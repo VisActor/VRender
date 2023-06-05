@@ -1,0 +1,48 @@
+{
+  "name": "@visactor/vrender-kits",
+  "version": "0.9.0-alpha.0",
+  "description": "",
+  "sideEffects": false,
+  "main": "cjs/index.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "cjs",
+    "es",
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "eslint": "eslint --debug --fix src/",
+    "build": "bundle",
+    "dev": "bundle --clean -f es -w",
+    "start": "vite ./vite",
+    "test": "",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@visactor/vrender": "workspace:0.9.0-alpha.0",
+    "@visactor/vutils": "0.9.0-alpha.2",
+    "@resvg/resvg-js": "2.4.1",
+    "canvas": "2.11.2",
+    "inversify": "6.0.1",
+    "node-fetch": "2.6.6",
+    "reflect-metadata": "0.1.13",
+    "roughjs": "4.5.2"
+  },
+  "devDependencies": {
+    "@internal/bundler": "workspace:*",
+    "@internal/eslint-config": "workspace:*",
+    "@internal/ts-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "@types/react": "16.9.49",
+    "@types/react-dom": "16.9.8",
+    "@types/node-fetch": "2.6.4",
+    "@vitejs/plugin-react": "3.1.0",
+    "eslint": "~8.18.0",
+    "vite": "3.2.6",
+    "typescript": "4.9.5"
+  }
+}

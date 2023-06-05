@@ -1,0 +1,9 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react",
+    "baseUrl": ".",
+    "outDir": "output"
+  },
+  "include": ["src"]
+}

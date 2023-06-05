@@ -1,0 +1,33 @@
+{
+  "name": "@internal/dev-demos",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@internal/eslint-config": "workspace:*",
+    "@internal/ts-config": "workspace:*",
+    "@visactor/vutils": "0.9.0-alpha.2",
+    "@visactor/vrender-kits": "workspace:0.9.0-alpha.0",
+    "d3-scale-chromatic": "^3.0.0",
+    "lodash": "4.17.21",
+    "dat.gui": "^0.7.9",
+    "stats.js": "^0.17.0",
+    "typescript": "4.9.5",
+    "vite": "3.2.6",
+    "canvas": "2.11.2",
+    "rollup-plugin-typescript2": "^0.33.0",
+    "@esbuild-plugins/node-globals-polyfill": "0.1.1",
+    "@esbuild-plugins/node-modules-polyfill": "0.1.4",
+    "rollup-plugin-node-polyfills": "0.2.1",
+    "zrender": "5.4.0",
+    "@antv/g": "^5.7.4"
+  },
+  "dependencies": {
+    "@visactor/vrender": "workspace:0.9.0-alpha.0"
+  }
+}

@@ -9,7 +9,7 @@ describe('shadowRoot', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
 
     const root = rect.attachShadow();
@@ -18,7 +18,7 @@ describe('shadowRoot', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     root?.add(r1);
 
@@ -32,7 +32,7 @@ describe('shadowRoot', () => {
       height: 100,
       x: 600,
       y: 600,
-      fillColor: 'red'
+      fill: 'red'
     });
     root2?.add(r2);
     expect(rect.AABBBounds).toEqual({ x1: 100, y1: 100, x2: 800, y2: 800 });
@@ -43,7 +43,7 @@ describe('shadowRoot', () => {
       height: 100,
       x: -600,
       y: -600,
-      fillColor: 'red'
+      fill: 'red'
     });
     root2?.add(r3);
     expect(rect.AABBBounds).toEqual({ x1: -500, y1: -500, x2: 800, y2: 800 });

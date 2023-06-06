@@ -66,7 +66,7 @@ describe('node-tree', () => {
         y: 10,
         width: 800,
         height: 300,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 2
       });
       tableGroup.name = 'tableGroup';
@@ -76,7 +76,7 @@ describe('node-tree', () => {
         y: 0,
         width: 800,
         height: 50,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 2
       });
       headerGroup.name = 'headerGroup';
@@ -88,7 +88,7 @@ describe('node-tree', () => {
         y: 50,
         width: 800,
         height: 250,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 2
       });
       bodyGroup.name = 'bodyGroup';
@@ -99,7 +99,7 @@ describe('node-tree', () => {
           y: 0,
           width: 160,
           height: 250,
-          strokeColor: '#000',
+          stroke: '#000',
           lineWidth: 2
         });
         columnGroup.name = 'columnGroup';
@@ -110,7 +110,7 @@ describe('node-tree', () => {
             y: j * 50,
             width: 160,
             height: 50,
-            strokeColor: '#000',
+            stroke: '#000',
             lineWidth: 2,
             pickable: true,
             childrenPickable: i === 2
@@ -123,7 +123,7 @@ describe('node-tree', () => {
             text: `cell_${i}_${j}`,
             textAlign: 'center',
             textBaseline: 'middle',
-            fillColor: 'red'
+            fill: 'red'
           });
           text.name = 'cellText';
           text.id = `cellText_${i}_${j}`;

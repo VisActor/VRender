@@ -41,7 +41,7 @@ describe('DragNDrop', () => {
     // append a rect
     // target = new VRender.CanvasRect(100, 100, 100, 80);
     // target.fill = true;
-    // target.fillColor = VRender.createPureColor('#999');
+    // target.fill = VRender.createPureColor('#999');
     // layer.appendChild(target);
 
     target = new Rect({
@@ -49,13 +49,13 @@ describe('DragNDrop', () => {
       y: 100,
       width: 100,
       height: 80,
-      fillColor: '#999'
+      fill: '#999'
     });
     stage.defaultLayer.add(target);
 
     // const circleBelow = new VRender.CanvasArc(300, 300, 0, 25, 0, Math.PI * 2, 0);
     // circleBelow.fill = true;
-    // circleBelow.fillColor = VRender.createPureColor('yellow');
+    // circleBelow.fill = VRender.createPureColor('yellow');
     // circleBelow.name = 'circleBelow';
     // layer.appendChild(circleBelow);
 
@@ -66,14 +66,14 @@ describe('DragNDrop', () => {
     //   radius: 25,
     //   startAngle: 0,
     //   endAngle: Math.PI * 2,
-    //   fillColor: 'yellow'
+    //   fill: 'yellow'
     // });
     // stage.add(circleBelow);
 
     // append a circle
     // source = new VRender.CanvasArc(300, 300, 0, 25, 0, Math.PI * 2, 0);
     // source.fill = true;
-    // source.fillColor = VRender.createPureColor('green');
+    // source.fill = VRender.createPureColor('green');
     // source.name = 'circleUp';
 
     // layer.appendChild(source);
@@ -84,7 +84,7 @@ describe('DragNDrop', () => {
       radius: 25,
       startAngle: 0,
       endAngle: Math.PI * 2,
-      fillColor: 'green'
+      fill: 'green'
     });
     stage.defaultLayer.add(source);
 

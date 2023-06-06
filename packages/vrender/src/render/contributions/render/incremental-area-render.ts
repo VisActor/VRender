@@ -61,7 +61,7 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
       }
       const areaAttribute = getTheme(area).area;
       const {
-        fill = areaAttribute.fill == null ? !!area.attribute.fillColor : areaAttribute.fill,
+        fill = areaAttribute.fill,
         fillOpacity = areaAttribute.fillOpacity,
         opacity = areaAttribute.opacity,
         visible = areaAttribute.visible

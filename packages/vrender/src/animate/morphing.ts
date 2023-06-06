@@ -58,7 +58,7 @@ const interpolateOtherAttrs = (attrs: OtherAttrItem[], out: any, ratio: number) 
   attrs.forEach(entry => {
     if (Number.isFinite(entry.to)) {
       out[entry.key] = entry.from + (entry.to - entry.from) * ratio;
-    } else if (entry.key === 'fillColor' || entry.key === 'strokeColor') {
+    } else if (entry.key === 'fill' || entry.key === 'stroke') {
       // 保存解析的结果到step
       const color = interpolateColor(entry.from, entry.to, ratio, false);
       if (color) {
@@ -165,13 +165,13 @@ const parseMorphingData = (
 };
 
 const validateOtherAttrs = [
-  'fillColor',
+  'fill',
   'fillOpacity',
   'shadowBlur',
   'shadowColor',
   'shadowOffsetX',
   'shadowOffsetY',
-  'strokeColor',
+  'stroke',
   'strokeOpacity',
   'lineDashOffset'
   // 'lineWidth'
@@ -194,11 +194,11 @@ const parseOtherAnimateAttrs = (
 
     const toValue = toAttrs[fromKey];
     if (!isNil(toValue) && !isNil(fromAttrs[fromKey]) && toValue !== fromAttrs[fromKey]) {
-      if (fromKey === 'fillColor' || fromKey === 'strokeColor') {
+      if (fromKey === 'fill' || fromKey === 'stroke') {
         res.push({
           from:
             typeof fromAttrs[fromKey] === 'string'
-              ? ColorStore.Get(fromAttrs[fromKey] as string, ColorType.Color255)
+              ? ColorStore.Get(fromAttrs[fromKey] as unknown as string, ColorType.Color255)
               : fromAttrs[fromKey],
           to: typeof toValue === 'string' ? ColorStore.Get(toValue as string, ColorType.Color255) : toValue,
           key: fromKey
@@ -436,12 +436,12 @@ const parseShadowChildAttrs = (graphicAttrs: Partial<IGraphicAttribute>) => {
     }
   });
 
-  if (attrs.fill == null) {
-    attrs.fill = !!attrs.fillColor;
-  }
-  if (attrs.stroke == null) {
-    attrs.stroke = !!attrs.strokeColor;
-  }
+  // if (attrs.fill == null) {
+  //   attrs.fill = !!attrs.fillColor;
+  // }
+  // if (attrs.stroke == null) {
+  //   attrs.stroke = !!attrs.strokeColor;
+  // }
 
   return attrs;
 };

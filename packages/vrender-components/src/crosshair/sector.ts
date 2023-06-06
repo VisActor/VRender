@@ -11,7 +11,7 @@ import { SectorCrosshairAttrs } from './type';
 export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
   static defaultAttributes = {
     sectorStyle: {
-      fillColor: '#b2bacf',
+      fill: '#b2bacf',
       opacity: 0.2
     }
   };

@@ -10,8 +10,7 @@ import { PolygonCrosshairAttrs } from './type';
 export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {
-      stroke: true,
-      strokeColor: '#b2bacf',
+      stroke: '#b2bacf',
       lineWidth: 1,
       lineDash: [2]
     }

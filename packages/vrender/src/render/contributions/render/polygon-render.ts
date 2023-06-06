@@ -45,8 +45,8 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     const polygonAttribute = getTheme(polygon, params?.theme).polygon;
     const {
       points = polygonAttribute.points,
-      fill = polygonAttribute.fill == null ? !!polygon.attribute.fillColor : polygonAttribute.fill,
-      stroke = polygonAttribute.stroke == null ? !!polygon.attribute.strokeColor : polygonAttribute.stroke,
+      fill = polygonAttribute.fill,
+      stroke = polygonAttribute.stroke,
       borderRadius = polygonAttribute.borderRadius,
       fillOpacity = polygonAttribute.fillOpacity,
       background,

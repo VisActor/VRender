@@ -9,7 +9,8 @@ import {
   IText,
   IncreaseCount,
   AttributeUpdateType,
-  FederatedPointerEvent
+  FederatedPointerEvent,
+  IColor
 } from '@visactor/vrender';
 import { isFunction, IBoundsLike, isValidNumber, isEmpty } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -510,7 +511,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         continue;
       }
       label.stroke = false;
-      label.strokeColor = 'black';
       let isInside = label._insideGraphic;
       if (isInside === undefined) {
         const text = createText(label);
@@ -532,9 +532,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
          * 若label存在stroke，label填充色为前景色，label描边色为背景色
          * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
          */
-        label.fillColor = labelSmartInvert(
-          label.fillColor,
-          label.strokeColor,
+        label.fill = labelSmartInvert(
+          label.fill as IColor,
+          label.stroke,
           this.attribute.smartInvert?.textType,
           this.attribute.smartInvert?.contrastRatiosThreshold,
           this.attribute.smartInvert?.alternativeColors
@@ -545,9 +545,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
          * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
          */
         const baseMark = this._relationMap.get(label._relatedIndex);
-        const backgroundColor = baseMark.attribute.fillColor;
-        const foregroundColor = label.fillColor;
-        label.fillColor = labelSmartInvert(
+        const backgroundColor = baseMark.attribute.fill as IColor;
+        const foregroundColor = label.fill as IColor;
+        label.fill = labelSmartInvert(
           foregroundColor,
           backgroundColor,
           this.attribute.smartInvert?.textType,
@@ -560,11 +560,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
          * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
          */
         const baseMark = this._relationMap.get(label._relatedIndex);
-        label.stroke = true;
-        label.strokeColor = baseMark.attribute.fillColor;
-        const backgroundColor = label.strokeColor;
-        const foregroundColor = label.fillColor;
-        label.fillColor = labelSmartInvert(
+        label.stroke = baseMark.attribute.fill;
+        const backgroundColor = label.stroke as IColor;
+        const foregroundColor = label.fill as IColor;
+        label.fill = labelSmartInvert(
           foregroundColor,
           backgroundColor,
           this.attribute.smartInvert?.textType,

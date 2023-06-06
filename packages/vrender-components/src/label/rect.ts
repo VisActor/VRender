@@ -9,7 +9,7 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
   static defaultAttributes: Partial<RectLabelAttrs> = {
     textStyle: {
       fontSize: 12,
-      fillColor: '#000',
+      fill: '#000',
       textAlign: 'center',
       textBaseline: 'middle'
     },

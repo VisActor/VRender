@@ -28,8 +28,6 @@ const defaultFormatting = {
   fontFamily: 'sans-serif',
   fill: true,
   stroke: false,
-  fillColor: { value: 'black' },
-  strokeColor: { value: 'black' },
   fontWeight: 'normal',
   lineHeight: 'normal',
   fontStyle: 'normal', // normal, italic, oblique
@@ -44,8 +42,13 @@ const regPunctuation = /[.?!,;:/，。？！、；：]/;
 export const regFirstSpace = /\S/;
 // Applies the style of a run to the canvas context
 export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+  const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
+  if (!fillStyle) {
+    ctx.globalAlpha = 0;
+    return;
+  }
   ctx.globalAlpha = 1;
-  ctx.fillStyle = (character && (character.fillColor as string)) || defaultFormatting.fillColor.value;
+  ctx.fillStyle = fillStyle as string;
 
   let fontSize = character.fontSize || 16;
   switch (character.script) {
@@ -66,9 +69,14 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
 }
 
 export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+  const strokeStyle = (character && (character.stroke as string)) || (defaultFormatting.stroke as any);
+  if (!strokeStyle) {
+    ctx.globalAlpha = 0;
+    return;
+  }
   ctx.globalAlpha = 1;
   ctx.lineWidth = 1;
-  ctx.strokeStyle = (character && (character.strokeColor as string)) || defaultFormatting.strokeColor.value;
+  ctx.strokeStyle = strokeStyle as string;
 
   let fontSize = character.fontSize || 16;
   switch (character.script) {

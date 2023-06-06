@@ -9,7 +9,7 @@ import {
   IArea,
   IAreaGraphicAttribute
 } from '../../../../interface';
-import { getScaledStroke } from '../../../../common';
+import { getAttributeFromDefaultAttrList, getScaledStroke } from '../../../../common';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
@@ -84,10 +84,12 @@ export class DefaultAreaTextureRenderContribution
     const { attribute = graphic.attribute } = options || {};
 
     const {
-      texture = graphic.attribute.texture ?? graphicAttribute.texture,
-      textureColor = graphic.attribute.textureColor ?? graphicAttribute.textureColor,
-      textureSize = graphic.attribute.textureSize ?? graphicAttribute.textureSize,
-      texturePadding = graphic.attribute.texturePadding ?? graphicAttribute.texturePadding
+      texture = graphic.attribute.texture ?? getAttributeFromDefaultAttrList(graphicAttribute, 'texture'),
+      textureColor = graphic.attribute.textureColor ??
+        getAttributeFromDefaultAttrList(graphicAttribute, 'textureColor'),
+      textureSize = graphic.attribute.textureSize ?? getAttributeFromDefaultAttrList(graphicAttribute, 'textureSize'),
+      texturePadding = graphic.attribute.texturePadding ??
+        getAttributeFromDefaultAttrList(graphicAttribute, 'texturePadding')
     } = attribute;
     if (!texture) {
       return;

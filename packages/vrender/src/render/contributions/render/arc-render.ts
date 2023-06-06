@@ -106,7 +106,7 @@ export function drawArcPath(
   cy: number,
   outerRadius: number,
   innerRadius: number,
-  partStroke?: boolean[]
+  partStroke?: (boolean | string)[]
 ) {
   const { startAngle, endAngle } = arc.getParsedAngle();
 
@@ -788,9 +788,9 @@ export class DefaultCanvasArcRender implements IGraphicRender {
     const arcAttribute = getTheme(arc, params?.theme).arc;
 
     const {
-      fill = arcAttribute.fill == null ? !!arc.attribute.fillColor : arcAttribute.fill,
+      fill = arcAttribute.fill,
       background,
-      stroke = arcAttribute.stroke == null ? !!arc.attribute.strokeColor : arcAttribute.stroke,
+      stroke = arcAttribute.stroke,
       opacity = arcAttribute.opacity,
       fillOpacity = arcAttribute.fillOpacity,
       lineWidth = arcAttribute.lineWidth,
@@ -894,12 +894,12 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         const capWidth = Math.abs(outerRadius - innerRadius) / 2;
         // 以外边界长度为准
         const capAngle = capWidth / outerRadius;
-        const { endAngle = arcAttribute.endAngle, fillColor = arcAttribute.fillColor } = arc.attribute;
+        const { endAngle = arcAttribute.endAngle, fill = arcAttribute.fill } = arc.attribute;
         const startAngle = endAngle;
         this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
         if (doFill) {
           // 获取渐变色最后一个颜色
-          const color = fillColor;
+          const color = fill;
           if ((color as IGradientColor).gradient === 'conical') {
             const lastColor = getConicGradientAt(0, 0, endAngle, color as any);
             if (fillCb) {

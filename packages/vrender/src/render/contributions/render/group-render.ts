@@ -44,9 +44,9 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     // const groupAttribute = graphicService.themeService.getCurrentTheme().groupAttribute;
     const groupAttribute = getTheme(group, params?.theme).group;
     const {
-      fill = groupAttribute.fill == null ? !!group.attribute.fillColor : groupAttribute.fill,
+      fill = groupAttribute.fill,
       background,
-      stroke = groupAttribute.stroke == null ? !!group.attribute.strokeColor : groupAttribute.stroke,
+      stroke = groupAttribute.stroke,
       opacity = groupAttribute.opacity,
       width = groupAttribute.width,
       height = groupAttribute.height,

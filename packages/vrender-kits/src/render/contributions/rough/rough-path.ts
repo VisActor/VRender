@@ -45,10 +45,8 @@ export class RoughCanvasPathRender implements IGraphicRender {
     context.transformFromMatrix(path.transMatrix, true);
 
     const {
-      fill = pathAttribute.fill == null ? !!path.attribute.fillColor : pathAttribute.fill,
-      stroke = pathAttribute.stroke == null ? !!path.attribute.strokeColor : pathAttribute.stroke,
-      fillColor = pathAttribute.fillColor,
-      strokeColor = pathAttribute.strokeColor,
+      fill = pathAttribute.fill,
+      stroke = pathAttribute.stroke,
       lineWidth = pathAttribute.lineWidth,
       path: p = pathAttribute.path,
       maxRandomnessOffset = defaultRouthThemeSpec.maxRandomnessOffset,
@@ -75,8 +73,8 @@ export class RoughCanvasPathRender implements IGraphicRender {
     } = path.attribute as any;
     if (typeof p === 'string') {
       rc.path(p, {
-        fill: fill ? (fillColor as string) : undefined,
-        stroke: stroke ? (strokeColor as string) : undefined,
+        fill: fill ? (fill as string) : undefined,
+        stroke: stroke ? (stroke as string) : undefined,
         strokeWidth: lineWidth,
         maxRandomnessOffset,
         roughness,

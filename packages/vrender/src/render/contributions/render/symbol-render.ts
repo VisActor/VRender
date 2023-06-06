@@ -49,13 +49,13 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
 
     const {
       size = symbolAttribute.size,
-      fill = symbolAttribute.fill == null ? !!symbol.attribute.fillColor : symbolAttribute.fill,
+      fill = symbolAttribute.fill,
       background,
       fillOpacity = symbolAttribute.fillOpacity,
       strokeOpacity = symbolAttribute.strokeOpacity,
       opacity = symbolAttribute.opacity,
       lineWidth = symbolAttribute.lineWidth,
-      stroke = symbolAttribute.stroke == null ? !!symbol.attribute.strokeColor : symbolAttribute.stroke,
+      stroke = symbolAttribute.stroke,
       visible = symbolAttribute.visible
     } = symbol.attribute;
 

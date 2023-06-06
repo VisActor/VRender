@@ -37,7 +37,7 @@ export function renderRect(num: number) {
         width: 80,
         height: 50,
         borderRadius: 10,
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },
     () => {

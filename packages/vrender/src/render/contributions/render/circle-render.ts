@@ -44,9 +44,9 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
     // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
     const circleAttribute = getTheme(circle, params?.theme).circle;
     const {
-      fill = circleAttribute.fill == null ? !!circle.attribute.fillColor : circleAttribute.fill,
+      fill = circleAttribute.fill,
       background,
-      stroke = circleAttribute.stroke == null ? !!circle.attribute.strokeColor : circleAttribute.stroke,
+      stroke = circleAttribute.stroke,
       radius = circleAttribute.radius,
       startAngle = circleAttribute.startAngle,
       endAngle = circleAttribute.endAngle,

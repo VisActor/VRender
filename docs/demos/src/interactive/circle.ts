@@ -15,7 +15,7 @@ export function renderCircle(num: number) {
       endAngle: Math.PI,
       x: 600 * Math.random(),
       y: 600 * Math.random(),
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)]
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)]
     });
   });
 }

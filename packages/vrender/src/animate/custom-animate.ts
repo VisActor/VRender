@@ -77,8 +77,8 @@ enum Direction {
 }
 export class FadeInPlus extends ACustomAnimate<any> {
   declare direction: number;
-  declare toFillColor: string;
-  declare toStrokeColor: string;
+  declare toFill: string;
+  declare toStroke: string;
   declare fillGradient: ILinearGradient;
   declare strokeGradient: ILinearGradient;
   declare fill: boolean;
@@ -107,15 +107,15 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   getEndProps(): Record<string, any> {
     return {
-      fillColor: this.toFillColor,
-      strokeColor: this.toStrokeColor
+      fill: this.toFill,
+      stroke: this.toStroke
     };
   }
 
   onBind(): void {
     // this.to = parseFloat(this.target.getAnimatePropByName('text'));
-    this.toFillColor = this.target.getComputedAttribute('fillColor');
-    this.toStrokeColor = this.target.getComputedAttribute('strokeColor');
+    this.toFill = this.target.getComputedAttribute('fill');
+    this.toStroke = this.target.getComputedAttribute('stroke');
   }
 
   onEnd(): void {
@@ -144,7 +144,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   leftToRight(end: boolean, ratio: number, out: Record<string, any>) {
     if (this.fill) {
-      const toFillColor = this.toFillColor;
+      const toFillColor = this.toFill;
       this.fillGradient.x0 = 0;
       this.fillGradient.y0 = 0;
       this.fillGradient.x1 = 1;
@@ -154,10 +154,10 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toFillColor },
         { offset: Math.min(1, ratio * 2), color: 'transparent' }
       ];
-      out.fillColor = this.fillGradient;
+      out.fill = this.fillGradient;
     }
     if (this.stroke) {
-      const toStrokeColor = this.toStrokeColor;
+      const toStrokeColor = this.toStroke;
       this.strokeGradient.x0 = 0;
       this.strokeGradient.y0 = 0;
       this.strokeGradient.x1 = 1;
@@ -167,7 +167,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toStrokeColor },
         { offset: Math.min(1, ratio * 6), color: 'transparent' }
       ];
-      out.strokeColor = this.strokeGradient;
+      out.stroke = this.strokeGradient;
       // const dashLen = 300;
       // const offset = ratio * dashLen;
       // out.lineDash = [offset, dashLen - offset];
@@ -177,7 +177,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   strokePath(end: boolean, ratio: number, out: Record<string, any>) {
     if (this.fill) {
-      const toFillColor = this.toFillColor;
+      const toFillColor = this.toFill;
       this.fillGradient.x0 = 0;
       this.fillGradient.y0 = 0;
       this.fillGradient.x1 = 1;
@@ -187,7 +187,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toFillColor },
         { offset: Math.min(1, ratio * 2), color: 'transparent' }
       ];
-      out.fillColor = this.fillGradient;
+      out.fill = this.fillGradient;
     }
     if (this.stroke) {
       const dashLen = 300;
@@ -238,7 +238,7 @@ export class InputText extends ACustomAnimate<{ text: string }> {
           { x: 0, y: 0 },
           { x: 0, y: this.target.getComputedAttribute('fontSize') }
         ],
-        strokeColor: 'black',
+        stroke: 'black',
         lineWidth: 1
       });
       root.add(line);
@@ -294,7 +294,7 @@ export class StreamLight extends ACustomAnimate<any> {
 
     const rect = graphicService.creator.rect({
       height: height,
-      fillColor: '#bcdeff',
+      fill: '#bcdeff',
       shadowBlur: 30,
       shadowColor: '#bcdeff',
       ...this.params?.attribute,

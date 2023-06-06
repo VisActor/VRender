@@ -53,7 +53,7 @@ function drawChartCanopus() {
       { x: 200, y: 550 },
       { x: 1200, y: 550 }
     ],
-    strokeColor: 'black'
+    stroke: 'black'
   });
   xAxisGroup.add(xLine);
   // 绘制轴标签
@@ -65,7 +65,7 @@ function drawChartCanopus() {
       x: 200 + (i / 10) * 1000,
       y: 580,
       textAlign: 'center',
-      fillColor: 'black',
+      fill: 'black',
       keepDirIn3d: true
     });
     xAxisGroup.add(text);
@@ -74,7 +74,7 @@ function drawChartCanopus() {
         { x: 200 + (i / 10) * 1000, y: 0 },
         { x: 200 + (i / 10) * 1000, y: 550 }
       ],
-      strokeColor: 'grey',
+      stroke: 'grey',
       strokeOpacity: 0.6,
       lineDash: [5, 5]
     });
@@ -85,7 +85,7 @@ function drawChartCanopus() {
         { x: 200 + (i / 10) * 1000, y: 550 },
         { x: 200 + (i / 10) * 1000, y: 570 }
       ],
-      strokeColor: 'grey',
+      stroke: 'grey',
       beta: -Math.PI / 2,
       anchor3d: [0, 550]
     });
@@ -97,7 +97,7 @@ function drawChartCanopus() {
       { x: 200, y: 0 },
       { x: 200, y: 550 }
     ],
-    strokeColor: 'black'
+    stroke: 'black'
   });
   yAxisGroup.add(yLine);
   for (let i = 0; i < yLabels.length; i++) {
@@ -109,7 +109,7 @@ function drawChartCanopus() {
       y: ((5 - i) / 5) * 550,
       textBaseline: 'middle',
       keepDirIn3d: true,
-      fillColor: 'black'
+      fill: 'black'
       // angle: 0.3
     });
     yAxisGroup.add(text);
@@ -119,7 +119,7 @@ function drawChartCanopus() {
         { x: 200, y: ((5 - i) / 5) * 550 },
         { x: 1200, y: ((5 - i) / 5) * 550 }
       ],
-      strokeColor: 'grey',
+      stroke: 'grey',
       strokeOpacity: 0.6,
       lineDash: [5, 5]
     });
@@ -130,7 +130,7 @@ function drawChartCanopus() {
         { x: 180, y: ((5 - i) / 5) * 550 },
         { x: 200, y: ((5 - i) / 5) * 550 }
       ],
-      strokeColor: 'grey',
+      stroke: 'grey',
       alpha: -Math.PI / 2,
       anchor3d: [200, 0]
     });
@@ -144,7 +144,7 @@ function drawChartCanopus() {
       { x: 200, y: 550 },
       { x: 1160, y: 550 }
     ],
-    strokeColor: 'red'
+    stroke: 'red'
     // alpha: pi / 2,
     // anchor3d: [200, 0]
   });
@@ -159,7 +159,7 @@ function drawChartCanopus() {
       y: 600,
       keepDirIn3d: true,
       textAlign: 'center',
-      fillColor: 'red'
+      fill: 'red'
       // alpha: pi / 2,
       // anchor3d: [200 - (200 + (i / 10) * 1000), 0]
     });
@@ -170,7 +170,7 @@ function drawChartCanopus() {
     //     { x: 200 + (i / 10) * 1000, y: 0 },
     //     { x: 200 + (i / 10) * 1000, y: 550 }
     //   ],
-    //   strokeColor: 'red',
+    //   stroke: 'red',
     //   strokeOpacity: 0.6,
     //   lineDash: [5, 5],
     //   alpha: pi / 2,
@@ -181,7 +181,7 @@ function drawChartCanopus() {
         { x: 200, y: ((5 - i) / 5) * 550 },
         { x: 1200, y: ((5 - i) / 5) * 550 }
       ],
-      strokeColor: 'red',
+      stroke: 'red',
       strokeOpacity: 0.6,
       // beta: pi / 2,
       // anchor3d: [200, 550],
@@ -199,7 +199,7 @@ function drawChartCanopus() {
     //     { x: 200 + (i / 10) * 1000, y: 550 },
     //     { x: 200 + (i / 10) * 1000, y: 570 }
     //   ],
-    //   strokeColor: 'red',
+    //   stroke: 'red',
     //   alpha: pi / 2,
     //   anchor3d: [200, 0]
     // });
@@ -219,11 +219,11 @@ function drawChartCanopus() {
       z: -Math.random() * 1000,
       keepDirIn3d: true,
       symbolType: symbols[i % 3],
-      fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+      fill: colorPools[Math.floor(Math.random() * colorPools.length)]
     });
 
     scatter.addEventListener('pointerenter', () => {
-      scatter.setAttribute('fillColor', colorPools[Math.floor(Math.random() * colorPools.length)]);
+      scatter.setAttribute('fill', colorPools[Math.floor(Math.random() * colorPools.length)]);
     });
     scatterList.push(scatter);
 
@@ -303,7 +303,7 @@ export const page = () => {
   //     { x: 99, y: 0 },
   //     { x: 99, y: 1000 }
   //   ],
-  //   strokeColor: 'black'
+  //   stroke: 'black'
   // }));
 
   // for (let i = 0; i < count; i++) {
@@ -317,7 +317,7 @@ export const page = () => {
   //       { x: 1000, y: i * 100 }
   //     ],
   //     lineDash: [5, 5],
-  //     strokeColor: 'grey'
+  //     stroke: 'grey'
   //   }) as any);
 
   //   leftGroup.add(createLine({
@@ -327,7 +327,7 @@ export const page = () => {
   //       { x: 90, y: i * 100 },
   //       { x: 99, y: i * 100 }
   //     ],
-  //     strokeColor: 'black'
+  //     stroke: 'black'
   //   }) as any);
   // }
 

@@ -54,8 +54,8 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = getTheme(path, params?.theme).path;
     const {
-      fill = pathAttribute.fill == null ? !!path.attribute.fillColor : pathAttribute.fill,
-      stroke = pathAttribute.stroke == null ? !!path.attribute.strokeColor : pathAttribute.stroke,
+      fill = pathAttribute.fill,
+      stroke = pathAttribute.stroke,
       fillOpacity = pathAttribute.fillOpacity,
       strokeOpacity = pathAttribute.strokeOpacity,
       opacity = pathAttribute.opacity,

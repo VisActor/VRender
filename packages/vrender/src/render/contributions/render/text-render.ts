@@ -35,8 +35,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const textAttribute = getTheme(text, params?.theme).text;
     const {
       text: str,
-      fill = textAttribute.fill == null ? !!text.attribute.fillColor : textAttribute.fill,
-      stroke = textAttribute.stroke == null ? !!text.attribute.strokeColor : textAttribute.stroke,
+      fill = textAttribute.fill,
+      stroke = textAttribute.stroke,
       fillOpacity = textAttribute.fillOpacity,
       strokeOpacity = textAttribute.strokeOpacity,
       opacity = textAttribute.opacity,
@@ -176,14 +176,14 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       textAlign = textAttribute.textAlign,
       textBaseline = textAttribute.textBaseline,
       fontSize = textAttribute.fontSize,
-      fillColor = textAttribute.fillColor,
+      fill = textAttribute.fill,
       opacity = textAttribute.opacity,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
     const w = text.clipedWidth;
     const offsetX = textDrawOffsetX(textAlign, w);
     const offsetY = textLayoutOffsetY(textBaseline, fontSize);
-    const attribute = { lineWidth: 0, strokeColor: fillColor, opacity, strokeOpacity: fillOpacity };
+    const attribute = { lineWidth: 0, strokeColor: fill, opacity, strokeOpacity: fillOpacity };
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
@@ -222,14 +222,14 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const {
       textAlign = textAttribute.textAlign,
       fontSize = textAttribute.fontSize,
-      fillColor = textAttribute.fillColor,
+      fill = textAttribute.fill,
       opacity = textAttribute.opacity,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
 
     const offsetX = textDrawOffsetX(textAlign, w);
     const offsetY = textLayoutOffsetY('alphabetic', fontSize);
-    const attribute = { lineWidth: 0, strokeColor: fillColor, opacity, strokeOpacity: fillOpacity };
+    const attribute = { lineWidth: 0, strokeColor: fill, opacity, strokeOpacity: fillOpacity };
     let deltaY = -3;
     if (underline) {
       attribute.lineWidth = underline;

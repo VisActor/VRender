@@ -18,7 +18,7 @@ export function renderCircle() {
     endAngle: Math.PI * 2,
     x: 400,
     y: 400,
-    fillColor: 'red'
+    fill: 'red'
   });
   circle.addEventListener('pointertap', () => console.log('circle, pointertap'));
   circle.addEventListener('tap', () => console.log('circle, tap'));
@@ -80,7 +80,7 @@ export function renderCircle() {
     endAngle: Math.PI * 2,
     x: 400,
     y: 400,
-    fillColor: 'red'
+    fill: 'red'
   });
   circle1.addEventListener('pointertap', () => console.log('circle1, pointertap'));
   circle1.addEventListener('tap', () => console.log('circle1, tap'));

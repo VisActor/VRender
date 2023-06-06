@@ -11,9 +11,9 @@ export function renderSymbol(num: number) {
       y: 600 * Math.random(),
       symbolType: 'circle',
       size: 200,
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)],
-      stroke: true,
-      strokeColor: colorPools[Math.floor(Math.random() * colorPools.length)],
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)],
+      
+      stroke: colorPools[Math.floor(Math.random() * colorPools.length)],
       lineWidth: 10
     });
   });

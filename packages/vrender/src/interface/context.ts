@@ -1,9 +1,9 @@
 import { Matrix, IMatrix, IBoundsLike, IPointLike } from '@visactor/vutils';
 import { ICamera } from './camera';
 import { ICanvas } from './canvas';
-import { IColor } from './color';
 import { Releaseable } from './common';
 import { mat4, vec3 } from './matrix';
+import { IFillType, IStrokeType } from './graphic';
 
 export interface IConicalGradientData {
   addColorStop: (pos: number, color: string) => void;
@@ -13,7 +13,7 @@ export interface IConicalGradientData {
 
 // 用于commonStyle函数的参数
 export interface ICommonStyleParams {
-  fillColor?: string | IColor;
+  fill?: IFillType;
   fillOpacity?: number;
   shadowBlur?: number;
   shadowColor?: string;
@@ -24,7 +24,7 @@ export interface ICommonStyleParams {
 }
 
 export interface IStrokeStyleParams {
-  strokeColor?: string | IColor;
+  stroke?: IStrokeType | IStrokeType[];
   strokeOpacity?: number;
   lineDash?: number[];
   lineDashOffset?: number;

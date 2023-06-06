@@ -19,7 +19,7 @@ export const page = () => {
           text: 'Mapbox',
           fontWeight: 'bold',
           fontSize: 30,
-          fillColor: '#3f51b5',
+          fill: '#3f51b5',
           fill: true
         },
         {
@@ -29,8 +29,8 @@ export const page = () => {
         {
           text: '替代方案',
           fontStyle: 'italic',
-          fill: true,
-          fillColor: '#3f51b5'
+          
+          fill: '#3f51b5'
         },
         {
           text: '。在当时，Google Map',
@@ -54,8 +54,8 @@ export const page = () => {
         {
           // "lineHeight": 30,
           text: '。\n',
-          fill: true,
-          fillColor: '#30ff05'
+          
+          fill: '#30ff05'
         },
         {
           lineHeight: 30,
@@ -71,21 +71,21 @@ export const page = () => {
         //   "fontSize": 20,
         //   "fill": true,
         //   "textAlign": "center",
-        //   "fillColor": "#ccc",
+        //   "fill": "#ccc",
         // },
         // {
         //   "text": "50%\n",
         //   "fontSize": 30,
         //   "fill": true,
         //   "textAlign": "center",
-        //   "fillColor": "#000",
+        //   "fill": "#000",
         // },
         // {
         //   "text": "利润",
         //   "fontSize": 20,
         //   "fill": true,
         //   "textAlign": "center",
-        //   "fillColor": "#ccc",
+        //   "fill": "#ccc",
         // },
       ]
     })
@@ -103,8 +103,8 @@ export const page = () => {
           fontSize: 30,
           textAlign: 'center',
           textDecoration: 'underline',
-          fill: true,
-          fillColor: '#0f51b5'
+          
+          fill: '#0f51b5'
         },
 
         // textAlign
@@ -127,7 +127,7 @@ export const page = () => {
         },
         {
           text: '\ntextAlign: center',
-          fill: true,
+          
           textAlign: 'center'
         },
         {
@@ -143,7 +143,7 @@ export const page = () => {
         },
         {
           text: '\ntextAlign: right',
-          fill: true,
+          
           textAlign: 'right'
         },
         {
@@ -161,7 +161,7 @@ export const page = () => {
         // textBaseline
         {
           text: '\ntextBaseline: top',
-          fill: true,
+          
           textBaseline: 'top'
         },
         {
@@ -178,7 +178,7 @@ export const page = () => {
         },
         {
           text: '\ntextBaseline: middle',
-          fill: true,
+          
           textBaseline: 'middle'
         },
         {
@@ -195,7 +195,7 @@ export const page = () => {
         },
         {
           text: '\ntextBaseline: alphabetic',
-          fill: true,
+          
           textBaseline: 'alphabetic'
         },
         {
@@ -212,7 +212,7 @@ export const page = () => {
         },
         {
           text: '\ntextBaseline: bottom',
-          fill: true,
+          
           textBaseline: 'bottom'
         },
         {
@@ -231,12 +231,12 @@ export const page = () => {
         // wrap
         {
           text: '\nlong lone lone lone lone lone text warps line',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
           text: ' line',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
@@ -268,7 +268,7 @@ export const page = () => {
         },
         {
           text: 'icon line start; ',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
@@ -284,12 +284,12 @@ export const page = () => {
         },
         {
           text: 'icon line middle; ',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
           text: 'icon line end',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
@@ -305,7 +305,7 @@ export const page = () => {
         },
         {
           text: '\nmargin',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
@@ -322,12 +322,12 @@ export const page = () => {
         },
         {
           text: 'margin',
-          fill: true,
+          
           textAlign: 'left'
         },
         {
           text: '\nmargin margin margin',
-          fill: true,
+          
           textAlign: 'left'
         }
       ]
@@ -345,34 +345,34 @@ export const page = () => {
         // {
         //   // lineHeight: 30,
         //   text: '中',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         // },
         // {
         //   // lineHeight: 30,
         //   text: '文',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         //   // rotate: -Math.PI / 3,
         // },
         // {
         //   // lineHeight: 30,
         //   text: '字',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         //   // rotate: Math.PI / 2,
         // },
         // {
         //   // lineHeight: 30,
         //   text: '符',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         //   // rotate: Math.PI,
         // },
         // {
         //   // lineHeight: 30,
         //   text: 'English',
-        //   fill: true,
+        //   
         //   textAlign: 'left',
         //   // rotate: Math.PI / 2,
         //   direction: 'vertical'
@@ -381,21 +381,21 @@ export const page = () => {
         // {
         //   // lineHeight: 30,
         //   text: 'n',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         //   // rotate: Math.PI / 3,
         // },
         // {
         //   // lineHeight: 30,
         //   text: 'g',
-        //   fill: true,
+        //   
         //   textAlign: 'left'
         //   // rotate: Math.PI / 2,
         // }
 
         {
           text: '这',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -405,12 +405,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'left',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '是',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -420,12 +420,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '一',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -435,12 +435,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '个',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -450,12 +450,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '汉',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -465,13 +465,13 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '【',
           direction: 'vertical',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -481,12 +481,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '放',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -496,12 +496,12 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: '大',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -511,13 +511,13 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         },
         {
           text: 'a0',
           direction: 'vertical',
-          fill: true,
+          
           stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -527,8 +527,8 @@ export const page = () => {
           textDecoration: 'none',
           textAlign: 'right',
           script: 'normal',
-          fillColor: '#6F6F6F',
-          strokeColor: 'black'
+          fill: '#6F6F6F',
+          stroke: 'black'
         }
       ]
     })

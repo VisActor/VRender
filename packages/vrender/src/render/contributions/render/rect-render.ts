@@ -43,9 +43,9 @@ export class DefaultCanvasRectRender implements IGraphicRender {
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const rectAttribute = getTheme(rect, params?.theme).rect;
     const {
-      fill = rectAttribute.fill == null ? !!rect.attribute.fillColor : rectAttribute.fill,
+      fill = rectAttribute.fill,
       background,
-      stroke = rectAttribute.stroke == null ? !!rect.attribute.strokeColor : rectAttribute.stroke,
+      stroke = rectAttribute.stroke,
       width = rectAttribute.width,
       height = rectAttribute.height,
       borderRadius = rectAttribute.borderRadius,

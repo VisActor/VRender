@@ -50,9 +50,8 @@ export const DefaultTransform: ITransform = {
 };
 
 export const DefaultFillStyle: IFillStyle = {
-  fillColor: 'black',
   fillOpacity: 1,
-  fill: null,
+  fill: false,
   shadowBlur: 0,
   shadowColor: 'black',
   shadowOffsetX: 0,
@@ -60,7 +59,6 @@ export const DefaultFillStyle: IFillStyle = {
 };
 
 const commonStroke: Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> = {
-  strokeColor: 'black',
   strokeOpacity: 1,
   lineDash: [],
   lineDashOffset: 0,
@@ -69,7 +67,7 @@ const commonStroke: Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> = {
   lineJoin: 'miter',
   miterLimit: 10,
   strokeBoundsBuffer: 2,
-  stroke: null
+  stroke: false
 };
 
 export const DefaultStrokeStyle: IStrokeStyle = {

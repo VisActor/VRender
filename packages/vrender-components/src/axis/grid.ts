@@ -95,8 +95,7 @@ export class Grid extends AbstractComponent<Required<GridAttributes>> {
   static defaultAttributes: Partial<GridAttributes> = {
     style: {
       lineWidth: 1,
-      stroke: true,
-      strokeColor: '#416180'
+      stroke: '#416180'
     },
     zIndex: 0
   };
@@ -181,8 +180,7 @@ export class Grid extends AbstractComponent<Required<GridAttributes>> {
         const path = getRegionPath(prev, curr, this.attribute as GridAttributes);
         const shape = createPath({
           path,
-          fill: true,
-          fillColor: getColor(index)
+          fill: getColor(index)
         }) as Path;
         shape.name = `${this.name}-region`;
         shape.id = this._getNodeId(`region-${index}`);

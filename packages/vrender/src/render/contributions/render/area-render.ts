@@ -89,12 +89,12 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
   ) {
     const areaAttribute = getTheme(area, params?.theme).area;
     const {
-      fill = areaAttribute.fill == null ? !!area.attribute.fillColor : areaAttribute.fill,
+      fill = areaAttribute.fill,
       fillOpacity = areaAttribute.fillOpacity,
       opacity = areaAttribute.opacity,
       visible = areaAttribute.visible,
       z = areaAttribute.z,
-      stroke = !!area.attribute.strokeColor,
+      stroke = area.attribute.stroke,
       lineWidth = areaAttribute.lineWidth,
       strokeOpacity = areaAttribute.strokeOpacity
     } = area.attribute;
@@ -203,7 +203,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           skip = this.drawSegmentItem(
             context,
             cache,
-            fill,
+            !!fill,
             fillOpacity,
             area.attribute.segments[index],
             [areaAttribute, area.attribute],
@@ -235,7 +235,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             skip = this.drawSegmentItem(
               context,
               cache,
-              fill,
+              !!fill,
               fillOpacity,
               area.attribute.segments[index],
               [areaAttribute, area.attribute],
@@ -253,7 +253,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       this.drawSegmentItem(
         context,
         area.cacheArea as IAreaCacheItem,
-        fill,
+        !!fill,
         fillOpacity,
         area.attribute,
         areaAttribute,

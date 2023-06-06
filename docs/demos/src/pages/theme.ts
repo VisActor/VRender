@@ -7,7 +7,7 @@ export const page = () => {
     y: 0,
     width: 100,
     height: 100,
-    fillColor: colorPools[0]
+    fill: colorPools[0]
   });
   root.name = 'root';
   const l1 = createGroup({
@@ -15,7 +15,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[1]
+    fill: colorPools[1]
   });
   l1.name = 'l1';
   const r1 = createGroup({
@@ -23,7 +23,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[2]
+    fill: colorPools[2]
   });
   r1.name = 'r1';
   const l11 = createGroup({
@@ -31,7 +31,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[3]
+    fill: colorPools[3]
   });
   l11.name = 'l11';
   const l12 = createGroup({
@@ -39,7 +39,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[4]
+    fill: colorPools[4]
   });
   l12.name = 'l12';
   const r11 = createGroup({
@@ -47,7 +47,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[5]
+    fill: colorPools[5]
   });
   r11.name = 'r11';
   const r12 = createGroup({
@@ -55,7 +55,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fillColor: colorPools[6]
+    fill: colorPools[6]
   });
   r12.name = 'r12';
   root.add(l1);
@@ -72,7 +72,7 @@ export const page = () => {
       startAngle: -1.5707963267948966,
       endAngle: -0.3141592653589793,
       cornerRadius: 100,
-      strokeColor: 'green',
+      stroke: 'green',
       cap: false
     })
   );
@@ -90,13 +90,13 @@ export const page = () => {
       startAngle: -1.5707963267948966,
       endAngle: -0.3141592653589793,
       cornerRadius: 100,
-      strokeColor: 'green',
+      stroke: 'green',
       cap: false
     })
   );
   r1.add(
     createRect({
-      fillColor: 'red',
+      fill: 'red',
       width: 20,
       height: 20
     })
@@ -105,7 +105,7 @@ export const page = () => {
   r1.add(
     createText({
       text: 'r1',
-      fillColor: 'red'
+      fill: 'red'
     })
   );
 
@@ -130,14 +130,14 @@ export const page = () => {
   // r11.add(
   //   createText({
   //     text: 'r11',
-  //     fillColor: 'red'
+  //     fill: 'red'
   //   })
   // );
 
   r12.add(
     createText({
       text: 'r12',
-      fillColor: 'red'
+      fill: 'red'
     })
   );
 
@@ -152,8 +152,8 @@ export const page = () => {
       fontSize: 12
     },
     common: {
-      fill: true,
-      fillColor: 'red'
+      
+      fill: 'red'
     }
   });
 

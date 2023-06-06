@@ -52,16 +52,14 @@ export class RoughCanvasCircleRender implements IGraphicRender {
     }
 
     const {
-      fillColor = circleAttribute.fillColor,
-      strokeColor = circleAttribute.strokeColor,
       radius = circleAttribute.radius,
       fill = circleAttribute.fill,
       stroke = circleAttribute.stroke,
       lineWidth = circleAttribute.lineWidth
     } = circle.attribute;
     rc.circle(x, y, radius, {
-      fill: fill ? (fillColor as string) : undefined,
-      stroke: stroke ? (strokeColor as string) : undefined,
+      fill: fill ? (fill as string) : undefined,
+      stroke: stroke ? (stroke as string) : undefined,
       strokeWidth: lineWidth,
       fillStyle: 'zigzag',
       roughness: 0.5

@@ -83,7 +83,7 @@ import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enu
 const tempMatrix = new Matrix();
 
 export const PURE_STYLE_KEY = [
-  'strokeColor',
+  'stroke',
   'opacity',
   'strokeOpacity',
   'lineDash',
@@ -91,7 +91,7 @@ export const PURE_STYLE_KEY = [
   'lineCap',
   'lineJoin',
   'miterLimit',
-  'fillColor',
+  'fill',
   'fillOpacity'
 ];
 

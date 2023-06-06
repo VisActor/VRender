@@ -879,9 +879,6 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, rectTheme, graphic);
     return aabbBounds;
   }
@@ -901,19 +898,17 @@ export class DefaultGraphicService implements IGraphicService {
     } else if (width != null && height != null) {
       aabbBounds.set(0, 0, width, height);
     }
-    const tb1 = this.tempAABBBounds1;
-    const tb2 = this.tempAABBBounds2;
-    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     if (!clip) {
       // 添加子节点
       graphic.forEachChildren((node: IGraphic) => {
         aabbBounds.union(node.AABBBounds);
       });
-      // 合并shadowRoot的bounds
-      this.combindShadowAABBBounds(aabbBounds, graphic);
     }
 
+    const tb1 = this.tempAABBBounds1;
+    const tb2 = this.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     this.transformAABBBounds(attribute, aabbBounds, groupTheme, graphic);
     return aabbBounds;
   }
@@ -1005,9 +1000,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, richtextTheme, graphic);
     return aabbBounds;
   }
@@ -1032,9 +1024,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
     return aabbBounds;
@@ -1063,10 +1052,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, pathTheme, graphic);
     return aabbBounds;
   }
@@ -1113,9 +1098,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
     return aabbBounds;
@@ -1170,9 +1152,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
     return aabbBounds;
   }
@@ -1200,9 +1179,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
     return aabbBounds;
@@ -1247,9 +1223,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, lineTheme, graphic);
     return aabbBounds;
@@ -1309,9 +1282,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, areaTheme, graphic);
     return aabbBounds;
@@ -1375,9 +1345,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, circleTheme, graphic);
 
@@ -1443,9 +1410,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
 
@@ -1520,8 +1484,6 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    this.transformAABBBounds(attribute, aabbBounds, symbolTheme, graphic);
-
     return aabbBounds;
   }
 
@@ -1578,9 +1540,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, imageTheme, graphic);
     return aabbBounds;
   }
@@ -1602,7 +1561,7 @@ export class DefaultGraphicService implements IGraphicService {
     const {
       scaleX = theme.scaleX,
       scaleY = theme.scaleY,
-      stroke = theme.stroke == null ? !!attribute.strokeColor : theme.stroke,
+      stroke = theme.stroke,
       shadowBlur = theme.shadowBlur,
       lineWidth = theme.lineWidth,
       lineJoin = theme.lineJoin,

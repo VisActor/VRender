@@ -69,17 +69,17 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       textStyle: {
         fontSize: 12,
         fontWeight: 'bold',
-        fillColor: 'rgba(46, 47, 50, 1)'
+        fill: 'rgba(46, 47, 50, 1)'
       }
     },
     handlerSize: 10,
     handlerStyle: {
       lineWidth: 1,
-      strokeColor: '#ccc',
-      fillColor: '#fff'
+      stroke: '#ccc',
+      fill: '#fff'
     },
     sizeBackground: {
-      fillColor: 'rgba(20,20,20,0.1)'
+      fill: 'rgba(20,20,20,0.1)'
     }
   };
 

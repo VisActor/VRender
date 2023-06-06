@@ -18,14 +18,13 @@ import { PagerAttributes } from './type';
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
   style: {
-    fill: true,
-    fillColor: 'rgb(47, 69, 84)',
+    fill: 'rgb(47, 69, 84)',
     cursor: 'pointer',
     size: 15
   },
   state: {
     disable: {
-      fillColor: 'rgb(170, 170, 170)',
+      fill: 'rgb(170, 170, 170)',
       cursor: 'not-allowed'
     },
     hover: {}
@@ -48,7 +47,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   static defaultAttributes: Partial<PagerAttributes> = {
     handler: DEFAULT_HANDLER_STYLE,
     textStyle: {
-      fillColor: 'rgb(51, 51, 51)',
+      fill: 'rgb(51, 51, 51)',
       fontSize: 12
     }
   };

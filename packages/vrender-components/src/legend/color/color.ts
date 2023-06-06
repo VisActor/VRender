@@ -23,17 +23,17 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       textStyle: {
         fontSize: 12,
         fontWeight: 'bold',
-        fillColor: 'rgba(46, 47, 50, 1)'
+        fill: 'rgba(46, 47, 50, 1)'
       }
     },
     handlerSize: 10,
     handlerStyle: {
       lineWidth: 4,
-      strokeColor: '#fff',
+      stroke: '#fff',
       outerBorder: {
         distance: 2,
         lineWidth: 1,
-        strokeColor: '#ccc'
+        stroke: '#ccc'
       }
     }
   };
@@ -110,7 +110,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       handlerStyle,
       railStyle,
       trackStyle: {
-        fillColor: this._color,
+        fill: this._color,
         ...trackStyle
       },
       startText,
@@ -180,8 +180,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     // 计算颜色
     const startHandlerColor = this._colorScale.scale(startValue);
     const endHandlerColor = this._colorScale.scale(endValue);
-    startHandler?.setAttribute('fillColor', startHandlerColor);
-    endHandler?.setAttribute('fillColor', endHandlerColor);
+    startHandler?.setAttribute('fill', startHandlerColor);
+    endHandler?.setAttribute('fill', endHandlerColor);
 
     const isHorizontal = layout === 'horizontal';
     const railLen = isHorizontal ? railWidth : railHeight;
@@ -212,7 +212,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
         offset: 1,
         color: endColor
       });
-      track.setAttribute('fillColor', {
+      track.setAttribute('fill', {
         ...(this._color as ILinearGradient),
         stops: newStops
       });

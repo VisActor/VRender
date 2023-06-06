@@ -4,8 +4,7 @@ export const DEFAULT_INDICATOR_THEME: Partial<IndicatorAttributes> = {
     style: {
       text: '',
       fontSize: 20,
-      fill: true,
-      fillColor: 'black',
+      fill: 'black',
       fontWeight: 'normal',
       fillOpacity: 1,
       textBaseline: 'top',
@@ -16,8 +15,7 @@ export const DEFAULT_INDICATOR_THEME: Partial<IndicatorAttributes> = {
     style: {
       text: '',
       fontSize: 16,
-      fill: true,
-      fillColor: 'black',
+      fill: 'black',
       fontWeight: 'normal',
       fillOpacity: 1,
       textBaseline: 'top',

@@ -49,32 +49,30 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     handlerSize: 14,
     handlerStyle: {
       symbolType: 'circle',
-      fill: true,
-      fillColor: '#fff',
-      stroke: 'true',
-      strokeColor: '#91caff',
+      fill: '#fff',
+      stroke: '#91caff',
       lineWidth: 2
     },
     railStyle: {
-      fillColor: 'rgba(0,0,0,.04)'
+      fill: 'rgba(0,0,0,.04)'
     },
     trackStyle: {
-      fillColor: '#91caff'
+      fill: '#91caff'
     },
     showValue: true,
     valueStyle: {
-      fillColor: '#2C3542',
+      fill: '#2C3542',
       fontSize: 12
     },
     startText: {
       style: {
-        fillColor: '#2C3542',
+        fill: '#2C3542',
         fontSize: 12
       }
     },
     endText: {
       style: {
-        fillColor: '#2C3542',
+        fill: '#2C3542',
         fontSize: 12
       }
     },
@@ -83,7 +81,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       space: 4,
       precision: 0,
       style: {
-        fillColor: '#2C3542',
+        fill: '#2C3542',
         fontSize: 12
       }
     }

@@ -63,10 +63,10 @@ export class RoughCanvasSymbolRender implements IGraphicRender {
     }
 
     const {
-      fill = symbolAttribute.fill == null ? !!symbol.attribute.fillColor : symbolAttribute.fill,
-      stroke = symbolAttribute.stroke == null ? !!symbol.attribute.strokeColor : symbolAttribute.stroke,
-      fillColor = symbolAttribute.fillColor,
-      strokeColor = symbolAttribute.strokeColor,
+      fill = symbolAttribute.fill,
+      stroke = symbolAttribute.stroke,
+      fillColor = symbolAttribute.fill,
+      strokeColor = symbolAttribute.stroke,
       size = symbolAttribute.size,
       lineWidth = symbolAttribute.lineWidth,
       maxRandomnessOffset = defaultRouthThemeSpec.maxRandomnessOffset,

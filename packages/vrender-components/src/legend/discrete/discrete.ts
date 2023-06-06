@@ -56,7 +56,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       textStyle: {
         fontSize: 12,
         fontWeight: 'bold',
-        fillColor: '#2C3542'
+        fill: '#2C3542'
       }
     },
     item: {
@@ -73,8 +73,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fillColor: '#D8D8D8',
-            strokeColor: '#D8D8D8'
+            fill: '#D8D8D8',
+            stroke: '#D8D8D8'
           }
         }
       },
@@ -82,7 +82,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         space: DEFAULT_LABEL_SPACE,
         style: {
           fontSize: 12,
-          fillColor: '#2C3542',
+          fill: '#2C3542',
           cursor: 'pointer'
         },
         state: {
@@ -90,7 +90,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fillColor: '#D8D8D8'
+            fill: '#D8D8D8'
           }
         }
       },
@@ -98,7 +98,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         alignRight: false,
         style: {
           fontSize: 12,
-          fillColor: '#ccc',
+          fill: '#ccc',
           cursor: 'pointer'
         },
         state: {
@@ -106,7 +106,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fillColor: '#D8D8D8'
+            fill: '#D8D8D8'
           }
         }
       },
@@ -120,7 +120,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         size: DEFAULT_SHAPE_SIZE,
         symbolType:
           'M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z',
-        fillColor: '#333',
+        fill: '#333',
         cursor: 'pointer'
       }
     },

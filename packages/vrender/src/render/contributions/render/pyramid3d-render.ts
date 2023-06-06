@@ -53,8 +53,8 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const pyramidAttribute = getTheme(pyramid3d, params?.theme).polygon;
     const {
-      fill = pyramidAttribute.fill == null ? !!pyramid3d.attribute.fillColor : pyramidAttribute.fill,
-      stroke = pyramidAttribute.stroke == null ? !!pyramid3d.attribute.strokeColor : pyramidAttribute.stroke,
+      fill = pyramidAttribute.fill,
+      stroke = pyramidAttribute.stroke,
       opacity = pyramidAttribute.opacity,
       fillOpacity = pyramidAttribute.fillOpacity,
       lineWidth = pyramidAttribute.lineWidth,
@@ -91,11 +91,11 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
 
     if (fill !== false) {
       context.setCommonStyle(pyramid3d, pyramid3d.attribute, x, y, pyramidAttribute);
-      let { fillColor = pyramidAttribute.fillColor } = pyramid3d.attribute;
-      if (typeof fillColor !== 'string') {
-        fillColor = 'black';
+      let fc = fill;
+      if (typeof fc !== 'string') {
+        fc = 'black';
       }
-      this.fill(x, y, z, face3d, face, fillColor, context, light, camera, pyramid3d, pyramidAttribute, fillCb);
+      this.fill(x, y, z, face3d, face, fc, context, light, camera, pyramid3d, pyramidAttribute, fillCb);
     }
     if (stroke !== false) {
       context.setStrokeStyle(pyramid3d, pyramid3d.attribute, x, y, pyramidAttribute);

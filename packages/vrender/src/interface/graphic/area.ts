@@ -23,7 +23,7 @@ export interface IArea extends IGraphic<IAreaGraphicAttribute> {
 
 type ISegmentStyle = Pick<
   IGraphicAttribute,
-  'fillColor' | 'fillOpacity' | 'background' | 'texture' | 'textureColor' | 'textureSize' | 'texturePadding'
+  'fill' | 'fillOpacity' | 'background' | 'texture' | 'textureColor' | 'textureSize' | 'texturePadding'
 >;
 
 export interface IAreaSegment extends Partial<ISegmentStyle> {

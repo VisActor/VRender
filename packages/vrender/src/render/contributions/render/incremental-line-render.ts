@@ -53,8 +53,8 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
       const lineAttribute = getTheme(line).line;
 
       const {
-        fill = lineAttribute.fill == null ? !!line.attribute.fillColor : lineAttribute.fill,
-        stroke = lineAttribute.stroke == null ? !!line.attribute.strokeColor : lineAttribute.stroke,
+        fill = lineAttribute.fill,
+        stroke = lineAttribute.stroke,
         opacity = lineAttribute.opacity,
         fillOpacity = lineAttribute.fillOpacity,
         strokeOpacity = lineAttribute.strokeOpacity,

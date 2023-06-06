@@ -12,7 +12,7 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
     x: 0,
     y: 0,
     size: 20,
-    fillColor: '#91caff',
+    fill: '#91caff',
     pickMode: 'imprecise',
     cursor: 'pointer'
   };

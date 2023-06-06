@@ -10,8 +10,8 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 100,
-    fillColor: colorPools[10],
-    strokeColor: colorPools[0],
+    fill: colorPools[10],
+    stroke: colorPools[0],
     stroke: [true, false, false, false],
     lineWidth: 5
   }));
@@ -21,7 +21,7 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 100,
-    fillColor: colorPools[10],
+    fill: colorPools[10],
     borderRadius: [5, 10, 15, 20],
     lineWidth: 5
   }));

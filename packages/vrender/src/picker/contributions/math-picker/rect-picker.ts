@@ -94,8 +94,8 @@ export class DefaultMathRectPicker implements IGraphicPicker {
     } else if (picked) {
       // 如果只有描边那需要测试描边
       const {
-        fill = !!rect.attribute.fillColor,
-        stroke = !!rect.attribute.strokeColor,
+        fill = rectAttribute.fill,
+        stroke = rectAttribute.stroke,
         lineWidth = rectAttribute.lineWidth
       } = rect.attribute;
       if (fill) {

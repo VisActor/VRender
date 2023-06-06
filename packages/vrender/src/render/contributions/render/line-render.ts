@@ -155,8 +155,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     const lineAttribute = getTheme(line, params?.theme).line;
 
     const {
-      fill = lineAttribute.fill == null ? !!line.attribute.fillColor : lineAttribute.fill,
-      stroke = lineAttribute.stroke == null ? !!line.attribute.strokeColor : lineAttribute.stroke,
+      fill = lineAttribute.fill,
+      stroke = lineAttribute.stroke,
       opacity = lineAttribute.opacity,
       fillOpacity = lineAttribute.fillOpacity,
       strokeOpacity = lineAttribute.strokeOpacity,
@@ -232,7 +232,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
           skip = this.drawSegmentItem(
             context,
             cache,
-            fill,
+            !!fill,
             !!stroke,
             fillOpacity,
             strokeOpacity,
@@ -267,7 +267,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             skip = this.drawSegmentItem(
               context,
               cache,
-              fill,
+              !!fill,
               !!stroke,
               fillOpacity,
               strokeOpacity,
@@ -288,7 +288,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       this.drawSegmentItem(
         context,
         line.cache as ISegPath2D,
-        fill,
+        !!fill,
         !!stroke,
         fillOpacity,
         strokeOpacity,

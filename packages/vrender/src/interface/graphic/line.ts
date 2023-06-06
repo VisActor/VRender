@@ -25,7 +25,7 @@ export interface ILine extends IGraphic<ILineGraphicAttribute> {
 
 type ISegmentStyle = Pick<
   IGraphicAttribute,
-  'strokeColor' | 'strokeOpacity' | 'lineDash' | 'lineDashOffset' | 'lineCap' | 'lineJoin' | 'lineWidth' | 'miterLimit'
+  'stroke' | 'strokeOpacity' | 'lineDash' | 'lineDashOffset' | 'lineCap' | 'lineJoin' | 'lineWidth' | 'miterLimit'
 >;
 
 export interface ISegment extends Partial<ISegmentStyle> {

@@ -2,7 +2,15 @@ import { isArray } from '@visactor/vutils';
 import { renderCommandList } from '../../../common';
 import { IDrawContext } from '../../../render/render-service';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IGraphic, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import {
+  IGraphicAttribute,
+  IContext2d,
+  IGraphic,
+  IMarkAttribute,
+  IThemeAttribute,
+  IFillType,
+  IStrokeType
+} from '../../../interface';
 import { IGraphicRenderDrawParams } from './graphic-render';
 
 /**
@@ -10,21 +18,20 @@ import { IGraphicRenderDrawParams } from './graphic-render';
  * @param fill
  * @returns
  */
-export function runFill(fill: boolean) {
-  return fill;
+export function runFill(fill: IFillType) {
+  return !!fill;
 }
-
 /**
  * 是否需要执行stroke逻辑
  * @param stroke
  * @returns
  */
-export function runStroke(stroke: number | boolean | boolean[], lineWidth: number) {
+export function runStroke(stroke: IStrokeType | IStrokeType[], lineWidth: number) {
   let s: boolean | number;
   if (isArray(stroke)) {
-    s = stroke.some(item => item);
+    s = stroke.some(item => item || item === undefined);
   } else {
-    s = stroke;
+    s = !!stroke;
   }
   return s && lineWidth > 0;
 }
@@ -83,8 +90,8 @@ export function drawPathProxy(
   const themeAttributes = getTheme(graphic, params?.theme)[graphic.type];
 
   const {
-    fill = themeAttributes.fill == null ? !!graphic.attribute.fillColor : themeAttributes.fill,
-    stroke = themeAttributes.stroke == null ? !!graphic.attribute.strokeColor : themeAttributes.stroke,
+    fill = themeAttributes.fill,
+    stroke = themeAttributes.stroke,
     opacity = themeAttributes.opacity,
     fillOpacity = themeAttributes.fillOpacity,
     lineWidth = themeAttributes.lineWidth,

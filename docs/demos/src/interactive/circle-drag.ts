@@ -25,7 +25,7 @@ export function renderCircle() {
     endAngle: Math.PI * 2,
     x: 150,
     y: 150,
-    fillColor: '#999'
+    fill: '#999'
   });
   stage.defaultLayer.add(targetCircle);
 
@@ -35,7 +35,7 @@ export function renderCircle() {
     endAngle: Math.PI * 2,
     x: 400,
     y: 400,
-    fillColor: 'green'
+    fill: 'green'
   });
   stage.defaultLayer.add(sourceCircle);
 
@@ -52,7 +52,7 @@ export function renderCircle() {
   });
 
   sourceCircle.addEventListener('dragstart', e => {
-    sourceCircle.setAttributes({ fillColor: 'red' });
+    sourceCircle.setAttributes({ fill: 'red' });
     console.log('%c 绿球开始拖拽!', 'color: green;font-weight: bold');
   });
 
@@ -62,7 +62,7 @@ export function renderCircle() {
   });
 
   sourceCircle.addEventListener('dragend', e => {
-    sourceCircle.setAttributes({ fillColor: 'green' });
+    sourceCircle.setAttributes({ fill: 'green' });
     console.log('%c 绿球拖拽结束!', 'color: green;font-weight: bold');
   });
 

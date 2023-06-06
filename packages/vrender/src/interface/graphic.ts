@@ -99,24 +99,24 @@ export type ITransform = {
   postMatrix: IMatrix;
 };
 
+export type IFillType = boolean | string | IColor;
 export type IFillStyle = {
-  fillColor: string | IColor;
   fillOpacity: number;
   shadowBlur: number;
   shadowColor: string;
   shadowOffsetX: number;
   shadowOffsetY: number;
-  fill: boolean | null;
+  fill: IFillType;
 };
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
   distance: number | string;
 };
 
+export type IStrokeType = boolean | string | IColor | null;
 export type IStrokeStyle = {
   outerBorder: Partial<IBorderStyle>;
   innerBorder: Partial<IBorderStyle>;
-  strokeColor: string | IColor;
   strokeOpacity: number;
   lineDash: number[];
   lineDashOffset: number;
@@ -143,7 +143,7 @@ export type IStrokeStyle = {
    *
    * stroke - boolean[]，适用于rect\arc等图形，用于配置部分描边的场景
    */
-  stroke: boolean[] | number | boolean | null;
+  stroke: IStrokeType[] | IStrokeType;
 };
 
 type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';

@@ -190,9 +190,9 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     const arcAttribute = getTheme(arc, params?.theme).arc;
 
     const {
-      fill = arcAttribute.fill == null ? !!arc.attribute.fillColor : arcAttribute.fill,
+      fill = arcAttribute.fill,
       background,
-      stroke = arcAttribute.stroke == null ? !!arc.attribute.strokeColor : arcAttribute.stroke,
+      stroke = arcAttribute.stroke,
       opacity = arcAttribute.opacity,
       fillOpacity = arcAttribute.fillOpacity,
       lineWidth = arcAttribute.lineWidth,
@@ -223,12 +223,11 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     const {
       outerRadius = arcAttribute.outerRadius,
       innerRadius = arcAttribute.innerRadius,
-      fillColor = arcAttribute.fillColor,
       // TODO 3d视角下直接硬编码，避免theme消耗性能
       height = 10
     } = arc.attribute;
 
-    const rgbArray = colorString.get(fillColor).value;
+    const rgbArray = colorString.get(fill).value;
     const { light } = drawContext.stage || {};
     const face = drawContext.hack_pieFace;
 
@@ -257,7 +256,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fillColor as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
           context.fill();
         }
       }
@@ -314,7 +313,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fillColor as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
           context.fill();
         }
       }

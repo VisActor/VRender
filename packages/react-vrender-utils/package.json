@@ -11,6 +11,7 @@
     "es",
     "dist"
   ],
+  "license": "MIT",
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",

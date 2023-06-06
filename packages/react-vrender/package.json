@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vrender",
-  "version": "0.9.0-alpha.0",
+  "version": "0.9.0-alpha.1",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -24,7 +24,7 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.9.0-alpha.0",
+    "@visactor/vrender": "workspace:0.9.0-alpha.1",
     "@visactor/vutils": "0.9.0-alpha.2",
     "react-reconciler": "^0.29.0",
     "tslib": "^2.3.1"
@@ -43,5 +43,8 @@
     "eslint": "~8.18.0",
     "vite": "3.2.6",
     "typescript": "4.9.5"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

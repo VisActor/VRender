@@ -91,5 +91,7 @@ common/autoinstallers/*/.npmrc
 # Heft temporary files
 .heft
 
+tsconfig.tsbuildinfo
 # git-hook
+
 common/scripts/pre-commit

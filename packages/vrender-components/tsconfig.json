@@ -2,9 +2,14 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": ".",
-    "outDir": "output"
+    "rootDir": "./src"
   },
   "include": [
     "src"
-  ]
+  ],
+  "references": [
+    {
+      "path": "../vrender"
+    }
+  ],
 }

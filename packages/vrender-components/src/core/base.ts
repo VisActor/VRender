@@ -109,7 +109,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
   }
 
   protected bindEvents() {
-    // for override
+    // please override
   }
 
   protected abstract render(): void;

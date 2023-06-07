@@ -90,3 +90,6 @@ common/autoinstallers/*/.npmrc
 
 # Heft temporary files
 .heft
+
+# git-hook
+common/scripts/pre-commit

@@ -56,7 +56,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: 'red'
+        stroke: 'red'
       }
     });
 
@@ -81,7 +81,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: '#000',
+        stroke: '#000',
         lineDash: [2, 4]
       },
       alternateColor: 'pink'
@@ -90,7 +90,7 @@ describe('Grid', () => {
     stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
     expect(grid.getChildren()).toHaveLength(19);
-    expect((grid.getChildren()[14] as Path).attribute.fillColor).toBe('pink');
+    expect((grid.getChildren()[14] as Path).attribute.fill).toBe('pink');
     expect((grid.getChildren()[14] as Path).attribute.path).toBe(
       'M50,350L79.38926261462366,390.45084971874735L50,400L50,350Z'
     );
@@ -111,7 +111,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: '#000',
+        stroke: '#000',
         lineDash: [2, 4]
       },
       alternateColor: 'pink',
@@ -122,7 +122,7 @@ describe('Grid', () => {
     stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
     expect(grid.getChildren()).toHaveLength(19);
-    expect((grid.getChildren()[14] as Path).attribute.fillColor).toBe('pink');
+    expect((grid.getChildren()[14] as Path).attribute.fill).toBe('pink');
     expect((grid.getChildren()[14] as Path).attribute.path).toBe(
       'M50,550L79.38926261462366,590.4508497187473A50,50,0,0,1,50,600L50,600L50,600L50,550A0,0,0,0,0,50,550Z'
     );
@@ -150,7 +150,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: 'blue',
+        stroke: 'blue',
         lineDash: [2, 4]
       },
       closed: true
@@ -185,7 +185,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: 'blue',
+        stroke: 'blue',
         lineDash: [2, 4]
       },
       closed: true,
@@ -196,9 +196,9 @@ describe('Grid', () => {
     stage.render();
     expect(grid.getChildren()).toHaveLength(7);
     expect((grid.getChildren()[2] as Path).attribute.path).toBe('M300,220A80,80,0,0,1,300,380A80,80,0,0,1,300,220Z');
-    expect((grid.getChildren()[4] as Path).attribute.fillColor).toBe('red');
-    expect((grid.getChildren()[5] as Path).attribute.fillColor).toBe('yellow');
-    expect((grid.getChildren()[6] as Path).attribute.fillColor).toBe('blue');
+    expect((grid.getChildren()[4] as Path).attribute.fill).toBe('red');
+    expect((grid.getChildren()[5] as Path).attribute.fill).toBe('yellow');
+    expect((grid.getChildren()[6] as Path).attribute.fill).toBe('blue');
   });
 
   it('Polygon Grid', () => {
@@ -225,7 +225,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: 'green'
+        stroke: 'green'
       },
       closed: false
     });
@@ -263,7 +263,7 @@ describe('Grid', () => {
       items: gridItems,
       style: {
         lineWidth: 2,
-        strokeColor: 'green'
+        stroke: 'green'
       },
       closed: false,
       alternateColor: ['#ff7893', '#ffffff']
@@ -272,7 +272,7 @@ describe('Grid', () => {
     stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
     expect(grid.getChildren()).toHaveLength(9);
-    expect((grid.getChildren()[5] as Path).attribute.fillColor).toBe('#ff7893');
-    expect((grid.getChildren()[6] as Path).attribute.fillColor).toBe('#ffffff');
+    expect((grid.getChildren()[5] as Path).attribute.fill).toBe('#ff7893');
+    expect((grid.getChildren()[6] as Path).attribute.fill).toBe('#ffffff');
   });
 });

@@ -20,7 +20,7 @@ describe('Segment', () => {
         { x: 200, y: 330 }
       ],
       lineStyle: {
-        strokeColor: 'red',
+        stroke: 'red',
         lineWidth: 2,
         lineDash: [2, 4]
       },
@@ -48,7 +48,7 @@ describe('Segment', () => {
       { x: 100, y: 100 },
       { x: 200, y: 330 }
     ]);
-    expect(segment.line.attribute.strokeColor).toBe('red');
+    expect(segment.line.attribute.stroke).toBe('red');
     expect(segment.line.attribute.lineWidth).toBe(2);
     expect(segment.line.attribute.lineDash).toEqual([2, 4]);
     expect(segment.startSymbol?.attribute.symbolType).toBe('square');

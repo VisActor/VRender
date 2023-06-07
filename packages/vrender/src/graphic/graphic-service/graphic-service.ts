@@ -1484,6 +1484,7 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
+    this.transformAABBBounds(attribute, aabbBounds, symbolTheme, graphic);
     return aabbBounds;
   }
 

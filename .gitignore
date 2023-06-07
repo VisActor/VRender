@@ -90,3 +90,7 @@ common/autoinstallers/*/.npmrc
 
 # Heft temporary files
 .heft
+
+tsconfig.tsbuildinfo
+
+common/scripts/pre-commit

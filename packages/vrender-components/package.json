@@ -2,7 +2,6 @@
   "name": "@visactor/vrender-components",
   "version": "0.9.0-alpha.1",
   "description": "components library for dp visualization",
-  "license": "MIT",
   "sideEffects": false,
   "main": "cjs/index.js",
   "module": "es/index.js",
@@ -17,33 +16,56 @@
     "eslint": "eslint --debug --fix src/",
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
-    "start": "vite ./vite",
+    "start": "vite ./__tests__/browser",
+    "test": "jest",
+    "test-cov": "jest --coverage",
+    "test-live": "npm run test-watch __tests__/unit/",
+    "test-watch": "DEBUG_MODE=1 jest --watch",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@visactor/vrender": "workspace:0.9.0-alpha.1",
     "@visactor/vutils": "0.9.0-alpha.2",
+    "@visactor/vscale": "0.9.0-alpha.2",
     "gl-matrix": "^3.4.3"
-  },
-  "peerDependencies": {
-    "@visactor/vrender": "0.9.0-alpha.1",
-    "@visactor/vscale": "0.9.0-alpha.2"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vrender": "workspace:0.9.0-alpha.1",
     "@visactor/vscale": "0.9.0-alpha.2",
-    "react": "16.13.0",
-    "react-dom": "16.13.0",
-    "@types/react": "16.9.49",
-    "@types/react-dom": "16.9.8",
-    "@vitejs/plugin-react": "3.1.0",
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.0",
+    "jest-electron": "^0.1.12",
+    "ts-jest": "^26.0.0",
+    "lil-gui": "^0.17.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
     "typescript": "4.9.5"
   },
+  "keywords": [
+    "VisActor",
+    "graphics",
+    "renderer",
+    "react",
+    "react-vrender",
+    "vrender",
+    "components",
+    "vrender-components"
+  ],
+  "homepage": "",
+  "bugs": "https://github.com/VisActor/VRender/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VRender.git",
+    "directory": "packages/vrender-components"
+  },
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

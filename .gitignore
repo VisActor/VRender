@@ -92,5 +92,6 @@ common/autoinstallers/*/.npmrc
 .heft
 
 tsconfig.tsbuildinfo
+# git-hook
 
 common/scripts/pre-commit

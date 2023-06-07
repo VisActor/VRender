@@ -192,7 +192,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   /**
    * 初始化滑动条
    */
-  private _initSlider = () => {
+  private _updateSliderAttrs = () => {
     let handlerSize;
     if (isValidNumber(this._handlerStyle.size)) {
       handlerSize = this._handlerStyle.size;
@@ -248,7 +248,11 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       attrs.x = this._layoutInfo.slider.x;
       attrs.y = this._layoutInfo.slider.y;
     }
+    return attrs;
+  };
 
+  private _initSlider = () => {
+    const attrs = this._updateSliderAttrs();
     this._slider = new Slider(attrs);
     this.add(this._slider as unknown as INode);
   };
@@ -256,7 +260,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   /**
    * 初始化控制器
    */
-  private _initController = () => {
+  private _updateControllerAttrs = () => {
     const attrs: ControllerAttributes = {
       visible: true,
       start: this._start,
@@ -330,7 +334,11 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
     }
+    return attrs;
+  };
 
+  private _initController = () => {
+    const attrs = this._updateControllerAttrs();
     this._controller = new Controller(attrs);
     this.add(this._controller as unknown as INode);
   };
@@ -339,8 +347,25 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
    * 渲染
    */
   render() {
-    this._slider.render();
-    this._controller.render();
+    this._initLayoutInfo();
+    this.renderSlider();
+    this.renderController();
+  }
+
+  /**
+   * 更新滑动条
+   */
+  renderSlider() {
+    const attrs = this._updateSliderAttrs();
+    this._slider.setAttributes(attrs);
+  }
+
+  /**
+   * 更新控制器
+   */
+  renderController() {
+    const attrs = this._updateControllerAttrs();
+    this._controller.setAttributes(attrs);
   }
 
   /**

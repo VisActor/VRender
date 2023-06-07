@@ -20,7 +20,7 @@ describe('Crosshair', () => {
       start: { x: 100, y: 200 },
       end: { x: 300, y: 200 },
       lineStyle: {
-        strokeColor: '#000'
+        stroke: '#000'
       }
     });
     stage.defaultLayer.add(lineCrosshair as unknown as IGraphic);
@@ -58,7 +58,7 @@ describe('Crosshair', () => {
       endAngle: Math.PI * 2,
       sides: 10,
       lineStyle: {
-        strokeColor: 'red',
+        stroke: 'red',
         lineDash: [0]
       }
     });

@@ -20,7 +20,7 @@ describe('DiscreteLegend', () => {
       // ==== 测试使用 ====
       width: 300,
       height: 300,
-      fillColor: 'rgba(33, 100, 60, .2)',
+      fill: 'rgba(33, 100, 60, .2)',
 
       // ==== 测试使用 end ====
       title: {
@@ -30,7 +30,7 @@ describe('DiscreteLegend', () => {
         background: {
           visible: true,
           style: {
-            fillColor: 'red'
+            fill: 'red'
           }
         }
       },
@@ -47,18 +47,17 @@ describe('DiscreteLegend', () => {
         },
         background: {
           style: {
-            stroke: true,
-            strokeColor: '#000',
+            stroke: '#000',
             lineWidth: 1
           }
         }
       },
       items: [
-        { label: '苹果', value: 100, shape: { fillColor: 'red', symbolType: 'circle' } },
-        { label: '香蕉', value: 100, shape: { fillColor: 'yellow', symbolType: 'square' } },
-        { label: '橘子', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle' } },
-        { label: '葡萄', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond' } },
-        { label: '梨', value: 100, shape: { fillColor: 'star' } }
+        { label: '苹果', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+        { label: '香蕉', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+        { label: '橘子', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+        { label: '葡萄', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+        { label: '梨', value: 100, shape: { fill: 'star' } }
       ]
     });
 

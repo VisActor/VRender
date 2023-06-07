@@ -302,14 +302,14 @@ describe('DataZoom component test', () => {
       },
       backgroundChartStyle: {
         area: {
-          fillColor: 'pink',
+          fill: 'pink',
           curveType: 'basis',
           fillOpacity: 0.2
         }
       },
       selectedBackgroundChartStyle: {
         area: {
-          fillColor: 'pink',
+          fill: 'pink',
           curveType: 'basis'
         }
       }
@@ -341,7 +341,7 @@ describe('DataZoom component test', () => {
       y: 241,
       y1: 265
     });
-    expect(previewArea.attribute.fillColor).toBe('pink');
+    expect(previewArea.attribute.fill).toBe('pink');
     expect(previewArea.attribute.fillOpacity).toBe(0.2);
 
     const selectedPreviewGroupClip = dataZoom.getElementsByName('selectedPreviewGroupClip')[0] as IGroup;
@@ -369,7 +369,7 @@ describe('DataZoom component test', () => {
       y: 241,
       y1: 265
     });
-    expect(selectedPreviewArea.attribute.fillColor).toBe('pink');
+    expect(selectedPreviewArea.attribute.fill).toBe('pink');
   });
 
   test('Horizontal Direction with Preview Data', () => {
@@ -394,14 +394,14 @@ describe('DataZoom component test', () => {
       },
       backgroundChartStyle: {
         area: {
-          fillColor: '#2E8B57',
+          fill: '#2E8B57',
           curveType: 'basis',
           fillOpacity: 0.2
         }
       },
       selectedBackgroundChartStyle: {
         area: {
-          fillColor: '#2E8B57',
+          fill: '#2E8B57',
           curveType: 'basis'
         }
       }
@@ -433,7 +433,7 @@ describe('DataZoom component test', () => {
       y: 50,
       y1: 50
     });
-    expect(previewArea.attribute.fillColor).toBe('#2E8B57');
+    expect(previewArea.attribute.fill).toBe('#2E8B57');
     expect(previewArea.attribute.fillOpacity).toBe(0.2);
 
     const selectedPreviewGroupClip = dataZoom.getElementsByName('selectedPreviewGroupClip')[0] as IGroup;
@@ -461,6 +461,6 @@ describe('DataZoom component test', () => {
       y: 50,
       y1: 50
     });
-    expect(selectedPreviewArea.attribute.fillColor).toBe('#2E8B57');
+    expect(selectedPreviewArea.attribute.fill).toBe('#2E8B57');
   });
 });

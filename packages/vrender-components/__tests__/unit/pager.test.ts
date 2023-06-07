@@ -17,7 +17,7 @@ describe('Pager', () => {
     const pager = new Pager({
       x: 100,
       y: 100,
-      fillColor: 'yellow',
+      fill: 'yellow',
       borderRadius: 45,
       total: 9,
       padding: 10
@@ -46,7 +46,7 @@ describe('Pager', () => {
       x: 300,
       y: 100,
       total: 9,
-      fillColor: 'yellow',
+      fill: 'yellow',
       defaultCurrent: 3
     });
 

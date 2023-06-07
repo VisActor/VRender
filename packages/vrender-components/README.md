@@ -1,4 +1,4 @@
-# @visactor/components
+# @visactor/vrender-components
 
 ## Description
 
@@ -7,3 +7,5 @@
 ```typescript
 import { xxx } from '@visactor/components';
 ```
+
+## Develop

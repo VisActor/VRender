@@ -311,10 +311,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (range) {
       // 绘制第二个滑块
       // 单滑块
-      const handlerStart = (((endValue as number) - min) / (max - min)) * railLen;
+      const handlerEnd = (((endValue as number) - min) / (max - min)) * railLen;
       const endHandler = this._renderHandler({
-        x: isHorizontal ? handlerStart : railWidth / 2,
-        y: isHorizontal ? railHeight / 2 : handlerStart,
+        x: isHorizontal ? handlerEnd : railWidth / 2,
+        y: isHorizontal ? railHeight / 2 : handlerEnd,
         size: handlerSize,
         strokeBoundsBuffer: 0,
         cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal),
@@ -323,15 +323,15 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       endHandler.name = SLIDER_ELEMENT_NAME.endHandler;
       this._endHandler = endHandler;
       container.add(endHandler);
-      this._currentValue.endPos = handlerStart;
-    }
+      this._currentValue.endPos = handlerEnd;
 
-    if (handlerTextVisible) {
-      const endHandlerText = this._renderHandlerText(endValue);
-      endHandlerText.name = SLIDER_ELEMENT_NAME.endHandlerText;
-      container.add(endHandlerText);
+      if (handlerTextVisible) {
+        const endHandlerText = this._renderHandlerText(endValue);
+        endHandlerText.name = SLIDER_ELEMENT_NAME.endHandlerText;
+        container.add(endHandlerText);
 
-      this._endHandlerText = endHandlerText;
+        this._endHandlerText = endHandlerText;
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-import { merge } from '@visactor/vutils';
+import { isNil, merge } from '@visactor/vutils';
 import { CustomEvent, FederatedPointerEvent, ISymbolGraphicAttribute } from '@visactor/vrender';
 import { AbstractComponent } from '../../core/base';
 import { BaseGraphicAttributes } from '../../core/type';
@@ -37,19 +37,14 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
 
   constructor(attributes: ControllerAttributes) {
     super(merge({}, Controller.defaultAttributes, attributes));
-    this._init();
-  }
-
-  private _init = () => {
-    this._initAttributes();
-    this._initLayout();
+    this.updateAttributes();
     this._initPlay();
     this._initBackward();
     this._initForward();
     this._initEvents();
-  };
+  }
 
-  _initAttributes = () => {
+  updateAttributes = () => {
     this._startAttr = {
       style: {
         symbolType: iconPlay,
@@ -76,10 +71,10 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
         ...this.attribute.backward.style
       }
     };
-    this._layout = this.attribute.layout;
+    this.updateLayout();
   };
 
-  private _initLayout = () => {
+  private updateLayout = () => {
     this._layout = this.attribute.layout;
     // 若水平布局
     if (this._layout === 'horizontal') {
@@ -94,27 +89,33 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
   };
 
   private _initPlay = () => {
-    this._playController = new PlayerIcon({
-      ...this._startAttr.style
-    });
+    if (isNil(this._playController)) {
+      this._playController = new PlayerIcon({
+        ...this._startAttr.style
+      });
 
-    this.add(this._playController);
+      this.add(this._playController);
+    }
   };
 
   private _initBackward = () => {
-    this._backwardController = new PlayerIcon({
-      ...this._backwardAttr.style
-    });
+    if (isNil(this._backwardController)) {
+      this._backwardController = new PlayerIcon({
+        ...this._backwardAttr.style
+      });
 
-    this.add(this._backwardController);
+      this.add(this._backwardController);
+    }
   };
 
   private _initForward = () => {
-    this._forwardController = new PlayerIcon({
-      ...this._forwardAttr.style
-    });
+    if (isNil(this._forwardController)) {
+      this._forwardController = new PlayerIcon({
+        ...this._forwardAttr.style
+      });
 
-    this.add(this._forwardController);
+      this.add(this._forwardController);
+    }
   };
 
   /**
@@ -152,8 +153,33 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
   };
 
   render(): void {
-    //  do nothing
+    this.updateAttributes();
+    this.renderPlay();
+    this.renderBackward();
+    this.renderForward();
   }
+
+  renderPlay = () => {
+    if (this._isPaused) {
+      this._playController.setAttributes({
+        symbolType: this._playController.getComputedAttribute('symbolType'),
+        ...this._startAttr.style
+      });
+    } else {
+      this._playController.setAttributes({
+        symbolType: this._playController.getComputedAttribute('symbolType'),
+        ...this._pauseAttr.style
+      });
+    }
+  };
+
+  renderBackward = () => {
+    this._backwardController.setAttributes(this._backwardAttr.style);
+  };
+
+  renderForward = () => {
+    this._forwardController.setAttributes(this._forwardAttr.style);
+  };
 
   play = () => {
     const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnPlay);

@@ -117,7 +117,7 @@ function contrastRatios(foregroundColor: IColor | undefined, backgroundColor: IC
 }
 
 /**
- * 计算相对亮度 https://webaim.org/articles/contrast/
+ *  计算相对亮度 https://webaim.org/articles/contrast/
  * the relative brightness of any point in a colorspace, normalized to 0 for darkest black and 1 for lightest white
  * Note 1: For the sRGB colorspace, the relative luminance of a color is defined as
  * L = 0.2126 * R + 0.7152 * G + 0.0722 * B where R, G and B are defined as:

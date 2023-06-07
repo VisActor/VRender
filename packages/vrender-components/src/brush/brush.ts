@@ -93,13 +93,13 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * 3. 如果是绘制状态: 标记绘制状态 & 标记正在绘制的mask & 清除之前的mask & 添加新的mask
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
+    if (this._outOfInteractiveRange(e)) {
+      return;
+    }
     const brushMoved = this.attribute?.brushMoved ?? true;
     this._activeMoveState = brushMoved && this._isPosInBrushMask(e); // 如果是移动状态，在这里会标记operatingMask为正在移动的mask
     this._activeDrawState = !this._activeMoveState;
 
-    if (this._outOfInteractiveRange(e)) {
-      return;
-    }
     this._activeDrawState && this._initDraw(e); // 如果是绘制状态，在这里会标记operatingMask为正在绘制的mask
     this._activeMoveState && this._initMove(e);
   };
@@ -203,7 +203,6 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 更新_cacheDrawPoints 和 mask的points属性
    */
   private _drawing(e: FederatedPointerEvent) {
-    const { brushStyle } = this.attribute as BrushAttributes;
     const pos = this.eventPosToStagePos(e);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
@@ -216,17 +215,15 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     // 更新交互位置
     this._cacheDrawPoints.push(pos);
     // 更新mask形状
-    if (this._activeDrawState) {
-      const maskPoints = this._computeMaskPoints();
-      this._operatingMask.setAttribute('points', maskPoints);
-      this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-      this._updateDragMaskCallback &&
-        this._updateDragMaskCallback({
-          operateType: 'brushing',
-          operateMask: this._operatingMask,
-          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
-        });
-    }
+    const maskPoints = this._computeMaskPoints();
+    this._operatingMask.setAttribute('points', maskPoints);
+    this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
+    this._updateDragMaskCallback &&
+      this._updateDragMaskCallback({
+        operateType: 'brushing',
+        operateMask: this._operatingMask,
+        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
+      });
   }
 
   /**

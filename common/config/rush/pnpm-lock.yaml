@@ -28,7 +28,7 @@ importers:
     dependencies:
       '@visactor/vrender': link:../../packages/vrender
     devDependencies:
-      '@antv/g': 5.16.28
+      '@antv/g': 5.16.29
       '@esbuild-plugins/node-globals-polyfill': 0.1.1
       '@esbuild-plugins/node-modules-polyfill': 0.1.4
       '@internal/eslint-config': link:../../share/eslint-config
@@ -177,19 +177,21 @@ importers:
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
-      '@types/react': 16.9.49
-      '@types/react-dom': 16.9.8
+      '@types/jest': ^26.0.0
       '@visactor/vrender': workspace:0.9.0-alpha.1
       '@visactor/vscale': 0.9.0-alpha.2
       '@visactor/vutils': 0.9.0-alpha.2
-      '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
       gl-matrix: ^3.4.3
-      react: 16.13.0
-      react-dom: 16.13.0
+      jest: ^26.0.0
+      jest-electron: ^0.1.12
+      lil-gui: ^0.17.0
+      ts-jest: ^26.0.0
       typescript: 4.9.5
       vite: 3.2.6
     dependencies:
+      '@visactor/vrender': link:../vrender
+      '@visactor/vscale': 0.9.0-alpha.2
       '@visactor/vutils': 0.9.0-alpha.2
       gl-matrix: 3.4.3
     devDependencies:
@@ -197,14 +199,12 @@ importers:
       '@internal/eslint-config': link:../../share/eslint-config
       '@internal/ts-config': link:../../share/ts-config
       '@rushstack/eslint-patch': 1.1.4
-      '@types/react': 16.9.49
-      '@types/react-dom': 16.9.8
-      '@visactor/vrender': link:../vrender
-      '@visactor/vscale': 0.9.0-alpha.2
-      '@vitejs/plugin-react': 3.1.0_vite@3.2.6
+      '@types/jest': 26.0.24
       eslint: 8.18.0
-      react: 16.13.0
-      react-dom: 16.13.0_react@16.13.0
+      jest: 26.6.3
+      jest-electron: 0.1.12_jest@26.6.3
+      lil-gui: 0.17.0
+      ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
       typescript: 4.9.5
       vite: 3.2.6
 
@@ -448,42 +448,42 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.18
 
-  /@antv/g-camera-api/1.0.40_@antv+g-lite@1.0.65:
+  /@antv/g-camera-api/1.0.40_@antv+g-lite@1.0.66:
     resolution: {integrity: sha512-GhhNdrPlT+Pw9RtBqMsBEQxrXhbR8nbva4WxJ381/o4gTdSzF+DBEt4uND3u5mv910HeC2iNbq+8itQhMFvlTw==}
     peerDependencies:
       '@antv/g-lite': ^1.0.0
     dependencies:
-      '@antv/g-lite': 1.0.65
+      '@antv/g-lite': 1.0.66
       '@antv/util': 3.3.2
       gl-matrix: 3.4.3
     dev: true
 
-  /@antv/g-css-layout-api/1.0.38_@antv+g-lite@1.0.65:
+  /@antv/g-css-layout-api/1.0.38_@antv+g-lite@1.0.66:
     resolution: {integrity: sha512-2KFNXOXVN20hVVFSyDiShLdFF1Bnc2whPDNQpfUgWlwlBTeUDx3Bd1tnNEuPg6MDQkV4luPE/1rEe8o6fOE3zg==}
     peerDependencies:
       '@antv/g-lite': ^1.0.0
     dependencies:
-      '@antv/g-lite': 1.0.65
+      '@antv/g-lite': 1.0.66
     dev: true
 
-  /@antv/g-css-typed-om-api/1.0.38_@antv+g-lite@1.0.65:
+  /@antv/g-css-typed-om-api/1.0.38_@antv+g-lite@1.0.66:
     resolution: {integrity: sha512-eDLGxlzMyoJGdbORHeajC23JNXV3TjVInegFZdiZdYmS4jNBQzK/8Y7HKdlelfGTJZs4m19i5diHCSyQebNJoQ==}
     peerDependencies:
       '@antv/g-lite': ^1.0.0
     dependencies:
-      '@antv/g-lite': 1.0.65
+      '@antv/g-lite': 1.0.66
     dev: true
 
-  /@antv/g-dom-mutation-observer-api/1.0.38_@antv+g-lite@1.0.65:
+  /@antv/g-dom-mutation-observer-api/1.0.38_@antv+g-lite@1.0.66:
     resolution: {integrity: sha512-RIuXxTh5cFZz6OWc0D3n0ExlCEqBO/s5EQmLRB7QQTCBjrhBTqvJT7AV8Bp6reeBkCLyZ8eBjwIjc2LX9iWFnw==}
     peerDependencies:
       '@antv/g-lite': ^1.0.0
     dependencies:
-      '@antv/g-lite': 1.0.65
+      '@antv/g-lite': 1.0.66
     dev: true
 
-  /@antv/g-lite/1.0.65:
-    resolution: {integrity: sha512-tRM+7Ci5BxCn5M9Hik/S6uAMBg2m+KuhRgPO8NEnkGVcA3ez1wtQh+ZdGM0G8E/Ie6szk5jTY0aNscP5Pq5+Jg==}
+  /@antv/g-lite/1.0.66:
+    resolution: {integrity: sha512-wVQbqFIlz5ZEhGfFAZ4XGMqCsnCvmxmvgeTNgKR7odVnZ46MN+8fgu88R1ctqs8z3S2mUK6AZXkA4sqjTxCgYA==}
     dependencies:
       '@antv/g-math': 1.7.49
       '@antv/util': 3.3.2
@@ -502,24 +502,24 @@ packages:
       tslib: 2.5.3
     dev: true
 
-  /@antv/g-web-animations-api/1.0.39_@antv+g-lite@1.0.65:
+  /@antv/g-web-animations-api/1.0.39_@antv+g-lite@1.0.66:
     resolution: {integrity: sha512-0QXVzjk8kKrVokxHLLphkJsMPvbhLgcQN8/eVUdPaj+A0Yf6Cpg/hquYaGBBuqzwoMVB0ROUsIvwXgRtoXQONA==}
     peerDependencies:
       '@antv/g-lite': ^1.0.0
     dependencies:
-      '@antv/g-lite': 1.0.65
+      '@antv/g-lite': 1.0.66
       '@antv/util': 3.3.2
     dev: true
 
-  /@antv/g/5.16.28:
-    resolution: {integrity: sha512-+jP5fokvarCjlywytWzF61xec6pLshj/csX8xm7nsuc3cbOFH7vJptKzYgcewh1yLU/y8LYZyV4ZBURI2QK3FA==}
+  /@antv/g/5.16.29:
+    resolution: {integrity: sha512-1yZjJgTVz62Wq3VpG/pe4Nco8+5dIuTz9ddC0UH6i2NaBv8XoF+uYbVjWRTAdLzMF6mMUgyJ4AltbxoglvKnyA==}
     dependencies:
-      '@antv/g-camera-api': 1.0.40_@antv+g-lite@1.0.65
-      '@antv/g-css-layout-api': 1.0.38_@antv+g-lite@1.0.65
-      '@antv/g-css-typed-om-api': 1.0.38_@antv+g-lite@1.0.65
-      '@antv/g-dom-mutation-observer-api': 1.0.38_@antv+g-lite@1.0.65
-      '@antv/g-lite': 1.0.65
-      '@antv/g-web-animations-api': 1.0.39_@antv+g-lite@1.0.65
+      '@antv/g-camera-api': 1.0.40_@antv+g-lite@1.0.66
+      '@antv/g-css-layout-api': 1.0.38_@antv+g-lite@1.0.66
+      '@antv/g-css-typed-om-api': 1.0.38_@antv+g-lite@1.0.66
+      '@antv/g-dom-mutation-observer-api': 1.0.38_@antv+g-lite@1.0.66
+      '@antv/g-lite': 1.0.66
+      '@antv/g-web-animations-api': 1.0.39_@antv+g-lite@1.0.66
     dev: true
 
   /@antv/util/3.3.2:
@@ -997,8 +997,8 @@ packages:
       - supports-color
     dev: false
 
-  /@babel/plugin-proposal-private-property-in-object/7.21.10_@babel+core@7.20.12:
-    resolution: {integrity: sha512-3YybmT8FN4sZFXp0kTr9Gbu90wAIhC3feNung+qcRQ1wALGoSHgOz1c+fR3ZLGZ0LXqIpYmtE6Faua6tMDarUg==}
+  /@babel/plugin-proposal-private-property-in-object/7.21.11_@babel+core@7.20.12:
+    resolution: {integrity: sha512-0QZ8qP/3RLDVBwBFoWAwCtgcDZJVwA5LUJRZU8x2YFfKNuFq161wK3cuGrALu5yiPu+vzwTAg/sMWVNeWeNyaw==}
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
@@ -1677,7 +1677,7 @@ packages:
       '@babel/plugin-proposal-optional-catch-binding': 7.18.6_@babel+core@7.20.12
       '@babel/plugin-proposal-optional-chaining': 7.21.0_@babel+core@7.20.12
       '@babel/plugin-proposal-private-methods': 7.18.6_@babel+core@7.20.12
-      '@babel/plugin-proposal-private-property-in-object': 7.21.10_@babel+core@7.20.12
+      '@babel/plugin-proposal-private-property-in-object': 7.21.11_@babel+core@7.20.12
       '@babel/plugin-proposal-unicode-property-regex': 7.18.6_@babel+core@7.20.12
       '@babel/plugin-syntax-async-generators': 7.8.4_@babel+core@7.20.12
       '@babel/plugin-syntax-class-properties': 7.12.13_@babel+core@7.20.12
@@ -3071,7 +3071,7 @@ packages:
     resolution: {integrity: sha512-zNQc2YeEhT86LOucDtc8tsAQV4F3zTDjHos0tlG6MEJB9sUFI4dJY93TmvAqzzu2iGD1rP1ofhDk83g3Poknnw==}
     dependencies:
       '@visactor/vutils': 0.9.0-alpha.2
-    dev: true
+    dev: false
 
   /@visactor/vutils/0.9.0-alpha.2:
     resolution: {integrity: sha512-g8zC6y4e1PKwTLK48wCeDRR24OrGoSvKQkhetjoRGu2W0deUUcC5+KMHs+eSRMo1IOiypdfi00paV7YoCBw3sA==}
@@ -3521,7 +3521,7 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.7
-      caniuse-lite: 1.0.30001494
+      caniuse-lite: 1.0.30001495
       fraction.js: 4.2.0
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -3812,8 +3812,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001494
-      electron-to-chromium: 1.4.419
+      caniuse-lite: 1.0.30001495
+      electron-to-chromium: 1.4.423
       node-releases: 2.0.12
       update-browserslist-db: 1.0.11_browserslist@4.21.7
 
@@ -3900,8 +3900,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  /caniuse-lite/1.0.30001494:
-    resolution: {integrity: sha512-sY2B5Qyl46ZzfYDegrl8GBCzdawSLT4ThM9b9F+aDYUrAG2zCOyMbd2Tq34mS1g4ZKBfjRlzOohQMxx28x6wJg==}
+  /caniuse-lite/1.0.30001495:
+    resolution: {integrity: sha512-F6x5IEuigtUfU5ZMQK2jsy5JqUUlEFRVZq8bO2a+ysq5K7jD6PPc9YXZj78xDNS3uNchesp1Jw47YXEqr+Viyg==}
 
   /canvas/2.11.2:
     resolution: {integrity: sha512-ItanGBMrmRV7Py2Z+Xhs7cT+FNt5K0vPL4p9EZ/UX/Mu7hFbkxSjKF2KVtPwX7UYWp7dRKnrTvReflgrItJbdw==}
@@ -4554,8 +4554,8 @@ packages:
       safer-buffer: 2.1.2
     dev: true
 
-  /electron-to-chromium/1.4.419:
-    resolution: {integrity: sha512-jdie3RiEgygvDTyS2sgjq71B36q2cDSBfPlwzUyuOrfYTNoYWyBxxjGJV/HAu3A2hB0Y+HesvCVkVAFoCKwCSw==}
+  /electron-to-chromium/1.4.423:
+    resolution: {integrity: sha512-y4A7YfQcDGPAeSWM1IuoWzXpg9RY1nwHzHSwRtCSQFp9FgAVDgdWlFf0RbdWfLWQ2WUI+bddUgk5RgTjqRE6FQ==}
 
   /electron/11.5.0:
     resolution: {integrity: sha512-WjNDd6lGpxyiNjE3LhnFCAk/D9GIj1rU3GSDealVShhkkkPR3Vh4q8ErXGDl1OAO/faomVa10KoFPUN/pLbNxg==}
@@ -7420,7 +7420,7 @@ packages:
       parse5: 6.0.1
       saxes: 5.0.1
       symbol-tree: 3.2.4
-      tough-cookie: 4.1.2
+      tough-cookie: 4.1.3
       w3c-hr-time: 1.0.2
       w3c-xmlserializer: 2.0.0
       webidl-conversions: 6.1.0
@@ -7630,6 +7630,10 @@ packages:
       rechoir: 0.6.2
       resolve: 1.22.2
     dev: false
+
+  /lil-gui/0.17.0:
+    resolution: {integrity: sha512-MVBHmgY+uEbmJNApAaPbtvNh1RCAeMnKym82SBjtp5rODTYKWtM+MXHCifLe2H2Ti1HuBGBtK/5SyG4ShQ3pUQ==}
+    dev: true
 
   /lines-and-columns/1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
@@ -9969,8 +9973,8 @@ packages:
       punycode: 2.3.0
     dev: true
 
-  /tough-cookie/4.1.2:
-    resolution: {integrity: sha512-G9fqXWoYFZgTc2z8Q5zaHy/vJMjm+WV0AkAeHxVCQiEB1b+dGvWzFW6QV07cY5jQ5gRkeid2qIkzkxUnmoQZUQ==}
+  /tough-cookie/4.1.3:
+    resolution: {integrity: sha512-aX/y5pVRkfRnfmuX+OdbSdXvPe6ieKX/G2s7e98f4poJHnqH3281gDPm/metm6E/WRamfx7WC4HUqkWHfQHprw==}
     engines: {node: '>=6'}
     dependencies:
       psl: 1.9.0

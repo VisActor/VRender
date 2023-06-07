@@ -16,7 +16,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     const markerVisible = this.attribute.visible ?? true;
 
     const group = createGroup({
-      pickable: false
+      pickable: false,
+      childrenPickable: false
     });
     group.name = 'marker-container';
     this.add(group);

@@ -49,4 +49,6 @@ bundler:
 
 # Add 'chore' label to any change to common/** files within the source dir
 chore:
-  - common/**
+  - common/autoinstallers/**
+  - common/git-hooks/**
+  - common/scripts/**

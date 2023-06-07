@@ -509,8 +509,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       if (!label) {
         continue;
       }
-      label.stroke = false;
-      label.strokeColor = 'black';
       let isInside = label._insideGraphic;
       if (isInside === undefined) {
         const text = createText(label);
@@ -554,7 +552,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           this.attribute.smartInvert?.contrastRatiosThreshold,
           this.attribute.smartInvert?.alternativeColors
         );
-      } else {
+      } else if (label.lineWidth > 0) {
         /**
          * 2-a
          * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。

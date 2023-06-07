@@ -11,7 +11,6 @@
     "es",
     "dist"
   ],
-  "license": "MIT",
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
@@ -45,6 +44,26 @@
     "vite": "3.2.6",
     "typescript": "4.9.5"
   },
+  "keywords": [
+    "VisActor",
+    "graphics",
+    "renderer",
+    "react",
+    "react-vrender",
+    "vrender"
+  ],
+  "homepage": "",
+  "bugs": "https://github.com/VisActor/VRender/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VRender.git",
+    "directory": "packages/react-vrender"
+  },
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
   "publishConfig": {
     "access": "public"
   }

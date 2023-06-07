@@ -77,12 +77,10 @@
     },
     {
       "commandKind": "global",
-
-      "name": "start",
-      "summary": "Start the development server",
-      "description": "Run this command to start chart-space development server",
-
-      "shellCommand": "rush run -p @arco-design/chart-space -s start"
+      "name": "components",
+      "summary": "Start the development server of VRender components",
+      "description": "Run this command to start VRender components development server",
+      "shellCommand": "rush run -p @visactor/vrender-components -s start"
     }
   ],
   "parameters": [

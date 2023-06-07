@@ -533,7 +533,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
          */
         label.fill = labelSmartInvert(
           label.fill as IColor,
-          label.stroke,
+          label.stroke as IColor,
           this.attribute.smartInvert?.textType,
           this.attribute.smartInvert?.contrastRatiosThreshold,
           this.attribute.smartInvert?.alternativeColors

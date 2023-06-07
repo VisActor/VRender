@@ -217,9 +217,9 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
 };
 
 const handleRelease = () => {
-  if (window.stage) {
-    window.stage.release();
-  }
+  // if (window.stage) {
+  //   window.stage.release();
+  // }
   if (document.getElementById('layout')) {
     (document.getElementById('layout') as HTMLCanvasElement).style.visibility = 'hidden';
   }

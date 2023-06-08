@@ -1,4 +1,4 @@
-export type ICompileOptions = any;
+import type { AsArray, FullTap, IfSet, Tap, UnsetAdditionalOptions } from '../interface';
 
 /**
  * 参考 https://github.com/webpack/tapable
@@ -24,27 +24,6 @@ export type ICompileOptions = any;
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-
-export type FullTap = Tap & {
-  type: 'sync' | 'async' | 'promise';
-  fn: (...d: any) => any;
-};
-
-type Tap = TapOptions & {
-  name: string;
-};
-
-type TapOptions = {
-  before?: string;
-  stage?: number;
-};
-
-export type AsArray<T> = T extends any[] ? T : [T];
-
-export declare class UnsetAdditionalOptions {
-  _UnsetAdditionalOptions: true;
-}
-type IfSet<X> = X extends UnsetAdditionalOptions ? any : X;
 
 export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
   protected _args: string[];

@@ -1,16 +1,8 @@
 import { inject, injectable, named } from 'inversify';
-import {
-  AABBBounds,
-  epsilon,
-  IAABBBounds,
-  IBounds,
-  IMatrix,
-  isArray,
-  pi2,
-  transformBoundsWithMatrix
-} from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
+import { AABBBounds, epsilon, isArray, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
-import {
+import type {
   mat4,
   vec3,
   IArc,
@@ -44,19 +36,24 @@ import {
   IArc3dGraphicAttribute,
   IArc3d,
   IImageGraphicAttribute,
-  IImage,
+  IGraphicService,
   ITransform
 } from '../../interface';
 import { graphicCreator } from '../graphic-creator';
-import { IRectBoundsContribution, RectBoundsContribution } from './rect-contribution';
+import type { IRectBoundsContribution } from './rect-contribution';
+import { RectBoundsContribution } from './rect-contribution';
 import { textDrawOffsetX } from '../../common/text';
-import { ISymbolBoundsContribution, SymbolBoundsContribution } from './symbol-contribution';
+import type { ISymbolBoundsContribution } from './symbol-contribution';
+import { SymbolBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
-import { CircleBoundsContribution, ICircleBoundsContribution } from './circle-contribution';
-import { ArcBoundsContribution, IArcBoundsContribution } from './arc-contribution';
-import { IPathBoundsContribution, PathBoundsContribution } from './path-contribution';
+import type { ICircleBoundsContribution } from './circle-contribution';
+import { CircleBoundsContribution } from './circle-contribution';
+import type { IArcBoundsContribution } from './arc-contribution';
+import { ArcBoundsContribution } from './arc-contribution';
+import type { IPathBoundsContribution } from './path-contribution';
+import { PathBoundsContribution } from './path-contribution';
 import { mat4Allocate } from '../../modules';
-import { ContributionProvider } from '../../common/contribution-provider';
+import type { ContributionProvider } from '../../common/contribution-provider';
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { circleBounds } from '../../common/utils';
@@ -603,142 +600,6 @@ export function getModelMatrix(out: mat4, graphic: IGraphic, theme: ITransform) 
 export function shouldUseMat4(graphic: IGraphic) {
   const { alpha, beta } = graphic.attribute;
   return alpha || beta;
-}
-
-export interface IGraphicService {
-  // themeService: IThemeService;
-  onAttributeUpdate: (graphic: IGraphic) => void;
-  onSetStage: (graphic: IGraphic, stage: IStage) => void;
-  onRemove: (graphic: IGraphic) => void;
-  onAddIncremental: (graphic: IGraphic, group: IGroup, stage: IStage) => void;
-  onClearIncremental: (group: IGroup, stage: IStage) => void;
-  hooks: {
-    onAttributeUpdate: SyncHook<[IGraphic]>;
-    onSetStage: SyncHook<[IGraphic, IStage]>;
-    onRemove: SyncHook<[IGraphic]>;
-    onAddIncremental: SyncHook<[IGraphic, IGroup, IStage]>;
-    onClearIncremental: SyncHook<[IGroup, IStage]>;
-    beforeUpdateAABBBounds: SyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
-    afterUpdateAABBBounds: SyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
-  };
-  beforeUpdateAABBBounds: (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => void;
-  afterUpdateAABBBounds: (
-    graphic: IGraphic,
-    stage: IStage,
-    bounds: IAABBBounds,
-    params: { globalAABBBounds: IAABBBounds },
-    selfChange: boolean
-  ) => void;
-
-  creator: typeof graphicCreator;
-
-  updateRectAABBBounds: (
-    attribute: IRectGraphicAttribute,
-    rectTheme: Required<IRectGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGraphic
-  ) => IAABBBounds;
-
-  updateGroupAABBBounds: (
-    attribute: IGroupGraphicAttribute,
-    groupTheme: Required<IGroupGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGroup
-  ) => IAABBBounds;
-
-  updateGlyphAABBBounds: (
-    attribute: IGlyphGraphicAttribute,
-    groupTheme: Required<IGlyphGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGlyph
-  ) => IAABBBounds;
-
-  updateSymbolAABBBounds: (
-    attribute: ISymbolGraphicAttribute,
-    symbolTheme: Required<ISymbolGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ISymbol
-  ) => IAABBBounds;
-
-  updateCircleAABBBounds: (
-    attribute: ICircleGraphicAttribute,
-    circleTheme: Required<ICircleGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ICircle
-  ) => IAABBBounds;
-
-  updateArcAABBBounds: (
-    attribute: IArcGraphicAttribute,
-    arcTheme: Required<IArcGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: IArc
-  ) => IAABBBounds;
-
-  updateArc3dAABBBounds: (
-    attribute: IArc3dGraphicAttribute,
-    arcTheme: Required<IArc3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArc3d
-  ) => IAABBBounds;
-
-  updateAreaAABBBounds: (
-    attribute: IAreaGraphicAttribute,
-    areaTheme: Required<IAreaGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArea
-  ) => IAABBBounds;
-
-  updateLineAABBBounds: (
-    attribute: ILineGraphicAttribute,
-    lineTheme: Required<ILineGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: ILine
-  ) => IAABBBounds;
-
-  updatePathAABBBounds: (
-    attribute: IPathGraphicAttribute,
-    pathTheme: Required<IPathGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPath
-  ) => IAABBBounds;
-
-  updatePolygonAABBBounds: (
-    attribute: IPolygonGraphicAttribute,
-    polygonTheme: Required<IPolygonGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPolygon
-  ) => IAABBBounds;
-
-  updatePyramid3dAABBBounds: (
-    attribute: IPyramid3dGraphicAttribute,
-    polygonTheme: Required<IPyramid3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPyramid3d
-  ) => IAABBBounds;
-
-  updateTextAABBBounds: (
-    attribute: ITextGraphicAttribute,
-    textTheme: Required<ITextGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IText
-  ) => IAABBBounds;
-
-  updateRichTextAABBBounds: (
-    attribute: IRichTextGraphicAttribute,
-    textTheme: Required<IRichTextGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IRichText
-  ) => IAABBBounds;
-
-  updateImageAABBBounds: (
-    attribute: IImageGraphicAttribute,
-    textTheme: Required<IImageGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IImage
-  ) => IAABBBounds;
 }
 
 export const GraphicService = Symbol.for('GraphicService');

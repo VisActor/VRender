@@ -1,13 +1,15 @@
 import { mat4Allocate } from '../../../modules';
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common/contribution-provider';
-import { getTheme, SYMBOL_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
+import type { ContributionProvider } from '../../../common/contribution-provider';
+import { SYMBOL_NUMBER_TYPE } from '../../../graphic/symbol';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
 import { BaseRender } from './base-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { ISymbolRenderContribution, SymbolRenderContribution } from './contributions/symbol-contribution-render';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { ISymbolRenderContribution } from './contributions/symbol-contribution-render';
+import { SymbolRenderContribution } from './contributions/symbol-contribution-render';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 
 @injectable()

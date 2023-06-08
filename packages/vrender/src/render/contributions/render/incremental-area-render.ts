@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IArea,
   IAreaGraphicAttribute,
   IAreaSegment,
@@ -8,9 +8,10 @@ import {
   IMarkAttribute,
   IThemeAttribute
 } from '../../../interface';
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IDrawContext } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { AREA_NUMBER_TYPE } from '../../../graphic/area';
+import { getTheme } from '../../../graphic/theme';
+import type { IDrawContext } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';
 import { DefaultCanvasAreaRender } from './area-render';
 import { drawIncrementalAreaSegments } from '../../../common/render-curve';

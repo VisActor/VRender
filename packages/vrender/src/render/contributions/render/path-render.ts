@@ -1,7 +1,7 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common/contribution-provider';
+import type { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';
-import {
+import type {
   IPath,
   ICustomPath2D,
   IContext2d,
@@ -9,11 +9,13 @@ import {
   IGraphicAttribute,
   IMarkAttribute
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { getTheme, PATH_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import { PATH_NUMBER_TYPE } from '../../../graphic/path';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { IPathRenderContribution, PathRenderContribution } from './contributions/path-contribution-render';
+import type { IPathRenderContribution } from './contributions/path-contribution-render';
+import { PathRenderContribution } from './contributions/path-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../modules';

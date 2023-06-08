@@ -1,16 +1,19 @@
 import { injectable, inject, postConstruct, named, multiInject } from 'inversify';
-import { IRenderSelector } from './render-slector';
-import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { IContext2d, MaybePromise, IGraphic, IGroup } from '../../../interface';
+import type { IRenderSelector } from './render-slector';
+import type { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IContext2d, MaybePromise, IGraphic, IGroup } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
-import { ContributionProvider } from '../../../common/contribution-provider';
-import { DefaultAttribute } from '../../../graphic';
-import { Bounds, getRectIntersect, IBounds, isRectIntersect } from '@visactor/vutils';
-import { ILayerService, LayerService } from '../../../core';
+import type { ContributionProvider } from '../../../common/contribution-provider';
+import { DefaultAttribute } from '../../../graphic/config';
+import type { IBounds } from '@visactor/vutils';
+import { Bounds, getRectIntersect, isRectIntersect } from '@visactor/vutils';
+import type { ILayerService } from '../../../core';
+import { LayerService } from '../../../core';
 import { container } from '../../../modules';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
-import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
+import type { IDrawItemInterceptorContribution } from './draw-interceptor';
+import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 
 /**

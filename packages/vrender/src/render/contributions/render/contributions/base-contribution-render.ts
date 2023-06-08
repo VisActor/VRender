@@ -1,7 +1,6 @@
-import { IGraphicAttribute, IContext2d, IGraphic, IStage, IThemeAttribute } from '../../../../interface';
+import type { IGraphicAttribute, IContext2d, IGraphic, IStage, IThemeAttribute } from '../../../../interface';
 import { injectable } from 'inversify';
-import { getTheme } from '../../../../graphic';
-import { ResourceLoader } from '../../../../resource-loader/loader';
+import { getTheme } from '../../../../graphic/theme';
 import { canvasAllocate } from '../../../../modules';
 import { pi2 } from '@visactor/vutils';
 

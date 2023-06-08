@@ -1,4 +1,5 @@
-import { min, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { min } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import type {
   IArea,
@@ -12,7 +13,7 @@ import type {
   ISegPath2D,
   IDirection
 } from '../../../interface';
-import { ContributionProvider } from '../../../common/contribution-provider';
+import type { ContributionProvider } from '../../../common/contribution-provider';
 import {
   genLinearSegments,
   genBasisSegments,
@@ -22,11 +23,13 @@ import {
   genLinearClosedSegments
 } from '../../../common/segment';
 
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { AREA_NUMBER_TYPE } from '../../../graphic/area';
+import { getTheme } from '../../../graphic/theme';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { AreaRenderContribution, IAreaRenderContribution } from './contributions/area-contribution-render';
+import type { IAreaRenderContribution } from './contributions/area-contribution-render';
+import { AreaRenderContribution } from './contributions/area-contribution-render';
 import { BaseRenderContributionTime } from './contributions';
 import { drawAreaSegments } from '../../../common/render-area';
 

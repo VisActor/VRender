@@ -1,8 +1,8 @@
-import { AABBBounds, OBBBounds, isArray, max } from '@visactor/vutils';
-import { ISymbol, ISymbolGraphicAttribute } from '../interface';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { isArray, max } from '@visactor/vutils';
+import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { ISymbolClass } from './builtin-symbol/interface';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';

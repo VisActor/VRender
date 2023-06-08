@@ -1,13 +1,15 @@
-import { isArray, isNumber } from '@visactor/vutils';
+import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, POLYGON_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IPolygon, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { POLYGON_NUMBER_TYPE } from '../../../graphic/polygon';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, IPolygon, IThemeAttribute } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { IPolygonRenderContribution, PolygonRenderContribution } from './contributions/polygon-contribution-render';
-import { ContributionProvider } from '../../../common/contribution-provider';
+import type { IPolygonRenderContribution } from './contributions/polygon-contribution-render';
+import { PolygonRenderContribution } from './contributions/polygon-contribution-render';
+import type { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()

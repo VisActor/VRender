@@ -1,10 +1,12 @@
 import { inject, injectable, named } from 'inversify';
-import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { CIRCLE_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { CircleRenderContribution, ICircleRenderContribution } from './contributions/circle-contribution-render';
-import { ContributionProvider } from '../../../common/contribution-provider';
+import type { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import { CIRCLE_NUMBER_TYPE } from '../../../graphic/circle';
+import { getTheme } from '../../../graphic/theme';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { ICircleRenderContribution } from './contributions/circle-contribution-render';
+import { CircleRenderContribution } from './contributions/circle-contribution-render';
+import type { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 

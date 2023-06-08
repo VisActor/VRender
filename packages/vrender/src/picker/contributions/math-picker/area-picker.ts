@@ -1,10 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IContext2d, IArea } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { AreaRender, IGraphicRender } from '../../../render';
-import { graphicService } from '../../../modules';
+import type { IPoint } from '@visactor/vutils';
+import { AREA_NUMBER_TYPE } from '../../../graphic/area';
+import { getTheme } from '../../../graphic/theme';
+import type { IArea } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IGraphicRender } from '../../../render';
+import { AreaRender } from '../../../render';
 
 @injectable()
 export class DefaultMathAreaPicker implements IGraphicPicker {

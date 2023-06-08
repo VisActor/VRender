@@ -1,11 +1,13 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common/contribution-provider';
-import { getTheme, IMAGE_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
+import type { ContributionProvider } from '../../../common/contribution-provider';
+import { IMAGE_NUMBER_TYPE } from '../../../graphic/image';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { IImageRenderContribution, ImageRenderContribution } from './contributions/image-contribution-render';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IImageRenderContribution } from './contributions/image-contribution-render';
+import { ImageRenderContribution } from './contributions/image-contribution-render';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';
 
 @injectable()

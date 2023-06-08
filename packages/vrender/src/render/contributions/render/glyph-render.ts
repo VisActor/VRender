@@ -1,9 +1,10 @@
-import { isArray } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
-import { getTheme, GLYPH_NUMBER_TYPE, RECT_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IGlyph, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { injectable } from 'inversify';
+import { GLYPH_NUMBER_TYPE } from '../../../graphic/glyph';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IGlyph, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import { IRect } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 
 @injectable()
 export class DefaultCanvasGlyphRender implements IGraphicRender {

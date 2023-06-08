@@ -75,3 +75,5 @@ export interface IDomRectLike {
 }
 
 export type IDirection = 1 | 2;
+
+export type AsArray<T> = T extends any[] ? T : [T];

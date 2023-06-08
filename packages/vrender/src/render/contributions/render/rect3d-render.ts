@@ -1,12 +1,7 @@
 import { injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  RECT3D_NUMBER_TYPE
-} from '../../../graphic';
-import {
+import { RECT3D_NUMBER_TYPE } from '../../../graphic/rect3d';
+import { getTheme } from '../../../graphic/theme';
+import type {
   IGraphicAttribute,
   IContext2d,
   IDirectionLight,
@@ -14,11 +9,11 @@ import {
   IMarkAttribute,
   IPolygonItem,
   IRect3d,
-  IThemeAttribute,
-  vec3
+  IThemeAttribute
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { vec3 } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../modules';

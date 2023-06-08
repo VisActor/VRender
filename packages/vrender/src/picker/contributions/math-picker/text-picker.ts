@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { TEXT_NUMBER_TYPE } from '../../../graphic';
-import { IText } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IPoint } from '@visactor/vutils';
+import { TEXT_NUMBER_TYPE } from '../../../graphic/text';
+import type { IText } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 
 @injectable()
 export class DefaultMathTextPicker implements IGraphicPicker {

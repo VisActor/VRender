@@ -1,9 +1,12 @@
-import { IPoint, AABBBounds } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { getTheme, ARC3D_NUMBER_TYPE, getExtraModelMatrix, multiplyMat4Mat3, multiplyMat4Mat4 } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IArc3d, IThemeAttribute } from '../../../interface';
-import { IGraphicRender, Arc3dRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import { ARC3D_NUMBER_TYPE } from '../../../graphic/arc3d';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, IArc3d, IThemeAttribute } from '../../../interface';
+import type { IGraphicRender } from '../../../render';
+import { Arc3dRender } from '../../../render';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 import { mat4Allocate } from '../../../modules';
 import { BasePicker } from './base-picker';
 

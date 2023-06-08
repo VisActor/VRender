@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
@@ -7,12 +7,9 @@ import {
   IImageGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { getTheme } from '../../../../graphic';
-import {
-  BaseRenderContributionTime,
-  DefaultBaseBackgroundRenderContribution,
-  IBaseRenderContribution
-} from './base-contribution-render';
+import { getTheme } from '../../../../graphic/theme';
+import type { IBaseRenderContribution } from './base-contribution-render';
+import { BaseRenderContributionTime, DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 
 export const ImageRenderContribution = Symbol.for('ImageRenderContribution');
 

@@ -23,10 +23,11 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import { Matrix, pi } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
-import {
+import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic/config';
+import type {
   ICamera,
   ICanvas,
   ICommonStyleParams,

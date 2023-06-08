@@ -1,6 +1,6 @@
-import { AABBBounds, IBoundsLike } from '@visactor/vutils';
+import type { AABBBounds, IBoundsLike } from '@visactor/vutils';
 import { container, layerService } from '../modules';
-import {
+import type {
   IContext2d,
   IDrawToParams,
   IGraphic,
@@ -11,9 +11,10 @@ import {
   Releaseable,
   IGlobal
 } from '../interface';
-import { Group, Theme } from '../graphic';
-import { IWindow } from './window';
-import { IDrawContext, IDrawContribution, IRenderServiceDrawParams } from '../render';
+import { Theme } from '../graphic/theme';
+import { Group } from '../graphic/group';
+import type { IWindow } from './window';
+import type { IDrawContext, IDrawContribution, IRenderServiceDrawParams } from '../render';
 
 export interface ILayerHandlerDrawParams extends ILayerDrawParams {
   x: number;

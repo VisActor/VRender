@@ -3,7 +3,6 @@ import { DefaultTicker, defaultTimeline } from './animate';
 import './modules';
 
 export * from './core/global';
-export * from './graphic';
 export * from './modules';
 export * from './create';
 export * from './event';
@@ -20,6 +19,35 @@ export const defaultTicker = new DefaultTicker();
 defaultTicker.addTimeline(defaultTimeline);
 const DEFAULT_TICKER_FPS = 60;
 defaultTicker.setFPS(DEFAULT_TICKER_FPS);
+
+/* export graphic */
+
+export * from './graphic/node-tree';
+export * from './graphic/circle';
+export * from './graphic/text';
+export * from './graphic/symbol';
+export * from './graphic/builtin-symbol';
+export * from './graphic/line';
+export * from './graphic/rect';
+export * from './graphic/rect3d';
+export * from './graphic/glyph';
+export * from './graphic/richtext';
+export * from './graphic/path';
+export * from './graphic/area';
+export * from './graphic/image';
+export * from './graphic/arc';
+export * from './graphic/arc3d';
+export * from './graphic/group';
+export * from './graphic/polygon';
+export * from './graphic/pyramid3d';
+export * from './graphic/config';
+export * from './graphic/graphic-service/graphic-service';
+export * from './graphic/graphic-creator';
+export * from './graphic/builtin-symbol';
+export * from './graphic/graphic';
+export * from './graphic/bounds';
+export * from './graphic/theme';
+export * from './graphic/tools';
 
 /* export common */
 export * from './common/text';

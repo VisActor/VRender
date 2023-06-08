@@ -1,5 +1,6 @@
-import { AABBBounds, Bounds, IBounds, IBoundsLike, IMatrix, IMatrixLike, Point } from '@visactor/vutils';
-import {
+import type { IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
+import { AABBBounds, Bounds, Point } from '@visactor/vutils';
+import type {
   IGraphic,
   IGroup,
   IExportType,
@@ -7,21 +8,26 @@ import {
   IStageParams,
   ILayer,
   IColor,
-  Global,
   IGlobal,
   IOption3D,
   ICamera,
   vec3,
   IDirectionLight
 } from '../interface';
-import { IWindow, Window } from './window';
+import { Global } from '../interface';
+import type { IWindow } from './window';
+import { Window } from './window';
 import { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../modules';
-import { IDrawContext, IRenderService, RenderService } from '../render';
-import { Group, Node, Theme } from '../graphic';
-import { IPickerService, PickerService } from '../picker/picker-service';
-import { IPluginService, PluginService } from '../plugins/plugin-service';
+import type { IDrawContext, IRenderService } from '../render';
+import { RenderService } from '../render';
+import { Group } from '../graphic/group';
+import { Theme } from '../graphic/theme';
+import type { IPickerService } from '../picker/picker-service';
+import { PickerService } from '../picker/picker-service';
+import type { IPluginService } from '../plugins/plugin-service';
+import { PluginService } from '../plugins/plugin-service';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
@@ -30,7 +36,7 @@ import { defaultTicker } from '../index';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
-import { ITicker } from '../animate';
+import type { ITicker } from '../animate';
 
 const DefaultConfig = {
   WIDTH: 500,

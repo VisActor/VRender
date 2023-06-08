@@ -1,9 +1,10 @@
-import { IMatrix, IPointLike, pi2 } from '@visactor/vutils';
+import type { IMatrix, IPointLike } from '@visactor/vutils';
+import { pi2 } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ARC3D_NUMBER_TYPE } from '../graphic';
-import { IArc, IContext2d, IGraphic, IGroup } from '../interface';
-import { IPickerService, IPickParams } from './picker-service';
-import { PickResult } from './type';
+import { ARC3D_NUMBER_TYPE } from '../graphic/arc3d';
+import type { IArc, IContext2d, IGraphic, IGroup } from '../interface';
+import type { IPickerService, IPickParams } from './picker-service';
+import type { PickResult } from './type';
 
 // 拦截器
 export const PickItemInterceptor = Symbol.for('PickItemInterceptor');

@@ -1,12 +1,14 @@
 import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, RECT_NUMBER_TYPE } from '../../../graphic';
+import { RECT_NUMBER_TYPE } from '../../../graphic/rect';
+import { getTheme } from '../../../graphic/theme';
 import { createRectPath } from '../../../common/shape/rect';
-import { ContributionProvider } from '../../../common/contribution-provider';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { IRectRenderContribution, RectRenderContribution } from './contributions/rect-contribution-render';
+import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IRectRenderContribution } from './contributions/rect-contribution-render';
+import { RectRenderContribution } from './contributions/rect-contribution-render';
 import { drawPathProxy, rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 

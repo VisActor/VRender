@@ -1,9 +1,10 @@
 import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { ARC_NUMBER_TYPE } from '../../../graphic/arc';
+import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
-import { ContributionProvider } from '../../../common/contribution-provider';
-import {
+import type { ContributionProvider } from '../../../common/contribution-provider';
+import type {
   IContext2d,
   IArc,
   IPath2D,
@@ -12,11 +13,12 @@ import {
   IThemeAttribute,
   IGradientColor
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { getConicGradientAt } from '../../../canvas';
-import { ArcRenderContribution, IArcRenderContribution } from './contributions/arc-contribution-render';
+import type { IArcRenderContribution } from './contributions/arc-contribution-render';
+import { ArcRenderContribution } from './contributions/arc-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/

@@ -1,10 +1,11 @@
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { CIRCLE_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { CircleRender, IGraphicRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { graphicService } from '../../../modules';
+import { CIRCLE_NUMBER_TYPE } from '../../../graphic/circle';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import type { IGraphicRender } from '../../../render';
+import { CircleRender } from '../../../render';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 
 @injectable()
 export class DefaultMathCirclePicker implements IGraphicPicker {

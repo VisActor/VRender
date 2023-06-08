@@ -1,10 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { IGraphicRender, LineRender } from '../../../render';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
-import { graphicService } from '../../../modules';
+import type { IPoint } from '@visactor/vutils';
+import type { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IGraphicRender } from '../../../render';
+import { LineRender } from '../../../render';
+import { LINE_NUMBER_TYPE } from '../../../graphic/line';
+import { getTheme } from '../../../graphic/theme';
 
 @injectable()
 export class DefaultMathLinePicker implements IGraphicPicker {

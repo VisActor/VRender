@@ -1,9 +1,10 @@
 import { injectable } from 'inversify';
 import { AABBBounds, pi2 } from '@visactor/vutils';
-import { ARC3D_NUMBER_TYPE, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
-import { IArc, IContext2d, IGraphic, IGroup } from '../../../interface';
-import { IDrawContext, IDrawContribution, IRenderService } from '../../render-service';
-import { IGraphicRenderDrawParams } from './graphic-render';
+import { ARC3D_NUMBER_TYPE } from '../../../graphic/arc3d';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic/graphic-service/graphic-service';
+import type { IArc, IContext2d, IGraphic, IGroup } from '../../../interface';
+import type { IDrawContext, IDrawContribution, IRenderService } from '../../render-service';
+import type { IGraphicRenderDrawParams } from './graphic-render';
 import { mat4Allocate } from '../../../modules';
 
 // 拦截器

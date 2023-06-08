@@ -1,9 +1,10 @@
 import { injectable } from 'inversify';
 import { createRectPath } from '../../../common/shape/rect';
-import { getTheme, RICHTEXT_NUMBER_TYPE } from '../../../graphic';
-import { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender } from './graphic-render';
+import { getTheme } from '../../../graphic/theme';
+import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/richtext';
+import type { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender } from './graphic-render';
 import { fillVisible } from './utils';
 
 @injectable()

@@ -1,7 +1,7 @@
-import { IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
-import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
+import type { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
+import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
 import { mat4Allocate } from '../../../modules';
 
 @injectable()

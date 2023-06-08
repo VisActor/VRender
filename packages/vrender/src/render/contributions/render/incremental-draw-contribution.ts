@@ -1,17 +1,20 @@
 import { injectable, inject, named, multiInject } from 'inversify';
-import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
-import { IGraphic, IGroup, Global, IGlobal } from '../../../interface';
-import { DefaultAttribute } from '../../../graphic';
-import { ILayerService, LayerService } from '../../../core';
+import type { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphic, IGroup, IGlobal } from '../../../interface';
+import { Global } from '../../../interface';
+import { DefaultAttribute } from '../../../graphic/config';
+import type { ILayerService } from '../../../core';
+import { LayerService } from '../../../core';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
 import { GraphicRender, RenderSelector } from './symbol';
-import { IRenderSelector } from './render-slector';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IRenderSelector } from './render-slector';
+import type { IGraphicRender } from './graphic-render';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
-import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
-import { ContributionProvider } from '../../../common/contribution-provider';
+import type { IDrawItemInterceptorContribution } from './draw-interceptor';
+import { DrawItemInterceptor } from './draw-interceptor';
+import type { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
 
 enum STATUS {

@@ -1,6 +1,7 @@
-import { min, IPointLike, isArray } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { min, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import {
+import type {
   IContext2d,
   ILine,
   ILineGraphicAttribute,
@@ -10,9 +11,10 @@ import {
   IClipRangeByDimensionType,
   ISegPath2D
 } from '../../../interface';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { LINE_NUMBER_TYPE } from '../../../graphic/line';
+import { getTheme } from '../../../graphic/theme';
+import type { IDrawContext, IRenderService } from '../../render-service';
+import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../modules';

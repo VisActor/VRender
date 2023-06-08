@@ -1,10 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { getTheme, POLYGON_NUMBER_TYPE } from '../../../graphic';
-import { IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute, IPolygon } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { IGraphicRender, PolygonRender } from '../../../render';
-import { graphicService } from '../../../modules';
+import type { IPoint } from '@visactor/vutils';
+import { POLYGON_NUMBER_TYPE } from '../../../graphic/polygon';
+import { getTheme } from '../../../graphic/theme';
+import type { IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute, IPolygon } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IGraphicRender } from '../../../render';
+import { PolygonRender } from '../../../render';
 
 @injectable()
 export class DefaultCanvasPolygonPicker implements IGraphicPicker {

@@ -9,9 +9,10 @@ import loadBuiltinContributions from './core/contributions/modules';
 import loadRenderContributions from './render/contributions/modules';
 import loadPickContributions from './picker/contributions/modules';
 import loadCanvasContributions from './canvas/contributions/modules';
-import { GraphicUtil, IGraphicUtil, ILayerService, ITransformUtil, LayerService, TransformUtil } from './core';
-import { GraphicService, IGraphicService } from './graphic';
-import { IMat4Allocate, IMatrixAllocate, Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
+import type { IGraphicUtil, ILayerService, ITransformUtil } from './core';
+import { GraphicUtil, LayerService, TransformUtil } from './core';
+import type { IMat4Allocate, IMatrixAllocate } from './allocator/matrix-allocate';
+import { Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
 import { GlobalPickerService } from './picker/global-picker-service';
 import { IPickerService } from './picker';
 import {
@@ -37,6 +38,8 @@ import {
   ICanvasAllocate
 } from './allocator/interface';
 import { Global, IGlobal } from './interface';
+import { GraphicService } from './graphic/graphic-service/graphic-service';
+import type { IGraphicService } from './interface/graphic-service';
 
 export const container = new Container();
 container.load(coreModule);

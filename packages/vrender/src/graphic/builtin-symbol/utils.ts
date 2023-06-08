@@ -1,7 +1,6 @@
-import { IBounds } from '@visactor/vutils';
+import type { IBounds } from '@visactor/vutils';
 import { renderCommandList } from '../../common/render-command-list';
-import { IContext2d, ICustomPath2D, IGraphic } from '../../interface';
-import { ISymbolClass } from './interface';
+import type { IContext2d, ICustomPath2D, ISymbolClass } from '../../interface';
 
 export class CustomSymbolClass implements ISymbolClass {
   type: string;

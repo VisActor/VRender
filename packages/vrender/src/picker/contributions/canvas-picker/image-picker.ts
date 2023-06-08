@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { IMAGE_NUMBER_TYPE } from '../../../graphic';
-import { IImage, IContext2d } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IPoint } from '@visactor/vutils';
+import { IMAGE_NUMBER_TYPE } from '../../../graphic/image';
+import type { IImage } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 
 @injectable()
 export class DefaultCanvasImagePicker implements IGraphicPicker {

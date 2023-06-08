@@ -1,9 +1,10 @@
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { getTheme, GLYPH_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IGlyph, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
-import { GlyphRender, IGraphicRender, RectRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import { GLYPH_NUMBER_TYPE } from '../../../graphic/glyph';
+import type { IGlyph } from '../../../interface';
+import type { IGraphicRender } from '../../../render';
+import { GlyphRender } from '../../../render';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 
 @injectable()
 export class DefaultMathGlyphPicker implements IGraphicPicker {

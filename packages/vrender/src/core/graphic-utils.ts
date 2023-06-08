@@ -1,10 +1,11 @@
 import { injectable, inject, named } from 'inversify';
-import { IGraphicAttribute, ICanvas, IContext2d, EnvType, Global, IGlobal, ITextAttribute } from '../interface';
-import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
+import type { IGraphicAttribute, ICanvas, IContext2d, EnvType, IGlobal, ITextAttribute } from '../interface';
+import { Global } from '../interface';
+import type { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas/util';
-import { DefaultTextStyle } from '../graphic';
+import { DefaultTextStyle } from '../graphic/config';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
 
 export const GraphicUtil = Symbol.for('GraphicUtil');

@@ -1,4 +1,6 @@
-import { AsArray, Hook, UnsetAdditionalOptions } from './Hook';
+import type { AsArray } from '../interface/common';
+import type { UnsetAdditionalOptions } from '../interface/sync-hook';
+import { Hook } from './Hook';
 
 /**
  * 参考 https://github.com/webpack/tapable

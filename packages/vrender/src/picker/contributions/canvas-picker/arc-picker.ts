@@ -1,9 +1,11 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IArc, IGraphicAttribute, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { ArcRender, IGraphicRender } from '../../../render';
+import type { IPoint } from '@visactor/vutils';
+import { ARC_NUMBER_TYPE } from '../../../graphic/arc';
+import { getTheme } from '../../../graphic/theme';
+import type { IArc, IGraphicAttribute, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IGraphicRender } from '../../../render';
+import { ArcRender } from '../../../render';
 import { getScaledStroke } from '../../../common/canvas-utils';
 
 @injectable()

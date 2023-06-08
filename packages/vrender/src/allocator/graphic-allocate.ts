@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 // import { IMatrix, IMatrixLike, Matrix } from '@visactor/vutils';
-import { IAllocate } from './interface';
-import {
+import type { IAllocate } from './interface';
+import type {
   IArc,
   IArcGraphicAttribute,
   IArea,
@@ -21,7 +21,14 @@ import {
   ITextGraphicAttribute,
   Releaseable
 } from '../interface';
-import { Arc, Rect, Area, Circle, Line, Path, Text, Symbol as SymbolGraphic } from '../graphic';
+import { Arc } from '../graphic/arc';
+import { Rect } from '../graphic/rect';
+import { Area } from '../graphic/area';
+import { Circle } from '../graphic/circle';
+import { Line } from '../graphic/line';
+import { Path } from '../graphic/path';
+import { Symbol as SymbolGraphic } from '../graphic/symbol';
+import { Text } from '../graphic/text';
 
 @injectable()
 export abstract class DefaultGraphicAllocate<T extends IGraphic, IGraphicAttribute>

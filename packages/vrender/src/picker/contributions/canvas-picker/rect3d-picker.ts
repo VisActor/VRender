@@ -1,10 +1,13 @@
-import { IPoint, AABBBounds } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { getTheme, RECT3D_NUMBER_TYPE } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect3d, IThemeAttribute } from '../../../interface';
-import { graphicService, mat4Allocate } from '../../../modules';
-import { IGraphicRender, Rect3DRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import { RECT3D_NUMBER_TYPE } from '../../../graphic/rect3d';
+import { getTheme } from '../../../graphic/theme';
+import type { IGraphicAttribute, IContext2d, IMarkAttribute, IRect3d, IThemeAttribute } from '../../../interface';
+import { mat4Allocate } from '../../../modules';
+import type { IGraphicRender } from '../../../render';
+import { Rect3DRender } from '../../../render';
+import type { IGraphicPicker, IPickParams } from '../../picker-service';
 import { BasePicker } from './base-picker';
 
 const _bounds = new AABBBounds();

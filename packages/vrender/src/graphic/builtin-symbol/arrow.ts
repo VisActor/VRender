@@ -1,6 +1,6 @@
-import { sqrt, IBounds } from '@visactor/vutils';
-import { IContext2d, SymbolType } from '../../interface';
-import { ISymbolClass } from './interface';
+import type { IBounds } from '@visactor/vutils';
+import { sqrt } from '@visactor/vutils';
+import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 /**
  * 部分源码参考 https://github.com/vega/vega/blob/main/packages/vega-scenegraph/src/path/symbols.js
  * Copyright (c) 2015-2023, University of Washington Interactive Data Lab

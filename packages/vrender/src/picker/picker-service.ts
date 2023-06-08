@@ -1,13 +1,18 @@
-import { Matrix, Point, IMatrix, IPoint, IBounds, IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPoint, IBounds, IPointLike } from '@visactor/vutils';
+import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { foreach } from '../common/sort';
-import { ContributionProvider } from '../common/contribution-provider';
-import { IContext2d, IGraphic, IGroup, EnvType, Global, IGlobal, mat4 } from '../interface';
-import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
+import type { ContributionProvider } from '../common/contribution-provider';
+import type { IContext2d, IGraphic, IGroup, EnvType, IGlobal } from '../interface';
+import { Global, mat4 } from '../interface';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../graphic/graphic-service/graphic-service';
+import { DefaultAttribute } from '../graphic/config';
+import { getTheme } from '../graphic/theme';
 import { mat4Allocate, matrixAllocate } from '../modules';
-import { PickResult } from './type';
-import { IDrawContribution } from '../render';
-import { IPickItemInterceptorContribution, PickItemInterceptor } from './pick-interceptor';
+import type { PickResult } from './type';
+import type { IDrawContribution } from '../render';
+import type { IPickItemInterceptorContribution } from './pick-interceptor';
+import { PickItemInterceptor } from './pick-interceptor';
 
 export const GraphicPicker = Symbol.for('GraphicPicker');
 

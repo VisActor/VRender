@@ -1,6 +1,5 @@
 import { min, IPointLike, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ISegPath2D, drawSegments, calcLineCache } from '../../../common';
 import {
   IContext2d,
   ILine,
@@ -8,7 +7,8 @@ import {
   IMarkAttribute,
   IGraphicAttribute,
   IThemeAttribute,
-  IClipRangeByDimensionType
+  IClipRangeByDimensionType,
+  ISegPath2D
 } from '../../../interface';
 import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
 import { IDrawContext, IRenderService } from '../../render-service';
@@ -16,6 +16,8 @@ import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../modules';
+import { drawSegments } from '../../../common/render-curve';
+import { calcLineCache } from '../../../common/segment';
 
 /**
  * 默认的基于canvas的line渲染器

@@ -1,5 +1,4 @@
 import { IPoint, AABBBounds } from '@visactor/vutils';
-import { getScaledStroke } from '../../../common';
 import { inject, injectable } from 'inversify';
 import { getTheme, ARC3D_NUMBER_TYPE, getExtraModelMatrix, multiplyMat4Mat3, multiplyMat4Mat4 } from '../../../graphic';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IArc3d, IThemeAttribute } from '../../../interface';

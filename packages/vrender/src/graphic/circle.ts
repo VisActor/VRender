@@ -1,7 +1,8 @@
-import { pi2, epsilon, AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
 import { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { circleBounds, parsePadding, CustomPath2D } from '../common';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 

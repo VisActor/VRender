@@ -1,13 +1,6 @@
 import { IPoint, AABBBounds } from '@visactor/vutils';
-import { getScaledStroke } from '../../../common';
 import { inject, injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  PYRAMID3D_NUMBER_TYPE
-} from '../../../graphic';
+import { getTheme, PYRAMID3D_NUMBER_TYPE } from '../../../graphic';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IPyramid3d, IThemeAttribute } from '../../../interface';
 import { IGraphicRender, Pyramid3dRender } from '../../../render';
 import { IGraphicPicker, IPickParams } from '../../picker-service';

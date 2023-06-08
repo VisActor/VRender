@@ -1,7 +1,9 @@
 import { abs, IPointLike } from '@visactor/vutils';
-import { Direction, SegContext } from '../seg-context';
+import { genLinearSegments } from './linear';
 import { genCurveSegments } from './common';
-import { ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
+import { SegContext } from '../seg-context';
+import { Direction } from '../enums';
+import { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -20,19 +22,38 @@ import { ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
   THIS SOFTWARE.
  */
 
-// 基于d3-shape重构，定义绘制线段的方法
-// https://github.com/d3/d3-shape/blob/main/src/curve/linear.js
-export class Linear extends ALinearTypeClass {
-  declare context: ISegPath2D;
+// 基于d3-shape重构
+// https://github.com/d3/d3-shape/blob/main/src/curve/basis.js
+export function point(curveClass: Basis, x: number, y: number, defined: boolean) {
+  curveClass.context.bezierCurveTo(
+    (2 * curveClass._x0 + curveClass._x1) / 3,
+    (2 * curveClass._y0 + curveClass._y1) / 3,
+    (curveClass._x0 + 2 * curveClass._x1) / 3,
+    (curveClass._y0 + 2 * curveClass._y1) / 3,
+    (curveClass._x0 + 4 * curveClass._x1 + x) / 6,
+    (curveClass._y0 + 4 * curveClass._y1 + y) / 6,
+    defined
+  );
+}
+
+export class Basis implements ICurvedSegment {
   private _lastDefined?: boolean;
+  declare context: ISegPath2D;
 
   protected startPoint?: IPointLike;
 
   constructor(context: ISegPath2D, startPoint?: IPointLike) {
-    super();
     this.context = context;
-    startPoint && (this.startPoint = startPoint);
+    this.startPoint = startPoint;
   }
+  _x: number;
+  _y: number;
+  _x0: number;
+  _x1: number;
+  _y0: number;
+  _y1: number;
+  _line: number;
+  _point: number;
 
   areaStart() {
     this._line = 0;
@@ -41,10 +62,21 @@ export class Linear extends ALinearTypeClass {
     this._line = NaN;
   }
   lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
     this._point = 0;
     this.startPoint && this.point(this.startPoint);
   }
   lineEnd() {
+    switch (this._point) {
+      case 2:
+        point(
+          this,
+          this._x1 * 6 - (this._x0 + 4 * this._x1),
+          this._y1 * 6 - (this._y0 + 4 * this._y1),
+          this._lastDefined !== false
+        ); // falls through
+      // case 2: this.context.lineTo(this._x1, this._y1); break;
+    }
     if (this._line || (this._line !== 0 && this._point === 1)) {
       this.context.closePath();
     }
@@ -61,12 +93,15 @@ export class Linear extends ALinearTypeClass {
           : this.context.moveTo(x, y);
         break;
       case 1:
-        this._point = 2; // falls through
+        this._point = 2;
+        break;
+      // case 2: this._point = 3; this.context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6, i, defined1, defined2); // falls through
       default:
-        this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
+        point(this, x, y, this._lastDefined !== false && p.defined !== false);
         break;
     }
-
+    (this._x0 = this._x1), (this._x1 = x);
+    (this._y0 = this._y1), (this._y1 = y);
     this._lastDefined = p.defined;
   }
 
@@ -75,26 +110,28 @@ export class Linear extends ALinearTypeClass {
   }
 }
 
-export function genLinearSegments(points: IPointLike[], params: IGenSegmentParams = {}): SegContext | null {
+export function genBasisTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
+  return genCurveSegments(path, points, 2);
+}
+
+export function genBasisSegments(points: IPointLike[], params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
     return null;
   }
-
+  if (points.length < 3 - Number(!!startPoint)) {
+    return genLinearSegments(points, params);
+  }
   const segContext = new SegContext(
-    'linear',
+    'basis',
     direction ??
       (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
         ? Direction.ROW
         : Direction.COLUMN)
   );
-  const linear = new Linear(segContext, startPoint);
+  const basis = new Basis(segContext, startPoint);
 
-  genLinearTypeSegments(linear, points);
+  genBasisTypeSegments(basis, points);
 
   return segContext;
-}
-
-export function genLinearTypeSegments(path: ALinearTypeClass, points: IPointLike[]): void {
-  return genCurveSegments(path, points, 1);
 }

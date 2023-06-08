@@ -4,7 +4,7 @@ import { DefaultGlobalPickerService, GlobalPickerService } from './global-picker
 import { DefaultCanvasPickerService } from './canvas-picker-service';
 import { DefaultMathPickerService } from './math-picker-service';
 import { Canvas3DPickItemInterceptor, PickItemInterceptor } from './pick-interceptor';
-import { bindContributionProvider } from '../common';
+import { bindContributionProvider } from '../common/contribution-provider';
 
 export default new ContainerModule(bind => {
   bind(DefaultCanvasPickerService).toSelf().inSingletonScope();

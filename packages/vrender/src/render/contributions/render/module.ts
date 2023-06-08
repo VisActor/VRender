@@ -1,5 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { bindContributionProvider } from '../../../common';
+import { bindContributionProvider } from '../../../common/contribution-provider';
 import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultCanvasRectRender } from './rect-render';
 import { DefaultCanvasArcRender } from './arc-render';

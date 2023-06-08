@@ -4,7 +4,8 @@ import { getModelMatrix, getTheme, GROUP_NUMBER_TYPE, multiplyMat4Mat4 } from '.
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { isArray } from '@visactor/vutils';
-import { ContributionProvider, createRectPath } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { GroupRenderContribution, IGroupRenderContribution } from './contributions/group-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';

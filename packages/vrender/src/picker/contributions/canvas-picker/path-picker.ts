@@ -4,8 +4,8 @@ import { getTheme, PATH_NUMBER_TYPE } from '../../../graphic';
 import { IContext2d, IPath, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, PathRender } from '../../../render';
-import { graphicService, mat4Allocate } from '../../../modules';
-import { getScaledStroke } from '../../../common';
+import { mat4Allocate } from '../../../modules';
+import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';
 
 @injectable()

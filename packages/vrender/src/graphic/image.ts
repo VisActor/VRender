@@ -1,10 +1,10 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
-import { parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 
 export const IMAGE_NUMBER_TYPE = genNumberType();
 

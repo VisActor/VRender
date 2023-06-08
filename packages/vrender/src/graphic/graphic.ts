@@ -42,7 +42,7 @@ import { IPickerService } from '../picker';
 import { graphicService, pickerService, transformUtil } from '../modules';
 import { Animate, DefaultStateAnimateConfig } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
-import { CustomPath2D } from '../common/path';
+import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
 import { ResourceLoader } from '../resource-loader/loader';
 import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enums';

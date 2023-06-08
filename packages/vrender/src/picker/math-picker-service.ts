@@ -1,5 +1,5 @@
 import { IPointLike } from '@visactor/vutils';
-import { ContributionProvider } from '../common';
+import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
 import { ICanvas, IContext2d, IGraphic, EnvType, Global, IGlobal } from '../interface';
 import { DefaultPickService, IGraphicPicker, IPickerService, IPickParams } from './picker-service';

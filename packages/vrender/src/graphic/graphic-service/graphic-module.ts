@@ -1,5 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { bindContributionProvider } from '../../common';
+import { bindContributionProvider } from '../../common/contribution-provider';
 import { ArcBoundsContribution, DefaultArcOuterBorderBoundsContribution } from './arc-contribution';
 import { CircleBoundsContribution, DefaultCircleOuterBorderBoundsContribution } from './circle-contribution';
 // import { DefaultTheme } from './default-theme';

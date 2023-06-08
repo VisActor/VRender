@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { drawIncrementalSegments } from '../../../common';
 import {
   IContext2d,
   ILine,
@@ -14,6 +13,7 @@ import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { IDrawContext } from '../../render-service';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { DefaultCanvasLineRender } from './line-render';
+import { drawIncrementalSegments } from '../../../common/render-curve';
 
 /**
  * 默认的基于canvas的line渲染器

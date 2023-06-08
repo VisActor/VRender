@@ -1,35 +1,19 @@
-import { min, IPointLike, IBoundsLike } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import {
   IArea,
-  IAreaCacheItem,
   IAreaGraphicAttribute,
   IAreaSegment,
   IGraphicAttribute,
   IContext2d,
-  ICurveType,
   IMarkAttribute,
-  ISegment,
   IThemeAttribute
 } from '../../../interface';
-import {
-  genLinearSegments,
-  genBasisSegments,
-  genMonotoneXSegments,
-  genMonotoneYSegments,
-  genStepSegments,
-  ISegPath2D,
-  Direction,
-  SegContext,
-  drawAreaSegments,
-  drawIncrementalAreaSegments
-} from '../../../common';
 import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { graphicService } from '../../../modules';
-import { IDrawContext, IRenderService } from '../../render-service';
+import { IDrawContext } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';
 import { DefaultCanvasAreaRender } from './area-render';
+import { drawIncrementalAreaSegments } from '../../../common/render-curve';
 
 /**
  * 默认的基于canvas的line渲染器

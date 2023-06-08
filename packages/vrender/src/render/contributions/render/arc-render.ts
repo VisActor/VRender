@@ -1,7 +1,8 @@
 import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { ContributionProvider, parseStroke } from '../../../common';
+import { parseStroke } from '../../../common/utils';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import {
   IContext2d,
   IArc,

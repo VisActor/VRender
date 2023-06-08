@@ -1,5 +1,6 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider, renderCommandList } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { renderCommandList } from '../../../common/render-command-list';
 import {
   IPath,
   ICustomPath2D,
@@ -9,7 +10,7 @@ import {
   IMarkAttribute
 } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
-import { getModelMatrix, getTheme, multiplyMat4Mat4, PATH_NUMBER_TYPE, shouldUseMat4 } from '../../../graphic';
+import { getTheme, PATH_NUMBER_TYPE } from '../../../graphic';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { IPathRenderContribution, PathRenderContribution } from './contributions/path-contribution-render';

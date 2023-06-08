@@ -1,5 +1,5 @@
 import { IPointLike, pi, pi2, vec2 } from '@visactor/vutils';
-import { enumCommandMap as CMD } from '../common';
+import { enumCommandMap as CMD } from '../common/path-svg';
 import { CommandType, IContext2d } from '../interface';
 // 源码参考 http://pomax.github.io/bezierinfo/#projections
 /**

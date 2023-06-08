@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Generator } from '../../../common';
+import { Generator } from '../../../common/generator';
 import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
 

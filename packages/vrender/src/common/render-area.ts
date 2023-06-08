@@ -1,6 +1,8 @@
-import { abs, IPoint, IPointLike } from '@visactor/vutils';
-import { IAreaCacheItem, ICurve, IPath2D } from '../interface';
-import { divideCubic, divideLinear, BoundsContext, CubicBezierCurve, LineCurve, Direction, SegContext } from '.';
+import { abs, IPoint } from '@visactor/vutils';
+import { IAreaCacheItem, ICubicBezierCurve, ICurve, IDirection, ILineCurve, IPath2D } from '../interface';
+import { Direction } from './enums';
+import { divideCubic } from './segment/curve/cubic-bezier';
+import { divideLinear } from './segment/curve/line';
 
 /**
  * 绘制连续的线段
@@ -19,7 +21,7 @@ export function drawAreaSegments(
     offsetX?: number;
     offsetY?: number;
     offsetZ?: number;
-    direction?: Direction;
+    direction?: IDirection;
   }
 ) {
   // const { offsetX = 0, offsetY = 0 } = params || {};
@@ -110,14 +112,14 @@ export function drawAreaSegments(
     if (tc && bc) {
       if (percent < 1) {
         if (tc.p2 && tc.p3) {
-          tc = divideCubic(tc as CubicBezierCurve, percent)[0];
+          tc = divideCubic(tc as ICubicBezierCurve, percent)[0];
         } else {
-          tc = divideLinear(tc as LineCurve, percent)[0];
+          tc = divideLinear(tc as ILineCurve, percent)[0];
         }
         if (bc.p2 && bc.p3) {
-          bc = divideCubic(bc as CubicBezierCurve, 1 - percent)[1];
+          bc = divideCubic(bc as ICubicBezierCurve, 1 - percent)[1];
         } else {
-          bc = divideLinear(bc as LineCurve, 1 - percent)[1];
+          bc = divideLinear(bc as ILineCurve, 1 - percent)[1];
         }
       }
       tc.defined = lastDefined;
@@ -241,7 +243,7 @@ function drawSegItem(
   } else {
     // 绘制一部分
     if (curve.p2 && curve.p3) {
-      const [curve1] = divideCubic(curve as CubicBezierCurve, endPercent);
+      const [curve1] = divideCubic(curve as ICubicBezierCurve, endPercent);
       ctx.bezierCurveTo(
         offsetX + curve1.p1.x,
         offsetY + curve1.p1.y,

@@ -14,7 +14,8 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle",
+    "build": "bundle --clean",
+    "build-umd": "bundle --clean -f umd",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest",

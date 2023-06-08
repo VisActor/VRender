@@ -23,9 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec, ITextMeasureOption } from '@visactor/vutils';
+import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ITextFontParams, getContextFont } from '../../../common';
 import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
 import {
   ICamera,
@@ -45,6 +44,7 @@ import { createColor, getScaledStroke } from '../../../common/canvas-utils';
 import { global, graphicUtil, matrixAllocate } from '../../../modules';
 import { createConicalGradient } from './conical-gradient';
 import { transformMat4 } from '../../../core/camera';
+import { getContextFont } from '../../../common/text';
 
 const outP: [number, number, number] = [0, 0, 0];
 

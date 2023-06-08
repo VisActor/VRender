@@ -1,5 +1,5 @@
 import { Dict, EventEmitter, isBoolean, isFunction, isObject, LooseFunction } from '@visactor/vutils';
-import { Generator } from '../common';
+import { Generator } from '../common/generator';
 import { INode, IGroup } from '../interface';
 
 export class Node extends EventEmitter<any, any> implements INode {

@@ -4,8 +4,7 @@ import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
 import { IArc, IGraphicAttribute, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { ArcRender, IGraphicRender } from '../../../render';
-import { graphicService } from '../../../modules';
-import { getScaledStroke } from '../../../common';
+import { getScaledStroke } from '../../../common/canvas-utils';
 
 @injectable()
 export class DefaultCanvasArcPicker implements IGraphicPicker {

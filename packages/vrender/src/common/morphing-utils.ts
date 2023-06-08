@@ -8,9 +8,10 @@
  */
 
 import { getAngleByPoint, IMatrix, isNumberClose, PointService } from '@visactor/vutils';
-import { ICustomPath2D, IGraphic } from '../interface';
-import { CustomPath2D } from './path';
+import { ICustomPath2D } from '../interface';
+import { CustomPath2D } from './custom-path2d';
 import { enumCommandMap } from './path-svg';
+import { addArcToBezierPath } from './shape/arc';
 
 export function cubicSubdivide(p0: number, p1: number, p2: number, p3: number, t: number, out: number[]) {
   const p01 = (p1 - p0) * t + p0;
@@ -334,45 +335,6 @@ const addLineToBezierPath = (bezierPath: number[], x0: number, y0: number, x1: n
   if (!(isNumberClose(x0, x1) && isNumberClose(y0, y1))) {
     bezierPath.push(x0, y0, x1, y1, x1, y1);
   }
-};
-
-export const addArcToBezierPath = (
-  bezierPath: number[],
-  startAngle: number,
-  endAngle: number,
-  cx: number,
-  cy: number,
-  rx: number,
-  ry: number
-) => {
-  // https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
-  const delta = Math.abs(endAngle - startAngle);
-  const len = (Math.tan(delta / 4) * 4) / 3;
-  const dir = endAngle < startAngle ? -1 : 1;
-
-  const c1 = Math.cos(startAngle);
-  const s1 = Math.sin(startAngle);
-  const c2 = Math.cos(endAngle);
-  const s2 = Math.sin(endAngle);
-
-  const x1 = c1 * rx + cx;
-  const y1 = s1 * ry + cy;
-
-  const x4 = c2 * rx + cx;
-  const y4 = s2 * ry + cy;
-
-  const hx = rx * len * dir;
-  const hy = ry * len * dir;
-
-  bezierPath.push(
-    // Move control points on tangent.
-    x1 - hx * s1,
-    y1 + hy * c1,
-    x4 + hx * s2,
-    y4 - hy * c2,
-    x4,
-    y4
-  );
 };
 
 export function pathToBezierCurves(path: ICustomPath2D): number[][] {

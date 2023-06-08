@@ -13,7 +13,7 @@ import {
   MathSymbolPicker,
   MathTextPicker
 } from '../constants';
-import { bindContributionProvider } from '../../../common';
+import { bindContributionProvider } from '../../../common/contribution-provider';
 import { DefaultMathCirclePicker } from './circle-picker';
 import { DefaultMathRectPicker } from './rect-picker';
 import { DefaultMathArcPicker } from './arc-picker';

@@ -3,19 +3,17 @@ import {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
-  ISymbol,
-  ISymbolGraphicAttribute,
   IThemeAttribute,
   IArea,
   IAreaGraphicAttribute
 } from '../../../../interface';
-import { getAttributeFromDefaultAttrList, getScaledStroke } from '../../../../common';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
   DefaultBaseTextureRenderContribution,
   IBaseRenderContribution
 } from './base-contribution-render';
+import { getAttributeFromDefaultAttrList } from '../../../../common/utils';
 
 export const AreaRenderContribution = Symbol.for('AreaRenderContribution');
 

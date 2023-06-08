@@ -1,10 +1,9 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute } from './config';
 import { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
-import { CustomPath2D } from '../common/path';
+import { CustomPath2D } from '../common/custom-path2d';
 import { graphicService } from '../modules';
 import { GraphicType } from '../interface';
 

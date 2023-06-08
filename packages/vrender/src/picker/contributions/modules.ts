@@ -1,5 +1,4 @@
-import { bindContributionProvider } from '../../common';
-import { Container, ContainerModule } from 'inversify';
+import { Container } from 'inversify';
 // import { PickerContribution } from '../picker-service';
 import canvasPickModule from './canvas-picker/module';
 import mathPickModule from './math-picker/module';

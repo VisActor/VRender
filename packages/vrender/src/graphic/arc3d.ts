@@ -4,7 +4,7 @@ import { genNumberType } from './graphic';
 import { Arc } from './arc';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
-import { parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 
 export const ARC3D_NUMBER_TYPE = genNumberType();
 

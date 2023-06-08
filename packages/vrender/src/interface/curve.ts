@@ -1,18 +1,18 @@
-import { IPoint, IPointLike } from '@visactor/vutils';
-import { ICurvePath, ICurveType } from '../../interface';
-import { Direction } from '../seg-context';
+import type { IPoint, IPointLike } from '@visactor/vutils';
+import type { ICurvePath } from './path';
+import type { ICurveType, IDirection } from './common';
 
 /**
  * 用于segment的path2d接口，参数比普通的path多，部分path的方法不支持。
  */
 export interface ISegPath2D extends ICurvePath<IPoint> {
-  direction: Direction;
+  direction: IDirection;
   curveType: ICurveType;
 
   endX: number;
   endY: number;
 
-  tryUpdateLength: (direction?: Direction) => number;
+  tryUpdateLength: (direction?: IDirection) => number;
   bezierCurveTo: (
     cp1x: number,
     cp1y: number,
@@ -38,12 +38,17 @@ export interface ISegPath2D extends ICurvePath<IPoint> {
   quadraticCurveTo: (cpx: number, cpy: number, x: number, y: number) => void;
 }
 
-export abstract class ACurveClass {
+export interface IGenSegmentParams {
+  direction?: IDirection;
+  startPoint?: IPointLike;
+}
+
+export interface IBaseSegment {
   context: ISegPath2D;
-  abstract lineStart(): void;
-  abstract lineEnd(): void;
-  abstract areaStart(): void;
-  abstract areaEnd(): void;
+  lineStart: () => void;
+  lineEnd: () => void;
+  areaStart: () => void;
+  areaEnd: () => void;
   _x: number;
   _y: number;
   _x0: number;
@@ -53,16 +58,12 @@ export abstract class ACurveClass {
   _line: number;
   _point: number;
 }
-export abstract class ALinearTypeClass extends ACurveClass {
-  abstract point(point: IPointLike): void;
-  abstract tryUpdateLength(): number;
+
+export interface ILinearSegment extends IBaseSegment {
+  point: (point: IPointLike) => void;
+  tryUpdateLength: () => number;
 }
 
-export abstract class ACurveTypeClass extends ACurveClass {
-  abstract point(point: IPointLike): void;
-}
-
-export interface IGenSegmentParams {
-  direction?: Direction;
-  startPoint?: IPointLike;
+export interface ICurvedSegment extends IBaseSegment {
+  point: (point: IPointLike) => void;
 }

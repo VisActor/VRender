@@ -2,7 +2,7 @@ import { IGroup } from '../../interface';
 import { IDrawContext } from '../../render';
 import { global, graphicService } from '../../modules';
 import { IPlugin, IPluginService } from '../plugin-service';
-import { Generator } from '../../common';
+import { Generator } from '../../common/generator';
 
 export class IncrementalAutoRenderPlugin implements IPlugin {
   name: 'IncrementalAutoRenderPlugin' = 'IncrementalAutoRenderPlugin';

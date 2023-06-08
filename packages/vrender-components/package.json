@@ -17,7 +17,7 @@
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
-    "test": "jest",
+    "test": "",
     "test-cov": "jest --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch",

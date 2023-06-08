@@ -16,6 +16,7 @@
     "eslint": "eslint --debug --fix src/",
     "build": "bundle --clean",
     "build-umd": "bundle --clean -f umd",
+    "build-es": "bundle --clean -f es",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest",

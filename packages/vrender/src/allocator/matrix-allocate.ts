@@ -1,7 +1,8 @@
 import { injectable } from 'inversify';
-import { IMatrix, IMatrixLike, Matrix } from '@visactor/vutils';
-import { IAllocate } from './interface';
-import { mat4, Releaseable } from '../interface';
+import type { IMatrix, IMatrixLike } from '@visactor/vutils';
+import { Matrix } from '@visactor/vutils';
+import type { IAllocate } from './interface';
+import type { mat4, Releaseable } from '../interface';
 
 export const MatrixAllocate = Symbol.for('MatrixAllocate');
 export const Mat4Allocate = Symbol.for('Mat4Allocate');

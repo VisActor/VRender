@@ -80,3 +80,4 @@ export * from './camera';
 export * from './matrix';
 export * from './light';
 export * from './curve';
+export * from './graphic-service';

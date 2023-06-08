@@ -12,7 +12,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@visactor/vutils": "0.9.0-alpha.2",
-    "@visactor/vrender-kits": "workspace:0.9.0-fillstroke.0",
+    "@visactor/vrender-kits": "workspace:0.9.0",
     "d3-scale-chromatic": "^3.0.0",
     "lodash": "4.17.21",
     "dat.gui": "^0.7.9",
@@ -28,6 +28,6 @@
     "@antv/g": "^5.7.4"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.9.0-fillstroke.0"
+    "@visactor/vrender": "workspace:0.9.0"
   }
 }

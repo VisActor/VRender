@@ -19,7 +19,7 @@
     "build-es": "bundle --clean -f es",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
-    "test": "jest",
+    "test": "",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

@@ -1,11 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { IAllocate } from './interface';
 import { Global, ICanvas, IGlobal, Releaseable } from '../interface';
-import { wrapCanvas } from '../canvas';
-
-export const CanvasAllocate = Symbol.for('CanvasAllocate');
-
-export type ICanvasAllocate = IAllocate<ICanvas>;
+import { wrapCanvas } from '../canvas/util';
 
 @injectable()
 export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {

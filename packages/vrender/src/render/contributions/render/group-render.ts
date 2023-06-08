@@ -1,6 +1,6 @@
 import { inject, injectable, named } from 'inversify';
 import { IGraphicAttribute, IContext2d, IGroup, IMarkAttribute, IThemeAttribute, mat4 } from '../../../interface';
-import { getModelMatrix, getTheme, GROUP_NUMBER_TYPE, multiplyMat4Mat4 } from '../../../graphic';
+import { getModelMatrix, getTheme, multiplyMat4Mat4 } from '../../../graphic';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { isArray } from '@visactor/vutils';
@@ -10,6 +10,7 @@ import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils'
 import { GroupRenderContribution, IGroupRenderContribution } from './contributions/group-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { mat4Allocate } from '../../../modules';
+import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {

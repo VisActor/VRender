@@ -2,12 +2,11 @@ import { AABBBounds, Matrix, OBBBounds, Point, transformBounds } from '@visactor
 import { graphicService } from '../modules';
 import { IStage, GraphicAttributeMap, INode, IGraphic, ITheme, IThemeSpec, ILayer, GraphicType } from '../interface';
 import { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
-import { Graphic, genNumberType } from './graphic';
+import { Graphic } from './graphic';
 import { getTheme, Theme } from './theme';
 import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
-
-export const GROUP_NUMBER_TYPE = genNumberType();
+import { GROUP_NUMBER_TYPE } from './constants';
 
 // Group更新AABBBounds的策略
 export enum GroupUpdateAABBBoundsMode {

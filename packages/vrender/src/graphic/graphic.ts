@@ -110,11 +110,6 @@ const tempConstantXYKey = ['x', 'y'];
 const tempConstantScaleXYKey = ['scaleX', 'scaleY'];
 const tempConstantAngleKey = ['angle'];
 
-let NUMBER_TYPE: number = 0;
-export function genNumberType() {
-  return NUMBER_TYPE++;
-}
-
 const point = new Point();
 
 export type GraphicReleaseStatus = 'released' | 'willRelease';

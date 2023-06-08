@@ -1,6 +1,7 @@
 import { inject, injectable, named } from 'inversify';
 import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { CIRCLE_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { CircleRenderContribution, ICircleRenderContribution } from './contributions/circle-contribution-render';

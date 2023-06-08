@@ -4,23 +4,24 @@ import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/IText
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas/util';
-import { DefaultTextStyle } from '../graphic';
+import { DefaultTextStyle } from '../graphic/config';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
+import { IGraphicUtil } from './interface';
 
 export const GraphicUtil = Symbol.for('GraphicUtil');
 
-export interface IGraphicUtil {
-  canvas?: ICanvas;
-  context?: IContext2d | null;
-  textMeasure: ITextMeasure;
-  measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
-  bindTextMeasure: (tm: ITextMeasure) => void;
-  createTextMeasureInstance: (
-    textSpec?: Partial<ITextAttribute>,
-    option?: Partial<ITextMeasureOption>,
-    getCanvasForMeasure?: () => any
-  ) => TextMeasure<ITextAttribute>;
-}
+// export interface IGraphicUtil {
+//   canvas?: ICanvas;
+//   context?: IContext2d | null;
+//   textMeasure: ITextMeasure;
+//   measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
+//   bindTextMeasure: (tm: ITextMeasure) => void;
+//   createTextMeasureInstance: (
+//     textSpec?: Partial<ITextAttribute>,
+//     option?: Partial<ITextMeasureOption>,
+//     getCanvasForMeasure?: () => any
+//   ) => TextMeasure<ITextAttribute>;
+// }
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {

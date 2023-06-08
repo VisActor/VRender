@@ -1,6 +1,7 @@
 import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, RECT_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 import { createRectPath } from '../../../common/shape/rect';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';

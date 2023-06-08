@@ -1,7 +1,7 @@
 import { isArray } from '@visactor/vutils';
 import { CanvasTextLayout, LayoutItemType } from '../core';
 import { IWrapTextGraphicAttribute } from '../interface';
-import { graphicUtil } from '../modules';
+import { application } from '../application';
 import { Text } from './text';
 import { getTheme } from './theme';
 
@@ -54,7 +54,7 @@ export class WrapText extends Text {
       return this._AABBBounds;
     }
 
-    const textMeasure = graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.textMeasure;
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure as any) as any;
 
     // layoutObj内逻辑

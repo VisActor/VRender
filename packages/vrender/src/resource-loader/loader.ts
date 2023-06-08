@@ -1,5 +1,5 @@
 import { IGraphic, IImage } from '../interface';
-import { global } from '../modules';
+import { application } from '../application';
 
 export type SupportResourceType =
   | 'json'
@@ -45,14 +45,14 @@ export class ResourceLoader {
       // 存在缓存
       if (data.loadState === 'fail') {
         // 资源请求失败，修改mark状态
-        global.getRequestAnimationFrame()(() => {
+        application.global.getRequestAnimationFrame()(() => {
           mark.imageLoadFail(url);
         });
       } else if (data.loadState === 'init' || data.loadState === 'loading') {
         // 资源padding队列加入mark信息
         data.waitingMark?.push(mark);
       } else if (mark) {
-        global.getRequestAnimationFrame()(() => {
+        application.global.getRequestAnimationFrame()(() => {
           mark.imageLoadSuccess(url, data.data as HTMLImageElement);
         });
       }
@@ -60,7 +60,7 @@ export class ResourceLoader {
       data = { type: 'image', loadState: 'init' };
       ResourceLoader.cache.set(url, data);
 
-      data.dataPromise = global.loadImage(url);
+      data.dataPromise = application.global.loadImage(url);
       if (!data.dataPromise) {
         // 无法获取资源，修改缓存和mark状态
         data.loadState = 'fail';
@@ -94,14 +94,14 @@ export class ResourceLoader {
       // 存在缓存
       if (data.loadState === 'fail') {
         // 资源请求失败，修改mark状态
-        global.getRequestAnimationFrame()(() => {
+        application.global.getRequestAnimationFrame()(() => {
           mark.imageLoadFail(svgStr);
         });
       } else if (data.loadState === 'init' || data.loadState === 'loading') {
         // 资源padding队列加入mark信息
         data.waitingMark?.push(mark);
       } else if (mark) {
-        global.getRequestAnimationFrame()(() => {
+        application.global.getRequestAnimationFrame()(() => {
           mark.imageLoadSuccess(svgStr, data.data as HTMLImageElement);
         });
       }
@@ -109,7 +109,7 @@ export class ResourceLoader {
       data = { type: 'image', loadState: 'init' };
       ResourceLoader.cache.set(svgStr, data);
 
-      data.dataPromise = global.loadSvg(svgStr);
+      data.dataPromise = application.global.loadSvg(svgStr);
       if (!data.dataPromise) {
         // 无法获取资源，修改缓存和mark状态
         data.loadState = 'fail';
@@ -152,11 +152,11 @@ export class ResourceLoader {
     ResourceLoader.cache.set(url, data);
 
     if (type === 'arrayBuffer') {
-      data.dataPromise = global.loadArrayBuffer(url);
+      data.dataPromise = application.global.loadArrayBuffer(url);
     } else if (type === 'blob') {
-      data.dataPromise = global.loadBlob(url);
+      data.dataPromise = application.global.loadBlob(url);
     } else if (type === 'json') {
-      data.dataPromise = global.loadJson(url);
+      data.dataPromise = application.global.loadJson(url);
     }
 
     return data.dataPromise.then(data => data.data);

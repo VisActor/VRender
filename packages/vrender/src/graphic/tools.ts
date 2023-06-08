@@ -1,4 +1,4 @@
-import { global } from '../modules';
+import { application } from '../application';
 import { IGraphic, IGroup, ILayer, IStage } from '../interface';
 import { IAABBBounds } from '@visactor/vutils';
 
@@ -14,7 +14,7 @@ export async function waitForAllSubLayers(stage: IStage) {
   const promiseList: Promise<any>[] = [];
   const layers = stage.getChildren() as ILayer[];
   await new Promise(resolve => {
-    global.getRequestAnimationFrame()(() => {
+    application.global.getRequestAnimationFrame()(() => {
       resolve(null);
     });
   });
@@ -62,3 +62,8 @@ function miterAdjustment(miter: boolean, strokeWidth: number) {
 //     graphic.shadowRoot = null;
 //   }
 // }
+
+let NUMBER_TYPE: number = 0;
+export function genNumberType() {
+  return NUMBER_TYPE++;
+}

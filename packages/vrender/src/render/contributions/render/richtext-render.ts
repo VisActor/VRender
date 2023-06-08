@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import { createRectPath } from '../../../common/shape/rect';
-import { getTheme, RICHTEXT_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender } from './graphic-render';

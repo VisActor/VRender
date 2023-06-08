@@ -1,12 +1,10 @@
 import { AABBBounds } from '@visactor/vutils';
 import { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
-import { genNumberType } from './graphic';
 import { Arc } from './arc';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 import { parsePadding } from '../common/utils';
-
-export const ARC3D_NUMBER_TYPE = genNumberType();
+import { ARC3D_NUMBER_TYPE } from './constants';
 
 export class Arc3d extends Arc implements IArc3d {
   type: GraphicType = 'arc3d';

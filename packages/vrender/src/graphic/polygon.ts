@@ -1,13 +1,12 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { graphicService } from '../modules';
 import { GraphicType } from '../interface';
-
-export const POLYGON_NUMBER_TYPE = genNumberType();
+import { POLYGON_NUMBER_TYPE } from './constants';
 
 const POLYGON_UPDATE_TAG_KEY = ['points', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 

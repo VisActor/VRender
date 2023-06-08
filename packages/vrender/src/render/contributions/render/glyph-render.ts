@@ -1,6 +1,7 @@
 import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, GLYPH_NUMBER_TYPE, RECT_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { GLYPH_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicAttribute, IContext2d, IGlyph, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';

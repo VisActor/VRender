@@ -1,7 +1,7 @@
 import { epsilon } from '@visactor/vutils';
 import { ITimeline } from '../../animate';
 import { Releaseable } from '../../interface';
-import { global } from '../../modules';
+import { application } from '../../application';
 import { ITicker } from './interface';
 
 export class ManualTickHandler implements ITickHandler {
@@ -70,14 +70,14 @@ export class RAFTickHandler implements ITickHandler {
   protected released: boolean;
 
   static Avaliable(): boolean {
-    return !!global.getRequestAnimationFrame();
+    return !!application.global.getRequestAnimationFrame();
   }
   avaliable(): boolean {
     return RAFTickHandler.Avaliable();
   }
 
   tick(interval: number, cb: (handler: ITickHandler) => void): void {
-    const raf = global.getRequestAnimationFrame();
+    const raf = application.global.getRequestAnimationFrame();
     raf(() => {
       if (this.released) {
         return;
@@ -151,10 +151,10 @@ export class DefaultTicker implements ITicker {
   init() {
     this.interval = NaN;
     this.status = STATUS.INITIAL;
-    global.hooks.onSetEnv.tap('window', () => {
+    application.global.hooks.onSetEnv.tap('window', () => {
       this.initHandler();
     });
-    if (global.env) {
+    if (application.global.env) {
       this.initHandler();
     }
   }

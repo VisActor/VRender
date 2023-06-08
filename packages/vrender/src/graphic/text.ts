@@ -1,13 +1,13 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout, LayoutType } from '../core/contributions/textMeasure/layout';
-import { graphicService, graphicUtil } from '../modules';
+import { graphicService } from '../modules';
+import { application } from '../application';
 import { IText, ITextCache, ITextGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
-
-export const TEXT_NUMBER_TYPE = genNumberType();
+import { TEXT_NUMBER_TYPE } from './constants';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -127,7 +127,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateSingallineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
-    const textMeasure = graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
     const buf = 2;
@@ -213,7 +213,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
 
-    const textMeasure = graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.textMeasure;
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,

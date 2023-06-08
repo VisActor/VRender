@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { global } from '../../../modules';
+import { application } from '../../../application';
 import { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../../interface';
 import { BrowserContext2d } from './context';
 
@@ -114,7 +114,7 @@ export class BrowserCanvas implements ICanvas {
     this._visiable = params.visiable !== false;
     this.controled = canvasControled;
     if (typeof container === 'string') {
-      const _c = global.getElementById(container);
+      const _c = application.global.getElementById(container);
       if (_c) {
         this._container = _c;
       }

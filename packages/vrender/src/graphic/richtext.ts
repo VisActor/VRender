@@ -14,7 +14,7 @@ import {
   ILayer,
   IRichTextIcon
 } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { DefaultRichTextAttribute } from './config';
 import Frame from './richtext/frame';
 import Paragraph from './richtext/paragraph';
@@ -24,8 +24,7 @@ import { RichTextIcon } from './richtext/icon';
 import { FederatedMouseEvent } from '../event';
 import { graphicService } from '../modules';
 import { parsePadding } from '../common/utils';
-
-export const RICHTEXT_NUMBER_TYPE = genNumberType();
+import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 const RICHTEXT_UPDATE_TAG_KEY = [
   'width',

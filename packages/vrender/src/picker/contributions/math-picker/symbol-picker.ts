@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { IPoint } from '@visactor/vutils';
-import { getTheme, SYMBOL_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, SymbolRender } from '../../../render';
-import { graphicService } from '../../../modules';
+import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultMathSymbolPicker implements IGraphicPicker {

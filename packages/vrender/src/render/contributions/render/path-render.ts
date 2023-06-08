@@ -17,7 +17,7 @@ import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from '.
 import { IPathRenderContribution, PathRenderContribution } from './contributions/path-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { BaseRender } from './base-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 
 @injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {

@@ -4,7 +4,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { CIRCLE_NUMBER_TYPE } from './constants';
 
 const CIRCLE_UPDATE_TAG_KEY = ['radius', 'startAngle', 'endAngle', ...GRAPHIC_UPDATE_TAG_KEY];
@@ -33,7 +33,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     const circleTheme = getTheme(this).circle;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateCircleAABBBounds(
+    const bounds = application.graphicService.updateCircleAABBBounds(
       attribute,
       getTheme(this).circle,
       this._AABBBounds,

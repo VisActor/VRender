@@ -6,9 +6,7 @@ import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas/util';
 import { DefaultTextStyle } from '../graphic/config';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
-import { IGraphicUtil } from './interface';
-
-export const GraphicUtil = Symbol.for('GraphicUtil');
+import { IGraphicUtil, ITransformUtil, TransformType } from './interface';
 
 // export interface IGraphicUtil {
 //   canvas?: ICanvas;
@@ -107,22 +105,9 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   }
 }
 
-type TransformType = Pick<IGraphicAttribute, 'x' | 'y' | 'scaleX' | 'scaleY' | 'angle' | 'dx' | 'dy'> & {
-  anchor?: IGraphicAttribute['anchor'];
-};
-
 enum TransformMode {
   transform = 0,
   matrix = 1
-}
-
-export const TransformUtil = Symbol.for('TransformUtil');
-
-export interface ITransformUtil {
-  init: (origin: TransformType) => ITransformUtil;
-  fromMatrix: (source: IMatrix, target: IMatrix) => ITransformUtil;
-  scale: (sx: number, sy: number, center?: IPointLike) => ITransformUtil;
-  translate: (dx: number, dy: number) => ITransformUtil;
 }
 
 const _matrix = new Matrix();

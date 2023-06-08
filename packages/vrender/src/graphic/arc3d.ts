@@ -2,7 +2,7 @@ import { AABBBounds } from '@visactor/vutils';
 import { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
 import { Arc } from './arc';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { parsePadding } from '../common/utils';
 import { ARC3D_NUMBER_TYPE } from './constants';
 
@@ -20,7 +20,7 @@ export class Arc3d extends Arc implements IArc3d {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
 
     const attribute = this.attribute;
-    const bounds = graphicService.updateArc3dAABBBounds(
+    const bounds = application.graphicService.updateArc3dAABBBounds(
       attribute,
       getTheme(this).polygon as any,
       this._AABBBounds,

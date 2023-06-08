@@ -5,7 +5,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { ISymbolClass } from './builtin-symbol/interface';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
 import { SYMBOL_NUMBER_TYPE } from './constants';
 
@@ -72,7 +72,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     const symbolTheme = getTheme(this).symbol;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateSymbolAABBBounds(
+    const bounds = application.graphicService.updateSymbolAABBBounds(
       attribute,
       getTheme(this).symbol,
       this._AABBBounds,

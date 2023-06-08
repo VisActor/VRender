@@ -15,7 +15,7 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { colorString } from '../../../color-string';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 @injectable()

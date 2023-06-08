@@ -1,13 +1,5 @@
-import { Bounds } from '@visactor/vutils';
 import { IContext2d, IRichTextParagraphCharacter } from '../../interface';
-import {
-  measureTextCanvas,
-  prepareContext,
-  applyFillStyle,
-  applyStrokeStyle,
-  regFirstSpace,
-  getStrByWithCanvas
-} from './utils';
+import { measureTextCanvas, applyFillStyle, applyStrokeStyle, getStrByWithCanvas } from './utils';
 
 /**
  * 部分代码参考 https://github.com/danielearwicker/carota/
@@ -290,4 +282,13 @@ export default class Paragraph {
     }
     return width;
   }
+}
+
+export function seperateParagraph(paragraph: Paragraph, index: number) {
+  const text1 = paragraph.text.slice(0, index);
+  const text2 = paragraph.text.slice(index);
+  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character);
+  const p2 = new Paragraph(text2, true, paragraph.character);
+
+  return [p1, p2];
 }

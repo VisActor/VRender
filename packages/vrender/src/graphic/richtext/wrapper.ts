@@ -1,7 +1,7 @@
 import Line from './line';
 import Frame from './frame';
-import Paragraph from './paragraph';
-import { DIRECTION_KEY, getStrByWithCanvas, seperateParagraph } from './utils';
+import Paragraph, { seperateParagraph } from './paragraph';
+import { DIRECTION_KEY, getStrByWithCanvas } from './utils';
 import { RichTextIcon } from './icon';
 
 /**

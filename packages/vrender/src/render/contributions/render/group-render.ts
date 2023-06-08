@@ -9,7 +9,7 @@ import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { GroupRenderContribution, IGroupRenderContribution } from './contributions/group-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()

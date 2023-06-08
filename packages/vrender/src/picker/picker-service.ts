@@ -4,7 +4,7 @@ import { foreach } from '../common/sort';
 import { ContributionProvider } from '../common/contribution-provider';
 import { IContext2d, IGraphic, IGroup, EnvType, Global, IGlobal, mat4 } from '../interface';
 import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
-import { mat4Allocate, matrixAllocate } from '../modules';
+import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
 import { PickResult } from './type';
 import { IDrawContribution } from '../render';
 import { IPickItemInterceptorContribution, PickItemInterceptor } from './pick-interceptor';

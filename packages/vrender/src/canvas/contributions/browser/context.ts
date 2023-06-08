@@ -42,7 +42,7 @@ import {
 } from '../../../interface';
 import { createColor, getScaledStroke } from '../../../common/canvas-utils';
 import { application } from '../../../application';
-import { matrixAllocate } from '../../../modules';
+import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { createConicalGradient } from './conical-gradient';
 import { transformMat4 } from '../../../core/camera';
 import { getContextFont } from '../../../common/text';

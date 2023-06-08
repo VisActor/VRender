@@ -6,7 +6,7 @@ import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { BasePicker } from './base-picker';
 import { IGraphicRender, TextRender } from '../../../render';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()

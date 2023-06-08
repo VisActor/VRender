@@ -1,4 +1,4 @@
-import { container } from '../modules';
+import { container } from '../container';
 import { DefaultMathPickerService, PickerService } from '../picker';
 
 // 兼容环境

@@ -17,7 +17,7 @@ import {
 import { IWindow, Window } from './window';
 import { Layer } from './layer';
 import { EventSystem } from '../event';
-import { container } from '../modules';
+import { container } from '../container';
 import { IDrawContext, IRenderService, RenderService } from '../render';
 import { Group, Node, Theme } from '../graphic';
 import { IPickerService, PickerService } from '../picker/picker-service';
@@ -26,7 +26,7 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
-import { defaultTicker } from '../index';
+import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';

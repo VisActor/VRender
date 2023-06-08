@@ -190,7 +190,8 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   ) {
     const { stroke = groupAttribute.stroke } = group.attribute as any;
 
-    if (Array.isArray(stroke)) {
+    // 数组且存在为false的项目，那就不绘制
+    if (Array.isArray(stroke) && stroke.some(s => s === false)) {
       doFillOrStroke.doStroke = false;
     }
   }
@@ -228,7 +229,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       stroke = groupAttribute.stroke
     } = rect.attribute as any;
 
-    if (!Array.isArray(stroke)) {
+    // 不是数组
+    if (!(Array.isArray(stroke) && stroke.some(s => s === false))) {
       return;
     }
 

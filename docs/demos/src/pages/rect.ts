@@ -8,10 +8,12 @@ export const page = () => {
   graphics.push(createRect({
     x: 100,
     y: 100,
-    width: 100,
+    width: 20,
     height: 100,
-    fill: colorPools[10],
-    stroke: colorPools[0],
+    fillColor: colorPools[10],
+    strokeColor: colorPools[0],
+    stroke: [true, true, true, true],
+    borderRadius: 10,
     lineWidth: 5
   }));
 

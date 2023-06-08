@@ -19,5 +19,5 @@ export * from './resource-loader/loader';
 
 export const defaultTicker = new DefaultTicker();
 defaultTicker.addTimeline(defaultTimeline);
-const DEFAULT_FPS = 60;
-defaultTicker.setFPS(DEFAULT_FPS);
+const DEFAULT_TICKER_FPS = 60;
+defaultTicker.setFPS(DEFAULT_TICKER_FPS);

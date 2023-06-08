@@ -22,12 +22,11 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
+import { pi2 } from '@visactor/vutils';
 import { global } from '../../../modules';
 import { IContext2d } from '../../../interface';
 import { IConicalGradient } from '../../../interface/color';
 import { interpolateColor } from '../../../color-string/interpolate';
-import { pi2 } from '@visactor/vutils';
 
 class ConicalCanvas {
   static canvas: HTMLCanvasElement;

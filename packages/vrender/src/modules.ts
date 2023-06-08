@@ -23,6 +23,9 @@ import {
   RectAllocate,
   SymbolAllocate,
   TextAllocate,
+  CanvasAllocate
+} from './allocator/constants';
+import {
   ILineAllocate,
   IPathAllocate,
   IRectAllocate,
@@ -30,10 +33,10 @@ import {
   ITextAllocate,
   IArcAllocate,
   IAreaAllocate,
-  ICircleAllocate
-} from './allocator/graphic-allocate';
+  ICircleAllocate,
+  ICanvasAllocate
+} from './allocator/interface';
 import { Global, IGlobal } from './interface';
-import { CanvasAllocate, ICanvasAllocate } from './allocator/canvas-allocate';
 
 export const container = new Container();
 container.load(coreModule);

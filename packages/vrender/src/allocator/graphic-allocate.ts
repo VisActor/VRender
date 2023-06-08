@@ -41,9 +41,6 @@ export abstract class DefaultGraphicAllocate<T extends IGraphic, IGraphicAttribu
   }
 }
 
-export type IRectAllocate = IAllocate<IRect>;
-export const RectAllocate = Symbol.for('RectAllocate');
-
 @injectable()
 export class DefaultRectAllocate extends DefaultGraphicAllocate<IRect, IRectGraphicAttribute> {
   allocate(attribute: IRectGraphicAttribute): IRect {
@@ -64,9 +61,6 @@ export class DefaultRectAllocate extends DefaultGraphicAllocate<IRect, IRectGrap
     return g;
   }
 }
-
-export type IArcAllocate = IAllocate<IArc>;
-export const ArcAllocate = Symbol.for('ArcAllocate');
 
 @injectable()
 export class DefaultArcAllocate extends DefaultGraphicAllocate<IArc, IArcGraphicAttribute> {
@@ -89,9 +83,6 @@ export class DefaultArcAllocate extends DefaultGraphicAllocate<IArc, IArcGraphic
   }
 }
 
-export type IAreaAllocate = IAllocate<IArea>;
-export const AreaAllocate = Symbol.for('AreaAllocate');
-
 @injectable()
 export class DefaultAreaAllocate extends DefaultGraphicAllocate<IArea, IAreaGraphicAttribute> {
   allocate(attribute: IAreaGraphicAttribute): IArea {
@@ -112,9 +103,6 @@ export class DefaultAreaAllocate extends DefaultGraphicAllocate<IArea, IAreaGrap
     return g;
   }
 }
-
-export type ICircleAllocate = IAllocate<ICircle>;
-export const CircleAllocate = Symbol.for('CircleAllocate');
 
 @injectable()
 export class DefaultCircleAllocate extends DefaultGraphicAllocate<ICircle, ICircleGraphicAttribute> {
@@ -137,9 +125,6 @@ export class DefaultCircleAllocate extends DefaultGraphicAllocate<ICircle, ICirc
   }
 }
 
-export type ILineAllocate = IAllocate<ILine>;
-export const LineAllocate = Symbol.for('LineAllocate');
-
 @injectable()
 export class DefaultLineAllocate extends DefaultGraphicAllocate<ILine, ILineGraphicAttribute> {
   allocate(attribute: ILineGraphicAttribute): ILine {
@@ -160,9 +145,6 @@ export class DefaultLineAllocate extends DefaultGraphicAllocate<ILine, ILineGrap
     return g;
   }
 }
-
-export type IPathAllocate = IAllocate<IPath>;
-export const PathAllocate = Symbol.for('PathAllocate');
 
 @injectable()
 export class DefaultPathAllocate extends DefaultGraphicAllocate<IPath, IPathGraphicAttribute> {
@@ -185,9 +167,6 @@ export class DefaultPathAllocate extends DefaultGraphicAllocate<IPath, IPathGrap
   }
 }
 
-export type ISymbolAllocate = IAllocate<ISymbol>;
-export const SymbolAllocate = Symbol.for('SymbolAllocate');
-
 @injectable()
 export class DefaultSymbolAllocate extends DefaultGraphicAllocate<ISymbol, ISymbolGraphicAttribute> {
   allocate(attribute: ISymbolGraphicAttribute): ISymbol {
@@ -208,9 +187,6 @@ export class DefaultSymbolAllocate extends DefaultGraphicAllocate<ISymbol, ISymb
     return g;
   }
 }
-
-export type ITextAllocate = IAllocate<IText>;
-export const TextAllocate = Symbol.for('TextAllocate');
 
 @injectable()
 export class DefaultTextAllocate extends DefaultGraphicAllocate<IText, ITextGraphicAttribute> {

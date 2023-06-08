@@ -1,23 +1,26 @@
 import { ContainerModule } from 'inversify';
-import { CanvasAllocate, DefaultCanvasAllocate } from './canvas-allocate';
+import { DefaultCanvasAllocate } from './canvas-allocate';
 import {
   DefaultRectAllocate,
-  RectAllocate,
-  ArcAllocate,
   DefaultArcAllocate,
-  AreaAllocate,
   DefaultAreaAllocate,
   DefaultLineAllocate,
-  LineAllocate,
   DefaultPathAllocate,
-  PathAllocate,
   DefaultSymbolAllocate,
-  SymbolAllocate,
   DefaultTextAllocate,
-  TextAllocate,
-  CircleAllocate,
   DefaultCircleAllocate
 } from './graphic-allocate';
+import {
+  CanvasAllocate,
+  RectAllocate,
+  ArcAllocate,
+  AreaAllocate,
+  LineAllocate,
+  PathAllocate,
+  SymbolAllocate,
+  TextAllocate,
+  CircleAllocate
+} from './constants';
 import { DefaultMat4Allocate, DefaultMatrixAllocate, Mat4Allocate, MatrixAllocate } from './matrix-allocate';
 
 export default new ContainerModule(bind => {

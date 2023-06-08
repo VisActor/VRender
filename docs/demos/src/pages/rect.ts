@@ -12,7 +12,6 @@ export const page = () => {
     height: 100,
     fill: colorPools[10],
     stroke: colorPools[0],
-    stroke: [true, false, false, false],
     lineWidth: 5
   }));
 

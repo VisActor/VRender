@@ -3,10 +3,12 @@ import { bindContributionProvider } from '../../common/contribution-provider';
 import { ArcBoundsContribution, DefaultArcOuterBorderBoundsContribution } from './arc-contribution';
 import { CircleBoundsContribution, DefaultCircleOuterBorderBoundsContribution } from './circle-contribution';
 // import { DefaultTheme } from './default-theme';
-import { DefaultGraphicService, GraphicService } from './graphic-service';
+import { DefaultGraphicService } from './graphic-service';
 import { DefaultPathOuterBorderBoundsContribution, PathBoundsContribution } from './path-contribution';
 import { RectBoundsContribution, DefaultRectOuterBorderBoundsContribution } from './rect-contribution';
 import { DefaultSymbolOuterBorderBoundsContribution, SymbolBoundsContribution } from './symbol-contribution';
+import { GraphicCreator, GraphicService } from '../constants';
+import { graphicCreator } from '../graphic-creator';
 // import { DefaultThemeService, Theme, ThemeServce } from './theme-service';
 
 export default new ContainerModule(bind => {
@@ -37,6 +39,8 @@ export default new ContainerModule(bind => {
   bind(DefaultPathOuterBorderBoundsContribution).toSelf().inSingletonScope();
   bind(PathBoundsContribution).toService(DefaultPathOuterBorderBoundsContribution);
   bindContributionProvider(bind, PathBoundsContribution);
+
+  bind(GraphicCreator).toConstantValue(graphicCreator);
   // bind(DefaultThemeService).toSelf().inSingletonScope();
   // bind(ThemeServce).toService(DefaultThemeService);
   // bind(DefaultTheme).toSelf().inSingletonScope();

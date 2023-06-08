@@ -11,7 +11,8 @@ import {
   Releaseable,
   IGlobal
 } from '../interface';
-import { Group, Theme } from '../graphic';
+import { Theme } from '../graphic/theme';
+import { Group } from '../graphic/group';
 import { IWindow } from './window';
 import { IDrawContext, IDrawContribution, IRenderServiceDrawParams } from '../render';
 

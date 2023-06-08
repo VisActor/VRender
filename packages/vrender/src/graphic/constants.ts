@@ -16,3 +16,6 @@ export const RECT3D_NUMBER_TYPE = genNumberType();
 export const RICHTEXT_NUMBER_TYPE = genNumberType();
 export const SYMBOL_NUMBER_TYPE = genNumberType();
 export const TEXT_NUMBER_TYPE = genNumberType();
+
+export const GraphicService = Symbol.for('GraphicService');
+export const GraphicCreator = Symbol.for('GraphicCreator');

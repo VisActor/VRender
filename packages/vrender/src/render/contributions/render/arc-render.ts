@@ -15,7 +15,7 @@ import {
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { getConicGradientAt } from '../../../canvas';
+import { getConicGradientAt } from '../../../canvas/contributions/browser/conical-gradient';
 import { ArcRenderContribution, IArcRenderContribution } from './contributions/arc-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';

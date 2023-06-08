@@ -53,12 +53,13 @@ import { ArcBoundsContribution } from './arc-contribution';
 import type { IPathBoundsContribution } from './path-contribution';
 import { PathBoundsContribution } from './path-contribution';
 import { mat4Allocate } from '../../modules';
-import type { ContributionProvider } from '../../common/contribution-provider';
+import type { IContributionProvider } from '../../common/contribution-provider';
+import { ContributionProvider } from '../../common/contribution-provider';
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { circleBounds } from '../../common/utils';
 
-/**
+/**git s
  * 部分代码参考 https://github.com/toji/gl-matrix
  * Copyright (c) 2015-2021, Brandon Jones, Colin MacKenzie IV.
 
@@ -630,19 +631,19 @@ export class DefaultGraphicService implements IGraphicService {
   constructor(
     @inject(ContributionProvider)
     @named(RectBoundsContribution)
-    protected readonly rectBoundsContribitions: ContributionProvider<IRectBoundsContribution>,
+    protected readonly rectBoundsContribitions: IContributionProvider<IRectBoundsContribution>,
     @inject(ContributionProvider)
     @named(SymbolBoundsContribution)
-    protected readonly symbolBoundsContribitions: ContributionProvider<ISymbolBoundsContribution>,
+    protected readonly symbolBoundsContribitions: IContributionProvider<ISymbolBoundsContribution>,
     @inject(ContributionProvider)
     @named(CircleBoundsContribution)
-    protected readonly circleBoundsContribitions: ContributionProvider<ICircleBoundsContribution>,
+    protected readonly circleBoundsContribitions: IContributionProvider<ICircleBoundsContribution>,
     @inject(ContributionProvider)
     @named(ArcBoundsContribution)
-    protected readonly arcBoundsContribitions: ContributionProvider<IArcBoundsContribution>,
+    protected readonly arcBoundsContribitions: IContributionProvider<IArcBoundsContribution>,
     @inject(ContributionProvider)
     @named(PathBoundsContribution)
-    protected readonly pathBoundsContribitions: ContributionProvider<IPathBoundsContribution>
+    protected readonly pathBoundsContribitions: IContributionProvider<IPathBoundsContribution>
   ) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),

@@ -1,11 +1,15 @@
-import { IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import type { IContributionProvider } from '../common/contribution-provider';
 import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
-import { ICanvas, IContext2d, IGraphic, EnvType, Global, IGlobal } from '../interface';
-import { DefaultPickService, IGraphicPicker, IPickerService, IPickParams } from './picker-service';
+import type { ICanvas, IContext2d, IGraphic, EnvType, IGlobal } from '../interface';
+import { Global } from '../interface';
+import type { IGraphicPicker, IPickerService, IPickParams } from './picker-service';
+import { DefaultPickService } from './picker-service';
 import { EmptyContext2d } from '../canvas';
 import { MathPickerContribution } from './contributions/constants';
-import { IPickItemInterceptorContribution, PickItemInterceptor } from './pick-interceptor';
+import type { IPickItemInterceptorContribution } from './pick-interceptor';
+import { PickItemInterceptor } from './pick-interceptor';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
@@ -20,12 +24,12 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
   constructor(
     @inject(ContributionProvider)
     @named(MathPickerContribution)
-    protected readonly contributions: ContributionProvider<IGraphicPicker>,
+    protected readonly contributions: IContributionProvider<IGraphicPicker>,
     @inject(Global) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: ContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {
     super(global, pickItemInterceptorContributions);
     this.global.hooks.onSetEnv.tap('math-picker-service', (lastEnv, env, global) => {

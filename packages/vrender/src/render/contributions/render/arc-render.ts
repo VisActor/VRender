@@ -3,7 +3,8 @@ import { inject, injectable, named } from 'inversify';
 import { ARC_NUMBER_TYPE } from '../../../graphic/arc';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import type {
   IContext2d,
   IArc,
@@ -363,7 +364,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
-    protected readonly arcRenderContribitions: ContributionProvider<IArcRenderContribution>
+    protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
   ) {}
 
   // drawArcPath(

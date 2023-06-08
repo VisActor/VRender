@@ -2,7 +2,8 @@ import type { IMatrix, IPoint, IBounds, IPointLike } from '@visactor/vutils';
 import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { foreach } from '../common/sort';
-import type { ContributionProvider } from '../common/contribution-provider';
+import type { IContributionProvider } from '../common/contribution-provider';
+import { ContributionProvider } from '../common/contribution-provider';
 import type { IContext2d, IGraphic, IGroup, EnvType, IGlobal } from '../interface';
 import { Global, mat4 } from '../interface';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../graphic/graphic-service/graphic-service';
@@ -61,7 +62,7 @@ export abstract class DefaultPickService implements IPickerService {
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: ContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {}
 
   protected _init() {

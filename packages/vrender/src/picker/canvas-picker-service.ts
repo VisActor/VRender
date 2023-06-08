@@ -1,8 +1,10 @@
-import { IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import type { IContributionProvider } from '../common/contribution-provider';
 import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
 import { BrowserCanvas } from '../canvas/contributions/browser';
-import { ICanvas, IContext2d, IGraphic, EnvType, Global, IGlobal } from '../interface';
+import type { ICanvas, IContext2d, IGraphic, EnvType, IGlobal } from '../interface';
+import { Global } from '../interface';
 import {
   CanvasArcPicker,
   CanvasAreaPicker,
@@ -17,9 +19,12 @@ import {
   CanvasTextPicker,
   CanvasRichTextPicker
 } from './contributions/constants';
-import { DefaultPickService, IGraphicPicker, IPickerService, IPickParams } from './picker-service';
-import { DrawContribution, IDrawContribution } from '../render';
-import { IPickItemInterceptorContribution, PickItemInterceptor } from './pick-interceptor';
+import type { IGraphicPicker, IPickerService, IPickParams } from './picker-service';
+import { DefaultPickService } from './picker-service';
+import type { IDrawContribution } from '../render';
+import { DrawContribution } from '../render';
+import type { IPickItemInterceptorContribution } from './pick-interceptor';
+import { PickItemInterceptor } from './pick-interceptor';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
@@ -34,7 +39,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
   constructor(
     @inject(ContributionProvider)
     @named(CanvasPickerContribution)
-    protected readonly contributions: ContributionProvider<IGraphicPicker>,
+    protected readonly contributions: IContributionProvider<IGraphicPicker>,
     @inject(CanvasCirclePicker) private readonly circlePicker: IGraphicPicker, // 默认的circlePicker
     @inject(CanvasRectPicker) private readonly rectPicker: IGraphicPicker, // 默认的rectPicker
     @inject(CanvasArcPicker) private readonly arcPicker: IGraphicPicker, // 默认的arcPicker
@@ -53,7 +58,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: ContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {
     super(global, pickItemInterceptorContributions);
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {

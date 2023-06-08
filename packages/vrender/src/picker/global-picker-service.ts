@@ -1,8 +1,10 @@
-import { Matrix, Point, IMatrix, IPoint, IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
+import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { IGraphic, IGroup, EnvType, Global, IGlobal } from '../interface';
-import { IGraphicPicker, IPickerService, IPickParams } from './picker-service';
-import { PickResult } from './type';
+import type { IGraphic, IGroup, EnvType, IGlobal } from '../interface';
+import { Global } from '../interface';
+import type { IGraphicPicker, IPickerService, IPickParams } from './picker-service';
+import type { PickResult } from './type';
 
 export const BoundsPicker = Symbol.for('BoundsPicker');
 
@@ -26,7 +28,7 @@ export class DefaultGlobalPickerService implements IPickerService {
   constructor(
     // @inject(ContributionProvider)
     // @named(PickerContribution)
-    // protected readonly contributions: ContributionProvider<IPickerContribution>,
+    // protected readonly contributions: IContributionProvider<IPickerContribution>,
     @inject(Global) public readonly global: IGlobal
   ) {
     this.global.hooks.onSetEnv.tap('global-picker-service', (lastEnv, env, global) => {

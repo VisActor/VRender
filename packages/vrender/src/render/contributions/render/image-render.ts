@@ -1,5 +1,6 @@
 import { inject, injectable, named } from 'inversify';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/image';
 import { getTheme } from '../../../graphic/theme';
 import type { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
@@ -20,7 +21,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: ContributionProvider<IImageRenderContribution>
+    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {}
 
   drawShape(

@@ -6,7 +6,8 @@ import { getTheme } from '../../../graphic/theme';
 import type { IDrawContext, IRenderService } from '../../render-service';
 import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { isArray } from '@visactor/vutils';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import type { IGroupRenderContribution } from './contributions/group-contribution-render';
@@ -24,7 +25,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(GroupRenderContribution)
-    protected readonly groupRenderContribitions: ContributionProvider<IGroupRenderContribution>
+    protected readonly groupRenderContribitions: IContributionProvider<IGroupRenderContribution>
   ) {}
 
   drawShape(

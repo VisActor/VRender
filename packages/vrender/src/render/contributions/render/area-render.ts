@@ -13,7 +13,8 @@ import type {
   ISegPath2D,
   IDirection
 } from '../../../interface';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import {
   genLinearSegments,
   genBasisSegments,
@@ -69,7 +70,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(AreaRenderContribution)
-    protected readonly areaRenderContribitions: ContributionProvider<IAreaRenderContribution>
+    protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
   ) {}
 
   drawShape(

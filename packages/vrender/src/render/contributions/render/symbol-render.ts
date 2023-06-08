@@ -1,6 +1,7 @@
 import { mat4Allocate } from '../../../modules';
 import { inject, injectable, named } from 'inversify';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/symbol';
 import { getTheme } from '../../../graphic/theme';
 import type { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
@@ -23,7 +24,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
   constructor(
     @inject(ContributionProvider)
     @named(SymbolRenderContribution)
-    protected readonly symbolRenderContribitions: ContributionProvider<ISymbolRenderContribution>
+    protected readonly symbolRenderContribitions: IContributionProvider<ISymbolRenderContribution>
   ) {
     super();
   }

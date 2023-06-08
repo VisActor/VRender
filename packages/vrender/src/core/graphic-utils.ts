@@ -3,10 +3,12 @@ import type { IGraphicAttribute, ICanvas, IContext2d, EnvType, IGlobal, ITextAtt
 import { Global } from '../interface';
 import type { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
+import type { IContributionProvider } from '../common/contribution-provider';
 import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas/util';
 import { DefaultTextStyle } from '../graphic/config';
-import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
+import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
+import { Matrix, TextMeasure } from '@visactor/vutils';
 
 export const GraphicUtil = Symbol.for('GraphicUtil');
 
@@ -33,7 +35,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   constructor(
     @inject(ContributionProvider)
     @named(TextMeasureContribution)
-    protected readonly contributions: ContributionProvider<ITextMeasure>,
+    protected readonly contributions: IContributionProvider<ITextMeasure>,
     @inject(Global) public readonly global: IGlobal
   ) {
     this.configured = false;

@@ -61,7 +61,7 @@
 //   constructor(
 //     @inject(ContributionProvider)
 //     @named(Theme)
-//     protected readonly contributions: ContributionProvider<ITheme>
+//     protected readonly contributions: IContributionProvider<ITheme>
 //   ) {}
 
 //   @postConstruct()

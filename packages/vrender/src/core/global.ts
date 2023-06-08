@@ -1,7 +1,9 @@
 import { inject, injectable, named } from 'inversify';
 import { SyncHook } from '../tapable';
+import type { IContributionProvider } from '../common/contribution-provider';
 import { ContributionProvider } from '../common/contribution-provider';
-import { EnvContribution, EnvType, ICreateCanvasParams, IEnvContribution, IEnvParamsMap, IGlobal } from '../interface';
+import type { EnvType, ICreateCanvasParams, IEnvContribution, IEnvParamsMap, IGlobal } from '../interface';
+import { EnvContribution } from '../interface';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
@@ -64,7 +66,7 @@ export class DefaultGlobal implements IGlobal {
     // todo: 不需要创建，动态获取就行？
     @inject(ContributionProvider)
     @named(EnvContribution)
-    protected readonly contributions: ContributionProvider<IEnvContribution>
+    protected readonly contributions: IContributionProvider<IEnvContribution>
   ) {
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])

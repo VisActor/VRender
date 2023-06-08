@@ -4,7 +4,8 @@ import type { IDrawContribution, IDrawContext, IRenderService } from '../../rend
 import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import type { IContext2d, MaybePromise, IGraphic, IGroup } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic/config';
 import type { IBounds } from '@visactor/vutils';
 import { Bounds, getRectIntersect, isRectIntersect } from '@visactor/vutils';
@@ -39,7 +40,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: ContributionProvider<IDrawItemInterceptorContribution>
+    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
     this.currentRenderMap = new Map();
     this.defaultRenderMap = new Map();

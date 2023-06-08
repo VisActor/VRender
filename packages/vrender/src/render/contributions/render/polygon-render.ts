@@ -9,7 +9,8 @@ import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import type { IPolygonRenderContribution } from './contributions/polygon-contribution-render';
 import { PolygonRenderContribution } from './contributions/polygon-contribution-render';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()
@@ -22,7 +23,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(PolygonRenderContribution)
-    protected readonly polygonRenderContribitions: ContributionProvider<IPolygonRenderContribution>
+    protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
   ) {}
 
   drawShape(

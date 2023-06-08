@@ -3,7 +3,8 @@ import { inject, injectable, named } from 'inversify';
 import { RECT_NUMBER_TYPE } from '../../../graphic/rect';
 import { getTheme } from '../../../graphic/theme';
 import { createRectPath } from '../../../common/shape/rect';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import type { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
 import type { IDrawContext, IRenderService } from '../../render-service';
 import type { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
@@ -22,7 +23,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(RectRenderContribution)
-    protected readonly rectRenderContribitions: ContributionProvider<IRectRenderContribution>
+    protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
   ) {}
 
   drawShape(

@@ -14,7 +14,8 @@ import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import type { IDrawItemInterceptorContribution } from './draw-interceptor';
 import { DrawItemInterceptor } from './draw-interceptor';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
 
 enum STATUS {
@@ -44,7 +45,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
   constructor(
     // @inject(ContributionProvider)
     // @named(GraphicRender)
-    // protected readonly contributions: ContributionProvider<IGraphicRender>,
+    // protected readonly contributions: IContributionProvider<IGraphicRender>,
     @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
     @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     @inject(DefaultIncrementalCanvasLineRender) protected readonly lineRender: IGraphicRender, // 默认的lineRender
@@ -53,7 +54,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: ContributionProvider<IDrawItemInterceptorContribution>
+    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
     super(contributions, renderSelector, layerService, drawItemInterceptorContributions);
   }

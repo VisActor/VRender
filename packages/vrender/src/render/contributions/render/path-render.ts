@@ -1,5 +1,6 @@
 import { inject, injectable, named } from 'inversify';
-import type { ContributionProvider } from '../../../common/contribution-provider';
+import type { IContributionProvider } from '../../../common/contribution-provider';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';
 import type {
   IPath,
@@ -31,7 +32,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(PathRenderContribution)
-    protected readonly pathRenderContribitions: ContributionProvider<IPathRenderContribution>
+    protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
   }

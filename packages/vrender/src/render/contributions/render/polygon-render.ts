@@ -7,7 +7,7 @@ import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { IPolygonRenderContribution, PolygonRenderContribution } from './contributions/polygon-contribution-render';
-import { ContributionProvider } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()

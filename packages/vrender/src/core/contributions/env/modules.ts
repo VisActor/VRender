@@ -1,5 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { bindContributionProvider } from '../../../common';
+import { bindContributionProvider } from '../../../common/contribution-provider';
 import { EnvContribution } from '../../../interface';
 import { BrowserEnvContribution } from './browser-contribution';
 import { FeishuEnvContribution } from './feishu-contribution';

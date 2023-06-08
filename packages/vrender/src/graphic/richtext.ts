@@ -8,7 +8,6 @@ import {
   RichTextVerticalDirection,
   RichTextWordBreak,
   IRichTextGraphicAttribute,
-  IRichTextIconGraphicAttribute,
   IRichTextImageCharacter,
   IRichTextParagraphCharacter,
   IStage,
@@ -16,7 +15,7 @@ import {
   IRichTextIcon
 } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute, DefaultRichTextAttribute } from './config';
+import { DefaultRichTextAttribute } from './config';
 import Frame from './richtext/frame';
 import Paragraph from './richtext/paragraph';
 import Wrapper from './richtext/wrapper';
@@ -24,7 +23,7 @@ import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import { FederatedMouseEvent } from '../event';
 import { graphicService } from '../modules';
-import { parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 
 export const RICHTEXT_NUMBER_TYPE = genNumberType();
 

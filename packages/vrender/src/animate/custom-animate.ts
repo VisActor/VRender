@@ -1,6 +1,7 @@
 import { IPoint, IPointLike, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
 import { graphicService } from '../modules';
-import { AttributeUpdateType, CustomPath2D, pointInterpolation } from '../common';
+import { AttributeUpdateType } from '../common/enums';
+import { CustomPath2D } from '../common/custom-path2d';
 import {
   EasingType,
   IArcGraphicAttribute,
@@ -15,6 +16,7 @@ import {
 import { ACustomAnimate } from './animate';
 import { createArc, createRect } from '../graphic/graphic-creator';
 import { Easing } from './easing';
+import { pointInterpolation } from '../common/utils';
 
 export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
   declare valid: boolean;

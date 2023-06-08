@@ -1,9 +1,10 @@
-import { AABBBounds, OBBBounds, transformBounds, IPointLike } from '@visactor/vutils';
+import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
 import { ILine, ILineGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { CustomPath2D, parsePadding, pointsInterpolation } from '../common';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
+import { parsePadding, pointsInterpolation } from '../common/utils';
+import { CustomPath2D } from '../common/custom-path2d';
 
 export const LINE_NUMBER_TYPE = genNumberType();
 

@@ -1,7 +1,8 @@
 import { isString, AABBBounds, OBBBounds, isNil } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
 import { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
-import { CustomPath2D, parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
+import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 

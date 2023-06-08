@@ -1,11 +1,5 @@
 import { injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  PYRAMID3D_NUMBER_TYPE
-} from '../../../graphic';
+import { getTheme, PYRAMID3D_NUMBER_TYPE } from '../../../graphic';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -14,7 +8,6 @@ import {
   IPyramid3d,
   IFace3d,
   IThemeAttribute,
-  vec3,
   ICamera,
   IPolygonItem
 } from '../../../interface';
@@ -22,7 +15,6 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
-import { max, min } from '@visactor/vutils';
 import { mat4Allocate } from '../../../modules';
 import { BaseRender } from './base-render';
 

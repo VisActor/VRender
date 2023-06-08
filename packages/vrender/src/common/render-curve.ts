@@ -1,7 +1,17 @@
 import { min, IPoint, IPointLike } from '@visactor/vutils';
-import { divideCubic, CubicBezierCurve, SegContext, BoundsContext, ISegPath2D } from '.';
-import { IAreaSegment, IClipRangeByDimensionType, ICurve, IPath2D, ISegment } from '../interface';
-import { Direction } from './seg-context';
+
+import type {
+  IAreaSegment,
+  IClipRangeByDimensionType,
+  ICubicBezierCurve,
+  ICurve,
+  IDirection,
+  IPath2D,
+  ISegment,
+  ISegPath2D
+} from '../interface';
+import { Direction } from './enums';
+import { divideCubic } from './segment/curve/cubic-bezier';
 
 /**
  * 绘制连续的线段
@@ -45,7 +55,7 @@ export function drawSegments(
     return;
   }
 
-  let direction: Direction | undefined;
+  let direction: IDirection | undefined;
 
   if (clipRangeByDimension === 'x') {
     direction = Direction.ROW;
@@ -192,7 +202,7 @@ function drawSegItem(
   } else {
     // 绘制一部分
     if (curve.p2 && curve.p3) {
-      const [curve1] = divideCubic(curve as CubicBezierCurve, endPercent);
+      const [curve1] = divideCubic(curve as ICubicBezierCurve, endPercent);
       ctx.bezierCurveTo(
         offsetX + curve1.p1.x,
         offsetY + curve1.p1.y,

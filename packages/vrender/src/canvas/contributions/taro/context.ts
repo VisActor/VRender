@@ -11,7 +11,8 @@ import {
   EnvType
 } from '../../../interface';
 import { BrowserContext2d } from '../browser';
-import { createColor, getContextFont, getScaledStroke } from '../../../common';
+import { createColor, getScaledStroke } from '../../../common/canvas-utils';
+import { getContextFont } from '../../../common/text';
 
 // 考虑taro-feishu等环境
 interface ITTContext {

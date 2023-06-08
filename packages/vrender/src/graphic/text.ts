@@ -1,10 +1,11 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { getContextFont, parsePadding, textDrawOffsetX, textLayoutOffsetY } from '../common';
+import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout, LayoutType } from '../core/contributions/textMeasure/layout';
 import { graphicService, graphicUtil } from '../modules';
 import { IText, ITextCache, ITextGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
 import { getTheme } from './theme';
+import { parsePadding } from '../common/utils';
 
 export const TEXT_NUMBER_TYPE = genNumberType();
 

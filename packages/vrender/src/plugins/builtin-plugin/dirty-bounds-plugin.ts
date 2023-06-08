@@ -1,5 +1,5 @@
 import { AABBBounds, IAABBBounds } from '@visactor/vutils';
-import { Generator } from '../../common';
+import { Generator } from '../../common/generator';
 import { IGraphic, IStage } from '../../interface';
 import { graphicService } from '../../modules';
 import { IPlugin, IPluginService } from '../plugin-service';

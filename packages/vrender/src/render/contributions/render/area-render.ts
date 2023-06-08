@@ -1,6 +1,6 @@
 import { min, IPointLike } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import {
+import type {
   IArea,
   IAreaCacheItem,
   IAreaGraphicAttribute,
@@ -8,33 +8,33 @@ import {
   IContext2d,
   ICurveType,
   IMarkAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  ISegPath2D,
+  IDirection
 } from '../../../interface';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import {
   genLinearSegments,
   genBasisSegments,
   genMonotoneXSegments,
   genMonotoneYSegments,
   genStepSegments,
-  ISegPath2D,
-  Direction,
-  SegContext,
-  drawAreaSegments,
-  genLinearClosedSegments,
-  ContributionProvider
-} from '../../../common';
+  genLinearClosedSegments
+} from '../../../common/segment';
+
 import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution, IAreaRenderContribution } from './contributions/area-contribution-render';
-import { ArcRenderContribution, BaseRenderContributionTime } from './contributions';
+import { BaseRenderContributionTime } from './contributions';
+import { drawAreaSegments } from '../../../common/render-area';
 
 function calcLineCache(
   points: IPointLike[],
   curveType: ICurveType,
-  params?: { direction?: Direction; startPoint?: IPointLike }
-): SegContext | null {
+  params?: { direction?: IDirection; startPoint?: IPointLike }
+): ISegPath2D | null {
   switch (curveType) {
     case 'linear':
       return genLinearSegments(points, params);

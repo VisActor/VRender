@@ -8,7 +8,7 @@
  */
 
 import { ICustomPath2D } from './../interface/path';
-import { IPointLike, isNumber, Bounds, getIntersectPoint, min } from '@visactor/vutils';
+import { IPointLike, isNumber, Bounds, getIntersectPoint } from '@visactor/vutils';
 import { ILine, IRect, IArc, ICircle, IArea, IPolygon, IPath } from '../interface';
 import { bezierCurversToPath, pathToBezierCurves } from './morphing-utils';
 /**

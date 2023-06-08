@@ -1,4 +1,4 @@
-import { Generator } from '../../common';
+import { Generator } from '../../common/generator';
 import { graphicService } from '../../modules';
 import { IPlugin, IPluginService } from '../plugin-service';
 

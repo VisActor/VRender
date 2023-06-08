@@ -1,4 +1,5 @@
-import { AnimateStatus, Generator } from '../common';
+import { AnimateStatus } from '../common/enums';
+import { Generator } from '../common/generator';
 import { IAnimate } from '../interface';
 
 export interface ITimeline {

@@ -3,7 +3,7 @@ import { ICustomPath2D, IRichTextIcon, IRichTextIconGraphicAttribute } from '../
 // import { genNumberType } from '../graphic';
 import { Image } from '../image';
 import { DefaultImageAttribute } from '../config';
-import { parsePadding } from '../../common';
+import { parsePadding } from '../../common/utils';
 
 // export const IMAGE_NUMBER_TYPE = genNumberType();
 

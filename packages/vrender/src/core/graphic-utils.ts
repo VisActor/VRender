@@ -2,7 +2,7 @@ import { injectable, inject, named } from 'inversify';
 import { IGraphicAttribute, ICanvas, IContext2d, EnvType, Global, IGlobal, ITextAttribute } from '../interface';
 import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
-import { ContributionProvider } from '../common';
+import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas';
 import { DefaultTextStyle } from '../graphic';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';

@@ -1,5 +1,5 @@
 import { IPointLike } from '@visactor/vutils';
-import { ContributionProvider } from '../common';
+import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
 import { BrowserCanvas } from '../canvas/contributions/browser';
 import { ICanvas, IContext2d, IGraphic, EnvType, Global, IGlobal } from '../interface';

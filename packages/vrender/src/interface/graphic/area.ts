@@ -1,6 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { ISegPath2D } from '../../common';
-import type { IGraphic, IFillStyle, IGraphicAttribute } from '../graphic';
+import type { ISegPath2D } from '../curve';
+import type { IGraphic, IGraphicAttribute } from '../graphic';
 import type { ICurveType } from '../common';
 
 export type IAreaAttribute = {

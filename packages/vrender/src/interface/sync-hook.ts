@@ -17,6 +17,7 @@ export interface UnsetAdditionalOptions {
 
 export interface IHook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
   name?: string;
+  taps: FullTap[];
   tap: (options: string | (Tap & IfSet<AdditionalOptions>), fn: (...args: AsArray<T>) => R) => void;
   unTap: (options: string | (Tap & IfSet<AdditionalOptions>), fn?: (...args: AsArray<T>) => R) => void;
 }

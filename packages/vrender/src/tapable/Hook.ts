@@ -1,4 +1,4 @@
-import type { AsArray, FullTap, IfSet, Tap, UnsetAdditionalOptions } from '../interface';
+import type { AsArray, FullTap, IHook, IfSet, Tap, UnsetAdditionalOptions } from '../interface';
 
 /**
  * 参考 https://github.com/webpack/tapable
@@ -25,7 +25,7 @@ import type { AsArray, FullTap, IfSet, Tap, UnsetAdditionalOptions } from '../in
   THE SOFTWARE.
  */
 
-export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
+export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> implements IHook<T, R, AdditionalOptions> {
   protected _args: string[];
   readonly name?: string;
   taps: FullTap[];

@@ -1,5 +1,5 @@
 import type { AsArray } from '../interface/common';
-import type { UnsetAdditionalOptions } from '../interface/sync-hook';
+import type { ISyncHook, UnsetAdditionalOptions } from '../interface/sync-hook';
 import { Hook } from './Hook';
 
 /**
@@ -26,7 +26,10 @@ import { Hook } from './Hook';
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-export class SyncHook<T, R = void, AdditionalOptions = UnsetAdditionalOptions> extends Hook<T, R, AdditionalOptions> {
+export class SyncHook<T, R = void, AdditionalOptions = UnsetAdditionalOptions>
+  extends Hook<T, R, AdditionalOptions>
+  implements ISyncHook<T, R, AdditionalOptions>
+{
   call(...args: AsArray<T>): R {
     const cbs = this.taps.map(t => t.fn);
     cbs.forEach(cb => cb(...args));

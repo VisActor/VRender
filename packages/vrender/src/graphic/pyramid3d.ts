@@ -2,7 +2,7 @@ import { AABBBounds, IPointLike, max, PointService } from '@visactor/vutils';
 import { parsePadding } from '../common/utils';
 import { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
 import { IFace3d } from '../interface/graphic/face3d';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { Polygon } from './polygon';
 import { getTheme } from './theme';
 import { PYRAMID3D_NUMBER_TYPE } from './constants';
@@ -21,7 +21,7 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
 
     const attribute = this.attribute;
-    const bounds = graphicService.updatePyramid3dAABBBounds(
+    const bounds = application.graphicService.updatePyramid3dAABBBounds(
       attribute,
       getTheme(this).polygon as any,
       this._AABBBounds,

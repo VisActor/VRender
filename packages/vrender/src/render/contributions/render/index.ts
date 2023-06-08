@@ -11,3 +11,4 @@ export * from './polygon-render';
 export * from './image-render';
 export * from './symbol';
 export * from './contributions';
+export * from './utils';

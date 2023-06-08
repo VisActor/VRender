@@ -4,7 +4,7 @@ import { getTheme } from '../../../graphic/theme';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, SymbolRender } from '../../../render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';

@@ -1,4 +1,4 @@
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { inject, injectable, named } from 'inversify';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';

@@ -2,7 +2,7 @@ import { injectable, inject, named, multiInject } from 'inversify';
 import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
 import { IGraphic, IGroup, Global, IGlobal } from '../../../interface';
 import { DefaultAttribute } from '../../../graphic';
-import { ILayerService, LayerService } from '../../../core';
+import { LayerService } from '../../../core/constants';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
 import { GraphicRender, RenderSelector } from './symbol';
@@ -13,6 +13,7 @@ import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
+import { ILayerService } from '../../../core/interface';
 
 enum STATUS {
   NORMAL = 0,

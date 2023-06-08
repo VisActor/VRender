@@ -1,7 +1,6 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout, LayoutType } from '../core/contributions/textMeasure/layout';
-import { graphicService } from '../modules';
 import { application } from '../application';
 import { IText, ITextCache, ITextGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
@@ -95,7 +94,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textTheme = getTheme(this).text;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateTextAABBBounds(attribute, textTheme, this._AABBBounds, this) as AABBBounds;
+    const bounds = application.graphicService.updateTextAABBBounds(
+      attribute,
+      textTheme,
+      this._AABBBounds,
+      this
+    ) as AABBBounds;
 
     this.clearUpdateBoundTag();
     return bounds;
@@ -103,7 +107,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   private updateAABBBounds(): AABBBounds {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    const bounds = graphicService.updateTextAABBBounds(
+    const bounds = application.graphicService.updateTextAABBBounds(
       attribute,
       getTheme(this).text,
       this._AABBBounds,

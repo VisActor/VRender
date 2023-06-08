@@ -14,7 +14,7 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 

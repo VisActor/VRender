@@ -1,5 +1,6 @@
 import { AABBBounds, IBoundsLike } from '@visactor/vutils';
-import { container, layerService } from '../modules';
+import { application } from '../application';
+import { container } from '../container';
 import {
   IContext2d,
   IDrawToParams,
@@ -168,7 +169,8 @@ export class Layer extends Group implements ILayer {
       });
     }
     subLayers.forEach(l => {
-      layerService.releaseLayer(this.stage, l.layer);
+      // l.layer.release();
+      application.layerService.releaseLayer(this.stage, l.layer);
     });
     this.subLayers.clear();
   }
@@ -254,7 +256,8 @@ export class Layer extends Group implements ILayer {
     this.layerHandler.release();
     if (this.subLayers) {
       this.subLayers.forEach(l => {
-        layerService.releaseLayer(this.stage, l.layer);
+        // l.layer.release();
+        application.layerService.releaseLayer(this.stage, l.layer);
       });
     }
   }

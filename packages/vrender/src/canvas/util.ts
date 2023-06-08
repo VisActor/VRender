@@ -1,7 +1,7 @@
 import { IPointLike, pi, pi2, vec2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
 import { CommandType, IContext2d } from '../interface';
-import { container } from '../modules';
+import { container } from '../container';
 import { application } from '../application';
 import { CanvasFactory, Context2dFactory, ICanvasFactory, IContext2dFactory } from './interface';
 import { CanvasConfigType, ICanvas } from '../interface';

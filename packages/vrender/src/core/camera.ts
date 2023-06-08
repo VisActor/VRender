@@ -1,7 +1,7 @@
 import { epsilon, IPoint, IPointLike } from '@visactor/vutils';
 import { DefaultMat4Allocate } from '../allocator/matrix-allocate';
 import { ICamera, mat4, OrthoParameters, vec3 } from '../interface';
-import { mat4Allocate } from '../modules';
+import { mat4Allocate } from '../allocator/matrix-allocate';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix

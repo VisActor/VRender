@@ -1,5 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { LayerHandlerContribution } from '../..';
+import { LayerHandlerContribution } from '../../layer';
 import { CanvasLayerHandlerContribution } from './canvas2d-contribution';
 import { OffscreenLayerHandlerContribution } from './offscreen2d-contribution';
 

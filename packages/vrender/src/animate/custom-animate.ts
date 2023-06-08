@@ -1,5 +1,5 @@
 import { IPoint, IPointLike, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
 import { CustomPath2D } from '../common/custom-path2d';
 import {
@@ -14,7 +14,6 @@ import {
   IShadowRoot
 } from '../interface';
 import { ACustomAnimate } from './animate';
-import { createArc, createRect } from '../graphic/graphic-creator';
 import { Easing } from './easing';
 import { pointInterpolation } from '../common/utils';
 
@@ -233,7 +232,7 @@ export class InputText extends ACustomAnimate<{ text: string }> {
     } else {
       this.toText = this.toText.toString();
       const root = this.target.attachShadow();
-      const line = graphicService.creator.line({
+      const line = application.graphicService.creator.line({
         x: 0,
         y: 0,
         points: [
@@ -294,7 +293,7 @@ export class StreamLight extends ACustomAnimate<any> {
 
     const height = this.target.AABBBounds.height();
 
-    const rect = graphicService.creator.rect({
+    const rect = application.graphicService.creator.rect({
       height: height,
       fill: '#bcdeff',
       shadowBlur: 30,
@@ -657,7 +656,7 @@ export class ClipAngleAnimate extends ClipGraphicAnimate {
       arcStartAngle = startAngle;
       arcEndAngle = animationType === 'out' ? startAngle + Math.PI * 2 : startAngle;
     }
-    const arc = createArc({
+    const arc = application.graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: params?.radius ?? (width + height) / 2,
@@ -707,7 +706,7 @@ export class ClipRadiusAnimate extends ClipGraphicAnimate {
     const startRadius = params?.startRadius ?? 0;
     const endRadius = params?.endRadius ?? Math.sqrt((width / 2) ** 2 + (height / 2) ** 2);
 
-    const arc = createArc({
+    const arc = application.graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: animationType === 'out' ? endRadius : startRadius,
@@ -751,7 +750,7 @@ export class ClipDirectionAnimate extends ClipGraphicAnimate {
     const direction = params?.direction ?? 'x';
     const orient = params?.orient ?? 'positive';
 
-    const rect = createRect({
+    const rect = application.graphicService.creator.rect({
       x: 0,
       y: 0,
       width: animationType === 'in' && direction === 'x' ? 0 : width,

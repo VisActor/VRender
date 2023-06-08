@@ -1,6 +1,5 @@
 import { AABBBounds, isArray } from '@visactor/vutils';
 import { ICustomPath2D, IRichTextIcon, IRichTextIconGraphicAttribute } from '../../interface';
-// import { genNumberType } from '../graphic';
 import { Image } from '../image';
 import { DefaultImageAttribute } from '../config';
 import { parsePadding } from '../../common/utils';

@@ -16,7 +16,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { GraphicType } from '../interface';
 import { ARC_NUMBER_TYPE } from './constants';
 
@@ -236,7 +236,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     const arcTheme = getTheme(this).arc;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateArcAABBBounds(
+    const bounds = application.graphicService.updateArcAABBBounds(
       attribute,
       getTheme(this).arc,
       this._AABBBounds,

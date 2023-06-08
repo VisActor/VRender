@@ -4,7 +4,7 @@ import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
 import { IArc, IContext2d, IGraphic, IGroup } from '../../../interface';
 import { IDrawContext, IDrawContribution, IRenderService } from '../../render-service';
 import { IGraphicRenderDrawParams } from './graphic-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 
 // 拦截器

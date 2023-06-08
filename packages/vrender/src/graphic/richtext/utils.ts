@@ -1,4 +1,3 @@
-import Paragraph from './paragraph';
 import { application } from '../../application';
 import { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 
@@ -223,15 +222,6 @@ export function testLetter(string: string, index: number): number {
     }
   }
   return i;
-}
-
-export function seperateParagraph(paragraph: Paragraph, index: number) {
-  const text1 = paragraph.text.slice(0, index);
-  const text2 = paragraph.text.slice(index);
-  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character);
-  const p2 = new Paragraph(text2, true, paragraph.character);
-
-  return [p1, p2];
 }
 
 // 测量文字详细信息

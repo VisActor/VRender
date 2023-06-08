@@ -4,7 +4,7 @@ import { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
 
@@ -31,7 +31,7 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
 
     const attribute = this.attribute;
-    const bounds = graphicService.updatePolygonAABBBounds(
+    const bounds = application.graphicService.updatePolygonAABBBounds(
       attribute,
       getTheme(this).polygon,
       this._AABBBounds,

@@ -39,7 +39,7 @@ import {
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
 import { IPickerService } from '../picker';
-import { graphicService, pickerService, transformUtil } from '../modules';
+import { application } from '../application';
 import { Animate, DefaultStateAnimateConfig } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -272,9 +272,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return this._AABBBounds;
     }
 
-    graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
-    graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+    application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
     return bounds;
   }
 
@@ -388,7 +388,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
    * @param mode
    * @returns
    */
-  containsPoint(x: number, y: number, mode: IContainPointMode, picker: IPickerService = pickerService): boolean {
+  containsPoint(x: number, y: number, mode: IContainPointMode, picker?: IPickerService): boolean {
+    if (!picker) {
+      return false;
+    }
     if (mode === IContainPointMode.GLOBAL) {
       // 转换x，y更精准
       const point = new Point(x, y);
@@ -511,7 +514,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       attribute.x = (attribute.x ?? DefaultTransform.x) + x;
       attribute.y = (attribute.y ?? DefaultTransform.y) + y;
     } else {
-      transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
+      application.transformUtil.fromMatrix(postMatrix, postMatrix).translate(x, y);
     }
 
     this.addUpdatePositionTag();
@@ -570,7 +573,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         postMatrix = new Matrix();
         attribute.postMatrix = postMatrix;
       }
-      transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
+      application.transformUtil.fromMatrix(postMatrix, postMatrix).scale(scaleX, scaleY, scaleCenter);
     }
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
@@ -669,7 +672,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   onAttributeUpdate(context?: ISetAttributeContext) {
-    graphicService.onAttributeUpdate(this);
+    application.graphicService.onAttributeUpdate(this);
     this._emitCustomEvent('afterAttributeUpdate', context);
   }
 
@@ -977,7 +980,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.layer = layer;
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
-      graphicService.onSetStage(this, stage);
+      application.graphicService.onSetStage(this, stage);
     }
   }
 
@@ -1165,7 +1168,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       shadowRoot.shadowHost = this;
     }
 
-    this.shadowRoot = shadowRoot ?? graphicService.creator.shadowRoot(this);
+    this.shadowRoot = shadowRoot ?? application.graphicService.creator.shadowRoot(this);
     this.addUpdateBoundTag();
     this.shadowRoot.setStage(this.stage, this.layer);
     return this.shadowRoot;

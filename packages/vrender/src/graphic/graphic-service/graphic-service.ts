@@ -56,7 +56,7 @@ import { boundStroke } from '../tools';
 import { CircleBoundsContribution, ICircleBoundsContribution } from './circle-contribution';
 import { ArcBoundsContribution, IArcBoundsContribution } from './arc-contribution';
 import { IPathBoundsContribution, PathBoundsContribution } from './path-contribution';
-import { mat4Allocate } from '../../modules';
+import { mat4Allocate } from '../../allocator/matrix-allocate';
 import { ContributionProvider } from '../../common/contribution-provider';
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';

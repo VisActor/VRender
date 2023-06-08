@@ -30,7 +30,7 @@ import {
   findBestMorphingRotation,
   pathToBezierCurves
 } from '../common/morphing-utils';
-import { createRect, createArc, createSymbol, createPolygon, createPath } from '../graphic/graphic-creator';
+import { application } from '../application';
 import { IMatrix, isNil } from '@visactor/vutils';
 import { interpolateColor } from '../color-string/interpolate';
 import { ColorStore, ColorType } from '../color-string';
@@ -466,7 +466,7 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
       rect: childAttrs
     });
     new Array(count).fill(0).forEach(el => {
-      const child = createRect({
+      const child = application.graphicService.creator.rect({
         x: 0,
         y: 0,
         width,
@@ -488,7 +488,9 @@ export const cloneGraphic = (graphic: IGraphic, count: number, needAppend?: bool
       path: new CustomPath2D().fromCustomPath2D(path)
     };
 
-    children.push(createPath(needAppend ? element : Object.assign({}, childAttrs, element)));
+    children.push(
+      application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
+    );
   }
 
   if (needAppend) {
@@ -505,17 +507,23 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   if (graphic.type === 'rect') {
     const childrenAttrs = splitRect(graphic as IRect, count);
     childrenAttrs.forEach(element => {
-      children.push(createRect(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.rect(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'arc') {
     const childrenAttrs = splitArc(graphic as IArc, count);
     childrenAttrs.forEach(element => {
-      children.push(createArc(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'circle') {
     const childrenAttrs = splitCircle(graphic as ICircle, count);
     childrenAttrs.forEach(element => {
-      children.push(createArc(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'line') {
     const childrenAttrs = splitLine(graphic as ILine, count);
@@ -523,7 +531,7 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
 
     childrenAttrs.forEach(element => {
       children.push(
-        createSymbol(
+        application.graphicService.creator.symbol(
           needAppend ? Object.assign({}, element, defaultSymbol) : Object.assign({}, childAttrs, element, defaultSymbol)
         )
       );
@@ -531,20 +539,28 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   } else if (graphic.type === 'polygon') {
     const childrenAttrs = splitPolygon(graphic as IPolygon, count);
     childrenAttrs.forEach(element => {
-      children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'area') {
     const childrenAttrs = splitArea(graphic as IArea, count);
     childrenAttrs.forEach(element => {
-      children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'path') {
     const childrenAttrs = splitPath(graphic as IPath, count);
     childrenAttrs.forEach(element => {
       if ('path' in element) {
-        children.push(createPath(needAppend ? element : Object.assign({}, childAttrs, element)));
+        children.push(
+          application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
+        );
       } else {
-        children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+        children.push(
+          application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+        );
       }
     });
   }

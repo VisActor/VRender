@@ -8,13 +8,13 @@ import {
   IThemeAttribute
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
-import { drawArcPath } from '../arc-render';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
   DefaultBaseTextureRenderContribution,
   IBaseRenderContribution
 } from './base-contribution-render';
+import { drawArcPath } from '../utils';
 
 export const ArcRenderContribution = Symbol.for('ArcRenderContribution');
 

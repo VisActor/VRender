@@ -22,7 +22,7 @@ import Wrapper from './richtext/wrapper';
 import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import { FederatedMouseEvent } from '../event';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { parsePadding } from '../common/utils';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
@@ -154,7 +154,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     const richTextTheme = getTheme(this).richtext;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateRichTextAABBBounds(
+    const bounds = application.graphicService.updateRichTextAABBBounds(
       attribute,
       getTheme(this).richtext,
       this._AABBBounds,

@@ -1,5 +1,4 @@
 import 'reflect-metadata';
-import { DefaultTicker, defaultTimeline } from './animate';
 import './modules';
 
 export * from './core/global';
@@ -15,11 +14,6 @@ export * from './picker';
 export * from './kits';
 export * from './animate';
 export * from './resource-loader/loader';
-
-export const defaultTicker = new DefaultTicker();
-defaultTicker.addTimeline(defaultTimeline);
-const DEFAULT_TICKER_FPS = 60;
-defaultTicker.setFPS(DEFAULT_TICKER_FPS);
 
 /* export common */
 export * from './common/text';
@@ -43,3 +37,5 @@ export * from './common/sort';
 export * from './common/morphing-utils';
 export * from './common/split-path';
 export * from './common/enums';
+
+export * from './animate/default-ticker';

@@ -8,7 +8,7 @@ import {
   ISymbolGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { createRectPath, getScaledStroke } from '../../../../common';
+import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,

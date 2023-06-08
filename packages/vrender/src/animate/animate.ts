@@ -10,10 +10,11 @@ import {
   IStepConfig,
   ISubAnimate
 } from '../interface';
-import { AnimateMode, AnimateStatus, AnimateStepType, AttributeUpdateType, Generator } from '../common';
+import { AnimateMode, AnimateStatus, AnimateStepType, AttributeUpdateType } from '../common/enums';
 import { Easing } from './easing';
 import { max } from '@visactor/vutils';
 import { defaultTimeline, ITimeline } from './timeline';
+import { Generator } from '../common/generator';
 
 // 参考TweenJS
 // https://github.com/CreateJS/TweenJS/tree/master/src/tweenjs

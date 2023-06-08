@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { BrowserCanvas } from '../../../canvas/contributions/browser';
-import { Generator } from '../../../common';
+import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';
 import { IWindowHandlerContribution, IWindowParams } from '../..';
 import { IContext2d, ICanvas, IDomRectLike, Global, EnvType, IGlobal } from '../../../interface';

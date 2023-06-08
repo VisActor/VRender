@@ -1,5 +1,5 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme, IMAGE_NUMBER_TYPE } from '../../../graphic';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';

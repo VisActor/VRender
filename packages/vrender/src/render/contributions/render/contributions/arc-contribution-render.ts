@@ -1,5 +1,4 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -8,7 +7,7 @@ import {
   IArcGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { getScaledStroke } from '../../../../common';
+import { getScaledStroke } from '../../../../common/canvas-utils';
 import { drawArcPath } from '../arc-render';
 import {
   BaseRenderContributionTime,

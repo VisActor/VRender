@@ -1,6 +1,7 @@
 import { Matrix, Point, IMatrix, IPoint, IBounds, IPointLike } from '@visactor/vutils';
-import { inject, injectable, named, postConstruct } from 'inversify';
-import { ContributionProvider, foreach } from '../common';
+import { inject, injectable, named } from 'inversify';
+import { foreach } from '../common/sort';
+import { ContributionProvider } from '../common/contribution-provider';
 import { IContext2d, IGraphic, IGroup, EnvType, Global, IGlobal, mat4 } from '../interface';
 import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
 import { mat4Allocate, matrixAllocate } from '../modules';

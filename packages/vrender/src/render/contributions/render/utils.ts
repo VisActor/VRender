@@ -1,5 +1,5 @@
 import { isArray } from '@visactor/vutils';
-import { renderCommandList } from '../../../common';
+import { renderCommandList } from '../../../common/render-command-list';
 import { IDrawContext } from '../../../render/render-service';
 import { getTheme } from '../../../graphic/theme';
 import {

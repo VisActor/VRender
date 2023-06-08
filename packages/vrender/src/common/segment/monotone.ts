@@ -1,8 +1,9 @@
 import { IPointLike, abs } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
 import { genCurveSegments } from './common';
-import { ACurveTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
-import { Direction, ReflectSegContext, SegContext } from '../seg-context';
+import { ReflectSegContext, SegContext } from '../seg-context';
+import { Direction } from '../enums';
+import { ICurvedSegment, IGenSegmentParams, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -58,7 +59,7 @@ function point(curveClass: MonotoneX | MonotoneY, t0: number, t1: number, define
   curveClass.context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1, defined);
 }
 
-export class MonotoneX extends ACurveTypeClass {
+export class MonotoneX implements ICurvedSegment {
   protected _lastDefined?: boolean;
   declare context: ISegPath2D;
   declare _t0: number;
@@ -66,10 +67,17 @@ export class MonotoneX extends ACurveTypeClass {
   protected startPoint?: IPointLike;
 
   constructor(context: ISegPath2D, startPoint?: IPointLike) {
-    super();
     this.context = context;
     this.startPoint = startPoint;
   }
+  _x: number;
+  _y: number;
+  _x0: number;
+  _x1: number;
+  _y0: number;
+  _y1: number;
+  _line: number;
+  _point: number;
 
   areaStart() {
     this._line = 0;
@@ -152,7 +160,7 @@ export function genMonotpneXTypeSegments(path: MonotoneX, points: IPointLike[]):
   return genCurveSegments(path, points, 2);
 }
 
-export function genMonotoneXSegments(points: IPointLike[], params: IGenSegmentParams = {}): SegContext | null {
+export function genMonotoneXSegments(points: IPointLike[], params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
 
   if (points.length < 2 - Number(!!startPoint)) {
@@ -179,7 +187,7 @@ export function genMonotpneYTypeSegments(path: MonotoneX, points: IPointLike[]):
   return genCurveSegments(path, points, 2);
 }
 
-export function genMonotoneYSegments(points: IPointLike[], params: IGenSegmentParams = {}): SegContext | null {
+export function genMonotoneYSegments(points: IPointLike[], params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
     return null;

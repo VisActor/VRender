@@ -1,8 +1,8 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute } from './config';
-import { GraphicType, IGraphicAttribute, IRect, IRectAttribute, IRectGraphicAttribute } from '../interface';
-import { parsePadding, CustomPath2D } from '../common';
+import { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 

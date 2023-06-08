@@ -1,4 +1,3 @@
-import type { CustomPath2D } from '../../common';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { ICustomPath2D } from '../path';
 // TODO: Path svg <Path path='' />
@@ -17,5 +16,5 @@ export interface IPath extends IGraphic<IPathGraphicAttribute> {
   cache?: ICustomPath2D;
   pathShape: ICustomPath2D;
 
-  getParsedPathShape: () => CustomPath2D;
+  getParsedPathShape: () => ICustomPath2D;
 }

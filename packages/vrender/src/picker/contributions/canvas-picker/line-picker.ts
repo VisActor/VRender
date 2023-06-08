@@ -4,8 +4,8 @@ import { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute }
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, LineRender } from '../../../render';
 import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
-import { graphicService, mat4Allocate } from '../../../modules';
-import { getScaledStroke } from '../../../common';
+import { mat4Allocate } from '../../../modules';
+import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';
 
 @injectable()

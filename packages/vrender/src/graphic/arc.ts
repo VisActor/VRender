@@ -6,7 +6,6 @@ import {
   asin,
   AABBBounds,
   OBBBounds,
-  transformBounds,
   clampAngleByRadian,
   isNumber,
   cos,
@@ -14,7 +13,8 @@ import {
 } from '@visactor/vutils';
 import { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { circleBounds, parsePadding, CustomPath2D } from '../common';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 import { GraphicType } from '../interface';

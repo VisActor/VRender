@@ -49,13 +49,17 @@ import {
 } from '../../interface';
 import { graphicCreator } from '../graphic-creator';
 import { IRectBoundsContribution, RectBoundsContribution } from './rect-contribution';
-import { BoundsContext, circleBounds, ContributionProvider, renderCommandList, textDrawOffsetX } from '../../common';
+import { textDrawOffsetX } from '../../common/text';
 import { ISymbolBoundsContribution, SymbolBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
 import { CircleBoundsContribution, ICircleBoundsContribution } from './circle-contribution';
 import { ArcBoundsContribution, IArcBoundsContribution } from './arc-contribution';
 import { IPathBoundsContribution, PathBoundsContribution } from './path-contribution';
 import { mat4Allocate } from '../../modules';
+import { ContributionProvider } from '../../common/contribution-provider';
+import { BoundsContext } from '../../common/bounds-context';
+import { renderCommandList } from '../../common/render-command-list';
+import { circleBounds } from '../../common/utils';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix

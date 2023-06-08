@@ -1,5 +1,5 @@
 import { isArray, isNumber, IPoint, AABBBounds } from '@visactor/vutils';
-import { getScaledStroke } from '../../../common';
+import { getScaledStroke } from '../../../common/canvas-utils';
 import { inject, injectable } from 'inversify';
 import { getTheme, RECT_NUMBER_TYPE } from '../../../graphic';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';

@@ -1,4 +1,5 @@
 import { degreeToRadian, halfPi, tau } from '@visactor/vutils';
+import { ICustomPath2D } from '../../interface';
 
 // const segmentCache: Record<string, number[][]> = {};
 // const bezierCache: Record<string, [number, number, number, number, number, number]> = {};
@@ -139,3 +140,74 @@ export function bezier(params: number[]) {
     a10 * x3 + a11 * y3
   ];
 }
+
+export function drawArc(
+  context: ICustomPath2D,
+  x: number,
+  y: number,
+  coords: [number, number, number, number, number, number, number]
+) {
+  const seg = segments(
+    coords[5], // end x
+    coords[6], // end y
+    coords[0], // radius x
+    coords[1], // radius y
+    coords[3], // large flag
+    coords[4], // sweep flag
+    coords[2], // rotation
+    x,
+    y
+  );
+  for (let i = 0; i < seg.length; ++i) {
+    const bez = bezier(seg[i]);
+    context.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5]);
+  }
+}
+
+/* Adapted from zrender by ecomfe
+ * https://github.com/ecomfe/zrender
+ * Licensed under the BSD-3-Clause
+
+ * url: https://github.com/ecomfe/zrender/blob/master/src/tool/morphPath.ts
+ * License: https://github.com/ecomfe/zrender/blob/master/LICENSE
+ * @license
+ */
+
+export const addArcToBezierPath = (
+  bezierPath: number[],
+  startAngle: number,
+  endAngle: number,
+  cx: number,
+  cy: number,
+  rx: number,
+  ry: number
+) => {
+  // https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
+  const delta = Math.abs(endAngle - startAngle);
+  const len = (Math.tan(delta / 4) * 4) / 3;
+  const dir = endAngle < startAngle ? -1 : 1;
+
+  const c1 = Math.cos(startAngle);
+  const s1 = Math.sin(startAngle);
+  const c2 = Math.cos(endAngle);
+  const s2 = Math.sin(endAngle);
+
+  const x1 = c1 * rx + cx;
+  const y1 = s1 * ry + cy;
+
+  const x4 = c2 * rx + cx;
+  const y4 = s2 * ry + cy;
+
+  const hx = rx * len * dir;
+  const hy = ry * len * dir;
+
+  bezierPath.push(
+    // Move control points on tangent.
+    x1 - hx * s1,
+    y1 + hy * c1,
+    x4 + hx * s2,
+    y4 - hy * c2,
+    x4,
+    y4
+  );
+};

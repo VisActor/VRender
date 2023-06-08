@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { createRectPath, parsePadding } from '../../../common';
+import { createRectPath } from '../../../common/shape/rect';
 import { getTheme, RICHTEXT_NUMBER_TYPE } from '../../../graphic';
 import { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';

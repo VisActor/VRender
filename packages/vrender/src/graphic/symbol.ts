@@ -3,9 +3,10 @@ import { ISymbol, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
 import { ISymbolClass } from './builtin-symbol/interface';
-import { CustomPath2D, parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
+import { CustomPath2D } from '../common/custom-path2d';
 
 export const SYMBOL_NUMBER_TYPE = genNumberType();
 

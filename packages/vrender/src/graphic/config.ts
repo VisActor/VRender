@@ -1,6 +1,6 @@
 // 存放公共属性
 import { Matrix, pi2 } from '@visactor/vutils';
-import { CustomPath2D } from '../common';
+import { CustomPath2D } from '../common/custom-path2d';
 import {
   IArcGraphicAttribute,
   IAreaGraphicAttribute,

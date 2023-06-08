@@ -1,13 +1,11 @@
 import { inject, injectable, named } from 'inversify';
 import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
 import { CIRCLE_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { graphicService } from '../../../modules';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { CircleRenderContribution, ICircleRenderContribution } from './contributions/circle-contribution-render';
-import { ContributionProvider } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { renderCommandList } from '../../../common/render-command-list';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()

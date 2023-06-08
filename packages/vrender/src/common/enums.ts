@@ -57,3 +57,17 @@ export enum AnimateStepType {
   'to' = 'to',
   'customAnimate' = 'customAnimate'
 }
+
+export enum Direction {
+  ROW = 1,
+  COLUMN = 2
+}
+
+export enum CurveTypeEnum {
+  CubicBezierCurve = 0,
+  QuadraticBezierCurve = 1,
+  ArcCurve = 2,
+  LineCurve = 3,
+  EllipseCurve = 4,
+  MoveCurve = 5
+}

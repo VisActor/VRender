@@ -22,7 +22,7 @@ import {
   IArea,
   IPath
 } from './../interface';
-import { CustomPath2D } from '../common/path';
+import { CustomPath2D } from '../common/custom-path2d';
 import { ACustomAnimate } from './animate';
 import {
   alignBezierCurves,

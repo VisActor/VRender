@@ -1,5 +1,5 @@
 import { AABBBounds, IPointLike, max, PointService } from '@visactor/vutils';
-import { parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 import { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
 import { IFace3d } from '../interface/graphic/face3d';
 import { graphicService } from '../modules';

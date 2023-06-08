@@ -26,7 +26,7 @@ import {
   CanvasSymbolPicker,
   CanvasTextPicker
 } from '../constants';
-import { bindContributionProvider } from '../../../common';
+import { bindContributionProvider } from '../../../common/contribution-provider';
 import { DefaultCanvasPolygonPicker } from './polygon-picker';
 import { DefaultCanvasRichTextPicker } from './richtext-picker';
 import { DefaultCanvasGlyphPicker } from './glyph-picker';

@@ -11,8 +11,9 @@ import {
   ITextStyleParams
 } from '../interface';
 import { matrixAllocate } from '../modules';
-import { getScaledStroke, CustomPath2D } from '../common';
 import { contain, containStroke } from './util';
+import { CustomPath2D } from '../common/custom-path2d';
+import { getScaledStroke } from '../common/canvas-utils';
 /**
  * 部分源码参考konva
  * MIT License

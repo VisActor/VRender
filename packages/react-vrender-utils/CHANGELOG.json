@@ -1,0 +1,20 @@
+{
+  "name": "@visactor/react-vrender-utils",
+  "entries": [
+    {
+      "version": "0.9.0",
+      "tag": "@visactor/react-vrender-utils_v0.9.0",
+      "date": "Wed, 07 Jun 2023 12:20:05 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.0-alpha.1` to `0.9.0`"
+          },
+          {
+            "comment": "Updating dependency \"@visactor/react-vrender\" from `0.9.0-alpha.1` to `0.9.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

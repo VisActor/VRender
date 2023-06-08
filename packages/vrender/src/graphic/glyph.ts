@@ -1,5 +1,5 @@
 import { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
-import { Graphic, genNumberType } from './graphic';
+import { Graphic } from './graphic';
 import {
   GraphicType,
   IGraphic,
@@ -10,8 +10,7 @@ import {
 } from '../interface';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
-
-export const GLYPH_NUMBER_TYPE = genNumberType();
+import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   type: GraphicType = 'glyph';

@@ -1,12 +1,11 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
-
-export const RECT_NUMBER_TYPE = genNumberType();
+import { RECT_NUMBER_TYPE } from './constants';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'height', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 

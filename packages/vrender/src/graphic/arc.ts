@@ -12,12 +12,13 @@ import {
   sqrt
 } from '@visactor/vutils';
 import { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
 import { GraphicType } from '../interface';
+import { ARC_NUMBER_TYPE } from './constants';
 
 /**
  * 部分代码参考 https://github.com/d3/d3-shape/
@@ -35,8 +36,6 @@ import { GraphicType } from '../interface';
   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
   THIS SOFTWARE.
  */
-
-export const ARC_NUMBER_TYPE = genNumberType();
 
 const ARC_UPDATE_TAG_KEY = [
   'innerRadius',

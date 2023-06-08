@@ -1,12 +1,11 @@
 import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
 import { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding, pointsInterpolation } from '../common/utils';
 import { getTheme } from './theme';
 import { graphicService } from '../modules';
-
-export const AREA_NUMBER_TYPE = genNumberType();
+import { AREA_NUMBER_TYPE } from './constants';
 
 const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDATE_TAG_KEY];
 

@@ -1,6 +1,7 @@
 import { IGroup } from '../../interface';
 import { IDrawContext } from '../../render';
-import { global, graphicService } from '../../modules';
+import { graphicService } from '../../modules';
+import { application } from '../../application';
 import { IPlugin, IPluginService } from '../plugin-service';
 import { Generator } from '../../common/generator';
 
@@ -46,7 +47,7 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
     this.nextFrameRenderGroupSet.add(group);
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      global.getRequestAnimationFrame()(() => {
+      application.global.getRequestAnimationFrame()(() => {
         this._doRenderInThisFrame();
         this.willNextFrameRender = false;
       });

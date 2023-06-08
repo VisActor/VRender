@@ -9,7 +9,7 @@ import loadBuiltinContributions from './core/contributions/modules';
 import loadRenderContributions from './render/contributions/modules';
 import loadPickContributions from './picker/contributions/modules';
 import loadCanvasContributions from './canvas/contributions/modules';
-import { GraphicUtil, IGraphicUtil, ILayerService, ITransformUtil, LayerService, TransformUtil } from './core';
+import { GraphicUtil, ILayerService, ITransformUtil, LayerService, TransformUtil } from './core';
 import { GraphicService, IGraphicService } from './graphic';
 import { IMat4Allocate, IMatrixAllocate, Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
 import { GlobalPickerService } from './picker/global-picker-service';
@@ -37,6 +37,8 @@ import {
   ICanvasAllocate
 } from './allocator/interface';
 import { Global, IGlobal } from './interface';
+import { application } from './application';
+import { IGraphicUtil } from './core/interface';
 
 export const container = new Container();
 container.load(coreModule);
@@ -51,8 +53,10 @@ loadPickContributions(container);
 loadCanvasContributions(container);
 
 // 全局变量
-export const global = container.get<IGlobal>(Global);
-export const graphicUtil = container.get<IGraphicUtil>(GraphicUtil);
+// export const global = container.get<IGlobal>(Global);
+application.global = container.get<IGlobal>(Global);
+// export const graphicUtil = container.get<IGraphicUtil>(GraphicUtil);
+application.graphicUtil = container.get<IGraphicUtil>(GraphicUtil);
 export const transformUtil = container.get<ITransformUtil>(TransformUtil);
 export const graphicService = container.get<IGraphicService>(GraphicService);
 export const matrixAllocate = container.get<IMatrixAllocate>(MatrixAllocate);

@@ -8,7 +8,8 @@ import {
   IThemeAttribute,
   ISegment
 } from '../../../interface';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { IDrawContext } from '../../render-service';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';

@@ -3,11 +3,9 @@ import { parsePadding } from '../common/utils';
 import { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
 import { IFace3d } from '../interface/graphic/face3d';
 import { graphicService } from '../modules';
-import { genNumberType } from './graphic';
 import { Polygon } from './polygon';
 import { getTheme } from './theme';
-
-export const PYRAMID3D_NUMBER_TYPE = genNumberType();
+import { PYRAMID3D_NUMBER_TYPE } from './constants';
 
 export class Pyramid3d extends Polygon implements IPyramid3d {
   type: GraphicType = 'pyramid3d';

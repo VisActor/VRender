@@ -1,7 +1,8 @@
 import { mat4Allocate } from '../../../modules';
 import { inject, injectable, named } from 'inversify';
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { getTheme, SYMBOL_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { BaseRender } from './base-render';

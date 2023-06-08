@@ -22,13 +22,14 @@ import {
   genLinearClosedSegments
 } from '../../../common/segment';
 
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution, IAreaRenderContribution } from './contributions/area-contribution-render';
 import { BaseRenderContributionTime } from './contributions';
 import { drawAreaSegments } from '../../../common/render-area';
+import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 
 function calcLineCache(
   points: IPointLike[],

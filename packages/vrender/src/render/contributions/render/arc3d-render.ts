@@ -1,6 +1,6 @@
 import { abs, cos, epsilon, sin, pi2, vec3, pi } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { ARC3D_NUMBER_TYPE, getExtraModelMatrix, getTheme, multiplyMat4Mat3, multiplyMat4Mat4 } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import {
   IContext2d,
   IArc,
@@ -16,6 +16,7 @@ import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from '.
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../modules';
 import { BaseRender } from './base-render';
+import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/

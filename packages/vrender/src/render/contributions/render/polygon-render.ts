@@ -1,6 +1,7 @@
 import { isArray, isNumber } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, POLYGON_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { POLYGON_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IPolygon, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';

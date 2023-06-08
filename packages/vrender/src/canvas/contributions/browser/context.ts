@@ -41,7 +41,8 @@ import {
   vec3
 } from '../../../interface';
 import { createColor, getScaledStroke } from '../../../common/canvas-utils';
-import { global, graphicUtil, matrixAllocate } from '../../../modules';
+import { application } from '../../../application';
+import { matrixAllocate } from '../../../modules';
 import { createConicalGradient } from './conical-gradient';
 import { transformMat4 } from '../../../core/camera';
 import { getContextFont } from '../../../common/text';
@@ -817,12 +818,15 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.isPointInStroke(x, y);
   }
 
-  measureText(text: string, method: 'native' | 'simple' | 'quick' = global.measureTextMethod): { width: number } {
+  measureText(
+    text: string,
+    method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
+  ): { width: number } {
     if (!method || method === 'native') {
       return this.nativeContext.measureText(text);
     }
     if (!this.mathTextMeasure) {
-      this.mathTextMeasure = graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas);
+      this.mathTextMeasure = application.graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas);
     }
     this.mathTextMeasure.textSpec.fontFamily = this.fontFamily ?? DefaultTextStyle.fontFamily;
     this.mathTextMeasure.textSpec.fontSize = this.fontSize ?? DefaultTextStyle.fontSize;

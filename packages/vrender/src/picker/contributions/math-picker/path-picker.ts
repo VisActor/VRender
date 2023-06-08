@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { IPoint } from '@visactor/vutils';
-import { getTheme, PATH_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import { IContext2d, IPath, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, PathRender } from '../../../render';
-import { graphicService } from '../../../modules';
+import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultMathPathPicker implements IGraphicPicker {

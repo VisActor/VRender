@@ -1,5 +1,5 @@
 import Paragraph from './paragraph';
-import { graphicUtil } from '../../modules';
+import { application } from '../../application';
 import { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 
 export const DIRECTION_KEY = {
@@ -166,7 +166,7 @@ export function getStrByWithCanvas(
   if (!width || width <= 0) {
     return 0;
   }
-  const textMeasure = graphicUtil.textMeasure;
+  const textMeasure = application.graphicUtil.textMeasure;
   // const measurement = textMeasure.measureText(text, character);
 
   // 测量从头到当前位置宽度以及从头到下一个字符位置宽度
@@ -288,7 +288,7 @@ export function measureTextCanvas(
   text: string,
   character: IRichTextParagraphCharacter
 ): { ascent: number; height: number; descent: number; width: number } {
-  const textMeasure = graphicUtil.textMeasure;
+  const textMeasure = application.graphicUtil.textMeasure;
   const measurement = textMeasure.measureText(text, character) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
     ascent: 0,

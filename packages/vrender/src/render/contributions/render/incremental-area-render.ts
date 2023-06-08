@@ -8,7 +8,8 @@ import {
   IMarkAttribute,
   IThemeAttribute
 } from '../../../interface';
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
+import { getTheme } from '../../../graphic/theme';
 import { IDrawContext } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';

@@ -1,5 +1,6 @@
 import { injectable } from 'inversify';
-import { getTheme, PYRAMID3D_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { PYRAMID3D_NUMBER_TYPE } from '../../../graphic/constants';
 import {
   IGraphicAttribute,
   IContext2d,

@@ -1,11 +1,5 @@
 import { injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  RECT3D_NUMBER_TYPE
-} from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -23,6 +17,7 @@ import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils'
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../modules';
 import { BaseRender } from './base-render';
+import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 @injectable()
 export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IGraphicRender {
   type = 'rect3d';

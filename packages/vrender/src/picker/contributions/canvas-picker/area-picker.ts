@@ -1,9 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { IPoint } from '@visactor/vutils';
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { IContext2d, IArea } from '../../../interface';
+import { getTheme } from '../../../graphic/theme';
+import { IArea } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { AreaRender, IGraphicRender } from '../../../render';
+import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultCanvasAreaPicker implements IGraphicPicker {

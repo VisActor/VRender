@@ -1,6 +1,6 @@
 import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import {
@@ -18,6 +18,7 @@ import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from '.
 import { getConicGradientAt } from '../../../canvas';
 import { ArcRenderContribution, IArcRenderContribution } from './contributions/arc-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
  * Copyright 2010-2022 Mike Bostock

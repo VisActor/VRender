@@ -1,10 +1,8 @@
 import { min } from '@visactor/vutils';
 import { GraphicType, IFace3d, IRect3d, IRect3dGraphicAttribute } from '../interface';
-import { genNumberType } from './graphic';
 import { Rect } from './rect';
 import { getTheme } from './theme';
-
-export const RECT3D_NUMBER_TYPE = genNumberType();
+import { RECT3D_NUMBER_TYPE } from './constants';
 
 const CUBE_VERTICES = [
   [0, 0, 0],

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
-import { IGraphicUtil } from '../..';
+import { IGraphicUtil } from '../../interface';
 import { ICanvas, IContext2d, EnvType } from '../../../interface';
 import { TextOptionsType, ITextMeasure } from './ITextMeasure';
-import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic';
+import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {

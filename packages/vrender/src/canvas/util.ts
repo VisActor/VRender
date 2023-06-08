@@ -1,6 +1,17 @@
 import { IPointLike, pi, pi2, vec2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
 import { CommandType, IContext2d } from '../interface';
+import { container, global } from '../modules';
+import { CanvasFactory, Context2dFactory, ICanvasFactory, IContext2dFactory } from './interface';
+import { CanvasConfigType, ICanvas } from '../interface';
+
+export function wrapCanvas(params: CanvasConfigType) {
+  return container.getNamed<ICanvasFactory>(CanvasFactory, global.env)(params);
+}
+
+export function wrapContext(canvas: ICanvas, dpr: number) {
+  return container.getNamed<IContext2dFactory>(Context2dFactory, global.env)(canvas, dpr);
+}
 // 源码参考 http://pomax.github.io/bezierinfo/#projections
 /**
  * 源码参考zrender https://github.com/ecomfe/zrender/

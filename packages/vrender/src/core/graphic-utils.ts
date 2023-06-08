@@ -3,7 +3,7 @@ import { IGraphicAttribute, ICanvas, IContext2d, EnvType, Global, IGlobal, IText
 import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 import { ContributionProvider } from '../common/contribution-provider';
-import { wrapCanvas } from '../canvas';
+import { wrapCanvas } from '../canvas/util';
 import { DefaultTextStyle } from '../graphic';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
 

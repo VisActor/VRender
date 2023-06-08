@@ -1,5 +1,5 @@
-import { wrapCanvas } from '../../../canvas';
 import { inject, injectable } from 'inversify';
+import { wrapCanvas } from '../../../canvas/util';
 import { ILayerHandlerContribution, IWindow, ILayerHandlerInitParams, ILayerHandlerDrawParams } from '../..';
 import { Global, IGlobal, ICanvas, IContext2d, IDrawToParams, IGroup, ILayer } from '../../../interface';
 import { IBoundsLike } from '@visactor/vutils';

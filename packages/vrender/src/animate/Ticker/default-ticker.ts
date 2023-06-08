@@ -1,8 +1,7 @@
-import { epsilon } from '@visactor/vutils';
-import { ITimeline } from '../../animate';
-import { Releaseable } from '../../interface';
+import type { ITimeline } from '../../animate';
+import type { Releaseable } from '../../interface';
 import { global } from '../../modules';
-import { ITicker } from './interface';
+import type { ITicker } from './interface';
 
 export class ManualTickHandler implements ITickHandler {
   protected timerId: number;

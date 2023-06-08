@@ -1,7 +1,17 @@
-import { AABBBounds, Matrix, OBBBounds, Point, transformBounds } from '@visactor/vutils';
+import type { AABBBounds, Matrix, OBBBounds } from '@visactor/vutils';
+import { Point } from '@visactor/vutils';
 import { graphicService } from '../modules';
-import { IStage, GraphicAttributeMap, INode, IGraphic, ITheme, IThemeSpec, ILayer, GraphicType } from '../interface';
-import { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
+import type {
+  IStage,
+  GraphicAttributeMap,
+  INode,
+  IGraphic,
+  ITheme,
+  IThemeSpec,
+  ILayer,
+  GraphicType
+} from '../interface';
+import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
 import { Graphic, genNumberType } from './graphic';
 import { getTheme, Theme } from './theme';
 import { parsePadding } from '../common/utils';

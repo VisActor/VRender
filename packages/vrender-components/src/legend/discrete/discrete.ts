@@ -73,8 +73,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fill: '#D8D8D8',
-            stroke: '#D8D8D8'
+            fill: '#D8D8D8'
+            // stroke: '#D8D8D8'
           }
         }
       },
@@ -349,16 +349,16 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ...shapeAttr.style
     });
     this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
-    // 处理下 shape 的 fill stroke
-    Object.keys(shapeAttr.state).forEach(key => {
-      if (isBoolean(shape.fill) && isNil(shapeAttr.state[key].fill)) {
-        shapeAttr.state[key].fill = shape.fill;
-      }
+    // // 处理下 shape 的 fill stroke
+    // Object.keys(shapeAttr.state).forEach(key => {
+    //   if ((shape.fill) && isNil(shapeAttr.state[key].fill)) {
+    //     shapeAttr.state[key].fill = shape.fill;
+    //   }
 
-      if (isBoolean(shape.stroke) && isNil(shapeAttr.state[key].stroke)) {
-        shapeAttr.state[key].stroke = shape.stroke;
-      }
-    });
+    //   if ((shape.stroke) && isNil(shapeAttr.state[key].stroke)) {
+    //     shapeAttr.state[key].stroke = shape.stroke;
+    //   }
+    // });
     itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(itemShape);
 

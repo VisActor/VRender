@@ -20,12 +20,12 @@ export function run() {
       autoFit: true,
       style: {
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -35,13 +35,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -49,13 +49,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -79,12 +79,12 @@ export function run() {
       style: {
         text: 'Aris',
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -94,13 +94,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -108,13 +108,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -139,12 +139,12 @@ export function run() {
       style: {
         // text: '',
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -154,13 +154,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -168,13 +168,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -199,12 +199,12 @@ export function run() {
       style: {
         text: 'TITLE',
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -214,13 +214,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -228,13 +228,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -259,12 +259,12 @@ export function run() {
       style: {
         text: 'TITLE',
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -274,13 +274,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -288,13 +288,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -319,12 +319,12 @@ export function run() {
       style: {
         text: 'TITLE',
         fontSize: 42,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     content: [
@@ -334,13 +334,13 @@ export function run() {
         fitPercent: 1,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -348,13 +348,13 @@ export function run() {
         autoFit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -378,12 +378,12 @@ export function run() {
       autoFit: true,
       style: {
         fontSize: 20,
-        fill: true,
+
         fontWeight: 'normal',
         fillOpacity: 1,
         textBaseline: 'top',
         textAlign: 'center',
-        fillColor: 'red',
+        fill: 'red',
         text: 2
       }
     },
@@ -392,26 +392,26 @@ export function run() {
         visible: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 0.9,
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
         visible: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'normal',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT0',
-          fillColor: 'black'
+          fill: 'black'
         }
       },
       {
@@ -419,13 +419,13 @@ export function run() {
         autoLimit: true,
         style: {
           fontSize: 16,
-          fill: true,
+
           fontWeight: 'bolder',
           fillOpacity: 1,
           textBaseline: 'top',
           textAlign: 'center',
           text: 'CONTENT111111111111111111111111111111111111111',
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     ]
@@ -450,8 +450,8 @@ export function run() {
       style: {
         text: 'TITLE',
         fontSize: 42,
-        fill: true,
-        fillColor: 'red'
+
+        fill: 'red'
       }
     },
     content: [
@@ -475,8 +475,8 @@ export function run() {
         style: {
           fontSize: 16,
           text: 'CONTENT111111111111111111111111111111111111111111111111111111111111111111111111111111',
-          fill: true,
-          fillColor: 'blue',
+
+          fill: 'blue',
           fontWeight: 'bolder'
         }
       }
@@ -498,8 +498,8 @@ export function run() {
           { x: 500, y: 250 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -508,8 +508,8 @@ export function run() {
           { x: 0, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -518,8 +518,8 @@ export function run() {
           { x: 250, y: 500 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -528,8 +528,8 @@ export function run() {
           { x: 500, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       })
     ],

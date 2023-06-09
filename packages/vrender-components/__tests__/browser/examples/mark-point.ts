@@ -42,47 +42,46 @@ export function run() {
             text: 'Mapbox',
             fontWeight: 'bold',
             fontSize: 10,
-            fillColor: '#3f51b5',
-            fill: true
+            fill: '#3f51b5'
           },
           {
             text: '公司成立于2010年，创立目标是为Google Map提供一个',
-            fill: true,
+
             fontSize: 8
           },
           {
             text: '替代方案',
             fontStyle: 'italic',
-            fill: true,
-            fillColor: '#3f51b5',
+
+            fill: '#3f51b5',
             fontSize: 8
           },
           {
             text: '。在当时，Google Map',
-            fill: true,
+
             fontSize: 8
           },
           {
             text: '地图',
             textDecoration: 'line-through',
-            fill: true,
+
             fontSize: 8
           },
           {
             text: '[1]',
             script: 'super',
-            fill: true,
+
             fontSize: 8
           },
           {
             text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
-            fill: true,
+
             fontSize: 8
           },
           {
             text: '。\n',
-            fill: true,
-            fillColor: '#30ff05',
+
+            fill: '#30ff05',
             fontSize: 8
           }
         ]

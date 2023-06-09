@@ -52,23 +52,23 @@ const angleItems = domain.map(value => {
 
 const stateStyle = {
   hover: {
-    fillColor: 'blue',
-    strokeColor: 'blue',
+    fill: 'blue',
+    stroke: 'blue',
     fontWeight: 500
   },
   hover_reverse: {
-    fillColor: 'yellow',
-    strokeColor: 'yellow',
+    fill: 'yellow',
+    stroke: 'yellow',
     fontWeight: 500
   },
   selected: {
-    fillColor: 'red',
-    strokeColor: 'red',
+    fill: 'red',
+    stroke: 'red',
     fontSize: 16
   },
   selected_reverse: {
-    fillColor: '#ccc',
-    strokeColor: '#ccc'
+    fill: '#ccc',
+    stroke: '#ccc'
   }
 };
 
@@ -94,7 +94,7 @@ const xAxisBottom = new LineAxis({
     // background: {
     //   visible: true,
     //   style: {
-    //     fillColor: 'rgba(0, 0, 0, 0.3)'
+    //     fill: 'rgba(0, 0, 0, 0.3)'
     //   }
     // },
     padding: 4,
@@ -119,7 +119,7 @@ const xAxisBottom = new LineAxis({
   subGrid: {
     visible: true,
     style: {
-      strokeColor: 'red'
+      stroke: 'red'
     }
   },
   hover: true,
@@ -127,8 +127,7 @@ const xAxisBottom = new LineAxis({
   panel: {
     visible: true,
     style: {
-      fill: true,
-      fillColor: 'rgba(23, 133, 45, 1)'
+      fill: 'rgba(23, 133, 45, 1)'
     },
     state: stateStyle
   }
@@ -146,7 +145,7 @@ const xAxisTop = new LineAxis({
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     padding: 0,
@@ -165,14 +164,13 @@ const xAxisTop = new LineAxis({
   subGrid: {
     visible: true,
     style: {
-      strokeColor: 'red'
+      stroke: 'red'
     }
   },
   panel: {
     visible: true,
     style: {
-      fill: true,
-      fillColor: 'rgba(23, 133, 45, 1)'
+      fill: 'rgba(23, 133, 45, 1)'
     }
   }
 });
@@ -188,7 +186,7 @@ const yAxisLeft = new LineAxis({
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     padding: 4,
@@ -198,8 +196,7 @@ const yAxisLeft = new LineAxis({
   panel: {
     visible: true,
     style: {
-      fill: true,
-      fillColor: 'rgba(23, 133, 45, 1)'
+      fill: 'rgba(23, 133, 45, 1)'
     }
   },
   label: {
@@ -218,8 +215,7 @@ const yAxisRight = new LineAxis({
   panel: {
     visible: true,
     style: {
-      fill: true,
-      fillColor: 'rgba(23, 133, 45, 1)'
+      fill: 'rgba(23, 133, 45, 1)'
     }
   },
   title: {
@@ -230,13 +226,13 @@ const yAxisRight = new LineAxis({
       visible: true,
       style: {
         symbolType: 'circle',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     padding: 4,
@@ -259,8 +255,7 @@ const yAxis = new LineAxis({
   panel: {
     visible: true,
     style: {
-      fill: true,
-      fillColor: 'rgba(23, 133, 45, 1)'
+      fill: 'rgba(23, 133, 45, 1)'
     }
   },
   title: {
@@ -270,7 +265,7 @@ const yAxis = new LineAxis({
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     padding: 4,
@@ -294,7 +289,7 @@ const yAxis3d = new LineAxis(
       background: {
         visible: true,
         style: {
-          fillColor: 'rgba(0, 0, 0, 0.3)'
+          fill: 'rgba(0, 0, 0, 0.3)'
         }
       },
       padding: 4,
@@ -333,7 +328,7 @@ const xAxis3d = new LineAxis(
       background: {
         visible: true,
         style: {
-          fillColor: 'rgba(0, 0, 0, 0.3)'
+          fill: 'rgba(0, 0, 0, 0.3)'
         }
       },
       padding: 4,
@@ -380,7 +375,7 @@ const zAxis3d = new LineAxis(
       background: {
         visible: true,
         style: {
-          fillColor: 'rgba(0, 0, 0, 0.3)'
+          fill: 'rgba(0, 0, 0, 0.3)'
         }
       },
       padding: 4,
@@ -448,13 +443,13 @@ const axisWidthGird = new LineAxis({
       visible: true,
       style: {
         symbolType: 'circle',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     padding: 4,
@@ -475,7 +470,7 @@ const axisWidthGird = new LineAxis({
     length: 300,
     alignWithLabel: false,
     style: {
-      strokeColor: 'red'
+      stroke: 'red'
     },
     zIndex: 1,
     alternateColor: ['#ccc', '#000']
@@ -507,7 +502,7 @@ const angleAxisWithGrid = new CircleAxis({
     visible: true,
     length: 6,
     style: {
-      strokeColor: 'blue'
+      stroke: 'blue'
     }
   },
   grid: {
@@ -520,7 +515,7 @@ const angleAxisWithGrid = new CircleAxis({
   // subGrid: {
   //   visible: true,
   //   style: {
-  //     strokeColor: 'blue'
+  //     stroke: 'blue'
   //   }
   //   // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)']
   // },

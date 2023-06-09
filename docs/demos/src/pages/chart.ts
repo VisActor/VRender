@@ -114,5 +114,5 @@ export const page = () => {
 
   stage.render(undefined, {});
 
-  stage.enableView3dTranform();
+  stage.enableView3dTransform();
 };

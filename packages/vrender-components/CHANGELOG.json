@@ -1,0 +1,29 @@
+{
+  "name": "@visactor/vrender-components",
+  "entries": [
+    {
+      "version": "0.9.1",
+      "tag": "@visactor/vrender-components_v0.9.1",
+      "date": "Thu, 08 Jun 2023 11:34:32 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.0` to `0.9.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.0",
+      "tag": "@visactor/vrender-components_v0.9.0",
+      "date": "Wed, 07 Jun 2023 12:20:05 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.9.0-alpha.1` to `0.9.0`"
+          }
+        ]
+      }
+    }
+  ]
+}

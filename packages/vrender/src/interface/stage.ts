@@ -40,7 +40,7 @@ export interface IStageParams {
   title: string;
   autoRender: boolean;
   disableDirtyBounds: boolean;
-  enableView3dTranform: boolean; // 是否开启view3d自动旋转
+  enableView3dTransform: boolean; // 是否开启view3d自动旋转
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
   // 绘制之后的钩子函数
@@ -151,7 +151,7 @@ export interface IStage extends INode {
   disableIncrementalAutoRender: () => void;
   enableDirtyBounds: () => void;
   disableDirtyBounds: () => void;
-  enableView3dTranform: () => void;
+  enableView3dTransform: () => void;
   disableView3dTranform: () => void;
   clearViewBox: (color?: string) => void;
   release: () => void;

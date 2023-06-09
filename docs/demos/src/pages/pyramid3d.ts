@@ -24,9 +24,12 @@ function drawChartCanopus() {
 
   group.setMode('3d');
 
-  for (let i = 5; i >= 0; i--) {
-    if (i === 4) {
-      break;
+  for (let i = 9; i >= 0; i--) {
+    // if (i === 4) {
+    //   break;
+    // }
+    if (i < 9) {
+      continue;
     }
     const p3d = createPyramid3d({
       points: [

@@ -869,12 +869,12 @@ export class BrowserContext2d implements IContext2d {
   strokeText(text: string, x: number, y: number, z: number) {
     z = z || 0;
     if (this.camera) {
-      // if (this.modelMatrix) {
-      //   transformMat4(outP, [x, y, z], this.modelMatrix);
-      //   x = outP[0];
-      //   y = outP[1];
-      //   z = outP[2];
-      // }
+      if (this.modelMatrix) {
+        transformMat4(outP, [x, y, z], this.modelMatrix);
+        x = outP[0];
+        y = outP[1];
+        z = outP[2];
+      }
       const data = this.camera.vp(x, y, z);
       x = data.x;
       y = data.y;

@@ -8,11 +8,11 @@ export const page = () => {
   graphics.push(createRect({
     x: 100,
     y: 100,
-    width: 100,
+    width: 20,
     height: 100,
     fill: colorPools[10],
-    stroke: colorPools[0],
-    stroke: [true, false, false, false],
+    stroke: [colorPools[0], colorPools[0], colorPools[0], colorPools[0]],
+    borderRadius: 10,
     lineWidth: 5
   }));
 

@@ -51,10 +51,9 @@ export function run() {
     xRange: [0, 250],
     yRange: [0, 250],
     brushStyle: {
-      fill: true,
-      fillColor: 'red',
+      fill: 'red',
       fillOpacity: 0.2,
-      strokeColor: '#B0C8F9',
+      stroke: '#B0C8F9',
       strokeWidth: 2
     }
   });

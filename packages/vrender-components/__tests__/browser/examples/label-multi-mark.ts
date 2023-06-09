@@ -38,8 +38,8 @@ const spec = {
                   attribute: {
                     visible: true,
                     lineWidth: 1,
-                    stroke: true,
-                    strokeColor: '#3478F6',
+
+                    stroke: '#3478F6',
                     points: [
                       {
                         x: 8.31400146484376,
@@ -213,8 +213,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 8.31400146484376,
@@ -230,8 +230,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 19.39933675130209,
@@ -247,8 +247,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 30.484672037760426,
@@ -264,8 +264,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 41.57000732421876,
@@ -281,8 +281,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 52.65534261067709,
@@ -298,8 +298,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 63.74067789713542,
@@ -315,8 +315,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 74.82601318359376,
@@ -332,8 +332,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 85.91134847005209,
@@ -349,8 +349,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 96.99668375651042,
@@ -366,8 +366,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 108.08201904296875,
@@ -383,8 +383,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 119.16735432942708,
@@ -400,8 +400,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 130.25268961588543,
@@ -417,8 +417,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 141.33802490234376,
@@ -434,8 +434,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 152.4233601888021,
@@ -451,8 +451,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 163.50869547526042,
@@ -468,8 +468,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 174.59403076171876,
@@ -485,8 +485,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 185.6793660481771,
@@ -502,8 +502,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 196.76470133463542,
@@ -519,8 +519,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 207.85003662109375,
@@ -536,8 +536,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 218.93537190755208,
@@ -553,8 +553,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 230.0207071940104,
@@ -570,8 +570,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 241.10604248046874,
@@ -587,8 +587,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 252.19137776692708,
@@ -604,8 +604,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 263.27671305338544,
@@ -621,8 +621,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 274.36204833984374,
@@ -638,8 +638,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 285.44738362630204,
@@ -655,8 +655,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 296.53271891276046,
@@ -672,8 +672,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 307.61805419921876,
@@ -689,8 +689,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 318.70338948567706,
@@ -706,8 +706,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 329.78872477213537,
@@ -723,8 +723,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 340.8740600585938,
@@ -740,8 +740,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 351.9593953450521,
@@ -757,8 +757,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 363.0447306315104,
@@ -774,8 +774,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 374.1300659179688,
@@ -791,8 +791,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 385.2154012044271,
@@ -808,8 +808,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 396.3007364908854,
@@ -825,8 +825,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#3478F6',
+
+                    fill: '#3478F6',
                     fillOpacity: 1,
                     visible: true,
                     x: 407.3860717773437,
@@ -868,8 +868,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 4.5228167968750075,
                     y: 308.79129505843696,
@@ -886,8 +886,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 15.60815208333334,
                     y: 462.6246321657772,
@@ -904,8 +904,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 26.693487369791676,
                     y: 468.2907604685087,
@@ -922,8 +922,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 37.77882265625001,
                     y: 458.9767292775828,
@@ -940,8 +940,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 48.86415794270834,
                     y: 461.1691649511308,
@@ -958,8 +958,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 59.94949322916667,
                     y: 451.60506053284536,
@@ -976,8 +976,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 71.03482851562501,
                     y: 430.43975885290376,
@@ -994,8 +994,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 82.12016380208334,
                     y: 450.57114450828414,
@@ -1012,8 +1012,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 93.20549908854167,
                     y: 453.56014375275913,
@@ -1030,8 +1030,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 104.290834375,
                     y: 447.57768584792444,
@@ -1048,8 +1048,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 115.37616966145833,
                     y: 450.8151621663444,
@@ -1066,8 +1066,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 126.46150494791667,
                     y: 442.71037896903294,
@@ -1084,8 +1084,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 137.54684023437503,
                     y: 465.14244648781107,
@@ -1102,8 +1102,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 148.63217552083336,
                     y: 296.68930807298904,
@@ -1120,8 +1120,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 159.7175108072917,
                     y: 475.99453713950186,
@@ -1138,8 +1138,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 170.80284609375002,
                     y: 464.98075998331825,
@@ -1156,8 +1156,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 181.88818138020835,
                     y: 328.73535528526526,
@@ -1174,8 +1174,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 192.97351666666668,
                     y: 475.16664989726604,
@@ -1192,8 +1192,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 204.05885195312501,
                     y: 475.2272299979613,
@@ -1210,8 +1210,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 215.14418723958335,
                     y: 460.16102112006575,
@@ -1228,8 +1228,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 226.22952252604168,
                     y: 467.8803874324219,
@@ -1246,8 +1246,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 237.3148578125,
                     y: 472.68559393507985,
@@ -1264,8 +1264,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 248.40019309895834,
                     y: 470.9713934623701,
@@ -1282,8 +1282,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 259.48552838541667,
                     y: 196.27133494960643,
@@ -1300,8 +1300,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 270.570863671875,
                     y: 474.04673778977013,
@@ -1318,8 +1318,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 281.6561989583333,
                     y: 473.6968013673877,
@@ -1336,8 +1336,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 292.7415342447917,
                     y: 470.9857549425751,
@@ -1354,8 +1354,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 303.82686953125,
                     y: 462.6910368590452,
@@ -1372,8 +1372,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 314.9122048177083,
                     y: 469.92976303458624,
@@ -1390,8 +1390,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 325.9975401041666,
                     y: 455.5903226875874,
@@ -1408,8 +1408,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 337.082875390625,
                     y: 476.6230532292879,
@@ -1426,8 +1426,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 348.1682106770833,
                     y: 466.9518230354324,
@@ -1444,8 +1444,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 359.2535459635416,
                     y: 467.5437594747569,
@@ -1462,8 +1462,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 370.33888125000004,
                     y: 455.94775308200525,
@@ -1480,8 +1480,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 381.42421653645835,
                     y: 429.92754947196795,
@@ -1498,8 +1498,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 392.50955182291665,
                     y: 470.8563315713351,
@@ -1516,8 +1516,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#65C466',
+
+                    fill: '#65C466',
                     fillOpacity: 1,
                     x: 403.59488710937495,
                     y: 466.72365820715703,
@@ -1546,8 +1546,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 8.513537500000009,
                     y: 0,
@@ -1564,8 +1564,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 19.598872786458344,
                     y: 469.33363104141915,
@@ -1582,8 +1582,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 30.684208072916675,
                     y: 456.2669420342866,
@@ -1600,8 +1600,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 41.76954335937501,
                     y: 431.7197384701634,
@@ -1618,8 +1618,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 52.85487864583334,
                     y: 460.9257582754378,
@@ -1636,8 +1636,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 63.94021393229167,
                     y: 470.07195737455373,
@@ -1654,8 +1654,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 75.02554921875002,
                     y: 418.4291863426148,
@@ -1672,8 +1672,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 86.11088450520835,
                     y: 463.6668310422531,
@@ -1690,8 +1690,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 97.19621979166668,
                     y: 433.12283448635424,
@@ -1708,8 +1708,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 108.28155507812501,
                     y: 371.3095818485612,
@@ -1726,8 +1726,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 119.36689036458334,
                     y: 447.0354635312051,
@@ -1744,8 +1744,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 130.45222565104166,
                     y: 475.36116018559375,
@@ -1762,8 +1762,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 141.53756093750002,
                     y: 472.38007565958145,
@@ -1780,8 +1780,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 152.62289622395835,
                     y: 164.00241194119286,
@@ -1798,8 +1798,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 163.70823151041668,
                     y: 455.7020111326679,
@@ -1816,8 +1816,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 174.793566796875,
                     y: 473.5007247443713,
@@ -1834,8 +1834,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 185.87890208333334,
                     y: 442.4965311414369,
@@ -1852,8 +1852,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 196.96423736979168,
                     y: 474.7141584655037,
@@ -1870,8 +1870,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 208.04957265625,
                     y: 465.0325085610729,
@@ -1888,8 +1888,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 219.13490794270834,
                     y: 470.4045966474408,
@@ -1906,8 +1906,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 230.22024322916667,
                     y: 474.6358775211849,
@@ -1924,8 +1924,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 241.305578515625,
                     y: 461.2213888341384,
@@ -1942,8 +1942,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 252.39091380208333,
                     y: 457.0066959304608,
@@ -1960,8 +1960,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 263.4762490885417,
                     y: 465.87241631351316,
@@ -1978,8 +1978,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 274.561584375,
                     y: 464.0473467047043,
@@ -1996,8 +1996,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 285.6469196614583,
                     y: 446.18801441651703,
@@ -2014,8 +2014,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 296.7322549479167,
                     y: 463.1755959741822,
@@ -2032,8 +2032,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 307.817590234375,
                     y: 456.9304953136521,
@@ -2050,8 +2050,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 318.9029255208333,
                     y: 469.5883134607373,
@@ -2068,8 +2068,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 329.9882608072916,
                     y: 470.6973574016128,
@@ -2086,8 +2086,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 341.07359609375004,
                     y: 457.3036329917631,
@@ -2104,8 +2104,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 352.15893138020834,
                     y: 460.850038089573,
@@ -2122,8 +2122,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 363.24426666666665,
                     y: 468.2469737390998,
@@ -2140,8 +2140,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 374.32960195312506,
                     y: 469.7417858108119,
@@ -2158,8 +2158,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 385.41493723958337,
                     y: 406.996995008956,
@@ -2176,8 +2176,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 396.50027252604167,
                     y: 463.7608407069784,
@@ -2194,8 +2194,8 @@ const spec = {
                 {
                   attribute: {
                     visible: true,
-                    fill: true,
-                    fillColor: '#EB6F02',
+
+                    fill: '#EB6F02',
                     fillOpacity: 1,
                     x: 407.5856078125,
                     y: 442.5559221127065,
@@ -2239,8 +2239,8 @@ const spec = {
                   attribute: {
                     visible: true,
                     lineWidth: 1,
-                    stroke: true,
-                    strokeColor: '#FFD030',
+
+                    stroke: '#FFD030',
                     points: [
                       {
                         x: 8.31400146484376,
@@ -2414,8 +2414,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 8.31400146484376,
@@ -2431,8 +2431,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 19.39933675130209,
@@ -2448,8 +2448,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 30.484672037760426,
@@ -2465,8 +2465,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 41.57000732421876,
@@ -2482,8 +2482,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 52.65534261067709,
@@ -2499,8 +2499,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 63.74067789713542,
@@ -2516,8 +2516,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 74.82601318359376,
@@ -2533,8 +2533,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 85.91134847005209,
@@ -2550,8 +2550,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 96.99668375651042,
@@ -2567,8 +2567,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 108.08201904296875,
@@ -2584,8 +2584,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 119.16735432942708,
@@ -2601,8 +2601,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 130.25268961588543,
@@ -2618,8 +2618,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 141.33802490234376,
@@ -2635,8 +2635,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 152.4233601888021,
@@ -2652,8 +2652,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 163.50869547526042,
@@ -2669,8 +2669,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 174.59403076171876,
@@ -2686,8 +2686,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 185.6793660481771,
@@ -2703,8 +2703,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 196.76470133463542,
@@ -2720,8 +2720,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 207.85003662109375,
@@ -2737,8 +2737,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 218.93537190755208,
@@ -2754,8 +2754,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 230.0207071940104,
@@ -2771,8 +2771,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 241.10604248046874,
@@ -2788,8 +2788,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 252.19137776692708,
@@ -2805,8 +2805,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 263.27671305338544,
@@ -2822,8 +2822,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 274.36204833984374,
@@ -2839,8 +2839,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 285.44738362630204,
@@ -2856,8 +2856,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 296.53271891276046,
@@ -2873,8 +2873,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 307.61805419921876,
@@ -2890,8 +2890,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 318.70338948567706,
@@ -2907,8 +2907,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 329.78872477213537,
@@ -2924,8 +2924,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 340.8740600585938,
@@ -2941,8 +2941,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 351.9593953450521,
@@ -2958,8 +2958,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 363.0447306315104,
@@ -2975,8 +2975,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 374.1300659179688,
@@ -2992,8 +2992,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 385.2154012044271,
@@ -3009,8 +3009,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 396.3007364908854,
@@ -3026,8 +3026,8 @@ const spec = {
                   attribute: {
                     size: 10,
                     symbolType: 'circle',
-                    fill: true,
-                    fillColor: '#FFD030',
+
+                    fill: '#FFD030',
                     fillOpacity: 1,
                     visible: true,
                     x: 407.3860717773437,
@@ -3058,10 +3058,10 @@ const spec = {
                   padding: 0,
                   textStyle: {
                     fontSize: 12,
-                    fillColor: '#333333',
+                    fill: '#333333',
                     fontWeight: 'normal',
                     fillOpacity: 1,
-                    fill: true,
+
                     maxLineWidth: null
                   }
                 },
@@ -3072,10 +3072,9 @@ const spec = {
                   padding: 0,
                   textStyle: {
                     fontSize: 12,
-                    fillColor: '#6F6F6F',
+                    fill: '#6F6F6F',
                     fontWeight: 'normal',
-                    fillOpacity: 1,
-                    fill: true
+                    fillOpacity: 1
                   },
                   formatMethod: null
                 },
@@ -3086,9 +3085,8 @@ const spec = {
                   length: 4,
                   style: {
                     lineWidth: 1,
-                    strokeColor: '#D8DCE3',
-                    strokeOpacity: 1,
-                    stroke: true
+                    stroke: '#D8DCE3',
+                    strokeOpacity: 1
                   }
                 },
                 subTick: {
@@ -3098,27 +3096,24 @@ const spec = {
                   length: 2,
                   style: {
                     lineWidth: 1,
-                    strokeColor: '#D8DCE3',
-                    strokeOpacity: 1,
-                    stroke: true
+                    stroke: '#D8DCE3',
+                    strokeOpacity: 1
                   }
                 },
                 line: {
                   visible: true,
                   style: {
                     lineWidth: 1,
-                    strokeColor: '#dfdfdf',
-                    strokeOpacity: 1,
-                    stroke: true
+                    stroke: '#dfdfdf',
+                    strokeOpacity: 1
                   }
                 },
                 grid: {
                   style: {
                     lineWidth: 1,
-                    strokeColor: '#dfdfdf',
+                    stroke: '#dfdfdf',
                     strokeOpacity: 1,
-                    lineDash: [4, 4],
-                    stroke: true
+                    lineDash: [4, 4]
                   },
                   type: 'line',
                   visible: false,
@@ -3128,10 +3123,9 @@ const spec = {
                   visible: false,
                   style: {
                     lineWidth: 1,
-                    strokeColor: '#dfdfdf',
+                    stroke: '#dfdfdf',
                     strokeOpacity: 1,
-                    lineDash: [4, 4],
-                    stroke: true
+                    lineDash: [4, 4]
                   },
                   type: 'line'
                 },
@@ -3282,16 +3276,15 @@ const spec = {
                       attribute: {
                         lineStyle: {
                           lineWidth: 1,
-                          strokeColor: '#dfdfdf',
-                          strokeOpacity: 1,
-                          stroke: true
+                          stroke: '#dfdfdf',
+                          strokeOpacity: 1
                         },
                         startSymbol: {
                           visible: false,
                           symbolType: 'triangle',
                           size: 12,
                           style: {
-                            fillColor: '#000'
+                            fill: '#000'
                           }
                         },
                         endSymbol: {
@@ -3299,7 +3292,7 @@ const spec = {
                           symbolType: 'triangle',
                           size: 12,
                           style: {
-                            fillColor: '#000'
+                            fill: '#000'
                           }
                         },
                         start: {
@@ -3327,9 +3320,8 @@ const spec = {
                               }
                             ],
                             lineWidth: 1,
-                            strokeColor: '#dfdfdf',
-                            strokeOpacity: 1,
-                            stroke: true
+                            stroke: '#dfdfdf',
+                            strokeOpacity: 1
                           },
                           id: 3686,
                           type: 'line',
@@ -3349,17 +3341,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 8.31400146484376,
                             y: 4,
@@ -3384,12 +3375,12 @@ const spec = {
                                     text: '0',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3405,17 +3396,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 30.48467203776043,
                             y: 4,
@@ -3440,12 +3430,12 @@ const spec = {
                                     text: '2',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3461,17 +3451,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 52.65534261067709,
                             y: 4,
@@ -3496,12 +3485,12 @@ const spec = {
                                     text: '4',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3517,17 +3506,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 74.82601318359376,
                             y: 4,
@@ -3552,12 +3540,12 @@ const spec = {
                                     text: '6',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3573,17 +3561,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 96.99668375651042,
                             y: 4,
@@ -3608,12 +3595,12 @@ const spec = {
                                     text: '8',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3629,17 +3616,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 119.16735432942708,
                             y: 4,
@@ -3664,12 +3650,12 @@ const spec = {
                                     text: '10',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3685,17 +3671,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 141.33802490234376,
                             y: 4,
@@ -3720,12 +3705,12 @@ const spec = {
                                     text: '12',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3741,17 +3726,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 163.50869547526042,
                             y: 4,
@@ -3776,12 +3760,12 @@ const spec = {
                                     text: '14',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3797,17 +3781,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 185.6793660481771,
                             y: 4,
@@ -3832,12 +3815,12 @@ const spec = {
                                     text: '16',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3853,17 +3836,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 207.85003662109375,
                             y: 4,
@@ -3888,12 +3870,12 @@ const spec = {
                                     text: '18',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3909,17 +3891,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 230.0207071940104,
                             y: 4,
@@ -3944,12 +3925,12 @@ const spec = {
                                     text: '20',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -3965,17 +3946,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 252.1913777669271,
                             y: 4,
@@ -4000,12 +3980,12 @@ const spec = {
                                     text: '22',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4021,17 +4001,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 274.36204833984374,
                             y: 4,
@@ -4056,12 +4035,12 @@ const spec = {
                                     text: '24',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4077,17 +4056,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 296.53271891276046,
                             y: 4,
@@ -4112,12 +4090,12 @@ const spec = {
                                     text: '26',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4133,17 +4111,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 318.70338948567706,
                             y: 4,
@@ -4168,12 +4145,12 @@ const spec = {
                                     text: '28',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4189,17 +4166,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 340.8740600585938,
                             y: 4,
@@ -4224,12 +4200,12 @@ const spec = {
                                     text: '30',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4245,17 +4221,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 363.0447306315104,
                             y: 4,
@@ -4280,12 +4255,12 @@ const spec = {
                                     text: '32',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4301,17 +4276,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 385.2154012044271,
                             y: 4,
@@ -4336,12 +4310,12 @@ const spec = {
                                     text: '34',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4357,17 +4331,16 @@ const spec = {
                           attribute: {
                             textStyle: {
                               fontSize: 12,
-                              fillColor: '#6F6F6F',
+                              fill: '#6F6F6F',
                               textAlign: 'center',
                               textBaseline: 'top',
                               fontWeight: 'normal',
-                              fillOpacity: 1,
-                              fill: true
+                              fillOpacity: 1
                             },
                             space: 4,
                             padding: 0,
                             shape: {
-                              fillColor: '#000'
+                              fill: '#000'
                             },
                             x: 407.3860717773437,
                             y: 4,
@@ -4392,12 +4365,12 @@ const spec = {
                                     text: '36',
                                     visible: true,
                                     fontSize: 12,
-                                    fillColor: '#6F6F6F',
+                                    fill: '#6F6F6F',
                                     textAlign: 'center',
                                     textBaseline: 'top',
                                     fontWeight: 'normal',
                                     fillOpacity: 1,
-                                    fill: true,
+
                                     x: 0,
                                     y: 0
                                   },
@@ -4427,8 +4400,7 @@ function createContent(stage: Stage) {
     _add(stage.at(0), item);
   });
   const textStyle = {
-    stroke: true,
-    strokeColor: 'white',
+    stroke: 'white',
     lineWidth: 1
   };
   const overlap: OverlapAttrs = {
@@ -4452,7 +4424,7 @@ function createContent(stage: Stage) {
         overlap,
         animation: false,
         data: greenBarData.map(d => {
-          return { text: d.y.toFixed(2), fillColor: '#65C466' };
+          return { text: d.y.toFixed(2), fill: '#65C466' };
         })
       },
       {
@@ -4463,14 +4435,14 @@ function createContent(stage: Stage) {
         overlap,
         animation: false,
         data: blueBarData.map(d => {
-          return { text: d.y.toFixed(2), fillColor: '#EB6F02' };
+          return { text: d.y.toFixed(2), fill: '#EB6F02' };
         })
       },
       {
         type: 'symbol',
         baseMarkGroupName: 'point_165',
         data: yellowSymbolData.map(d => {
-          return { text: d.y.toFixed(2), fillColor: '#FFD030' };
+          return { text: d.y.toFixed(2), fill: '#FFD030' };
         }),
         textStyle,
         animation: false,
@@ -4480,7 +4452,7 @@ function createContent(stage: Stage) {
         type: 'symbol',
         baseMarkGroupName: 'point_152',
         data: blueSymbolData.map(d => {
-          return { text: d.y.toFixed(2), fillColor: '#3478F6' };
+          return { text: d.y.toFixed(2), fill: '#3478F6' };
         }),
         textStyle,
         offset: 2,

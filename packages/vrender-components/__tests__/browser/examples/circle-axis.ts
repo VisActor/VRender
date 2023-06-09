@@ -43,19 +43,19 @@ const nextItems = 'BDFH'.split('').map(value => {
 
 const stateStyle = {
   hover: {
-    fillColor: 'blue',
+    fill: 'blue',
     fontWeight: 500
   },
   hover_reverse: {
-    fillColor: 'yellow',
+    fill: 'yellow',
     fontWeight: 500
   },
   selected: {
-    fillColor: 'red',
+    fill: 'red',
     fontSize: 16
   },
   selected_reverse: {
-    fillColor: '#ccc'
+    fill: '#ccc'
   }
 };
 const radiusAxis = new LineAxis({
@@ -78,7 +78,7 @@ const radiusAxis = new LineAxis({
   subGrid: {
     visible: false,
     style: {
-      strokeColor: 'red'
+      stroke: 'red'
     }
   }
 });
@@ -104,13 +104,13 @@ const angleAxis = new CircleAxis({
       space: 10,
       style: {
         symbolType: 'circle',
-        fillColor: 'red'
+        fill: 'red'
       }
     },
     background: {
       visible: true,
       style: {
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       }
     },
     state: {

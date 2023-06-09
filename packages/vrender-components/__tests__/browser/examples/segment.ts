@@ -21,7 +21,7 @@ export function run() {
   const styleAttr = {
     lineStyle: {
       lineWidth: 2,
-      fillColor: '#08979c'
+      fill: '#08979c'
     },
     startSymbol: {
       visible: guiObject.startSymbolVisible,
@@ -31,7 +31,7 @@ export function run() {
       refY: guiObject.startSymbolRefY,
       refAngle: degreeToRadian(guiObject.startSymbolRefAngle),
       style: {
-        fillColor: 'blue',
+        fill: 'blue',
         fillOpacity: 0.5
       }
     },
@@ -43,7 +43,7 @@ export function run() {
       refAngle: degreeToRadian(guiObject.endSymbolRefAngle),
       size: 12,
       style: {
-        fillColor: 'red',
+        fill: 'red',
         fillOpacity: 0.5
       }
     }

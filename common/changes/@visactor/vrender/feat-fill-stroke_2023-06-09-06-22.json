@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix enableView3dTranform",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "upgrade vrender",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

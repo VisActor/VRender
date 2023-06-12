@@ -9,11 +9,13 @@ module.exports = {
   globals: {
     '@visactor/vrender': 'VRender',
     '@visactor/vutils': 'VUtils',
-    '@visactor/vutils': 'VUtils'
+    'react-reconciler': 'ReactReconciler',
+    '@visactor/react-vrender': 'ReactVRender'
   },
   external: [
     "@visactor/vrender",
     "@visactor/vutils",
-    "@visactor/vutils"
+    "react-reconciler",
+    "@visactor/react-vrender"
   ]
 };

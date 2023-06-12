@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vrender-utils",
+      "comment": "upgrade vrender",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/react-vrender-utils"
+}

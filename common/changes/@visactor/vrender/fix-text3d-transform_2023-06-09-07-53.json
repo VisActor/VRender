@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of strokeText in 3d mode",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of pyramid in some case",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

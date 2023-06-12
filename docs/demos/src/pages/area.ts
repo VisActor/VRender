@@ -1,6 +1,9 @@
-import { createStage, createArea, container, IGraphic } from '@visactor/vrender';
+import { createStage, createArea, container, IGraphic, global } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import '../contribution/env-canvas/module';
+
+global.setEnv('node');
 
 const subP1 = [
   [0, 100],
@@ -65,7 +68,7 @@ export const page = () => {
 
 
   const stage = createStage({
-    canvas: 'main',
+    canvas: document.getElementById('main'),
     autoRender: true
   });
 

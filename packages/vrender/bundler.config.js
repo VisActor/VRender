@@ -7,9 +7,7 @@ module.exports = {
   name: 'VRender',
   umdOutputFilename: 'index',
   external: [
-    "@visactor/vutils",
-    'inversify',
-    'reflect-metadata'
+    "@visactor/vutils"
   ],
   globals: {
     'inversify': 'inversify',

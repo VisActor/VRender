@@ -44,8 +44,8 @@ const symbolGenerator = () => {
                 attribute: {
                   visible: true,
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#6690F2',
+
+                  stroke: '#6690F2',
                   points: [
                     {
                       x: 16.80376232250319,
@@ -129,8 +129,8 @@ const symbolGenerator = () => {
                 attribute: {
                   visible: true,
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#70D6A3',
+
+                  stroke: '#70D6A3',
                   points: [
                     {
                       x: 969.0169605976827,
@@ -177,8 +177,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 16.80376232250319,
                   y: 37.39987869320076,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -196,8 +196,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 72.81630339751375,
                   y: 54.258412885629205,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -215,8 +215,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 128.8288444725243,
                   y: 45.32572466869518,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -234,8 +234,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 184.84138554753486,
                   y: 40.174224781068304,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -253,8 +253,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 240.85392662254543,
                   y: 33.951306311991935,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -272,8 +272,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 296.866467697556,
                   y: 36.16264715266333,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -291,8 +291,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 352.8790087725665,
                   y: 37.86994576560465,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -310,8 +310,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 408.8915498475771,
                   y: 38.60057281481931,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -329,8 +329,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 464.90409092258767,
                   y: 54.45319909934279,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -348,8 +348,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 520.9166319975982,
                   y: 37.22205811873503,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -367,8 +367,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 576.9291730726088,
                   y: 43.33410972873424,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -386,8 +386,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 632.9417141476193,
                   y: 43.41750864263618,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -405,8 +405,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 688.9542552226299,
                   y: 44.643399223788535,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -424,8 +424,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 744.9667962976405,
                   y: 36.48159528883226,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -443,8 +443,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 800.979337372651,
                   y: 34.62028035244824,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -462,8 +462,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 856.9918784476616,
                   y: 31.73169764549956,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -481,8 +481,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 913.0044195226722,
                   y: 38.05568715953296,
-                  fill: true,
-                  fillColor: '#6690F2',
+
+                  fill: '#6690F2',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -500,8 +500,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 969.0169605976827,
                   y: 435,
-                  fill: true,
-                  fillColor: '#70D6A3',
+
+                  fill: '#70D6A3',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -519,8 +519,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 969.0169605976827,
                   y: 435,
-                  fill: true,
-                  fillColor: '#70D6A3',
+
+                  fill: '#70D6A3',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -538,8 +538,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 969.0169605976827,
                   y: 435,
-                  fill: true,
-                  fillColor: '#70D6A3',
+
+                  fill: '#70D6A3',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -557,8 +557,8 @@ const symbolGenerator = () => {
                   visible: true,
                   x: 969.0169605976827,
                   y: 435,
-                  fill: true,
-                  fillColor: '#70D6A3',
+
+                  fill: '#70D6A3',
                   pickable: true,
                   zIndex: 300,
                   scaleX: 1,
@@ -608,8 +608,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -632,8 +632,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -656,8 +656,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -680,8 +680,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -704,8 +704,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -728,8 +728,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -752,8 +752,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -776,8 +776,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -800,8 +800,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -824,8 +824,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -848,8 +848,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -872,8 +872,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -896,8 +896,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -920,8 +920,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -955,8 +955,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -985,8 +985,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0,
@@ -1007,8 +1007,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.05,
@@ -1029,8 +1029,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.1,
@@ -1051,8 +1051,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.15,
@@ -1073,8 +1073,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.2,
@@ -1095,8 +1095,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.25,
@@ -1117,8 +1117,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.3,
@@ -1139,8 +1139,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.35,
@@ -1161,8 +1161,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.4,
@@ -1183,8 +1183,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.45,
@@ -1205,8 +1205,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.5,
@@ -1227,8 +1227,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.55,
@@ -1249,8 +1249,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.6,
@@ -1271,8 +1271,8 @@ const symbolGenerator = () => {
                   textAlign: 'right',
                   textBaseline: 'middle',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: 0.65,
@@ -1324,8 +1324,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1349,8 +1349,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1374,8 +1374,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1399,8 +1399,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1424,8 +1424,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1449,8 +1449,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1474,8 +1474,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1499,8 +1499,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1524,8 +1524,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1549,8 +1549,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1574,8 +1574,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1599,8 +1599,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1624,8 +1624,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1649,8 +1649,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   lineDash: [4, 4],
                   pickable: true,
@@ -1700,8 +1700,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1724,8 +1724,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1748,8 +1748,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1772,8 +1772,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1796,8 +1796,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1820,8 +1820,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1844,8 +1844,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1868,8 +1868,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1892,8 +1892,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1916,8 +1916,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1940,8 +1940,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1964,8 +1964,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -1988,8 +1988,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2012,8 +2012,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2036,8 +2036,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2060,8 +2060,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2084,8 +2084,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2108,8 +2108,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#D8DCE3',
+
+                  stroke: '#D8DCE3',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2143,8 +2143,8 @@ const symbolGenerator = () => {
                     }
                   ],
                   lineWidth: 1,
-                  stroke: true,
-                  strokeColor: '#dfdfdf',
+
+                  stroke: '#dfdfdf',
                   strokeOpacity: 1,
                   pickable: true,
                   zIndex: 300
@@ -2173,8 +2173,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/19',
@@ -2195,8 +2195,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/20',
@@ -2217,8 +2217,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/21',
@@ -2239,8 +2239,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/22',
@@ -2261,8 +2261,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/23',
@@ -2283,8 +2283,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/24',
@@ -2305,8 +2305,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/25',
@@ -2327,8 +2327,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/26',
@@ -2349,8 +2349,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/27',
@@ -2371,8 +2371,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/28',
@@ -2393,8 +2393,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/29',
@@ -2415,8 +2415,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/30',
@@ -2437,8 +2437,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '3/31',
@@ -2459,8 +2459,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '4/1',
@@ -2481,8 +2481,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '4/2',
@@ -2503,8 +2503,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '4/3',
@@ -2525,8 +2525,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '4/4',
@@ -2547,8 +2547,8 @@ const symbolGenerator = () => {
                   textAlign: 'center',
                   textBaseline: 'top',
                   fontSize: 12,
-                  fill: true,
-                  fillColor: '#6F6F6F',
+
+                  fill: '#6F6F6F',
                   fontWeight: 'normal',
                   fillOpacity: 0,
                   text: '',
@@ -2618,8 +2618,8 @@ const symbolGenerator = () => {
                       visible: true,
                       x: 0,
                       y: 0,
-                      fill: true,
-                      fillColor: 'gray',
+
+                      fill: 'gray',
                       fillOpacity: 0,
                       pickable: true,
                       zIndex: 300,
@@ -2637,8 +2637,8 @@ const symbolGenerator = () => {
                       visible: true,
                       x: 0,
                       y: 0,
-                      fill: true,
-                      fillColor: 'gray',
+
+                      fill: 'gray',
                       fillOpacity: 0,
                       pickable: true,
                       zIndex: 300,
@@ -2679,7 +2679,7 @@ function createContent(stage: Stage) {
         data: {
           type: 'Next Day'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2693,7 +2693,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.568924210630669'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2707,7 +2707,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.582271905667467'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2721,7 +2721,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.589969549177714'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2735,7 +2735,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5992681629820811'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2749,7 +2749,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5959638605764801'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2763,7 +2763,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5934127247180621'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2777,7 +2777,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.59232098315027'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2791,7 +2791,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.568633150771097'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2805,7 +2805,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5943808326961431'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2819,7 +2819,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.585247882014535'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2833,7 +2833,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.585123262947785'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2847,7 +2847,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5832914724242241'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2861,7 +2861,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.595487271407492'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2875,7 +2875,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.59826854659979'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2889,7 +2889,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.6025848196101731'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2903,7 +2903,7 @@ function createContent(stage: Stage) {
           type: 'Next Day',
           y: '0.5931351801064451'
         },
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2917,7 +2917,7 @@ function createContent(stage: Stage) {
           type: '',
           y: ''
         },
-        fillColor: '#70D6A3',
+        fill: '#70D6A3',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2931,7 +2931,7 @@ function createContent(stage: Stage) {
           type: '',
           y: ''
         },
-        fillColor: '#70D6A3',
+        fill: '#70D6A3',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:
@@ -2965,7 +2965,7 @@ function createContent(stage: Stage) {
     data: [
       {
         text: '这是一个折线',
-        fillColor: '#6690F2',
+        fill: '#6690F2',
         angle: 0,
         textBaseline: 'middle',
         fontFamily:

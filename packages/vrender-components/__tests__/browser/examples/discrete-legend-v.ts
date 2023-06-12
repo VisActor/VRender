@@ -9,7 +9,7 @@ const legend = new DiscreteLegend({
     textStyle: {
       fontSize: 12,
       fontWeight: 'bold',
-      fillColor: '#2C3542'
+      fill: '#2C3542'
     }
   },
   item: {
@@ -27,7 +27,7 @@ const legend = new DiscreteLegend({
           opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8',
+          fill: '#D8D8D8',
           fillOpacity: 0.5
         }
       }
@@ -36,16 +36,15 @@ const legend = new DiscreteLegend({
       space: 4,
       style: {
         fontSize: 12,
-        fillColor: 'black',
-        cursor: 'pointer',
-        fill: true
+        fill: 'black',
+        cursor: 'pointer'
       },
       state: {
         selectedHover: {
           opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8',
+          fill: '#D8D8D8',
           fillOpacity: 0.5
         }
       }
@@ -54,7 +53,7 @@ const legend = new DiscreteLegend({
       alignRight: false,
       style: {
         fontSize: 12,
-        fillColor: '#ccc',
+        fill: '#ccc',
         cursor: 'pointer'
       },
       state: {
@@ -62,7 +61,7 @@ const legend = new DiscreteLegend({
           opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8'
+          fill: '#D8D8D8'
         }
       }
     },
@@ -72,14 +71,12 @@ const legend = new DiscreteLegend({
       },
       state: {
         selectedHover: {
-          fill: true,
           fillOpacity: 0.7,
-          fillColor: 'gray'
+          fill: 'gray'
         },
         unSelectedHover: {
-          fill: true,
           fillOpacity: 0.2,
-          fillColor: 'gray'
+          fill: 'gray'
         }
       }
     },
@@ -88,7 +85,7 @@ const legend = new DiscreteLegend({
       size: 10,
       symbolType:
         'M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z',
-      fillColor: '#333',
+      fill: '#333',
       cursor: 'pointer'
     },
     visible: true,
@@ -118,11 +115,8 @@ const legend = new DiscreteLegend({
     {
       label: '0',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '0',
       index: 0
@@ -130,11 +124,8 @@ const legend = new DiscreteLegend({
     {
       label: '1',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '1',
       index: 1
@@ -142,11 +133,8 @@ const legend = new DiscreteLegend({
     {
       label: '2',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '2',
       index: 2
@@ -154,11 +142,8 @@ const legend = new DiscreteLegend({
     {
       label: '3',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '3',
       index: 3
@@ -166,11 +151,8 @@ const legend = new DiscreteLegend({
     {
       label: '4',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '4',
       index: 4
@@ -178,11 +160,8 @@ const legend = new DiscreteLegend({
     {
       label: '5',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '5',
       index: 5
@@ -190,11 +169,8 @@ const legend = new DiscreteLegend({
     {
       label: '6',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '6',
       index: 6
@@ -202,11 +178,8 @@ const legend = new DiscreteLegend({
     {
       label: '7',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '7',
       index: 7
@@ -214,11 +187,8 @@ const legend = new DiscreteLegend({
     {
       label: '8',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '8',
       index: 8
@@ -226,11 +196,8 @@ const legend = new DiscreteLegend({
     {
       label: '9',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '9',
       index: 9
@@ -238,11 +205,8 @@ const legend = new DiscreteLegend({
     {
       label: '10',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '10',
       index: 10
@@ -250,11 +214,8 @@ const legend = new DiscreteLegend({
     {
       label: '11',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '11',
       index: 11
@@ -262,11 +223,8 @@ const legend = new DiscreteLegend({
     {
       label: '12',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '12',
       index: 12
@@ -274,11 +232,8 @@ const legend = new DiscreteLegend({
     {
       label: '13',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '13',
       index: 13
@@ -286,11 +241,8 @@ const legend = new DiscreteLegend({
     {
       label: '14',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '14',
       index: 14
@@ -298,11 +250,8 @@ const legend = new DiscreteLegend({
     {
       label: '15',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '15',
       index: 15
@@ -310,11 +259,8 @@ const legend = new DiscreteLegend({
     {
       label: '16',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '16',
       index: 16
@@ -322,11 +268,8 @@ const legend = new DiscreteLegend({
     {
       label: '17',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '17',
       index: 17
@@ -334,11 +277,8 @@ const legend = new DiscreteLegend({
     {
       label: '18',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '18',
       index: 18
@@ -346,11 +286,8 @@ const legend = new DiscreteLegend({
     {
       label: '19',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '19',
       index: 19
@@ -358,11 +295,8 @@ const legend = new DiscreteLegend({
     {
       label: '20',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '20',
       index: 20
@@ -370,11 +304,8 @@ const legend = new DiscreteLegend({
     {
       label: '21',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '21',
       index: 21
@@ -382,11 +313,8 @@ const legend = new DiscreteLegend({
     {
       label: '22',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '22',
       index: 22
@@ -394,11 +322,8 @@ const legend = new DiscreteLegend({
     {
       label: '23',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '23',
       index: 23
@@ -406,11 +331,8 @@ const legend = new DiscreteLegend({
     {
       label: '24',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '24',
       index: 24
@@ -418,11 +340,8 @@ const legend = new DiscreteLegend({
     {
       label: '25',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '25',
       index: 25
@@ -430,11 +349,8 @@ const legend = new DiscreteLegend({
     {
       label: '26',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '26',
       index: 26
@@ -442,11 +358,8 @@ const legend = new DiscreteLegend({
     {
       label: '27',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '27',
       index: 27
@@ -454,11 +367,8 @@ const legend = new DiscreteLegend({
     {
       label: '28',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '28',
       index: 28
@@ -466,11 +376,8 @@ const legend = new DiscreteLegend({
     {
       label: '29',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '29',
       index: 29
@@ -478,11 +385,8 @@ const legend = new DiscreteLegend({
     {
       label: '30',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '30',
       index: 30
@@ -490,11 +394,8 @@ const legend = new DiscreteLegend({
     {
       label: '31',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '31',
       index: 31
@@ -502,11 +403,8 @@ const legend = new DiscreteLegend({
     {
       label: '32',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '32',
       index: 32
@@ -514,11 +412,8 @@ const legend = new DiscreteLegend({
     {
       label: '33',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '33',
       index: 33
@@ -526,11 +421,8 @@ const legend = new DiscreteLegend({
     {
       label: '34',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '34',
       index: 34
@@ -538,11 +430,8 @@ const legend = new DiscreteLegend({
     {
       label: '35',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '35',
       index: 35
@@ -550,11 +439,8 @@ const legend = new DiscreteLegend({
     {
       label: '36',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '36',
       index: 36
@@ -562,11 +448,8 @@ const legend = new DiscreteLegend({
     {
       label: '37',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '37',
       index: 37
@@ -574,11 +457,8 @@ const legend = new DiscreteLegend({
     {
       label: '38',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '38',
       index: 38
@@ -586,11 +466,8 @@ const legend = new DiscreteLegend({
     {
       label: '39',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '39',
       index: 39
@@ -598,11 +475,8 @@ const legend = new DiscreteLegend({
     {
       label: '40',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '40',
       index: 40
@@ -610,11 +484,8 @@ const legend = new DiscreteLegend({
     {
       label: '41',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '41',
       index: 41
@@ -622,11 +493,8 @@ const legend = new DiscreteLegend({
     {
       label: '42',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '42',
       index: 42
@@ -634,11 +502,8 @@ const legend = new DiscreteLegend({
     {
       label: '43',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '43',
       index: 43
@@ -646,11 +511,8 @@ const legend = new DiscreteLegend({
     {
       label: '44',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '44',
       index: 44
@@ -658,11 +520,8 @@ const legend = new DiscreteLegend({
     {
       label: '45',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '45',
       index: 45
@@ -670,11 +529,8 @@ const legend = new DiscreteLegend({
     {
       label: '46',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '46',
       index: 46
@@ -682,11 +538,8 @@ const legend = new DiscreteLegend({
     {
       label: '47',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '47',
       index: 47
@@ -694,11 +547,8 @@ const legend = new DiscreteLegend({
     {
       label: '48',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '48',
       index: 48
@@ -706,11 +556,8 @@ const legend = new DiscreteLegend({
     {
       label: '49',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '49',
       index: 49
@@ -718,11 +565,8 @@ const legend = new DiscreteLegend({
     {
       label: '50',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '50',
       index: 50
@@ -730,11 +574,8 @@ const legend = new DiscreteLegend({
     {
       label: '51',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '51',
       index: 51
@@ -742,11 +583,8 @@ const legend = new DiscreteLegend({
     {
       label: '52',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '52',
       index: 52
@@ -754,11 +592,8 @@ const legend = new DiscreteLegend({
     {
       label: '53',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '53',
       index: 53
@@ -766,11 +601,8 @@ const legend = new DiscreteLegend({
     {
       label: '54',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '54',
       index: 54
@@ -778,11 +610,8 @@ const legend = new DiscreteLegend({
     {
       label: '55',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '55',
       index: 55
@@ -790,11 +619,8 @@ const legend = new DiscreteLegend({
     {
       label: '56',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '56',
       index: 56
@@ -802,11 +628,8 @@ const legend = new DiscreteLegend({
     {
       label: '57',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '57',
       index: 57
@@ -814,11 +637,8 @@ const legend = new DiscreteLegend({
     {
       label: '58',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '58',
       index: 58
@@ -826,11 +646,8 @@ const legend = new DiscreteLegend({
     {
       label: '59',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '59',
       index: 59
@@ -838,11 +655,8 @@ const legend = new DiscreteLegend({
     {
       label: '60',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '60',
       index: 60
@@ -850,11 +664,8 @@ const legend = new DiscreteLegend({
     {
       label: '61',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '61',
       index: 61
@@ -862,11 +673,8 @@ const legend = new DiscreteLegend({
     {
       label: '62',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '62',
       index: 62
@@ -874,11 +682,8 @@ const legend = new DiscreteLegend({
     {
       label: '63',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '63',
       index: 63
@@ -886,11 +691,8 @@ const legend = new DiscreteLegend({
     {
       label: '64',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '64',
       index: 64
@@ -898,11 +700,8 @@ const legend = new DiscreteLegend({
     {
       label: '65',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '65',
       index: 65
@@ -910,11 +709,8 @@ const legend = new DiscreteLegend({
     {
       label: '66',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '66',
       index: 66
@@ -922,11 +718,8 @@ const legend = new DiscreteLegend({
     {
       label: '67',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '67',
       index: 67
@@ -934,11 +727,8 @@ const legend = new DiscreteLegend({
     {
       label: '68',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '68',
       index: 68
@@ -946,11 +736,8 @@ const legend = new DiscreteLegend({
     {
       label: '69',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '69',
       index: 69
@@ -958,11 +745,8 @@ const legend = new DiscreteLegend({
     {
       label: '70',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '70',
       index: 70
@@ -970,11 +754,8 @@ const legend = new DiscreteLegend({
     {
       label: '71',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '71',
       index: 71
@@ -982,11 +763,8 @@ const legend = new DiscreteLegend({
     {
       label: '72',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '72',
       index: 72
@@ -994,11 +772,8 @@ const legend = new DiscreteLegend({
     {
       label: '73',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '73',
       index: 73
@@ -1006,11 +781,8 @@ const legend = new DiscreteLegend({
     {
       label: '74',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '74',
       index: 74
@@ -1018,11 +790,8 @@ const legend = new DiscreteLegend({
     {
       label: '75',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '75',
       index: 75
@@ -1030,11 +799,8 @@ const legend = new DiscreteLegend({
     {
       label: '76',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '76',
       index: 76
@@ -1042,11 +808,8 @@ const legend = new DiscreteLegend({
     {
       label: '77',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '77',
       index: 77
@@ -1054,11 +817,8 @@ const legend = new DiscreteLegend({
     {
       label: '78',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '78',
       index: 78
@@ -1066,11 +826,8 @@ const legend = new DiscreteLegend({
     {
       label: '79',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '79',
       index: 79
@@ -1078,11 +835,8 @@ const legend = new DiscreteLegend({
     {
       label: '80',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '80',
       index: 80
@@ -1090,11 +844,8 @@ const legend = new DiscreteLegend({
     {
       label: '81',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '81',
       index: 81
@@ -1102,11 +853,8 @@ const legend = new DiscreteLegend({
     {
       label: '82',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '82',
       index: 82
@@ -1114,11 +862,8 @@ const legend = new DiscreteLegend({
     {
       label: '83',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '83',
       index: 83
@@ -1126,11 +871,8 @@ const legend = new DiscreteLegend({
     {
       label: '84',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '84',
       index: 84
@@ -1138,11 +880,8 @@ const legend = new DiscreteLegend({
     {
       label: '85',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '85',
       index: 85
@@ -1150,11 +889,8 @@ const legend = new DiscreteLegend({
     {
       label: '86',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '86',
       index: 86
@@ -1162,11 +898,8 @@ const legend = new DiscreteLegend({
     {
       label: '87',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '87',
       index: 87
@@ -1174,11 +907,8 @@ const legend = new DiscreteLegend({
     {
       label: '88',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '88',
       index: 88
@@ -1186,11 +916,8 @@ const legend = new DiscreteLegend({
     {
       label: '89',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '89',
       index: 89
@@ -1198,11 +925,8 @@ const legend = new DiscreteLegend({
     {
       label: '90',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '90',
       index: 90
@@ -1210,11 +934,8 @@ const legend = new DiscreteLegend({
     {
       label: '91',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '91',
       index: 91
@@ -1222,11 +943,8 @@ const legend = new DiscreteLegend({
     {
       label: '92',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '92',
       index: 92
@@ -1234,11 +952,8 @@ const legend = new DiscreteLegend({
     {
       label: '93',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '93',
       index: 93
@@ -1246,11 +961,8 @@ const legend = new DiscreteLegend({
     {
       label: '94',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '94',
       index: 94
@@ -1258,11 +970,8 @@ const legend = new DiscreteLegend({
     {
       label: '95',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '95',
       index: 95
@@ -1270,11 +979,8 @@ const legend = new DiscreteLegend({
     {
       label: '96',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '96',
       index: 96
@@ -1282,11 +988,8 @@ const legend = new DiscreteLegend({
     {
       label: '97',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '97',
       index: 97
@@ -1294,11 +997,8 @@ const legend = new DiscreteLegend({
     {
       label: '98',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '98',
       index: 98
@@ -1306,11 +1006,8 @@ const legend = new DiscreteLegend({
     {
       label: '99',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '99',
       index: 99
@@ -1318,11 +1015,8 @@ const legend = new DiscreteLegend({
     {
       label: '100',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '100',
       index: 100
@@ -1330,11 +1024,8 @@ const legend = new DiscreteLegend({
     {
       label: '101',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '101',
       index: 101
@@ -1342,11 +1033,8 @@ const legend = new DiscreteLegend({
     {
       label: '102',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '102',
       index: 102
@@ -1354,11 +1042,8 @@ const legend = new DiscreteLegend({
     {
       label: '103',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '103',
       index: 103
@@ -1366,11 +1051,8 @@ const legend = new DiscreteLegend({
     {
       label: '104',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '104',
       index: 104
@@ -1378,11 +1060,8 @@ const legend = new DiscreteLegend({
     {
       label: '105',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '105',
       index: 105
@@ -1390,11 +1069,8 @@ const legend = new DiscreteLegend({
     {
       label: '106',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '106',
       index: 106
@@ -1402,11 +1078,8 @@ const legend = new DiscreteLegend({
     {
       label: '107',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '107',
       index: 107
@@ -1414,11 +1087,8 @@ const legend = new DiscreteLegend({
     {
       label: '108',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '108',
       index: 108
@@ -1426,11 +1096,8 @@ const legend = new DiscreteLegend({
     {
       label: '109',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '109',
       index: 109
@@ -1438,11 +1105,8 @@ const legend = new DiscreteLegend({
     {
       label: '110',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '110',
       index: 110
@@ -1450,11 +1114,8 @@ const legend = new DiscreteLegend({
     {
       label: '111',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '111',
       index: 111
@@ -1462,11 +1123,8 @@ const legend = new DiscreteLegend({
     {
       label: '112',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '112',
       index: 112
@@ -1474,11 +1132,8 @@ const legend = new DiscreteLegend({
     {
       label: '113',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '113',
       index: 113
@@ -1486,11 +1141,8 @@ const legend = new DiscreteLegend({
     {
       label: '114',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '114',
       index: 114
@@ -1498,11 +1150,8 @@ const legend = new DiscreteLegend({
     {
       label: '115',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '115',
       index: 115
@@ -1510,11 +1159,8 @@ const legend = new DiscreteLegend({
     {
       label: '116',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '116',
       index: 116
@@ -1522,11 +1168,8 @@ const legend = new DiscreteLegend({
     {
       label: '117',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '117',
       index: 117
@@ -1534,11 +1177,8 @@ const legend = new DiscreteLegend({
     {
       label: '118',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '118',
       index: 118
@@ -1546,11 +1186,8 @@ const legend = new DiscreteLegend({
     {
       label: '119',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '119',
       index: 119
@@ -1558,11 +1195,8 @@ const legend = new DiscreteLegend({
     {
       label: '120',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '120',
       index: 120
@@ -1570,11 +1204,8 @@ const legend = new DiscreteLegend({
     {
       label: '121',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '121',
       index: 121
@@ -1582,11 +1213,8 @@ const legend = new DiscreteLegend({
     {
       label: '122',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '122',
       index: 122
@@ -1594,11 +1222,8 @@ const legend = new DiscreteLegend({
     {
       label: '123',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '123',
       index: 123
@@ -1606,11 +1231,8 @@ const legend = new DiscreteLegend({
     {
       label: '124',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '124',
       index: 124
@@ -1618,11 +1240,8 @@ const legend = new DiscreteLegend({
     {
       label: '125',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '125',
       index: 125
@@ -1630,11 +1249,8 @@ const legend = new DiscreteLegend({
     {
       label: '126',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '126',
       index: 126
@@ -1642,11 +1258,8 @@ const legend = new DiscreteLegend({
     {
       label: '127',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '127',
       index: 127
@@ -1654,11 +1267,8 @@ const legend = new DiscreteLegend({
     {
       label: '128',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '128',
       index: 128
@@ -1666,11 +1276,8 @@ const legend = new DiscreteLegend({
     {
       label: '129',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '129',
       index: 129
@@ -1678,11 +1285,8 @@ const legend = new DiscreteLegend({
     {
       label: '130',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '130',
       index: 130
@@ -1690,11 +1294,8 @@ const legend = new DiscreteLegend({
     {
       label: '131',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '131',
       index: 131
@@ -1702,11 +1303,8 @@ const legend = new DiscreteLegend({
     {
       label: '132',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '132',
       index: 132
@@ -1714,11 +1312,8 @@ const legend = new DiscreteLegend({
     {
       label: '133',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '133',
       index: 133
@@ -1726,11 +1321,8 @@ const legend = new DiscreteLegend({
     {
       label: '134',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '134',
       index: 134
@@ -1738,11 +1330,8 @@ const legend = new DiscreteLegend({
     {
       label: '135',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '135',
       index: 135
@@ -1750,11 +1339,8 @@ const legend = new DiscreteLegend({
     {
       label: '136',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '136',
       index: 136
@@ -1762,11 +1348,8 @@ const legend = new DiscreteLegend({
     {
       label: '137',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '137',
       index: 137
@@ -1774,11 +1357,8 @@ const legend = new DiscreteLegend({
     {
       label: '138',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '138',
       index: 138
@@ -1786,11 +1366,8 @@ const legend = new DiscreteLegend({
     {
       label: '139',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '139',
       index: 139
@@ -1798,11 +1375,8 @@ const legend = new DiscreteLegend({
     {
       label: '140',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '140',
       index: 140
@@ -1810,11 +1384,8 @@ const legend = new DiscreteLegend({
     {
       label: '141',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '141',
       index: 141
@@ -1822,11 +1393,8 @@ const legend = new DiscreteLegend({
     {
       label: '142',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '142',
       index: 142
@@ -1834,11 +1402,8 @@ const legend = new DiscreteLegend({
     {
       label: '143',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '143',
       index: 143
@@ -1846,11 +1411,8 @@ const legend = new DiscreteLegend({
     {
       label: '144',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '144',
       index: 144
@@ -1858,11 +1420,8 @@ const legend = new DiscreteLegend({
     {
       label: '145',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '145',
       index: 145
@@ -1870,11 +1429,8 @@ const legend = new DiscreteLegend({
     {
       label: '146',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '146',
       index: 146
@@ -1882,11 +1438,8 @@ const legend = new DiscreteLegend({
     {
       label: '147',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '147',
       index: 147
@@ -1894,11 +1447,8 @@ const legend = new DiscreteLegend({
     {
       label: '148',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '148',
       index: 148
@@ -1906,11 +1456,8 @@ const legend = new DiscreteLegend({
     {
       label: '149',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '149',
       index: 149
@@ -1918,11 +1465,8 @@ const legend = new DiscreteLegend({
     {
       label: '150',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '150',
       index: 150
@@ -1930,11 +1474,8 @@ const legend = new DiscreteLegend({
     {
       label: '151',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '151',
       index: 151
@@ -1942,11 +1483,8 @@ const legend = new DiscreteLegend({
     {
       label: '152',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '152',
       index: 152
@@ -1954,11 +1492,8 @@ const legend = new DiscreteLegend({
     {
       label: '153',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '153',
       index: 153
@@ -1966,11 +1501,8 @@ const legend = new DiscreteLegend({
     {
       label: '154',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '154',
       index: 154
@@ -1978,11 +1510,8 @@ const legend = new DiscreteLegend({
     {
       label: '155',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '155',
       index: 155
@@ -1990,11 +1519,8 @@ const legend = new DiscreteLegend({
     {
       label: '156',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '156',
       index: 156
@@ -2002,11 +1528,8 @@ const legend = new DiscreteLegend({
     {
       label: '157',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '157',
       index: 157
@@ -2014,11 +1537,8 @@ const legend = new DiscreteLegend({
     {
       label: '158',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '158',
       index: 158
@@ -2026,11 +1546,8 @@ const legend = new DiscreteLegend({
     {
       label: '159',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '159',
       index: 159
@@ -2038,11 +1555,8 @@ const legend = new DiscreteLegend({
     {
       label: '160',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '160',
       index: 160
@@ -2050,11 +1564,8 @@ const legend = new DiscreteLegend({
     {
       label: '161',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '161',
       index: 161
@@ -2062,11 +1573,8 @@ const legend = new DiscreteLegend({
     {
       label: '162',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '162',
       index: 162
@@ -2074,11 +1582,8 @@ const legend = new DiscreteLegend({
     {
       label: '163',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '163',
       index: 163
@@ -2086,11 +1591,8 @@ const legend = new DiscreteLegend({
     {
       label: '164',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '164',
       index: 164
@@ -2098,11 +1600,8 @@ const legend = new DiscreteLegend({
     {
       label: '165',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '165',
       index: 165
@@ -2110,11 +1609,8 @@ const legend = new DiscreteLegend({
     {
       label: '166',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '166',
       index: 166
@@ -2122,11 +1618,8 @@ const legend = new DiscreteLegend({
     {
       label: '167',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '167',
       index: 167
@@ -2134,11 +1627,8 @@ const legend = new DiscreteLegend({
     {
       label: '168',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '168',
       index: 168
@@ -2146,11 +1636,8 @@ const legend = new DiscreteLegend({
     {
       label: '169',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '169',
       index: 169
@@ -2158,11 +1645,8 @@ const legend = new DiscreteLegend({
     {
       label: '170',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '170',
       index: 170
@@ -2170,11 +1654,8 @@ const legend = new DiscreteLegend({
     {
       label: '171',
       shape: {
-        fill: true,
-        fillColor: '#70D6A3',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#70D6A3',
+        symbolType: 'circle'
       },
       id: '171',
       index: 171
@@ -2182,11 +1663,8 @@ const legend = new DiscreteLegend({
     {
       label: '172',
       shape: {
-        fill: true,
-        fillColor: '#B4E6E2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#B4E6E2',
+        symbolType: 'circle'
       },
       id: '172',
       index: 172
@@ -2194,11 +1672,8 @@ const legend = new DiscreteLegend({
     {
       label: '173',
       shape: {
-        fill: true,
-        fillColor: '#63B5FC',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63B5FC',
+        symbolType: 'circle'
       },
       id: '173',
       index: 173
@@ -2206,11 +1681,8 @@ const legend = new DiscreteLegend({
     {
       label: '174',
       shape: {
-        fill: true,
-        fillColor: '#FF8F62',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FF8F62',
+        symbolType: 'circle'
       },
       id: '174',
       index: 174
@@ -2218,11 +1690,8 @@ const legend = new DiscreteLegend({
     {
       label: '175',
       shape: {
-        fill: true,
-        fillColor: '#FFDC83',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#FFDC83',
+        symbolType: 'circle'
       },
       id: '175',
       index: 175
@@ -2230,11 +1699,8 @@ const legend = new DiscreteLegend({
     {
       label: '176',
       shape: {
-        fill: true,
-        fillColor: '#BCC5FD',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#BCC5FD',
+        symbolType: 'circle'
       },
       id: '176',
       index: 176
@@ -2242,11 +1708,8 @@ const legend = new DiscreteLegend({
     {
       label: '177',
       shape: {
-        fill: true,
-        fillColor: '#A29BFE',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#A29BFE',
+        symbolType: 'circle'
       },
       id: '177',
       index: 177
@@ -2254,11 +1717,8 @@ const legend = new DiscreteLegend({
     {
       label: '178',
       shape: {
-        fill: true,
-        fillColor: '#63C4C7',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#63C4C7',
+        symbolType: 'circle'
       },
       id: '178',
       index: 178
@@ -2266,11 +1726,8 @@ const legend = new DiscreteLegend({
     {
       label: '179',
       shape: {
-        fill: true,
-        fillColor: '#F68484',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#F68484',
+        symbolType: 'circle'
       },
       id: '179',
       index: 179
@@ -2278,11 +1735,8 @@ const legend = new DiscreteLegend({
     {
       label: '180',
       shape: {
-        fill: true,
-        fillColor: '#6690F2',
-        symbolType: 'circle',
-        strokeColor: null,
-        stroke: false
+        fill: '#6690F2',
+        symbolType: 'circle'
       },
       id: '180',
       index: 180

@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import './modules';
 
+export * from './container';
 export * from './core/global';
 export * from './graphic';
 export * from './modules';

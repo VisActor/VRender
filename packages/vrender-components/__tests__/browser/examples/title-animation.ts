@@ -26,8 +26,8 @@ export function run() {
           { x: 500, y: 10 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -36,8 +36,8 @@ export function run() {
           { x: 0, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -46,8 +46,8 @@ export function run() {
           { x: 250, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -56,8 +56,8 @@ export function run() {
           { x: 500, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       })
     ],
@@ -79,8 +79,5 @@ export function run() {
   );
 
   // 主标题增添fadeIn动画
-  title._mainTitle
-    .animate()
-    .wait(10)
-    .play(new FadeInPlus(0, { fill: true, stroke: true }, 2000, 'quadIn'));
+  title._mainTitle.animate().wait(10).play(new FadeInPlus(0, {}, 2000, 'quadIn'));
 }

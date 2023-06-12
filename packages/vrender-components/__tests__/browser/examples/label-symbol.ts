@@ -29,8 +29,8 @@ const symbolGenerator = (count = 100) => {
         visible: true,
         x: random(10, 490),
         y: random(10, 490),
-        fill: true,
-        fillColor: colorPools[i % 5],
+
+        fill: colorPools[i % 5],
         pickable: true,
         zIndex: 300
       },
@@ -121,7 +121,7 @@ function createContent(stage: Stage) {
         text: `${c.id}`,
         x: c.attribute.x,
         y: c.attribute.y,
-        fillColor: c.attribute.fillColor
+        fill: c.attribute.fill
       };
     }),
     type: 'symbol',

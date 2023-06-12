@@ -9,9 +9,9 @@ export function run() {
     y1: 90,
     thickness: 40,
     align: 'center',
-    fillColor: 'red',
+    fill: 'red',
     backgroudStyle: {
-      fillColor: '#ccc'
+      fill: '#ccc'
     },
     endArrow: true,
     startArrow: true
@@ -25,9 +25,9 @@ export function run() {
     y1: 400,
     thickness: 40,
     align: 'center',
-    fillColor: 'red',
+    fill: 'red',
     backgroudStyle: {
-      fillColor: '#ccc'
+      fill: '#ccc'
     },
     endArrow: true,
     startArrow: true

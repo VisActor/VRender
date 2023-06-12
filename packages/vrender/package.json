@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.9.2-fill-stroke.2",
+  "version": "0.9.2-fill-stroke.3",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",

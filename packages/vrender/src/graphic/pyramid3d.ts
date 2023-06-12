@@ -44,12 +44,16 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
     // 找到斜率相同的两条边
     const kList = points.map((p, i) => {
       const p1 = i === 3 ? points[0] : points[i + 1];
-      return (p.y - p1.y) / (p.x - p1.x);
+      const dx = p.x - p1.x;
+      if (dx === 0) {
+        return 0;
+      }
+      return (p.y - p1.y) / dx;
     });
 
     const pointsMap: { p: IPointLike; d: number }[] = points.map(p => ({ p, d: 0 }));
     let find = false;
-    let maxD = -Infinity;
+    let maxD = 0;
     for (let i = 0; i < kList.length - 1; i++) {
       for (let j = i + 1; j < kList.length; j++) {
         if (kList[i] === kList[j]) {

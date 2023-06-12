@@ -137,10 +137,12 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
       eslint: ~8.18.0
+      form-data: ~4.0.0
       inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       jest-extended: ^1.2.1
+      node-fetch: 2.6.6
       react: 16.13.0
       react-dom: 16.13.0
       reflect-metadata: 0.1.13
@@ -162,9 +164,11 @@ importers:
       '@types/react-dom': 16.9.8
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       eslint: 8.18.0
+      form-data: 4.0.0
       jest: 26.6.3
       jest-electron: 0.1.12_jest@26.6.3
       jest-extended: 1.2.1
+      node-fetch: 2.6.6
       react: 16.13.0
       react-dom: 16.13.0_react@16.13.0
       ts-jest: 26.5.6_xuote2qreek47x2di7kesslrai
@@ -2357,6 +2361,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: false
     optional: true
@@ -2366,6 +2371,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: false
     optional: true
@@ -2375,6 +2381,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
     requiresBuild: true
     dev: false
     optional: true
@@ -2384,6 +2391,7 @@ packages:
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
     requiresBuild: true
     dev: false
     optional: true
@@ -5481,6 +5489,15 @@ packages:
       combined-stream: 1.0.8
       mime-types: 2.1.35
 
+  /form-data/4.0.0:
+    resolution: {integrity: sha512-ETEklSGi5t0QMZuiXoA/Q6vcnxcLQP5vdugSpuAyi6SVGi2clPPp+xgEhuMaHC+zGgn31Kd235W35f7Hykkaww==}
+    engines: {node: '>= 6'}
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      mime-types: 2.1.35
+    dev: true
+
   /fraction.js/4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}
     dev: false
@@ -8032,7 +8049,6 @@ packages:
     engines: {node: 4.x || >=6.0.0}
     dependencies:
       whatwg-url: 5.0.0
-    dev: false
 
   /node-int64/0.4.0:
     resolution: {integrity: sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw==}

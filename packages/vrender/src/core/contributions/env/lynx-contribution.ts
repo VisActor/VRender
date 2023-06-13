@@ -143,12 +143,14 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     // 但是在小组件工作台环境和模拟器中正常
     // 反馈飞书修改，目前先使用setTimeout模拟，进行测试，飞书修复后替换回requestAnimationFrame
     return function (callback: FrameRequestCallback) {
-      setTimeout(callback, 1000 / 60, true);
+      return setTimeout(callback, 1000 / 60, true);
     } as any;
   }
 
   getCancelAnimationFrame(): (h: number) => void {
-    return cancelAnimationFrame;
+    return (h: number) => {
+      clearTimeout(h);
+    };
   }
 
   addEventListener<K extends keyof DocumentEventMap>(

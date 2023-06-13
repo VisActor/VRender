@@ -14,7 +14,7 @@ VRender, not just a feature-rich visual rendering engine, but also a skillful an
 
 <p align="center">
   <a href="">Introduction</a> •
-  <a href="">demo</a> •
+  <a href="">Demo</a> •
   <a href="">Tutorial</a> •
   <a href="">API</a>•
   <a href="">Cross-Platform</a>
@@ -124,7 +124,7 @@ st.defaultLayer.add(sy);
 
 # Contribution
 
-If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) 和 [ Guide](./CONTRIBUTING.zh-CN.md) first。
+If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) and [ Guide](./CONTRIBUTING.zh-CN.md) first。
 
 Small streams converge to make great rivers and seas!
 

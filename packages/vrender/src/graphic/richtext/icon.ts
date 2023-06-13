@@ -74,7 +74,7 @@ export class RichTextIcon extends Image implements IRichTextIcon {
     const { backgroundWidth = width, backgroundHeight = height } = this.attribute;
     const expandX = (backgroundWidth - width) / 2;
     const expandY = (backgroundHeight - height) / 2;
-    this._AABBBounds.expand([expandY, expandX, expandY, expandX]);
+    this._AABBBounds.expand([0, expandX * 2, expandY * 2, 0]);
 
     return this._AABBBounds;
   }

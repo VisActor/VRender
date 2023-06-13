@@ -194,14 +194,6 @@ export default class Paragraph {
     //   }
     // }
 
-    if (this.character.stroke) {
-      applyStrokeStyle(ctx, this.character);
-      ctx.strokeText(text, left, baseline);
-    }
-
-    // 下面绘制underline和line-through时需要设置FillStyle
-    applyFillStyle(ctx, this.character);
-
     // 处理旋转
     if (direction === 'vertical') {
       ctx.save();
@@ -211,11 +203,20 @@ export default class Paragraph {
       left = 0;
       baseline = 0;
     }
+
+    if (this.character.stroke) {
+      applyStrokeStyle(ctx, this.character);
+      ctx.strokeText(text, left, baseline);
+    }
+
+    // 下面绘制underline和line-through时需要设置FillStyle
+    applyFillStyle(ctx, this.character);
+
     if (this.character.fill) {
       ctx.fillText(text, left, baseline);
     }
 
-    if (this.character.stroke || this.character.fill) {
+    if (this.character.fill) {
       if (typeof this.character.lineThrough === 'boolean' || typeof this.character.underline === 'boolean') {
         if (this.character.underline) {
           ctx.fillRect(

@@ -12,7 +12,8 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
       fontSize: 12,
       fill: '#000',
       textAlign: 'center',
-      textBaseline: 'middle'
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
     position: 'end',
     offset: 6,

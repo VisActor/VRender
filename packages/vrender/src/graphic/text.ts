@@ -101,19 +101,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       this
     ) as AABBBounds;
 
-    this.clearUpdateBoundTag();
-    return bounds;
-  }
-  private updateAABBBounds(): AABBBounds {
-    const textTheme = getTheme(this).text;
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateTextAABBBounds(
-      attribute,
-      getTheme(this).text,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
     const { boundsPadding = textTheme.boundsPadding } = this.attribute;
     const paddingArray = parsePadding(boundsPadding);
     if (paddingArray) {
@@ -121,7 +108,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     this.clearUpdateBoundTag();
-
     return bounds;
   }
 

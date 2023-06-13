@@ -45,10 +45,10 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
       opacity = richtextIconAttribute.opacity,
       image: url,
       backgroundFill = richtextIconAttribute.backgroundFill,
-      backgroundFillColor = richtextIconAttribute.backgroundFillColor,
+      // backgroundFillColor = richtextIconAttribute.backgroundFillColor,
       backgroundFillOpacity = richtextIconAttribute.backgroundFillOpacity,
       backgroundStroke = richtextIconAttribute.backgroundStroke,
-      backgroundStrokeColor = richtextIconAttribute.backgroundStrokeColor,
+      // backgroundStrokeColor = richtextIconAttribute.backgroundStrokeColor,
       backgroundStrokeOpacity = richtextIconAttribute.backgroundStrokeOpacity,
       backgroundRadius = richtextIconAttribute.backgroundRadius,
       margin
@@ -79,13 +79,13 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
       if (backgroundFill) {
         // context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
         context.globalAlpha = backgroundFillOpacity;
-        context.fillStyle = backgroundFillColor as string;
+        context.fillStyle = backgroundFill as string;
         context.fill();
       }
       if (backgroundStroke) {
         // context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
         context.globalAlpha = backgroundStrokeOpacity;
-        context.strokeStyle = backgroundStrokeColor as string;
+        context.strokeStyle = backgroundStroke as string;
         context.stroke();
       }
     }

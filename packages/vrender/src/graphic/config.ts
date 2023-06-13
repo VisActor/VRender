@@ -271,11 +271,9 @@ export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribut
 
   width: 20,
   height: 20,
-  backgroundFill: true,
-  backgroundFillColor: 'rgba(101, 117, 168, 0.1)',
+  backgroundFill: 'rgba(101, 117, 168, 0.1)',
   backgroundFillOpacity: 1,
   backgroundStroke: false,
-  backgroundStrokeColor: '#000',
   backgroundStrokeOpacity: 1,
   backgroundRadius: 4,
   opacity: 1

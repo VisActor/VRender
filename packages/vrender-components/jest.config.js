@@ -11,7 +11,8 @@ module.exports = {
       resolveJsonModule: true,
       esModuleInterop: true,
       experimentalDecorators: true,
-      module: 'ESNext'
+      module: 'ESNext',
+      tsconfig: './tsconfig.test.json',
     }
   },
   verbose: true,

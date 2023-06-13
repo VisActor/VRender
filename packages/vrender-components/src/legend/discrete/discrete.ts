@@ -352,11 +352,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     Object.keys(shapeAttr.state).forEach(key => {
       const color = shapeAttr.state[key].fill || shapeAttr.state[key].stroke;
       if (shape.fill && isNil(shapeAttr.state[key].fill) && color) {
-        shapeAttr.state[key].fill = color;
+        shapeAttr.state[key].fill = color as string;
       }
 
       if (shape.stroke && isNil(shapeAttr.state[key].stroke) && color) {
-        shapeAttr.state[key].stroke = color;
+        shapeAttr.state[key].stroke = color as string;
       }
     });
     this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);

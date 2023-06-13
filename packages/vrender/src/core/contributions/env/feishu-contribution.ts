@@ -164,7 +164,9 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
   }
 
   getCancelAnimationFrame(): (h: number) => void {
-    return cancelAnimationFrame;
+    return (h: number) => {
+      clearTimeout(h);
+    };
   }
 
   addEventListener<K extends keyof DocumentEventMap>(

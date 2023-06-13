@@ -1,5 +1,4 @@
-import * as _Reflect from 'reflect-metadata';
-export const Reflect = _Reflect;
+import 'reflect-metadata';
 import './modules';
 
 export * from './container';

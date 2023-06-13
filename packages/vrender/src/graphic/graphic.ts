@@ -1093,7 +1093,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (Number.isFinite(nextStepVal)) {
       nextAttributes[key] = lastStepVal + (nextStepVal - lastStepVal) * ratio;
       return true;
-    } else if (key === 'fillColor') {
+    } else if (key === 'fill') {
       if (!nextParsedProps) {
         nextParsedProps = {};
       }
@@ -1106,7 +1106,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         nextAttributes[key] = color;
       }
       return true;
-    } else if (key === 'strokeColor') {
+    } else if (key === 'stroke') {
       if (!nextParsedProps) {
         nextParsedProps = {};
       }

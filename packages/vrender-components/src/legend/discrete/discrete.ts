@@ -348,17 +348,19 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ...shape,
       ...shapeAttr.style
     });
-    this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
-    // // 处理下 shape 的 fill stroke
-    // Object.keys(shapeAttr.state).forEach(key => {
-    //   if ((shape.fill) && isNil(shapeAttr.state[key].fill)) {
-    //     shapeAttr.state[key].fill = shape.fill;
-    //   }
+    // 处理下 shape 的 fill stroke
+    Object.keys(shapeAttr.state).forEach(key => {
+      const color = shapeAttr.state[key].fill || shapeAttr.state[key].stroke;
+      if (shape.fill && isNil(shapeAttr.state[key].fill) && color) {
+        shapeAttr.state[key].fill = color;
+      }
 
-    //   if ((shape.stroke) && isNil(shapeAttr.state[key].stroke)) {
-    //     shapeAttr.state[key].stroke = shape.stroke;
-    //   }
-    // });
+      if (shape.stroke && isNil(shapeAttr.state[key].stroke) && color) {
+        shapeAttr.state[key].stroke = color;
+      }
+    });
+    this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
+
     itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(itemShape);
 

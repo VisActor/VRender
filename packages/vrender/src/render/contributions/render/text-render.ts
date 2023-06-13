@@ -184,7 +184,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const w = text.clipedWidth;
     const offsetX = textDrawOffsetX(textAlign, w);
     const offsetY = textLayoutOffsetY(textBaseline, fontSize);
-    const attribute = { lineWidth: 0, strokeColor: fill, opacity, strokeOpacity: fillOpacity };
+    const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
@@ -230,7 +230,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
 
     const offsetX = textDrawOffsetX(textAlign, w);
     const offsetY = textLayoutOffsetY('alphabetic', fontSize);
-    const attribute = { lineWidth: 0, strokeColor: fill, opacity, strokeOpacity: fillOpacity };
+    const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     let deltaY = -3;
     if (underline) {
       attribute.lineWidth = underline;

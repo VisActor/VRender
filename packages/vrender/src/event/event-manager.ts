@@ -330,7 +330,7 @@ export class EventManager {
 
     if (isMouse) {
       this[propagationMethod](e, 'mousemove');
-      this.cursor = e.target?.attribute?.cursor as Cursor;
+      this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
 
     trackingData.overTargets = e.composedPath();
@@ -354,7 +354,7 @@ export class EventManager {
       this.dispatchEvent(e, 'mouseover');
     }
     if (e.pointerType === 'mouse') {
-      this.cursor = e.target?.attribute?.cursor as Cursor;
+      this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
 
     const enterEvent = this.clonePointerEvent(e, 'pointerenter');

@@ -6,7 +6,7 @@ const hLegend = new DiscreteLegend({
   y: 20,
 
   // ==== 测试使用 ====
-  strokeColor: 'red',
+  stroke: 'red',
   // ==== 测试使用 end ====
 
   maxWidth: 400,
@@ -18,7 +18,7 @@ const hLegend = new DiscreteLegend({
     background: {
       visible: true,
       style: {
-        fillColor: 'red'
+        fill: 'red'
       }
     }
   },
@@ -34,38 +34,37 @@ const hLegend = new DiscreteLegend({
     value: {
       alignRight: true,
       style: {
-        fillColor: '#666',
+        fill: '#666',
         fontWeight: 'bold'
       }
     },
     background: {
       style: {
-        stroke: true,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 1
       }
     }
   },
   items: [
-    { label: '苹果', shape: { fillColor: 'red', symbolType: 'circle' } },
-    { label: '香蕉', shape: { fillColor: 'yellow', symbolType: 'square' } },
-    { label: '橘子', shape: { fillColor: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄', shape: { fillColor: 'purple', symbolType: 'diamond' } },
-    { label: '梨', shape: { fillColor: 'green', symbolType: 'star' } },
-    { label: '苹果1', value: 100, shape: { fillColor: 'red', symbolType: 'circle' } },
-    { label: '香蕉1', value: 100, shape: { fillColor: 'yellow', symbolType: 'square' } },
-    { label: '橘子1', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄1', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond' } },
-    { label: '梨1', value: 100, shape: { fillColor: 'green', symbolType: 'star' } },
-    { label: '苹果2', value: 100, shape: { fillColor: 'red', symbolType: 'circle' } },
-    { label: '香蕉2', value: 100, shape: { fillColor: 'yellow', symbolType: 'square' } },
-    { label: '橘子2', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄2', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond' } },
-    { label: '梨2', value: 100, shape: { fillColor: 'green', symbolType: 'star' } }
+    { label: '苹果', shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
   ],
   allowAllCanceled: false,
   pager: {
-    fillColor: 'red',
+    fill: 'red',
     padding: 10
   }
 });
@@ -75,7 +74,7 @@ const vLegend = new DiscreteLegend({
   y: 200,
 
   // ==== 测试使用 ====
-  strokeColor: 'red',
+  stroke: 'red',
   // ==== 测试使用 end ====
 
   layout: 'vertical',
@@ -90,7 +89,7 @@ const vLegend = new DiscreteLegend({
     background: {
       visible: true,
       style: {
-        fillColor: 'red'
+        fill: 'red'
       }
     }
   },
@@ -112,59 +111,58 @@ const vLegend = new DiscreteLegend({
     label: {
       state: {
         selectedHover: {
-          fillColor: 'red'
+          fill: 'red'
         }
       }
     },
     value: {
       alignRight: true,
       style: {
-        fillColor: '#666'
+        fill: '#666'
       },
       state: {
         selectedHover: {
-          fillColor: 'red'
+          fill: 'red'
         }
       }
     },
     background: {
       style: {
-        stroke: true,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 1
         // borderRadius: 5
       },
       state: {
         selectedHover: {
-          fillColor: 'rgba(0,0,0,.3)'
+          fill: 'rgba(0,0,0,.3)'
         },
         selected: {
-          fillColor: 'pink',
+          fill: 'pink',
           fillOpacity: 0.5
         },
         unSelected: {
-          fillColor: 'blue'
+          fill: 'blue'
         }
       }
     },
     focus: true
   },
   items: [
-    { label: '苹果', value: 100, shape: { fillColor: 'red', symbolType: 'circle', stroke: false } },
-    { label: '香蕉', value: 100, shape: { fillColor: 'yellow', symbolType: 'square', stroke: false } },
-    { label: '橘子', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle', stroke: false } },
-    { label: '葡萄', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond', stroke: false } },
-    { label: '梨', value: 100, shape: { fillColor: 'green', symbolType: 'star', stroke: false } },
-    { label: '苹果1', value: 100, shape: { fillColor: 'red', symbolType: 'circle', stroke: false } },
-    { label: '香蕉1', value: 100, shape: { fillColor: 'yellow', symbolType: 'square', stroke: false } },
-    { label: '橘子1', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle', stroke: false } },
-    { label: '葡萄1', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond', stroke: false } },
-    { label: '梨1', value: 100, shape: { fillColor: 'green', symbolType: 'star', stroke: false } },
-    { label: '苹果2', value: 100, shape: { fillColor: 'red', symbolType: 'circle', stroke: false } },
-    { label: '香蕉2', value: 100, shape: { fillColor: 'yellow', symbolType: 'square', stroke: false } },
-    { label: '橘子2', value: 100, shape: { fillColor: 'orange', symbolType: 'triangle', stroke: false } },
-    { label: '葡萄2', value: 100, shape: { fillColor: 'purple', symbolType: 'diamond', stroke: false } },
-    { label: '梨2', value: 100, shape: { fillColor: 'green', symbolType: 'star', stroke: false } }
+    { label: '苹果', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
   ],
   defaultSelected: ['苹果'],
   allowAllCanceled: false,
@@ -180,8 +178,7 @@ const legend = new DiscreteLegend({
     textStyle: {
       fontSize: 14,
       fontWeight: 'normal',
-      fillColor: '#1890ff',
-      fill: true
+      fill: '#1890ff'
     },
     visible: true,
     padding: 0,
@@ -199,16 +196,12 @@ const legend = new DiscreteLegend({
       },
       state: {
         selectedHover: {
-          opacity: 0.85,
-          fill: true,
-          stroke: true
+          opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8',
-          strokeColor: '#D8D8D8',
-          fillOpacity: 0.5,
-          fill: true,
-          stroke: true
+          fill: '#D8D8D8',
+          stroke: '#D8D8D8',
+          fillOpacity: 0.5
         }
       }
     },
@@ -216,16 +209,15 @@ const legend = new DiscreteLegend({
       space: 4,
       style: {
         fontSize: 12,
-        fillColor: 'black',
-        cursor: 'pointer',
-        fill: true
+        fill: 'black',
+        cursor: 'pointer'
       },
       state: {
         selectedHover: {
           opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8',
+          fill: '#D8D8D8',
           fillOpacity: 0.5
         }
       }
@@ -234,20 +226,18 @@ const legend = new DiscreteLegend({
       alignRight: true,
       style: {
         fontSize: 12,
-        fillColor: '#333',
-        cursor: 'pointer',
-        fill: true
+        fill: '#333',
+        cursor: 'pointer'
       },
       state: {
         selectedHover: {
           opacity: 0.85
         },
         unSelected: {
-          fillColor: '#D8D8D8'
+          fill: '#D8D8D8'
         },
         unselected: {
-          fill: true,
-          fillColor: '#d8d8d8'
+          fill: '#d8d8d8'
         }
       }
     },
@@ -257,14 +247,12 @@ const legend = new DiscreteLegend({
       },
       state: {
         selectedHover: {
-          fill: true,
           fillOpacity: 0.7,
-          fillColor: 'gray'
+          fill: 'gray'
         },
         unSelectedHover: {
-          fill: true,
           fillOpacity: 0.2,
-          fillColor: 'gray'
+          fill: 'gray'
         }
       }
     },
@@ -273,7 +261,7 @@ const legend = new DiscreteLegend({
       size: 10,
       symbolType:
         'M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z',
-      fillColor: '#333',
+      fill: '#333',
       cursor: 'pointer'
     },
     visible: true,
@@ -299,11 +287,9 @@ const legend = new DiscreteLegend({
     {
       label: 'nlp',
       shape: {
-        fill: true,
-        fillColor: '#1890ff',
+        fill: '#1890ff',
         symbolType: 'circle',
-        strokeColor: '#1890ff',
-        stroke: true
+        stroke: '#1890ff'
       },
       value: '20,000',
       id: 'nlp',
@@ -312,11 +298,9 @@ const legend = new DiscreteLegend({
     {
       label: 'blockchain',
       shape: {
-        fill: true,
-        fillColor: '#2fc25b',
+        fill: '#2fc25b',
         symbolType: 'circle',
-        strokeColor: '#2fc25b',
-        stroke: true
+        stroke: '#2fc25b'
       },
       value: '7,000',
       id: 'blockchain',

@@ -49,7 +49,7 @@ export function renderSymbol(num: number) {
         x: 800 * Math.random(),
         y: 800 * Math.random(),
         size: 20,
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },
     () => {

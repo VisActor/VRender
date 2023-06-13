@@ -12,18 +12,18 @@ export const page = () => {
   //     y: 100,
   //     width: 100,
   //     height: 100,
-  //     fillColor: colorPools[10],
+  //     fill: colorPools[10],
   //     outerBorder: {
   //       distance: 10,
   //       lineWidth: 6,
-  //       strokeColor: 'green'
+  //       stroke: 'green'
   //     },
   //     innerBorder: {
   //       distance: 10,
   //       lineWidth: 6,
-  //       strokeColor: 'red'
+  //       stroke: 'red'
   //     },
-  //     // strokeColor: 'red',
+  //     // stroke: 'red',
   //     lineWidth: 2,
   //     shadowBlur: 10,
   //     shadowOffsetX: 10,
@@ -46,14 +46,14 @@ export const page = () => {
   //     outerBorder: {
   //       distance: 10,
   //       lineWidth: 6,
-  //       strokeColor: 'green'
+  //       stroke: 'green'
   //     },
   //     innerBorder: {
   //       distance: 10,
   //       lineWidth: 1,
-  //       strokeColor: 'red'
+  //       stroke: 'red'
   //     },
-  //     // fillColor: {
+  //     // fill: {
   //     //   gradient: 'radial',
   //     //   x0: 0,
   //     //   y0: 0,
@@ -66,7 +66,7 @@ export const page = () => {
   //     //     { color: 'green', offset: 1 }
   //     //   ]
   //     // },
-  //     // strokeColor: 'red',
+  //     // stroke: 'red',
   //     lineWidth: 2
   //   })
   // );
@@ -79,8 +79,8 @@ export const page = () => {
   //     height: 50,
   //     borderRadius: 20,
   //     angle: Math.PI / 4,
-  //     fillColor: colorPools[10],
-  //     // strokeColor: 'red',
+  //     fill: colorPools[10],
+  //     // stroke: 'red',
   //     lineWidth: 2
   //   })
   // );
@@ -91,9 +91,9 @@ export const page = () => {
   //     y: 400,
   //     width: 100,
   //     height: 50,
-  //     fillColor: colorPools[10],
-  //     strokeColor: colorPools[5],
-  //     stroke: true,
+  //     fill: colorPools[10],
+  //     stroke: colorPools[5],
+  //     
   //     lineWidth: 2
   //   })
   // );
@@ -105,9 +105,9 @@ export const page = () => {
   //     width: 100,
   //     height: 50,
   //     borderRadius: 20,
-  //     fillColor: colorPools[10],
-  //     strokeColor: colorPools[5],
-  //     stroke: true,
+  //     fill: colorPools[10],
+  //     stroke: colorPools[5],
+  //     
   //     lineWidth: 2
   //   })
   // );
@@ -120,9 +120,9 @@ export const page = () => {
     borderRadius: 20,
     scaleX: 2,
     scaleY: 2,
-    fillColor: 'red',
-    strokeColor: colorPools[5],
-    stroke: true,
+    fill: 'red',
+    stroke: colorPools[5],
+    
     lineWidth: 2
   });
   shapes.push(r);
@@ -135,9 +135,9 @@ export const page = () => {
       borderRadius: 20,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[1],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[1],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -150,9 +150,9 @@ export const page = () => {
       borderRadius: 20,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[3],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[3],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -165,16 +165,16 @@ export const page = () => {
       borderRadius: 20,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[4],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[4],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
 
   r.addEventListener('click', () => {
     r.setAttributes({
-      fillColor: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(
+      fill: `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(
         Math.random() * 255
       )})`
     });

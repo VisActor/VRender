@@ -1,12 +1,13 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common';
-import { getTheme, IMAGE_NUMBER_TYPE } from '../../../graphic';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { getTheme } from '../../../graphic/theme';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { IImageRenderContribution, ImageRenderContribution } from './contributions/image-contribution-render';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';
+import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultCanvasImageRender implements IGraphicRender {

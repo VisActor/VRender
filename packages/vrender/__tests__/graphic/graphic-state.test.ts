@@ -10,17 +10,17 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink' },
+      selected: { fill: 'pink' },
       hover: { fillOpacity: 0.5 }
     };
 
     expect(rect.hasState()).toBeFalsy();
     rect.useStates(['hover']);
     expect(rect.hasState()).toBeTruthy();
-    expect(rect.attribute.fillColor).toEqual('red');
+    expect(rect.attribute.fill).toEqual('red');
     expect(rect.attribute.fillOpacity).toEqual(rect.states.hover.fillOpacity);
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
     expect(rect.currentStates).toEqual(['hover']);
@@ -32,17 +32,17 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink' },
+      selected: { fill: 'pink' },
       hover: { fillOpacity: 0.5 }
     };
 
     expect(rect.hasState('hover')).toBeFalsy();
     rect.toggleState('hover');
     expect(rect.hasState('hover')).toBeTruthy();
-    expect(rect.attribute.fillColor).toEqual('red');
+    expect(rect.attribute.fill).toEqual('red');
     expect(rect.attribute.fillOpacity).toEqual(rect.states.hover.fillOpacity);
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
     expect(rect.currentStates).toEqual(['hover']);
@@ -59,27 +59,27 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink', strokeColor: 'black' },
-      hover: { fillOpacity: 0.5, fillColor: 'yellow' }
+      selected: { fill: 'pink', stroke: 'black' },
+      hover: { fillOpacity: 0.5, fill: 'yellow' }
     };
 
     rect.useStates(['selected', 'hover']);
 
     expect(rect.hasState()).toBeTruthy();
-    expect(rect.attribute.fillColor).toEqual(rect.states.hover.fillColor);
-    expect(rect.attribute.strokeColor).toEqual(rect.states.selected.strokeColor);
-    expect(rect.normalAttrs?.fillColor).toEqual('red');
-    expect(rect.normalAttrs?.strokeColor).toBeUndefined();
+    expect(rect.attribute.fill).toEqual(rect.states.hover.fill);
+    expect(rect.attribute.stroke).toEqual(rect.states.selected.stroke);
+    expect(rect.normalAttrs?.fill).toEqual('red');
+    expect(rect.normalAttrs?.stroke).toBeUndefined();
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
 
     rect.clearStates();
 
     expect(rect.hasState()).toBeFalsy();
-    expect(rect.attribute.fillColor).toEqual('red');
-    expect(rect.attribute.strokeColor).toBeUndefined();
+    expect(rect.attribute.fill).toEqual('red');
+    expect(rect.attribute.stroke).toBeUndefined();
     expect(rect.attribute.fillOpacity).toBeUndefined();
     expect(rect.normalAttrs).toBeNull();
   });
@@ -90,19 +90,19 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink', strokeColor: 'black' },
-      hover: { fillOpacity: 0.5, fillColor: 'yellow' }
+      selected: { fill: 'pink', stroke: 'black' },
+      hover: { fillOpacity: 0.5, fill: 'yellow' }
     };
 
     rect.useStates(['selected']);
     expect(rect.hasState()).toBeTruthy();
-    expect(rect.attribute.fillColor).toEqual(rect.states.selected.fillColor);
-    expect(rect.attribute.strokeColor).toEqual(rect.states.selected.strokeColor);
-    expect(rect.normalAttrs?.fillColor).toEqual('red');
-    expect(rect.normalAttrs?.strokeColor).toBeUndefined();
+    expect(rect.attribute.fill).toEqual(rect.states.selected.fill);
+    expect(rect.attribute.stroke).toEqual(rect.states.selected.stroke);
+    expect(rect.normalAttrs?.fill).toEqual('red');
+    expect(rect.normalAttrs?.stroke).toBeUndefined();
   });
 
   it('addState() and keepCurrentStates = true', () => {
@@ -111,17 +111,17 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink', strokeColor: 'black' },
-      hover: { fillOpacity: 0.5, fillColor: 'yellow' }
+      selected: { fill: 'pink', stroke: 'black' },
+      hover: { fillOpacity: 0.5, fill: 'yellow' }
     };
 
     rect.addState('selected', true);
     expect(rect.hasState()).toBeTruthy();
     expect(rect.attribute).toMatchObject(rect.states.selected);
-    expect(rect.normalAttrs).toMatchObject({ fillColor: 'red', strokeColor: undefined });
+    expect(rect.normalAttrs).toMatchObject({ fill: 'red', stroke: undefined });
 
     rect.addState('hover', true);
     expect(rect.attribute).toMatchObject({ ...rect.states.selected, ...rect.states.hover });
@@ -133,21 +133,21 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {
-      selected: { fillColor: 'pink', strokeColor: 'black' },
-      hover: { fillOpacity: 0.5, fillColor: 'yellow' }
+      selected: { fill: 'pink', stroke: 'black' },
+      hover: { fillOpacity: 0.5, fill: 'yellow' }
     };
 
     rect.addState('selected', false);
     expect(rect.hasState()).toBeTruthy();
     expect(rect.attribute).toMatchObject(rect.states.selected);
-    expect(rect.normalAttrs).toMatchObject({ fillColor: 'red', strokeColor: undefined });
+    expect(rect.normalAttrs).toMatchObject({ fill: 'red', stroke: undefined });
 
     rect.addState('hover', false);
     expect(rect.attribute).toMatchObject(rect.states.hover);
-    expect(rect.normalAttrs).toMatchObject({ fillColor: 'red', fillOpacity: undefined });
+    expect(rect.normalAttrs).toMatchObject({ fill: 'red', fillOpacity: undefined });
   });
 
   it('removeState', () => {
@@ -156,7 +156,7 @@ describe('Graphic-state', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     rect.states = {};
 
@@ -164,17 +164,17 @@ describe('Graphic-state', () => {
 
     expect(rect.hasState('selected')).toBeTruthy();
     expect(rect.currentStates).toEqual(['selected']);
-    expect(rect.attribute.fillColor).toEqual('red');
-    expect(rect.normalAttrs?.fillColor).toBeUndefined();
-    expect(rect.normalAttrs?.strokeColor).toBeUndefined();
+    expect(rect.attribute.fill).toEqual('red');
+    expect(rect.normalAttrs?.fill).toBeUndefined();
+    expect(rect.normalAttrs?.stroke).toBeUndefined();
     expect(rect.normalAttrs?.fillOpacity).toBeUndefined();
 
     rect.removeState('selected');
 
     expect(rect.currentStates).toEqual([]);
     expect(rect.hasState('selected')).toBeFalsy();
-    expect(rect.attribute.fillColor).toEqual('red');
-    expect(rect.attribute.strokeColor).toBeUndefined();
+    expect(rect.attribute.fill).toEqual('red');
+    expect(rect.attribute.stroke).toBeUndefined();
     expect(rect.attribute.fillOpacity).toBeUndefined();
     expect(rect.normalAttrs).toBeNull();
   });
@@ -184,7 +184,7 @@ describe('glyph-state', () => {
   it('hasState', () => {
     const glyph = crateDemoGlyph();
     glyph.glyphStates = {
-      selected: { attributes: { strokeColor: 'red' } },
+      selected: { attributes: { stroke: 'red' } },
       hover: { attributes: { fillOpacity: 0.5 } }
     };
 
@@ -199,8 +199,8 @@ describe('glyph-state', () => {
   it('hasState', () => {
     const glyph = crateDemoGlyph();
     glyph.glyphStates = {
-      selected: { attributes: { strokeColor: 'red' }, subAttributes: [{ lineWidth: 2 }] },
-      hover: { attributes: { fillOpacity: 0.5 }, subAttributes: [{ fillColor: 'yellow' }, { fillColor: 'grey' }] }
+      selected: { attributes: { stroke: 'red' }, subAttributes: [{ lineWidth: 2 }] },
+      hover: { attributes: { fillOpacity: 0.5 }, subAttributes: [{ fill: 'yellow' }, { fill: 'grey' }] }
     };
 
     expect(glyph.hasState()).toBeFalsy();

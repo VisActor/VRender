@@ -17,7 +17,7 @@ describe('Tag', () => {
     const tag = new Tag({
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         textAlign: 'end',
         textBaseline: 'top',
         lineHeight: 12,
@@ -32,7 +32,7 @@ describe('Tag', () => {
       visible: true,
       text: 'title',
       angle: 0.6947382761967031,
-      panel: { visible: true, fillColor: 'rgba(0, 0, 0, 0.3)' },
+      panel: { visible: true, fill: 'rgba(0, 0, 0, 0.3)' },
       maxWidth: 60
     });
 

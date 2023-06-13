@@ -64,7 +64,7 @@ describe('Marker', () => {
       }
     ]);
     expect((markAreaContainer.children[0] as Polygon).attribute.fill).toBeTruthy();
-    expect((markAreaContainer.children[0] as Polygon).attribute.fillColor).toBe('#b2bacf');
+    expect((markAreaContainer.children[0] as Polygon).attribute.fill).toBe('#b2bacf');
     // tag构造的label
     expect((markAreaContainer.children[1] as unknown as Tag).attribute.x).toBe(200);
     expect((markAreaContainer.children[1] as unknown as Tag).attribute.y).toBe(350);

@@ -1,10 +1,11 @@
 import { isArray, isNumber, IPoint, AABBBounds } from '@visactor/vutils';
-import { getScaledStroke } from '../../../common';
+import { getScaledStroke } from '../../../common/canvas-utils';
 import { inject, injectable } from 'inversify';
-import { getTheme, RECT_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
 import { IGraphicRender, RectRender } from '../../../render';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
+import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 
 const _bounds = new AABBBounds();
 
@@ -95,8 +96,8 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
     } else if (picked) {
       // 如果只有描边那需要测试描边
       const {
-        fill = !!rect.attribute.fillColor,
-        stroke = !!rect.attribute.strokeColor,
+        fill = rectAttribute.fill,
+        stroke = rectAttribute.stroke,
         lineWidth = rectAttribute.lineWidth
       } = rect.attribute;
       if (fill) {

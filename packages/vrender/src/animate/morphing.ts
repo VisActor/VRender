@@ -22,7 +22,7 @@ import {
   IArea,
   IPath
 } from './../interface';
-import { CustomPath2D } from '../common/path';
+import { CustomPath2D } from '../common/custom-path2d';
 import { ACustomAnimate } from './animate';
 import {
   alignBezierCurves,
@@ -30,7 +30,7 @@ import {
   findBestMorphingRotation,
   pathToBezierCurves
 } from '../common/morphing-utils';
-import { createRect, createArc, createSymbol, createPolygon, createPath } from '../graphic/graphic-creator';
+import { application } from '../application';
 import { IMatrix, isNil } from '@visactor/vutils';
 import { interpolateColor } from '../color-string/interpolate';
 import { ColorStore, ColorType } from '../color-string';
@@ -58,7 +58,7 @@ const interpolateOtherAttrs = (attrs: OtherAttrItem[], out: any, ratio: number) 
   attrs.forEach(entry => {
     if (Number.isFinite(entry.to)) {
       out[entry.key] = entry.from + (entry.to - entry.from) * ratio;
-    } else if (entry.key === 'fillColor' || entry.key === 'strokeColor') {
+    } else if (entry.key === 'fill' || entry.key === 'stroke') {
       // 保存解析的结果到step
       const color = interpolateColor(entry.from, entry.to, ratio, false);
       if (color) {
@@ -165,13 +165,13 @@ const parseMorphingData = (
 };
 
 const validateOtherAttrs = [
-  'fillColor',
+  'fill',
   'fillOpacity',
   'shadowBlur',
   'shadowColor',
   'shadowOffsetX',
   'shadowOffsetY',
-  'strokeColor',
+  'stroke',
   'strokeOpacity',
   'lineDashOffset'
   // 'lineWidth'
@@ -194,11 +194,11 @@ const parseOtherAnimateAttrs = (
 
     const toValue = toAttrs[fromKey];
     if (!isNil(toValue) && !isNil(fromAttrs[fromKey]) && toValue !== fromAttrs[fromKey]) {
-      if (fromKey === 'fillColor' || fromKey === 'strokeColor') {
+      if (fromKey === 'fill' || fromKey === 'stroke') {
         res.push({
           from:
             typeof fromAttrs[fromKey] === 'string'
-              ? ColorStore.Get(fromAttrs[fromKey] as string, ColorType.Color255)
+              ? ColorStore.Get(fromAttrs[fromKey] as unknown as string, ColorType.Color255)
               : fromAttrs[fromKey],
           to: typeof toValue === 'string' ? ColorStore.Get(toValue as string, ColorType.Color255) : toValue,
           key: fromKey
@@ -436,12 +436,12 @@ const parseShadowChildAttrs = (graphicAttrs: Partial<IGraphicAttribute>) => {
     }
   });
 
-  if (attrs.fill == null) {
-    attrs.fill = !!attrs.fillColor;
-  }
-  if (attrs.stroke == null) {
-    attrs.stroke = !!attrs.strokeColor;
-  }
+  // if (attrs.fill == null) {
+  //   attrs.fill = !!attrs.fillColor;
+  // }
+  // if (attrs.stroke == null) {
+  //   attrs.stroke = !!attrs.strokeColor;
+  // }
 
   return attrs;
 };
@@ -466,7 +466,7 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
       rect: childAttrs
     });
     new Array(count).fill(0).forEach(el => {
-      const child = createRect({
+      const child = application.graphicService.creator.rect({
         x: 0,
         y: 0,
         width,
@@ -488,7 +488,9 @@ export const cloneGraphic = (graphic: IGraphic, count: number, needAppend?: bool
       path: new CustomPath2D().fromCustomPath2D(path)
     };
 
-    children.push(createPath(needAppend ? element : Object.assign({}, childAttrs, element)));
+    children.push(
+      application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
+    );
   }
 
   if (needAppend) {
@@ -505,17 +507,23 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   if (graphic.type === 'rect') {
     const childrenAttrs = splitRect(graphic as IRect, count);
     childrenAttrs.forEach(element => {
-      children.push(createRect(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.rect(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'arc') {
     const childrenAttrs = splitArc(graphic as IArc, count);
     childrenAttrs.forEach(element => {
-      children.push(createArc(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'circle') {
     const childrenAttrs = splitCircle(graphic as ICircle, count);
     childrenAttrs.forEach(element => {
-      children.push(createArc(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.arc(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'line') {
     const childrenAttrs = splitLine(graphic as ILine, count);
@@ -523,7 +531,7 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
 
     childrenAttrs.forEach(element => {
       children.push(
-        createSymbol(
+        application.graphicService.creator.symbol(
           needAppend ? Object.assign({}, element, defaultSymbol) : Object.assign({}, childAttrs, element, defaultSymbol)
         )
       );
@@ -531,20 +539,28 @@ export const splitGraphic = (graphic: IGraphic, count: number, needAppend?: bool
   } else if (graphic.type === 'polygon') {
     const childrenAttrs = splitPolygon(graphic as IPolygon, count);
     childrenAttrs.forEach(element => {
-      children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'area') {
     const childrenAttrs = splitArea(graphic as IArea, count);
     childrenAttrs.forEach(element => {
-      children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+      children.push(
+        application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+      );
     });
   } else if (graphic.type === 'path') {
     const childrenAttrs = splitPath(graphic as IPath, count);
     childrenAttrs.forEach(element => {
       if ('path' in element) {
-        children.push(createPath(needAppend ? element : Object.assign({}, childAttrs, element)));
+        children.push(
+          application.graphicService.creator.path(needAppend ? element : Object.assign({}, childAttrs, element))
+        );
       } else {
-        children.push(createPolygon(needAppend ? element : Object.assign({}, childAttrs, element)));
+        children.push(
+          application.graphicService.creator.polygon(needAppend ? element : Object.assign({}, childAttrs, element))
+        );
       }
     });
   }

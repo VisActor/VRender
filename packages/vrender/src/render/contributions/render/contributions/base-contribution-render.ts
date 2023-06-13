@@ -1,8 +1,7 @@
 import { IGraphicAttribute, IContext2d, IGraphic, IStage, IThemeAttribute } from '../../../../interface';
 import { injectable } from 'inversify';
 import { getTheme } from '../../../../graphic';
-import { ResourceLoader } from '../../../../resource-loader/loader';
-import { canvasAllocate } from '../../../../modules';
+import { canvasAllocate } from '../../../../allocator/canvas-allocate';
 import { pi2 } from '@visactor/vutils';
 
 export enum BaseRenderContributionTime {

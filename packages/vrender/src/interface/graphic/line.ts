@@ -1,7 +1,7 @@
 import type { IPointLike } from '@visactor/vutils';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { ICurveType } from '../common';
-import type { ISegPath2D } from '../../common';
+import { ISegPath2D } from '../curve';
 
 // 依据x纬度做clipRange
 // 依据y纬度做clipRange
@@ -25,7 +25,7 @@ export interface ILine extends IGraphic<ILineGraphicAttribute> {
 
 type ISegmentStyle = Pick<
   IGraphicAttribute,
-  'strokeColor' | 'strokeOpacity' | 'lineDash' | 'lineDashOffset' | 'lineCap' | 'lineJoin' | 'lineWidth' | 'miterLimit'
+  'stroke' | 'strokeOpacity' | 'lineDash' | 'lineDashOffset' | 'lineCap' | 'lineJoin' | 'lineWidth' | 'miterLimit'
 >;
 
 export interface ISegment extends Partial<ISegmentStyle> {

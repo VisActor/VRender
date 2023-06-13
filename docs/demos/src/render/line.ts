@@ -44,7 +44,7 @@ export function renderLine(num: number) {
     () => {
       return new Line({
         points: points.sort(() => Math.random() - 0.5).slice(),
-        strokeColor: colorPools[Math.floor(Math.random() * colorPools.length)],
+        stroke: colorPools[Math.floor(Math.random() * colorPools.length)],
         lineWidth: 3,
         curveType: curveType[Math.floor(Math.random() * curveType.length)] as any
       });

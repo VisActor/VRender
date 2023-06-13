@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { IPoint } from '@visactor/vutils';
-import { TEXT_NUMBER_TYPE } from '../../../graphic';
+import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import { IText } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 

@@ -1,6 +1,6 @@
 // 存放公共属性
 import { Matrix, pi2 } from '@visactor/vutils';
-import { CustomPath2D } from '../common';
+import { CustomPath2D } from '../common/custom-path2d';
 import {
   IArcGraphicAttribute,
   IAreaGraphicAttribute,
@@ -50,9 +50,8 @@ export const DefaultTransform: ITransform = {
 };
 
 export const DefaultFillStyle: IFillStyle = {
-  fillColor: 'black',
   fillOpacity: 1,
-  fill: null,
+  fill: false,
   shadowBlur: 0,
   shadowColor: 'black',
   shadowOffsetX: 0,
@@ -60,7 +59,6 @@ export const DefaultFillStyle: IFillStyle = {
 };
 
 const commonStroke: Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> = {
-  strokeColor: 'black',
   strokeOpacity: 1,
   lineDash: [],
   lineDashOffset: 0,
@@ -69,7 +67,7 @@ const commonStroke: Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> = {
   lineJoin: 'miter',
   miterLimit: 10,
   strokeBoundsBuffer: 2,
-  stroke: null
+  stroke: false
 };
 
 export const DefaultStrokeStyle: IStrokeStyle = {
@@ -273,11 +271,9 @@ export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribut
 
   width: 20,
   height: 20,
-  backgroundFill: true,
-  backgroundFillColor: 'rgba(101, 117, 168, 0.1)',
+  backgroundFill: 'rgba(101, 117, 168, 0.1)',
   backgroundFillOpacity: 1,
   backgroundStroke: false,
-  backgroundStrokeColor: '#000',
   backgroundStrokeOpacity: 1,
   backgroundRadius: 4,
   opacity: 1

@@ -10,8 +10,7 @@ import { LineCrosshairAttrs } from './type';
 export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {
-      stroke: true,
-      strokeColor: '#b2bacf',
+      stroke: '#b2bacf',
       lineWidth: 1,
       lineDash: [2]
     }

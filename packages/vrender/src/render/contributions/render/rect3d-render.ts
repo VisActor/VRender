@@ -1,11 +1,5 @@
 import { injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  RECT3D_NUMBER_TYPE
-} from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -21,8 +15,9 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { colorString } from '../../../color-string';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
+import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 @injectable()
 export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IGraphicRender {
   type = 'rect3d';
@@ -50,8 +45,8 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const rectAttribute = getTheme(rect, params?.theme).rect3d;
     const {
-      fill = rectAttribute.fill == null ? !!rect.attribute.fillColor : rectAttribute.fill,
-      stroke = rectAttribute.stroke == null ? !!rect.attribute.strokeColor : rectAttribute.stroke,
+      fill = rectAttribute.fill,
+      stroke = rectAttribute.stroke,
       width = rectAttribute.width,
       height = rectAttribute.height,
       opacity = rectAttribute.opacity,
@@ -87,11 +82,11 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
 
     if (fill !== false) {
       context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-      let { fillColor = rectAttribute.fillColor } = rect.attribute;
-      if (typeof fillColor !== 'string') {
-        fillColor = 'black';
+      let fc = fill;
+      if (typeof fc !== 'string') {
+        fc = 'black';
       }
-      this.fill(x, y, z, face3d, fillColor, context, light, fillCb);
+      this.fill(x, y, z, face3d, fc, context, light, fillCb);
     }
     if (stroke !== false) {
       context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);

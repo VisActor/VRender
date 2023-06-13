@@ -16,7 +16,7 @@ export const page = () => {
       text: ['这是abc'],
       x: 100,
       y: 100,
-      fillColor: 'green',
+      fill: 'green',
       textAlign: 'left',
       textBaseline: 'alphabetic',
       maxLineWidth: 600
@@ -32,7 +32,7 @@ export const page = () => {
       y: 100,
       textAlign: 'left',
       textBaseline: 'alphabetic',
-      fillColor: 'red',
+      fill: 'red',
       maxLineWidth: 600
     },
     'wrapText'
@@ -81,7 +81,7 @@ export const page = () => {
   //     text: ['多行自动换行高度限制多行多行'],
   //     maxLineWidth: 60,
   //     heightLimit: 50,
-  //     fill: true,
+  //     
   //     ellipsis: ''
   //   })
   // );

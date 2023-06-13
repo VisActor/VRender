@@ -1,5 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { bindContributionProvider } from '../../../common';
+import { bindContributionProvider } from '../../../common/contribution-provider';
 import { DefaultTextMeasureContribution, TextMeasureContribution } from './textMeasure-contribution';
 
 export default new ContainerModule(bind => {

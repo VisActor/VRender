@@ -14,9 +14,9 @@ export const page = () => {
     //   endAngle: (3 * Math.PI) / 2,
     //   x: 100,
     //   y: 100,
-    //   fillColor: colorPools[0],
-    //   stroke: true,
-    //   strokeColor: 'red',
+    //   fill: colorPools[0],
+    //   
+    //   stroke: 'red',
     //   lineWidth: 6,
     //   // cornerRadius: 10,
     // });
@@ -27,9 +27,9 @@ export const page = () => {
       y: 100,
       width: 100,
       height: 100,
-      fillColor: colorPools[0],
-      stroke: true,
-      strokeColor: 'red',
+      fill: colorPools[0],
+      
+      stroke: 'red',
       lineWidth: 6,
       borderRadius: 10
     });
@@ -47,9 +47,9 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 100,
-    fillColor: colorPools[0],
-    stroke: true,
-    strokeColor: 'red',
+    fill: colorPools[0],
+    
+    stroke: 'red',
     lineWidth: 6,
     borderRadius: 10
   };

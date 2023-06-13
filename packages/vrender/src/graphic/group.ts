@@ -1,13 +1,12 @@
 import { AABBBounds, Matrix, OBBBounds, Point, transformBounds } from '@visactor/vutils';
-import { graphicService } from '../modules';
+import { application } from '../application';
 import { IStage, GraphicAttributeMap, INode, IGraphic, ITheme, IThemeSpec, ILayer, GraphicType } from '../interface';
 import { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
-import { Graphic, genNumberType } from './graphic';
+import { Graphic } from './graphic';
 import { getTheme, Theme } from './theme';
-import { parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
-
-export const GROUP_NUMBER_TYPE = genNumberType();
+import { GROUP_NUMBER_TYPE } from './constants';
 
 // Group更新AABBBounds的策略
 export enum GroupUpdateAABBBoundsMode {
@@ -133,10 +132,10 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
-    graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
+    application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const selfChange = this.shouldSelfChangeUpdateAABBBounds();
     const bounds = this.doUpdateAABBBounds();
-    graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
+    application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
     return bounds;
   }
 
@@ -145,7 +144,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     const groupTheme = getTheme(this).group;
     // debugger;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
-    const bounds = graphicService.updateGroupAABBBounds(
+    const bounds = application.graphicService.updateGroupAABBBounds(
       attribute,
       getTheme(this).group,
       this._AABBBounds,
@@ -207,13 +206,13 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       (data as unknown as this).layer = this.layer;
     }
     this.addUpdateBoundTag();
-    graphicService.onAddIncremental(node as unknown as IGraphic, this, this.stage);
+    application.graphicService.onAddIncremental(node as unknown as IGraphic, this, this.stage);
     return data;
   }
   incrementalClearChild(): void {
     super.removeAllChild();
     this.addUpdateBoundTag();
-    graphicService.onClearIncremental(this, this.stage);
+    application.graphicService.onClearIncremental(this, this.stage);
     return;
   }
 
@@ -253,14 +252,14 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   removeChild(child: IGraphic): IGraphic {
     const data = super.removeChild(child);
     child.stage = null;
-    graphicService.onRemove(child);
+    application.graphicService.onRemove(child);
     this.addUpdateBoundTag();
     return data as IGraphic;
   }
 
   removeAllChild(): void {
     this.forEachChildren((child: IGraphic) => {
-      graphicService.onRemove(child);
+      application.graphicService.onRemove(child);
     });
     super.removeAllChild();
     this.addUpdateBoundTag();
@@ -272,7 +271,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.layer = layer;
       this.setStageToShadowRoot(stage, layer);
       this._onSetStage && this._onSetStage(this, stage, layer);
-      graphicService.onSetStage(this, stage);
+      application.graphicService.onSetStage(this, stage);
       this.forEachChildren(item => {
         (item as any).setStage(stage, this.layer);
       });
@@ -351,7 +350,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     if (graphic) {
       graphic.setAttributes(attributes);
     } else {
-      graphic = graphicService.creator[graphicType](attributes as any);
+      graphic = application.graphicService.creator[graphicType](attributes as any);
       graphic.name = graphicName;
       this.add(graphic);
     }

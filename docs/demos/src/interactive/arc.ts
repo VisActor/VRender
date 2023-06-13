@@ -13,7 +13,7 @@ export function renderArc(num: number) {
       endAngle: 2 * Math.PI * Math.random(),
       x: 600 * Math.random(),
       y: 600 * Math.random(),
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)],
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)],
       cursor: 'pointer'
     });
   });

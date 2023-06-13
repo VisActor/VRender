@@ -1,8 +1,8 @@
 import { IGroup } from '../../interface';
 import { IDrawContext } from '../../render';
-import { global, graphicService } from '../../modules';
+import { application } from '../../application';
 import { IPlugin, IPluginService } from '../plugin-service';
-import { Generator } from '../../common';
+import { Generator } from '../../common/generator';
 
 export class IncrementalAutoRenderPlugin implements IPlugin {
   name: 'IncrementalAutoRenderPlugin' = 'IncrementalAutoRenderPlugin';
@@ -16,7 +16,7 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
-    graphicService.hooks.onAddIncremental.tap(this.key, (graphic, group, stage) => {
+    application.graphicService.hooks.onAddIncremental.tap(this.key, (graphic, group, stage) => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
@@ -25,7 +25,7 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
         this.renderNextFrame(group);
       }
     });
-    graphicService.hooks.onClearIncremental.tap(this.key, (group, stage) => {
+    application.graphicService.hooks.onClearIncremental.tap(this.key, (group, stage) => {
       if (group.stage === context.stage && group.stage != null) {
         this.nextUserParams.startAtId = group._uid;
         this.nextUserParams.restartIncremental = true;
@@ -34,19 +34,21 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    graphicService.hooks.onAddIncremental.taps = graphicService.hooks.onAddIncremental.taps.filter(item => {
-      return item.name !== this.key;
-    });
-    graphicService.hooks.onClearIncremental.taps = graphicService.hooks.onClearIncremental.taps.filter(item => {
-      return item.name !== this.key;
-    });
+    application.graphicService.hooks.onAddIncremental.taps =
+      application.graphicService.hooks.onAddIncremental.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.onClearIncremental.taps =
+      application.graphicService.hooks.onClearIncremental.taps.filter(item => {
+        return item.name !== this.key;
+      });
   }
 
   renderNextFrame(group: IGroup): void {
     this.nextFrameRenderGroupSet.add(group);
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      global.getRequestAnimationFrame()(() => {
+      application.global.getRequestAnimationFrame()(() => {
         this._doRenderInThisFrame();
         this.willNextFrameRender = false;
       });

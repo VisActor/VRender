@@ -15,7 +15,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
   static defaultAttributes: Partial<TitleAttrs> = {
     textStyle: {
       ellipsis: '...',
-      fillColor: '#333',
+      fill: '#333',
       fontSize: 20,
       fontWeight: 'bold',
       textAlign: 'left',
@@ -23,7 +23,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     },
     subtextStyle: {
       ellipsis: '...',
-      fillColor: '#6F6F6F',
+      fill: '#6F6F6F',
       fontSize: 16,
       fontWeight: 'normal',
       textAlign: 'left',

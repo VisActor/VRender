@@ -15,10 +15,8 @@ export type LegendItemDatum = {
   /** 图例项前的 shape 形状定义 */
   shape: {
     symbolType?: string;
-    fillColor?: string;
-    fill?: boolean;
-    strokeColor?: string;
-    stroke?: boolean;
+    fill?: string;
+    stroke?: string;
   };
   [key: string]: any;
 };

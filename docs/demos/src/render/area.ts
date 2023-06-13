@@ -43,7 +43,7 @@ export function renderArea(num: number) {
     () => {
       return new Area({
         points: points.sort(() => Math.random() - 0.5).slice(),
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)],
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)],
         curveType: curveType[Math.floor(Math.random() * curveType.length)] as any
       });
     },

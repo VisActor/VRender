@@ -1,7 +1,8 @@
 import { abs, IPointLike } from '@visactor/vutils';
-import { Direction, SegContext } from '../seg-context';
+import { SegContext } from '../seg-context';
 import { genCurveSegments } from './common';
-import { ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
+import { Direction } from '../enums';
+import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -22,17 +23,24 @@ import { ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
 
 // 基于d3-shape重构，定义绘制线段的方法
 // https://github.com/d3/d3-shape/blob/main/src/curve/linear.js
-export class LinearClosed extends ALinearTypeClass {
+export class LinearClosed implements ILinearSegment {
   declare context: ISegPath2D;
   private _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
 
   constructor(context: ISegPath2D, startPoint?: IPointLike) {
-    super();
     this.context = context;
     startPoint && (this.startPoint = startPoint);
   }
+  _x: number;
+  _y: number;
+  _x0: number;
+  _x1: number;
+  _y0: number;
+  _y1: number;
+  _line: number;
+  _point: number;
 
   areaStart() {
     this._line = 0;
@@ -72,7 +80,7 @@ export class LinearClosed extends ALinearTypeClass {
   }
 }
 
-export function genLinearClosedSegments(points: IPointLike[], params: IGenSegmentParams = {}): SegContext | null {
+export function genLinearClosedSegments(points: IPointLike[], params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
     return null;
@@ -92,6 +100,6 @@ export function genLinearClosedSegments(points: IPointLike[], params: IGenSegmen
   return segContext;
 }
 
-export function genLinearClosedTypeSegments(path: ALinearTypeClass, points: IPointLike[]): void {
+export function genLinearClosedTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
   return genCurveSegments(path, points, 1);
 }

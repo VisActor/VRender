@@ -1,6 +1,9 @@
-import { createStage, createArea, container, IGraphic } from '@visactor/vrender';
+import { createStage, createArea, container, IGraphic, global } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import '../contribution/env-canvas/module';
+
+global.setEnv('node');
 
 const subP1 = [
   [0, 100],
@@ -39,7 +42,7 @@ export const page = () => {
       curveType: type as any,
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
-      fillColor: 'red'
+      fill: 'red'
     }));
   });
 
@@ -51,10 +54,10 @@ export const page = () => {
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
       segments: [
-        { points: subP1, fillColor: colorPools[3] },
+        { points: subP1, fill: colorPools[3] },
         {
           points: subP2,
-          fillColor: colorPools[2],
+          fill: colorPools[2],
           texture: 'bias-rl',
           textureColor: 'grey'
         }
@@ -65,7 +68,7 @@ export const page = () => {
 
 
   const stage = createStage({
-    canvas: 'main',
+    canvas: document.getElementById('main'),
     autoRender: true
   });
 

@@ -1,5 +1,4 @@
 import { injectable } from 'inversify';
-import { drawIncrementalSegments } from '../../../common';
 import {
   IContext2d,
   ILine,
@@ -9,11 +8,13 @@ import {
   IThemeAttribute,
   ISegment
 } from '../../../interface';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { IDrawContext } from '../../render-service';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { DefaultCanvasLineRender } from './line-render';
+import { drawIncrementalSegments } from '../../../common/render-curve';
 
 /**
  * 默认的基于canvas的line渲染器
@@ -53,8 +54,8 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
       const lineAttribute = getTheme(line).line;
 
       const {
-        fill = lineAttribute.fill == null ? !!line.attribute.fillColor : lineAttribute.fill,
-        stroke = lineAttribute.stroke == null ? !!line.attribute.strokeColor : lineAttribute.stroke,
+        fill = lineAttribute.fill,
+        stroke = lineAttribute.stroke,
         opacity = lineAttribute.opacity,
         fillOpacity = lineAttribute.fillOpacity,
         strokeOpacity = lineAttribute.strokeOpacity,

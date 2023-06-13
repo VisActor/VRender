@@ -10,8 +10,7 @@ import { CircleCrosshairAttrs } from './type';
 export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {
-      stroke: [true, false, false, false],
-      strokeColor: '#b2bacf',
+      stroke: ['#b2bacf', false, false, false],
       lineWidth: 1,
       lineDash: [2]
     }

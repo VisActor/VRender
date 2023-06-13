@@ -19,7 +19,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   static defaultAttributes: Partial<SegmentAttributes> = {
     lineStyle: {
       lineWidth: 1,
-      strokeColor: '#000'
+      stroke: '#000'
     },
     startSymbol: {
       visible: false,
@@ -29,7 +29,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       refY: 0,
       refAngle: 0,
       style: {
-        fillColor: '#000',
+        fill: '#000',
         zIndex: 1 // 默认 symbol 绘制在 line 上面
       }
     },
@@ -41,7 +41,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       refY: 0,
       refAngle: 0,
       style: {
-        fillColor: '#000',
+        fill: '#000',
         zIndex: 1 // 默认 symbol 绘制在 line 上面
       }
     }

@@ -1,11 +1,11 @@
-import { pi2, epsilon, AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
 import { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { circleBounds, parsePadding, CustomPath2D } from '../common';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const CIRCLE_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { CIRCLE_NUMBER_TYPE } from './constants';
 
 const CIRCLE_UPDATE_TAG_KEY = ['radius', 'startAngle', 'endAngle', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -33,7 +33,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     const circleTheme = getTheme(this).circle;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateCircleAABBBounds(
+    const bounds = application.graphicService.updateCircleAABBBounds(
       attribute,
       getTheme(this).circle,
       this._AABBBounds,

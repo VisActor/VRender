@@ -18,14 +18,14 @@ export const page = () => {
       x: (i * 100) % 500 + 100,
       y: (Math.floor(i * 100 / 500) + 1) * 100,
       size: 60,
-      fillColor: 'grey',
+      fill: 'grey',
       texture: 'diamond',
       texturePadding: 0,
       textureSize: 3,
       textureColor: 'red',
     });
     symbol.addEventListener('mouseenter', () => {
-      symbol.setAttribute('fillColor', 'blue');
+      symbol.setAttribute('fill', 'blue');
     })
     graphics.push(symbol);
   })

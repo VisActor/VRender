@@ -15,7 +15,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     visible: true,
     textStyle: {
       fontSize: 12,
-      fillColor: '#000',
+      fill: '#000',
       textAlign: 'left',
       textBaseline: 'top'
     },
@@ -23,7 +23,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     padding: 4,
     // @ts-ignore
     shape: {
-      fillColor: '#000'
+      fill: '#000'
     }
   };
 

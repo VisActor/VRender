@@ -6,21 +6,18 @@ export const defaultAttributes: Partial<TooltipAttributes> = {
   panel: {
     visible: true,
     borderRadius: [3, 3, 3, 3],
-    fill: true,
-    fillColor: 'white',
+    fill: 'white',
     shadow: true,
     shadowBlur: 12,
     shadowColor: 'rgba(0, 0, 0, 0.1)',
     shadowOffsetX: 0,
     shadowOffsetY: 4,
     shadowSpread: 0,
-    stroke: true,
-    strokeColor: 'white'
+    stroke: 'white'
   },
   titleStyle: {
     value: {
-      fill: true,
-      fillColor: '#4E5969',
+      fill: '#4E5969',
       fontFamily: DEFAULT_TEXT_FONT_FAMILY,
       fontSize: 14,
       lineHeight: 18,
@@ -31,15 +28,13 @@ export const defaultAttributes: Partial<TooltipAttributes> = {
   },
   contentStyle: {
     shape: {
-      fill: true,
-      fillColor: 'black',
+      fill: 'black',
       size: 8,
       symbolType: 'circle',
       spacing: 6
     },
     key: {
-      fill: true,
-      fillColor: '#4E5969',
+      fill: '#4E5969',
       fontFamily: DEFAULT_TEXT_FONT_FAMILY,
       fontSize: 12,
       lineHeight: 18,
@@ -48,8 +43,7 @@ export const defaultAttributes: Partial<TooltipAttributes> = {
       spacing: 26
     },
     value: {
-      fill: true,
-      fillColor: '#4E5969',
+      fill: '#4E5969',
       fontFamily: DEFAULT_TEXT_FONT_FAMILY,
       fontSize: 12,
       lineHeight: 18,

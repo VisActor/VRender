@@ -37,8 +37,8 @@ export const addShapesToStage = (stage: Stage, shapes: IGraphic[], includeBBox?:
         height: bbox.y2 - bbox.y1,
         x: bbox.x1,
         y: bbox.y1,
-        stroke: true,
-        strokeColor: '#ff7300',
+        
+        stroke: '#ff7300',
         lineWidth: 1,
         fill: false
       });

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "modify smart invert to adapt stroke&fill of Canopus",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

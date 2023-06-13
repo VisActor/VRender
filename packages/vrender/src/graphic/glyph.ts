@@ -1,5 +1,5 @@
 import { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
-import { Graphic, genNumberType } from './graphic';
+import { Graphic } from './graphic';
 import {
   GraphicType,
   IGraphic,
@@ -9,9 +9,8 @@ import {
   ISetAttributeContext
 } from '../interface';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const GLYPH_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { GLYPH_NUMBER_TYPE } from './constants';
 
 export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   type: GraphicType = 'glyph';
@@ -157,7 +156,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
 
   protected doUpdateAABBBounds(): AABBBounds {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
-    const bounds = graphicService.updateGlyphAABBBounds(
+    const bounds = application.graphicService.updateGlyphAABBBounds(
       this.attribute,
       getTheme(this).glyph,
       this._AABBBounds,

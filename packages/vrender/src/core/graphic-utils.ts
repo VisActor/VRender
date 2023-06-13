@@ -2,25 +2,24 @@ import { injectable, inject, named } from 'inversify';
 import { IGraphicAttribute, ICanvas, IContext2d, EnvType, Global, IGlobal, ITextAttribute } from '../interface';
 import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
-import { ContributionProvider } from '../common';
-import { wrapCanvas } from '../canvas';
-import { DefaultTextStyle } from '../graphic';
+import { ContributionProvider } from '../common/contribution-provider';
+import { wrapCanvas } from '../canvas/util';
+import { DefaultTextStyle } from '../graphic/config';
 import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
+import { IGraphicUtil, ITransformUtil, TransformType } from './interface';
 
-export const GraphicUtil = Symbol.for('GraphicUtil');
-
-export interface IGraphicUtil {
-  canvas?: ICanvas;
-  context?: IContext2d | null;
-  textMeasure: ITextMeasure;
-  measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
-  bindTextMeasure: (tm: ITextMeasure) => void;
-  createTextMeasureInstance: (
-    textSpec?: Partial<ITextAttribute>,
-    option?: Partial<ITextMeasureOption>,
-    getCanvasForMeasure?: () => any
-  ) => TextMeasure<ITextAttribute>;
-}
+// export interface IGraphicUtil {
+//   canvas?: ICanvas;
+//   context?: IContext2d | null;
+//   textMeasure: ITextMeasure;
+//   measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
+//   bindTextMeasure: (tm: ITextMeasure) => void;
+//   createTextMeasureInstance: (
+//     textSpec?: Partial<ITextAttribute>,
+//     option?: Partial<ITextMeasureOption>,
+//     getCanvasForMeasure?: () => any
+//   ) => TextMeasure<ITextAttribute>;
+// }
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -106,22 +105,9 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   }
 }
 
-type TransformType = Pick<IGraphicAttribute, 'x' | 'y' | 'scaleX' | 'scaleY' | 'angle' | 'dx' | 'dy'> & {
-  anchor?: IGraphicAttribute['anchor'];
-};
-
 enum TransformMode {
   transform = 0,
   matrix = 1
-}
-
-export const TransformUtil = Symbol.for('TransformUtil');
-
-export interface ITransformUtil {
-  init: (origin: TransformType) => ITransformUtil;
-  fromMatrix: (source: IMatrix, target: IMatrix) => ITransformUtil;
-  scale: (sx: number, sy: number, center?: IPointLike) => ITransformUtil;
-  translate: (dx: number, dy: number) => ITransformUtil;
 }
 
 const _matrix = new Matrix();

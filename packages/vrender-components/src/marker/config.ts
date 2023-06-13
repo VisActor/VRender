@@ -6,16 +6,14 @@ export const DEFAULT_MARK_LINE_THEME = {
     visible: false,
     symbolType: 'triangle',
     size: 12,
-    fill: true,
-    fillColor: 'rgba(46, 47, 50)',
+    fill: 'rgba(46, 47, 50)',
     lineWidth: 0
   },
   endSymbol: {
     visible: true,
     symbolType: 'triangle',
     size: 12,
-    fill: true,
-    fillColor: 'rgba(46, 47, 50)',
+    fill: 'rgba(46, 47, 50)',
     lineWidth: 0
   },
   label: {
@@ -24,9 +22,8 @@ export const DEFAULT_MARK_LINE_THEME = {
     refY: 0,
     refAngle: 0,
     textStyle: {
-      fill: true,
-      fillColor: '#fff',
-      strokeColor: '#fff',
+      fill: '#fff',
+      stroke: '#fff',
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
@@ -36,14 +33,12 @@ export const DEFAULT_MARK_LINE_THEME = {
     panel: {
       visible: true,
       borderRadius: 0,
-      fill: true,
-      fillColor: 'rgb(48, 115, 242)',
+      fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8
     }
   },
   lineStyle: {
-    stroke: true,
-    strokeColor: '#b2bacf',
+    stroke: '#b2bacf',
     lineWidth: 1,
     lineDash: [2]
   }
@@ -99,9 +94,8 @@ export const DEFAULT_MARK_AREA_THEME = {
   label: {
     position: IMarkAreaLabelPosition.right,
     textStyle: {
-      fill: true,
-      fillColor: '#fff',
-      strokeColor: '#fff',
+      fill: '#fff',
+      stroke: '#fff',
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
@@ -111,14 +105,12 @@ export const DEFAULT_MARK_AREA_THEME = {
     panel: {
       visible: true,
       borderRadius: 0,
-      fill: true,
-      fillColor: 'rgb(48, 115, 242)',
+      fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8
     }
   },
   areaStyle: {
-    fillColor: '#b2bacf',
-    fill: true,
+    fill: '#b2bacf',
     visible: true
   }
 };
@@ -185,8 +177,7 @@ export const DEFAULT_MARK_POINT_THEME = {
       size: 20,
       style: {
         fill: false,
-        fillColor: 'rgba(46, 47, 50)',
-        strokeColor: 'rgba(46, 47, 50)'
+        stroke: 'rgba(46, 47, 50)'
       }
     },
     endSymbol: {
@@ -196,13 +187,11 @@ export const DEFAULT_MARK_POINT_THEME = {
       size: 12,
       style: {
         fill: false,
-        fillColor: 'rgba(46, 47, 50)',
-        strokeColor: 'rgba(46, 47, 50)'
+        stroke: 'rgba(46, 47, 50)'
       }
     },
     lineStyle: {
-      stroke: true,
-      strokeColor: '#000',
+      stroke: '#000',
       lineWidth: 1
     }
   },
@@ -212,8 +201,7 @@ export const DEFAULT_MARK_POINT_THEME = {
     refX: 10,
     symbolStyle: {
       symbolType: 'star',
-      fill: true,
-      fillColor: 'rgb(48, 115, 242)',
+      fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8,
       size: 20
     },

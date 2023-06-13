@@ -1,13 +1,5 @@
-import { Bounds } from '@visactor/vutils';
 import { IContext2d, IRichTextParagraphCharacter } from '../../interface';
-import {
-  measureTextCanvas,
-  prepareContext,
-  applyFillStyle,
-  applyStrokeStyle,
-  regFirstSpace,
-  getStrByWithCanvas
-} from './utils';
+import { measureTextCanvas, applyFillStyle, applyStrokeStyle, getStrByWithCanvas } from './utils';
 
 /**
  * 部分代码参考 https://github.com/danielearwicker/carota/
@@ -202,14 +194,6 @@ export default class Paragraph {
     //   }
     // }
 
-    if (this.character.stroke) {
-      applyStrokeStyle(ctx, this.character);
-      ctx.strokeText(text, left, baseline);
-    }
-
-    // 下面绘制underline和line-through时需要设置FillStyle
-    applyFillStyle(ctx, this.character);
-
     // 处理旋转
     if (direction === 'vertical') {
       ctx.save();
@@ -219,11 +203,20 @@ export default class Paragraph {
       left = 0;
       baseline = 0;
     }
+
+    if (this.character.stroke) {
+      applyStrokeStyle(ctx, this.character);
+      ctx.strokeText(text, left, baseline);
+    }
+
+    // 下面绘制underline和line-through时需要设置FillStyle
+    applyFillStyle(ctx, this.character);
+
     if (this.character.fill) {
       ctx.fillText(text, left, baseline);
     }
 
-    if (this.character.stroke || this.character.fill) {
+    if (this.character.fill) {
       if (typeof this.character.lineThrough === 'boolean' || typeof this.character.underline === 'boolean') {
         if (this.character.underline) {
           ctx.fillRect(
@@ -290,4 +283,13 @@ export default class Paragraph {
     }
     return width;
   }
+}
+
+export function seperateParagraph(paragraph: Paragraph, index: number) {
+  const text1 = paragraph.text.slice(0, index);
+  const text2 = paragraph.text.slice(index);
+  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character);
+  const p2 = new Paragraph(text2, true, paragraph.character);
+
+  return [p1, p2];
 }

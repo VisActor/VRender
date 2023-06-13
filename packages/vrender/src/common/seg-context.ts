@@ -1,7 +1,8 @@
 import { abs, IPoint, Point } from '@visactor/vutils';
-import { ICurve, ICurveType } from '../interface';
-import { ISegPath2D } from './curve/interface';
-import { CubicBezierCurve, LineCurve } from './path';
+import type { ICubicBezierCurve, ICurve, ICurveType, IDirection, ILineCurve, ISegPath2D } from '../interface';
+import { Direction } from './enums';
+import { CubicBezierCurve } from './segment/curve/cubic-bezier';
+import { LineCurve } from './segment/curve/line';
 
 /**
  * 部分逻辑参考d3-shape：https://github.com/d3/d3-shape/blob/8ec82658454750cfa29efb1e0ea514e3dd9b2297/src/curve/monotone.js
@@ -19,10 +20,6 @@ import { CubicBezierCurve, LineCurve } from './path';
   TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
   THIS SOFTWARE.
  */
-export enum Direction {
-  ROW = 1,
-  COLUMN = 2
-}
 
 /**
  * 缓存segment的context
@@ -41,15 +38,15 @@ export class SegContext implements ISegPath2D {
   }
 
   curves: ICurve<IPoint>[];
-  direction: Direction;
+  direction: IDirection;
   curveType: ICurveType;
   length: number;
 
-  constructor(curveType: ICurveType, direction: Direction) {
+  constructor(curveType: ICurveType, direction: IDirection) {
     this.init(curveType, direction);
   }
 
-  init(curveType: ICurveType, direction: Direction) {
+  init(curveType: ICurveType, direction: IDirection) {
     this._lastX = this._lastY = this._startX = this._startY = 0;
     this.curveType = curveType;
     this.direction = direction;
@@ -57,7 +54,7 @@ export class SegContext implements ISegPath2D {
   }
   // @ts-ignore
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number, defined: boolean): void {
-    const curve: CubicBezierCurve = new CubicBezierCurve(
+    const curve: ICubicBezierCurve = new CubicBezierCurve(
       new Point(this._lastX, this._lastY),
       new Point(cp1x, cp1y),
       new Point(cp2x, cp2y),
@@ -100,12 +97,12 @@ export class SegContext implements ISegPath2D {
     this.length = NaN;
   }
 
-  tryUpdateLength(direction?: Direction): number {
+  tryUpdateLength(direction?: IDirection): number {
     return this.getLength(direction);
   }
 
   // linear
-  protected addLinearCurve(x: number, y: number, defined: boolean): LineCurve {
+  protected addLinearCurve(x: number, y: number, defined: boolean): ILineCurve {
     const curve = new LineCurve(new Point(this._lastX, this._lastY), new Point(x, y));
     curve.defined = defined;
     return curve;
@@ -117,7 +114,7 @@ export class SegContext implements ISegPath2D {
   getCurveLengths(): number[] {
     return [];
   }
-  getLength(direction?: Direction): number {
+  getLength(direction?: IDirection): number {
     if (direction === Direction.COLUMN) {
       if (!this.curves.length) {
         return 0;

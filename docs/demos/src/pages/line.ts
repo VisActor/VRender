@@ -41,7 +41,7 @@ export const page = () => {
       curveType: type as any,
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
-      strokeColor: 'red'
+      stroke: 'red'
     }));
   });
 
@@ -53,10 +53,10 @@ export const page = () => {
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
       segments: [
-        { points: subP1, strokeColor: colorPools[3], lineWidth: 6 },
-        { points: subP2, strokeColor: colorPools[2], lineWidth: 2, lineDash: [3, 3] }
+        { points: subP1, stroke: colorPools[3], lineWidth: 6 },
+        { points: subP2, stroke: colorPools[2], lineWidth: 2, lineDash: [3, 3] }
       ],
-      strokeColor: 'red'
+      stroke: 'red'
     }));
   });
 

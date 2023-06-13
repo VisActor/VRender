@@ -40,7 +40,7 @@ export function renderCircle(num: number) {
         endAngle: Math.PI * 2,
         x: 800 * Math.random(),
         y: 800 * Math.random(),
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },
     () => {

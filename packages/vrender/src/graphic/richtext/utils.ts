@@ -1,5 +1,4 @@
-import Paragraph from './paragraph';
-import { graphicUtil } from '../../modules';
+import { application } from '../../application';
 import { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 
 export const DIRECTION_KEY = {
@@ -28,8 +27,6 @@ const defaultFormatting = {
   fontFamily: 'sans-serif',
   fill: true,
   stroke: false,
-  fillColor: { value: 'black' },
-  strokeColor: { value: 'black' },
   fontWeight: 'normal',
   lineHeight: 'normal',
   fontStyle: 'normal', // normal, italic, oblique
@@ -44,8 +41,13 @@ const regPunctuation = /[.?!,;:/，。？！、；：]/;
 export const regFirstSpace = /\S/;
 // Applies the style of a run to the canvas context
 export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+  const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
+  if (!fillStyle) {
+    ctx.globalAlpha = 0;
+    return;
+  }
   ctx.globalAlpha = 1;
-  ctx.fillStyle = (character && (character.fillColor as string)) || defaultFormatting.fillColor.value;
+  ctx.fillStyle = fillStyle as string;
 
   let fontSize = character.fontSize || 16;
   switch (character.script) {
@@ -66,9 +68,14 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
 }
 
 export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+  const strokeStyle = (character && (character.stroke as string)) || (defaultFormatting.stroke as any);
+  if (!strokeStyle) {
+    ctx.globalAlpha = 0;
+    return;
+  }
   ctx.globalAlpha = 1;
   ctx.lineWidth = 1;
-  ctx.strokeStyle = (character && (character.strokeColor as string)) || defaultFormatting.strokeColor.value;
+  ctx.strokeStyle = strokeStyle as string;
 
   let fontSize = character.fontSize || 16;
   switch (character.script) {
@@ -158,7 +165,7 @@ export function getStrByWithCanvas(
   if (!width || width <= 0) {
     return 0;
   }
-  const textMeasure = graphicUtil.textMeasure;
+  const textMeasure = application.graphicUtil.textMeasure;
   // const measurement = textMeasure.measureText(text, character);
 
   // 测量从头到当前位置宽度以及从头到下一个字符位置宽度
@@ -217,15 +224,6 @@ export function testLetter(string: string, index: number): number {
   return i;
 }
 
-export function seperateParagraph(paragraph: Paragraph, index: number) {
-  const text1 = paragraph.text.slice(0, index);
-  const text2 = paragraph.text.slice(index);
-  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character);
-  const p2 = new Paragraph(text2, true, paragraph.character);
-
-  return [p1, p2];
-}
-
 // 测量文字详细信息
 export function measureTextDom(
   text: string,
@@ -280,7 +278,7 @@ export function measureTextCanvas(
   text: string,
   character: IRichTextParagraphCharacter
 ): { ascent: number; height: number; descent: number; width: number } {
-  const textMeasure = graphicUtil.textMeasure;
+  const textMeasure = application.graphicUtil.textMeasure;
   const measurement = textMeasure.measureText(text, character) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
     ascent: 0,

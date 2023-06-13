@@ -1,12 +1,11 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-import { parsePadding } from '../common';
-
-export const IMAGE_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { parsePadding } from '../common/utils';
+import { IMAGE_NUMBER_TYPE } from './constants';
 
 const IMAGE_UPDATE_TAG_KEY = ['width', 'height', 'image', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -93,7 +92,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     const imageTheme = getTheme(this).image;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateImageAABBBounds(
+    const bounds = application.graphicService.updateImageAABBBounds(
       attribute,
       getTheme(this).image,
       this._AABBBounds,

@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { FeishuCanvas } from '../../../canvas/contributions/feishu';
-import { Generator } from '../../../common';
+import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';
 import { IWindowHandlerContribution, IWindowParams } from '../..';
 import { Global, EnvType, IGlobal, IContext2d, ICanvas, IDomRectLike } from '../../../interface';

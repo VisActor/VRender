@@ -1,7 +1,7 @@
 // import { createCanvas, createImageData, loadImage } from 'canvas';
 // import { inject, injectable } from 'inversify';
 // import { Canvas } from '../../../canvas';
-// import { Generator } from '../../../common';
+// import { Generator } from '../../../common/generator';
 // import { Global, IWindow, EnvType, IGlobal, IWindowHandlerContribution, IWindowParams } from '../..';
 // import { BaseWindowHandlerContribution } from './base-contribution';
 // import { ICanvas } from '../../../interface/canvas';

@@ -104,17 +104,17 @@ export class RoughCanvasAreaRender extends DefaultCanvasAreaRender implements IG
       fixedDecimalPlaceDigits = defaultRouthThemeSpec.fixedDecimalPlaceDigits
     } = attribute as any;
 
-    let { fillColor, strokeColor, lineWidth } = attribute;
+    let { fill: fillColor, stroke: strokeColor, lineWidth } = attribute;
 
     if (Array.isArray(defaultAttribute)) {
       defaultAttribute.forEach(item => {
-        fillColor = fillColor ?? item.fillColor;
-        strokeColor = strokeColor ?? item.strokeColor;
+        fillColor = fillColor ?? item.fill;
+        strokeColor = strokeColor ?? item.stroke;
         lineWidth = lineWidth ?? item.lineWidth;
       });
     } else {
-      fillColor = fillColor ?? defaultAttribute.fillColor;
-      strokeColor = strokeColor ?? defaultAttribute.strokeColor;
+      fillColor = fillColor ?? defaultAttribute.fill;
+      strokeColor = strokeColor ?? defaultAttribute.stroke;
       lineWidth = lineWidth ?? defaultAttribute.lineWidth;
     }
 

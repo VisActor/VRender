@@ -73,3 +73,5 @@ export interface IDomRectLike {
   x: number;
   y: number;
 }
+
+export type IDirection = 1 | 2;

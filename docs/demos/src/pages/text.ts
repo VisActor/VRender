@@ -8,8 +8,8 @@ export const page = () => {
   graphics.push(createText({
     x: 100,
     y: 200,
-    fillColor: colorPools[5],
-    strokeColor: 'red',
+    fill: colorPools[5],
+    stroke: 'red',
     text: 'Testabcdefg',
     fontSize: 20,
     textBaseline: 'top'
@@ -18,7 +18,7 @@ export const page = () => {
   graphics.push(createText({
     x: 300,
     y: 200,
-    fillColor: colorPools[5],
+    fill: colorPools[5],
     text: ['Test', 'test'],
     fontSize: 20,
     textBaseline: 'top'
@@ -27,7 +27,7 @@ export const page = () => {
   graphics.push(createText({
     x: 500,
     y: 200,
-    fillColor: colorPools[5],
+    fill: colorPools[5],
     text: ['Test', 'test'],
     fontSize: 20,
     lineThrough: 1,

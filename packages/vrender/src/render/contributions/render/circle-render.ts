@@ -1,13 +1,12 @@
 import { inject, injectable, named } from 'inversify';
 import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { CIRCLE_NUMBER_TYPE, getTheme } from '../../../graphic';
-import { graphicService } from '../../../modules';
+import { getTheme } from '../../../graphic/theme';
+import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { CircleRenderContribution, ICircleRenderContribution } from './contributions/circle-contribution-render';
-import { ContributionProvider } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { renderCommandList } from '../../../common/render-command-list';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()
@@ -44,9 +43,9 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
     // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
     const circleAttribute = getTheme(circle, params?.theme).circle;
     const {
-      fill = circleAttribute.fill == null ? !!circle.attribute.fillColor : circleAttribute.fill,
+      fill = circleAttribute.fill,
       background,
-      stroke = circleAttribute.stroke == null ? !!circle.attribute.strokeColor : circleAttribute.stroke,
+      stroke = circleAttribute.stroke,
       radius = circleAttribute.radius,
       startAngle = circleAttribute.startAngle,
       endAngle = circleAttribute.endAngle,

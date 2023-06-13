@@ -1,11 +1,6 @@
 import { injectable } from 'inversify';
-import {
-  getExtraModelMatrix,
-  getTheme,
-  multiplyMat4Mat3,
-  multiplyMat4Mat4,
-  PYRAMID3D_NUMBER_TYPE
-} from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { PYRAMID3D_NUMBER_TYPE } from '../../../graphic/constants';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -14,7 +9,6 @@ import {
   IPyramid3d,
   IFace3d,
   IThemeAttribute,
-  vec3,
   ICamera,
   IPolygonItem
 } from '../../../interface';
@@ -22,8 +16,7 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
-import { max, min } from '@visactor/vutils';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 
 @injectable()
@@ -53,8 +46,8 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const pyramidAttribute = getTheme(pyramid3d, params?.theme).polygon;
     const {
-      fill = pyramidAttribute.fill == null ? !!pyramid3d.attribute.fillColor : pyramidAttribute.fill,
-      stroke = pyramidAttribute.stroke == null ? !!pyramid3d.attribute.strokeColor : pyramidAttribute.stroke,
+      fill = pyramidAttribute.fill,
+      stroke = pyramidAttribute.stroke,
       opacity = pyramidAttribute.opacity,
       fillOpacity = pyramidAttribute.fillOpacity,
       lineWidth = pyramidAttribute.lineWidth,
@@ -91,11 +84,11 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
 
     if (fill !== false) {
       context.setCommonStyle(pyramid3d, pyramid3d.attribute, x, y, pyramidAttribute);
-      let { fillColor = pyramidAttribute.fillColor } = pyramid3d.attribute;
-      if (typeof fillColor !== 'string') {
-        fillColor = 'black';
+      let fc = fill;
+      if (typeof fc !== 'string') {
+        fc = 'black';
       }
-      this.fill(x, y, z, face3d, face, fillColor, context, light, camera, pyramid3d, pyramidAttribute, fillCb);
+      this.fill(x, y, z, face3d, face, fc, context, light, camera, pyramid3d, pyramidAttribute, fillCb);
     }
     if (stroke !== false) {
       context.setStrokeStyle(pyramid3d, pyramid3d.attribute, x, y, pyramidAttribute);

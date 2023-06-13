@@ -23,19 +23,19 @@ describe('EventSystem', () => {
     // // create a rectangle
     // rect = stage.createRect(50, 50, 100, 100);
     // rect.fill = true;
-    // rect.fillColor = VRender.createPureColor('red');
+    // rect.fill = VRender.createPureColor('red');
 
     // // create a circle
     // circle = stage.createArc(200, 200, 0, 30, 0, Math.PI * 2, 0);
     // circle.fill = true;
-    // circle.fillColor = VRender.createPureColor('yellow');
+    // circle.fill = VRender.createPureColor('yellow');
 
     rect = new Rect({
       width: 100,
       height: 100,
       x: 50,
       y: 50,
-      fillColor: 'red'
+      fill: 'red'
     });
     stage.defaultLayer.add(rect);
 
@@ -45,7 +45,7 @@ describe('EventSystem', () => {
       endAngle: Math.PI * 2,
       x: 200,
       y: 200,
-      fillColor: 'yellow'
+      fill: 'yellow'
     });
     stage.defaultLayer.add(circle);
 

@@ -2,7 +2,7 @@ import { IPointLike } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
 import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 
 @injectable()
 export abstract class BaseRender<T extends IGraphic> {

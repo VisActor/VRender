@@ -1,6 +1,6 @@
 import { IMatrix, IPointLike, pi2 } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ARC3D_NUMBER_TYPE } from '../graphic';
+import { ARC3D_NUMBER_TYPE } from '../graphic/constants';
 import { IArc, IContext2d, IGraphic, IGroup } from '../interface';
 import { IPickerService, IPickParams } from './picker-service';
 import { PickResult } from './type';

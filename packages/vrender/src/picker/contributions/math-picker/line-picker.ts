@@ -3,8 +3,8 @@ import { IPoint } from '@visactor/vutils';
 import { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, LineRender } from '../../../render';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
-import { graphicService } from '../../../modules';
+import { getTheme } from '../../../graphic/theme';
+import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultMathLinePicker implements IGraphicPicker {

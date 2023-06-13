@@ -1,12 +1,11 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute } from './config';
-import { GraphicType, IGraphicAttribute, IRect, IRectAttribute, IRectGraphicAttribute } from '../interface';
-import { parsePadding, CustomPath2D } from '../common';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const RECT_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { RECT_NUMBER_TYPE } from './constants';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'height', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -30,7 +29,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     const rectTheme = getTheme(this).rect;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateRectAABBBounds(
+    const bounds = application.graphicService.updateRectAABBBounds(
       attribute,
       getTheme(this).rect,
       this._AABBBounds,

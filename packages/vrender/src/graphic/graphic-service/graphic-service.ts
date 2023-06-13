@@ -45,17 +45,23 @@ import {
   IArc3d,
   IImageGraphicAttribute,
   IImage,
-  ITransform
+  ITransform,
+  IGraphicService,
+  IGraphicCreator
 } from '../../interface';
-import { graphicCreator } from '../graphic-creator';
 import { IRectBoundsContribution, RectBoundsContribution } from './rect-contribution';
-import { BoundsContext, circleBounds, ContributionProvider, renderCommandList, textDrawOffsetX } from '../../common';
+import { textDrawOffsetX } from '../../common/text';
 import { ISymbolBoundsContribution, SymbolBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
 import { CircleBoundsContribution, ICircleBoundsContribution } from './circle-contribution';
 import { ArcBoundsContribution, IArcBoundsContribution } from './arc-contribution';
 import { IPathBoundsContribution, PathBoundsContribution } from './path-contribution';
-import { mat4Allocate } from '../../modules';
+import { mat4Allocate } from '../../allocator/matrix-allocate';
+import { ContributionProvider } from '../../common/contribution-provider';
+import { BoundsContext } from '../../common/bounds-context';
+import { renderCommandList } from '../../common/render-command-list';
+import { circleBounds } from '../../common/utils';
+import { GraphicCreator } from '../constants';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix
@@ -601,144 +607,6 @@ export function shouldUseMat4(graphic: IGraphic) {
   return alpha || beta;
 }
 
-export interface IGraphicService {
-  // themeService: IThemeService;
-  onAttributeUpdate: (graphic: IGraphic) => void;
-  onSetStage: (graphic: IGraphic, stage: IStage) => void;
-  onRemove: (graphic: IGraphic) => void;
-  onAddIncremental: (graphic: IGraphic, group: IGroup, stage: IStage) => void;
-  onClearIncremental: (group: IGroup, stage: IStage) => void;
-  hooks: {
-    onAttributeUpdate: SyncHook<[IGraphic]>;
-    onSetStage: SyncHook<[IGraphic, IStage]>;
-    onRemove: SyncHook<[IGraphic]>;
-    onAddIncremental: SyncHook<[IGraphic, IGroup, IStage]>;
-    onClearIncremental: SyncHook<[IGroup, IStage]>;
-    beforeUpdateAABBBounds: SyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
-    afterUpdateAABBBounds: SyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
-  };
-  beforeUpdateAABBBounds: (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => void;
-  afterUpdateAABBBounds: (
-    graphic: IGraphic,
-    stage: IStage,
-    bounds: IAABBBounds,
-    params: { globalAABBBounds: IAABBBounds },
-    selfChange: boolean
-  ) => void;
-
-  creator: typeof graphicCreator;
-
-  updateRectAABBBounds: (
-    attribute: IRectGraphicAttribute,
-    rectTheme: Required<IRectGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGraphic
-  ) => IAABBBounds;
-
-  updateGroupAABBBounds: (
-    attribute: IGroupGraphicAttribute,
-    groupTheme: Required<IGroupGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGroup
-  ) => IAABBBounds;
-
-  updateGlyphAABBBounds: (
-    attribute: IGlyphGraphicAttribute,
-    groupTheme: Required<IGlyphGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGlyph
-  ) => IAABBBounds;
-
-  updateSymbolAABBBounds: (
-    attribute: ISymbolGraphicAttribute,
-    symbolTheme: Required<ISymbolGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ISymbol
-  ) => IAABBBounds;
-
-  updateCircleAABBBounds: (
-    attribute: ICircleGraphicAttribute,
-    circleTheme: Required<ICircleGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ICircle
-  ) => IAABBBounds;
-
-  updateArcAABBBounds: (
-    attribute: IArcGraphicAttribute,
-    arcTheme: Required<IArcGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: IArc
-  ) => IAABBBounds;
-
-  updateArc3dAABBBounds: (
-    attribute: IArc3dGraphicAttribute,
-    arcTheme: Required<IArc3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArc3d
-  ) => IAABBBounds;
-
-  updateAreaAABBBounds: (
-    attribute: IAreaGraphicAttribute,
-    areaTheme: Required<IAreaGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArea
-  ) => IAABBBounds;
-
-  updateLineAABBBounds: (
-    attribute: ILineGraphicAttribute,
-    lineTheme: Required<ILineGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: ILine
-  ) => IAABBBounds;
-
-  updatePathAABBBounds: (
-    attribute: IPathGraphicAttribute,
-    pathTheme: Required<IPathGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPath
-  ) => IAABBBounds;
-
-  updatePolygonAABBBounds: (
-    attribute: IPolygonGraphicAttribute,
-    polygonTheme: Required<IPolygonGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPolygon
-  ) => IAABBBounds;
-
-  updatePyramid3dAABBBounds: (
-    attribute: IPyramid3dGraphicAttribute,
-    polygonTheme: Required<IPyramid3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPyramid3d
-  ) => IAABBBounds;
-
-  updateTextAABBBounds: (
-    attribute: ITextGraphicAttribute,
-    textTheme: Required<ITextGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IText
-  ) => IAABBBounds;
-
-  updateRichTextAABBBounds: (
-    attribute: IRichTextGraphicAttribute,
-    textTheme: Required<IRichTextGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IRichText
-  ) => IAABBBounds;
-
-  updateImageAABBBounds: (
-    attribute: IImageGraphicAttribute,
-    textTheme: Required<IImageGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IImage
-  ) => IAABBBounds;
-}
-
-export const GraphicService = Symbol.for('GraphicService');
-
 // 管理graphic
 @injectable()
 export class DefaultGraphicService implements IGraphicService {
@@ -752,8 +620,6 @@ export class DefaultGraphicService implements IGraphicService {
     afterUpdateAABBBounds: SyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
   };
 
-  creator = graphicCreator;
-
   protected _rectBoundsContribitions: IRectBoundsContribution[];
   protected _symbolBoundsContribitions: ISymbolBoundsContribution[];
   protected _circleBoundsContribitions: ICircleBoundsContribution[];
@@ -763,6 +629,7 @@ export class DefaultGraphicService implements IGraphicService {
   protected tempAABBBounds1: AABBBounds;
   protected tempAABBBounds2: AABBBounds;
   constructor(
+    @inject(GraphicCreator) public readonly creator: IGraphicCreator,
     @inject(ContributionProvider)
     @named(RectBoundsContribution)
     protected readonly rectBoundsContribitions: ContributionProvider<IRectBoundsContribution>,
@@ -879,9 +746,6 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, rectTheme, graphic);
     return aabbBounds;
   }
@@ -901,19 +765,17 @@ export class DefaultGraphicService implements IGraphicService {
     } else if (width != null && height != null) {
       aabbBounds.set(0, 0, width, height);
     }
-    const tb1 = this.tempAABBBounds1;
-    const tb2 = this.tempAABBBounds2;
-    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     if (!clip) {
       // 添加子节点
       graphic.forEachChildren((node: IGraphic) => {
         aabbBounds.union(node.AABBBounds);
       });
-      // 合并shadowRoot的bounds
-      this.combindShadowAABBBounds(aabbBounds, graphic);
     }
 
+    const tb1 = this.tempAABBBounds1;
+    const tb2 = this.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     this.transformAABBBounds(attribute, aabbBounds, groupTheme, graphic);
     return aabbBounds;
   }
@@ -1005,9 +867,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, richtextTheme, graphic);
     return aabbBounds;
   }
@@ -1032,9 +891,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
     return aabbBounds;
@@ -1063,10 +919,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, pathTheme, graphic);
     return aabbBounds;
   }
@@ -1113,9 +965,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
     return aabbBounds;
@@ -1170,9 +1019,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
     return aabbBounds;
   }
@@ -1200,9 +1046,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
     return aabbBounds;
@@ -1247,9 +1090,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, lineTheme, graphic);
     return aabbBounds;
@@ -1309,9 +1149,6 @@ export class DefaultGraphicService implements IGraphicService {
     //     aabbBounds.union(tb1);
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, areaTheme, graphic);
     return aabbBounds;
@@ -1375,9 +1212,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, circleTheme, graphic);
 
@@ -1443,9 +1277,6 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
 
     this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
 
@@ -1521,7 +1352,6 @@ export class DefaultGraphicService implements IGraphicService {
       });
 
     this.transformAABBBounds(attribute, aabbBounds, symbolTheme, graphic);
-
     return aabbBounds;
   }
 
@@ -1578,9 +1408,6 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    // 合并shadowRoot的bounds
-    this.combindShadowAABBBounds(aabbBounds, graphic);
-
     this.transformAABBBounds(attribute, aabbBounds, imageTheme, graphic);
     return aabbBounds;
   }
@@ -1602,7 +1429,7 @@ export class DefaultGraphicService implements IGraphicService {
     const {
       scaleX = theme.scaleX,
       scaleY = theme.scaleY,
-      stroke = theme.stroke == null ? !!attribute.strokeColor : theme.stroke,
+      stroke = theme.stroke,
       shadowBlur = theme.shadowBlur,
       lineWidth = theme.lineWidth,
       lineJoin = theme.lineJoin,

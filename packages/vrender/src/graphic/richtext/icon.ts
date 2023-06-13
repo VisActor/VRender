@@ -1,9 +1,8 @@
 import { AABBBounds, isArray } from '@visactor/vutils';
 import { ICustomPath2D, IRichTextIcon, IRichTextIconGraphicAttribute } from '../../interface';
-// import { genNumberType } from '../graphic';
 import { Image } from '../image';
 import { DefaultImageAttribute } from '../config';
-import { parsePadding } from '../../common';
+import { parsePadding } from '../../common/utils';
 
 // export const IMAGE_NUMBER_TYPE = genNumberType();
 
@@ -75,7 +74,7 @@ export class RichTextIcon extends Image implements IRichTextIcon {
     const { backgroundWidth = width, backgroundHeight = height } = this.attribute;
     const expandX = (backgroundWidth - width) / 2;
     const expandY = (backgroundHeight - height) / 2;
-    this._AABBBounds.expand([expandY, expandX, expandY, expandX]);
+    this._AABBBounds.expand([0, expandX * 2, expandY * 2, 0]);
 
     return this._AABBBounds;
   }

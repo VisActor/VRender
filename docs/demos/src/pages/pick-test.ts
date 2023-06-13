@@ -39,7 +39,7 @@ export const page = () => {
     y: 10,
     width: 800,
     height: 300,
-    strokeColor: '#000',
+    stroke: '#000',
     lineWidth: 2
   });
   tableGroup.name = 'tableGroup';
@@ -49,7 +49,7 @@ export const page = () => {
     y: 0,
     width: 800,
     height: 50,
-    strokeColor: '#000',
+    stroke: '#000',
     lineWidth: 2
   });
   headerGroup.name = 'headerGroup';
@@ -61,7 +61,7 @@ export const page = () => {
     y: 50,
     width: 800,
     height: 250,
-    strokeColor: '#000',
+    stroke: '#000',
     lineWidth: 2
   });
   bodyGroup.name = 'bodyGroup';
@@ -72,7 +72,7 @@ export const page = () => {
       y: 0,
       width: 160,
       height: 250,
-      strokeColor: '#000',
+      stroke: '#000',
       lineWidth: 2
     });
     columnGroup.name = 'columnGroup';
@@ -83,7 +83,7 @@ export const page = () => {
         y: j * 50,
         width: 160,
         height: 50,
-        strokeColor: '#000',
+        stroke: '#000',
         lineWidth: 2,
         pickable: true,
         childrenPickable: i === 2
@@ -96,7 +96,7 @@ export const page = () => {
         text: `cell_${i}_${j}`,
         textAlign: 'center',
         textBaseline: 'middle',
-        fillColor: 'red'
+        fill: 'red'
       });
       text.name = 'cellText';
       text.id = `cellText_${i}_${j}`;

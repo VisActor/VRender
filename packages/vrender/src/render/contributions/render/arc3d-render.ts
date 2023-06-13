@@ -1,6 +1,6 @@
 import { abs, cos, epsilon, sin, pi2, vec3, pi } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { ARC3D_NUMBER_TYPE, getExtraModelMatrix, getTheme, multiplyMat4Mat3, multiplyMat4Mat4 } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import {
   IContext2d,
   IArc,
@@ -14,8 +14,9 @@ import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
+import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -190,9 +191,9 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     const arcAttribute = getTheme(arc, params?.theme).arc;
 
     const {
-      fill = arcAttribute.fill == null ? !!arc.attribute.fillColor : arcAttribute.fill,
+      fill = arcAttribute.fill,
       background,
-      stroke = arcAttribute.stroke == null ? !!arc.attribute.strokeColor : arcAttribute.stroke,
+      stroke = arcAttribute.stroke,
       opacity = arcAttribute.opacity,
       fillOpacity = arcAttribute.fillOpacity,
       lineWidth = arcAttribute.lineWidth,
@@ -223,12 +224,11 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     const {
       outerRadius = arcAttribute.outerRadius,
       innerRadius = arcAttribute.innerRadius,
-      fillColor = arcAttribute.fillColor,
       // TODO 3d视角下直接硬编码，避免theme消耗性能
       height = 10
     } = arc.attribute;
 
-    const rgbArray = colorString.get(fillColor).value;
+    const rgbArray = colorString.get(fill).value;
     const { light } = drawContext.stage || {};
     const face = drawContext.hack_pieFace;
 
@@ -257,7 +257,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fillColor as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
           context.fill();
         }
       }
@@ -314,7 +314,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fillColor as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
           context.fill();
         }
       }

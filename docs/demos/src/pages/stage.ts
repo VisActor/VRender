@@ -14,8 +14,8 @@ export const page = () => {
       radius: 50,
       x: 100,
       y: 100,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -29,8 +29,8 @@ export const page = () => {
       // dx: 200,
       x: 300,
       y: 100,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2,
       zIndex: 1
     })
@@ -45,8 +45,8 @@ export const page = () => {
       y: 100,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[6],
-      // strokeColor: 'red',
+      fill: colorPools[6],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -58,9 +58,9 @@ export const page = () => {
       radius: 50,
       x: 100,
       y: 400,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -74,9 +74,9 @@ export const page = () => {
       // dx: 200,
       x: 300,
       y: 400,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -90,9 +90,9 @@ export const page = () => {
       y: 400,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -105,8 +105,8 @@ export const page = () => {
       y: 100,
       width: 100,
       height: 50,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -118,8 +118,8 @@ export const page = () => {
       width: 100,
       height: 50,
       borderRadius: 20,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -133,8 +133,8 @@ export const page = () => {
       borderRadius: 20,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -147,8 +147,8 @@ export const page = () => {
       height: 50,
       borderRadius: 20,
       angle: Math.PI / 4,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -159,9 +159,9 @@ export const page = () => {
       y: 400,
       width: 100,
       height: 50,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -173,9 +173,9 @@ export const page = () => {
       width: 100,
       height: 50,
       borderRadius: 20,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -189,9 +189,9 @@ export const page = () => {
       borderRadius: 20,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -204,9 +204,9 @@ export const page = () => {
       height: 50,
       borderRadius: 20,
       angle: Math.PI / 4,
-      fillColor: colorPools[10],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[10],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -258,19 +258,19 @@ export const page = () => {
 
   // setTimeout(() => {
   //   shapes.forEach(item => {
-  //     item.setAttributes({ fillColor: 'red' });
+  //     item.setAttributes({ fill: 'red' });
   //   });
   //   shapes2.forEach(item => {
-  //     item.setAttributes({ fillColor: 'green' });
+  //     item.setAttributes({ fill: 'green' });
   //   });
   //   stage.render();
   // }, 2000);
   // setTimeout(() => {
   //   shapes.forEach(item => {
-  //     item.setAttributes({ fillColor: 'blue' });
+  //     item.setAttributes({ fill: 'blue' });
   //   });
   //   shapes2.forEach(item => {
-  //     item.setAttributes({ fillColor: 'orange' });
+  //     item.setAttributes({ fill: 'orange' });
   //   });
   //   // stage.renderNextFrame([layer2]);
   // }, 3000);

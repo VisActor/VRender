@@ -41,7 +41,7 @@ function drawChartCanopus() {
       x: 0,
       y: 0,
       z: 30 * i,
-      fillColor: colorPools[Math.floor(Math.random() * colorPools.length)],
+      fill: colorPools[Math.floor(Math.random() * colorPools.length)],
       // anchor3d: [300, 0, -(300 - 30 * i)],
       fillOpacity: 0.2,
       alpha: 0
@@ -54,16 +54,16 @@ function drawChartCanopus() {
         x: 300,
         y: i * 60,
         z: 300,
-        fillColor: 'red',
+        fill: 'red',
         symbolType: 'circle',
         size: 10
       })
     );
     p3d.addEventListener('pointerenter', () => {
-      p3d.setAttribute('fillColor', 'red');
+      p3d.setAttribute('fill', 'red');
     });
     p3d.addEventListener('pointerleave', () => {
-      p3d.setAttribute('fillColor', colorPools[Math.floor(Math.random() * colorPools.length)]);
+      p3d.setAttribute('fill', colorPools[Math.floor(Math.random() * colorPools.length)]);
     });
   }
   console.log(group);

@@ -13,8 +13,8 @@ export const page = () => {
       radius: 50,
       x: 100,
       y: 100,
-      fillColor: colorPools[0],
-      // strokeColor: 'red',
+      fill: colorPools[0],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -28,8 +28,8 @@ export const page = () => {
       // dx: 200,
       x: 300,
       y: 100,
-      fillColor: colorPools[1],
-      // strokeColor: 'red',
+      fill: colorPools[1],
+      // stroke: 'red',
       lineWidth: 2,
       zIndex: 1
     })
@@ -44,8 +44,8 @@ export const page = () => {
       y: 100,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[2],
-      // strokeColor: 'red',
+      fill: colorPools[2],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -57,9 +57,9 @@ export const page = () => {
       radius: 50,
       x: 100,
       y: 400,
-      fillColor: colorPools[3],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[3],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -73,9 +73,9 @@ export const page = () => {
       // dx: 200,
       x: 300,
       y: 400,
-      fillColor: colorPools[4],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[4],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -89,9 +89,9 @@ export const page = () => {
       y: 400,
       scaleX: 2,
       scaleY: 2,
-      fillColor: colorPools[5],
-      strokeColor: colorPools[5],
-      stroke: true,
+      fill: colorPools[5],
+      stroke: colorPools[5],
+      
       lineWidth: 2
     })
   );
@@ -105,11 +105,11 @@ export const page = () => {
       }
 
       return {
-        fillColor: 'red'
+        fill: 'red'
       };
     };
 
-    // shape.animate().to({ fillOpacity: 0.5, fillColor: 'red' }, 5000, 'quadIn');
+    // shape.animate().to({ fillOpacity: 0.5, fill: 'red' }, 5000, 'quadIn');
 
     shape.addEventListener('mouseenter', (e: FederatedEvent) => {
       shape.addState('hover', true, true);

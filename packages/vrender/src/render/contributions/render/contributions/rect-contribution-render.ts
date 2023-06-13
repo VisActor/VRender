@@ -1,4 +1,4 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
+import { isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import {
   IGraphicAttribute,
@@ -8,13 +8,14 @@ import {
   IRectGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { createRectPath, getScaledStroke } from '../../../../common';
+import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
   DefaultBaseTextureRenderContribution,
   IBaseRenderContribution
 } from './base-contribution-render';
+import { createRectPath } from '../../../../common/shape/rect';
 
 export const RectRenderContribution = Symbol.for('RectRenderContribution');
 

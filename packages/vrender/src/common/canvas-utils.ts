@@ -1,6 +1,6 @@
 import { IColor, IConicalGradient, ILinearGradient, IRadialGradient } from '../interface/color';
 import { IContext2d } from '../interface';
-import { IBoundsLike } from '@visactor/vutils';
+import { IBoundsLike, isArray } from '@visactor/vutils';
 
 export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
   let strokeWidth = width;
@@ -17,15 +17,26 @@ export function getScaledStroke(context: IContext2d, width: number, dpr: number)
 
 export function createColor(
   context: IContext2d,
-  color: string | IColor,
+  c: string | IColor | Array<string | IColor> | boolean,
   params: { AABBBounds?: IBoundsLike },
   offsetX: number,
   offsetY: number
 ): string | CanvasGradient {
-  if (!color) {
+  if (!c || c === true) {
     return 'black';
   }
   let result: string | CanvasGradient | undefined;
+  let color: string | IColor;
+  if (isArray(c)) {
+    for (let i = 0; i < c.length; i++) {
+      color = c[i];
+      if (color) {
+        break;
+      }
+    }
+  } else {
+    color = c;
+  }
   if (typeof color === 'string') {
     return color;
   }

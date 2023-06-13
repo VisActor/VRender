@@ -1,6 +1,5 @@
 import { min, IPointLike, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ISegPath2D, drawSegments, calcLineCache } from '../../../common';
 import {
   IContext2d,
   ILine,
@@ -8,14 +7,18 @@ import {
   IMarkAttribute,
   IGraphicAttribute,
   IThemeAttribute,
-  IClipRangeByDimensionType
+  IClipRangeByDimensionType,
+  ISegPath2D
 } from '../../../interface';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import { drawSegments } from '../../../common/render-curve';
+import { calcLineCache } from '../../../common/segment';
 
 /**
  * 默认的基于canvas的line渲染器
@@ -155,8 +158,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     const lineAttribute = getTheme(line, params?.theme).line;
 
     const {
-      fill = lineAttribute.fill == null ? !!line.attribute.fillColor : lineAttribute.fill,
-      stroke = lineAttribute.stroke == null ? !!line.attribute.strokeColor : lineAttribute.stroke,
+      fill = lineAttribute.fill,
+      stroke = lineAttribute.stroke,
       opacity = lineAttribute.opacity,
       fillOpacity = lineAttribute.fillOpacity,
       strokeOpacity = lineAttribute.strokeOpacity,
@@ -232,7 +235,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
           skip = this.drawSegmentItem(
             context,
             cache,
-            fill,
+            !!fill,
             !!stroke,
             fillOpacity,
             strokeOpacity,
@@ -267,7 +270,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             skip = this.drawSegmentItem(
               context,
               cache,
-              fill,
+              !!fill,
               !!stroke,
               fillOpacity,
               strokeOpacity,
@@ -288,7 +291,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       this.drawSegmentItem(
         context,
         line.cache as ISegPath2D,
-        fill,
+        !!fill,
         !!stroke,
         fillOpacity,
         strokeOpacity,

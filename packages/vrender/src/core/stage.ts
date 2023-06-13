@@ -67,6 +67,7 @@ export class Stage extends Group implements IStage {
   private _subView: boolean; // 是否是存在子视图
   protected nextFrameRenderLayerSet: Set<Layer>;
   protected willNextFrameRender: boolean;
+  protected _cursor: string;
   renderCount: number;
   dirtyBounds: IBounds | null;
   option3d?: IOption3D;
@@ -691,6 +692,11 @@ export class Stage extends Group implements IStage {
   }
 
   setCursor(mode?: string): void {
+    this._cursor = mode;
     this.eventSystem.setCursor(mode);
+  }
+
+  getCursor() {
+    return this._cursor;
   }
 }

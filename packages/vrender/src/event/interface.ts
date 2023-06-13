@@ -44,6 +44,9 @@ export interface IEventTarget extends INode {
   attribute?: Partial<IGraphicAttribute>;
 
   emit: (eventName: any, data: Dict<any>) => boolean;
+
+  getCursor: () => string;
+  setCursor: (c?: string) => void;
 }
 
 export interface IRender {

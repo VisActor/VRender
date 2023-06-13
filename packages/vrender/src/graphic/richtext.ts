@@ -319,10 +319,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         this._currentHoverIcon?.setHoverState(false);
         this._currentHoverIcon = pickedIcon;
         this._currentHoverIcon.setHoverState(true);
-        if (pickedIcon.attribute.cursor) {
-          this.stage?.setCursor(pickedIcon.attribute.cursor);
-          // console.log(pickedIcon.attribute.cursor);
-        }
+        this.stage?.setCursor(pickedIcon.attribute.cursor);
         this.stage?.renderNextFrame();
       } else if (!pickedIcon && this._currentHoverIcon) {
         this._currentHoverIcon.setHoverState(false);

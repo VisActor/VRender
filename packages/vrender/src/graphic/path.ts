@@ -1,11 +1,11 @@
 import { isString, AABBBounds, OBBBounds, isNil } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
-import { CustomPath2D, parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
+import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const PATH_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { PATH_NUMBER_TYPE } from './constants';
 
 const PATH_UPDATE_TAG_KEY = ['path', 'customPath', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -56,7 +56,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     this.doUpdatePathShape();
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updatePathAABBBounds(
+    const bounds = application.graphicService.updatePathAABBBounds(
       attribute,
       getTheme(this).path,
       this._AABBBounds,

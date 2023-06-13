@@ -1,14 +1,12 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute } from './config';
+import { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
-import { CustomPath2D } from '../common/path';
-import { graphicService } from '../modules';
+import { CustomPath2D } from '../common/custom-path2d';
+import { application } from '../application';
 import { GraphicType } from '../interface';
-
-export const POLYGON_NUMBER_TYPE = genNumberType();
+import { POLYGON_NUMBER_TYPE } from './constants';
 
 const POLYGON_UPDATE_TAG_KEY = ['points', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -33,7 +31,7 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
 
     const attribute = this.attribute;
-    const bounds = graphicService.updatePolygonAABBBounds(
+    const bounds = application.graphicService.updatePolygonAABBBounds(
       attribute,
       getTheme(this).polygon,
       this._AABBBounds,

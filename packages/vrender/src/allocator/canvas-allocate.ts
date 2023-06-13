@@ -1,20 +1,14 @@
-import { inject, injectable } from 'inversify';
+import { application } from '../application';
 import { IAllocate } from './interface';
-import { Global, ICanvas, IGlobal, Releaseable } from '../interface';
-import { wrapCanvas } from '../canvas';
+import { ICanvas, Releaseable } from '../interface';
+import { wrapCanvas } from '../canvas/util';
 
-export const CanvasAllocate = Symbol.for('CanvasAllocate');
-
-export type ICanvasAllocate = IAllocate<ICanvas>;
-
-@injectable()
 export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
-  constructor(@inject(Global) public readonly global: IGlobal) {}
   protected pools: ICanvas[] = [];
   allocate(data: { width: number; height: number; dpr: number }): ICanvas {
     if (!this.pools.length) {
       return wrapCanvas({
-        nativeCanvas: this.global.createCanvas(data),
+        nativeCanvas: application.global.createCanvas(data),
         ...data
       });
     }
@@ -31,7 +25,7 @@ export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
         dpr: canvas.dpr
       };
       return wrapCanvas({
-        nativeCanvas: this.global.createCanvas(data),
+        nativeCanvas: application.global.createCanvas(data),
         ...data
       });
     }
@@ -50,3 +44,5 @@ export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
     this.pools = [];
   }
 }
+
+export const canvasAllocate = new DefaultCanvasAllocate();

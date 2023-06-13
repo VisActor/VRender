@@ -8,25 +8,23 @@ import {
   RichTextVerticalDirection,
   RichTextWordBreak,
   IRichTextGraphicAttribute,
-  IRichTextIconGraphicAttribute,
   IRichTextImageCharacter,
   IRichTextParagraphCharacter,
   IStage,
   ILayer,
   IRichTextIcon
 } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { DefaultAttribute, DefaultRichTextAttribute } from './config';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { DefaultRichTextAttribute } from './config';
 import Frame from './richtext/frame';
 import Paragraph from './richtext/paragraph';
 import Wrapper from './richtext/wrapper';
 import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import { FederatedMouseEvent } from '../event';
-import { graphicService } from '../modules';
-import { parsePadding } from '../common';
-
-export const RICHTEXT_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { parsePadding } from '../common/utils';
+import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 const RICHTEXT_UPDATE_TAG_KEY = [
   'width',
@@ -156,7 +154,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     const richTextTheme = getTheme(this).richtext;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateRichTextAABBBounds(
+    const bounds = application.graphicService.updateRichTextAABBBounds(
       attribute,
       getTheme(this).richtext,
       this._AABBBounds,
@@ -321,14 +319,14 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         this._currentHoverIcon?.setHoverState(false);
         this._currentHoverIcon = pickedIcon;
         this._currentHoverIcon.setHoverState(true);
-        if (pickedIcon.attribute.cursor) {
-          this.stage?.setCursor(pickedIcon.attribute.cursor);
-        }
+        this.stage?.setCursor(pickedIcon.attribute.cursor);
         this.stage?.renderNextFrame();
       } else if (!pickedIcon && this._currentHoverIcon) {
         this._currentHoverIcon.setHoverState(false);
         this._currentHoverIcon = null;
         this.stage?.setCursor();
+        // console.log('setCursor()');
+
         this.stage?.renderNextFrame();
       }
     });
@@ -354,7 +352,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     // }
     let pickIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach(icon => {
-      if (icon.containsPoint(point.x - x, point.y - y)) {
+      if (icon.AABBBounds.containsPoint({ x: point.x - x, y: point.y - y })) {
         pickIcon = icon;
 
         pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x;

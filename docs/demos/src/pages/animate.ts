@@ -62,7 +62,7 @@ export const page = () => {
       fontSize: 200,
       fontFamily: 'Lato',
       fontWeight: 'bolder',
-      fillColor: '#08fff9',
+      fill: '#08fff9',
       blend: 'lighten',
       x: x,
       y: y
@@ -76,7 +76,7 @@ export const page = () => {
       fontFamily: 'Lato',
       fontWeight: 'bolder',
       blend: 'lighten',
-      fillColor: '#f00044',
+      fill: '#f00044',
       x: x + delta,
       y: y + delta
     });
@@ -106,7 +106,7 @@ export const page = () => {
           { x: 0, y: 0 },
           { x: Math.random() * 200 + 60, y: 0 }
         ],
-        strokeColor: colors[Math.floor(Math.random() * colors.length)],
+        stroke: colors[Math.floor(Math.random() * colors.length)],
         opacity: 0,
       });
       g.add(line);
@@ -155,14 +155,14 @@ export const page = () => {
     const text = createText({
       text: '🚗',
       fontSize: 37,
-      fill: true,
+      
       textAlign: 'center',
       textBaseline: 'middle'
     });
     const text2 = createText({
       text: '🐶',
       fontSize: 37,
-      fill: true,
+      
       textAlign: 'center',
       textBaseline: 'middle'
     });
@@ -176,7 +176,7 @@ export const page = () => {
       scaleY: 600,
       x: 350,
       y: 500,
-      strokeColor: 'grey',
+      stroke: 'grey',
       strokeOpacity: 0.6,
       lineDash: [0.01, 0.01]
     });
@@ -186,7 +186,7 @@ export const page = () => {
       scaleY: 700,
       x: 350,
       y: 500,
-      strokeColor: 'grey',
+      stroke: 'grey',
       strokeOpacity: 0.6,
       lineDash: [0.01, 0.01]
     });
@@ -223,7 +223,7 @@ export const page = () => {
         y: 50 + i * 100,
         width: 0,
         height: 20,
-        fillColor: 'blue'
+        fill: 'blue'
       });
       r.animate()
         .to({ width: Math.random() * 900 + 300 }, 1000, 'quadIn')
@@ -271,7 +271,7 @@ export const page = () => {
         x: 130,
         y: 100,
         opacity: 0,
-        fillColor: colorPools[Math.floor(Math.random() * 10)]
+        fill: colorPools[Math.floor(Math.random() * 10)]
       });
       symbol
         .animate()
@@ -290,8 +290,8 @@ export const page = () => {
       fontSize: 28,
       x: 100,
       y: 200,
-      fillColor: 'black',
-      strokeColor: 'black',
+      fill: 'black',
+      stroke: 'black',
       textBaseline: 'top'
     });
     text
@@ -306,7 +306,7 @@ export const page = () => {
   //     fontSize: 36,
   //     x: 200,
   //     y: 200,
-  //     fillColor: 'red'
+  //     fill: 'red'
   //   });
   //   text
   //     .animate()
@@ -316,12 +316,12 @@ export const page = () => {
   // addCase('area', container, stage => {
   //   const area = createArea({
   //     visible: true,
-  //     stroke: true,
-  //     strokeColor: '#000',
+  //     
+  //     stroke: '#000',
   //     lineWidth: 4,
   //     fillOpacity: 0.3,
-  //     fill: true,
-  //     fillColor: '#6690F2',
+  //     
+  //     fill: '#6690F2',
   //     defined: true,
   //     points: [
   //       {
@@ -388,14 +388,14 @@ export const page = () => {
   //     fontSize: 36,
   //     x: 200,
   //     y: 200,
-  //     fillColor: 'black',
-  //     strokeColor: 'black'
+  //     fill: 'black',
+  //     stroke: 'black'
   //   });
   //   console.log('text添加');
   //   text
   //     .animate()
   //     .wait(4000)
-  //     .play(new FadeInPlus(0, { fill: true, stroke: true }, 2000, 'quadIn'));
+  //     .play(new FadeInPlus(0, {  stroke: true }, 2000, 'quadIn'));
 
   //   // text.onBeforeAttributeUpdate = (val: any, attributes: any, key: null | string | string[], context?: any) => {
   //   //   if (
@@ -421,10 +421,10 @@ export const page = () => {
   //     fontSize: 36,
   //     x: 200,
   //     y: 200,
-  //     fillColor: 'red',
-  //     strokeColor: 'black'
+  //     fill: 'red',
+  //     stroke: 'black'
   //   });
-  //   text.animate().to({ fillColor: undefined }, 2000, 'quadIn');
+  //   text.animate().to({ fill: undefined }, 2000, 'quadIn');
   //   stage.defaultLayer.add(text as any);
   //   // stage.render();
   // });
@@ -435,8 +435,8 @@ export const page = () => {
   //     fontSize: 36,
   //     x: 200,
   //     y: 200,
-  //     fillColor: 'black',
-  //     strokeColor: 'black',
+  //     fill: 'black',
+  //     stroke: 'black',
   //     textBaseline: 'top'
   //   });
   //   text
@@ -453,7 +453,7 @@ export const page = () => {
   //       y: bottom,
   //       width: 50,
   //       height: 0,
-  //       fillColor: 'red'
+  //       fill: 'red'
   //     });
   //     const height = 600;
   //     rect.animate().to({ y: bottom - height, height }, 3000, 'quadIn');
@@ -481,7 +481,7 @@ export const page = () => {
   //       y: 50 + i * 100,
   //       width: 0,
   //       height: 30,
-  //       fillColor: 'blue'
+  //       fill: 'blue'
   //     });
   //     r.animate()
   //       .to({ width: Math.random() * 900 + 300 }, 1000, 'quadIn')
@@ -497,8 +497,8 @@ export const page = () => {
   //   //   fontSize: 36,
   //   //   x: 200,
   //   //   y: 200,
-  //   //   fillColor: 'black',
-  //   //   strokeColor: 'black',
+  //   //   fill: 'black',
+  //   //   stroke: 'black',
   //   //   textBaseline: 'top'
   //   // });
   // });
@@ -511,7 +511,7 @@ export const page = () => {
   //       { x: 100, y: 100 },
   //       { x: 200, y: 700 }
   //     ],
-  //     strokeColor: 'red',
+  //     stroke: 'red',
   //     lineWidth: 6,
   //     blur: 60
   //   });
@@ -523,7 +523,7 @@ export const page = () => {
   //       y: 50 + i * 100,
   //       width: Math.random() * 900 + 300,
   //       height: 60,
-  //       fillColor: 'blue'
+  //       fill: 'blue'
   //     });
   //     r.animate().to({ blur: 30 }, 1000, 'quadIn');
   //     stage.defaultLayer.add(r as any);
@@ -535,7 +535,7 @@ export const page = () => {
   //       { x: 100, y: 100 },
   //       { x: 200, y: 700 }
   //     ],
-  //     strokeColor: 'orange',
+  //     stroke: 'orange',
   //     lineWidth: 6
   //   });
   //   stage.defaultLayer.add(line2 as any);
@@ -547,7 +547,7 @@ export const page = () => {
   //     fontSize: 36,
   //     x: 200,
   //     y: 200,
-  //     fillColor: {
+  //     fill: {
   //       gradient: 'linear',
   //       x0: 0,
   //       y0: 0,
@@ -562,7 +562,7 @@ export const page = () => {
   //   });
   //   text.animate().to(
   //     {
-  //       fillColor: {
+  //       fill: {
   //         gradient: 'linear',
   //         x0: 0,
   //         y0: 0,
@@ -594,8 +594,8 @@ export const page = () => {
   //     shadowBlur: 10,
   //     shadowOffsetX: 0,
   //     shadowOffsetY: 4,
-  //     stroke: true,
-  //     strokeColor: {
+  //     
+  //     stroke: {
   //       x0: 0,
   //       y0: 0.5,
   //       x1: 1,
@@ -637,7 +637,7 @@ export const page = () => {
   //     fontSize: 37,
   //     x: 100,
   //     y: 100,
-  //     fillColor: 'red',
+  //     fill: 'red',
   //     textAlign: 'center',
   //     textBaseline: 'middle'
   //   });
@@ -671,7 +671,7 @@ export const page = () => {
   //     fontSize: 37,
   //     x: 100,
   //     y: 100,
-  //     fillColor: 'red',
+  //     fill: 'red',
   //     textAlign: 'center',
   //     textBaseline: 'middle'
   //   });
@@ -680,7 +680,7 @@ export const page = () => {
   //     fontSize: 37,
   //     x: 100,
   //     y: 100,
-  //     fillColor: 'red',
+  //     fill: 'red',
   //     textAlign: 'center',
   //     textBaseline: 'middle'
   //   });
@@ -694,7 +694,7 @@ export const page = () => {
   //     scaleY: 600,
   //     x: 350,
   //     y: 500,
-  //     strokeColor: 'grey',
+  //     stroke: 'grey',
   //     strokeOpacity: 0.6,
   //     lineDash: [0.01, 0.01]
   //   });
@@ -704,7 +704,7 @@ export const page = () => {
   //     scaleY: 700,
   //     x: 350,
   //     y: 500,
-  //     strokeColor: 'grey',
+  //     stroke: 'grey',
   //     strokeOpacity: 0.6,
   //     lineDash: [0.01, 0.01]
   //   });
@@ -770,7 +770,7 @@ export const page = () => {
   //     symbolType: 'star',
   //     x: 100,
   //     y: 100,
-  //     fillColor: 'red'
+  //     fill: 'red'
   //   });
   //   symbol
   //     .animate()
@@ -793,8 +793,8 @@ export const page = () => {
   //       radius: 50,
   //       x: 350,
   //       y: 150,
-  //       fillColor: colorPools[10],
-  //       // strokeColor: 'red',
+  //       fill: colorPools[10],
+  //       // stroke: 'red',
   //       lineWidth: 2
   //     })
   //   );
@@ -805,7 +805,7 @@ export const page = () => {
   //       y: 200,
   //       width: 200,
   //       height: 300,
-  //       fillColor: colorPools[8]
+  //       fill: colorPools[8]
   //     })
   //   );
 
@@ -814,7 +814,7 @@ export const page = () => {
   //     y: 250,
   //     width: 100,
   //     height: 50,
-  //     fillColor: colorPools[7]
+  //     fill: colorPools[7]
   //   });
 
   //   group.add(leftHand);
@@ -824,7 +824,7 @@ export const page = () => {
   //     y: 250,
   //     width: 100,
   //     height: 50,
-  //     fillColor: colorPools[7]
+  //     fill: colorPools[7]
   //   });
 
   //   group.add(rightHand);
@@ -835,7 +835,7 @@ export const page = () => {
   //       y: 500,
   //       width: 50,
   //       height: 50,
-  //       fillColor: colorPools[7]
+  //       fill: colorPools[7]
   //     })
   //   );
 
@@ -845,7 +845,7 @@ export const page = () => {
   //       y: 500,
   //       width: 50,
   //       height: 50,
-  //       fillColor: colorPools[7]
+  //       fill: colorPools[7]
   //     })
   //   );
 
@@ -857,7 +857,7 @@ export const page = () => {
   //       y: rotateCenter[1],
   //       width: 5,
   //       height: 5,
-  //       fillColor: 'green'
+  //       fill: 'green'
   //     })
   //   );
 
@@ -867,8 +867,8 @@ export const page = () => {
   //     radius: 50,
   //     x: 3500,
   //     y: -1500,
-  //     fillColor: 'red',
-  //     // strokeColor: 'red',
+  //     fill: 'red',
+  //     // stroke: 'red',
   //     lineWidth: 2
   //   });
   //   group.add(circle);

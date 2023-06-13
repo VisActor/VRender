@@ -1,7 +1,7 @@
 import { AABBBounds, IAABBBounds } from '@visactor/vutils';
-import { Generator } from '../../common';
+import { Generator } from '../../common/generator';
 import { IGraphic, IStage } from '../../interface';
-import { graphicService } from '../../modules';
+import { application } from '../../application';
 import { IPlugin, IPluginService } from '../plugin-service';
 
 const globalBounds = new AABBBounds();
@@ -21,7 +21,7 @@ export class DirtyBoundsPlugin implements IPlugin {
       }
       stage.dirtyBounds.clear();
     });
-    graphicService.hooks.beforeUpdateAABBBounds.tap(
+    application.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
         if (graphic.glyphHost) {
@@ -40,7 +40,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         }
       }
     );
-    graphicService.hooks.afterUpdateAABBBounds.tap(
+    application.graphicService.hooks.afterUpdateAABBBounds.tap(
       this.key,
       (
         graphic: IGraphic,
@@ -59,7 +59,7 @@ export class DirtyBoundsPlugin implements IPlugin {
         stage.dirty(params.globalAABBBounds);
       }
     );
-    graphicService.hooks.onRemove.tap(this.key, (graphic: IGraphic) => {
+    application.graphicService.hooks.onRemove.tap(this.key, (graphic: IGraphic) => {
       const stage = graphic.stage;
       if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
         return;
@@ -70,16 +70,18 @@ export class DirtyBoundsPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    graphicService.hooks.beforeUpdateAABBBounds.taps = graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
-      return item.name !== this.key;
-    });
-    graphicService.hooks.afterUpdateAABBBounds.taps = graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
-      return item.name !== this.key;
-    });
+    application.graphicService.hooks.beforeUpdateAABBBounds.taps =
+      application.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.afterUpdateAABBBounds.taps =
+      application.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
+        return item.name !== this.key;
+      });
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
       return item.name !== this.key;
     });
-    graphicService.hooks.onRemove.taps = graphicService.hooks.onRemove.taps.filter(item => {
+    application.graphicService.hooks.onRemove.taps = application.graphicService.hooks.onRemove.taps.filter(item => {
       return item.name !== this.key;
     });
   }

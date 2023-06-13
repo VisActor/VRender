@@ -41,10 +41,8 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   text: string;
   fontSize?: number;
   fontFamily?: string;
-  fill?: boolean;
-  stroke?: boolean;
-  fillColor?: IColor;
-  strokeColor?: IColor;
+  fill?: IColor | boolean;
+  stroke?: IColor | boolean;
   fontWeight?: string;
   // lineHeight?: number;
   fontStyle?: RichTextFontStyle; // normal, italic, oblique
@@ -65,11 +63,9 @@ export type IRichTextImageCharacter = IRichTextBasicCharacter & {
   // hover相关属性
   // backgroundShow?: boolean; // 是否显示background
   backgroundShowMode?: 'always' | 'hover';
-  backgroundFill?: boolean;
-  backgroundFillColor?: IColor; // 背景矩形填充颜色
+  backgroundFill?: boolean | IColor; // 背景矩形填充颜色
   backgroundFillOpacity?: number; // 背景矩形填充透明度
-  backgroundStroke?: boolean;
-  backgroundStrokeColor?: IColor; // 背景矩形边框颜色
+  backgroundStroke?: boolean | IColor; // 背景矩形边框颜色
   backgroundStrokeOpacity?: number; // 背景矩形边框透明度
   backgroundRadius?: number; // 背景矩形圆角
   // background size 同时控制了该icon的响应范围
@@ -93,11 +89,9 @@ export type IRichTextCharacter = IRichTextParagraphCharacter | IRichTextImageCha
 export type IRichTextIconGraphicAttribute = IImageGraphicAttribute & {
   id?: string;
   backgroundShowMode?: 'always' | 'hover' | 'never';
-  backgroundFill?: boolean;
-  backgroundFillColor?: IColor; // 背景矩形填充颜色
+  backgroundFill?: boolean | IColor; // 背景矩形填充颜色
   backgroundFillOpacity?: number; // 背景矩形填充透明度
-  backgroundStroke?: boolean;
-  backgroundStrokeColor?: IColor; // 背景矩形边框颜色
+  backgroundStroke?: boolean | IColor; // 背景矩形边框颜色
   backgroundStrokeOpacity?: number; // 背景矩形边框透明度
   backgroundRadius?: number; // 背景矩形圆角
   backgroundWidth?: number;

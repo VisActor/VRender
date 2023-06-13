@@ -1,10 +1,10 @@
 import { inject, injectable } from 'inversify';
 import { IPoint } from '@visactor/vutils';
-import { ARC_NUMBER_TYPE, getTheme } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
 import { IArc, IGraphicAttribute, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { ArcRender, IGraphicRender } from '../../../render';
-import { graphicService } from '../../../modules';
+import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultMathArcPicker implements IGraphicPicker {

@@ -1,9 +1,9 @@
 import { inject, injectable, postConstruct } from 'inversify';
 import { IBoundsLike } from '@visactor/vutils';
-import { Generator } from '../common';
+import { Generator } from '../common/generator';
 import { IContribution } from './contributions/interface';
 import { IEventElement, ICanvas, IContext2d, Releaseable, IDomRectLike, Global, IGlobal } from '../interface';
-import { container } from '../modules';
+import { container } from '../container';
 import { SyncHook } from '../tapable';
 
 // window为内部对象，属性均为stage传入

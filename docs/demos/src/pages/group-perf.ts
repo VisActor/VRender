@@ -10,7 +10,7 @@ export const page = () => {
   for (let i = 0; i < 50000; i++) {
     // raw rect
     const rect = createRect({
-      fill: true,
+      
       width: 100,
       height: 100,
 
@@ -25,7 +25,7 @@ export const page = () => {
     //   x: 0,
     // });
     // const rect = createRect({
-    //   fill: true,
+    //   
     //   width: 100,
     //   height: 100,
 

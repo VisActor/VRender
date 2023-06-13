@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "release",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

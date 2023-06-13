@@ -27,8 +27,8 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 50,
-    fillColor: colorPools[10],
-    strokeColor: 'red',
+    fill: colorPools[10],
+    stroke: 'red',
     lineWidth: 2
     // shadowBlur: 10,
     // shadowOffsetX: 10,
@@ -41,8 +41,8 @@ export const page = () => {
     y: 300,
     width: 50,
     height: 150,
-    fillColor: colorPools[10],
-    strokeColor: 'red',
+    fill: colorPools[10],
+    stroke: 'red',
     lineWidth: 2
     // shadowBlur: 10,
     // shadowOffsetX: 10,
@@ -55,8 +55,8 @@ export const page = () => {
     y: 100,
     width: 200,
     height: 100,
-    fillColor: colorPools[10],
-    strokeColor: 'red',
+    fill: colorPools[10],
+    stroke: 'red',
     lineWidth: 2
     // shadowBlur: 10,
     // shadowOffsetX: 10,
@@ -69,8 +69,8 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 300,
-    fillColor: colorPools[5],
-    strokeColor: 'red',
+    fill: colorPools[5],
+    stroke: 'red',
     lineWidth: 2
     // shadowBlur: 10,
     // shadowOffsetX: 10,
@@ -82,7 +82,7 @@ export const page = () => {
     x: 150,
     y: 150,
     radius: 100,
-    fillColor: colorPools[0]
+    fill: colorPools[0]
   });
 
   const polygon = createPolygon({
@@ -100,8 +100,8 @@ export const page = () => {
       // { x: 200, y: 200 },
       // { x: 0, y: 200 }
     ],
-    fillColor: colorPools[10],
-    strokeColor: 'green',
+    fill: colorPools[10],
+    stroke: 'green',
     lineWidth: 2,
     shadowBlur: 10,
     shadowOffsetX: 10,
@@ -121,8 +121,8 @@ export const page = () => {
       { x: 50, y: 80, y1: 60 },
       { x: 80, y: 150, y1: 20 }
     ],
-    fillColor: colorPools[10],
-    strokeColor: 'green'
+    fill: colorPools[10],
+    stroke: 'green'
   });
 
   const arc = createArc({
@@ -132,8 +132,8 @@ export const page = () => {
     endAngle: Math.PI,
     innerRadius: 50,
     outerRadius: 200,
-    fillColor: colorPools[10],
-    strokeColor: 'green'
+    fill: colorPools[10],
+    stroke: 'green'
   });
 
   // const tuoyuanProxy = new CustomPath2D();
@@ -162,7 +162,7 @@ export const page = () => {
       { x: 100, y: 70 }
     ],
     lineWidth: 6,
-    strokeColor: colorPools[7]
+    stroke: colorPools[7]
   });
 
   const stage = createStage({
@@ -186,7 +186,7 @@ export const page = () => {
       y: Math.random() * 500,
       symbolType: 'triangleLeft',
       size: 10,
-      fillColor: colorPools[2],
+      fill: colorPools[2],
       // angle: Math.PI / 4,
       lineWidth: 6
     });
@@ -205,8 +205,8 @@ export const page = () => {
       y: Math.random() * 500,
       symbolType: 'triangleLeft',
       size: 5 + Math.floor(Math.random() * 10),
-      fillColor: 'green',
-      // strokeColor: 'red',
+      fill: 'green',
+      // stroke: 'red',
       // angle: Math.PI / 4,
       lineWidth: 6
     });
@@ -231,7 +231,7 @@ export const page = () => {
       y: 300,
       symbolType: 'triangleLeft',
       size: 5 + Math.floor(Math.random() * 10),
-      fillColor: 'green',
+      fill: 'green',
       // angle: Math.PI / 4,
       lineWidth: 6
     });

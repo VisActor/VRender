@@ -59,10 +59,8 @@ export class RoughCanvasArcRender implements IGraphicRender {
     const customPath = new CustomPath2D();
 
     const {
-      fill = arcAttribute.fill == null ? !!arc.attribute.fillColor : arcAttribute.fill,
-      stroke = arcAttribute.stroke == null ? !!arc.attribute.strokeColor : arcAttribute.stroke,
-      fillColor = arcAttribute.fillColor,
-      strokeColor = arcAttribute.strokeColor,
+      fill = arcAttribute.fill,
+      stroke = arcAttribute.stroke,
       lineWidth = arcAttribute.lineWidth,
       outerRadius = arcAttribute.outerRadius,
       innerRadius = arcAttribute.innerRadius,
@@ -92,8 +90,8 @@ export class RoughCanvasArcRender implements IGraphicRender {
     drawArcPath(arc, customPath, x, y, outerRadius, innerRadius);
 
     rc.path(customPath.toString(), {
-      fill: fill ? (fillColor as string) : undefined,
-      stroke: stroke ? (strokeColor as string) : undefined,
+      fill: fill ? (fill as string) : undefined,
+      stroke: stroke ? (stroke as string) : undefined,
       strokeWidth: lineWidth,
       maxRandomnessOffset,
       roughness,

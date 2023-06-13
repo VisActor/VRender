@@ -3,10 +3,11 @@ import { IPoint } from '@visactor/vutils';
 import { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
 import { IGraphicPicker, IPickParams } from '../../picker-service';
 import { IGraphicRender, LineRender } from '../../../render';
-import { getTheme, LINE_NUMBER_TYPE } from '../../../graphic';
-import { graphicService, mat4Allocate } from '../../../modules';
-import { getScaledStroke } from '../../../common';
+import { getTheme } from '../../../graphic/theme';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';
+import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultCanvasLinePicker extends BasePicker<ILine> implements IGraphicPicker {

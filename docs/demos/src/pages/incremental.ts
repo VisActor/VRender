@@ -23,7 +23,7 @@ export const page = () => {
     y: 0,
     width: 1000,
     height: 1000,
-    fillColor: 'pink'
+    fill: 'pink'
   });
 
   const root = createGroup({
@@ -46,7 +46,7 @@ export const page = () => {
         y: Math.random() * 1000,
         width: Math.random() * 200,
         height: Math.random() * 200,
-        fillColor: 'green'
+        fill: 'green'
       })
     );
   }
@@ -54,7 +54,7 @@ export const page = () => {
   fg.add(
     createLine({
       points: new Array(100).fill(0).map((_, i) => ({ x: i * 10, y: Math.random() * 800 })),
-      strokeColor: 'red',
+      stroke: 'red',
       lineWidth: 3
     })
   );
@@ -69,10 +69,10 @@ export const page = () => {
         x: Math.random() * 1000,
         y: Math.random() * 1000,
         symbolType: symbolList[Math.floor(symbolList.length * Math.random())],
-        fillColor: 'blue'
+        fill: 'blue'
       });
       symbol.addEventListener('mouseenter', () => {
-        symbol.setAttribute('fillColor', 'red');
+        symbol.setAttribute('fill', 'red');
       });
       ig.add(
         symbol
@@ -86,10 +86,10 @@ export const page = () => {
         x: Math.random() * 1000,
         y: Math.random() * 1000,
         symbolType: symbolList[Math.floor(symbolList.length * Math.random())],
-        fillColor: 'green'
+        fill: 'green'
       });
       symbol.addEventListener('mouseenter', () => {
-        symbol.setAttribute('fillColor', 'red');
+        symbol.setAttribute('fill', 'red');
       });
       ig2.add(
         symbol
@@ -98,7 +98,7 @@ export const page = () => {
   }
   const line = createLine({
     segments: [{ points: new Array(10).fill(0).map((_, i) => ({ x: i * 0.01, y: Math.random() * 500 })) }],
-    strokeColor: 'orange',
+    stroke: 'orange',
     lineWidth: 1
   });
   line.incremental = 1;
@@ -120,10 +120,10 @@ export const page = () => {
         x: Math.random() * 1000,
         y: Math.random() * 1000,
         symbolType: symbolList[Math.floor(symbolList.length * Math.random())],
-        fillColor: 'blue'
+        fill: 'blue'
       });
       symbol.addEventListener('mouseenter', () => {
-        symbol.setAttribute('fillColor', 'red');
+        symbol.setAttribute('fill', 'red');
       })
       ig.incrementalAppendChild(
         symbol
@@ -156,7 +156,7 @@ export const page = () => {
   // setTimeout(() => {
   //   stage.defaultLayer.combineSubLayer();
   //   console.log('afjdfjdslf');
-  //   line.setAttributes({ strokeColor: 'blue' });
+  //   line.setAttributes({ stroke: 'blue' });
   // }, 6000);
   // for (let i = 0; i < 1000; i++) {
   //   setTimeout(() => {

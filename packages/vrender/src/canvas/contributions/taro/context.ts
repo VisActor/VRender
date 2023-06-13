@@ -11,7 +11,8 @@ import {
   EnvType
 } from '../../../interface';
 import { BrowserContext2d } from '../browser';
-import { createColor, getContextFont, getScaledStroke } from '../../../common';
+import { createColor, getScaledStroke } from '../../../common/canvas-utils';
+import { getContextFont } from '../../../common/text';
 
 // 考虑taro-feishu等环境
 interface ITTContext {
@@ -70,11 +71,11 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
     const {
       fillOpacity = defaultParams.fillOpacity,
       opacity = defaultParams.opacity,
-      fillColor = defaultParams.fillColor
+      fill = defaultParams.fill
     } = attribute;
     if (fillOpacity > 1e-12 && opacity > 1e-12) {
       _context.setGlobalAlpha(fillOpacity * opacity);
-      _context.setFillStyle(createColor(this, fillColor, params, offsetX, offsetY));
+      _context.setFillStyle(createColor(this, fill, params, offsetX, offsetY));
       // todo 小程序
     } else {
       // _context.setGlobalAlpha(fillOpacity * opacity);
@@ -97,7 +98,7 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
     if (strokeOpacity > 1e-12 && opacity > 1e-12) {
       const {
         lineWidth = defaultParams.lineWidth,
-        strokeColor = defaultParams.strokeColor,
+        stroke = defaultParams.stroke,
         lineJoin = defaultParams.lineJoin,
         lineDash = defaultParams.lineDash,
         lineCap = defaultParams.lineCap,
@@ -105,7 +106,7 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
       } = attribute;
       _context.setGlobalAlpha(strokeOpacity * opacity);
       _context.setLineWidth(getScaledStroke(this, lineWidth, this.dpr));
-      _context.setStrokeStyle(createColor(this, strokeColor, params, offsetX, offsetY));
+      _context.setStrokeStyle(createColor(this, stroke as any, params, offsetX, offsetY));
       _context.setLineJoin(lineJoin);
       _context.setLineDash(lineDash);
       _context.setLineCap(lineCap);

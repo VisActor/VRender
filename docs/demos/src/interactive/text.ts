@@ -11,7 +11,7 @@ export function renderText(num: number) {
       y: 600 * Math.random(),
       text: 'test',
       fontSize: 20,
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)]
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)]
     });
   });
 }

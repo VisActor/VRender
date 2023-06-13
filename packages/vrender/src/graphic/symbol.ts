@@ -1,13 +1,13 @@
 import { AABBBounds, OBBBounds, isArray, max } from '@visactor/vutils';
 import { ISymbol, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { ISymbolClass } from './builtin-symbol/interface';
-import { CustomPath2D, parsePadding } from '../common';
+import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const SYMBOL_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { CustomPath2D } from '../common/custom-path2d';
+import { SYMBOL_NUMBER_TYPE } from './constants';
 
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -72,7 +72,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     const symbolTheme = getTheme(this).symbol;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateSymbolAABBBounds(
+    const bounds = application.graphicService.updateSymbolAABBBounds(
       attribute,
       getTheme(this).symbol,
       this._AABBBounds,

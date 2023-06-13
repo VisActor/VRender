@@ -23,10 +23,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -39,10 +38,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -53,9 +51,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -65,27 +62,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -95,10 +89,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -142,10 +135,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -158,10 +150,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -172,9 +163,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -184,27 +174,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -214,10 +201,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -366,10 +352,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -382,10 +367,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -396,9 +380,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -408,27 +391,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -438,10 +418,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -590,10 +569,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -606,10 +584,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -620,9 +597,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -632,27 +608,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -662,10 +635,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -814,10 +786,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -830,10 +801,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -844,9 +814,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -856,27 +825,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -886,10 +852,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -1038,10 +1003,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -1054,10 +1018,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -1068,9 +1031,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -1080,27 +1042,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -1110,10 +1069,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -1262,10 +1220,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -1278,10 +1235,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -1292,9 +1248,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -1304,27 +1259,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -1334,10 +1286,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -1486,10 +1437,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -1502,10 +1452,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -1516,9 +1465,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -1528,27 +1476,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -1558,10 +1503,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -1710,10 +1654,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -1726,10 +1669,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -1740,9 +1682,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -1752,27 +1693,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -1782,10 +1720,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },
@@ -1934,10 +1871,9 @@ const data = [
       padding: [0, 0, 0, 0],
       textStyle: {
         fontSize: 12,
-        fillColor: '#333333',
+        fill: '#333333',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       autoRotate: false,
       text: 'country',
@@ -1950,10 +1886,9 @@ const data = [
       padding: 0,
       style: {
         fontSize: 12,
-        fillColor: '#6F6F6F',
+        fill: '#6F6F6F',
         fontWeight: 'normal',
-        fillOpacity: 1,
-        fill: true
+        fillOpacity: 1
       },
       formatMethod: null
     },
@@ -1964,9 +1899,8 @@ const data = [
       length: 4,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     subTick: {
@@ -1976,27 +1910,24 @@ const data = [
       length: 2,
       style: {
         lineWidth: 1,
-        strokeColor: '#D8DCE3',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#D8DCE3',
+        strokeOpacity: 1
       }
     },
     line: {
       visible: true,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
-        strokeOpacity: 1,
-        stroke: true
+        stroke: '#dfdfdf',
+        strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line',
       visible: true,
@@ -2006,10 +1937,9 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        strokeColor: '#dfdfdf',
+        stroke: '#dfdfdf',
         strokeOpacity: 1,
-        lineDash: [4, 4],
-        stroke: true
+        lineDash: [4, 4]
       },
       type: 'line'
     },

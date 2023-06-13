@@ -1,6 +1,7 @@
 import { IPoint, IPointLike, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
-import { graphicService } from '../modules';
-import { AttributeUpdateType, CustomPath2D, pointInterpolation } from '../common';
+import { application } from '../application';
+import { AttributeUpdateType } from '../common/enums';
+import { CustomPath2D } from '../common/custom-path2d';
 import {
   EasingType,
   IArcGraphicAttribute,
@@ -13,8 +14,8 @@ import {
   IShadowRoot
 } from '../interface';
 import { ACustomAnimate } from './animate';
-import { createArc, createRect } from '../graphic/graphic-creator';
 import { Easing } from './easing';
+import { pointInterpolation } from '../common/utils';
 
 export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
   declare valid: boolean;
@@ -77,8 +78,8 @@ enum Direction {
 }
 export class FadeInPlus extends ACustomAnimate<any> {
   declare direction: number;
-  declare toFillColor: string;
-  declare toStrokeColor: string;
+  declare toFill: string;
+  declare toStroke: string;
   declare fillGradient: ILinearGradient;
   declare strokeGradient: ILinearGradient;
   declare fill: boolean;
@@ -107,15 +108,15 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   getEndProps(): Record<string, any> {
     return {
-      fillColor: this.toFillColor,
-      strokeColor: this.toStrokeColor
+      fill: this.toFill,
+      stroke: this.toStroke
     };
   }
 
   onBind(): void {
     // this.to = parseFloat(this.target.getAnimatePropByName('text'));
-    this.toFillColor = this.target.getComputedAttribute('fillColor');
-    this.toStrokeColor = this.target.getComputedAttribute('strokeColor');
+    this.toFill = this.target.getComputedAttribute('fill');
+    this.toStroke = this.target.getComputedAttribute('stroke');
   }
 
   onEnd(): void {
@@ -144,7 +145,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   leftToRight(end: boolean, ratio: number, out: Record<string, any>) {
     if (this.fill) {
-      const toFillColor = this.toFillColor;
+      const toFillColor = this.toFill;
       this.fillGradient.x0 = 0;
       this.fillGradient.y0 = 0;
       this.fillGradient.x1 = 1;
@@ -154,10 +155,10 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toFillColor },
         { offset: Math.min(1, ratio * 2), color: 'transparent' }
       ];
-      out.fillColor = this.fillGradient;
+      out.fill = this.fillGradient;
     }
     if (this.stroke) {
-      const toStrokeColor = this.toStrokeColor;
+      const toStrokeColor = this.toStroke;
       this.strokeGradient.x0 = 0;
       this.strokeGradient.y0 = 0;
       this.strokeGradient.x1 = 1;
@@ -167,7 +168,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toStrokeColor },
         { offset: Math.min(1, ratio * 6), color: 'transparent' }
       ];
-      out.strokeColor = this.strokeGradient;
+      out.stroke = this.strokeGradient;
       // const dashLen = 300;
       // const offset = ratio * dashLen;
       // out.lineDash = [offset, dashLen - offset];
@@ -177,7 +178,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
 
   strokePath(end: boolean, ratio: number, out: Record<string, any>) {
     if (this.fill) {
-      const toFillColor = this.toFillColor;
+      const toFillColor = this.toFill;
       this.fillGradient.x0 = 0;
       this.fillGradient.y0 = 0;
       this.fillGradient.x1 = 1;
@@ -187,7 +188,7 @@ export class FadeInPlus extends ACustomAnimate<any> {
         { offset: ratio, color: toFillColor },
         { offset: Math.min(1, ratio * 2), color: 'transparent' }
       ];
-      out.fillColor = this.fillGradient;
+      out.fill = this.fillGradient;
     }
     if (this.stroke) {
       const dashLen = 300;
@@ -231,14 +232,14 @@ export class InputText extends ACustomAnimate<{ text: string }> {
     } else {
       this.toText = this.toText.toString();
       const root = this.target.attachShadow();
-      const line = graphicService.creator.line({
+      const line = application.graphicService.creator.line({
         x: 0,
         y: 0,
         points: [
           { x: 0, y: 0 },
           { x: 0, y: this.target.getComputedAttribute('fontSize') }
         ],
-        strokeColor: 'black',
+        stroke: 'black',
         lineWidth: 1
       });
       root.add(line);
@@ -292,9 +293,9 @@ export class StreamLight extends ACustomAnimate<any> {
 
     const height = this.target.AABBBounds.height();
 
-    const rect = graphicService.creator.rect({
+    const rect = application.graphicService.creator.rect({
       height: height,
-      fillColor: '#bcdeff',
+      fill: '#bcdeff',
       shadowBlur: 30,
       shadowColor: '#bcdeff',
       ...this.params?.attribute,
@@ -655,7 +656,7 @@ export class ClipAngleAnimate extends ClipGraphicAnimate {
       arcStartAngle = startAngle;
       arcEndAngle = animationType === 'out' ? startAngle + Math.PI * 2 : startAngle;
     }
-    const arc = createArc({
+    const arc = application.graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: params?.radius ?? (width + height) / 2,
@@ -705,7 +706,7 @@ export class ClipRadiusAnimate extends ClipGraphicAnimate {
     const startRadius = params?.startRadius ?? 0;
     const endRadius = params?.endRadius ?? Math.sqrt((width / 2) ** 2 + (height / 2) ** 2);
 
-    const arc = createArc({
+    const arc = application.graphicService.creator.arc({
       x: params?.center?.x ?? width / 2,
       y: params?.center?.y ?? height / 2,
       outerRadius: animationType === 'out' ? endRadius : startRadius,
@@ -749,7 +750,7 @@ export class ClipDirectionAnimate extends ClipGraphicAnimate {
     const direction = params?.direction ?? 'x';
     const orient = params?.orient ?? 'positive';
 
-    const rect = createRect({
+    const rect = application.graphicService.creator.rect({
       x: 0,
       y: 0,
       width: animationType === 'in' && direction === 'x' ? 0 : width,

@@ -21,17 +21,14 @@ const layoutPlayer1 = new DiscretePlayer({
   slider: {
     space: 10,
     trackStyle: {
-      stroke: true,
-      fill: true,
       fillOpacity: 1,
       borderRadius: 5,
-      strokeColor: 'black',
-      fillColor: 'red'
+      stroke: 'black',
+      fill: 'red'
     },
     railStyle: {},
     handlerStyle: {
-      stroke: true,
-      strokeColor: 'yellow'
+      stroke: 'yellow'
     }
   },
   controller: {
@@ -40,30 +37,29 @@ const layoutPlayer1 = new DiscretePlayer({
       space: 10,
       style: {
         size: 20,
-        fill: true,
-        fillColor: '#63B5FC'
+
+        fill: '#63B5FC'
       }
     },
     pause: {
       style: {
         size: 20,
-        fill: true,
-        fillColor: '#63B5FC'
+
+        fill: '#63B5FC'
       }
     },
     backward: {
       style: {
         size: 20,
-        fill: true,
-        fillColor: '#63B5FC'
+
+        fill: '#63B5FC'
       }
     },
     forward: {
       space: 10,
       position: 'start',
       style: {
-        fill: true,
-        fillColor: '#63B5FC'
+        fill: '#63B5FC'
       }
     }
   }
@@ -108,8 +104,8 @@ const layoutPlayer3 = new ContinuousPlayer({
   slider: {
     railStyle: {
       borderRadius: 40,
-      stroke: true,
-      strokeColor: 'blue',
+
+      stroke: 'blue',
       strokeOpacity: 0.1
     }
   },
@@ -214,8 +210,8 @@ setInterval(() => {
     slider: {
       railStyle: {
         borderRadius: 40,
-        stroke: true,
-        strokeColor: 'blue',
+
+        stroke: 'blue',
         strokeOpacity: 0.1
       }
     },

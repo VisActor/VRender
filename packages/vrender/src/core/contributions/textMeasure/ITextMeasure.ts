@@ -1,5 +1,5 @@
 import { IContribution } from '../interface';
-import { IGraphicUtil } from '../..';
+import { IGraphicUtil } from '../../interface';
 
 export interface TextOptionsType {
   fontSize?: number;

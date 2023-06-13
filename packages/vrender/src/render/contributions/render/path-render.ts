@@ -1,5 +1,6 @@
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider, renderCommandList } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { renderCommandList } from '../../../common/render-command-list';
 import {
   IPath,
   ICustomPath2D,
@@ -9,13 +10,14 @@ import {
   IMarkAttribute
 } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
-import { getModelMatrix, getTheme, multiplyMat4Mat4, PATH_NUMBER_TYPE, shouldUseMat4 } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { IPathRenderContribution, PathRenderContribution } from './contributions/path-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 import { BaseRender } from './base-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 
 @injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
@@ -54,8 +56,8 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = getTheme(path, params?.theme).path;
     const {
-      fill = pathAttribute.fill == null ? !!path.attribute.fillColor : pathAttribute.fill,
-      stroke = pathAttribute.stroke == null ? !!path.attribute.strokeColor : pathAttribute.stroke,
+      fill = pathAttribute.fill,
+      stroke = pathAttribute.stroke,
       fillOpacity = pathAttribute.fillOpacity,
       strokeOpacity = pathAttribute.strokeOpacity,
       opacity = pathAttribute.opacity,

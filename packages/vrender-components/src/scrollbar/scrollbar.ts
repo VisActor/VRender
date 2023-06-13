@@ -24,12 +24,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     round: true,
     sliderSize: 20,
     sliderStyle: {
-      fill: true,
-      fillColor: 'rgba(0, 0, 0, .5)'
+      fill: 'rgba(0, 0, 0, .5)'
     },
     railStyle: {
-      fill: true,
-      fillColor: 'rgba(0, 0, 0, .0)'
+      fill: 'rgba(0, 0, 0, .0)'
     },
     padding: 2,
     scrollRange: [0, 1]

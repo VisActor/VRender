@@ -38,7 +38,7 @@ export function renderArc(num: number) {
         endAngle: 2 * Math.PI * Math.random(),
         x: 600 * Math.random(),
         y: 600 * Math.random(),
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },
     () => {

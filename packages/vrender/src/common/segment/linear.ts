@@ -1,7 +1,8 @@
-import { IPointLike, abs } from '@visactor/vutils';
-import { Direction, SegContext } from '../seg-context';
+import { abs, IPointLike } from '@visactor/vutils';
+import { SegContext } from '../seg-context';
 import { genCurveSegments } from './common';
-import { ACurveTypeClass, ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
+import { Direction } from '../enums';
+import { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -20,21 +21,26 @@ import { ACurveTypeClass, ALinearTypeClass, IGenSegmentParams, ISegPath2D } from
   THIS SOFTWARE.
  */
 
-// 基于d3-shape重构
-// https://github.com/d3/d3-shape/blob/main/src/curve/step.js
-export class Step extends ACurveTypeClass {
+// 基于d3-shape重构，定义绘制线段的方法
+// https://github.com/d3/d3-shape/blob/main/src/curve/linear.js
+export class Linear implements ILinearSegment {
   declare context: ISegPath2D;
-  declare _t: number;
   private _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
 
-  constructor(context: ISegPath2D, t: number = 0.5, startPoint?: IPointLike) {
-    super();
+  constructor(context: ISegPath2D, startPoint?: IPointLike) {
     this.context = context;
-    this._t = t;
-    this.startPoint = startPoint;
+    startPoint && (this.startPoint = startPoint);
   }
+  _x: number;
+  _y: number;
+  _x0: number;
+  _x1: number;
+  _y0: number;
+  _y1: number;
+  _line: number;
+  _point: number;
 
   areaStart() {
     this._line = 0;
@@ -43,25 +49,18 @@ export class Step extends ACurveTypeClass {
     this._line = NaN;
   }
   lineStart() {
-    this._x = this._y = NaN;
     this._point = 0;
     this.startPoint && this.point(this.startPoint);
   }
   lineEnd() {
-    if (0 < this._t && this._t < 1 && this._point === 2) {
-      this.context.lineTo(this._x, this._y, this._lastDefined !== false);
-    }
     if (this._line || (this._line !== 0 && this._point === 1)) {
       this.context.closePath();
     }
-    if (this._line >= 0) {
-      (this._t = 1 - this._t), (this._line = 1 - this._line);
-    }
+    this._line = 1 - this._line;
   }
   point(p: IPointLike): void {
     const x = p.x;
     const y = p.y;
-
     switch (this._point) {
       case 0:
         this._point = 1;
@@ -71,20 +70,12 @@ export class Step extends ACurveTypeClass {
         break;
       case 1:
         this._point = 2; // falls through
-      default: {
-        if (this._t <= 0) {
-          this.context.lineTo(this._x, y, this._lastDefined !== false && p.defined !== false);
-          this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
-        } else {
-          const x1 = this._x * (1 - this._t) + x * this._t;
-          this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false);
-          this.context.lineTo(x1, y, this._lastDefined !== false && p.defined !== false);
-        }
+      default:
+        this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
         break;
-      }
     }
+
     this._lastDefined = p.defined;
-    (this._x = x), (this._y = y);
   }
 
   tryUpdateLength(): number {
@@ -92,25 +83,26 @@ export class Step extends ACurveTypeClass {
   }
 }
 
-export function genStepSegments(points: IPointLike[], t: number, params: IGenSegmentParams = {}): SegContext | null {
+export function genLinearSegments(points: IPointLike[], params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
     return null;
   }
+
   const segContext = new SegContext(
-    'step',
+    'linear',
     direction ??
       (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
         ? Direction.ROW
         : Direction.COLUMN)
   );
-  const step = new Step(segContext, t, startPoint);
+  const linear = new Linear(segContext, startPoint);
 
-  genStepTypeSegments(step, points);
+  genLinearTypeSegments(linear, points);
 
   return segContext;
 }
 
-export function genStepTypeSegments(path: ALinearTypeClass, points: IPointLike[]): void {
+export function genLinearTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
   return genCurveSegments(path, points, 1);
 }

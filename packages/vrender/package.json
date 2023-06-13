@@ -1,8 +1,8 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.9.1",
+  "version": "0.9.2-fill-stroke.9",
   "description": "",
-  "sideEffects": false,
+  "sideEffects": true,
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -14,7 +14,8 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle",
+    "build": "bundle --clean",
+    "build-umd": "bundle --clean -f umd",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest",

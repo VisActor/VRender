@@ -1,7 +1,9 @@
 import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, RECT_NUMBER_TYPE } from '../../../graphic';
-import { ContributionProvider, createRectPath } from '../../../common';
+import { getTheme } from '../../../graphic/theme';
+import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
+import { createRectPath } from '../../../common/shape/rect';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
@@ -43,9 +45,9 @@ export class DefaultCanvasRectRender implements IGraphicRender {
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const rectAttribute = getTheme(rect, params?.theme).rect;
     const {
-      fill = rectAttribute.fill == null ? !!rect.attribute.fillColor : rectAttribute.fill,
+      fill = rectAttribute.fill,
       background,
-      stroke = rectAttribute.stroke == null ? !!rect.attribute.strokeColor : rectAttribute.stroke,
+      stroke = rectAttribute.stroke,
       width = rectAttribute.width,
       height = rectAttribute.height,
       borderRadius = rectAttribute.borderRadius,

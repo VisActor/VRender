@@ -10,9 +10,10 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
   static defaultAttributes: Partial<LineLabelAttrs> = {
     textStyle: {
       fontSize: 12,
-      fillColor: '#000',
+      fill: '#000',
       textAlign: 'center',
-      textBaseline: 'middle'
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
     position: 'end',
     offset: 6,

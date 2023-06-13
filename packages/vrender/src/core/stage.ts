@@ -17,7 +17,7 @@ import {
 import { IWindow, Window } from './window';
 import { Layer } from './layer';
 import { EventSystem } from '../event';
-import { container } from '../modules';
+import { container } from '../container';
 import { IDrawContext, IRenderService, RenderService } from '../render';
 import { Group, Node, Theme } from '../graphic';
 import { IPickerService, PickerService } from '../picker/picker-service';
@@ -26,7 +26,7 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
-import { defaultTicker } from '../index';
+import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
@@ -67,6 +67,7 @@ export class Stage extends Group implements IStage {
   private _subView: boolean; // 是否是存在子视图
   protected nextFrameRenderLayerSet: Set<Layer>;
   protected willNextFrameRender: boolean;
+  protected _cursor: string;
   renderCount: number;
   dirtyBounds: IBounds | null;
   option3d?: IOption3D;
@@ -246,8 +247,8 @@ export class Stage extends Group implements IStage {
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
     }
-    if (params.enableView3dTranform) {
-      this.enableView3dTranform();
+    if (params.enableView3dTransform) {
+      this.enableView3dTransform();
     }
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
@@ -327,7 +328,7 @@ export class Stage extends Group implements IStage {
     this._afterNextRenderCbs.push(cb);
   }
 
-  enableView3dTranform() {
+  enableView3dTransform() {
     if (this.view3dTranform) {
       return;
     }
@@ -691,6 +692,11 @@ export class Stage extends Group implements IStage {
   }
 
   setCursor(mode?: string): void {
+    this._cursor = mode;
     this.eventSystem.setCursor(mode);
+  }
+
+  getCursor() {
+    return this._cursor;
   }
 }

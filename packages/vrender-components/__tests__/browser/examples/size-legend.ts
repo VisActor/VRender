@@ -1,6 +1,31 @@
 import { createRect } from '@visactor/vrender';
-import { SizeContinuousLegend } from '../../../src';
+import { SizeContinuousLegend, Segment } from '../../../src';
 import render from '../../util/render';
+
+const segment = new Segment({
+  points: [
+    { x: 100, y: 100 },
+    { x: 200, y: 330 }
+  ],
+  startSymbol: {
+    visible: true,
+    clip: true,
+    symbolType: 'square',
+    style: {
+      fillOpacity: 0.4
+    }
+  },
+  endSymbol: {
+    visible: true,
+    clip: true,
+    symbolType: 'square',
+    style: {
+      fillOpacity: 0.4
+    }
+  }
+});
+
+console.log(segment);
 
 const hbLegend = new SizeContinuousLegend({
   x: 20,
@@ -71,3 +96,6 @@ const vrLegend = new SizeContinuousLegend({
   value: [50, 100]
 });
 const stage = render([hbLegend, htLegend, vlLegend, vrLegend], 'main');
+
+stage.defaultLayer.add(segment as any);
+stage.render();

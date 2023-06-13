@@ -37,7 +37,7 @@ describe('EventManager', () => {
     // // append a rect
     // rect = new VRender.CanvasRect(100, 100, 100, 100);
     // rect.fill = true;
-    // rect.fillColor = VRender.createPureColor('red');
+    // rect.fill = VRender.createPureColor('red');
     // layer.appendChild(rect);
 
     rect = new Rect({
@@ -45,14 +45,14 @@ describe('EventManager', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     stage.defaultLayer.add(rect);
 
     // // append a circle
     // const circle = new VRender.CanvasArc(300, 300, 0, 50, 0, Math.PI * 2, 0);
     // circle.fill = true;
-    // circle.fillColor = VRender.createPureColor('red');
+    // circle.fill = VRender.createPureColor('red');
     // layer.appendChild(circle);
 
     const circle = new Circle({
@@ -61,7 +61,7 @@ describe('EventManager', () => {
       endAngle: Math.PI * 2,
       x: 300,
       y: 300,
-      fillColor: 'red'
+      fill: 'red'
     });
 
     // append a group
@@ -78,7 +78,7 @@ describe('EventManager', () => {
 
     // target = new VRender.CanvasText(30, 20, 'Hello, VRender');
     // target.fill = true;
-    // target.fillColor = VRender.createPureColor('#000');
+    // target.fill = VRender.createPureColor('#000');
     // group.appendChild(target);
 
     target = new Rect({
@@ -86,7 +86,7 @@ describe('EventManager', () => {
       height: 18,
       x: 30,
       y: 20,
-      fillColor: 'red'
+      fill: 'red'
     });
     group.add(target);
 

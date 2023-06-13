@@ -23,9 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec, ITextMeasureOption } from '@visactor/vutils';
+import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { ITextFontParams, getContextFont } from '../../../common';
 import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
 import {
   ICamera,
@@ -42,9 +41,11 @@ import {
   vec3
 } from '../../../interface';
 import { createColor, getScaledStroke } from '../../../common/canvas-utils';
-import { global, graphicUtil, matrixAllocate } from '../../../modules';
+import { application } from '../../../application';
+import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { createConicalGradient } from './conical-gradient';
 import { transformMat4 } from '../../../core/camera';
+import { getContextFont } from '../../../common/text';
 
 const outP: [number, number, number] = [0, 0, 0];
 
@@ -817,12 +818,15 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.isPointInStroke(x, y);
   }
 
-  measureText(text: string, method: 'native' | 'simple' | 'quick' = global.measureTextMethod): { width: number } {
+  measureText(
+    text: string,
+    method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
+  ): { width: number } {
     if (!method || method === 'native') {
       return this.nativeContext.measureText(text);
     }
     if (!this.mathTextMeasure) {
-      this.mathTextMeasure = graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas);
+      this.mathTextMeasure = application.graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas);
     }
     this.mathTextMeasure.textSpec.fontFamily = this.fontFamily ?? DefaultTextStyle.fontFamily;
     this.mathTextMeasure.textSpec.fontSize = this.fontSize ?? DefaultTextStyle.fontSize;
@@ -959,11 +963,11 @@ export class BrowserContext2d implements IContext2d {
     const {
       fillOpacity = defaultParams.fillOpacity,
       opacity = defaultParams.opacity,
-      fillColor = defaultParams.fillColor
+      fill = defaultParams.fill
     } = attribute;
     if (fillOpacity > 1e-12 && opacity > 1e-12) {
       _context.globalAlpha = fillOpacity * opacity;
-      _context.fillStyle = createColor(this, fillColor, params, offsetX, offsetY);
+      _context.fillStyle = createColor(this, fill, params, offsetX, offsetY);
       // todo 小程序
     } else {
       _context.globalAlpha = fillOpacity * opacity;
@@ -1071,7 +1075,7 @@ export class BrowserContext2d implements IContext2d {
     if (strokeOpacity > 1e-12 && opacity > 1e-12) {
       const {
         lineWidth = defaultParams.lineWidth,
-        strokeColor = defaultParams.strokeColor,
+        stroke = defaultParams.stroke,
         lineJoin = defaultParams.lineJoin,
         lineDash = defaultParams.lineDash,
         lineCap = defaultParams.lineCap,
@@ -1079,7 +1083,7 @@ export class BrowserContext2d implements IContext2d {
       } = attribute;
       _context.globalAlpha = strokeOpacity * opacity;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
-      _context.strokeStyle = createColor(this, strokeColor, params, offsetX, offsetY);
+      _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
       _context.setLineDash(lineDash);
       _context.lineCap = lineCap;

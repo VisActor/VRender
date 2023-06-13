@@ -11,8 +11,7 @@ export function run() {
     height: 12,
     padding: [2, 0],
     railStyle: {
-      fill: true,
-      fillColor: 'rgba(0, 0, 0, .1)'
+      fill: 'rgba(0, 0, 0, .1)'
     },
     range: [0, 0.05]
     // scrollRange: [0.4, 0.8]
@@ -26,10 +25,9 @@ export function run() {
     height: 500,
     padding: [0, 2],
     railStyle: {
-      fill: true,
-      fillColor: 'rgba(0, 0, 0, .1)'
-      // stroke: true,
-      // strokeColor: 'red'
+      fill: 'rgba(0, 0, 0, .1)'
+      //
+      // stroke: 'red'
     },
     range: [0.1, 0.3]
   });

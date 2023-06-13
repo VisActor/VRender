@@ -1,14 +1,16 @@
 import { inject, injectable, named } from 'inversify';
 import { IGraphicAttribute, IContext2d, IGroup, IMarkAttribute, IThemeAttribute, mat4 } from '../../../interface';
-import { getModelMatrix, getTheme, GROUP_NUMBER_TYPE, multiplyMat4Mat4 } from '../../../graphic';
+import { getModelMatrix, getTheme, multiplyMat4Mat4 } from '../../../graphic';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { isArray } from '@visactor/vutils';
-import { ContributionProvider, createRectPath } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { GroupRenderContribution, IGroupRenderContribution } from './contributions/group-contribution-render';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -44,9 +46,9 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     // const groupAttribute = graphicService.themeService.getCurrentTheme().groupAttribute;
     const groupAttribute = getTheme(group, params?.theme).group;
     const {
-      fill = groupAttribute.fill == null ? !!group.attribute.fillColor : groupAttribute.fill,
+      fill = groupAttribute.fill,
       background,
-      stroke = groupAttribute.stroke == null ? !!group.attribute.strokeColor : groupAttribute.stroke,
+      stroke = groupAttribute.stroke,
       opacity = groupAttribute.opacity,
       width = groupAttribute.width,
       height = groupAttribute.height,

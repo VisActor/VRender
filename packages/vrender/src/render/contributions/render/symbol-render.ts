@@ -1,7 +1,8 @@
-import { mat4Allocate } from '../../../modules';
+import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { inject, injectable, named } from 'inversify';
-import { ContributionProvider } from '../../../common';
-import { getTheme, SYMBOL_NUMBER_TYPE } from '../../../graphic';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { getTheme } from '../../../graphic/theme';
+import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { BaseRender } from './base-render';
@@ -49,13 +50,13 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
 
     const {
       size = symbolAttribute.size,
-      fill = symbolAttribute.fill == null ? !!symbol.attribute.fillColor : symbolAttribute.fill,
+      fill = symbolAttribute.fill,
       background,
       fillOpacity = symbolAttribute.fillOpacity,
       strokeOpacity = symbolAttribute.strokeOpacity,
       opacity = symbolAttribute.opacity,
       lineWidth = symbolAttribute.lineWidth,
-      stroke = symbolAttribute.stroke == null ? !!symbol.attribute.strokeColor : symbolAttribute.stroke,
+      stroke = symbolAttribute.stroke,
       visible = symbolAttribute.visible
     } = symbol.attribute;
 

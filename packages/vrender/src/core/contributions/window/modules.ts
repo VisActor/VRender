@@ -1,6 +1,5 @@
 import { ContainerModule } from 'inversify';
-import { bindContributionProvider } from '../../../common/contribution-provider';
-import { WindowHandlerContribution } from '../..';
+import { WindowHandlerContribution } from '../../window';
 import { BrowserWindowHandlerContribution } from './browser-contribution';
 import { FeishuWindowHandlerContribution } from './feishu-contribution';
 import { TaroWindowHandlerContribution } from './taro-contribution';

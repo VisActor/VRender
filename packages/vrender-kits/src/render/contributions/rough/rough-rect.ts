@@ -57,10 +57,10 @@ export class RoughCanvasRectRender implements IGraphicRender {
     }
 
     const {
-      fill = rectAttribute.fill == null ? !!rect.attribute.fillColor : rectAttribute.fill,
-      stroke = rectAttribute.stroke == null ? !!rect.attribute.strokeColor : rectAttribute.stroke,
-      fillColor = rectAttribute.fillColor,
-      strokeColor = rectAttribute.strokeColor,
+      fill = rectAttribute.fill,
+      stroke = rectAttribute.stroke,
+      fillColor = rectAttribute.fill,
+      strokeColor = rectAttribute.stroke,
       width = rectAttribute.width,
       height = rectAttribute.height,
       lineWidth = rectAttribute.lineWidth,

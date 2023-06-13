@@ -1,4 +1,3 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import {
   IGraphicAttribute,
@@ -8,7 +7,6 @@ import {
   IPolygonGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { getScaledStroke } from '../../../../common';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,

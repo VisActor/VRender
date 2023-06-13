@@ -1,5 +1,5 @@
-import { IAABBBounds, IBounds } from '@visactor/vutils';
-import { renderCommandList } from '../../common';
+import { IBounds } from '@visactor/vutils';
+import { renderCommandList } from '../../common/render-command-list';
 import { IContext2d, ICustomPath2D, IGraphic } from '../../interface';
 import { ISymbolClass } from './interface';
 

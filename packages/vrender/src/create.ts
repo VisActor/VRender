@@ -1,4 +1,4 @@
-import { Stage } from './core';
+import { Stage } from './core/stage';
 import { IStageParams } from './interface/stage';
 
 export function createStage(params: Partial<IStageParams>) {

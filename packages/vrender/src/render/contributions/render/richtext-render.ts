@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
-import { createRectPath, parsePadding } from '../../../common';
-import { getTheme, RICHTEXT_NUMBER_TYPE } from '../../../graphic';
+import { createRectPath } from '../../../common/shape/rect';
+import { getTheme } from '../../../graphic/theme';
+import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender } from './graphic-render';
@@ -44,10 +45,10 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
       opacity = richtextIconAttribute.opacity,
       image: url,
       backgroundFill = richtextIconAttribute.backgroundFill,
-      backgroundFillColor = richtextIconAttribute.backgroundFillColor,
+      // backgroundFillColor = richtextIconAttribute.backgroundFillColor,
       backgroundFillOpacity = richtextIconAttribute.backgroundFillOpacity,
       backgroundStroke = richtextIconAttribute.backgroundStroke,
-      backgroundStrokeColor = richtextIconAttribute.backgroundStrokeColor,
+      // backgroundStrokeColor = richtextIconAttribute.backgroundStrokeColor,
       backgroundStrokeOpacity = richtextIconAttribute.backgroundStrokeOpacity,
       backgroundRadius = richtextIconAttribute.backgroundRadius,
       margin
@@ -78,13 +79,13 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
       if (backgroundFill) {
         // context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
         context.globalAlpha = backgroundFillOpacity;
-        context.fillStyle = backgroundFillColor as string;
+        context.fillStyle = backgroundFill as string;
         context.fill();
       }
       if (backgroundStroke) {
         // context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
         context.globalAlpha = backgroundStrokeOpacity;
-        context.strokeStyle = backgroundStrokeColor as string;
+        context.strokeStyle = backgroundStroke as string;
         context.stroke();
       }
     }

@@ -1,6 +1,6 @@
-import { IAABBBounds, IPoint, IPointLike } from '@visactor/vutils';
-import { Direction } from '../common';
-import { Releaseable } from './common';
+import type { IAABBBounds, IPoint, IPointLike } from '@visactor/vutils';
+import type { Releaseable, IDirection } from './common';
+import { CurveTypeEnum } from '../common/enums';
 
 export const strCommandMap = [
   'arc',
@@ -38,15 +38,6 @@ export type CommandStrType = [
   (number | boolean)?
 ];
 
-export enum ICurveTypeEnum {
-  CubicBezierCurve = 0,
-  QuadraticBezierCurve = 1,
-  ArcCurve = 2,
-  LineCurve = 3,
-  EllipseCurve = 4,
-  MoveCurve = 5
-}
-
 export interface ICurve<T> {
   type: number;
   defined: boolean;
@@ -56,11 +47,11 @@ export interface ICurve<T> {
   readonly p3?: T;
   getPointAt: (t: number) => IPointLike;
   getAngleAt: (t: number) => number;
-  getLength: (direction?: Direction) => number;
+  getLength: (direction?: IDirection) => number;
 }
 
 export interface ICubicBezierCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.CubicBezierCurve;
+  type: CurveTypeEnum.CubicBezierCurve;
   // p0: IPoint;
   readonly p1: IPoint;
   readonly p2: IPoint;
@@ -68,27 +59,27 @@ export interface ICubicBezierCurve extends ICurve<IPoint> {
 }
 
 export interface IQuadraticBezierCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.QuadraticBezierCurve;
+  type: CurveTypeEnum.QuadraticBezierCurve;
   // p0: IPoint;
   readonly p1: IPoint;
   readonly p2: IPoint;
 }
 
 export interface IArcCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.ArcCurve;
+  type: CurveTypeEnum.ArcCurve;
   // p0: IPoint;
   readonly p1: IPoint;
   radius: number;
 }
 
 export interface ILineCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.LineCurve;
+  type: CurveTypeEnum.LineCurve;
   // p0: IPoint;
   readonly p1: IPoint;
 }
 
 export interface IEllipseCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.EllipseCurve;
+  type: CurveTypeEnum.EllipseCurve;
   // p0: IPoint;
   radiusX: number;
   radiusY: number;
@@ -99,7 +90,7 @@ export interface IEllipseCurve extends ICurve<IPoint> {
 }
 
 export interface IMoveCurve extends ICurve<IPoint> {
-  type: ICurveTypeEnum.MoveCurve;
+  type: CurveTypeEnum.MoveCurve;
   // p0: IPoint;
   readonly p1: IPoint;
 }
@@ -109,7 +100,7 @@ export interface ICurvePath<T> {
   bounds?: IAABBBounds;
   getPointAt: (t: number) => IPointLike;
   getCurveLengths: () => number[];
-  getLength: (direction?: Direction) => number;
+  getLength: (direction?: IDirection) => number;
   getBounds?: () => IAABBBounds;
 }
 

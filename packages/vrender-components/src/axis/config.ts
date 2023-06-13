@@ -4,7 +4,7 @@ export const DEFAULT_AXIS_THEME = {
     padding: 0,
     textStyle: {
       fontSize: 12,
-      fillColor: '#333333',
+      fill: '#333333',
       fontWeight: 'normal',
       fillOpacity: 1
     }
@@ -16,7 +16,7 @@ export const DEFAULT_AXIS_THEME = {
     padding: 0,
     style: {
       fontSize: 12,
-      fillColor: '#333',
+      fill: '#333',
       fontWeight: 'normal',
       fillOpacity: 1
     }
@@ -28,7 +28,7 @@ export const DEFAULT_AXIS_THEME = {
     length: 4,
     style: {
       lineWidth: 1,
-      strokeColor: '#000',
+      stroke: '#000',
       strokeOpacity: 1
     }
   },
@@ -39,7 +39,7 @@ export const DEFAULT_AXIS_THEME = {
     length: 2,
     style: {
       lineWidth: 1,
-      strokeColor: '#999',
+      stroke: '#999',
       strokeOpacity: 1
     }
   },
@@ -47,14 +47,14 @@ export const DEFAULT_AXIS_THEME = {
     visible: true,
     style: {
       lineWidth: 1,
-      strokeColor: '#000',
+      stroke: '#000',
       strokeOpacity: 1
     }
   },
   grid: {
     style: {
       lineWidth: 1,
-      strokeColor: '#999',
+      stroke: '#999',
       strokeOpacity: 1,
       lineDash: [4, 4]
     }
@@ -63,7 +63,7 @@ export const DEFAULT_AXIS_THEME = {
     visible: false,
     style: {
       lineWidth: 1,
-      strokeColor: '#999',
+      stroke: '#999',
       strokeOpacity: 1,
       lineDash: [4, 4]
     }

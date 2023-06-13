@@ -13,8 +13,8 @@ export const page = () => {
       radius: 50,
       x: 350,
       y: 150,
-      fillColor: colorPools[10],
-      // strokeColor: 'red',
+      fill: colorPools[10],
+      // stroke: 'red',
       lineWidth: 2
     })
   );
@@ -25,7 +25,7 @@ export const page = () => {
       y: 200,
       width: 200,
       height: 300,
-      fillColor: colorPools[8]
+      fill: colorPools[8]
     })
   );
 
@@ -35,7 +35,7 @@ export const page = () => {
       y: 250,
       width: 100,
       height: 50,
-      fillColor: colorPools[7]
+      fill: colorPools[7]
     })
   );
 
@@ -45,7 +45,7 @@ export const page = () => {
       y: 250,
       width: 100,
       height: 50,
-      fillColor: colorPools[7]
+      fill: colorPools[7]
     })
   );
 
@@ -55,7 +55,7 @@ export const page = () => {
       y: 500,
       width: 50,
       height: 50,
-      fillColor: colorPools[7]
+      fill: colorPools[7]
     })
   );
 
@@ -65,7 +65,7 @@ export const page = () => {
       y: 500,
       width: 50,
       height: 50,
-      fillColor: colorPools[7]
+      fill: colorPools[7]
     })
   );
 
@@ -77,7 +77,7 @@ export const page = () => {
       y: rotateCenter[1],
       width: 5,
       height: 5,
-      fillColor: 'green'
+      fill: 'green'
     })
   );
 

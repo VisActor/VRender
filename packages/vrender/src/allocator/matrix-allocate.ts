@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import { IMatrix, IMatrixLike, Matrix } from '@visactor/vutils';
 import { IAllocate } from './interface';
 import { mat4, Releaseable } from '../interface';
@@ -13,7 +12,6 @@ export function createMat4(): mat4 {
   return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 }
 
-@injectable()
 export class DefaultMatrixAllocate implements IAllocate<IMatrix>, Releaseable {
   protected pools: IMatrix[] = [];
   allocate(a: number, b: number, c: number, d: number, e: number, f: number): IMatrix {
@@ -53,7 +51,6 @@ export class DefaultMatrixAllocate implements IAllocate<IMatrix>, Releaseable {
   }
 }
 
-@injectable()
 export class DefaultMat4Allocate implements IAllocate<mat4>, Releaseable {
   protected pools: mat4[] = [];
 
@@ -107,3 +104,6 @@ export class DefaultMat4Allocate implements IAllocate<mat4>, Releaseable {
     this.pools = [];
   }
 }
+
+export const matrixAllocate = new DefaultMatrixAllocate();
+export const mat4Allocate = new DefaultMat4Allocate();

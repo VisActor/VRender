@@ -16,8 +16,8 @@ export const page = () => {
       { x: 100, y: 100 },
       { x: 0, y: 100 }
     ],
-    fillColor: colorPools[10],
-    strokeColor: colorPools[5],
+    fill: colorPools[10],
+    stroke: colorPools[5],
     stroke: false,
     lineJoin: 'bevel',
     lineWidth: 20
@@ -36,9 +36,9 @@ export const page = () => {
         { x: 160, y: 100 },
         { x: 0, y: 100 }
       ],
-      fillColor: colorPools[10],
-      strokeColor: 'green',
-      stroke: true,
+      fill: colorPools[10],
+      stroke: 'green',
+      
       lineJoin: 'round',
       lineWidth: 1,
       // lineDash: [10, 10],
@@ -59,8 +59,8 @@ export const page = () => {
         { x: -100, y: 200 * Math.cos(Math.PI / 6) },
         { x: -100 - 200 * Math.sin(Math.PI / 6), y: 0 }
       ],
-      fillColor: colorPools[10],
-      strokeColor: 'green',
+      fill: colorPools[10],
+      stroke: 'green',
       lineWidth: 2,
       shadowBlur: 10,
       shadowOffsetX: 10,
@@ -108,7 +108,7 @@ export const page = () => {
     .loop(0)
     .to(
       {
-        fillColor: () => colorPools[~~(Math.random() * 10)]
+        fill: () => colorPools[~~(Math.random() * 10)]
       },
       1000,
       'quadIn'

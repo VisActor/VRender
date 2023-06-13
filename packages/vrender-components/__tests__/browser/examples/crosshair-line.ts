@@ -33,7 +33,7 @@ export function run() {
     start: { x: 100, y: 50 },
     end: { x: 100, y: 400 },
     lineStyle: {
-      strokeColor: '#000'
+      stroke: '#000'
     }
   });
 
@@ -41,7 +41,7 @@ export function run() {
     start: { x: 50, y: 300 },
     end: { x: 450, y: 300 },
     lineStyle: {
-      strokeColor: '#000'
+      stroke: '#000'
     }
   });
 
@@ -51,7 +51,7 @@ export function run() {
     start: center,
     end: endPoint,
     lineStyle: {
-      strokeColor: '#000'
+      stroke: '#000'
     }
   });
   const stage = render([cartesianCrosshair, polarCrosshair, cartesianHorizontalCrosshair], 'main');

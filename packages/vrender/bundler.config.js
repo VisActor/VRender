@@ -5,11 +5,12 @@
 module.exports = {
   formats: ["cjs", "es", "umd"],
   name: 'VRender',
-  umdOutputFilename: 'vrender',
-  globals: {
-    '@visactor/vutils': 'VUtils'
-  },
+  umdOutputFilename: 'index',
   external: [
-    "@visactor/vutils"
-  ]
+  ],
+  globals: {
+    'inversify': 'inversify',
+    'reflect-metadata': 'reflectMetadata',
+    '@visactor/vutils': 'VUtils'
+  }
 };

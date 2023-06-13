@@ -21,21 +21,21 @@ export function run() {
     text: guiObject.text,
     textStyle: {
       fontSize: 12,
-      fillColor: '#08979c'
+      fill: '#08979c'
     },
     panel: {
       visible: guiObject.backgroundVisible,
-      fill: true,
-      fillColor: '#e6fffb',
-      stroke: true,
-      strokeColor: '#87e8de',
+
+      fill: '#e6fffb',
+
+      stroke: '#87e8de',
       lineWidth: 1,
       borderRadius: 4
     },
     shape: {
       visible: guiObject.symbolVisible,
       symbolType: guiObject.symbolType,
-      fillColor: '#08979c'
+      fill: '#08979c'
     }
     // padding: 0
     // minWidth: 500
@@ -50,8 +50,8 @@ export function run() {
           { x: 200, y: 50 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       }),
       createLine({
@@ -60,8 +60,8 @@ export function run() {
           { x: 100, y: 200 }
         ],
         lineWidth: 1,
-        stroke: true,
-        strokeColor: '#ccc',
+
+        stroke: '#ccc',
         lineDash: [2]
       })
     ],
@@ -71,13 +71,13 @@ export function run() {
   console.log(tag, tag.AABBBounds.width(), tag.AABBBounds.height());
   tag.addEventListener('pointerenter', () => {
     tag.setAttribute('panel', {
-      fillColor: 'yellow'
+      fill: 'yellow'
     });
   });
 
   tag.addEventListener('pointerleave', () => {
     tag.setAttribute('panel', {
-      fillColor: '#e6fffb'
+      fill: '#e6fffb'
     });
   });
 

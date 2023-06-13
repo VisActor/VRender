@@ -1,6 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { ISegPath2D } from '../../common';
-import type { IGraphic, IFillStyle, IGraphicAttribute } from '../graphic';
+import type { ISegPath2D } from '../curve';
+import type { IGraphic, IGraphicAttribute } from '../graphic';
 import type { ICurveType } from '../common';
 
 export type IAreaAttribute = {
@@ -23,7 +23,7 @@ export interface IArea extends IGraphic<IAreaGraphicAttribute> {
 
 type ISegmentStyle = Pick<
   IGraphicAttribute,
-  'fillColor' | 'fillOpacity' | 'background' | 'texture' | 'textureColor' | 'textureSize' | 'texturePadding'
+  'fill' | 'fillOpacity' | 'background' | 'texture' | 'textureColor' | 'textureSize' | 'texturePadding'
 >;
 
 export interface IAreaSegment extends Partial<ISegmentStyle> {

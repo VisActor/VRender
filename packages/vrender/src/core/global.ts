@@ -1,6 +1,6 @@
 import { inject, injectable, named } from 'inversify';
 import { SyncHook } from '../tapable';
-import { ContributionProvider } from '../common';
+import { ContributionProvider } from '../common/contribution-provider';
 import { EnvContribution, EnvType, ICreateCanvasParams, IEnvContribution, IEnvParamsMap, IGlobal } from '../interface';
 
 const defaultEnv: EnvType = 'browser';

@@ -24,7 +24,7 @@ export function renderArea(num: number) {
       x: 600 * Math.random(),
       y: 600 * Math.random(),
       curveType: 'linear',
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)]
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)]
     });
   });
 }

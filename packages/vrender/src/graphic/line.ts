@@ -1,11 +1,11 @@
-import { AABBBounds, OBBBounds, transformBounds, IPointLike } from '@visactor/vutils';
+import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
 import { ILine, ILineGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { CustomPath2D, parsePadding, pointsInterpolation } from '../common';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const LINE_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { parsePadding, pointsInterpolation } from '../common/utils';
+import { CustomPath2D } from '../common/custom-path2d';
+import { LINE_NUMBER_TYPE } from './constants';
 
 const LINE_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -46,7 +46,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     const lineTheme = getTheme(this).line;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateLineAABBBounds(
+    const bounds = application.graphicService.updateLineAABBBounds(
       attribute,
       getTheme(this).line,
       this._AABBBounds,

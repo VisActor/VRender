@@ -1,11 +1,11 @@
-import { AABBBounds, OBBBounds, IPoint, transformBounds, IPointLike } from '@visactor/vutils';
-import { IArea, IAreaCacheItem, IAreaGraphicAttribute, IAreaSegment as ISegment } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
-import { CustomPath2D, parsePadding, pointsInterpolation } from '../common';
+import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { CustomPath2D } from '../common/custom-path2d';
+import { parsePadding, pointsInterpolation } from '../common/utils';
 import { getTheme } from './theme';
-import { graphicService } from '../modules';
-
-export const AREA_NUMBER_TYPE = genNumberType();
+import { application } from '../application';
+import { AREA_NUMBER_TYPE } from './constants';
 
 const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -43,7 +43,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
 
     const attribute = this.attribute;
-    const bounds = graphicService.updateAreaAABBBounds(
+    const bounds = application.graphicService.updateAreaAABBBounds(
       attribute,
       getTheme(this).area,
       this._AABBBounds,

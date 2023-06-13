@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Generator } from '../../../common';
+import { Generator } from '../../../common/generator';
 import { IWindow, IWindowHandlerContribution, IWindowParams } from '../..';
 import { ICanvas, IContext2d, IDomRectLike, EnvType, IGlobal } from '../../../interface';
 import { IBoundsLike } from '@visactor/vutils';

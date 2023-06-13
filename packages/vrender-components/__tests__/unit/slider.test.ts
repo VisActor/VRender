@@ -44,7 +44,7 @@ describe('Slider', () => {
           space: 8
         },
         handlerStyle: {
-          fillColor: 'transparent'
+          fill: 'transparent'
         }
       });
 
@@ -110,7 +110,7 @@ describe('Slider', () => {
           space: 8
         },
         handlerStyle: {
-          fillColor: 'transparent'
+          fill: 'transparent'
         }
       });
 
@@ -168,7 +168,7 @@ describe('Slider', () => {
         value: [10, 78],
         railStyle: {
           borderRadius: 5,
-          fillColor: 'yellow'
+          fill: 'yellow'
         },
         startText: {
           visible: true,
@@ -181,7 +181,7 @@ describe('Slider', () => {
           space: 8
         },
         handlerStyle: {
-          fillColor: 'transparent'
+          fill: 'transparent'
         }
       });
 
@@ -227,7 +227,7 @@ describe('Slider', () => {
         value: [10, 78],
         railStyle: {
           borderRadius: 5,
-          fillColor: 'yellow'
+          fill: 'yellow'
         },
         startText: {
           visible: true,
@@ -240,7 +240,7 @@ describe('Slider', () => {
           space: 8
         },
         handlerStyle: {
-          fillColor: 'transparent'
+          fill: 'transparent'
         }
       });
 

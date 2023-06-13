@@ -38,7 +38,7 @@ describe('Graphic-Bounds', () => {
     // // append a rect
     // rect = new VRender.CanvasRect(100, 100, 100, 100);
     // rect.fill = true;
-    // rect.fillColor = VRender.createPureColor('red');
+    // rect.fill = VRender.createPureColor('red');
     // layer.appendChild(rect);
 
     rect = new Rect({
@@ -46,14 +46,14 @@ describe('Graphic-Bounds', () => {
       height: 100,
       x: 100,
       y: 100,
-      fillColor: 'red'
+      fill: 'red'
     });
     // stage.defaultLayer.add(rect);
 
     // // append a circle
     // const circle = new VRender.CanvasArc(300, 300, 0, 50, 0, Math.PI * 2, 0);
     // circle.fill = true;
-    // circle.fillColor = VRender.createPureColor('red');
+    // circle.fill = VRender.createPureColor('red');
     // layer.appendChild(circle);
 
     circle = new Circle({
@@ -62,7 +62,7 @@ describe('Graphic-Bounds', () => {
       endAngle: Math.PI * 2,
       x: 300,
       y: 300,
-      fillColor: 'red'
+      fill: 'red'
     });
 
     // append a group
@@ -77,7 +77,7 @@ describe('Graphic-Bounds', () => {
 
     // target = new VRender.CanvasText(30, 20, 'Hello, VRender');
     // target.fill = true;
-    // target.fillColor = VRender.createPureColor('#000');
+    // target.fill = VRender.createPureColor('#000');
     // group.appendChild(target);
 
     group.add(rect);
@@ -114,7 +114,7 @@ describe('Graphic-Bounds', () => {
       height: 100,
       x: 0,
       y: 0,
-      fillColor: 'red'
+      fill: 'red'
     });
     group.add(rect2);
 

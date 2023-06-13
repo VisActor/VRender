@@ -4,7 +4,7 @@ import { clock } from '../util';
 import { WILDCARD } from '../constant';
 import type { FederatedPointerEvent } from '../federated-event';
 import type { IEventTarget } from '../interface';
-import { global } from '../../modules';
+import { application } from '../../application';
 
 /**
  * 代码参考 https://github.com/hammerjs/hammer.js
@@ -412,7 +412,7 @@ export class Gesture extends EventEmitter {
       return;
     }
 
-    this.throttleTimer = global.getRequestAnimationFrame()(() => {
+    this.throttleTimer = application.global.getRequestAnimationFrame()(() => {
       for (let i = 0, len = emitThrottles.length; i < len; i++) {
         const { type, ev } = emitThrottles[i];
         this.emitEvent(type, ev);

@@ -5,8 +5,7 @@ export const crateDemoGlyph = () => {
   const g = createGlyph({
     x: 300,
     y: 100,
-    strokeColor: 'green',
-    stroke: true,
+    stroke: 'green',
     lineWidth: 10
   });
 
@@ -16,7 +15,7 @@ export const crateDemoGlyph = () => {
     createRect({
       width: 100,
       height: 100,
-      fillColor: 'pink'
+      fill: 'pink'
     })
   );
 
@@ -26,7 +25,7 @@ export const crateDemoGlyph = () => {
     dx: 50,
     dy: 50,
     symbolType: 'star',
-    fillColor: 'green',
+    fill: 'green',
     stroke: true
   });
   subGraphic.push(symbol);

@@ -28,7 +28,12 @@ export enum Edge {
 }
 
 // 公共的stroke数组，避免大量数组生成
-const _strokeVec4: [boolean, boolean, boolean, boolean] = [false, false, false, false];
+const _strokeVec4: [boolean | string, boolean | string, boolean | string, boolean | string] = [
+  false,
+  false,
+  false,
+  false
+];
 /**
  * 解析stroke配置
  * @param stroke
@@ -38,28 +43,27 @@ export const parseStroke = (
   stroke: IStrokeStyle['stroke']
 ): {
   isFullStroke: boolean;
-  stroke: boolean[];
+  stroke: (boolean | string)[];
 } => {
   let isFullStroke: boolean = true;
   // 首先判断
   if (isBoolean(stroke, true)) {
     for (let i = 0; i < 4; i++) {
       _strokeVec4[i] = stroke as boolean;
+      isFullStroke &&= !!(_strokeVec4[i] ?? true);
     }
     isFullStroke = stroke as boolean;
   } else if (Array.isArray(stroke)) {
     // array
     for (let i = 0; i < 4; i++) {
       _strokeVec4[i] = !!stroke[i];
-      isFullStroke &&= _strokeVec4[i];
+      isFullStroke &&= !!_strokeVec4[i];
     }
-  } else if (isNumber(stroke, true)) {
-    // boolean
-    _strokeVec4[0] = !!((stroke as number) & Edge.Top);
-    _strokeVec4[1] = !!((stroke as number) & Edge.Right);
-    _strokeVec4[2] = !!((stroke as number) & Edge.Bottom);
-    _strokeVec4[3] = !!((stroke as number) & Edge.Left);
-    isFullStroke = _strokeVec4[0] && _strokeVec4[1] && _strokeVec4[2] && _strokeVec4[3];
+  } else {
+    _strokeVec4[0] = false;
+    _strokeVec4[1] = false;
+    _strokeVec4[2] = false;
+    _strokeVec4[3] = false;
   }
 
   return {
@@ -314,3 +318,14 @@ export const transformKeys = [
 export const isTransformKey = (key: string) => {
   return transformKeys.includes(key);
 };
+
+export function getAttributeFromDefaultAttrList(attr: Record<string, any> | Record<string, any>[], key: string) {
+  if (isArray(attr)) {
+    let val;
+    for (let i = 0; i < attr.length && val === undefined; i++) {
+      val = attr[i][key];
+    }
+    return val;
+  }
+  return attr[key];
+}

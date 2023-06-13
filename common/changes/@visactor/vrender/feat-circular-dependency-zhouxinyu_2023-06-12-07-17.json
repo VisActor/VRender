@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug that forgot to export container",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

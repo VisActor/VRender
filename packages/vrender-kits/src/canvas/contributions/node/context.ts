@@ -3,7 +3,6 @@ import { Matrix } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import type { EnvType, ICanvas, IContext2d } from '@visactor/vrender';
 import { BrowserContext2d } from '@visactor/vrender';
-import { CanvasRenderingContext2D, Image, CanvasPattern } from 'canvas';
 
 // https://github.com/konvajs/konva/blob/master/src/Context.ts
 const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);

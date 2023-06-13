@@ -1,13 +1,14 @@
 import { isArray, isNumber } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import { getTheme, POLYGON_NUMBER_TYPE } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { POLYGON_NUMBER_TYPE } from '../../../graphic/constants';
 import { IGraphicAttribute, IContext2d, IMarkAttribute, IPolygon, IThemeAttribute } from '../../../interface';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { IPolygonRenderContribution, PolygonRenderContribution } from './contributions/polygon-contribution-render';
-import { ContributionProvider } from '../../../common';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from './contributions/base-contribution-render';
 
 @injectable()
@@ -45,8 +46,8 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     const polygonAttribute = getTheme(polygon, params?.theme).polygon;
     const {
       points = polygonAttribute.points,
-      fill = polygonAttribute.fill == null ? !!polygon.attribute.fillColor : polygonAttribute.fill,
-      stroke = polygonAttribute.stroke == null ? !!polygon.attribute.strokeColor : polygonAttribute.stroke,
+      fill = polygonAttribute.fill,
+      stroke = polygonAttribute.stroke,
       borderRadius = polygonAttribute.borderRadius,
       fillOpacity = polygonAttribute.fillOpacity,
       background,

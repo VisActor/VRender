@@ -46,7 +46,7 @@ describe('Line Axis', () => {
         style: (datum, index) => {
           if (index === 0) {
             return {
-              strokeColor: 'red',
+              stroke: 'red',
               lineWidth: 2
             };
           }
@@ -59,7 +59,7 @@ describe('Line Axis', () => {
         style: (datum, index) => {
           if (index === 3) {
             return {
-              strokeColor: 'red',
+              stroke: 'red',
               lineWidth: 2
             };
           }
@@ -76,7 +76,7 @@ describe('Line Axis', () => {
         style: (value, index) => {
           if (index === 0) {
             return {
-              fillColor: 'red'
+              fill: 'red'
             };
           }
         }
@@ -93,7 +93,7 @@ describe('Line Axis', () => {
     expect(tickLineGroup.childrenCount).toBe(29);
     const tickLine = tickLineGroup.children.filter(child => child.name === AXIS_ELEMENT_NAME.tick);
     expect(tickLine.length).toBe(8);
-    expect((tickLine[0] as unknown as ILine).attribute.strokeColor).toBe('red');
+    expect((tickLine[0] as unknown as ILine).attribute.stroke).toBe('red');
     expect((tickLine[0] as unknown as ILine).attribute.points).toEqual([
       { x: 100, y: 100 },
       { x: 100, y: 120 }
@@ -101,7 +101,7 @@ describe('Line Axis', () => {
 
     const subTickLine = tickLineGroup.children.filter(child => child.name === AXIS_ELEMENT_NAME.subTick);
     expect(subTickLine.length).toBe(21);
-    expect((subTickLine[0] as unknown as ILine).attribute.strokeColor).toBe('#999');
+    expect((subTickLine[0] as unknown as ILine).attribute.stroke).toBe('#999');
     expect((subTickLine[0] as unknown as ILine).attribute.points).toEqual([
       { x: 114.28571428571428, y: 100 },
       { x: 114.28571428571428, y: 108 }
@@ -144,7 +144,7 @@ describe('Line Axis', () => {
         visible: true,
         length: 20,
         style: {
-          strokeColor: 'red'
+          stroke: 'red'
         }
       },
       subTick: {
@@ -152,7 +152,7 @@ describe('Line Axis', () => {
         count: 3,
         length: 8,
         style: {
-          strokeColor: 'blue'
+          stroke: 'blue'
         }
       },
       label: {
@@ -247,7 +247,7 @@ describe('Line Axis', () => {
       autoRotate: true,
       panel: {
         visible: true,
-        fillColor: 'rgba(0, 0, 0, 0.3)'
+        fill: 'rgba(0, 0, 0, 0.3)'
       },
       padding: 4,
       maxWidth: 60,
@@ -289,7 +289,7 @@ describe('Line Axis', () => {
         style: (datum, index) => {
           if (index === 1) {
             return {
-              strokeColor: 'red',
+              stroke: 'red',
               lineWidth: 3,
               lineDash: [4, 4]
             };
@@ -302,7 +302,7 @@ describe('Line Axis', () => {
       subGrid: {
         visible: true,
         style: {
-          strokeColor: 'red'
+          stroke: 'red'
         }
       }
     });

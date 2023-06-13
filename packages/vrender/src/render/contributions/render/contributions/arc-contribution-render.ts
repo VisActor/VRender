@@ -1,5 +1,4 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { injectable } from 'inversify';
 import {
   IGraphicAttribute,
   IContext2d,
@@ -8,14 +7,14 @@ import {
   IArcGraphicAttribute,
   IThemeAttribute
 } from '../../../../interface';
-import { getScaledStroke } from '../../../../common';
-import { drawArcPath } from '../arc-render';
+import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
   BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
   DefaultBaseTextureRenderContribution,
   IBaseRenderContribution
 } from './base-contribution-render';
+import { drawArcPath } from '../utils';
 
 export const ArcRenderContribution = Symbol.for('ArcRenderContribution');
 

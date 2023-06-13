@@ -10,7 +10,7 @@ export const page = () => {
 
   group.setTheme({
     common: {
-      strokeColor: 'blue',
+      stroke: 'blue',
       lineWidth: 3
     },
     symbol: {
@@ -21,8 +21,8 @@ export const page = () => {
   const g = createGlyph({
     x: 300,
     y: 100,
-    strokeColor: 'green',
-    stroke: true,
+    stroke: 'green',
+    
     lineWidth: 10
   });
 
@@ -34,7 +34,7 @@ export const page = () => {
       // y: 10,
       width: 100,
       height: 100,
-      fillColor: 'pink'
+      fill: 'pink'
     })
   );
 
@@ -44,7 +44,7 @@ export const page = () => {
     dx: 50,
     dy: 50,
     symbolType: 'star',
-    fillColor: 'green',
+    fill: 'green',
     stroke: true
   });
   subGraphic.push(symbol);
@@ -72,7 +72,7 @@ export const page = () => {
 
     return {
       attributes: {
-        strokeColor: 'red'
+        stroke: 'red'
       }
     };
   };

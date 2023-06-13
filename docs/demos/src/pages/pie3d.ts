@@ -41,7 +41,7 @@ function drawChartCanopus() {
   //       endAngle: a,
   //       outerRadius: 100,
   //       innerRadius: 60,
-  //       fillColor: colorPools[Math.floor(Math.random() * colorPools.length)],
+  //       fill: colorPools[Math.floor(Math.random() * colorPools.length)],
   //       height: 20,
   //       beta: -Math.PI / 3,
   //       anchor: [100, 100]
@@ -64,8 +64,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#6690F2',
+      
+      fill: '#6690F2',
       pickable: true
     },
     {
@@ -82,8 +82,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#70D6A3',
+      
+      fill: '#70D6A3',
       pickable: true
     },
     {
@@ -100,8 +100,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#B4E6E2',
+      
+      fill: '#B4E6E2',
       pickable: true
     },
     {
@@ -118,8 +118,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#63B5FC',
+      
+      fill: '#63B5FC',
       pickable: true
     },
     {
@@ -136,8 +136,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#FF8F62',
+      
+      fill: '#FF8F62',
       pickable: true
     },
     {
@@ -154,8 +154,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#FFDC83',
+      
+      fill: '#FFDC83',
       pickable: true
     },
     {
@@ -172,8 +172,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#BCC5FD',
+      
+      fill: '#BCC5FD',
       pickable: true
     },
     {
@@ -190,8 +190,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#A29BFE',
+      
+      fill: '#A29BFE',
       pickable: true
     },
     {
@@ -208,8 +208,8 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#63C4C7',
+      
+      fill: '#63C4C7',
       pickable: true
     },
     {
@@ -226,18 +226,18 @@ function drawChartCanopus() {
       innerRadius: 0,
       cornerRadius: 0,
       anchor3d: [876, 230],
-      fill: true,
-      fillColor: '#F68484',
+      
+      fill: '#F68484',
       pickable: true
     }
   ].forEach(attr => {
     const arc = createArc3d(attr as any);
     arcList.push(arc);
     arc.addEventListener('pointerenter', () => {
-      arc.setAttribute('fillColor', 'red');
+      arc.setAttribute('fill', 'red');
     });
     arc.addEventListener('pointerleave', () => {
-      arc.setAttribute('fillColor', colorPools[Math.floor(Math.random() * colorPools.length)]);
+      arc.setAttribute('fill', colorPools[Math.floor(Math.random() * colorPools.length)]);
     });
   });
 

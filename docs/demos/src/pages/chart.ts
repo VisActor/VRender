@@ -40,13 +40,13 @@ function _add(group, json) {
     const t = createText({ ...json.attribute, z: json.attribute.z || 0, keepDirIn3d: false });
     group.add(t);
     t.addEventListener('mousemove', () => {
-      t.setAttribute('fillColor', 'red');
+      t.setAttribute('fill', 'red');
     });
   } else if (json.type === 'symbol') {
     const s = createSymbol({ ...json.attribute, symbolType: 'square', keepDirIn3d: true });
     // s.animate().to({ scaleX: 0.5, scaleY: 0.5 }, 1000, 'linear');
     s.addEventListener('mouseenter', () => {
-      s.setAttribute('fillColor', 'red');
+      s.setAttribute('fill', 'red');
     });
     console.log(s);
     group.add(s);
@@ -97,13 +97,13 @@ export const page = () => {
   });
 
   const group = stage.defaultLayer.getChildren()[0] as IGroup;
-  // group.setAttribute('fillColor', 'green');
+  // group.setAttribute('fill', 'green');
 
   // group
   //   .animate()
   //   .play(
   //     new AnimateGroup(2000, [
-  //       new AttributeAnimate({ fillColor: 'red' }, 2000, 'quadIn'),
+  //       new AttributeAnimate({ fill: 'red' }, 2000, 'quadIn'),
   //       new GroupFadeIn(1000, 'quadIn')
   //     ])
   //   )
@@ -114,5 +114,5 @@ export const page = () => {
 
   stage.render(undefined, {});
 
-  stage.enableView3dTranform();
+  stage.enableView3dTransform();
 };

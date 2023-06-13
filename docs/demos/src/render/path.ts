@@ -85,7 +85,7 @@ export function renderPath(num: number) {
 
           path.closePath();
         },
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },
     () => {

@@ -1,8 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { ILayer, IStage, Global, IGlobal } from '../interface';
 import { Layer } from './layer';
-
-export const LayerService = Symbol.for('LayerService');
+import { ILayerService } from './interface';
 
 @injectable()
 export class DefaultLayerService implements ILayerService {
@@ -41,12 +40,4 @@ export class DefaultLayerService implements ILayerService {
     }
     return 0;
   }
-}
-
-export interface ILayerService {
-  createLayer: (stage: IStage) => ILayer;
-  releaseLayer: (stage: IStage, layer: ILayer) => void;
-  restLayerCount: (stage: IStage) => number;
-  getStageLayer: (stage: IStage) => ILayer[];
-  layerCount: (stage: IStage) => number;
 }

@@ -11,7 +11,7 @@ import { RectCrosshairAttrs } from './type';
 export class RectCrosshair extends CrosshairBase<RectCrosshairAttrs> {
   static defaultAttributes = {
     rectStyle: {
-      fillColor: '#b2bacf',
+      fill: '#b2bacf',
       opacity: 0.2
     }
   };

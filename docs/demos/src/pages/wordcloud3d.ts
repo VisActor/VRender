@@ -57,7 +57,7 @@ function drawChartCanopus1() {
         keepDirIn3d: true,
         z: nz,
         text: Math.floor(Math.random() * 100),
-        fillColor: colorPools[Math.floor(Math.random() * colorPools.length)]
+        fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
       group.add(t);
       t.animate().play(new RotateBySphereAnimate(null, null, 10000, 'linear', { center, r })).loop(Infinity);
@@ -97,7 +97,7 @@ function drawChartCanopus() {
   const center = { x: 0, y: 0, z: 0 };
   for (let i = 0; i < n; i++) {
     const th = ((Math.PI * 2) / n) * i;
-    const fillColor = colorPools[Math.floor(Math.random() * colorPools.length)];
+    const fill = colorPools[Math.floor(Math.random() * colorPools.length)];
     for (let j = 1; j < n; j++) {
       const p = (Math.PI / n) * j;
       const theta = th + (Math.random() * Math.PI) / 100;
@@ -112,7 +112,7 @@ function drawChartCanopus() {
         x,
         y,
         z,
-        fillColor
+        fill
       });
       group.add(t);
       t.onBeforeAttributeUpdate = (...args) => {
@@ -142,7 +142,7 @@ export const page = () => {
   //     { x: 99, y: 0 },
   //     { x: 99, y: 1000 }
   //   ],
-  //   strokeColor: 'black'
+  //   stroke: 'black'
   // }));
 
   // for (let i = 0; i < count; i++) {
@@ -156,7 +156,7 @@ export const page = () => {
   //       { x: 1000, y: i * 100 }
   //     ],
   //     lineDash: [5, 5],
-  //     strokeColor: 'grey'
+  //     stroke: 'grey'
   //   }) as any);
 
   //   leftGroup.add(createLine({
@@ -166,7 +166,7 @@ export const page = () => {
   //       { x: 90, y: i * 100 },
   //       { x: 99, y: i * 100 }
   //     ],
-  //     strokeColor: 'black'
+  //     stroke: 'black'
   //   }) as any);
   // }
 

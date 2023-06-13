@@ -1,8 +1,8 @@
-import { abs, IPointLike } from '@visactor/vutils';
-import { genLinearSegments } from './linear';
+import { IPointLike, abs } from '@visactor/vutils';
+import { SegContext } from '../seg-context';
 import { genCurveSegments } from './common';
-import { ACurveTypeClass, ALinearTypeClass, IGenSegmentParams, ISegPath2D } from './interface';
-import { Direction, SegContext } from '../seg-context';
+import { Direction } from '../enums';
+import type { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -22,30 +22,27 @@ import { Direction, SegContext } from '../seg-context';
  */
 
 // 基于d3-shape重构
-// https://github.com/d3/d3-shape/blob/main/src/curve/basis.js
-export function point(curveClass: Basis, x: number, y: number, defined: boolean) {
-  curveClass.context.bezierCurveTo(
-    (2 * curveClass._x0 + curveClass._x1) / 3,
-    (2 * curveClass._y0 + curveClass._y1) / 3,
-    (curveClass._x0 + 2 * curveClass._x1) / 3,
-    (curveClass._y0 + 2 * curveClass._y1) / 3,
-    (curveClass._x0 + 4 * curveClass._x1 + x) / 6,
-    (curveClass._y0 + 4 * curveClass._y1 + y) / 6,
-    defined
-  );
-}
-
-export class Basis extends ACurveTypeClass {
-  private _lastDefined?: boolean;
+// https://github.com/d3/d3-shape/blob/main/src/curve/step.js
+export class Step implements ICurvedSegment {
   declare context: ISegPath2D;
+  declare _t: number;
+  private _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
 
-  constructor(context: ISegPath2D, startPoint?: IPointLike) {
-    super();
+  constructor(context: ISegPath2D, t: number = 0.5, startPoint?: IPointLike) {
     this.context = context;
+    this._t = t;
     this.startPoint = startPoint;
   }
+  _x: number;
+  _y: number;
+  _x0: number;
+  _x1: number;
+  _y0: number;
+  _y1: number;
+  _line: number;
+  _point: number;
 
   areaStart() {
     this._line = 0;
@@ -54,29 +51,25 @@ export class Basis extends ACurveTypeClass {
     this._line = NaN;
   }
   lineStart() {
-    this._x0 = this._x1 = this._y0 = this._y1 = NaN;
+    this._x = this._y = NaN;
     this._point = 0;
     this.startPoint && this.point(this.startPoint);
   }
   lineEnd() {
-    switch (this._point) {
-      case 2:
-        point(
-          this,
-          this._x1 * 6 - (this._x0 + 4 * this._x1),
-          this._y1 * 6 - (this._y0 + 4 * this._y1),
-          this._lastDefined !== false
-        ); // falls through
-      // case 2: this.context.lineTo(this._x1, this._y1); break;
+    if (0 < this._t && this._t < 1 && this._point === 2) {
+      this.context.lineTo(this._x, this._y, this._lastDefined !== false);
     }
     if (this._line || (this._line !== 0 && this._point === 1)) {
       this.context.closePath();
     }
-    this._line = 1 - this._line;
+    if (this._line >= 0) {
+      (this._t = 1 - this._t), (this._line = 1 - this._line);
+    }
   }
   point(p: IPointLike): void {
     const x = p.x;
     const y = p.y;
+
     switch (this._point) {
       case 0:
         this._point = 1;
@@ -85,16 +78,21 @@ export class Basis extends ACurveTypeClass {
           : this.context.moveTo(x, y);
         break;
       case 1:
-        this._point = 2;
+        this._point = 2; // falls through
+      default: {
+        if (this._t <= 0) {
+          this.context.lineTo(this._x, y, this._lastDefined !== false && p.defined !== false);
+          this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
+        } else {
+          const x1 = this._x * (1 - this._t) + x * this._t;
+          this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false);
+          this.context.lineTo(x1, y, this._lastDefined !== false && p.defined !== false);
+        }
         break;
-      // case 2: this._point = 3; this.context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6, i, defined1, defined2); // falls through
-      default:
-        point(this, x, y, this._lastDefined !== false && p.defined !== false);
-        break;
+      }
     }
-    (this._x0 = this._x1), (this._x1 = x);
-    (this._y0 = this._y1), (this._y1 = y);
     this._lastDefined = p.defined;
+    (this._x = x), (this._y = y);
   }
 
   tryUpdateLength(): number {
@@ -102,28 +100,25 @@ export class Basis extends ACurveTypeClass {
   }
 }
 
-export function genBasisTypeSegments(path: ALinearTypeClass, points: IPointLike[]): void {
-  return genCurveSegments(path, points, 2);
-}
-
-export function genBasisSegments(points: IPointLike[], params: IGenSegmentParams = {}): SegContext | null {
+export function genStepSegments(points: IPointLike[], t: number, params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
     return null;
   }
-  if (points.length < 3 - Number(!!startPoint)) {
-    return genLinearSegments(points, params);
-  }
   const segContext = new SegContext(
-    'basis',
+    'step',
     direction ??
       (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
         ? Direction.ROW
         : Direction.COLUMN)
   );
-  const basis = new Basis(segContext, startPoint);
+  const step = new Step(segContext, t, startPoint);
 
-  genBasisTypeSegments(basis, points);
+  genStepTypeSegments(step, points);
 
   return segContext;
+}
+
+export function genStepTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
+  return genCurveSegments(path, points, 1);
 }

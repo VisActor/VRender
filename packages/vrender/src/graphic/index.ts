@@ -40,3 +40,4 @@ export * from './graphic';
 export * from './bounds';
 export * from './theme';
 export * from './tools';
+export * from './constants';

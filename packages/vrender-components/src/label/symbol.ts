@@ -9,9 +9,10 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
   static defaultAttributes: Partial<SymbolLabelAttrs> = {
     textStyle: {
       fontSize: 12,
-      fillColor: '#000',
+      fill: '#000',
       textAlign: 'center',
-      textBaseline: 'middle'
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
     position: 'top',
     offset: 5,

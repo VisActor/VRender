@@ -24,7 +24,7 @@ export function renderLine(num: number) {
       x: 600 * Math.random(),
       y: 600 * Math.random(),
       lineWidth: 6,
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)]
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)]
     });
   });
 }

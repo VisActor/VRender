@@ -1,5 +1,5 @@
 import { IPointLike } from '@visactor/vutils';
-import { ALinearTypeClass } from './interface';
+import { ILinearSegment } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -24,7 +24,7 @@ import { ALinearTypeClass } from './interface';
  * @param points
  * @param step
  */
-export function genCurveSegments(path: ALinearTypeClass, points: IPointLike[], step: number = 1): void {
+export function genCurveSegments(path: ILinearSegment, points: IPointLike[], step: number = 1): void {
   let defined0 = false;
   for (let i = 0, n = points.length; i <= n; i++) {
     if (i >= n === defined0) {

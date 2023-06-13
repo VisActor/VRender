@@ -1,6 +1,6 @@
 import { min, IPointLike } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
-import {
+import type {
   IArea,
   IAreaCacheItem,
   IAreaGraphicAttribute,
@@ -8,33 +8,34 @@ import {
   IContext2d,
   ICurveType,
   IMarkAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  ISegPath2D,
+  IDirection
 } from '../../../interface';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import {
   genLinearSegments,
   genBasisSegments,
   genMonotoneXSegments,
   genMonotoneYSegments,
   genStepSegments,
-  ISegPath2D,
-  Direction,
-  SegContext,
-  drawAreaSegments,
-  genLinearClosedSegments,
-  ContributionProvider
-} from '../../../common';
-import { AREA_NUMBER_TYPE, getTheme } from '../../../graphic';
+  genLinearClosedSegments
+} from '../../../common/segment';
+
+import { getTheme } from '../../../graphic/theme';
 import { IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution, IAreaRenderContribution } from './contributions/area-contribution-render';
-import { ArcRenderContribution, BaseRenderContributionTime } from './contributions';
+import { BaseRenderContributionTime } from './contributions';
+import { drawAreaSegments } from '../../../common/render-area';
+import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 
 function calcLineCache(
   points: IPointLike[],
   curveType: ICurveType,
-  params?: { direction?: Direction; startPoint?: IPointLike }
-): SegContext | null {
+  params?: { direction?: IDirection; startPoint?: IPointLike }
+): ISegPath2D | null {
   switch (curveType) {
     case 'linear':
       return genLinearSegments(points, params);
@@ -89,12 +90,12 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
   ) {
     const areaAttribute = getTheme(area, params?.theme).area;
     const {
-      fill = areaAttribute.fill == null ? !!area.attribute.fillColor : areaAttribute.fill,
+      fill = areaAttribute.fill,
       fillOpacity = areaAttribute.fillOpacity,
       opacity = areaAttribute.opacity,
       visible = areaAttribute.visible,
       z = areaAttribute.z,
-      stroke = !!area.attribute.strokeColor,
+      stroke = area.attribute.stroke,
       lineWidth = areaAttribute.lineWidth,
       strokeOpacity = areaAttribute.strokeOpacity
     } = area.attribute;
@@ -203,7 +204,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           skip = this.drawSegmentItem(
             context,
             cache,
-            fill,
+            !!fill,
             fillOpacity,
             area.attribute.segments[index],
             [areaAttribute, area.attribute],
@@ -235,7 +236,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             skip = this.drawSegmentItem(
               context,
               cache,
-              fill,
+              !!fill,
               fillOpacity,
               area.attribute.segments[index],
               [areaAttribute, area.attribute],
@@ -253,7 +254,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       this.drawSegmentItem(
         context,
         area.cacheArea as IAreaCacheItem,
-        fill,
+        !!fill,
         fillOpacity,
         area.attribute,
         areaAttribute,

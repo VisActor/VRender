@@ -3,13 +3,16 @@ import { IRenderSelector } from './render-slector';
 import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
 import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { IContext2d, MaybePromise, IGraphic, IGroup } from '../../../interface';
-import { ContributionProvider, createColor, findNextGraphic, foreach } from '../../../common';
+import { findNextGraphic, foreach } from '../../../common/sort';
+import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
 import { Bounds, getRectIntersect, IBounds, isRectIntersect } from '@visactor/vutils';
-import { ILayerService, LayerService } from '../../../core';
-import { container } from '../../../modules';
+import { LayerService } from '../../../core/constants';
+import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
 import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
+import { createColor } from '../../../common/canvas-utils';
+import { ILayerService } from '../../../core/interface';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染

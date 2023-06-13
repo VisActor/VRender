@@ -1,12 +1,12 @@
 import { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { getContextFont, parsePadding, textDrawOffsetX, textLayoutOffsetY } from '../common';
+import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout, LayoutType } from '../core/contributions/textMeasure/layout';
-import { graphicService, graphicUtil } from '../modules';
+import { application } from '../application';
 import { IText, ITextCache, ITextGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, genNumberType } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
-
-export const TEXT_NUMBER_TYPE = genNumberType();
+import { parsePadding } from '../common/utils';
+import { TEXT_NUMBER_TYPE } from './constants';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -94,17 +94,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textTheme = getTheme(this).text;
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const attribute = this.attribute;
-    const bounds = graphicService.updateTextAABBBounds(attribute, textTheme, this._AABBBounds, this) as AABBBounds;
-
-    this.clearUpdateBoundTag();
-    return bounds;
-  }
-  private updateAABBBounds(): AABBBounds {
-    const textTheme = getTheme(this).text;
-    const attribute = this.attribute;
-    const bounds = graphicService.updateTextAABBBounds(
+    const bounds = application.graphicService.updateTextAABBBounds(
       attribute,
-      getTheme(this).text,
+      textTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;
@@ -116,7 +108,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     this.clearUpdateBoundTag();
-
     return bounds;
   }
 
@@ -126,7 +117,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateSingallineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
-    const textMeasure = graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
     const buf = 2;
@@ -212,7 +203,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
 
-    const textMeasure = graphicUtil.textMeasure;
+    const textMeasure = application.graphicUtil.textMeasure;
     const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,

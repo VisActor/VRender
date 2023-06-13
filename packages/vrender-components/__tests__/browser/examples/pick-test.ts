@@ -18,9 +18,9 @@ export function run() {
     y: 0,
     size: 30,
     symbolType: 'circle',
-    fillColor: 'red',
+    fill: 'red',
     lineWidth: 2,
-    strokeColor: 'black'
+    stroke: 'black'
   });
 
   group.add(symbol);

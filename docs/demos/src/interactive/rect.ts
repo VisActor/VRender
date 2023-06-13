@@ -15,7 +15,7 @@ export function renderRect(num: number) {
       // scaleX: 2,
       // scaleY: 2,
       // angle: Math.PI / 4,
-      fillColor: colorPools[Math.ceil(Math.random() * colorPools.length)]
+      fill: colorPools[Math.ceil(Math.random() * colorPools.length)]
     });
   });
 }

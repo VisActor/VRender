@@ -525,7 +525,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
        *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
        *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
        */
-      if (label.stroke) {
+      if (label.stroke && label.lineWidth > 0) {
         /**
          * 1-b, 2-b
          * 若label存在stroke，label填充色为前景色，label描边色为背景色

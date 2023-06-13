@@ -66,5 +66,15 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "exports": {
+    "node": {
+      "import": "./es/index-node.js",
+      "require": "./cjs/index-node.js"
+    },
+    "default": {
+      "import": "./es/index.js",
+      "require": "./cjs/index.js"
+    }
   }
 }

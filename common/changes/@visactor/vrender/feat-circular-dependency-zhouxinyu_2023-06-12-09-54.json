@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "solve reflect import problem by export reflect",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

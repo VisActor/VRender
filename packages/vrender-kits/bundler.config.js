@@ -5,7 +5,7 @@
 module.exports = {
   formats: ["cjs", "es", "umd"],
   name: 'VRender.Kits',
-  umdOutputFilename: 'vrender-kits',
+  umdOutputFilename: 'index',
   globals: {
     'inversify': 'inversify',
     'reflect-metadata': 'reflectMetadata',

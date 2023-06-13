@@ -66,6 +66,12 @@
     "url": "https://VisActor.io/"
   },
   "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./es/index.js",
+      "require": "./dist/index.js"
+    }
+  },
   "publishConfig": {
     "access": "public"
   }

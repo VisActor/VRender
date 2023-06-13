@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix legend shape's color does not change in unselected state",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

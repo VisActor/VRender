@@ -9,3 +9,9 @@ import { xxx } from '@visactor/components';
 ```
 
 ## Develop
+
+```bash
+# start development server
+$ rush components
+
+```

@@ -20,11 +20,10 @@ export const page = () => {
           fontWeight: 'bold',
           fontSize: 30,
           fill: '#3f51b5',
-          fill: true
         },
         {
           text: '公司成立于2010年，创立目标是为Google Map提供一个',
-          fill: true
+          fill: '#000'
         },
         {
           text: '替代方案',
@@ -34,22 +33,22 @@ export const page = () => {
         },
         {
           text: '。在当时，Google Map',
-          fill: true
+          fill: '#000'
         },
         {
           text: '地图',
           textDecoration: 'line-through',
-          fill: true
+          fill: '#000'
         },
         {
           text: '[1]',
           script: 'super',
-          fill: true
+          fill: '#000'
         },
         {
           // "lineHeight": 30,
           text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
-          fill: true
+          fill: '#000'
         },
         {
           // "lineHeight": 30,
@@ -60,11 +59,11 @@ export const page = () => {
         {
           lineHeight: 30,
           text: 'Mapbox的成立旨在改变这种状况，为制图人员和开发人员提供工具来创建他们想要的地图。值得一提的是，目前Mapbox提供的制图工具几乎都是开源的。\nMapbox目前主要提供地理数据、渲染客户端和其他与地图相关的服务。Mapbox GL JS是他们的一个开源客户端库，用于渲染Web端的可交互地图。作为Mapbox生态系统的一部分，它通常与Mapbox提供的其他服务集成在一起，统一对外使用。',
-          fill: true
+          fill: '#000'
         },
         {
           text: '\n目前Mapbox公司的主营业务除了地图相关产品，还包括LBS(Location Based Services)服务、自动驾驶、自有数据(Boundaries, Traffic Data, Movement)以及车机服务。',
-          fill: true
+          fill: '#000'
         }
         // {
         //   "text": "当前值 219,300\n",
@@ -110,7 +109,7 @@ export const page = () => {
         // textAlign
         {
           text: '\ntextAlign: left',
-          fill: true
+          fill: '#000'
         },
         {
           // image: 'https://vega.github.io/images/idl-logo.png',
@@ -127,7 +126,7 @@ export const page = () => {
         },
         {
           text: '\ntextAlign: center',
-          
+          fill: '#000',
           textAlign: 'center'
         },
         {
@@ -139,11 +138,11 @@ export const page = () => {
           backgroundHeight: 34,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-1'
         },
         {
           text: '\ntextAlign: right',
-          
+          fill: '#000',
           textAlign: 'right'
         },
         {
@@ -155,13 +154,13 @@ export const page = () => {
           backgroundHeight: 34,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-2'
         },
 
         // textBaseline
         {
           text: '\ntextBaseline: top',
-          
+          fill: '#000',
           textBaseline: 'top'
         },
         {
@@ -174,11 +173,11 @@ export const page = () => {
           backgroundShowMode: 'hover',
           textBaseline: 'top',
 
-          id: 'circle-0'
+          id: 'circle-3'
         },
         {
           text: '\ntextBaseline: middle',
-          
+          fill: '#000',
           textBaseline: 'middle'
         },
         {
@@ -191,11 +190,11 @@ export const page = () => {
           backgroundShowMode: 'hover',
           textBaseline: 'middle',
 
-          id: 'circle-0'
+          id: 'circle-4'
         },
         {
           text: '\ntextBaseline: alphabetic',
-          
+          fill: '#000',
           textBaseline: 'alphabetic'
         },
         {
@@ -208,11 +207,11 @@ export const page = () => {
           backgroundShowMode: 'hover',
           textBaseline: 'alphabetic',
 
-          id: 'circle-0'
+          id: 'circle-5'
         },
         {
           text: '\ntextBaseline: bottom',
-          
+          fill: '#000',
           textBaseline: 'bottom'
         },
         {
@@ -225,18 +224,18 @@ export const page = () => {
           backgroundShowMode: 'hover',
           textBaseline: 'bottom',
 
-          id: 'circle-0'
+          id: 'circle-6'
         },
 
         // wrap
         {
           text: '\nlong lone lone lone lone lone text warps line',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
           text: ' line',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
@@ -248,7 +247,7 @@ export const page = () => {
           backgroundHeight: 34,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-7'
         },
 
         // pos
@@ -264,11 +263,11 @@ export const page = () => {
           backgroundHeight: 34,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-8'
         },
         {
           text: 'icon line start; ',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
@@ -280,16 +279,16 @@ export const page = () => {
           backgroundHeight: 34,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-9'
         },
         {
           text: 'icon line middle; ',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
           text: 'icon line end',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
@@ -301,11 +300,11 @@ export const page = () => {
           backgroundHeight: 50,
           backgroundShowMode: 'hover',
 
-          id: 'circle-0'
+          id: 'circle-10'
         },
         {
           text: '\nmargin',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
@@ -317,22 +316,24 @@ export const page = () => {
           backgroundHeight: 50,
           backgroundShowMode: 'hover',
           margin: [10, 5, 10, 10],
+          cursor: 'pointer',
 
-          id: 'circle-0'
+          id: 'circle-11'
         },
         {
           text: 'margin',
-          
+          fill: '#000',
           textAlign: 'left'
         },
         {
           text: '\nmargin margin margin',
-          
+          fill: '#000',
           textAlign: 'left'
         }
       ]
     })
   );
+  shapes[shapes.length - 1].bindIconEvent();
 
   shapes.push(
     createRichText({
@@ -396,7 +397,7 @@ export const page = () => {
         {
           text: '这',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -411,7 +412,7 @@ export const page = () => {
         {
           text: '是',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -426,7 +427,7 @@ export const page = () => {
         {
           text: '一',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -441,7 +442,7 @@ export const page = () => {
         {
           text: '个',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -456,7 +457,7 @@ export const page = () => {
         {
           text: '汉',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -472,7 +473,7 @@ export const page = () => {
           text: '【',
           direction: 'vertical',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -487,7 +488,7 @@ export const page = () => {
         {
           text: '放',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -502,7 +503,7 @@ export const page = () => {
         {
           text: '大',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -518,7 +519,7 @@ export const page = () => {
           text: 'a0',
           direction: 'vertical',
           
-          stroke: false,
+          // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
           fontSize: 12,
@@ -539,7 +540,7 @@ export const page = () => {
       x: 900,
       y: 300,
       radius: 5,
-      fill: true
+      fill: '#000'
     })
   );
   shapes.push(
@@ -552,13 +553,14 @@ export const page = () => {
       textConfig: [
         {
           text: '富文本全局',
-          fill: true
+          fill: '#000'
         },
         {
           text: '\ntextBaseline: middle',
-          fill: true
+          fill: '#000'
         }
-      ]
+      ],
+      cursor: 'pointer'
     })
   );
 
@@ -567,7 +569,7 @@ export const page = () => {
       x: 900,
       y: 400,
       radius: 5,
-      fill: true
+      fill: '#000'
     })
   );
   shapes.push(
@@ -580,11 +582,11 @@ export const page = () => {
       textConfig: [
         {
           text: '富文本全局',
-          fill: true
+          fill: '#000'
         },
         {
           text: '\ntextBaseline: bottom',
-          fill: true
+          fill: '#000'
         }
       ]
     })
@@ -595,7 +597,7 @@ export const page = () => {
       x: 900,
       y: 500,
       radius: 5,
-      fill: true
+      fill: '#000'
     })
   );
   shapes.push(
@@ -608,11 +610,11 @@ export const page = () => {
       textConfig: [
         {
           text: '富文本全局',
-          fill: true
+          fill: '#000'
         },
         {
           text: '\ntextAlign: center',
-          fill: true
+          fill: '#000'
         }
       ]
     })
@@ -623,7 +625,7 @@ export const page = () => {
       x: 900,
       y: 600,
       radius: 5,
-      fill: true
+      fill: '#000'
     })
   );
   shapes.push(
@@ -636,11 +638,11 @@ export const page = () => {
       textConfig: [
         {
           text: '富文本全局',
-          fill: true
+          fill: '#000'
         },
         {
           text: '\ntextAlign: right',
-          fill: true
+          fill: '#000'
         }
       ]
     })

@@ -319,14 +319,14 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         this._currentHoverIcon?.setHoverState(false);
         this._currentHoverIcon = pickedIcon;
         this._currentHoverIcon.setHoverState(true);
-        if (pickedIcon.attribute.cursor) {
-          this.stage?.setCursor(pickedIcon.attribute.cursor);
-        }
+        this.stage?.setCursor(pickedIcon.attribute.cursor);
         this.stage?.renderNextFrame();
       } else if (!pickedIcon && this._currentHoverIcon) {
         this._currentHoverIcon.setHoverState(false);
         this._currentHoverIcon = null;
         this.stage?.setCursor();
+        // console.log('setCursor()');
+
         this.stage?.renderNextFrame();
       }
     });
@@ -352,7 +352,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     // }
     let pickIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach(icon => {
-      if (icon.containsPoint(point.x - x, point.y - y)) {
+      if (icon.AABBBounds.containsPoint({ x: point.x - x, y: point.y - y })) {
         pickIcon = icon;
 
         pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x;

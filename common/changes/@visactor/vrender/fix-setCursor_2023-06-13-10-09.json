@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug that will be overwritten after stage.setCursor",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

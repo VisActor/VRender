@@ -11,7 +11,8 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
       fontSize: 12,
       fill: '#000',
       textAlign: 'center',
-      textBaseline: 'middle'
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
     position: 'top',
     offset: 5,

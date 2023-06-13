@@ -5,7 +5,7 @@
 module.exports = {
   formats: ["cjs", "es", "umd"],
   name: 'ReactVRender.Utils',
-  umdOutputFilename: 'reactvrender.utils',
+  umdOutputFilename: 'index',
   globals: {
     '@visactor/vrender': 'VRender',
     '@visactor/vutils': 'VUtils',

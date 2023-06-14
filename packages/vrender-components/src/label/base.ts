@@ -252,7 +252,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
     if (avoidBaseMark) {
       this._baseMarks?.forEach(mark => {
-        mark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, mark.AABBBounds));
+        mark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, mark.AABBBounds, true));
       });
     }
 
@@ -268,25 +268,25 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce)) {
         // 如果配置了限制在图形内部，需要提前判断；
         if (!checkBounds) {
-          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds));
+          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push({
             ...text.attribute,
-            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds),
-            _computedBound: text.AABBBounds
+            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)
           });
           continue;
         }
 
         if (checkBounds && baseMark?.AABBBounds && canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
-          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds));
+          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push({ ...text.attribute, _insideGraphic: true, _computedBound: text.AABBBounds });
           continue;
         }
       }
 
+      let hasPlace: ReturnType<typeof place> = false;
       // 发生碰撞，根据策略寻找可放置的位置
       for (let j = 0; j < strategy.length; j++) {
-        const hasPlace = place(
+        hasPlace = place(
           bmpTool,
           bitmap,
           strategy[j],
@@ -295,17 +295,19 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           this.getGraphicBounds(baseMark, labels[i]),
           this.labeling
         );
-        if (hasPlace) {
+        if (hasPlace !== false) {
           result.push({
             ...text.attribute,
-            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds),
-            _computedBound: text.AABBBounds
+            x: hasPlace.x,
+            y: hasPlace.y,
+            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)
           });
           break;
         }
       }
 
-      !hideOnHit &&
+      !hasPlace &&
+        !hideOnHit &&
         result.push({
           ...text.attribute,
           _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds),

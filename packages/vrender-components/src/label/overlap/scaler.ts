@@ -1,4 +1,4 @@
-import { IBoundsLike } from '@visactor/vutils';
+import { IBoundsLike, clamp as clampRange } from '@visactor/vutils';
 import { bitmap } from './bitmap';
 
 /**
@@ -48,7 +48,21 @@ export function bitmapTool(width: number, height: number, padding = 0) {
   return scale;
 }
 
-export function boundToRange($: BitmapTool, bound: IBoundsLike) {
+export function boundToRange($: BitmapTool, bound: IBoundsLike, clamp: boolean = false) {
+  if (clamp) {
+    const { x1, x2, y1, y2 } = bound;
+    const _x1 = clampRange(x1, 0, $.width);
+    const _x2 = clampRange(x2, 0, $.width);
+    const _y1 = clampRange(y1, 0, $.height);
+    const _y2 = clampRange(y2, 0, $.height);
+    return {
+      x1: $(_x1),
+      x2: $(_x2),
+      y1: $(_y1),
+      y2: $(_y2)
+    };
+  }
+
   return {
     x1: $(bound.x1),
     x2: $(bound.x2),

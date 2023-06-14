@@ -1,4 +1,4 @@
-import { Text, createText } from '@visactor/vrender';
+import { Text } from '@visactor/vrender';
 import { IAABBBounds, IBoundsLike, isFunction } from '@visactor/vutils';
 import { PointLocationCfg } from '../../core/type';
 import type { LabelBase } from '../base';
@@ -67,18 +67,18 @@ export function placeToCandidates(
   text: Text,
   candidates: PointLocationCfg[] = [],
   clampForce = true
-) {
+): PointLocationCfg | false {
   for (let i = 0; i < candidates.length; i++) {
-    const tempText = createText(text.attribute) as Text;
+    const tempText = text.clone();
     tempText.setAttributes(candidates[i]);
     tempText.update();
 
     if (canPlace($, bitmap, boundToRange($, tempText.AABBBounds), clampForce)) {
-      bitmap.setRange(boundToRange($, tempText.AABBBounds));
-      text.setAttributes(candidates[i]);
-      return true;
+      bitmap.setRange(boundToRange($, tempText.AABBBounds, true));
+      return candidates[i];
     }
   }
+  return false;
 }
 
 export function place<T extends BaseLabelAttrs>(
@@ -89,14 +89,14 @@ export function place<T extends BaseLabelAttrs>(
   text: Text,
   bounds: IBoundsLike,
   labeling?: LabelBase<T>['labeling']
-): boolean {
+): PointLocationCfg | false {
   if (s.type === 'bound' || s.type === 'position') {
     if (isFunction(labeling)) {
       // TODO：这里可以 filter 掉初始位置，提升一部分性能
       const userPosition = isFunction(s.position) ? s.position(text.attribute) : s.position;
       const positions = (userPosition || defaultLabelPosition(attrs.type)) as string[];
       const candidates = positions.map(p => labeling(text.AABBBounds, bounds, p, attrs.offset) as PointLocationCfg);
-      return !!placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
+      return placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
     }
     return false;
   }
@@ -106,7 +106,7 @@ export function place<T extends BaseLabelAttrs>(
     const candidates = offset.map(dy => {
       return { x: text.attribute.x as number, y: (text.attribute.y as number) + dy };
     });
-    return !!placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
+    return placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
   }
 
   if (s.type === 'moveX') {
@@ -114,7 +114,7 @@ export function place<T extends BaseLabelAttrs>(
     const candidates = offset.map(dx => {
       return { x: (text.attribute.x as number) + dx, y: text.attribute.y as number };
     });
-    return !!placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
+    return placeToCandidates($, bitmap, text, candidates, (attrs.overlap as OverlapAttrs)?.clampForce);
   }
   return false;
 }

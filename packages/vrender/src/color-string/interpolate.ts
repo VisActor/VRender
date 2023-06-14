@@ -8,6 +8,9 @@ export function interpolateColor(
   alphaChannel: boolean,
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor {
+  if (!(from && to)) {
+    return (from as string) || (to as string) || false;
+  }
   let fromArray: [number, number, number, number];
   let toArray: [number, number, number, number];
   let fromGradient: boolean = false;

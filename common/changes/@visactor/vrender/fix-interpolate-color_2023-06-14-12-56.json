@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of interpolate color",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

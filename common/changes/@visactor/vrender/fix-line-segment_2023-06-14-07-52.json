@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the defined bug in basis and monotone curve",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -60,7 +60,8 @@ function point(curveClass: MonotoneX | MonotoneY, t0: number, t1: number, define
 }
 
 export class MonotoneX implements ICurvedSegment {
-  protected _lastDefined?: boolean;
+  protected _lastDefined1?: boolean;
+  protected _lastDefined2?: boolean;
   declare context: ISegPath2D;
   declare _t0: number;
 
@@ -93,10 +94,10 @@ export class MonotoneX implements ICurvedSegment {
   lineEnd() {
     switch (this._point) {
       case 2:
-        this.context.lineTo(this._x1, this._y1, this._lastDefined !== false);
+        this.context.lineTo(this._x1, this._y1, this._lastDefined2 !== false);
         break;
       case 3:
-        point(this, this._t0, slope2(this, this._t0), this._lastDefined !== false);
+        point(this, this._t0, slope2(this, this._t0), this._lastDefined2 !== false);
         break;
     }
     if (this._line || (this._line !== 0 && this._point === 1)) {
@@ -116,7 +117,7 @@ export class MonotoneX implements ICurvedSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false)
+          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false)
           : this.context.moveTo(x, y);
         break;
       case 1:
@@ -124,17 +125,23 @@ export class MonotoneX implements ICurvedSegment {
         break;
       case 2:
         this._point = 3;
-        point(this, slope2(this, (t1 = slope3(this, x, y))), t1, this._lastDefined !== false && p.defined !== false);
+        point(
+          this,
+          slope2(this, (t1 = slope3(this, x, y))),
+          t1,
+          this._lastDefined1 !== false && this._lastDefined2 !== false
+        );
         break;
       default:
-        point(this, this._t0, (t1 = slope3(this, x, y)), this._lastDefined !== false && p.defined !== false);
+        point(this, this._t0, (t1 = slope3(this, x, y)), this._lastDefined1 !== false && this._lastDefined2 !== false);
         break;
     }
 
     (this._x0 = this._x1), (this._x1 = x);
     (this._y0 = this._y1), (this._y1 = y);
     this._t0 = t1;
-    this._lastDefined = p.defined !== false;
+    this._lastDefined1 = this._lastDefined2;
+    this._lastDefined2 = p.defined !== false;
   }
 
   tryUpdateLength(): number {

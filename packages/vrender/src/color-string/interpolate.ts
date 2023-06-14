@@ -1,6 +1,18 @@
 import { ColorStore, ColorType } from './index';
 import { IGradientColor, ILinearGradient, IRadialGradient, IConicalGradient } from '../interface';
 
+function colorArrayToString(
+  color: string | IGradientColor | [number, number, number, number],
+  alphaChannel: boolean = false
+) {
+  if (Array.isArray(color)) {
+    return alphaChannel
+      ? `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])},${color[3].toFixed(2)})`
+      : `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])})`;
+  }
+  return color;
+}
+
 export function interpolateColor(
   from: [number, number, number, number] | string | IGradientColor,
   to: [number, number, number, number] | string | IGradientColor,
@@ -9,7 +21,7 @@ export function interpolateColor(
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor {
   if (!(from && to)) {
-    return (from as string) || (to as string) || false;
+    return (from && colorArrayToString(from)) || (to && colorArrayToString(to)) || false;
   }
   let fromArray: [number, number, number, number];
   let toArray: [number, number, number, number];
@@ -55,9 +67,7 @@ export function interpolateColor(
   }
   cb && cb(fromArray, toArray);
   const result = interpolatePureColorArray(fromArray, toArray, ratio);
-  return alphaChannel
-    ? `rgb(${Math.round(result[0])},${Math.round(result[1])},${Math.round(result[2])},${result[3].toFixed(2)})`
-    : `rgb(${Math.round(result[0])},${Math.round(result[1])},${Math.round(result[2])})`;
+  return colorArrayToString(result, alphaChannel);
 }
 
 export function interpolateGradientLinearColor(

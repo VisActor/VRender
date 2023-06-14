@@ -37,7 +37,8 @@ export function point(curveClass: Basis, x: number, y: number, defined: boolean)
 }
 
 export class Basis implements ICurvedSegment {
-  private _lastDefined?: boolean;
+  private _lastDefined1?: boolean;
+  private _lastDefined2?: boolean;
   declare context: ISegPath2D;
 
   protected startPoint?: IPointLike;
@@ -73,7 +74,7 @@ export class Basis implements ICurvedSegment {
           this,
           this._x1 * 6 - (this._x0 + 4 * this._x1),
           this._y1 * 6 - (this._y0 + 4 * this._y1),
-          this._lastDefined !== false
+          this._lastDefined1 !== false && this._lastDefined2 !== false
         ); // falls through
       // case 2: this.context.lineTo(this._x1, this._y1); break;
     }
@@ -89,7 +90,7 @@ export class Basis implements ICurvedSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false)
+          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false)
           : this.context.moveTo(x, y);
         break;
       case 1:
@@ -97,12 +98,13 @@ export class Basis implements ICurvedSegment {
         break;
       // case 2: this._point = 3; this.context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6, i, defined1, defined2); // falls through
       default:
-        point(this, x, y, this._lastDefined !== false && p.defined !== false);
+        point(this, x, y, this._lastDefined1 !== false && this._lastDefined2 !== false);
         break;
     }
     (this._x0 = this._x1), (this._x1 = x);
     (this._y0 = this._y1), (this._y1 = y);
-    this._lastDefined = p.defined;
+    this._lastDefined1 = this._lastDefined2;
+    this._lastDefined2 = p.defined;
   }
 
   tryUpdateLength(): number {

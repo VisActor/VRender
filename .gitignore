@@ -84,10 +84,6 @@ common/temp/
 common/autoinstallers/*/.npmrc
 **/.rush/temp/
 
-.npmrc
-
-.npmrc-publish
-
 # Heft temporary files
 .heft
 

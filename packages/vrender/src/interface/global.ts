@@ -1,4 +1,4 @@
-import { Dict, IPoint } from '@visactor/vutils';
+import { Dict, IPoint, IPointLike } from '@visactor/vutils';
 import type { SyncHook } from '../tapable';
 import { ICanvasLike } from './canvas';
 import { IEventElement } from './common';
@@ -81,7 +81,7 @@ export interface IEnvContribution
   /**
    * 将窗口坐标转换为画布坐标，小程序/小组件环境需要兼容
    */
-  mapToCanvasPoint?: (event: any) => IPoint | null;
+  mapToCanvasPoint?: (event: any, domElement?: any) => IPointLike | null;
 
   loadImage: (url: string) => Promise<{
     loadState: 'success' | 'fail';
@@ -198,7 +198,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   /**
    * 将窗口坐标转换为画布坐标，小程序/小组件环境需要兼容
    */
-  mapToCanvasPoint: (nativeEvent: any) => IPoint | null;
+  mapToCanvasPoint: (nativeEvent: any, domElement?: any) => IPointLike | null;
 
   loadImage: (url: string) => Promise<{
     loadState: 'success' | 'fail';

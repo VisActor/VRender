@@ -42,7 +42,16 @@ export function interpolateColor(
     toGradient = true;
   }
   if (fromGradient !== toGradient) {
-    return false;
+    // 纯色到渐变色，那就将纯色转成渐变色
+    const gradient: IGradientColor = (fromGradient ? from : to) as IGradientColor;
+    const pure = (fromGradient ? to : from) as string | [number, number, number, number];
+    const gradientFromPure: IGradientColor = {
+      ...gradient,
+      stops: gradient.stops.map(v => ({ ...v, color: colorArrayToString(pure) as string }))
+    };
+    return fromGradient
+      ? interpolateColor(gradient, gradientFromPure, ratio, alphaChannel, cb)
+      : interpolateColor(gradientFromPure, gradient, ratio, alphaChannel, cb);
   }
 
   if (fromGradient) {

@@ -2,6 +2,7 @@ import { injectable } from 'inversify';
 import { Generator } from '../../../common/generator';
 import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
+import { IPoint, IPointLike } from '@visactor/vutils';
 
 export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
   const img = document.createElement('img');
@@ -42,6 +43,23 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
       this.supportsPointerEvents = false;
     }
     this.applyStyles = true;
+  }
+
+  mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent, domElement?: HTMLElement): IPointLike {
+    if (domElement) {
+      const { clientX: x, clientY: y } = nativeEvent;
+      const rect = domElement.getBoundingClientRect();
+      const scaleX = rect.width / domElement.offsetWidth;
+      const scaleY = rect.width / domElement.offsetWidth;
+      return {
+        x: (x - rect.left) / scaleX,
+        y: (y - rect.top) / scaleY
+      };
+    }
+    return {
+      x: nativeEvent.offsetX,
+      y: nativeEvent.offsetY
+    };
   }
 
   loadImage(url: string): Promise<{

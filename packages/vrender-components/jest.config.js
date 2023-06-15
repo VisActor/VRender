@@ -19,6 +19,7 @@ module.exports = {
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.ts'],
   coverageReporters: ['json-summary', 'lcov'],
+  setupFiles: ['./setup-mock.js'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
   moduleNameMapper: {
     '@visactor/vrender': path.resolve(__dirname, '../vrender/src/index.ts')

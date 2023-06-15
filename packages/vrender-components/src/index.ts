@@ -1,4 +1,5 @@
-export const version = '0.1.0';
+// 导出版本号
+export const version = __VERSION__;
 
 export * from './core/base';
 export * from './scrollbar';

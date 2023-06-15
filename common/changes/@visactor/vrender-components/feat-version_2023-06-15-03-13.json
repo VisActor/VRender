@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "export version",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

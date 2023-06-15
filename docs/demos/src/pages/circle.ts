@@ -23,12 +23,54 @@ export const page = () => {
     stroke: 'green',
   }));
 
-  graphics.push(createCircle({
+  const stage = createStage({
+    canvas: 'main',
+    autoRender: true
+  });
+  const c1 = {
+    gradient: 'radial',
+    x0: 0.5,
+    y0: 0,
+    r0: 0,
+    x1: 0.5,
+    y1: 1,
+    r1: 0.7,
+    stops: [
+      {
+        offset: 0,
+        color: 'rgba(255,255,255,0.5)'
+      },
+      {
+        offset: 1,
+        color: '#6690F2'
+      }
+    ]
+  }
+  const c2 = {
+    gradient: 'radial',
+    x0: 0.5,
+    y0: 0,
+    r0: 0,
+    x1: 0.5,
+    y1: 1,
+    r1: 0.7,
+    stops: [
+      {
+        offset: 0,
+        color: 'rgba(255,255,255,0.5)'
+      },
+      {
+        offset: 1,
+        color: '#FFDC83'
+      }
+    ]
+  }
+
+  const circle = createCircle({
     radius: 50,
     x: 500,
     y: 200,
-    fill: colorPools[10],
-    lineWidth: 2,
+    fill: 'red',
     outerBorder: {
       distance: 10,
       lineWidth: 6,
@@ -42,12 +84,11 @@ export const page = () => {
     texture: 'circle',
     textureColor: 'orange',
     stroke: 'red',
-  }));
-
-  const stage = createStage({
-    canvas: 'main',
-    autoRender: true
   });
+  graphics.push(circle);
+  
+  circle.animate().to({ fill: c2 }, 2000, 'linear');
+  console.log(stage)
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);

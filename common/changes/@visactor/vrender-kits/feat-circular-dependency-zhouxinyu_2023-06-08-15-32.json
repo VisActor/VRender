@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vrender-kits",
       "comment": "code style",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vrender-kits"

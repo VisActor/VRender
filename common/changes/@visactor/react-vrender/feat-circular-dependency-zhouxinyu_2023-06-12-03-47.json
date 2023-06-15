@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/react-vrender",
       "comment": "upgrade vrender",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/react-vrender"

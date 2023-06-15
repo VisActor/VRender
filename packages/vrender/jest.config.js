@@ -18,5 +18,6 @@ module.exports = {
     },
     __DEV__: true
   },
+  setupFiles: ['./setup-mock.js'],
   collectCoverageFrom: ['**/*.{ts}', '!**/node_modules/**']
 };

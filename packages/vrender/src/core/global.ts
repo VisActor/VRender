@@ -212,14 +212,14 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.getDocument();
   }
 
-  mapToCanvasPoint(event: any) {
+  mapToCanvasPoint(event: any, domElement?: any) {
     if (!this._env) {
       this.setEnv(defaultEnv);
     }
     if (!this.envContribution.mapToCanvasPoint) {
       return null;
     }
-    return this.envContribution.mapToCanvasPoint(event);
+    return this.envContribution.mapToCanvasPoint(event, domElement);
   }
 
   loadImage(url: string) {

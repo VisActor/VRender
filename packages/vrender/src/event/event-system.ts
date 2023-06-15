@@ -332,7 +332,7 @@ export class EventSystem {
   }
 
   private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent): IPointLike {
-    const point = this.globalObj?.mapToCanvasPoint(nativeEvent);
+    const point = this.globalObj?.mapToCanvasPoint(nativeEvent, this.domElement);
 
     if (point) {
       return point;

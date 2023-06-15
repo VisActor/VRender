@@ -1,3 +1,4 @@
+import { clone } from '@visactor/vutils';
 import { IGraphicAttribute, IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
 import {
   DefaultArcAttribute,
@@ -58,17 +59,34 @@ export function newThemeObj(): IFullThemeSpec {
 }
 
 // 将t合并到out中
-function combineTheme(out: IThemeSpec, t: IThemeSpec) {
+function combineTheme(out: IThemeSpec, t: IThemeSpec, rewrite: boolean = true) {
   if (!t) {
     return;
   }
-  Object.keys(t).forEach(k => {
-    if (out[k]) {
-      Object.assign(out[k], t[k]);
-    } else {
-      out[k] = t[k];
-    }
-  });
+  if (rewrite) {
+    Object.keys(t).forEach(k => {
+      if (out[k]) {
+        Object.assign(out[k], t[k]);
+      } else {
+        out[k] = t[k];
+      }
+    });
+  } else {
+    Object.keys(t).forEach(k => {
+      if (out[k]) {
+        // Object.assign(out[k], t[k]);
+        const outItem = out[k];
+        const tItem = t[k];
+        Object.keys(t[k]).forEach(kItem => {
+          if (outItem[kItem] === undefined) {
+            outItem[kItem] = tItem[kItem];
+          }
+        });
+      } else {
+        out[k] = t[k];
+      }
+    });
+  }
 }
 
 // 全局创建60个theme，节省打点耗时时间
@@ -138,13 +156,20 @@ export class Theme implements ITheme {
   }
 
   // 应用主题，从根节点一直触发到当前节点（如果上层节点需要的话）
-  applyTheme(group: IGroup, pt: IThemeSpec): IThemeSpec {
+  applyTheme(group: IGroup, pt: IThemeSpec, force: boolean = false): IThemeSpec {
     if (this.dirty) {
       const parentGroup = this.getParentWithTheme(group);
       if (parentGroup) {
         const parentTheme = parentGroup.theme;
-        if (parentTheme.dirty) {
-          parentTheme.applyTheme(parentGroup, pt);
+        if (parentTheme.dirty || force) {
+          // 强制apply所有的上层
+          parentTheme.applyTheme(parentGroup, pt, true);
+        }
+        // 将parentTheme.userTheme设置给自己的userTheme
+        if (!this.userTheme) {
+          this.userTheme = clone(parentTheme.userTheme);
+        } else {
+          combineTheme(this.userTheme, parentTheme.userTheme, false);
         }
         combineTheme(pt, parentTheme.userTheme);
       }

@@ -53,7 +53,7 @@ export interface ITheme {
   combinedTheme?: IFullThemeSpec;
   userTheme?: IThemeSpec;
   nextTheme?: IThemeSpec;
-  applyTheme: (group: IGroup, pt: IThemeSpec) => IThemeSpec;
+  applyTheme: (group: IGroup, pt: IThemeSpec, force?: boolean) => IThemeSpec;
   setTheme: (t: IThemeSpec, g: IGroup) => void;
   dirty: boolean;
 }

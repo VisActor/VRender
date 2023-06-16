@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "clear nextFrameRenderLayerSet after render",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

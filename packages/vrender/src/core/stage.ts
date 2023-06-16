@@ -459,6 +459,7 @@ export class Stage extends Group implements IStage {
       );
     });
     this.combineLayersToWindow();
+    this.nextFrameRenderLayerSet.clear();
     this.hooks.afterRender.call(this);
   }
 

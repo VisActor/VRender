@@ -2,6 +2,67 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.10.0",
+      "tag": "@visactor/vrender_v0.10.0",
+      "date": "Fri, 16 Jun 2023 03:13:09 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "code style"
+          },
+          {
+            "comment": "export version"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "several bugfix"
+          },
+          {
+            "comment": "fix the bug that forgot to export container"
+          },
+          {
+            "comment": "solve reflect import problem by export reflect"
+          },
+          {
+            "comment": "fix the bug of fill-stroke refactor"
+          },
+          {
+            "comment": "modify smart invert to adapt stroke&fill of Canopus"
+          },
+          {
+            "comment": "support color interpolate between pure color with gradient color"
+          },
+          {
+            "comment": "fix enableView3dTranform"
+          },
+          {
+            "comment": "fix the bug of interpolate color"
+          },
+          {
+            "comment": "fix the defined bug in basis and monotone curve"
+          },
+          {
+            "comment": "fix the bug of pyramid in some case"
+          },
+          {
+            "comment": "fix the bug that will be overwritten after stage.setCursor"
+          },
+          {
+            "comment": "fix the bug of strokeText in 3d mode"
+          },
+          {
+            "comment": "fix the bug in css transform"
+          }
+        ],
+        "none": [
+          {
+            "comment": "release"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.1",
       "tag": "@visactor/vrender_v0.9.1",
       "date": "Thu, 08 Jun 2023 11:34:32 GMT",

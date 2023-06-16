@@ -49,11 +49,11 @@ jobs:
       - name: Update shrinkwrap
         run: node common/scripts/install-run-rush.js update
 
-      - name: Get package version
+      - name: Get npm version
         id: package-version
         uses: xile611/read-package-version-action@v2.1
         with:
-          path: packages/vrender # 各项目需要修改
+          path: packages/vrender
 
       - name: Commit & Push changes
         uses: actions-js/push@master
@@ -61,6 +61,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           message: 'build: prelease version ${{ steps.package-version.outputs.current_version }}'
           branch: ${{ github.ref_name }}
+
+      - name: Collect changelog of rush
+        uses: xile611/collect-rush-changlog@main
+        id: changelog
+        with:
+          version: ${{ steps.package-version.outputs.current_version }}
 
       - name: Create Release for Tag
         id: release_tag
@@ -71,6 +77,8 @@ jobs:
           tag: v${{ steps.package-version.outputs.current_version }}
           commit: main
           prerelease: false
+          body: |
+            ${{ steps.changelog.outputs.markdown }}
           draft: true #
 
       - name: Create Pull Request
@@ -81,4 +89,6 @@ jobs:
           base: main
           head: ${{ github.ref_name }}
           labels: release # default labels, the action will throw error if not specified
-          reviewers: xile611 # 各项目修改成owner账号，default reviewers, the action will throw error if not specified
+          reviewers: xile611 # default reviewers, the action will throw error if not specified
+          body: |
+            ${{ steps.changelog.outputs.markdown }}

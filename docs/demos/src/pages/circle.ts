@@ -1,4 +1,4 @@
-import { createStage, createCircle, IGraphic } from '@visactor/vrender';
+import { createStage, DragNDrop, createCircle, IGraphic } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { createGroup } from '@visactor/vrender';
 
@@ -45,7 +45,7 @@ export const page = () => {
     stroke: 'red',
   });
 
-  const group = createGroup();
+  const group = createGroup({});
   group.add(circle);
 
   group.setTheme({

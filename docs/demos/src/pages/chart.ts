@@ -19,6 +19,7 @@ import {
   AttributeAnimate
 } from '@visactor/vrender';
 // import { json3 } from './json';
+// import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
 
 container.load(roughModule);
@@ -75,15 +76,16 @@ export const page = () => {
     canvas: c as HTMLCanvasElement,
     width: 802,
     height: 500,
+    disableDirtyBounds: false
     canvasControled: true,
     autoRender: true
   });
 
   const layer = stage.at(0);
 
-  json3.children[0].children.forEach(item => {
-    _add(layer, item);
-  });
+  // json3.children[0].children.forEach(item => {
+  //   _add(layer, item);
+  // });
   stage.set3dOptions({
     alpha: 0,
     beta: 0,
@@ -114,5 +116,15 @@ export const page = () => {
 
   stage.render(undefined, {});
 
-  stage.enableView3dTransform();
+  const button = document.createElement('button');
+  button.innerHTML = 'click';
+  document.body.appendChild(button);
+  button.addEventListener('click', () => {
+    stage.getElementsByType('rect').forEach(r => {
+      r.setAttribute('fill', 'red');
+    });
+    stage.render(undefined, {});
+  });
+
+  // stage.enableView3dTransform();
 };

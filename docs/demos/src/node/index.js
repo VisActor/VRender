@@ -1,6 +1,6 @@
 const CanvasPkg = require('canvas');
 const { global, createStage, container, Path, Arc, Rect, Symbol, Circle, Image } = require('@visactor/vrender');
-const { nodeLoader, roughModule } = require('@visactor/vrender-kits');
+// const { nodeLoader, roughModule } = require('@visactor/vrender-kits');
 const fs = require('fs');
 
 const colorPools = [
@@ -28,7 +28,7 @@ const colorPools = [
 ];
 
 // 加载node环境的loader
-nodeLoader(container);
+// nodeLoader(container);
 // 加载rough的module
 // container.load(roughModule)
 

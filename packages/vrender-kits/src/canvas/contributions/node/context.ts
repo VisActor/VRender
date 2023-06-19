@@ -21,7 +21,7 @@ export class NodeContext2d extends BrowserContext2d implements IContext2d {
     this.canvas = canvas;
     this.matrix = new Matrix(1, 0, 0, 1, 0, 0);
     this.stack = [];
-    this.dpr = 1;
+    this.dpr = dpr ?? 1;
   }
 
   release(...params: any): void {

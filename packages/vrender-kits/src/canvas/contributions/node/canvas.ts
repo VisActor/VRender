@@ -13,14 +13,19 @@ const DefaultConfig = {
 export class NodeCanvas implements ICanvas {
   static env: EnvType = 'node';
   // 显示的宽高，如果是离屏canvas，就是pixelWidth / pixelRatio
-  private _width: number; // 显示的宽度
-  private _height: number; // 显示的高度
   private _id: number | string;
+
+  private _displayWidth: number; // 显示的宽度
+  private _displayHeight: number; // 显示的高度
+  // 像素宽高
+  private _pixelWidth: number; // 像素宽度
+  private _pixelHeight: number; // 像素高度
 
   private _nativeCanvas: Canvas;
   private _context: IContext2d;
   private _visiable: boolean;
   private controled: boolean;
+  private _dpr: number;
 
   get id(): number | string {
     return this._id;
@@ -36,23 +41,26 @@ export class NodeCanvas implements ICanvas {
   }
 
   get width(): number {
-    return this._width;
+    return this._pixelWidth;
   }
   set width(width: number) {
-    this._width = width;
+    this._pixelWidth = width;
+    this._displayWidth = width / (this._dpr || 1);
   }
   get displayWidth(): number {
-    return this._width;
+    return this._pixelWidth / this._dpr;
   }
+
   get displayHeight(): number {
-    return this._height;
+    return this._pixelHeight / this._dpr;
   }
 
   get height(): number {
-    return this._height;
+    return this._pixelHeight;
   }
   set height(height: number) {
-    this._height = height;
+    this._pixelHeight = height;
+    this._displayHeight = height / (this._dpr || 1);
   }
   getContext(str?: string): IContext2d {
     return this._context;
@@ -67,9 +75,11 @@ export class NodeCanvas implements ICanvas {
   }
 
   get dpr(): number {
-    return 1;
+    return this._dpr;
   }
   set dpr(dpr: number) {
+    this._dpr = dpr;
+    this.resize(this.width, this.height);
     return;
   }
 
@@ -78,16 +88,25 @@ export class NodeCanvas implements ICanvas {
    * @param params
    */
   constructor(params: CanvasConfigType) {
-    const { nativeCanvas, width = DefaultConfig.WIDTH, height = DefaultConfig.HEIGHT, canvasControled = true } = params;
+    const {
+      nativeCanvas,
+      width = DefaultConfig.WIDTH,
+      height = DefaultConfig.HEIGHT,
+      canvasControled = true,
+      dpr = DefaultConfig.DPR
+    } = params;
     this._visiable = params.visiable !== false;
     this.controled = canvasControled;
 
     // 离屏canvas
-    this._width = width;
-    this._height = height;
+    this._pixelWidth = width * dpr;
+    this._pixelHeight = height * dpr;
+    this._displayWidth = width;
+    this._displayHeight = height;
     this._nativeCanvas = nativeCanvas as unknown as Canvas;
     this._context = new NodeContext2d(this, params.dpr);
     this._id = nativeCanvas.id;
+    this._dpr = dpr;
   }
 
   applyPosition() {
@@ -115,9 +134,13 @@ export class NodeCanvas implements ICanvas {
    * @param height
    */
   resize(width: number, height: number) {
+    this._pixelWidth = width * this._dpr;
+    this._pixelHeight = height * this._dpr;
+    this._displayWidth = width;
+    this._displayHeight = height;
     if (this._nativeCanvas) {
-      this._nativeCanvas.width = width;
-      this._nativeCanvas.height = height;
+      this._nativeCanvas.width = this._pixelWidth;
+      this._nativeCanvas.height = this._pixelHeight;
     }
     return;
   }

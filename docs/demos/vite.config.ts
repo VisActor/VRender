@@ -18,7 +18,8 @@ export default defineConfig({
   },
   define: {
     'process.env': {},
-    __DEV__: true
+    __DEV__: true,
+    __VERSION__: JSON.stringify(require('../../packages/vrender/package.json').version)
   },
   optimizeDeps: {
     esbuildOptions: {

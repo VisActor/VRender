@@ -2,7 +2,8 @@ import { injectable } from 'inversify';
 import { Generator } from '../../../common/generator';
 import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
-import { IPoint, IPointLike } from '@visactor/vutils';
+import { IPoint, IPointLike, isValidNumber } from '@visactor/vutils';
+import { IElementLike } from 'src/event/type';
 
 export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
   const img = document.createElement('img');
@@ -45,15 +46,21 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
     this.applyStyles = true;
   }
 
-  mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent, domElement?: HTMLElement): IPointLike {
+  mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent, domElement?: IElementLike): IPointLike {
     if (domElement) {
       const { clientX: x, clientY: y } = nativeEvent;
       const rect = domElement.getBoundingClientRect();
-      const scaleX = rect.width / domElement.offsetWidth;
-      const scaleY = rect.width / domElement.offsetWidth;
+      const nativeCanvas = domElement.getNativeHandler?.().nativeCanvas;
+      let scaleX;
+      let scaleY;
+      if (nativeCanvas) {
+        scaleX = rect.width / nativeCanvas.offsetWidth;
+        scaleY = rect.height / nativeCanvas.offsetHeight;
+      }
+
       return {
-        x: (x - rect.left) / scaleX,
-        y: (y - rect.top) / scaleY
+        x: (x - rect.left) / (isValidNumber(scaleX) ? scaleX : 1),
+        y: (y - rect.top) / (isValidNumber(scaleY) ? scaleX : 1)
       };
     }
     return {

@@ -57,7 +57,11 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       opacity = symbolAttribute.opacity,
       lineWidth = symbolAttribute.lineWidth,
       stroke = symbolAttribute.stroke,
-      visible = symbolAttribute.visible
+      visible = symbolAttribute.visible,
+      x: originX = symbolAttribute.x,
+      y: originY = symbolAttribute.y,
+      scaleX = symbolAttribute.scaleX,
+      scaleY = symbolAttribute.scaleY
     } = symbol.attribute;
 
     // 不绘制或者透明
@@ -129,7 +133,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       if (fillCb) {
         fillCb(context, symbol.attribute, symbolAttribute);
       } else if (fVisible) {
-        context.setCommonStyle(symbol, symbol.attribute, x, y, symbolAttribute);
+        context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
         context.fill();
       }
     }
@@ -137,7 +141,13 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       if (strokeCb) {
         strokeCb(context, symbol.attribute, symbolAttribute);
       } else if (sVisible) {
-        context.setStrokeStyle(symbol, symbol.attribute, x, y, symbolAttribute);
+        context.setStrokeStyle(
+          symbol,
+          symbol.attribute,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          symbolAttribute
+        );
         context.stroke();
       }
     }

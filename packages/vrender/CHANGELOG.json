@@ -2,6 +2,21 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.10.1",
+      "tag": "@visactor/vrender_v0.10.1",
+      "date": "Mon, 19 Jun 2023 09:49:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix the bug of mapToCanvasPoint"
+          },
+          {
+            "comment": "clear nextFrameRenderLayerSet after render"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@visactor/vrender_v0.10.0",
       "date": "Fri, 16 Jun 2023 03:13:09 GMT",

@@ -2,6 +2,18 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.10.1",
+      "tag": "@visactor/react-vrender_v0.10.1",
+      "date": "Mon, 19 Jun 2023 09:49:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.10.0` to `0.10.1`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@visactor/react-vrender_v0.10.0",
       "date": "Fri, 16 Jun 2023 03:13:09 GMT",

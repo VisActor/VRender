@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 16 Jun 2023 03:13:09 GMT and should not be manually modified.
+This log was last generated on Mon, 19 Jun 2023 09:49:38 GMT and should not be manually modified.
+
+## 0.10.1
+Mon, 19 Jun 2023 09:49:38 GMT
+
+### Patches
+
+- fix the bug of mapToCanvasPoint
+- clear nextFrameRenderLayerSet after render
 
 ## 0.10.0
 Fri, 16 Jun 2023 03:13:09 GMT

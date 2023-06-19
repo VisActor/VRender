@@ -35,7 +35,7 @@ nodeLoader(container);
 global.setEnv('node', CanvasPkg);
 
 function run() {
-  const stage = createStage({ width: 0, height: 0, title: '这是title' });
+  const stage = createStage({ width: 0, height: 0, title: '这是title', dpr: 2 });
   stage.resize(1200, 1200)
   stage.defaultLayer.add(new Path({
     x: 200,

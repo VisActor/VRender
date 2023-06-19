@@ -147,5 +147,9 @@ export const pages = [
   {
     title: 'wrapText',
     path: 'wrap-text'
+  },
+  {
+    title: 'bin-tree',
+    path: 'bin-tree'
   }
 ];

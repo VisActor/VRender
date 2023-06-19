@@ -1,5 +1,5 @@
 import { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, global, INode } from '@visactor/vrender';
-import { IPointLike, array, isFunction, isValid, merge } from '@visactor/vutils';
+import { IPointLike, array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { Tag, TagAttributes } from '../tag';
 import { DataZoomActiveTag, DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
@@ -71,6 +71,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _previewCallbackY1!: (datum: any) => number;
   private _updateStateCallback!: (start: number, end: number) => void;
   private _statePointToData: (state: number) => any = state => state;
+  private _layoutAttrFromConfig: any; // 用于缓存
 
   constructor(attributes: DataZoomAttributes) {
     super(merge({}, DataZoom.defaultAttributes, attributes));
@@ -114,25 +115,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._startHandler) {
       this._startHandler.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'start') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'start') as unknown as EventListener
       );
     }
     if (this._endHandler) {
       this._endHandler.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'end') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'end') as unknown as EventListener
       );
     }
     if (this._middleHandlerSymbol) {
       this._middleHandlerSymbol.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'middleSymbol') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'middleSymbol') as unknown as EventListener
       );
     }
     if (this._middleHandlerRect) {
       this._middleHandlerRect.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'middleRect') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'middleRect') as unknown as EventListener
       );
     }
 
@@ -140,25 +141,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._selectedBackground) {
       this._selectedBackground.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, selectedTag) as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
     if (brushSelect && this._background) {
       this._background.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'background') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'background') as unknown as EventListener
       );
     }
     if (brushSelect && this._previewGroup) {
       this._previewGroup.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'background') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'background') as unknown as EventListener
       );
     }
     if (this._selectedPreviewGroup) {
       this._selectedPreviewGroup.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, selectedTag) as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
     if (global.env === 'browser') {
@@ -168,14 +169,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       global.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
     }
     // 拖拽时
-    this.addEventListener('pointermove', this._onHandlerPointerMove as EventListener);
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener);
     // 拖拽结束
-    this.addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
-    this.addEventListener('pointerside', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
     // hover
     if (showDetail === 'auto') {
-      this.addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
-      this.addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
+      (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
+      (this as unknown as IGroup).addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
     }
   }
 
@@ -193,10 +194,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const stagePosition = this.stage?.window.getBoundingClientRect();
+    const stagePosition = (this as unknown as IGroup).stage?.window.getBoundingClientRect();
     return {
-      x: e.clientX - (stagePosition?.left || 0) - (this.stage?.x || 0),
-      y: e.clientY - (stagePosition?.top || 0) - (this.stage?.y || 0)
+      x: e.clientX - (stagePosition?.left || 0) - ((this as unknown as IGroup).stage?.x || 0),
+      y: e.clientY - (stagePosition?.top || 0) - ((this as unknown as IGroup).stage?.y || 0)
     };
   }
 
@@ -262,12 +263,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         }
       }
       this._activeCache.lastPos = pos;
+      brushSelect && this.renderDragMask();
     }
     this.state.start = Math.min(Math.max(this.state.start, 0), 1);
     this.state.end = Math.min(Math.max(this.state.end, 0), 1);
-
-    // dragMask不依赖于state更新
-    brushSelect && this.renderDragMask();
 
     // 避免attributes相同时, 重复渲染
     if (start !== this.state.start || end !== this.state.end) {
@@ -366,7 +365,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this._dragMask = this._container.createOrUpdateChild(
         'dragMask',
         {
-          x: this.dragMaskSize() < 0 ? this._activeCache.lastPos.x : this._activeCache.startPos.x,
+          x: clamp(
+            this.dragMaskSize() < 0 ? this._activeCache.lastPos.x : this._activeCache.startPos.x,
+            position.x,
+            position.x + width
+          ),
           y: position.y,
           width:
             (this._activeState && this._activeTag === DataZoomActiveTag.background && Math.abs(this.dragMaskSize())) ||
@@ -381,7 +384,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         'dragMask',
         {
           x: position.x,
-          y: this.dragMaskSize() < 0 ? this._activeCache.lastPos.y : this._activeCache.startPos.y,
+          y: clamp(
+            this.dragMaskSize() < 0 ? this._activeCache.lastPos.y : this._activeCache.startPos.y,
+            position.y,
+            position.y + height
+          ),
           width,
           height:
             (this._activeState && this._activeTag === DataZoomActiveTag.background && Math.abs(this.dragMaskSize())) ||
@@ -478,8 +485,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 实际绘制的背景框中的高度或宽度 减去 中间手柄的高度或宽度
    */
   protected getLayoutAttrFromConfig() {
+    if (this._layoutAttrFromConfig) {
+      return this._layoutAttrFromConfig;
+    }
     const { position: positionConfig, size, orient, middleHandlerStyle } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
+    const middleHandlerSize = middleHandlerStyle?.background?.size ?? 10;
 
     // 如果middleHandler显示的话，要将其宽高计入datazoom宽高
     let width;
@@ -488,16 +499,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (middleHandlerStyle?.visible) {
       if (this._isHorizontal) {
         width = widthConfig;
-        height = heightConfig - (middleHandlerStyle.background?.size ?? 10);
+        height = heightConfig - middleHandlerSize;
         position = {
           x: positionConfig.x,
-          y: positionConfig.y + (middleHandlerStyle.background?.size ?? 10)
+          y: positionConfig.y + middleHandlerSize
         };
       } else {
-        width = widthConfig - (middleHandlerStyle.background?.size ?? 10);
+        width = widthConfig - middleHandlerSize;
         height = heightConfig;
         position = {
-          x: positionConfig.x + (orient === 'left' ? middleHandlerStyle.background?.size ?? 10 : 0),
+          x: positionConfig.x + (orient === 'left' ? middleHandlerSize : 0),
           y: positionConfig.y
         };
       }
@@ -506,14 +517,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       height = heightConfig;
       position = positionConfig;
     }
-    return {
+
+    this._layoutAttrFromConfig = {
       position,
       width,
       height
     };
+    return this._layoutAttrFromConfig;
   }
 
   protected render() {
+    this._layoutAttrFromConfig = null;
     const {
       // start,
       // end,

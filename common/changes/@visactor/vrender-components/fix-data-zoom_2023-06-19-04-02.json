@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "limit the range of dragMask, it should not exceeded the display range of datazoom",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

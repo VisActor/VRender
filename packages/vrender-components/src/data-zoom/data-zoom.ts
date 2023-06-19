@@ -114,25 +114,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._startHandler) {
       this._startHandler.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'start') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'start') as unknown as EventListener
       );
     }
     if (this._endHandler) {
       this._endHandler.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'end') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'end') as unknown as EventListener
       );
     }
     if (this._middleHandlerSymbol) {
       this._middleHandlerSymbol.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'middleSymbol') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'middleSymbol') as unknown as EventListener
       );
     }
     if (this._middleHandlerRect) {
       this._middleHandlerRect.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'middleRect') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'middleRect') as unknown as EventListener
       );
     }
 
@@ -140,25 +140,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._selectedBackground) {
       this._selectedBackground.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, selectedTag) as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
     if (brushSelect && this._background) {
       this._background.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'background') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'background') as unknown as EventListener
       );
     }
     if (brushSelect && this._previewGroup) {
       this._previewGroup.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, 'background') as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'background') as unknown as EventListener
       );
     }
     if (this._selectedPreviewGroup) {
       this._selectedPreviewGroup.addEventListener(
         'pointerdown',
-        e => this._onHandlerPointerDown(e as FederatedPointerEvent, selectedTag) as unknown as EventListener
+        (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
     if (global.env === 'browser') {
@@ -168,14 +168,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       global.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
     }
     // 拖拽时
-    this.addEventListener('pointermove', this._onHandlerPointerMove as EventListener);
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener);
     // 拖拽结束
-    this.addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
-    this.addEventListener('pointerside', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
     // hover
     if (showDetail === 'auto') {
-      this.addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
-      this.addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
+      (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
+      (this as unknown as IGroup).addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
     }
   }
 
@@ -193,10 +193,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const stagePosition = this.stage?.window.getBoundingClientRect();
+    const stagePosition = (this as unknown as IGroup).stage?.window.getBoundingClientRect();
     return {
-      x: e.clientX - (stagePosition?.left || 0) - (this.stage?.x || 0),
-      y: e.clientY - (stagePosition?.top || 0) - (this.stage?.y || 0)
+      x: e.clientX - (stagePosition?.left || 0) - ((this as unknown as IGroup).stage?.x || 0),
+      y: e.clientY - (stagePosition?.top || 0) - ((this as unknown as IGroup).stage?.y || 0)
     };
   }
 

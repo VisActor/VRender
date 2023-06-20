@@ -130,7 +130,7 @@ const vLegend = new DiscreteLegend({
       style: {
         stroke: '#000',
         lineWidth: 1
-        // borderRadius: 5
+        // cornerRadius: 5
       },
       state: {
         selectedHover: {

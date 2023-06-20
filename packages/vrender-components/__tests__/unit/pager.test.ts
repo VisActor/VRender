@@ -18,7 +18,7 @@ describe('Pager', () => {
       x: 100,
       y: 100,
       fill: 'yellow',
-      borderRadius: 45,
+      cornerRadius: 45,
       total: 9,
       padding: 10
     });

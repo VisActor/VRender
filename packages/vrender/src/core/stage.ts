@@ -258,7 +258,6 @@ export class Stage extends Group implements IStage {
   }
 
   set3dOptions(options: IOption3D) {
-    this.option3d = options;
     const {
       center = { x: this.width / 2, y: this.height / 2 },
       light = {},
@@ -268,6 +267,16 @@ export class Stage extends Group implements IStage {
       fieldRatio = 1,
       fieldDepth
     } = options;
+    this.option3d = {
+      ...options,
+      center,
+      light,
+      alpha,
+      beta,
+      camera,
+      fieldRatio,
+      fieldDepth
+    };
     const { dir = [1, 1, -1], color = 'white', ambient } = light;
 
     const centerVec3: vec3 = [center.x, center.y, 0];

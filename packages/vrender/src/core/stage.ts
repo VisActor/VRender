@@ -247,9 +247,6 @@ export class Stage extends Group implements IStage {
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
     }
-    if (params.enableView3dTransform) {
-      this.enableView3dTransform();
-    }
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
     this._beforeRender = params.beforeRender;
@@ -308,6 +305,10 @@ export class Stage extends Group implements IStage {
       this.camera.params = cameraParams;
     } else {
       this.camera = new OrthoCamera(cameraParams);
+    }
+
+    if (options.enableView3dTransform) {
+      this.enableView3dTransform();
     }
   }
 

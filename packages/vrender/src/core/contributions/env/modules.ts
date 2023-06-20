@@ -5,6 +5,7 @@ import { BrowserEnvContribution } from './browser-contribution';
 import { FeishuEnvContribution } from './feishu-contribution';
 import { TaroEnvContribution } from './taro-contribution';
 import { LynxEnvContribution } from './lynx-contribution';
+import { NodeEnvContribution } from './node-contribution';
 
 export default new ContainerModule(bind => {
   // browser
@@ -22,6 +23,10 @@ export default new ContainerModule(bind => {
   // lynx
   bind(LynxEnvContribution).toSelf().inSingletonScope();
   bind(EnvContribution).toService(LynxEnvContribution);
+
+  // node
+  bind(NodeEnvContribution).toSelf().inSingletonScope();
+  bind(EnvContribution).toService(NodeEnvContribution);
 
   bindContributionProvider(bind, EnvContribution);
 });

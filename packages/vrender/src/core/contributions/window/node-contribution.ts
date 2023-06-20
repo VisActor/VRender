@@ -1,106 +1,152 @@
-// import { createCanvas, createImageData, loadImage } from 'canvas';
-// import { inject, injectable } from 'inversify';
-// import { Canvas } from '../../../canvas';
-// import { Generator } from '../../../common/generator';
-// import { Global, IWindow, EnvType, IGlobal, IWindowHandlerContribution, IWindowParams } from '../..';
-// import { BaseWindowHandlerContribution } from './base-contribution';
-// import { ICanvas } from '../../../interface/canvas';
+import { inject, injectable } from 'inversify';
+import { IBoundsLike } from '@visactor/vutils';
+import { NodeCanvas } from '../../../canvas/contributions/node';
+import { Generator } from '../../../common/generator';
+import { BaseWindowHandlerContribution } from './base-contribution';
+import { IWindowHandlerContribution, IWindowParams } from '../..';
+import { Global, EnvType, IGlobal, IContext2d, ICanvas, IDomRectLike } from '../../../interface';
 
-// type NodePkg = {
-//   createCanvas: typeof createCanvas;
-//   createImageData: typeof createImageData;
-//   loadImage: typeof loadImage;
-// };
+@injectable()
+export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
+  static env: EnvType = 'node';
+  type: EnvType = 'node';
 
-// @injectable()
-// export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
-//   type: EnvType = 'node';
+  canvas: ICanvas;
+  get container(): HTMLElement | null {
+    return null;
+  }
 
-//   pkg: NodePkg;
+  constructor(@inject(Global) private readonly global: IGlobal) {
+    super();
+  }
 
-//   configure(window: IWindow, global: IGlobal) {
-//     if (global.env === this.type) {
-//       window.setWindowHandler(this);
-//       this.pkg = global.envParams;
-//     }
-//   }
+  getTitle(): string {
+    return '';
+  }
 
-//   canvas: Canvas;
-//   get container(): HTMLElement | null {
-//     return this.canvas.nativeCanvas.parentElement;
-//   }
+  getWH(): { width: number; height: number } {
+    return {
+      width: this.canvas.displayWidth,
+      height: this.canvas.displayHeight
+    };
+  }
 
-//   constructor(@inject(Global) private readonly global: IGlobal) {
-//     super();
-//   }
+  getXY(): { x: number; y: number } {
+    return { x: 0, y: 0 };
+  }
 
-//   createWindow(params: IWindowParams): void {
-//     // 如果没有传入canvas，那么就创建一个canvas
-//     if (!params.canvas) {
-//       this.createWindowByConfig(params);
-//     } else {
-//       this.createWindowByCanvas(params);
-//     }
-//   }
-//   private createWindowByConfig(params: IWindowParams) {
-//     // 创建canvas
-//     const nativeCanvas = this.global.createCanvas({ width: params.width, height: params.height });
+  createWindow(params: IWindowParams): void {
+    // 如果没有传入canvas，那么就创建一个canvas
+    if (!params.canvas) {
+      this.createWindowByConfig(params);
+    } else {
+      this.createWindowByCanvas(params);
+    }
+  }
+  private createWindowByConfig(params: IWindowParams) {
+    // 创建canvas
+    const nativeCanvas = this.global.createCanvas({ width: params.width, height: params.height });
 
-//     // 绑定
-//     const options = {
-//       width: params.width,
-//       height: params.height,
-//       dpr: params.dpr,
-//       nativeCanvas,
-//       id: Generator.GenAutoIncrementId().toString()
-//     };
-//     this.canvas = new Canvas(options);
-//   }
-//   private createWindowByCanvas(params: IWindowParams) {
-//     // 获取canvas
-//     let canvas: HTMLCanvasElement | null;
-//     if (typeof params.canvas === 'string') {
-//       throw new Error('node环境不允许传入canvasId获取canvas');
-//     } else {
-//       canvas = params!.canvas as HTMLCanvasElement | null;
-//     }
-//     if (!canvas) {
-//       throw new Error('发生错误，传入的canvas不正确');
-//     }
+    // 绑定
+    const options = {
+      width: params.width,
+      height: params.height,
+      dpr: params.dpr,
+      nativeCanvas,
+      id: Generator.GenAutoIncrementId().toString(),
+      canvasControled: true
+    };
+    this.canvas = new NodeCanvas(options);
+  }
+  private createWindowByCanvas(params: IWindowParams) {
+    // 获取canvas
+    const canvas = params!.canvas as HTMLCanvasElement | null;
 
-//     this.canvas = new Canvas({
-//       width: params.width,
-//       height: params.height,
-//       dpr: params.dpr,
-//       nativeCanvas: canvas
-//     });
-//   }
-//   destroyWindow(): void {
-//     this.canvas.destroy();
-//   }
-//   resizeWindow(width: number, height: number): void {
-//     this.canvas.resize(width, height);
-//   }
-//   setDpr(dpr: number): void {
-//     this.canvas.dpr = dpr;
-//   }
+    // 如果没有传入wh，或者是不受控制的canvas，那就用canvas的原始wh
+    let width = params.width;
+    let height = params.height;
+    if (width == null || height == null || !params.canvasControled) {
+      width = canvas.width;
+      height = canvas.height;
+    }
 
-//   getNativeHandler(): ICanvas {
-//     return this.canvas;
-//   }
-//   getDpr(): number {
-//     return this.canvas.dpr;
-//   }
-//   getContext(): any {
-//     throw new Error('暂不支持');
-//   }
-//   getTitle(): string {
-//     throw new Error('暂不支持');
-//   }
-//   getWH(): { width: number; height: number } {
-//     throw new Error('暂不支持');
-//   }
-//   getXY(): { x: number; y: number } {
-//     throw new Error('暂不支持');
-//   }
-// }
+    this.canvas = new NodeCanvas({
+      width: width,
+      height: height,
+      dpr: 1,
+      nativeCanvas: canvas,
+      canvasControled: params.canvasControled
+    });
+  }
+  releaseWindow(): void {
+    this.canvas.release();
+  }
+  resizeWindow(width: number, height: number): void {
+    this.canvas.resize(width, height);
+  }
+  setDpr(dpr: number): void {
+    this.canvas.dpr = dpr;
+  }
+
+  getContext(): IContext2d {
+    return this.canvas.getContext();
+  }
+  getNativeHandler(): ICanvas {
+    return this.canvas;
+  }
+  getDpr(): number {
+    return this.canvas.dpr;
+  }
+
+  getImageBuffer(type: string = 'image/png'): any {
+    const canvas = this.canvas.nativeCanvas;
+    return canvas.toBuffer(type);
+  }
+
+  addEventListener<K extends keyof DocumentEventMap>(
+    type: K,
+    listener: (this: Document, ev: DocumentEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | AddEventListenerOptions
+  ): void;
+  addEventListener(type: unknown, listener: unknown, options?: unknown): void {
+    return;
+  }
+
+  dispatchEvent(event: any): boolean {
+    return true;
+  }
+
+  removeEventListener<K extends keyof DocumentEventMap>(
+    type: K,
+    listener: (this: Document, ev: DocumentEventMap[K]) => any,
+    options?: boolean | EventListenerOptions
+  ): void;
+  removeEventListener(
+    type: string,
+    listener: EventListenerOrEventListenerObject,
+    options?: boolean | EventListenerOptions
+  ): void;
+  removeEventListener(type: unknown, listener: unknown, options?: unknown): void {
+    return;
+  }
+
+  getStyle(): CSSStyleDeclaration | Record<string, any> {
+    return;
+  }
+  setStyle(style: CSSStyleDeclaration | Record<string, any>): void {
+    return;
+  }
+
+  getBoundingClientRect(): IDomRectLike {
+    return null;
+  }
+
+  clearViewBox(vb: IBoundsLike, color?: string): void {
+    return;
+  }
+}

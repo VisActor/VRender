@@ -3,7 +3,7 @@ import { ICamera } from './camera';
 import { ICanvas } from './canvas';
 import { Releaseable } from './common';
 import { mat4, vec3 } from './matrix';
-import { IFillType, IStrokeType } from './graphic';
+import { IFillType, IStrokeType, ITransform } from './graphic';
 
 export interface IConicalGradientData {
   addColorStop: (pos: number, color: string) => void;
@@ -44,12 +44,12 @@ export interface ITextStyleParams {
 }
 
 export interface ISetCommonStyleParams {
-  attribute: Partial<ICommonStyleParams>;
+  attribute: Partial<ICommonStyleParams & ITransform>;
   AABBBounds: IBoundsLike;
 }
 
 export interface ISetStrokeStyleParams {
-  attribute: Partial<IStrokeStyleParams>;
+  attribute: Partial<IStrokeStyleParams & ITransform>;
   AABBBounds: IBoundsLike;
 }
 export interface IContext2d extends Releaseable {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/react-vrender",
+      "comment": "update vUtils version",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/react-vrender"
+}

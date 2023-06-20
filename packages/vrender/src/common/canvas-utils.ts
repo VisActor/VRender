@@ -63,13 +63,19 @@ function createLinearGradient(
   }
   let w = bounds.x2 - bounds.x1;
   let h = bounds.y2 - bounds.y1;
+  let x = bounds.x1 - offsetX;
+  let y = bounds.y1 - offsetY;
   if (params.attribute) {
     const { scaleX = 1, scaleY = 1 } = params.attribute;
+    if (scaleX * scaleY === 0) {
+      return;
+    }
     w /= scaleX;
     h /= scaleY;
+    x /= scaleX;
+    y /= scaleY;
   }
-  const x = bounds.x1 - offsetX;
-  const y = bounds.y1 - offsetY;
+
   const canvasGradient = context.createLinearGradient(
     x + (color.x0 || 0) * w,
     y + (color.y0 || 0) * h,
@@ -95,10 +101,15 @@ function createRadialGradient(
   }
   let w = bounds.x2 - bounds.x1;
   let h = bounds.y2 - bounds.y1;
-  const { scaleX = 1, scaleY = 1 } = params.attribute;
-  const x = (bounds.x1 - offsetX) / scaleX;
-  const y = (bounds.y1 - offsetY) / scaleY;
+  let x = bounds.x1 - offsetX;
+  let y = bounds.y1 - offsetY;
   if (params.attribute) {
+    const { scaleX = 1, scaleY = 1 } = params.attribute;
+    if (scaleX * scaleY === 0) {
+      return;
+    }
+    x /= scaleX;
+    y /= scaleY;
     w /= scaleX;
     h /= scaleY;
   }
@@ -127,10 +138,20 @@ function createConicGradient(
   if (!bounds) {
     return;
   }
-  const w = bounds.x2 - bounds.x1;
-  const h = bounds.y2 - bounds.y1;
-  const x = bounds.x1 || 0 - offsetX;
-  const y = bounds.y1 || 0 - offsetY;
+  let w = bounds.x2 - bounds.x1;
+  let h = bounds.y2 - bounds.y1;
+  let x = bounds.x1 - offsetX;
+  let y = bounds.y1 - offsetY;
+  if (params.attribute) {
+    const { scaleX = 1, scaleY = 1 } = params.attribute;
+    if (scaleX * scaleY === 0) {
+      return;
+    }
+    w /= scaleX;
+    h /= scaleY;
+    x /= scaleX;
+    y /= scaleY;
+  }
 
   const canvasGradient = context.createConicGradient(
     x + (color.x || 0) * w,

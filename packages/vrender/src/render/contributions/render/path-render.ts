@@ -63,7 +63,9 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       opacity = pathAttribute.opacity,
       background,
       lineWidth = pathAttribute.lineWidth,
-      visible = pathAttribute.visible
+      visible = pathAttribute.visible,
+      x: originX = pathAttribute.x,
+      y: originY = pathAttribute.y
     } = path.attribute;
 
     const z = this.z ?? 0;
@@ -113,7 +115,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       if (strokeCb) {
         strokeCb(context, path.attribute, pathAttribute);
       } else if (sVisible) {
-        context.setStrokeStyle(path, path.attribute, x, y, pathAttribute);
+        context.setStrokeStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
         context.stroke();
       }
     }
@@ -121,7 +123,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       if (fillCb) {
         fillCb(context, path.attribute, pathAttribute);
       } else if (fVisible) {
-        context.setCommonStyle(path, path.attribute, x, y, pathAttribute);
+        context.setCommonStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
         context.fill();
       }
     }

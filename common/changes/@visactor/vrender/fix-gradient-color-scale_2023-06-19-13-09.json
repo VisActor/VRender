@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of gradient color while scale",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

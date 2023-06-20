@@ -12,18 +12,39 @@ export const page = () => {
   ]
   const graphics: IGraphic[] = [];
   
-  symbolList.forEach((st, i) => {
+  symbolList.slice(0, 1).forEach((st, i) => {
     const symbol = createSymbol({
-      symbolType: st,
-      x: (i * 100) % 500 + 100,
-      y: (Math.floor(i * 100 / 500) + 1) * 100,
-      size: 60,
-      fill: 'grey',
-      texture: 'diamond',
-      texturePadding: 0,
-      textureSize: 3,
-      textureColor: 'red',
-    });
+      "shape": "circle",
+      "fillOpacity": 1,
+      "visible": true,
+      "x": 78.57,
+      "y": 78.76363636363637,
+      "size": 24.536082474226802,
+      "z": null,
+      "fill": {
+          "gradient": "radial",
+          "x0": 0.5,
+          "y0": 0,
+          "r0": 0,
+          "x1": 0.5,
+          "y1": 1,
+          "r1": 0.7,
+          "stops": [
+              {
+                  "offset": 0,
+                  "color": "rgba(255,255,255,0.5)"
+              },
+              {
+                  "offset": 1,
+                  "color": "#6690F2"
+              }
+          ]
+      },
+      "symbolType": "circle",
+      "pickable": true,
+      "scaleX": 3,
+      "scaleY": 3
+  });
     symbol.addEventListener('mouseenter', () => {
       symbol.setAttribute('fill', 'blue');
     })

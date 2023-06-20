@@ -1,6 +1,6 @@
 import { IColor, IConicalGradient, ILinearGradient, IRadialGradient } from '../interface/color';
-import { IContext2d } from '../interface';
-import { IBoundsLike, isArray } from '@visactor/vutils';
+import { ICommonStyleParams, IContext2d, ITransform } from '../interface';
+import { IBoundsLike, IMatrix, isArray } from '@visactor/vutils';
 
 export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
   let strokeWidth = width;
@@ -18,7 +18,7 @@ export function getScaledStroke(context: IContext2d, width: number, dpr: number)
 export function createColor(
   context: IContext2d,
   c: string | IColor | Array<string | IColor> | boolean,
-  params: { AABBBounds?: IBoundsLike },
+  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
   offsetX: number,
   offsetY: number
 ): string | CanvasGradient {
@@ -41,11 +41,11 @@ export function createColor(
     return color;
   }
   if (color.gradient === 'linear') {
-    result = createLinearGradient(context, color, params.AABBBounds, offsetX, offsetY);
+    result = createLinearGradient(context, color, params, offsetX, offsetY);
   } else if (color.gradient === 'conical') {
-    result = createConicGradient(context, color, params.AABBBounds, offsetX, offsetY);
+    result = createConicGradient(context, color, params, offsetX, offsetY);
   } else if (color.gradient === 'radial') {
-    result = createRadialGradient(context, color, params.AABBBounds, offsetX, offsetY);
+    result = createRadialGradient(context, color, params, offsetX, offsetY);
   }
   return result || 'orange';
 }
@@ -53,14 +53,23 @@ export function createColor(
 function createLinearGradient(
   context: IContext2d,
   color: ILinearGradient,
-  bounds: IBoundsLike,
-  offsetX: number,
-  offsetY: number
+  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
+  offsetX: number = 0,
+  offsetY: number = 0
 ) {
-  const w = bounds.x2 - bounds.x1;
-  const h = bounds.y2 - bounds.y1;
-  const x = bounds.x1;
-  const y = bounds.y1;
+  const bounds = params.AABBBounds;
+  if (!bounds) {
+    return;
+  }
+  let w = bounds.x2 - bounds.x1;
+  let h = bounds.y2 - bounds.y1;
+  if (params.attribute) {
+    const { scaleX = 1, scaleY = 1 } = params.attribute;
+    w /= scaleX;
+    h /= scaleY;
+  }
+  const x = bounds.x1 - offsetX;
+  const y = bounds.y1 - offsetY;
   const canvasGradient = context.createLinearGradient(
     x + (color.x0 || 0) * w,
     y + (color.y0 || 0) * h,
@@ -76,14 +85,23 @@ function createLinearGradient(
 function createRadialGradient(
   context: IContext2d,
   color: IRadialGradient,
-  bounds: IBoundsLike,
-  offsetX: number,
-  offsetY: number
+  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
+  offsetX: number = 0,
+  offsetY: number = 0
 ) {
-  const w = bounds.x2 - bounds.x1;
-  const h = bounds.y2 - bounds.y1;
-  const x = bounds.x1;
-  const y = bounds.y1;
+  const bounds = params.AABBBounds;
+  if (!bounds) {
+    return;
+  }
+  let w = bounds.x2 - bounds.x1;
+  let h = bounds.y2 - bounds.y1;
+  const { scaleX = 1, scaleY = 1 } = params.attribute;
+  const x = (bounds.x1 - offsetX) / scaleX;
+  const y = (bounds.y1 - offsetY) / scaleY;
+  if (params.attribute) {
+    w /= scaleX;
+    h /= scaleY;
+  }
   const canvasGradient = context.createRadialGradient(
     x + (color.x0 || 0.5) * w,
     y + (color.y0 || 0.5) * h,
@@ -101,17 +119,18 @@ function createRadialGradient(
 function createConicGradient(
   context: IContext2d,
   color: IConicalGradient,
-  bounds: IBoundsLike,
-  offsetX: number,
-  offsetY: number
+  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
+  offsetX: number = 0,
+  offsetY: number = 0
 ) {
+  const bounds = params.AABBBounds;
   if (!bounds) {
     return;
   }
   const w = bounds.x2 - bounds.x1;
   const h = bounds.y2 - bounds.y1;
-  const x = bounds.x1 || 0;
-  const y = bounds.y1 || 0;
+  const x = bounds.x1 || 0 - offsetX;
+  const y = bounds.y1 || 0 - offsetY;
 
   const canvasGradient = context.createConicGradient(
     x + (color.x || 0) * w,

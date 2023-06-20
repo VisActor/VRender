@@ -148,11 +148,11 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
             `${itemGroupName}-${TOOLTIP_SHAPE_NAME_SUFFIX}`,
             {
               visible: true,
+              x: itemAttr.shape.size / 2,
               ...itemAttr.shape
             },
             'symbol'
           ) as ISymbol;
-          // shape.setAttribute('x', itemAttr.shape.size / 2);
           element.setAttribute('y', itemAttr.height / 2);
         }
         if (hasContentShape) {

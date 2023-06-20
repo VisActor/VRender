@@ -4,7 +4,7 @@ import type { IGraphicAttribute, IGraphic } from '../graphic';
 export type IRectAttribute = {
   width: number;
   height: number;
-  borderRadius: number | number[];
+  cornerRadius: number | number[];
 };
 
 export type IRectGraphicAttribute = Partial<IGraphicAttribute> & Partial<IRectAttribute>;

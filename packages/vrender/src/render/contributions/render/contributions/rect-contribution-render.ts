@@ -73,7 +73,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
     const {
       width = rectAttribute.width,
       height = rectAttribute.height,
-      borderRadius = rectAttribute.borderRadius,
+      cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
       outerBorder,
       innerBorder
@@ -85,7 +85,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       const nextX = x - d;
       const nextY = y - d;
       const dw = d * 2;
-      if (borderRadius === 0 || (isArray(borderRadius) && (<number[]>borderRadius).every(num => num === 0))) {
+      if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
         // 不需要处理圆角
         context.beginPath();
         context.rect(nextX, nextY, width + dw, height + dw);
@@ -93,7 +93,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
         context.beginPath();
 
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, nextX, nextY, width + dw, height + dw, borderRadius);
+        createRectPath(context, nextX, nextY, width + dw, height + dw, cornerRadius);
       }
 
       // shadow
@@ -117,7 +117,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       const nextX = x + d;
       const nextY = y + d;
       const dw = d * 2;
-      if (borderRadius === 0 || (isArray(borderRadius) && (<number[]>borderRadius).every(num => num === 0))) {
+      if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
         // 不需要处理圆角
         context.beginPath();
         context.rect(nextX, nextY, width - dw, height - dw);
@@ -125,7 +125,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
         context.beginPath();
 
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, nextX, nextY, width - dw, height - dw, borderRadius);
+        createRectPath(context, nextX, nextY, width - dw, height - dw, cornerRadius);
       }
 
       // shadow

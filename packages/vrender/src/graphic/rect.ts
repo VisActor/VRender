@@ -7,7 +7,7 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
 
-const RECT_UPDATE_TAG_KEY = ['width', 'height', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
+const RECT_UPDATE_TAG_KEY = ['width', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   type: GraphicType = 'rect';

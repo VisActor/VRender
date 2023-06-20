@@ -18,7 +18,7 @@ import {
   AnimateGroup,
   AttributeAnimate
 } from '@visactor/vrender';
-// import { json3 } from './json';
+import { json } from './json';
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
 
@@ -28,7 +28,6 @@ let arcList = [];
 function _add(group, json) {
   if (json.type === 'group') {
     const g = createGroup(json.attribute);
-    g.setMode('3d');
     group.add(g);
     json.children &&
       json.children.forEach(item => {
@@ -44,7 +43,7 @@ function _add(group, json) {
       t.setAttribute('fill', 'red');
     });
   } else if (json.type === 'symbol') {
-    const s = createSymbol({ ...json.attribute, symbolType: 'square', keepDirIn3d: true });
+    const s = createSymbol({ ...json.attribute, keepDirIn3d: true });
     // s.animate().to({ scaleX: 0.5, scaleY: 0.5 }, 1000, 'linear');
     s.addEventListener('mouseenter', () => {
       s.setAttribute('fill', 'red');
@@ -76,27 +75,23 @@ export const page = () => {
     canvas: c as HTMLCanvasElement,
     width: 802,
     height: 500,
-    disableDirtyBounds: false
+    disableDirtyBounds: true,
     canvasControled: true,
     autoRender: true
   });
 
   const layer = stage.at(0);
 
-  // json3.children[0].children.forEach(item => {
-  //   _add(layer, item);
-  // });
+  json.children[0].children.forEach(item => {
+    _add(layer, item);
+  });
   stage.set3dOptions({
     alpha: 0,
-    beta: 0,
-    center: { x: 400, y: 250 },
-    fieldRatio: 0.8,
-    light: {
-      dir: [1, -2, -1],
-      color: 'white',
-      ambient: 0.7
-    }
+    // beta: 0,
+    enable: true
   });
+
+  stage.children[0].children[0].setMode('3d');
 
   const group = stage.defaultLayer.getChildren()[0] as IGroup;
   // group.setAttribute('fill', 'green');
@@ -126,5 +121,5 @@ export const page = () => {
     stage.render(undefined, {});
   });
 
-  // stage.enableView3dTransform();
+  stage.enableView3dTransform();
 };

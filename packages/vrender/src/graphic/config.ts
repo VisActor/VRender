@@ -207,7 +207,8 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
-  borderRadius: 0
+  borderRadius: 0,
+  strokeBoundsBuffer: 0
 };
 
 export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {

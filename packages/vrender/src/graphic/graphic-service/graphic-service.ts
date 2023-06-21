@@ -746,7 +746,7 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    this.transformAABBBounds(attribute, aabbBounds, rectTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, rectTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -776,7 +776,7 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    this.transformAABBBounds(attribute, aabbBounds, groupTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, groupTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -867,7 +867,7 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    this.transformAABBBounds(attribute, aabbBounds, richtextTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -919,7 +919,8 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(tb1);
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
-    this.transformAABBBounds(attribute, aabbBounds, pathTheme, graphic);
+    const { lineJoin = pathTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, pathTheme, lineJoin === 'miter', graphic);
     return aabbBounds;
   }
 
@@ -966,7 +967,7 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, polygonTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -1019,7 +1020,7 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, arcTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -1047,7 +1048,8 @@ export class DefaultGraphicService implements IGraphicService {
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
 
-    this.transformAABBBounds(attribute, aabbBounds, polygonTheme, graphic);
+    const { lineJoin = polygonTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', graphic);
     return aabbBounds;
   }
 
@@ -1091,7 +1093,8 @@ export class DefaultGraphicService implements IGraphicService {
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
 
-    this.transformAABBBounds(attribute, aabbBounds, lineTheme, graphic);
+    const { lineJoin = lineTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, lineTheme, lineJoin === 'miter', graphic);
     return aabbBounds;
   }
 
@@ -1150,7 +1153,8 @@ export class DefaultGraphicService implements IGraphicService {
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
 
-    this.transformAABBBounds(attribute, aabbBounds, areaTheme, graphic);
+    const { lineJoin = areaTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, areaTheme, lineJoin === 'miter', graphic);
     return aabbBounds;
   }
 
@@ -1213,7 +1217,7 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    this.transformAABBBounds(attribute, aabbBounds, circleTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, circleTheme, false, graphic);
 
     return aabbBounds;
   }
@@ -1278,7 +1282,8 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    this.transformAABBBounds(attribute, aabbBounds, arcTheme, graphic);
+    const { lineJoin = arcTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, arcTheme, lineJoin === 'miter', graphic);
 
     return aabbBounds;
   }
@@ -1351,7 +1356,8 @@ export class DefaultGraphicService implements IGraphicService {
         tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
       });
 
-    this.transformAABBBounds(attribute, aabbBounds, symbolTheme, graphic);
+    const { lineJoin = symbolTheme.lineJoin } = attribute;
+    this.transformAABBBounds(attribute, aabbBounds, symbolTheme, lineJoin === 'miter', graphic);
     return aabbBounds;
   }
 
@@ -1408,7 +1414,7 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    this.transformAABBBounds(attribute, aabbBounds, imageTheme, graphic);
+    this.transformAABBBounds(attribute, aabbBounds, imageTheme, false, graphic);
     return aabbBounds;
   }
 
@@ -1424,6 +1430,7 @@ export class DefaultGraphicService implements IGraphicService {
     attribute: Partial<IGraphicAttribute>,
     aabbBounds: IAABBBounds,
     theme: Required<IGraphicAttribute>,
+    miter: boolean,
     graphic?: IGraphic
   ) {
     const {
@@ -1432,20 +1439,19 @@ export class DefaultGraphicService implements IGraphicService {
       stroke = theme.stroke,
       shadowBlur = theme.shadowBlur,
       lineWidth = theme.lineWidth,
-      lineJoin = theme.lineJoin,
       strokeBoundsBuffer = theme.strokeBoundsBuffer
     } = attribute;
     const tb1 = this.tempAABBBounds1;
     const tb2 = this.tempAABBBounds2;
     if (stroke) {
       const scaledHalfLineWidth = lineWidth / Math.abs(scaleX + scaleY);
-      boundStroke(tb1, scaledHalfLineWidth, lineJoin === 'miter', strokeBoundsBuffer);
+      boundStroke(tb1, scaledHalfLineWidth, miter, strokeBoundsBuffer);
       aabbBounds.union(tb1);
       tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     }
     if (shadowBlur) {
       const shadowBlurHalfWidth = shadowBlur / Math.abs(scaleX + scaleY);
-      boundStroke(tb1, shadowBlurHalfWidth, lineJoin === 'miter', strokeBoundsBuffer);
+      boundStroke(tb1, shadowBlurHalfWidth, miter, strokeBoundsBuffer);
       aabbBounds.union(tb1);
       // tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     }

@@ -4,7 +4,7 @@ import type { IGraphicAttribute, IGraphic } from '../graphic';
 export type IPolygonAttribute = {
   // ? 不需要x2/y2
   points: IPointLike[];
-  borderRadius?: number | number[];
+  cornerRadius?: number | number[];
 };
 
 export type IPolygonGraphicAttribute = Partial<IGraphicAttribute> & Partial<IPolygonAttribute>;

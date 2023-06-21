@@ -30,7 +30,7 @@ export function run() {
 
       stroke: '#87e8de',
       lineWidth: 1,
-      borderRadius: 4
+      cornerRadius: 4
     },
     shape: {
       visible: guiObject.symbolVisible,

@@ -14,7 +14,7 @@ const doubleSlider1 = new Slider({
   max: 100,
   value: [10, 78],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,
@@ -41,7 +41,7 @@ const doubleSlider2 = new Slider({
   max: 100,
   value: [10, 78],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,
@@ -67,7 +67,7 @@ const doubleSlider3 = new Slider({
   min: 0,
   max: 100,
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,
@@ -92,7 +92,7 @@ const singleSlider1 = new Slider({
   max: 100,
   value: 80,
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,
@@ -117,7 +117,7 @@ const singleSlider2 = new Slider({
   max: 100,
   value: 80,
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,
@@ -141,7 +141,7 @@ const singleSlider3 = new Slider({
   min: 0,
   max: 100,
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   },
   startText: {
     visible: true,

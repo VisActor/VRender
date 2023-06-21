@@ -31,7 +31,7 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
 
     // const { rectAttribute } = graphicService.themeService.getCurrentTheme();
     const rectAttribute = getTheme(rect).rect;
-    const { borderRadius = rectAttribute.borderRadius } = rect.attribute;
+    const { cornerRadius = rectAttribute.cornerRadius } = rect.attribute;
     let { x = rectAttribute.x, y = rectAttribute.y } = rect.attribute;
 
     pickContext.highPerformanceSave();
@@ -54,8 +54,8 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
     // 处理圆角情况，无圆角直接使用bounds判断结果
     if (
       !onlyTranslate ||
-      (isNumber(borderRadius, true) && borderRadius !== 0) ||
-      (isArray(borderRadius) && (<number[]>borderRadius).some(num => num !== 0))
+      (isNumber(cornerRadius, true) && cornerRadius !== 0) ||
+      (isArray(cornerRadius) && (<number[]>cornerRadius).some(num => num !== 0))
     ) {
       // 详细形状判断
       picked = false;

@@ -18,7 +18,7 @@ import {
   AnimateGroup,
   AttributeAnimate
 } from '@visactor/vrender';
-import { json } from './json';
+// import { json } from './json';
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
 
@@ -82,9 +82,9 @@ export const page = () => {
 
   const layer = stage.at(0);
 
-  json.children[0].children.forEach(item => {
-    _add(layer, item);
-  });
+  // json.children[0].children.forEach(item => {
+  //   _add(layer, item);
+  // });
   stage.set3dOptions({
     alpha: 0,
     // beta: 0,

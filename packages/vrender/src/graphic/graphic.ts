@@ -148,6 +148,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
     }
   }
+
+  declare _events?: any;
+
   declare onBeforeAttributeUpdate?: (
     val: any,
     attributes: Partial<T>,
@@ -1275,10 +1278,13 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected _emitCustomEvent(type: string, context?: any) {
-    const changeEvent = new CustomEvent(type, context);
+    if (this._events && type in this._events) {
+      const changeEvent = new CustomEvent(type, context);
+      changeEvent.bubbles = false;
 
-    (changeEvent as any).manager = (this.stage as any)?.eventSystem?.manager;
-    this.dispatchEvent(changeEvent);
+      (changeEvent as any).manager = (this.stage as any)?.eventSystem?.manager;
+      this.dispatchEvent(changeEvent);
+    }
   }
 
   abstract clone(): Graphic<any>;

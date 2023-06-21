@@ -158,7 +158,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       'slider',
       {
         ...sliderAttribute,
-        borderRadius: this._getDefaultSliderBorderRadius(),
+        cornerRadius: this._getDefaultSliderCornerRadius(),
         ...sliderStyle,
         boundsPadding: normalizePadding(padding),
         pickMode: 'imprecise'
@@ -195,7 +195,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   }
 
   // 获取默认的滑块圆角
-  private _getDefaultSliderBorderRadius() {
+  private _getDefaultSliderCornerRadius() {
     const { direction, round } = this.attribute as ScrollBarAttributes;
 
     if (round) {

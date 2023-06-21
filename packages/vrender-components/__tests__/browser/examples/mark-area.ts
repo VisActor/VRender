@@ -8,7 +8,7 @@ export function run() {
   const guiObject = {
     name: 'MarkArea',
     labelPos: 'left',
-    borderRadius: 0,
+    cornerRadius: 0,
     labelDx: 0,
     labelDy: 0
   };
@@ -20,7 +20,7 @@ export function run() {
       dx: guiObject.labelDx,
       dy: guiObject.labelDy,
       areaStyle: {
-        borderRadius: guiObject.borderRadius
+        cornerRadius: guiObject.cornerRadius
       }
     }
   };
@@ -68,7 +68,7 @@ export function run() {
     ],
     ...(styleAttr as any),
     areaStyle: {
-      borderRadius: guiObject.borderRadius
+      cornerRadius: guiObject.cornerRadius
     }
   });
 
@@ -114,10 +114,10 @@ export function run() {
     );
   });
 
-  gui.add(guiObject, 'borderRadius').onChange(value => {
+  gui.add(guiObject, 'cornerRadius').onChange(value => {
     markAreas.forEach(markArea =>
       markArea.setAttribute('areaStyle', {
-        borderRadius: value
+        cornerRadius: value
       })
     );
   });

@@ -358,7 +358,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       y: 0,
       width: railWidth,
       height: railHeight,
-      borderRadius: railStyle?.borderRadius,
+      cornerRadius: railStyle?.cornerRadius,
       clip: true,
       pickable: false
     });

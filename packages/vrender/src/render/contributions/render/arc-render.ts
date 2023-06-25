@@ -489,7 +489,9 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       fillOpacity = arcAttribute.fillOpacity,
       lineWidth = arcAttribute.lineWidth,
       strokeOpacity = arcAttribute.strokeOpacity,
-      visible = arcAttribute.visible
+      visible = arcAttribute.visible,
+      x: originX = arcAttribute.x,
+      y: originY = arcAttribute.y
     } = arc.attribute;
     // 不绘制或者透明
     const fVisible = fillVisible(opacity, fillOpacity);
@@ -551,7 +553,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         if (fillCb) {
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
-          context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
+          context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
           context.fill();
         }
       }
@@ -560,7 +562,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         if (strokeCb) {
           strokeCb(context, arc.attribute, arcAttribute);
         } else if (sVisible) {
-          context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+          context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
           context.stroke();
         }
       }

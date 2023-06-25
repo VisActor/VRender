@@ -369,11 +369,12 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     // shadow
     context.setShadowStyle && context.setShadowStyle(area, attribute, defaultAttribute);
 
+    const { x: originX = 0, x: originY = 0 } = attribute;
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, attribute, defaultAttribute);
       } else if (fillOpacity) {
-        context.setCommonStyle(area, attribute, offsetX, offsetY, defaultAttribute);
+        context.setCommonStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
         context.fill();
       }
     }

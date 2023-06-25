@@ -70,7 +70,7 @@
   "exports": {
     ".": {
       "import": "./es/index.js",
-      "require": "./dist/index.js"
+      "require": "./cjs/index.js"
     }
   },
   "publishConfig": {

@@ -53,7 +53,9 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
       strokeOpacity = circleAttribute.strokeOpacity,
       opacity = circleAttribute.opacity,
       lineWidth = circleAttribute.lineWidth,
-      visible = circleAttribute.visible
+      visible = circleAttribute.visible,
+      x: originX = circleAttribute.x,
+      y: originY = circleAttribute.y
     } = circle.attribute;
 
     // 不绘制或者透明
@@ -98,7 +100,7 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
       if (fillCb) {
         fillCb(context, circle.attribute, circleAttribute);
       } else if (fVisible) {
-        context.setCommonStyle(circle, circle.attribute, x, y, circleAttribute);
+        context.setCommonStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
         context.fill();
       }
     }
@@ -107,7 +109,7 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
       if (strokeCb) {
         strokeCb(context, circle.attribute, circleAttribute);
       } else if (sVisible) {
-        context.setStrokeStyle(circle, circle.attribute, x, y, circleAttribute);
+        context.setStrokeStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
         context.stroke();
       }
     }

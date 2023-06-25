@@ -55,7 +55,9 @@ export class DefaultCanvasRectRender implements IGraphicRender {
       fillOpacity = rectAttribute.fillOpacity,
       lineWidth = rectAttribute.lineWidth,
       strokeOpacity = rectAttribute.strokeOpacity,
-      visible = rectAttribute.visible
+      visible = rectAttribute.visible,
+      x: originX = rectAttribute.x,
+      y: originY = rectAttribute.y
     } = rect.attribute;
 
     // 不绘制或者透明
@@ -126,7 +128,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
         fillCb(context, rect.attribute, rectAttribute);
       } else if (fVisible) {
         // 存在fill
-        context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
+        context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
         context.fill();
       }
     }
@@ -135,7 +137,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
         strokeCb(context, rect.attribute, rectAttribute);
       } else if (sVisible) {
         // 存在stroke
-        context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
+        context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
         context.stroke();
       }
     }

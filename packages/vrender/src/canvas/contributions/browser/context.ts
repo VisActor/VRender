@@ -23,7 +23,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import { IPointLike, Matrix, pi, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import { IPointLike, Matrix, pi, pi2, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
 import {
@@ -62,6 +62,15 @@ const addArcToBezierPath = (
   ry: number,
   clockwise: boolean
 ) => {
+  if (clockwise) {
+    while (endAngle > startAngle) {
+      endAngle -= pi2;
+    }
+  } else {
+    while (endAngle < startAngle) {
+      endAngle += pi2;
+    }
+  }
   // https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
   const step = (pi / 3) * (endAngle > startAngle ? 1 : -1);
   let sa = startAngle;

@@ -76,12 +76,16 @@ export class DefaultCanvasTextPicker extends BasePicker<IText> implements IGraph
         if (picked) {
           return true;
         }
-        const { textBaseline = textAttribute.textBaseline, textAlign = textAttribute.textAlign } = text.attribute;
+        const {
+          fontSize = textAttribute.fontSize,
+          textBaseline = textAttribute.textBaseline,
+          textAlign = textAttribute.textAlign
+        } = text.attribute;
         // 拾取基于xy的rect
         const bounds = text.AABBBounds;
         const height = bounds.height();
         const width = bounds.width();
-        const offsetY = textLayoutOffsetY(textBaseline, height);
+        const offsetY = textLayoutOffsetY(textBaseline, height, fontSize);
         const offsetX = textDrawOffsetX(textAlign, width);
         context.rect(offsetX + x, offsetY + y, width, height, z);
         picked = context.isPointInPath(pickPoint.x, pickPoint.y);

@@ -1,9 +1,5 @@
 import { createStage, createArea, container, IGraphic, global } from '@visactor/vrender';
-import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
-import '../contribution/env-canvas/module';
-
-global.setEnv('node');
 
 const subP1 = [
   [0, 100],
@@ -42,7 +38,18 @@ export const page = () => {
       curveType: type as any,
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
-      fill: 'red'
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 0,
+        stops: [
+          { offset: 0, color: 'green' },
+          { offset: 0.5, color: 'orange' },
+          { offset: 1, color: 'red' }
+        ]
+      },
     }));
   });
 

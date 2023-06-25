@@ -129,7 +129,7 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   getDevicePixelRatio(): number {
-    return 0;
+    return 1;
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {

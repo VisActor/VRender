@@ -6,7 +6,7 @@ export type IGroupAttribute = {
   path: IGraphic[];
   width: number;
   height: number;
-  borderRadius: number | number[];
+  cornerRadius: number | number[];
   clip: boolean;
   visibleAll: boolean;
 };

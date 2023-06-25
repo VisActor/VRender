@@ -48,7 +48,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
       points = polygonAttribute.points,
       fill = polygonAttribute.fill,
       stroke = polygonAttribute.stroke,
-      borderRadius = polygonAttribute.borderRadius,
+      cornerRadius = polygonAttribute.cornerRadius,
       fillOpacity = polygonAttribute.fillOpacity,
       background,
       strokeOpacity = polygonAttribute.strokeOpacity,
@@ -76,11 +76,11 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     }
     context.beginPath();
 
-    if ((borderRadius as number) <= 0 || (isArray(borderRadius) && (<number[]>borderRadius).every(num => num === 0))) {
+    if ((cornerRadius as number) <= 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       drawPolygon(context.camera ? context : context.nativeContext, points, x, y);
     } else {
       // FIXME: type
-      drawRoundedPolygon(context.camera ? context : context.nativeContext, points, x, y, borderRadius);
+      drawRoundedPolygon(context.camera ? context : context.nativeContext, points, x, y, cornerRadius);
     }
     // polygon 默认闭合
     context.closePath();

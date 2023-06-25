@@ -31,7 +31,7 @@ export const page = () => {
       
       stroke: 'red',
       lineWidth: 6,
-      borderRadius: 10
+      cornerRadius: 10
     });
     (stage as any).defaultLayer.add(rect);
   }
@@ -51,7 +51,7 @@ export const page = () => {
     
     stroke: 'red',
     lineWidth: 6,
-    borderRadius: 10
+    cornerRadius: 10
   };
   const key = 'x';
   (window as any).update = () => {

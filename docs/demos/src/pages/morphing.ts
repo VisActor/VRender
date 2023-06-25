@@ -109,7 +109,7 @@ export const page = () => {
     shadowColor: colorPools[2]
     // scaleX: 0.5,
     // scaleY: 0.5
-    // borderRadius: 30
+    // cornerRadius: 30
   });
 
   const area = createArea({

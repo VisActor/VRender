@@ -55,7 +55,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       clip = groupAttribute.clip,
       fillOpacity = groupAttribute.fillOpacity,
       strokeOpacity = groupAttribute.strokeOpacity,
-      borderRadius = groupAttribute.borderRadius,
+      cornerRadius = groupAttribute.cornerRadius,
       path = groupAttribute.path,
       lineWidth = groupAttribute.lineWidth,
       visible = groupAttribute.visible
@@ -97,14 +97,14 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       context.disableFill = disableFill;
       context.disableStroke = disableStroke;
       context.disableBeginPath = disableBeginPath;
-    } else if (borderRadius === 0 || (isArray(borderRadius) && (<number[]>borderRadius).every(num => num === 0))) {
+    } else if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       // 不需要处理圆角
       context.beginPath();
       context.rect(x, y, width, height);
     } else {
       context.beginPath();
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-      createRectPath(context, x, y, width, height, borderRadius);
+      createRectPath(context, x, y, width, height, cornerRadius);
     }
 
     if (!this._groupRenderContribitions) {

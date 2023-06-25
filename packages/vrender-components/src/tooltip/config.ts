@@ -5,7 +5,7 @@ import { TooltipAttributes } from './type';
 export const defaultAttributes: Partial<TooltipAttributes> = {
   panel: {
     visible: true,
-    borderRadius: [3, 3, 3, 3],
+    cornerRadius: [3, 3, 3, 3],
     fill: 'white',
     shadow: true,
     shadowBlur: 12,

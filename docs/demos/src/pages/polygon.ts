@@ -18,10 +18,9 @@ export const page = () => {
     ],
     fill: colorPools[10],
     stroke: colorPools[5],
-    stroke: false,
     lineJoin: 'bevel',
     lineWidth: 20
-    // borderRadius: 10
+    // cornerRadius: 10
   });
   shapes.push(square);
 
@@ -42,7 +41,7 @@ export const page = () => {
       lineJoin: 'round',
       lineWidth: 1,
       // lineDash: [10, 10],
-      borderRadius: 10
+      cornerRadius: 10
     })
   );
 
@@ -68,7 +67,7 @@ export const page = () => {
       shadowColor: colorPools[2],
       scaleX: 0.5,
       scaleY: 0.5
-      // borderRadius: 30
+      // cornerRadius: 30
     })
   );
 

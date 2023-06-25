@@ -165,7 +165,7 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
-  borderRadius: 0,
+  cornerRadius: 0,
   path: [],
   clip: false,
   visibleAll: true
@@ -176,7 +176,7 @@ export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
   path: '',
   width: 0,
   height: 0,
-  borderRadius: 0,
+  cornerRadius: 0,
   clip: false
 };
 
@@ -200,22 +200,22 @@ export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
 export const DefaultPolygonAttribute: Required<IPolygonGraphicAttribute> = {
   ...DefaultAttribute,
   points: [],
-  borderRadius: 0
+  cornerRadius: 0
 };
 
 export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
-  borderRadius: 0,
   strokeBoundsBuffer: 0
+  cornerRadius: 0
 };
 
 export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
-  borderRadius: 0,
+  cornerRadius: 0,
   length: 0
 };
 

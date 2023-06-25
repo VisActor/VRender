@@ -31,7 +31,7 @@ describe('Slider', () => {
         max: 100,
         value: 34,
         railStyle: {
-          borderRadius: 5
+          cornerRadius: 5
         },
         startText: {
           visible: true,
@@ -97,7 +97,7 @@ describe('Slider', () => {
         max: 100,
         value: 34,
         railStyle: {
-          borderRadius: 5
+          cornerRadius: 5
         },
         startText: {
           visible: true,
@@ -167,7 +167,7 @@ describe('Slider', () => {
         max: 100,
         value: [10, 78],
         railStyle: {
-          borderRadius: 5,
+          cornerRadius: 5,
           fill: 'yellow'
         },
         startText: {
@@ -226,7 +226,7 @@ describe('Slider', () => {
         max: 100,
         value: [10, 78],
         railStyle: {
-          borderRadius: 5,
+          cornerRadius: 5,
           fill: 'yellow'
         },
         startText: {

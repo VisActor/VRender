@@ -45,7 +45,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       visible = textAttribute.visible,
       underline = textAttribute.underline,
       lineThrough = textAttribute.lineThrough,
-      keepDirIn3d = textAttribute.keepDirIn3d
+      keepDirIn3d = textAttribute.keepDirIn3d,
+      x: originX = textAttribute.x,
+      y: originY = textAttribute.y
     } = text.attribute;
 
     // 不绘制或者透明
@@ -83,7 +85,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         if (strokeCb) {
           strokeCb(context, text.attribute, textAttribute);
         } else if (sVisible) {
-          context.setStrokeStyle(text, text.attribute, x, y, textAttribute);
+          context.setStrokeStyle(text, text.attribute, originX - x, originY - y, textAttribute);
           multilineLayout.lines.forEach(line => {
             context.strokeText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
           });
@@ -93,7 +95,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         if (fillCb) {
           fillCb(context, text.attribute, textAttribute);
         } else if (fVisible) {
-          context.setCommonStyle(text, text.attribute, x, y, textAttribute);
+          context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
           multilineLayout.lines.forEach(line => {
             context.fillText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
             this.drawMultiUnderLine(
@@ -117,7 +119,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         if (strokeCb) {
           strokeCb(context, text.attribute, textAttribute);
         } else if (sVisible) {
-          context.setStrokeStyle(text, text.attribute, x, y, textAttribute);
+          context.setStrokeStyle(text, text.attribute, originX - x, originY - y, textAttribute);
           context.strokeText(t, x, y, z);
         }
       }
@@ -125,7 +127,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         if (fillCb) {
           fillCb(context, text.attribute, textAttribute);
         } else if (fVisible) {
-          context.setCommonStyle(text, text.attribute, x, y, textAttribute);
+          context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
           context.fillText(t, x, y, z);
           this.drawUnderLine(underline, lineThrough, text, x, y, z, textAttribute, context);
         }

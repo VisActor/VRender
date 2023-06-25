@@ -6,6 +6,7 @@
     "@commitlint/cli": "17.0.3",
     "@commitlint/config-conventional": "17.0.3",
     "@microsoft/rush-lib": "5.94.1",
+    "chalk": "4.1.2",
     "commitizen": "4.2.5",
     "eslint": "~8.18.0",
     "lint-staged": "13.0.3",

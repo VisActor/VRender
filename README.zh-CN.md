@@ -20,9 +20,9 @@ VRender，不只是一个功能丰富的可视化渲染引可视化渲染擎，�
   <a href="">跨端</a>
 </p>
 
-[![npm Version](https://img.shields.io/npm/v/@visactor/vgrammar.svg)](https://www.npmjs.com/package/@visactor/vgrammar)
-[![npm Download](https://img.shields.io/npm/dm/@visactor/vgrammar.svg)](https://www.npmjs.com/package/@visactor/vgrammar)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vgrammar/blob/main/LICENSE)
+[![npm Version](https://img.shields.io/npm/v/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
+[![npm Download](https://img.shields.io/npm/dm/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vrender/blob/main/LICENSE)
 
 </div>
 
@@ -119,7 +119,7 @@ st.defaultLayer.add(sy);
 | ---- | ---- |
 
 | [VChart](https://visactor.io/vchart) | 基于 [VisActor/VRender](https://visactor.io/vrender) 封装的图表库。 |
-| [VGrammar](https://visactor.io/vgrammar) | 基于 [VisActor/VRender](https://visactor.io/vgrammar) 封装的语法库。 |
+| [VGrammar](https://visactor.io/vgrammar) | 基于 [VisActor/VRender](https://visactor.io/vrender) 封装的语法库。 |
 | [React 组件库](https://visactor.io/react-vrender) | 基于 [VisActor/VChart](https://visactor.io/vrender) 的 React 图表 组件库。 |
 | [智能生成组件](https://visactor.io/ai-vrender) | 基于 AI 的智能图表生成组件 |
 
@@ -129,7 +129,7 @@ st.defaultLayer.add(sy);
 
 细流成河，终成大海！
 
-<a href="https://github.com/visactor/vgrammar/graphs/contributors"><img src="https://contrib.rocks/image?repo=visactor/vgrammar" /></a>
+<a href="https://github.com/visactor/vrender/graphs/contributors"><img src="https://contrib.rocks/image?repo=visactor/vrender" /></a>
 
 # 许可证
 

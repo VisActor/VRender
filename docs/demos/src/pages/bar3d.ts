@@ -205,7 +205,7 @@ function drawChartCanopus() {
       z: 0,
       width: 20,
       length: 20,
-      borderRadius: 10,
+      cornerRadius: 10,
       // length: 20,
       stroke: i === 3,
       lineWidth: 1,

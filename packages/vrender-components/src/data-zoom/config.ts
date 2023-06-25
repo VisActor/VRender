@@ -12,7 +12,7 @@ export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
     fill: 'white',
     stroke: '#D1DBEE',
     lineWidth: 1,
-    borderRadius: 2
+    cornerRadius: 2
   },
   dragMaskStyle: {
     fill: '#B0C8F9',
@@ -55,7 +55,7 @@ export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
       style: {
         fill: 'white',
         stroke: '#B0C8F9',
-        borderRadius: 2
+        cornerRadius: 2
       }
     },
     icon: {

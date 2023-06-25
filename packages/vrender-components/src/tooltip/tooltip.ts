@@ -144,16 +144,16 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
         let x = 0;
         if (isVisible(itemAttr.shape)) {
           // 存在 symbol
-          const element = itemGroup.createOrUpdateChild(
+          itemGroup.createOrUpdateChild(
             `${itemGroupName}-${TOOLTIP_SHAPE_NAME_SUFFIX}`,
             {
               visible: true,
+              x: itemAttr.shape.size / 2,
+              y: itemAttr.height / 2,
               ...itemAttr.shape
             },
             'symbol'
           ) as ISymbol;
-          // shape.setAttribute('x', itemAttr.shape.size / 2);
-          element.setAttribute('y', itemAttr.height / 2);
         }
         if (hasContentShape) {
           x += itemAttr.shape.size + itemAttr.shape.spacing;

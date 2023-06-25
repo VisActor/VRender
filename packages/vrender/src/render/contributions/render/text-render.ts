@@ -117,14 +117,17 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       context.setTextStyle(text.attribute, textAttribute, z);
       const t = text.clipedText as string;
       let dy = 0;
-      if (textBaseline === 'top') {
-        dy = (lineHeight - fontSize) / 2;
-      } else if (textBaseline === 'middle') {
-        // no nothing
-      } else if (textBaseline === 'bottom') {
-        dy = -(lineHeight - fontSize) / 2;
-      } else {
-        dy = (lineHeight - fontSize) / 2 - fontSize * 0.79;
+      if (lineHeight !== fontSize) {
+        if (textBaseline === 'top') {
+          dy = (lineHeight - fontSize) / 2;
+        } else if (textBaseline === 'middle') {
+          // middle do nothing
+        } else if (textBaseline === 'bottom') {
+          dy = -(lineHeight - fontSize) / 2;
+        } else {
+          // alphabetic do nothing
+          // dy = (lineHeight - fontSize) / 2 - fontSize * 0.79;
+        }
       }
       if (doStroke) {
         if (strokeCb) {
@@ -196,7 +199,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } = text.attribute;
     const w = text.clipedWidth;
     const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY(textBaseline, fontSize);
+    const offsetY = textLayoutOffsetY(textBaseline, fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     if (underline) {
       attribute.lineWidth = underline;
@@ -242,7 +245,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } = text.attribute;
 
     const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY('alphabetic', fontSize);
+    const offsetY = textLayoutOffsetY('alphabetic', fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     let deltaY = -3;
     if (underline) {

@@ -28,10 +28,10 @@ export const page = () => {
     x: 500,
     y: 200,
     fill: colorPools[5],
-    // text: ['Tffg','ggaaaa'],
+    // text: ['Tffg'],
     text: 'Tffgggaaaa',
-    fontSize: 20,
-    lineHeight: 40,
+    fontSize: 15,
+    lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
     textBaseline: 'alphabetic',
@@ -39,7 +39,13 @@ export const page = () => {
     // scaleY: 2
   })
   graphics.push(text);
-
+  const circle = createCircle({
+    x: 500,
+    y: 200,
+    fill: 'black',
+    radius: 2
+  })
+  graphics.push(circle);
   
   const rect = createRect({
     x: text.AABBBounds.x1,

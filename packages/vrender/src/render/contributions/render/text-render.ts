@@ -46,12 +46,14 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       underline = textAttribute.underline,
       lineThrough = textAttribute.lineThrough,
       keepDirIn3d = textAttribute.keepDirIn3d,
-      lineHeight = textAttribute.lineHeight,
+      // lineHeight = textAttribute.lineHeight,
       fontSize = textAttribute.fontSize,
-      textBaseline = textAttribute.textBaseline
+      textBaseline = textAttribute.textBaseline,
       x: originX = textAttribute.x,
       y: originY = textAttribute.y
     } = text.attribute;
+
+    const lineHeight = text.attribute.lineHeight ?? fontSize;
 
     // 不绘制或者透明
     const fVisible = fillVisible(opacity, fillOpacity);

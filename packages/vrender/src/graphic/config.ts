@@ -89,7 +89,7 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   ellipsis: '…',
   fontVariant: '',
   fontStyle: '',
-  lineHeight: 16,
+  lineHeight: undefined,
   underline: 0,
   lineThrough: 0
 };

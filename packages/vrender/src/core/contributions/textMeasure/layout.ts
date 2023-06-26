@@ -233,8 +233,7 @@ export class CanvasTextLayout {
       line.leftOffset = bbox.width - line.width;
     }
 
-    // line.topOffset = lineHeight * 0.79 + origin[1]; // 渲染默认使用alphabetic
-    line.topOffset = (lineHeight - this.textOptions.fontSize) / 2 + this.textOptions.fontSize * 0.79 + origin[1];
+    line.topOffset = lineHeight * 0.79 + origin[1]; // 渲染默认使用alphabetic
     origin[1] += lineHeight;
 
     return line;

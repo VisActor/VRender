@@ -46,9 +46,14 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       underline = textAttribute.underline,
       lineThrough = textAttribute.lineThrough,
       keepDirIn3d = textAttribute.keepDirIn3d,
+      // lineHeight = textAttribute.lineHeight,
+      fontSize = textAttribute.fontSize,
+      textBaseline = textAttribute.textBaseline,
       x: originX = textAttribute.x,
       y: originY = textAttribute.y
     } = text.attribute;
+
+    const lineHeight = text.attribute.lineHeight ?? fontSize;
 
     // 不绘制或者透明
     const fVisible = fillVisible(opacity, fillOpacity);
@@ -115,12 +120,25 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } else {
       context.setTextStyle(text.attribute, textAttribute, z);
       const t = text.clipedText as string;
+      let dy = 0;
+      if (lineHeight !== fontSize) {
+        if (textBaseline === 'top') {
+          dy = (lineHeight - fontSize) / 2;
+        } else if (textBaseline === 'middle') {
+          // middle do nothing
+        } else if (textBaseline === 'bottom') {
+          dy = -(lineHeight - fontSize) / 2;
+        } else {
+          // alphabetic do nothing
+          // dy = (lineHeight - fontSize) / 2 - fontSize * 0.79;
+        }
+      }
       if (doStroke) {
         if (strokeCb) {
           strokeCb(context, text.attribute, textAttribute);
         } else if (sVisible) {
           context.setStrokeStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-          context.strokeText(t, x, y, z);
+          context.strokeText(t, x, y + dy, z);
         }
       }
       if (doFill) {
@@ -128,8 +146,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
           fillCb(context, text.attribute, textAttribute);
         } else if (fVisible) {
           context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-          context.fillText(t, x, y, z);
-          this.drawUnderLine(underline, lineThrough, text, x, y, z, textAttribute, context);
+          context.fillText(t, x, y + dy, z);
+          this.drawUnderLine(underline, lineThrough, text, x, y + dy, z, textAttribute, context);
         }
       }
     }
@@ -185,7 +203,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } = text.attribute;
     const w = text.clipedWidth;
     const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY(textBaseline, fontSize);
+    const offsetY = textLayoutOffsetY(textBaseline, fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     if (underline) {
       attribute.lineWidth = underline;
@@ -231,7 +249,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } = text.attribute;
 
     const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY('alphabetic', fontSize);
+    const offsetY = textLayoutOffsetY('alphabetic', fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     let deltaY = -3;
     if (underline) {

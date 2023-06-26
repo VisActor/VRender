@@ -24,7 +24,7 @@ export function drawRoundedPolygon(
   points: IPointLike[],
   x: number,
   y: number,
-  borderRadius: number | number[]
+  cornerRadius: number | number[]
 ) {
   if (points.length < 3) {
     drawPolygon(path, points, x, y);
@@ -52,7 +52,7 @@ export function drawRoundedPolygon(
     const tan = Math.abs(Math.tan(angle));
 
     // get config radius
-    let radius = Array.isArray(borderRadius) ? borderRadius[(i + 1) % points.length] ?? 0 : borderRadius;
+    let radius = Array.isArray(cornerRadius) ? cornerRadius[(i + 1) % points.length] ?? 0 : cornerRadius;
     let segment = radius / tan;
 
     //Check the segment

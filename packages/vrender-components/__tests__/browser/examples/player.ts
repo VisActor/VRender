@@ -22,7 +22,7 @@ const layoutPlayer1 = new DiscretePlayer({
     space: 10,
     trackStyle: {
       fillOpacity: 1,
-      borderRadius: 5,
+      cornerRadius: 5,
       stroke: 'black',
       fill: 'red'
     },
@@ -103,7 +103,7 @@ const layoutPlayer3 = new ContinuousPlayer({
   orient: 'bottom',
   slider: {
     railStyle: {
-      borderRadius: 40,
+      cornerRadius: 40,
 
       stroke: 'blue',
       strokeOpacity: 0.1
@@ -209,7 +209,7 @@ setInterval(() => {
     orient: 'bottom',
     slider: {
       railStyle: {
-        borderRadius: 40,
+        cornerRadius: 40,
 
         stroke: 'blue',
         strokeOpacity: 0.1

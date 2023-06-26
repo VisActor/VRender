@@ -57,7 +57,7 @@ export function getRollupOptions(
         destDir: path.resolve(projectRoot, config.outputDir.umd!)
       }),
       Alias({ entries: config.alias }),
-      config.minify && terser(),
+      ...(config.minify ? [terser()] : []),
       ...((config.rollupOptions.plugins as Plugin[]) || [])
     ]
   };

@@ -1,1 +1,1 @@
-import {} from '@visactor/vrender';
+// import {} from '@visactor/vrender';

@@ -18,7 +18,18 @@ export const page = () => {
   graphics.push(createText({
     x: 300,
     y: 200,
-    fill: colorPools[5],
+    fill: {
+      gradient: 'linear',
+      x0: 0,
+      y0: 0,
+      x1: 1,
+      y1: 0,
+      stops: [
+        { offset: 0, color: 'green' },
+        { offset: 0.5, color: 'orange' },
+        { offset: 1, color: 'red' }
+      ]
+    },
     text: ['Test', 'test'],
     fontSize: 20,
     textBaseline: 'top'

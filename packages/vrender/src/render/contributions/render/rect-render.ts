@@ -50,12 +50,14 @@ export class DefaultCanvasRectRender implements IGraphicRender {
       stroke = rectAttribute.stroke,
       width = rectAttribute.width,
       height = rectAttribute.height,
-      borderRadius = rectAttribute.borderRadius,
+      cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
       fillOpacity = rectAttribute.fillOpacity,
       lineWidth = rectAttribute.lineWidth,
       strokeOpacity = rectAttribute.strokeOpacity,
-      visible = rectAttribute.visible
+      visible = rectAttribute.visible,
+      x: originX = rectAttribute.x,
+      y: originY = rectAttribute.y
     } = rect.attribute;
 
     // 不绘制或者透明
@@ -77,7 +79,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
       return;
     }
 
-    if (borderRadius === 0 || (isArray(borderRadius) && (<number[]>borderRadius).every(num => num === 0))) {
+    if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       // 不需要处理圆角
       context.beginPath();
       context.rect(x, y, width, height);
@@ -85,7 +87,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
       context.beginPath();
 
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-      createRectPath(context, x, y, width, height, borderRadius);
+      createRectPath(context, x, y, width, height, cornerRadius);
     }
 
     if (!this._rectRenderContribitions) {
@@ -126,7 +128,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
         fillCb(context, rect.attribute, rectAttribute);
       } else if (fVisible) {
         // 存在fill
-        context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
+        context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
         context.fill();
       }
     }
@@ -135,7 +137,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
         strokeCb(context, rect.attribute, rectAttribute);
       } else if (sVisible) {
         // 存在stroke
-        context.setStrokeStyle(rect, rect.attribute, x, y, rectAttribute);
+        context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
         context.stroke();
       }
     }

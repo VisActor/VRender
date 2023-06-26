@@ -36,7 +36,7 @@ export function renderRect(num: number) {
         y: 600 * Math.random(),
         width: 80,
         height: 50,
-        borderRadius: 10,
+        cornerRadius: 10,
         fill: colorPools[Math.floor(Math.random() * colorPools.length)]
       });
     },

@@ -16,7 +16,7 @@ const hbLegend = new ColorContinuousLegend({
   max: 100,
   value: [0, 100],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   }
 });
 
@@ -37,7 +37,7 @@ const htLegend = new ColorContinuousLegend({
   max: 100,
   value: [0, 100],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   }
 });
 
@@ -57,7 +57,7 @@ const vlLegend = new ColorContinuousLegend({
   max: 100,
   value: [10, 100],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   }
 });
 const vrLegend = new ColorContinuousLegend({
@@ -76,7 +76,7 @@ const vrLegend = new ColorContinuousLegend({
   max: 100,
   value: [10, 100],
   railStyle: {
-    borderRadius: 5
+    cornerRadius: 5
   }
 });
 const stage = render([hbLegend, htLegend, vlLegend, vrLegend], 'main');

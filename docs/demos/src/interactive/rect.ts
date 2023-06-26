@@ -11,7 +11,7 @@ export function renderRect(num: number) {
       height: 60,
       x: 800 * Math.random(),
       y: 800 * Math.random(),
-      borderRadius: 50,
+      cornerRadius: 50,
       // scaleX: 2,
       // scaleY: 2,
       // angle: Math.PI / 4,

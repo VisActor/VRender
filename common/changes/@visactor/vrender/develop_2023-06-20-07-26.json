@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "move enableView3dTransform into options3d",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -20,6 +20,8 @@ VRender, not just a feature-rich visual rendering engine, but also a skillful an
   <a href="">Cross-Platform</a>
 </p>
 
+![image test](https://github.com/visactor/vchart/actions/workflows/bug-server.yml/badge.svg)
+![unit test](https://github.com/visactor/vchart/actions/workflows/unit-test.yml/badge.svg)
 [![npm Version](https://img.shields.io/npm/v/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vrender/blob/main/LICENSE)

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "rename all of the borderRadius to cornerRadius",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

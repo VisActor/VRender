@@ -1,4 +1,5 @@
-import ArgsParser, { Arguments } from 'yargs-parser';
+import type { Arguments } from 'yargs-parser';
+import ArgsParser from 'yargs-parser';
 import type { RawPackageJson } from './package';
 import type { RollupOptions } from 'rollup';
 import type { Alias } from '@rollup/plugin-alias';
@@ -104,6 +105,7 @@ export interface Config {
   preTasks: Record<string, (config: Config, projectRoot: string, rawPackageJson: RawPackageJson) => Promise<unknown>>;
   // 构建后执行的任务列表
   postTasks: Record<string, (config: Config, projectRoot: string, rawPackageJson: RawPackageJson) => Promise<unknown>>;
+  globals: Record<string, string>;
 }
 
 export const DEFAULT_CONFIG_FILE = 'bundler.config.js';
@@ -139,7 +141,8 @@ export function getDefaultConfig(): Config {
     alias: [],
     rollupOptions: {},
     preTasks: {},
-    postTasks: {}
+    postTasks: {},
+    globals: {}
   };
 }
 
@@ -185,7 +188,7 @@ export function getFinalConfig(
   defaultConfig: Config,
   packageVersion: string
 ): Config {
-  const parsedCLIEnvs = parserEnvsOfCLIArgs(cliArgs['envs'] || []);
+  const parsedCLIEnvs = parserEnvsOfCLIArgs(cliArgs.envs || []);
   const envs = {
     ...userConfig.envs,
     ...parsedCLIEnvs,

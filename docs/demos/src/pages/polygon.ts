@@ -16,12 +16,22 @@ export const page = () => {
       { x: 100, y: 100 },
       { x: 0, y: 100 }
     ],
-    fill: colorPools[10],
+    fill: {
+      gradient: 'linear',
+      x0: 0,
+      y0: 0,
+      x1: 1,
+      y1: 0,
+      stops: [
+        { offset: 0, color: 'green' },
+        { offset: 0.5, color: 'orange' },
+        { offset: 1, color: 'red' }
+      ]
+    },
     stroke: colorPools[5],
-    stroke: false,
     lineJoin: 'bevel',
     lineWidth: 20
-    // borderRadius: 10
+    // cornerRadius: 10
   });
   shapes.push(square);
 
@@ -42,7 +52,7 @@ export const page = () => {
       lineJoin: 'round',
       lineWidth: 1,
       // lineDash: [10, 10],
-      borderRadius: 10
+      cornerRadius: 10
     })
   );
 
@@ -68,7 +78,7 @@ export const page = () => {
       shadowColor: colorPools[2],
       scaleX: 0.5,
       scaleY: 0.5
-      // borderRadius: 30
+      // cornerRadius: 30
     })
   );
 
@@ -108,7 +118,7 @@ export const page = () => {
     .loop(0)
     .to(
       {
-        fill: () => colorPools[~~(Math.random() * 10)]
+        fill: colorPools[~~(Math.random() * 10)]
       },
       1000,
       'quadIn'

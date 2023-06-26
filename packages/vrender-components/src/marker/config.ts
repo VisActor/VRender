@@ -32,7 +32,7 @@ export const DEFAULT_MARK_LINE_THEME = {
     padding: [2, 2, 4, 4],
     panel: {
       visible: true,
-      borderRadius: 0,
+      cornerRadius: 0,
       fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8
     }
@@ -104,7 +104,7 @@ export const DEFAULT_MARK_AREA_THEME = {
     padding: [2, 2, 4, 4],
     panel: {
       visible: true,
-      borderRadius: 0,
+      cornerRadius: 0,
       fill: 'rgb(48, 115, 242)',
       fillOpacity: 0.8
     }

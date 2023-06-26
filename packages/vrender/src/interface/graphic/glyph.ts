@@ -10,7 +10,7 @@ export type IGlyphAttribute = {
   path: string | ICustomPath2D;
   width: number;
   height: number;
-  borderRadius: number | number[];
+  cornerRadius: number | number[];
   clip: boolean;
 };
 

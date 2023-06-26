@@ -8,7 +8,7 @@ import { application } from '../application';
 import { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
 
-const POLYGON_UPDATE_TAG_KEY = ['points', 'borderRadius', ...GRAPHIC_UPDATE_TAG_KEY];
+const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolygon {
   type: GraphicType = 'polygon';

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of gradient color while the x1 in color is zero caused by ||",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

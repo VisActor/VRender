@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.11.0-alpha.1",
+  "version": "0.11.0-alpha.2",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -70,7 +70,7 @@
   "exports": {
     ".": {
       "import": "./es/index.js",
-      "require": "./dist/index.js"
+      "require": "./cjs/index.js"
     }
   },
   "publishConfig": {

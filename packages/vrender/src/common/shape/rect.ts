@@ -1,5 +1,7 @@
-import { isNumber, vec2, vec4, arrayEqual } from '@visactor/vutils';
+import { isNumber, vec2, vec4, arrayEqual, pi } from '@visactor/vutils';
 import { IContext2d, ICustomPath2D } from '../../interface';
+
+const halfPi = pi / 2;
 
 export function createRectPath(
   path: ICustomPath2D | IContext2d,
@@ -87,8 +89,10 @@ export function createRectPath(
       centerX,
       centerY,
       _cornerRadius[1],
-      Math.atan2(rightTopPoint1[1] - centerY, rightTopPoint1[0] - centerX),
-      Math.atan2(rightTopPoint2[1] - centerY, rightTopPoint2[0] - centerX),
+      -halfPi,
+      0,
+      // Math.atan2(rightTopPoint1[1] - centerY, rightTopPoint1[0] - centerX),
+      // Math.atan2(rightTopPoint2[1] - centerY, rightTopPoint2[0] - centerX),
       false
     );
     // path.arcTo(rightTop[0], rightTop[1], rightTopPoint2[0], rightTopPoint2[1], _cornerRadius[1]);
@@ -102,8 +106,10 @@ export function createRectPath(
       centerX,
       centerY,
       _cornerRadius[2],
-      Math.atan2(rightBottomPoint2[1] - centerY, rightBottomPoint2[0] - centerX),
-      Math.atan2(rightBottomPoint1[1] - centerY, rightBottomPoint1[0] - centerX),
+      0,
+      halfPi,
+      // Math.atan2(rightBottomPoint2[1] - centerY, rightBottomPoint2[0] - centerX),
+      // Math.atan2(rightBottomPoint1[1] - centerY, rightBottomPoint1[0] - centerX),
       false
     );
     // path.arcTo(rightBottom[0], rightBottom[1], rightBottomPoint1[0], rightBottomPoint1[1], _cornerRadius[2]);
@@ -117,8 +123,10 @@ export function createRectPath(
       centerX,
       centerY,
       _cornerRadius[3],
-      Math.atan2(leftBottomPoint1[1] - centerY, leftBottomPoint1[0] - centerX),
-      Math.atan2(leftBottomPoint2[1] - centerY, leftBottomPoint2[0] - centerX),
+      halfPi,
+      pi,
+      // Math.atan2(leftBottomPoint1[1] - centerY, leftBottomPoint1[0] - centerX),
+      // Math.atan2(leftBottomPoint2[1] - centerY, leftBottomPoint2[0] - centerX),
       false
     );
     // path.arcTo(leftBottom[0], leftBottom[1], leftBottomPoint2[0], leftBottomPoint2[1], _cornerRadius[3]);
@@ -132,8 +140,10 @@ export function createRectPath(
       centerX,
       centerY,
       _cornerRadius[0],
-      Math.atan2(leftTopPoint2[1] - centerY, leftTopPoint2[0] - centerX),
-      Math.atan2(leftTopPoint1[1] - centerY, leftTopPoint1[0] - centerX),
+      pi,
+      pi + halfPi,
+      // Math.atan2(leftTopPoint2[1] - centerY, leftTopPoint2[0] - centerX),
+      // Math.atan2(leftTopPoint1[1] - centerY, leftTopPoint1[0] - centerX) + Math.PI * 2,
       false
     );
     // path.arcTo(leftTop[0], leftTop[1], leftTopPoint1[0], leftTopPoint1[1], _cornerRadius[0]);

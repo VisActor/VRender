@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 20 Jun 2023 06:23:42 GMT and should not be manually modified.
+This log was last generated on Tue, 27 Jun 2023 03:18:18 GMT and should not be manually modified.
+
+## 0.11.0
+Tue, 27 Jun 2023 03:18:18 GMT
+
+### Minor changes
+
+- update vUtils version
+- move enableView3dTransform into options3d
+- rename all of the borderRadius to cornerRadius
+
+### Patches
+
+- fix the bug of arc in 3d mode
+- fix the bug of gradient-color caused by bounds and offsetXY
+- fix the bug of gradient color while the x1 in color is zero caused by ||
+- fix the bug of dpr in node env
+- fix the error of options3d default value
+- fix the bug of rect cornerRadius on left top
 
 ## 0.10.3
 Tue, 20 Jun 2023 06:23:42 GMT

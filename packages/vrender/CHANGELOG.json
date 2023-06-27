@@ -2,6 +2,44 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "@visactor/vrender_v0.11.0",
+      "date": "Tue, 27 Jun 2023 03:18:18 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "update vUtils version"
+          },
+          {
+            "comment": "move enableView3dTransform into options3d"
+          },
+          {
+            "comment": "rename all of the borderRadius to cornerRadius"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix the bug of arc in 3d mode"
+          },
+          {
+            "comment": "fix the bug of gradient-color caused by bounds and offsetXY"
+          },
+          {
+            "comment": "fix the bug of gradient color while the x1 in color is zero caused by ||"
+          },
+          {
+            "comment": "fix the bug of dpr in node env"
+          },
+          {
+            "comment": "fix the error of options3d default value"
+          },
+          {
+            "comment": "fix the bug of rect cornerRadius on left top"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.3",
       "tag": "@visactor/vrender_v0.10.3",
       "date": "Tue, 20 Jun 2023 06:23:42 GMT",

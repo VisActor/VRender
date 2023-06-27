@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 20 Jun 2023 06:23:42 GMT and should not be manually modified.
+This log was last generated on Tue, 27 Jun 2023 03:18:18 GMT and should not be manually modified.
+
+## 0.11.0
+Tue, 27 Jun 2023 03:18:18 GMT
+
+### Minor changes
+
+- update vUtils version
+- rename all of the borderRadius to cornerRadius
+
+### Patches
+
+- fix the position offset of the tooltip content shape
 
 ## 0.10.3
 Tue, 20 Jun 2023 06:23:42 GMT

@@ -55,6 +55,79 @@ describe('node-tree', () => {
     });
   });
 
+  it('insertInto & remove', () => {
+    const group = createGroup({});
+    const g1 = createRect({});
+    const g2 = createRect({});
+    const g3 = createRect({});
+    const g4 = createRect({});
+    const g5 = createRect({});
+    const g6 = createRect({});
+    group.insertInto(g1, 10);
+    group.insertInto(g2, 30);
+    group.insertInto(g3, 20);
+    group.insertInto(g4, 12);
+    group.insertInto(g5, 2);
+    group.insertInto(g6, 3);
+    group.removeChild(g3);
+    group.removeChild(g6);
+    let children = [g1, g2, g5, g4];
+    expect(group.children.length).toEqual(children.length);
+    group.getChildren().forEach((v, i) => {
+      expect(v).toEqual(children[i]);
+    });
+    group.insertInto(g3, 20);
+    group.insertInto(g6, 1);
+    const g7 = createRect({});
+    group.insertInto(g7, 0);
+    children = [g7, g1, g6, g2, g5, g4, g3];
+    group.getChildren().forEach((v, i) => {
+      expect(v).toEqual(children[i]);
+    });
+  });
+
+  it('insertIntoKeepIdx & remove', () => {
+    const group = createGroup({});
+    const g1 = createRect({});
+    const g2 = createRect({});
+    const g3 = createRect({});
+    const g4 = createRect({});
+    const g5 = createRect({});
+    const g6 = createRect({});
+    group.insertIntoKeepIdx(g1, 10);
+    group.insertIntoKeepIdx(g2, 30);
+    group.insertIntoKeepIdx(g3, 20);
+    group.insertIntoKeepIdx(g4, 12);
+    group.insertIntoKeepIdx(g5, 2);
+    group.insertIntoKeepIdx(g6, 3);
+    group.removeChild(g3);
+    group.removeChild(g6);
+    let children = [g5, g1, g4, g2];
+    expect(group.getChildren().length).toEqual(children.length);
+    group.getChildren().forEach((v, i) => {
+      expect(v).toEqual(children[i]);
+    });
+
+    group.insertIntoKeepIdx(g3, 20);
+    group.insertIntoKeepIdx(g6, 3);
+    children = [g5, g6, g1, g4, g3, g2];
+    expect(group.getChildren().length).toEqual(children.length);
+    group.getChildren().forEach((v, i) => {
+      expect(v).toEqual(children[i]);
+    });
+
+    const group2 = createGroup({});
+    const g21 = createRect({});
+    const g22 = createRect({});
+    group2.insertIntoKeepIdx(g21, 1);
+    group2.insertIntoKeepIdx(g22, 0);
+    const children2 = [g22, g21];
+    expect(group2.getChildren().length).toEqual(children2.length);
+    group2.getChildren().forEach((v, i) => {
+      expect(v).toEqual(children2[i]);
+    });
+  });
+
   describe('find api', () => {
     let tableGroup;
     let headerGroup;

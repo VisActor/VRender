@@ -117,20 +117,20 @@ export class ColorInterpolate {
   }
 }
 
-class ConicalImageDataStore {
+class ConicalPatternStore {
   private static cache: {
     [key: string]: {
       width: number;
       height: number;
-      imageData: ImageData;
+      pattern: CanvasPattern;
     }[];
   } = {};
   private static ImageSize = [20, 40, 80, 160, 320, 640, 1280, 2560];
 
   static GetSize(minSize: number): number {
-    for (let i = 0; i < ConicalImageDataStore.ImageSize.length; i++) {
-      if (ConicalImageDataStore.ImageSize[i] >= minSize) {
-        return ConicalImageDataStore.ImageSize[i];
+    for (let i = 0; i < ConicalPatternStore.ImageSize.length; i++) {
+      if (ConicalPatternStore.ImageSize[i] >= minSize) {
+        return ConicalPatternStore.ImageSize[i];
       }
     }
     return minSize;
@@ -144,15 +144,15 @@ class ConicalImageDataStore {
     endAngle: number,
     w: number,
     h: number
-  ): ImageData | null {
-    const key = ConicalImageDataStore.GenKey(stops, x, y, startAngle, endAngle);
-    const data = ConicalImageDataStore.cache[key];
+  ): CanvasPattern | null {
+    const key = ConicalPatternStore.GenKey(stops, x, y, startAngle, endAngle);
+    const data = ConicalPatternStore.cache[key];
     if (!data || data.length === 0) {
       return null;
     }
     for (let i = 0; i < data.length; i++) {
       if (data[i].width >= w && data[i].height >= h) {
-        return data[i].imageData;
+        return data[i].pattern;
       }
     }
     return null;
@@ -164,25 +164,25 @@ class ConicalImageDataStore {
     y: number,
     startAngle: number,
     endAngle: number,
-    imageData: ImageData,
+    pattern: CanvasPattern,
     w: number,
     h: number
   ) {
-    const key = ConicalImageDataStore.GenKey(stops, x, y, startAngle, endAngle);
+    const key = ConicalPatternStore.GenKey(stops, x, y, startAngle, endAngle);
     // 必然是顺序的，因为如果能get到的话就不需要set
-    if (!ConicalImageDataStore.cache[key]) {
-      ConicalImageDataStore.cache[key] = [
+    if (!ConicalPatternStore.cache[key]) {
+      ConicalPatternStore.cache[key] = [
         {
           width: w,
           height: h,
-          imageData
+          pattern
         }
       ];
     } else {
-      ConicalImageDataStore.cache[key].push({
+      ConicalPatternStore.cache[key].push({
         width: w,
         height: h,
-        imageData
+        pattern
       });
     }
   }
@@ -254,14 +254,11 @@ export function createConicalGradient(
   if (!conicalCtx) {
     return null;
   }
-  const width = ConicalImageDataStore.GetSize(minW);
-  const height = ConicalImageDataStore.GetSize(minH);
-  let imageData = ConicalImageDataStore.Get(stops, x, y, startAngle, endAngle, width, height);
-  if (imageData) {
-    conicalCanvas.width = imageData.width;
-    conicalCanvas.height = imageData.height;
-    conicalCtx.putImageData(imageData, 0, 0);
-    return context.createPattern(conicalCanvas, 'no-repeat');
+  const width = ConicalPatternStore.GetSize(minW);
+  const height = ConicalPatternStore.GetSize(minH);
+  let pattern = ConicalPatternStore.Get(stops, x, y, startAngle, endAngle, width, height);
+  if (pattern) {
+    return pattern;
   }
 
   const r = Math.sqrt(
@@ -298,11 +295,12 @@ export function createConicalGradient(
     conicalCtx.fill();
   }
 
-  imageData = conicalCtx.getImageData(0, 0, width, height);
-  ConicalImageDataStore.Set(stops, x, y, startAngle, endAngle, imageData, width, height);
+  const imageData = conicalCtx.getImageData(0, 0, width, height);
 
   conicalCanvas.width = imageData.width;
   conicalCanvas.height = imageData.height;
   conicalCtx.putImageData(imageData, 0, 0);
-  return context.createPattern(conicalCanvas, 'no-repeat');
+  pattern = context.createPattern(conicalCanvas, 'no-repeat');
+  ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
+  return pattern;
 }

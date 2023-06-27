@@ -1,4 +1,4 @@
-import { createStage, createText, global, getTextBounds, createLine, createRect, createCircle, IGraphic } from '@visactor/vrender';
+import { createStage, createText, global, getTextBounds, createLine, createRect, createCircle, IGraphic, createWrapText } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // global.setEnv('browser');
@@ -35,18 +35,38 @@ export const page = () => {
     textBaseline: 'top'
   }));
 
-  graphics.push(createText({
+  const text = createText({
     x: 500,
     y: 200,
     fill: colorPools[5],
-    text: ['Test', 'test'],
-    fontSize: 20,
-    lineThrough: 1,
-    underline: 1,
-    textBaseline: 'top',
-    scaleX: 2,
-    scaleY: 2
-  }));
+    // text: ['Tffg'],
+    text: 'Tffgggaaaa',
+    fontSize: 15,
+    lineHeight: 30,
+    // lineThrough: 1,
+    // underline: 1,
+    textBaseline: 'alphabetic',
+    // scaleX: 2,
+    // scaleY: 2
+  })
+  graphics.push(text);
+  const circle = createCircle({
+    x: 500,
+    y: 200,
+    fill: 'black',
+    radius: 2
+  })
+  graphics.push(circle);
+  
+  const rect = createRect({
+    x: text.AABBBounds.x1,
+    y: text.AABBBounds.y1,
+    width: text.AABBBounds.width(),
+    height: text.AABBBounds.height(),
+    stroke: 'red',
+    lineWidth: 1,
+  })
+  graphics.push(rect);
 
   const stage = createStage({
     canvas: 'main',

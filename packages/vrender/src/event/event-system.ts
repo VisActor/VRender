@@ -273,7 +273,6 @@ export class EventSystem {
     }
 
     domElement.addEventListener('wheel', this.onWheel, {
-      passive: true,
       capture: true
     });
 

@@ -116,12 +116,13 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     // shadow
     context.setShadowStyle && context.setShadowStyle(line, attribute, defaultAttribute);
 
+    const { x: originX = 0, x: originY = 0 } = attribute;
     const ret: boolean = false;
     if (fill !== false) {
       if (fillCb) {
         fillCb(context, attribute, defaultAttribute);
       } else if (fillOpacity) {
-        context.setCommonStyle(line, attribute, offsetX, offsetY, defaultAttribute);
+        context.setCommonStyle(line, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
         context.fill();
       }
     }
@@ -129,7 +130,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       if (strokeCb) {
         strokeCb(context, attribute, defaultAttribute);
       } else if (strokeOpacity) {
-        context.setStrokeStyle(line, attribute, offsetX, offsetY, defaultAttribute);
+        context.setStrokeStyle(line, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
         context.stroke();
       }
     }

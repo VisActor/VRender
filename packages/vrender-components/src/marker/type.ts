@@ -116,7 +116,7 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
     /**
      * label 相对line的位置
      */
-    position?: IMarkLineLabelPosition;
+    position?: keyof typeof IMarkLineLabelPosition;
   } & IMarkRef &
     IMarkLabel;
 }

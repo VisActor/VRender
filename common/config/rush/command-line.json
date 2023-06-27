@@ -76,11 +76,20 @@
       "shellCommand": "ts-node common/autoinstallers/create/src/cli.ts"
     },
     {
+      "name": "start",
       "commandKind": "global",
-      "name": "components",
-      "summary": "Start the development server of VRender components",
-      "description": "Run this command to start VRender components development server",
-      "shellCommand": "rush run -p @visactor/vrender-components -s start"
+      "summary": "Start the development server",
+      "description": "Run this command to start VRender development server",
+      "shellCommand": "rush run -p @internal/dev-demos -s start"
+    },
+    {
+      "name": "change-all",
+      "commandKind": "global",
+      "autoinstallerName": "run-script",
+      "summary": "Run rush change width lint",
+      "description": "Run this command to start VRender development server",
+      "safeForSimultaneousRushProcesses": true,
+      "shellCommand": "ts-node common/autoinstallers/lint/change-all.ts"
     }
   ],
   "parameters": [
@@ -88,9 +97,7 @@
       "parameterKind": "string",
       "longName": "--dir",
       "description": "Specify which dir will handle",
-      "associatedCommands": [
-        "prettier"
-      ],
+      "associatedCommands": ["prettier"],
       "argumentName": "DIR",
       "required": false
     },
@@ -98,9 +105,7 @@
       "parameterKind": "string",
       "longName": "--ext",
       "description": "Specify which file type will handle, example `rush prettier --ext 'tsx,scss'`",
-      "associatedCommands": [
-        "prettier"
-      ],
+      "associatedCommands": ["prettier"],
       "argumentName": "EXT",
       "required": false
     },
@@ -109,9 +114,7 @@
       "longName": "--project",
       "shortName": "-p",
       "description": "Specify the name of the main Rush project to be run",
-      "associatedCommands": [
-        "run"
-      ],
+      "associatedCommands": ["run"],
       "argumentName": "PROJECT_NAME",
       "required": true
     },
@@ -120,11 +123,47 @@
       "longName": "--script",
       "shortName": "-s",
       "description": "Specify script name in project",
-      "associatedCommands": [
-        "run"
-      ],
+      "associatedCommands": ["run"],
       "argumentName": "SCRIPT_NAME",
       "required": true
+    },
+    {
+      "parameterKind": "string",
+      "longName": "--message",
+      "shortName": "-m",
+      "description": "Write a message for change",
+      "associatedCommands": ["change-all"],
+      "argumentName": "MESSAGE",
+      "required": false
+    },
+    {
+      "parameterKind": "flag",
+      "longName": "--not-commit",
+      "shortName": "-n",
+      "description": "not commit after run rush change",
+      "associatedCommands": ["change-all"],
+      "required": false
+    },
+    {
+      "parameterKind": "choice",
+      "longName": "--type",
+      "shortName": "-t",
+      "description": "The bump type of change: major, minor, patch, none",
+      "associatedCommands": ["change-all"],
+      "alternatives": [
+        {
+          "name": "patch",
+          "description": "A patch change"
+        },
+        {
+          "name": "minor",
+          "description": "A minor change"
+        },
+        {
+          "name": "major",
+          "description": "A major change"
+        }
+      ]
     }
   ]
 }

@@ -9,7 +9,7 @@ module.exports = {
   globals: {
     '@visactor/vrender': 'VRender',
     '@visactor/vutils': 'VUtils',
-    '@visactor/vscale': 'VGrammar.Scale'
+    '@visactor/vscale': 'VScale'
   },
   external: [
     "@visactor/vrender",

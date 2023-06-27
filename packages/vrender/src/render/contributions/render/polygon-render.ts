@@ -54,7 +54,9 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
       strokeOpacity = polygonAttribute.strokeOpacity,
       lineWidth = polygonAttribute.lineWidth,
       opacity = polygonAttribute.opacity,
-      visible = polygonAttribute.visible
+      visible = polygonAttribute.visible,
+      x: originX = polygonAttribute.x,
+      y: originY = polygonAttribute.y
     } = polygon.attribute;
 
     // 不绘制或者透明
@@ -104,7 +106,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
         fillCb(context, polygon.attribute, polygonAttribute);
       } else if (fillOpacity) {
         // 存在fill
-        context.setCommonStyle(polygon, polygon.attribute, x, y, polygonAttribute);
+        context.setCommonStyle(polygon, polygon.attribute, originX - x, originY - y, polygonAttribute);
         context.fill();
       }
     }
@@ -113,7 +115,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
         strokeCb(context, polygon.attribute, polygonAttribute);
       } else if (strokeOpacity) {
         // 存在stroke
-        context.setStrokeStyle(polygon, polygon.attribute, x, y, polygonAttribute);
+        context.setStrokeStyle(polygon, polygon.attribute, originX - x, originY - y, polygonAttribute);
         context.stroke();
       }
     }

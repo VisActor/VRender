@@ -155,14 +155,14 @@ export const page = () => {
     const text = createText({
       text: '🚗',
       fontSize: 37,
-      
+      fill: true,
       textAlign: 'center',
       textBaseline: 'middle'
     });
     const text2 = createText({
       text: '🐶',
       fontSize: 37,
-      
+      fill: true,
       textAlign: 'center',
       textBaseline: 'middle'
     });

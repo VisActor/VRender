@@ -63,7 +63,7 @@ export class FederatedWheelEvent extends FederatedMouseEvent implements WheelEve
     event.nativeEvent = this.nativeEvent;
     event.originalEvent = this.originalEvent;
 
-    this.manager?.copyPointerData(this, event);
+    this.manager?.copyWheelData(this, event);
     this.manager?.copyMouseData(this, event);
     this.manager?.copyData(this, event);
 

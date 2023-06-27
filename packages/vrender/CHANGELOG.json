@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.11.1",
+      "tag": "@visactor/vrender_v0.11.1",
+      "date": "Tue, 27 Jun 2023 13:38:36 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "optimize the performance of drawing conical-gradient"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.11.0",
       "tag": "@visactor/vrender_v0.11.0",
       "date": "Tue, 27 Jun 2023 03:18:18 GMT",

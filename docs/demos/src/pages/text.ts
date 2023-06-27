@@ -23,15 +23,15 @@ export const page = () => {
       x0: 0,
       y0: 0,
       x1: 1,
-      y1: 0,
+      y1: 1,
       stops: [
         { offset: 0, color: 'green' },
         { offset: 0.5, color: 'orange' },
         { offset: 1, color: 'red' }
       ]
     },
-    text: ['Test', 'test'],
-    fontSize: 20,
+    text: ['这'],
+    fontSize: 180,
     textBaseline: 'top'
   }));
 

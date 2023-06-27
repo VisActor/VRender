@@ -28,7 +28,18 @@ export const page = () => {
     radius: 50,
     x: 500,
     y: 200,
-    fill: colorPools[10],
+    fill: {
+      gradient: 'linear',
+      x0: 0,
+      y0: 0,
+      x1: 1,
+      y1: 0,
+      stops: [
+        { offset: 0, color: 'green' },
+        { offset: 0.5, color: 'orange' },
+        { offset: 1, color: 'red' }
+      ]
+    },
     // lineWidth: 2,
     outerBorder: {
       distance: 10,

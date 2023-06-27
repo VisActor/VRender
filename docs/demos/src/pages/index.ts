@@ -151,5 +151,9 @@ export const pages = [
   {
     title: 'bin-tree',
     path: 'bin-tree'
+  },
+  {
+    title: 'animate-3d',
+    path: 'animate-3d'
   }
 ];

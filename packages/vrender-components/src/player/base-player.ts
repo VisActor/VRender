@@ -36,7 +36,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       dx: 0,
       dy: 0,
       railStyle: {
-        borderRadius: 5
+        cornerRadius: 5
       },
       trackStyle: {},
       handlerStyle: {}

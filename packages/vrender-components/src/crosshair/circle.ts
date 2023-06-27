@@ -28,7 +28,8 @@ export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
       {
         ...center,
         outerRadius: radius,
-        ...this.attribute,
+        // TODO: group的cornerRadius支持数组，arc的不支持数组，此处会有类型转换问题
+        ...(this.attribute as any),
         ...lineStyle
       },
       'arc'

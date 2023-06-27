@@ -77,10 +77,10 @@ function createLinearGradient(
   }
 
   const canvasGradient = context.createLinearGradient(
-    x + (color.x0 || 0) * w,
-    y + (color.y0 || 0) * h,
-    x + (color.x1 || 1) * w,
-    y + (color.y1 || 0) * h
+    x + (color.x0 ?? 0) * w,
+    y + (color.y0 ?? 0) * h,
+    x + (color.x1 ?? 1) * w,
+    y + (color.y1 ?? 0) * h
   );
   color.stops.forEach(stop => {
     canvasGradient.addColorStop(stop.offset, stop.color);
@@ -114,12 +114,12 @@ function createRadialGradient(
     h /= scaleY;
   }
   const canvasGradient = context.createRadialGradient(
-    x + (color.x0 || 0.5) * w,
-    y + (color.y0 || 0.5) * h,
-    Math.max(w, h) * (color.r0 || 0),
-    x + (color.x1 || 0.5) * w,
-    y + (color.y1 || 0.5) * h,
-    Math.max(w, h) * (color.r1 || 0.5)
+    x + (color.x0 ?? 0.5) * w,
+    y + (color.y0 ?? 0.5) * h,
+    Math.max(w, h) * (color.r0 ?? 0),
+    x + (color.x1 ?? 0.5) * w,
+    y + (color.y1 ?? 0.5) * h,
+    Math.max(w, h) * (color.r1 ?? 0.5)
   );
   color.stops.forEach(stop => {
     canvasGradient.addColorStop(stop.offset, stop.color);
@@ -154,8 +154,8 @@ function createConicGradient(
   }
 
   const canvasGradient = context.createConicGradient(
-    x + (color.x || 0) * w,
-    y + (color.y || 0) * h,
+    x + (color.x ?? 0) * w,
+    y + (color.y ?? 0) * h,
     color.startAngle,
     color.endAngle
   );

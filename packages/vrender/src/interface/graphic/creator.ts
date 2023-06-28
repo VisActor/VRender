@@ -1,19 +1,19 @@
-import { IGraphicAttribute } from '../graphic';
-import { IArcAttribute, IArcGraphicAttribute } from './arc';
-import { IAreaAttribute, IAreaGraphicAttribute } from './area';
-import { ICircleAttribute, ICircleGraphicAttribute } from './circle';
-import { IEllipseAttribute } from './ellipse';
-import { IGroupAttribute, IGroupGraphicAttribute } from './group';
-import { IImageAttribute, IImageGraphicAttribute } from './image';
-import { IIsogonAttribute } from './isogon';
-import { ILineAttribute, ILineGraphicAttribute } from './line';
-import { IPathAttribute, IPathGraphicAttribute } from './path';
-import { IPolygonAttribute } from './polygon';
-import { IRectAttribute, IRectGraphicAttribute } from './rect';
-import { IRichTextAttribute, IRichTextGraphicAttribute } from './richText';
-import { ISvgAttribute } from './svg';
-import { ISymbolAttribute, ISymbolGraphicAttribute } from './symbol';
-import { ITextAttribute, ITextGraphicAttribute, IWrapTextGraphicAttribute } from './text';
+import type { IGraphicAttribute } from '../graphic';
+import type { IArcAttribute, IArcGraphicAttribute } from './arc';
+import type { IAreaAttribute, IAreaGraphicAttribute } from './area';
+import type { ICircleAttribute, ICircleGraphicAttribute } from './circle';
+import type { IEllipseAttribute } from './ellipse';
+import type { IGroupAttribute, IGroupGraphicAttribute } from './group';
+import type { IImageAttribute, IImageGraphicAttribute } from './image';
+import type { IIsogonAttribute } from './isogon';
+import type { ILineAttribute, ILineGraphicAttribute } from './line';
+import type { IPathAttribute, IPathGraphicAttribute } from './path';
+import type { IPolygonAttribute } from './polygon';
+import type { IRectAttribute, IRectGraphicAttribute } from './rect';
+import type { IRichTextAttribute, IRichTextGraphicAttribute } from './richText';
+import type { ISvgAttribute } from './svg';
+import type { ISymbolAttribute, ISymbolGraphicAttribute } from './symbol';
+import type { ITextAttribute, ITextGraphicAttribute, IWrapTextGraphicAttribute } from './text';
 
 export type IMarkAttribute =
   | IGraphicAttribute

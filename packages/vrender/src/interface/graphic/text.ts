@@ -1,6 +1,34 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import type { LayoutType } from '../../core/contributions/textMeasure/layout';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
+
+export interface TextLayoutBBox {
+  width: number; // 包围盒的宽度
+  height: number; // 包围盒的高度
+  xOffset: number;
+  yOffset: number;
+}
+
+export interface LayoutItemType {
+  str: string; // 这行的字符串
+  leftOffset?: number; // 该行距离左侧的偏移
+  topOffset?: number; // 该行距离右侧的偏移
+  width: number;
+}
+
+export interface SimplifyLayoutType {
+  lines: LayoutItemType[];
+}
+
+export interface LayoutType {
+  bbox: TextLayoutBBox;
+  lines: LayoutItemType[];
+  fontFamily: string;
+  fontSize: number;
+  fontWeight?: string | number;
+  lineHeight: number;
+  textAlign: TextAlignType;
+  textBaseline: TextBaselineType;
+}
 
 export type ITextAttribute = {
   text: string | number | string[] | number[];

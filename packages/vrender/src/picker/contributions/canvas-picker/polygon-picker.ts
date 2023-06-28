@@ -1,9 +1,17 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { getTheme } from '../../../graphic/theme';
-import { IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute, IPolygon } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { IGraphicRender, PolygonRender } from '../../../render';
+import type {
+  IContext2d,
+  IMarkAttribute,
+  IGraphicAttribute,
+  IThemeAttribute,
+  IPolygon,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
+import { PolygonRender } from '../../../render';
 import { POLYGON_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()

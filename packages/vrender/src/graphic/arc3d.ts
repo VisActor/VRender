@@ -1,5 +1,5 @@
-import { AABBBounds } from '@visactor/vutils';
-import { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
+import type { AABBBounds } from '@visactor/vutils';
+import type { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
 import { Arc } from './arc';
 import { getTheme } from './theme';
 import { application } from '../application';

@@ -1,19 +1,10 @@
-import { IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { boundStroke } from '../tools';
-import { IGraphic, ISymbolGraphicAttribute } from '../../interface';
+import type { IGraphic, ISymbolBoundsContribution, ISymbolGraphicAttribute } from '../../interface';
 import { DefaultOuterBorderBoundsContribution } from './common-contribution';
 
 export const SymbolBoundsContribution = Symbol.for('SymbolBoundsContribution');
-
-export interface ISymbolBoundsContribution {
-  updateBounds: (
-    attribute: ISymbolGraphicAttribute,
-    SymbolTheme: Required<ISymbolGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGraphic
-  ) => IAABBBounds;
-}
 
 @injectable()
 export class DefaultSymbolOuterBorderBoundsContribution

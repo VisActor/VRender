@@ -1,11 +1,18 @@
 import { injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IThemeAttribute,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams
+} from '../../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
-import { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
 

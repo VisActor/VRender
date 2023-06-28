@@ -1,4 +1,5 @@
-import { AsArray, Hook, UnsetAdditionalOptions } from './Hook';
+import type { AsArray, ISyncHook, UnsetAdditionalOptions } from '../interface';
+import { Hook } from './Hook';
 
 /**
  * 参考 https://github.com/webpack/tapable
@@ -24,7 +25,10 @@ import { AsArray, Hook, UnsetAdditionalOptions } from './Hook';
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-export class SyncHook<T, R = void, AdditionalOptions = UnsetAdditionalOptions> extends Hook<T, R, AdditionalOptions> {
+export class SyncHook<T, R = void, AdditionalOptions = UnsetAdditionalOptions>
+  extends Hook<T, R, AdditionalOptions>
+  implements ISyncHook<T, R, AdditionalOptions>
+{
   call(...args: AsArray<T>): R {
     const cbs = this.taps.map(t => t.fn);
     cbs.forEach(cb => cb(...args));

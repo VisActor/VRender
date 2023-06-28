@@ -1,4 +1,4 @@
-import { ITextAttribute } from '../interface';
+import type { ITextAttribute } from '../interface';
 import { createText } from './graphic-creator';
 
 type ITextBoundsParams = Partial<ITextAttribute>;

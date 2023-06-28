@@ -1,17 +1,18 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IArea,
   IAreaGraphicAttribute,
   IAreaSegment,
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IDrawContext
 } from '../../../interface';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { getTheme } from '../../../graphic/theme';
-import { IDrawContext } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill } from './utils';
 import { DefaultCanvasAreaRender } from './area-render';
 import { drawIncrementalAreaSegments } from '../../../common/render-curve';

@@ -1,6 +1,6 @@
-import { IBounds, tau } from '@visactor/vutils';
-import { IContext2d, SymbolType } from '../../interface';
-import { ISymbolClass } from './interface';
+import type { IBounds } from '@visactor/vutils';
+import { tau } from '@visactor/vutils';
+import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 
 /**
  * 

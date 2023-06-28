@@ -1,4 +1,4 @@
-import {
+import type {
   EasingType,
   EasingTypeFunc,
   IAnimate,
@@ -8,12 +8,13 @@ import {
   IGraphic,
   IStep,
   IStepConfig,
-  ISubAnimate
+  ISubAnimate,
+  ITimeline
 } from '../interface';
 import { AnimateMode, AnimateStatus, AnimateStepType, AttributeUpdateType } from '../common/enums';
 import { Easing } from './easing';
 import { max } from '@visactor/vutils';
-import { defaultTimeline, ITimeline } from './timeline';
+import { defaultTimeline } from './timeline';
 import { Generator } from '../common/generator';
 
 // 参考TweenJS

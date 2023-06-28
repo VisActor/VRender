@@ -1,6 +1,6 @@
-import { ILayerService } from './core/interface';
-import { IGraphicUtil, ITransformUtil } from './core/interface';
-import { IGlobal, IGraphicService } from './interface';
+import type { ILayerService } from './interface/core';
+import type { IGraphicUtil, ITransformUtil } from './interface/core';
+import type { IGlobal, IGraphicService } from './interface';
 
 export class Application {
   global: IGlobal;

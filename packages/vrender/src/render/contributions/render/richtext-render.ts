@@ -2,9 +2,14 @@ import { injectable } from 'inversify';
 import { createRectPath } from '../../../common/shape/rect';
 import { getTheme } from '../../../graphic/theme';
 import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
-import { IContext2d, IRichText, IRichTextIcon } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender } from './graphic-render';
+import type {
+  IContext2d,
+  IRichText,
+  IRichTextIcon,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender
+} from '../../../interface';
 import { fillVisible } from './utils';
 
 @injectable()

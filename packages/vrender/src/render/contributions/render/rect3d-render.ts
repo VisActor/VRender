@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IDirectionLight,
@@ -9,10 +9,11 @@ import {
   IPolygonItem,
   IRect3d,
   IThemeAttribute,
-  vec3
+  IGraphicRender,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';

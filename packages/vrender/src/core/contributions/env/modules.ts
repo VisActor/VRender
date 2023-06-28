@@ -1,6 +1,6 @@
 import { ContainerModule } from 'inversify';
 import { bindContributionProvider } from '../../../common/contribution-provider';
-import { EnvContribution } from '../../../interface';
+import { EnvContribution } from '../../../constants';
 import { BrowserEnvContribution } from './browser-contribution';
 import { FeishuEnvContribution } from './feishu-contribution';
 import { TaroEnvContribution } from './taro-contribution';

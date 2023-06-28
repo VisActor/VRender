@@ -1,45 +1,12 @@
 import { injectable } from 'inversify';
+import type { IPathRenderContribution } from '../../../../interface';
 import {
-  IGraphicAttribute,
-  IContext2d,
-  IMarkAttribute,
-  IPath,
-  IPathGraphicAttribute,
-  IThemeAttribute
-} from '../../../../interface';
-import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const PathRenderContribution = Symbol.for('PathRenderContribution');
-
-export interface IPathRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    Path: IPath,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    PathAttribute: Required<IPathGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultPathBackgroundRenderContribution

@@ -1,17 +1,20 @@
-import { abs, cos, epsilon, sin, pi2, vec3, pi } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
+import type { vec3 } from '@visactor/vutils';
+import { abs, cos, epsilon, sin, pi2, pi } from '@visactor/vutils';
+import { injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
-import {
+import type {
   IContext2d,
   IArc,
   IPath2D,
   IGraphicAttribute,
   IMarkAttribute,
   IThemeAttribute,
-  IArc3d
+  IArc3d,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';

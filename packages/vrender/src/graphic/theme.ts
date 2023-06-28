@@ -1,5 +1,5 @@
 import { clone } from '@visactor/vutils';
-import { IGraphicAttribute, IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
+import type { IGraphicAttribute, IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
 import {
   DefaultArcAttribute,
   DefaultAreaAttribute,

@@ -1,5 +1,6 @@
-import { AABBBounds, OBBBounds, transformBounds } from '@visactor/vutils';
-import { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { transformBounds } from '@visactor/vutils';
+import type { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';

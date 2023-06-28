@@ -1,12 +1,9 @@
-import { IMatrix, IMatrixLike, Matrix } from '@visactor/vutils';
-import { IAllocate } from './interface';
-import { mat4, Releaseable } from '../interface';
+import type { IMatrix, IMatrixLike } from '@visactor/vutils';
+import { Matrix } from '@visactor/vutils';
+import type { mat4, Releaseable, IAllocate } from '../interface';
 
 export const MatrixAllocate = Symbol.for('MatrixAllocate');
 export const Mat4Allocate = Symbol.for('Mat4Allocate');
-
-export type IMatrixAllocate = IAllocate<IMatrix>;
-export type IMat4Allocate = IAllocate<mat4>;
 
 export function createMat4(): mat4 {
   return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];

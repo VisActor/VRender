@@ -1,24 +1,19 @@
 import { injectable } from 'inversify';
 import { loadFeishuContributions } from '../../../kits';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type {
+  ICanvasLike,
+  EnvType,
+  ICreateCanvasParams,
+  IEnvContribution,
+  IGlobal,
+  ITTCanvas
+} from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
-import { createImageElement } from './browser-contribution';
 
 declare const tt: {
   getSystemInfoSync: () => { pixelRatio: number };
   createCanvasContext: (id: string) => any;
 };
-
-export interface ITTCanvas extends ICanvasLike {
-  width: number;
-  height: number;
-  offsetWidth: number;
-  offsetHeight: number;
-  getContext: () => any;
-  // 构造 getBoundingClientRect 方法
-  getBoundingClientRect: () => { width: number; height: number };
-  id: string;
-}
 
 // 飞书小程序canvas的wrap
 function makeUpCanvas(

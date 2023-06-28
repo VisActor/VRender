@@ -1,5 +1,5 @@
-import type Frame from '../../graphic/richtext/frame';
 import type { IColor } from '../color';
+import type { IContext2d } from '../context';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { IImage, IImageGraphicAttribute } from './image';
 
@@ -107,8 +107,108 @@ export type IRichTextIconGraphicAttribute = IImageGraphicAttribute & {
   // backgroundShow?: boolean;
 };
 
+export interface IRichTextParagraph {
+  text: string;
+  ascent: number;
+  descent: number;
+  width: number;
+  height: number;
+  lineHeight: number;
+  fontSize: number;
+  length: number;
+  newLine: boolean;
+  character: IRichTextParagraphCharacter;
+  left: number;
+  top: number;
+  direction?: 'horizontal' | 'vertical';
+  widthOrigin?: number;
+  heightOrigin?: number;
+  textBaseline?: CanvasTextBaseline;
+  ellipsis: 'normal' | 'add' | 'replace' | 'hide';
+  ellipsisWidth: number;
+  ellipsisOtherParagraphWidth: number;
+  verticalEllipsis?: boolean;
+  updateWidth: () => void;
+  draw: (ctx: IContext2d, baseline: number, deltaLeft: number, isLineFirst: boolean, textAlign: string) => void;
+  getWidthWithEllips: (direction: string) => number;
+}
+
+export interface IRichTextLine {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  baseline: number;
+  ascent: number;
+  descent: number;
+  paragraphs: (IRichTextParagraph | IRichTextIcon)[];
+  actualWidth: number;
+  blankWidth: number;
+  textAlign: string;
+  direction: 'horizontal' | 'vertical';
+  directionKey: {
+    width: string;
+    height: string;
+    left: string;
+    x: string;
+    y: string;
+  };
+  draw: (
+    ctx: IContext2d,
+    lastLine: boolean,
+    x: number,
+    y: number,
+    drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
+  ) => void;
+  getWidthWithEllips: () => number;
+}
+
+export interface IRichTextFrame {
+  left: number;
+  top: number;
+  bottom: number;
+  right: number;
+  width: number;
+  height: number;
+  actualHeight: number;
+  ellipsis: boolean | string;
+  wordBreak: 'break-word' | 'break-all';
+  verticalDirection: 'top' | 'middle' | 'bottom';
+  lines: IRichTextLine[];
+  globalAlign: 'left' | 'center' | 'right';
+  globalBaseline: 'top' | 'middle' | 'bottom';
+  layoutDirection: 'horizontal' | 'vertical';
+  directionKey: {
+    width: string;
+    height: string;
+    left: string;
+    top: string;
+    bottom: string;
+  };
+  isWidthMax: boolean;
+  isHeightMax: boolean;
+  singleLine: boolean;
+  icons: Map<string, IRichTextIcon>;
+  draw: (
+    ctx: IContext2d,
+    drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
+  ) => boolean;
+  getActualSize: () => {
+    width: number;
+    height: number;
+  };
+  getRawActualSize: () => {
+    width: number;
+    height: number;
+  };
+  getActualSizeWidthEllipsis: () => {
+    width: number;
+    height: number;
+  };
+}
+
 export interface IRichText extends IGraphic<IRichTextGraphicAttribute> {
-  getFrameCache: () => Frame;
+  getFrameCache: () => IRichTextFrame;
 }
 
 export interface IRichTextIcon extends IImage {

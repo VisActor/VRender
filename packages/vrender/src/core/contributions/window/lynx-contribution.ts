@@ -2,9 +2,17 @@ import { inject, injectable } from 'inversify';
 import { LynxCanvas } from '../../../canvas/contributions/lynx';
 import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';
-import { IWindowHandlerContribution, IWindowParams } from '../..';
-import { Global, EnvType, IGlobal, IContext2d, ICanvas, IDomRectLike } from '../../../interface';
-import { IBoundsLike } from '@visactor/vutils';
+import type {
+  EnvType,
+  IGlobal,
+  IContext2d,
+  ICanvas,
+  IDomRectLike,
+  IWindowParams,
+  IWindowHandlerContribution
+} from '../../../interface';
+import type { IBoundsLike } from '@visactor/vutils';
+import { Global } from '../../../constants';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -48,6 +56,9 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
 
   constructor(@inject(Global) private readonly global: IGlobal) {
     super();
+  }
+  release(...params: any) {
+    // todo
   }
 
   getTitle(): string {

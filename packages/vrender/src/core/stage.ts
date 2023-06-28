@@ -1,5 +1,6 @@
-import { AABBBounds, Bounds, IBounds, IBoundsLike, IMatrix, IMatrixLike, Point } from '@visactor/vutils';
-import {
+import type { IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
+import { AABBBounds, Bounds, Point } from '@visactor/vutils';
+import type {
   IGraphic,
   IGroup,
   IExportType,
@@ -7,21 +8,27 @@ import {
   IStageParams,
   ILayer,
   IColor,
-  Global,
   IGlobal,
   IOption3D,
   ICamera,
   vec3,
-  IDirectionLight
+  IDirectionLight,
+  ITicker,
+  IRenderService,
+  IPickerService,
+  IPluginService,
+  ISyncHook,
+  IDrawContext,
+  IWindow
 } from '../interface';
-import { IWindow, Window } from './window';
+import { Window } from './window';
 import { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../container';
-import { IDrawContext, IRenderService, RenderService } from '../render';
-import { Group, Node, Theme } from '../graphic';
-import { IPickerService, PickerService } from '../picker/picker-service';
-import { IPluginService, PluginService } from '../plugins/plugin-service';
+import { RenderService } from '../render';
+import { Group, Theme } from '../graphic';
+import { PickerService } from '../picker/picker-service';
+import { PluginService } from '../plugins/plugin-service';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
@@ -30,7 +37,7 @@ import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
-import { ITicker } from '../animate';
+import { Global } from '../constants';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -76,8 +83,8 @@ export class Stage extends Group implements IStage {
   declare renderStyle?: string;
 
   declare hooks: {
-    beforeRender: SyncHook<[IStage]>;
-    afterRender: SyncHook<[IStage]>;
+    beforeRender: ISyncHook<[IStage]>;
+    afterRender: ISyncHook<[IStage]>;
   };
 
   set viewBox(b: IBoundsLike) {

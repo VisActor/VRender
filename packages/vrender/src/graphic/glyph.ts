@@ -1,6 +1,6 @@
-import { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
 import { Graphic } from './graphic';
-import {
+import type {
   GraphicType,
   IGraphic,
   IGlyph,

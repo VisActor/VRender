@@ -1,4 +1,5 @@
-import { Releaseable, IEventElement } from '../interface';
+import type { IEventElement, Releaseable } from './common';
+
 export interface INode extends Releaseable, IEventElement {
   _prev?: INode;
   _next?: INode;

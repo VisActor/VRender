@@ -1,6 +1,14 @@
 import { injectable } from 'inversify';
 import { loadTaroContributions } from '../../../kits';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type {
+  ICanvasLike,
+  EnvType,
+  ICreateCanvasParams,
+  IEnvContribution,
+  IGlobal,
+  IDomRef,
+  ITTCanvas
+} from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
 import { createImageElement } from './browser-contribution';
 
@@ -14,33 +22,6 @@ interface ITaro {
     height: number;
     success: (res: any) => void;
   }) => any;
-}
-
-export interface ITTCanvas extends ICanvasLike {
-  width: number;
-  height: number;
-  offsetWidth: number;
-  offsetHeight: number;
-  getContext: () => any;
-  // 构造 getBoundingClientRect 方法
-  getBoundingClientRect: () => { width: number; height: number };
-  id: string;
-}
-
-export interface IDomRef {
-  id: string;
-  width: number;
-  height: number;
-  left: number;
-  top: number;
-  right: number;
-  bottom: number;
-  x: number;
-  y: number;
-
-  requestAnimationFrame?: any;
-  cancelAnimationFrame?: any;
-  getBoundingClientRect?: () => { height: number; width: number };
 }
 
 function makeUpCanvas(

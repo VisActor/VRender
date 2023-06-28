@@ -1,6 +1,6 @@
 import type { Dict } from '@visactor/vutils';
 import type { INode } from '../interface/node-tree';
-import type { IEventTarget } from './interface';
+import type { IEventTarget } from '../interface/event';
 
 import { FederatedEvent, CustomEvent } from './federated-event';
 

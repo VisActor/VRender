@@ -1,32 +1,20 @@
-import { IMatrix, IPointLike, pi2 } from '@visactor/vutils';
+import type { IMatrix, IPointLike } from '@visactor/vutils';
+import { pi2 } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { ARC3D_NUMBER_TYPE } from '../graphic/constants';
-import { IArc, IContext2d, IGraphic, IGroup } from '../interface';
-import { IPickerService, IPickParams } from './picker-service';
-import { PickResult } from './type';
+import type {
+  IArc,
+  IContext2d,
+  IGraphic,
+  IGroup,
+  IPickItemInterceptorContribution,
+  IPickParams,
+  IPickerService,
+  PickResult
+} from '../interface';
 
 // 拦截器
 export const PickItemInterceptor = Symbol.for('PickItemInterceptor');
-
-export interface IPickItemInterceptorContribution {
-  order: number;
-  // null代表没匹配到，boolean代表是否pick中
-  beforePickItem?: (
-    graphic: IGraphic,
-    pickerService: IPickerService,
-    point: IPointLike,
-    drawContext: {
-      in3dInterceptor?: boolean;
-    },
-    params?: {
-      parentMatrix: IMatrix;
-    }
-  ) => boolean | PickResult | null;
-  // afterPickItem?: (
-  //   graphic: IGraphic,
-  //   pickerService: IPickerService,
-  // ) => boolean;
-}
 
 /**
  * 3d拦截器，用于渲染3d视角

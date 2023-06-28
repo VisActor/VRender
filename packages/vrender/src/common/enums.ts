@@ -71,3 +71,8 @@ export enum CurveTypeEnum {
   EllipseCurve = 4,
   MoveCurve = 5
 }
+
+export enum BaseRenderContributionTime {
+  beforeFillStroke,
+  afterFillStroke
+}

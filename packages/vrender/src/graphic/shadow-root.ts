@@ -1,5 +1,5 @@
-import { AABBBounds, Matrix } from '@visactor/vutils';
-import { GraphicType, IGraphic } from '../interface';
+import type { AABBBounds, Matrix } from '@visactor/vutils';
+import type { GraphicType, IGraphic } from '../interface';
 import { Group } from './group';
 
 export class ShadowRoot extends Group {

@@ -1,12 +1,9 @@
-import { interfaces } from 'inversify';
+import type { interfaces } from 'inversify';
+import type { IContributionProvider } from '../interface';
 
 export const ContributionProvider = Symbol('ContributionProvider');
 
-export interface ContributionProvider<T> {
-  getContributions: () => T[];
-}
-
-class ContributionProviderCache<T> implements ContributionProvider<T> {
+class ContributionProviderCache<T> implements IContributionProvider<T> {
   protected caches?: T[];
   protected serviceIdentifier: interfaces.ServiceIdentifier<T>;
   protected container: interfaces.Container;

@@ -1,56 +1,22 @@
-import { AABBBounds, IBoundsLike } from '@visactor/vutils';
+import type { AABBBounds, IBoundsLike } from '@visactor/vutils';
 import { application } from '../application';
 import { container } from '../container';
-import {
-  IContext2d,
+import type {
   IDrawToParams,
   IGraphic,
   IGroup,
   ILayer,
   ILayerDrawParams,
   IStage,
-  Releaseable,
-  IGlobal
+  IGlobal,
+  ILayerHandlerContribution,
+  IDrawContext,
+  ILayerHandlerDrawParams,
+  IDrawContribution,
+  IWindow
 } from '../interface';
 import { Theme } from '../graphic/theme';
 import { Group } from '../graphic/group';
-import { IWindow } from './window';
-import { IDrawContext, IDrawContribution, IRenderServiceDrawParams } from '../render';
-
-export interface ILayerHandlerDrawParams extends ILayerDrawParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  layer: ILayer;
-  stage: IStage;
-  updateBounds: boolean;
-}
-
-export interface ILayerHandlerInitParams {
-  main: boolean;
-  canvasId?: string;
-  width: number;
-  height: number;
-  zIndex: number;
-  dpr?: number;
-}
-
-// TODO: layer在resize的时候需要判断是否需要resize window对应的canvas
-
-// 具体的Layer实现
-// Canvas2d的Layer可以对应一个Canvas或者ImageData
-export interface ILayerHandlerContribution extends Releaseable {
-  init: (layer: ILayer, window: IWindow, params: ILayerHandlerInitParams) => void;
-  resize: (w: number, h: number) => void;
-  resizeView: (w: number, h: number) => void;
-  render: (group: IGroup[], params: ILayerHandlerDrawParams, userParams?: Partial<IDrawContext>) => void;
-  prepare: (dirtyBounds: IBoundsLike, params: IRenderServiceDrawParams) => void;
-  drawTo: (target: IWindow, group: IGroup[], params: IDrawToParams & ILayerHandlerDrawParams) => void;
-  merge: (layerHandlers: ILayerHandlerContribution[]) => void;
-  getContext: () => IContext2d;
-  offscreen: boolean;
-}
 
 export const LayerHandlerContribution = Symbol.for('LayerHandlerContribution');
 

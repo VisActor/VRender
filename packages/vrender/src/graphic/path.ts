@@ -1,6 +1,7 @@
-import { isString, AABBBounds, OBBBounds, isNil } from '@visactor/vutils';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { isString, isNil } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
-import { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
+import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
 import { parsePadding } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';

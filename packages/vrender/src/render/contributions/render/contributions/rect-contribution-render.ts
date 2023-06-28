@@ -1,48 +1,23 @@
 import { isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   IRect,
   IRectGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IRectRenderContribution
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { createRectPath } from '../../../../common/shape/rect';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const RectRenderContribution = Symbol.for('RectRenderContribution');
-
-export interface IRectRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    rect: IRect,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    rectAttribute: Required<IRectGraphicAttribute>,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
-  ) => void;
-}
 
 @injectable()
 export class DefaultRectRenderContribution implements IRectRenderContribution {

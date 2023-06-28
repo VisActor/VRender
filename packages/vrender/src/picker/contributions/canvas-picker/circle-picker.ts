@@ -1,9 +1,17 @@
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
-import { CircleRender, IGraphicRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type {
+  IGraphicAttribute,
+  ICircle,
+  IContext2d,
+  IMarkAttribute,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
+import { CircleRender } from '../../../render';
 import { getScaledStroke } from '../../../common/canvas-utils';
 import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
 

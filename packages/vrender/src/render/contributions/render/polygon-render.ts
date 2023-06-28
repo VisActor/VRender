@@ -1,15 +1,26 @@
-import { isArray, isNumber } from '@visactor/vutils';
+import { isArray } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { POLYGON_NUMBER_TYPE } from '../../../graphic/constants';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IPolygon, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IPolygon,
+  IThemeAttribute,
+  IGraphicRender,
+  IPolygonRenderContribution,
+  IContributionProvider,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
+} from '../../../interface';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { IPolygonRenderContribution, PolygonRenderContribution } from './contributions/polygon-contribution-render';
+import { PolygonRenderContribution } from './contributions/polygon-contribution-render';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export class DefaultCanvasPolygonRender implements IGraphicRender {
@@ -21,7 +32,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(PolygonRenderContribution)
-    protected readonly polygonRenderContribitions: ContributionProvider<IPolygonRenderContribution>
+    protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
   ) {}
 
   drawShape(

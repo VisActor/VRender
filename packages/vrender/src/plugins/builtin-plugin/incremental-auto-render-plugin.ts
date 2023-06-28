@@ -1,7 +1,5 @@
-import { IGroup } from '../../interface';
-import { IDrawContext } from '../../render';
+import type { IGroup, IPlugin, IPluginService, IDrawContext } from '../../interface';
 import { application } from '../../application';
-import { IPlugin, IPluginService } from '../plugin-service';
 import { Generator } from '../../common/generator';
 
 export class IncrementalAutoRenderPlugin implements IPlugin {

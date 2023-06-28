@@ -20,7 +20,6 @@ module.exports = {
   },
   setupFiles: ['./setup-mock.js'],
   verbose: true,
-  collectCoverage: true,
   coverageReporters: ['json-summary', 'lcov', 'text'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
   collectCoverageFrom: [

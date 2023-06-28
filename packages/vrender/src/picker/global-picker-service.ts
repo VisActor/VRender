@@ -1,17 +1,19 @@
-import { Matrix, Point, IMatrix, IPoint, IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
+import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
-import { IGraphic, IGroup, EnvType, Global, IGlobal } from '../interface';
-import { IGraphicPicker, IPickerService, IPickParams } from './picker-service';
-import { PickResult } from './type';
+import type {
+  IGraphic,
+  IGroup,
+  EnvType,
+  IGlobal,
+  IPickerService,
+  IGraphicPicker,
+  IPickParams,
+  PickResult
+} from '../interface';
+import { Global } from '../constants';
 
 export const BoundsPicker = Symbol.for('BoundsPicker');
-
-export interface IBoundsPicker {
-  type: string;
-  numberType?: number;
-
-  contains: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
-}
 
 export const GlobalPickerService = Symbol.for('GlobalPickerService');
 

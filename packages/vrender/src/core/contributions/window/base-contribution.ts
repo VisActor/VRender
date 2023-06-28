@@ -1,8 +1,16 @@
 import { injectable } from 'inversify';
 import { Generator } from '../../../common/generator';
-import { IWindow, IWindowHandlerContribution, IWindowParams } from '../..';
-import { ICanvas, IContext2d, IDomRectLike, EnvType, IGlobal } from '../../../interface';
-import { IBoundsLike } from '@visactor/vutils';
+import type {
+  ICanvas,
+  IContext2d,
+  IDomRectLike,
+  EnvType,
+  IGlobal,
+  IWindowHandlerContribution,
+  IWindow,
+  IWindowParams
+} from '../../../interface';
+import type { IBoundsLike } from '@visactor/vutils';
 
 type OnchangeCbType = (params: { x: number; y: number; width: number; height: number }) => void;
 
@@ -27,6 +35,7 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
       window.setWindowHandler(this);
     }
   }
+  abstract release(...params: any): void;
   abstract createWindow(params: IWindowParams): void;
   abstract releaseWindow(): void;
   abstract setDpr(dpr: number): void;

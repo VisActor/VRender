@@ -1,9 +1,9 @@
-import { IPoint, AABBBounds } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
 import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
-import { IRichText } from '../../../interface';
-import { IGraphicRender, RichTextRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type { IGraphicPicker, IGraphicRender, IPickParams, IRichText } from '../../../interface';
+import { RichTextRender } from '../../../render';
 
 const _bounds = new AABBBounds();
 

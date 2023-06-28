@@ -1,10 +1,10 @@
-import { isUndefined, has, isString, IPointLike } from '@visactor/vutils';
-import { IGlobal } from '../interface';
+import type { IPointLike } from '@visactor/vutils';
+import { isUndefined, has, isString } from '@visactor/vutils';
+import type { IGlobal } from '../interface';
 import { EventManager } from './event-manager';
 import { FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { FederatedMouseEvent } from './federated-event/mouse-event';
-import type { IEventTarget } from './interface';
-import type { IElementLike, NativeEvent, RenderConfig } from './type';
+import type { IElementLike, IEventTarget, NativeEvent, RenderConfig } from '../interface/event';
 import { clock } from './util';
 
 const MOUSE_POINTER_ID = 1;

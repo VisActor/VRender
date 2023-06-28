@@ -1,9 +1,5 @@
-import { epsilon } from '@visactor/vutils';
-import { ITimeline } from '../../animate';
-import { Releaseable } from '../../interface';
+import type { ITickHandler, ITickerHandlerStatic, ITimeline, ITicker } from '../../interface';
 import { application } from '../../application';
-import { ITicker } from './interface';
-
 export class ManualTickHandler implements ITickHandler {
   protected timerId: number;
   protected time: number = 0;
@@ -92,23 +88,6 @@ export class RAFTickHandler implements ITickHandler {
   getTime() {
     return Date.now();
   }
-}
-
-export interface ITickHandler extends Releaseable {
-  avaliable: () => boolean;
-  /**
-   * 开始执行tick
-   * @param interval 延时 ms
-   * @param cb 执行的回调
-   */
-  tick: (interval: number, cb: (handler: ITickHandler) => void) => void; // 开始
-  tickTo?: (t: number, cb: (handler: ITickHandler, params?: { once: boolean }) => void) => void;
-  getTime: () => number; // 获取时间
-}
-
-export interface ITickerHandlerStatic {
-  Avaliable: () => boolean;
-  new (): ITickHandler;
 }
 
 type TickerMode = 'raf' | 'timeout' | 'manual';

@@ -1,17 +1,18 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IContext2d,
   ILine,
   ILineGraphicAttribute,
   IMarkAttribute,
   IGraphicAttribute,
   IThemeAttribute,
-  ISegment
+  ISegment,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IDrawContext
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { IDrawContext } from '../../render-service';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { DefaultCanvasLineRender } from './line-render';
 import { drawIncrementalSegments } from '../../../common/render-curve';

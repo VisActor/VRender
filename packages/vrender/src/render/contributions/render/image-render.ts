@@ -1,13 +1,24 @@
 import { inject, injectable, named } from 'inversify';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { IImageRenderContribution, ImageRenderContribution } from './contributions/image-contribution-render';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IImage,
+  IThemeAttribute,
+  IGraphicRender,
+  IImageRenderContribution,
+  IContributionProvider,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
+} from '../../../interface';
+import { ImageRenderContribution } from './contributions/image-contribution-render';
 import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export class DefaultCanvasImageRender implements IGraphicRender {
@@ -19,7 +30,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: ContributionProvider<IImageRenderContribution>
+    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {}
 
   drawShape(

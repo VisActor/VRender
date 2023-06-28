@@ -1,14 +1,26 @@
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { inject, injectable, named } from 'inversify';
+// eslint-disable-next-line
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  ISymbol,
+  IThemeAttribute,
+  ISymbolRenderContribution,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IContributionProvider
+} from '../../../interface';
+import type {} from '../../render-service';
 import { BaseRender } from './base-render';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { ISymbolRenderContribution, SymbolRenderContribution } from './contributions/symbol-contribution-render';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
+import { SymbolRenderContribution } from './contributions/symbol-contribution-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 
 @injectable()
@@ -22,7 +34,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
   constructor(
     @inject(ContributionProvider)
     @named(SymbolRenderContribution)
-    protected readonly symbolRenderContribitions: ContributionProvider<ISymbolRenderContribution>
+    protected readonly symbolRenderContribitions: IContributionProvider<ISymbolRenderContribution>
   ) {
     super();
   }

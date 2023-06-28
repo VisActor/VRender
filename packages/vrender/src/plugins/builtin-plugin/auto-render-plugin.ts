@@ -1,6 +1,6 @@
 import { Generator } from '../../common/generator';
 import { application } from '../../application';
-import { IPlugin, IPluginService } from '../plugin-service';
+import type { IPlugin, IPluginService } from '../../interface';
 
 export class AutoRenderPlugin implements IPlugin {
   name: 'AutoRenderPlugin' = 'AutoRenderPlugin';

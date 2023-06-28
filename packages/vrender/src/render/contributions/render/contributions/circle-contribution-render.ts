@@ -1,46 +1,21 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   ICircle,
   ICircleGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  ICircleRenderContribution
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const CircleRenderContribution = Symbol.for('CircleRenderContribution');
-
-export interface ICircleRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    circle: ICircle,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    circleAttribute: Required<ICircleGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultCircleRenderContribution implements ICircleRenderContribution {

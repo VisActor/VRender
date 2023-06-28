@@ -1,4 +1,4 @@
-export type ICompileOptions = any;
+import type { AsArray, FullTap, IfSet, Tap, UnsetAdditionalOptions } from '../interface';
 
 /**
  * 参考 https://github.com/webpack/tapable
@@ -24,30 +24,8 @@ export type ICompileOptions = any;
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
  */
-
-export type FullTap = Tap & {
-  type: 'sync' | 'async' | 'promise';
-  fn: (...d: any) => any;
-};
-
-type Tap = TapOptions & {
-  name: string;
-};
-
-type TapOptions = {
-  before?: string;
-  stage?: number;
-};
-
-export type AsArray<T> = T extends any[] ? T : [T];
-
-export declare class UnsetAdditionalOptions {
-  _UnsetAdditionalOptions: true;
-}
-type IfSet<X> = X extends UnsetAdditionalOptions ? any : X;
-
 export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
-  protected _args: string[];
+  private _args: string[];
   readonly name?: string;
   taps: FullTap[];
 
@@ -82,7 +60,7 @@ export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
     }
   }
 
-  protected _parseOptions(
+  private _parseOptions(
     type: string,
     options: string | (Tap & IfSet<AdditionalOptions>),
     fn: (...args: AsArray<T>) => R
@@ -103,11 +81,11 @@ export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
     return _options;
   }
 
-  protected _tap(type: string, options: string | (Tap & IfSet<AdditionalOptions>), fn: (...args: AsArray<T>) => R) {
+  private _tap(type: string, options: string | (Tap & IfSet<AdditionalOptions>), fn: (...args: AsArray<T>) => R) {
     this._insert(this._parseOptions(type, options, fn));
   }
 
-  protected _insert(item: FullTap) {
+  private _insert(item: FullTap) {
     let before;
     if (typeof item.before === 'string') {
       before = new Set([item.before]);

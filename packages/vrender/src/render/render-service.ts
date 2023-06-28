@@ -1,78 +1,10 @@
 import { injectable, inject } from 'inversify';
-import { IAABBBounds, IBounds } from '@visactor/vutils';
-import { IGroup, IGraphic, IContext2d, MaybePromise, IColor, IStage, ILayer } from '../interface';
-import { DrawContribution, IGraphicRender, IGraphicRenderDrawParams } from './contributions/render';
-import { SyncHook } from '../tapable';
-
-// 用于绘制的参数，提供context
-// TODO: 考虑是否可以隐藏上下文类型
-export interface IRenderServiceDrawParams {
-  context?: IContext2d;
-
-  // 绘制的区域以及是否需要清屏
-  clear?: string | IColor;
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  stage: IStage;
-  layer: ILayer;
-  renderService: IRenderService;
-  updateBounds: boolean;
-  renderStyle?: string;
-}
-
-export interface IRenderService {
-  dirtyBounds: IBounds;
-  renderTreeRoots: IGraphic[]; // 此次render的数组
-  renderLists: IGraphic[];
-  drawParams: IRenderServiceDrawParams;
-
-  prepare: (updateBounds: boolean) => void;
-  prepareRenderList: () => void;
-  beforeDraw: (params: IRenderServiceDrawParams) => void;
-  draw: (params: IRenderServiceDrawParams) => void;
-  afterDraw: (params: IRenderServiceDrawParams) => void;
-  render: (groups: IGroup[], params: IRenderServiceDrawParams) => MaybePromise<void>;
-}
-
-export interface IDrawContext extends IRenderServiceDrawParams {
-  startAtId?: number;
-  break?: boolean;
-  restartIncremental?: boolean;
-  // multi图元开始的位置
-  multiGraphicOptions?: {
-    startAtIdx: number;
-    length: number;
-  };
-  in3dInterceptor?: boolean;
-  drawContribution?: IDrawContribution;
-  // hack内容
-  hack_pieFace?: 'inside' | 'bottom' | 'top' | 'outside';
-}
-
-export interface IDrawContribution {
-  hooks?: {
-    completeDraw: SyncHook<[]>;
-  };
-  dirtyBounds?: IAABBBounds;
-  backupDirtyBounds?: IAABBBounds;
-  rendering?: boolean;
-  currentRenderMap: Map<number, IGraphicRender>;
-  defaultRenderMap: Map<number, IGraphicRender>;
-  styleRenderMap: Map<string, Map<number, IGraphicRender>>;
-  draw: (renderService: IRenderService, drawParams: IDrawContext) => MaybePromise<void>;
-  getRenderContribution: (graphic: IGraphic) => IGraphicRender | null;
-  renderGroup: (group: IGroup, drawContext: IDrawContext) => void;
-  renderItem: (graphic: IGraphic, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) => void;
-}
+import type { IAABBBounds, IBounds } from '@visactor/vutils';
+import type { IGroup, IGraphic, IRenderService, IRenderServiceDrawParams, IDrawContribution } from '../interface';
+import { DrawContribution } from './contributions/render';
 
 export const RenderService = Symbol.for('RenderService');
 export const BeforeRenderConstribution = Symbol.for('BeforeRenderConstribution');
-
-interface IBeforeRenderConstribution {
-  apply: (renderService: IRenderService) => MaybePromise<void>;
-}
 
 /**
  * 渲染用的service，通常和stage一一绑定，

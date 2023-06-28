@@ -1,8 +1,8 @@
 import { ContainerModule } from 'inversify';
 import { LynxCanvas } from './canvas';
 import { LynxContext2d } from './context';
-import { CanvasFactory, Context2dFactory } from '../../interface';
-import { CanvasConfigType, ICanvas } from '../../../interface';
+import { CanvasFactory, Context2dFactory } from '../../constants';
+import type { CanvasConfigType, ICanvas } from '../../../interface';
 
 export default new ContainerModule(bind => {
   bind(CanvasFactory)

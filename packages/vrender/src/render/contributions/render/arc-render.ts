@@ -2,18 +2,23 @@ import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visact
 import { inject, injectable, named } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import {
+import type {
   IContext2d,
   IArc,
   IPath2D,
   IGraphicAttribute,
   IMarkAttribute,
   IThemeAttribute,
-  IGradientColor
+  IGradientColor,
+  IArcRenderContribution,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IContributionProvider
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import {
   cornerTangents,
   drawArcPath,
@@ -25,8 +30,8 @@ import {
   strokeVisible
 } from './utils';
 import { getConicGradientAt } from '../../../canvas/contributions/browser/conical-gradient';
-import { ArcRenderContribution, IArcRenderContribution } from './contributions/arc-contribution-render';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { ArcRenderContribution } from './contributions/arc-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -54,7 +59,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
-    protected readonly arcRenderContribitions: ContributionProvider<IArcRenderContribution>
+    protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
   ) {}
 
   // drawArcPath(

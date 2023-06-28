@@ -1,10 +1,18 @@
 import { inject, injectable } from 'inversify';
-import { IBoundsLike } from '@visactor/vutils';
+import type { IBoundsLike } from '@visactor/vutils';
 import { NodeCanvas } from '../../../canvas/contributions/node';
 import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';
-import { IWindowHandlerContribution, IWindowParams } from '../..';
-import { Global, EnvType, IGlobal, IContext2d, ICanvas, IDomRectLike } from '../../../interface';
+import type {
+  EnvType,
+  IGlobal,
+  IContext2d,
+  ICanvas,
+  IDomRectLike,
+  IWindowHandlerContribution,
+  IWindowParams
+} from '../../../interface';
+import { Global } from '../../../constants';
 
 @injectable()
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
@@ -18,6 +26,9 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
 
   constructor(@inject(Global) private readonly global: IGlobal) {
     super();
+  }
+  release(...params: any) {
+    // todo
   }
 
   getTitle(): string {

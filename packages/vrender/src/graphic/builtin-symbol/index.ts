@@ -16,7 +16,7 @@ import thinTriangle from './thin-triangle';
 import arrow2Left from './arrow2-left';
 import arrow2Right from './arrow2-right';
 import rect from './rect';
-import { ISymbolClass } from './interface';
+import type { ISymbolClass } from '../../interface';
 
 export const builtinSymbols = [
   circle,
@@ -45,4 +45,3 @@ builtinSymbols.forEach(symbol => {
 });
 
 export * from './utils';
-export * from './interface';

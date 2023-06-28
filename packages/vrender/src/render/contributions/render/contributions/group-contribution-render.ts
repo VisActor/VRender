@@ -1,46 +1,15 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
-  IMarkAttribute,
   IGroup,
-  IGroupGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IGroupRenderContribution
 } from '../../../../interface';
-import {
-  BaseRenderContributionTime,
-  DefaultBaseBackgroundRenderContribution,
-  IBaseRenderContribution
-} from './base-contribution-render';
+import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const GroupRenderContribution = Symbol.for('GroupRenderContribution');
-
-export interface IGroupRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    group: IGroup,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    groupAttribute: Required<IGroupGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
-  ) => void;
-}
 
 @injectable()
 export class DefaultGroupBackgroundRenderContribution

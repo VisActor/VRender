@@ -1,6 +1,5 @@
 // import { IBounds, sqrt } from '@visactor/vutils';
-import { IContext2d, SymbolType } from '../../interface';
-import { ISymbolClass } from './interface';
+import type { SymbolType, ISymbolClass } from '../../interface';
 import { trianglUp, TriangleUpSymbol } from './triangle-up';
 
 /**

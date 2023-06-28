@@ -19,5 +19,26 @@ module.exports = {
     __DEV__: true
   },
   setupFiles: ['./setup-mock.js'],
-  collectCoverageFrom: ['**/*.{ts}', '!**/node_modules/**']
+  verbose: true,
+  coverageReporters: ['json-summary', 'lcov', 'text'],
+  coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
+  collectCoverageFrom: [
+    '**/src/**',
+    '!**/cjs/**',
+    '!**/dist/**',
+    '!**/es/**',
+    '!**/node_modules/**',
+    '!**/__tests__/**',
+    '!**/interface/**',
+    '!**/interface.ts',
+    '!**/**.d.ts'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  }
 };

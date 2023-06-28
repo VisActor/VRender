@@ -1,20 +1,17 @@
-import { ICustomPath2D } from './../interface/path';
+import type { ICustomPath2D } from './../interface/path';
+import type { OBBBounds, Dict, IPointLike, IAABBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
-  OBBBounds,
   Matrix,
   normalTransform,
   Point,
   isNil,
-  Dict,
-  IPointLike,
   has,
   isString,
-  IAABBBounds,
   isValidUrl,
   isBase64
 } from '@visactor/vutils';
-import {
+import type {
   GraphicType,
   IAnimateConfig,
   IGraphicAttribute,
@@ -22,15 +19,17 @@ import {
   IGraphicAnimateParams,
   IGraphicJson,
   ISetAttributeContext,
-  ITransform
+  ITransform,
+  GraphicReleaseStatus
 } from '../interface/graphic';
 import { Node } from './node-tree';
-import {
+import type {
   IAnimate,
   IAnimateTarget,
   IGlyphGraphicAttribute,
   IGroup,
   ILayer,
+  IPickerService,
   IShadowRoot,
   IStage,
   IStep,
@@ -38,7 +37,6 @@ import {
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
-import { IPickerService } from '../picker';
 import { application } from '../application';
 import { Animate, DefaultStateAnimateConfig } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
@@ -111,8 +109,6 @@ const tempConstantScaleXYKey = ['scaleX', 'scaleY'];
 const tempConstantAngleKey = ['angle'];
 
 const point = new Point();
-
-export type GraphicReleaseStatus = 'released' | 'willRelease';
 
 /**
  * globalTransMatrix更新逻辑

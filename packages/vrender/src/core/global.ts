@@ -1,7 +1,17 @@
 import { inject, injectable, named } from 'inversify';
-import { SyncHook } from '../tapable';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';
-import { EnvContribution, EnvType, ICreateCanvasParams, IEnvContribution, IEnvParamsMap, IGlobal } from '../interface';
+import type {
+  EnvType,
+  IContributionProvider,
+  ICreateCanvasParams,
+  IEnvContribution,
+  IEnvParamsMap,
+  IGlobal,
+  ISyncHook
+} from '../interface';
+import { SyncHook } from '../tapable';
+import { EnvContribution } from '../constants';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
@@ -57,14 +67,14 @@ export class DefaultGlobal implements IGlobal {
   envParams?: any;
   declare measureTextMethod: 'native' | 'simple' | 'quick';
   declare hooks: {
-    onSetEnv: SyncHook<[EnvType | undefined, EnvType, IGlobal]>;
+    onSetEnv: ISyncHook<[EnvType | undefined, EnvType, IGlobal]>;
   };
 
   constructor(
     // todo: 不需要创建，动态获取就行？
     @inject(ContributionProvider)
     @named(EnvContribution)
-    protected readonly contributions: ContributionProvider<IEnvContribution>
+    protected readonly contributions: IContributionProvider<IEnvContribution>
   ) {
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])

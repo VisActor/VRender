@@ -1,8 +1,7 @@
 import { isArray, abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visactor/vutils';
 import { renderCommandList } from '../../../common/render-command-list';
-import { IDrawContext } from '../../../render/render-service';
 import { getTheme } from '../../../graphic/theme';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IGraphic,
@@ -11,9 +10,10 @@ import {
   IFillType,
   IStrokeType,
   IArc,
-  IPath2D
+  IPath2D,
+  IGraphicRenderDrawParams,
+  IDrawContext
 } from '../../../interface';
-import { IGraphicRenderDrawParams } from './graphic-render';
 
 /**
  * 是否需要执行fill逻辑

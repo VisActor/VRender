@@ -1,5 +1,5 @@
 import { Point } from '@visactor/vutils';
-import { IEventTarget } from '../interface';
+import type { IEventTarget } from '../../interface/event';
 import type { EventManager } from '../event-manager';
 
 /**

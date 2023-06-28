@@ -1,8 +1,14 @@
 import { injectable } from 'inversify';
 import { loadFeishuContributions } from '../../../kits';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type {
+  ICanvasLike,
+  EnvType,
+  ICreateCanvasParams,
+  IEnvContribution,
+  IGlobal,
+  ILynxCanvas
+} from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
-import { createImageElement } from './browser-contribution';
 
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -11,17 +17,6 @@ declare const lynx: {
 declare const SystemInfo: {
   pixelRatio: number;
 };
-
-export interface ILynxCanvas extends ICanvasLike {
-  width: number;
-  height: number;
-  offsetWidth: number;
-  offsetHeight: number;
-  getContext: () => any;
-  // 构造 getBoundingClientRect 方法
-  getBoundingClientRect: () => { width: number; height: number };
-  id: string;
-}
 
 // 飞书小程序canvas的wrap
 function makeUpCanvas(

@@ -1,43 +1,44 @@
-import { IAABBBounds } from '@visactor/vutils';
-import { SyncHook } from '../tapable/SyncHook';
-import {
-  IArc,
-  IArcGraphicAttribute,
-  IArea,
-  IAreaGraphicAttribute,
-  ICircle,
-  ICircleGraphicAttribute,
-  IGraphic,
+import type { IAABBBounds } from '@visactor/vutils';
+
+import type { ISyncHook } from './sync-hook';
+import type { IGraphic } from './graphic';
+import type { IStage } from './stage';
+import type {
+  IRectGraphicAttribute,
   IGroup,
   IGroupGraphicAttribute,
-  ILine,
-  ILineGraphicAttribute,
-  IPath,
-  IPathGraphicAttribute,
-  IPolygon,
-  IPolygonGraphicAttribute,
-  IRectGraphicAttribute,
-  IStage,
-  ISymbol,
-  ISymbolGraphicAttribute,
-  IText,
-  ITextGraphicAttribute,
-  IGlyph,
   IGlyphGraphicAttribute,
-  IRichTextGraphicAttribute,
-  IRichText,
+  ISymbolGraphicAttribute,
+  ICircleGraphicAttribute,
+  ICircle,
+  IGlyph,
+  ISymbol,
+  IArcGraphicAttribute,
+  IArc,
+  IArc3dGraphicAttribute,
+  IAreaGraphicAttribute,
+  IArc3d,
+  IArea,
+  ILineGraphicAttribute,
+  IPathGraphicAttribute,
+  ILine,
+  IPath,
+  IPolygonGraphicAttribute,
+  IPolygon,
   IPyramid3dGraphicAttribute,
   IPyramid3d,
-  IArc3dGraphicAttribute,
-  IArc3d,
+  ITextGraphicAttribute,
+  IText,
+  IRichTextGraphicAttribute,
+  IRichText,
   IImageGraphicAttribute,
   IImage,
+  IRect3dGraphicAttribute,
   IRect,
   IRect3d,
   IShadowRoot,
-  IWrapTextGraphicAttribute,
-  IRect3dGraphicAttribute
-} from '.';
+  IWrapTextGraphicAttribute
+} from './graphic/index';
 
 export interface IGraphicService {
   // themeService: IThemeService;
@@ -47,13 +48,13 @@ export interface IGraphicService {
   onAddIncremental: (graphic: IGraphic, group: IGroup, stage: IStage) => void;
   onClearIncremental: (group: IGroup, stage: IStage) => void;
   hooks: {
-    onAttributeUpdate: SyncHook<[IGraphic]>;
-    onSetStage: SyncHook<[IGraphic, IStage]>;
-    onRemove: SyncHook<[IGraphic]>;
-    onAddIncremental: SyncHook<[IGraphic, IGroup, IStage]>;
-    onClearIncremental: SyncHook<[IGroup, IStage]>;
-    beforeUpdateAABBBounds: SyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
-    afterUpdateAABBBounds: SyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
+    onAttributeUpdate: ISyncHook<[IGraphic]>;
+    onSetStage: ISyncHook<[IGraphic, IStage]>;
+    onRemove: ISyncHook<[IGraphic]>;
+    onAddIncremental: ISyncHook<[IGraphic, IGroup, IStage]>;
+    onClearIncremental: ISyncHook<[IGroup, IStage]>;
+    beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
+    afterUpdateAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
   };
   beforeUpdateAABBBounds: (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => void;
   afterUpdateAABBBounds: (
@@ -192,3 +193,57 @@ export type IGraphicCreator = {
   shadowRoot: (graphic?: IGraphic) => IShadowRoot;
   wrapText: (attributes: IWrapTextGraphicAttribute) => IText;
 };
+
+export interface IArcBoundsContribution {
+  updateBounds: (
+    attribute: IArcGraphicAttribute,
+    arcTheme: Required<IArcGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}
+
+export interface IAreaBoundsContribution {
+  updateBounds: (
+    attribute: IAreaGraphicAttribute,
+    arcTheme: Required<IAreaGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}
+
+export interface ICircleBoundsContribution {
+  updateBounds: (
+    attribute: ICircleGraphicAttribute,
+    circleTheme: Required<ICircleGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}
+
+export interface IPathBoundsContribution {
+  updateBounds: (
+    attribute: IPathGraphicAttribute,
+    pathTheme: Required<IPathGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}
+
+export interface IRectBoundsContribution {
+  updateBounds: (
+    attribute: IRectGraphicAttribute,
+    rectTheme: Required<IRectGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}
+
+export interface ISymbolBoundsContribution {
+  updateBounds: (
+    attribute: ISymbolGraphicAttribute,
+    SymbolTheme: Required<ISymbolGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}

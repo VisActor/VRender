@@ -1,9 +1,17 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, ISymbol, IThemeAttribute } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { IGraphicRender, SymbolRender } from '../../../render';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  ISymbol,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
+import { SymbolRender } from '../../../render';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';

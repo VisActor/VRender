@@ -1,21 +1,26 @@
 import { inject, injectable, named } from 'inversify';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';
-import {
+import type {
   IPath,
   ICustomPath2D,
   IContext2d,
   IThemeAttribute,
   IGraphicAttribute,
-  IMarkAttribute
+  IMarkAttribute,
+  IPathRenderContribution,
+  IGraphicRender,
+  IContributionProvider,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
 import { getTheme } from '../../../graphic/theme';
 import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { IPathRenderContribution, PathRenderContribution } from './contributions/path-contribution-render';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { PathRenderContribution } from './contributions/path-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 
@@ -30,7 +35,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   constructor(
     @inject(ContributionProvider)
     @named(PathRenderContribution)
-    protected readonly pathRenderContribitions: ContributionProvider<IPathRenderContribution>
+    protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
   }

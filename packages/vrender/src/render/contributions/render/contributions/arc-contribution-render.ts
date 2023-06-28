@@ -1,47 +1,22 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   IArc,
   IArcGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IArcRenderContribution
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { drawArcPath } from '../utils';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const ArcRenderContribution = Symbol.for('ArcRenderContribution');
-
-export interface IArcRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    arc: IArc,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    arcAttribute: Required<IArcGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultArcRenderContribution implements IArcRenderContribution {

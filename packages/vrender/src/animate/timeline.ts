@@ -1,17 +1,6 @@
 import { AnimateStatus } from '../common/enums';
 import { Generator } from '../common/generator';
-import { IAnimate } from '../interface';
-
-export interface ITimeline {
-  id: number;
-  animateCount: number;
-  addAnimate: (animate: IAnimate) => void;
-  removeAnimate: (animate: IAnimate) => void;
-  tick: (delta: number) => void;
-  clear: () => void;
-  pause: () => void;
-  resume: () => void;
-}
+import type { IAnimate, ITimeline } from '../interface';
 
 // 管理一组动画
 export class DefaultTimeline implements ITimeline {

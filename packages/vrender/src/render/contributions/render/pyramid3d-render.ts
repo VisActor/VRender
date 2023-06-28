@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { PYRAMID3D_NUMBER_TYPE } from '../../../graphic/constants';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IDirectionLight,
@@ -10,10 +10,12 @@ import {
   IFace3d,
   IThemeAttribute,
   ICamera,
-  IPolygonItem
+  IPolygonItem,
+  IGraphicRender,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
 } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';

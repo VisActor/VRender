@@ -1,10 +1,19 @@
-import { IPoint, AABBBounds } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { inject, injectable } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect3d, IThemeAttribute } from '../../../interface';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IRect3d,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
-import { IGraphicRender, Rect3DRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import { Rect3DRender } from '../../../render';
 import { BasePicker } from './base-picker';
 import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 

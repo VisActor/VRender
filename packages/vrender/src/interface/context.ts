@@ -1,9 +1,9 @@
-import { Matrix, IMatrix, IBoundsLike, IPointLike } from '@visactor/vutils';
-import { ICamera } from './camera';
-import { ICanvas } from './canvas';
-import { Releaseable } from './common';
-import { mat4, vec3 } from './matrix';
-import { IFillType, IStrokeType, ITransform } from './graphic';
+import type { Matrix, IMatrix, IBoundsLike, IPointLike } from '@visactor/vutils';
+import type { ICamera } from './camera';
+import type { ICanvas } from './canvas';
+import type { Releaseable } from './common';
+import type { mat4, vec3 } from './matrix';
+import type { IFillType, IStrokeType, ITransform } from './graphic';
 
 export interface IConicalGradientData {
   addColorStop: (pos: number, color: string) => void;

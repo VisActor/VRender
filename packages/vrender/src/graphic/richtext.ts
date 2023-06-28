@@ -1,7 +1,6 @@
-import { AABBBounds, IPoint, OBBBounds, transformBounds } from '@visactor/vutils';
-import {
+import type { AABBBounds, IPoint, OBBBounds } from '@visactor/vutils';
+import type {
   IRichText,
-  IRichTextAttribute,
   IRichTextCharacter,
   RichTextGlobalAlignType,
   RichTextGlobalBaselineType,
@@ -21,7 +20,7 @@ import Paragraph from './richtext/paragraph';
 import Wrapper from './richtext/wrapper';
 import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
-import { FederatedMouseEvent } from '../event';
+import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
 import { parsePadding } from '../common/utils';
 import { RICHTEXT_NUMBER_TYPE } from './constants';

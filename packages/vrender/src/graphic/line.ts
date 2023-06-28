@@ -1,5 +1,5 @@
-import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
-import { ILine, ILineGraphicAttribute } from '../interface';
+import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import type { ILine, ILineGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
 import { application } from '../application';

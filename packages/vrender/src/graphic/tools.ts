@@ -1,6 +1,6 @@
 import { application } from '../application';
-import { IGraphic, IGroup, ILayer, IStage } from '../interface';
-import { IAABBBounds } from '@visactor/vutils';
+import type { IGraphic, IGroup, ILayer, IStage } from '../interface';
+import type { IAABBBounds } from '@visactor/vutils';
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {

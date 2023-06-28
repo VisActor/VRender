@@ -1,8 +1,8 @@
-import { Dict, IPoint, IPointLike } from '@visactor/vutils';
-import type { SyncHook } from '../tapable';
-import { ICanvasLike } from './canvas';
-import { IEventElement } from './common';
-import { IContribution } from './contribution';
+import type { Dict, IPointLike } from '@visactor/vutils';
+import type { ICanvasLike } from './canvas';
+import type { IEventElement } from './common';
+import type { IContribution } from './contribution';
+import type { ISyncHook } from './sync-hook';
 
 export interface ILoader {
   loadImage: (url: string) => HTMLImageElement | ImageData;
@@ -11,8 +11,6 @@ export interface ILoader {
 
 // 环境定义
 export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx';
-
-export const EnvContribution = Symbol.for('EnvContribution');
 
 // 创建canvas需要的参数
 export interface ICreateCanvasParams {
@@ -135,8 +133,6 @@ export interface IEnvParamsMap {
   readonly native: any;
   readonly lynx: any;
 }
-
-export const Global = Symbol.for('Global');
 export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 'removeAllListeners'> {
   // 当前代码所运行的环境
   env: EnvType;
@@ -146,7 +142,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   // 当设置env的时候被调用
   hooks: {
-    onSetEnv: SyncHook<[EnvType | undefined, EnvType, IGlobal]>;
+    onSetEnv: ISyncHook<[EnvType | undefined, EnvType, IGlobal]>;
   };
 
   // 设置env的时候传入的参数

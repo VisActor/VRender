@@ -377,3 +377,5 @@ export type IAnimateConfig = {
   duration?: number;
   easing?: EasingType;
 };
+
+export type GraphicReleaseStatus = 'released' | 'willRelease';

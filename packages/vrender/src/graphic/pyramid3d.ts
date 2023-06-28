@@ -1,7 +1,8 @@
-import { AABBBounds, IPointLike, max, PointService } from '@visactor/vutils';
+import type { AABBBounds, IPointLike } from '@visactor/vutils';
+import { max, PointService } from '@visactor/vutils';
 import { parsePadding } from '../common/utils';
-import { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
-import { IFace3d } from '../interface/graphic/face3d';
+import type { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
+import type { IFace3d } from '../interface/graphic/face3d';
 import { application } from '../application';
 import { Polygon } from './polygon';
 import { getTheme } from './theme';

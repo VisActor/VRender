@@ -1,12 +1,11 @@
-import { Dict, EventEmitter, get } from '@visactor/vutils';
+import type { Dict } from '@visactor/vutils';
+import { EventEmitter, get } from '@visactor/vutils';
 import { FederatedMouseEvent, FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
-import { IEventTarget } from './interface';
+import type { IEventTarget } from '../interface/event';
 import { WILDCARD } from './constant';
-
-import type { LooseFunction } from './type';
 import type { FederatedEvent } from './federated-event/base-event';
 import { clock } from './util';
-import { Cursor } from '../interface';
+import type { Cursor } from '../interface';
 /**
  * 代码参考自 https://github.com/pixijs/pixijs
  * The MIT License

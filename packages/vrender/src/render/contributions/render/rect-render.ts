@@ -3,13 +3,24 @@ import { inject, injectable, named } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 import { createRectPath } from '../../../common/shape/rect';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { IRectRenderContribution, RectRenderContribution } from './contributions/rect-contribution-render';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IRect,
+  IThemeAttribute,
+  IGraphicRender,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService,
+  IRectRenderContribution,
+  IContributionProvider
+} from '../../../interface';
+import { RectRenderContribution } from './contributions/rect-contribution-render';
 import { drawPathProxy, rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export class DefaultCanvasRectRender implements IGraphicRender {
@@ -21,7 +32,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(RectRenderContribution)
-    protected readonly rectRenderContribitions: ContributionProvider<IRectRenderContribution>
+    protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
   ) {}
 
   drawShape(

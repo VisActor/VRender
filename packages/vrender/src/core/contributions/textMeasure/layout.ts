@@ -1,37 +1,6 @@
-import { ITextMeasure, TextOptionsType } from './ITextMeasure';
-
-type vec2 = [number, number];
-
-export type TextAlignType = 'left' | 'right' | 'center' | 'start' | 'end';
-export type TextBaselineType = 'top' | 'middle' | 'bottom' | 'alphabetic';
-
-export interface LayoutItemType {
-  str: string; // 这行的字符串
-  leftOffset?: number; // 该行距离左侧的偏移
-  topOffset?: number; // 该行距离右侧的偏移
-  width: number;
-}
-
-export interface BBox {
-  width: number; // 包围盒的宽度
-  height: number; // 包围盒的高度
-  xOffset: number;
-  yOffset: number;
-}
-
-export interface LayoutType {
-  bbox: BBox;
-  lines: LayoutItemType[];
-  fontFamily: string;
-  fontSize: number;
-  fontWeight?: string | number;
-  lineHeight: number;
-  textAlign: TextAlignType;
-  textBaseline: TextBaselineType;
-}
-export interface SimplifyLayoutType {
-  lines: LayoutItemType[];
-}
+import type { vec2 } from '@visactor/vutils';
+import type { ITextMeasure, TextOptionsType } from '../../../interface/text';
+import type { TextLayoutBBox, LayoutItemType, LayoutType, TextAlignType, TextBaselineType } from '../../../interface';
 
 export class CanvasTextLayout {
   private fontFamily: string;
@@ -44,7 +13,7 @@ export class CanvasTextLayout {
     this.textMeasure = textMeasure;
   }
 
-  LayoutBBox(bbox: BBox, textAlign: TextAlignType, textBaseline: TextBaselineType): BBox {
+  LayoutBBox(bbox: TextLayoutBBox, textAlign: TextAlignType, textBaseline: TextBaselineType): TextLayoutBBox {
     if (textAlign === 'left' || textAlign === 'start') {
       bbox.xOffset = 0;
     } else if (textAlign === 'center') {
@@ -109,7 +78,7 @@ export class CanvasTextLayout {
       bboxOffset[1] = -bboxWH[1];
     }
 
-    const bbox: BBox = {
+    const bbox: TextLayoutBBox = {
       xOffset: bboxOffset[0],
       yOffset: bboxOffset[1],
       width: bboxWH[0],
@@ -162,7 +131,7 @@ export class CanvasTextLayout {
     }
     bboxWH[1] = linesLayout.length * lineHeight;
 
-    const bbox: BBox = {
+    const bbox: TextLayoutBBox = {
       xOffset: 0,
       yOffset: 0,
       width: bboxWH[0],
@@ -175,7 +144,7 @@ export class CanvasTextLayout {
   }
 
   layoutWithBBox(
-    bbox: BBox,
+    bbox: TextLayoutBBox,
     lines: LayoutItemType[],
     textAlign: TextAlignType,
     textBaseline: TextBaselineType,
@@ -218,7 +187,7 @@ export class CanvasTextLayout {
    * @param origin 这个line的左上角位置，会复用并修改
    */
   private lineOffset(
-    bbox: BBox,
+    bbox: TextLayoutBBox,
     line: LayoutItemType,
     textAlign: TextAlignType,
     textBaseline: TextBaselineType,

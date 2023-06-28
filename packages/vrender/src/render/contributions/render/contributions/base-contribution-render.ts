@@ -1,19 +1,16 @@
-import { IGraphicAttribute, IContext2d, IGraphic, IStage, IThemeAttribute } from '../../../../interface';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IGraphic,
+  IStage,
+  IThemeAttribute,
+  IBaseRenderContribution
+} from '../../../../interface';
 import { injectable } from 'inversify';
 import { getTheme } from '../../../../graphic';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
 import { pi2 } from '@visactor/vutils';
-
-export enum BaseRenderContributionTime {
-  beforeFillStroke,
-  afterFillStroke
-}
-
-export interface IBaseRenderContribution {
-  time: BaseRenderContributionTime;
-  useStyle: boolean;
-  order: number;
-}
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 @injectable()
 export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContribution {

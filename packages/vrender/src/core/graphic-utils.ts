@@ -1,25 +1,15 @@
 import { injectable, inject, named } from 'inversify';
-import { IGraphicAttribute, ICanvas, IContext2d, EnvType, Global, IGlobal, ITextAttribute } from '../interface';
-import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
+import type { ICanvas, IContext2d, EnvType, IGlobal, ITextAttribute, IContributionProvider } from '../interface';
+import type { ITextMeasure, TextOptionsType } from '../interface/text';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';
 import { wrapCanvas } from '../canvas/util';
 import { DefaultTextStyle } from '../graphic/config';
-import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
-import { IGraphicUtil, ITransformUtil, TransformType } from './interface';
-
-// export interface IGraphicUtil {
-//   canvas?: ICanvas;
-//   context?: IContext2d | null;
-//   textMeasure: ITextMeasure;
-//   measureText: (text: string, tc: TextOptionsType) => { width: number; height: number };
-//   bindTextMeasure: (tm: ITextMeasure) => void;
-//   createTextMeasureInstance: (
-//     textSpec?: Partial<ITextAttribute>,
-//     option?: Partial<ITextMeasureOption>,
-//     getCanvasForMeasure?: () => any
-//   ) => TextMeasure<ITextAttribute>;
-// }
+import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
+import { Matrix, TextMeasure } from '@visactor/vutils';
+import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
+import { Global } from '../constants';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -31,7 +21,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   constructor(
     @inject(ContributionProvider)
     @named(TextMeasureContribution)
-    protected readonly contributions: ContributionProvider<ITextMeasure>,
+    protected readonly contributions: IContributionProvider<ITextMeasure>,
     @inject(Global) public readonly global: IGlobal
   ) {
     this.configured = false;

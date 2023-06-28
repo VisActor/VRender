@@ -1,5 +1,5 @@
-import { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
-import { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
+import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import type { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding, pointsInterpolation } from '../common/utils';

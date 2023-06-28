@@ -1,7 +1,7 @@
 /**
  * 提供ICanvas和ICanvasLike封装
  */
-import { Releaseable } from './common';
+import type { Releaseable } from './common';
 import type { IContextLike, IContext2d } from './context';
 
 export type CanvasConfigType = {
@@ -89,4 +89,12 @@ export interface ICanvasLike {
   readonly PNG_FILTER_PAETH?: number;
 
   getContext: (contextId: string) => IContextLike;
+}
+
+export interface ICanvasFactory extends Function {
+  (...params: any): ICanvas;
+}
+
+export interface IContext2dFactory extends Function {
+  (...params: any): IContext2d;
 }

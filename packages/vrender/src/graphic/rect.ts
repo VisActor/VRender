@@ -1,6 +1,6 @@
-import { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
-import { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
+import type { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';

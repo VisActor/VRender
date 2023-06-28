@@ -1,23 +1,12 @@
-import {
-  pi2,
-  sin,
-  epsilon,
-  abs,
-  asin,
-  AABBBounds,
-  OBBBounds,
-  clampAngleByRadian,
-  isNumber,
-  cos,
-  sqrt
-} from '@visactor/vutils';
-import { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt } from '@visactor/vutils';
+import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
-import { GraphicType } from '../interface';
+import type { GraphicType } from '../interface';
 import { ARC_NUMBER_TYPE } from './constants';
 
 /**

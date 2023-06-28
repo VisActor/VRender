@@ -1,6 +1,11 @@
-import { ICanvas, IContext2d, IGraphicAttribute, ILayer, IStage, ITextAttribute } from '../interface';
-import { ITextMeasure, TextOptionsType } from './contributions/textMeasure/ITextMeasure';
-import { IMatrix, IPointLike, ITextMeasureOption, Matrix, TextMeasure } from '@visactor/vutils';
+import type { ICanvas } from './canvas';
+import type { IContext2d } from './context';
+import type { IGraphicAttribute } from './graphic';
+import type { ITextAttribute } from './graphic/text';
+import type { ILayer } from './layer';
+import type { IStage } from './stage';
+import type { ITextMeasure, TextOptionsType } from './text';
+import type { IMatrix, IPointLike, ITextMeasureOption, TextMeasure } from '@visactor/vutils';
 
 export interface IGraphicUtil {
   canvas?: ICanvas;

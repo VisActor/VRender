@@ -1,11 +1,7 @@
 // 存放一些公共方法，公共配置
-export interface ITextFontParams {
-  fontStyle: string;
-  fontVariant: string;
-  fontWeight: string | number;
-  fontSize: number;
-  fontFamily: string;
-}
+
+import type { ITextFontParams } from '@visactor/vutils';
+import type { TextAlignType, TextBaselineType } from '../interface';
 
 export function getContextFont(
   text: Partial<ITextFontParams>,
@@ -33,10 +29,6 @@ export function getContextFont(
     (fontFamily ? fontFamily : 'sans-serif')
   );
 }
-
-export type ITextAlignType = 'left' | 'right' | 'center' | 'start' | 'end';
-export type ITextBaselineType = 'top' | 'middle' | 'bottom' | 'alphabetic';
-
 // TODO: 更好的方案
 /**
  * 用于绘制的时候偏移
@@ -45,7 +37,7 @@ export type ITextBaselineType = 'top' | 'middle' | 'bottom' | 'alphabetic';
  * @param h
  * @returns
  */
-export function textDrawOffsetY(baseline: ITextBaselineType, h: number): number {
+export function textDrawOffsetY(baseline: TextBaselineType, h: number): number {
   const offset =
     baseline === 'top'
       ? Math.ceil(0.79 * h)
@@ -63,7 +55,7 @@ export function textDrawOffsetY(baseline: ITextBaselineType, h: number): number 
  * @param width
  * @returns
  */
-export function textDrawOffsetX(textAlign: ITextAlignType, width: number): number {
+export function textDrawOffsetX(textAlign: TextAlignType, width: number): number {
   if (textAlign === 'end' || textAlign === 'right') {
     return -width;
   } else if (textAlign === 'center') {
@@ -79,7 +71,7 @@ export function textDrawOffsetX(textAlign: ITextAlignType, width: number): numbe
  * @param lineHeight
  * @returns
  */
-export function textLayoutOffsetY(baseline: ITextBaselineType, lineHeight: number, fontSize: number): number {
+export function textLayoutOffsetY(baseline: TextBaselineType, lineHeight: number, fontSize: number): number {
   if (baseline === 'middle') {
     return -lineHeight / 2;
   }

@@ -1,4 +1,4 @@
-import { vec3 } from './matrix';
+import type { vec3 } from './matrix';
 
 export interface IDirectionLight {
   dir: vec3;

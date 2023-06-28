@@ -19,6 +19,7 @@
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": "jest",
+    "test-cov": "jest -w 16 --coverage",
     "prepublishOnly": "npm run build",
     "ci": "node github-ci.js"
   },

@@ -1,11 +1,11 @@
-import { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
-import { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
+import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { application } from '../application';
-import { GraphicType } from '../interface';
+import type { GraphicType } from '../interface';
 import { POLYGON_NUMBER_TYPE } from './constants';
 
 const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];

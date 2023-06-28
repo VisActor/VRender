@@ -12,35 +12,13 @@ import loadCanvasContributions from './canvas/contributions/modules';
 import { LayerService } from './core/constants';
 // import { IMat4Allocate, IMatrixAllocate, Mat4Allocate, MatrixAllocate } from './allocator/matrix-allocate';
 import { GlobalPickerService } from './picker/global-picker-service';
-import { IPickerService } from './picker';
-import {
-  ArcAllocate,
-  AreaAllocate,
-  CircleAllocate,
-  LineAllocate,
-  PathAllocate,
-  RectAllocate,
-  SymbolAllocate,
-  TextAllocate,
-  CanvasAllocate
-} from './allocator/constants';
-import {
-  ILineAllocate,
-  IPathAllocate,
-  IRectAllocate,
-  ISymbolAllocate,
-  ITextAllocate,
-  IArcAllocate,
-  IAreaAllocate,
-  ICircleAllocate,
-  ICanvasAllocate
-} from './allocator/interface';
-import { Global, IGlobal, IGraphicService } from './interface';
+import type { IGlobal, IGraphicService, IPickerService } from './interface';
 import { application } from './application';
-import { IGraphicUtil, ILayerService, ITransformUtil } from './core/interface';
+import type { IGraphicUtil, ILayerService, ITransformUtil } from './interface/core';
 import { GraphicService } from './graphic/constants';
 import { GraphicUtil, TransformUtil } from './core/constants';
 import { container } from './container';
+import { Global } from './constants';
 
 container.load(coreModule);
 container.load(graphicModule);

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug of stroke bounds",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

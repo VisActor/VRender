@@ -1,19 +1,29 @@
 import { injectable, inject, named, multiInject } from 'inversify';
-import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
-import { IGraphic, IGroup, Global, IGlobal } from '../../../interface';
+import type {
+  IGraphic,
+  IGroup,
+  IGlobal,
+  IRenderService,
+  IDrawContext,
+  IDrawContribution,
+  IGraphicRender,
+  IRenderSelector,
+  IDrawItemInterceptorContribution,
+  IContributionProvider
+} from '../../../interface';
 import { DefaultAttribute } from '../../../graphic';
 import { LayerService } from '../../../core/constants';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
 import { GraphicRender, RenderSelector } from './symbol';
-import { IRenderSelector } from './render-slector';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
-import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
+import { DrawItemInterceptor } from './draw-interceptor';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
-import { ILayerService } from '../../../core/interface';
+import type { ILayerService } from '../../../interface/core';
+import { Global } from '../../../constants';
 
 enum STATUS {
   NORMAL = 0,
@@ -51,7 +61,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: ContributionProvider<IDrawItemInterceptorContribution>
+    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
     super(contributions, renderSelector, layerService, drawItemInterceptorContributions);
   }

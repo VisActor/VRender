@@ -1,45 +1,16 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
-  IMarkAttribute,
   IImage,
-  IImageGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IImageRenderContribution
 } from '../../../../interface';
 import { getTheme } from '../../../../graphic';
-import {
-  BaseRenderContributionTime,
-  DefaultBaseBackgroundRenderContribution,
-  IBaseRenderContribution
-} from './base-contribution-render';
+import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const ImageRenderContribution = Symbol.for('ImageRenderContribution');
-
-export interface IImageRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    image: IImage,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    imageAttribute: Required<IImageGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultImageBackgroundRenderContribution

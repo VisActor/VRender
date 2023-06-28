@@ -1,8 +1,9 @@
 import { ContainerModule } from 'inversify';
-import { Global, IGlobal } from '../interface';
+import type { IGlobal } from '../interface';
 import { container } from '../container';
 import { DefaultGlobal } from './global';
 import envModules from './contributions/env/modules';
+import { Global } from '../constants';
 
 const globalModule = new ContainerModule((bind, unbind, isBound) => {
   // global对象，全局单例模式

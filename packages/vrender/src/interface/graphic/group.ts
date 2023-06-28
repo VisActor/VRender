@@ -1,6 +1,7 @@
 import type { ITheme, IThemeSpec } from './theme';
-import type { GraphicAttributeMap, INode } from '../../interface';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
+import type { INode } from '../node-tree';
+import type { GraphicAttributeMap } from './creator';
 
 export type IGroupAttribute = {
   path: IGraphic[];

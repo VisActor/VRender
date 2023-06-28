@@ -1,7 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { ILayer, IStage, Global, IGlobal } from '../interface';
+import type { ILayer, IStage, IGlobal } from '../interface';
 import { Layer } from './layer';
-import { ILayerService } from './interface';
+import type { ILayerService } from '../interface/core';
+import { Global } from '../constants';
 
 @injectable()
 export class DefaultLayerService implements ILayerService {

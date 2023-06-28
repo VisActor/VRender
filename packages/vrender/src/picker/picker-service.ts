@@ -1,46 +1,28 @@
-import { Matrix, Point, IMatrix, IPoint, IBounds, IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
+import { Matrix, Point, IBounds } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { foreach } from '../common/sort';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';
-import { IContext2d, IGraphic, IGroup, EnvType, Global, IGlobal, mat4 } from '../interface';
+import type {
+  IContext2d,
+  IGraphic,
+  IGroup,
+  EnvType,
+  IGlobal,
+  IPickerService,
+  IGraphicPicker,
+  IPickParams,
+  PickResult,
+  IPickItemInterceptorContribution,
+  IContributionProvider
+} from '../interface';
 import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
-import { PickResult } from './type';
-import { IDrawContribution } from '../render';
-import { IPickItemInterceptorContribution, PickItemInterceptor } from './pick-interceptor';
+import { PickItemInterceptor } from './pick-interceptor';
+import { Global } from '../constants';
 
 export const GraphicPicker = Symbol.for('GraphicPicker');
-
-export interface IGraphicPicker {
-  type: string;
-  numberType: number;
-
-  contains: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
-}
-
-export interface IPickParams {
-  group?: boolean;
-  graphic?: boolean;
-  bounds?: IBounds;
-  pickContext?: IContext2d;
-  pickerService?: IPickerService;
-  // 内部设置
-  in3dInterceptor?: boolean;
-  hack_pieFace?: string;
-}
-
-export interface IPickerService {
-  type: string;
-
-  pickContext?: IContext2d;
-  pickerMap: Map<number, IGraphicPicker>;
-  configure: (global: IGlobal, env: EnvType) => void;
-  pick: (group: IGraphic[], point: IPoint, params?: IPickParams) => PickResult;
-  pickGroup: (group: IGroup, point: IPointLike, parentMatrix: IMatrix, params: IPickParams) => PickResult;
-  pickItem: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => IGraphic | null;
-  containsPoint: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
-  drawContribution?: IDrawContribution;
-}
 
 export const PickerService = Symbol.for('PickerService');
 
@@ -56,7 +38,7 @@ export abstract class DefaultPickService implements IPickerService {
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: ContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {}
 
   protected _init() {

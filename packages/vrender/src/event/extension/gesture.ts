@@ -1,9 +1,18 @@
-import { INode } from '../../interface/node-tree';
-import { EventEmitter, IPointLike } from '@visactor/vutils';
+import type { INode } from '../../interface/node-tree';
+import type { IPointLike } from '@visactor/vutils';
+import { EventEmitter } from '@visactor/vutils';
 import { clock } from '../util';
 import { WILDCARD } from '../constant';
 import type { FederatedPointerEvent } from '../federated-event';
-import type { IEventTarget } from '../interface';
+import type {
+  DefaultGestureConfig,
+  EmitEventObject,
+  GestureConfig,
+  GestureDirection,
+  GestureEvent,
+  IEventTarget,
+  IFederatedPointerEvent
+} from '../../interface/event';
 import { application } from '../../application';
 
 /**
@@ -77,69 +86,10 @@ const getCenter = (points: IPointLike[]) => {
   };
 };
 
-type Direction = 'none' | 'left' | 'right' | 'down' | 'up';
-
-export interface GestureEvent extends FederatedPointerEvent {
-  points: IPointLike[];
-  direction: Direction;
-  deltaX: number;
-  deltaY: number;
-  scale: number;
-  center: IPointLike;
-  velocity: number;
-}
-
-export interface GestureConfig {
-  press?: {
-    /**
-     * @default 251
-     * Minimal press time in ms.
-     * @see http://hammerjs.github.io/recognizer-press/
-     */
-    time?: number;
-    /**
-     * @default 10
-     * Minimal movement that is allowed while pressing.
-     * @see http://hammerjs.github.io/recognizer-press/
-     */
-    threshold?: number;
-  };
-  swipe?: {
-    /**
-     * Minimal distance required before recognizing.
-     * @default 10
-     * @see https://hammerjs.github.io/recognizer-swipe/
-     */
-    threshold?: number;
-    /**
-     * Minimal velocity required before recognizing, unit is in px per ms.
-     * @default 0.3
-     * @see http://hammerjs.github.io/recognizer-swipe/
-     */
-    velocity?: number;
-  };
-}
-
-interface DefaultGestureConfig {
-  press: {
-    time: number;
-    threshold: number;
-  };
-  swipe: {
-    threshold: number;
-    velocity: number;
-  };
-}
-
-interface EmitEventObject {
-  type: string;
-  ev: GestureEvent;
-}
-
 export class Gesture extends EventEmitter {
   element: INode | null;
 
-  private cachedEvents: FederatedPointerEvent[] = [];
+  private cachedEvents: IFederatedPointerEvent[] = [];
   private startTime: number;
   // @ts-ignore
   // eslint-disable-next-line no-undef
@@ -150,7 +100,7 @@ export class Gesture extends EventEmitter {
   private startDistance: number;
   private center: IPointLike;
   private eventType: string | null;
-  private direction: Direction | null;
+  private direction: GestureDirection | null;
 
   private lastMoveTime: number;
   private prevMoveTime: number;
@@ -226,7 +176,7 @@ export class Gesture extends EventEmitter {
     }
 
     if (startPoints.length === 1) {
-      const event = cachedEvents[0] as GestureEvent;
+      const event = cachedEvents[0] as unknown as GestureEvent;
       this.pressTimeout = setTimeout(() => {
         const eventType = 'press';
         const direction = 'none';
@@ -253,7 +203,7 @@ export class Gesture extends EventEmitter {
       return;
     }
 
-    const moveEvent = ev.clone() as GestureEvent;
+    const moveEvent = ev.clone() as unknown as GestureEvent;
     const { x, y, pointerId } = moveEvent;
     for (let i = 0, len = cachedEvents.length; i < len; i++) {
       if (pointerId === cachedEvents[i].pointerId) {
@@ -299,7 +249,7 @@ export class Gesture extends EventEmitter {
   };
 
   private onEnd = (ev: FederatedPointerEvent) => {
-    const endEvent = ev.clone() as GestureEvent;
+    const endEvent = ev.clone() as unknown as GestureEvent;
     const { cachedEvents, startPoints } = this;
     const points = cachedEvents.map(ev => {
       return { x: ev.x, y: ev.y };

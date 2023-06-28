@@ -1,6 +1,5 @@
-import { IOption3D } from '../../interface';
+import type { IOption3D, IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
-import { IPlugin, IPluginService } from '../plugin-service';
 
 export class ViewTransform3dPlugin implements IPlugin {
   name: 'ViewTransform3dPlugin' = 'ViewTransform3dPlugin';

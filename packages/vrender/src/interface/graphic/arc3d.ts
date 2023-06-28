@@ -1,5 +1,6 @@
-import type { IArcGraphicAttribute, ICustomPath2D } from '../../interface';
 import type { IGraphic } from '../graphic';
+import type { ICustomPath2D } from '../path';
+import type { IArcGraphicAttribute } from './arc';
 
 export type IArc3dGraphicAttribute = Partial<IArcGraphicAttribute> & {
   height?: number; // 长度

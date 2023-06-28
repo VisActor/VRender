@@ -1,16 +1,8 @@
 import { inject, injectable, named } from 'inversify';
-import {
-  AABBBounds,
-  epsilon,
-  IAABBBounds,
-  IBounds,
-  IMatrix,
-  isArray,
-  pi2,
-  transformBoundsWithMatrix
-} from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
+import { AABBBounds, epsilon, isArray, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
-import {
+import type {
   mat4,
   vec3,
   IArc,
@@ -44,19 +36,26 @@ import {
   IArc3dGraphicAttribute,
   IArc3d,
   IImageGraphicAttribute,
-  IImage,
   ITransform,
   IGraphicService,
-  IGraphicCreator
+  IGraphicCreator,
+  ISyncHook,
+  IRectBoundsContribution,
+  ISymbolBoundsContribution,
+  ICircleBoundsContribution,
+  IArcBoundsContribution,
+  IPathBoundsContribution,
+  IContributionProvider
 } from '../../interface';
-import { IRectBoundsContribution, RectBoundsContribution } from './rect-contribution';
+import { RectBoundsContribution } from './rect-contribution';
 import { textDrawOffsetX } from '../../common/text';
-import { ISymbolBoundsContribution, SymbolBoundsContribution } from './symbol-contribution';
+import { SymbolBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
-import { CircleBoundsContribution, ICircleBoundsContribution } from './circle-contribution';
-import { ArcBoundsContribution, IArcBoundsContribution } from './arc-contribution';
-import { IPathBoundsContribution, PathBoundsContribution } from './path-contribution';
+import { CircleBoundsContribution } from './circle-contribution';
+import { ArcBoundsContribution } from './arc-contribution';
+import { PathBoundsContribution } from './path-contribution';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../common/contribution-provider';
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
@@ -611,13 +610,13 @@ export function shouldUseMat4(graphic: IGraphic) {
 @injectable()
 export class DefaultGraphicService implements IGraphicService {
   declare hooks: {
-    onAttributeUpdate: SyncHook<[IGraphic]>;
-    onSetStage: SyncHook<[IGraphic, IStage]>;
-    onRemove: SyncHook<[IGraphic]>;
-    onAddIncremental: SyncHook<[IGraphic, IGroup, IStage]>;
-    onClearIncremental: SyncHook<[IGroup, IStage]>;
-    beforeUpdateAABBBounds: SyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
-    afterUpdateAABBBounds: SyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
+    onAttributeUpdate: ISyncHook<[IGraphic]>;
+    onSetStage: ISyncHook<[IGraphic, IStage]>;
+    onRemove: ISyncHook<[IGraphic]>;
+    onAddIncremental: ISyncHook<[IGraphic, IGroup, IStage]>;
+    onClearIncremental: ISyncHook<[IGroup, IStage]>;
+    beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
+    afterUpdateAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
   };
 
   protected _rectBoundsContribitions: IRectBoundsContribution[];
@@ -632,19 +631,19 @@ export class DefaultGraphicService implements IGraphicService {
     @inject(GraphicCreator) public readonly creator: IGraphicCreator,
     @inject(ContributionProvider)
     @named(RectBoundsContribution)
-    protected readonly rectBoundsContribitions: ContributionProvider<IRectBoundsContribution>,
+    protected readonly rectBoundsContribitions: IContributionProvider<IRectBoundsContribution>,
     @inject(ContributionProvider)
     @named(SymbolBoundsContribution)
-    protected readonly symbolBoundsContribitions: ContributionProvider<ISymbolBoundsContribution>,
+    protected readonly symbolBoundsContribitions: IContributionProvider<ISymbolBoundsContribution>,
     @inject(ContributionProvider)
     @named(CircleBoundsContribution)
-    protected readonly circleBoundsContribitions: ContributionProvider<ICircleBoundsContribution>,
+    protected readonly circleBoundsContribitions: IContributionProvider<ICircleBoundsContribution>,
     @inject(ContributionProvider)
     @named(ArcBoundsContribution)
-    protected readonly arcBoundsContribitions: ContributionProvider<IArcBoundsContribution>,
+    protected readonly arcBoundsContribitions: IContributionProvider<IArcBoundsContribution>,
     @inject(ContributionProvider)
     @named(PathBoundsContribution)
-    protected readonly pathBoundsContribitions: ContributionProvider<IPathBoundsContribution>
+    protected readonly pathBoundsContribitions: IContributionProvider<IPathBoundsContribution>
   ) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),

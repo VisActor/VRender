@@ -1,18 +1,30 @@
 import { injectable, inject, postConstruct, named, multiInject } from 'inversify';
-import { IRenderSelector } from './render-slector';
-import { IDrawContribution, IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { IContext2d, MaybePromise, IGraphic, IGroup } from '../../../interface';
+import type {
+  IContext2d,
+  MaybePromise,
+  IGraphic,
+  IGroup,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IContributionProvider,
+  IDrawItemInterceptorContribution,
+  IDrawContribution,
+  IRenderSelector
+} from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
-import { Bounds, getRectIntersect, IBounds, isRectIntersect } from '@visactor/vutils';
+import type { IBounds } from '@visactor/vutils';
+import { Bounds, getRectIntersect, isRectIntersect } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
-import { DrawItemInterceptor, IDrawItemInterceptorContribution } from './draw-interceptor';
+import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
-import { ILayerService } from '../../../core/interface';
+import type { ILayerService } from '../../../interface/core';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -37,7 +49,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
-    protected readonly drawItemInterceptorContributions: ContributionProvider<IDrawItemInterceptorContribution>
+    protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
     this.currentRenderMap = new Map();
     this.defaultRenderMap = new Map();

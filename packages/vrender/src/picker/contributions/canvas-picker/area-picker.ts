@@ -1,9 +1,8 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { getTheme } from '../../../graphic/theme';
-import { IArea } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { AreaRender, IGraphicRender } from '../../../render';
+import type { IArea, IGraphicPicker, IGraphicRender, IPickParams } from '../../../interface';
+import { AreaRender } from '../../../render';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 
 @injectable()

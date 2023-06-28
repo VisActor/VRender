@@ -1,10 +1,11 @@
-import { IPointLike, pi, pi2, vec2 } from '@visactor/vutils';
+import type { IPointLike, vec2 } from '@visactor/vutils';
+import { pi, pi2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
-import { CommandType, IContext2d } from '../interface';
+import type { CommandType, IContext2d } from '../interface';
 import { container } from '../container';
 import { application } from '../application';
-import { CanvasFactory, Context2dFactory, ICanvasFactory, IContext2dFactory } from './interface';
-import { CanvasConfigType, ICanvas } from '../interface';
+import { CanvasFactory, Context2dFactory } from './constants';
+import type { CanvasConfigType, ICanvas, ICanvasFactory, IContext2dFactory } from '../interface';
 
 export function wrapCanvas(params: CanvasConfigType) {
   return container.getNamed<ICanvasFactory>(CanvasFactory, application.global.env)(params);

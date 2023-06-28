@@ -1,6 +1,6 @@
 import { isArray } from '@visactor/vutils';
-import { CanvasTextLayout, LayoutItemType } from '../core/contributions/textMeasure/layout';
-import { IWrapTextGraphicAttribute } from '../interface';
+import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
+import type { IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
 import { application } from '../application';
 import { Text } from './text';
 import { getTheme } from './theme';

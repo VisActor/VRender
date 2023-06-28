@@ -1,9 +1,12 @@
-import { IAABBBounds, IBounds } from '@visactor/vutils';
-import { IGraphic } from './graphic';
-import { IGroup } from './graphic/group';
-import { IDrawContext, IDrawContribution, IRenderService } from '../render/render-service';
-import { IColor } from './color';
-import { ILayerHandlerContribution, ILayerHandlerDrawParams, IWindow } from '../core';
+import type { IAABBBounds, IBounds, IBoundsLike } from '@visactor/vutils';
+import type { IGraphic } from './graphic';
+import type { IGroup } from './graphic/group';
+import type { IColor } from './color';
+import type { IDrawContext, IDrawContribution, IRenderService, IRenderServiceDrawParams } from './render';
+import type { IStage } from './stage';
+import type { Releaseable } from './common';
+import type { IContext2d } from './context';
+import type { IWindow } from './window';
 
 export interface ILayerDrawParams {
   renderService: IRenderService;
@@ -62,4 +65,39 @@ export interface ILayer extends IGroup {
   drawTo: (target: IWindow, params: IDrawToParams) => void;
   combineTo: (target: IWindow, params: IDrawToParams) => void;
   // 考虑操作回放
+}
+
+export interface ILayerHandlerDrawParams extends ILayerDrawParams {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  layer: ILayer;
+  stage: IStage;
+  updateBounds: boolean;
+}
+
+export interface ILayerHandlerInitParams {
+  main: boolean;
+  canvasId?: string;
+  width: number;
+  height: number;
+  zIndex: number;
+  dpr?: number;
+}
+
+// TODO: layer在resize的时候需要判断是否需要resize window对应的canvas
+
+// 具体的Layer实现
+// Canvas2d的Layer可以对应一个Canvas或者ImageData
+export interface ILayerHandlerContribution extends Releaseable {
+  init: (layer: ILayer, window: IWindow, params: ILayerHandlerInitParams) => void;
+  resize: (w: number, h: number) => void;
+  resizeView: (w: number, h: number) => void;
+  render: (group: IGroup[], params: ILayerHandlerDrawParams, userParams?: Partial<IDrawContext>) => void;
+  prepare: (dirtyBounds: IBoundsLike, params: IRenderServiceDrawParams) => void;
+  drawTo: (target: IWindow, group: IGroup[], params: IDrawToParams & ILayerHandlerDrawParams) => void;
+  merge: (layerHandlers: ILayerHandlerContribution[]) => void;
+  getContext: () => IContext2d;
+  offscreen: boolean;
 }

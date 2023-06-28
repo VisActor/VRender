@@ -1,8 +1,8 @@
-import { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
-import { CanvasTextLayout, LayoutType } from '../core/contributions/textMeasure/layout';
+import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
-import { IText, ITextCache, ITextGraphicAttribute } from '../interface';
+import type { IText, ITextCache, ITextGraphicAttribute, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "refactor: refactor interfaces and types of typescript",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

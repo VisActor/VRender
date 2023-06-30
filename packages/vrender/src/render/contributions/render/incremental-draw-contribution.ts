@@ -52,7 +52,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
   constructor(
     // @inject(ContributionProvider)
     // @named(GraphicRender)
-    // protected readonly contributions: ContributionProvider<IGraphicRender>,
+    // protected readonly contributionƒs: ContributionProvider<IGraphicRender>,
     @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
     @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     @inject(DefaultIncrementalCanvasLineRender) protected readonly lineRender: IGraphicRender, // 默认的lineRender

@@ -291,7 +291,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   protected tryUpdateGlobalAABBBounds(): AABBBounds {
     if (!this._globalAABBBounds) {
-      this._globalAABBBounds = this._AABBBounds.clone();
+      this._globalAABBBounds = this.AABBBounds.clone();
     } else {
       this._globalAABBBounds.setValue(
         this._AABBBounds.x1,

@@ -258,6 +258,9 @@ export class Node extends EventEmitter<any, any> implements INode {
    * @param referenceNode 插入到referenceNode之前
    */
   insertInto(newNode: INode, idx: number): INode | null {
+    if (this._nodeList) {
+      console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
+    }
     if (idx >= this.childrenCount) {
       return this.appendChild(newNode);
     }

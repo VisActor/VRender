@@ -250,8 +250,8 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
 };
 
 export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
-  repeatX: 'stretch',
-  repeatY: 'stretch',
+  repeatX: 'no-repeat',
+  repeatY: 'no-repeat',
   image: '',
   width: 0,
   height: 0,

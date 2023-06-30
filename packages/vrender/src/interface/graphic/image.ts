@@ -1,6 +1,6 @@
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 
-export type IRepeatType = 'no-repeat' | 'repeat' | 'stretch';
+export type IRepeatType = 'no-repeat' | 'repeat';
 
 export type IImageAttribute = {
   width: number;

@@ -34,9 +34,6 @@ export class BrowserWindowHandlerContribution
   constructor(@inject(Global) private readonly global: IGlobal) {
     super();
   }
-  release(...params: any) {
-    // todo
-  }
 
   getTitle(): string {
     return this.canvas.id.toString();

@@ -35,7 +35,9 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
       window.setWindowHandler(this);
     }
   }
-  abstract release(...params: any): void;
+  release(...params: any) {
+    this.releaseWindow();
+  }
   abstract createWindow(params: IWindowParams): void;
   abstract releaseWindow(): void;
   abstract setDpr(dpr: number): void;

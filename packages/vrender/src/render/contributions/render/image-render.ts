@@ -20,6 +20,8 @@ import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 
+const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
+
 @injectable()
 export class DefaultCanvasImageRender implements IGraphicRender {
   type: 'image';
@@ -55,6 +57,8 @@ export class DefaultCanvasImageRender implements IGraphicRender {
       opacity = imageAttribute.opacity,
       fillOpacity = imageAttribute.fillOpacity,
       visible = imageAttribute.visible,
+      repeatX = imageAttribute.repeatX,
+      repeatY = imageAttribute.repeatY,
       image: url
     } = image.attribute;
 
@@ -103,7 +107,20 @@ export class DefaultCanvasImageRender implements IGraphicRender {
           return;
         }
         context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        context.drawImage(res.data, x, y, width, height);
+        let repeat = 0;
+        if (repeatX === 'repeat') {
+          repeat |= 0b0001;
+        }
+        if (repeatY === 'repeat') {
+          repeat |= 0b0010;
+        }
+        if (repeat) {
+          const pattern = context.createPattern(res.data, repeatStr[repeat]);
+          context.fillStyle = pattern;
+          context.fillRect(x, y, width, height);
+        } else {
+          context.drawImage(res.data, x, y, width, height);
+        }
       }
     }
 

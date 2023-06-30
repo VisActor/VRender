@@ -1,6 +1,6 @@
-import { IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
+import type { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
 import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 
@@ -23,15 +23,16 @@ export abstract class BaseRender<T extends IGraphic> {
     use3dMatrixIn3dMode: boolean = false
   ): IPointLike & { z: number; lastModelMatrix: mat4 } {
     const transMatrix = graphic.transMatrix;
-    const onlyTranslate = transMatrix.onlyTranslate();
     const {
       x = graphicAttribute.x,
       y = graphicAttribute.y,
       z = graphicAttribute.z,
       scaleX = graphicAttribute.scaleX,
       scaleY = graphicAttribute.scaleY,
-      angle = graphicAttribute.angle
+      angle = graphicAttribute.angle,
+      postMatrix
     } = graphic.attribute;
+    const onlyTranslate = transMatrix.onlyTranslate() && !postMatrix;
 
     // 存在3d变换的时候，需要计算3d矩阵
     const lastModelMatrix = context.modelMatrix;

@@ -621,7 +621,7 @@ export class Stage extends Group implements IStage {
 
   release() {
     super.release();
-    this.eventSystem.release();
+    this.eventSystem && this.eventSystem.release();
     this.pluginService.release();
     this.forEach(layer => {
       layer.release();

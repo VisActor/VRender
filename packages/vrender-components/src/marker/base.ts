@@ -14,12 +14,11 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected render() {
     this.removeAllChild();
     const markerVisible = this.attribute.visible ?? true;
-    this.setAttribute('pickable', false);
 
-    const group = createGroup({
-      pickable: false,
-      childrenPickable: false
-    });
+    this.setAttribute('pickable', false);
+    this.setAttribute('childrenPickable', false);
+
+    const group = createGroup({});
     group.name = 'marker-container';
     this.add(group);
     markerVisible && this.renderMarker(group);

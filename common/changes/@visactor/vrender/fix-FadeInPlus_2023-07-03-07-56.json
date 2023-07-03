@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix the bug in FadeInPlus",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -1,8 +1,9 @@
-import { IPoint, IPointLike, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
+import type { IPoint, IPointLike } from '@visactor/vutils';
+import { isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
 import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
-import { CustomPath2D } from '../common/custom-path2d';
-import {
+import type { CustomPath2D } from '../common/custom-path2d';
+import type {
   EasingType,
   IArcGraphicAttribute,
   IGraphic,
@@ -124,6 +125,12 @@ export class FadeInPlus extends ACustomAnimate<any> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    if (!this.toFill) {
+      return;
+    }
+    if (!this.toStroke) {
+      return;
+    }
     switch (this.direction) {
       case Direction.RIGHT_TO_LEFT:
         this.rightToLeft(end, ratio, out);

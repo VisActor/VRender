@@ -6,7 +6,10 @@ import { addShapesToStage, colorPools } from '../utils';
 export const page = () => {
   const shapes = [];
 
-  const group = createGroup({});
+  const group = createGroup({
+    pickable: false,
+    // childrenPickable: false,
+  });
 
   group.setTheme({
     common: {
@@ -22,7 +25,6 @@ export const page = () => {
     x: 300,
     y: 100,
     stroke: 'green',
-    
     lineWidth: 10
   });
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(marker): add interactive config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

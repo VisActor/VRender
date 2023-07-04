@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: tooltip should not throw error when title not exist\n\n",
+      "type": "patch",
+      "packageName": "@visactor/vrender"
+    }
+  ],
+  "packageName": "@visactor/vrender",
+  "email": "kangxiaoting.kk@bytedance.com"
+}

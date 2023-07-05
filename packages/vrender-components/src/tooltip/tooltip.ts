@@ -1,12 +1,13 @@
 /**
  * @description 标题组件
  */
-import { IGroup, IText, IRect, ISymbol, builtinSymbolsMap } from '@visactor/vrender';
+import type { IGroup, IText, IRect, ISymbol } from '@visactor/vrender';
+import { builtinSymbolsMap } from '@visactor/vrender';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
-import { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
+import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
 import { mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 
@@ -316,8 +317,10 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
       titleMaxHeight = Math.max(titleShape.size, titleMaxHeight);
     }
 
-    attribute.title.width = maxWidth;
-    attribute.title.height = titleMaxHeight;
+    if (attribute.title) {
+      attribute.title.width = maxWidth;
+      attribute.title.height = titleMaxHeight;
+    }
 
     if (isVisible(titleAttr)) {
       containerHeight += titleMaxHeight + titleAttr.spaceRow;

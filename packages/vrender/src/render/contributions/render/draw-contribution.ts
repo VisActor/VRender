@@ -164,7 +164,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
 
-  renderGroup(group: IGroup, drawContext: IDrawContext) {
+  renderGroup(group: IGroup, drawContext: IDrawContext, skipSort?: boolean) {
     if (drawContext.break || group.attribute.visibleAll === false) {
       return;
     }
@@ -186,22 +186,33 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     this.renderItem(group, drawContext, {
       drawingCb: () => {
-        foreach(
-          group,
-          DefaultAttribute.zIndex,
-          (item: IGraphic) => {
-            if (drawContext.break) {
-              return;
-            }
-            if (item.isContainer) {
-              this.renderGroup(item as IGroup, drawContext);
-            } else {
-              this.renderItem(item, drawContext);
-            }
-          },
-          false,
-          !!drawContext.context?.camera
-        );
+        skipSort
+          ? group.forEachChildren((item: IGraphic) => {
+              if (drawContext.break) {
+                return;
+              }
+              if (item.isContainer) {
+                this.renderGroup(item as IGroup, drawContext);
+              } else {
+                this.renderItem(item, drawContext);
+              }
+            })
+          : foreach(
+              group,
+              DefaultAttribute.zIndex,
+              (item: IGraphic) => {
+                if (drawContext.break) {
+                  return;
+                }
+                if (item.isContainer) {
+                  this.renderGroup(item as IGroup, drawContext);
+                } else {
+                  this.renderItem(item, drawContext);
+                }
+              },
+              false,
+              !!drawContext.context?.camera
+            );
       }
     });
 

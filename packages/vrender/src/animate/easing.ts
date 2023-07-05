@@ -28,6 +28,7 @@ import { pi2 } from '@visactor/vutils';
 
 /**
  * 代码迁移自createjs
+ * 部分缓动函数参考https://easings.net/
  */
 export class Easing {
   private constructor() {
@@ -127,6 +128,30 @@ export class Easing {
   static backIn = Easing.getBackIn(1.7);
   static backOut = Easing.getBackOut(1.7);
   static backInOut = Easing.getBackInOut(1.7);
+
+  static sineIn(t: number): number {
+    return 1 - Math.cos((t * Math.PI) / 2);
+  }
+
+  static sineOut(t: number): number {
+    return Math.sin((t * Math.PI) / 2);
+  }
+
+  static sineInOut(t: number): number {
+    return -(Math.cos(Math.PI * t) - 1) / 2;
+  }
+
+  static expoIn(t: number): number {
+    return t === 0 ? 0 : Math.pow(2, 10 * t - 10);
+  }
+
+  static expoOut(t: number): number {
+    return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+  }
+
+  static expoInOut(t: number): number {
+    return t === 0 ? 0 : t === 1 ? 1 : t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+  }
 
   // 插值函数
   static circIn(t: number) {

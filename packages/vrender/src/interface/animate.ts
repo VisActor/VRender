@@ -90,6 +90,12 @@ export type EasingTypeStr =
   | 'elasticIn'
   | 'elasticOut'
   | 'elasticInOut'
+  | 'sineIn'
+  | 'sineOut'
+  | 'sineInOut'
+  | 'expoIn'
+  | 'expoOut'
+  | 'expoInOut'
   | '';
 export type EasingTypeFunc = (t: number) => number;
 

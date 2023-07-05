@@ -1,6 +1,6 @@
 // 参考konva
 import { injectable } from 'inversify';
-import { IContext2d, EnvType } from '../../../interface';
+import type { IContext2d, EnvType } from '../../../interface';
 import { BrowserContext2d } from '../browser';
 
 @injectable()
@@ -17,6 +17,20 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
   set globalAlpha(ga: number) {
     this.nativeContext.globalAlpha = ga;
     this._globalAlpha = ga;
+  }
+
+  setLineDash(segments: number[]) {
+    const a = arguments;
+    const _context = this.nativeContext;
+
+    if (!!this.nativeContext.setLineDash) {
+      const lineDash = a[0];
+      // lynx环境中lineDash不能为[0, 0]
+      if (lineDash[0] === 0 && lineDash[1] === 0) {
+        return;
+      }
+      _context.setLineDash(lineDash);
+    }
   }
 
   draw() {

@@ -29,7 +29,7 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
       if (lineDash[0] === 0 && lineDash[1] === 0) {
         return;
       }
-      _context.setLineDash();
+      _context.setLineDash(lineDash);
     }
   }
 

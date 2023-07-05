@@ -53,7 +53,7 @@ export interface IOption3D {
   alpha?: number; // x轴的转角
   beta?: number; // y轴的转角
   gama?: number; // z轴的转角
-  center?: IPointLike; // 中心位置
+  center?: { x?: number; y?: number; z?: number; dx?: number; dy?: number; dz?: number }; // 中心位置
   fieldRatio?: number; // 透视的视域缩放比例
   fieldDepth?: number;
   light?: {

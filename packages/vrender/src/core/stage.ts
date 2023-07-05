@@ -261,9 +261,9 @@ export class Stage extends Group implements IStage {
     this.ticker = params.ticker || defaultTicker;
   }
 
-  set3dOptions(options: IOption3D) {
+  get3dOptions(options: IOption3D) {
     const {
-      center = { x: this.width / 2, y: this.height / 2 },
+      center = { x: this.width / 2, y: this.height / 2, z: 0, dx: 0, dy: 0, dz: 0 },
       light = {},
       alpha = 0,
       beta = 0,
@@ -271,7 +271,8 @@ export class Stage extends Group implements IStage {
       fieldRatio = 1,
       fieldDepth
     } = options;
-    this.option3d = {
+
+    return {
       ...options,
       center,
       light,
@@ -281,16 +282,25 @@ export class Stage extends Group implements IStage {
       fieldRatio,
       fieldDepth
     };
+  }
+
+  set3dOptions(options: IOption3D) {
+    this.option3d = options;
+    const options3d = this.get3dOptions(options);
+    const { light, center, camera, alpha, beta, fieldRatio, fieldDepth } = options3d;
     const { dir = [1, 1, -1], color = 'white', ambient } = light;
 
-    const centerVec3: vec3 = [center.x, center.y, 0];
+    const centerX = (center.x ?? this.width / 2) + (center.dx ?? 0);
+    const centerY = (center.y ?? this.height / 2) + (center.dy ?? 0);
+    const centerZ = (center.z ?? 0) + (center.dz ?? 0);
+    const centerVec3: vec3 = [centerX, centerY, centerZ];
     const z = 1;
     let cameraX = 0;
     let cameraY = 0;
     let cameraZ = 0;
     if (!camera) {
-      cameraX = Math.sin(alpha) + center.x;
-      cameraY = Math.sin(beta) + center.y;
+      cameraX = Math.sin(alpha) + centerX;
+      cameraY = Math.sin(beta) + centerY;
       cameraZ = Math.cos(alpha) * Math.cos(beta) * z;
     }
 
@@ -553,7 +563,8 @@ export class Stage extends Group implements IStage {
       this.viewBox.setValue(this.viewBox.x1, this.viewBox.y1, this.viewBox.x1 + w, this.viewBox.y1 + h);
     }
     // 设置camera
-    this.camera && (this.camera.params = { ...this.camera.params, right: this.width, bottom: this.height });
+    // this.camera && (this.camera.params = { ...this.camera.params, right: this.width, bottom: this.height });
+    this.camera && this.option3d && this.set3dOptions(this.option3d);
     rerender && this.render();
   }
   resizeView(w: number, h: number, rerender: boolean = true) {

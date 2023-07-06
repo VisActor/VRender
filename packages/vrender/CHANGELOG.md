@@ -1,6 +1,27 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 27 Jun 2023 13:38:36 GMT and should not be manually modified.
+This log was last generated on Thu, 06 Jul 2023 09:09:12 GMT and should not be manually modified.
+
+## 0.12.0
+Thu, 06 Jul 2023 09:09:12 GMT
+
+### Minor changes
+
+- support sine and expo ease
+
+### Patches
+
+- fix the bug where repeat attribute doesn't work in image
+- fix the bug in arc bounds
+- fix the bug of stroke bounds
+- fix the bug in FadeInPlus
+- fix the bug of rendering pyramid3d graphic
+-  fix the bug of releasing in node env
+- fix the bug of pick path
+- fix: tooltip should not throw error when title not exist
+
+
+- refactor: refactor interfaces and types of typescript
 
 ## 0.11.1
 Tue, 27 Jun 2023 13:38:36 GMT

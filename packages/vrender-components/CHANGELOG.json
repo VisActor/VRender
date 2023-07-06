@@ -2,6 +2,36 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.12.0",
+      "tag": "@visactor/vrender-components_v0.12.0",
+      "date": "Thu, 06 Jul 2023 09:09:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(marker): pickable problem"
+          },
+          {
+            "comment": "fix(marker): add interactive config"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: tooltip should not throw error when title not exist\n\n"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "refactor: refactor interfaces and types of typescript"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.11.1` to `0.12.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.11.1",
       "tag": "@visactor/vrender-components_v0.11.1",
       "date": "Tue, 27 Jun 2023 13:38:36 GMT",

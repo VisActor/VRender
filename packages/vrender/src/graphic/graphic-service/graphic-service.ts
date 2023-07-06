@@ -1305,14 +1305,14 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ): IAABBBounds {
-    const {
-      outerRadius = arcTheme.outerRadius,
-      innerRadius = arcTheme.innerRadius,
-      endAngle = arcTheme.endAngle,
-      startAngle = arcTheme.startAngle
-    } = attribute;
+    const { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    let { endAngle = arcTheme.endAngle, startAngle = arcTheme.startAngle } = attribute;
 
-    // const { startAngle, endAngle } = this.getParsedAngle();
+    if (startAngle > endAngle) {
+      const temp = startAngle;
+      startAngle = endAngle;
+      endAngle = temp;
+    }
 
     if (outerRadius <= epsilon) {
       aabbBounds.set(0, 0, 0, 0);

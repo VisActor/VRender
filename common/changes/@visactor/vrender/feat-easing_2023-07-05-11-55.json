@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "support sine and expo ease",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

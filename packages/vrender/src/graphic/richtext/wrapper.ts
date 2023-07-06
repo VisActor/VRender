@@ -1,6 +1,7 @@
 import Line from './line';
-import Frame from './frame';
-import Paragraph, { seperateParagraph } from './paragraph';
+import type Frame from './frame';
+import type Paragraph from './paragraph';
+import { seperateParagraph } from './paragraph';
 import { DIRECTION_KEY, getStrByWithCanvas } from './utils';
 import { RichTextIcon } from './icon';
 
@@ -140,6 +141,9 @@ export default class Wrapper {
       } else {
         if (this.lineWidth + paragraph[this.directionKey.width] <= this[this.directionKey.width]) {
           this.store(paragraph);
+        } else if (this.lineBuffer.length === 0) {
+          this.store(paragraph);
+          this.send();
         } else {
           this.send();
           this.deal(paragraph);

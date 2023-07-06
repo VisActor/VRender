@@ -204,7 +204,7 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
           graphic.add(i.g);
         });
 
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, true);
 
         graphic.removeAllChild();
         children.forEach(g => {

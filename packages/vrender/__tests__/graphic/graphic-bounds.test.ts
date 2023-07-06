@@ -329,4 +329,22 @@ describe('Graphic-Bounds', () => {
     expect(text.AABBBounds.x2).toBeCloseTo(185.66);
     expect(text.AABBBounds.y2).toBeCloseTo(106.72);
   });
+
+  it('arc bounds', () => {
+    const arc = createArc({
+      innerRadius: 60,
+      outerRadius: 137.8,
+      startAngle: 5.2,
+      endAngle: 2.2,
+      x: 100,
+      y: 200,
+      lineWidth: 2,
+      stroke: true
+    });
+
+    expect(arc.AABBBounds.x1).toBeCloseTo(15.904546042213468);
+    expect(arc.AABBBounds.y1).toBeCloseTo(75.25994844176289);
+    expect(arc.AABBBounds.x2).toBeCloseTo(240.8);
+    expect(arc.AABBBounds.y2).toBeCloseTo(340.8);
+  });
 });

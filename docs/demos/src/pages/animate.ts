@@ -382,38 +382,38 @@ export const page = () => {
   //   stage.defaultLayer.add(area as any);
   // });
 
-  // addCase('textFadeIn', container, stage => {
-  //   const text = createText({
-  //     text: ['这是一段很长的文字这是一段很长的文字这是一段很长的文字', 'abcdefghijklmn'],
-  //     fontSize: 36,
-  //     x: 200,
-  //     y: 200,
-  //     fill: 'black',
-  //     stroke: 'black'
-  //   });
-  //   console.log('text添加');
-  //   text
-  //     .animate()
-  //     .wait(4000)
-  //     .play(new FadeInPlus(0, {  stroke: true }, 2000, 'quadIn'));
+  addCase('textFadeIn', container, stage => {
+    const text = createText({
+      text: ['这是一段很长的文字这是一段很长的文字这是一段很长的文字', 'abcdefghijklmn'],
+      fontSize: 36,
+      x: 200,
+      y: 200,
+      // stroke: 'red',
+      // fill: 'red'
+    });
+    console.log('text添加');
+    text
+      .animate()
+      // .wait(4000)
+      .play(new FadeInPlus(0, null, 2000, 'quadIn'));
 
-  //   // text.onBeforeAttributeUpdate = (val: any, attributes: any, key: null | string | string[], context?: any) => {
-  //   //   if (
-  //   //     context &&
-  //   //     context.type === AttributeUpdateType.ANIMATE_UPDATE &&
-  //   //     context.animationState &&
-  //   //     context.animationState.isFirstFrameOfStep &&
-  //   //     context.animationState.step.type !== 'wait'
-  //   //   ) {
-  //   //     console.log(val, attributes, key, context);
-  //   //   }
-  //   // };
+    // text.onBeforeAttributeUpdate = (val: any, attributes: any, key: null | string | string[], context?: any) => {
+    //   if (
+    //     context &&
+    //     context.type === AttributeUpdateType.ANIMATE_UPDATE &&
+    //     context.animationState &&
+    //     context.animationState.isFirstFrameOfStep &&
+    //     context.animationState.step.type !== 'wait'
+    //   ) {
+    //     console.log(val, attributes, key, context);
+    //   }
+    // };
 
-  //   text.on('afterAttributeUpdate', e => {
-  //     console.log('事件监听', e);
-  //   });
-  //   stage.defaultLayer.add(text as any);
-  // });
+    text.on('afterAttributeUpdate', e => {
+      console.log('事件监听', e);
+    });
+    stage.defaultLayer.add(text as any);
+  });
 
   // addCase('defaultAttr', container, stage => {
   //   const text = createText({

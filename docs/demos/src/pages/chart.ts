@@ -1,3 +1,4 @@
+import { createPyramid3d } from '@visactor/vrender';
 import {
   createStage,
   createGroup,
@@ -22,7 +23,994 @@ import {
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
 
-const json = {"attribute":{},"_uid":83157,"type":"group","children":[{"attribute":{},"_uid":83161,"type":"group","children":[{"attribute":{"x":0,"y":0,"width":1043,"height":500,"sizeAttrs":{"x":0,"y":0,"width":1043,"height":500}},"_uid":83165,"type":"group","name":"root","children":[{"attribute":{"visible":true,"clip":false,"x":47,"y":12,"width":984,"height":460,"sizeAttrs":{"x":47,"y":12,"width":984,"height":460},"pickable":false,"zIndex":450},"_uid":83186,"type":"group","name":"regionGroup_15573","children":[{"attribute":{"visible":true,"x":0,"y":0,"clip":false,"sizeAttrs":{"x":0,"y":0},"pickable":false,"zIndex":0},"_uid":83187,"type":"group","name":"seriesGroup_bar_15574_15576","children":[{"attribute":{"pickable":false,"zIndex":300},"_uid":83230,"type":"group","name":"bar_15577","children":[{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":0,"y":0,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":0,"y":0,"y1":460,"width":25.23076923076923},"height":460,"pickable":true},"_uid":83231,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":151.3846153846154,"y":156.39999999999998,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":151.3846153846154,"y":156.39999999999998,"y1":460,"width":25.23076923076923},"height":303.6,"pickable":true},"_uid":83232,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":302.7692307692308,"y":23.00000000000002,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":302.7692307692308,"y":23.00000000000002,"y1":460,"width":25.23076923076923},"height":437,"pickable":true},"_uid":83233,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":454.1538461538462,"y":220.79999999999998,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":454.1538461538462,"y":220.79999999999998,"y1":460,"width":25.23076923076923},"height":239.20000000000002,"pickable":true},"_uid":83234,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":605.5384615384615,"y":147.2,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":605.5384615384615,"y":147.2,"y1":460,"width":25.23076923076923},"height":312.8,"pickable":true},"_uid":83235,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":756.9230769230769,"y":220.79999999999998,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":756.9230769230769,"y":220.79999999999998,"y1":460,"width":25.23076923076923},"height":239.20000000000002,"pickable":true},"_uid":83236,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":908.3076923076924,"y":239.20000000000002,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4CC9E4"},{"offset":0,"color":"rgba(76,201,228,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":908.3076923076924,"y":239.20000000000002,"y1":460,"width":25.23076923076923},"height":220.79999999999998,"pickable":true},"_uid":83237,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":50.46153846153846,"y":262.20000000000005,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":50.46153846153846,"y":262.20000000000005,"y1":460,"width":25.23076923076923},"height":197.79999999999995,"pickable":true},"_uid":83238,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":201.84615384615384,"y":91.99999999999999,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":201.84615384615384,"y":91.99999999999999,"y1":460,"width":25.23076923076923},"height":368,"pickable":true},"_uid":83239,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":353.2307692307692,"y":147.2,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":353.2307692307692,"y":147.2,"y1":460,"width":25.23076923076923},"height":312.8,"pickable":true},"_uid":83240,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":504.61538461538464,"y":276,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":504.61538461538464,"y":276,"y1":460,"width":25.23076923076923},"height":184,"pickable":true},"_uid":83241,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":656,"y":216.2,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":656,"y":216.2,"y1":460,"width":25.23076923076923},"height":243.8,"pickable":true},"_uid":83242,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":807.3846153846154,"y":128.8,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":807.3846153846154,"y":128.8,"y1":460,"width":25.23076923076923},"height":331.2,"pickable":true},"_uid":83243,"type":"rect","children":[]},{"attribute":{"visible":true,"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10,"stroke":"#fff","lineWidth":3,"x":958.7692307692308,"y":133.4,"fill":{"x0":0,"y0":0,"x1":1,"y1":1,"stops":[{"offset":1,"color":"#4954E6"},{"offset":0,"color":"rgba(73,84,230,0.6)"}],"gradient":"linear"},"y1":460,"width":25.23076923076923,"cornerAttrs":{"cornerRadiusTopLeft":10,"cornerRadiusTopRight":10,"cornerRadiusBottomRight":10,"cornerRadiusBottomLeft":10},"cornerRadius":[10,10,10,10],"strokeAttrs":{"stroke":"#fff"},"sizeAttrs":{"x":958.7692307692308,"y":133.4,"y1":460,"width":25.23076923076923},"height":326.6,"pickable":true},"_uid":83244,"type":"rect","children":[]}]}]}]},{"attribute":{"pickable":false,"zIndex":100},"_uid":83166,"type":"group","name":"axis-bottom_15585","children":[{"attribute":{"title":{"space":4,"padding":0,"textStyle":{"fontSize":12,"fill":"#333333","fontWeight":"normal","fillOpacity":1},"autoRotate":false,"angle":null,"shape":{},"background":{},"state":{"text":null,"shape":null,"background":null},"text":"x","maxWidth":null},"label":{"visible":true,"inside":false,"space":4,"padding":0,"style":{"fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"formatMethod":null,"state":null},"tick":{"visible":false,"inside":false,"alignWithLabel":true,"length":4,"style":{"lineWidth":1,"stroke":"#D8DCE3","strokeOpacity":1},"state":null},"subTick":{"visible":false,"inside":false,"count":4,"length":2,"style":{"lineWidth":1,"stroke":"#D8DCE3","strokeOpacity":1},"state":null},"line":{"visible":false,"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1}},"grid":{"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1,"lineDash":[4,4]},"visible":false,"length":460,"type":"line","depth":0},"subGrid":{"visible":false,"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1,"lineDash":[4,4]},"type":"line"},"x":47,"y":472,"start":{"x":0,"y":0},"end":{"x":984,"y":0},"items":[[{"id":"Mon","label":"Mon","value":0.038461538461538464,"rawValue":"Mon"},{"id":"Tues","label":"Tues","value":0.1923076923076923,"rawValue":"Tues"},{"id":"Wed","label":"Wed","value":0.3461538461538462,"rawValue":"Wed"},{"id":"Thus","label":"Thus","value":0.5000000000000001,"rawValue":"Thus"},{"id":"Fri","label":"Fri","value":0.6538461538461539,"rawValue":"Fri"},{"id":"Sat","label":"Sat","value":0.8076923076923076,"rawValue":"Sat"},{"id":"sun","label":"sun","value":0.9615384615384616,"rawValue":"sun"}]],"visible":true,"pickable":true,"panel":{"state":null},"verticalFactor":1},"_uid":83167,"type":"group","name":"axis","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83209,"type":"group","children":[{"attribute":{"x":0,"y":0,"zIndex":1},"_uid":83210,"type":"group","name":"axis-container","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83211,"type":"group","name":"axis-label-container","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83212,"type":"group","name":"axis-label-container-layer-0","children":[{"attribute":{"x":37.84615384615385,"y":4,"text":"Mon","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83213,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":189.23076923076923,"y":4,"text":"Tues","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83214,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":340.61538461538464,"y":4,"text":"Wed","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83215,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":492.0000000000001,"y":4,"text":"Thus","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83216,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":643.3846153846154,"y":4,"text":"Fri","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83217,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":794.7692307692307,"y":4,"text":"Sat","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83218,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":946.1538461538462,"y":4,"text":"sun","lineHeight":12,"textAlign":"center","textBaseline":"top","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83219,"type":"text","name":"axis-label","children":[]}]}]}]}]}]}]},{"attribute":{"pickable":false,"zIndex":100},"_uid":83176,"type":"group","name":"axis-left_15588","children":[{"attribute":{"title":{"space":4,"padding":0,"textStyle":{"fontSize":12,"fill":"#333333","fontWeight":"normal","fillOpacity":1,"textAlign":"center","textBaseline":"bottom"},"autoRotate":false,"angle":-1.5707963267948966,"shape":{},"background":{},"state":{"text":null,"shape":null,"background":null},"text":"y","maxWidth":null},"label":{"visible":true,"inside":false,"space":4,"padding":0,"style":{"fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"formatMethod":null,"state":null},"tick":{"visible":false,"inside":false,"alignWithLabel":true,"length":4,"style":{"lineWidth":1,"stroke":"#D8DCE3","strokeOpacity":1},"state":null},"subTick":{"visible":false,"inside":false,"count":4,"length":2,"style":{"lineWidth":1,"stroke":"#D8DCE3","strokeOpacity":1},"state":null},"line":{"visible":false,"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1}},"grid":{"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1,"lineDash":[4,4]},"visible":false,"length":984,"type":"line","depth":0},"subGrid":{"visible":false,"style":{"lineWidth":1,"stroke":"#dfdfdf","strokeOpacity":1,"lineDash":[4,4]},"type":"line"},"x":47,"y":12,"start":{"x":0,"y":0},"end":{"x":0,"y":460},"items":[[{"id":0,"label":0,"value":1,"rawValue":0},{"id":20,"label":20,"value":0.8,"rawValue":20},{"id":40,"label":40,"value":0.6,"rawValue":40},{"id":60,"label":60,"value":0.4,"rawValue":60},{"id":80,"label":80,"value":0.19999999999999996,"rawValue":80},{"id":100,"label":100,"value":0,"rawValue":100}]],"visible":true,"pickable":true,"panel":{"state":null},"verticalFactor":1},"_uid":83177,"type":"group","name":"axis","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83220,"type":"group","children":[{"attribute":{"x":0,"y":0,"zIndex":1},"_uid":83221,"type":"group","name":"axis-container","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83222,"type":"group","name":"axis-label-container","children":[{"attribute":{"x":0,"y":0,"pickable":false},"_uid":83223,"type":"group","name":"axis-label-container-layer-0","children":[{"attribute":{"x":-4,"y":460,"text":"0%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83224,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":-4,"y":368,"text":"20%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83225,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":-4,"y":276,"text":"40%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83226,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":-4,"y":184,"text":"60%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83227,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":-4,"y":91.99999999999999,"text":"80%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83228,"type":"text","name":"axis-label","children":[]},{"attribute":{"x":-4,"y":0,"text":"100%","lineHeight":12,"textAlign":"end","textBaseline":"middle","fontSize":12,"fill":"#6F6F6F","fontWeight":"normal","fillOpacity":1},"_uid":83229,"type":"text","name":"axis-label","children":[]}]}]}]}]}]}]}]}]}]}
+const json = {
+  "attribute": {},
+  "_uid": 2,
+  "type": "group",
+  "children": [
+      {
+          "attribute": {},
+          "_uid": 6,
+          "type": "group",
+          "children": [
+              {
+                  "attribute": {
+                      "x": 0,
+                      "y": 0,
+                      "width": 1135,
+                      "height": 500,
+                      "sizeAttrs": {
+                          "x": 0,
+                          "y": 0,
+                          "width": 1135,
+                          "height": 500
+                      }
+                  },
+                  "_uid": 9,
+                  "type": "group",
+                  "name": "root",
+                  "children": [
+                      {
+                          "attribute": {
+                              "visible": true,
+                              "clip": false,
+                              "x": 0,
+                              "y": 30,
+                              "width": 1135,
+                              "height": 392,
+                              "sizeAttrs": {
+                                  "x": 0,
+                                  "y": 30,
+                                  "width": 1135,
+                                  "height": 392
+                              },
+                              "pickable": false,
+                              "zIndex": 450
+                          },
+                          "_uid": 10,
+                          "type": "group",
+                          "name": "regionGroup_4",
+                          "children": [
+                              {
+                                  "attribute": {
+                                      "visible": true,
+                                      "x": 0,
+                                      "y": 0,
+                                      "clip": false,
+                                      "sizeAttrs": {
+                                          "x": 0,
+                                          "y": 0
+                                      },
+                                      "pickable": false,
+                                      "zIndex": 0
+                                  },
+                                  "_uid": 11,
+                                  "type": "group",
+                                  "name": "seriesGroup_funnel3d_5_8",
+                                  "children": [
+                                      {
+                                          "attribute": {
+                                              "pickable": false,
+                                              "zIndex": 300
+                                          },
+                                          "_uid": 41,
+                                          "type": "group",
+                                          "name": "funnel3d_9",
+                                          "children": [
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "stroke": false,
+                                                      "visible": true,
+                                                      "points": [
+                                                          {
+                                                              "x": 367.5,
+                                                              "y": 0
+                                                          },
+                                                          {
+                                                              "x": 767.5,
+                                                              "y": 0
+                                                          },
+                                                          {
+                                                              "x": 732.5,
+                                                              "y": 78.4
+                                                          },
+                                                          {
+                                                              "x": 402.5,
+                                                              "y": 78.4
+                                                          }
+                                                      ],
+                                                      "fill": "#1664FF",
+                                                      "z": 0,
+                                                      "pickable": true
+                                                  },
+                                                  "_uid": 42,
+                                                  "type": "pyramid3d",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "stroke": false,
+                                                      "visible": true,
+                                                      "points": [
+                                                          {
+                                                              "x": 402.5,
+                                                              "y": 78.4
+                                                          },
+                                                          {
+                                                              "x": 732.5,
+                                                              "y": 78.4
+                                                          },
+                                                          {
+                                                              "x": 697.5,
+                                                              "y": 156.8
+                                                          },
+                                                          {
+                                                              "x": 437.5,
+                                                              "y": 156.8
+                                                          }
+                                                      ],
+                                                      "fill": "#1AC6FF",
+                                                      "z": 35,
+                                                      "pickable": true
+                                                  },
+                                                  "_uid": 43,
+                                                  "type": "pyramid3d",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "stroke": false,
+                                                      "visible": true,
+                                                      "points": [
+                                                          {
+                                                              "x": 437.5,
+                                                              "y": 156.8
+                                                          },
+                                                          {
+                                                              "x": 697.5,
+                                                              "y": 156.8
+                                                          },
+                                                          {
+                                                              "x": 662.5,
+                                                              "y": 235.2
+                                                          },
+                                                          {
+                                                              "x": 472.5,
+                                                              "y": 235.2
+                                                          }
+                                                      ],
+                                                      "fill": "#FF8A00",
+                                                      "z": 70,
+                                                      "pickable": true
+                                                  },
+                                                  "_uid": 44,
+                                                  "type": "pyramid3d",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "stroke": false,
+                                                      "visible": true,
+                                                      "points": [
+                                                          {
+                                                              "x": 472.5,
+                                                              "y": 235.20000000000005
+                                                          },
+                                                          {
+                                                              "x": 662.5,
+                                                              "y": 235.20000000000005
+                                                          },
+                                                          {
+                                                              "x": 627.5,
+                                                              "y": 313.6
+                                                          },
+                                                          {
+                                                              "x": 507.5,
+                                                              "y": 313.6
+                                                          }
+                                                      ],
+                                                      "fill": "#3CC780",
+                                                      "z": 105,
+                                                      "pickable": true
+                                                  },
+                                                  "_uid": 45,
+                                                  "type": "pyramid3d",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "stroke": false,
+                                                      "visible": true,
+                                                      "points": [
+                                                          {
+                                                              "x": 507.5,
+                                                              "y": 313.6
+                                                          },
+                                                          {
+                                                              "x": 627.5,
+                                                              "y": 313.6
+                                                          },
+                                                          {
+                                                              "x": 592.5,
+                                                              "y": 392
+                                                          },
+                                                          {
+                                                              "x": 542.5,
+                                                              "y": 392
+                                                          }
+                                                      ],
+                                                      "fill": "#7442D4",
+                                                      "z": 140,
+                                                      "pickable": true
+                                                  },
+                                                  "_uid": 46,
+                                                  "type": "pyramid3d",
+                                                  "children": []
+                                              }
+                                          ]
+                                      },
+                                      {
+                                          "attribute": {
+                                              "pickable": false,
+                                              "zIndex": 300
+                                          },
+                                          "_uid": 35,
+                                          "type": "group",
+                                          "name": "label_11",
+                                          "children": [
+                                              {
+                                                  "attribute": {
+                                                      "visible": true,
+                                                      "angle": 0,
+                                                      "textAlign": "center",
+                                                      "lineWidth": 2,
+                                                      "fontSize": 14,
+                                                      "fontWeight": "normal",
+                                                      "fillOpacity": 1,
+                                                      "fill": "white",
+                                                      "textBaseline": "middle",
+                                                      "x": 567.5,
+                                                      "y": 39.2,
+                                                      "text": "Step1 100",
+                                                      "limit": 400,
+                                                      "stroke": "#1664FF",
+                                                      "z": 0,
+                                                      "limitAttrs": {
+                                                          "text": "Step1 100",
+                                                          "limit": 400
+                                                      },
+                                                      "maxLineWidth": 400,
+                                                      "pickable": true,
+                                                      "opacity": 1,
+                                                      "strokeOpacity": 1
+                                                  },
+                                                  "_uid": 36,
+                                                  "type": "text",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "visible": true,
+                                                      "angle": 0,
+                                                      "textAlign": "center",
+                                                      "lineWidth": 2,
+                                                      "fontSize": 14,
+                                                      "fontWeight": "normal",
+                                                      "fillOpacity": 1,
+                                                      "fill": "white",
+                                                      "textBaseline": "middle",
+                                                      "x": 567.5,
+                                                      "y": 117.60000000000001,
+                                                      "text": "Step2 80",
+                                                      "limit": 400,
+                                                      "stroke": "#1AC6FF",
+                                                      "z": 35,
+                                                      "limitAttrs": {
+                                                          "text": "Step2 80",
+                                                          "limit": 400
+                                                      },
+                                                      "maxLineWidth": 400,
+                                                      "pickable": true,
+                                                      "opacity": 1,
+                                                      "strokeOpacity": 1
+                                                  },
+                                                  "_uid": 37,
+                                                  "type": "text",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "visible": true,
+                                                      "angle": 0,
+                                                      "textAlign": "center",
+                                                      "lineWidth": 2,
+                                                      "fontSize": 14,
+                                                      "fontWeight": "normal",
+                                                      "fillOpacity": 1,
+                                                      "fill": "white",
+                                                      "textBaseline": "middle",
+                                                      "x": 567.5,
+                                                      "y": 196,
+                                                      "text": "Step3 60",
+                                                      "limit": 400,
+                                                      "stroke": "#FF8A00",
+                                                      "z": 70,
+                                                      "limitAttrs": {
+                                                          "text": "Step3 60",
+                                                          "limit": 400
+                                                      },
+                                                      "maxLineWidth": 400,
+                                                      "pickable": true,
+                                                      "opacity": 1,
+                                                      "strokeOpacity": 1
+                                                  },
+                                                  "_uid": 38,
+                                                  "type": "text",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "visible": true,
+                                                      "angle": 0,
+                                                      "textAlign": "center",
+                                                      "lineWidth": 2,
+                                                      "fontSize": 14,
+                                                      "fontWeight": "normal",
+                                                      "fillOpacity": 1,
+                                                      "fill": "white",
+                                                      "textBaseline": "middle",
+                                                      "x": 567.5,
+                                                      "y": 274.40000000000003,
+                                                      "text": "Step4 40",
+                                                      "limit": 400,
+                                                      "stroke": "#3CC780",
+                                                      "z": 105,
+                                                      "limitAttrs": {
+                                                          "text": "Step4 40",
+                                                          "limit": 400
+                                                      },
+                                                      "maxLineWidth": 400,
+                                                      "pickable": true,
+                                                      "opacity": 1,
+                                                      "strokeOpacity": 1
+                                                  },
+                                                  "_uid": 39,
+                                                  "type": "text",
+                                                  "children": []
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "visible": true,
+                                                      "angle": 0,
+                                                      "textAlign": "center",
+                                                      "lineWidth": 2,
+                                                      "fontSize": 14,
+                                                      "fontWeight": "normal",
+                                                      "fillOpacity": 1,
+                                                      "fill": "white",
+                                                      "textBaseline": "middle",
+                                                      "x": 567.5,
+                                                      "y": 352.8,
+                                                      "text": "Step5 20",
+                                                      "limit": 400,
+                                                      "stroke": "#7442D4",
+                                                      "z": 140,
+                                                      "limitAttrs": {
+                                                          "text": "Step5 20",
+                                                          "limit": 400
+                                                      },
+                                                      "maxLineWidth": 400,
+                                                      "pickable": true,
+                                                      "opacity": 1,
+                                                      "strokeOpacity": 1
+                                                  },
+                                                  "_uid": 40,
+                                                  "type": "text",
+                                                  "children": []
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }
+                          ]
+                      },
+                      {
+                          "attribute": {
+                              "layout": "horizontal",
+                              "title": {
+                                  "align": "start",
+                                  "space": 12,
+                                  "textStyle": {
+                                      "fontSize": 12,
+                                      "fontWeight": "bold",
+                                      "fill": "#2C3542"
+                                  }
+                              },
+                              "item": {
+                                  "spaceCol": 10,
+                                  "spaceRow": 10,
+                                  "shape": {
+                                      "space": 4,
+                                      "style": {
+                                          "size": 10,
+                                          "cursor": "pointer"
+                                      },
+                                      "state": {
+                                          "selectedHover": {
+                                              "opacity": 0.85
+                                          },
+                                          "unSelected": {
+                                              "fill": "#D8D8D8",
+                                              "fillOpacity": 0.5
+                                          }
+                                      }
+                                  },
+                                  "label": {
+                                      "space": 4,
+                                      "style": {
+                                          "fontSize": 14,
+                                          "fill": "#89909D",
+                                          "cursor": "pointer"
+                                      },
+                                      "state": {
+                                          "selectedHover": {
+                                              "opacity": 0.85
+                                          },
+                                          "unSelected": {
+                                              "fill": "#D8D8D8",
+                                              "fillOpacity": 0.5
+                                          }
+                                      }
+                                  },
+                                  "value": {
+                                      "alignRight": false,
+                                      "style": {
+                                          "fontSize": 12,
+                                          "fill": "#ccc",
+                                          "cursor": "pointer"
+                                      },
+                                      "state": {
+                                          "selectedHover": {
+                                              "opacity": 0.85
+                                          },
+                                          "unSelected": {
+                                              "fill": "#D8D8D8"
+                                          }
+                                      }
+                                  },
+                                  "background": {
+                                      "style": {
+                                          "cursor": "pointer"
+                                      },
+                                      "state": {
+                                          "selectedHover": {
+                                              "fill": "gray",
+                                              "fillOpacity": 0.7
+                                          },
+                                          "unSelectedHover": {
+                                              "fill": "gray",
+                                              "fillOpacity": 0.2
+                                          }
+                                      }
+                                  },
+                                  "focus": false,
+                                  "focusIconStyle": {
+                                      "size": 10,
+                                      "symbolType": "M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z",
+                                      "fill": "#333",
+                                      "cursor": "pointer"
+                                  },
+                                  "visible": true,
+                                  "padding": 2
+                              },
+                              "autoPage": true,
+                              "pager": {
+                                  "space": 12,
+                                  "handler": {
+                                      "style": {
+                                          "size": 10
+                                      },
+                                      "space": 4
+                                  }
+                              },
+                              "hover": true,
+                              "select": true,
+                              "selectMode": "multiple",
+                              "allowAllCanceled": false,
+                              "items": [
+                                  {
+                                      "label": "Step1",
+                                      "shape": {
+                                          "fill": "#1664FF",
+                                          "symbolType": "square",
+                                          "stroke": false,
+                                          "fillOpacity": 1,
+                                          "strokeOpacity": 1,
+                                          "opacity": 1,
+                                          "texture": null,
+                                          "texturePadding": null,
+                                          "textureSize": null,
+                                          "textureColor": null,
+                                          "innerBorder": null,
+                                          "outerBorder": null
+                                      },
+                                      "id": "Step1",
+                                      "index": 0
+                                  },
+                                  {
+                                      "label": "Step2",
+                                      "shape": {
+                                          "fill": "#1AC6FF",
+                                          "symbolType": "square",
+                                          "stroke": false,
+                                          "fillOpacity": 1,
+                                          "strokeOpacity": 1,
+                                          "opacity": 1,
+                                          "texture": null,
+                                          "texturePadding": null,
+                                          "textureSize": null,
+                                          "textureColor": null,
+                                          "innerBorder": null,
+                                          "outerBorder": null
+                                      },
+                                      "id": "Step2",
+                                      "index": 1
+                                  },
+                                  {
+                                      "label": "Step3",
+                                      "shape": {
+                                          "fill": "#FF8A00",
+                                          "symbolType": "square",
+                                          "stroke": false,
+                                          "fillOpacity": 1,
+                                          "strokeOpacity": 1,
+                                          "opacity": 1,
+                                          "texture": null,
+                                          "texturePadding": null,
+                                          "textureSize": null,
+                                          "textureColor": null,
+                                          "innerBorder": null,
+                                          "outerBorder": null
+                                      },
+                                      "id": "Step3",
+                                      "index": 2
+                                  },
+                                  {
+                                      "label": "Step4",
+                                      "shape": {
+                                          "fill": "#3CC780",
+                                          "symbolType": "square",
+                                          "stroke": false,
+                                          "fillOpacity": 1,
+                                          "strokeOpacity": 1,
+                                          "opacity": 1,
+                                          "texture": null,
+                                          "texturePadding": null,
+                                          "textureSize": null,
+                                          "textureColor": null,
+                                          "innerBorder": null,
+                                          "outerBorder": null
+                                      },
+                                      "id": "Step4",
+                                      "index": 3
+                                  },
+                                  {
+                                      "label": "Step5",
+                                      "shape": {
+                                          "fill": "#7442D4",
+                                          "symbolType": "square",
+                                          "stroke": false,
+                                          "fillOpacity": 1,
+                                          "strokeOpacity": 1,
+                                          "opacity": 1,
+                                          "texture": null,
+                                          "texturePadding": null,
+                                          "textureSize": null,
+                                          "textureColor": null,
+                                          "innerBorder": null,
+                                          "outerBorder": null
+                                      },
+                                      "id": "Step5",
+                                      "index": 4
+                                  }
+                              ],
+                              "zIndex": 500,
+                              "maxWidth": 1075,
+                              "maxHeight": 410,
+                              "defaultSelected": [
+                                  "Step1",
+                                  "Step2",
+                                  "Step3",
+                                  "Step4",
+                                  "Step5"
+                              ],
+                              "width": 318.1737823486328,
+                              "height": 18,
+                              "dx": 378.4131088256836,
+                              "dy": 0,
+                              "x": 30,
+                              "y": 452
+                          },
+                          "_uid": 12,
+                          "type": "group",
+                          "name": "legend",
+                          "children": [
+                              {
+                                  "attribute": {
+                                      "x": 0,
+                                      "y": 0,
+                                      "pickable": true,
+                                      "childrenPickable": true
+                                  },
+                                  "_uid": 13,
+                                  "type": "group",
+                                  "name": "innerView",
+                                  "children": [
+                                      {
+                                          "attribute": {
+                                              "x": 0,
+                                              "y": 0
+                                          },
+                                          "_uid": 14,
+                                          "type": "group",
+                                          "children": [
+                                              {
+                                                  "attribute": {
+                                                      "x": 0,
+                                                      "y": 0,
+                                                      "cursor": "pointer",
+                                                      "width": 53.40596008300781,
+                                                      "height": 18
+                                                  },
+                                                  "_uid": 15,
+                                                  "type": "group",
+                                                  "name": "legendItem",
+                                                  "children": [
+                                                      {
+                                                          "attribute": {
+                                                              "x": 7,
+                                                              "y": 9,
+                                                              "pickable": false
+                                                          },
+                                                          "_uid": 16,
+                                                          "type": "group",
+                                                          "children": [
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 0,
+                                                                      "y": 0,
+                                                                      "symbolType": "square",
+                                                                      "strokeBoundsBuffer": 0,
+                                                                      "fill": "#1664FF",
+                                                                      "stroke": false,
+                                                                      "fillOpacity": 1,
+                                                                      "strokeOpacity": 1,
+                                                                      "opacity": 1,
+                                                                      "texture": null,
+                                                                      "texturePadding": null,
+                                                                      "textureSize": null,
+                                                                      "textureColor": null,
+                                                                      "innerBorder": null,
+                                                                      "outerBorder": null,
+                                                                      "size": 10,
+                                                                      "cursor": "pointer"
+                                                                  },
+                                                                  "_uid": 17,
+                                                                  "type": "symbol",
+                                                                  "name": "legendItemShape",
+                                                                  "children": []
+                                                              },
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 9,
+                                                                      "y": 0,
+                                                                      "textAlign": "start",
+                                                                      "textBaseline": "middle",
+                                                                      "lineHeight": 14,
+                                                                      "fontSize": 14,
+                                                                      "fill": "#89909D",
+                                                                      "cursor": "pointer",
+                                                                      "text": "Step1"
+                                                                  },
+                                                                  "_uid": 18,
+                                                                  "type": "text",
+                                                                  "name": "legendItemLabel",
+                                                                  "children": []
+                                                              }
+                                                          ]
+                                                      }
+                                                  ]
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 63.40596008300781,
+                                                      "y": 0,
+                                                      "cursor": "pointer",
+                                                      "width": 56.19195556640625,
+                                                      "height": 18
+                                                  },
+                                                  "_uid": 19,
+                                                  "type": "group",
+                                                  "name": "legendItem",
+                                                  "children": [
+                                                      {
+                                                          "attribute": {
+                                                              "x": 7,
+                                                              "y": 9,
+                                                              "pickable": false
+                                                          },
+                                                          "_uid": 20,
+                                                          "type": "group",
+                                                          "children": [
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 0,
+                                                                      "y": 0,
+                                                                      "symbolType": "square",
+                                                                      "strokeBoundsBuffer": 0,
+                                                                      "fill": "#1AC6FF",
+                                                                      "stroke": false,
+                                                                      "fillOpacity": 1,
+                                                                      "strokeOpacity": 1,
+                                                                      "opacity": 1,
+                                                                      "texture": null,
+                                                                      "texturePadding": null,
+                                                                      "textureSize": null,
+                                                                      "textureColor": null,
+                                                                      "innerBorder": null,
+                                                                      "outerBorder": null,
+                                                                      "size": 10,
+                                                                      "cursor": "pointer"
+                                                                  },
+                                                                  "_uid": 21,
+                                                                  "type": "symbol",
+                                                                  "name": "legendItemShape",
+                                                                  "children": []
+                                                              },
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 9,
+                                                                      "y": 0,
+                                                                      "textAlign": "start",
+                                                                      "textBaseline": "middle",
+                                                                      "lineHeight": 14,
+                                                                      "fontSize": 14,
+                                                                      "fill": "#89909D",
+                                                                      "cursor": "pointer",
+                                                                      "text": "Step2"
+                                                                  },
+                                                                  "_uid": 22,
+                                                                  "type": "text",
+                                                                  "name": "legendItemLabel",
+                                                                  "children": []
+                                                              }
+                                                          ]
+                                                      }
+                                                  ]
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 129.59791564941406,
+                                                      "y": 0,
+                                                      "cursor": "pointer",
+                                                      "width": 56.19195556640625,
+                                                      "height": 18
+                                                  },
+                                                  "_uid": 23,
+                                                  "type": "group",
+                                                  "name": "legendItem",
+                                                  "children": [
+                                                      {
+                                                          "attribute": {
+                                                              "x": 7,
+                                                              "y": 9,
+                                                              "pickable": false
+                                                          },
+                                                          "_uid": 24,
+                                                          "type": "group",
+                                                          "children": [
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 0,
+                                                                      "y": 0,
+                                                                      "symbolType": "square",
+                                                                      "strokeBoundsBuffer": 0,
+                                                                      "fill": "#FF8A00",
+                                                                      "stroke": false,
+                                                                      "fillOpacity": 1,
+                                                                      "strokeOpacity": 1,
+                                                                      "opacity": 1,
+                                                                      "texture": null,
+                                                                      "texturePadding": null,
+                                                                      "textureSize": null,
+                                                                      "textureColor": null,
+                                                                      "innerBorder": null,
+                                                                      "outerBorder": null,
+                                                                      "size": 10,
+                                                                      "cursor": "pointer"
+                                                                  },
+                                                                  "_uid": 25,
+                                                                  "type": "symbol",
+                                                                  "name": "legendItemShape",
+                                                                  "children": []
+                                                              },
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 9,
+                                                                      "y": 0,
+                                                                      "textAlign": "start",
+                                                                      "textBaseline": "middle",
+                                                                      "lineHeight": 14,
+                                                                      "fontSize": 14,
+                                                                      "fill": "#89909D",
+                                                                      "cursor": "pointer",
+                                                                      "text": "Step3"
+                                                                  },
+                                                                  "_uid": 26,
+                                                                  "type": "text",
+                                                                  "name": "legendItemLabel",
+                                                                  "children": []
+                                                              }
+                                                          ]
+                                                      }
+                                                  ]
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 195.7898712158203,
+                                                      "y": 0,
+                                                      "cursor": "pointer",
+                                                      "width": 56.19195556640625,
+                                                      "height": 18
+                                                  },
+                                                  "_uid": 27,
+                                                  "type": "group",
+                                                  "name": "legendItem",
+                                                  "children": [
+                                                      {
+                                                          "attribute": {
+                                                              "x": 7,
+                                                              "y": 9,
+                                                              "pickable": false
+                                                          },
+                                                          "_uid": 28,
+                                                          "type": "group",
+                                                          "children": [
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 0,
+                                                                      "y": 0,
+                                                                      "symbolType": "square",
+                                                                      "strokeBoundsBuffer": 0,
+                                                                      "fill": "#3CC780",
+                                                                      "stroke": false,
+                                                                      "fillOpacity": 1,
+                                                                      "strokeOpacity": 1,
+                                                                      "opacity": 1,
+                                                                      "texture": null,
+                                                                      "texturePadding": null,
+                                                                      "textureSize": null,
+                                                                      "textureColor": null,
+                                                                      "innerBorder": null,
+                                                                      "outerBorder": null,
+                                                                      "size": 10,
+                                                                      "cursor": "pointer"
+                                                                  },
+                                                                  "_uid": 29,
+                                                                  "type": "symbol",
+                                                                  "name": "legendItemShape",
+                                                                  "children": []
+                                                              },
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 9,
+                                                                      "y": 0,
+                                                                      "textAlign": "start",
+                                                                      "textBaseline": "middle",
+                                                                      "lineHeight": 14,
+                                                                      "fontSize": 14,
+                                                                      "fill": "#89909D",
+                                                                      "cursor": "pointer",
+                                                                      "text": "Step4"
+                                                                  },
+                                                                  "_uid": 30,
+                                                                  "type": "text",
+                                                                  "name": "legendItemLabel",
+                                                                  "children": []
+                                                              }
+                                                          ]
+                                                      }
+                                                  ]
+                                              },
+                                              {
+                                                  "attribute": {
+                                                      "x": 261.98182678222656,
+                                                      "y": 0,
+                                                      "cursor": "pointer",
+                                                      "width": 56.19195556640625,
+                                                      "height": 18
+                                                  },
+                                                  "_uid": 31,
+                                                  "type": "group",
+                                                  "name": "legendItem",
+                                                  "children": [
+                                                      {
+                                                          "attribute": {
+                                                              "x": 7,
+                                                              "y": 9,
+                                                              "pickable": false
+                                                          },
+                                                          "_uid": 32,
+                                                          "type": "group",
+                                                          "children": [
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 0,
+                                                                      "y": 0,
+                                                                      "symbolType": "square",
+                                                                      "strokeBoundsBuffer": 0,
+                                                                      "fill": "#7442D4",
+                                                                      "stroke": false,
+                                                                      "fillOpacity": 1,
+                                                                      "strokeOpacity": 1,
+                                                                      "opacity": 1,
+                                                                      "texture": null,
+                                                                      "texturePadding": null,
+                                                                      "textureSize": null,
+                                                                      "textureColor": null,
+                                                                      "innerBorder": null,
+                                                                      "outerBorder": null,
+                                                                      "size": 10,
+                                                                      "cursor": "pointer"
+                                                                  },
+                                                                  "_uid": 33,
+                                                                  "type": "symbol",
+                                                                  "name": "legendItemShape",
+                                                                  "children": []
+                                                              },
+                                                              {
+                                                                  "attribute": {
+                                                                      "x": 9,
+                                                                      "y": 0,
+                                                                      "textAlign": "start",
+                                                                      "textBaseline": "middle",
+                                                                      "lineHeight": 14,
+                                                                      "fontSize": 14,
+                                                                      "fill": "#89909D",
+                                                                      "cursor": "pointer",
+                                                                      "text": "Step5"
+                                                                  },
+                                                                  "_uid": 34,
+                                                                  "type": "text",
+                                                                  "name": "legendItemLabel",
+                                                                  "children": []
+                                                              }
+                                                          ]
+                                                      }
+                                                  ]
+                                              }
+                                          ]
+                                      }
+                                  ]
+                              }
+                          ]
+                      }
+                  ]
+              }
+          ]
+      }
+  ]
+}
 
 container.load(roughModule);
 
@@ -44,6 +1032,9 @@ function _add(group, json) {
     t.addEventListener('mousemove', () => {
       t.setAttribute('fill', 'red');
     });
+  } else if (json.type === 'pyramid3d') {
+    group.setMode('3d');
+    group.add(createPyramid3d({ ...json.attribute, keepDirIn3d: false }));
   } else if (json.type === 'symbol') {
     const s = createSymbol({ ...json.attribute, keepDirIn3d: true });
     // s.animate().to({ scaleX: 0.5, scaleY: 0.5 }, 1000, 'linear');

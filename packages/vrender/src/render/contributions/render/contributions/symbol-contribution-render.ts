@@ -1,46 +1,21 @@
-import { IAABBBounds, isArray } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   ISymbol,
   ISymbolGraphicAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  ISymbolRenderContribution
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
-
-export interface ISymbolRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    symbol: ISymbol,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    symbolAttribute: Required<ISymbolGraphicAttribute>,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultSymbolRenderContribution implements ISymbolRenderContribution {

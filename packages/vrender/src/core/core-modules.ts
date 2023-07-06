@@ -1,10 +1,10 @@
-import { Global } from '../interface';
 import { ContainerModule } from 'inversify';
 import { DefaultGlobal } from './global';
 import { DefaultGraphicUtil, DefaultTransformUtil } from './graphic-utils';
 import { DefaultLayerService } from './layer-service';
 import { DefaultWindow, Window } from './window';
 import { GraphicUtil, LayerService, TransformUtil } from './constants';
+import { Global } from '../constants';
 
 export default new ContainerModule(bind => {
   // global对象，全局单例模式

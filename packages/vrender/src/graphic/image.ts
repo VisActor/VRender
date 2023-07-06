@@ -1,5 +1,5 @@
-import { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
@@ -46,7 +46,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     }
   }
   get repeatX(): IRepeatType {
-    return this.attribute.repeatX ?? 'stretch';
+    return this.attribute.repeatX ?? 'no-repeat';
   }
   set repeatX(repeatX: IRepeatType) {
     if (this.attribute.repeatX === repeatX) {
@@ -54,7 +54,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     }
   }
   get repeatY(): IRepeatType {
-    return this.attribute.repeatY ?? 'stretch';
+    return this.attribute.repeatY ?? 'no-repeat';
   }
   set repeatY(repeatY: IRepeatType) {
     if (this.attribute.repeatY === repeatY) {

@@ -1,4 +1,4 @@
-import { createStage, createRect, createGlyph, createSymbol, createGroup, FederatedEvent } from '@visactor/vrender';
+import { createStage, createRect, createText, createGlyph, createSymbol, createGroup, FederatedEvent } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // container.load(roughModule);
@@ -6,7 +6,10 @@ import { addShapesToStage, colorPools } from '../utils';
 export const page = () => {
   const shapes = [];
 
-  const group = createGroup({});
+  const group = createGroup({
+    pickable: false,
+    // childrenPickable: false,
+  });
 
   group.setTheme({
     common: {
@@ -22,7 +25,6 @@ export const page = () => {
     x: 300,
     y: 100,
     stroke: 'green',
-    
     lineWidth: 10
   });
 
@@ -112,6 +114,15 @@ export const page = () => {
     viewWidth: 1200,
     viewHeight: 600
   });
+
+  console.log(createText({
+    x: 100,
+    y: 100,
+    fontFamily: 'sans-serif',
+    text: ['aaa这是aaa', 'aa这是aa'],
+    fontSize: 16,
+    fill: 'red'
+  }))
 
   addShapesToStage(stage, shapes as any, true);
   stage.render();

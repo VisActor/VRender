@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import type { EnvType, CanvasConfigType, ICanvas, IContext2d } from '../../../interface';
 import { NodeContext2d } from './context';
+import { isFunction } from '@visactor/vutils';
 
 type Canvas = any;
 
@@ -166,6 +167,8 @@ export class NodeCanvas implements ICanvas {
   }
 
   release(...params: any): void {
-    throw new Error('暂不支持release');
+    if ((this._nativeCanvas as any).release && isFunction((this._nativeCanvas as any).release)) {
+      (this._nativeCanvas as any).release();
+    }
   }
 }

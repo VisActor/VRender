@@ -2,9 +2,17 @@ import { inject, injectable } from 'inversify';
 import { BrowserCanvas } from '../../../canvas/contributions/browser';
 import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';
-import { IWindowHandlerContribution, IWindowParams } from '../..';
-import { IContext2d, ICanvas, IDomRectLike, Global, EnvType, IGlobal } from '../../../interface';
-import { IBoundsLike } from '@visactor/vutils';
+import type {
+  IContext2d,
+  ICanvas,
+  IDomRectLike,
+  EnvType,
+  IGlobal,
+  IWindowHandlerContribution,
+  IWindowParams
+} from '../../../interface';
+import type { IBoundsLike } from '@visactor/vutils';
+import { Global } from '../../../constants';
 
 @injectable()
 export class BrowserWindowHandlerContribution

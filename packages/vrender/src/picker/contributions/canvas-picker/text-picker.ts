@@ -1,10 +1,18 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IText, IThemeAttribute } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IText,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
 import { BasePicker } from './base-picker';
-import { IGraphicRender, TextRender } from '../../../render';
+import { TextRender } from '../../../render';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';

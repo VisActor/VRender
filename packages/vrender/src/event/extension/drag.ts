@@ -1,7 +1,7 @@
 /**
  * @description drag and drop event
  */
-import type { IEventTarget, IEventExtension } from '../interface';
+import type { IEventTarget, IEventExtension } from '../../interface/event';
 import type { FederatedPointerEvent } from '../federated-event';
 
 export class DragNDrop implements IEventExtension {

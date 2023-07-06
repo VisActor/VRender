@@ -1,6 +1,5 @@
 import { application } from '../application';
-import { IAllocate } from './interface';
-import { ICanvas, Releaseable } from '../interface';
+import type { ICanvas, Releaseable, IAllocate } from '../interface';
 import { wrapCanvas } from '../canvas/util';
 
 export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {

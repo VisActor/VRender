@@ -1,18 +1,18 @@
-import { INode } from './node-tree';
-import { ILayer } from './layer';
-import { IGraphic } from './graphic';
-import { IGroup } from './graphic/group';
-import { IColor } from './color';
-import { IBounds, IBoundsLike, IMatrix, IMatrixLike, IPointLike } from '@visactor/vutils';
-import { SyncHook } from '../tapable';
-import { IWindow } from '../core';
-import { IDrawContext, IRenderService } from '../render';
-import { ICamera } from './camera';
-import { vec3 } from './matrix';
-import { IDirectionLight } from './light';
-import { ITicker } from '../animate';
-import { IPluginService } from '../plugins/plugin-service';
-import { IPickerService } from '../picker';
+import type { INode } from './node-tree';
+import type { ILayer } from './layer';
+import type { IGraphic } from './graphic';
+import type { IGroup } from './graphic/group';
+import type { IColor } from './color';
+import type { IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
+import type { ICamera } from './camera';
+import type { vec3 } from './matrix';
+import type { IDirectionLight } from './light';
+import type { ISyncHook } from './sync-hook';
+import type { IDrawContext, IRenderService } from './render';
+import type { ITicker } from './animate';
+import type { IPickerService } from './picker';
+import type { IPluginService } from './plugin';
+import type { IWindow } from './window';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -53,7 +53,7 @@ export interface IOption3D {
   alpha?: number; // x轴的转角
   beta?: number; // y轴的转角
   gama?: number; // z轴的转角
-  center?: IPointLike; // 中心位置
+  center?: { x?: number; y?: number; z?: number; dx?: number; dy?: number; dz?: number }; // 中心位置
   fieldRatio?: number; // 透视的视域缩放比例
   fieldDepth?: number;
   light?: {
@@ -86,8 +86,8 @@ export interface IStage extends INode {
   renderCount: number;
 
   hooks: {
-    beforeRender: SyncHook<[IStage]>;
-    afterRender: SyncHook<[IStage]>;
+    beforeRender: ISyncHook<[IStage]>;
+    afterRender: ISyncHook<[IStage]>;
   };
 
   renderService: IRenderService;

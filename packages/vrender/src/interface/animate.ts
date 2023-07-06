@@ -1,4 +1,5 @@
 import type { AnimateMode, AnimateStatus, AnimateStepType } from '../common/enums';
+import type { Releaseable } from './common';
 import type { IGraphic } from './graphic';
 
 // export type EasingType = (...args: any) => any;
@@ -89,6 +90,12 @@ export type EasingTypeStr =
   | 'elasticIn'
   | 'elasticOut'
   | 'elasticInOut'
+  | 'sineIn'
+  | 'sineOut'
+  | 'sineInOut'
+  | 'expoIn'
+  | 'expoOut'
+  | 'expoInOut'
   | '';
 export type EasingTypeFunc = (t: number) => number;
 
@@ -288,4 +295,48 @@ export interface MorphingAnimateConfig extends Omit<BaseAnimateConfig, 'interpol
 export interface MultiMorphingAnimateConfig extends MorphingAnimateConfig {
   splitPath?: 'clone' | ((graphic: IGraphic, count: number, needAppend?: boolean) => IGraphic[]);
   individualDelay?: (index: number, count: number, fromGraphic: IGraphic, toGraphic: IGraphic) => number;
+}
+
+export interface ITimeline {
+  id: number;
+  animateCount: number;
+  addAnimate: (animate: IAnimate) => void;
+  removeAnimate: (animate: IAnimate) => void;
+  tick: (delta: number) => void;
+  clear: () => void;
+  pause: () => void;
+  resume: () => void;
+}
+
+export interface ITickHandler extends Releaseable {
+  avaliable: () => boolean;
+  /**
+   * 开始执行tick
+   * @param interval 延时 ms
+   * @param cb 执行的回调
+   */
+  tick: (interval: number, cb: (handler: ITickHandler) => void) => void; // 开始
+  tickTo?: (t: number, cb: (handler: ITickHandler, params?: { once: boolean }) => void) => void;
+  getTime: () => number; // 获取时间
+}
+
+export interface ITickerHandlerStatic {
+  Avaliable: () => boolean;
+  new (): ITickHandler;
+}
+
+export interface ITicker {
+  setFPS?: (fps: number) => void;
+  setInterval?: (interval: number) => void;
+  getFPS?: () => number;
+  getInterval?: () => number;
+  tick: (interval: number) => void;
+  tickAt?: (time: number) => void;
+  pause: () => boolean;
+  resume: () => boolean;
+  /**
+   * 开启tick，force为true强制开启，否则如果timeline为空则不开启
+   */
+  start: (force?: boolean) => boolean;
+  stop: () => void;
 }

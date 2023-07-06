@@ -1,32 +1,22 @@
 import { injectable } from 'inversify';
 import { AABBBounds, pi2 } from '@visactor/vutils';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
-import { IArc, IContext2d, IGraphic, IGroup } from '../../../interface';
-import { IDrawContext, IDrawContribution, IRenderService } from '../../render-service';
-import { IGraphicRenderDrawParams } from './graphic-render';
+import type {
+  IArc,
+  IContext2d,
+  IDrawContext,
+  IDrawContribution,
+  IDrawItemInterceptorContribution,
+  IGraphic,
+  IGraphicRenderDrawParams,
+  IGroup,
+  IRenderService
+} from '../../../interface';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 
 // 拦截器
 export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
-
-export interface IDrawItemInterceptorContribution {
-  order: number;
-  beforeDrawItem?: (
-    graphic: IGraphic,
-    renderService: IRenderService,
-    drawContext: IDrawContext,
-    drawContribution: IDrawContribution,
-    params?: IGraphicRenderDrawParams
-  ) => boolean;
-  afterDrawItem?: (
-    graphic: IGraphic,
-    renderService: IRenderService,
-    drawContext: IDrawContext,
-    drawContribution: IDrawContribution,
-    params?: IGraphicRenderDrawParams
-  ) => boolean;
-}
 
 // @injectable()
 // export class DefaultDrawItemInterceptor implements IDrawItemInterceptor {
@@ -214,7 +204,7 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
           graphic.add(i.g);
         });
 
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, true);
 
         graphic.removeAllChild();
         children.forEach(g => {

@@ -1,10 +1,19 @@
-import { isArray, isNumber, IPoint, AABBBounds } from '@visactor/vutils';
+import type { IPoint } from '@visactor/vutils';
+import { isArray, isNumber, AABBBounds } from '@visactor/vutils';
 import { getScaledStroke } from '../../../common/canvas-utils';
 import { inject, injectable } from 'inversify';
 import { getTheme } from '../../../graphic';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IRect, IThemeAttribute } from '../../../interface';
-import { IGraphicRender, RectRender } from '../../../render';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IRect,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
+import { RectRender } from '../../../render';
 import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 
 const _bounds = new AABBBounds();

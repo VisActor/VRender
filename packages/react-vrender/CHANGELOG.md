@@ -1,6 +1,13 @@
 # Change Log - @visactor/react-vrender
 
-This log was last generated on Tue, 27 Jun 2023 13:38:36 GMT and should not be manually modified.
+This log was last generated on Thu, 06 Jul 2023 09:09:12 GMT and should not be manually modified.
+
+## 0.12.0
+Thu, 06 Jul 2023 09:09:12 GMT
+
+### Minor changes
+
+- refactor: refactor interfaces and types of typescript
 
 ## 0.11.1
 Tue, 27 Jun 2023 13:38:36 GMT

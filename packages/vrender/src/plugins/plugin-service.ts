@@ -1,20 +1,5 @@
 import { injectable } from 'inversify';
-import { Releaseable, IStage } from '../interface';
-
-export interface IPluginService extends Releaseable {
-  register: (plugin: IPlugin) => void;
-  active: (stage: IStage) => void;
-  actived: boolean;
-  stage: IStage;
-  findPluginsByName: (name: string) => IPlugin[];
-}
-
-export interface IPlugin {
-  name: string;
-  activeEvent: 'onStartupFinished' | 'onRegister';
-  activate: (context: IPluginService) => void;
-  deactivate: (context: IPluginService) => void;
-}
+import type { IPlugin, IPluginService, IStage } from '../interface';
 
 export const PluginService = Symbol.for('PluginService');
 

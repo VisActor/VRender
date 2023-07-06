@@ -1,10 +1,5 @@
 import { injectable } from 'inversify';
-import { IGraphic } from '../../../interface';
-import { IGraphicRender } from './graphic-render';
-
-export interface IRenderSelector {
-  selector: (graphic: IGraphic) => IGraphicRender | null;
-}
+import type { IGraphic, IGraphicRender, IRenderSelector } from '../../../interface';
 
 @injectable()
 export abstract class DefaultRenderSelector implements IRenderSelector {

@@ -1,5 +1,5 @@
-import type { ICustomPath2D } from '../../interface';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
+import type { ICustomPath2D } from '../path';
 
 export type IRectAttribute = {
   width: number;

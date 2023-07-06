@@ -1,5 +1,5 @@
 import { min } from '@visactor/vutils';
-import { GraphicType, IFace3d, IRect3d, IRect3dGraphicAttribute } from '../interface';
+import type { GraphicType, IFace3d, IRect3d, IRect3dGraphicAttribute } from '../interface';
 import { Rect } from './rect';
 import { getTheme } from './theme';
 import { RECT3D_NUMBER_TYPE } from './constants';

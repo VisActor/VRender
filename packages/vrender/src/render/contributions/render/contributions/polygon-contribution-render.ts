@@ -1,45 +1,12 @@
 import { injectable } from 'inversify';
+import type { IPolygonRenderContribution } from '../../../../interface';
 import {
-  IGraphicAttribute,
-  IContext2d,
-  IMarkAttribute,
-  IPolygon,
-  IPolygonGraphicAttribute,
-  IThemeAttribute
-} from '../../../../interface';
-import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const PolygonRenderContribution = Symbol.for('PolygonRenderContribution');
-
-export interface IPolygonRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    Polygon: IPolygon,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    PolygonAttribute: Required<IPolygonGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
 
 @injectable()
 export class DefaultPolygonBackgroundRenderContribution

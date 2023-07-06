@@ -1,7 +1,7 @@
 // 存放公共属性
 import { Matrix, pi2 } from '@visactor/vutils';
 import { CustomPath2D } from '../common/custom-path2d';
-import {
+import type {
   IArcGraphicAttribute,
   IAreaGraphicAttribute,
   IGraphicAttribute,
@@ -207,6 +207,7 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
+  strokeBoundsBuffer: 0,
   cornerRadius: 0
 };
 
@@ -249,8 +250,8 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
 };
 
 export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
-  repeatX: 'stretch',
-  repeatY: 'stretch',
+  repeatX: 'no-repeat',
+  repeatY: 'no-repeat',
   image: '',
   width: 0,
   height: 0,

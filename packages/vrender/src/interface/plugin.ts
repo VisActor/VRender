@@ -1,0 +1,17 @@
+import type { Releaseable } from './common';
+import type { IStage } from './stage';
+
+export interface IPluginService extends Releaseable {
+  register: (plugin: IPlugin) => void;
+  active: (stage: IStage) => void;
+  actived: boolean;
+  stage: IStage;
+  findPluginsByName: (name: string) => IPlugin[];
+}
+
+export interface IPlugin {
+  name: string;
+  activeEvent: 'onStartupFinished' | 'onRegister';
+  activate: (context: IPluginService) => void;
+  deactivate: (context: IPluginService) => void;
+}

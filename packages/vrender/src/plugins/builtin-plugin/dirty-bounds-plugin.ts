@@ -1,8 +1,8 @@
-import { AABBBounds, IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
-import { IGraphic, IStage } from '../../interface';
+import type { IGraphic, IStage, IPlugin, IPluginService } from '../../interface';
 import { application } from '../../application';
-import { IPlugin, IPluginService } from '../plugin-service';
 
 const globalBounds = new AABBBounds();
 

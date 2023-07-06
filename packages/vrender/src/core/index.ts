@@ -6,4 +6,4 @@ export * from './graphic-utils';
 export * from './contributions';
 export * from './layer-service';
 export * from './constants';
-export * from './interface';
+export * from '../interface/core';

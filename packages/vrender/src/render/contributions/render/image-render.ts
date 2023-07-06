@@ -1,13 +1,26 @@
 import { inject, injectable, named } from 'inversify';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { getTheme } from '../../../graphic/theme';
-import { IGraphicAttribute, IContext2d, IMarkAttribute, IImage, IThemeAttribute } from '../../../interface';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
-import { IImageRenderContribution, ImageRenderContribution } from './contributions/image-contribution-render';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
+import type {
+  IGraphicAttribute,
+  IContext2d,
+  IMarkAttribute,
+  IImage,
+  IThemeAttribute,
+  IGraphicRender,
+  IImageRenderContribution,
+  IContributionProvider,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IRenderService
+} from '../../../interface';
+import { ImageRenderContribution } from './contributions/image-contribution-render';
 import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
+import { BaseRenderContributionTime } from '../../../common/enums';
+
+const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
 @injectable()
 export class DefaultCanvasImageRender implements IGraphicRender {
@@ -19,7 +32,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
-    protected readonly imageRenderContribitions: ContributionProvider<IImageRenderContribution>
+    protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {}
 
   drawShape(
@@ -44,6 +57,8 @@ export class DefaultCanvasImageRender implements IGraphicRender {
       opacity = imageAttribute.opacity,
       fillOpacity = imageAttribute.fillOpacity,
       visible = imageAttribute.visible,
+      repeatX = imageAttribute.repeatX,
+      repeatY = imageAttribute.repeatY,
       image: url
     } = image.attribute;
 
@@ -92,7 +107,20 @@ export class DefaultCanvasImageRender implements IGraphicRender {
           return;
         }
         context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        context.drawImage(res.data, x, y, width, height);
+        let repeat = 0;
+        if (repeatX === 'repeat') {
+          repeat |= 0b0001;
+        }
+        if (repeatY === 'repeat') {
+          repeat |= 0b0010;
+        }
+        if (repeat) {
+          const pattern = context.createPattern(res.data, repeatStr[repeat]);
+          context.fillStyle = pattern;
+          context.fillRect(x, y, width, height);
+        } else {
+          context.drawImage(res.data, x, y, width, height);
+        }
       }
     }
 

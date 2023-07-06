@@ -1,13 +1,24 @@
 import { inject, injectable, named } from 'inversify';
-import { IGraphicAttribute, ICircle, IContext2d, IMarkAttribute, IThemeAttribute } from '../../../interface';
+import type {
+  IGraphicAttribute,
+  ICircle,
+  IContext2d,
+  IMarkAttribute,
+  IThemeAttribute,
+  ICircleRenderContribution,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IContributionProvider
+} from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
-import { CircleRenderContribution, ICircleRenderContribution } from './contributions/circle-contribution-render';
+import { CircleRenderContribution } from './contributions/circle-contribution-render';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { BaseRenderContributionTime } from './contributions/base-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export class DefaultCanvasCircleRender implements IGraphicRender {
@@ -19,7 +30,7 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(CircleRenderContribution)
-    protected readonly circleRenderContribitions: ContributionProvider<ICircleRenderContribution>
+    protected readonly circleRenderContribitions: IContributionProvider<ICircleRenderContribution>
   ) {}
 
   drawShape(

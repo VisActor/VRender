@@ -1,48 +1,21 @@
 import { injectable } from 'inversify';
-import {
+import type {
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   IThemeAttribute,
   IArea,
-  IAreaGraphicAttribute
+  IAreaGraphicAttribute,
+  IAreaRenderContribution
 } from '../../../../interface';
 import {
-  BaseRenderContributionTime,
   DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution,
-  IBaseRenderContribution
+  DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { getAttributeFromDefaultAttrList } from '../../../../common/utils';
+import { BaseRenderContributionTime } from '../../../../common/enums';
 
 export const AreaRenderContribution = Symbol.for('AreaRenderContribution');
-
-export interface IAreaRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    area: IArea,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    areaAttribute: Required<IAreaGraphicAttribute>,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    options?: {
-      attribute?: Partial<IAreaGraphicAttribute>;
-    }
-  ) => void;
-}
 
 @injectable()
 export class DefaultAreaBackgroundRenderContribution

@@ -1,6 +1,6 @@
 import { application } from '../application';
-import { IGraphic, IGroup, ILayer, IStage } from '../interface';
-import { IAABBBounds } from '@visactor/vutils';
+import type { IGraphic, IGroup, ILayer, IStage } from '../interface';
+import type { IAABBBounds } from '@visactor/vutils';
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {
@@ -41,8 +41,8 @@ export async function waitForAllSubLayers(stage: IStage) {
   await Promise.all(promiseList);
 }
 
-export function boundStroke(bounds: IAABBBounds, length: number, miter: boolean, pad = 0) {
-  bounds.expand(length + pad + (miter ? miterAdjustment(miter, length) : 0));
+export function boundStroke(bounds: IAABBBounds, halfW: number, miter: boolean, pad = 0) {
+  bounds.expand(halfW + (pad / 2 + (miter ? miterAdjustment(miter, halfW) : 0)));
   return bounds;
 }
 

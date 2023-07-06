@@ -1,6 +1,6 @@
 import type { IAABBBounds, IPoint, IPointLike } from '@visactor/vutils';
 import type { Releaseable, IDirection } from './common';
-import { CurveTypeEnum } from '../common/enums';
+import type { CurveTypeEnum } from '../common/enums';
 
 export const strCommandMap = [
   'arc',

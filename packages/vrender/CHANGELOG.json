@@ -2,6 +2,47 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.12.0",
+      "tag": "@visactor/vrender_v0.12.0",
+      "date": "Thu, 06 Jul 2023 09:09:12 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "support sine and expo ease"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix the bug where repeat attribute doesn't work in image"
+          },
+          {
+            "comment": "fix the bug in arc bounds"
+          },
+          {
+            "comment": "fix the bug of stroke bounds"
+          },
+          {
+            "comment": "fix the bug in FadeInPlus"
+          },
+          {
+            "comment": "fix the bug of rendering pyramid3d graphic"
+          },
+          {
+            "comment": " fix the bug of releasing in node env"
+          },
+          {
+            "comment": "fix the bug of pick path"
+          },
+          {
+            "comment": "fix: tooltip should not throw error when title not exist\n\n"
+          },
+          {
+            "comment": "refactor: refactor interfaces and types of typescript"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.11.1",
       "tag": "@visactor/vrender_v0.11.1",
       "date": "Tue, 27 Jun 2023 13:38:36 GMT",

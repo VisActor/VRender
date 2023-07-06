@@ -1,4 +1,5 @@
-import { min, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { min } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import type {
   IArea,
@@ -10,8 +11,15 @@ import type {
   IMarkAttribute,
   IThemeAttribute,
   ISegPath2D,
-  IDirection
+  IDirection,
+  IAreaRenderContribution,
+  IDrawContext,
+  IRenderService,
+  IGraphicRender,
+  IGraphicRenderDrawParams,
+  IContributionProvider
 } from '../../../interface';
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import {
   genLinearSegments,
@@ -23,11 +31,9 @@ import {
 } from '../../../common/segment';
 
 import { getTheme } from '../../../graphic/theme';
-import { IDrawContext, IRenderService } from '../../render-service';
-import { IGraphicRender, IGraphicRenderDrawParams } from './graphic-render';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { AreaRenderContribution, IAreaRenderContribution } from './contributions/area-contribution-render';
-import { BaseRenderContributionTime } from './contributions';
+import { AreaRenderContribution } from './contributions/area-contribution-render';
+import { BaseRenderContributionTime } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 
@@ -67,7 +73,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
   constructor(
     @inject(ContributionProvider)
     @named(AreaRenderContribution)
-    protected readonly areaRenderContribitions: ContributionProvider<IAreaRenderContribution>
+    protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
   ) {}
 
   drawShape(

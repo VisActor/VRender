@@ -1,9 +1,20 @@
 import { inject, injectable } from 'inversify';
 import { wrapCanvas } from '../../../canvas/util';
-import { ILayerHandlerContribution, IWindow, ILayerHandlerInitParams, ILayerHandlerDrawParams } from '../..';
-import { Global, IGlobal, ICanvas, IContext2d, IDrawToParams, IGroup, ILayer } from '../../../interface';
-import { IBounds } from '@visactor/vutils';
-import { IDrawContext } from '../../../render';
+import type {
+  IGlobal,
+  ICanvas,
+  IContext2d,
+  IDrawToParams,
+  IGroup,
+  ILayer,
+  ILayerHandlerContribution,
+  IWindow,
+  ILayerHandlerInitParams,
+  ILayerHandlerDrawParams,
+  IDrawContext
+} from '../../../interface';
+import type { IBounds } from '@visactor/vutils';
+import { Global } from '../../../constants';
 
 @injectable()
 export class CanvasLayerHandlerContribution implements ILayerHandlerContribution {

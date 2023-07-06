@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 27 Jun 2023 13:38:36 GMT and should not be manually modified.
+This log was last generated on Thu, 06 Jul 2023 09:09:12 GMT and should not be manually modified.
+
+## 0.12.0
+Thu, 06 Jul 2023 09:09:12 GMT
+
+### Minor changes
+
+- refactor: refactor interfaces and types of typescript
+
+### Patches
+
+- fix: tooltip should not throw error when title not exist
+
+
 
 ## 0.11.1
 Tue, 27 Jun 2023 13:38:36 GMT

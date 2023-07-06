@@ -1,8 +1,16 @@
 import { inject, injectable } from 'inversify';
-import { IPoint } from '@visactor/vutils';
-import { ILine, IContext2d, IMarkAttribute, IGraphicAttribute, IThemeAttribute } from '../../../interface';
-import { IGraphicPicker, IPickParams } from '../../picker-service';
-import { IGraphicRender, LineRender } from '../../../render';
+import type { IPoint } from '@visactor/vutils';
+import type {
+  ILine,
+  IContext2d,
+  IMarkAttribute,
+  IGraphicAttribute,
+  IThemeAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IPickParams
+} from '../../../interface';
+import { LineRender } from '../../../render';
 import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 

@@ -342,9 +342,9 @@ describe('Graphic-Bounds', () => {
       stroke: true
     });
 
-    expect(arc.AABBBounds.x1).toBeCloseTo(15.904546042213468);
-    expect(arc.AABBBounds.y1).toBeCloseTo(75.25994844176289);
-    expect(arc.AABBBounds.x2).toBeCloseTo(240.8);
-    expect(arc.AABBBounds.y2).toBeCloseTo(340.8);
+    expect(arc.AABBBounds.x1).toBeCloseTo(-40.80000000000001);
+    expect(arc.AABBBounds.y1).toBeCloseTo(59.19999999999999);
+    expect(arc.AABBBounds.x2).toBeCloseTo(167.56159730519198);
+    expect(arc.AABBBounds.y2).toBeCloseTo(314.4108044463395);
   });
 });

@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/react-vrender",
       "comment": "refactor: refactor interfaces and types of typescript",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/react-vrender"

@@ -52,8 +52,8 @@ export class ViewTransform3dPlugin implements IPlugin {
 
         const angle1 = deltaX / 100;
         const angle2 = deltaY / 100;
-        this.option3d.alpha += angle1;
-        this.option3d.beta += angle2;
+        this.option3d.alpha = (this.option3d.alpha ?? 0) + angle1;
+        this.option3d.beta = (this.option3d.beta ?? 0) + angle2;
         stage.set3dOptions(this.option3d);
         stage.renderNextFrame();
       }

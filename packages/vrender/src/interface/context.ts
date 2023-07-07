@@ -41,6 +41,7 @@ export interface ITextStyleParams {
   fontWeight?: string | number;
   textAlign?: CanvasTextAlign;
   textBaseline?: CanvasTextBaseline;
+  scaleIn3d?: boolean;
 }
 
 export interface ISetCommonStyleParams {

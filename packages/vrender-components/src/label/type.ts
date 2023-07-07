@@ -206,9 +206,7 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 export type Functional<T> = T | ((data: any) => T);
 
 export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
-  _insideGraphic?: boolean;
   _relatedIndex?: number;
-  _computedBound?: Bounds;
 }
 
 export interface ILabelAnimation {

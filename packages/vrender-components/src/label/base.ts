@@ -1,25 +1,18 @@
 /**
  * @description Label 基类
  */
-import {
-  IGroup,
-  Text,
-  createText,
-  IGraphic,
-  IText,
-  IncreaseCount,
-  AttributeUpdateType,
-  FederatedPointerEvent,
-  IColor
-} from '@visactor/vrender';
-import { isFunction, IBoundsLike, isValidNumber, isEmpty } from '@visactor/vutils';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
+import type { IBoundsLike } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { PointLocationCfg } from '../core/type';
+import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert } from '../util/labelSmartInvert';
 import { traverseGroup } from '../util';
 import { StateValue } from '../constant';
-import { Bitmap, bitmapTool, boundToRange, canPlace, canPlaceInside, place } from './overlap';
-import { BaseLabelAttrs, OverlapAttrs, ILabelGraphicAttribute, ILabelAnimation } from './type';
+import type { Bitmap } from './overlap';
+import { bitmapTool, boundToRange, canPlace, canPlaceInside, place } from './overlap';
+import type { BaseLabelAttrs, OverlapAttrs, ILabelGraphicAttribute, ILabelAnimation } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -269,16 +262,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         // 如果配置了限制在图形内部，需要提前判断；
         if (!checkBounds) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push({
-            ...text.attribute,
-            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)
-          });
+          result.push({ ...text.attribute });
           continue;
         }
 
         if (checkBounds && baseMark?.AABBBounds && canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push({ ...text.attribute, _insideGraphic: true, _computedBound: text.AABBBounds });
+          result.push({ ...text.attribute });
           continue;
         }
       }
@@ -299,20 +289,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           result.push({
             ...text.attribute,
             x: hasPlace.x,
-            y: hasPlace.y,
-            _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)
+            y: hasPlace.y
           });
           break;
         }
       }
 
-      !hasPlace &&
-        !hideOnHit &&
-        result.push({
-          ...text.attribute,
-          _insideGraphic: canPlaceInside(text.AABBBounds, baseMark?.AABBBounds),
-          _computedBound: text.AABBBounds
-        });
+      !hasPlace && !hideOnHit && result.push({ ...text.attribute });
     }
 
     if (isFunction(this.onAfterLabelOverlap)) {
@@ -512,12 +495,11 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       if (!label) {
         continue;
       }
-      let isInside = label._insideGraphic;
-      if (isInside === undefined) {
-        const text = createText(label);
-        text.update();
-        isInside = canPlaceInside(text.AABBBounds, this._relationMap.get(label._relatedIndex)?.AABBBounds);
-      }
+
+      const isInside = canPlaceInside(
+        createText(label).AABBBounds,
+        this._relationMap.get(label._relatedIndex)?.AABBBounds
+      );
       /**
        * stroke 的处理逻辑
        * 1. 当文本在图元内部时，有两种情况：

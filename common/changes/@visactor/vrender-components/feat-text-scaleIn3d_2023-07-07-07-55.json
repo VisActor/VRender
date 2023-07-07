@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: check label inside in smartInvert ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

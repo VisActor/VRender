@@ -8,10 +8,9 @@ export function getContextFont(
   defaultAttr: Partial<ITextFontParams> = {},
   fontSizeScale?: number
 ): string {
-  // if (fontSizeScale == null) {
-  //   fontSizeScale = 1;
-  // }
-  fontSizeScale = 1;
+  if (!fontSizeScale) {
+    fontSizeScale = 1;
+  }
   const {
     fontStyle = defaultAttr.fontStyle,
     fontVariant = defaultAttr.fontVariant,

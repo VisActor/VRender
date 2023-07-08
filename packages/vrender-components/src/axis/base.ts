@@ -3,28 +3,26 @@
  * 1. trunk 坐标轴截断
  * @description 坐标轴组件基类
  */
-import {
-  createLine,
+import type {
   IGroup,
   INode,
   ITextGraphicAttribute,
   TextAlignType,
   TextBaselineType,
-  createText,
-  createGroup,
-  createRect,
   FederatedPointerEvent,
   IGraphic
 } from '@visactor/vrender';
-import { abs, cloneDeep, Dict, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
+import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
+import type { Dict } from '@visactor/vutils';
+import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { Point } from '../core/type';
-import { TagAttributes } from '../tag';
+import type { Point } from '../core/type';
+import type { TagAttributes } from '../tag';
 import { traverseGroup } from '../util';
 import { DEFAULT_STATES, StateValue } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
-import {
+import type {
   GridAttributes,
   LabelAttributes,
   AxisBaseAttributes,
@@ -336,13 +334,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected renderGrid(container: IGroup): void {
-    this._renderGridByType('grid', container);
-
     // 渲染 subGrid
     const { visible } = this.attribute.subGrid || {};
     if (visible) {
       this._renderGridByType('subGrid', container);
     }
+
+    // 渲染 Grid，Grid 需要在 subGrid 上层渲染
+    this._renderGridByType('grid', container);
   }
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {

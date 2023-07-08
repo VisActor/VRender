@@ -3,16 +3,9 @@
  * @author 章伟星
  */
 import { merge, isEmpty, normalizePadding, get, isValid, Dict, isBoolean, isNil } from '@visactor/vutils';
-import {
-  FederatedPointerEvent,
-  createGroup,
-  IGroup,
-  createText,
-  createSymbol,
-  CustomEvent,
-  IGraphic,
-  INode
-} from '@visactor/vrender';
+import type { FederatedPointerEvent, IGroup, IGraphic, INode } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
+import { createGroup, createText, createSymbol, CustomEvent } from '@visactor/vrender';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -28,7 +21,7 @@ import {
   LegendEvent,
   LEGEND_ELEMENT_NAME
 } from '../constant';
-import { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
+import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -205,7 +198,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (isValid(itemHeight)) {
       this._itemHeightByUser = itemHeight;
     }
-
     let doWrap = false; // 水平布局换行标识
     let maxWidthInCol = 0; // 存储每一列最大的宽度，用于垂直布局的换列
     let startX = 0;
@@ -232,12 +224,22 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       if (isHorizontal) {
         maxPages = maxRow;
         // 水平布局
-        if (isValid(maxWidth) && maxWidth < startX + itemWidth) {
-          // 检测是否需要换行：如果用户声明了 maxWidth 并且超出了，则进行换行
-          doWrap = true;
-          startX = 0;
-          startY += itemHeight + spaceRow;
-          pages += 1;
+        if (isValid(maxWidth)) {
+          if (itemWidth >= maxWidth) {
+            // 如果图例项本身就大于 maxWidth
+            doWrap = true;
+            if (index > 0) {
+              startX = 0;
+              startY += itemHeight + spaceRow;
+              pages += 1;
+            }
+          } else if (maxWidth < startX + itemWidth) {
+            // 检测是否需要换行：如果用户声明了 maxWidth 并且超出了，则进行换行
+            doWrap = true;
+            startX = 0;
+            startY += itemHeight + spaceRow;
+            pages += 1;
+          }
         }
         if (index > 0) {
           itemGroup.setAttributes({
@@ -270,10 +272,13 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
 
     // TODO: 添加测试用例
+    let pagerRendered = false;
     if (doWrap && autoPage && pages > maxPages) {
       // 进行分页处理
-      this._renderPager(isHorizontal);
-    } else {
+      pagerRendered = this._renderPager(isHorizontal);
+    }
+
+    if (!pagerRendered) {
       itemsContainer.setAttribute(
         'y',
         this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0
@@ -498,9 +503,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       });
       this._pager = pagerComp;
       this._innerView.add(pagerComp as unknown as INode);
-
       pageHeight = (maxRow - 1) * spaceRow + this._itemHeight * maxRow;
       pageWidth = (maxWidth as number) - pagerComp.AABBBounds.width() - pagerSpace;
+
+      if (pageWidth <= 0) {
+        // 布局空间不够则不进行分页器渲染
+        this._innerView.removeChild(pagerComp as unknown as INode);
+        return false;
+      }
 
       // 重新进行布局
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
@@ -538,6 +548,13 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       pageWidth = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
       pageHeight = (maxHeight as number) - pagerComp.AABBBounds.height() - pagerSpace - renderStartY;
+
+      if (pageHeight <= 0) {
+        // 布局空间不够则不进行分页器渲染
+        this._innerView.removeChild(pagerComp as unknown as INode);
+        return false;
+      }
+
       // 重新进行布局
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { height } = item.attribute;
@@ -606,6 +623,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     this._pager.addEventListener('toPrev', onPaging);
     this._pager.addEventListener('toNext', onPaging);
+
+    return true;
   }
 
   private _onHover = (e: FederatedPointerEvent) => {

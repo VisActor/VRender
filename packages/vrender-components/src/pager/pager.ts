@@ -1,19 +1,13 @@
 /**
  * @description 翻页器
  */
-import {
-  createGroup,
-  createSymbol,
-  createText,
-  ISymbol,
-  IText,
-  FederatedPointerEvent,
-  CustomEvent
-} from '@visactor/vrender';
-import { merge, normalizePadding, get, isNumber } from '@visactor/vutils';
+import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
+import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender';
+import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
-import { PagerAttributes } from './type';
+import type { PagerAttributes } from './type';
 
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
@@ -91,6 +85,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
 
     const preHandler = createSymbol({
       strokeBoundsBuffer: 0,
+      pickMode: 'imprecise',
       ...handlerStyle,
       x: 0,
       y: 0,
@@ -126,6 +121,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
 
     const nextHandler = createSymbol({
       strokeBoundsBuffer: 0,
+      pickMode: 'imprecise',
       ...handlerStyle,
       x: isHorizontal ? handlerSizeX + handlerSpace * 2 + maxTextWidth : 0,
       y: isHorizontal ? 0 : handlerSizeY + handlerSpace * 2 + maxTextHeight,

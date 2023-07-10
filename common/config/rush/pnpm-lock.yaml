@@ -187,6 +187,7 @@ importers:
       '@visactor/vutils': ~0.11.1
       eslint: ~8.18.0
       gl-matrix: ^3.4.3
+      inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lil-gui: ^0.17.0
@@ -198,6 +199,7 @@ importers:
       '@visactor/vscale': 0.11.2
       '@visactor/vutils': 0.11.1
       gl-matrix: 3.4.3
+      inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config

@@ -32,7 +32,7 @@ import {
 
 import { getTheme } from '../../../graphic/theme';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { AreaRenderContribution } from './contributions/area-contribution-render';
+import { AreaRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
@@ -219,6 +219,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             y,
             z,
             area,
+            drawContext,
             fillCb
           );
         });
@@ -251,6 +252,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
               y,
               z,
               area,
+              drawContext,
               fillCb
             );
           }
@@ -269,6 +271,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
         y,
         z,
         area,
+        drawContext,
         fillCb
       );
     }
@@ -333,6 +336,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     offsetY: number,
     offsetZ: number,
     area: IArea,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -365,6 +369,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           fill,
           false,
           defaultAttribute as any,
+          drawContext,
           fillCb,
           null,
           { attribute }
@@ -400,6 +405,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           fill,
           false,
           defaultAttribute as any,
+          drawContext,
           fillCb,
           null,
           { attribute }

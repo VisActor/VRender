@@ -76,7 +76,8 @@ export const page = () => {
 
   const stage = createStage({
     canvas: 'main',
-    autoRender: true
+    autoRender: true,
+    poptip: true
   });
 
   graphics.forEach(g => {

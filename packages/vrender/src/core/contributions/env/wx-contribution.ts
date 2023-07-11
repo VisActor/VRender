@@ -124,18 +124,18 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  async configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number }) {
+  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number }) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      await makeUpCanvas(
+      return makeUpCanvas(
         params.domref,
         params.canvasIdLists,
         this.canvasMap,
         params.freeCanvasIdx,
         this.freeCanvasList
-      );
-
-      loadFeishuContributions();
+      ).then(() => {
+        loadFeishuContributions();
+      });
     }
   }
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(components): adjust the drawing level of grid and subGrid",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

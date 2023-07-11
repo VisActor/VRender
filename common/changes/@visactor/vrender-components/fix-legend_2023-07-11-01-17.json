@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "chore: remove gl-matrix",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

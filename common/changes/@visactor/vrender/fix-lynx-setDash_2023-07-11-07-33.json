@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the error of setLineDash in lynx",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

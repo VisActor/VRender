@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 07 Jul 2023 09:04:45 GMT and should not be manually modified.
+This log was last generated on Tue, 11 Jul 2023 13:17:12 GMT and should not be manually modified.
+
+## 0.12.2
+Tue, 11 Jul 2023 13:17:12 GMT
+
+### Patches
+
+- fix: fix the issue of false warn
+- fix: fix the error of setLineDash in lynx
 
 ## 0.12.1
 Fri, 07 Jul 2023 09:04:45 GMT

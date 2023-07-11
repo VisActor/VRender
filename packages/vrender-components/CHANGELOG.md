@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 07 Jul 2023 09:04:45 GMT and should not be manually modified.
+This log was last generated on Tue, 11 Jul 2023 13:17:12 GMT and should not be manually modified.
+
+## 0.12.2
+Tue, 11 Jul 2023 13:17:12 GMT
+
+### Patches
+
+- fix(components): fix a layout issue when legend item is larger than maxWidth
+- fix(components): adjust the drawing level of grid and subGrid
+- fix: set the pickMode of pager handler to imprecise to improve the click in mobile
+- chore: remove gl-matrix
 
 ## 0.12.1
 Fri, 07 Jul 2023 09:04:45 GMT

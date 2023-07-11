@@ -256,9 +256,10 @@ export class Node extends EventEmitter<any, any> implements INode {
    * 不能insert父级元素
    * @param newNode 要插入的节点
    * @param referenceNode 插入到referenceNode之前
+   * @param ignoreWarn 是否需要忽略警告
    */
-  insertInto(newNode: INode, idx: number): INode | null {
-    if (this._nodeList) {
+  insertInto(newNode: INode, idx: number, ignoreWarn?: boolean): INode | null {
+    if (!ignoreWarn && this._nodeList) {
       console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
     }
     if (idx >= this.childrenCount) {
@@ -340,7 +341,7 @@ export class Node extends EventEmitter<any, any> implements INode {
     if (node) {
       return node._next ? this.insertBefore(newNode, node._next) : this.appendChild(newNode);
     }
-    return this.insertInto(newNode, 0);
+    return this.insertInto(newNode, 0, true);
   }
 
   /**

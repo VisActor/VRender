@@ -55,8 +55,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  protected _arcBeforeRenderContribitions: IArcRenderContribution[];
-  protected _arcAfterRenderContribitions: IArcRenderContribution[];
+  protected _arcBeforeRenderContribitions: IArcRenderContribution[] = [];
+  protected _arcAfterRenderContribitions: IArcRenderContribution[] = [];
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
@@ -273,6 +273,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
 
+    let beforeRenderContribitionsRuned = false;
+
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
     if (doFill || isFullStroke) {
       context.beginPath();
@@ -292,8 +294,6 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       if (!this._arcBeforeRenderContribitions) {
         const contributions = this.arcRenderContribitions.getContributions() || [];
         contributions.sort((a, b) => b.order - a.order);
-        this._arcAfterRenderContribitions = [];
-        this._arcBeforeRenderContribitions = [];
         contributions.forEach(c => {
           if (c.time === BaseRenderContributionTime.beforeFillStroke) {
             this._arcBeforeRenderContribitions.push(c);
@@ -302,6 +302,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
           }
         });
       }
+      beforeRenderContribitionsRuned = true;
       this._arcBeforeRenderContribitions.forEach(c => {
         c.drawShape(
           arc,
@@ -346,6 +347,37 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       context.beginPath();
       const collapsedToLine = drawArcPath(arc, context, x, y, outerRadius, innerRadius, arrayStroke);
 
+      if (!beforeRenderContribitionsRuned) {
+        if (!this._arcBeforeRenderContribitions) {
+          const contributions = this.arcRenderContribitions.getContributions() || [];
+          contributions.sort((a, b) => b.order - a.order);
+          contributions.forEach(c => {
+            if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+              this._arcBeforeRenderContribitions.push(c);
+            } else {
+              this._arcAfterRenderContribitions.push(c);
+            }
+          });
+        }
+        beforeRenderContribitionsRuned = true;
+        this._arcBeforeRenderContribitions.forEach(c => {
+          c.drawShape(
+            arc,
+            context,
+            x,
+            y,
+            doFill,
+            doStroke,
+            fVisible,
+            sVisible,
+            arcAttribute,
+            drawContext,
+            fillCb,
+            strokeCb
+          );
+        });
+      }
+
       if (strokeCb) {
         strokeCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {
@@ -366,6 +398,38 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         const { endAngle = arcAttribute.endAngle, fill = arcAttribute.fill } = arc.attribute;
         const startAngle = endAngle;
         this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
+
+        if (!beforeRenderContribitionsRuned) {
+          if (!this._arcBeforeRenderContribitions) {
+            const contributions = this.arcRenderContribitions.getContributions() || [];
+            contributions.sort((a, b) => b.order - a.order);
+            contributions.forEach(c => {
+              if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+                this._arcBeforeRenderContribitions.push(c);
+              } else {
+                this._arcAfterRenderContribitions.push(c);
+              }
+            });
+          }
+          beforeRenderContribitionsRuned = true;
+          this._arcBeforeRenderContribitions.forEach(c => {
+            c.drawShape(
+              arc,
+              context,
+              x,
+              y,
+              doFill,
+              doStroke,
+              fVisible,
+              sVisible,
+              arcAttribute,
+              drawContext,
+              fillCb,
+              strokeCb
+            );
+          });
+        }
+
         if (doFill) {
           // 获取渐变色最后一个颜色
           const color = fill;

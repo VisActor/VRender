@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 06 Jul 2023 09:09:12 GMT and should not be manually modified.
+This log was last generated on Fri, 07 Jul 2023 09:04:45 GMT and should not be manually modified.
+
+## 0.12.1
+Fri, 07 Jul 2023 09:04:45 GMT
+
+### Patches
+
+- feat: text support scaleIn3d in 3d mode
+- fix the bug of view3dtransform caused by undefined beta
 
 ## 0.12.0
 Thu, 06 Jul 2023 09:09:12 GMT

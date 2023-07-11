@@ -1,23 +1,16 @@
 /**
  * @description 直线型坐标轴
  */
-import {
-  IPointLike,
-  get,
-  isNil,
-  merge,
-  polarToCartesian,
-  PointService,
-  isNumberClose,
-  isEmpty
-} from '@visactor/vutils';
-import { IGroup, INode, TextBaselineType } from '@visactor/vrender';
-import { Segment, SegmentAttributes } from '../segment';
-import { Point } from '../core/type';
-import { angleTo, vec2 } from '../util/matrix';
-import { TagAttributes } from '../tag';
+import type { IPointLike } from '@visactor/vutils';
+import { get, isNil, merge, polarToCartesian, PointService, isNumberClose, isEmpty } from '@visactor/vutils';
+import type { IGroup, INode, TextBaselineType } from '@visactor/vrender';
+import type { SegmentAttributes } from '../segment';
+import { Segment } from '../segment';
+import type { Point } from '../core/type';
+import { angleTo, normalize, scale } from '../util/matrix';
+import type { TagAttributes } from '../tag';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
-import {
+import type {
   GridItem,
   LineAxisGridAttributes,
   LineAttributes,
@@ -98,9 +91,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
   protected getVerticalVector(offset: number, inside = false) {
     const { verticalFactor = 1 } = this.attribute;
     const axisVector = this.getRelativeVector();
-    const normalize = vec2.normalize([0, 0], axisVector);
-    const verticalVector: [number, number] = [normalize[1], normalize[0] * -1];
-    return vec2.scale([0, 0], verticalVector, offset * (inside ? 1 : -1) * verticalFactor);
+    const normalizedAxisVector = normalize(axisVector);
+    const verticalVector: [number, number] = [normalizedAxisVector[1], normalizedAxisVector[0] * -1];
+    return scale(verticalVector, offset * (inside ? 1 : -1) * verticalFactor);
   }
 
   // TODO: 太 hack 了，需要静心优化

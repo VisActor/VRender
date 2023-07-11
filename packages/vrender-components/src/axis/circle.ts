@@ -1,13 +1,14 @@
 /**
  * @description 圆弧型坐标轴
  */
-import { IGroup, TextBaselineType, createCircle } from '@visactor/vrender';
+import type { IGroup, TextBaselineType } from '@visactor/vrender';
+import { createCircle } from '@visactor/vrender';
 import { isNil, get, merge, polarToCartesian, isNumberClose, isEmpty } from '@visactor/vutils';
-import { Point } from '../core/type';
-import { vec2 } from '../util/matrix';
-import { TagAttributes } from '../tag';
+import type { Point } from '../core/type';
+import { scale, length } from '../util/matrix';
+import type { TagAttributes } from '../tag';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
-import {
+import type {
   CircleAxisGridAttributes,
   CircleAxisAttributes,
   TitleAttributes,
@@ -89,8 +90,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     const { inside: axisInside = false } = this.attribute;
     const { center } = this.attribute as CircleAxisAttributes;
     const vector: [number, number] = [point.x - center.x, point.y - center.y];
-    vec2.scale(vector, vector, ((inside ? -1 : 1) * (axisInside ? -1 : 1) * offset) / vec2.length(vector));
-    return vector;
+    return scale(vector, ((inside ? -1 : 1) * (axisInside ? -1 : 1) * offset) / length(vector));
   }
 
   protected getRelativeVector(point: Point): [number, number] {

@@ -23,10 +23,11 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import { IPointLike, Matrix, pi, pi2, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import { Matrix, pi, pi2 } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
-import {
+import type {
   ICamera,
   ICanvas,
   ICommonStyleParams,
@@ -1104,10 +1105,15 @@ export class BrowserContext2d implements IContext2d {
     if (!defaultParams) {
       defaultParams = this.textAttributes;
     }
+    const { scaleIn3d = defaultParams.scaleIn3d } = params;
     if (params.font) {
       _context.font = params.font;
     } else {
-      _context.font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
+      _context.font = getContextFont(
+        params,
+        defaultParams,
+        scaleIn3d && this.camera && this.camera.getProjectionScale(z)
+      );
     }
     const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
     this.fontFamily = fontFamily;

@@ -91,7 +91,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   fontStyle: '',
   lineHeight: undefined,
   underline: 0,
-  lineThrough: 0
+  lineThrough: 0,
+  scaleIn3d: false
 };
 
 export const DefaultStyle: IGraphicStyle = {

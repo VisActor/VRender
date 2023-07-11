@@ -44,6 +44,7 @@ export type ITextAttribute = {
   lineHeight: number;
   underline: number;
   lineThrough: number;
+  scaleIn3d: boolean;
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

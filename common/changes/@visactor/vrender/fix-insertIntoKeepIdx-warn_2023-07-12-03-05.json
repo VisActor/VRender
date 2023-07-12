@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the issue of warning while call insertIntoKeepIdx",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

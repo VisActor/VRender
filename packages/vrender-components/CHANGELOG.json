@@ -2,6 +2,32 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.12.2",
+      "tag": "@visactor/vrender-components_v0.12.2",
+      "date": "Tue, 11 Jul 2023 13:17:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix(components): fix a layout issue when legend item is larger than maxWidth"
+          },
+          {
+            "comment": "fix(components): adjust the drawing level of grid and subGrid"
+          },
+          {
+            "comment": "fix: set the pickMode of pager handler to imprecise to improve the click in mobile"
+          },
+          {
+            "comment": "chore: remove gl-matrix"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.12.1` to `0.12.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.1",
       "tag": "@visactor/vrender-components_v0.12.1",
       "date": "Fri, 07 Jul 2023 09:04:45 GMT",

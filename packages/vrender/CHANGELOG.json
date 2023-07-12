@@ -2,6 +2,21 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.12.2",
+      "tag": "@visactor/vrender_v0.12.2",
+      "date": "Tue, 11 Jul 2023 13:17:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue of false warn"
+          },
+          {
+            "comment": "fix: fix the error of setLineDash in lynx"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.1",
       "tag": "@visactor/vrender_v0.12.1",
       "date": "Fri, 07 Jul 2023 09:04:45 GMT",

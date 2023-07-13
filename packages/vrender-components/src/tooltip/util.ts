@@ -18,7 +18,7 @@ export const mergeRowAttrs = (
 };
 
 export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAttribute => {
-  const { width, height, wordBreak, textAlign, textBaseline, text } = attr;
+  const { width, height, wordBreak = 'break-word', textAlign, textBaseline, text } = attr;
   return {
     width,
     height,

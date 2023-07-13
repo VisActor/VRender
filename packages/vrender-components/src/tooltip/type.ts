@@ -59,6 +59,7 @@ export type TooltipComponentAttrs = TooltipPositionAttrs & {
 /** tooltip 文本样式 */
 export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute & IContainerSize> & {
   multiLine?: boolean;
+  wordBreak?: string;
 };
 
 /** tooltip symbol 样式 */

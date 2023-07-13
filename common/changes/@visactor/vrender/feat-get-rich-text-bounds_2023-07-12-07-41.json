@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "new api to measure rich text bounds",
+      "comment": "feat: new api to measure rich text bounds",
       "type": "patch"
     }
   ],

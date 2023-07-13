@@ -22,13 +22,16 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
   return {
     width,
     height,
-    wordBreak,
-    textAlign,
-    textBaseline,
+    wordBreak: wordBreak as any,
+    textAlign: textAlign as any,
+    textBaseline: textBaseline as any,
     singleLine: false,
-    textConfig: array(text).map(text => ({
-      ...attr,
-      text
-    }))
+    textConfig: array(text).map(
+      text =>
+        ({
+          ...attr,
+          text
+        } as any)
+    )
   };
 };

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "feat: support rich text tooltip which supports wrap",
+      "comment": "feat: tooltip supports rich text which can wrap",
       "type": "patch"
     }
   ],

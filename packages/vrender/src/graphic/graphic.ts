@@ -1269,6 +1269,28 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     cb && cb();
   }
 
+  private _stopAnimates(animates: Map<string | number, IAnimate>) {
+    if (animates) {
+      animates.forEach(animate => {
+        animate.stop();
+      });
+    }
+  }
+
+  stopAnimates() {
+    this._stopAnimates(this.animates);
+
+    if (this.shadowRoot) {
+      const children = this.shadowRoot.getChildren();
+
+      if (children && children.length) {
+        children.forEach(child => {
+          this._stopAnimates((child as IGraphic).animates);
+        });
+      }
+    }
+  }
+
   release(): void {
     this.releaseStatus = 'released';
   }

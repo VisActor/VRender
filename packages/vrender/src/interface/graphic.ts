@@ -364,6 +364,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   imageLoadFail: (url: string) => void;
 
   clone: () => IGraphic;
+  stopAnimates: () => void;
 }
 
 export interface IRoot extends IGraphic {

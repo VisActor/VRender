@@ -1,0 +1,6 @@
+<!--logs.wxml-->
+<view class="container">
+  <!-- <canvas class="interactive" id="interactive" type="2d" /> -->
+  <canvas bind:touchstart="bindEvent" bind:touchmove="bindEvent" bind:touchend="bindEvent" class="draw" id="draw" type="2d" />
+  <canvas class="backup" id="backup" type="2d" />
+</view>

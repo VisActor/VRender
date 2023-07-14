@@ -6,6 +6,7 @@ import { FeishuEnvContribution } from './feishu-contribution';
 import { TaroEnvContribution } from './taro-contribution';
 import { LynxEnvContribution } from './lynx-contribution';
 import { NodeEnvContribution } from './node-contribution';
+import { WxEnvContribution } from './wx-contribution';
 
 export default new ContainerModule(bind => {
   // browser
@@ -23,6 +24,10 @@ export default new ContainerModule(bind => {
   // lynx
   bind(LynxEnvContribution).toSelf().inSingletonScope();
   bind(EnvContribution).toService(LynxEnvContribution);
+
+  // wx
+  bind(WxEnvContribution).toSelf().inSingletonScope();
+  bind(EnvContribution).toService(WxEnvContribution);
 
   // node
   bind(NodeEnvContribution).toSelf().inSingletonScope();

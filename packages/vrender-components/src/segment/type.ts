@@ -1,11 +1,11 @@
-import {
+import type {
   IGraphicAttribute,
   IGroupGraphicAttribute,
   ILineGraphicAttribute,
   ISymbolGraphicAttribute,
   SymbolType
 } from '@visactor/vrender';
-import { Point, State } from '../core/type';
+import type { Point, State } from '../core/type';
 
 export type SymbolAttributes = {
   /** 是否展示 symbol */
@@ -43,6 +43,11 @@ export type SymbolAttributes = {
 };
 
 export interface SegmentAttributes extends IGroupGraphicAttribute {
+  /**
+   * 可见性
+   * @default true
+   */
+  visible?: boolean;
   points: Point[];
   /** 轴线起始点 symbol 配置 */
   startSymbol?: SymbolAttributes;

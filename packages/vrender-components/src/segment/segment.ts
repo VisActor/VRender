@@ -2,9 +2,10 @@
  * @description 标签组件
  */
 import { isEmpty, merge } from '@visactor/vutils';
-import { createSymbol, ILine, ISymbol, createLine } from '@visactor/vrender';
+import type { ILine, ISymbol } from '@visactor/vrender';
+import { createSymbol, createLine } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
-import { SegmentAttributes, SymbolAttributes } from './type';
+import type { SegmentAttributes, SymbolAttributes } from './type';
 
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
@@ -67,7 +68,11 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
   protected render() {
     this.removeAllChild();
-    const { points, startSymbol, endSymbol, lineStyle, state } = this.attribute as SegmentAttributes;
+    const { points, startSymbol, endSymbol, lineStyle, state, visible } = this.attribute as SegmentAttributes;
+
+    if (!visible) {
+      return;
+    }
 
     // 计算线的起点和终点角度
     // 计算角度的原因：

@@ -1,12 +1,12 @@
 /**
  * @description 标签组件
  */
-import { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender';
+import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
-import { BackgroundAttributes } from '../interface';
-import { TagAttributes, TagShapeAttributes } from './type';
+import type { BackgroundAttributes } from '../interface';
+import type { TagAttributes, TagShapeAttributes } from './type';
 
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
@@ -161,7 +161,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
     // 绘制背景层
     const { visible: bgVisible, ...backgroundStyle } = panel;
-    if (isBoolean(bgVisible)) {
+    if (visible && isBoolean(bgVisible)) {
       const bgRect = this.createOrUpdateChild(
         'tag-panel',
         {

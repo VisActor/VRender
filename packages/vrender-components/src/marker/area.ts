@@ -1,9 +1,10 @@
-import { createPolygon, IGroup, INode, IPolygon } from '@visactor/vrender';
+import type { IGroup, INode, IPolygon } from '@visactor/vrender';
+import { createPolygon } from '@visactor/vrender';
 import { merge } from '@visactor/vutils';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
-import { MarkAreaAttrs } from './type';
+import type { MarkAreaAttrs } from './type';
 
 export class MarkArea extends Marker<MarkAreaAttrs> {
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
@@ -80,7 +81,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     });
   }
 
-  protected renderMarker(container: IGroup) {
+  protected initMarker(container: IGroup) {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
     const area = createPolygon({
       points: points,
@@ -96,6 +97,18 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     markLabel.name = 'mark-area-label';
     this._label = markLabel;
     container.add(markLabel as unknown as INode);
+    this.setLabelPos();
+  }
+
+  protected updateMarker() {
+    const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    this._area.setAttributes({
+      points: points,
+      ...areaStyle
+    });
+    this._label.setAttributes({
+      ...label
+    });
     this.setLabelPos();
   }
 }

@@ -93,6 +93,38 @@ export function run() {
             cornerRadius: 4
           }
         }
+      }),
+      createText({
+        text: 'hover那个text，你就能看到poptip',
+        maxLineWidth: 80,
+        textBaseline: 'middle',
+        fill: 'red',
+        x: 60,
+        y: 100,
+        poptip: {
+          visible: true,
+          visibleCb: (text: IText) => text.cliped,
+          position: 'top',
+          title: guiObject.title,
+          titleStyle: {
+            fontSize: 16,
+            fill: '#08979c'
+          },
+          content: guiObject.content,
+          contentStyle: {
+            fontSize: 12,
+            fill: 'green'
+          },
+          panel: {
+            visible: guiObject.backgroundVisible,
+
+            fill: '#e6fffb',
+
+            stroke: '#87e8de',
+            lineWidth: 1,
+            cornerRadius: 4
+          }
+        }
       })
     ],
     'main'

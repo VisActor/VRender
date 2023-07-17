@@ -89,6 +89,26 @@ export class DefaultGlobal implements IGlobal {
   }
 
   /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.envContribution.getDynamicCanvasCount();
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.envContribution.getStaticCanvasCount();
+  }
+
+  /**
    * 设置当前环境
    * @param env
    * @param params 环境参数

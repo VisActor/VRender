@@ -21,10 +21,11 @@ import type {
   IDrawContext,
   IWindow,
   IPlugin,
-  IContributionProvider
+  IContributionProvider,
+  ILayerService
 } from '../interface';
 import { Window } from './window';
-import { Layer } from './layer';
+import type { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../container';
 import { RenderService } from '../render';
@@ -40,6 +41,7 @@ import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
 import { Global } from '../constants';
+import { LayerService } from './constants';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -158,12 +160,15 @@ export class Stage extends Group implements IStage {
   readonly renderService: IRenderService;
   readonly pickerService: IPickerService;
   readonly pluginService: IPluginService;
+  readonly layerService: ILayerService;
   private readonly eventSystem?: EventSystem;
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
   protected _afterNextRenderCbs?: ((stage: IStage) => void)[];
   protected lastRenderparams?: Partial<IDrawContext>;
+
+  protected interactiveLayer?: ILayer;
 
   /**
    * 所有属性都具有默认值。
@@ -184,6 +189,7 @@ export class Stage extends Group implements IStage {
     this.renderService = container.get<IRenderService>(RenderService);
     this.pickerService = container.get<IPickerService>(PickerService);
     this.pluginService = container.get<IPluginService>(PluginService);
+    this.layerService = container.get<ILayerService>(LayerService);
     this.pluginService.active(this);
 
     this.window.create({
@@ -217,7 +223,8 @@ export class Stage extends Group implements IStage {
     this._background = params.background ?? DefaultConfig.BACKGROUND;
 
     // 创建一个默认layer图层
-    this.appendChild(new Layer(this, this.global, this.window, { main: true }));
+    // this.appendChild(new Layer(this, this.global, this.window, { main: true }));
+    this.appendChild(this.layerService.createLayer(this, { main: true }));
 
     this.nextFrameRenderLayerSet = new Set();
     this.willNextFrameRender = false;
@@ -261,6 +268,9 @@ export class Stage extends Group implements IStage {
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
     this.ticker = params.ticker || defaultTicker;
+    if (params.interactiveLayer !== false) {
+      this.initInteractiveLayer();
+    }
   }
 
   get3dOptions(options: IOption3D) {
@@ -455,18 +465,37 @@ export class Stage extends Group implements IStage {
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
   createLayer(canvasId?: string): ILayer {
     // 创建一个默认layer图层
-    const layer = new Layer(this, this.global, this.window, {
+    const layer = this.layerService.createLayer(this, {
       main: false,
       canvasId
     });
     this.appendChild(layer);
     return layer;
+    // const layer = new Layer(this, this.global, this.window, {
+    //   main: false,
+    //   canvasId
+    // });
+    // this.appendChild(layer);
+    // return layer;
   }
-  sortLayer(cb: (ILayer: ILayer) => number): void {
-    throw new Error('暂不支持');
+  sortLayer(cb: (ILayer1: ILayer, layer2: ILayer) => number): void {
+    const children = this.children;
+    children.sort(cb);
+    this.removeAllChild();
+    children.forEach(c => {
+      this.appendChild(c);
+    });
   }
   removeLayer(ILayerId: number): ILayer | false {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
+  }
+  protected initInteractiveLayer() {
+    // TODO：顺序可能会存在问题
+    this.interactiveLayer = this.createLayer();
+    this.interactiveLayer.name = '_builtin_interactive';
+    this.interactiveLayer.afterDraw(l => {
+      l.removeAllChild();
+    });
   }
 
   clearViewBox(color?: string) {
@@ -639,6 +668,7 @@ export class Stage extends Group implements IStage {
     this.forEach(layer => {
       layer.release();
     });
+    this.interactiveLayer && this.interactiveLayer.release();
     this.window.release();
   }
 
@@ -663,6 +693,11 @@ export class Stage extends Group implements IStage {
       this.dirtyBounds.setValue(b.x1, b.y1, b.x2, b.y2);
     }
     this.dirtyBounds.union(b);
+  }
+
+  getLayer(name: string): undefined | ILayer {
+    const layer = this.children.filter(layer => layer.name === name);
+    return layer[0] as ILayer;
   }
 
   renderTo(window: IWindow, params: { x: number; y: number; width: number; height: number }) {

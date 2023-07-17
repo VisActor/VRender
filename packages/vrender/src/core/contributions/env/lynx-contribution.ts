@@ -94,6 +94,19 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
       loadFeishuContributions();
     }
   }
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
 
   loadImage(url: string): Promise<{
     loadState: 'success' | 'fail';

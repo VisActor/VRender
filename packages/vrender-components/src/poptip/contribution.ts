@@ -37,10 +37,15 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
       }
       this.poptipComponent.setAttributes({
         ...(graphic.attribute as any).poptip,
-        x,
-        y
+        x: 0,
+        y: 0,
+        postMatrix: graphic.globalTransMatrix
       });
-      drawContext.drawContribution && drawContext.drawContribution.renderGroup(this.poptipComponent, drawContext);
+      // 添加到交互层中
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      if (interactiveLayer) {
+        interactiveLayer.add(this.poptipComponent);
+      }
     }
   }
 }

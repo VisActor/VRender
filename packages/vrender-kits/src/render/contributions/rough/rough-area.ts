@@ -7,7 +7,8 @@ import type {
   IThemeAttribute,
   IGraphicAttribute,
   IArea,
-  IAreaGraphicAttribute
+  IAreaGraphicAttribute,
+  IDrawContext
 } from '@visactor/vrender';
 import { drawAreaSegments, DefaultCanvasAreaRender, CustomPath2D, drawSegments } from '@visactor/vrender';
 import rough from 'roughjs';
@@ -46,6 +47,7 @@ export class RoughCanvasAreaRender extends DefaultCanvasAreaRender implements IG
     offsetY: number,
     offsetZ: number,
     area: IArea,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -65,6 +67,7 @@ export class RoughCanvasAreaRender extends DefaultCanvasAreaRender implements IG
         offsetY,
         offsetZ,
         area,
+        drawContext,
         fillCb
       );
     }

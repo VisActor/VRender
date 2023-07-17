@@ -186,6 +186,8 @@ importers:
       '@visactor/vscale': ~0.11.1
       '@visactor/vutils': ~0.11.1
       eslint: ~8.18.0
+      gl-matrix: ~3.4.3
+      inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lil-gui: ^0.17.0
@@ -196,6 +198,8 @@ importers:
       '@visactor/vrender': link:../vrender
       '@visactor/vscale': 0.11.2
       '@visactor/vutils': 0.11.1
+      gl-matrix: 3.4.3
+      inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config
@@ -5633,7 +5637,6 @@ packages:
 
   /gl-matrix/3.4.3:
     resolution: {integrity: sha512-wcCp8vu8FT22BnvKVPjXa/ICBWRq/zjFfdofZy1WSpQZpphblv12/bOQLBC1rMM7SGOFS9ltVmKOHil5+Ml7gA==}
-    dev: true
 
   /glob-parent/3.1.0:
     resolution: {integrity: sha512-E8Ak/2+dZY6fnzlR7+ueWvhsH1SjHr4jjss4YS/h4py44jY9MhK/VFdaZJAWDz6BbL21KeteKxFSFpq8OS5gVA==}

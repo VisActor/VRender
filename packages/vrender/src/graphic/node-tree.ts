@@ -19,6 +19,8 @@ export class Node extends EventEmitter<any, any> implements INode {
   protected _structEdit?: boolean; // 树的结构是否发生修改
   protected _nodeList?: INode[]; // 用于有顺序的插入（正常情况用不到）
 
+  declare _ignoreWarn?: boolean;
+
   get previousSibling(): INode | null {
     return this._prev;
   }
@@ -258,7 +260,7 @@ export class Node extends EventEmitter<any, any> implements INode {
    * @param referenceNode 插入到referenceNode之前
    */
   insertInto(newNode: INode, idx: number): INode | null {
-    if (this._nodeList) {
+    if (!this._ignoreWarn && this._nodeList) {
       console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
     }
     if (idx >= this.childrenCount) {
@@ -340,7 +342,10 @@ export class Node extends EventEmitter<any, any> implements INode {
     if (node) {
       return node._next ? this.insertBefore(newNode, node._next) : this.appendChild(newNode);
     }
-    return this.insertInto(newNode, 0);
+    this._ignoreWarn = true;
+    const data = this.insertInto(newNode, 0);
+    this._ignoreWarn = false;
+    return data;
   }
 
   /**

@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix the bug of view3dtransform caused by undefined beta",
-      "type": "patch"
+      "comment": "feat: support wx env",
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vrender"

@@ -133,7 +133,7 @@ Page({
     ]
     const graphics = [];
     
-    symbolList.slice(0, 1).forEach((st, i) => {
+    symbolList.forEach((st, i) => {
       const symbol = createSymbol({
         symbolType: st,
         x: (i * 30) % 150 + 30,

@@ -4223,7 +4223,9 @@
       getContributions() {
           if (!this.caches) {
               this.caches = [];
-              this.container && this.caches.push(...this.container.getAll(this.serviceIdentifier));
+              this.container &&
+                  this.container.isBound(this.serviceIdentifier) &&
+                  this.caches.push(...this.container.getAll(this.serviceIdentifier));
           }
           return this.caches;
       }
@@ -4373,23 +4375,16 @@
           this.measureTextMethod = 'native';
       }
       bindContribution(params) {
-          const promiseArr = [];
           this.contributions.getContributions().forEach(contribution => {
-              const data = contribution.configure(this, params);
-              if (data && data.then) {
-                  promiseArr.push(data);
-              }
+              contribution.configure(this, params);
           });
-          if (promiseArr.length) {
-              return Promise.all(promiseArr);
-          }
       }
       setEnv(env, params) {
           if (!(params && params.force === true) && this._env === env) {
               return;
           }
           this.deactiveCurrentEnv();
-          return this.activeEnv(env, params);
+          this.activeEnv(env, params);
       }
       deactiveCurrentEnv() {
           this.envContribution && this.envContribution.release();
@@ -4397,13 +4392,7 @@
       activeEnv(env, params) {
           const lastEnv = this._env;
           this._env = env;
-          const data = this.bindContribution(params);
-          if (data && data.then) {
-              return data.then(() => {
-                  this.envParams = params;
-                  this.hooks.onSetEnv.call(lastEnv, env, this);
-              });
-          }
+          this.bindContribution(params);
           this.envParams = params;
           this.hooks.onSetEnv.call(lastEnv, env, this);
       }
@@ -9160,7 +9149,7 @@
           return newNode;
       }
       insertInto(newNode, idx) {
-          if (!this._ignoreWarn && this._nodeList) {
+          if (this._nodeList) {
               console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
           }
           if (idx >= this.childrenCount) {
@@ -9228,10 +9217,7 @@
           if (node) {
               return node._next ? this.insertBefore(newNode, node._next) : this.appendChild(newNode);
           }
-          this._ignoreWarn = true;
-          const data = this.insertInto(newNode, 0);
-          this._ignoreWarn = false;
-          return data;
+          return this.insertInto(newNode, 0);
       }
       removeChild(child) {
           if (!this._idMap) {
@@ -17208,128 +17194,397 @@
       conicalCanvas.height = imageData.height;
       conicalCtx.putImageData(imageData, 0, 0);
       pattern = context.createPattern(conicalCanvas, 'no-repeat');
-      pattern && ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
+      ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
       return pattern;
   }
 
-  function getScaledStroke(context, width, dpr) {
-      let strokeWidth = width;
-      const { a, b, c, d } = context.currentMatrix;
-      const scaleX = Math.sign(a) * Math.sqrt(a * a + b * b);
-      const scaleY = Math.sign(d) * Math.sqrt(c * c + d * d);
-      if (scaleX + scaleY === 0) {
-          return 0;
+  const ArcRenderContribution = Symbol.for('ArcRenderContribution');
+  const AreaRenderContribution = Symbol.for('AreaRenderContribution');
+  const CircleRenderContribution = Symbol.for('CircleRenderContribution');
+  const GroupRenderContribution = Symbol.for('GroupRenderContribution');
+  const ImageRenderContribution = Symbol.for('ImageRenderContribution');
+  const PathRenderContribution = Symbol.for('PathRenderContribution');
+  const PolygonRenderContribution = Symbol.for('PolygonRenderContribution');
+  const RectRenderContribution = Symbol.for('RectRenderContribution');
+  const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
+  const TextRenderContribution = Symbol.for('TextRenderContribution');
+  const InteractiveSubRenderContribution = Symbol.for('InteractiveSubRenderContribution');
+
+  exports.DefaultCanvasArcRender = class DefaultCanvasArcRender {
+      arcRenderContribitions;
+      type;
+      numberType = ARC_NUMBER_TYPE;
+      _arcBeforeRenderContribitions = [];
+      _arcAfterRenderContribitions = [];
+      constructor(arcRenderContribitions) {
+          this.arcRenderContribitions = arcRenderContribitions;
       }
-      strokeWidth = (strokeWidth / Math.abs(scaleX + scaleY)) * 2 * dpr;
-      return strokeWidth;
-  }
-  function createColor(context, c, params, offsetX, offsetY) {
-      if (!c || c === true) {
-          return 'black';
-      }
-      let result;
-      let color;
-      if (isArray(c)) {
-          for (let i = 0; i < c.length; i++) {
-              color = c[i];
-              if (color) {
-                  break;
+      drawArcTailCapPath(arc, context, cx, cy, outerRadius, innerRadius, _sa, _ea) {
+          const capAngle = _ea - _sa;
+          const data = arc.getParsedAngle();
+          const startAngle = data.startAngle;
+          let endAngle = data.endAngle;
+          endAngle = _ea;
+          const deltaAngle = abs(endAngle - startAngle);
+          const clockwise = endAngle > startAngle;
+          let collapsedToLine = false;
+          if (outerRadius < innerRadius) {
+              const temp = outerRadius;
+              outerRadius = innerRadius;
+              innerRadius = temp;
+          }
+          const cornerRadius = arc.getParsedCornerRadius();
+          const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } = arc.getParsePadAngle(startAngle, endAngle);
+          const outerCornerRadiusStart = cornerRadius;
+          const outerCornerRadiusEnd = cornerRadius;
+          const innerCornerRadiusEnd = cornerRadius;
+          const innerCornerRadiusStart = cornerRadius;
+          const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
+          const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
+          let limitedOcr = maxOuterCornerRadius;
+          let limitedIcr = maxInnerCornerRadius;
+          const xors = outerRadius * cos(outerStartAngle);
+          const yors = outerRadius * sin(outerStartAngle);
+          const xire = innerRadius * cos(innerEndAngle);
+          const yire = innerRadius * sin(innerEndAngle);
+          let xore;
+          let yore;
+          let xirs;
+          let yirs;
+          if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
+              xore = outerRadius * cos(outerEndAngle);
+              yore = outerRadius * sin(outerEndAngle);
+              xirs = innerRadius * cos(innerStartAngle);
+              yirs = innerRadius * sin(innerStartAngle);
+              if (deltaAngle < pi) {
+                  const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
+                  if (oc) {
+                      const ax = xors - oc[0];
+                      const ay = yors - oc[1];
+                      const bx = xore - oc[0];
+                      const by = yore - oc[1];
+                      const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
+                      const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+                      limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
+                      limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
+                  }
               }
           }
+          if (limitedOcr > epsilon) {
+              const cornerRadiusStart = min(outerCornerRadiusStart, limitedOcr);
+              const cornerRadiusEnd = min(outerCornerRadiusEnd, limitedOcr);
+              const t0 = cornerTangents(xirs, yirs, xors, yors, outerRadius, cornerRadiusStart, Number(clockwise));
+              const t1 = cornerTangents(xore, yore, xire, yire, outerRadius, cornerRadiusEnd, Number(clockwise));
+              if (limitedOcr < maxOuterCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
+                  context.moveTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
+                  context.arc(cx + t0.cx, cy + t0.cy, limitedOcr, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !clockwise);
+              }
+              else {
+                  const a1 = endAngle - capAngle - 0.03;
+                  const a2 = atan2(t1.y11, t1.x11);
+                  context.arc(cx, cy, outerRadius, a1, a2, !clockwise);
+                  cornerRadiusEnd > 0 &&
+                      context.arc(cx + t1.cx, cy + t1.cy, cornerRadiusEnd, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !clockwise);
+              }
+          }
+          else {
+              context.moveTo(cx + xors, cy + yors);
+          }
+          if (!(innerRadius > epsilon) || innerDeltaAngle < 0.001) {
+              context.lineTo(cx + xire, cy + yire);
+              collapsedToLine = true;
+          }
+          else if (limitedIcr > epsilon) {
+              const cornerRadiusStart = min(innerCornerRadiusStart, limitedIcr);
+              const cornerRadiusEnd = min(innerCornerRadiusEnd, limitedIcr);
+              const t0 = cornerTangents(xire, yire, xore, yore, innerRadius, -cornerRadiusEnd, Number(clockwise));
+              const t1 = cornerTangents(xors, yors, xirs, yirs, innerRadius, -cornerRadiusStart, Number(clockwise));
+              context.lineTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
+              if (limitedIcr < maxInnerCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
+                  const arcEndAngle = atan2(t1.y01, t1.x01);
+                  context.arc(cx + t0.cx, cy + t0.cy, limitedIcr, atan2(t0.y01, t0.x01), arcEndAngle, !clockwise);
+              }
+              else {
+                  cornerRadiusEnd > 0 &&
+                      context.arc(cx + t0.cx, cy + t0.cy, cornerRadiusEnd, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !clockwise);
+                  const a1 = atan2(t0.cy + t0.y11, t0.cx + t0.x11);
+                  const a2 = endAngle - capAngle - 0.03;
+                  context.arc(cx, cy, innerRadius, a1, a2, clockwise);
+              }
+          }
+          else {
+              context.lineTo(cx + innerRadius * cos(innerStartAngle), cy + innerRadius * sin(innerStartAngle));
+          }
+          return collapsedToLine;
       }
-      else {
-          color = c;
-      }
-      if (typeof color === 'string') {
-          return color;
-      }
-      if (color.gradient === 'linear') {
-          result = createLinearGradient(context, color, params, offsetX, offsetY);
-      }
-      else if (color.gradient === 'conical') {
-          result = createConicGradient(context, color, params, offsetX, offsetY);
-      }
-      else if (color.gradient === 'radial') {
-          result = createRadialGradient(context, color, params, offsetX, offsetY);
-      }
-      return result || 'orange';
-  }
-  function createLinearGradient(context, color, params, offsetX = 0, offsetY = 0) {
-      const bounds = params.AABBBounds;
-      if (!bounds) {
-          return;
-      }
-      let w = bounds.x2 - bounds.x1;
-      let h = bounds.y2 - bounds.y1;
-      let x = bounds.x1 - offsetX;
-      let y = bounds.y1 - offsetY;
-      if (params.attribute) {
-          const { scaleX = 1, scaleY = 1 } = params.attribute;
-          if (scaleX * scaleY === 0) {
+      drawShape(arc, context, x, y, drawContext, params, fillCb, strokeCb) {
+          const arcAttribute = getTheme(arc, params?.theme).arc;
+          const { fill = arcAttribute.fill, background, stroke = arcAttribute.stroke, opacity = arcAttribute.opacity, fillOpacity = arcAttribute.fillOpacity, lineWidth = arcAttribute.lineWidth, strokeOpacity = arcAttribute.strokeOpacity, visible = arcAttribute.visible, x: originX = arcAttribute.x, y: originY = arcAttribute.y } = arc.attribute;
+          const fVisible = fillVisible(opacity, fillOpacity);
+          const sVisible = strokeVisible(opacity, strokeOpacity);
+          const doFill = runFill(fill);
+          const doStroke = runStroke(stroke, lineWidth);
+          if (!(arc.valid && visible)) {
               return;
           }
-          w /= scaleX;
-          h /= scaleY;
-          x /= scaleX;
-          y /= scaleY;
-      }
-      const canvasGradient = context.createLinearGradient(x + (color.x0 ?? 0) * w, y + (color.y0 ?? 0) * h, x + (color.x1 ?? 1) * w, y + (color.y1 ?? 0) * h);
-      color.stops.forEach(stop => {
-          canvasGradient.addColorStop(stop.offset, stop.color);
-      });
-      return canvasGradient;
-  }
-  function createRadialGradient(context, color, params, offsetX = 0, offsetY = 0) {
-      const bounds = params.AABBBounds;
-      if (!bounds) {
-          return;
-      }
-      let w = bounds.x2 - bounds.x1;
-      let h = bounds.y2 - bounds.y1;
-      let x = bounds.x1 - offsetX;
-      let y = bounds.y1 - offsetY;
-      if (params.attribute) {
-          const { scaleX = 1, scaleY = 1 } = params.attribute;
-          if (scaleX * scaleY === 0) {
+          if (!(doFill || doStroke || background)) {
               return;
           }
-          x /= scaleX;
-          y /= scaleY;
-          w /= scaleX;
-          h /= scaleY;
-      }
-      const canvasGradient = context.createRadialGradient(x + (color.x0 ?? 0.5) * w, y + (color.y0 ?? 0.5) * h, Math.max(w, h) * (color.r0 ?? 0), x + (color.x1 ?? 0.5) * w, y + (color.y1 ?? 0.5) * h, Math.max(w, h) * (color.r1 ?? 0.5));
-      color.stops.forEach(stop => {
-          canvasGradient.addColorStop(stop.offset, stop.color);
-      });
-      return canvasGradient;
-  }
-  function createConicGradient(context, color, params, offsetX = 0, offsetY = 0) {
-      const bounds = params.AABBBounds;
-      if (!bounds) {
-          return;
-      }
-      let w = bounds.x2 - bounds.x1;
-      let h = bounds.y2 - bounds.y1;
-      let x = bounds.x1 - offsetX;
-      let y = bounds.y1 - offsetY;
-      if (params.attribute) {
-          const { scaleX = 1, scaleY = 1 } = params.attribute;
-          if (scaleX * scaleY === 0) {
+          if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
               return;
           }
-          w /= scaleX;
-          h /= scaleY;
-          x /= scaleX;
-          y /= scaleY;
+          const { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius, cap = arcAttribute.cap, forceShowCap = arcAttribute.forceShowCap } = arc.attribute;
+          let beforeRenderContribitionsRuned = false;
+          const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
+          if (doFill || isFullStroke) {
+              context.beginPath();
+              drawArcPath$1(arc, context, x, y, outerRadius, innerRadius);
+              if (!this._arcBeforeRenderContribitions) {
+                  const contributions = this.arcRenderContribitions.getContributions() || [];
+                  contributions.sort((a, b) => b.order - a.order);
+                  contributions.forEach(c => {
+                      if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
+                          this._arcBeforeRenderContribitions.push(c);
+                      }
+                      else {
+                          this._arcAfterRenderContribitions.push(c);
+                      }
+                  });
+              }
+              beforeRenderContribitionsRuned = true;
+              this._arcBeforeRenderContribitions.forEach(c => {
+                  c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, drawContext, fillCb, strokeCb);
+              });
+              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+              if (doFill) {
+                  if (fillCb) {
+                      fillCb(context, arc.attribute, arcAttribute);
+                  }
+                  else if (fVisible) {
+                      context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+                      context.fill();
+                  }
+              }
+              if (doStroke && isFullStroke) {
+                  if (strokeCb) {
+                      strokeCb(context, arc.attribute, arcAttribute);
+                  }
+                  else if (sVisible) {
+                      context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+                      context.stroke();
+                  }
+              }
+          }
+          if (!isFullStroke && doStroke) {
+              context.beginPath();
+              drawArcPath$1(arc, context, x, y, outerRadius, innerRadius, arrayStroke);
+              if (!beforeRenderContribitionsRuned) {
+                  if (!this._arcBeforeRenderContribitions) {
+                      const contributions = this.arcRenderContribitions.getContributions() || [];
+                      contributions.sort((a, b) => b.order - a.order);
+                      contributions.forEach(c => {
+                          if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
+                              this._arcBeforeRenderContribitions.push(c);
+                          }
+                          else {
+                              this._arcAfterRenderContribitions.push(c);
+                          }
+                      });
+                  }
+                  beforeRenderContribitionsRuned = true;
+                  this._arcBeforeRenderContribitions.forEach(c => {
+                      c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, drawContext, fillCb, strokeCb);
+                  });
+              }
+              if (strokeCb) {
+                  strokeCb(context, arc.attribute, arcAttribute);
+              }
+              else if (sVisible) {
+                  context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+                  context.stroke();
+              }
+          }
+          if (cap && forceShowCap) {
+              const { startAngle: sa, endAngle: ea } = arc.getParsedAngle();
+              const deltaAngle = abs(ea - sa);
+              if (deltaAngle >= pi2 - epsilon) {
+                  context.beginPath();
+                  const capWidth = Math.abs(outerRadius - innerRadius) / 2;
+                  const capAngle = capWidth / outerRadius;
+                  const { endAngle = arcAttribute.endAngle, fill = arcAttribute.fill } = arc.attribute;
+                  const startAngle = endAngle;
+                  this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
+                  if (!beforeRenderContribitionsRuned) {
+                      if (!this._arcBeforeRenderContribitions) {
+                          const contributions = this.arcRenderContribitions.getContributions() || [];
+                          contributions.sort((a, b) => b.order - a.order);
+                          contributions.forEach(c => {
+                              if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
+                                  this._arcBeforeRenderContribitions.push(c);
+                              }
+                              else {
+                                  this._arcAfterRenderContribitions.push(c);
+                              }
+                          });
+                      }
+                      beforeRenderContribitionsRuned = true;
+                      this._arcBeforeRenderContribitions.forEach(c => {
+                          c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, drawContext, fillCb, strokeCb);
+                      });
+                  }
+                  if (doFill) {
+                      const color = fill;
+                      if (color.gradient === 'conical') {
+                          const lastColor = getConicGradientAt(0, 0, endAngle, color);
+                          if (fillCb) ;
+                          else if (fillVisible) {
+                              context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
+                              context.fillStyle = lastColor;
+                              context.fill();
+                          }
+                      }
+                  }
+                  if (doStroke) {
+                      if (strokeCb) ;
+                      else if (sVisible) {
+                          context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+                          context.stroke();
+                      }
+                  }
+              }
+          }
+          this._arcAfterRenderContribitions.forEach(c => {
+              c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, drawContext, fillCb, strokeCb);
+          });
       }
-      const canvasGradient = context.createConicGradient(x + (color.x ?? 0) * w, y + (color.y ?? 0) * h, color.startAngle, color.endAngle);
-      color.stops.forEach(stop => {
-          canvasGradient.addColorStop(stop.offset, stop.color);
-      });
-      let deltaAngle;
-      return canvasGradient.GetPattern(w + x, h + y, deltaAngle);
-  }
+      draw(arc, renderService, drawContext, params) {
+          const { context } = drawContext;
+          if (!context) {
+              return;
+          }
+          const arcAttribute = getTheme(arc, params?.theme).arc;
+          context.highPerformanceSave();
+          let { x = arcAttribute.x, y = arcAttribute.y } = arc.attribute;
+          if (!arc.transMatrix.onlyTranslate()) {
+              x = 0;
+              y = 0;
+              context.transformFromMatrix(arc.transMatrix, true);
+          }
+          else {
+              const point = arc.getOffsetXY(arcAttribute);
+              x += point.x;
+              y += point.y;
+              context.setTransformForCurrent();
+          }
+          if (drawPathProxy(arc, context, x, y, drawContext, params)) {
+              context.highPerformanceRestore();
+              return;
+          }
+          this.drawShape(arc, context, x, y, drawContext, params);
+          context.highPerformanceRestore();
+      }
+  };
+  exports.DefaultCanvasArcRender = __decorate([
+      injectable(),
+      __param(0, inject(ContributionProvider)),
+      __param(0, named(ArcRenderContribution)),
+      __metadata("design:paramtypes", [Object])
+  ], exports.DefaultCanvasArcRender);
+
+  exports.DefaultCanvasCircleRender = class DefaultCanvasCircleRender {
+      circleRenderContribitions;
+      type;
+      numberType = CIRCLE_NUMBER_TYPE;
+      _circleRenderContribitions;
+      constructor(circleRenderContribitions) {
+          this.circleRenderContribitions = circleRenderContribitions;
+      }
+      drawShape(circle, context, x, y, drawContext, params, fillCb, strokeCb) {
+          const circleAttribute = getTheme(circle, params?.theme).circle;
+          const { fill = circleAttribute.fill, background, stroke = circleAttribute.stroke, radius = circleAttribute.radius, startAngle = circleAttribute.startAngle, endAngle = circleAttribute.endAngle, fillOpacity = circleAttribute.fillOpacity, strokeOpacity = circleAttribute.strokeOpacity, opacity = circleAttribute.opacity, lineWidth = circleAttribute.lineWidth, visible = circleAttribute.visible, x: originX = circleAttribute.x, y: originY = circleAttribute.y } = circle.attribute;
+          const fVisible = fillVisible(opacity, fillOpacity);
+          const sVisible = strokeVisible(opacity, strokeOpacity);
+          const doFill = runFill(fill);
+          const doStroke = runStroke(stroke, lineWidth);
+          if (!(circle.valid && visible)) {
+              return;
+          }
+          if (!(doFill || doStroke || background)) {
+              return;
+          }
+          if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
+              return;
+          }
+          context.beginPath();
+          context.arc(x, y, radius, startAngle, endAngle);
+          context.closePath();
+          if (!this._circleRenderContribitions) {
+              this._circleRenderContribitions = this.circleRenderContribitions.getContributions() || [];
+              this._circleRenderContribitions.sort((a, b) => b.order - a.order);
+          }
+          this._circleRenderContribitions.forEach(c => {
+              if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
+                  c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, drawContext, fillCb, strokeCb);
+              }
+          });
+          context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
+          if (doFill) {
+              if (fillCb) {
+                  fillCb(context, circle.attribute, circleAttribute);
+              }
+              else if (fVisible) {
+                  context.setCommonStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
+                  context.fill();
+              }
+          }
+          if (doStroke) {
+              if (strokeCb) {
+                  strokeCb(context, circle.attribute, circleAttribute);
+              }
+              else if (sVisible) {
+                  context.setStrokeStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
+                  context.stroke();
+              }
+          }
+          this._circleRenderContribitions.forEach(c => {
+              if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
+                  c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, drawContext, fillCb, strokeCb);
+              }
+          });
+      }
+      draw(circle, renderService, drawContext, params) {
+          const { context } = drawContext;
+          if (!context) {
+              return;
+          }
+          context.highPerformanceSave();
+          const circleAttribute = getTheme(circle, params?.theme).circle;
+          let { x = circleAttribute.x, y = circleAttribute.y } = circle.attribute;
+          if (!circle.transMatrix.onlyTranslate()) {
+              x = 0;
+              y = 0;
+              context.transformFromMatrix(circle.transMatrix, true);
+          }
+          else {
+              const point = circle.getOffsetXY(circleAttribute);
+              x += point.x;
+              y += point.y;
+              context.setTransformForCurrent();
+          }
+          if (drawPathProxy(circle, context, x, y, drawContext, params)) {
+              context.highPerformanceRestore();
+              return;
+          }
+          this.drawShape(circle, context, x, y, drawContext, params);
+          context.highPerformanceRestore();
+      }
+  };
+  exports.DefaultCanvasCircleRender = __decorate([
+      injectable(),
+      __param(0, inject(ContributionProvider)),
+      __param(0, named(CircleRenderContribution)),
+      __metadata("design:paramtypes", [Object])
+  ], exports.DefaultCanvasCircleRender);
 
   const CIRCLE_UPDATE_TAG_KEY = ['radius', 'startAngle', 'endAngle', ...GRAPHIC_UPDATE_TAG_KEY];
   class Circle extends Graphic {
@@ -17649,7 +17904,7 @@
               return false;
           }
           this.tryUpdateAABBBounds();
-          return this.clipedText === attribute.text;
+          return this.clipedText !== attribute.text;
       }
       get multilineLayout() {
           if (!Array.isArray(this.attribute.text)) {
@@ -22222,723 +22477,6 @@
       text.setAttributes(params);
       return text.AABBBounds;
   }
-  const richText = createRichText({});
-  function getRichTextBounds(params) {
-      richText.setAttributes(params);
-      return richText.AABBBounds;
-  }
-
-  class DefaultCanvasAllocate {
-      pools = [];
-      allocate(data) {
-          if (!this.pools.length) {
-              return wrapCanvas({
-                  nativeCanvas: application.global.createCanvas(data),
-                  ...data
-              });
-          }
-          const m = this.pools.pop();
-          m.resize(data.width, data.height);
-          m.dpr = data.dpr;
-          return m;
-      }
-      allocateByObj(canvas) {
-          if (!this.pools.length) {
-              const data = {
-                  width: canvas.width / canvas.dpr,
-                  height: canvas.height / canvas.dpr,
-                  dpr: canvas.dpr
-              };
-              return wrapCanvas({
-                  nativeCanvas: application.global.createCanvas(data),
-                  ...data
-              });
-          }
-          const m = this.pools.pop();
-          m.width = canvas.width;
-          m.height = canvas.height;
-          return m;
-      }
-      free(d) {
-          this.pools.push(d);
-      }
-      get length() {
-          return this.pools.length;
-      }
-      release(...params) {
-          this.pools = [];
-      }
-  }
-  const canvasAllocate = new DefaultCanvasAllocate();
-
-  exports.DefaultBaseBackgroundRenderContribution = class DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, fillCb, strokeCb, options) {
-          const { background } = graphic.attribute;
-          if (!background) {
-              return;
-          }
-          if (graphic.backgroundImg && graphic.resources) {
-              const res = graphic.resources.get(background);
-              if (res.state !== 'success' || !res.data) {
-                  return;
-              }
-              context.save();
-              if (graphic.parent && !graphic.transMatrix.onlyTranslate()) {
-                  const groupAttribute = getTheme(graphic.parent).group;
-                  const { scrollX = groupAttribute.scrollX, scrollY = groupAttribute.scrollY } = graphic.parent.attribute;
-                  context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
-                  context.translate(scrollX, scrollY);
-              }
-              context.clip();
-              const b = graphic.AABBBounds;
-              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-              context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
-              context.restore();
-              if (!graphic.transMatrix.onlyTranslate()) {
-                  context.setTransformForCurrent();
-              }
-          }
-          else {
-              context.highPerformanceSave();
-              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-              context.fillStyle = background;
-              context.fill();
-              context.highPerformanceRestore();
-          }
-      }
-  };
-  exports.DefaultBaseBackgroundRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultBaseBackgroundRenderContribution);
-  exports.DefaultBaseTextureRenderContribution = class DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      textureMap;
-      order = 10;
-      createCommonPattern(size, padding, color, targetContext, cb) {
-          const r = (size - padding * 2) / 2;
-          const canvas = canvasAllocate.allocate({ width: size, height: size, dpr: 1 });
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-              return null;
-          }
-          ctx.clearRect(0, 0, size, size);
-          cb(r, ctx);
-          const pattern = targetContext.createPattern(canvas.nativeCanvas, 'repeat');
-          canvasAllocate.free(canvas);
-          return pattern;
-      }
-      createCirclePattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              ctx.fillStyle = color;
-              ctx.arc(r, r, r, 0, pi2);
-              ctx.fill();
-          });
-      }
-      createDiamondPattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              const x = size / 2;
-              const y = x;
-              ctx.fillStyle = color;
-              ctx.moveTo(x, y - r);
-              ctx.lineTo(r + x, y);
-              ctx.lineTo(x, y + r);
-              ctx.lineTo(x - r, y);
-              ctx.closePath();
-              ctx.fill();
-          });
-      }
-      createRectPattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              const x = padding;
-              const y = x;
-              ctx.fillStyle = color;
-              ctx.fillRect(x, y, r * 2, r * 2);
-          });
-      }
-      createVerticalLinePattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              const x = padding;
-              const y = 0;
-              ctx.fillStyle = color;
-              ctx.fillRect(x, y, r * 2, size);
-          });
-      }
-      createHorizontalLinePattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              const x = 0;
-              const y = padding;
-              ctx.fillStyle = color;
-              ctx.fillRect(x, y, size, r * 2);
-          });
-      }
-      createBiasLRLinePattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              ctx.strokeStyle = color;
-              ctx.lineWidth = r;
-              ctx.moveTo(0, 0);
-              ctx.lineTo(size, size);
-              const dx = size / 2;
-              const dy = -dx;
-              ctx.moveTo(dx, dy);
-              ctx.lineTo(dx + size, dy + size);
-              ctx.moveTo(-dx, -dy);
-              ctx.lineTo(-dx + size, -dy + size);
-              ctx.stroke();
-          });
-      }
-      createBiasRLLinePattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              ctx.strokeStyle = color;
-              ctx.lineWidth = r;
-              ctx.moveTo(size, 0);
-              ctx.lineTo(0, size);
-              const dx = size / 2;
-              const dy = dx;
-              ctx.moveTo(size + dx, dy);
-              ctx.lineTo(dx, dy + size);
-              ctx.moveTo(size - dx, -dy);
-              ctx.lineTo(-dx, -dy + size);
-              ctx.stroke();
-          });
-      }
-      createGridPattern(size, padding, color, targetContext) {
-          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
-              const x = padding;
-              const y = x;
-              ctx.fillStyle = color;
-              ctx.fillRect(x, y, r, r);
-              ctx.fillRect(x + r, y + r, r, r);
-          });
-      }
-      initTextureMap(ctx, stage) {
-          this.textureMap = new Map();
-      }
-      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, fillCb, strokeCb, options) {
-          if (!this.textureMap) {
-              this.initTextureMap(context, graphic.stage);
-          }
-          const { texture = graphicAttribute.texture, textureColor = graphicAttribute.textureColor, textureSize = graphicAttribute.textureSize, texturePadding = graphicAttribute.texturePadding } = graphic.attribute;
-          if (!texture) {
-              return;
-          }
-          let pattern = this.textureMap.get(texture);
-          if (!pattern) {
-              switch (texture) {
-                  case 'circle':
-                      pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'diamond':
-                      pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'rect':
-                      pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'vertical-line':
-                      pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'horizontal-line':
-                      pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'bias-lr':
-                      pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'bias-rl':
-                      pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'grid':
-                      pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-              }
-          }
-          if (pattern) {
-              context.highPerformanceSave();
-              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-              context.fillStyle = pattern;
-              context.fill();
-              context.highPerformanceRestore();
-          }
-      }
-  };
-  exports.DefaultBaseTextureRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultBaseTextureRenderContribution);
-
-  const ArcRenderContribution = Symbol.for('ArcRenderContribution');
-  exports.DefaultArcRenderContribution = class DefaultArcRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, fillCb, strokeCb) {
-          const { innerRadius = arcAttribute.innerRadius, outerRadius = arcAttribute.outerRadius, startAngle = arcAttribute.startAngle, endAngle = arcAttribute.endAngle, opacity = arcAttribute.opacity, outerBorder, innerBorder } = arc.attribute;
-          if (outerBorder) {
-              const { distance = arcAttribute.outerBorder.distance } = outerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const deltaAngle = distance / outerRadius;
-              arc.setAttributes({
-                  outerRadius: outerRadius + d,
-                  innerRadius: innerRadius - d,
-                  startAngle: startAngle - deltaAngle,
-                  endAngle: endAngle + deltaAngle
-              });
-              context.beginPath();
-              drawArcPath$1(arc, context, x, y, outerRadius + d, innerRadius - d);
-              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
-              if (strokeCb) {
-                  strokeCb(context, outerBorder, arcAttribute.outerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = arcAttribute.outerBorder.opacity;
-                  arcAttribute.outerBorder.opacity = opacity;
-                  context.setStrokeStyle(arc, outerBorder, x, y, arcAttribute.outerBorder);
-                  arcAttribute.outerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-          if (innerBorder) {
-              const { distance = arcAttribute.innerBorder.distance } = innerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const deltaAngle = distance / outerRadius;
-              arc.setAttributes({
-                  outerRadius: outerRadius - d,
-                  innerRadius: innerRadius + d,
-                  startAngle: startAngle + deltaAngle,
-                  endAngle: endAngle - deltaAngle
-              });
-              context.beginPath();
-              drawArcPath$1(arc, context, x, y, outerRadius - d, innerRadius + d);
-              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
-              if (strokeCb) {
-                  strokeCb(context, innerBorder, arcAttribute.innerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = arcAttribute.innerBorder.opacity;
-                  arcAttribute.innerBorder.opacity = opacity;
-                  context.setStrokeStyle(arc, innerBorder, x, y, arcAttribute.innerBorder);
-                  arcAttribute.innerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-          arc.setAttributes({ outerRadius: outerRadius, innerRadius: innerRadius, startAngle, endAngle });
-      }
-  };
-  exports.DefaultArcRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultArcRenderContribution);
-  exports.DefaultArcBackgroundRenderContribution = class DefaultArcBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  exports.DefaultArcBackgroundRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultArcBackgroundRenderContribution);
-  exports.DefaultArcTextureRenderContribution = class DefaultArcTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  };
-  exports.DefaultArcTextureRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultArcTextureRenderContribution);
-
-  exports.DefaultCanvasArcRender = class DefaultCanvasArcRender {
-      arcRenderContribitions;
-      type;
-      numberType = ARC_NUMBER_TYPE;
-      _arcRenderContribitions;
-      constructor(arcRenderContribitions) {
-          this.arcRenderContribitions = arcRenderContribitions;
-      }
-      drawArcTailCapPath(arc, context, cx, cy, outerRadius, innerRadius, _sa, _ea) {
-          const capAngle = _ea - _sa;
-          const data = arc.getParsedAngle();
-          const startAngle = data.startAngle;
-          let endAngle = data.endAngle;
-          endAngle = _ea;
-          const deltaAngle = abs(endAngle - startAngle);
-          const clockwise = endAngle > startAngle;
-          let collapsedToLine = false;
-          if (outerRadius < innerRadius) {
-              const temp = outerRadius;
-              outerRadius = innerRadius;
-              innerRadius = temp;
-          }
-          const cornerRadius = arc.getParsedCornerRadius();
-          const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } = arc.getParsePadAngle(startAngle, endAngle);
-          const outerCornerRadiusStart = cornerRadius;
-          const outerCornerRadiusEnd = cornerRadius;
-          const innerCornerRadiusEnd = cornerRadius;
-          const innerCornerRadiusStart = cornerRadius;
-          const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
-          const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
-          let limitedOcr = maxOuterCornerRadius;
-          let limitedIcr = maxInnerCornerRadius;
-          const xors = outerRadius * cos(outerStartAngle);
-          const yors = outerRadius * sin(outerStartAngle);
-          const xire = innerRadius * cos(innerEndAngle);
-          const yire = innerRadius * sin(innerEndAngle);
-          let xore;
-          let yore;
-          let xirs;
-          let yirs;
-          if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
-              xore = outerRadius * cos(outerEndAngle);
-              yore = outerRadius * sin(outerEndAngle);
-              xirs = innerRadius * cos(innerStartAngle);
-              yirs = innerRadius * sin(innerStartAngle);
-              if (deltaAngle < pi) {
-                  const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
-                  if (oc) {
-                      const ax = xors - oc[0];
-                      const ay = yors - oc[1];
-                      const bx = xore - oc[0];
-                      const by = yore - oc[1];
-                      const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
-                      const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-                      limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
-                      limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
-                  }
-              }
-          }
-          if (limitedOcr > epsilon) {
-              const cornerRadiusStart = min(outerCornerRadiusStart, limitedOcr);
-              const cornerRadiusEnd = min(outerCornerRadiusEnd, limitedOcr);
-              const t0 = cornerTangents(xirs, yirs, xors, yors, outerRadius, cornerRadiusStart, Number(clockwise));
-              const t1 = cornerTangents(xore, yore, xire, yire, outerRadius, cornerRadiusEnd, Number(clockwise));
-              if (limitedOcr < maxOuterCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
-                  context.moveTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-                  context.arc(cx + t0.cx, cy + t0.cy, limitedOcr, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !clockwise);
-              }
-              else {
-                  const a1 = endAngle - capAngle - 0.03;
-                  const a2 = atan2(t1.y11, t1.x11);
-                  context.arc(cx, cy, outerRadius, a1, a2, !clockwise);
-                  cornerRadiusEnd > 0 &&
-                      context.arc(cx + t1.cx, cy + t1.cy, cornerRadiusEnd, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !clockwise);
-              }
-          }
-          else {
-              context.moveTo(cx + xors, cy + yors);
-          }
-          if (!(innerRadius > epsilon) || innerDeltaAngle < 0.001) {
-              context.lineTo(cx + xire, cy + yire);
-              collapsedToLine = true;
-          }
-          else if (limitedIcr > epsilon) {
-              const cornerRadiusStart = min(innerCornerRadiusStart, limitedIcr);
-              const cornerRadiusEnd = min(innerCornerRadiusEnd, limitedIcr);
-              const t0 = cornerTangents(xire, yire, xore, yore, innerRadius, -cornerRadiusEnd, Number(clockwise));
-              const t1 = cornerTangents(xors, yors, xirs, yirs, innerRadius, -cornerRadiusStart, Number(clockwise));
-              context.lineTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-              if (limitedIcr < maxInnerCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
-                  const arcEndAngle = atan2(t1.y01, t1.x01);
-                  context.arc(cx + t0.cx, cy + t0.cy, limitedIcr, atan2(t0.y01, t0.x01), arcEndAngle, !clockwise);
-              }
-              else {
-                  cornerRadiusEnd > 0 &&
-                      context.arc(cx + t0.cx, cy + t0.cy, cornerRadiusEnd, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !clockwise);
-                  const a1 = atan2(t0.cy + t0.y11, t0.cx + t0.x11);
-                  const a2 = endAngle - capAngle - 0.03;
-                  context.arc(cx, cy, innerRadius, a1, a2, clockwise);
-              }
-          }
-          else {
-              context.lineTo(cx + innerRadius * cos(innerStartAngle), cy + innerRadius * sin(innerStartAngle));
-          }
-          return collapsedToLine;
-      }
-      drawShape(arc, context, x, y, drawContext, params, fillCb, strokeCb) {
-          const arcAttribute = getTheme(arc, params?.theme).arc;
-          const { fill = arcAttribute.fill, background, stroke = arcAttribute.stroke, opacity = arcAttribute.opacity, fillOpacity = arcAttribute.fillOpacity, lineWidth = arcAttribute.lineWidth, strokeOpacity = arcAttribute.strokeOpacity, visible = arcAttribute.visible, x: originX = arcAttribute.x, y: originY = arcAttribute.y } = arc.attribute;
-          const fVisible = fillVisible(opacity, fillOpacity);
-          const sVisible = strokeVisible(opacity, strokeOpacity);
-          const doFill = runFill(fill);
-          const doStroke = runStroke(stroke, lineWidth);
-          if (!(arc.valid && visible)) {
-              return;
-          }
-          if (!(doFill || doStroke || background)) {
-              return;
-          }
-          if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-              return;
-          }
-          const { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius, cap = arcAttribute.cap, forceShowCap = arcAttribute.forceShowCap } = arc.attribute;
-          const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
-          if (doFill || isFullStroke || background) {
-              context.beginPath();
-              drawArcPath$1(arc, context, x, y, outerRadius, innerRadius);
-              if (!this._arcRenderContribitions) {
-                  this._arcRenderContribitions = this.arcRenderContribitions.getContributions() || [];
-                  this._arcRenderContribitions.sort((a, b) => b.order - a.order);
-              }
-              this._arcRenderContribitions.forEach(c => {
-                  if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                      c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, fillCb, strokeCb);
-                  }
-              });
-              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
-              if (doFill) {
-                  if (fillCb) {
-                      fillCb(context, arc.attribute, arcAttribute);
-                  }
-                  else if (fVisible) {
-                      context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-                      context.fill();
-                  }
-              }
-              if (doStroke && isFullStroke) {
-                  if (strokeCb) {
-                      strokeCb(context, arc.attribute, arcAttribute);
-                  }
-                  else if (sVisible) {
-                      context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-                      context.stroke();
-                  }
-              }
-          }
-          if (!isFullStroke && doStroke) {
-              context.beginPath();
-              drawArcPath$1(arc, context, x, y, outerRadius, innerRadius, arrayStroke);
-              if (strokeCb) {
-                  strokeCb(context, arc.attribute, arcAttribute);
-              }
-              else if (sVisible) {
-                  context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
-                  context.stroke();
-              }
-          }
-          if (cap && forceShowCap) {
-              const { startAngle: sa, endAngle: ea } = arc.getParsedAngle();
-              const deltaAngle = abs(ea - sa);
-              if (deltaAngle >= pi2 - epsilon) {
-                  context.beginPath();
-                  const capWidth = Math.abs(outerRadius - innerRadius) / 2;
-                  const capAngle = capWidth / outerRadius;
-                  const { endAngle = arcAttribute.endAngle, fill = arcAttribute.fill } = arc.attribute;
-                  const startAngle = endAngle;
-                  this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
-                  if (doFill) {
-                      const color = fill;
-                      if (color.gradient === 'conical') {
-                          const lastColor = getConicGradientAt(0, 0, endAngle, color);
-                          if (fillCb) ;
-                          else if (fillVisible) {
-                              context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-                              context.fillStyle = lastColor;
-                              context.fill();
-                          }
-                      }
-                  }
-                  if (doStroke) {
-                      if (strokeCb) ;
-                      else if (sVisible) {
-                          context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
-                          context.stroke();
-                      }
-                  }
-              }
-          }
-          if (!this._arcRenderContribitions) {
-              this._arcRenderContribitions = this.arcRenderContribitions.getContributions() || [];
-          }
-          this._arcRenderContribitions.forEach(c => {
-              if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, fillCb, strokeCb);
-              }
-          });
-      }
-      draw(arc, renderService, drawContext, params) {
-          const { context } = drawContext;
-          if (!context) {
-              return;
-          }
-          const arcAttribute = getTheme(arc, params?.theme).arc;
-          context.highPerformanceSave();
-          let { x = arcAttribute.x, y = arcAttribute.y } = arc.attribute;
-          if (!arc.transMatrix.onlyTranslate()) {
-              x = 0;
-              y = 0;
-              context.transformFromMatrix(arc.transMatrix, true);
-          }
-          else {
-              const point = arc.getOffsetXY(arcAttribute);
-              x += point.x;
-              y += point.y;
-              context.setTransformForCurrent();
-          }
-          if (drawPathProxy(arc, context, x, y, drawContext, params)) {
-              context.highPerformanceRestore();
-              return;
-          }
-          this.drawShape(arc, context, x, y, drawContext, params);
-          context.highPerformanceRestore();
-      }
-  };
-  exports.DefaultCanvasArcRender = __decorate([
-      injectable(),
-      __param(0, inject(ContributionProvider)),
-      __param(0, named(ArcRenderContribution)),
-      __metadata("design:paramtypes", [Object])
-  ], exports.DefaultCanvasArcRender);
-
-  const CircleRenderContribution = Symbol.for('CircleRenderContribution');
-  exports.DefaultCircleRenderContribution = class DefaultCircleRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, fillCb, strokeCb) {
-          const { radius = circleAttribute.radius, startAngle = circleAttribute.startAngle, endAngle = circleAttribute.endAngle, opacity = circleAttribute.opacity, outerBorder, innerBorder } = circle.attribute;
-          if (outerBorder) {
-              const { distance = circleAttribute.outerBorder.distance } = outerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const dw = d;
-              context.beginPath();
-              context.arc(x, y, radius + dw, startAngle, endAngle);
-              context.closePath();
-              context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
-              if (strokeCb) {
-                  strokeCb(context, outerBorder, circleAttribute.outerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = circleAttribute.outerBorder.opacity;
-                  circleAttribute.outerBorder.opacity = opacity;
-                  context.setStrokeStyle(circle, outerBorder, x, y, circleAttribute.outerBorder);
-                  circleAttribute.outerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-          if (innerBorder) {
-              const { distance = circleAttribute.innerBorder.distance } = innerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const dw = d;
-              context.beginPath();
-              context.arc(x, y, radius - dw, startAngle, endAngle);
-              context.closePath();
-              context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
-              if (strokeCb) {
-                  strokeCb(context, innerBorder, circleAttribute.innerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = circleAttribute.innerBorder.opacity;
-                  circleAttribute.innerBorder.opacity = opacity;
-                  context.setStrokeStyle(circle, innerBorder, x, y, circleAttribute.innerBorder);
-                  circleAttribute.innerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-      }
-  };
-  exports.DefaultCircleRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultCircleRenderContribution);
-  exports.DefaultCircleBackgroundRenderContribution = class DefaultCircleBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  exports.DefaultCircleBackgroundRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultCircleBackgroundRenderContribution);
-  exports.DefaultCircleTextureRenderContribution = class DefaultCircleTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  };
-  exports.DefaultCircleTextureRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultCircleTextureRenderContribution);
-
-  exports.DefaultCanvasCircleRender = class DefaultCanvasCircleRender {
-      circleRenderContribitions;
-      type;
-      numberType = CIRCLE_NUMBER_TYPE;
-      _circleRenderContribitions;
-      constructor(circleRenderContribitions) {
-          this.circleRenderContribitions = circleRenderContribitions;
-      }
-      drawShape(circle, context, x, y, drawContext, params, fillCb, strokeCb) {
-          const circleAttribute = getTheme(circle, params?.theme).circle;
-          const { fill = circleAttribute.fill, background, stroke = circleAttribute.stroke, radius = circleAttribute.radius, startAngle = circleAttribute.startAngle, endAngle = circleAttribute.endAngle, fillOpacity = circleAttribute.fillOpacity, strokeOpacity = circleAttribute.strokeOpacity, opacity = circleAttribute.opacity, lineWidth = circleAttribute.lineWidth, visible = circleAttribute.visible, x: originX = circleAttribute.x, y: originY = circleAttribute.y } = circle.attribute;
-          const fVisible = fillVisible(opacity, fillOpacity);
-          const sVisible = strokeVisible(opacity, strokeOpacity);
-          const doFill = runFill(fill);
-          const doStroke = runStroke(stroke, lineWidth);
-          if (!(circle.valid && visible)) {
-              return;
-          }
-          if (!(doFill || doStroke || background)) {
-              return;
-          }
-          if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-              return;
-          }
-          context.beginPath();
-          context.arc(x, y, radius, startAngle, endAngle);
-          context.closePath();
-          if (!this._circleRenderContribitions) {
-              this._circleRenderContribitions = this.circleRenderContribitions.getContributions() || [];
-              this._circleRenderContribitions.sort((a, b) => b.order - a.order);
-          }
-          this._circleRenderContribitions.forEach(c => {
-              if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, fillCb, strokeCb);
-              }
-          });
-          context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
-          if (doFill) {
-              if (fillCb) {
-                  fillCb(context, circle.attribute, circleAttribute);
-              }
-              else if (fVisible) {
-                  context.setCommonStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
-                  context.fill();
-              }
-          }
-          if (doStroke) {
-              if (strokeCb) {
-                  strokeCb(context, circle.attribute, circleAttribute);
-              }
-              else if (sVisible) {
-                  context.setStrokeStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
-                  context.stroke();
-              }
-          }
-          this._circleRenderContribitions.forEach(c => {
-              if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, fillCb, strokeCb);
-              }
-          });
-      }
-      draw(circle, renderService, drawContext, params) {
-          const { context } = drawContext;
-          if (!context) {
-              return;
-          }
-          context.highPerformanceSave();
-          const circleAttribute = getTheme(circle, params?.theme).circle;
-          let { x = circleAttribute.x, y = circleAttribute.y } = circle.attribute;
-          if (!circle.transMatrix.onlyTranslate()) {
-              x = 0;
-              y = 0;
-              context.transformFromMatrix(circle.transMatrix, true);
-          }
-          else {
-              const point = circle.getOffsetXY(circleAttribute);
-              x += point.x;
-              y += point.y;
-              context.setTransformForCurrent();
-          }
-          if (drawPathProxy(circle, context, x, y, drawContext, params)) {
-              context.highPerformanceRestore();
-              return;
-          }
-          this.drawShape(circle, context, x, y, drawContext, params);
-          context.highPerformanceRestore();
-      }
-  };
-  exports.DefaultCanvasCircleRender = __decorate([
-      injectable(),
-      __param(0, inject(ContributionProvider)),
-      __param(0, named(CircleRenderContribution)),
-      __metadata("design:paramtypes", [Object])
-  ], exports.DefaultCanvasCircleRender);
 
   let BaseRender = class BaseRender {
       camera;
@@ -23305,68 +22843,6 @@
       injectable()
   ], exports.DefaultCanvasLineRender);
 
-  const AreaRenderContribution = Symbol.for('AreaRenderContribution');
-  let DefaultAreaBackgroundRenderContribution = class DefaultAreaBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  DefaultAreaBackgroundRenderContribution = __decorate([
-      injectable()
-  ], DefaultAreaBackgroundRenderContribution);
-  let DefaultAreaTextureRenderContribution = class DefaultAreaTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, fillCb, strokeCb, options) {
-          if (!this.textureMap) {
-              this.initTextureMap(context, graphic.stage);
-          }
-          const { attribute = graphic.attribute } = options || {};
-          const { texture = graphic.attribute.texture ?? getAttributeFromDefaultAttrList(graphicAttribute, 'texture'), textureColor = graphic.attribute.textureColor ??
-              getAttributeFromDefaultAttrList(graphicAttribute, 'textureColor'), textureSize = graphic.attribute.textureSize ?? getAttributeFromDefaultAttrList(graphicAttribute, 'textureSize'), texturePadding = graphic.attribute.texturePadding ??
-              getAttributeFromDefaultAttrList(graphicAttribute, 'texturePadding') } = attribute;
-          if (!texture) {
-              return;
-          }
-          let pattern = this.textureMap.get(texture);
-          if (!pattern) {
-              switch (texture) {
-                  case 'circle':
-                      pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'diamond':
-                      pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'rect':
-                      pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'vertical-line':
-                      pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'horizontal-line':
-                      pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'bias-lr':
-                      pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'bias-rl':
-                      pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
-                      break;
-                  case 'grid':
-                      pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
-                      break;
-              }
-          }
-          if (pattern) {
-              context.highPerformanceSave();
-              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-              context.fillStyle = pattern;
-              context.fill();
-              context.highPerformanceRestore();
-          }
-      }
-  };
-  DefaultAreaTextureRenderContribution = __decorate([
-      injectable()
-  ], DefaultAreaTextureRenderContribution);
-
   function drawAreaSegments(path, segPath, percent, params) {
       const { top, bottom } = segPath;
       if (percent >= 1) {
@@ -23644,7 +23120,7 @@
                       if (skip) {
                           return;
                       }
-                      skip = this.drawSegmentItem(context, cache, !!fill, fillOpacity, area.attribute.segments[index], [areaAttribute, area.attribute], clipRange, x, y, z, area, fillCb);
+                      skip = this.drawSegmentItem(context, cache, !!fill, fillOpacity, area.attribute.segments[index], [areaAttribute, area.attribute], clipRange, x, y, z, area, drawContext, fillCb);
                   });
               }
               else {
@@ -23660,13 +23136,13 @@
                       const _cr = (totalDrawLength - drawedLengthUntilLast) / curSegLength;
                       drawedLengthUntilLast += curSegLength;
                       if (_cr > 0) {
-                          skip = this.drawSegmentItem(context, cache, !!fill, fillOpacity, area.attribute.segments[index], [areaAttribute, area.attribute], min(_cr, 1), x, y, z, area, fillCb);
+                          skip = this.drawSegmentItem(context, cache, !!fill, fillOpacity, area.attribute.segments[index], [areaAttribute, area.attribute], min(_cr, 1), x, y, z, area, drawContext, fillCb);
                       }
                   });
               }
           }
           else {
-              this.drawSegmentItem(context, area.cacheArea, !!fill, fillOpacity, area.attribute, areaAttribute, clipRange, x, y, z, area, fillCb);
+              this.drawSegmentItem(context, area.cacheArea, !!fill, fillOpacity, area.attribute, areaAttribute, clipRange, x, y, z, area, drawContext, fillCb);
           }
       }
       draw(area, renderService, drawContext, params) {
@@ -23692,7 +23168,7 @@
           this.drawShape(area, context, x, y, drawContext, params);
           context.highPerformanceRestore();
       }
-      drawSegmentItem(context, cache, fill, fillOpacity, attribute, defaultAttribute, clipRange, offsetX, offsetY, offsetZ, area, fillCb) {
+      drawSegmentItem(context, cache, fill, fillOpacity, attribute, defaultAttribute, clipRange, offsetX, offsetY, offsetZ, area, drawContext, fillCb) {
           context.beginPath();
           const ret = false;
           drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
@@ -23706,7 +23182,7 @@
           }
           this._areaRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(area, context, offsetX, offsetY, !!fillOpacity, false, fill, false, defaultAttribute, fillCb, null, { attribute });
+                  c.drawShape(area, context, offsetX, offsetY, !!fillOpacity, false, fill, false, defaultAttribute, drawContext, fillCb, null, { attribute });
               }
           });
           context.setShadowStyle && context.setShadowStyle(area, attribute, defaultAttribute);
@@ -23725,7 +23201,7 @@
           }
           this._areaRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(area, context, offsetX, offsetY, !!fillOpacity, false, fill, false, defaultAttribute, fillCb, null, { attribute });
+                  c.drawShape(area, context, offsetX, offsetY, !!fillOpacity, false, fill, false, defaultAttribute, drawContext, fillCb, null, { attribute });
               }
           });
           return ret;
@@ -23737,20 +23213,6 @@
       __param(0, named(AreaRenderContribution)),
       __metadata("design:paramtypes", [Object])
   ], exports.DefaultCanvasAreaRender);
-
-  const PathRenderContribution = Symbol.for('PathRenderContribution');
-  let DefaultPathBackgroundRenderContribution = class DefaultPathBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  DefaultPathBackgroundRenderContribution = __decorate([
-      injectable()
-  ], DefaultPathBackgroundRenderContribution);
-  let DefaultPathTextureRenderContribution = class DefaultPathTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  };
-  DefaultPathTextureRenderContribution = __decorate([
-      injectable()
-  ], DefaultPathTextureRenderContribution);
 
   exports.DefaultCanvasPathRender = class DefaultCanvasPathRender extends BaseRender {
       pathRenderContribitions;
@@ -23792,7 +23254,7 @@
           }
           this._pathRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, fillCb, strokeCb);
+                  c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, drawContext, fillCb, strokeCb);
               }
           });
           context.setShadowStyle && context.setShadowStyle(path, path.attribute, pathAttribute);
@@ -23816,7 +23278,7 @@
           }
           this._pathRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, fillCb, strokeCb);
+                  c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, drawContext, fillCb, strokeCb);
               }
           });
       }
@@ -23937,140 +23399,6 @@
       return path;
   }
 
-  const RectRenderContribution = Symbol.for('RectRenderContribution');
-  exports.DefaultRectRenderContribution = class DefaultRectRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, fillCb, strokeCb) {
-          const { width = rectAttribute.width, height = rectAttribute.height, cornerRadius = rectAttribute.cornerRadius, opacity = rectAttribute.opacity, outerBorder, innerBorder } = rect.attribute;
-          if (outerBorder) {
-              const { distance = rectAttribute.outerBorder.distance } = outerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const nextX = x - d;
-              const nextY = y - d;
-              const dw = d * 2;
-              if (cornerRadius === 0 || (isArray(cornerRadius) && cornerRadius.every(num => num === 0))) {
-                  context.beginPath();
-                  context.rect(nextX, nextY, width + dw, height + dw);
-              }
-              else {
-                  context.beginPath();
-                  createRectPath(context, nextX, nextY, width + dw, height + dw, cornerRadius);
-              }
-              context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
-              if (strokeCb) {
-                  strokeCb(context, outerBorder, rectAttribute.outerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = rectAttribute.outerBorder.opacity;
-                  rectAttribute.outerBorder.opacity = opacity;
-                  context.setStrokeStyle(rect, outerBorder, x, y, rectAttribute.outerBorder);
-                  rectAttribute.outerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-          if (innerBorder) {
-              const { distance = rectAttribute.innerBorder.distance } = innerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              const nextX = x + d;
-              const nextY = y + d;
-              const dw = d * 2;
-              if (cornerRadius === 0 || (isArray(cornerRadius) && cornerRadius.every(num => num === 0))) {
-                  context.beginPath();
-                  context.rect(nextX, nextY, width - dw, height - dw);
-              }
-              else {
-                  context.beginPath();
-                  createRectPath(context, nextX, nextY, width - dw, height - dw, cornerRadius);
-              }
-              context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
-              if (strokeCb) {
-                  strokeCb(context, innerBorder, rectAttribute.innerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = rectAttribute.innerBorder.opacity;
-                  rectAttribute.innerBorder.opacity = opacity;
-                  context.setStrokeStyle(rect, innerBorder, x, y, rectAttribute.innerBorder);
-                  rectAttribute.innerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-      }
-  };
-  exports.DefaultRectRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultRectRenderContribution);
-  exports.DefaultRectBackgroundRenderContribution = class DefaultRectBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  exports.DefaultRectBackgroundRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultRectBackgroundRenderContribution);
-  exports.DefaultRectTextureRenderContribution = class DefaultRectTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  };
-  exports.DefaultRectTextureRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultRectTextureRenderContribution);
-  exports.SplitRectBeforeRenderContribution = class SplitRectBeforeRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, fillCb, strokeCb, doFillOrStroke) {
-          const { stroke = groupAttribute.stroke } = group.attribute;
-          if (Array.isArray(stroke) && stroke.some(s => s === false)) {
-              doFillOrStroke.doStroke = false;
-          }
-      }
-  };
-  exports.SplitRectBeforeRenderContribution = __decorate([
-      injectable()
-  ], exports.SplitRectBeforeRenderContribution);
-  exports.SplitRectAfterRenderContribution = class SplitRectAfterRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, fillCb, strokeCb) {
-          const { width = groupAttribute.width, height = groupAttribute.height, stroke = groupAttribute.stroke } = rect.attribute;
-          if (!(Array.isArray(stroke) && stroke.some(s => s === false))) {
-              return;
-          }
-          context.setStrokeStyle(rect, rect.attribute, x, y, groupAttribute);
-          context.beginPath();
-          context.moveTo(x, y);
-          if (stroke[0]) {
-              context.lineTo(x + width, y);
-          }
-          else {
-              context.moveTo(x + width, y);
-          }
-          if (stroke[1]) {
-              context.lineTo(x + width, y + height);
-          }
-          else {
-              context.moveTo(x + width, y + height);
-          }
-          if (stroke[2]) {
-              context.lineTo(x, y + height);
-          }
-          else {
-              context.moveTo(x, y + height);
-          }
-          if (stroke[3]) {
-              const adjustY = stroke[0] ? y - context.lineWidth / 2 : y;
-              context.lineTo(x, adjustY);
-          }
-          else {
-              context.moveTo(x, y);
-          }
-          context.stroke();
-      }
-  };
-  exports.SplitRectAfterRenderContribution = __decorate([
-      injectable()
-  ], exports.SplitRectAfterRenderContribution);
-
   exports.DefaultCanvasRectRender = class DefaultCanvasRectRender {
       rectRenderContribitions;
       type = 'rect';
@@ -24113,7 +23441,7 @@
           };
           this._rectRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, fillCb, strokeCb, doFillOrStroke);
+                  c.drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, drawContext, fillCb, strokeCb, doFillOrStroke);
               }
           });
           context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
@@ -24137,7 +23465,7 @@
           }
           this._rectRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, fillCb, strokeCb);
+                  c.drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, drawContext, fillCb, strokeCb);
               }
           });
       }
@@ -24174,67 +23502,6 @@
       __param(0, named(RectRenderContribution)),
       __metadata("design:paramtypes", [Object])
   ], exports.DefaultCanvasRectRender);
-
-  const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
-  exports.DefaultSymbolRenderContribution = class DefaultSymbolRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-      useStyle = true;
-      order = 0;
-      drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, fillCb, strokeCb) {
-          const { size = symbolAttribute.size, opacity = symbolAttribute.opacity, outerBorder, innerBorder } = symbol.attribute;
-          const parsedPath = symbol.getParsedPath();
-          if (!parsedPath) {
-              return;
-          }
-          if (outerBorder) {
-              const { distance = symbolAttribute.outerBorder.distance } = outerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              context.beginPath();
-              if (parsedPath.drawOffset(context, size, x, y, d) === false) {
-                  context.closePath();
-              }
-              context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
-              if (strokeCb) {
-                  strokeCb(context, outerBorder, symbolAttribute.outerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = symbolAttribute.outerBorder.opacity;
-                  symbolAttribute.outerBorder.opacity = opacity;
-                  context.setStrokeStyle(symbol, outerBorder, x, y, symbolAttribute.outerBorder);
-                  symbolAttribute.outerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-          if (innerBorder) {
-              const { distance = symbolAttribute.innerBorder.distance } = innerBorder;
-              const d = getScaledStroke(context, distance, context.dpr);
-              context.beginPath();
-              if (parsedPath.drawOffset(context, size, x, y, -d) === false) {
-                  context.closePath();
-              }
-              context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
-              if (strokeCb) {
-                  strokeCb(context, innerBorder, symbolAttribute.innerBorder);
-              }
-              else if (sVisible) {
-                  const lastOpacity = symbolAttribute.innerBorder.opacity;
-                  symbolAttribute.innerBorder.opacity = opacity;
-                  context.setStrokeStyle(symbol, innerBorder, x, y, symbolAttribute.innerBorder);
-                  symbolAttribute.innerBorder.opacity = lastOpacity;
-                  context.stroke();
-              }
-          }
-      }
-  };
-  exports.DefaultSymbolRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultSymbolRenderContribution);
-  class DefaultSymbolBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  }
-  class DefaultSymbolTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  }
 
   exports.DefaultCanvasSymbolRender = class DefaultCanvasSymbolRender extends BaseRender {
       symbolRenderContribitions;
@@ -24288,7 +23555,7 @@
           }
           this._symbolRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, fillCb, strokeCb);
+                  c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, drawContext, fillCb, strokeCb);
               }
           });
           context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
@@ -24312,7 +23579,7 @@
           }
           this._symbolRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, fillCb, strokeCb);
+                  c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, drawContext, fillCb, strokeCb);
               }
           });
       }
@@ -24347,9 +23614,16 @@
   ], exports.DefaultCanvasSymbolRender);
 
   exports.DefaultCanvasTextRender = class DefaultCanvasTextRender extends BaseRender {
+      textRenderContribitions;
       type;
       numberType = TEXT_NUMBER_TYPE;
       z;
+      _textBeforeRenderContribitions;
+      _textAfterRenderContribitions;
+      constructor(textRenderContribitions) {
+          super();
+          this.textRenderContribitions = textRenderContribitions;
+      }
       drawShape(text, context, x, y, drawContext, params, fillCb, strokeCb) {
           const textAttribute = getTheme(text, params?.theme).text;
           const { text: str, fill = textAttribute.fill, stroke = textAttribute.stroke, fillOpacity = textAttribute.fillOpacity, strokeOpacity = textAttribute.strokeOpacity, opacity = textAttribute.opacity, lineWidth = textAttribute.lineWidth, visible = textAttribute.visible, underline = textAttribute.underline, lineThrough = textAttribute.lineThrough, keepDirIn3d = textAttribute.keepDirIn3d, fontSize = textAttribute.fontSize, textBaseline = textAttribute.textBaseline, x: originX = textAttribute.x, y: originY = textAttribute.y } = text.attribute;
@@ -24367,6 +23641,23 @@
           const transform3dMatrixToContextMatrix = !keepDirIn3d;
           const z = this.z || 0;
           context.beginPath();
+          if (!this._textBeforeRenderContribitions) {
+              const contributions = this.textRenderContribitions.getContributions() || [];
+              contributions.sort((a, b) => b.order - a.order);
+              this._textBeforeRenderContribitions = [];
+              this._textAfterRenderContribitions = [];
+              contributions.forEach(c => {
+                  if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
+                      this._textBeforeRenderContribitions.push(c);
+                  }
+                  else {
+                      this._textAfterRenderContribitions.push(c);
+                  }
+              });
+          }
+          this._textBeforeRenderContribitions.forEach(c => {
+              c.drawShape(text, context, x, y, doFill, doStroke, fVisible, sVisible, textAttribute, drawContext, fillCb, strokeCb);
+          });
           context.setShadowStyle && context.setShadowStyle(text, text.attribute, textAttribute);
           transform3dMatrixToContextMatrix && this.transformUseContext2d(text, textAttribute, z, context);
           if (Array.isArray(str)) {
@@ -24436,6 +23727,9 @@
               }
           }
           transform3dMatrixToContextMatrix && this.restoreTransformUseContext2d(text, textAttribute, z, context);
+          this._textAfterRenderContribitions.forEach(c => {
+              c.drawShape(text, context, x, y, doFill, doStroke, fVisible, sVisible, textAttribute, drawContext, fillCb, strokeCb);
+          });
       }
       draw(text, renderService, drawContext, params) {
           const { context } = drawContext;
@@ -24513,7 +23807,10 @@
       }
   };
   exports.DefaultCanvasTextRender = __decorate([
-      injectable()
+      injectable(),
+      __param(0, inject(ContributionProvider)),
+      __param(0, named(TextRenderContribution)),
+      __metadata("design:paramtypes", [Object])
   ], exports.DefaultCanvasTextRender);
 
   exports.AbstractGraphicRender = class AbstractGraphicRender {
@@ -24594,20 +23891,6 @@
       };
   }
 
-  const PolygonRenderContribution = Symbol.for('PolygonRenderContribution');
-  let DefaultPolygonBackgroundRenderContribution = class DefaultPolygonBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-  };
-  DefaultPolygonBackgroundRenderContribution = __decorate([
-      injectable()
-  ], DefaultPolygonBackgroundRenderContribution);
-  let DefaultPolygonTextureRenderContribution = class DefaultPolygonTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
-      time = exports.BaseRenderContributionTime.afterFillStroke;
-  };
-  DefaultPolygonTextureRenderContribution = __decorate([
-      injectable()
-  ], DefaultPolygonTextureRenderContribution);
-
   exports.DefaultCanvasPolygonRender = class DefaultCanvasPolygonRender {
       polygonRenderContribitions;
       type;
@@ -24646,7 +23929,7 @@
           }
           this._polygonRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, fillCb, strokeCb);
+                  c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, drawContext, fillCb, strokeCb);
               }
           });
           context.setShadowStyle && context.setShadowStyle(polygon, polygon.attribute, polygonAttribute);
@@ -24670,7 +23953,7 @@
           }
           this._polygonRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, fillCb, strokeCb);
+                  c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, drawContext, fillCb, strokeCb);
               }
           });
       }
@@ -24708,47 +23991,6 @@
       __metadata("design:paramtypes", [Object])
   ], exports.DefaultCanvasPolygonRender);
 
-  const ImageRenderContribution = Symbol.for('ImageRenderContribution');
-  exports.DefaultImageBackgroundRenderContribution = class DefaultImageBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
-      time = exports.BaseRenderContributionTime.beforeFillStroke;
-      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, fillCb, strokeCb) {
-          const { background, width, height } = graphic.attribute;
-          if (!background) {
-              return;
-          }
-          if (!graphic.backgroundImg) {
-              context.beginPath();
-              const b = graphic.AABBBounds;
-              context.rect(x, y, b.width(), b.height());
-              context.fillStyle = background;
-              context.globalAlpha = 1;
-              context.fill();
-          }
-          else {
-              const res = graphic.resources.get(background);
-              if (res.state !== 'success' || !res.data) {
-                  return;
-              }
-              context.save();
-              if (graphic.parent && !graphic.transMatrix.onlyTranslate()) {
-                  const groupAttribute = getTheme(graphic.parent).group;
-                  const { scrollX = groupAttribute.scrollX, scrollY = groupAttribute.scrollY } = graphic.parent.attribute;
-                  context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
-                  context.translate(scrollX, scrollY);
-              }
-              const b = graphic.AABBBounds;
-              context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
-              context.restore();
-              if (!graphic.transMatrix.onlyTranslate()) {
-                  context.setTransformForCurrent();
-              }
-          }
-      }
-  };
-  exports.DefaultImageBackgroundRenderContribution = __decorate([
-      injectable()
-  ], exports.DefaultImageBackgroundRenderContribution);
-
   const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
   exports.DefaultCanvasImageRender = class DefaultCanvasImageRender {
       imageRenderContribitions;
@@ -24777,7 +24019,7 @@
           }
           this._imageRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, fillCb);
+                  c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
               }
           });
           context.setShadowStyle && context.setShadowStyle(image, imageAttribute);
@@ -24813,7 +24055,7 @@
           }
           this._imageRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, fillCb);
+                  c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
               }
           });
       }
@@ -24876,10 +24118,526 @@
   const RenderSelector = Symbol.for('RenderSelector');
   const DrawContribution = Symbol.for('DrawContribution');
 
-  const GroupRenderContribution = Symbol.for('GroupRenderContribution');
+  function getScaledStroke(context, width, dpr) {
+      let strokeWidth = width;
+      const { a, b, c, d } = context.currentMatrix;
+      const scaleX = Math.sign(a) * Math.sqrt(a * a + b * b);
+      const scaleY = Math.sign(d) * Math.sqrt(c * c + d * d);
+      if (scaleX + scaleY === 0) {
+          return 0;
+      }
+      strokeWidth = (strokeWidth / Math.abs(scaleX + scaleY)) * 2 * dpr;
+      return strokeWidth;
+  }
+  function createColor(context, c, params, offsetX, offsetY) {
+      if (!c || c === true) {
+          return 'black';
+      }
+      let result;
+      let color;
+      if (isArray(c)) {
+          for (let i = 0; i < c.length; i++) {
+              color = c[i];
+              if (color) {
+                  break;
+              }
+          }
+      }
+      else {
+          color = c;
+      }
+      if (typeof color === 'string') {
+          return color;
+      }
+      if (color.gradient === 'linear') {
+          result = createLinearGradient(context, color, params, offsetX, offsetY);
+      }
+      else if (color.gradient === 'conical') {
+          result = createConicGradient(context, color, params, offsetX, offsetY);
+      }
+      else if (color.gradient === 'radial') {
+          result = createRadialGradient(context, color, params, offsetX, offsetY);
+      }
+      return result || 'orange';
+  }
+  function createLinearGradient(context, color, params, offsetX = 0, offsetY = 0) {
+      const bounds = params.AABBBounds;
+      if (!bounds) {
+          return;
+      }
+      let w = bounds.x2 - bounds.x1;
+      let h = bounds.y2 - bounds.y1;
+      let x = bounds.x1 - offsetX;
+      let y = bounds.y1 - offsetY;
+      if (params.attribute) {
+          const { scaleX = 1, scaleY = 1 } = params.attribute;
+          if (scaleX * scaleY === 0) {
+              return;
+          }
+          w /= scaleX;
+          h /= scaleY;
+          x /= scaleX;
+          y /= scaleY;
+      }
+      const canvasGradient = context.createLinearGradient(x + (color.x0 ?? 0) * w, y + (color.y0 ?? 0) * h, x + (color.x1 ?? 1) * w, y + (color.y1 ?? 0) * h);
+      color.stops.forEach(stop => {
+          canvasGradient.addColorStop(stop.offset, stop.color);
+      });
+      return canvasGradient;
+  }
+  function createRadialGradient(context, color, params, offsetX = 0, offsetY = 0) {
+      const bounds = params.AABBBounds;
+      if (!bounds) {
+          return;
+      }
+      let w = bounds.x2 - bounds.x1;
+      let h = bounds.y2 - bounds.y1;
+      let x = bounds.x1 - offsetX;
+      let y = bounds.y1 - offsetY;
+      if (params.attribute) {
+          const { scaleX = 1, scaleY = 1 } = params.attribute;
+          if (scaleX * scaleY === 0) {
+              return;
+          }
+          x /= scaleX;
+          y /= scaleY;
+          w /= scaleX;
+          h /= scaleY;
+      }
+      const canvasGradient = context.createRadialGradient(x + (color.x0 ?? 0.5) * w, y + (color.y0 ?? 0.5) * h, Math.max(w, h) * (color.r0 ?? 0), x + (color.x1 ?? 0.5) * w, y + (color.y1 ?? 0.5) * h, Math.max(w, h) * (color.r1 ?? 0.5));
+      color.stops.forEach(stop => {
+          canvasGradient.addColorStop(stop.offset, stop.color);
+      });
+      return canvasGradient;
+  }
+  function createConicGradient(context, color, params, offsetX = 0, offsetY = 0) {
+      const bounds = params.AABBBounds;
+      if (!bounds) {
+          return;
+      }
+      let w = bounds.x2 - bounds.x1;
+      let h = bounds.y2 - bounds.y1;
+      let x = bounds.x1 - offsetX;
+      let y = bounds.y1 - offsetY;
+      if (params.attribute) {
+          const { scaleX = 1, scaleY = 1 } = params.attribute;
+          if (scaleX * scaleY === 0) {
+              return;
+          }
+          w /= scaleX;
+          h /= scaleY;
+          x /= scaleX;
+          y /= scaleY;
+      }
+      const canvasGradient = context.createConicGradient(x + (color.x ?? 0) * w, y + (color.y ?? 0) * h, color.startAngle, color.endAngle);
+      color.stops.forEach(stop => {
+          canvasGradient.addColorStop(stop.offset, stop.color);
+      });
+      let deltaAngle;
+      return canvasGradient.GetPattern(w + x, h + y, deltaAngle);
+  }
+
+  class DefaultCanvasAllocate {
+      pools = [];
+      allocate(data) {
+          if (!this.pools.length) {
+              return wrapCanvas({
+                  nativeCanvas: application.global.createCanvas(data),
+                  ...data
+              });
+          }
+          const m = this.pools.pop();
+          m.resize(data.width, data.height);
+          m.dpr = data.dpr;
+          return m;
+      }
+      allocateByObj(canvas) {
+          if (!this.pools.length) {
+              const data = {
+                  width: canvas.width / canvas.dpr,
+                  height: canvas.height / canvas.dpr,
+                  dpr: canvas.dpr
+              };
+              return wrapCanvas({
+                  nativeCanvas: application.global.createCanvas(data),
+                  ...data
+              });
+          }
+          const m = this.pools.pop();
+          m.width = canvas.width;
+          m.height = canvas.height;
+          return m;
+      }
+      free(d) {
+          this.pools.push(d);
+      }
+      get length() {
+          return this.pools.length;
+      }
+      release(...params) {
+          this.pools = [];
+      }
+  }
+  const canvasAllocate = new DefaultCanvasAllocate();
+
+  exports.DefaultBaseBackgroundRenderContribution = class DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb, options) {
+          const { background } = graphic.attribute;
+          if (!background) {
+              return;
+          }
+          if (graphic.backgroundImg && graphic.resources) {
+              const res = graphic.resources.get(background);
+              if (res.state !== 'success' || !res.data) {
+                  return;
+              }
+              context.save();
+              if (graphic.parent && !graphic.transMatrix.onlyTranslate()) {
+                  const groupAttribute = getTheme(graphic.parent).group;
+                  const { scrollX = groupAttribute.scrollX, scrollY = groupAttribute.scrollY } = graphic.parent.attribute;
+                  context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+                  context.translate(scrollX, scrollY);
+              }
+              context.clip();
+              const b = graphic.AABBBounds;
+              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+              context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
+              context.restore();
+              if (!graphic.transMatrix.onlyTranslate()) {
+                  context.setTransformForCurrent();
+              }
+          }
+          else {
+              context.highPerformanceSave();
+              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+              context.fillStyle = background;
+              context.fill();
+              context.highPerformanceRestore();
+          }
+      }
+  };
+  exports.DefaultBaseBackgroundRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultBaseBackgroundRenderContribution);
+  exports.DefaultBaseInteractiveRenderContribution = class DefaultBaseInteractiveRenderContribution {
+      subRenderContribitions;
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      _subRenderContribitions;
+      constructor(subRenderContribitions) {
+          this.subRenderContribitions = subRenderContribitions;
+      }
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb, options) {
+          if (!this._subRenderContribitions) {
+              this._subRenderContribitions = this.subRenderContribitions.getContributions();
+          }
+          this._subRenderContribitions.forEach(c => {
+              c.render(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb, options);
+          });
+      }
+  };
+  exports.DefaultBaseInteractiveRenderContribution = __decorate([
+      injectable(),
+      __param(0, inject(ContributionProvider)),
+      __param(0, named(InteractiveSubRenderContribution)),
+      __metadata("design:paramtypes", [Object])
+  ], exports.DefaultBaseInteractiveRenderContribution);
+  exports.DefaultBaseTextureRenderContribution = class DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      textureMap;
+      order = 10;
+      createCommonPattern(size, padding, color, targetContext, cb) {
+          const r = (size - padding * 2) / 2;
+          const canvas = canvasAllocate.allocate({ width: size, height: size, dpr: 1 });
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+              return null;
+          }
+          ctx.clearRect(0, 0, size, size);
+          cb(r, ctx);
+          const pattern = targetContext.createPattern(canvas.nativeCanvas, 'repeat');
+          canvasAllocate.free(canvas);
+          return pattern;
+      }
+      createCirclePattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              ctx.fillStyle = color;
+              ctx.arc(r, r, r, 0, pi2);
+              ctx.fill();
+          });
+      }
+      createDiamondPattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              const x = size / 2;
+              const y = x;
+              ctx.fillStyle = color;
+              ctx.moveTo(x, y - r);
+              ctx.lineTo(r + x, y);
+              ctx.lineTo(x, y + r);
+              ctx.lineTo(x - r, y);
+              ctx.closePath();
+              ctx.fill();
+          });
+      }
+      createRectPattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              const x = padding;
+              const y = x;
+              ctx.fillStyle = color;
+              ctx.fillRect(x, y, r * 2, r * 2);
+          });
+      }
+      createVerticalLinePattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              const x = padding;
+              const y = 0;
+              ctx.fillStyle = color;
+              ctx.fillRect(x, y, r * 2, size);
+          });
+      }
+      createHorizontalLinePattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              const x = 0;
+              const y = padding;
+              ctx.fillStyle = color;
+              ctx.fillRect(x, y, size, r * 2);
+          });
+      }
+      createBiasLRLinePattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              ctx.strokeStyle = color;
+              ctx.lineWidth = r;
+              ctx.moveTo(0, 0);
+              ctx.lineTo(size, size);
+              const dx = size / 2;
+              const dy = -dx;
+              ctx.moveTo(dx, dy);
+              ctx.lineTo(dx + size, dy + size);
+              ctx.moveTo(-dx, -dy);
+              ctx.lineTo(-dx + size, -dy + size);
+              ctx.stroke();
+          });
+      }
+      createBiasRLLinePattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              ctx.strokeStyle = color;
+              ctx.lineWidth = r;
+              ctx.moveTo(size, 0);
+              ctx.lineTo(0, size);
+              const dx = size / 2;
+              const dy = dx;
+              ctx.moveTo(size + dx, dy);
+              ctx.lineTo(dx, dy + size);
+              ctx.moveTo(size - dx, -dy);
+              ctx.lineTo(-dx, -dy + size);
+              ctx.stroke();
+          });
+      }
+      createGridPattern(size, padding, color, targetContext) {
+          return this.createCommonPattern(size, padding, color, targetContext, (r, ctx) => {
+              const x = padding;
+              const y = x;
+              ctx.fillStyle = color;
+              ctx.fillRect(x, y, r, r);
+              ctx.fillRect(x + r, y + r, r, r);
+          });
+      }
+      initTextureMap(ctx, stage) {
+          this.textureMap = new Map();
+      }
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb, options) {
+          if (!this.textureMap) {
+              this.initTextureMap(context, graphic.stage);
+          }
+          const { texture = graphicAttribute.texture, textureColor = graphicAttribute.textureColor, textureSize = graphicAttribute.textureSize, texturePadding = graphicAttribute.texturePadding } = graphic.attribute;
+          if (!texture) {
+              return;
+          }
+          let pattern = this.textureMap.get(texture);
+          if (!pattern) {
+              switch (texture) {
+                  case 'circle':
+                      pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'diamond':
+                      pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'rect':
+                      pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'vertical-line':
+                      pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'horizontal-line':
+                      pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'bias-lr':
+                      pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'bias-rl':
+                      pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'grid':
+                      pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+              }
+          }
+          if (pattern) {
+              context.highPerformanceSave();
+              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+              context.fillStyle = pattern;
+              context.fill();
+              context.highPerformanceRestore();
+          }
+      }
+  };
+  exports.DefaultBaseTextureRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultBaseTextureRenderContribution);
+
+  exports.DefaultArcRenderContribution = class DefaultArcRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, drawContext, fillCb, strokeCb) {
+          const { innerRadius = arcAttribute.innerRadius, outerRadius = arcAttribute.outerRadius, startAngle = arcAttribute.startAngle, endAngle = arcAttribute.endAngle, opacity = arcAttribute.opacity, outerBorder, innerBorder } = arc.attribute;
+          if (outerBorder) {
+              const { distance = arcAttribute.outerBorder.distance } = outerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const deltaAngle = distance / outerRadius;
+              arc.setAttributes({
+                  outerRadius: outerRadius + d,
+                  innerRadius: innerRadius - d,
+                  startAngle: startAngle - deltaAngle,
+                  endAngle: endAngle + deltaAngle
+              });
+              context.beginPath();
+              drawArcPath$1(arc, context, x, y, outerRadius + d, innerRadius - d);
+              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+              if (strokeCb) {
+                  strokeCb(context, outerBorder, arcAttribute.outerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = arcAttribute.outerBorder.opacity;
+                  arcAttribute.outerBorder.opacity = opacity;
+                  context.setStrokeStyle(arc, outerBorder, x, y, arcAttribute.outerBorder);
+                  arcAttribute.outerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+          if (innerBorder) {
+              const { distance = arcAttribute.innerBorder.distance } = innerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const deltaAngle = distance / outerRadius;
+              arc.setAttributes({
+                  outerRadius: outerRadius - d,
+                  innerRadius: innerRadius + d,
+                  startAngle: startAngle + deltaAngle,
+                  endAngle: endAngle - deltaAngle
+              });
+              context.beginPath();
+              drawArcPath$1(arc, context, x, y, outerRadius - d, innerRadius + d);
+              context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+              if (strokeCb) {
+                  strokeCb(context, innerBorder, arcAttribute.innerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = arcAttribute.innerBorder.opacity;
+                  arcAttribute.innerBorder.opacity = opacity;
+                  context.setStrokeStyle(arc, innerBorder, x, y, arcAttribute.innerBorder);
+                  arcAttribute.innerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+          arc.setAttributes({ outerRadius: outerRadius, innerRadius: innerRadius, startAngle, endAngle });
+      }
+  };
+  exports.DefaultArcRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultArcRenderContribution);
+  exports.DefaultArcBackgroundRenderContribution = class DefaultArcBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  exports.DefaultArcBackgroundRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultArcBackgroundRenderContribution);
+  exports.DefaultArcTextureRenderContribution = class DefaultArcTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  };
+  exports.DefaultArcTextureRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultArcTextureRenderContribution);
+
+  exports.DefaultCircleRenderContribution = class DefaultCircleRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, drawContext, fillCb, strokeCb) {
+          const { radius = circleAttribute.radius, startAngle = circleAttribute.startAngle, endAngle = circleAttribute.endAngle, opacity = circleAttribute.opacity, outerBorder, innerBorder } = circle.attribute;
+          if (outerBorder) {
+              const { distance = circleAttribute.outerBorder.distance } = outerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const dw = d;
+              context.beginPath();
+              context.arc(x, y, radius + dw, startAngle, endAngle);
+              context.closePath();
+              context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
+              if (strokeCb) {
+                  strokeCb(context, outerBorder, circleAttribute.outerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = circleAttribute.outerBorder.opacity;
+                  circleAttribute.outerBorder.opacity = opacity;
+                  context.setStrokeStyle(circle, outerBorder, x, y, circleAttribute.outerBorder);
+                  circleAttribute.outerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+          if (innerBorder) {
+              const { distance = circleAttribute.innerBorder.distance } = innerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const dw = d;
+              context.beginPath();
+              context.arc(x, y, radius - dw, startAngle, endAngle);
+              context.closePath();
+              context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
+              if (strokeCb) {
+                  strokeCb(context, innerBorder, circleAttribute.innerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = circleAttribute.innerBorder.opacity;
+                  circleAttribute.innerBorder.opacity = opacity;
+                  context.setStrokeStyle(circle, innerBorder, x, y, circleAttribute.innerBorder);
+                  circleAttribute.innerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+      }
+  };
+  exports.DefaultCircleRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultCircleRenderContribution);
+  exports.DefaultCircleBackgroundRenderContribution = class DefaultCircleBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  exports.DefaultCircleBackgroundRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultCircleBackgroundRenderContribution);
+  exports.DefaultCircleTextureRenderContribution = class DefaultCircleTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  };
+  exports.DefaultCircleTextureRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultCircleTextureRenderContribution);
+
   exports.DefaultGroupBackgroundRenderContribution = class DefaultGroupBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
       time = exports.BaseRenderContributionTime.beforeFillStroke;
-      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, fillCb, strokeCb) {
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb) {
           const { background } = graphic.attribute;
           if (!background) {
               return;
@@ -24907,6 +24665,239 @@
   exports.DefaultGroupBackgroundRenderContribution = __decorate([
       injectable()
   ], exports.DefaultGroupBackgroundRenderContribution);
+
+  exports.DefaultImageBackgroundRenderContribution = class DefaultImageBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb) {
+          const { background, width, height } = graphic.attribute;
+          if (!background) {
+              return;
+          }
+          if (!graphic.backgroundImg) {
+              context.beginPath();
+              const b = graphic.AABBBounds;
+              context.rect(x, y, b.width(), b.height());
+              context.fillStyle = background;
+              context.globalAlpha = 1;
+              context.fill();
+          }
+          else {
+              const res = graphic.resources.get(background);
+              if (res.state !== 'success' || !res.data) {
+                  return;
+              }
+              context.save();
+              if (graphic.parent && !graphic.transMatrix.onlyTranslate()) {
+                  const groupAttribute = getTheme(graphic.parent).group;
+                  const { scrollX = groupAttribute.scrollX, scrollY = groupAttribute.scrollY } = graphic.parent.attribute;
+                  context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+                  context.translate(scrollX, scrollY);
+              }
+              const b = graphic.AABBBounds;
+              context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
+              context.restore();
+              if (!graphic.transMatrix.onlyTranslate()) {
+                  context.setTransformForCurrent();
+              }
+          }
+      }
+  };
+  exports.DefaultImageBackgroundRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultImageBackgroundRenderContribution);
+
+  exports.DefaultRectRenderContribution = class DefaultRectRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, drawContext, fillCb, strokeCb) {
+          const { width = rectAttribute.width, height = rectAttribute.height, cornerRadius = rectAttribute.cornerRadius, opacity = rectAttribute.opacity, outerBorder, innerBorder } = rect.attribute;
+          if (outerBorder) {
+              const { distance = rectAttribute.outerBorder.distance } = outerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const nextX = x - d;
+              const nextY = y - d;
+              const dw = d * 2;
+              if (cornerRadius === 0 || (isArray(cornerRadius) && cornerRadius.every(num => num === 0))) {
+                  context.beginPath();
+                  context.rect(nextX, nextY, width + dw, height + dw);
+              }
+              else {
+                  context.beginPath();
+                  createRectPath(context, nextX, nextY, width + dw, height + dw, cornerRadius);
+              }
+              context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
+              if (strokeCb) {
+                  strokeCb(context, outerBorder, rectAttribute.outerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = rectAttribute.outerBorder.opacity;
+                  rectAttribute.outerBorder.opacity = opacity;
+                  context.setStrokeStyle(rect, outerBorder, x, y, rectAttribute.outerBorder);
+                  rectAttribute.outerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+          if (innerBorder) {
+              const { distance = rectAttribute.innerBorder.distance } = innerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              const nextX = x + d;
+              const nextY = y + d;
+              const dw = d * 2;
+              if (cornerRadius === 0 || (isArray(cornerRadius) && cornerRadius.every(num => num === 0))) {
+                  context.beginPath();
+                  context.rect(nextX, nextY, width - dw, height - dw);
+              }
+              else {
+                  context.beginPath();
+                  createRectPath(context, nextX, nextY, width - dw, height - dw, cornerRadius);
+              }
+              context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
+              if (strokeCb) {
+                  strokeCb(context, innerBorder, rectAttribute.innerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = rectAttribute.innerBorder.opacity;
+                  rectAttribute.innerBorder.opacity = opacity;
+                  context.setStrokeStyle(rect, innerBorder, x, y, rectAttribute.innerBorder);
+                  rectAttribute.innerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+      }
+  };
+  exports.DefaultRectRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultRectRenderContribution);
+  exports.DefaultRectBackgroundRenderContribution = class DefaultRectBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  exports.DefaultRectBackgroundRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultRectBackgroundRenderContribution);
+  exports.DefaultRectTextureRenderContribution = class DefaultRectTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  };
+  exports.DefaultRectTextureRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultRectTextureRenderContribution);
+  exports.SplitRectBeforeRenderContribution = class SplitRectBeforeRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, drawContext, fillCb, strokeCb, doFillOrStroke) {
+          const { stroke = groupAttribute.stroke } = group.attribute;
+          if (Array.isArray(stroke) && stroke.some(s => s === false)) {
+              doFillOrStroke.doStroke = false;
+          }
+      }
+  };
+  exports.SplitRectBeforeRenderContribution = __decorate([
+      injectable()
+  ], exports.SplitRectBeforeRenderContribution);
+  exports.SplitRectAfterRenderContribution = class SplitRectAfterRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, drawContext, fillCb, strokeCb) {
+          const { width = groupAttribute.width, height = groupAttribute.height, stroke = groupAttribute.stroke } = rect.attribute;
+          if (!(Array.isArray(stroke) && stroke.some(s => s === false))) {
+              return;
+          }
+          context.setStrokeStyle(rect, rect.attribute, x, y, groupAttribute);
+          context.beginPath();
+          context.moveTo(x, y);
+          if (stroke[0]) {
+              context.lineTo(x + width, y);
+          }
+          else {
+              context.moveTo(x + width, y);
+          }
+          if (stroke[1]) {
+              context.lineTo(x + width, y + height);
+          }
+          else {
+              context.moveTo(x + width, y + height);
+          }
+          if (stroke[2]) {
+              context.lineTo(x, y + height);
+          }
+          else {
+              context.moveTo(x, y + height);
+          }
+          if (stroke[3]) {
+              const adjustY = stroke[0] ? y - context.lineWidth / 2 : y;
+              context.lineTo(x, adjustY);
+          }
+          else {
+              context.moveTo(x, y);
+          }
+          context.stroke();
+      }
+  };
+  exports.SplitRectAfterRenderContribution = __decorate([
+      injectable()
+  ], exports.SplitRectAfterRenderContribution);
+
+  exports.DefaultSymbolRenderContribution = class DefaultSymbolRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      useStyle = true;
+      order = 0;
+      drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, drawContext, fillCb, strokeCb) {
+          const { size = symbolAttribute.size, opacity = symbolAttribute.opacity, outerBorder, innerBorder } = symbol.attribute;
+          const parsedPath = symbol.getParsedPath();
+          if (!parsedPath) {
+              return;
+          }
+          if (outerBorder) {
+              const { distance = symbolAttribute.outerBorder.distance } = outerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              context.beginPath();
+              if (parsedPath.drawOffset(context, size, x, y, d) === false) {
+                  context.closePath();
+              }
+              context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
+              if (strokeCb) {
+                  strokeCb(context, outerBorder, symbolAttribute.outerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = symbolAttribute.outerBorder.opacity;
+                  symbolAttribute.outerBorder.opacity = opacity;
+                  context.setStrokeStyle(symbol, outerBorder, x, y, symbolAttribute.outerBorder);
+                  symbolAttribute.outerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+          if (innerBorder) {
+              const { distance = symbolAttribute.innerBorder.distance } = innerBorder;
+              const d = getScaledStroke(context, distance, context.dpr);
+              context.beginPath();
+              if (parsedPath.drawOffset(context, size, x, y, -d) === false) {
+                  context.closePath();
+              }
+              context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
+              if (strokeCb) {
+                  strokeCb(context, innerBorder, symbolAttribute.innerBorder);
+              }
+              else if (sVisible) {
+                  const lastOpacity = symbolAttribute.innerBorder.opacity;
+                  symbolAttribute.innerBorder.opacity = opacity;
+                  context.setStrokeStyle(symbol, innerBorder, x, y, symbolAttribute.innerBorder);
+                  symbolAttribute.innerBorder.opacity = lastOpacity;
+                  context.stroke();
+              }
+          }
+      }
+  };
+  exports.DefaultSymbolRenderContribution = __decorate([
+      injectable()
+  ], exports.DefaultSymbolRenderContribution);
+  class DefaultSymbolBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  }
+  class DefaultSymbolTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  }
 
   const RenderService = Symbol.for('RenderService');
   const BeforeRenderConstribution = Symbol.for('BeforeRenderConstribution');
@@ -26470,7 +26461,7 @@
       __metadata("design:paramtypes", [Object, Number])
   ], exports.BrowserContext2d);
 
-  const DefaultConfig$6 = {
+  const DefaultConfig$5 = {
       WIDTH: 500,
       HEIGHT: 500,
       DPR: 1
@@ -26540,7 +26531,7 @@
           this.resize(this.width, this.height);
       }
       constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$6.WIDTH, height = DefaultConfig$6.HEIGHT, dpr = DefaultConfig$6.DPR, container, x, y, canvasControled = true } = params;
+          const { nativeCanvas, width = DefaultConfig$5.WIDTH, height = DefaultConfig$5.HEIGHT, dpr = DefaultConfig$5.DPR, container, x, y, canvasControled = true } = params;
           const offsetX = 0;
           const offsetY = 0;
           this._x = x ?? offsetX;
@@ -27165,9 +27156,13 @@
       bind(GraphicCreator).toConstantValue(graphicCreator);
   });
 
+  const AutoEnablePlugins = Symbol.for('AutoEnablePlugins');
   const PluginService = Symbol.for('PluginService');
+
   let DefaultPluginService = class DefaultPluginService {
-      constructor() {
+      autoEnablePlugins;
+      constructor(autoEnablePlugins) {
+          this.autoEnablePlugins = autoEnablePlugins;
           this.onStartupFinishedPlugin = [];
           this.onRegisterPlugin = [];
           this.actived = false;
@@ -27175,6 +27170,11 @@
       active(stage) {
           this.stage = stage;
           this.actived = true;
+          if (container.isBound(AutoEnablePlugins)) {
+              this.autoEnablePlugins.getContributions().forEach(p => {
+                  this.register(p);
+              });
+          }
       }
       findPluginsByName(name) {
           const arr = [];
@@ -27212,12 +27212,15 @@
   };
   DefaultPluginService = __decorate([
       injectable(),
-      __metadata("design:paramtypes", [])
+      __param(0, inject(ContributionProvider)),
+      __param(0, named(AutoEnablePlugins)),
+      __metadata("design:paramtypes", [Object])
   ], DefaultPluginService);
 
   var pluginModule = new ContainerModule(bind => {
       bind(DefaultPluginService).toSelf();
       bind(PluginService).toService(DefaultPluginService);
+      bindContributionProvider(bind, AutoEnablePlugins);
   });
 
   exports.BaseEnvContribution = class BaseEnvContribution {
@@ -27458,7 +27461,7 @@
       container.rebind(PickerService).toService(exports.DefaultMathPickerService);
   }
 
-  function makeUpCanvas$3(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList) {
+  function makeUpCanvas$2(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList) {
       const dpr = tt.getSystemInfoSync().pixelRatio;
       canvasIdLists.forEach((id, i) => {
           const ctx = tt.createCanvasContext(id);
@@ -27506,7 +27509,7 @@
       configure(service, params) {
           if (service.env === this.type) {
               service.setActiveEnvContribution(this);
-              makeUpCanvas$3(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
+              makeUpCanvas$2(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
               loadFeishuContributions();
           }
       }
@@ -27576,7 +27579,7 @@
       __metadata("design:paramtypes", [])
   ], FeishuEnvContribution);
 
-  function makeUpCanvas$2(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList, taro, dpr) {
+  function makeUpCanvas$1(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList, taro, dpr) {
       canvasIdLists.forEach((id, i) => {
           const ctx = taro.createCanvasContext(id);
           ctx.canvas = {
@@ -27648,7 +27651,7 @@
       configure(service, params) {
           if (service.env === this.type) {
               service.setActiveEnvContribution(this);
-              makeUpCanvas$2(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList, params.taro, params.pixelRatio);
+              makeUpCanvas$1(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList, params.taro, params.pixelRatio);
               this.taro = params.taro;
               this.pixelRatio = params.pixelRatio;
               loadTaroContributions();
@@ -27729,7 +27732,7 @@
       __metadata("design:paramtypes", [])
   ], TaroEnvContribution);
 
-  function makeUpCanvas$1(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList) {
+  function makeUpCanvas(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList) {
       SystemInfo.pixelRatio;
       canvasIdLists.forEach((id, i) => {
           const _canvas = lynx.createCanvas(id);
@@ -27777,7 +27780,7 @@
       configure(service, params) {
           if (service.env === this.type) {
               service.setActiveEnvContribution(this);
-              makeUpCanvas$1(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
+              makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
               loadFeishuContributions();
           }
       }
@@ -27960,122 +27963,6 @@
       injectable()
   ], NodeEnvContribution);
 
-  async function makeUpCanvas(domref, canvasIdLists, canvasMap, freeCanvasIdx, freeCanvasList) {
-      const dpr = wx.getSystemInfoSync().pixelRatio;
-      for (let i = 0; i < canvasIdLists.length; i++) {
-          const id = canvasIdLists[i];
-          await new Promise(resolve => {
-              wx.createSelectorQuery()
-                  .select(`#${id}`)
-                  .fields({ node: true, size: true })
-                  .exec((res) => {
-                  const canvas = res[0].node;
-                  const width = res[0].width;
-                  const height = res[0].height;
-                  canvas.width = width * dpr;
-                  canvas.height = height * dpr;
-                  canvasMap.set(id, canvas);
-                  if (i >= freeCanvasIdx) {
-                      freeCanvasList.push(canvas);
-                  }
-                  resolve(null);
-              });
-          });
-      }
-  }
-  let WxEnvContribution = class WxEnvContribution extends exports.BaseEnvContribution {
-      type = 'wx';
-      supportEvent = true;
-      canvasMap = new Map();
-      freeCanvasList = [];
-      canvasIdx = 0;
-      constructor() {
-          super();
-          this.supportsTouchEvents = true;
-          try {
-              this.supportsPointerEvents = !!globalThis.PointerEvent;
-              this.supportsMouseEvents = !!globalThis.MouseEvent;
-          }
-          catch (err) {
-              this.supportsPointerEvents = false;
-              this.supportsMouseEvents = false;
-          }
-          this.applyStyles = true;
-      }
-      configure(service, params) {
-          if (service.env === this.type) {
-              service.setActiveEnvContribution(this);
-              return makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList).then(() => {
-                  loadFeishuContributions();
-              });
-          }
-      }
-      loadImage(url) {
-          return Promise.resolve({
-              data: url,
-              loadState: 'success'
-          });
-      }
-      loadSvg(url) {
-          return Promise.reject();
-      }
-      createCanvas(params) {
-          const result = this.freeCanvasList[this.canvasIdx] || this.freeCanvasList[this.freeCanvasList.length - 1];
-          this.canvasIdx++;
-          return result;
-      }
-      createOffscreenCanvas(params) {
-          return;
-      }
-      releaseCanvas(canvas) {
-          return;
-      }
-      getDevicePixelRatio() {
-          return wx.getSystemInfoSync().pixelRatio;
-      }
-      getRequestAnimationFrame() {
-          return function (callback) {
-              return setTimeout(callback, 1000 / 60, true);
-          };
-      }
-      getCancelAnimationFrame() {
-          return (h) => {
-              clearTimeout(h);
-          };
-      }
-      addEventListener(type, listener, options) {
-          return null;
-      }
-      removeEventListener(type, listener, options) {
-          return null;
-      }
-      dispatchEvent(event) {
-          return null;
-      }
-      getElementById(str) {
-          return this.canvasMap.get(str);
-      }
-      getRootElement() {
-          return null;
-      }
-      getDocument() {
-          return null;
-      }
-      release(...params) {
-          return;
-      }
-      mapToCanvasPoint(event) {
-          if (event?.type?.startsWith('mouse')) {
-              return event;
-          }
-          return null;
-      }
-  };
-  WxEnvContribution = __decorate([
-      injectable(),
-      __metadata("design:paramtypes", [])
-  ], WxEnvContribution);
-
   var envModules = new ContainerModule(bind => {
       bind(BrowserEnvContribution).toSelf().inSingletonScope();
       bind(EnvContribution).toService(BrowserEnvContribution);
@@ -28085,8 +27972,6 @@
       bind(EnvContribution).toService(TaroEnvContribution);
       bind(LynxEnvContribution).toSelf().inSingletonScope();
       bind(EnvContribution).toService(LynxEnvContribution);
-      bind(WxEnvContribution).toSelf().inSingletonScope();
-      bind(EnvContribution).toService(WxEnvContribution);
       bind(NodeEnvContribution).toSelf().inSingletonScope();
       bind(EnvContribution).toService(NodeEnvContribution);
       bindContributionProvider(bind, EnvContribution);
@@ -28328,15 +28213,12 @@
               });
           });
       }
-      createPattern(image, repetition) {
-          return null;
-      }
   };
   FeishuContext2d = __decorate([
       injectable()
   ], FeishuContext2d);
 
-  const DefaultConfig$5 = {
+  const DefaultConfig$4 = {
       WIDTH: 500,
       HEIGHT: 500,
       DPR: 1
@@ -28404,7 +28286,7 @@
           this._dpr = dpr;
       }
       constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$5.WIDTH, height = DefaultConfig$5.HEIGHT, dpr = DefaultConfig$5.DPR } = params;
+          const { nativeCanvas, width = DefaultConfig$4.WIDTH, height = DefaultConfig$4.HEIGHT, dpr = DefaultConfig$4.DPR } = params;
           const { x, y } = nativeCanvas.getBoundingClientRect ? nativeCanvas.getBoundingClientRect() : { x: 0, y: 0 };
           this._x = x;
           this._y = y;
@@ -28457,7 +28339,7 @@
       __metadata("design:paramtypes", [Object])
   ], FeishuCanvas);
 
-  let MiniAppEventManager$3 = class MiniAppEventManager {
+  let MiniAppEventManager$2 = class MiniAppEventManager {
       addEventListener(type, func) {
           if (!type || !func) {
               return;
@@ -28488,7 +28370,7 @@
       global;
       static env = 'feishu';
       type = 'feishu';
-      eventManager = new MiniAppEventManager$3();
+      eventManager = new MiniAppEventManager$2();
       canvas;
       get container() {
           return null;
@@ -28724,15 +28606,12 @@
       createConicGradient(x, y, startAngle, endAngle) {
           return null;
       }
-      createPattern(image, repetition) {
-          return null;
-      }
   };
   TaroContext2d = __decorate([
       injectable()
   ], TaroContext2d);
 
-  const DefaultConfig$4 = {
+  const DefaultConfig$3 = {
       WIDTH: 500,
       HEIGHT: 500,
       DPR: 1
@@ -28799,7 +28678,7 @@
           this._dpr = dpr;
       }
       constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$4.WIDTH, height = DefaultConfig$4.HEIGHT, dpr = DefaultConfig$4.DPR } = params;
+          const { nativeCanvas, width = DefaultConfig$3.WIDTH, height = DefaultConfig$3.HEIGHT, dpr = DefaultConfig$3.DPR } = params;
           const { x, y } = nativeCanvas.getBoundingClientRect ? nativeCanvas.getBoundingClientRect() : { x: 0, y: 0 };
           this._x = x;
           this._y = y;
@@ -28852,7 +28731,7 @@
       __metadata("design:paramtypes", [Object])
   ], TaroCanvas);
 
-  let MiniAppEventManager$2 = class MiniAppEventManager {
+  let MiniAppEventManager$1 = class MiniAppEventManager {
       addEventListener(type, func) {
           if (!type || !func) {
               return;
@@ -28883,7 +28762,7 @@
       global;
       static env = 'taro';
       type = 'taro';
-      eventManager = new MiniAppEventManager$2();
+      eventManager = new MiniAppEventManager$1();
       canvas;
       get container() {
           return null;
@@ -29077,28 +28956,6 @@
               _context.setLineDash(lineDash);
           }
       }
-      _setStrokeStyle(params, attribute, offsetX, offsetY, defaultParams) {
-          const _context = this.nativeContext;
-          if (!defaultParams) {
-              defaultParams = this.strokeAttributes;
-          }
-          const { strokeOpacity = defaultParams.strokeOpacity, opacity = defaultParams.opacity } = attribute;
-          if (strokeOpacity > 1e-12 && opacity > 1e-12) {
-              const { lineWidth = defaultParams.lineWidth, stroke = defaultParams.stroke, lineJoin = defaultParams.lineJoin, lineDash = defaultParams.lineDash, lineCap = defaultParams.lineCap, miterLimit = defaultParams.miterLimit } = attribute;
-              _context.globalAlpha = strokeOpacity * opacity;
-              _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
-              _context.strokeStyle = createColor(this, stroke, params, offsetX, offsetY);
-              _context.lineJoin = lineJoin;
-              if (!(lineDash[0] === 0 && lineDash[1] === 0)) {
-                  _context.setLineDash(lineDash);
-              }
-              _context.lineCap = lineCap;
-              _context.miterLimit = miterLimit;
-          }
-      }
-      createPattern(image, repetition) {
-          return null;
-      }
       draw() {
           const _context = this.nativeContext;
           this.drawPromise = new Promise(resolve => {
@@ -29113,7 +28970,7 @@
       injectable()
   ], LynxContext2d);
 
-  const DefaultConfig$3 = {
+  const DefaultConfig$2 = {
       WIDTH: 500,
       HEIGHT: 500,
       DPR: 1
@@ -29181,7 +29038,7 @@
           this._dpr = dpr;
       }
       constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$3.WIDTH, height = DefaultConfig$3.HEIGHT, dpr = DefaultConfig$3.DPR } = params;
+          const { nativeCanvas, width = DefaultConfig$2.WIDTH, height = DefaultConfig$2.HEIGHT, dpr = DefaultConfig$2.DPR } = params;
           const { x, y } = nativeCanvas.getBoundingClientRect ? nativeCanvas.getBoundingClientRect() : { x: 0, y: 0 };
           this._x = x;
           this._y = y;
@@ -29234,7 +29091,7 @@
       __metadata("design:paramtypes", [Object])
   ], LynxCanvas);
 
-  let MiniAppEventManager$1 = class MiniAppEventManager {
+  class MiniAppEventManager {
       addEventListener(type, func) {
           if (!type || !func) {
               return;
@@ -29260,12 +29117,12 @@
           this.cache = {};
       }
       cache = {};
-  };
+  }
   let LynxWindowHandlerContribution = class LynxWindowHandlerContribution extends exports.BaseWindowHandlerContribution {
       global;
       static env = 'lynx';
       type = 'lynx';
-      eventManager = new MiniAppEventManager$1();
+      eventManager = new MiniAppEventManager();
       canvas;
       get container() {
           return null;
@@ -29451,7 +29308,7 @@
       __metadata("design:paramtypes", [Object, Number])
   ], NodeContext2d);
 
-  const DefaultConfig$2 = {
+  const DefaultConfig$1 = {
       WIDTH: 500,
       HEIGHT: 500,
       DPR: 1
@@ -29519,7 +29376,7 @@
           return;
       }
       constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$2.WIDTH, height = DefaultConfig$2.HEIGHT, canvasControled = true, dpr = DefaultConfig$2.DPR } = params;
+          const { nativeCanvas, width = DefaultConfig$1.WIDTH, height = DefaultConfig$1.HEIGHT, canvasControled = true, dpr = DefaultConfig$1.DPR } = params;
           this._visiable = params.visiable !== false;
           this.controled = canvasControled;
           this._pixelWidth = width * dpr;
@@ -29690,333 +29547,6 @@
       __metadata("design:paramtypes", [Object])
   ], NodeWindowHandlerContribution);
 
-  let WxContext2d = class WxContext2d extends exports.BrowserContext2d {
-      static env = 'wx';
-      draw() {
-          return;
-      }
-      createPattern(image, repetition) {
-          return null;
-      }
-  };
-  WxContext2d = __decorate([
-      injectable()
-  ], WxContext2d);
-
-  const DefaultConfig$1 = {
-      WIDTH: 500,
-      HEIGHT: 500,
-      DPR: 1
-  };
-  let WxCanvas = class WxCanvas {
-      static env = 'wx';
-      _displayWidth;
-      _displayHeight;
-      _id;
-      _pixelWidth;
-      _pixelHeight;
-      _x;
-      _y;
-      _dpr;
-      _container;
-      _nativeCanvas;
-      _context;
-      _visiable;
-      get id() {
-          return this._id;
-      }
-      get x() {
-          return this._x;
-      }
-      get y() {
-          return this._y;
-      }
-      get nativeCanvas() {
-          return this._nativeCanvas;
-      }
-      get width() {
-          return this._pixelWidth;
-      }
-      set width(width) {
-          this._pixelWidth = width;
-          this._displayWidth = width / (this._dpr || 1);
-      }
-      get height() {
-          return this._pixelHeight;
-      }
-      set height(height) {
-          this._pixelHeight = height;
-          this._displayHeight = height / (this._dpr || 1);
-      }
-      get displayWidth() {
-          return this._displayWidth;
-      }
-      get displayHeight() {
-          return this._displayHeight;
-      }
-      getContext(str) {
-          return this._context;
-      }
-      get visiable() {
-          return this._visiable;
-      }
-      set visiable(visiable) {
-          this._visiable = visiable;
-          visiable ? this.show() : this.hide();
-      }
-      get dpr() {
-          return this._dpr;
-      }
-      set dpr(dpr) {
-          this._dpr = dpr;
-      }
-      constructor(params) {
-          const { nativeCanvas, width = DefaultConfig$1.WIDTH, height = DefaultConfig$1.HEIGHT, dpr = DefaultConfig$1.DPR } = params;
-          const { x, y } = nativeCanvas.getBoundingClientRect ? nativeCanvas.getBoundingClientRect() : { x: 0, y: 0 };
-          this._x = x;
-          this._y = y;
-          this._pixelWidth = width * dpr;
-          this._pixelHeight = height * dpr;
-          this._visiable = params.visiable !== false;
-          this._displayWidth = width;
-          this._displayHeight = height;
-          this._dpr = dpr;
-          this._nativeCanvas = nativeCanvas;
-          this._context = new WxContext2d(this, this._dpr);
-          this._id = nativeCanvas.id;
-      }
-      getNativeCanvas() {
-          return this._nativeCanvas;
-      }
-      resetStyle(params) {
-          return;
-      }
-      applyPosition() {
-          return;
-      }
-      hide() {
-          return;
-      }
-      show() {
-          return;
-      }
-      resize(width, height) {
-          return;
-      }
-      toDataURL(mimeType, quality) {
-          return '';
-      }
-      readPixels(x, y, w, h) {
-          throw new Error('暂未实现');
-      }
-      convertToBlob(options) {
-          throw new Error('暂未实现');
-      }
-      transferToImageBitmap() {
-          throw new Error('暂未实现');
-      }
-      release(...params) {
-          return;
-      }
-  };
-  WxCanvas = __decorate([
-      injectable(),
-      __metadata("design:paramtypes", [Object])
-  ], WxCanvas);
-
-  class MiniAppEventManager {
-      addEventListener(type, func) {
-          if (!type || !func) {
-              return;
-          }
-          this.cache[type] = this.cache[type] || {
-              listener: []
-          };
-          this.cache[type].listener.push(func);
-      }
-      removeEventListener(type, func) {
-          if (!type || !func) {
-              return;
-          }
-          if (!this.cache[type]) {
-              return;
-          }
-          const index = this.cache[type].listener.findIndex((f) => f === func);
-          if (index >= 0) {
-              this.cache[type].listener.splice(index, 1);
-          }
-      }
-      cleanEvent() {
-          this.cache = {};
-      }
-      cache = {};
-  }
-  let WxWindowHandlerContribution = class WxWindowHandlerContribution extends exports.BaseWindowHandlerContribution {
-      global;
-      static env = 'wx';
-      type = 'wx';
-      eventManager = new MiniAppEventManager();
-      canvas;
-      get container() {
-          return null;
-      }
-      constructor(global) {
-          super();
-          this.global = global;
-      }
-      getTitle() {
-          return this.canvas.id.toString();
-      }
-      getWH() {
-          return {
-              width: this.canvas.width / (this.canvas.dpr || 1),
-              height: this.canvas.height / (this.canvas.dpr || 1)
-          };
-      }
-      getXY() {
-          return { x: 0, y: 0 };
-      }
-      createWindow(params) {
-          if (!params.canvas) {
-              this.createWindowByConfig(params);
-          }
-          else {
-              this.createWindowByCanvas(params);
-          }
-      }
-      createWindowByConfig(params) {
-          const nativeCanvas = this.global.createCanvas({
-              width: params.width,
-              height: params.height
-          });
-          const options = {
-              width: params.width,
-              height: params.height,
-              dpr: params.dpr,
-              nativeCanvas,
-              id: Generator.GenAutoIncrementId().toString(),
-              canvasControled: false
-          };
-          this.canvas = new WxCanvas(options);
-      }
-      createWindowByCanvas(params) {
-          let canvas;
-          if (typeof params.canvas === 'string') {
-              canvas = this.global.getElementById(params.canvas);
-              if (!canvas) {
-                  throw new Error('canvasId 参数不正确，请确认canvas存在并插入dom');
-              }
-          }
-          else {
-              canvas = params.canvas;
-          }
-          let width = params.width;
-          let height = params.height;
-          if (width == null || height == null || !params.canvasControled) {
-              const data = canvas.getBoundingClientRect();
-              width = data.width;
-              height = data.height;
-          }
-          let dpr = params.dpr;
-          if (dpr == null) {
-              dpr = canvas.width / width;
-          }
-          this.canvas = new WxCanvas({
-              width: width,
-              height: height,
-              dpr: dpr,
-              nativeCanvas: canvas,
-              canvasControled: params.canvasControled
-          });
-      }
-      releaseWindow() {
-          return;
-      }
-      resizeWindow(width, height) {
-          return;
-      }
-      setDpr(dpr) {
-          this.canvas.dpr = dpr;
-      }
-      getContext() {
-          return this.canvas.getContext();
-      }
-      getNativeHandler() {
-          return this.canvas;
-      }
-      getDpr() {
-          return this.canvas.dpr;
-      }
-      addEventListener(type, listener) {
-          this.eventManager.addEventListener(type, listener);
-      }
-      removeEventListener(type, listener) {
-          this.eventManager.removeEventListener(type, listener);
-      }
-      dispatchEvent(event) {
-          const { type } = event;
-          if (!this.eventManager.cache[type]) {
-              return false;
-          }
-          if (event.changedTouches && event.changedTouches[0]) {
-              event.offsetX = event.changedTouches[0].x;
-              event.changedTouches[0].offsetX = event.changedTouches[0].x ?? event.changedTouches[0].pageX;
-              event.changedTouches[0].clientX = event.changedTouches[0].x ?? event.changedTouches[0].pageX;
-              event.offsetY = event.changedTouches[0].y;
-              event.changedTouches[0].offsetY = event.changedTouches[0].y ?? event.changedTouches[0].pageY;
-              event.changedTouches[0].clientY = event.changedTouches[0].y ?? event.changedTouches[0].pageY;
-          }
-          event.preventDefault = () => {
-              return;
-          };
-          event.stopPropagation = () => {
-              return;
-          };
-          if (this.eventManager.cache[type].listener) {
-              this.eventManager.cache[type].listener.forEach((f) => {
-                  f(event);
-              });
-          }
-          return true;
-      }
-      getStyle() {
-          return {};
-      }
-      setStyle(style) {
-          return;
-      }
-      getBoundingClientRect() {
-          const wh = this.getWH();
-          return {
-              x: 0,
-              y: 0,
-              width: wh.width,
-              height: wh.height,
-              left: 0,
-              top: 0,
-              right: 0,
-              bottom: 0
-          };
-      }
-      clearViewBox(vb, color) {
-          const context = this.getContext();
-          const dpr = this.getDpr();
-          context.nativeContext.save();
-          context.nativeContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-          context.clearRect(vb.x1, vb.y1, vb.x2 - vb.x1, vb.y2 - vb.y1);
-          if (color) {
-              context.fillStyle = color;
-              context.fillRect(vb.x1, vb.y1, vb.x2 - vb.x1, vb.y2 - vb.y1);
-          }
-          context.nativeContext.restore();
-      }
-  };
-  WxWindowHandlerContribution = __decorate([
-      injectable(),
-      __param(0, inject(Global)),
-      __metadata("design:paramtypes", [Object])
-  ], WxWindowHandlerContribution);
-
   var windowModules = new ContainerModule(bind => {
       bind(BrowserWindowHandlerContribution).toSelf();
       bind(WindowHandlerContribution)
@@ -30034,10 +29564,6 @@
       bind(WindowHandlerContribution)
           .toDynamicValue(ctx => ctx.container.get(LynxWindowHandlerContribution))
           .whenTargetNamed(LynxWindowHandlerContribution.env);
-      bind(WxWindowHandlerContribution).toSelf();
-      bind(WindowHandlerContribution)
-          .toDynamicValue(ctx => ctx.container.get(WxWindowHandlerContribution))
-          .whenTargetNamed(WxWindowHandlerContribution.env);
       bind(NodeWindowHandlerContribution).toSelf();
       bind(WindowHandlerContribution)
           .toDynamicValue(ctx => ctx.container.get(NodeWindowHandlerContribution))
@@ -30742,7 +30268,7 @@
           };
           this._groupRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.beforeFillStroke) {
-                  c.drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, fillCb, strokeCb, doFillOrStroke);
+                  c.drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, drawContext, fillCb, strokeCb, doFillOrStroke);
               }
           });
           if (clip) {
@@ -30769,7 +30295,7 @@
           }
           this._groupRenderContribitions.forEach(c => {
               if (c.time === exports.BaseRenderContributionTime.afterFillStroke) {
-                  c.drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, fillCb, strokeCb);
+                  c.drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, drawContext, fillCb, strokeCb);
               }
           });
       }
@@ -31774,6 +31300,93 @@
       injectable()
   ], DefaultCanvasPyramid3dRender);
 
+  let DefaultPolygonBackgroundRenderContribution = class DefaultPolygonBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  DefaultPolygonBackgroundRenderContribution = __decorate([
+      injectable()
+  ], DefaultPolygonBackgroundRenderContribution);
+  let DefaultPolygonTextureRenderContribution = class DefaultPolygonTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  };
+  DefaultPolygonTextureRenderContribution = __decorate([
+      injectable()
+  ], DefaultPolygonTextureRenderContribution);
+
+  let DefaultPathBackgroundRenderContribution = class DefaultPathBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  DefaultPathBackgroundRenderContribution = __decorate([
+      injectable()
+  ], DefaultPathBackgroundRenderContribution);
+  let DefaultPathTextureRenderContribution = class DefaultPathTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+  };
+  DefaultPathTextureRenderContribution = __decorate([
+      injectable()
+  ], DefaultPathTextureRenderContribution);
+
+  let DefaultAreaBackgroundRenderContribution = class DefaultAreaBackgroundRenderContribution extends exports.DefaultBaseBackgroundRenderContribution {
+      time = exports.BaseRenderContributionTime.beforeFillStroke;
+  };
+  DefaultAreaBackgroundRenderContribution = __decorate([
+      injectable()
+  ], DefaultAreaBackgroundRenderContribution);
+  let DefaultAreaTextureRenderContribution = class DefaultAreaTextureRenderContribution extends exports.DefaultBaseTextureRenderContribution {
+      time = exports.BaseRenderContributionTime.afterFillStroke;
+      drawShape(graphic, context, x, y, doFill, doStroke, fVisible, sVisible, graphicAttribute, drawContext, fillCb, strokeCb, options) {
+          if (!this.textureMap) {
+              this.initTextureMap(context, graphic.stage);
+          }
+          const { attribute = graphic.attribute } = options || {};
+          const { texture = graphic.attribute.texture ?? getAttributeFromDefaultAttrList(graphicAttribute, 'texture'), textureColor = graphic.attribute.textureColor ??
+              getAttributeFromDefaultAttrList(graphicAttribute, 'textureColor'), textureSize = graphic.attribute.textureSize ?? getAttributeFromDefaultAttrList(graphicAttribute, 'textureSize'), texturePadding = graphic.attribute.texturePadding ??
+              getAttributeFromDefaultAttrList(graphicAttribute, 'texturePadding') } = attribute;
+          if (!texture) {
+              return;
+          }
+          let pattern = this.textureMap.get(texture);
+          if (!pattern) {
+              switch (texture) {
+                  case 'circle':
+                      pattern = this.createCirclePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'diamond':
+                      pattern = this.createDiamondPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'rect':
+                      pattern = this.createRectPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'vertical-line':
+                      pattern = this.createVerticalLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'horizontal-line':
+                      pattern = this.createHorizontalLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'bias-lr':
+                      pattern = this.createBiasLRLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'bias-rl':
+                      pattern = this.createBiasRLLinePattern(textureSize, texturePadding, textureColor, context);
+                      break;
+                  case 'grid':
+                      pattern = this.createGridPattern(textureSize, texturePadding, textureColor, context);
+                      break;
+              }
+          }
+          if (pattern) {
+              context.highPerformanceSave();
+              context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+              context.fillStyle = pattern;
+              context.fill();
+              context.highPerformanceRestore();
+          }
+      }
+  };
+  DefaultAreaTextureRenderContribution = __decorate([
+      injectable()
+  ], DefaultAreaTextureRenderContribution);
+
   var renderModule = new ContainerModule(bind => {
       bind(DefaultDrawContribution).toSelf();
       bind(DrawContribution).toService(DefaultDrawContribution);
@@ -31811,6 +31424,7 @@
       bind(exports.DefaultCanvasTextRender).toSelf().inSingletonScope();
       bind(TextRender).to(exports.DefaultCanvasTextRender);
       bind(GraphicRender).to(exports.DefaultCanvasTextRender);
+      bindContributionProvider(bind, TextRenderContribution);
       bind(exports.DefaultCanvasPathRender).toSelf().inSingletonScope();
       bind(PathRender).to(exports.DefaultCanvasPathRender);
       bind(GraphicRender).to(exports.DefaultCanvasPathRender);
@@ -31884,6 +31498,17 @@
       bind(DefaultCanvasPyramid3dRender).toSelf().inSingletonScope();
       bind(Pyramid3dRender).toService(DefaultCanvasPyramid3dRender);
       bind(GraphicRender).toService(Pyramid3dRender);
+      bind(exports.DefaultBaseInteractiveRenderContribution).toSelf().inSingletonScope();
+      bind(TextRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(ArcRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(PathRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(SymbolRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(RectRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(ImageRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(CircleRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(AreaRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bind(PolygonRenderContribution).toService(exports.DefaultBaseInteractiveRenderContribution);
+      bindContributionProvider(bind, InteractiveSubRenderContribution);
       bindContributionProvider(bind, GraphicRender);
       bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
       bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
@@ -33348,19 +32973,6 @@
           .whenTargetNamed(LynxContext2d.env);
   });
 
-  var wxModule = new ContainerModule(bind => {
-      bind(CanvasFactory)
-          .toDynamicValue(() => {
-          return (params) => new WxCanvas(params);
-      })
-          .whenTargetNamed(WxCanvas.env);
-      bind(Context2dFactory)
-          .toDynamicValue(() => {
-          return (params, dpr) => new WxContext2d(params, dpr);
-      })
-          .whenTargetNamed(WxContext2d.env);
-  });
-
   var nodeModule = new ContainerModule(bind => {
       bind(CanvasFactory)
           .toDynamicValue(() => {
@@ -33379,7 +32991,6 @@
       container.load(feishuModule);
       container.load(taroModule);
       container.load(lynxModule);
-      container.load(wxModule);
       container.load(nodeModule);
   }
 
@@ -34255,7 +33866,7 @@
       'rect'
   ];
 
-  const version = "0.12.2";
+  const version = "0.12.0";
 
   exports.ACustomAnimate = ACustomAnimate;
   exports.ARC3D_NUMBER_TYPE = ARC3D_NUMBER_TYPE;
@@ -34271,7 +33882,9 @@
   exports.ArcRenderContribution = ArcRenderContribution;
   exports.Area = Area;
   exports.AreaRender = AreaRender;
+  exports.AreaRenderContribution = AreaRenderContribution;
   exports.AttributeAnimate = AttributeAnimate;
+  exports.AutoEnablePlugins = AutoEnablePlugins;
   exports.Basis = Basis;
   exports.BeforeRenderConstribution = BeforeRenderConstribution;
   exports.BoundsContext = BoundsContext;
@@ -34358,6 +33971,7 @@
   exports.IncreaseCount = IncreaseCount;
   exports.IncrementalDrawContribution = IncrementalDrawContribution;
   exports.InputText = InputText;
+  exports.InteractiveSubRenderContribution = InteractiveSubRenderContribution;
   exports.LINE_NUMBER_TYPE = LINE_NUMBER_TYPE;
   exports.Layer = Layer;
   exports.LayerHandlerContribution = LayerHandlerContribution;
@@ -34381,9 +33995,12 @@
   exports.PYRAMID3D_NUMBER_TYPE = PYRAMID3D_NUMBER_TYPE;
   exports.Path = Path;
   exports.PathRender = PathRender;
+  exports.PathRenderContribution = PathRenderContribution;
   exports.PickerService = PickerService;
+  exports.PluginService = PluginService;
   exports.Polygon = Polygon;
   exports.PolygonRender = PolygonRender;
+  exports.PolygonRenderContribution = PolygonRenderContribution;
   exports.Pyramid3d = Pyramid3d;
   exports.Pyramid3dRender = Pyramid3dRender;
   exports.RAFTickHandler = RAFTickHandler;
@@ -34415,6 +34032,7 @@
   exports.TagPointsUpdate = TagPointsUpdate;
   exports.Text = Text;
   exports.TextRender = TextRender;
+  exports.TextRenderContribution = TextRenderContribution;
   exports.Theme = Theme;
   exports.TimeOutTickHandler = TimeOutTickHandler;
   exports.TransformUtil = TransformUtil;
@@ -34497,7 +34115,6 @@
   exports.getContextFont = getContextFont;
   exports.getExtraModelMatrix = getExtraModelMatrix;
   exports.getModelMatrix = getModelMatrix;
-  exports.getRichTextBounds = getRichTextBounds;
   exports.getScaledStroke = getScaledStroke;
   exports.getTextBounds = getTextBounds;
   exports.getTheme = getTheme;

@@ -58,7 +58,9 @@ export type TooltipComponentAttrs = TooltipPositionAttrs & {
 
 /** tooltip 文本样式 */
 export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute & IContainerSize> & {
+  /** 文本是否支持多行显示 */
   multiLine?: boolean;
+  /** 文本换行模式 */
   wordBreak?: string;
 };
 

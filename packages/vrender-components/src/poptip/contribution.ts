@@ -6,7 +6,7 @@ import type {
   IInteractiveSubRenderContribution,
   IThemeAttribute,
   IDrawContext
-} from '@visactor/vrender/src/index';
+} from '@visactor/vrender';
 import { PopTip } from './poptip';
 
 @injectable()

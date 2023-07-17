@@ -1277,17 +1277,17 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
-  stopAnimates() {
+  stopAnimates(stopChildren: boolean = false) {
     this._stopAnimates(this.animates);
 
     if (this.shadowRoot) {
-      const children = this.shadowRoot.getChildren();
-
-      if (children && children.length) {
-        children.forEach(child => {
-          this._stopAnimates((child as IGraphic).animates);
-        });
-      }
+      // 停止所有影子节点的动画
+      this.shadowRoot.stopAnimates(true);
+    }
+    if (this.isContainer && stopChildren) {
+      this.forEachChildren((c: IGraphic) => {
+        c.stopAnimates(stopChildren);
+      });
     }
   }
 

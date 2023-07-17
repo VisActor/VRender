@@ -7,6 +7,7 @@ Page({
       { name: 'arc', image: 'pie.png' },
       { name: 'symbol', image: 'scatter.png' },
       { name: 'text', image: 'wordcloud.png' },
+      { name: 'image', image: 'indicator.png' },
     ]
   },
   // 事件处理函数

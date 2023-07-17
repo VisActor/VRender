@@ -10,4 +10,8 @@ export class WxContext2d extends BrowserContext2d implements IContext2d {
   draw() {
     return;
   }
+
+  createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
+    return null;
+  }
 }

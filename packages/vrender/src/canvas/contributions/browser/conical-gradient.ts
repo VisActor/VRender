@@ -24,8 +24,8 @@
  */
 import { pi2 } from '@visactor/vutils';
 import { application } from '../../../application';
-import { IContext2d } from '../../../interface';
-import { IConicalGradient } from '../../../interface/color';
+import type { IContext2d } from '../../../interface';
+import type { IConicalGradient } from '../../../interface/color';
 import { interpolateColor } from '../../../color-string/interpolate';
 
 class ConicalCanvas {
@@ -301,6 +301,6 @@ export function createConicalGradient(
   conicalCanvas.height = imageData.height;
   conicalCtx.putImageData(imageData, 0, 0);
   pattern = context.createPattern(conicalCanvas, 'no-repeat');
-  ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
+  pattern && ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
   return pattern;
 }

@@ -9160,7 +9160,7 @@
           return newNode;
       }
       insertInto(newNode, idx) {
-          if (this._nodeList) {
+          if (!this._ignoreWarn && this._nodeList) {
               console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
           }
           if (idx >= this.childrenCount) {
@@ -9228,7 +9228,10 @@
           if (node) {
               return node._next ? this.insertBefore(newNode, node._next) : this.appendChild(newNode);
           }
-          return this.insertInto(newNode, 0);
+          this._ignoreWarn = true;
+          const data = this.insertInto(newNode, 0);
+          this._ignoreWarn = false;
+          return data;
       }
       removeChild(child) {
           if (!this._idMap) {
@@ -17205,7 +17208,7 @@
       conicalCanvas.height = imageData.height;
       conicalCtx.putImageData(imageData, 0, 0);
       pattern = context.createPattern(conicalCanvas, 'no-repeat');
-      ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
+      pattern && ConicalPatternStore.Set(stops, x, y, startAngle, endAngle, pattern, width, height);
       return pattern;
   }
 
@@ -22219,6 +22222,11 @@
       text.setAttributes(params);
       return text.AABBBounds;
   }
+  const richText = createRichText({});
+  function getRichTextBounds(params) {
+      richText.setAttributes(params);
+      return richText.AABBBounds;
+  }
 
   class DefaultCanvasAllocate {
       pools = [];
@@ -22657,7 +22665,7 @@
           }
           const { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius, cap = arcAttribute.cap, forceShowCap = arcAttribute.forceShowCap } = arc.attribute;
           const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
-          if (doFill || isFullStroke) {
+          if (doFill || isFullStroke || background) {
               context.beginPath();
               drawArcPath$1(arc, context, x, y, outerRadius, innerRadius);
               if (!this._arcRenderContribitions) {
@@ -27994,11 +28002,12 @@
           }
           this.applyStyles = true;
       }
-      async configure(service, params) {
+      configure(service, params) {
           if (service.env === this.type) {
               service.setActiveEnvContribution(this);
-              await makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
-              loadFeishuContributions();
+              return makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList).then(() => {
+                  loadFeishuContributions();
+              });
           }
       }
       loadImage(url) {
@@ -28318,6 +28327,9 @@
                   resolve(null);
               });
           });
+      }
+      createPattern(image, repetition) {
+          return null;
       }
   };
   FeishuContext2d = __decorate([
@@ -28712,6 +28724,9 @@
       createConicGradient(x, y, startAngle, endAngle) {
           return null;
       }
+      createPattern(image, repetition) {
+          return null;
+      }
   };
   TaroContext2d = __decorate([
       injectable()
@@ -29061,6 +29076,28 @@
               }
               _context.setLineDash(lineDash);
           }
+      }
+      _setStrokeStyle(params, attribute, offsetX, offsetY, defaultParams) {
+          const _context = this.nativeContext;
+          if (!defaultParams) {
+              defaultParams = this.strokeAttributes;
+          }
+          const { strokeOpacity = defaultParams.strokeOpacity, opacity = defaultParams.opacity } = attribute;
+          if (strokeOpacity > 1e-12 && opacity > 1e-12) {
+              const { lineWidth = defaultParams.lineWidth, stroke = defaultParams.stroke, lineJoin = defaultParams.lineJoin, lineDash = defaultParams.lineDash, lineCap = defaultParams.lineCap, miterLimit = defaultParams.miterLimit } = attribute;
+              _context.globalAlpha = strokeOpacity * opacity;
+              _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
+              _context.strokeStyle = createColor(this, stroke, params, offsetX, offsetY);
+              _context.lineJoin = lineJoin;
+              if (!(lineDash[0] === 0 && lineDash[1] === 0)) {
+                  _context.setLineDash(lineDash);
+              }
+              _context.lineCap = lineCap;
+              _context.miterLimit = miterLimit;
+          }
+      }
+      createPattern(image, repetition) {
+          return null;
       }
       draw() {
           const _context = this.nativeContext;
@@ -29657,6 +29694,9 @@
       static env = 'wx';
       draw() {
           return;
+      }
+      createPattern(image, repetition) {
+          return null;
       }
   };
   WxContext2d = __decorate([
@@ -34215,7 +34255,7 @@
       'rect'
   ];
 
-  const version = "0.12.1";
+  const version = "0.12.2";
 
   exports.ACustomAnimate = ACustomAnimate;
   exports.ARC3D_NUMBER_TYPE = ARC3D_NUMBER_TYPE;
@@ -34457,6 +34497,7 @@
   exports.getContextFont = getContextFont;
   exports.getExtraModelMatrix = getExtraModelMatrix;
   exports.getModelMatrix = getModelMatrix;
+  exports.getRichTextBounds = getRichTextBounds;
   exports.getScaledStroke = getScaledStroke;
   exports.getTextBounds = getTextBounds;
   exports.getTheme = getTheme;

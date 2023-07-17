@@ -69,6 +69,10 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
     }
   }
 
+  createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
+    return null;
+  }
+
   draw() {
     const _context = this.nativeContext as any;
     this.drawPromise = new Promise(resolve => {

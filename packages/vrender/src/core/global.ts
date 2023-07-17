@@ -82,10 +82,17 @@ export class DefaultGlobal implements IGlobal {
     this.measureTextMethod = 'native';
   }
 
-  protected bindContribution(params?: any) {
+  protected bindContribution(params?: any): void | Promise<any> {
+    const promiseArr: any[] = [];
     this.contributions.getContributions().forEach(contribution => {
-      contribution.configure(this, params);
+      const data = contribution.configure(this, params);
+      if ((data as any) && (data as any).then) {
+        promiseArr.push(data);
+      }
     });
+    if (promiseArr.length) {
+      return Promise.all(promiseArr);
+    }
   }
 
   /**
@@ -95,23 +102,29 @@ export class DefaultGlobal implements IGlobal {
    * 默认重复设置不生效，但如果params.force为true那么每次设置env都会重复执行初始化逻辑
    * @returns
    */
-  setEnv(env: EnvType, params?: IEnvParamsMap[EnvType]): void {
+  setEnv(env: EnvType, params?: IEnvParamsMap[EnvType]): void | Promise<any> {
     // 如果环境设置过了，但是没有设置force为true，就直接跳过
     if (!(params && params.force === true) && this._env === env) {
       return;
     }
     this.deactiveCurrentEnv();
-    this.activeEnv(env, params);
+    return this.activeEnv(env, params);
   }
 
   protected deactiveCurrentEnv() {
     this.envContribution && this.envContribution.release();
   }
 
-  protected activeEnv(env: EnvType, params?: IEnvParamsMap[EnvType]) {
+  protected activeEnv(env: EnvType, params?: IEnvParamsMap[EnvType]): void | Promise<any> {
     const lastEnv = this._env;
     this._env = env;
-    this.bindContribution(params);
+    const data = this.bindContribution(params);
+    if (data && data.then) {
+      return data.then(() => {
+        this.envParams = params;
+        this.hooks.onSetEnv.call(lastEnv, env, this);
+      });
+    }
     this.envParams = params;
     this.hooks.onSetEnv.call(lastEnv, env, this);
   }

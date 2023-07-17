@@ -10,7 +10,7 @@ export interface ILoader {
 }
 
 // 环境定义
-export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx';
+export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx';
 
 // 创建canvas需要的参数
 export interface ICreateCanvasParams {
@@ -132,6 +132,7 @@ export interface IEnvParamsMap {
   readonly node: any;
   readonly native: any;
   readonly lynx: any;
+  readonly wx: any;
 }
 export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 'removeAllListeners'> {
   // 当前代码所运行的环境

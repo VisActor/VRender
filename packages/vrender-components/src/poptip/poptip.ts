@@ -1,5 +1,5 @@
 /**
- * @description 标签组件
+ * @description PopTip组件
  */
 import type {
   IGroup,

@@ -1,6 +1,6 @@
 // 参考konva
 import { injectable } from 'inversify';
-import {
+import type {
   ICommonStyleParams,
   IContext2d,
   ISetCommonStyleParams,
@@ -142,6 +142,10 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
     _context.setTextBaseline(params.textBaseline ?? defaultParams.textBaseline);
   }
   createConicGradient(x: number, y: number, startAngle: number, endAngle: number): IConicalGradientData {
+    return null;
+  }
+
+  createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
     return null;
   }
 }

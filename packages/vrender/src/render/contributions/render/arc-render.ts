@@ -234,7 +234,6 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   ) {
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
     const arcAttribute = getTheme(arc, params?.theme).arc;
-
     const {
       fill = arcAttribute.fill,
       background,
@@ -276,7 +275,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
     let beforeRenderContribitionsRuned = false;
 
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
-    if (doFill || isFullStroke) {
+    if (doFill || isFullStroke || background) {
       context.beginPath();
       // if (arc.shouldUpdateShape()) {
       //   // 更新shape

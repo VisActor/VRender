@@ -2,6 +2,36 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.12.2",
+      "tag": "@visactor/vrender_v0.12.2",
+      "date": "Tue, 11 Jul 2023 13:17:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue of false warn"
+          },
+          {
+            "comment": "fix: fix the error of setLineDash in lynx"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.1",
+      "tag": "@visactor/vrender_v0.12.1",
+      "date": "Fri, 07 Jul 2023 09:04:45 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: text support scaleIn3d in 3d mode"
+          },
+          {
+            "comment": "fix the bug of view3dtransform caused by undefined beta"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.0",
       "tag": "@visactor/vrender_v0.12.0",
       "date": "Thu, 06 Jul 2023 09:09:12 GMT",

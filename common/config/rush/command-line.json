@@ -90,7 +90,14 @@
       "description": "Run this command to start VRender development server",
       "safeForSimultaneousRushProcesses": true,
       "shellCommand": "ts-node common/autoinstallers/lint/change-all.ts"
-    }
+    },
+    {
+      "name": "components",
+      "commandKind": "global",
+      "summary": "Start the development server of VRender components",
+      "description": "Run this command to start VRender components development server",
+      "shellCommand": "rush run -p @visactor/vrender-components -s start"
+    },
   ],
   "parameters": [
     {

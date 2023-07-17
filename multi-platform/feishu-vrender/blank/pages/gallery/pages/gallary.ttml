@@ -1,0 +1,6 @@
+<!--logs.ttml-->
+<view class="container">
+  <canvas class="interactive" id="interactive"></canvas>
+  <canvas bind:touchstart="bindEvent" bind:touchmove="bindEvent" bind:touchend="bindEvent"  canvas-id="draw" class="draw" id="draw"></canvas>
+  <canvas class="backup" id="backup"></canvas>
+</view>

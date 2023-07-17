@@ -12,8 +12,10 @@ import type {
   FederatedPointerEvent,
   IGraphic
 } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
 import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
 import type { Dict } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
@@ -278,12 +280,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected renderLabels(container: IGroup, items: AxisItem[], layer: number) {
-    let data: TransformedAxisItem[];
-    if (layer === 0) {
-      data = this.data;
-    } else {
-      data = this._transformItems(items);
+    const { dataFilter } = this.attribute.label;
+    if (dataFilter && isFunction(dataFilter)) {
+      items = dataFilter(items, layer) as TransformedAxisItem[];
     }
+    const data = this._transformItems(items);
+
     const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
@@ -320,7 +322,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       textBaseline
     };
     return labelGroup;
-    // TODO: autoOverlap
   }
 
   protected renderTitle(container: IGroup) {
@@ -369,13 +370,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const data = this.data;
     // tick 处理
     const tickLineItems: TickLineItem[] = [];
-    const { alignWithLabel, inside = false, length } = tick as TickAttributes;
+    const { alignWithLabel, inside = false, length, dataFilter } = tick as TickAttributes;
     let tickSegment = 1;
     const count = data.length;
     if (count >= 2) {
       tickSegment = data[1].value - data[0].value;
     }
-    data.forEach((item: TransformedAxisItem) => {
+
+    (dataFilter && isFunction(dataFilter) ? dataFilter(data) : data).forEach((item: TransformedAxisItem) => {
       let point = item.point;
       let tickValue = item.value;
       if (!alignWithLabel) {

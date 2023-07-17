@@ -1,4 +1,4 @@
-import {
+import type {
   IGraphicAttribute,
   ILineGraphicAttribute,
   SymbolType,
@@ -7,10 +7,10 @@ import {
   IRectGraphicAttribute,
   IGroupGraphicAttribute
 } from '@visactor/vrender';
-import { Dict } from '@visactor/vutils';
-import { Point } from '../core/type';
-import { SegmentAttributes } from '../segment';
-import { TagAttributes } from '../tag';
+import type { Dict } from '@visactor/vutils';
+import type { Point } from '../core/type';
+import type { SegmentAttributes } from '../segment';
+import type { TagAttributes } from '../tag';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;
@@ -133,7 +133,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
   /** 坐标轴数据 */
   items: AxisItem[][];
   /**
-   * TODO：待支持
    * 坐标轴组件可占用尺寸，用于组件内部的约束性布局
    */
   layoutSize?: [number, number];
@@ -410,6 +409,12 @@ export interface TickAttributes {
    */
   style?: Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
   state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
+  /**
+   * 用于 tick 的数据过滤
+   * @param data
+   * @returns
+   */
+  dataFilter?: (data: AxisItem[]) => AxisItem[];
 }
 
 // 子轴刻度线配置
@@ -470,4 +475,12 @@ export interface LabelAttributes {
    */
   layouts?: LabelLayoutConfig[];
   state?: AxisItemStateStyle<Partial<ITextGraphicAttribute>>;
+
+  /**
+   * 用于 label 的数据过滤
+   * @param data
+   * @param layer
+   * @returns
+   */
+  dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
 }

@@ -4,13 +4,12 @@ import type {
   IContext2d,
   IImage,
   IThemeAttribute,
-  IImageRenderContribution
+  IImageRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import { getTheme } from '../../../../graphic';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const ImageRenderContribution = Symbol.for('ImageRenderContribution');
 
 @injectable()
 export class DefaultImageBackgroundRenderContribution
@@ -29,7 +28,7 @@ export class DefaultImageBackgroundRenderContribution
     fVisible: boolean,
     sVisible: boolean,
     graphicAttribute: Required<IGraphicAttribute>,
-
+    drawContext: IDrawContext,
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {

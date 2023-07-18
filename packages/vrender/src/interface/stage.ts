@@ -40,6 +40,7 @@ export interface IStageParams {
   title: string;
   autoRender: boolean;
   disableDirtyBounds: boolean;
+  poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
   // 绘制之后的钩子函数

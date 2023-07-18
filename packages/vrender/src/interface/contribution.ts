@@ -6,6 +6,7 @@ import type { ISymbol, ISymbolGraphicAttribute } from './graphic/symbol';
 import type { BaseRenderContributionTime } from '../common/enums';
 import type { IArc, IArcGraphicAttribute } from './graphic/arc';
 import type { IArea, IAreaGraphicAttribute } from './graphic/area';
+import type { IText, ITextGraphicAttribute } from './graphic/text';
 import type { ICircle, ICircleGraphicAttribute } from './graphic/circle';
 import type { IGroup, IGroupGraphicAttribute } from './graphic/group';
 import type { IImage, IImageGraphicAttribute } from './graphic/image';
@@ -14,20 +15,19 @@ import type { IPolygon, IPolygonGraphicAttribute } from './graphic/polygon';
 import type { IRect, IRectGraphicAttribute } from './graphic/rect';
 import type { IStage } from './stage';
 import type { ICanvasLike } from './canvas';
+import type { IDrawContext } from './render';
 
 export interface IContribution<T> extends Releaseable {
   configure: (service: T, ...data: any) => void;
 }
 
-export interface IBaseRenderContribution {
+export interface IBaseRenderContribution<GraphicType, AttributeType> {
   time: BaseRenderContributionTime;
   useStyle: boolean;
   order: number;
-}
 
-export interface ISymbolRenderContribution extends IBaseRenderContribution {
   drawShape: (
-    symbol: ISymbol,
+    graphic: GraphicType,
     context: IContext2d,
     x: number,
     y: number,
@@ -35,56 +35,8 @@ export interface ISymbolRenderContribution extends IBaseRenderContribution {
     doStroke: boolean,
     fVisible: boolean,
     sVisible: boolean,
-    symbolAttribute: Required<ISymbolGraphicAttribute>,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
-
-export interface IArcRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    arc: IArc,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    arcAttribute: Required<IArcGraphicAttribute>,
-
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
-
-export interface IAreaRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    area: IArea,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    areaAttribute: Required<IAreaGraphicAttribute>,
+    graphicAttribute: Required<AttributeType>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -95,162 +47,29 @@ export interface IAreaRenderContribution extends IBaseRenderContribution {
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
     ) => boolean,
-    options?: {
-      attribute?: Partial<IAreaGraphicAttribute>;
-    }
+    params?: any
   ) => void;
 }
 
-export interface ICircleRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    circle: ICircle,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    circleAttribute: Required<ICircleGraphicAttribute>,
+export type ISymbolRenderContribution = IBaseRenderContribution<ISymbol, ISymbolGraphicAttribute>;
 
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
+export type IArcRenderContribution = IBaseRenderContribution<IArc, IArcGraphicAttribute>;
 
-export interface IGroupRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    group: IGroup,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    groupAttribute: Required<IGroupGraphicAttribute>,
+export type ITextRenderContribution = IBaseRenderContribution<IText, ITextGraphicAttribute>;
 
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
-  ) => void;
-}
+export type IAreaRenderContribution = IBaseRenderContribution<IArea, IAreaGraphicAttribute>;
 
-export interface IImageRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    image: IImage,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    imageAttribute: Required<IImageGraphicAttribute>,
+export type ICircleRenderContribution = IBaseRenderContribution<ICircle, ICircleGraphicAttribute>;
 
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
+export type IGroupRenderContribution = IBaseRenderContribution<IGroup, IGroupGraphicAttribute>;
 
-export interface IPathRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    Path: IPath,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    PathAttribute: Required<IPathGraphicAttribute>,
+export type IImageRenderContribution = IBaseRenderContribution<IImage, IImageGraphicAttribute>;
 
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
+export type IPathRenderContribution = IBaseRenderContribution<IPath, IPathGraphicAttribute>;
 
-export interface IPolygonRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    Polygon: IPolygon,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    PolygonAttribute: Required<IPolygonGraphicAttribute>,
+export type IPolygonRenderContribution = IBaseRenderContribution<IPolygon, IPolygonGraphicAttribute>;
 
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ) => void;
-}
-
-export interface IRectRenderContribution extends IBaseRenderContribution {
-  drawShape: (
-    rect: IRect,
-    context: IContext2d,
-    x: number,
-    y: number,
-    doFill: boolean,
-    doStroke: boolean,
-    fVisible: boolean,
-    sVisible: boolean,
-    rectAttribute: Required<IRectGraphicAttribute>,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    doFillOrStroke?: { doFill: boolean; doStroke: boolean }
-  ) => void;
-}
+export type IRectRenderContribution = IBaseRenderContribution<IRect, IRectGraphicAttribute>;
 
 export interface IContributionProvider<T> {
   getContributions: () => T[];

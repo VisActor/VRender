@@ -31,6 +31,10 @@ const specs = [
     name: '标签'
   },
   {
+    path: 'poptip',
+    name: 'poptip'
+  },
+  {
     path: 'label-symbol',
     name: '点布局 数据标签'
   },

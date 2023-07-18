@@ -6,7 +6,8 @@ import type {
   IArc,
   IArcGraphicAttribute,
   IThemeAttribute,
-  IArcRenderContribution
+  IArcRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
@@ -15,8 +16,6 @@ import {
 } from './base-contribution-render';
 import { drawArcPath } from '../utils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const ArcRenderContribution = Symbol.for('ArcRenderContribution');
 
 @injectable()
 export class DefaultArcRenderContribution implements IArcRenderContribution {
@@ -33,6 +32,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
     fVisible: boolean,
     sVisible: boolean,
     arcAttribute: Required<IArcGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,

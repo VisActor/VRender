@@ -16,7 +16,9 @@ class ContributionProviderCache<T> implements IContributionProvider<T> {
   getContributions(): T[] {
     if (!this.caches) {
       this.caches = [];
-      this.container && this.caches.push(...this.container.getAll(this.serviceIdentifier));
+      this.container &&
+        this.container.isBound(this.serviceIdentifier) &&
+        this.caches.push(...this.container.getAll(this.serviceIdentifier));
     }
     return this.caches;
   }

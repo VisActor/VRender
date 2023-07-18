@@ -4,6 +4,7 @@ export const version = __VERSION__;
 export * from './core/base';
 export * from './scrollbar';
 export * from './tag';
+export * from './poptip';
 export * from './crosshair';
 export * from './label';
 export * from './axis';

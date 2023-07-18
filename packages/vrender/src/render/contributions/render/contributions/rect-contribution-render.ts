@@ -7,7 +7,8 @@ import type {
   IRect,
   IRectGraphicAttribute,
   IThemeAttribute,
-  IRectRenderContribution
+  IRectRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
@@ -16,8 +17,6 @@ import {
 } from './base-contribution-render';
 import { createRectPath } from '../../../../common/shape/rect';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const RectRenderContribution = Symbol.for('RectRenderContribution');
 
 @injectable()
 export class DefaultRectRenderContribution implements IRectRenderContribution {
@@ -34,6 +33,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
     fVisible: boolean,
     sVisible: boolean,
     rectAttribute: Required<IRectGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -151,6 +151,7 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IRectGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -187,6 +188,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     fVisible: boolean,
     sVisible: boolean,
     groupAttribute: Required<IRectGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,

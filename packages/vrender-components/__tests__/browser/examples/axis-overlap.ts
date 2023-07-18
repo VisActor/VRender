@@ -1,27 +1,8 @@
-import { pi } from '@visactor/vutils';
-import { BandScale, LinearScale, PointScale } from '@visactor/vscale';
-import { CircleAxis, LineAxis } from '../../../src';
+import { PointScale } from '@visactor/vscale';
+import { LineAxis } from '../../../src';
 import render from '../../util/render';
 
-const scale = new LinearScale().domain([0, 100]).range([0, 1]).nice();
-const items = scale.ticks(10).map(tick => {
-  return {
-    id: tick,
-    label: tick,
-    value: scale.scale(tick),
-    rawValue: tick
-  };
-});
-const nextYItems = scale.ticks(5).map(tick => {
-  return {
-    id: tick,
-    label: tick,
-    value: scale.scale(tick),
-    rawValue: tick
-  };
-});
-
-const domain = 'ABCDEFGH'.split('');
+const domain = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789abcdefghijk'.split('');
 const pointScale = new PointScale().domain(domain).range([0, 1]);
 const xItems = domain.map(value => {
   return {
@@ -31,62 +12,10 @@ const xItems = domain.map(value => {
     rawValue: value
   };
 });
-const nextXItems = 'BDFH'.split('').map(value => {
-  return {
-    id: value,
-    label: value,
-    value: pointScale.scale(value),
-    rawValue: value
-  };
-});
-
-const bandScale = new BandScale().domain(domain).range([0, 1]);
-const angleItems = domain.map(value => {
-  return {
-    id: value,
-    label: value,
-    value: bandScale.scale(value),
-    rawValue: value
-  };
-});
-
-const stateStyle = {
-  hover: {
-    fill: 'blue',
-    stroke: 'blue',
-    fontWeight: 500
-  },
-  hover_reverse: {
-    fill: 'yellow',
-    stroke: 'yellow',
-    fontWeight: 500
-  },
-  selected: {
-    fill: 'red',
-    stroke: 'red',
-    fontSize: 16
-  },
-  selected_reverse: {
-    fill: '#ccc',
-    stroke: '#ccc'
-  }
-};
-
-const xAxisBottom = new LineAxis({
+const axisBottom = new LineAxis({
   start: { x: 100, y: 400 },
-  end: { x: 400, y: 400 },
+  end: { x: 500, y: 400 },
   items: [xItems],
-  line: {
-    startSymbol: {
-      visible: true,
-      symbolType: 'triangle'
-    },
-    endSymbol: {
-      visible: true,
-      symbolType: 'triangle'
-    },
-    state: stateStyle
-  },
   title: {
     visible: true,
     position: 'middle',
@@ -100,19 +29,14 @@ const xAxisBottom = new LineAxis({
     padding: 4,
     maxWidth: 100,
     text: 'x 轴 -- bottom',
-    space: 0,
-    state: {
-      text: stateStyle,
-      shape: stateStyle,
-      background: stateStyle
-    }
+    space: 0
   },
   tick: {
     visible: true,
-    state: stateStyle,
-    dataFilter: data => {
-      return data.filter((d, i) => i % 2 === 0);
-    }
+    length: 10
+    // dataFilter: data => {
+    //   return data.filter((d, i) => i % 2 === 0);
+    // }
   },
   // subTick: {
   //   visible: true,
@@ -120,27 +44,50 @@ const xAxisBottom = new LineAxis({
   // },
   label: {
     visible: true,
-    space: 0,
-    state: stateStyle,
-    dataFilter: data => {
-      return data.filter((d, i) => i % 2 === 0);
-    }
+    space: 10,
+    autoRotate: true,
+    autoRotateAngle: [0, 30, 60],
+    autoHide: true,
+    autoLimit: true,
+    // dataFilter: data => {
+    //   return data.filter((d, i) => i % 2 === 0);
+    // }
+    formatMethod: () => 'AAAAAAAAAAAAAA'
+    // style: {
+    //   angle: Math.PI * 0.5
+    // }
   },
-  subGrid: {
-    visible: true,
-    style: {
-      stroke: 'red'
-    }
-  },
-  hover: true,
-  select: true,
-  panel: {
-    visible: true,
-    style: {
-      fill: 'rgba(23, 133, 45, 1)'
-    },
-    state: stateStyle
-  }
+  orient: 'bottom',
+  verticalLimitSize: 100
 });
 
-render([xAxisBottom], 'main');
+const axisLeft = new LineAxis({
+  start: { x: 250, y: 50 },
+  end: { x: 250, y: 350 },
+  items: [xItems],
+  title: {
+    visible: true,
+    position: 'middle',
+    autoRotate: true,
+    padding: 4,
+    maxWidth: 100,
+    text: 'y 轴 -- left',
+    space: 0
+  },
+  tick: {
+    visible: true,
+    length: 10
+  },
+  label: {
+    visible: true,
+    autoRotate: false,
+    autoRotateAngle: [0, 45, 90],
+    autoHide: true,
+    autoLimit: true,
+    formatMethod: () => 'AAAAAAAAAAAAAA'
+  },
+  orient: 'left',
+  verticalLimitSize: 100
+});
+
+render([axisBottom, axisLeft], 'main');

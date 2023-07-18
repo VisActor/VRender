@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(axis): support `dataFilter` property for tick and label's data filter",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

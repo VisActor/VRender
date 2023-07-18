@@ -3,6 +3,10 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'axis-overlap',
+    name: '轴标签防重叠'
+  },
+  {
     path: 'size-legend',
     name: '连续尺寸图例'
   },

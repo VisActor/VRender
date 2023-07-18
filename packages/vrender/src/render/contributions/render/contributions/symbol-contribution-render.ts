@@ -6,7 +6,8 @@ import type {
   ISymbol,
   ISymbolGraphicAttribute,
   IThemeAttribute,
-  ISymbolRenderContribution
+  ISymbolRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
@@ -14,8 +15,6 @@ import {
   DefaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
 
 @injectable()
 export class DefaultSymbolRenderContribution implements ISymbolRenderContribution {
@@ -32,6 +31,7 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
     fVisible: boolean,
     sVisible: boolean,
     symbolAttribute: Required<ISymbolGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,

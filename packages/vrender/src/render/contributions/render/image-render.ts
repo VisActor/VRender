@@ -15,7 +15,7 @@ import type {
   IGraphicRenderDrawParams,
   IRenderService
 } from '../../../interface';
-import { ImageRenderContribution } from './contributions/image-contribution-render';
+import { ImageRenderContribution } from './contributions/constants';
 import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
@@ -85,7 +85,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
     this._imageRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, fillCb);
+        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       }
     });
 
@@ -127,7 +127,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
     this._imageRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, fillCb);
+        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       }
     });
   }

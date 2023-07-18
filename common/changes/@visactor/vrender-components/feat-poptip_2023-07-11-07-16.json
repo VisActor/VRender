@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support poptip component and plugin",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -19,7 +19,7 @@ import type {
 import { getTheme } from '../../../graphic/theme';
 import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { PathRenderContribution } from './contributions/path-contribution-render';
+import { PathRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
@@ -109,7 +109,20 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     this._pathRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, fillCb, strokeCb);
+        c.drawShape(
+          path,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          pathAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
 
@@ -136,7 +149,20 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     this._pathRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(path, context, x, y, doFill, doStroke, fVisible, sVisible, pathAttribute, fillCb, strokeCb);
+        c.drawShape(
+          path,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          pathAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

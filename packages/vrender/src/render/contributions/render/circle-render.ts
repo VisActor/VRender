@@ -14,7 +14,7 @@ import type {
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
-import { CircleRenderContribution } from './contributions/circle-contribution-render';
+import { CircleRenderContribution } from './contributions/constants';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
@@ -100,7 +100,20 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
     this._circleRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(circle, circle.attribute, x, y, circleAttribute);
-        c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, fillCb, strokeCb);
+        c.drawShape(
+          circle,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          circleAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
 
@@ -128,7 +141,20 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
     this._circleRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(circle, circle.attribute, x, y, circleAttribute);
-        c.drawShape(circle, context, x, y, doFill, doStroke, fVisible, sVisible, circleAttribute, fillCb, strokeCb);
+        c.drawShape(
+          circle,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          circleAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

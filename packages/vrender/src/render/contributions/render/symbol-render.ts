@@ -20,7 +20,7 @@ import type {
 import type {} from '../../render-service';
 import { BaseRender } from './base-render';
 import { BaseRenderContributionTime } from '../../../common/enums';
-import { SymbolRenderContribution } from './contributions/symbol-contribution-render';
+import { SymbolRenderContribution } from './contributions/constants';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 
 @injectable()
@@ -125,7 +125,20 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     this._symbolRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(symbol, symbol.attribute, x, y, symbolAttribute);
-        c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, fillCb, strokeCb);
+        c.drawShape(
+          symbol,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          symbolAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
 
@@ -166,7 +179,20 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
 
     this._symbolRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        c.drawShape(symbol, context, x, y, doFill, doStroke, fVisible, sVisible, symbolAttribute, fillCb, strokeCb);
+        c.drawShape(
+          symbol,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          symbolAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

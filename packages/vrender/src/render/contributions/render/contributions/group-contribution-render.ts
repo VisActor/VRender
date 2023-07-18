@@ -4,12 +4,11 @@ import type {
   IContext2d,
   IGroup,
   IThemeAttribute,
-  IGroupRenderContribution
+  IGroupRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const GroupRenderContribution = Symbol.for('GroupRenderContribution');
 
 @injectable()
 export class DefaultGroupBackgroundRenderContribution
@@ -28,7 +27,7 @@ export class DefaultGroupBackgroundRenderContribution
     fVisible: boolean,
     sVisible: boolean,
     graphicAttribute: Required<IGraphicAttribute>,
-
+    drawContext: IDrawContext,
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {

@@ -6,7 +6,8 @@ import type {
   IThemeAttribute,
   IArea,
   IAreaGraphicAttribute,
-  IAreaRenderContribution
+  IAreaRenderContribution,
+  IDrawContext
 } from '../../../../interface';
 import {
   DefaultBaseBackgroundRenderContribution,
@@ -14,8 +15,6 @@ import {
 } from './base-contribution-render';
 import { getAttributeFromDefaultAttrList } from '../../../../common/utils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
-
-export const AreaRenderContribution = Symbol.for('AreaRenderContribution');
 
 @injectable()
 export class DefaultAreaBackgroundRenderContribution
@@ -42,6 +41,7 @@ export class DefaultAreaTextureRenderContribution
     fVisible: boolean,
     sVisible: boolean,
     graphicAttribute: Required<IGraphicAttribute>,
+    drawContext: IDrawContext,
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     options?: {

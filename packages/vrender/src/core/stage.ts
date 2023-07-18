@@ -19,7 +19,9 @@ import type {
   IPluginService,
   ISyncHook,
   IDrawContext,
-  IWindow
+  IWindow,
+  IPlugin,
+  IContributionProvider
 } from '../interface';
 import { Window } from './window';
 import { Layer } from './layer';
@@ -28,7 +30,7 @@ import { container } from '../container';
 import { RenderService } from '../render';
 import { Group, Theme } from '../graphic';
 import { PickerService } from '../picker/picker-service';
-import { PluginService } from '../plugins/plugin-service';
+import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';

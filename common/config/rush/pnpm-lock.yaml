@@ -183,7 +183,7 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
       '@visactor/vrender': workspace:0.12.2
-      '@visactor/vscale': ~0.11.1
+      '@visactor/vscale': ~0.12.0
       '@visactor/vutils': ~0.11.1
       eslint: ~8.18.0
       inversify: 6.0.1
@@ -195,7 +195,7 @@ importers:
       vite: 3.2.6
     dependencies:
       '@visactor/vrender': link:../vrender
-      '@visactor/vscale': 0.11.2
+      '@visactor/vscale': 0.12.0
       '@visactor/vutils': 0.11.1
       inversify: 6.0.1
     devDependencies:
@@ -3053,8 +3053,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: false
 
-  /@visactor/vscale/0.11.2:
-    resolution: {integrity: sha512-50ct/lDhkT50F5oW7hnLbRYdp3m2HSkDRKXSgC7oSgPsJswz7PcLELbfjIB6gzhG2trUwMLaONe07SaC2bNIlA==}
+  /@visactor/vscale/0.12.0:
+    resolution: {integrity: sha512-g5ozQXk6y3+FSAJ4oSNMtt2CRaeifs/sos45kzbSd9N0pIdfY68V3s1JyBg6gjiub5pUh3chRyh/c/+/+F5EfA==}
     dependencies:
       '@visactor/vutils': 0.11.1
     dev: false

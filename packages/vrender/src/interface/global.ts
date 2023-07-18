@@ -45,6 +45,16 @@ export interface IEnvContribution
   createOffscreenCanvas: (params: ICreateCanvasParams) => ICanvasLike | any;
   releaseCanvas: (canvas: ICanvasLike | string | any) => void;
 
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount: () => number;
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount: () => number;
+
   // 设备信息
   getDevicePixelRatio: () => number;
 
@@ -160,6 +170,16 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   createCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   createOffscreenCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   releaseCanvas: (canvas: HTMLCanvasElement | string | any) => void;
+
+  /**
+   * 获取环境中最大动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount: () => number;
+
+  /**
+   * 获取环境中最大静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount: () => number;
 
   /* 浏览器环境 - dom tree */
   getElementById: (str: string) => HTMLElement | null;

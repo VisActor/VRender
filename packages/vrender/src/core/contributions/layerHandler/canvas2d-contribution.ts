@@ -43,6 +43,10 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
           height: window.height
         });
       }
+      // 不是main的话，就穿透点击事件
+      if (nativeCanvas.style) {
+        nativeCanvas.style['pointer-events'] = 'none';
+      }
       const windowContext = window.getContext();
       const windowCanvas = windowContext.getCanvas().nativeCanvas;
       const canvas = wrapCanvas({

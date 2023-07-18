@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat(marker): performance enhance",
+      "comment": "perf(marker): performance enhance",
       "type": "none"
     }
   ],

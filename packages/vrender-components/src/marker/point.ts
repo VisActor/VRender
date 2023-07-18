@@ -55,7 +55,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const itemOffsetX = refX * Math.cos(itemAngle) + refY * Math.cos(itemAngle - Math.PI / 2);
     const itemOffsetY = refX * Math.sin(itemAngle) + refY * Math.sin(itemAngle - Math.PI / 2);
     if (itemType === 'text') {
-      item.setAttributes({
+      item?.setAttributes({
         ...textStyle,
         textStyle: {
           ...DEFAULT_MARK_POINT_TEXT_STYLE_MAP[itemContent?.position || 'end'],
@@ -63,17 +63,17 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         }
       });
     } else if (itemType === 'richText') {
-      item.setAttributes({
+      item?.setAttributes({
         dx: this.getItemDx(item, position, richTextStyle) + (richTextStyle?.dx || 0),
         dy: this.getItemDy(item, position, richTextStyle) + (richTextStyle?.dy || 0)
       });
     } else if (itemType === 'image') {
-      item.setAttributes({
+      item?.setAttributes({
         dx: this.getItemDx(item, position, imageStyle) + (imageStyle?.dx || 0),
         dy: this.getItemDy(item, position, imageStyle) + (imageStyle?.dy || 0)
       });
     }
-    item.setAttributes({
+    item?.setAttributes({
       x: itemPosition.x + (itemOffsetX || 0),
       y: itemPosition.y + (itemOffsetY || 0),
       angle: autoRotate && itemAngle + refAngle
@@ -176,7 +176,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
   protected setItemLineAttr(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike, visible: boolean) {
     const { startSymbol, endSymbol, lineStyle } = itemLine;
     const points = this.getItemLineAttr(itemLine, position, itemPosition);
-    this._line.setAttributes({
+    this._line?.setAttributes({
       points,
       startSymbol,
       endSymbol,
@@ -206,7 +206,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
       itemLine,
       itemPosition
     );
-    this._decorativeLine.setAttributes({
+    this._decorativeLine?.setAttributes({
       points: [
         {
           x: itemPosition.x + startPointOffsetX,

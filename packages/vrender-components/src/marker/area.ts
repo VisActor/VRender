@@ -53,27 +53,27 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     const { label } = this.attribute as MarkAreaAttrs;
     const labelPosition = label?.position ?? 'middle';
     if (labelPosition.includes('left') || labelPosition.includes('Left')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         ...this.getLeftPos()
       });
     } else if (labelPosition.includes('right') || labelPosition.includes('Right')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         ...this.getRightPos()
       });
     } else if (labelPosition.includes('top') || labelPosition.includes('Top')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         ...this.getTopPos()
       });
     } else if (labelPosition.includes('bottom') || labelPosition.includes('Bottom')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         ...this.getBottomPos()
       });
     } else {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         ...this.getMiddlePos()
       });
     }
-    this._label.setAttributes({
+    this._label?.setAttributes({
       textStyle: {
         ...DEFAULT_MARK_AREA_TEXT_STYLE_MAP[labelPosition],
         ...label.textStyle
@@ -102,11 +102,11 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected updateMarker() {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
-    this._area.setAttributes({
+    this._area?.setAttributes({
       points: points,
       ...areaStyle
     });
-    this._label.setAttributes({
+    this._label?.setAttributes({
       ...label
     });
     this.setLabelPos();

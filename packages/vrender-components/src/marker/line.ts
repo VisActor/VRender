@@ -22,17 +22,17 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     const labelOffsetX = label?.refX * Math.cos(labelAngle) + label.refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = label?.refX * Math.sin(labelAngle) + label.refY * Math.sin(labelAngle - Math.PI / 2);
     if (labelPosition.includes('start') || labelPosition.includes('Start')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         x: points[0].x + labelOffsetX,
         y: points[0].y + labelOffsetY
       });
     } else if (labelPosition.includes('middle') || labelPosition.includes('Middle')) {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         x: (points[0].x + points[points.length - 1].x) / 2 + labelOffsetX,
         y: (points[0].y + points[points.length - 1].y) / 2 + labelOffsetY
       });
     } else {
-      this._label.setAttributes({
+      this._label?.setAttributes({
         x: points[points.length - 1].x + labelOffsetX,
         y: points[points.length - 1].y + labelOffsetY
       });
@@ -69,14 +69,14 @@ export class MarkLine extends Marker<MarkLineAttrs> {
 
   protected updateMarker() {
     const { points, startSymbol, endSymbol, label, lineStyle } = this.attribute as MarkLineAttrs;
-    this._line.setAttributes({
+    this._line?.setAttributes({
       points,
       startSymbol,
       endSymbol,
       lineStyle
     });
 
-    this._label.setAttributes({
+    this._label?.setAttributes({
       ...label
     });
 

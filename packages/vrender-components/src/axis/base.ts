@@ -10,7 +10,8 @@ import type {
   TextAlignType,
   TextBaselineType,
   FederatedPointerEvent,
-  IGraphic
+  IGraphic,
+  IText
 } from '@visactor/vrender';
 // eslint-disable-next-line no-duplicate-imports
 import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
@@ -74,6 +75,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected abstract getTitleAttribute(): TagAttributes;
   protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
+  protected abstract handleLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    layer: number,
+    layerCount: number
+  ): void;
 
   /**
    * 坐标轴的一个特殊的方法，用于不更新场景树来获取更新属性后的包围盒
@@ -200,7 +207,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         this.axisLabelsContainer = labelGroup;
         axisContainer.add(labelGroup);
         items.forEach((axisItems: AxisItem[], layer: number) => {
-          this.renderLabels(labelGroup, axisItems, layer);
+          const layerLabelGroup = this.renderLabels(labelGroup, axisItems, layer);
+
+          // handle overlap
+          const labels = layerLabelGroup.getChildren() as IText[];
+          this.handleLabelsOverlap(labels, axisItems, layer, items.length);
         });
       }
 

@@ -1,7 +1,8 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, TextBaselineType } from '@visactor/vrender';
+import type { IGroup, IText, TextBaselineType } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
 import { createCircle } from '@visactor/vrender';
 import { isNil, get, merge, polarToCartesian, isNumberClose, isEmpty } from '@visactor/vutils';
 import type { Point } from '../core/type';
@@ -15,7 +16,8 @@ import type {
   GridItem,
   SubTickAttributes,
   TickLineItem,
-  TransformedAxisItem
+  TransformedAxisItem,
+  AxisItem
 } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
@@ -331,5 +333,10 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       base = 'bottom';
     }
     return base;
+  }
+
+  protected handleLabelsOverlap(labelShapes: IText[], labelData: AxisItem[], layer: number, layerCount: number): void {
+    // 暂不支持
+    return;
   }
 }

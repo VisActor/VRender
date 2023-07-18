@@ -2,9 +2,21 @@
  * @description 直线型坐标轴
  */
 import type { IPointLike } from '@visactor/vutils';
-import { get, isNil, merge, polarToCartesian, PointService, isNumberClose, isEmpty } from '@visactor/vutils';
-import type { IGroup, INode, TextBaselineType } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
+import {
+  get,
+  isNil,
+  merge,
+  polarToCartesian,
+  PointService,
+  isNumberClose,
+  isEmpty,
+  isFunction,
+  isValidNumber
+} from '@visactor/vutils';
+import type { IGroup, INode, IText, TextBaselineType } from '@visactor/vrender';
 import type { SegmentAttributes } from '../segment';
+// eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
 import type { Point } from '../core/type';
 import { angleTo, normalize, scale } from '../util/matrix';
@@ -18,11 +30,16 @@ import type {
   TitleAttributes,
   LineGridOfLineAxisAttributes,
   PolarGridOfLineAxisAttributes,
-  TransformedAxisItem
+  TransformedAxisItem,
+  AxisItem
 } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
+import { measureTextSize } from '../util';
+import { autoHide as autoHideFunc } from './overlap/auto-hide';
+import { autoRotate as autoRotateFunc } from './overlap/auto-rotate';
+import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 
 function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
   const points: Point[] = [];
@@ -124,10 +141,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       const space = +get(this.attribute, 'label.space', 4);
       labelLength += space;
       if (axisVector[1] === 0) {
-        Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
-          labelLength += this.axisLabelLayerSize[layer].height + (index > 0 ? space : 0);
-        });
+        labelLength = this.axisLabelsContainer.AABBBounds.height();
+      } else if (axisVector[0] === 0) {
+        labelLength = this.axisLabelsContainer.AABBBounds.width();
       } else {
+        // 发生了旋转
         Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
           labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
         });
@@ -380,5 +398,64 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       base = 'bottom';
     }
     return base;
+  }
+
+  protected handleLabelsOverlap(labelShapes: IText[], labelData: AxisItem[], layer: number, layerCount: number): void {
+    if (isEmpty(labelShapes)) {
+      return;
+    }
+
+    const { verticalLimitSize, label, title, line, tick, orient } = this.attribute;
+    const labelSpace = label.space ?? 4;
+    let limitLength = verticalLimitSize;
+    let titleHeight = 0;
+    let titleSpacing = 0;
+    const axisLineWidth = line?.visible ? line.style.lineWidth ?? 1 : 0;
+    const tickLength = tick?.visible ? tick.length ?? 4 : 0;
+    if (title?.visible) {
+      titleHeight = measureTextSize(title.text, title.textStyle).height;
+      titleSpacing = title.space;
+    }
+    if (limitLength) {
+      limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
+    }
+
+    const {
+      layoutFunc,
+      autoRotate,
+      autoRotateAngle,
+      autoLimit,
+      limitEllipsis,
+      autoHide,
+      autoHideMethod,
+      autoHideSeparation
+    } = label;
+
+    if (isFunction(layoutFunc)) {
+      // 自定义布局
+      layoutFunc(labelShapes, labelData, layer, this);
+    } else {
+      // order: autoRotate -> autoLimit -> autoHide
+      if (autoRotate) {
+        autoRotateFunc(labelShapes, {
+          labelRotateAngle: autoRotateAngle,
+          orient
+        });
+      }
+      if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
+        autoLimitFunc(labelShapes, {
+          limitLength,
+          ellipsis: limitEllipsis,
+          orient
+        });
+      }
+      if (autoHide) {
+        autoHideFunc(labelShapes, {
+          orient,
+          method: autoHideMethod,
+          separation: autoHideSeparation
+        });
+      }
+    }
   }
 }

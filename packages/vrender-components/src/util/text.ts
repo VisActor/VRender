@@ -1,5 +1,9 @@
-import { getTextBounds, ITextGraphicAttribute } from '@visactor/vrender';
-import { ITextMeasureOption, TextMeasure } from '@visactor/vutils';
+import type { ITextGraphicAttribute } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
+import { getTextBounds } from '@visactor/vrender';
+import type { ITextMeasureOption } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
+import { TextMeasure } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
 
 export const initTextMeasure = (

@@ -38,6 +38,7 @@ export const page = () => {
       curveType: type as any,
       x: (i * 300) % 900 + 100,
       y: (Math.floor(i * 300 / 900)) * 200,
+      stroke: ['black', false],
       fill: {
         gradient: 'linear',
         x0: 0,

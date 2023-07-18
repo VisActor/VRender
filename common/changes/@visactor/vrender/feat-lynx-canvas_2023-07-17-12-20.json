@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: support createCanvasNG in lynx env",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

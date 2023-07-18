@@ -69,8 +69,8 @@ function makeUpCanvas(
 
     const canvas = {
       id: id,
-      width: domref.width,
-      height: domref.height,
+      width: domref.width * dpr,
+      height: domref.height * dpr,
       offsetWidth: domref.width,
       offsetHeight: domref.height,
       getContext: () => ctx,

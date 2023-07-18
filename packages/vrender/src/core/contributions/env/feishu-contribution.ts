@@ -57,8 +57,8 @@ function makeUpCanvas(
     //   });
 
     const canvas = {
-      width: domref.width,
-      height: domref.height,
+      width: domref.width * dpr,
+      height: domref.height * dpr,
       offsetWidth: domref.width,
       offsetHeight: domref.height,
       id: id ?? '',

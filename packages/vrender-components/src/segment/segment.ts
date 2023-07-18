@@ -18,6 +18,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   private _endAngle!: number;
 
   static defaultAttributes: Partial<SegmentAttributes> = {
+    visible: true,
     lineStyle: {
       lineWidth: 1,
       stroke: '#000'
@@ -68,7 +69,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
   protected render() {
     this.removeAllChild();
-    const { points, startSymbol, endSymbol, lineStyle, state, visible } = this.attribute as SegmentAttributes;
+    const { points, startSymbol, endSymbol, lineStyle, state, visible = true } = this.attribute as SegmentAttributes;
 
     if (!visible) {
       return;

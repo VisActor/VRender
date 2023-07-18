@@ -449,6 +449,8 @@ export interface SubTickAttributes {
   state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
 }
 
+export type CustomMethod = (items: IText[], separation: number) => IText[];
+
 export interface AxisLabelOverlap {
   /**
    * 自动旋转配置
@@ -469,9 +471,10 @@ export interface AxisLabelOverlap {
    * 防重叠策略，默认为 'parity'。
    * - 'parity': 奇偶校验，使用删除所有其他标签的策略（这对于标准线性轴非常有效）。
    * - 'greedy': 将执行标签的线性扫描，并删除与最后一个可见标签重叠的所有标签。
+   * - 也可以传入函数用于自定义策略
    * @default 'parity'
    */
-  autoHideMethod?: 'parity' | 'greedy';
+  autoHideMethod?: 'parity' | 'greedy' | CustomMethod;
   /**
    * 仅当 `autoHide` 为 true 时生效，设置文本之间的间隔距离，单位 px
    * @default 0

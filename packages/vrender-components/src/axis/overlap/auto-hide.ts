@@ -5,7 +5,8 @@
 import type { IText } from '@visactor/vrender';
 import type { IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { isEmpty, isRectIntersect, isRotateAABBIntersect, last } from '@visactor/vutils';
+import { isEmpty, isFunction, isRectIntersect, isRotateAABBIntersect, last } from '@visactor/vutils';
+import type { CustomMethod } from '../type';
 
 function itemIntersect(item1: IText, item2: IText) {
   return (
@@ -64,8 +65,9 @@ type HideConfig = {
    * 防重叠策略。
    * - 'parity': 奇偶校验，使用删除所有其他标签的策略（这对于标准线性轴非常有效）。
    * - 'greedy': 将执行标签的线性扫描，并删除与最后一个可见标签重叠的所有标签。
+   * - 也可以传入函数用于自定义策略
    */
-  method?: 'parity' | 'greedy';
+  method?: 'parity' | 'greedy' | CustomMethod;
   /**
    * 设置文本之间的间隔距离，单位 px
    */
@@ -87,7 +89,8 @@ export function autoHide(labels: IText[], config: HideConfig) {
   items = reset(source);
 
   const { method = 'parity', separation: sep = 0 } = config;
-  const reduce = methods[method] || methods.parity;
+
+  const reduce = isFunction(method) ? method : methods[method] || methods.parity;
 
   if (items.length >= 3 && hasOverlap(items, sep)) {
     do {

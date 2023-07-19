@@ -1,6 +1,34 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 11 Jul 2023 13:17:12 GMT and should not be manually modified.
+This log was last generated on Wed, 19 Jul 2023 08:29:52 GMT and should not be manually modified.
+
+## 0.13.0
+Wed, 19 Jul 2023 08:29:52 GMT
+
+### Minor changes
+
+- feat: area support stroke
+- feat: support interactive layer
+- feat: support createCanvasNG in lynx env
+- feat: support wx env
+- feat: support interactive contribution
+
+### Patches
+
+- fix: add compatibility on createPattern
+- feat: new api to measure rich text bounds
+- feat: add `stopAnimates()` to IGraphic
+
+
+
+## 0.12.3
+Wed, 12 Jul 2023 12:30:46 GMT
+
+### Patches
+
+- new api to measure rich text bounds
+- fix: fix the issue of arc background do not work
+- fix: fix the issue of warning while call insertIntoKeepIdx
 
 ## 0.12.2
 Tue, 11 Jul 2023 13:17:12 GMT

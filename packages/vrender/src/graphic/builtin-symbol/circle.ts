@@ -1,6 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import { tau } from '@visactor/vutils';
-import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import type { IContext2d, SymbolType, ISymbolClass, IPath2D } from '../../interface';
 
 /**
  * 
@@ -43,6 +43,11 @@ export class CircleSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
     const r = size / 2 + offset;
     return circle(ctx, r, x, y, z);
+  }
+
+  drawToSvgPath(size: number, x: number, y: number, z?: number): string {
+    const r = size / 2;
+    return `M ${x - r}, ${y} a ${r},${r} 0 1,0 ${r * 2},0 a ${r},${r} 0 1,0 -${r * 2},0`;
   }
 
   bounds(size: number, bounds: IBounds) {

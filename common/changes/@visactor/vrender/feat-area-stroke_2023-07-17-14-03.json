@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: area support stroke",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

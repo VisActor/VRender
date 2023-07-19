@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: new api to measure rich text bounds",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

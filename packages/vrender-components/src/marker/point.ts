@@ -1,8 +1,4 @@
-import {
-  createRichText,
-  createSymbol,
-  createImage,
-  createLine,
+import type {
   IGroup,
   IImage,
   INode,
@@ -12,12 +8,15 @@ import {
   IRichTextGraphicAttribute,
   ILine
 } from '@visactor/vrender';
-import { IPointLike, merge } from '@visactor/vutils';
+import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender';
+import type { IPointLike } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
-import { IItemContent, IItemLine, IMarkPointItemPosition, MarkPointAttrs } from './type';
+import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
+import { IMarkPointItemPosition } from './type';
 
 export class MarkPoint extends Marker<MarkPointAttrs> {
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
@@ -56,7 +55,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const itemOffsetX = refX * Math.cos(itemAngle) + refY * Math.cos(itemAngle - Math.PI / 2);
     const itemOffsetY = refX * Math.sin(itemAngle) + refY * Math.sin(itemAngle - Math.PI / 2);
     if (itemType === 'text') {
-      item.setAttributes({
+      item?.setAttributes({
         ...textStyle,
         textStyle: {
           ...DEFAULT_MARK_POINT_TEXT_STYLE_MAP[itemContent?.position || 'end'],
@@ -64,17 +63,17 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         }
       });
     } else if (itemType === 'richText') {
-      item.setAttributes({
+      item?.setAttributes({
         dx: this.getItemDx(item, position, richTextStyle) + (richTextStyle?.dx || 0),
         dy: this.getItemDy(item, position, richTextStyle) + (richTextStyle?.dy || 0)
       });
     } else if (itemType === 'image') {
-      item.setAttributes({
+      item?.setAttributes({
         dx: this.getItemDx(item, position, imageStyle) + (imageStyle?.dx || 0),
         dy: this.getItemDy(item, position, imageStyle) + (imageStyle?.dy || 0)
       });
     }
-    item.setAttributes({
+    item?.setAttributes({
       x: itemPosition.x + (itemOffsetX || 0),
       y: itemPosition.y + (itemOffsetY || 0),
       angle: autoRotate && itemAngle + refAngle
@@ -109,7 +108,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     return 0;
   }
 
-  protected renderItem(itemContent: IItemContent, itemPosition: IPointLike) {
+  protected initItem(itemContent: IItemContent, itemPosition: IPointLike) {
     const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
     if (type === 'symbol') {
@@ -138,9 +137,9 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     return item;
   }
 
-  protected renderItemLine(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike) {
-    const { startSymbol, endSymbol, lineStyle, type = 'type-s' } = itemLine;
+  protected getItemLineAttr(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike) {
     let points: IPointLike[] = [];
+    const { type = 'type-s' } = itemLine;
     if (type === 'type-do') {
       points = [
         position,
@@ -171,25 +170,43 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     } else {
       points = [position, itemPosition];
     }
+    return points;
+  }
 
-    const line = new Segment({
+  protected setItemLineAttr(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike, visible: boolean) {
+    const { startSymbol, endSymbol, lineStyle } = itemLine;
+    const points = this.getItemLineAttr(itemLine, position, itemPosition);
+    this._line?.setAttributes({
       points,
       startSymbol,
       endSymbol,
-      lineStyle
+      lineStyle,
+      visible
     });
-    return line;
   }
 
-  protected renderDecorativeLine(itemLine: IItemLine, itemPosition: IPointLike) {
-    const { lineStyle } = itemLine;
+  protected getDecorativeLineAttr(itemLine: IItemLine, itemPosition: IPointLike) {
     const decorativeLength = itemLine?.decorativeLine?.length || 10;
     const itemAngle = this._line.getEndAngle() || 0;
     const startPointOffsetX = (decorativeLength / 2) * Math.cos(itemAngle - Math.PI / 2);
     const startPointOffsetY = (decorativeLength / 2) * Math.sin(itemAngle - Math.PI / 2);
     const endPointOffsetX = (-decorativeLength / 2) * Math.cos(itemAngle - Math.PI / 2);
     const endPointOffsetY = (-decorativeLength / 2) * Math.sin(itemAngle - Math.PI / 2);
-    return createLine({
+    return {
+      startPointOffsetX,
+      startPointOffsetY,
+      endPointOffsetX,
+      endPointOffsetY
+    };
+  }
+
+  protected setDecorativeLineAttr(itemLine: IItemLine, itemPosition: IPointLike, visible: boolean) {
+    const { lineStyle } = itemLine;
+    const { startPointOffsetX, startPointOffsetY, endPointOffsetX, endPointOffsetY } = this.getDecorativeLineAttr(
+      itemLine,
+      itemPosition
+    );
+    this._decorativeLine?.setAttributes({
       points: [
         {
           x: itemPosition.x + startPointOffsetX,
@@ -200,33 +217,49 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
           y: itemPosition.y + endPointOffsetY
         }
       ],
-      ...lineStyle
+      ...lineStyle,
+      visible
     });
   }
 
-  protected renderMarker(container: IGroup) {
+  protected initMarker(container: IGroup) {
     const { position, itemLine, itemContent } = this.attribute as MarkPointAttrs;
     const itemPosition = {
       x: position.x + (itemContent?.offsetX || 0),
       y: position.y + (itemContent?.offsetY || 0)
     };
 
-    if (itemLine?.visible) {
-      const line = this.renderItemLine(itemLine, position, itemPosition);
-      line.name = 'mark-point-line';
-      this._line = line;
-      container.add(line as unknown as INode);
+    const line = new Segment({
+      points: []
+    });
+    line.name = 'mark-point-line';
+    this._line = line;
+    container.add(line as unknown as INode);
 
-      if (itemLine?.decorativeLine?.visible) {
-        const decorativeLine = this.renderDecorativeLine(itemLine, itemPosition);
-        decorativeLine.name = 'mark-point-decorativeLine';
-        this._decorativeLine = decorativeLine;
-        container.add(decorativeLine as unknown as INode);
-      }
-    }
+    const decorativeLine = createLine({
+      points: []
+    });
+    decorativeLine.name = 'mark-point-decorativeLine';
+    this._decorativeLine = decorativeLine;
+    container.add(decorativeLine as unknown as INode);
 
-    const item = this.renderItem(itemContent as any, itemPosition);
+    this.setItemLineAttr(itemLine, position, itemPosition, itemLine?.visible);
+    this.setDecorativeLineAttr(itemLine, itemPosition, itemLine?.decorativeLine?.visible);
+
+    const item = this.initItem(itemContent as any, itemPosition);
     this._item = item;
     container.add(item as unknown as INode);
+  }
+
+  protected updateMarker() {
+    const { position, itemLine, itemContent } = this.attribute as MarkPointAttrs;
+    const { type = 'text' } = itemContent;
+    const itemPosition = {
+      x: position.x + (itemContent?.offsetX || 0),
+      y: position.y + (itemContent?.offsetY || 0)
+    };
+    this.setItemLineAttr(itemLine, position, itemPosition, itemLine?.visible);
+    this.setDecorativeLineAttr(itemLine, itemPosition, itemLine?.decorativeLine?.visible);
+    this.setItemAttributes(this._item, itemContent, itemPosition, type);
   }
 }

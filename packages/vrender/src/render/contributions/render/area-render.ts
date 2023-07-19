@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import { min } from '@visactor/vutils';
+import { isArray, min } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import type {
   IArea,
@@ -32,10 +32,11 @@ import {
 
 import { getTheme } from '../../../graphic/theme';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { AreaRenderContribution } from './contributions/area-contribution-render';
+import { AreaRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
+import { drawSegments } from '../../../common/render-curve';
 
 function calcLineCache(
   points: IPointLike[],
@@ -210,8 +211,10 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           skip = this.drawSegmentItem(
             context,
             cache,
-            !!fill,
+            doFill,
             fillOpacity,
+            doStroke,
+            strokeOpacity,
             area.attribute.segments[index],
             [areaAttribute, area.attribute],
             clipRange,
@@ -219,7 +222,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             y,
             z,
             area,
-            fillCb
+            drawContext,
+            fillCb,
+            strokeCb
           );
         });
       } else {
@@ -242,8 +247,10 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             skip = this.drawSegmentItem(
               context,
               cache,
-              !!fill,
+              doFill,
               fillOpacity,
+              doStroke,
+              strokeOpacity,
               area.attribute.segments[index],
               [areaAttribute, area.attribute],
               min(_cr, 1),
@@ -251,7 +258,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
               y,
               z,
               area,
-              fillCb
+              drawContext,
+              fillCb,
+              strokeCb
             );
           }
         });
@@ -260,8 +269,10 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       this.drawSegmentItem(
         context,
         area.cacheArea as IAreaCacheItem,
-        !!fill,
+        doFill,
         fillOpacity,
+        doStroke,
+        strokeOpacity,
         area.attribute,
         areaAttribute,
         clipRange,
@@ -269,7 +280,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
         y,
         z,
         area,
-        fillCb
+        drawContext,
+        fillCb,
+        strokeCb
       );
     }
   }
@@ -326,6 +339,8 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     cache: IAreaCacheItem,
     fill: boolean,
     fillOpacity: number,
+    stroke: boolean,
+    strokeOpacity: number,
     attribute: Partial<IAreaGraphicAttribute>,
     defaultAttribute: Required<IAreaGraphicAttribute> | Partial<IAreaGraphicAttribute>[],
     clipRange: number,
@@ -333,7 +348,13 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     offsetY: number,
     offsetZ: number,
     area: IArea,
+    drawContext: IDrawContext,
     fillCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute | IThemeAttribute[]
+    ) => boolean,
+    strokeCb?: (
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute | IThemeAttribute[]
@@ -365,6 +386,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           fill,
           false,
           defaultAttribute as any,
+          drawContext,
           fillCb,
           null,
           { attribute }
@@ -385,6 +407,24 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       }
     }
 
+    if (stroke !== false) {
+      if (strokeCb) {
+        strokeCb(context, attribute, defaultAttribute);
+      } else {
+        const { stroke } = attribute;
+        if (isArray(stroke) && stroke[0] && stroke[1] === false) {
+          context.beginPath();
+          drawSegments(context.camera ? context : context.nativeContext, cache.top, clipRange, 'auto', {
+            offsetX,
+            offsetY,
+            offsetZ
+          });
+        }
+        context.setStrokeStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
+        context.stroke();
+      }
+    }
+
     if (!this._areaRenderContribitions) {
       this._areaRenderContribitions = this.areaRenderContribitions.getContributions() || [];
     }
@@ -400,6 +440,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
           fill,
           false,
           defaultAttribute as any,
+          drawContext,
           fillCb,
           null,
           { attribute }

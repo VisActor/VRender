@@ -12,6 +12,7 @@ export * from './create';
 export * from './event';
 export * from './interface';
 export * from './render';
+export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
 export * from './picker';
@@ -41,5 +42,7 @@ export * from './common/sort';
 export * from './common/morphing-utils';
 export * from './common/split-path';
 export * from './common/enums';
+export * from './common/generator';
+export * from './plugins/constants';
 
 export * from './animate/default-ticker';

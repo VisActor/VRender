@@ -1,6 +1,6 @@
 import { Matrix } from '@visactor/vutils';
 import { injectable } from 'inversify';
-import { IContext2d, IConicalGradientData, EnvType } from '../../../interface';
+import type { IContext2d, IConicalGradientData, EnvType } from '../../../interface';
 import { BrowserContext2d } from '../browser';
 
 const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);
@@ -21,6 +21,10 @@ export class TTContext2d extends BrowserContext2d implements IContext2d {
   }
 
   createConicGradient(x: number, y: number, startAngle: number, endAngle: number): IConicalGradientData {
+    return null;
+  }
+
+  createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
     return null;
   }
 }

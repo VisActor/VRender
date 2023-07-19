@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: tooltip supports rich text which can wrap",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

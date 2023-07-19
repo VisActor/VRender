@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: add compatibility on createPattern",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

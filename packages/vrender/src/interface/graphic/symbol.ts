@@ -50,5 +50,7 @@ export interface ISymbolClass {
     z?: number
   ) => boolean;
 
+  drawToSvgPath?: (size: number | [number, number], x: number, y: number, z?: number) => string;
+
   bounds: (size: number | [number, number], bounds: IBounds) => void;
 }

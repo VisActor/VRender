@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(axis): support custom method for autohide",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

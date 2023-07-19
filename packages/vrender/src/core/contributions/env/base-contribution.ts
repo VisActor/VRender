@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
 
 @injectable()
 export abstract class BaseEnvContribution implements IEnvContribution {
@@ -15,6 +15,20 @@ export abstract class BaseEnvContribution implements IEnvContribution {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
     }
+  }
+
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return 999;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return 999;
   }
 
   abstract loadImage(url: string): Promise<{

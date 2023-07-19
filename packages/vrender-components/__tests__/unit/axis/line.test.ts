@@ -1,6 +1,7 @@
 import { PointScale, LinearScale } from '@visactor/vscale';
-import { IGraphic, Stage, Group, ILine, Text } from '@visactor/vrender';
-import { Grid, LineAxis, Segment } from '../../../src';
+import type { IGraphic, Stage, Group, ILine, Text } from '@visactor/vrender';
+import type { Grid } from '../../../src';
+import { LineAxis, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
@@ -14,7 +15,7 @@ describe('Line Axis', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
 
   it('horizontal direction.', () => {

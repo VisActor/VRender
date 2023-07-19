@@ -11,22 +11,24 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { SYMBOL_NUMBER_TYPE, DefaultCanvasSymbolRender, getTheme, CustomPath2D } from '@visactor/vrender';
+import { SYMBOL_NUMBER_TYPE, DefaultCanvasSymbolRender, BaseRender, getTheme, CustomPath2D } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
 @injectable()
-export class RoughCanvasSymbolRender implements IGraphicRender {
+export class RoughCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
   type: 'symbol';
   numberType: number;
-  style: 'rough' = 'rough';
+  style: 'rough';
 
   constructor(
     @inject(DefaultCanvasSymbolRender)
     public readonly canvasRenderer: IGraphicRender
   ) {
+    super();
     this.type = 'symbol';
     this.numberType = SYMBOL_NUMBER_TYPE;
+    this.style = 'rough';
   }
 
   draw(symbol: ISymbol, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
@@ -39,22 +41,9 @@ export class RoughCanvasSymbolRender implements IGraphicRender {
     const rc = rough.canvas(canvas);
 
     context.highPerformanceSave();
-
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const symbolAttribute = getTheme(symbol).symbol;
-    let { x = symbolAttribute.x, y = symbolAttribute.y } = symbol.attribute;
-    if (!symbol.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(symbol.transMatrix, true);
-    } else {
-      const { dx = symbolAttribute.dx, dy = symbolAttribute.dy } = symbol.attribute;
-      x += dx;
-      y += dy;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
+    const data = this.transform(symbol, symbolAttribute, context);
+    const { x, y, z, lastModelMatrix } = data;
 
     const parsedPath = symbol.getParsedPath();
     // todo: 考虑使用path
@@ -92,12 +81,18 @@ export class RoughCanvasSymbolRender implements IGraphicRender {
       fixedDecimalPlaceDigits = defaultRouthThemeSpec.fixedDecimalPlaceDigits
     } = symbol.attribute as any;
 
-    const customPath = new CustomPath2D();
-    if (parsedPath.draw(customPath, size, x, y)) {
-      customPath.closePath();
+    let svgPath = '';
+    if (parsedPath.drawToSvgPath) {
+      svgPath = parsedPath.drawToSvgPath(size, x, y);
+    } else {
+      const customPath = new CustomPath2D();
+      if (parsedPath.draw(customPath, size, x, y)) {
+        customPath.closePath();
+      }
+      svgPath = customPath.toString();
     }
 
-    rc.path(customPath.toString(), {
+    rc.path(svgPath, {
       fill: fill ? (fillColor as string) : undefined,
       stroke: stroke ? (strokeColor as string) : undefined,
       strokeWidth: lineWidth,

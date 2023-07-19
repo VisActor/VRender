@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@visactor/vrender": "workspace:0.12.2",
-    "@visactor/vutils": "~0.12.1",
+    "@visactor/vutils": "~0.13.0",
     "@resvg/resvg-js": "2.4.1",
     "canvas": "2.11.2",
     "inversify": "6.0.1",

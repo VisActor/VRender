@@ -50,6 +50,7 @@ export interface IStageParams {
   afterRender: (stage: IStage) => void;
   renderStyle?: string;
   ticker?: ITicker;
+  pluginList?: string[];
 }
 
 export interface IOption3D {

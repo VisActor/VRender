@@ -64,6 +64,8 @@ export type PopTipAttributes = {
   visible?: boolean;
   visibleFunc?: (graphic: IGraphic) => boolean;
   state?: StateStyle;
+  dx?: number;
+  dy?: number;
 } & Omit<IGroupGraphicAttribute, 'background'>;
 
 export type PoptipShapeAttributes = {

@@ -190,7 +190,7 @@ export class Stage extends Group implements IStage {
     this.pickerService = container.get<IPickerService>(PickerService);
     this.pluginService = container.get<IPluginService>(PluginService);
     this.layerService = container.get<ILayerService>(LayerService);
-    this.pluginService.active(this);
+    this.pluginService.active(this, params);
 
     this.window.create({
       width: params.width,

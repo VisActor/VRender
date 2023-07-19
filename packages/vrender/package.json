@@ -24,7 +24,7 @@
     "ci": "node github-ci.js"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.11.1",
+    "@visactor/vutils": "~0.12.1",
     "color-convert": "2.0.1",
     "inversify": "6.0.1",
     "reflect-metadata": "0.1.13"

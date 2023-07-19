@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "perf(marker): performance enhance",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

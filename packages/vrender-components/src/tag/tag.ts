@@ -160,7 +160,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
     // 绘制背景层
     const { visible: bgVisible, ...backgroundStyle } = panel;
-    if (isBoolean(bgVisible)) {
+    if (visible && isBoolean(bgVisible)) {
       const bgRect = this.createOrUpdateChild(
         'tag-panel',
         {

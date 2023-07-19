@@ -1,5 +1,6 @@
-import { Group, IGraphic, Stage } from '@visactor/vrender';
-import { Tag, Segment, MarkPoint } from '../../../src';
+import type { Group, IGraphic, Stage } from '@visactor/vrender';
+import type { Tag, Segment } from '../../../src';
+import { MarkPoint } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 
@@ -57,10 +58,10 @@ describe('Marker', () => {
     expect((markPointContainer.children[0] as unknown as Segment).startSymbol?.attribute.y).toBe(250);
 
     // tag构造的label
-    expect((markPointContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(209.5782628522115);
-    expect((markPointContainer.children[1] as unknown as Tag).attribute.y).toBeCloseTo(282.87347885566345);
+    expect((markPointContainer.children[2] as unknown as Tag).attribute.x).toBeCloseTo(209.5782628522115);
+    expect((markPointContainer.children[2] as unknown as Tag).attribute.y).toBeCloseTo(282.87347885566345);
     expect(
-      ((markPointContainer.children[1] as unknown as Tag).getChildByName('tag-content') as any).children[0].attribute
+      ((markPointContainer.children[2] as unknown as Tag).getChildByName('tag-content') as any).children[0].attribute
         .text
     ).toBe('mark point label text');
   });

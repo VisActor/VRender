@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'core-js/proposals/reflect-metadata';
 import './modules';
 
 // 导出版本号

@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'core-js/proposals/reflect-metadata';
 import _roughModule from './render/contributions/rough/module';
 // import _canvasModuleLoader from './canvas/contributions/canvas-module';
 

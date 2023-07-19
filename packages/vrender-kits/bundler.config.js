@@ -1,21 +1,14 @@
-
 /**
  * @type {Partial<import('@visactor/bundler').Config>}
  */
 module.exports = {
-  formats: ["cjs", "es", "umd"],
+  formats: ['cjs', 'es', 'umd'],
   name: 'VRender.Kits',
   umdOutputFilename: 'index',
   globals: {
-    'inversify': 'inversify',
-    'reflect-metadata': 'reflectMetadata',
+    inversify: 'inversify',
     '@visactor/vrender': 'VRender',
     '@visactor/vutils': 'VUtils'
   },
-  external: [
-    'inversify',
-    'reflect-metadata',
-    "@visactor/vrender",
-    "@visactor/vutils"
-  ]
+  external: ['inversify', 'core-js/proposals/reflect-metadata', '@visactor/vrender', '@visactor/vutils']
 };

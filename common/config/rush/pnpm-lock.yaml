@@ -136,6 +136,7 @@ importers:
       '@visactor/vutils': ~0.13.0
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
+      core-js: 3.31.1
       eslint: ~8.18.0
       form-data: ~4.0.0
       inversify: 6.0.1
@@ -145,15 +146,14 @@ importers:
       node-fetch: 2.6.6
       react: 16.13.0
       react-dom: 16.13.0
-      reflect-metadata: 0.1.13
       ts-jest: ^26.0.0
       typescript: 4.9.5
       vite: 3.2.6
     dependencies:
       '@visactor/vutils': 0.13.0
       color-convert: 2.0.1
+      core-js: 3.31.1
       inversify: 6.0.1
-      reflect-metadata: 0.1.13
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config
@@ -226,12 +226,12 @@ importers:
       '@visactor/vutils': ~0.13.0
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
+      core-js: 3.31.1
       eslint: ~8.18.0
       inversify: 6.0.1
       node-fetch: 2.6.6
       react: 16.13.0
       react-dom: 16.13.0
-      reflect-metadata: 0.1.13
       roughjs: 4.5.2
       typescript: 4.9.5
       vite: 3.2.6
@@ -240,9 +240,9 @@ importers:
       '@visactor/vrender': link:../vrender
       '@visactor/vutils': 0.13.0
       canvas: 2.11.2
+      core-js: 3.31.1
       inversify: 6.0.1
       node-fetch: 2.6.6
-      reflect-metadata: 0.1.13
       roughjs: 4.5.2
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
@@ -4166,6 +4166,11 @@ packages:
     resolution: {integrity: sha512-wIDWd2s5/5aJSdpOJHfSibxNODxoGoWOBHt8JSPB41NOE94M7kuTPZCYLOlTtuoXTsBPKobpJ6T+y0SSy5L9SA==}
     dependencies:
       browserslist: 4.21.9
+    dev: false
+
+  /core-js/3.31.1:
+    resolution: {integrity: sha512-2sKLtfq1eFST7l7v62zaqXacPc7uG8ZAya8ogijLhTtaKNcpzpB4TMoTw2Si+8GYKRwFPMMtUT0263QFWFfqyQ==}
+    requiresBuild: true
     dev: false
 
   /core-util-is/1.0.2:
@@ -8855,10 +8860,6 @@ packages:
     engines: {node: '>= 0.10'}
     dependencies:
       resolve: 1.22.2
-    dev: false
-
-  /reflect-metadata/0.1.13:
-    resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
     dev: false
 
   /regenerate-unicode-properties/10.1.0:

@@ -2,7 +2,7 @@ import type { ICanvas } from './canvas';
 import type { IContext2d } from './context';
 import type { IGraphicAttribute } from './graphic';
 import type { ITextAttribute } from './graphic/text';
-import type { ILayer } from './layer';
+import type { ILayer, ILayerParams } from './layer';
 import type { IStage } from './stage';
 import type { ITextMeasure, TextOptionsType } from './text';
 import type { IMatrix, IPointLike, ITextMeasureOption, TextMeasure } from '@visactor/vutils';
@@ -31,7 +31,7 @@ export interface ITransformUtil {
 }
 
 export interface ILayerService {
-  createLayer: (stage: IStage) => ILayer;
+  createLayer: (stage: IStage, options?: ILayerParams) => ILayer;
   releaseLayer: (stage: IStage, layer: ILayer) => void;
   restLayerCount: (stage: IStage) => number;
   getStageLayer: (stage: IStage) => ILayer[];

@@ -354,7 +354,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ...shapeAttr.style
     });
     // 处理下 shape 的 fill stroke
-    Object.keys(shapeAttr.state).forEach(key => {
+    Object.keys(shapeAttr.state || {}).forEach(key => {
       const color = shapeAttr.state[key].fill || shapeAttr.state[key].stroke;
       if (shape.fill && isNil(shapeAttr.state[key].fill) && color) {
         shapeAttr.state[key].fill = color as string;

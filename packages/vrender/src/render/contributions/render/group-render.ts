@@ -18,7 +18,7 @@ import { isArray } from '@visactor/vutils';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { createRectPath } from '../../../common/shape/rect';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
-import { GroupRenderContribution } from './contributions/group-contribution-render';
+import { GroupRenderContribution } from './contributions/constants';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
@@ -140,6 +140,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
           fVisible,
           sVisible,
           groupAttribute,
+          drawContext,
           fillCb,
           strokeCb,
           doFillOrStroke
@@ -175,7 +176,20 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     this._groupRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
-        c.drawShape(group, context, x, y, doFill, doStroke, fVisible, sVisible, groupAttribute, fillCb, strokeCb);
+        c.drawShape(
+          group,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          groupAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

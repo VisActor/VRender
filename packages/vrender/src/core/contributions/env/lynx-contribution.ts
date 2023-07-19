@@ -13,10 +13,18 @@ import { BaseEnvContribution } from './base-contribution';
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
   createCanvas: (id: string) => any;
+  createCanvasNG: (id: string) => any;
 };
 declare const SystemInfo: {
   pixelRatio: number;
 };
+
+let ng = false;
+try {
+  ng = !!lynx.createCanvasNG;
+} catch (err) {
+  // do nothing
+}
 
 // 飞书小程序canvas的wrap
 function makeUpCanvas(
@@ -29,7 +37,11 @@ function makeUpCanvas(
   const dpr = SystemInfo.pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
-    const _canvas = lynx.createCanvas(id);
+    const _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
+    _canvas.width = domref.width * dpr;
+    _canvas.height = domref.height * dpr;
+    ng && _canvas.attachToCanvasView(id);
+
     const ctx = _canvas.getContext('2d');
     ctx.draw = (a: any, b: any) => {
       b();
@@ -41,8 +53,8 @@ function makeUpCanvas(
     // };
 
     const canvas = {
-      width: domref.width,
-      height: domref.height,
+      width: domref.width * dpr,
+      height: domref.height * dpr,
       offsetWidth: domref.width,
       offsetHeight: domref.height,
       id: id ?? '',
@@ -93,6 +105,19 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
 
       loadFeishuContributions();
     }
+  }
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return this.freeCanvasList.length;
   }
 
   loadImage(url: string): Promise<{

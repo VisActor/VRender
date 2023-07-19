@@ -8,6 +8,13 @@ import type { Releaseable } from './common';
 import type { IContext2d } from './context';
 import type { IWindow } from './window';
 
+export interface ILayerParams {
+  main: boolean;
+  zIndex?: number;
+  canvasId?: string;
+  virtual?: boolean;
+}
+
 export interface ILayerDrawParams {
   renderService: IRenderService;
   background?: string | IColor;
@@ -34,6 +41,8 @@ export interface ILayer extends IGroup {
   height: number;
   viewWidth: number;
   viewHeight: number;
+
+  readonly virtual: boolean;
 
   offscreen: boolean;
   subLayers: Map<number, { layer: ILayer; group?: IGroup; zIndex: number; drawContribution?: IDrawContribution }>;

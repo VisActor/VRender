@@ -1,6 +1,6 @@
 // 参考konva
 import { injectable } from 'inversify';
-import { IContext2d, EnvType } from '../../../interface';
+import type { IContext2d, EnvType } from '../../../interface';
 import { BrowserContext2d } from '../browser';
 
 declare const tt: {
@@ -51,5 +51,8 @@ export class FeishuContext2d extends BrowserContext2d implements IContext2d {
         resolve(null);
       });
     });
+  }
+  createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
+    return null;
   }
 }

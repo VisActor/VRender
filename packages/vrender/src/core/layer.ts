@@ -13,7 +13,8 @@ import type {
   IDrawContext,
   ILayerHandlerDrawParams,
   IDrawContribution,
-  IWindow
+  IWindow,
+  ILayerParams
 } from '../interface';
 import { Theme } from '../graphic/theme';
 import { Group } from '../graphic/group';
@@ -21,12 +22,6 @@ import { Group } from '../graphic/group';
 export const LayerHandlerContribution = Symbol.for('LayerHandlerContribution');
 
 type BlendMode = 'normal';
-
-interface ILayerParams {
-  main: boolean;
-  zIndex?: number;
-  canvasId?: string;
-}
 
 // layer需要有多个，对于Canvas来说，layer可以绑定一个canvas或一个ImageData
 // 对于WebGL来说，layer对应一个FrameBuffer
@@ -36,6 +31,9 @@ export class Layer extends Group implements ILayer {
 
   declare _dpr: number;
   declare main: boolean;
+
+  declare readonly virtual: boolean;
+  declare afterDrawCbs: ((l: this) => void)[];
 
   declare imageData?: ImageData;
   // 混合模式，用于多图层混合
@@ -115,6 +113,8 @@ export class Layer extends Group implements ILayer {
     this.subLayers = new Map();
     this.theme = new Theme();
     this.background = 'rgba(0, 0, 0, 0)';
+    this.virtual = !!params.virtual;
+    this.afterDrawCbs = [];
   }
 
   combineSubLayer(removeIncrementalKey: boolean = true) {
@@ -172,6 +172,7 @@ export class Layer extends Group implements ILayer {
       },
       userParams
     );
+    this.afterDrawCbs.forEach(c => c(this));
   }
   resize(w: number, h: number) {
     this.layerHandler.resize(w, h);
@@ -183,7 +184,7 @@ export class Layer extends Group implements ILayer {
     throw new Error('暂不支持');
   }
   afterDraw(cb: (l: this) => void) {
-    throw new Error('暂不支持');
+    this.afterDrawCbs.push(cb);
   }
 
   // 动画相关
@@ -214,6 +215,7 @@ export class Layer extends Group implements ILayer {
         layer: this,
         ...params
       });
+      this.afterDrawCbs.forEach(c => c(this));
     }
   }
 
@@ -241,5 +243,6 @@ export class Layer extends Group implements ILayer {
       layer: this,
       ...params
     });
+    this.afterDrawCbs.forEach(c => c(this));
   }
 }

@@ -1269,6 +1269,28 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     cb && cb();
   }
 
+  private _stopAnimates(animates: Map<string | number, IAnimate>) {
+    if (animates) {
+      animates.forEach(animate => {
+        animate.stop();
+      });
+    }
+  }
+
+  stopAnimates(stopChildren: boolean = false) {
+    this._stopAnimates(this.animates);
+
+    if (this.shadowRoot) {
+      // 停止所有影子节点的动画
+      this.shadowRoot.stopAnimates(true);
+    }
+    if (this.isContainer && stopChildren) {
+      this.forEachChildren((c: IGraphic) => {
+        c.stopAnimates(stopChildren);
+      });
+    }
+  }
+
   release(): void {
     this.releaseStatus = 'released';
   }

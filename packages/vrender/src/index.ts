@@ -12,6 +12,7 @@ export * from './create';
 export * from './event';
 export * from './interface';
 export * from './render';
+export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
 export * from './picker';

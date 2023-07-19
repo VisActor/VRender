@@ -244,7 +244,6 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     //     context.transformFromMatrix(symbol.transMatrix, true);
     //   }
     // }
-
     const data = this.transform(symbol, symbolAttribute, context);
     const { x, y, z, lastModelMatrix } = data;
 

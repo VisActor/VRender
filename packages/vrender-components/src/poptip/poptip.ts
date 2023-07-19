@@ -57,7 +57,9 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       maxWidth = Infinity,
       padding = 4,
       visible,
-      state
+      state,
+      dx = 0,
+      dy = 0
     } = this.attribute as PopTipAttributes;
 
     const parsedPadding = normalizePadding(padding);
@@ -180,8 +182,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     }
 
     group.setAttributes({
-      x: -offset[0],
-      y: -offset[1]
+      x: -offset[0] + dx,
+      y: -offset[1] + dy
     });
   }
 

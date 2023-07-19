@@ -21,14 +21,17 @@ export class DefaultPluginService implements IPluginService {
     this.actived = false;
   }
 
-  active(stage: IStage) {
+  active(stage: IStage, params: { pluginList?: string[] }) {
     this.stage = stage;
     this.actived = true;
 
     // 启动插件
-    if (container.isBound(AutoEnablePlugins)) {
+    const { pluginList } = params;
+    if (pluginList && container.isBound(AutoEnablePlugins)) {
       this.autoEnablePlugins.getContributions().forEach(p => {
-        this.register(p);
+        if (pluginList.includes(p.name)) {
+          this.register(p);
+        }
       });
     }
   }

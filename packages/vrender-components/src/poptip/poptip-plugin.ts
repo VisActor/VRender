@@ -4,7 +4,7 @@ import { Generator } from '@visactor/vrender';
 
 @injectable()
 export class PopTipPlugin implements IPlugin {
-  name: 'PopTipPlugin' = 'PopTipPlugin';
+  name: 'poptip' = 'poptip';
   activeEvent: 'onRegister' = 'onRegister';
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();

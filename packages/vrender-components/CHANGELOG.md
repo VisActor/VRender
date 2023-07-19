@@ -1,6 +1,21 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 12 Jul 2023 12:30:46 GMT and should not be manually modified.
+This log was last generated on Wed, 19 Jul 2023 08:29:52 GMT and should not be manually modified.
+
+## 0.13.0
+Wed, 19 Jul 2023 08:29:52 GMT
+
+### Minor changes
+
+- feat(axis): support `dataFilter` property for tick and label's data filter
+- feat(axis): add anti-overlapping logic for cartesian axis labels
+- feat: support poptip component and plugin
+
+### Patches
+
+- feat(axis): support custom method for autohide
+- feat: tooltip supports rich text which can wrap
+- fix(legend): compact the undefiend scene when use Object.keys
 
 ## 0.12.3
 Wed, 12 Jul 2023 12:30:46 GMT

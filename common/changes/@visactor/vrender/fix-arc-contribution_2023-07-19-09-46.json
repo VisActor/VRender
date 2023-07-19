@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the error of drawing arc background",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

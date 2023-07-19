@@ -55,8 +55,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  protected _arcBeforeRenderContribitions: IArcRenderContribution[] = [];
-  protected _arcAfterRenderContribitions: IArcRenderContribution[] = [];
+  protected _arcBeforeRenderContribitions: IArcRenderContribution[];
+  protected _arcAfterRenderContribitions: IArcRenderContribution[];
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
@@ -273,7 +273,6 @@ export class DefaultCanvasArcRender implements IGraphicRender {
     } = arc.attribute;
 
     let beforeRenderContribitionsRuned = false;
-
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
     if (doFill || isFullStroke || background) {
       context.beginPath();
@@ -291,6 +290,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       drawArcPath(arc, context, x, y, outerRadius, innerRadius);
 
       if (!this._arcBeforeRenderContribitions) {
+        this._arcBeforeRenderContribitions = [];
+        this._arcAfterRenderContribitions = [];
         const contributions = this.arcRenderContribitions.getContributions() || [];
         contributions.sort((a, b) => b.order - a.order);
         contributions.forEach(c => {
@@ -348,6 +349,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
 
       if (!beforeRenderContribitionsRuned) {
         if (!this._arcBeforeRenderContribitions) {
+          this._arcBeforeRenderContribitions = [];
+          this._arcAfterRenderContribitions = [];
           const contributions = this.arcRenderContribitions.getContributions() || [];
           contributions.sort((a, b) => b.order - a.order);
           contributions.forEach(c => {
@@ -400,6 +403,8 @@ export class DefaultCanvasArcRender implements IGraphicRender {
 
         if (!beforeRenderContribitionsRuned) {
           if (!this._arcBeforeRenderContribitions) {
+            this._arcBeforeRenderContribitions = [];
+            this._arcAfterRenderContribitions = [];
             const contributions = this.arcRenderContribitions.getContributions() || [];
             contributions.sort((a, b) => b.order - a.order);
             contributions.forEach(c => {

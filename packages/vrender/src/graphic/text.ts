@@ -128,6 +128,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
+      fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth
@@ -146,11 +147,16 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     if (Number.isFinite(maxLineWidth)) {
       if (ellipsis) {
         const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
-        const data = textMeasure.clipTextWithSuffix(text.toString(), { fontSize }, maxLineWidth, strEllipsis);
+        const data = textMeasure.clipTextWithSuffix(
+          text.toString(),
+          { fontSize, fontWeight },
+          maxLineWidth,
+          strEllipsis
+        );
         str = data.str;
         width = data.width;
       } else {
-        const data = textMeasure.clipText(text.toString(), { fontSize }, maxLineWidth);
+        const data = textMeasure.clipText(text.toString(), { fontSize, fontWeight }, maxLineWidth);
         str = data.str;
         width = data.width;
       }
@@ -158,7 +164,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       this.cache.clipedWidth = width;
       // todo 计算原本的宽度
     } else {
-      width = textMeasure.measureTextWidth(text.toString(), { fontSize });
+      width = textMeasure.measureTextWidth(text.toString(), { fontSize, fontWeight });
       this.cache.clipedText = text.toString();
       this.cache.clipedWidth = width;
     }
@@ -187,6 +193,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
+      fontWeight = textTheme.fontWeight,
       lineHeight = attribute.lineHeight || attribute.fontSize || textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
@@ -204,7 +211,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure);
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
       textAlign,

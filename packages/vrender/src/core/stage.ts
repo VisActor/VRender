@@ -493,9 +493,9 @@ export class Stage extends Group implements IStage {
     // TODO：顺序可能会存在问题
     this.interactiveLayer = this.createLayer();
     this.interactiveLayer.name = '_builtin_interactive';
-    this.interactiveLayer.afterDraw(l => {
-      l.removeAllChild();
-    });
+    // this.interactiveLayer.afterDraw(l => {
+    //   l.removeAllChild();
+    // });
   }
 
   clearViewBox(color?: string) {

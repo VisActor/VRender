@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Wed, 19 Jul 2023 08:29:52 GMT and should not be manually modified.
+This log was last generated on Thu, 20 Jul 2023 10:41:23 GMT and should not be manually modified.
+
+## 0.12.5
+Thu, 20 Jul 2023 10:41:23 GMT
+
+### Patches
+
+- fix: fix the error caused by reflect-metadata in react env
 
 ## 0.12.4
 Wed, 19 Jul 2023 08:29:52 GMT

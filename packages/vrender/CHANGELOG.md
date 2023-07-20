@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 19 Jul 2023 08:29:52 GMT and should not be manually modified.
+This log was last generated on Thu, 20 Jul 2023 10:41:23 GMT and should not be manually modified.
+
+## 0.13.1
+Thu, 20 Jul 2023 10:41:23 GMT
+
+### Patches
+
+- fix: fix the error of drawing arc background
+- fix: fix the error caused by reflect-metadata in react env
+- fix: fix the bounds issue caused by fontWeight
 
 ## 0.13.0
 Wed, 19 Jul 2023 08:29:52 GMT

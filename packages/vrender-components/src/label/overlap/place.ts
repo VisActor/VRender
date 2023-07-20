@@ -1,10 +1,12 @@
-import { Text } from '@visactor/vrender';
-import { IAABBBounds, IBoundsLike, isFunction } from '@visactor/vutils';
-import { PointLocationCfg } from '../../core/type';
+import type { IText, Text } from '@visactor/vrender';
+import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
+import { isFunction } from '@visactor/vutils';
+import type { PointLocationCfg } from '../../core/type';
 import type { LabelBase } from '../base';
 import type { BaseLabelAttrs, OverlapAttrs, Strategy } from '../type';
 import type { Bitmap } from './bitmap';
-import { BitmapTool, boundToRange } from './scaler';
+import type { BitmapTool } from './scaler';
+import { boundToRange } from './scaler';
 
 /**
  * 防重叠逻辑参考 https://github.com/vega/vega/
@@ -138,4 +140,32 @@ export function defaultLabelPosition(type?: string) {
     default:
       return DefaultPositions;
   }
+}
+
+export function clampText(text: IText, width: number, height: number) {
+  const { x1, x2, y1, y2 } = text.AABBBounds;
+  const minX = Math.min(x1, x2);
+  const maxX = Math.max(x1, x2);
+
+  const minY = Math.min(y1, y2);
+  const maxY = Math.max(y1, y2);
+
+  let dx = 0;
+  let dy = 0;
+
+  // x 方向
+  if (minX < 0 && maxX - minX <= width) {
+    dx = -minX;
+  } else if (maxX > width && minX - (maxX - width) >= 0) {
+    dx = width - maxX;
+  }
+
+  // y 方向
+  if (minY < 0 && maxY - minY <= height) {
+    dy = -minY;
+  } else if (maxY > height && minY - (maxY - height) >= 0) {
+    dy = height - maxY;
+  }
+
+  return { dx, dy };
 }

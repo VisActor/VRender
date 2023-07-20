@@ -140,10 +140,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (this.attribute.label?.visible && this.attribute.label?.inside === false) {
       const space = +get(this.attribute, 'label.space', 4);
       labelLength += space;
+      const layerCount = Object.keys(this.axisLabelLayerSize).length;
       if (axisVector[1] === 0) {
-        labelLength = this.axisLabelsContainer.AABBBounds.height();
+        labelLength += this.axisLabelsContainer.AABBBounds.height() + (layerCount - 1) * space;
       } else if (axisVector[0] === 0) {
-        labelLength = this.axisLabelsContainer.AABBBounds.width();
+        labelLength += this.axisLabelsContainer.AABBBounds.width() + (layerCount - 1) * space;
       } else {
         // 发生了旋转
         Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {

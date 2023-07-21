@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(vrender-components): fix the calculation of axis title offset",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

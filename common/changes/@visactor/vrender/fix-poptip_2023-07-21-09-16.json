@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the poptip not work due to mount and unmount issue",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -665,7 +665,6 @@ describe('Line Axis', () => {
         visible: true,
         inside: false,
         space: 8,
-        padding: 0,
         style: {
           fontSize: 14,
           fill: '#505050',

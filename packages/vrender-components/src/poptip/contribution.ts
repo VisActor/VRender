@@ -9,30 +9,10 @@ import type {
 } from '@visactor/vrender';
 import { PopTip } from './poptip';
 import { merge } from '@visactor/vutils';
+import { theme } from './theme';
 
 function wrapPoptip(target: Record<string, any>, source: Record<string, any>) {
-  const theme = {
-    visible: true,
-    position: 'top',
-    titleStyle: {
-      fontSize: 16,
-      fill: '#08979c'
-    },
-    contentStyle: {
-      fontSize: 12,
-      fill: 'green'
-    },
-    panel: {
-      visible: true,
-
-      fill: '#e6fffb',
-
-      stroke: '#87e8de',
-      lineWidth: 1,
-      cornerRadius: 4
-    }
-  };
-  merge(target, theme, source);
+  merge(target, theme.poptip, source);
   return target;
 }
 
@@ -62,20 +42,22 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
       if (!this.poptipComponent) {
         this.poptipComponent = new PopTip((graphic.attribute as any).poptip);
       }
-      // 如果text图元没有配置title的话
+      // 如果text图元没有配置title和content的话
       let poptip = (graphic.attribute as any).poptip || {};
       if (graphic.type === 'text' && poptip.title == null && poptip.content == null) {
         const out = {};
         wrapPoptip(out, poptip);
         poptip = out;
-        poptip.title = poptip.title ?? (graphic.attribute as any).text;
+        poptip.content = poptip.content ?? (graphic.attribute as any).text;
       }
+      const matrix = graphic.globalTransMatrix;
       this.poptipComponent.setAttributes({
         visibleAll: true,
+        pickable: false,
+        childrenPickable: false,
         ...poptip,
-        x: 0,
-        y: 0,
-        postMatrix: graphic.globalTransMatrix
+        x: matrix.e,
+        y: matrix.f
       });
       // 添加到交互层中
       const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
@@ -84,9 +66,10 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
       }
     } else if (graphic._showPoptip === 2) {
       graphic._showPoptip = 0;
-      this.poptipComponent.setAttributes({
-        visibleAll: false
-      });
+      this.poptipComponent &&
+        this.poptipComponent.setAttributes({
+          visibleAll: false
+        });
     }
   }
 }

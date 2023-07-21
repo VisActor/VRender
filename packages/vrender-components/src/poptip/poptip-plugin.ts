@@ -31,12 +31,12 @@ export class PopTipPlugin implements IPlugin {
     }
     const { poptip } = graphic.attribute;
     if (poptip) {
-      graphic.addUpdateBoundTag();
+      graphic.setAttributes({});
       graphic._showPoptip = 1;
     }
 
     if (this.activeGraphic) {
-      this.activeGraphic.addUpdateBoundTag();
+      this.activeGraphic.setAttributes({});
       this.activeGraphic._showPoptip = 2;
     }
     // console.log(graphic)
@@ -47,7 +47,7 @@ export class PopTipPlugin implements IPlugin {
     if (!this.activeGraphic) {
       return;
     }
-    this.activeGraphic.addUpdateBoundTag();
+    this.activeGraphic.setAttributes({});
     this.activeGraphic._showPoptip = 2;
     this.setActiveGraphic(null, true);
   };
@@ -86,18 +86,17 @@ export class PopTipForClipedTextPlugin implements IPlugin {
       return;
     }
     // 触发graphic重绘
-    graphic.addUpdateBoundTag();
     if (graphic === this.activeGraphic) {
       return;
     }
     const { poptip = {} } = graphic.attribute;
     if (poptip) {
-      graphic.addUpdateBoundTag();
+      graphic.setAttributes({});
       graphic._showPoptip = 1;
     }
     // 添加默认poptip
     if (this.activeGraphic) {
-      this.activeGraphic.addUpdateBoundTag();
+      this.activeGraphic.setAttributes({});
       this.activeGraphic._showPoptip = 2;
     }
     // console.log(graphic)
@@ -108,7 +107,7 @@ export class PopTipForClipedTextPlugin implements IPlugin {
     if (!this.activeGraphic) {
       return;
     }
-    this.activeGraphic.addUpdateBoundTag();
+    this.activeGraphic.setAttributes({});
     this.activeGraphic._showPoptip = 2;
     this.setActiveGraphic(null, true);
   };

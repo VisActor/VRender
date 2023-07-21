@@ -1,7 +1,10 @@
 import { container, InteractiveSubRenderContribution, AutoEnablePlugins } from '@visactor/vrender';
 import { ContainerModule } from 'inversify';
+import { merge } from '@visactor/vutils';
 import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
+import type { PopTipAttributes } from './type';
+import { theme } from './theme';
 
 export const module = new ContainerModule(bind => {
   bind(PopTipRenderContribution).toSelf().inSingletonScope();
@@ -14,6 +17,7 @@ export const module = new ContainerModule(bind => {
   bind(AutoEnablePlugins).toService(PopTipForClipedTextPlugin);
 });
 
-export function loadPoptip() {
+export function loadPoptip(defaultPoptipTheme: PopTipAttributes) {
+  merge(theme.poptip, defaultPoptipTheme);
   container.load(module);
 }

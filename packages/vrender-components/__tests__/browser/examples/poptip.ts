@@ -1,8 +1,8 @@
 import GUI from 'lil-gui';
 import { createLine, createText, IText } from '@visactor/vrender';
 import render from '../../util/render';
-import { PopTip, enablePoptip } from '../../../src';
-enablePoptip();
+import { PopTip, loadPoptip } from '../../../src';
+loadPoptip();
 
 export function run() {
   const guiObject = {

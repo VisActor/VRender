@@ -2,6 +2,24 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.1",
+      "tag": "@visactor/vrender_v0.13.1",
+      "date": "Thu, 20 Jul 2023 10:41:23 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the error of drawing arc background"
+          },
+          {
+            "comment": "fix: fix the error caused by reflect-metadata in react env"
+          },
+          {
+            "comment": "fix: fix the bounds issue caused by fontWeight"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.0",
       "tag": "@visactor/vrender_v0.13.0",
       "date": "Wed, 19 Jul 2023 08:29:52 GMT",

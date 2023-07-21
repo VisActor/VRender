@@ -640,4 +640,118 @@ describe('Line Axis', () => {
     const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
     expect(axisTitle.attribute.x).toBe(-40);
   });
+
+  it('Horizontal Line Axis with no labels', () => {
+    const axis = new LineAxis({
+      title: {
+        space: 20,
+        padding: 0,
+        textStyle: {
+          fontSize: 14,
+          fill: '#333',
+          fontWeight: 'bold',
+          fillOpacity: 1,
+          fontFamily: 'PingFang SC'
+        },
+        visible: true,
+        autoRotate: false,
+        shape: {},
+        background: {},
+
+        text: 'date',
+        maxWidth: 331
+      },
+      label: {
+        visible: true,
+        inside: false,
+        space: 8,
+        padding: 0,
+        style: {
+          fontSize: 14,
+          fill: '#505050',
+          fontWeight: 'normal',
+          fillOpacity: 1,
+          fontFamily: 'PingFang SC',
+          angle: -1.0471975511965976,
+          textAlign: 'end',
+          textBaseline: 'middle'
+        },
+        autoRotate: false,
+        autoHide: false,
+        autoLimit: false
+      },
+      tick: {
+        visible: false,
+        inside: false,
+        alignWithLabel: true,
+        length: 4,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      subTick: {
+        visible: false,
+        inside: false,
+        count: 4,
+        length: 2,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      line: {
+        visible: true,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      grid: {
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: []
+        },
+        visible: false,
+        length: 399,
+        type: 'line',
+        depth: 0
+      },
+      subGrid: {
+        visible: false,
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: [4, 4]
+        }
+      },
+      x: 121,
+      y: 423,
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 331,
+        y: 0
+      },
+      items: [[]],
+      visible: true,
+      pickable: true,
+      orient: 'bottom',
+      verticalFactor: 1,
+      verticalLimitSize: 150
+    });
+    stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.render();
+    const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
+    expect(axisTitle.attribute.y).toBe(20);
+    expect(axisTitle.attribute.x).toBe(165.5);
+  });
 });

@@ -142,10 +142,20 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       labelLength += space;
       const layerCount = Object.keys(this.axisLabelLayerSize).length;
       if (axisVector[1] === 0) {
-        labelLength += this.axisLabelsContainer.AABBBounds.height() + (layerCount - 1) * space;
+        const labelBoundsHeight = this.axisLabelsContainer.AABBBounds.height();
+        if (isFinite(labelBoundsHeight)) {
+          labelLength += labelBoundsHeight + (layerCount - 1) * space;
+        } else {
+          labelLength = 0;
+        }
       } else {
         if (axisVector[0] === 0) {
-          labelLength += this.axisLabelsContainer.AABBBounds.width() + (layerCount - 1) * space;
+          const boundsWidth = this.axisLabelsContainer.AABBBounds.width();
+          if (isFinite(boundsWidth)) {
+            labelLength += boundsWidth + (layerCount - 1) * space;
+          } else {
+            labelLength = 0;
+          }
         } else {
           // 发生了旋转
           Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {

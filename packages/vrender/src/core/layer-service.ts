@@ -9,10 +9,17 @@ export class DefaultLayerService implements ILayerService {
   declare layerMap: Map<IStage, ILayer[]>;
   declare staticLayerCountInEnv: number;
   declare dynamicLayerCountInEnv: number;
+  declare inited: boolean;
   constructor(@inject(Global) public readonly global: IGlobal) {
     this.layerMap = new Map();
-    this.staticLayerCountInEnv = global.getStaticCanvasCount();
-    this.dynamicLayerCountInEnv = global.getDynamicCanvasCount();
+  }
+
+  tryInit() {
+    if (!this.inited) {
+      this.staticLayerCountInEnv = this.global.getStaticCanvasCount();
+      this.dynamicLayerCountInEnv = this.global.getDynamicCanvasCount();
+      this.inited = true;
+    }
   }
 
   getStageLayer(stage: IStage) {
@@ -20,6 +27,7 @@ export class DefaultLayerService implements ILayerService {
   }
 
   createLayer(stage: IStage, options: ILayerParams = { main: false }): ILayer {
+    this.tryInit();
     const layer = new Layer(stage, this.global, stage.window, {
       ...options,
       virtual: this.staticLayerCountInEnv === 0

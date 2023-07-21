@@ -495,4 +495,149 @@ describe('Line Axis', () => {
       datum: {}
     });
   });
+
+  it('Vertical Line Axis with Title', () => {
+    const axis = new LineAxis({
+      title: {
+        space: 20,
+        padding: 0,
+        textStyle: {
+          fontSize: 11,
+          fill: 'rgb(169,174,184)',
+          fontWeight: 'normal',
+          fillOpacity: 1,
+          textAlign: 'left',
+          textBaseline: 'bottom',
+          angle: 3.141592653589793,
+          text: 'DAU'
+        },
+        visible: true,
+        autoRotate: false,
+        shape: {},
+        background: {},
+        text: 'y'
+      },
+      label: {
+        visible: true,
+        inside: false,
+        space: 20,
+        style: {
+          fontSize: 14,
+          fill: '#89909D',
+          fontWeight: 'normal',
+          fillOpacity: 1,
+          textAlign: 'left'
+        },
+        autoRotate: false,
+        autoHide: false,
+        autoLimit: false
+      },
+      tick: {
+        visible: false,
+        inside: false,
+        alignWithLabel: true,
+        length: 4,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      subTick: {
+        visible: false,
+        inside: false,
+        count: 4,
+        length: 2,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      line: {
+        visible: false,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      grid: {
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: [2, 2]
+        },
+        visible: true,
+        length: 337,
+        type: 'line',
+        depth: 0
+      },
+      subGrid: {
+        visible: false,
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: [4, 4]
+        }
+      },
+      x: 151,
+      y: 12,
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 0,
+        y: 102.25
+      },
+      items: [
+        [
+          {
+            id: '0',
+            label: '0',
+            value: 0.9149881024361075,
+            rawValue: 0
+          },
+          {
+            id: '200000000',
+            label: '200000000',
+            value: 0.6876642054066237,
+            rawValue: 200000000
+          },
+          {
+            id: '400000000',
+            label: '400000000',
+            value: 0.46034030837713946,
+            rawValue: 400000000
+          },
+          {
+            id: '600000000',
+            label: '600000000',
+            value: 0.23301641134765558,
+            rawValue: 600000000
+          },
+          {
+            id: '800000000',
+            label: '800000000',
+            value: 0.0056925143181715265,
+            rawValue: 800000000
+          }
+        ]
+      ],
+      visible: true,
+      pickable: true,
+      orient: 'left',
+
+      verticalFactor: 1,
+      verticalLimitSize: 139
+    });
+    stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.render();
+
+    const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
+    expect(axisTitle.attribute.x).toBe(-40);
+  });
 });

@@ -12,14 +12,7 @@ import { traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } from './overlap';
-import type {
-  BaseLabelAttrs,
-  OverlapAttrs,
-  ILabelGraphicAttribute,
-  ILabelAnimation,
-  LabelItem,
-  SmartInvertAttrs
-} from './type';
+import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -171,7 +164,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
   };
 
-  private _createLabelText(attributes: ILabelGraphicAttribute) {
+  private _createLabelText(attributes: LabelItem) {
     const text = createText(attributes);
     this._bindEvent(text);
     this._setStates(text);

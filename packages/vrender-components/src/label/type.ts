@@ -221,12 +221,6 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 
 export type Functional<T> = T | ((data: any) => T);
 
-// TODO 删除
-export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
-  _relatedIndex?: number;
-  _labelGraphic?: IGraphic;
-}
-
 export interface ILabelAnimation {
   mode?: 'same-time' | 'after' | 'after-all';
   duration?: number;

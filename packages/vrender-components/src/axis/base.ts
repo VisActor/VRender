@@ -255,16 +255,26 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     tickLineGroup.id = this._getNodeId('tick-container');
     container.add(tickLineGroup);
 
-    const tickLineState = isEmpty(this.attribute.tick?.state)
-      ? null
-      : merge({}, DEFAULT_STATES, this.attribute.tick.state);
     tickLineItems.forEach((item: TickLineItem, index) => {
       const line = createLine({
         ...this._getTickLineAttribute('tick', item, index, tickLineItems)
       });
       line.name = AXIS_ELEMENT_NAME.tick;
       line.id = this._getNodeId(item.id);
-      line.states = tickLineState;
+
+      if (isEmpty(this.attribute.tick?.state)) {
+        line.states = null;
+      } else {
+        const data = this.data[index];
+        const tickLineState = merge({}, DEFAULT_STATES, this.attribute.tick.state);
+        Object.keys(tickLineState).forEach(key => {
+          if (isFunction(tickLineState[key])) {
+            tickLineState[key] = tickLineState[key](data.rawValue, index, data, this.data);
+          }
+        });
+        line.states = tickLineState;
+      }
+
       tickLineGroup.add(line);
     });
     this.tickLineItems = tickLineItems;
@@ -274,14 +284,25 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     if (subTick?.visible) {
       const subTickLineItems: TickLineItem[] = this.getSubTickLineItems();
       if (subTickLineItems.length) {
-        const subTickLineState = isEmpty(subTick.state) ? null : merge({}, DEFAULT_STATES, subTick.state);
         subTickLineItems.forEach((item: TickLineItem, index) => {
           const line = createLine({
             ...this._getTickLineAttribute('subTick', item, index, tickLineItems)
           });
           line.name = AXIS_ELEMENT_NAME.subTick;
           line.id = this._getNodeId(`${index}`);
-          line.states = subTickLineState;
+
+          if (isEmpty(subTick.state)) {
+            line.states = null;
+          } else {
+            const subTickLineState = merge({}, DEFAULT_STATES, subTick.state);
+            Object.keys(subTickLineState).forEach(key => {
+              if (isFunction(subTickLineState[key])) {
+                subTickLineState[key] = subTickLineState[key](item.value, index, item, tickLineItems);
+              }
+            });
+            line.states = subTickLineState;
+          }
+
           tickLineGroup.add(line);
         });
       }
@@ -305,15 +326,22 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let maxTextHeight = 0;
     let textAlign = 'center';
     let textBaseline = 'middle';
-    const labelState = isEmpty(this.attribute.label?.state)
-      ? null
-      : merge({}, DEFAULT_STATES, this.attribute.label.state);
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle = this._getLabelAttribute(item, index, data, layer);
       const text = createText(labelStyle);
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
-      text.states = labelState;
+      if (isEmpty(this.attribute.label?.state)) {
+        text.states = null;
+      } else {
+        const labelState = merge({}, DEFAULT_STATES, this.attribute.label.state);
+        Object.keys(labelState).forEach(key => {
+          if (isFunction(labelState[key])) {
+            labelState[key] = labelState[key](item, index, data, layer);
+          }
+        });
+        text.states = labelState;
+      }
 
       labelGroup.add(text);
       const angle = labelStyle.angle ?? 0;

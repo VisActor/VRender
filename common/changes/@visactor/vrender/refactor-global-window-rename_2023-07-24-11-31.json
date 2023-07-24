@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "refactor: rename global and window to vglobal and vwindow",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

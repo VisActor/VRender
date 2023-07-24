@@ -17,7 +17,7 @@ import type {
 import { DefaultPickService } from './picker-service';
 import { EmptyContext2d } from '../canvas';
 import { MathPickerContribution } from './contributions/constants';
-import { Global } from '../constants';
+import { VGlobal } from '../constants';
 import { PickItemInterceptor } from './pick-interceptor';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
@@ -34,7 +34,7 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
     @inject(ContributionProvider)
     @named(MathPickerContribution)
     protected readonly contributions: IContributionProvider<IGraphicPicker>,
-    @inject(Global) public readonly global: IGlobal,
+    @inject(VGlobal) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)

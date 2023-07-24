@@ -1,19 +1,12 @@
 /**
  * @description 框选组件
  */
-import { FederatedPointerEvent, IGroup, IPolygon, global, createPolygon, Polygon, point } from '@visactor/vrender';
-import {
-  cloneDeep,
-  debounce,
-  IBounds,
-  IPointLike,
-  isFunction,
-  merge,
-  polygonContainPoint,
-  throttle
-} from '@visactor/vutils';
+import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender';
+import { createPolygon, Polygon, point } from '@visactor/vrender';
+import type { IBounds, IPointLike } from '@visactor/vutils';
+import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { BrushAttributes } from './type';
+import type { BrushAttributes } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES } from './config';
 
 const delayMap = {

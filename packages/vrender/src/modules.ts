@@ -18,7 +18,7 @@ import type { IGraphicUtil, ILayerService, ITransformUtil } from './interface/co
 import { GraphicService } from './graphic/constants';
 import { GraphicUtil, TransformUtil } from './core/constants';
 import { container } from './container';
-import { Global } from './constants';
+import { VGlobal } from './constants';
 
 container.load(coreModule);
 container.load(graphicModule);
@@ -32,8 +32,8 @@ loadPickContributions(container);
 loadCanvasContributions(container);
 
 // 全局变量
-export const global = container.get<IGlobal>(Global);
-application.global = global;
+export const vglobal = container.get<IGlobal>(VGlobal);
+application.global = vglobal;
 export const graphicUtil = container.get<IGraphicUtil>(GraphicUtil);
 application.graphicUtil = graphicUtil;
 export const transformUtil = container.get<ITransformUtil>(TransformUtil);

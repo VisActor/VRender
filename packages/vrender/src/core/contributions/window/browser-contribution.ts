@@ -12,7 +12,7 @@ import type {
   IWindowParams
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { Global } from '../../../constants';
+import { VGlobal } from '../../../constants';
 
 @injectable()
 export class BrowserWindowHandlerContribution
@@ -31,7 +31,7 @@ export class BrowserWindowHandlerContribution
     return this.canvas.nativeCanvas.parentElement;
   }
 
-  constructor(@inject(Global) private readonly global: IGlobal) {
+  constructor(@inject(VGlobal) private readonly global: IGlobal) {
     super();
   }
 

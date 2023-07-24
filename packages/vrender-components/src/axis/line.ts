@@ -142,14 +142,26 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       labelLength += space;
       const layerCount = Object.keys(this.axisLabelLayerSize).length;
       if (axisVector[1] === 0) {
-        labelLength += this.axisLabelsContainer.AABBBounds.height() + (layerCount - 1) * space;
-      } else if (axisVector[0] === 0) {
-        labelLength += this.axisLabelsContainer.AABBBounds.width() + (layerCount - 1) * space;
+        const labelBoundsHeight = this.axisLabelsContainer.AABBBounds.height();
+        if (isFinite(labelBoundsHeight)) {
+          labelLength += labelBoundsHeight + (layerCount - 1) * space;
+        } else {
+          labelLength = 0;
+        }
       } else {
-        // 发生了旋转
-        Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
-          labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
-        });
+        if (axisVector[0] === 0) {
+          const boundsWidth = this.axisLabelsContainer.AABBBounds.width();
+          if (isFinite(boundsWidth)) {
+            labelLength += boundsWidth + (layerCount - 1) * space;
+          } else {
+            labelLength = 0;
+          }
+        } else {
+          // 发生了旋转
+          Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
+            labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
+          });
+        }
 
         const textAlign = this.axisLabelLayerSize[0].textAlign;
         const isTextAlignStart = textAlign === 'start' || textAlign === 'left';
@@ -161,7 +173,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
               ? labelLength
               : isTextCenter
               ? labelLength / 2
-              : 0
+              : space
             : isTextAlignStart
             ? space
             : isTextCenter
@@ -170,7 +182,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         } else {
           labelLength = isReverse
             ? isTextAlignStart
-              ? 0
+              ? space
               : isTextCenter
               ? labelLength / 2
               : labelLength
@@ -178,7 +190,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             ? labelLength
             : isTextCenter
             ? labelLength / 2
-            : 0;
+            : space;
         }
       }
     }

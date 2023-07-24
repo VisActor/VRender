@@ -34,7 +34,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: true,
+    disableDirtyBounds: false,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {

@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 20 Jul 2023 10:41:23 GMT and should not be manually modified.
+This log was last generated on Fri, 21 Jul 2023 10:50:41 GMT and should not be manually modified.
+
+## 0.13.2
+Fri, 21 Jul 2023 10:50:41 GMT
+
+### Patches
+
+- fix(vrender-components): fix the calculation of axis title offset
+- fix(vrender-components): fix the issue of bounds when labelContainer is empty
 
 ## 0.13.1
 Thu, 20 Jul 2023 10:41:23 GMT

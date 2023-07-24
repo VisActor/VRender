@@ -25,7 +25,7 @@ type StateStyle = {
 
 export type PopTipAttributes = {
   /** 位置，参考arco design */
-  position?: 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb';
+  position?: 'auto' | 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb';
   /**
    * 标题内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    */
@@ -49,7 +49,7 @@ export type PopTipAttributes = {
   /**
    * 标签的背景面板配置, TODO: 支持symbol形状
    */
-  panel?: BackgroundAttributes & ISymbolGraphicAttribute;
+  panel?: BackgroundAttributes & ISymbolGraphicAttribute & { space?: number };
 
   /**
    * 最小宽度，像素值

@@ -4,9 +4,9 @@ import { merge } from '@visactor/vutils';
 import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
 import type { PopTipAttributes } from './type';
-import { theme } from './theme';
+import { DEFAULT_THEME, theme } from './theme';
 
-export const module = new ContainerModule(bind => {
+export const popTipModule = new ContainerModule(bind => {
   bind(PopTipRenderContribution).toSelf().inSingletonScope();
   bind(InteractiveSubRenderContribution).toService(PopTipRenderContribution);
 
@@ -19,5 +19,9 @@ export const module = new ContainerModule(bind => {
 
 export function loadPoptip(defaultPoptipTheme: PopTipAttributes) {
   merge(theme.poptip, defaultPoptipTheme);
-  container.load(module);
+  container.load(popTipModule);
+}
+
+export function setPoptipTheme(defaultPoptipTheme: PopTipAttributes) {
+  merge(theme.poptip, DEFAULT_THEME, defaultPoptipTheme);
 }

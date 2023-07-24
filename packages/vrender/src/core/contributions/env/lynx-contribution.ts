@@ -14,6 +14,7 @@ declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
   createCanvas: (id: string) => any;
   createCanvasNG: (id: string) => any;
+  createImage: (id: string) => any;
 };
 declare const SystemInfo: {
   pixelRatio: number;
@@ -73,6 +74,25 @@ function makeUpCanvas(
   });
 }
 
+export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
+  if (isSvg) {
+    return Promise.reject();
+  }
+  const img = lynx.createImage(src);
+  // if (img.complete) {
+  //   return Promise.resolve(img);
+  // }
+  const promise: Promise<HTMLImageElement> = new Promise((resolve, reject) => {
+    img.onload = () => {
+      resolve(img);
+    };
+    img.onerror = () => {
+      reject(new Error('加载失败'));
+    };
+  });
+  return promise;
+}
+
 @injectable()
 export class LynxEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'lynx';
@@ -124,10 +144,20 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    return Promise.resolve({
-      data: url as unknown as HTMLImageElement,
-      loadState: 'success'
-    });
+    const imagePromise = createImageElement(url, false);
+    return imagePromise
+      .then((img: HTMLImageElement) => {
+        return {
+          data: img,
+          loadState: 'success' as const
+        };
+      })
+      .catch(() => {
+        return {
+          data: null,
+          loadState: 'fail'
+        };
+      });
   }
 
   loadSvg(url: string): Promise<{

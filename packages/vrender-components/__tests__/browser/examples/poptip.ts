@@ -70,27 +70,10 @@ export function run() {
         x: 160,
         y: 100,
         poptip: {
-          visible: true,
-          visibleCb: (text: IText) => text.cliped,
-          position: 'lt',
-          title: guiObject.title,
-          titleStyle: {
-            fontSize: 16,
-            fill: '#08979c'
-          },
-          content: guiObject.content,
-          contentStyle: {
-            fontSize: 12,
-            fill: 'green'
-          },
+          position: 'top',
           panel: {
-            visible: guiObject.backgroundVisible,
-
-            fill: '#e6fffb',
-
-            stroke: '#87e8de',
-            lineWidth: 1,
-            cornerRadius: 4
+            size: 0,
+            space: 12
           }
         }
       }),
@@ -102,27 +85,10 @@ export function run() {
         x: 60,
         y: 100,
         poptip: {
-          visible: true,
-          visibleCb: (text: IText) => text.cliped,
-          position: 'top',
-          title: guiObject.title,
-          titleStyle: {
-            fontSize: 16,
-            fill: '#08979c'
-          },
-          content: guiObject.content,
-          contentStyle: {
-            fontSize: 12,
-            fill: 'green'
-          },
+          position: 'auto',
           panel: {
-            visible: guiObject.backgroundVisible,
-
-            fill: '#e6fffb',
-
-            stroke: '#87e8de',
-            lineWidth: 1,
-            cornerRadius: 4
+            size: 0,
+            space: 12
           }
         }
       })

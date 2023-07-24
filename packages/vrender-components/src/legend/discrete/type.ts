@@ -1,7 +1,12 @@
-import { EasingType, IGroupGraphicAttribute, ISymbolGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
-import { BaseGraphicAttributes, Padding } from '../../core/type';
-import { PagerAttributes } from '../../pager';
-import { LegendBaseAttributes } from '../type';
+import type {
+  EasingType,
+  IGroupGraphicAttribute,
+  ISymbolGraphicAttribute,
+  ITextGraphicAttribute
+} from '@visactor/vrender';
+import type { BaseGraphicAttributes, Padding } from '../../core/type';
+import type { PagerAttributes } from '../../pager';
+import type { LegendBaseAttributes } from '../type';
 
 export type LegendItemDatum = {
   /**
@@ -20,6 +25,13 @@ export type LegendItemDatum = {
   };
   [key: string]: any;
 };
+
+export type StyleCallback<T> = (
+  item: LegendItemDatum,
+  isSelected: boolean,
+  index: number,
+  allItems: LegendItemDatum[]
+) => T;
 
 export type formatterCallback = (text: string | number, item: LegendItemDatum, index: number) => any;
 
@@ -58,14 +70,14 @@ export type LegendItem = {
    */
   background?: {
     visible?: boolean;
-  } & BaseGraphicAttributes<Partial<IGroupGraphicAttribute>>;
+  } & BaseGraphicAttributes<Partial<IGroupGraphicAttribute> | StyleCallback<Partial<IGroupGraphicAttribute>>>;
   /**
    * 图例项的 shape 图标的配置
    */
   shape?: {
     /** shape 同后面 label 的间距 */
     space?: number;
-  } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute>>;
+  } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute> | StyleCallback<Partial<ISymbolGraphicAttribute>>>;
   /**
    * 图例项的 label 文本配置
    */
@@ -78,7 +90,7 @@ export type LegendItem = {
      * 格式化文本函数
      */
     formatMethod?: formatterCallback;
-  } & BaseGraphicAttributes<Partial<ITextGraphicAttribute>>;
+  } & BaseGraphicAttributes<Partial<ITextGraphicAttribute> | StyleCallback<Partial<ITextGraphicAttribute>>>;
   /**
    * 图例项 value 配置
    */
@@ -94,7 +106,7 @@ export type LegendItem = {
      * 格式化文本函数
      */
     formatMethod?: formatterCallback;
-  } & BaseGraphicAttributes<Partial<ITextGraphicAttribute>>;
+  } & BaseGraphicAttributes<Partial<ITextGraphicAttribute> | StyleCallback<Partial<ITextGraphicAttribute>>>;
   /**
    * 是否开启聚焦功能，默认关闭
    */

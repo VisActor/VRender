@@ -7,6 +7,10 @@ const specs = [
     name: '轴标签防重叠'
   },
   {
+    path: 'interactive-axis',
+    name: '带交互的坐标轴'
+  },
+  {
     path: 'size-legend',
     name: '连续尺寸图例'
   },

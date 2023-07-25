@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.4",
+      "tag": "@visactor/vrender-components_v0.13.4",
+      "date": "Tue, 25 Jul 2023 13:33:47 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.3` to `0.13.4`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.3",
       "tag": "@visactor/vrender-components_v0.13.3",
       "date": "Tue, 25 Jul 2023 07:34:59 GMT",

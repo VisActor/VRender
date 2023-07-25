@@ -3,9 +3,9 @@ import render from '../../util/render';
 import { DataZoom } from '../../../src';
 
 const data: any[] = [];
-for (let i = 0; i < 9; i++) {
+for (let i = 0; i < 6; i++) {
   data.push({
-    x: 50 + i * 50,
+    x: 50 + 50 + i * 50,
     y: 235 + Math.random() * 30
   });
 }
@@ -19,6 +19,9 @@ export function run() {
     position: {
       x: 50,
       y: 235
+    },
+    startHandlerStyle: {
+      size: 100
     },
     size: {
       width: 400,

@@ -1,8 +1,8 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, IPath, Path } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType, createPath } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -12,8 +12,9 @@ import { traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, canPlaceInside, place } from './overlap';
-import type { BaseLabelAttrs, OverlapAttrs, ILabelGraphicAttribute, ILabelAnimation } from './type';
+import type { BaseLabelAttrs, OverlapAttrs, ILabelGraphicAttribute, ILabelAnimation, ArcLabelAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
+import type { ArcInfo } from './arc';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -48,8 +49,19 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     textBounds: IBoundsLike,
     graphicBounds: IBoundsLike,
     position?: BaseLabelAttrs['position'],
-    offset?: number
+    offset?: number,
+    graphicAttributes?: any,
+    textData?: any,
+    width?: number,
+    height?: number,
+    attribute?: any
   ): Partial<ILabelGraphicAttribute> | undefined;
+
+  protected abstract layoutArcLabels(
+    position?: BaseLabelAttrs['position'],
+    attribute?: any,
+    currentMarks?: IGraphic[]
+  ): any;
 
   protected render() {
     const currentBaseMarks = this._checkMarks();
@@ -180,6 +192,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       this._relationMap = new Map();
     }
 
+    const { width, height } = this.attribute as ArcLabelAttrs;
+
     // 默认根据 index 顺序排序
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
@@ -196,28 +210,55 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         text.update();
         const textBounds = this.getGraphicBounds(text);
         const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
+        const graphicAttributes = baseMark.attribute;
 
         const textAttributes = this.labeling(
           textBounds,
           graphicBounds,
           isFunction(position) ? position(textData) : position,
-          offset
+          offset,
+          graphicAttributes,
+          textData,
+          width,
+          height,
+          this.attribute
         );
 
         if (!textAttributes) {
           continue;
         }
 
-        labelAttribute.x = textAttributes.x;
-        labelAttribute.y = textAttributes.y;
-
-        labels.push(labelAttribute);
+        if (this.attribute.type === 'arc') {
+          labels.push(labelAttribute);
+        } else {
+          labelAttribute.x = textAttributes.x;
+          labelAttribute.y = textAttributes.y;
+          labels.push(labelAttribute);
+        }
       }
     }
 
     this._baseMarks = currentMarks as IGraphic[];
-    if (this.attribute.overlap !== false) {
-      labels = this.overlapping(labels, this.attribute.overlap as OverlapAttrs);
+    if (this.attribute.type === 'arc') {
+      const arcs: ArcInfo[] = this.layoutArcLabels(position, this.attribute, currentMarks);
+      for (let i = 0; i < data.length; i++) {
+        const textData = data[i];
+        const basedArc = arcs.find(arc => arc.labelText === textData.text);
+
+        labels[i].x = basedArc.labelPosition.x;
+        labels[i].y = basedArc.labelPosition.y;
+        labels[i].textAlign = basedArc.textAlign;
+        labels[i].textBaseline = basedArc.textBaseline;
+        labels[i].angle = basedArc.angle;
+
+        labels[i].pointA = basedArc.pointA;
+        labels[i].pointB = basedArc.pointB;
+        labels[i].pointC = basedArc.pointC;
+      }
+    } else {
+      if (this.attribute.overlap !== false) {
+        labels = this.overlapping(labels, this.attribute.overlap as OverlapAttrs);
+      }
     }
 
     return labels;
@@ -351,18 +392,38 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const currentTextMap = new Map();
     const prevTextMap = this._textMap || new Map();
     const texts = [] as IText[];
+    const labelLines = [] as IPath[];
 
     labels.forEach((label, index) => {
       const text = this._createLabelText(label);
+      let labelLine: IPath;
+
+      if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+        labelLine = createPath({
+          visible: label?.visible ?? true,
+          stroke: label?.line?.stroke ?? label?.fill,
+          lineWidth: 1,
+          path:
+            `M${Math.round(label.pointA.x)},${Math.round(label.pointA.y)}` +
+            ` L${Math.round(label.pointB.x)},${Math.round(label.pointB.y)}` +
+            ` L${Math.round(label.pointC.x)},${Math.round(label.pointC.y)}`
+        }) as Path;
+      }
       const relatedGraphic = this._relationMap.get(label._relatedIndex);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
 
       if (state === 'enter') {
         texts.push(text);
+        if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+          labelLines.push(labelLine);
+        }
         currentTextMap.set(relatedGraphic, text);
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(label, 'fadeIn');
           this.add(text);
+          if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+            this.add(labelLine);
+          }
           relatedGraphic.onAnimateBind = () => {
             text.setAttributes(from);
             const listener = this._afterRelatedGraphicAttributeUpdate(text, texts, index, relatedGraphic, {
@@ -496,10 +557,18 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         continue;
       }
 
-      const isInside = canPlaceInside(
+      let isInside = canPlaceInside(
         createText(label).AABBBounds,
         this._relationMap.get(label._relatedIndex)?.AABBBounds
       );
+
+      if (this.attribute.type === 'arc') {
+        if (this.attribute.position === 'inside') {
+          isInside = true;
+        } else {
+          isInside = false;
+        }
+      }
       /**
        * stroke 的处理逻辑
        * 1. 当文本在图元内部时，有两种情况：

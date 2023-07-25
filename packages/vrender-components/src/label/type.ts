@@ -195,6 +195,26 @@ export interface LineLabelAttrs extends BaseLabelAttrs {
   position?: Functional<'start' | 'end'>;
 }
 
+export interface ArcLabelAttrs extends BaseLabelAttrs {
+  type: 'arc';
+
+  /**
+   *  图元 group 名称
+   */
+  baseMarkGroupName: string;
+
+  /**
+   * 标签位置
+   * @default 'outside'
+   */
+  position?: Functional<'inside' | 'outside'>;
+
+  // 画布宽度
+  width?: number;
+  // 画布高度
+  height?: number;
+}
+
 export interface DataLabelAttrs extends IGroupGraphicAttribute {
   dataLabels: (RectLabelAttrs | SymbolLabelAttrs)[];
   /**
@@ -206,6 +226,16 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 export type Functional<T> = T | ((data: any) => T);
 
 export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
+  angle: any;
+  textBaseline: string;
+  fill: any;
+  line: any;
+  pointC: IPoint;
+  pointB: IPoint;
+  pointA: IPoint;
+  stroke: any;
+  visible: boolean;
+  textAlign: string;
   _relatedIndex?: number;
 }
 
@@ -219,3 +249,17 @@ export interface ILabelAnimation {
    */
   increaseEffect?: boolean;
 }
+
+export interface IPoint {
+  x: number;
+  y: number;
+}
+
+export interface IPolarPoint {
+  radius: number;
+  angle: number;
+}
+
+export type Quadrant = 1 | 2 | 3 | 4;
+
+export type TextAlign = 'left' | 'right' | 'center';

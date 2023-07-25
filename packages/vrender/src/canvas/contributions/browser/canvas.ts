@@ -1,6 +1,6 @@
 import { injectable } from 'inversify';
 import { application } from '../../../application';
-import { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../../interface';
+import type { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../../interface';
 import { BrowserContext2d } from './context';
 
 const DefaultConfig = {
@@ -44,8 +44,14 @@ export class BrowserCanvas implements ICanvas {
   get x(): number {
     return this._x;
   }
+  set x(_x: number) {
+    this._x = _x;
+  }
   get y(): number {
     return this._y;
+  }
+  set y(_y: number) {
+    this._y = _y;
   }
   get nativeCanvas(): HTMLCanvasElement {
     return this._nativeCanvas;

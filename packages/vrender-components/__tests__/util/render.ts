@@ -43,7 +43,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       x2: 550,
       y2: 550
     },
-    pluginList: ['poptip'],
+    pluginList: ['poptipForText'],
     ...option
   });
 }

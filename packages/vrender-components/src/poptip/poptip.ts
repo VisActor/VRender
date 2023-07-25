@@ -11,7 +11,19 @@ import type {
   TextAlignType,
   TextBaselineType
 } from '@visactor/vrender';
-import { isArray, isBoolean, isEmpty, isValid, max, merge, normalizePadding, pi } from '@visactor/vutils';
+import {
+  Bounds,
+  getRectIntersect,
+  isArray,
+  isBoolean,
+  isEmpty,
+  isValid,
+  max,
+  merge,
+  normalizePadding,
+  pi,
+  rectInsideAnotherRect
+} from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { BackgroundAttributes } from '../interface';
 import type { PopTipAttributes } from './type';
@@ -51,7 +63,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       position,
       content = '',
       contentStyle = {} as ITextGraphicAttribute,
-      panel = {} as BackgroundAttributes & ISymbolGraphicAttribute,
+      panel = {} as BackgroundAttributes & ISymbolGraphicAttribute & { space?: number },
       space = 4,
       minWidth = 0,
       maxWidth = Infinity,
@@ -133,59 +145,94 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     // 绘制背景层
     const { visible: bgVisible, ...backgroundStyle } = panel;
     const symbolSize = backgroundStyle.size ?? 12;
+    const spaceSize: number | [number, number] = isArray(symbolSize)
+      ? [symbolSize[0] + (backgroundStyle.space ?? 0), symbolSize[1] + (backgroundStyle.space ?? 0)]
+      : (symbolSize as number) + (backgroundStyle.space ?? 0);
     const lineWidth = backgroundStyle.lineWidth ?? 1;
-    const { angle, offset, rectOffset } = this.getAngleAndOffset(
-      position,
-      popTipWidth,
-      poptipHeight,
-      isArray(symbolSize) ? symbolSize : [symbolSize, symbolSize - lineWidth]
-    );
-    if (isBoolean(bgVisible)) {
-      const offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
-      const bgSymbol = group.createOrUpdateChild(
-        'poptip-symbol-panel',
-        {
-          ...backgroundStyle,
-          visible: bgVisible && (contentVisible || titleVisible),
-          x: offsetX,
-          y: 0,
-          anchor: [0, 0],
-          symbolType: 'arrow2Left',
-          angle: angle,
-          dx: offset[0],
-          dy: offset[1],
-          size: symbolSize,
-          zIndex: -9
-        },
-        'symbol'
-      ) as ISymbol;
-      if (!isEmpty(state?.panel)) {
-        bgSymbol.states = state.panel;
+    const range: [number, number] | undefined = (this as any).stage
+      ? [(this as any).stage.width, (this as any).stage.height]
+      : undefined;
+
+    const layout = position === 'auto';
+    // 最多循环this.positionList次
+    let minifyBBoxI: number;
+    let minifyBBoxSize: number = Infinity;
+    for (let i = 0; i < this.positionList.length + 1; i++) {
+      const p = layout ? this.positionList[i === this.positionList.length ? minifyBBoxI : i] : position;
+      const { angle, offset, rectOffset } = this.getAngleAndOffset(
+        p,
+        popTipWidth,
+        poptipHeight,
+        isArray(spaceSize) ? (spaceSize as [number, number]) : [spaceSize, spaceSize - lineWidth]
+      );
+      if (isBoolean(bgVisible)) {
+        const offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
+        const bgSymbol = group.createOrUpdateChild(
+          'poptip-symbol-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && (contentVisible || titleVisible),
+            x: offsetX,
+            y: 0,
+            strokeBoundsBuffer: -1,
+            boundsPadding: -2,
+            anchor: [0, 0],
+            symbolType: 'arrow2Left',
+            angle: angle,
+            dx: offset[0],
+            dy: offset[1],
+            size: symbolSize,
+            zIndex: -9
+          },
+          'symbol'
+        ) as ISymbol;
+        if (!isEmpty(state?.panel)) {
+          bgSymbol.states = state.panel;
+        }
+
+        const bgRect = group.createOrUpdateChild(
+          'poptip-rect-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && (contentVisible || titleVisible),
+            x: 0,
+            y: 0,
+            width: popTipWidth,
+            height: poptipHeight,
+            zIndex: -8
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
       }
 
-      const bgRect = group.createOrUpdateChild(
-        'poptip-rect-panel',
-        {
-          ...backgroundStyle,
-          visible: bgVisible && (contentVisible || titleVisible),
-          x: 0,
-          y: 0,
-          width: popTipWidth,
-          height: poptipHeight,
-          zIndex: -10
-        },
-        'rect'
-      ) as IRect;
-      if (!isEmpty(state?.panel)) {
-        bgRect.states = state.panel;
+      group.setAttributes({
+        x: -offset[0] + dx,
+        y: -offset[1] + dy
+      });
+
+      if (layout && range) {
+        const b = (this as any).AABBBounds;
+        const stageBounds = new Bounds().setValue(0, 0, range[0], range[1]);
+        if (rectInsideAnotherRect(b, stageBounds, false)) {
+          break;
+        } else {
+          const bbox = getRectIntersect(b, stageBounds, false);
+          const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
+          if (size < minifyBBoxSize) {
+            minifyBBoxSize = size;
+            minifyBBoxI = i;
+          }
+        }
+      } else {
+        break;
       }
     }
-
-    group.setAttributes({
-      x: -offset[0] + dx,
-      y: -offset[1] + dy
-    });
   }
+
+  positionList = ['top', 'tl', 'tr', 'bottom', 'bl', 'br', 'left', 'lt', 'lb', 'right', 'rt', 'rb'];
 
   getAngleAndOffset(
     position: string,

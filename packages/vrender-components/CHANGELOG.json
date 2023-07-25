@@ -2,6 +2,29 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.3",
+      "tag": "@visactor/vrender-components_v0.13.3",
+      "date": "Tue, 25 Jul 2023 07:34:59 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat(vrender-components): discreate legend's item's state style supports function"
+          },
+          {
+            "comment": "feat(vrender-components): axis label, tick and subTick's state style supports function"
+          },
+          {
+            "comment": "fix: fix the issue of maxLineWidth's value is negative"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.2` to `0.13.3`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.2",
       "tag": "@visactor/vrender-components_v0.13.2",
       "date": "Fri, 21 Jul 2023 10:50:41 GMT",

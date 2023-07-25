@@ -415,7 +415,10 @@ export interface TickAttributes {
    * 刻度线样式配置
    */
   style?: Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
+  /**
+   * 刻度线状态样式配置
+   */
+  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>>;
   /**
    * 用于 tick 的数据过滤
    * @param data
@@ -446,7 +449,10 @@ export interface SubTickAttributes {
    * 子刻度线样式配置
    */
   style?: Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
+  /**
+   * 子刻度线状态样式配置
+   */
+  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>>;
 }
 
 export type CustomMethod = (items: IText[], separation: number) => IText[];
@@ -524,8 +530,10 @@ export interface LabelAttributes extends AxisLabelOverlap {
    * 文本样式
    */
   style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
-
-  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute>>;
+  /**
+   * 文本状态样式配置
+   */
+  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>>;
 
   /**
    * 用于 label 的数据过滤

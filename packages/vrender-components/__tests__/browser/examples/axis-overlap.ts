@@ -46,7 +46,7 @@ const axisBottom = new LineAxis({
     visible: true,
     space: 10,
     autoRotate: true,
-    autoRotateAngle: [0, 30, 60],
+    autoRotateAngle: [-45],
     autoHide: true,
     autoLimit: true,
     // dataFilter: data => {

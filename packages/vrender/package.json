@@ -21,7 +21,7 @@
     "test": "jest",
     "test-cov": "jest -w 16 --coverage",
     "prepublishOnly": "npm run build",
-    "ci": "node github-ci.js"
+    "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
     "@visactor/vutils": "~0.13.0",

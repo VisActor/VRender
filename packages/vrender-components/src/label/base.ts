@@ -428,7 +428,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         }
         currentTextMap.set(relatedGraphic, text);
         if (!disableAnimation && relatedGraphic) {
-          const { from, to } = getAnimationAttributes(label, 'fadeIn');
+          const { from, to } = getAnimationAttributes(label as ITextGraphicAttribute, 'fadeIn');
           this.add(text);
           if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
             this.add(labelLine);

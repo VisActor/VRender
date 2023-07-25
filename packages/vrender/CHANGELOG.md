@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 21 Jul 2023 10:50:41 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 07:34:59 GMT and should not be manually modified.
+
+## 0.13.3
+Tue, 25 Jul 2023 07:34:59 GMT
+
+### Patches
+
+- feat: export wrap canvas and context
+- fix: fix the issue related to load image in lynx env
 
 ## 0.13.2
 Fri, 21 Jul 2023 10:50:41 GMT

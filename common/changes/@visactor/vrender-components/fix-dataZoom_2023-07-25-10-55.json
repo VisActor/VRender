@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: daatzoom attr compute",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

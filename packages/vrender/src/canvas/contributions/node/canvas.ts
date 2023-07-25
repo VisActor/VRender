@@ -35,8 +35,16 @@ export class NodeCanvas implements ICanvas {
   get x(): number {
     return 0;
   }
+  set x(_x: number) {
+    // this._x = _x;
+    return;
+  }
   get y(): number {
     return 0;
+  }
+  set y(_y: number) {
+    // this._y = _y;
+    return;
   }
   get nativeCanvas(): Canvas {
     return this._nativeCanvas;

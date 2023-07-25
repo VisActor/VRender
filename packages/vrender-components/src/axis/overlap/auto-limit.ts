@@ -25,9 +25,9 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
         ? orient === 'top' || orient === 'bottom'
           ? null
           : limitLength
-        : limitLength / Math.sin(label.attribute.angle);
+        : Math.abs(limitLength / Math.sin(label.attribute.angle));
     label.setAttributes({
-      maxLineWidth: Math.abs(limitLabelLength),
+      maxLineWidth: limitLabelLength,
       ellipsis
     });
   });

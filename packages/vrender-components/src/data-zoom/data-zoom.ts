@@ -530,22 +530,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     const startHandlerSize = (startHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
     const endHandlerSize = (endHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
-
     // 如果startHandler显示的话，要将其宽高计入dataZoom宽高
     if (startHandlerStyle?.visible) {
       if (this._isHorizontal) {
-        width = widthConfig - (startHandlerSize + endHandlerSize) / 2;
-        height = heightConfig;
+        width -= (startHandlerSize + endHandlerSize) / 2;
         position = {
-          x: positionConfig.x + startHandlerSize / 2,
-          y: positionConfig.y
+          x: position.x + startHandlerSize / 2,
+          y: position.y
         };
       } else {
-        width = widthConfig;
-        height = heightConfig - (startHandlerSize + endHandlerSize) / 2;
+        height -= (startHandlerSize + endHandlerSize) / 2;
         position = {
-          x: positionConfig.x,
-          y: positionConfig.y + startHandlerSize
+          x: position.x,
+          y: position.y + startHandlerSize
         };
       }
     }

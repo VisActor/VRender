@@ -82,8 +82,8 @@ export function run() {
         maxLineWidth: 80,
         textBaseline: 'middle',
         fill: 'red',
-        x: 60,
-        y: 100,
+        x: 30,
+        y: 10,
         poptip: {
           position: 'auto',
           panel: {

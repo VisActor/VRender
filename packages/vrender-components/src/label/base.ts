@@ -1,7 +1,17 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, IPath, Path } from '@visactor/vrender';
+import type {
+  IGroup,
+  Text,
+  IGraphic,
+  IText,
+  FederatedPointerEvent,
+  IColor,
+  IPath,
+  Path,
+  ITextGraphicAttribute
+} from '@visactor/vrender';
 import { createText, IncreaseCount, AttributeUpdateType, createPath } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty } from '@visactor/vutils';
@@ -557,7 +567,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       let isInside = canPlaceInside(
-        createText(label).AABBBounds,
+        createText(label as ITextGraphicAttribute).AABBBounds,
         this._relationMap.get(label._relatedIndex)?.AABBBounds
       );
 

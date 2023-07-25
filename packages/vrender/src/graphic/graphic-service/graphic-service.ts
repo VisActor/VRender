@@ -891,7 +891,7 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
+    this.transformAABBBounds(attribute, aabbBounds, textTheme, false, graphic);
     return aabbBounds;
   }
 

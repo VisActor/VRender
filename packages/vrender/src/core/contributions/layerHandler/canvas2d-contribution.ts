@@ -22,6 +22,8 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   canvas: ICanvas;
   context: IContext2d;
   offscreen: boolean;
+  main: boolean;
+  window: IWindow;
 
   constructor(@inject(Global) public readonly global: IGlobal) {
     this.offscreen = false;
@@ -29,11 +31,14 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
 
   init(layer: ILayer, window: IWindow, params: ILayerHandlerInitParams): void {
     this.layer = layer;
+    this.window = window;
     // 默认图层，那么直接拿window上的上下文和canvas即可
     if (params.main) {
+      this.main = true;
       this.context = window.getContext();
       this.canvas = this.context.getCanvas();
     } else {
+      this.main = false;
       let nativeCanvas: HTMLElement;
       if (params.canvasId) {
         nativeCanvas = this.global.getElementById(params.canvasId);
@@ -74,6 +79,16 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   }
 
   render(group: IGroup[], params: ILayerHandlerDrawParams, userParams?: Partial<IDrawContext>): void {
+    // 调整位置
+    if (!this.main) {
+      const windowContext = this.window.getContext();
+      const windowCanvas = windowContext.getCanvas().nativeCanvas;
+      if (windowCanvas && (this.canvas.x !== windowCanvas.offsetLeft || this.canvas.y !== windowCanvas.offsetTop)) {
+        this.canvas.x = windowCanvas.offsetLeft;
+        this.canvas.y = windowCanvas.offsetTop;
+        this.canvas.applyPosition();
+      }
+    }
     params.renderService.render(group, {
       context: this.context,
       clear: params.background ?? '#ffffff',

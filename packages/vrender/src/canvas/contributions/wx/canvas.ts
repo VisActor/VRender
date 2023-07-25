@@ -34,8 +34,14 @@ export class WxCanvas implements ICanvas {
   get x(): number {
     return this._x;
   }
+  set x(_x: number) {
+    this._x = _x;
+  }
   get y(): number {
     return this._y;
+  }
+  set y(_y: number) {
+    this._y = _y;
   }
   get nativeCanvas(): HTMLCanvasElement {
     return this._nativeCanvas;

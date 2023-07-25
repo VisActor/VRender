@@ -2,7 +2,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign } from './type';
-import { IPolarPoint } from './type';
+import type { BaseLabelAttrs } from './type';
 import type { ITextGraphicAttribute } from '@visactor/vrender';
 import { isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import {
@@ -204,7 +204,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   // layoutLabels : 执行内部/外部标签的布局计算
-  protected layoutArcLabels(position = 'outside', attribute: any, currentMarks?: IGraphic[]) {
+  protected layoutArcLabels(position: BaseLabelAttrs['position'], attribute: any, currentMarks?: IGraphic[]) {
     const leftArcs = Array.from(this._arcLeft.values());
     const rightArcs = Array.from(this._arcRight.values());
     const arcs: ArcInfo[] = [];

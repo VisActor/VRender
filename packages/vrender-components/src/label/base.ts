@@ -57,11 +57,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     attribute?: any
   ): Partial<ILabelGraphicAttribute> | undefined;
 
-  protected abstract layoutArcLabels(
-    position?: BaseLabelAttrs['position'],
-    attribute?: any,
-    currentMarks?: IGraphic[]
-  ): any;
+  protected layoutArcLabels(position?: BaseLabelAttrs['position'], attribute?: any, currentMarks?: IGraphic[]): any {
+    const arcs: ArcInfo[] = [];
+    return arcs;
+  }
 
   protected render() {
     const currentBaseMarks = this._checkMarks();

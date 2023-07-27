@@ -294,17 +294,17 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 export type Functional<T> = T | ((data: any) => T);
 
 export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
-  angle: any;
-  textBaseline: string;
-  fill: any;
-  line: any;
-  pointC: IPoint;
-  pointB: IPoint;
-  pointA: IPoint;
-  stroke: any;
-  visible: boolean;
-  textAlign: string;
   _relatedIndex?: number;
+
+  angle?: any;
+  textBaseline?: string;
+  fill?: any;
+  line?: any;
+  pointC?: IPoint;
+  pointB?: IPoint;
+  pointA?: IPoint;
+  stroke?: any;
+  visible?: boolean;
 }
 
 export interface ILabelAnimation {

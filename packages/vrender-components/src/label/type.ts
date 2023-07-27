@@ -213,6 +213,74 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   width?: number;
   // 画布高度
   height?: number;
+
+  /**
+   * 是否允许标签重叠
+   * @default false
+   */
+  coverEnable?: boolean;
+  /**
+   * 是否允许标签旋转
+   * @default true
+   */
+  rotate?: boolean;
+
+  /**
+   * 文字与引导线间隔宽度
+   * @default 5
+   */
+  spaceWidth?: number;
+  /**
+   * 扇区间标签的间隔
+   * @default 6
+   */
+  layoutArcGap?: number;
+  /** 标签引导线样式 */
+  line?: IArcLabelLineSpec;
+  /** 标签布局配置 */
+  layout?: IArcLabelLayoutSpec;
+}
+
+export interface IArcLabelLineSpec {
+  /**
+   * 是否显示引导线
+   * @default true
+   */
+  visible?: boolean;
+  /**
+   * 引导线 line1 部分最小长度
+   * @default 20
+   */
+  line1MinLength?: number;
+  /**
+   * 引导线 line2 部分最小长度
+   * @default 10
+   */
+  line2MinLength?: number;
+}
+
+export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';
+
+export type ArcLabelStrategyType = 'priority' | 'vertical' | 'none';
+
+export interface IArcLabelLayoutSpec {
+  /**
+   * 标签对齐方式
+   * @default 'arc'
+   */
+  textAlign?: ArcLabelAlignType;
+  /** @deprecate 建议统一使用textAlign，后续将废除 */
+  align?: ArcLabelAlignType;
+  /**
+   * 标签布局策略
+   * @default 'priority'
+   */
+  strategy?: ArcLabelStrategyType;
+  /**
+   * 是否启用切线约束
+   * @default true
+   */
+  tangentConstraint?: boolean;
 }
 
 export interface DataLabelAttrs extends IGroupGraphicAttribute {

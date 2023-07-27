@@ -296,15 +296,10 @@ export type Functional<T> = T | ((data: any) => T);
 export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
   _relatedIndex?: number;
 
-  angle?: any;
-  textBaseline?: string;
-  fill?: any;
   line?: any;
   pointC?: IPoint;
   pointB?: IPoint;
   pointA?: IPoint;
-  stroke?: any;
-  visible?: boolean;
 }
 
 export interface ILabelAnimation {

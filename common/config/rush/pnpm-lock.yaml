@@ -28,7 +28,7 @@ importers:
     dependencies:
       '@visactor/vrender': link:../../packages/vrender
     devDependencies:
-      '@antv/g': 5.18.7
+      '@antv/g': 5.18.8
       '@esbuild-plugins/node-globals-polyfill': 0.1.1
       '@esbuild-plugins/node-modules-polyfill': 0.1.4
       '@internal/eslint-config': link:../../share/eslint-config
@@ -458,25 +458,25 @@ packages:
       '@jridgewell/gen-mapping': 0.3.3
       '@jridgewell/trace-mapping': 0.3.18
 
-  /@antv/g-camera-api/1.2.6:
-    resolution: {integrity: sha512-u2vvGba/eZKPNVs4m/9/NEVz9DCT3U3jjnzV9IPFMpB+E73Exqed1dBNGnvCFqXJmbatFU2+dB1K0FGJqDsW+A==}
+  /@antv/g-camera-api/1.2.7:
+    resolution: {integrity: sha512-gshIoy+5slnM4KAuAaVMKdyWaB6jeGDju6CdO30DGrxWsD0Cct2GcfVZt+Opx3bKYB7TJ6ws6H03yzcaWYnFTg==}
     dependencies:
-      '@antv/g-lite': 1.2.6
+      '@antv/g-lite': 1.2.7
       '@antv/util': 3.3.4
       gl-matrix: 3.4.3
       tslib: 2.6.1
     dev: true
 
-  /@antv/g-dom-mutation-observer-api/1.2.6:
-    resolution: {integrity: sha512-IQ5z+8vCekhghlwE4sazXZO+vYhAzdO8GfdmIJJfAO2HDbuCQ3NkX+Tc0OiFkyxgO4tHunAcdtHvD8Pz8yYThQ==}
+  /@antv/g-dom-mutation-observer-api/1.2.7:
+    resolution: {integrity: sha512-lUTgROvNywkyr4tw8rLVIHfA1rCI6qm17X0sUy6JwjGKG87Yzz0VBZz5AMNv1IRaPIP7nEMtcfJ29HJAu3+X0A==}
     dependencies:
-      '@antv/g-lite': 1.2.6
+      '@antv/g-lite': 1.2.7
     dev: true
 
-  /@antv/g-lite/1.2.6:
-    resolution: {integrity: sha512-1yLjLwrC9lny7oQ2qrxQWZmLOQmQF3MzXnDHgMumNmPjRiWWGFRUyxO2Ks9V/M0o/ieyp5E4JjphHh2tnhTySg==}
+  /@antv/g-lite/1.2.7:
+    resolution: {integrity: sha512-rTToCzfZviOzJeHS0hJvRpEyWv7/6sMe7cyIXLH/BbDYpIOscx0/AV536Zd4I2dVtRiw5wpAU25FQl+Sr7hDHg==}
     dependencies:
-      '@antv/g-math': 2.0.1
+      '@antv/g-math': 2.0.2
       '@antv/util': 3.3.4
       d3-color: 1.4.1
       eventemitter3: 5.0.1
@@ -485,29 +485,29 @@ packages:
       tslib: 2.6.1
     dev: true
 
-  /@antv/g-math/2.0.1:
-    resolution: {integrity: sha512-Y1DREalYzUMaglD0m6V9s9UxsseXgSmwNA3l9zDHRH1CXDLcvtmrku+DQM9oCgPtbPWV43AdyAYoNT3WLyL/WA==}
+  /@antv/g-math/2.0.2:
+    resolution: {integrity: sha512-uqGU1C+70orjeSUoIzD3TuXjL5dRQCIyjZrBrTmm0FWd6VQJMWHyG5ypuZ2lMiI5MrRajVSE1w+3J4hiNBYSJg==}
     dependencies:
       '@antv/util': 3.3.4
       gl-matrix: 3.4.3
       tslib: 2.6.1
     dev: true
 
-  /@antv/g-web-animations-api/1.2.6:
-    resolution: {integrity: sha512-EeKGjUhdC41XvljfgHHhR9X6rYozGmRKVkh27VrHGONw5SIFgwBr4wJEpkYZ++Lfy8xx0dx8YlAYCcocbiQKkA==}
+  /@antv/g-web-animations-api/1.2.7:
+    resolution: {integrity: sha512-lrsZIHtcbUwkw25bV3cI8CJ8phhraewR+AI5mKqKEx+vlngd7TvfGn3aG/jQ1IA01NgkULGNQENJCySVCHtD4w==}
     dependencies:
-      '@antv/g-lite': 1.2.6
+      '@antv/g-lite': 1.2.7
       '@antv/util': 3.3.4
       tslib: 2.6.1
     dev: true
 
-  /@antv/g/5.18.7:
-    resolution: {integrity: sha512-t6PPs3Ow2xFGiKXGahOKmVjKsDcmhtbBMJ3CQz25DX6sRcvELR3erl5CpabFLeRue5qUFzPY5S0LwnI/Ebvvjw==}
+  /@antv/g/5.18.8:
+    resolution: {integrity: sha512-kv3AZmbOrPKncfiJ5lVaCQyMVBAxmJUppzBqU+6QplLQFDo73wBGNwHJX4LuucYO7CfcNjN94wIcT0CnX6Ls5A==}
     dependencies:
-      '@antv/g-camera-api': 1.2.6
-      '@antv/g-dom-mutation-observer-api': 1.2.6
-      '@antv/g-lite': 1.2.6
-      '@antv/g-web-animations-api': 1.2.6
+      '@antv/g-camera-api': 1.2.7
+      '@antv/g-dom-mutation-observer-api': 1.2.7
+      '@antv/g-lite': 1.2.7
+      '@antv/g-web-animations-api': 1.2.7
     dev: true
 
   /@antv/util/3.3.4:
@@ -3826,7 +3826,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001517
-      electron-to-chromium: 1.4.471
+      electron-to-chromium: 1.4.473
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11_browserslist@4.21.9
 
@@ -4570,8 +4570,8 @@ packages:
       safer-buffer: 2.1.2
     dev: true
 
-  /electron-to-chromium/1.4.471:
-    resolution: {integrity: sha512-GpmGRC1vTl60w/k6YpQ18pSiqnmr0j3un//5TV1idPi6aheNfkT1Ye71tMEabWyNDO6sBMgAR+95Eb0eUUr1tA==}
+  /electron-to-chromium/1.4.473:
+    resolution: {integrity: sha512-aVfC8+440vGfl06l8HKKn8/PD5jRfSnLkTTD65EFvU46igbpQRri1gxSzW9/+TeUlwYzrXk1sw867T96zlyECA==}
 
   /electron/11.5.0:
     resolution: {integrity: sha512-WjNDd6lGpxyiNjE3LhnFCAk/D9GIj1rU3GSDealVShhkkkPR3Vh4q8ErXGDl1OAO/faomVa10KoFPUN/pLbNxg==}

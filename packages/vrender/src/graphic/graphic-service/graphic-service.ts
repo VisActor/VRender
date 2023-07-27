@@ -891,7 +891,21 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
-    this.transformAABBBounds(attribute, aabbBounds, textTheme, false, graphic);
+    const {
+      scaleX = textTheme.scaleX,
+      scaleY = textTheme.scaleY,
+      shadowBlur = textTheme.shadowBlur,
+      strokeBoundsBuffer = textTheme.strokeBoundsBuffer
+    } = attribute;
+    if (shadowBlur) {
+      const shadowBlurHalfWidth = shadowBlur / Math.abs(scaleX + scaleY);
+      boundStroke(tb1, shadowBlurHalfWidth, true, strokeBoundsBuffer);
+      aabbBounds.union(tb1);
+    }
+    // 合并shadowRoot的bounds
+    this.combindShadowAABBBounds(aabbBounds, graphic);
+
+    transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
     return aabbBounds;
   }
 

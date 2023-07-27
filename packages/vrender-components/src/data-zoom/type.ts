@@ -6,9 +6,9 @@ import type {
   IRectGraphicAttribute,
   ISymbolGraphicAttribute
 } from '@visactor/vrender';
-import { IPointLike } from '@visactor/vutils';
-import { OrientType } from '../interface';
-import { TagAttributes } from '../tag';
+import type { IPointLike } from '@visactor/vutils';
+import type { OrientType } from '../interface';
+import type { TagAttributes } from '../tag';
 
 export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
@@ -161,4 +161,5 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   previewCallbackY?: (datum: any) => number;
   previewCallbackX1?: (datum: any) => number;
   previewCallbackY1?: (datum: any) => number;
+  updateStateCallback?: (start: number, end: number) => any;
 }

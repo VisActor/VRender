@@ -30,7 +30,7 @@ import {
   strokeVisible
 } from './utils';
 import { getConicGradientAt } from '../../../canvas/contributions/browser/conical-gradient';
-import { ArcRenderContribution } from './contributions/arc-contribution-render';
+import { ArcRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 /**
@@ -55,264 +55,13 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  protected _arcRenderContribitions: IArcRenderContribution[];
+  protected _arcBeforeRenderContribitions: IArcRenderContribution[];
+  protected _arcAfterRenderContribitions: IArcRenderContribution[];
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
     protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
   ) {}
-
-  // drawArcPath(
-  //   arc: IArc,
-  //   context: IContext2d | IPath2D,
-  //   cx: number,
-  //   cy: number,
-  //   outerRadius: number,
-  //   innerRadius: number,
-  //   partStroke?: boolean[]
-  // ) {
-  //   const { startAngle, endAngle } = arc.getParsedAngle();
-
-  //   const deltaAngle = abs(endAngle - startAngle);
-  //   const clockwise: boolean = endAngle > startAngle;
-  //   let collapsedToLine: boolean = false;
-  //   // 规范化outerRadius和innerRadius
-  //   if (outerRadius < innerRadius) {
-  //     const temp = outerRadius;
-  //     outerRadius = innerRadius;
-  //     innerRadius = temp;
-  //   }
-  //   // Is it a point?
-  //   if (outerRadius <= epsilon) {
-  //     context.moveTo(cx, cy);
-  //   } else if (deltaAngle >= pi2 - epsilon) {
-  //     // 是个完整的圆环
-  //     // Or is it a circle or annulus?
-  //     context.moveTo(cx + outerRadius * cos(startAngle), cy + outerRadius * sin(startAngle));
-  //     context.arc(cx, cy, outerRadius, startAngle, endAngle, !clockwise);
-  //     if (innerRadius > epsilon) {
-  //       context.moveTo(cx + innerRadius * cos(endAngle), cy + innerRadius * sin(endAngle));
-  //       context.arc(cx, cy, innerRadius, endAngle, startAngle, clockwise);
-  //     }
-  //   } else {
-  //     const cornerRadius = arc.getParsedCornerRadius();
-  //     // Or is it a circular or annular sector?
-  //     const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
-  //       arc.getParsePadAngle(startAngle, endAngle);
-
-  //     const outerCornerRadiusStart = cornerRadius;
-  //     const outerCornerRadiusEnd = cornerRadius;
-  //     const innerCornerRadiusEnd = cornerRadius;
-  //     const innerCornerRadiusStart = cornerRadius;
-  //     const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
-  //     const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
-  //     let limitedOcr = maxOuterCornerRadius;
-  //     let limitedIcr = maxInnerCornerRadius;
-
-  //     const xors = outerRadius * cos(outerStartAngle);
-  //     const yors = outerRadius * sin(outerStartAngle);
-  //     const xire = innerRadius * cos(innerEndAngle);
-  //     const yire = innerRadius * sin(innerEndAngle);
-
-  //     // Apply rounded corners?
-  //     let xore: number;
-  //     let yore: number;
-  //     let xirs: number;
-  //     let yirs: number;
-
-  //     if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
-  //       xore = outerRadius * cos(outerEndAngle);
-  //       yore = outerRadius * sin(outerEndAngle);
-  //       xirs = innerRadius * cos(innerStartAngle);
-  //       yirs = innerRadius * sin(innerStartAngle);
-
-  //       // Restrict the corner radius according to the sector angle.
-  //       if (deltaAngle < pi) {
-  //         const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
-
-  //         if (oc) {
-  //           const ax = xors - oc[0];
-  //           const ay = yors - oc[1];
-  //           const bx = xore - oc[0];
-  //           const by = yore - oc[1];
-  //           const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
-  //           const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-
-  //           limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
-  //           limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
-  //         }
-  //       }
-  //     }
-
-  //     // Is the sector collapsed to a line?
-  //     // 角度过小，会将acr处理为圆心到半径的一条线
-  //     if (outerDeltaAngle < 0.001) {
-  //       // 如果有左右边的话
-  //       if (partStroke && (partStroke[3] || partStroke[1])) {
-  //         context.moveTo(cx + xors, cy + yors);
-  //       }
-  //       collapsedToLine = true;
-  //     } else if (limitedOcr > epsilon) {
-  //       const cornerRadiusStart = min(outerCornerRadiusStart, limitedOcr);
-  //       const cornerRadiusEnd = min(outerCornerRadiusEnd, limitedOcr);
-  //       // Does the sector’s outer ring have rounded corners?
-  //       const t0 = cornerTangents(xirs, yirs, xors, yors, outerRadius, cornerRadiusStart, Number(clockwise));
-  //       const t1 = cornerTangents(xore, yore, xire, yire, outerRadius, cornerRadiusEnd, Number(clockwise));
-
-  //       // Have the corners merged?
-  //       if (limitedOcr < maxOuterCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
-  //         if (!partStroke || partStroke[0]) {
-  //           context.moveTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-  //           context.arc(cx + t0.cx, cy + t0.cy, limitedOcr, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !clockwise);
-  //         } else {
-  //           context.moveTo(
-  //             cx + t0.cx + limitedOcr * cos(atan2(t1.y01, t1.x01)),
-  //             cy + t0.cy + limitedOcr * sin(atan2(t1.y01, t1.x01))
-  //           );
-  //         }
-  //       } else {
-  //         // Otherwise, draw the two corners and the ring.
-  //         if (!partStroke || partStroke[0]) {
-  //           context.moveTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-  //           cornerRadiusStart > 0 &&
-  //             context.arc(
-  //               cx + t0.cx,
-  //               cy + t0.cy,
-  //               cornerRadiusStart,
-  //               atan2(t0.y01, t0.x01),
-  //               atan2(t0.y11, t0.x11),
-  //               !clockwise
-  //             );
-  //           context.arc(
-  //             cx,
-  //             cy,
-  //             outerRadius,
-  //             atan2(t0.cy + t0.y11, t0.cx + t0.x11),
-  //             atan2(t1.cy + t1.y11, t1.cx + t1.x11),
-  //             !clockwise
-  //           );
-  //           cornerRadiusEnd > 0 &&
-  //             context.arc(
-  //               cx + t1.cx,
-  //               cy + t1.cy,
-  //               cornerRadiusEnd,
-  //               atan2(t1.y11, t1.x11),
-  //               atan2(t1.y01, t1.x01),
-  //               !clockwise
-  //             );
-  //         } else {
-  //           if (cornerRadiusEnd > 0) {
-  //             context.moveTo(
-  //               cx + t1.cx + cornerRadiusEnd * cos(atan2(t1.y01, t1.x01)),
-  //               cy + t1.cy + cornerRadiusEnd * sin(atan2(t1.y01, t1.x01))
-  //             );
-  //           } else {
-  //             context.moveTo(cx + xore, cy + outerRadius * sin(outerEndAngle));
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       // Or is the outer ring just a circular arc?
-  //       if (!partStroke || partStroke[0]) {
-  //         context.moveTo(cx + xors, cy + yors);
-  //         context.arc(cx, cy, outerRadius, outerStartAngle, outerEndAngle, !clockwise);
-  //       } else {
-  //         // context.moveTo(cx + outerRadius * cos(outerEndAngle), cy + yore);
-  //       }
-  //     }
-  //     // Is there no inner ring, and it’s a circular sector?
-  //     // Or perhaps it’s an annular sector collapsed due to padding?
-  //     if (!(innerRadius > epsilon) || innerDeltaAngle < 0.001) {
-  //       if (!partStroke || partStroke[1]) {
-  //         context.lineTo(cx + xire, cy + yire);
-  //       } else {
-  //         context.moveTo(cx + xire, cy + yire);
-  //       }
-  //       collapsedToLine = true;
-  //     } else if (limitedIcr > epsilon) {
-  //       const cornerRadiusStart = min(innerCornerRadiusStart, limitedIcr);
-  //       const cornerRadiusEnd = min(innerCornerRadiusEnd, limitedIcr);
-  //       // Does the sector’s inner ring (or point) have rounded corners?
-  //       const t0 = cornerTangents(xire, yire, xore, yore, innerRadius, -cornerRadiusEnd, Number(clockwise));
-  //       const t1 = cornerTangents(xors, yors, xirs, yirs, innerRadius, -cornerRadiusStart, Number(clockwise));
-
-  //       if (!partStroke || partStroke[1]) {
-  //         context.lineTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-  //       } else {
-  //         context.moveTo(cx + t0.cx + t0.x01, cy + t0.cy + t0.y01);
-  //       }
-
-  //       // Have the corners merged?
-  //       if (limitedIcr < maxInnerCornerRadius && cornerRadiusStart === cornerRadiusEnd) {
-  //         const arcEndAngle = atan2(t1.y01, t1.x01);
-  //         if (!partStroke || partStroke[2]) {
-  //           context.arc(cx + t0.cx, cy + t0.cy, limitedIcr, atan2(t0.y01, t0.x01), arcEndAngle, !clockwise);
-  //         } else {
-  //           context.moveTo(cx + t0.cx + cos(arcEndAngle), cy + t0.cy + sin(arcEndAngle));
-  //         }
-  //       } else {
-  //         // Otherwise, draw the two corners and the ring.
-  //         if (!partStroke || partStroke[2]) {
-  //           cornerRadiusEnd > 0 &&
-  //             context.arc(
-  //               cx + t0.cx,
-  //               cy + t0.cy,
-  //               cornerRadiusEnd,
-  //               atan2(t0.y01, t0.x01),
-  //               atan2(t0.y11, t0.x11),
-  //               !clockwise
-  //             );
-  //           context.arc(
-  //             cx,
-  //             cy,
-  //             innerRadius,
-  //             atan2(t0.cy + t0.y11, t0.cx + t0.x11),
-  //             atan2(t1.cy + t1.y11, t1.cx + t1.x11),
-  //             clockwise
-  //           );
-  //           cornerRadiusStart > 0 &&
-  //             context.arc(
-  //               cx + t1.cx,
-  //               cy + t1.cy,
-  //               cornerRadiusStart,
-  //               atan2(t1.y11, t1.x11),
-  //               atan2(t1.y01, t1.x01),
-  //               !clockwise
-  //             );
-  //         } else {
-  //           if (cornerRadiusStart > 0) {
-  //             context.moveTo(
-  //               cx + t1.cx + cornerRadiusStart * cos(atan2(t1.y01, t1.x01)),
-  //               cy + t1.cy + cornerRadiusStart * sin(atan2(t1.y01, t1.x01))
-  //             );
-  //           } else {
-  //             context.moveTo(cx + xirs, cy + yirs);
-  //           }
-  //         }
-  //       }
-  //     } else {
-  //       // Or is the inner ring just a circular arc?
-  //       if (!partStroke || partStroke[1]) {
-  //         context.lineTo(cx + xire, cy + yire);
-  //       } else {
-  //         context.moveTo(cx + xire, cy + yire);
-  //       }
-  //       if (!partStroke || partStroke[2]) {
-  //         context.arc(cx, cy, innerRadius, innerEndAngle, innerStartAngle, clockwise);
-  //       } else {
-  //         context.moveTo(cx + innerRadius * cos(innerStartAngle), cy + innerRadius * sin(innerStartAngle));
-  //       }
-  //     }
-  //   }
-
-  //   if (!partStroke) {
-  //     context.closePath();
-  //   } else if (partStroke[3]) {
-  //     context.lineTo(cx + outerRadius * cos(endAngle), cy + outerRadius * cos(endAngle));
-  //   }
-
-  //   return collapsedToLine;
-  // }
 
   // 绘制尾部cap
   drawArcTailCapPath(
@@ -523,6 +272,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
 
+    let beforeRenderContribitionsRuned = false;
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
     if (doFill || isFullStroke || background) {
       context.beginPath();
@@ -539,15 +289,35 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此arc不再使用cache
       drawArcPath(arc, context, x, y, outerRadius, innerRadius);
 
-      if (!this._arcRenderContribitions) {
-        this._arcRenderContribitions = this.arcRenderContribitions.getContributions() || [];
-        this._arcRenderContribitions.sort((a, b) => b.order - a.order);
+      if (!this._arcBeforeRenderContribitions) {
+        this._arcBeforeRenderContribitions = [];
+        this._arcAfterRenderContribitions = [];
+        const contributions = this.arcRenderContribitions.getContributions() || [];
+        contributions.sort((a, b) => b.order - a.order);
+        contributions.forEach(c => {
+          if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+            this._arcBeforeRenderContribitions.push(c);
+          } else {
+            this._arcAfterRenderContribitions.push(c);
+          }
+        });
       }
-      this._arcRenderContribitions.forEach(c => {
-        if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-          // c.useStyle && context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, fillCb, strokeCb);
-        }
+      beforeRenderContribitionsRuned = true;
+      this._arcBeforeRenderContribitions.forEach(c => {
+        c.drawShape(
+          arc,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          arcAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       });
 
       // shadow
@@ -577,6 +347,39 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       context.beginPath();
       const collapsedToLine = drawArcPath(arc, context, x, y, outerRadius, innerRadius, arrayStroke);
 
+      if (!beforeRenderContribitionsRuned) {
+        if (!this._arcBeforeRenderContribitions) {
+          this._arcBeforeRenderContribitions = [];
+          this._arcAfterRenderContribitions = [];
+          const contributions = this.arcRenderContribitions.getContributions() || [];
+          contributions.sort((a, b) => b.order - a.order);
+          contributions.forEach(c => {
+            if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+              this._arcBeforeRenderContribitions.push(c);
+            } else {
+              this._arcAfterRenderContribitions.push(c);
+            }
+          });
+        }
+        beforeRenderContribitionsRuned = true;
+        this._arcBeforeRenderContribitions.forEach(c => {
+          c.drawShape(
+            arc,
+            context,
+            x,
+            y,
+            doFill,
+            doStroke,
+            fVisible,
+            sVisible,
+            arcAttribute,
+            drawContext,
+            fillCb,
+            strokeCb
+          );
+        });
+      }
+
       if (strokeCb) {
         strokeCb(context, arc.attribute, arcAttribute);
       } else if (sVisible) {
@@ -597,6 +400,40 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         const { endAngle = arcAttribute.endAngle, fill = arcAttribute.fill } = arc.attribute;
         const startAngle = endAngle;
         this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
+
+        if (!beforeRenderContribitionsRuned) {
+          if (!this._arcBeforeRenderContribitions) {
+            this._arcBeforeRenderContribitions = [];
+            this._arcAfterRenderContribitions = [];
+            const contributions = this.arcRenderContribitions.getContributions() || [];
+            contributions.sort((a, b) => b.order - a.order);
+            contributions.forEach(c => {
+              if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+                this._arcBeforeRenderContribitions.push(c);
+              } else {
+                this._arcAfterRenderContribitions.push(c);
+              }
+            });
+          }
+          beforeRenderContribitionsRuned = true;
+          this._arcBeforeRenderContribitions.forEach(c => {
+            c.drawShape(
+              arc,
+              context,
+              x,
+              y,
+              doFill,
+              doStroke,
+              fVisible,
+              sVisible,
+              arcAttribute,
+              drawContext,
+              fillCb,
+              strokeCb
+            );
+          });
+        }
+
         if (doFill) {
           // 获取渐变色最后一个颜色
           const color = fill;
@@ -624,13 +461,21 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       }
     }
 
-    if (!this._arcRenderContribitions) {
-      this._arcRenderContribitions = this.arcRenderContribitions.getContributions() || [];
-    }
-    this._arcRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        c.drawShape(arc, context, x, y, doFill, doStroke, fVisible, sVisible, arcAttribute, fillCb, strokeCb);
-      }
+    this._arcAfterRenderContribitions.forEach(c => {
+      c.drawShape(
+        arc,
+        context,
+        x,
+        y,
+        doFill,
+        doStroke,
+        fVisible,
+        sVisible,
+        arcAttribute,
+        drawContext,
+        fillCb,
+        strokeCb
+      );
     });
   }
 

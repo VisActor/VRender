@@ -1,6 +1,6 @@
+import type { IGraphic, IStageParams } from '@visactor/vrender';
 import {
   createStage,
-  IGraphic,
   createGroup,
   createLine,
   createText,
@@ -9,8 +9,7 @@ import {
   createPath,
   createArc,
   createArea,
-  createCircle,
-  IStageParams
+  createCircle
 } from '@visactor/vrender';
 
 import { array } from '@visactor/vutils';
@@ -35,7 +34,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: true,
+    disableDirtyBounds: false,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {
@@ -44,6 +43,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       x2: 550,
       y2: 550
     },
+    pluginList: ['poptipForText'],
     ...option
   });
 }

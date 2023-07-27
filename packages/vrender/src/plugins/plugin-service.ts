@@ -1,7 +1,8 @@
-import { injectable } from 'inversify';
-import type { IPlugin, IPluginService, IStage } from '../interface';
-
-export const PluginService = Symbol.for('PluginService');
+import { injectable, inject, named } from 'inversify';
+import type { IContributionProvider, IPlugin, IPluginService, IStage } from '../interface';
+import { ContributionProvider } from '../common/contribution-provider';
+import { AutoEnablePlugins } from './constants';
+import { container } from '../container';
 
 @injectable()
 export class DefaultPluginService implements IPluginService {
@@ -10,15 +11,29 @@ export class DefaultPluginService implements IPluginService {
   declare stage: IStage;
   declare actived: boolean;
 
-  constructor() {
+  constructor(
+    @inject(ContributionProvider)
+    @named(AutoEnablePlugins)
+    protected readonly autoEnablePlugins: IContributionProvider<IPlugin>
+  ) {
     this.onStartupFinishedPlugin = [];
     this.onRegisterPlugin = [];
     this.actived = false;
   }
 
-  active(stage: IStage) {
+  active(stage: IStage, params: { pluginList?: string[] }) {
     this.stage = stage;
     this.actived = true;
+
+    // 启动插件
+    const { pluginList } = params;
+    if (pluginList && container.isBound(AutoEnablePlugins)) {
+      this.autoEnablePlugins.getContributions().forEach(p => {
+        if (pluginList.includes(p.name)) {
+          this.register(p);
+        }
+      });
+    }
   }
 
   findPluginsByName(name: string): IPlugin[] {

@@ -1,14 +1,14 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRect, ISymbol } from '@visactor/vrender';
+import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender';
 import { builtinSymbolsMap } from '@visactor/vrender';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
 import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
-import { mergeRowAttrs } from './util';
+import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
@@ -29,7 +29,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
   // tooltip title shape
   private _tooltipTitleSymbol!: ISymbol;
   // tooltip title 文本
-  private _tooltipTitle!: IText;
+  private _tooltipTitle!: IText | IRichText;
   // tooltip 内容项容器
   private _tooltipContent!: IGroup;
 
@@ -88,16 +88,29 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     ) as ISymbol;
 
     // 文本
-    const titlePaddingLeft = isVisible(titleAttr.shape) ? titleAttr.shape.size + titleAttr.shape.spacing : 0;
-    this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
-      `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-      merge({ text: '' }, titleAttr.value, {
-        visible: isVisible(titleAttr) && isVisible(titleAttr.value)
-      }),
-      'text'
-    ) as IText;
+    if (titleAttr.value.multiLine) {
+      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+        {
+          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+          ...getRichTextAttribute(titleAttr.value)
+        },
+        'richtext'
+      ) as IRichText;
+    } else {
+      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+        {
+          text: '',
+          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+          ...titleAttr.value
+        },
+        'text'
+      ) as IText;
+    }
 
     // 调整标题的位置
+    const titlePaddingLeft = isVisible(titleAttr.shape) ? titleAttr.shape.size + titleAttr.shape.spacing : 0;
     const { textAlign, textBaseline } = titleAttr.value;
     const contentWidth = panel.width - padding[3] - padding[0] - titlePaddingLeft;
     if (textAlign === 'center') {
@@ -150,7 +163,9 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
             {
               visible: true,
               x: itemAttr.shape.size / 2,
-              y: itemAttr.height / 2,
+              y:
+                itemAttr.shape.size / 2 +
+                ((itemAttr.key.lineHeight ?? itemAttr.key.fontSize) - itemAttr.shape.size) / 2,
               ...itemAttr.shape
             },
             'symbol'
@@ -161,14 +176,28 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
         }
 
         if (isVisible(itemAttr.key)) {
-          const element = itemGroup.createOrUpdateChild(
-            `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
-            {
-              visible: true,
-              ...itemAttr.key
-            },
-            'text'
-          ) as IText;
+          let element: IRichText | IText;
+          if (itemAttr.key.multiLine) {
+            element = itemGroup.createOrUpdateChild(
+              `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
+              {
+                visible: true,
+                ...getRichTextAttribute(itemAttr.key),
+                textBaseline: 'top'
+              },
+              'richtext'
+            ) as IRichText;
+          } else {
+            element = itemGroup.createOrUpdateChild(
+              `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
+              {
+                visible: true,
+                ...itemAttr.key,
+                textBaseline: 'top'
+              },
+              'text'
+            ) as IText;
+          }
 
           const { textAlign } = itemAttr.key;
           if (textAlign === 'center') {
@@ -181,19 +210,33 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
             element.setAttribute('x', x);
           }
 
-          element.setAttribute('y', itemAttr.height / 2);
+          element.setAttribute('y', 0);
           x += keyWidth + itemAttr.key.spacing;
         }
 
         if (isVisible(itemAttr.value)) {
-          const element = itemGroup.createOrUpdateChild(
-            `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-            {
-              visible: true,
-              ...itemAttr.value
-            },
-            'text'
-          ) as IText;
+          let element: IRichText | IText;
+          if (itemAttr.value.multiLine) {
+            element = itemGroup.createOrUpdateChild(
+              `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+              {
+                visible: true,
+                ...getRichTextAttribute(itemAttr.value),
+                textBaseline: 'top'
+              },
+              'richtext'
+            ) as IRichText;
+          } else {
+            element = itemGroup.createOrUpdateChild(
+              `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+              {
+                visible: true,
+                ...itemAttr.value,
+                textBaseline: 'top'
+              },
+              'text'
+            ) as IText;
+          }
 
           let textAlign = 'right';
           if (isValid(itemAttr.value.textAlign)) {
@@ -214,7 +257,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
           }
           x += valueWidth;
 
-          element.setAttribute('y', itemAttr.height / 2);
+          element.setAttribute('y', 0);
 
           itemGroup.add(element);
         }

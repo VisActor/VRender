@@ -1,6 +1,55 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 11 Jul 2023 13:17:12 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 13:33:47 GMT and should not be manually modified.
+
+## 0.13.4
+Tue, 25 Jul 2023 13:33:47 GMT
+
+_Version update only_
+
+## 0.13.3
+Tue, 25 Jul 2023 07:34:59 GMT
+
+### Patches
+
+- feat(vrender-components): discreate legend's item's state style supports function
+- feat(vrender-components): axis label, tick and subTick's state style supports function
+- fix: fix the issue of maxLineWidth's value is negative
+
+## 0.13.2
+Fri, 21 Jul 2023 10:50:41 GMT
+
+### Patches
+
+- fix(vrender-components): fix the calculation of axis title offset
+- fix(vrender-components): fix the issue of bounds when labelContainer is empty
+
+## 0.13.1
+Thu, 20 Jul 2023 10:41:23 GMT
+
+### Patches
+
+- fix: fix the offset of axis title
+
+## 0.13.0
+Wed, 19 Jul 2023 08:29:52 GMT
+
+### Minor changes
+
+- feat(axis): support `dataFilter` property for tick and label's data filter
+- feat(axis): add anti-overlapping logic for cartesian axis labels
+- feat: support poptip component and plugin
+
+### Patches
+
+- feat(axis): support custom method for autohide
+- feat: tooltip supports rich text which can wrap
+- fix(legend): compact the undefiend scene when use Object.keys
+
+## 0.12.3
+Wed, 12 Jul 2023 12:30:46 GMT
+
+_Version update only_
 
 ## 0.12.2
 Tue, 11 Jul 2023 13:17:12 GMT

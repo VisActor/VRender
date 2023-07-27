@@ -49,54 +49,55 @@ import {
   DefaultRectBackgroundRenderContribution,
   DefaultRectRenderContribution,
   DefaultRectTextureRenderContribution,
-  RectRenderContribution,
   SplitRectAfterRenderContribution,
   SplitRectBeforeRenderContribution
 } from './contributions/rect-contribution-render';
 import {
   DefaultSymbolBackgroundRenderContribution,
   DefaultSymbolRenderContribution,
-  DefaultSymbolTextureRenderContribution,
-  SymbolRenderContribution
+  DefaultSymbolTextureRenderContribution
 } from './contributions/symbol-contribution-render';
 import {
-  CircleRenderContribution,
   DefaultCircleBackgroundRenderContribution,
   DefaultCircleRenderContribution,
   DefaultCircleTextureRenderContribution
 } from './contributions/circle-contribution-render';
 import {
-  ArcRenderContribution,
   DefaultArcBackgroundRenderContribution,
   DefaultArcRenderContribution,
   DefaultArcTextureRenderContribution
 } from './contributions/arc-contribution-render';
 import { DefaultCanvasGlyphRender } from './glyph-render';
-import {
-  DefaultImageBackgroundRenderContribution,
-  ImageRenderContribution
-} from './contributions/image-contribution-render';
-import {
-  DefaultGroupBackgroundRenderContribution,
-  GroupRenderContribution
-} from './contributions/group-contribution-render';
+import { DefaultImageBackgroundRenderContribution } from './contributions/image-contribution-render';
+import { DefaultGroupBackgroundRenderContribution } from './contributions/group-contribution-render';
 import { DefaultCanvasArc3DRender } from './arc3d-render';
 import { DefaultCanvasPyramid3dRender } from './pyramid3d-render';
 import {
   DefaultPolygonBackgroundRenderContribution,
-  DefaultPolygonTextureRenderContribution,
-  PolygonRenderContribution
+  DefaultPolygonTextureRenderContribution
 } from './contributions/polygon-contribution-render';
 import {
   DefaultPathBackgroundRenderContribution,
-  DefaultPathTextureRenderContribution,
-  PathRenderContribution
+  DefaultPathTextureRenderContribution
 } from './contributions/path-contribution-render';
 import {
-  AreaRenderContribution,
   DefaultAreaBackgroundRenderContribution,
   DefaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
+import {
+  RectRenderContribution,
+  CircleRenderContribution,
+  ArcRenderContribution,
+  AreaRenderContribution,
+  TextRenderContribution,
+  PathRenderContribution,
+  PolygonRenderContribution,
+  GroupRenderContribution,
+  ImageRenderContribution,
+  SymbolRenderContribution,
+  InteractiveSubRenderContribution
+} from './contributions/constants';
+import { DefaultBaseInteractiveRenderContribution } from './contributions';
 
 export default new ContainerModule(bind => {
   bind(DefaultDrawContribution).toSelf();
@@ -147,6 +148,7 @@ export default new ContainerModule(bind => {
   bind(DefaultCanvasTextRender).toSelf().inSingletonScope();
   bind(TextRender).to(DefaultCanvasTextRender);
   bind(GraphicRender).to(DefaultCanvasTextRender);
+  bindContributionProvider(bind, TextRenderContribution);
 
   // path 渲染器
   bind(DefaultCanvasPathRender).toSelf().inSingletonScope();
@@ -261,6 +263,19 @@ export default new ContainerModule(bind => {
   bind(DefaultCanvasPyramid3dRender).toSelf().inSingletonScope();
   bind(Pyramid3dRender).toService(DefaultCanvasPyramid3dRender);
   bind(GraphicRender).toService(Pyramid3dRender);
+
+  // 绑定通用interactive contribution
+  bind(DefaultBaseInteractiveRenderContribution).toSelf().inSingletonScope();
+  bind(TextRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(ArcRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(PathRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(SymbolRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(RectRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(ImageRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(CircleRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(AreaRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bind(PolygonRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
+  bindContributionProvider(bind, InteractiveSubRenderContribution);
 
   bindContributionProvider(bind, GraphicRender);
 

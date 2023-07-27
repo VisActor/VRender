@@ -57,8 +57,8 @@ function makeUpCanvas(
     //   });
 
     const canvas = {
-      width: domref.width,
-      height: domref.height,
+      width: domref.width * dpr,
+      height: domref.height * dpr,
       offsetWidth: domref.width,
       offsetHeight: domref.height,
       id: id ?? '',
@@ -98,6 +98,20 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
       this.supportsMouseEvents = false;
     }
     this.applyStyles = true;
+  }
+
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return this.freeCanvasList.length;
   }
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放

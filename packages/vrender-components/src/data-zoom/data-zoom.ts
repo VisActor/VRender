@@ -1,9 +1,12 @@
-import { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, global, INode } from '@visactor/vrender';
-import { IPointLike, array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender';
+import { global } from '@visactor/vrender';
+import type { IPointLike } from '@visactor/vutils';
+import { array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { Tag, TagAttributes } from '../tag';
+import type { TagAttributes } from '../tag';
+import { Tag } from '../tag';
 import { DataZoomActiveTag, DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
-import { DataZoomAttributes } from './type';
+import type { DataZoomAttributes } from './type';
 
 export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   name = 'dataZoom';
@@ -488,7 +491,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._layoutAttrFromConfig) {
       return this._layoutAttrFromConfig;
     }
-    const { position: positionConfig, size, orient, middleHandlerStyle } = this.attribute as DataZoomAttributes;
+    const {
+      position: positionConfig,
+      size,
+      orient,
+      middleHandlerStyle,
+      startHandlerStyle,
+      endHandlerStyle
+    } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
     const middleHandlerSize = middleHandlerStyle?.background?.size ?? 10;
 
@@ -516,6 +526,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       width = widthConfig;
       height = heightConfig;
       position = positionConfig;
+    }
+
+    const startHandlerSize = (startHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
+    const endHandlerSize = (endHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
+    // 如果startHandler显示的话，要将其宽高计入dataZoom宽高
+    if (startHandlerStyle?.visible) {
+      if (this._isHorizontal) {
+        width -= (startHandlerSize + endHandlerSize) / 2;
+        position = {
+          x: position.x + startHandlerSize / 2,
+          y: position.y
+        };
+      } else {
+        height -= (startHandlerSize + endHandlerSize) / 2;
+        position = {
+          x: position.x,
+          y: position.y + startHandlerSize
+        };
+      }
     }
 
     this._layoutAttrFromConfig = {
@@ -874,10 +903,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       ) as IArea;
     }
 
-    const { position, size, selectedBackgroundChartStyle } = this.attribute as DataZoomAttributes;
-    const { width, height } = size;
+    const { selectedBackgroundChartStyle } = this.attribute as DataZoomAttributes;
+
     const { start, end } = this.state;
-    const { basePointStart, basePointEnd } = this.computeBasePoints();
+    const { position, width, height } = this.getLayoutAttrFromConfig();
     this._selectedPreviewGroupClip.setAttributes({
       x: this._isHorizontal ? position.x + start * width : position.x,
       y: this._isHorizontal ? position.y : position.y + start * height,

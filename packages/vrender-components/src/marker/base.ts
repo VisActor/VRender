@@ -1,7 +1,8 @@
-import { createGroup, IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender';
+import { createGroup } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
-import { Tag } from '../tag';
-import { MarkerAttrs } from './type';
+import type { Tag } from '../tag';
+import type { MarkerAttrs } from './type';
 
 export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
   private _container!: IGroup;
@@ -9,10 +10,11 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected _label!: Tag;
 
   protected abstract setLabelPos(): any;
-  protected abstract renderMarker(container: IGroup): any;
+  protected abstract initMarker(container: IGroup): any;
+  protected abstract updateMarker(): any;
 
   protected render() {
-    this.removeAllChild();
+    // this.removeAllChild();
     const markerVisible = this.attribute.visible ?? true;
     const markerInteractive = this.attribute.interactive ?? false;
 
@@ -21,9 +23,16 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       this.setAttribute('childrenPickable', false);
     }
 
-    const group = createGroup({});
-    group.name = 'marker-container';
-    this.add(group);
-    markerVisible && this.renderMarker(group);
+    if (markerVisible) {
+      if (!this._container) {
+        const group = createGroup({});
+        group.name = 'marker-container';
+        this.add(group);
+        this._container = group;
+        this.initMarker(group);
+      } else {
+        this.updateMarker();
+      }
+    }
   }
 }

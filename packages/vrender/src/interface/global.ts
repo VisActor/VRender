@@ -10,7 +10,7 @@ export interface ILoader {
 }
 
 // 环境定义
-export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx';
+export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx';
 
 // 创建canvas需要的参数
 export interface ICreateCanvasParams {
@@ -44,6 +44,16 @@ export interface IEnvContribution
   createCanvas: (params: ICreateCanvasParams) => ICanvasLike | any;
   createOffscreenCanvas: (params: ICreateCanvasParams) => ICanvasLike | any;
   releaseCanvas: (canvas: ICanvasLike | string | any) => void;
+
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount: () => number;
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount: () => number;
 
   // 设备信息
   getDevicePixelRatio: () => number;
@@ -132,6 +142,7 @@ export interface IEnvParamsMap {
   readonly node: any;
   readonly native: any;
   readonly lynx: any;
+  readonly wx: any;
 }
 export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 'removeAllListeners'> {
   // 当前代码所运行的环境
@@ -159,6 +170,16 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   createCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   createOffscreenCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;
   releaseCanvas: (canvas: HTMLCanvasElement | string | any) => void;
+
+  /**
+   * 获取环境中最大动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount: () => number;
+
+  /**
+   * 获取环境中最大静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount: () => number;
 
   /* 浏览器环境 - dom tree */
   getElementById: (str: string) => HTMLElement | null;

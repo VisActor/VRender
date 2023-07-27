@@ -13,6 +13,7 @@ import type { ITicker } from './animate';
 import type { IPickerService } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
+import type { ILayerService } from './core';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -40,12 +41,16 @@ export interface IStageParams {
   title: string;
   autoRender: boolean;
   disableDirtyBounds: boolean;
+  // 是否支持interactiveLayer，默认为true
+  interactiveLayer: boolean;
+  poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
   // 绘制之后的钩子函数
   afterRender: (stage: IStage) => void;
   renderStyle?: string;
   ticker?: ITicker;
+  pluginList?: string[];
 }
 
 export interface IOption3D {
@@ -90,8 +95,6 @@ export interface IStage extends INode {
     afterRender: ISyncHook<[IStage]>;
   };
 
-  renderService: IRenderService;
-
   option3d?: IOption3D;
 
   set3dOptions: (options: IOption3D) => void;
@@ -104,12 +107,15 @@ export interface IStage extends INode {
   background: string | IColor;
   ticker: ITicker;
   increaseAutoRender: boolean;
+  readonly renderService: IRenderService;
   readonly pickerService: IPickerService;
   readonly pluginService: IPluginService;
+  readonly layerService: ILayerService;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
   createLayer: (canvasId?: string) => ILayer;
-  sortLayer: (cb: (layer: ILayer) => number) => void;
+  getLayer: (name: string) => ILayer;
+  sortLayer: (cb: (layer1: ILayer, layer2: ILayer) => number) => void;
   removeLayer: (layerId: number) => ILayer | false;
 
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;

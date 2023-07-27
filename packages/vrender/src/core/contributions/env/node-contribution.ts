@@ -1,6 +1,7 @@
 import { injectable } from 'inversify';
 import { loadTaroContributions } from '../../../kits';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type { EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import { ICanvasLike } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
 import { createImageElement } from './browser-contribution';
 
@@ -36,6 +37,20 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
       service.setActiveEnvContribution(this);
       this.pkg = pkg;
     }
+  }
+
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return 0;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return 1;
   }
 
   loadJson(url: string): Promise<{

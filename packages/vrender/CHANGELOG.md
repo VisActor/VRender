@@ -1,6 +1,65 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 11 Jul 2023 13:17:12 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 13:33:47 GMT and should not be manually modified.
+
+## 0.13.4
+Tue, 25 Jul 2023 13:33:47 GMT
+
+### Patches
+
+- ci: align bugserver config to vchart
+
+## 0.13.3
+Tue, 25 Jul 2023 07:34:59 GMT
+
+### Patches
+
+- feat: export wrap canvas and context
+- fix: fix the issue related to load image in lynx env
+
+## 0.13.2
+Fri, 21 Jul 2023 10:50:41 GMT
+
+### Patches
+
+- fix: fix the poptip not work due to mount and unmount issue
+
+## 0.13.1
+Thu, 20 Jul 2023 10:41:23 GMT
+
+### Patches
+
+- fix: fix the error of drawing arc background
+- fix: fix the error caused by reflect-metadata in react env
+- fix: fix the bounds issue caused by fontWeight
+
+## 0.13.0
+Wed, 19 Jul 2023 08:29:52 GMT
+
+### Minor changes
+
+- feat: area support stroke
+- feat: support interactive layer
+- feat: support createCanvasNG in lynx env
+- feat: support wx env
+- feat: support interactive contribution
+
+### Patches
+
+- fix: add compatibility on createPattern
+- feat: new api to measure rich text bounds
+- feat: add `stopAnimates()` to IGraphic
+
+
+
+## 0.12.3
+Wed, 12 Jul 2023 12:30:46 GMT
+
+### Patches
+
+- new api to measure rich text bounds
+- fix: fix the issue of arc background do not work
+- fix: fix the issue of warning while call insertIntoKeepIdx
 
 ## 0.12.2
 Tue, 11 Jul 2023 13:17:12 GMT

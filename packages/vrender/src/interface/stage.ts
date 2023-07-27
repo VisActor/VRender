@@ -120,6 +120,7 @@ export interface IStage extends INode {
 
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;
   renderNextFrame: (layers?: ILayer[]) => void;
+  tryInitInteractiveLayer: () => void;
 
   // 画布操作
   resize: (w: number, h: number, rerender?: boolean) => void;

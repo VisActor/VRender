@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the issue of using interactive layer in only on canvas env",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

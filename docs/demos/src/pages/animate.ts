@@ -38,6 +38,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: Stage) => voi
       canvas: document.getElementById('main') as HTMLCanvasElement,
       width: 900,
       height: 600,
+      disableDirtyBounds: false,
       canvasControled: false,
       autoRender: true
     });
@@ -84,17 +85,17 @@ export const page = () => {
 
     stage.defaultLayer.add(g);
     t1.animate()
-      .to({dx: delta, dy: delta}, 70, 'backOut')
+      .to({ dx: delta, dy: delta }, 70, 'backOut')
       .to({ dx: -delta / 2, dy: -delta / 2 }, 100, 'backOut')
       .to({ dx: 0, dy: 0 }, 30, 'backOut')
       .wait(2000)
-      .loop(Infinity)
+      .loop(Infinity);
     t2.animate()
-      .to({dx: -delta, dy: -delta}, 70, 'backOut')
+      .to({ dx: -delta, dy: -delta }, 70, 'backOut')
       .to({ dx: delta / 2, dy: delta / 2 }, 100, 'backOut')
       .to({ dx: 0, dy: 0 }, 30, 'backOut')
       .wait(2000)
-      .loop(Infinity)
+      .loop(Infinity);
 
     const colors = ['#f00', '#0f0', '#00f', '#ff0', '#f0f', '#0ff'];
     const lines = new Array(16).fill(0).map(() => {
@@ -107,50 +108,50 @@ export const page = () => {
           { x: Math.random() * 200 + 60, y: 0 }
         ],
         stroke: colors[Math.floor(Math.random() * colors.length)],
-        opacity: 0,
+        opacity: 0
       });
       g.add(line);
       return line;
     });
 
     lines.forEach(line => {
-      line.animate()
-      .wait(1000)
-      .to({ opacity: 1 }, 1, 'linear')
-      .to({ x: (line.attribute?.x ?? 0) > x ? -2000 : 2000 }, 500, 'linear')
-      .runCb(() => {
-        console.log('回调')
-        line.setAttributes({
-          x: x + (Math.random() - 0.5) * x * 2,
-          y: y + (Math.random() - 0.5) * y * 0.8,
-          lineWidth: Math.random() * 5,
-          points: [
-            { x: 0, y: 0 },
-            { x: Math.random() * 200 + 60, y: 0 }
-          ],
-          opacity: 0,
-        });
-      }).loop(Infinity)
-    })
-  //   setInterval(function () {
-  //     if (Math.random() > 0.2) {
-  //       t2.set
-  //         t2.attr('position', [w / 2 + Math.random() * 50, h / 2]);
+      line
+        .animate()
+        .wait(1000)
+        .to({ opacity: 1 }, 1, 'linear')
+        .to({ x: (line.attribute?.x ?? 0) > x ? -2000 : 2000 }, 500, 'linear')
+        .runCb(() => {
+          console.log('回调');
+          line.setAttributes({
+            x: x + (Math.random() - 0.5) * x * 2,
+            y: y + (Math.random() - 0.5) * y * 0.8,
+            lineWidth: Math.random() * 5,
+            points: [
+              { x: 0, y: 0 },
+              { x: Math.random() * 200 + 60, y: 0 }
+            ],
+            opacity: 0
+          });
+        })
+        .loop(Infinity);
+    });
+    //   setInterval(function () {
+    //     if (Math.random() > 0.2) {
+    //       t2.set
+    //         t2.attr('position', [w / 2 + Math.random() * 50, h / 2]);
 
-  //         setTimeout(function () {
-  //             t2.attr('position', [w / 2, h / 2]);
+    //         setTimeout(function () {
+    //             t2.attr('position', [w / 2, h / 2]);
 
-
-  //             for (var i = 0; i < lines.length; ++i) {
-  //                 lines[i].attr('style', {
-  //                     opacity: 0
-  //                 });
-  //             }
-  //         }, 100);
-  //     }
-  // }, 500);
-    
-  })
+    //             for (var i = 0; i < lines.length; ++i) {
+    //                 lines[i].attr('style', {
+    //                     opacity: 0
+    //                 });
+    //             }
+    //         }, 100);
+    //     }
+    // }, 500);
+  });
   addCase('car🚗', container, stage => {
     const text = createText({
       text: '🚗',
@@ -279,7 +280,10 @@ export const page = () => {
         .to({ opacity: 1 }, 1, 'linear')
         .play(new MotionPath(null, null, 10000, 'quadInOut', { path: cp, distance: 1 }))
         .reversed(true);
-      symbol.animate().startAt(i * 600).play(new Meteor(10, 10000, 'quadIn'));
+      symbol
+        .animate()
+        .startAt(i * 600)
+        .play(new Meteor(10, 10000, 'quadIn'));
       stage.defaultLayer.add(symbol);
     }
   });
@@ -296,7 +300,14 @@ export const page = () => {
     });
     text
       .animate()
-      .play(new InputText({ text: '' }, { text: 'The more beauty you see, the more insights you gain. VisActor, presenting the beauty of data.' }, 3000, 'quadIn'));
+      .play(
+        new InputText(
+          { text: '' },
+          { text: 'The more beauty you see, the more insights you gain. VisActor, presenting the beauty of data.' },
+          3000,
+          'quadIn'
+        )
+      );
     stage.defaultLayer.add(text as any);
   });
 
@@ -316,11 +327,11 @@ export const page = () => {
   // addCase('area', container, stage => {
   //   const area = createArea({
   //     visible: true,
-  //     
+  //
   //     stroke: '#000',
   //     lineWidth: 4,
   //     fillOpacity: 0.3,
-  //     
+  //
   //     fill: '#6690F2',
   //     defined: true,
   //     points: [
@@ -387,7 +398,7 @@ export const page = () => {
       text: ['这是一段很长的文字这是一段很长的文字这是一段很长的文字', 'abcdefghijklmn'],
       fontSize: 36,
       x: 200,
-      y: 200,
+      y: 200
       // stroke: 'red',
       // fill: 'red'
     });
@@ -594,7 +605,7 @@ export const page = () => {
   //     shadowBlur: 10,
   //     shadowOffsetX: 0,
   //     shadowOffsetY: 4,
-  //     
+  //
   //     stroke: {
   //       x0: 0,
   //       y0: 0.5,

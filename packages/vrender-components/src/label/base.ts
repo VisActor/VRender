@@ -296,24 +296,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         }
       }
 
-      // 尝试向内挤压
-      if (clampForce) {
-        const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
-        if (
-          !(dx === 0 && dy === 0) &&
-          canPlace(bmpTool, bitmap, {
-            x1: text.AABBBounds.x1 + dx,
-            x2: text.AABBBounds.x2 + dx,
-            y1: text.AABBBounds.y1 + dy,
-            y2: text.AABBBounds.y2 + dy
-          })
-        ) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
-          result.push(text);
-          continue;
-        }
-      }
-
       let hasPlace: ReturnType<typeof place> = false;
       // 发生碰撞，根据策略寻找可放置的位置
       for (let j = 0; j < strategy.length; j++) {
@@ -330,6 +312,24 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           text.setAttributes({ x: hasPlace.x, y: hasPlace.y });
           result.push(text);
           break;
+        }
+      }
+
+      // 尝试向内挤压
+      if (clampForce) {
+        const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
+        if (
+          !(dx === 0 && dy === 0) &&
+          canPlace(bmpTool, bitmap, {
+            x1: text.AABBBounds.x1 + dx,
+            x2: text.AABBBounds.x2 + dx,
+            y1: text.AABBBounds.y1 + dy,
+            y2: text.AABBBounds.y2 + dy
+          })
+        ) {
+          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+          result.push(text);
+          continue;
         }
       }
 

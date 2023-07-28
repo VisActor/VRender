@@ -258,6 +258,7 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
 }
 
 export interface IArcLabelLineSpec {
+  stroke: string;
   /**
    * 是否显示引导线
    * @default true

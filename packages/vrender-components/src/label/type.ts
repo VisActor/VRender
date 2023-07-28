@@ -1,5 +1,4 @@
-import type { EasingType, IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
-import type { Bounds } from '@visactor/vutils';
+import type { EasingType, IGraphic, IGroupGraphicAttribute, ITextGraphicAttribute, Text } from '@visactor/vrender';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -8,8 +7,20 @@ export type LabelItemStateStyle<T> = {
   selected_reverse?: T;
 };
 
+export type LabelItem = {
+  // 用于动画
+  id?: string;
+  // 原始数据
+  data?: any;
+  [key: string]: any;
+} & ITextGraphicAttribute;
+
 export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   type: string;
+  /**
+   *  图元 group 名称
+   */
+  baseMarkGroupName: string;
   /**
    * 是否开启选中交互
    * @default false
@@ -23,15 +34,7 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /**
    * 标签数据
    */
-  data: Functional<(ITextGraphicAttribute & Record<string, any>)[]>;
-
-  sort?: (graphicA: any, graphicB: any) => number;
-
-  /**
-   *  图元 group 名称
-   *  如果不配置，需要在 data 里指定标签定位 x/y
-   */
-  baseMarkGroupName?: string;
+  data: LabelItem[];
 
   /** 文本样式，优先级低于 data */
   textStyle?: Partial<ITextGraphicAttribute>;
@@ -55,6 +58,19 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | false;
+
+  // 排序 or 删减
+  dataFilter?: (data: LabelItem[]) => LabelItem[];
+
+  /** 自定义布局函数
+   * @description 当配置了 customLayoutFunc 后，默认布局和防重叠逻辑将不再生效。（overlap/position/offset不生效）
+   */
+  customLayoutFunc?: (data: LabelItem[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+
+  /** 自定义标签躲避函数
+   * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
+   */
+  customOverlapFunc?: (label: Text[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
 }
 
 export interface OverlapAttrs {
@@ -292,15 +308,6 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 }
 
 export type Functional<T> = T | ((data: any) => T);
-
-export interface ILabelGraphicAttribute extends ITextGraphicAttribute {
-  _relatedIndex?: number;
-
-  line?: any;
-  pointC?: IPoint;
-  pointB?: IPoint;
-  pointA?: IPoint;
-}
 
 export interface ILabelAnimation {
   mode?: 'same-time' | 'after' | 'after-all';

@@ -407,24 +407,6 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       }
     }
 
-    if (stroke !== false) {
-      if (strokeCb) {
-        strokeCb(context, attribute, defaultAttribute);
-      } else {
-        const { stroke } = attribute;
-        if (isArray(stroke) && stroke[0] && stroke[1] === false) {
-          context.beginPath();
-          drawSegments(context.camera ? context : context.nativeContext, cache.top, clipRange, 'auto', {
-            offsetX,
-            offsetY,
-            offsetZ
-          });
-        }
-        context.setStrokeStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
-        context.stroke();
-      }
-    }
-
     if (!this._areaRenderContribitions) {
       this._areaRenderContribitions = this.areaRenderContribitions.getContributions() || [];
     }
@@ -447,6 +429,30 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
         );
       }
     });
+
+    if (stroke !== false) {
+      if (strokeCb) {
+        strokeCb(context, attribute, defaultAttribute);
+      } else {
+        const { stroke } = attribute;
+        if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
+          context.beginPath();
+          drawSegments(
+            context.camera ? context : context.nativeContext,
+            stroke[0] ? cache.top : cache.bottom,
+            clipRange,
+            'auto',
+            {
+              offsetX,
+              offsetY,
+              offsetZ
+            }
+          );
+        }
+        context.setStrokeStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
+        context.stroke();
+      }
+    }
 
     return ret;
   }

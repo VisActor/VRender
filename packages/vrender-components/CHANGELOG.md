@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 27 Jul 2023 12:27:43 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jul 2023 07:17:04 GMT and should not be manually modified.
+
+## 0.13.6
+Fri, 28 Jul 2023 07:17:04 GMT
+
+### Patches
+
+- Merge pull request #225 from VisActor/sync-0.13.5
+
+Sync 0.13.5
+
 
 ## 0.13.5
 Thu, 27 Jul 2023 12:27:43 GMT

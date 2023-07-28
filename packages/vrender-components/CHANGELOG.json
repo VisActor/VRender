@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.6",
+      "tag": "@visactor/vrender-components_v0.13.6",
+      "date": "Fri, 28 Jul 2023 07:17:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Merge pull request #225 from VisActor/sync-0.13.5\n\nSync 0.13.5\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.5",
       "tag": "@visactor/vrender-components_v0.13.5",
       "date": "Thu, 27 Jul 2023 12:27:43 GMT",

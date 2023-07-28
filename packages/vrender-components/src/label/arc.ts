@@ -3,7 +3,7 @@ import { merge } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign } from './type';
 import type { BaseLabelAttrs } from './type';
-import type { ITextGraphicAttribute } from '@visactor/vrender';
+import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender';
 import { isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import {
   circlePoint,
@@ -45,8 +45,8 @@ export class ArcInfo {
   radian: number;
   middleAngle: number;
   k: number;
-  textAlign: string;
-  textBaseline: string;
+  textAlign: TextAlignType;
+  textBaseline: TextBaselineType;
   angle: number;
 
   constructor(

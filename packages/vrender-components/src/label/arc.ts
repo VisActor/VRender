@@ -140,7 +140,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     width: number,
     height: number,
     attribute: any
-  ): Partial<ITextGraphicAttribute> | undefined {
+  ): { x: number; y: number } | undefined {
     if (!textBounds || !graphicBounds) {
       return;
     }
@@ -200,7 +200,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       this._arcLeft.set(arc.refDatum, arc);
     }
 
-    return { arcRight: this._arcRight, arcLeft: this._arcLeft };
+    // return { arcRight: this._arcRight, arcLeft: this._arcLeft };
   }
 
   // layoutLabels : 执行内部/外部标签的布局计算
@@ -221,7 +221,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 布局内部标签
    */
-  private _layoutInsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: IGraphic[]) {
+  private _layoutInsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: any[]) {
     const center = attribute.center ?? { x: 0, y: 0 };
     const innerRadiusRatio = this.computeLayoutOuterRadius(
       currentMarks[0].attribute.innerRadius,
@@ -279,7 +279,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 布局外部标签
    */
-  private _layoutOutsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: IGraphic[]) {
+  private _layoutOutsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: any[]) {
     // const height = Math.min(attribute.center.x, attribute.center.y) * 2;
     const height = attribute.center.y * 2;
     const line2MinLength = attribute.line.line2MinLength as number;
@@ -355,7 +355,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 计算 pointC 以及 label limit 与 position
    */
-  private _computeX(arc: ArcInfo, attribute: any, currentMarks: IGraphic[]) {
+  private _computeX(arc: ArcInfo, attribute: any, currentMarks: any[]) {
     const center = attribute.center ?? { x: 0, y: 0 };
     const plotLayout = { width: attribute.center.x * 2, height: attribute.center.y * 2 };
     const radiusRatio = this.computeLayoutOuterRadius(
@@ -452,7 +452,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 调整标签位置的 Y 值
    */
-  private _adjustY(arcs: ArcInfo[], maxLabels: number, attribute: any, currentMarks: any) {
+  private _adjustY(arcs: ArcInfo[], maxLabels: number, attribute: any, currentMarks: any[]) {
     const plotRect = { width: attribute.center.x * 2, height: attribute.center.y * 2 };
     const labelLayout = attribute.layout;
     if (labelLayout.strategy === 'vertical') {
@@ -615,7 +615,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 计算 pointB，其 y 值在 adjustY 中确定，也即是 label 的 y 值
    */
-  private _computePointB(arc: ArcInfo, r: number, attribute: any, currentMarks: any) {
+  private _computePointB(arc: ArcInfo, r: number, attribute: any, currentMarks: any[]) {
     const labelConfig = attribute;
     const radiusRatio = this.computeLayoutOuterRadius(
       currentMarks[0].attribute.outerRadius,
@@ -664,7 +664,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 计算圆弧切线所限制的标签 Y 值范围
    */
-  private _computeYRange(arc: ArcInfo, attribute: any, currentMarks: any) {
+  private _computeYRange(arc: ArcInfo, attribute: any, currentMarks: any[]) {
     const plotRect = { width: attribute.center.x * 2, height: attribute.center.y * 2 };
 
     const radiusRatio = this.computeLayoutOuterRadius(
@@ -737,7 +737,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   /**
    * 计算标签布局圆弧半径，即 pointB 所落在的圆弧
    */
-  private _computeLayoutRadius(halfYLength: number, attribute: any, currentMarks: any) {
+  private _computeLayoutRadius(halfYLength: number, attribute: any, currentMarks: any[]) {
     const labelConfig = attribute;
     const layoutArcGap = labelConfig.layoutArcGap as number;
     const line1MinLength = labelConfig.line.line1MinLength as number;

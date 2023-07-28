@@ -253,7 +253,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         const graphicAttributes = baseMark.attribute;
         const { width, height } = this.attribute as ArcLabelAttrs;
 
-        const arcRightLeft = this.labeling(
+        this.labeling(
           textBounds,
           graphicBounds,
           isFunction(position) ? position(textData) : position,

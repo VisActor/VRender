@@ -1,5 +1,4 @@
-import type { IBoundsLike } from '@visactor/vutils';
-import { merge } from '@visactor/vutils';
+import { merge, IBoundsLike } from '@visactor/vutils';
 import type { ITextGraphicAttribute } from '@visactor/vrender';
 import type { RectLabelAttrs } from './type';
 import { LabelBase } from './base';
@@ -24,7 +23,12 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     super(merge({}, RectLabel.defaultAttributes, attributes));
   }
 
-  protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {
+  protected labeling(
+    textBounds: IBoundsLike,
+    graphicBounds: IBoundsLike,
+    position = 'top',
+    offset = 0
+  ): Partial<ITextGraphicAttribute> | undefined {
     if (!textBounds || !graphicBounds) {
       return;
     }

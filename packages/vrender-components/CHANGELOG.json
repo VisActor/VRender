@@ -2,6 +2,26 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.5",
+      "tag": "@visactor/vrender-components_v0.13.5",
+      "date": "Thu, 27 Jul 2023 12:27:43 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat(component): label component support custom layout and dataFilter"
+          },
+          {
+            "comment": "fix: fix the issue of using interactive layer in only on canvas env"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.4` to `0.13.5`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.4",
       "tag": "@visactor/vrender-components_v0.13.4",
       "date": "Tue, 25 Jul 2023 13:33:47 GMT",

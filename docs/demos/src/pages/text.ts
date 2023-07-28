@@ -56,8 +56,10 @@ export const page = () => {
     fill: colorPools[5],
     // text: ['Tffg'],
     text: 'Tffgggaaaa',
-    fontSize: 15,
-    lineHeight: 30,
+    fontSize: 20,
+    stroke: 'green',
+    lineWidth: 100,
+    // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
     textBaseline: 'alphabetic'

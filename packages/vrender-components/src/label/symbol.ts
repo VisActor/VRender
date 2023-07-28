@@ -1,4 +1,5 @@
-import { merge, IBoundsLike } from '@visactor/vutils';
+import type { IBoundsLike } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
 import type { ITextGraphicAttribute } from '@visactor/vrender';
 import type { SymbolLabelAttrs } from './type';
 import { LabelBase } from './base';
@@ -23,12 +24,7 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
     super(merge({}, SymbolLabel.defaultAttributes, attributes));
   }
 
-  protected labeling(
-    textBounds: IBoundsLike,
-    graphicBounds: IBoundsLike,
-    position = 'top',
-    offset = 0
-  ): Partial<ITextGraphicAttribute> | undefined {
+  protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {
     if (!textBounds) {
       return;
     }

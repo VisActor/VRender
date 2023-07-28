@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 25 Jul 2023 13:33:47 GMT and should not be manually modified.
+This log was last generated on Thu, 27 Jul 2023 12:27:43 GMT and should not be manually modified.
+
+## 0.13.5
+Thu, 27 Jul 2023 12:27:43 GMT
+
+### Patches
+
+- fix: fix the issue of area stroke with texture
+- fix: fix the issue of using interactive layer in only on canvas env
 
 ## 0.13.4
 Tue, 25 Jul 2023 13:33:47 GMT

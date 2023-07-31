@@ -2943,10 +2943,8 @@ function createContent(stage: Stage) {
     animation: {
       // mode: 'after'
     },
-    dataFilter: data => {
-      return data.filter(item => Number(item.text) > 0.59).reverse();
-    },
     overlap: {
+      enable: false,
       avoidBaseMark: true,
       size: {
         width: 1036.2320098876953,

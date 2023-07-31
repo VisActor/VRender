@@ -4,15 +4,15 @@
 import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor } from '@visactor/vrender';
 import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert } from '../util/labelSmartInvert';
 import { traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
-import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } from './overlap';
-import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, LabelItem, SmartInvertAttrs } from './type';
+import { bitmapTool, boundToRange, canPlace, canPlaceInside, place } from './overlap';
+import type { BaseLabelAttrs, OverlapAttrs, ILabelGraphicAttribute, ILabelAnimation } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -31,9 +31,11 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, IText>;
+  protected _relationMap: Map<number, IGraphic>;
 
-  protected _idToGraphic: Map<string, IGraphic>;
+  protected _prevRelationMap: Map<number, IGraphic>;
+
+  protected _textMap: Map<IGraphic, IText>;
 
   onAfterLabelOverlap?: (bitmap: Bitmap) => void;
 
@@ -47,39 +49,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     graphicBounds: IBoundsLike,
     position?: BaseLabelAttrs['position'],
     offset?: number
-  ): { x: number; y: number } | undefined;
+  ): Partial<ILabelGraphicAttribute> | undefined;
 
   protected render() {
-    this._prepare();
+    const currentBaseMarks = this._checkMarks();
+    const labels = this.layout(currentBaseMarks);
 
-    const { overlap, smartInvert, dataFilter, customLayoutFunc, customOverlapFunc } = this.attribute;
-    let data = this.attribute.data;
-
-    if (isFunction(dataFilter)) {
-      data = dataFilter(data);
-    }
-
-    let labels: IText[];
-
-    if (isFunction(customLayoutFunc)) {
-      labels = customLayoutFunc(data, (d: LabelItem) => this._idToGraphic.get(d.id));
-    } else {
-      // 根据关联图元和配置的position计算标签坐标
-      labels = this.layout(data);
-
-      if (isFunction(customOverlapFunc)) {
-        labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
-      } else {
-        // 防重叠逻辑
-        if (overlap !== false) {
-          labels = this._overlapping(labels);
-        }
-      }
-    }
-
-    if (smartInvert !== false) {
-      this._smartInvert(labels);
-    }
+    this._smartInvert(labels);
 
     this._renderLabels(labels);
   }
@@ -164,14 +140,14 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
   };
 
-  private _createLabelText(attributes: LabelItem) {
+  private _createLabelText(attributes: ILabelGraphicAttribute) {
     const text = createText(attributes);
     this._bindEvent(text);
     this._setStates(text);
     return text;
   }
 
-  private _prepare() {
+  private _checkMarks() {
     const baseMarks = this.getBaseMarks();
     const currentBaseMarks: IGraphic[] = [];
     baseMarks.forEach(mark => {
@@ -179,79 +155,80 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         currentBaseMarks.push(mark);
       }
     });
-
-    this._idToGraphic?.clear();
-    this._baseMarks = currentBaseMarks;
-
-    if (!currentBaseMarks || currentBaseMarks.length === 0) {
-      return;
-    }
-
-    const { data } = this.attribute;
-
-    if (!data || data.length === 0) {
-      return;
-    }
-
-    if (!this._idToGraphic) {
-      this._idToGraphic = new Map();
-    }
-    // generate id mapping before data filter
-    for (let i = 0; i < currentBaseMarks.length; i++) {
-      const textData = data[i];
-      const baseMark = currentBaseMarks[i] as IGraphic;
-      if (textData && baseMark) {
-        if (!isValid(textData.id)) {
-          textData.id = `vrender-component-${this.name}-${i}`;
-        }
-        this._idToGraphic.set(textData.id, baseMark);
-      }
-    }
+    this._prevRelationMap = new Map(this._relationMap);
+    this._relationMap?.clear();
+    return currentBaseMarks;
   }
 
-  protected layout(data: LabelItem[] = []): IText[] {
-    const { textStyle = {}, position, offset } = this.attribute;
-    const labels = [];
+  protected layout(currentMarks?: IGraphic[]): ILabelGraphicAttribute[] {
+    const { textStyle, position, offset } = this.attribute as BaseLabelAttrs;
+    let { data } = this.attribute as BaseLabelAttrs;
+    if (isFunction(data)) {
+      data = data({});
+    }
+    if (!data || data.length === 0) {
+      return [];
+    }
 
+    let labels: ILabelGraphicAttribute[] = [];
+
+    if (isFunction(this.attribute.sort) && currentMarks && currentMarks.length) {
+      currentMarks = currentMarks.sort(this.attribute.sort);
+    }
+
+    if (!this._relationMap) {
+      this._relationMap = new Map();
+    }
+
+    // 默认根据 index 顺序排序
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
-      const baseMark = this._idToGraphic.get(textData.id);
-
+      const baseMark = currentMarks?.[i] as IGraphic;
       const labelAttribute = {
         ...textStyle,
-        ...textData
+        ...textData,
+        _relatedIndex: i
       };
-      const text = this._createLabelText(labelAttribute);
-      const textBounds = this.getGraphicBounds(text);
-      const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
-      const textLocation = this.labeling(
-        textBounds,
-        graphicBounds,
-        isFunction(position) ? position(textData) : position,
-        offset
-      );
-      if (!textLocation) {
-        continue;
-      }
-      labelAttribute.x = textLocation.x;
-      labelAttribute.y = textLocation.y;
+      this._relationMap.set(i, baseMark);
 
-      text.setAttributes(textLocation);
-      labels.push(text);
+      if (textData) {
+        const text = createText(labelAttribute);
+        text.update();
+        const textBounds = this.getGraphicBounds(text);
+        const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
+
+        const textAttributes = this.labeling(
+          textBounds,
+          graphicBounds,
+          isFunction(position) ? position(textData) : position,
+          offset
+        );
+
+        if (!textAttributes) {
+          continue;
+        }
+
+        labelAttribute.x = textAttributes.x;
+        labelAttribute.y = textAttributes.y;
+
+        labels.push(labelAttribute);
+      }
+    }
+
+    this._baseMarks = currentMarks as IGraphic[];
+    if (this.attribute.overlap !== false) {
+      labels = this.overlapping(labels, this.attribute.overlap as OverlapAttrs);
     }
 
     return labels;
   }
 
-  protected _overlapping(labels: IText[]) {
+  protected overlapping(labels: ILabelGraphicAttribute[], option: OverlapAttrs = {}) {
     if (labels.length === 0) {
       return [];
     }
-    const option = this.attribute.overlap as OverlapAttrs;
-
-    const result: IText[] = [];
+    const result: ILabelGraphicAttribute[] = [];
     const baseMarkGroup = this.getBaseMarkGroup();
-
     const size = option.size ?? {
       width: baseMarkGroup?.AABBBounds.width() ?? 0,
       height: baseMarkGroup?.AABBBounds.height() ?? 0
@@ -276,8 +253,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       if (labels[i].visible === false) {
         continue;
       }
-      const text = labels[i] as IText;
-      const baseMark = this._idToGraphic.get((text.attribute as LabelItem).id);
+      const text = createText(labels[i]) as Text;
+      const baseMark = this._baseMarks?.[i];
       text.update();
 
       // 默认位置可以放置
@@ -285,31 +262,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         // 如果配置了限制在图形内部，需要提前判断；
         if (!checkBounds) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push(text);
+          result.push({ ...text.attribute });
           continue;
         }
 
         if (checkBounds && baseMark?.AABBBounds && canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push(text);
-          continue;
-        }
-      }
-
-      // 尝试向内挤压
-      if (clampForce) {
-        const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
-        if (
-          !(dx === 0 && dy === 0) &&
-          canPlace(bmpTool, bitmap, {
-            x1: text.AABBBounds.x1 + dx,
-            x2: text.AABBBounds.x2 + dx,
-            y1: text.AABBBounds.y1 + dy,
-            y2: text.AABBBounds.y2 + dy
-          })
-        ) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
-          result.push(text);
+          result.push({ ...text.attribute });
           continue;
         }
       }
@@ -322,18 +281,21 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           bitmap,
           strategy[j],
           <BaseLabelAttrs>this.attribute,
-          text as Text,
+          text,
           this.getGraphicBounds(baseMark, labels[i]),
           this.labeling
         );
         if (hasPlace !== false) {
-          text.setAttributes({ x: hasPlace.x, y: hasPlace.y });
-          result.push(text);
+          result.push({
+            ...text.attribute,
+            x: hasPlace.x,
+            y: hasPlace.y
+          });
           break;
         }
       }
 
-      !hasPlace && !hideOnHit && result.push(text);
+      !hasPlace && !hideOnHit && result.push({ ...text.attribute });
     }
 
     if (isFunction(this.onAfterLabelOverlap)) {
@@ -378,7 +340,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     );
   }
 
-  protected _renderLabels(labels: IText[]) {
+  protected _renderLabels(labels: ILabelGraphicAttribute[]) {
     const animationConfig = (this.attribute.animation ?? {}) as ILabelAnimation;
     const disableAnimation = this._enableAnimation === false || (animationConfig as unknown as boolean) === false;
     const mode = animationConfig.mode ?? DefaultLabelAnimation.mode;
@@ -387,16 +349,19 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const delay = animationConfig.delay ?? 0;
 
     const currentTextMap = new Map();
-    const prevTextMap = this._graphicToText || new Map();
+    const prevTextMap = this._textMap || new Map();
     const texts = [] as IText[];
-    labels.forEach((text, index) => {
-      const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
+
+    labels.forEach((label, index) => {
+      const text = this._createLabelText(label);
+      const relatedGraphic = this._relationMap.get(label._relatedIndex);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+
       if (state === 'enter') {
         texts.push(text);
         currentTextMap.set(relatedGraphic, text);
         if (!disableAnimation && relatedGraphic) {
-          const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
+          const { from, to } = getAnimationAttributes(label, 'fadeIn');
           this.add(text);
           relatedGraphic.onAnimateBind = () => {
             text.setAttributes(from);
@@ -454,7 +419,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
     });
 
-    this._graphicToText = currentTextMap;
+    this._textMap = currentTextMap;
   }
 
   protected _afterRelatedGraphicAttributeUpdate(
@@ -521,17 +486,20 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     return listener;
   }
 
-  protected _smartInvert(labels: IText[]) {
-    const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors } = option;
-
+  protected _smartInvert(labels: ILabelGraphicAttribute[]) {
+    if (this.attribute.smartInvert === false) {
+      return;
+    }
     for (let i = 0; i < labels.length; i++) {
-      const label = labels[i];
+      const label = labels?.[i] as ILabelGraphicAttribute;
       if (!label) {
         continue;
       }
-      const baseMark = this._idToGraphic.get((label.attribute as LabelItem).id);
-      const isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+
+      const isInside = canPlaceInside(
+        createText(label).AABBBounds,
+        this._relationMap.get(label._relatedIndex)?.AABBBounds
+      );
       /**
        * stroke 的处理逻辑
        * 1. 当文本在图元内部时，有两种情况：
@@ -541,42 +509,50 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
        *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
        *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
        */
-      if (label.attribute.stroke && label.attribute.lineWidth > 0) {
+      if (label.stroke && label.lineWidth > 0) {
         /**
          * 1-b, 2-b
          * 若label存在stroke，label填充色为前景色，label描边色为背景色
          * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
          */
-        label.setAttributes({
-          fill: labelSmartInvert(
-            label.attribute.fill as IColor,
-            label.attribute.stroke as IColor,
-            textType,
-            contrastRatiosThreshold,
-            alternativeColors
-          )
-        });
+        label.fill = labelSmartInvert(
+          label.fill as IColor,
+          label.stroke as IColor,
+          this.attribute.smartInvert?.textType,
+          this.attribute.smartInvert?.contrastRatiosThreshold,
+          this.attribute.smartInvert?.alternativeColors
+        );
       } else if (isInside) {
         /**
          * 1-a
          * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
          */
+        const baseMark = this._relationMap.get(label._relatedIndex);
         const backgroundColor = baseMark.attribute.fill as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
-      } else if (label.attribute.lineWidth > 0) {
+        const foregroundColor = label.fill as IColor;
+        label.fill = labelSmartInvert(
+          foregroundColor,
+          backgroundColor,
+          this.attribute.smartInvert?.textType,
+          this.attribute.smartInvert?.contrastRatiosThreshold,
+          this.attribute.smartInvert?.alternativeColors
+        );
+      } else if (label.lineWidth > 0) {
         /**
          * 2-a
          * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
          */
-        const backgroundColor = label.attribute.stroke as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          stroke: baseMark.attribute.fill,
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
+        const baseMark = this._relationMap.get(label._relatedIndex);
+        label.stroke = baseMark.attribute.fill;
+        const backgroundColor = label.stroke as IColor;
+        const foregroundColor = label.fill as IColor;
+        label.fill = labelSmartInvert(
+          foregroundColor,
+          backgroundColor,
+          this.attribute.smartInvert?.textType,
+          this.attribute.smartInvert?.contrastRatiosThreshold,
+          this.attribute.smartInvert?.alternativeColors
+        );
       }
     }
   }

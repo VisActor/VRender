@@ -60,7 +60,7 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
     const z = this.z ?? 0;
 
     // 不绘制或者透明
-    const fVisible = rectFillVisible(opacity, fillOpacity, width, height);
+    const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
     const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);

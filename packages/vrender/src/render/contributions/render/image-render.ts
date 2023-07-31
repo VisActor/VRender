@@ -63,7 +63,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
     } = image.attribute;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const doFill = runFill(fill);
 
     if (!(image.valid && visible)) {

@@ -53,7 +53,7 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
         visible = areaAttribute.visible
       } = area.attribute;
       // 不绘制或者透明
-      const fVisible = fillVisible(opacity, fillOpacity);
+      const fVisible = fillVisible(opacity, fillOpacity, fill);
       const doFill = runFill(fill);
 
       if (!(area.valid && visible)) {

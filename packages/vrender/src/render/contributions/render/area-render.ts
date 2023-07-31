@@ -360,6 +360,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
+    if (!cache) {
+      return;
+    }
     context.beginPath();
 
     const ret: boolean = false;

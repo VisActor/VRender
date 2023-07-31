@@ -328,6 +328,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           })
         ) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push(text);
           continue;
         }

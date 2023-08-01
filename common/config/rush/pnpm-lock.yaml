@@ -12,8 +12,8 @@ importers:
       '@esbuild-plugins/node-modules-polyfill': 0.1.4
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
-      '@visactor/vrender': workspace:0.13.4
-      '@visactor/vrender-kits': workspace:0.12.8
+      '@visactor/vrender': workspace:0.13.5
+      '@visactor/vrender-kits': workspace:0.12.9
       '@visactor/vutils': ~0.13.0
       canvas: 2.11.2
       d3-scale-chromatic: ^3.0.0
@@ -55,7 +55,7 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@types/react-reconciler': ^0.28.2
-      '@visactor/vrender': workspace:0.13.4
+      '@visactor/vrender': workspace:0.13.5
       '@visactor/vutils': ~0.13.0
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -93,8 +93,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/react-vrender': workspace:0.12.8
-      '@visactor/vrender': workspace:0.13.4
+      '@visactor/react-vrender': workspace:0.12.9
+      '@visactor/vrender': workspace:0.13.5
       '@visactor/vutils': ~0.13.0
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -184,7 +184,7 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
-      '@visactor/vrender': workspace:0.13.4
+      '@visactor/vrender': workspace:0.13.5
       '@visactor/vscale': ~0.13.0
       '@visactor/vutils': ~0.13.0
       eslint: ~8.18.0
@@ -197,7 +197,7 @@ importers:
       vite: 3.2.6
     dependencies:
       '@visactor/vrender': link:../vrender
-      '@visactor/vscale': 0.13.3
+      '@visactor/vscale': 0.13.4
       '@visactor/vutils': 0.13.3
       inversify: 6.0.1
     devDependencies:
@@ -224,7 +224,7 @@ importers:
       '@types/node-fetch': 2.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vrender': workspace:0.13.4
+      '@visactor/vrender': workspace:0.13.5
       '@visactor/vutils': ~0.13.0
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
@@ -1681,7 +1681,7 @@ packages:
       babel-plugin-polyfill-corejs2: 0.3.3_@babel+core@7.20.12
       babel-plugin-polyfill-corejs3: 0.6.0_@babel+core@7.20.12
       babel-plugin-polyfill-regenerator: 0.4.1_@babel+core@7.20.12
-      core-js-compat: 3.31.1
+      core-js-compat: 3.32.0
       semver: 6.3.1
     transitivePeerDependencies:
       - supports-color
@@ -3061,8 +3061,8 @@ packages:
       eslint-visitor-keys: 3.4.1
     dev: false
 
-  /@visactor/vscale/0.13.3:
-    resolution: {integrity: sha512-iVPguZ0uVSlOSfPWZaZmfp9hCeIxb67kCWgY+yVYEhzKTdnZLfNqxUarFhdqx2P9wNiAGjxhUJBNEenkndW5hg==}
+  /@visactor/vscale/0.13.4:
+    resolution: {integrity: sha512-UeyPYN+vAmvI+CURCfRN1s+peKeFDGxdblTJCgvZj/bho1oJF6WeI/mqAOquLeCT4+Y3f3SYoqIqDL5nSHJkZw==}
     dependencies:
       '@visactor/vutils': 0.13.3
     dev: false
@@ -3110,7 +3110,7 @@ packages:
   /@vitest/snapshot/0.30.1:
     resolution: {integrity: sha512-fJZqKrE99zo27uoZA/azgWyWbFvM1rw2APS05yB0JaLwUIg9aUtvvnBf4q7JWhEcAHmSwbrxKFgyBUga6tq9Tw==}
     dependencies:
-      magic-string: 0.30.1
+      magic-string: 0.30.2
       pathe: 1.1.1
       pretty-format: 27.5.1
     dev: true
@@ -3656,7 +3656,7 @@ packages:
     dependencies:
       '@babel/core': 7.20.12
       '@babel/helper-define-polyfill-provider': 0.3.3_@babel+core@7.20.12
-      core-js-compat: 3.31.1
+      core-js-compat: 3.32.0
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -3826,7 +3826,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001517
-      electron-to-chromium: 1.4.473
+      electron-to-chromium: 1.4.475
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11_browserslist@4.21.9
 
@@ -4212,8 +4212,8 @@ packages:
       is-plain-object: 5.0.0
     dev: false
 
-  /core-js-compat/3.31.1:
-    resolution: {integrity: sha512-wIDWd2s5/5aJSdpOJHfSibxNODxoGoWOBHt8JSPB41NOE94M7kuTPZCYLOlTtuoXTsBPKobpJ6T+y0SSy5L9SA==}
+  /core-js-compat/3.32.0:
+    resolution: {integrity: sha512-7a9a3D1k4UCVKnLhrgALyFcP7YCsLOQIxPd0dKjf/6GuPcgyiGP70ewWdCGrSK7evyhymi0qO4EqCmSJofDeYw==}
     dependencies:
       browserslist: 4.21.9
     dev: false
@@ -4570,8 +4570,8 @@ packages:
       safer-buffer: 2.1.2
     dev: true
 
-  /electron-to-chromium/1.4.473:
-    resolution: {integrity: sha512-aVfC8+440vGfl06l8HKKn8/PD5jRfSnLkTTD65EFvU46igbpQRri1gxSzW9/+TeUlwYzrXk1sw867T96zlyECA==}
+  /electron-to-chromium/1.4.475:
+    resolution: {integrity: sha512-mTye5u5P98kSJO2n7zYALhpJDmoSQejIGya0iR01GpoRady8eK3bw7YHHnjA1Rfi4ZSLdpuzlAC7Zw+1Zu7Z6A==}
 
   /electron/11.5.0:
     resolution: {integrity: sha512-WjNDd6lGpxyiNjE3LhnFCAk/D9GIj1rU3GSDealVShhkkkPR3Vh4q8ErXGDl1OAO/faomVa10KoFPUN/pLbNxg==}
@@ -7954,8 +7954,8 @@ packages:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /magic-string/0.30.1:
-    resolution: {integrity: sha512-mbVKXPmS0z0G4XqFDCTllmDQ6coZzn94aMlb0o/A4HEHJCKcanlDZwYJgwnkmgD3jyWhUgj9VsPrfd972yPffA==}
+  /magic-string/0.30.2:
+    resolution: {integrity: sha512-lNZdu7pewtq/ZvWUp9Wpf/x7WzMTsR26TWV03BRZrXFsv+BI6dy8RAiKgm1uM/kyR0rCfUcqvOlXKG66KhIGug==}
     engines: {node: '>=12'}
     dependencies:
       '@jridgewell/sourcemap-codec': 1.4.15
@@ -10810,7 +10810,7 @@ packages:
       concordance: 5.0.4
       debug: 4.3.4
       local-pkg: 0.4.3
-      magic-string: 0.30.1
+      magic-string: 0.30.2
       pathe: 1.1.1
       picocolors: 1.0.0
       source-map: 0.6.1

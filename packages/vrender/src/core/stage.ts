@@ -169,6 +169,7 @@ export class Stage extends Group implements IStage {
   protected lastRenderparams?: Partial<IDrawContext>;
 
   protected interactiveLayer?: ILayer;
+  protected supportInteractiveLayer: boolean;
 
   /**
    * 所有属性都具有默认值。
@@ -268,9 +269,7 @@ export class Stage extends Group implements IStage {
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
     this.ticker = params.ticker || defaultTicker;
-    if (params.interactiveLayer !== false) {
-      this.initInteractiveLayer();
-    }
+    this.supportInteractiveLayer = params.interactiveLayer !== false;
   }
 
   get3dOptions(options: IOption3D) {
@@ -489,10 +488,13 @@ export class Stage extends Group implements IStage {
   removeLayer(ILayerId: number): ILayer | false {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
   }
-  protected initInteractiveLayer() {
+  tryInitInteractiveLayer() {
     // TODO：顺序可能会存在问题
-    this.interactiveLayer = this.createLayer();
-    this.interactiveLayer.name = '_builtin_interactive';
+    // 支持交互层，且没有创建过，那就创建
+    if (this.supportInteractiveLayer && !this.interactiveLayer) {
+      this.interactiveLayer = this.createLayer();
+      this.interactiveLayer.name = '_builtin_interactive';
+    }
     // this.interactiveLayer.afterDraw(l => {
     //   l.removeAllChild();
     // });

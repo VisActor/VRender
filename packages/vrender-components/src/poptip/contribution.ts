@@ -60,6 +60,7 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
         y: matrix.f
       });
       // 添加到交互层中
+      drawContext.stage.tryInitInteractiveLayer();
       const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
         interactiveLayer.add(this.poptipComponent);

@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 25 Jul 2023 13:33:47 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jul 2023 07:17:04 GMT and should not be manually modified.
+
+## 0.13.6
+Fri, 28 Jul 2023 07:17:04 GMT
+
+### Patches
+
+- Merge pull request #225 from VisActor/sync-0.13.5
+
+Sync 0.13.5
+
+
+## 0.13.5
+Thu, 27 Jul 2023 12:27:43 GMT
+
+### Patches
+
+- feat(component): label component support custom layout and dataFilter
+- fix: fix the issue of using interactive layer in only on canvas env
 
 ## 0.13.4
 Tue, 25 Jul 2023 13:33:47 GMT

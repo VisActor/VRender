@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": " fix(wrapText): fix wrapText clip caculate error",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(marker): add formatMethod of label",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

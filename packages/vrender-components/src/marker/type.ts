@@ -1,5 +1,4 @@
-import {
-  IGraphic,
+import type {
   IGroup,
   IGroupGraphicAttribute,
   IImageGraphicAttribute,
@@ -7,9 +6,10 @@ import {
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
 } from '@visactor/vrender';
-import { IPointLike } from '@visactor/vutils';
-import { SegmentAttributes, SymbolAttributes } from '../segment';
-import { TagAttributes } from '../tag';
+import { IGraphic } from '@visactor/vrender';
+import type { Dict, IPointLike } from '@visactor/vutils';
+import type { SegmentAttributes, SymbolAttributes } from '../segment';
+import type { TagAttributes } from '../tag';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -67,7 +67,7 @@ export interface IMarkLabel extends Omit<TagAttributes, 'x' | 'y' | 'panel'> {
   /**
    * 标签自定义格式
    */
-  formatMethod?: (text: string | string[], datum?: any) => string | string[];
+  formatMethod?: (text: string | number | string[] | number[]) => string;
 }
 
 export interface IMarkRef {

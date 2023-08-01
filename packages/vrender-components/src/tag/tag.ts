@@ -42,7 +42,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       maxWidth,
       padding = 4,
       visible,
-      state
+      state,
+      formatMethod
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -84,7 +85,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     textX += symbolPlaceWidth;
 
     const textAttrs = {
-      text,
+      text: formatMethod ? formatMethod(text) : text,
       visible: isValid(text) && visible !== false,
       lineHeight: textStyle?.fontSize,
       ...textStyle,

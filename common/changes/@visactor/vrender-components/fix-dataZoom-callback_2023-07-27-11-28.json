@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(dataZoom): updateStateCallback don not effect when setStartAndEnd",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

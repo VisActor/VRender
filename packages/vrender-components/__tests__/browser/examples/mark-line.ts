@@ -27,7 +27,10 @@ export function run() {
       autoRotate: guiObject.labelAutoRotate,
       refX: guiObject.labelRefX,
       refY: guiObject.labelRefY,
-      refAngle: degreeToRadian(guiObject.labelRefAngle)
+      refAngle: degreeToRadian(guiObject.labelRefAngle),
+      formatMethod: text => {
+        return text + '格式化';
+      }
     }
   };
   const markLine = new MarkLine({

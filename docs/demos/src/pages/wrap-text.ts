@@ -28,7 +28,7 @@ export const page = () => {
     'text',
     {
       text: '这是abc',
-      x: 100,
+      x: 200,
       y: 100,
       textAlign: 'left',
       textBaseline: 'alphabetic',
@@ -37,8 +37,28 @@ export const page = () => {
     },
     'wrapText'
   );
+
+  group.createOrUpdateChild('text-error', {
+    "text": [
+      "饼图"
+    ],
+    "ellipsis": "...",
+    "fill": "#333",
+    "fontSize": 14,
+    "fontWeight": "bold",
+    "textAlign": "left",
+    "textBaseline": "top",
+    // "width": 12,
+    // "fontColor": "#333",
+    "maxLineWidth": 12,
+    "x": 200,
+    "y": 200
+  },
+  'wrapText');
+
   shapes.push(group.children[0]);
   shapes.push(group.children[1]);
+  shapes.push(group.children[2]);
   // console.log(createWrapText({
   //   x: 100,
   //   y: 200,

@@ -42,8 +42,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       maxWidth,
       padding = 4,
       visible,
-      state,
-      formatMethod
+      state
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 

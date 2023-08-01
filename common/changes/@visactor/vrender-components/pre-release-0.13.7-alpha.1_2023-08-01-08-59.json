@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(marker): formatMethod logic should not in vrender",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

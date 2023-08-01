@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.13.6",
+  "version": "0.13.7-alpha.2",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",

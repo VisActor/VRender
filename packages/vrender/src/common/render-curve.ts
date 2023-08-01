@@ -1,4 +1,5 @@
-import { min, IPoint, IPointLike } from '@visactor/vutils';
+import type { IPoint, IPointLike } from '@visactor/vutils';
+import { min } from '@visactor/vutils';
 
 import type {
   IAreaSegment,
@@ -33,6 +34,9 @@ export function drawSegments(
     offsetZ?: number;
   }
 ) {
+  if (!segPath) {
+    return;
+  }
   const { offsetX = 0, offsetY = 0, offsetZ = 0 } = params || {};
   let needMoveTo: boolean = true;
   const { curves } = segPath;

@@ -104,7 +104,7 @@ export class WrapText extends Text {
                 ellipsis
               );
               clip.str = clipEllipsis.str ?? '';
-              clip.width = 0;
+              clip.width = clipEllipsis.width ?? 0;
             } else {
               // 宽度限制不足一个字符，不显示
               clip.str = '';

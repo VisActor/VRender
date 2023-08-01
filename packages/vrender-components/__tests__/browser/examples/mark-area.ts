@@ -19,9 +19,6 @@ export function run() {
       position: guiObject.labelPos,
       dx: guiObject.labelDx,
       dy: guiObject.labelDy,
-      formatMethod: text => {
-        return text + '格式化';
-      },
       areaStyle: {
         cornerRadius: guiObject.cornerRadius
       }

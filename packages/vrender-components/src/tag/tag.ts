@@ -85,7 +85,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     textX += symbolPlaceWidth;
 
     const textAttrs = {
-      text: formatMethod ? formatMethod(text) : text,
+      text,
       visible: isValid(text) && visible !== false,
       lineHeight: textStyle?.fontSize,
       ...textStyle,

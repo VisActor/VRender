@@ -77,16 +77,16 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     } = symbol.attribute;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     if (!(symbol.valid && visible)) {
       return;
     }
 
-    if (!(doFill || doStroke || background)) {
+    if (!(doFill || doStroke)) {
       return;
     }
 

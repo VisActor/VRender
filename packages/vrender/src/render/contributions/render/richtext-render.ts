@@ -31,7 +31,7 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
       return;
     }
 
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, true);
     if (!fVisible) {
       return;
     }

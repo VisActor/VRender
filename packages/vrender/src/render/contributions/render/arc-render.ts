@@ -247,20 +247,20 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       y: originY = arcAttribute.y
     } = arc.attribute;
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     if (!(arc.valid && visible)) {
       return;
     }
 
-    if (!(doFill || doStroke || background)) {
+    if (!(doFill || doStroke)) {
       return;
     }
 
-    // 如果存在fillCb和strokeCb，那就不直接跳过
+    // 如果存在fillCb和strokeCb，以及background那就不直接跳过
     if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
       return;
     }
@@ -271,10 +271,9 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       cap = arcAttribute.cap,
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
-
     let beforeRenderContribitionsRuned = false;
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
-    if (doFill || isFullStroke || background) {
+    if (doFill || isFullStroke) {
       context.beginPath();
       // if (arc.shouldUpdateShape()) {
       //   // 更新shape

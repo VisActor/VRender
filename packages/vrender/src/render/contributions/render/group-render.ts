@@ -73,9 +73,9 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     } = group.attribute;
 
     // 不绘制或者透明
-    const fVisible = rectFillVisible(opacity, fillOpacity, width, height);
+    const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
     const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     if (!(group.valid && visible)) {
@@ -83,7 +83,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     }
 
     if (!clip) {
-      if (!(doFill || doStroke || background)) {
+      if (!(doFill || doStroke)) {
         return;
       }
 

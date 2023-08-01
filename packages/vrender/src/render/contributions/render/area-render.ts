@@ -102,14 +102,15 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       opacity = areaAttribute.opacity,
       visible = areaAttribute.visible,
       z = areaAttribute.z,
+      background,
       stroke = area.attribute.stroke,
       lineWidth = areaAttribute.lineWidth,
       strokeOpacity = areaAttribute.strokeOpacity
     } = area.attribute;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
-    const doFill = runFill(fill);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
     const sVisible = strokeVisible(opacity, strokeOpacity);
 

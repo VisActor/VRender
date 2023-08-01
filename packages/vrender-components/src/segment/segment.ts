@@ -25,6 +25,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     },
     startSymbol: {
       visible: false,
+      autoRotate: true,
       symbolType: 'triangle',
       size: 12,
       refX: 0,
@@ -37,6 +38,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     },
     endSymbol: {
       visible: false,
+      autoRotate: true,
       symbolType: 'triangle',
       size: 12,
       refX: 0,
@@ -125,6 +127,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
 
   private renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
+    const { autoRotate } = attribute;
     let symbol;
     if (attribute?.visible) {
       const startAngle = this._startAngle;
@@ -153,7 +156,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         ...position,
         symbolType: symbolType as string,
         size,
-        angle: rotate + refAngle,
+        angle: autoRotate && rotate + refAngle,
         strokeBoundsBuffer: 0,
         ...style
       });

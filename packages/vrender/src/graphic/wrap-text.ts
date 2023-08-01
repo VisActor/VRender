@@ -95,6 +95,23 @@ export class WrapText extends Text {
 
           // 测量截断位置
           const clip = layoutObj.textMeasure.clipText(str, layoutObj.textOptions, maxLineWidth);
+          if (str !== '' && clip.str === '') {
+            if (ellipsis) {
+              const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
+                str,
+                layoutObj.textOptions,
+                maxLineWidth,
+                ellipsis
+              );
+              clip.str = clipEllipsis.str ?? '';
+              clip.width = 0;
+            } else {
+              // 宽度限制不足一个字符，不显示
+              clip.str = '';
+              clip.width = 0;
+            }
+          }
+
           linesLayout.push({
             str: clip.str,
             width: clip.width

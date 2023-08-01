@@ -194,7 +194,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
 
         area.cacheArea = { top: topCache, bottom: bottomCache };
       } else {
-        area.cache = null;
+        area.cacheArea = null;
         area.clearUpdateShapeTag();
         return;
       }
@@ -361,13 +361,118 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
+    let ret = false;
+    ret =
+      ret ||
+      this._drawSegmentItem(
+        context,
+        cache,
+        fill,
+        fillOpacity,
+        stroke,
+        strokeOpacity,
+        attribute,
+        defaultAttribute,
+        clipRange,
+        offsetX,
+        offsetY,
+        offsetZ,
+        area,
+        drawContext,
+        false,
+        fillCb,
+        strokeCb
+      );
+    ret =
+      ret ||
+      this._drawSegmentItem(
+        context,
+        cache,
+        fill,
+        fillOpacity,
+        stroke,
+        strokeOpacity,
+        attribute,
+        defaultAttribute,
+        clipRange,
+        offsetX,
+        offsetY,
+        offsetZ,
+        area,
+        drawContext,
+        true,
+        fillCb,
+        strokeCb
+      );
+    return ret;
+  }
+
+  protected _drawSegmentItem(
+    context: IContext2d,
+    cache: IAreaCacheItem,
+    fill: boolean,
+    fillOpacity: number,
+    stroke: boolean,
+    strokeOpacity: number,
+    attribute: Partial<IAreaGraphicAttribute>,
+    defaultAttribute: Required<IAreaGraphicAttribute> | Partial<IAreaGraphicAttribute>[],
+    clipRange: number,
+    offsetX: number,
+    offsetY: number,
+    offsetZ: number,
+    area: IArea,
+    drawContext: IDrawContext,
+    connect: boolean,
+    fillCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute | IThemeAttribute[]
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute | IThemeAttribute[]
+    ) => boolean
+  ) {
+    // 绘制connect区域
+    let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
+    const da = [];
+    if (connect) {
+      if (isArray(defaultAttribute)) {
+        connectedType = connectedType ?? defaultAttribute[0].connectedType ?? defaultAttribute[1].connectedType;
+        connectedX = connectedX ?? defaultAttribute[0].connectedX ?? defaultAttribute[1].connectedX;
+        connectedY = connectedY ?? defaultAttribute[0].connectedY ?? defaultAttribute[1].connectedY;
+        connectedStyle = connectedStyle ?? defaultAttribute[0].connectedStyle ?? defaultAttribute[1].connectedStyle;
+      } else {
+        connectedType = connectedType ?? defaultAttribute.connectedType;
+        connectedX = connectedX ?? defaultAttribute.connectedX;
+        connectedY = connectedY ?? defaultAttribute.connectedY;
+        connectedStyle = connectedStyle ?? defaultAttribute.connectedStyle;
+      }
+
+      if (isArray(defaultAttribute)) {
+        defaultAttribute.forEach(i => da.push(i));
+      } else {
+        da.push(defaultAttribute);
+      }
+      da.push(attribute);
+    }
+
+    if (connect && connectedType === 'none') {
+      return false;
+    }
+
     context.beginPath();
 
     const ret: boolean = false;
     drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
       offsetX,
       offsetY,
-      offsetZ
+      offsetZ,
+      drawConnect: connect,
+      mode: connectedType,
+      zeroX: connectedX,
+      zeroY: connectedY
     });
 
     if (!this._areaRenderContribitions) {
@@ -403,7 +508,13 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       if (fillCb) {
         fillCb(context, attribute, defaultAttribute);
       } else if (fillOpacity) {
-        context.setCommonStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
+        context.setCommonStyle(
+          area,
+          connect ? connectedStyle : attribute,
+          originX - offsetX,
+          originY - offsetY,
+          connect ? da : defaultAttribute
+        );
         context.fill();
       }
     }
@@ -446,11 +557,21 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             {
               offsetX,
               offsetY,
-              offsetZ
+              offsetZ,
+              drawConnect: connect,
+              mode: connectedType,
+              zeroX: connectedX,
+              zeroY: connectedY
             }
           );
         }
-        context.setStrokeStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
+        context.setStrokeStyle(
+          area,
+          connect ? connectedStyle : attribute,
+          originX - offsetX,
+          originY - offsetY,
+          connect ? da : defaultAttribute
+        );
         context.stroke();
       }
     }

@@ -26,7 +26,8 @@ import type {
   RichTextVerticalDirection,
   RichTextGlobalAlignType,
   RichTextGlobalBaselineType,
-  IRichTextIconGraphicAttribute
+  IRichTextIconGraphicAttribute,
+  IConnectedStyle
 } from '../interface';
 
 export const DefaultTransform: ITransform = {
@@ -109,6 +110,24 @@ export const DefaultStyle: IGraphicStyle = {
   ...DefaultStrokeStyle
 };
 
+export const DefaultConnectAttribute: Required<IConnectedStyle> = {
+  connectedType: 'none',
+  // connectedStyle: {
+  //   stroke: DefaultStrokeStyle.stroke,
+  //   strokeOpacity: DefaultStrokeStyle.strokeOpacity,
+  //   lineDash: DefaultStrokeStyle.lineDash,
+  //   lineDashOffset: DefaultStrokeStyle.lineDashOffset,
+  //   lineCap: DefaultStrokeStyle.lineCap,
+  //   lineJoin: DefaultStrokeStyle.lineJoin,
+  //   lineWidth: DefaultStrokeStyle.lineWidth,
+  //   fill: DefaultFillStyle.fill,
+  //   fillOpacity: DefaultFillStyle.fillOpacity
+  // },
+  connectedStyle: {}, // 默认全都继承父属性
+  connectedX: NaN,
+  connectedY: NaN
+} as IConnectedStyle;
+
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
   pickable: true,
@@ -149,6 +168,7 @@ export const DefaultArcAttribute: Required<IArcGraphicAttribute> = {
 
 export const DefaultAreaAttribute: Required<IAreaGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultConnectAttribute,
   points: [],
   segments: [],
   curveType: 'linear',
@@ -183,6 +203,7 @@ export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
 
 export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultConnectAttribute,
   points: [],
   segments: [],
   curveType: 'linear',

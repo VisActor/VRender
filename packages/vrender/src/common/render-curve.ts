@@ -1,4 +1,5 @@
-import { min, IPoint, IPointLike } from '@visactor/vutils';
+import type { IPoint, IPointLike } from '@visactor/vutils';
+import { min } from '@visactor/vutils';
 
 import type {
   IAreaSegment,
@@ -31,24 +32,75 @@ export function drawSegments(
     offsetX?: number;
     offsetY?: number;
     offsetZ?: number;
+    drawConnect?: boolean; // 是否是绘制connect区域的效果
+    mode?: 'none' | 'connect' | 'zero';
+    zeroX?: number;
+    zeroY?: number;
   }
 ) {
-  const { offsetX = 0, offsetY = 0, offsetZ = 0 } = params || {};
+  const {
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
+    mode = 'none',
+    drawConnect = false,
+    zeroX = 0,
+    zeroY = 0
+  } = params || {};
+  // none的connect不需要draw
+  if (drawConnect && mode === 'none') {
+    return;
+  }
   let needMoveTo: boolean = true;
   const { curves } = segPath;
   if (percent >= 1) {
-    curves.forEach(curve => {
-      // 跳过这个点
-      if (!curve.defined) {
-        needMoveTo = true;
-        return;
-      }
-      if (needMoveTo) {
-        path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
-      }
-      drawSegItem(path, curve, 1, params);
-      needMoveTo = false;
-    });
+    if (drawConnect) {
+      curves.forEach((curve, i) => {
+        if (curve.defined) {
+          // connect段结束，封闭
+          if (needMoveTo && i !== 0) {
+            path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+          } else if (!needMoveTo) {
+            // 持续moveTo
+            // if (curve.p2 && curve.p3) {
+            //   path.moveTo(curve.p3.x + offsetX, curve.p3.y + offsetY, offsetZ);
+            // } else {
+            //   path.moveTo(curve.p1.x + offsetX, curve.p1.y + offsetY, offsetZ);
+            // }
+          }
+          needMoveTo = false;
+        } else {
+          // connect段开始
+          if (!needMoveTo) {
+            path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+          } else {
+            // 如果是zero，那么每一段都要绘制一下（第一段不需要绘制）
+            if (mode === 'zero') {
+              path.lineTo(
+                (isFinite(zeroX) ? zeroX : curve.p0.x) + offsetX,
+                (isFinite(zeroY) ? zeroY : curve.p0.y) + offsetY,
+                offsetZ
+              );
+            }
+          }
+          needMoveTo = true;
+        }
+      });
+    } else {
+      curves.forEach(curve => {
+        // 跳过这个点
+        if (!curve.defined) {
+          needMoveTo = true;
+          return;
+        }
+        if (needMoveTo) {
+          path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        }
+        drawSegItem(path, curve, 1, params);
+        needMoveTo = false;
+      });
+    }
+
     return;
   }
   if (percent <= 0) {
@@ -80,16 +132,41 @@ export function drawSegments(
       break;
     }
 
-    // 跳过这个点
-    if (!curve.defined) {
-      needMoveTo = true;
-      continue;
+    if (drawConnect) {
+      if (curve.defined) {
+        // connect段结束，封闭
+        if (needMoveTo && i !== 0) {
+          path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        }
+        needMoveTo = false;
+      } else {
+        // connect段开始
+        if (!needMoveTo) {
+          path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        } else {
+          // 如果是zero，那么每一段都要绘制一下（第一段不需要绘制）
+          if (mode === 'zero') {
+            path.lineTo(
+              (isFinite(zeroX) ? zeroX : curve.p0.x) + offsetX,
+              (isFinite(zeroY) ? zeroY : curve.p0.y) + offsetY,
+              offsetZ
+            );
+          }
+        }
+        needMoveTo = true;
+      }
+    } else {
+      // 跳过这个点
+      if (!curve.defined) {
+        needMoveTo = true;
+        continue;
+      }
+      if (needMoveTo) {
+        path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+      }
+      drawSegItem(path, curve, min(_p, 1), params);
+      needMoveTo = false;
     }
-    if (needMoveTo) {
-      path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
-    }
-    drawSegItem(path, curve, min(_p, 1), params);
-    needMoveTo = false;
   }
 }
 

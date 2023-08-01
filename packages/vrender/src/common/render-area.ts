@@ -23,35 +23,65 @@ export function drawAreaSegments(
     offsetY?: number;
     offsetZ?: number;
     direction?: IDirection;
+    drawConnect?: boolean; // 是否是绘制connect区域的效果
+    mode?: 'none' | 'connect' | 'zero';
+    zeroX?: number;
+    zeroY?: number;
   }
 ) {
-  // const { offsetX = 0, offsetY = 0 } = params || {};
+  const { drawConnect = false, mode = 'none' } = params || {};
+  if (drawConnect && mode === 'none') {
+    return;
+  }
   // let needMoveTo: boolean = true;
   const { top, bottom } = segPath;
   if (percent >= 1) {
     const topList: ICurve<IPoint>[] = [];
     const bottomList: ICurve<IPoint>[] = [];
     let lastDefined: boolean = true;
-    for (let i = 0, n = top.curves.length; i < n; i++) {
-      const topCurve = top.curves[i];
-      if (lastDefined !== topCurve.defined) {
-        if (lastDefined) {
-          drawAreaBlock(path, topList, bottomList, params);
-          topList.length = 0;
-          bottomList.length = 0;
+    if (drawConnect) {
+      for (let i = 0, n = top.curves.length; i < n; i++) {
+        const topCurve = top.curves[i];
+        if (lastDefined !== topCurve.defined) {
+          if (!lastDefined) {
+            drawAreaConnectBlock(path, topList, bottomList, params);
+            topList.length = 0;
+            bottomList.length = 0;
+          } else {
+            topList.push(topCurve);
+            bottomList.push(bottom.curves[n - i - 1]);
+          }
+          lastDefined = !lastDefined;
         } else {
-          topList.push(topCurve);
-          bottomList.push(bottom.curves[n - i - 1]);
-        }
-        lastDefined = !lastDefined;
-      } else {
-        if (lastDefined) {
-          topList.push(topCurve);
-          bottomList.push(bottom.curves[n - i - 1]);
+          if (!lastDefined) {
+            topList.push(topCurve);
+            bottomList.push(bottom.curves[n - i - 1]);
+          }
         }
       }
+      drawAreaBlock(path, topList, bottomList, params);
+    } else {
+      for (let i = 0, n = top.curves.length; i < n; i++) {
+        const topCurve = top.curves[i];
+        if (lastDefined !== topCurve.defined) {
+          if (lastDefined) {
+            drawAreaBlock(path, topList, bottomList, params);
+            topList.length = 0;
+            bottomList.length = 0;
+          } else {
+            topList.push(topCurve);
+            bottomList.push(bottom.curves[n - i - 1]);
+          }
+          lastDefined = !lastDefined;
+        } else {
+          if (lastDefined) {
+            topList.push(topCurve);
+            bottomList.push(bottom.curves[n - i - 1]);
+          }
+        }
+      }
+      drawAreaBlock(path, topList, bottomList, params);
     }
-    drawAreaBlock(path, topList, bottomList, params);
 
     return;
   }
@@ -158,6 +188,35 @@ export function drawAreaSegments(
   //   drawSegItem(path, curve, min(_p, 1), params);
   //   needMoveTo = false;
   // }
+}
+
+function drawAreaConnectBlock(
+  path: IPath2D,
+  topList: ICurve<IPoint>[],
+  bottomList: ICurve<IPoint>[],
+  params?: {
+    offsetX?: number;
+    offsetY?: number;
+    offsetZ?: number;
+  }
+) {
+  if (topList.length < 2) {
+    return;
+  }
+  const { offsetX = 0, offsetY = 0, offsetZ = 0 } = params || {};
+  let curve = topList[0];
+  path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+  curve = topList[topList.length - 1];
+  let end = curve.p3 || curve.p1;
+  path.lineTo(end.x + offsetX, end.y + offsetY, offsetZ);
+
+  curve = bottomList[bottomList.length - 1];
+  path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+  curve = bottomList[0];
+  end = curve.p3 || curve.p1;
+  path.lineTo(end.x + offsetX, end.y + offsetY, offsetZ);
+
+  path.closePath();
 }
 
 function drawAreaBlock(

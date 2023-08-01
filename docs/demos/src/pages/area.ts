@@ -32,29 +32,33 @@ const points = [
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  // ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
-  //   graphics.push(
-  //     createArea({
-  //       points,
-  //       curveType: type as any,
-  //       x: ((i * 300) % 900) + 100,
-  //       y: Math.floor((i * 300) / 900) * 200,
-  //       stroke: ['black', false],
-  //       fill: {
-  //         gradient: 'linear',
-  //         x0: 0,
-  //         y0: 0,
-  //         x1: 1,
-  //         y1: 0,
-  //         stops: [
-  //           { offset: 0, color: 'green' },
-  //           { offset: 0.5, color: 'orange' },
-  //           { offset: 1, color: 'red' }
-  //         ]
-  //       }
-  //     })
-  //   );
-  // });
+  ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
+    graphics.push(
+      createArea({
+        points,
+        curveType: type as any,
+        x: ((i * 300) % 900) + 100,
+        y: Math.floor((i * 300) / 900) * 200,
+        stroke: ['black', false],
+        fill: {
+          gradient: 'linear',
+          x0: 0,
+          y0: 0,
+          x1: 1,
+          y1: 0,
+          stops: [
+            { offset: 0, color: 'green' },
+            { offset: 0.5, color: 'orange' },
+            { offset: 1, color: 'red' }
+          ]
+        },
+        connectedType: 'connect',
+        connectedStyle: {
+          fill: 'grey'
+        }
+      })
+    );
+  });
 
   ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
     i += 7;

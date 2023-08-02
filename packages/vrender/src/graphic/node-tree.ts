@@ -179,8 +179,7 @@ export class Node extends EventEmitter<any, any> implements INode {
    */
   insertBefore(newNode: INode, referenceNode: INode | undefined): INode | null {
     if (!referenceNode) {
-      this.appendChild(newNode);
-      return newNode;
+      return this.appendChild(newNode);
     }
     if (this._uid === newNode._uid) {
       return null;
@@ -224,8 +223,7 @@ export class Node extends EventEmitter<any, any> implements INode {
    */
   insertAfter(newNode: INode, referenceNode: INode | undefined): INode | null {
     if (!referenceNode) {
-      this.appendChild(newNode);
-      return newNode;
+      return this.appendChild(newNode);
     }
     if (this._uid === newNode._uid) {
       return null;

@@ -177,7 +177,11 @@ export class Node extends EventEmitter<any, any> implements INode {
    * @param newNode 要插入的节点
    * @param referenceNode 插入到referenceNode之前
    */
-  insertBefore(newNode: INode, referenceNode: INode): INode | null {
+  insertBefore(newNode: INode, referenceNode: INode | undefined): INode | null {
+    if (!referenceNode) {
+      this.appendChild(newNode);
+      return newNode;
+    }
     if (this._uid === newNode._uid) {
       return null;
     }
@@ -218,7 +222,11 @@ export class Node extends EventEmitter<any, any> implements INode {
    * @param newNode 要插入的节点
    * @param referenceNode 插入到referenceNode之后
    */
-  insertAfter(newNode: INode, referenceNode: INode): INode | null {
+  insertAfter(newNode: INode, referenceNode: INode | undefined): INode | null {
+    if (!referenceNode) {
+      this.appendChild(newNode);
+      return newNode;
+    }
     if (this._uid === newNode._uid) {
       return null;
     }

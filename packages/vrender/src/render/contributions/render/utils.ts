@@ -20,8 +20,8 @@ import type {
  * @param fill
  * @returns
  */
-export function runFill(fill: IFillType) {
-  return !!fill;
+export function runFill(fill: IFillType, background?: string | HTMLImageElement | HTMLCanvasElement) {
+  return !!(fill || background);
 }
 /**
  * 是否需要执行stroke逻辑
@@ -44,12 +44,12 @@ export function runStroke(stroke: IStrokeType | IStrokeType[], lineWidth: number
  * @param fillOpacity
  * @returns
  */
-export function fillVisible(opacity: number, fillOpacity: number) {
-  return opacity * fillOpacity > 0;
+export function fillVisible(opacity: number, fillOpacity: number, fill: IFillType) {
+  return fill && opacity * fillOpacity > 0;
 }
 
-export function rectFillVisible(opacity: number, fillOpacity: number, width: number, height: number) {
-  return opacity * fillOpacity > 0 && width > 0 && height > 0;
+export function rectFillVisible(opacity: number, fillOpacity: number, width: number, height: number, fill: IFillType) {
+  return fill && opacity * fillOpacity > 0 && width > 0 && height > 0;
 }
 
 /**
@@ -101,7 +101,7 @@ export function drawPathProxy(
     visible = themeAttributes.visible
   } = graphic.attribute;
   // 不绘制或者透明
-  const fVisible = fillVisible(opacity, fillOpacity);
+  const fVisible = fillVisible(opacity, fillOpacity, fill);
   const sVisible = strokeVisible(opacity, strokeOpacity);
   const doFill = runFill(fill);
   const doStroke = runStroke(stroke, lineWidth);

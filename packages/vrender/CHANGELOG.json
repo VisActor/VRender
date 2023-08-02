@@ -2,6 +2,24 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.6",
+      "tag": "@visactor/vrender_v0.13.6",
+      "date": "Wed, 02 Aug 2023 03:13:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue of arc bounds while outerRadius is smaller than innerRadius"
+          },
+          {
+            "comment": "fix: fix the issue when the segment points is empty"
+          },
+          {
+            "comment": " fix(wrapText): fix wrapText clip caculate error"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.5",
       "tag": "@visactor/vrender_v0.13.5",
       "date": "Thu, 27 Jul 2023 12:27:43 GMT",

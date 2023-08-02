@@ -127,7 +127,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
 
   private renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
-    const { autoRotate } = attribute;
+    const { autoRotate = true } = attribute;
     let symbol;
     if (attribute?.visible) {
       const startAngle = this._startAngle;
@@ -156,7 +156,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         ...position,
         symbolType: symbolType as string,
         size,
-        angle: autoRotate && rotate + refAngle,
+        angle: autoRotate ? rotate + refAngle : 0,
         strokeBoundsBuffer: 0,
         ...style
       });

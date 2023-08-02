@@ -19,7 +19,7 @@ export const page = () => {
           text: 'Mapbox',
           fontWeight: 'bold',
           fontSize: 30,
-          fill: '#3f51b5',
+          fill: '#3f51b5'
         },
         {
           text: '公司成立于2010年，创立目标是为Google Map提供一个',
@@ -28,7 +28,7 @@ export const page = () => {
         {
           text: '替代方案',
           fontStyle: 'italic',
-          
+
           fill: '#3f51b5'
         },
         {
@@ -53,7 +53,7 @@ export const page = () => {
         {
           // "lineHeight": 30,
           text: '。\n',
-          
+
           fill: '#30ff05'
         },
         {
@@ -102,7 +102,7 @@ export const page = () => {
           fontSize: 30,
           textAlign: 'center',
           textDecoration: 'underline',
-          
+
           fill: '#0f51b5'
         },
 
@@ -346,34 +346,34 @@ export const page = () => {
         // {
         //   // lineHeight: 30,
         //   text: '中',
-        //   
+        //
         //   textAlign: 'left'
         // },
         // {
         //   // lineHeight: 30,
         //   text: '文',
-        //   
+        //
         //   textAlign: 'left'
         //   // rotate: -Math.PI / 3,
         // },
         // {
         //   // lineHeight: 30,
         //   text: '字',
-        //   
+        //
         //   textAlign: 'left'
         //   // rotate: Math.PI / 2,
         // },
         // {
         //   // lineHeight: 30,
         //   text: '符',
-        //   
+        //
         //   textAlign: 'left'
         //   // rotate: Math.PI,
         // },
         // {
         //   // lineHeight: 30,
         //   text: 'English',
-        //   
+        //
         //   textAlign: 'left',
         //   // rotate: Math.PI / 2,
         //   direction: 'vertical'
@@ -382,21 +382,21 @@ export const page = () => {
         // {
         //   // lineHeight: 30,
         //   text: 'n',
-        //   
+        //
         //   textAlign: 'left'
         //   // rotate: Math.PI / 3,
         // },
         // {
         //   // lineHeight: 30,
         //   text: 'g',
-        //   
+        //
         //   textAlign: 'left'
         //   // rotate: Math.PI / 2,
         // }
 
         {
           text: '这',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -411,7 +411,7 @@ export const page = () => {
         },
         {
           text: '是',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -426,7 +426,7 @@ export const page = () => {
         },
         {
           text: '一',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -441,7 +441,7 @@ export const page = () => {
         },
         {
           text: '个',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -456,7 +456,7 @@ export const page = () => {
         },
         {
           text: '汉',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -472,7 +472,7 @@ export const page = () => {
         {
           text: '【',
           direction: 'vertical',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -487,7 +487,7 @@ export const page = () => {
         },
         {
           text: '放',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -502,7 +502,7 @@ export const page = () => {
         },
         {
           text: '大',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',
@@ -516,9 +516,9 @@ export const page = () => {
           stroke: 'black'
         },
         {
-          text: 'a0',
+          text: 'a0这是什么',
           direction: 'vertical',
-          
+
           // stroke: false,
           fontFamily:
             'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol',

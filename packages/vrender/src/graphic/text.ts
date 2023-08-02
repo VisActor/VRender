@@ -7,6 +7,7 @@ import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
+import { TextDirection, verticalLayout } from './tools';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -117,6 +118,19 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateSingallineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { direction = textTheme.direction } = this.attribute;
+
+    return direction === 'horizontal'
+      ? this.updateHorizontalSingallineAABBBounds(text)
+      : this.updateVerticalSingallineAABBBounds(text);
+  }
+
+  /**
+   * 计算单行文字的bounds，可以缓存长度以及截取的文字
+   * @param text
+   */
+  updateHorizontalSingallineAABBBounds(text: number | string): AABBBounds {
+    const textTheme = getTheme(this).text;
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
@@ -173,6 +187,97 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const dx = textDrawOffsetX(textAlign, width);
     const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
     this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
+
+    if (stroke) {
+      this._AABBBounds.expand(lineWidth / 2);
+    }
+
+    return this._AABBBounds;
+  }
+
+  /**
+   * 计算垂直布局的单行文字的bounds，可以缓存长度以及截取的文字
+   * @param text
+   */
+  updateVerticalSingallineAABBBounds(text: number | string): AABBBounds {
+    const textTheme = getTheme(this).text;
+    const textMeasure = application.graphicUtil.textMeasure;
+    let width: number;
+    let str: string;
+    const buf = 2;
+    const attribute = this.attribute;
+    const {
+      maxLineWidth = textTheme.maxLineWidth,
+      ellipsis = textTheme.ellipsis,
+      textAlign = textTheme.textAlign,
+      textBaseline = textTheme.textBaseline,
+      fontSize = textTheme.fontSize,
+      fontWeight = textTheme.fontWeight,
+      stroke = textTheme.stroke,
+      lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
+      lineWidth = textTheme.lineWidth
+    } = attribute;
+    if (!this.shouldUpdateShape() && this.cache) {
+      width = this.cache.clipedWidth;
+      const dx = textDrawOffsetX(textAlign, width);
+      const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
+      this._AABBBounds.set(dy, dx, dy + lineHeight, dx + width);
+      if (stroke) {
+        this._AABBBounds.expand(lineWidth / 2);
+      }
+      return this._AABBBounds;
+    }
+
+    let verticalList: { text: string; width?: number; direction: TextDirection }[][] = [
+      verticalLayout(text.toString())
+    ];
+    if (Number.isFinite(maxLineWidth)) {
+      if (ellipsis) {
+        const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
+        const data = textMeasure.clipTextWithSuffixVertical(
+          verticalList[0],
+          { fontSize, fontWeight },
+          maxLineWidth,
+          strEllipsis
+        );
+        verticalList = [data.verticalList];
+        width = data.width;
+
+        // const data = textMeasure.clipTextWithSuffix(
+        //   text.toString(),
+        //   { fontSize, fontWeight },
+        //   maxLineWidth,
+        //   strEllipsis
+        // );
+        // str = data.str;
+        // width = data.width;
+      } else {
+        const data = textMeasure.clipTextVertical(verticalList[0], { fontSize, fontWeight }, maxLineWidth);
+        verticalList = [data.verticalList];
+        width = data.width;
+      }
+      this.cache.verticalList = verticalList;
+      this.cache.clipedWidth = width;
+      // todo 计算原本的宽度
+    } else {
+      width = 0;
+      verticalList[0].forEach(t => {
+        const w =
+          t.direction === TextDirection.HORIZONTAL
+            ? fontSize
+            : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight });
+
+        width += w;
+        t.width = w;
+      });
+      this.cache.verticalList = verticalList;
+      this.cache.clipedWidth = width;
+    }
+    this.clearUpdateShapeTag();
+
+    const dx = textDrawOffsetX(textAlign, width);
+    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
+    this._AABBBounds.set(dy, dx, dy + lineHeight, dx + width);
 
     if (stroke) {
       this._AABBBounds.expand(lineWidth / 2);

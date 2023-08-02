@@ -55,14 +55,18 @@ export const page = () => {
     y: 200,
     fill: colorPools[5],
     // text: ['Tffg'],
-    text: 'Tffgggaaaa',
+    text: '这是垂aaa直布局的文字(abc】',
+    maxLineWidth: 200,
+    // ellipsis: '',
+    direction: 'vertical',
     fontSize: 20,
     stroke: 'green',
-    lineWidth: 100,
+    // lineWidth: 100,
     // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-    textBaseline: 'alphabetic'
+    textBaseline: 'top',
+    textAlign: 'left'
     // scaleX: 2,
     // scaleY: 2
   });

@@ -19,6 +19,10 @@ export type SymbolAttributes = {
    */
   size?: number;
   /**
+   * 自动旋转，沿着线的方向，默认 true
+   */
+  autoRotate?: boolean;
+  /**
    * symbol 相对line平行方向上的偏移
    */
   refX?: number;

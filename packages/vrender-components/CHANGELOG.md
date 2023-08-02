@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 28 Jul 2023 07:17:04 GMT and should not be manually modified.
+This log was last generated on Wed, 02 Aug 2023 03:13:00 GMT and should not be manually modified.
+
+## 0.13.7
+Wed, 02 Aug 2023 03:13:00 GMT
+
+### Patches
+
+- feat(chore): trigger publish
+- fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300
 
 ## 0.13.6
 Fri, 28 Jul 2023 07:17:04 GMT

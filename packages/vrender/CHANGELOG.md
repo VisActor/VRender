@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 27 Jul 2023 12:27:43 GMT and should not be manually modified.
+This log was last generated on Wed, 02 Aug 2023 03:13:00 GMT and should not be manually modified.
+
+## 0.13.6
+Wed, 02 Aug 2023 03:13:00 GMT
+
+### Patches
+
+- fix: fix the issue of arc bounds while outerRadius is smaller than innerRadius
+- fix: fix the issue when the segment points is empty
+-  fix(wrapText): fix wrapText clip caculate error
 
 ## 0.13.5
 Thu, 27 Jul 2023 12:27:43 GMT

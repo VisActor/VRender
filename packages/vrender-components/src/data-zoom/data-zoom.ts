@@ -89,7 +89,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       previewCallbackX,
       previewCallbackY,
       previewCallbackX1,
-      previewCallbackY1
+      previewCallbackY1,
+      updateStateCallback
     } = this.attribute as DataZoomAttributes;
     const { width, height } = size;
     start && (this.state.start = start);
@@ -110,6 +111,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     isFunction(previewCallbackY) && (this._previewCallbackY = previewCallbackY);
     isFunction(previewCallbackX1) && (this._previewCallbackX1 = previewCallbackX1);
     isFunction(previewCallbackY1) && (this._previewCallbackY1 = previewCallbackY1);
+    isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
   }
 
   protected bindEvents(): void {
@@ -959,6 +961,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setAttributes({ start, end });
+        this._updateStateCallback && this._updateStateCallback(start, end);
       }
     }
   }

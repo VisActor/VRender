@@ -2,6 +2,46 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.7",
+      "tag": "@visactor/vrender-components_v0.13.7",
+      "date": "Wed, 02 Aug 2023 03:13:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(marker): add formatMethod of label"
+          },
+          {
+            "comment": "fix(dataZoom): updateStateCallback don not effect when setStartAndEnd"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "feat(chore): trigger publish"
+          },
+          {
+            "comment": "fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.5` to `0.13.6`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.6",
+      "tag": "@visactor/vrender-components_v0.13.6",
+      "date": "Fri, 28 Jul 2023 07:17:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Merge pull request #225 from VisActor/sync-0.13.5\n\nSync 0.13.5\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.5",
       "tag": "@visactor/vrender-components_v0.13.5",
       "date": "Thu, 27 Jul 2023 12:27:43 GMT",

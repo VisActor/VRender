@@ -78,7 +78,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const lineHeight = text.attribute.lineHeight ?? fontSize;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);

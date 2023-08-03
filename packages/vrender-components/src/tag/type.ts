@@ -1,11 +1,11 @@
-import {
+import type {
   ITextGraphicAttribute,
   ISymbolGraphicAttribute,
   IGroupGraphicAttribute,
   IRectGraphicAttribute
 } from '@visactor/vrender';
-import { Padding, State } from '../core/type';
-import { BackgroundAttributes } from '../interface';
+import type { Padding, State } from '../core/type';
+import type { BackgroundAttributes } from '../interface';
 
 type StateStyle = {
   /**
@@ -54,6 +54,7 @@ export type TagAttributes = {
   maxWidth?: number;
   visible?: boolean;
   state?: StateStyle;
+  formatMethod?: (text: string | number | string[] | number[]) => string;
 } & Omit<IGroupGraphicAttribute, 'background'>;
 
 export type TagShapeAttributes = {

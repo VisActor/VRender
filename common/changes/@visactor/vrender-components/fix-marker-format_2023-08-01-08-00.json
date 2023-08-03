@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "chore: trigger publish alpha version",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

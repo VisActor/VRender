@@ -34,10 +34,7 @@ export function run() {
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
       textStyle: {
-        text: 'mark point label text',
-        formatMethod: text => {
-          return text + '格式化';
-        }
+        text: 'mark point label text'
       },
       richTextStyle: {
         textConfig: [

@@ -29,10 +29,7 @@ export function run() {
       autoRotate: guiObject.labelAutoRotate,
       refX: guiObject.labelRefX,
       refY: guiObject.labelRefY,
-      refAngle: degreeToRadian(guiObject.labelRefAngle),
-      formatMethod: text => {
-        return text + '格式化';
-      }
+      refAngle: degreeToRadian(guiObject.labelRefAngle)
     }
   };
   const markLine = new MarkLine({

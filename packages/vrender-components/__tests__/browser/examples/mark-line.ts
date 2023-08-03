@@ -17,9 +17,11 @@ export function run() {
 
   const styleAttr = {
     endSymbol: {
-      symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
+      //  symbolType: 'triangleLeft',
+      // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
       size: 10,
-      refAngle: degreeToRadian(-90)
+      autoRotate: false
+      // refAngle: degreeToRadian(-90)
     },
     label: {
       text: '平均值: 17.7',
@@ -27,10 +29,7 @@ export function run() {
       autoRotate: guiObject.labelAutoRotate,
       refX: guiObject.labelRefX,
       refY: guiObject.labelRefY,
-      refAngle: degreeToRadian(guiObject.labelRefAngle),
-      formatMethod: text => {
-        return text + '格式化';
-      }
+      refAngle: degreeToRadian(guiObject.labelRefAngle)
     }
   };
   const markLine = new MarkLine({

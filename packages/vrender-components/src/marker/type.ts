@@ -64,10 +64,6 @@ export interface IMarkLabel extends Omit<TagAttributes, 'x' | 'y' | 'panel'> {
    * 标签的背景面板配置
    */
   panel?: IMarkBackgroundAttributes;
-  /**
-   * 标签自定义格式
-   */
-  formatMethod?: (text: string | number | string[] | number[]) => string;
 }
 
 export interface IMarkRef {

@@ -54,7 +54,6 @@ export type TagAttributes = {
   maxWidth?: number;
   visible?: boolean;
   state?: StateStyle;
-  formatMethod?: (text: string | number | string[] | number[]) => string;
 } & Omit<IGroupGraphicAttribute, 'background'>;
 
 export type TagShapeAttributes = {

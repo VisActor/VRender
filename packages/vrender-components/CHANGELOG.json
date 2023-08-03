@@ -2,6 +2,38 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.8",
+      "tag": "@visactor/vrender-components_v0.13.8",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat(component): label component support custom layout and dataFilter"
+          },
+          {
+            "comment": "chore: trigger publish alpha version"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          },
+          {
+            "comment": "fix(marker): segement support autoRotate setting"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.6` to `0.13.7`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.7",
       "tag": "@visactor/vrender-components_v0.13.7",
       "date": "Wed, 02 Aug 2023 03:13:00 GMT",

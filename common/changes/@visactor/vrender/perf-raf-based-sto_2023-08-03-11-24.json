@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "perf: enhance the effect of requestAnimationFrame in miniapp",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

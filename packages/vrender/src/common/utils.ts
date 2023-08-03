@@ -352,7 +352,7 @@ export class RafBasedSTO {
       this.durations.shift();
     }
     // 最多60fps
-    this.timeout = Math.min(this.durations.reduce((a, b) => a + b, 0) / this.durations.length, 1000 / 60);
+    this.timeout = Math.max(this.durations.reduce((a, b) => a + b, 0) / this.durations.length, 1000 / 60);
   }
 }
 

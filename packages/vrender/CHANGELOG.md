@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 02 Aug 2023 03:13:00 GMT and should not be manually modified.
+This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+
+## 0.13.7
+Thu, 03 Aug 2023 10:04:34 GMT
+
+### Patches
+
+- fix(marker): segement support autoRotate setting
 
 ## 0.13.6
 Wed, 02 Aug 2023 03:13:00 GMT

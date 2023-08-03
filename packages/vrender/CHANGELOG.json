@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.7",
+      "tag": "@visactor/vrender_v0.13.7",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix(marker): segement support autoRotate setting"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.6",
       "tag": "@visactor/vrender_v0.13.6",
       "date": "Wed, 02 Aug 2023 03:13:00 GMT",

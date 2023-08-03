@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 02 Aug 2023 03:13:00 GMT and should not be manually modified.
+This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+
+## 0.13.8
+Thu, 03 Aug 2023 10:04:34 GMT
+
+### Patches
+
+- feat(component): label component support custom layout and dataFilter
+- chore: trigger publish alpha version
+- fix(marker): formatMethod logic should not in vrender
+- fix(marker): formatMethod logic should not in vrender
+- fix(marker): segement support autoRotate setting
+- fix(marker): formatMethod logic should not in vrender
 
 ## 0.13.7
 Wed, 02 Aug 2023 03:13:00 GMT

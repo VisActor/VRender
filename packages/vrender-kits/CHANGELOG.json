@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.12.11",
+      "tag": "@visactor/vrender-kits_v0.12.11",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.6` to `0.13.7`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.10",
       "tag": "@visactor/vrender-kits_v0.12.10",
       "date": "Wed, 02 Aug 2023 03:13:00 GMT",

@@ -4,11 +4,11 @@
 import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor } from '@visactor/vrender';
 import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty, isValid, isString } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert } from '../util/labelSmartInvert';
-import { traverseGroup } from '../util';
+import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } from './overlap';
@@ -172,7 +172,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   }
 
   private _prepare() {
-    const baseMarks = this.getBaseMarks();
+    const baseMarks = getMarksByName(this.getRootNode() as IGroup, this.attribute.baseMarkGroupName);
     const currentBaseMarks: IGraphic[] = [];
     baseMarks.forEach(mark => {
       if ((mark as any).releaseStatus !== 'willRelease') {
@@ -261,14 +261,28 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       return labels;
     }
 
-    const { avoidBaseMark, strategy = [], hideOnHit = true, clampForce = true } = option;
+    const { avoidBaseMark, strategy = [], hideOnHit = true, clampForce = true, avoidMarks = [] } = option;
     const bmpTool = this._bmpTool || bitmapTool(size.width, size.height);
     const bitmap = this._bitmap || bmpTool.bitmap();
     const checkBounds = strategy.some(s => s.type === 'bound');
 
+    // 躲避关联的基础图元
     if (avoidBaseMark) {
       this._baseMarks?.forEach(mark => {
         mark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, mark.AABBBounds, true));
+      });
+    }
+
+    // 躲避指定图元
+    if (avoidMarks.length > 0) {
+      avoidMarks.forEach(avoid => {
+        if (isString(avoid)) {
+          getNoneGroupMarksByName(this.getRootNode() as IGroup, avoid).forEach(avoidMark => {
+            avoidMark.AABBBounds && bitmap.setRange(boundToRange(bmpTool, avoidMark.AABBBounds, true));
+          });
+        } else if (avoid.AABBBounds) {
+          bitmap.setRange(boundToRange(bmpTool, avoid.AABBBounds, true));
+        }
       });
     }
 
@@ -316,7 +330,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       // 尝试向内挤压
-      if (clampForce) {
+      if (!hasPlace && clampForce) {
         const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
         if (
           !(dx === 0 && dy === 0) &&
@@ -342,14 +356,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
 
     return result;
-  }
-
-  protected getBaseMarks() {
-    const baseMarkGroup = this.getBaseMarkGroup() as IGroup;
-    if (!baseMarkGroup) {
-      return;
-    }
-    return baseMarkGroup.getChildren() as IGraphic[];
   }
 
   protected getBaseMarkGroup() {

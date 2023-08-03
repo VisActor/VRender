@@ -55,7 +55,7 @@ export const page = () => {
     y: 200,
     fill: colorPools[5],
     // text: ['Tffg'],
-    text: '这是垂aaa直布局的文字(abc】',
+    text: ['这是垂aaa直布局的文字(abc】', '这是垂ccc直布局的文字(abc】'],
     maxLineWidth: 200,
     // ellipsis: '',
     direction: 'vertical',
@@ -65,8 +65,8 @@ export const page = () => {
     // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-    textBaseline: 'top',
-    textAlign: 'left'
+    textBaseline: 'middle',
+    textAlign: 'center'
     // scaleX: 2,
     // scaleY: 2
   });

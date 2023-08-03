@@ -21,6 +21,7 @@ import { ContributionProvider } from '../../../common/contribution-provider';
 import { TextRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
+import { max } from '@visactor/vutils';
 
 @injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
@@ -134,22 +135,26 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     context.setShadowStyle && context.setShadowStyle(text, text.attribute, textAttribute);
 
     transform3dMatrixToContextMatrix && this.transformUseContext2d(text, textAttribute, z, context);
-    if (Array.isArray(str)) {
-      context.setTextStyleWithoutAlignBaseline(text.attribute, textAttribute, z);
-      const { multilineLayout } = text;
-      if (!multilineLayout) {
-        context.highPerformanceRestore();
-        return;
-      } // 如果不存在的话，需要render层自行布局
-      const { xOffset, yOffset } = multilineLayout.bbox;
+
+    const drawText = (t: string, offsetX: number, offsetY: number, direction: number) => {
+      let _x = x + offsetX;
+      const _y = y + offsetY;
+      if (direction) {
+        context.highPerformanceSave();
+        _x += fontSize;
+        const matrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
+        // matrix.translate(fontSize, 0);
+        matrix.rotateByCenter(Math.PI / 2, _x, _y);
+        context.transformFromMatrix(matrix, true);
+        matrixAllocate.free(matrix);
+      }
+
       if (doStroke) {
         if (strokeCb) {
           strokeCb(context, text.attribute, textAttribute);
         } else if (sVisible) {
           context.setStrokeStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-          multilineLayout.lines.forEach(line => {
-            context.strokeText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
-          });
+          context.strokeText(t, _x, _y, z);
         }
       }
       if (doFill) {
@@ -157,43 +162,38 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
           fillCb(context, text.attribute, textAttribute);
         } else if (fVisible) {
           context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-          multilineLayout.lines.forEach(line => {
-            context.fillText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
-            this.drawMultiUnderLine(
-              underline,
-              lineThrough,
-              text,
-              (line.leftOffset || 0) + x, // 中下划线都是从文字左侧开始，因此不需要+xOffset
-              (line.topOffset || 0) + yOffset + y,
-              z,
-              line.width,
-              textAttribute,
-              context
-            );
-          });
+          context.fillText(t, _x, _y, z);
+          this.drawUnderLine(underline, lineThrough, text, _x, _y, z, textAttribute, context);
         }
       }
-    } else {
-      const cache = text.cache;
-      const drawText = (t: string, offsetX: number, offsetY: number, direction: number) => {
-        let _x = x + offsetX;
-        const _y = y + offsetY;
-        if (direction) {
-          context.highPerformanceSave();
-          _x += fontSize;
-          const matrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-          // matrix.translate(fontSize, 0);
-          matrix.rotateByCenter(Math.PI / 2, _x, _y);
-          context.transformFromMatrix(matrix, true);
-          matrixAllocate.free(matrix);
-        }
 
+      if (direction) {
+        context.highPerformanceRestore();
+        context.setTransformForCurrent();
+      }
+    };
+    if (Array.isArray(str)) {
+      context.setTextStyleWithoutAlignBaseline(text.attribute, textAttribute, z);
+      if (direction === 'horizontal') {
+        const { multilineLayout } = text;
+        if (!multilineLayout) {
+          context.highPerformanceRestore();
+          return;
+        } // 如果不存在的话，需要render层自行布局
+        const { xOffset, yOffset } = multilineLayout.bbox;
         if (doStroke) {
           if (strokeCb) {
             strokeCb(context, text.attribute, textAttribute);
           } else if (sVisible) {
             context.setStrokeStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-            context.strokeText(t, _x, _y, z);
+            multilineLayout.lines.forEach(line => {
+              context.strokeText(
+                line.str,
+                (line.leftOffset || 0) + xOffset + x,
+                (line.topOffset || 0) + yOffset + y,
+                z
+              );
+            });
           }
         }
         if (doFill) {
@@ -201,16 +201,63 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
             fillCb(context, text.attribute, textAttribute);
           } else if (fVisible) {
             context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
-            context.fillText(t, _x, _y, z);
-            this.drawUnderLine(underline, lineThrough, text, _x, _y, z, textAttribute, context);
+            multilineLayout.lines.forEach(line => {
+              context.fillText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
+              this.drawMultiUnderLine(
+                underline,
+                lineThrough,
+                text,
+                (line.leftOffset || 0) + x, // 中下划线都是从文字左侧开始，因此不需要+xOffset
+                (line.topOffset || 0) + yOffset + y,
+                z,
+                line.width,
+                textAttribute,
+                context
+              );
+            });
           }
         }
-
-        if (direction) {
-          context.highPerformanceRestore();
-          context.setTransformForCurrent();
+      } else {
+        const cache = text.cache;
+        const { verticalList } = cache;
+        context.textAlign = 'left';
+        context.textBaseline = 'top';
+        const totalHeight = lineHeight * verticalList.length;
+        let totalW = 0;
+        verticalList.forEach(verticalData => {
+          const _w = verticalData.reduce((a, b) => a + (b.width || 0), 0);
+          totalW = max(_w, totalW);
+        });
+        let offsetY = 0;
+        let offsetX = 0;
+        if (textBaseline === 'bottom') {
+          offsetX = -totalHeight;
+        } else if (textBaseline === 'middle') {
+          offsetX = -totalHeight / 2;
         }
-      };
+        if (textAlign === 'center') {
+          offsetY -= totalW / 2;
+        } else if (textAlign === 'right') {
+          offsetY -= totalW;
+        }
+        verticalList.forEach((verticalData, i) => {
+          const currentW = verticalData.reduce((a, b) => a + (b.width || 0), 0);
+          const dw = totalW - currentW;
+          let currentOffsetY = offsetY;
+          if (textAlign === 'center') {
+            currentOffsetY += dw / 2;
+          } else if (textAlign === 'right') {
+            currentOffsetY += dw;
+          }
+          verticalData.forEach(item => {
+            const { text, width, direction } = item;
+            drawText(text, totalHeight - (i + 1) * lineHeight + offsetX, currentOffsetY, direction);
+            currentOffsetY += width;
+          });
+        });
+      }
+    } else {
+      const cache = text.cache;
       if (direction === 'horizontal') {
         context.setTextStyle(text.attribute, textAttribute, z);
         const t = text.clipedText as string;

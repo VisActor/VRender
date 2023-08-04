@@ -154,6 +154,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       connectedY = connectedY ?? defaultAttribute.connectedY;
       connectedStyle = connectedStyle ?? defaultAttribute.connectedStyle;
     }
+    // 如果有非法值就是none
+    if (connectedType !== 'connect' && connectedType !== 'zero') {
+      connectedType = 'none';
+    }
     if (connectedType !== 'none') {
       context.beginPath();
       drawSegments(context.camera ? context : context.nativeContext, cache, clipRange, clipRangeByDimension, {

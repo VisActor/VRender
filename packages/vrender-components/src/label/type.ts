@@ -1,4 +1,12 @@
-import type { EasingType, IGraphic, IGroupGraphicAttribute, ITextGraphicAttribute, Text } from '@visactor/vrender';
+import type {
+  EasingType,
+  IGraphic,
+  IGroupGraphicAttribute,
+  ITextGraphicAttribute,
+  Text,
+  TextAlignType,
+  TextBaselineType
+} from '@visactor/vrender';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -253,11 +261,11 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签横向点对齐
    */
-  textAlign?: string;
+  textAlign?: TextAlignType;
   /**
    * 标签纵向点对齐
    */
-  textBaseline?: string;
+  textBaseline?: TextBaselineType;
   /**
    * 扇区间标签的间隔
    * @default 6

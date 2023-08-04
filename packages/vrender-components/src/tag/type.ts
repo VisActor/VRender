@@ -1,11 +1,11 @@
-import {
+import type {
   ITextGraphicAttribute,
   ISymbolGraphicAttribute,
   IGroupGraphicAttribute,
   IRectGraphicAttribute
 } from '@visactor/vrender';
-import { Padding, State } from '../core/type';
-import { BackgroundAttributes } from '../interface';
+import type { Padding, State } from '../core/type';
+import type { BackgroundAttributes } from '../interface';
 
 type StateStyle = {
   /**

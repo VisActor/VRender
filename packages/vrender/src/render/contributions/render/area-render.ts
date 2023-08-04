@@ -462,6 +462,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       return false;
     }
 
+    if (!cache) {
+      return;
+    }
     context.beginPath();
 
     const ret: boolean = false;

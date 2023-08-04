@@ -101,6 +101,9 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
+    if (!cache) {
+      return;
+    }
     context.beginPath();
 
     const z = this.z ?? 0;

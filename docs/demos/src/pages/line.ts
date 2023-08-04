@@ -44,7 +44,7 @@ export const page = () => {
         x: ((i * 300) % 900) + 100,
         y: Math.floor((i * 300) / 900) * 200,
         stroke: 'red',
-        connectedType: 'zero',
+        connectedType: 'connected',
         connectedStyle: {
           stroke: 'green'
         },

@@ -450,6 +450,11 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
         connectedStyle = connectedStyle ?? defaultAttribute.connectedStyle;
       }
 
+      // 如果有非法值就是none
+      if (connectedType !== 'connect' && connectedType !== 'zero') {
+        connectedType = 'none';
+      }
+
       if (isArray(defaultAttribute)) {
         defaultAttribute.forEach(i => da.push(i));
       } else {

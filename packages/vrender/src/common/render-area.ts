@@ -198,13 +198,17 @@ function drawAreaConnectBlock(
     offsetX?: number;
     offsetY?: number;
     offsetZ?: number;
+    mode?: 'none' | 'connect' | 'zero';
+    zeroX?: number;
+    zeroY?: number;
   }
 ) {
   if (topList.length < 2) {
     return;
   }
-  const { offsetX = 0, offsetY = 0, offsetZ = 0 } = params || {};
+  const { offsetX = 0, offsetY = 0, offsetZ = 0, mode } = params || {};
   let curve = topList[0];
+  // mode不支持zero
   path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
   curve = topList[topList.length - 1];
   let end = curve.p3 || curve.p1;

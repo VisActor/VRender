@@ -473,7 +473,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const innerGroupBounds = innerGroup.AABBBounds;
     const innerGroupWidth = innerGroupBounds.width();
     const innerGroupHeight = innerGroupBounds.height();
-    const itemGroupWidth = this._itemWidthByUser || innerGroupWidth + parsedPadding[1] + parsedPadding[3];
+    const itemGroupWidth = isValid(this.attribute.item.width)
+      ? this.attribute.item.width
+      : innerGroupWidth + parsedPadding[1] + parsedPadding[3];
     const itemGroupHeight = this._itemHeightByUser || innerGroupHeight + parsedPadding[0] + parsedPadding[2];
     itemGroup.attribute.width = itemGroupWidth;
     itemGroup.attribute.height = itemGroupHeight;

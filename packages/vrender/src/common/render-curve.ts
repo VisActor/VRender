@@ -51,6 +51,9 @@ export function drawSegments(
   if (drawConnect && mode === 'none') {
     return;
   }
+  if (!segPath) {
+    return;
+  }
   let needMoveTo: boolean = true;
   const { curves } = segPath;
   if (percent >= 1) {

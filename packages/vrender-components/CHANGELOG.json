@@ -2,6 +2,98 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.8",
+      "tag": "@visactor/vrender-components_v0.13.8",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat(component): label component support custom layout and dataFilter"
+          },
+          {
+            "comment": "chore: trigger publish alpha version"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          },
+          {
+            "comment": "fix(marker): segement support autoRotate setting"
+          },
+          {
+            "comment": "fix(marker): formatMethod logic should not in vrender"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.6` to `0.13.7`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.7",
+      "tag": "@visactor/vrender-components_v0.13.7",
+      "date": "Wed, 02 Aug 2023 03:13:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(marker): add formatMethod of label"
+          },
+          {
+            "comment": "fix(dataZoom): updateStateCallback don not effect when setStartAndEnd"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "feat(chore): trigger publish"
+          },
+          {
+            "comment": "fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.5` to `0.13.6`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.6",
+      "tag": "@visactor/vrender-components_v0.13.6",
+      "date": "Fri, 28 Jul 2023 07:17:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Merge pull request #225 from VisActor/sync-0.13.5\n\nSync 0.13.5\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.5",
+      "tag": "@visactor/vrender-components_v0.13.5",
+      "date": "Thu, 27 Jul 2023 12:27:43 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat(component): label component support custom layout and dataFilter"
+          },
+          {
+            "comment": "fix: fix the issue of using interactive layer in only on canvas env"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.4` to `0.13.5`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.4",
       "tag": "@visactor/vrender-components_v0.13.4",
       "date": "Tue, 25 Jul 2023 13:33:47 GMT",

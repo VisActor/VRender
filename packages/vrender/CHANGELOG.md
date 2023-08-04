@@ -1,6 +1,30 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 25 Jul 2023 13:33:47 GMT and should not be manually modified.
+This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+
+## 0.13.7
+Thu, 03 Aug 2023 10:04:34 GMT
+
+### Patches
+
+- fix(marker): segement support autoRotate setting
+
+## 0.13.6
+Wed, 02 Aug 2023 03:13:00 GMT
+
+### Patches
+
+- fix: fix the issue of arc bounds while outerRadius is smaller than innerRadius
+- fix: fix the issue when the segment points is empty
+-  fix(wrapText): fix wrapText clip caculate error
+
+## 0.13.5
+Thu, 27 Jul 2023 12:27:43 GMT
+
+### Patches
+
+- fix: fix the issue of area stroke with texture
+- fix: fix the issue of using interactive layer in only on canvas env
 
 ## 0.13.4
 Tue, 25 Jul 2023 13:33:47 GMT

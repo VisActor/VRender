@@ -24,13 +24,13 @@ export function run() {
       width: 400,
       height: 30
     },
-    brushSelect: false
-  });
-  dataZoom.setUpdateStateCallback((start, end) => {
-    if (start === 0) {
-      dataZoom.setStartAndEnd(0, 1);
+    brushSelect: false,
+    updateStateCallback: (start, end) => {
+      console.log('setCallback', start, end);
     }
   });
+
+  dataZoom.setStartAndEnd(0, 1);
   dataZoom.setPreviewData(data);
   dataZoom.setPreviewCallbackX(d => d.x);
   dataZoom.setPreviewCallbackY(d => d.y);

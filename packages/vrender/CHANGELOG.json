@@ -2,6 +2,51 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.7",
+      "tag": "@visactor/vrender_v0.13.7",
+      "date": "Thu, 03 Aug 2023 10:04:34 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix(marker): segement support autoRotate setting"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.6",
+      "tag": "@visactor/vrender_v0.13.6",
+      "date": "Wed, 02 Aug 2023 03:13:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue of arc bounds while outerRadius is smaller than innerRadius"
+          },
+          {
+            "comment": "fix: fix the issue when the segment points is empty"
+          },
+          {
+            "comment": " fix(wrapText): fix wrapText clip caculate error"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.13.5",
+      "tag": "@visactor/vrender_v0.13.5",
+      "date": "Thu, 27 Jul 2023 12:27:43 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue of area stroke with texture"
+          },
+          {
+            "comment": "fix: fix the issue of using interactive layer in only on canvas env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.4",
       "tag": "@visactor/vrender_v0.13.4",
       "date": "Tue, 25 Jul 2023 13:33:47 GMT",

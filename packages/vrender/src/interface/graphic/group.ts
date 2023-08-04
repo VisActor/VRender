@@ -10,6 +10,12 @@ export type IGroupAttribute = {
   cornerRadius: number | number[];
   clip: boolean;
   visibleAll: boolean;
+  display?: 'relative' | 'flex';
+  flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
+  flexWrap?: 'nowrap' | 'wrap';
+  justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
+  alignItems?: 'flex-start' | 'flex-end' | 'center';
+  alignContent?: 'flex-start' | 'center' | 'space-between' | 'space-around';
 };
 
 export type IGroupGraphicAttribute = Partial<IGraphicAttribute> & Partial<IGroupAttribute>;

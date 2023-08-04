@@ -109,6 +109,10 @@ export type IFillStyle = {
   fill: IFillType;
 };
 
+export type ILayout = {
+  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+};
+
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
   distance: number | string;
 };

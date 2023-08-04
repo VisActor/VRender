@@ -27,8 +27,13 @@ import type {
   RichTextGlobalAlignType,
   RichTextGlobalBaselineType,
   IRichTextIconGraphicAttribute,
-  IConnectedStyle
+  IConnectedStyle,
+  ILayout
 } from '../interface';
+
+export const DefaultLayout: ILayout = {
+  alignSelf: 'auto'
+};
 
 export const DefaultTransform: ITransform = {
   x: 0,
@@ -108,7 +113,8 @@ export const DefaultStyle: IGraphicStyle = {
   blur: 0,
   cursor: null,
   ...DefaultFillStyle,
-  ...DefaultStrokeStyle
+  ...DefaultStrokeStyle,
+  ...DefaultLayout
 };
 
 export const DefaultConnectAttribute: Required<IConnectedStyle> = {
@@ -190,7 +196,13 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   cornerRadius: 0,
   path: [],
   clip: false,
-  visibleAll: true
+  visibleAll: true,
+  display: 'relative',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  alignContent: 'flex-start'
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {

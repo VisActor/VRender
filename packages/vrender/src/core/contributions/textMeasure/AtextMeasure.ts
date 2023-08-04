@@ -89,6 +89,51 @@ export class ATextMeasure implements ITextMeasure {
     return this.context.measureText(text);
   }
 
+  clipTextVertical(
+    verticalList: { text: string; width?: number; direction: number }[],
+    options: TextOptionsType,
+    width: number
+  ): {
+    verticalList: { text: string; width?: number; direction: number }[];
+    width: number;
+  } {
+    if (verticalList.length === 0) {
+      return { verticalList, width: 0 };
+    }
+    const { fontSize = 12 } = options;
+    // 计算每一个区域的width
+    verticalList.forEach(item => {
+      item.width = item.direction === 0 ? fontSize : this.measureTextWidth(item.text, options);
+    });
+    const out: { text: string; width?: number; direction: number }[] = [];
+    let length = 0;
+    let i = 0;
+    for (; i < verticalList.length; i++) {
+      if (length + verticalList[i].width < width) {
+        length += verticalList[i].width;
+        out.push(verticalList[i]);
+      } else {
+        break;
+      }
+    }
+    if (verticalList[i] && verticalList[i].text.length > 1) {
+      const clipedData = this._clipText(
+        verticalList[i].text,
+        options,
+        width - length,
+        0,
+        verticalList[i].text.length - 1
+      );
+      out.push({ ...verticalList[i], text: clipedData.str });
+      length += clipedData.width;
+    }
+
+    return {
+      verticalList: out,
+      width: length
+    };
+  }
+
   /**
    * 将文本裁剪到width宽
    * @param text
@@ -162,6 +207,46 @@ export class ATextMeasure implements ITextMeasure {
     return { str: subText, width: strWidth };
   }
 
+  clipTextWithSuffixVertical(
+    verticalList: { text: string; width?: number; direction: number }[],
+    options: TextOptionsType,
+    width: number,
+    suffix: string
+  ): {
+    verticalList: { text: string; width?: number; direction: number }[];
+    width: number;
+  } {
+    if (suffix === '') {
+      return this.clipTextVertical(verticalList, options, width);
+    }
+    if (verticalList.length === 0) {
+      return { verticalList, width: 0 };
+    }
+
+    const output = this.clipTextVertical(verticalList, options, width);
+    if (
+      output.verticalList.length === verticalList.length &&
+      output.verticalList[output.verticalList.length - 1].width === verticalList[verticalList.length - 1].width
+    ) {
+      return output;
+    }
+
+    const suffixWidth = this.measureTextWidth(suffix, options);
+    if (suffixWidth > width) {
+      return output;
+    }
+
+    width -= suffixWidth;
+
+    const out = this.clipTextVertical(verticalList, options, width);
+    out.width += suffixWidth;
+    out.verticalList.push({
+      text: suffix,
+      direction: 1,
+      width: suffixWidth
+    });
+    return out;
+  }
   clipTextWithSuffix(
     text: string,
     options: TextOptionsType,

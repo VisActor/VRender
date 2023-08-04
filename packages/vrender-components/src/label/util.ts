@@ -35,6 +35,38 @@ export function circlePoint(x0: number, y0: number, radius: number, radian: numb
   };
 }
 
+/**
+ * 根据角度计算象限
+ * 计算角度所在象限
+ * @param angle
+ * @returns
+ */
+export function computeQuadrant(angle: number): Quadrant {
+  angle = normalizeAngle(angle);
+  if (angle > 0 && angle <= Math.PI / 2) {
+    return 2;
+  } else if (angle > Math.PI / 2 && angle <= Math.PI) {
+    return 3;
+  } else if (angle > Math.PI && angle <= (3 * Math.PI) / 2) {
+    return 4;
+  }
+  return 1;
+}
+
+/**
+ * 角度标准化处理
+ * @param angle 弧度角
+ */
+export function normalizeAngle(angle: number): number {
+  while (angle < 0) {
+    angle += Math.PI * 2;
+  }
+  while (angle >= Math.PI * 2) {
+    angle -= Math.PI * 2;
+  }
+  return angle;
+}
+
 export function isQuadrantLeft(quadrant: Quadrant): boolean {
   return quadrant === 3 || quadrant === 4;
 }

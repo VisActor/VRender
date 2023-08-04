@@ -232,6 +232,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       const baseMark = this._idToGraphic.get(textData.id);
 
       const labelAttribute = {
+        fill: baseMark.attribute.fill,
         ...textStyle,
         ...textData
       };

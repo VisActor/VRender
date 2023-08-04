@@ -52,7 +52,9 @@ export const page = () => {
             { offset: 1, color: 'red' }
           ]
         },
-        connectedType: 'connect',
+        connectedType: 'zero',
+        connectedX: null,
+        connectedY: 100,
         connectedStyle: {
           fill: 'grey'
         }

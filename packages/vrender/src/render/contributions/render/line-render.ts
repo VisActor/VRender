@@ -101,6 +101,9 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
+    if (!cache) {
+      return;
+    }
     context.beginPath();
 
     const z = this.z ?? 0;
@@ -150,6 +153,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       connectedX = connectedX ?? defaultAttribute.connectedX;
       connectedY = connectedY ?? defaultAttribute.connectedY;
       connectedStyle = connectedStyle ?? defaultAttribute.connectedStyle;
+    }
+    // 如果有非法值就是none
+    if (connectedType !== 'connect' && connectedType !== 'zero') {
+      connectedType = 'none';
     }
     if (connectedType !== 'none') {
       context.beginPath();

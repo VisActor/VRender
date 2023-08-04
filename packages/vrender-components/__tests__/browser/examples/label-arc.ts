@@ -400,6 +400,7 @@ function createContent(stage: Stage) {
     //   strategy: 'none'
     // },
 
+    // angle: 0,
     zIndex: 302
   });
 

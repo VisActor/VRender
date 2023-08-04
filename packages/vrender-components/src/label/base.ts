@@ -283,9 +283,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         const labelAttribute = {
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
-          textAlign: basedArc.textAlign,
-          textBaseline: basedArc.textBaseline,
-          angle: basedArc.angle
+          textAlign: this.attribute.textAlign ?? basedArc.textAlign,
+          textBaseline: this.attribute.textBaseline ?? basedArc.textBaseline,
+          angle: this.attribute.angle ?? basedArc.angle
         };
 
         labels[i].setAttributes(labelAttribute);

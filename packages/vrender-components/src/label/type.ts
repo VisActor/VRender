@@ -247,6 +247,18 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
    */
   spaceWidth?: number;
   /**
+   * 标签旋转角度
+   */
+  angle?: number;
+  /**
+   * 标签横向点对齐
+   */
+  textAlign?: string;
+  /**
+   * 标签纵向点对齐
+   */
+  textBaseline?: string;
+  /**
    * 扇区间标签的间隔
    * @default 6
    */

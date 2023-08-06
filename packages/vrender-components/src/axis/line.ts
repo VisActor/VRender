@@ -12,9 +12,10 @@ import {
   isNumberClose,
   isEmpty,
   isFunction,
-  isValidNumber
+  isValidNumber,
+  isValid
 } from '@visactor/vutils';
-import type { IGroup, INode, IText, TextBaselineType } from '@visactor/vrender';
+import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -40,6 +41,7 @@ import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
+import { alignAxisLabels } from '../util/align';
 
 function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
   const points: Point[] = [];
@@ -413,25 +415,28 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     return base;
   }
 
-  protected handleLabelsOverlap(labelShapes: IText[], labelData: AxisItem[], layer: number, layerCount: number): void {
+  protected beforeLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void {
+    return;
+  }
+  protected handleLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void {
     if (isEmpty(labelShapes)) {
       return;
     }
 
-    const { verticalLimitSize, label, title, line, tick, orient } = this.attribute;
-    const labelSpace = label.space ?? 4;
-    let limitLength = verticalLimitSize;
-    let titleHeight = 0;
-    let titleSpacing = 0;
-    const axisLineWidth = line?.visible ? line.style.lineWidth ?? 1 : 0;
-    const tickLength = tick?.visible ? tick.length ?? 4 : 0;
-    if (title?.visible) {
-      titleHeight = measureTextSize(title.text, title.textStyle).height;
-      titleSpacing = title.space;
-    }
-    if (limitLength) {
-      limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
-    }
+    const { verticalLimitSize, label, orient } = this.attribute;
+    const limitLength = this._getAxisLabelLimitLength(verticalLimitSize, layerCount);
 
     const {
       layoutFunc,
@@ -470,5 +475,86 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         });
       }
     }
+  }
+
+  protected afterLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ) {
+    const { verticalLimitSize, orient } = this.attribute;
+
+    // 处理 verticalMinSize，根据 verticalMinSize 调整 labelContainer 的大小
+    const isHorizontal = orient === 'bottom' || orient === 'top';
+    const axisLabelContainerBounds = labelContainer.AABBBounds;
+    let axisLabelContainerSize = isHorizontal ? axisLabelContainerBounds.height() : axisLabelContainerBounds.width();
+    const { verticalMinSize } = this.attribute;
+
+    if (isValidNumber(verticalMinSize) && (!isValidNumber(verticalLimitSize) || verticalMinSize <= verticalLimitSize)) {
+      const minSize = this._getAxisLabelLimitLength(verticalMinSize, layerCount);
+      axisLabelContainerSize = Math.max(axisLabelContainerSize, minSize);
+
+      let x;
+      let y;
+      if (orient === 'left') {
+        x = axisLabelContainerBounds.x2 - axisLabelContainerSize;
+        y = axisLabelContainerBounds.y1;
+      } else if (orient === 'right') {
+        x = axisLabelContainerBounds.x1;
+        y = axisLabelContainerBounds.y1;
+      } else if (orient === 'top') {
+        x = axisLabelContainerBounds.x1;
+        y = axisLabelContainerBounds.y2 - axisLabelContainerSize;
+      } else if (orient === 'bottom') {
+        x = axisLabelContainerBounds.x1;
+        y = axisLabelContainerBounds.y1;
+      }
+      const bgRect = createRect({
+        x,
+        y,
+        width: isHorizontal ? axisLabelContainerBounds.width() : axisLabelContainerSize,
+        height: isHorizontal ? axisLabelContainerSize : axisLabelContainerBounds.height(),
+        pickable: false
+      });
+      bgRect.name = AXIS_ELEMENT_NAME.axisLabelBackground;
+      bgRect.id = this._getNodeId('axis-label-background');
+      labelContainer.insertBefore(bgRect, labelContainer.firstChild);
+    }
+
+    // 处理 align，进行整体的对齐操作
+    if (isValid(this.attribute.label.containerAlign)) {
+      let start;
+      if (orient === 'left') {
+        start = axisLabelContainerBounds.x2;
+      } else if (orient === 'right') {
+        start = axisLabelContainerBounds.x1;
+      } else if (orient === 'top') {
+        start = axisLabelContainerBounds.y2;
+      } else if (orient === 'bottom') {
+        start = axisLabelContainerBounds.y1;
+      }
+
+      alignAxisLabels(labelShapes, start, axisLabelContainerSize, orient, this.attribute.label.containerAlign);
+    }
+  }
+
+  private _getAxisLabelLimitLength(limitSize: number, layerCount: number): number {
+    const { label, title, line, tick } = this.attribute;
+    const labelSpace = label.space ?? 4;
+    let limitLength = limitSize;
+    let titleHeight = 0;
+    let titleSpacing = 0;
+    const axisLineWidth = line?.visible ? line.style.lineWidth ?? 1 : 0;
+    const tickLength = tick?.visible ? tick.length ?? 4 : 0;
+    if (title?.visible) {
+      titleHeight = measureTextSize(title.text, title.textStyle).height;
+      titleSpacing = title.space;
+    }
+    if (limitLength) {
+      limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
+    }
+    return limitLength;
   }
 }

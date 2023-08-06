@@ -335,8 +335,32 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     return base;
   }
 
-  protected handleLabelsOverlap(labelShapes: IText[], labelData: AxisItem[], layer: number, layerCount: number): void {
+  protected beforeLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void {
+    return;
+  }
+  protected handleLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void {
     // 暂不支持
+    return;
+  }
+  protected afterLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void {
     return;
   }
 }

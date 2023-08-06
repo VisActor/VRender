@@ -133,11 +133,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    */
   verticalFactor?: number;
   /**
-   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
-   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
-   */
-  verticalLimitSize?: number;
-  /**
    * 坐标轴的显示位置，用于文本的防重叠处理
    */
   orient?: string;
@@ -259,6 +254,31 @@ export interface LineAxisAttributes extends AxisBaseAttributes {
    * 网格线配置
    */
   grid?: LineAxisGridAttributes;
+  /**
+   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
+   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
+   */
+  verticalLimitSize?: number;
+  /**
+   * 坐标轴垂直方向的最小空间，如果小于该值，则以该值占据显示空间。
+   * 如果同时声明了 verticalLimitSize，请保证 verticalMinSize <= verticalLimitSize，否则会以 verticalLimitSize 为准。
+   */
+  verticalMinSize?: number;
+  /**
+   * 轴标签配置
+   */
+  label?: LabelAttributes & {
+    /**
+     * label 相对于容器整体的对齐方式
+     * - `top`：整体向上对齐（垂直方向）
+     * - `middle`：整体居中对齐（垂直方向）
+     * - `bottom`：整体向下对齐（垂直方向）
+     * - `left`：整体向左对齐（水平方向）
+     * - `center`：整体居中对齐（水平方向）
+     * - `right`：整体向右对齐（水平方向）
+     */
+    containerAlign?: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle';
+  };
 }
 
 export interface CircleAxisGridAttributes extends Omit<LineGridAttributes, 'items'> {

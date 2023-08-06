@@ -75,9 +75,24 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected abstract getTitleAttribute(): TagAttributes;
   protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
+  protected abstract beforeLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
   protected abstract handleLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
+  protected abstract afterLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
     layer: number,
     layerCount: number
   ): void;
@@ -209,9 +224,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         items.forEach((axisItems: AxisItem[], layer: number) => {
           const layerLabelGroup = this.renderLabels(labelGroup, axisItems, layer);
 
-          // handle overlap
           const labels = layerLabelGroup.getChildren() as IText[];
-          this.handleLabelsOverlap(labels, axisItems, layer, items.length);
+          this.beforeLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          // handle overlap
+          this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
         });
       }
 
@@ -246,7 +263,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
   }
-
   protected renderTicks(container: IGroup) {
     const tickLineItems = this.getTickLineItems();
 

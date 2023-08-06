@@ -11,7 +11,8 @@ export enum AXIS_ELEMENT_NAME {
   grid = 'axis-grid',
   gridRegion = 'axis-grid-region',
   line = 'axis-line',
-  background = 'axis-background'
+  background = 'axis-background',
+  axisLabelBackground = 'axis-label-background'
 }
 
 export enum AxisStateValue {

@@ -46,6 +46,7 @@ export type ITextAttribute = {
   lineThrough: number;
   scaleIn3d: boolean;
   direction: 'horizontal' | 'vertical';
+  wordBreak: 'break-word' | 'break-all';
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

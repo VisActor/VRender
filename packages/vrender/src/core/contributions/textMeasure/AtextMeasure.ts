@@ -3,6 +3,7 @@ import type { IGraphicUtil } from '../../../interface/core';
 import type { ICanvas, IContext2d, EnvType } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';
 import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
+import { testLetter } from '../../../graphic/richtext/utils';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {
@@ -92,7 +93,8 @@ export class ATextMeasure implements ITextMeasure {
   clipTextVertical(
     verticalList: { text: string; width?: number; direction: number }[],
     options: TextOptionsType,
-    width: number
+    width: number,
+    wordBreak: boolean
   ): {
     verticalList: { text: string; width?: number; direction: number }[];
     width: number;
@@ -124,7 +126,24 @@ export class ATextMeasure implements ITextMeasure {
         0,
         verticalList[i].text.length - 1
       );
-      out.push({ ...verticalList[i], text: clipedData.str });
+      if (wordBreak && clipedData.str !== verticalList[i].text) {
+        let text = '';
+        let length = 0;
+        for (let j = 0; j < i; j++) {
+          const item = verticalList[j];
+          text += item.text;
+          length += item.text.length;
+        }
+        text += verticalList[i].text;
+        const totalLength = length + clipedData.str.length;
+        let index = testLetter(text, totalLength);
+        index = index - length;
+        if (index !== clipedData.str.length - 1) {
+          clipedData.str = clipedData.str.substring(0, index);
+          clipedData.width = this.measureTextWidth(clipedData.str, options);
+        }
+      }
+      out.push({ ...verticalList[i], text: clipedData.str, width: clipedData.width });
       length += clipedData.width;
     }
 
@@ -143,7 +162,8 @@ export class ATextMeasure implements ITextMeasure {
   clipText(
     text: string,
     options: TextOptionsType,
-    width: number
+    width: number,
+    wordBreak: boolean
   ): {
     str: string;
     width: number;
@@ -159,7 +179,16 @@ export class ATextMeasure implements ITextMeasure {
     if (length > width) {
       return { str: '', width: 0 };
     }
-    return this._clipText(text, options, width, 0, text.length - 1);
+    const data = this._clipText(text, options, width, 0, text.length - 1);
+    // 如果需要文字截断
+    if (wordBreak && data.str !== text) {
+      const index = testLetter(text, data.str.length);
+      if (index !== data.str.length) {
+        data.str = text.substring(0, index);
+        data.width = this.measureTextWidth(data.str, options);
+      }
+    }
+    return data;
   }
 
   // 二分法找到最佳宽
@@ -211,19 +240,20 @@ export class ATextMeasure implements ITextMeasure {
     verticalList: { text: string; width?: number; direction: number }[],
     options: TextOptionsType,
     width: number,
-    suffix: string
+    suffix: string,
+    wordBreak: boolean
   ): {
     verticalList: { text: string; width?: number; direction: number }[];
     width: number;
   } {
     if (suffix === '') {
-      return this.clipTextVertical(verticalList, options, width);
+      return this.clipTextVertical(verticalList, options, width, wordBreak);
     }
     if (verticalList.length === 0) {
       return { verticalList, width: 0 };
     }
 
-    const output = this.clipTextVertical(verticalList, options, width);
+    const output = this.clipTextVertical(verticalList, options, width, wordBreak);
     if (
       output.verticalList.length === verticalList.length &&
       output.verticalList[output.verticalList.length - 1].width === verticalList[verticalList.length - 1].width
@@ -238,7 +268,7 @@ export class ATextMeasure implements ITextMeasure {
 
     width -= suffixWidth;
 
-    const out = this.clipTextVertical(verticalList, options, width);
+    const out = this.clipTextVertical(verticalList, options, width, wordBreak);
     out.width += suffixWidth;
     out.verticalList.push({
       text: suffix,
@@ -251,13 +281,14 @@ export class ATextMeasure implements ITextMeasure {
     text: string,
     options: TextOptionsType,
     width: number,
-    suffix: string
+    suffix: string,
+    wordBreak: boolean
   ): {
     str: string;
     width: number;
   } {
     if (suffix === '') {
-      return this.clipText(text, options, width);
+      return this.clipText(text, options, width, wordBreak);
     }
     if (text.length === 0) {
       return { str: '', width: 0 };
@@ -272,6 +303,15 @@ export class ATextMeasure implements ITextMeasure {
     }
     width -= suffixWidth;
     const data = this._clipText(text, options, width, 0, text.length - 1);
+
+    // 如果需要文字截断
+    if (wordBreak && data.str !== text) {
+      const index = testLetter(text, data.str.length);
+      if (index !== data.str.length) {
+        data.str = text.substring(0, index);
+        data.width = this.measureTextWidth(data.str, options);
+      }
+    }
     data.str += suffix;
     data.width += suffixWidth;
     return data;

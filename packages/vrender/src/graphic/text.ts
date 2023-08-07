@@ -158,7 +158,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
-      lineWidth = textTheme.lineWidth
+      lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak
     } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
@@ -178,12 +179,18 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           text.toString(),
           { fontSize, fontWeight },
           maxLineWidth,
-          strEllipsis
+          strEllipsis,
+          wordBreak === 'break-word'
         );
         str = data.str;
         width = data.width;
       } else {
-        const data = textMeasure.clipText(text.toString(), { fontSize, fontWeight }, maxLineWidth);
+        const data = textMeasure.clipText(
+          text.toString(),
+          { fontSize, fontWeight },
+          maxLineWidth,
+          wordBreak === 'break-word'
+        );
         str = data.str;
         width = data.width;
       }
@@ -228,7 +235,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
-      lineWidth = textTheme.lineWidth
+      lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak
     } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
@@ -251,12 +259,18 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           verticalList[0],
           { fontSize, fontWeight },
           maxLineWidth,
-          strEllipsis
+          strEllipsis,
+          wordBreak === 'break-word'
         );
         verticalList = [data.verticalList];
         width = data.width;
       } else {
-        const data = textMeasure.clipTextVertical(verticalList[0], { fontSize, fontWeight }, maxLineWidth);
+        const data = textMeasure.clipTextVertical(
+          verticalList[0],
+          { fontSize, fontWeight },
+          maxLineWidth,
+          wordBreak === 'break-word'
+        );
         verticalList = [data.verticalList];
         width = data.width;
       }
@@ -361,7 +375,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
-      lineWidth = textTheme.lineWidth
+      lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak
     } = attribute;
     width = 0;
     if (!this.shouldUpdateShape() && this.cache) {
@@ -390,12 +405,18 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             verticalData,
             { fontSize, fontWeight },
             maxLineWidth,
-            strEllipsis
+            strEllipsis,
+            wordBreak === 'break-word'
           );
           verticalLists[i] = data.verticalList;
           width = data.width;
         } else {
-          const data = textMeasure.clipTextVertical(verticalData, { fontSize, fontWeight }, maxLineWidth);
+          const data = textMeasure.clipTextVertical(
+            verticalData,
+            { fontSize, fontWeight },
+            maxLineWidth,
+            wordBreak === 'break-word'
+          );
           verticalLists[i] = data.verticalList;
           width = data.width;
         }

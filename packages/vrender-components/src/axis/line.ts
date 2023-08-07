@@ -13,7 +13,8 @@ import {
   isEmpty,
   isFunction,
   isValidNumber,
-  isValid
+  isValid,
+  normalizePadding
 } from '@visactor/vutils';
 import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender';
 import type { SegmentAttributes } from '../segment';
@@ -60,6 +61,32 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     super(merge({}, LineAxis.defaultAttributes, attributes), mode);
     if (mode === '3d') {
       this.setMode(mode);
+    }
+  }
+
+  protected _renderInner(container: IGroup) {
+    super._renderInner(container);
+    const { panel } = this.attribute;
+
+    // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
+    // 坐标轴主体 panel
+    if (panel && panel.visible) {
+      const axisContainer = this.axisContainer;
+      const axisContainerBounds = axisContainer.AABBBounds;
+      const bgRect = createRect({
+        x: axisContainerBounds.x1,
+        y: axisContainerBounds.y1,
+        width: axisContainerBounds.width(),
+        height: axisContainerBounds.height(),
+        ...panel.style
+      });
+      bgRect.name = AXIS_ELEMENT_NAME.background;
+      bgRect.id = this._getNodeId('background');
+
+      if (!isEmpty(panel.state)) {
+        bgRect.states = merge({}, DEFAULT_STATES, panel.state);
+      }
+      axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
   }
 
@@ -517,6 +544,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         x = axisLabelContainerBounds.x1;
         y = axisLabelContainerBounds.y1;
       }
+
       const bgRect = createRect({
         x,
         y,
@@ -556,7 +584,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const tickLength = tick?.visible ? tick.length ?? 4 : 0;
     if (title?.visible) {
       titleHeight = measureTextSize(title.text, title.textStyle).height;
-      titleSpacing = title.space;
+      const padding = normalizePadding(title.padding);
+      titleSpacing = title.space + padding[0] + padding[2];
     }
     if (limitLength) {
       limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;

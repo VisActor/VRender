@@ -192,8 +192,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
   };
 
-  private _renderInner(container: IGroup) {
-    const { title, label, tick, line, grid, items, panel } = this.attribute;
+  protected _renderInner(container: IGroup) {
+    const { title, label, tick, line, grid, items } = this.attribute;
 
     const axisContainer = createGroup({ x: 0, y: 0, zIndex: 1 });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
@@ -241,26 +241,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     // 渲染标题
     if (title?.visible) {
       this.renderTitle(axisContainer);
-    }
-
-    // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
-    // 坐标轴主体 panel
-    if (panel && panel.visible) {
-      const axisContainerBounds = axisContainer.AABBBounds;
-      const bgRect = createRect({
-        x: axisContainerBounds.x1,
-        y: axisContainerBounds.y1,
-        width: axisContainerBounds.width(),
-        height: axisContainerBounds.height(),
-        ...panel.style
-      });
-      bgRect.name = AXIS_ELEMENT_NAME.background;
-      bgRect.id = this._getNodeId('background');
-
-      if (!isEmpty(panel.state)) {
-        bgRect.states = merge({}, DEFAULT_STATES, panel.state);
-      }
-      axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
   }
   protected renderTicks(container: IGroup) {

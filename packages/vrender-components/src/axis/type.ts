@@ -166,23 +166,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 子刻度对应网格线配置
    */
   subGrid?: SubGridAttributesForAxis;
-  /**
-   * 坐标轴背景配置
-   */
-  panel?: {
-    /**
-     * 是否绘制坐标轴背景
-     */
-    visible?: boolean;
-    /**
-     * 坐标轴背景配置
-     */
-    style?: Partial<IRectGraphicAttribute>;
-    /**
-     * 坐标轴背景交互状态样式配置
-     */
-    state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
-  };
 }
 
 export type LineGridOfLineAxisAttributes = Omit<LineGridAttributes, 'items'> & {
@@ -278,6 +261,23 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * - `right`：整体向右对齐（水平方向）
      */
     containerAlign?: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle';
+  };
+  /**
+   * 坐标轴背景配置
+   */
+  panel?: {
+    /**
+     * 是否绘制坐标轴背景
+     */
+    visible?: boolean;
+    /**
+     * 坐标轴背景配置
+     */
+    style?: Partial<IRectGraphicAttribute>;
+    /**
+     * 坐标轴背景交互状态样式配置
+     */
+    state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
 }
 

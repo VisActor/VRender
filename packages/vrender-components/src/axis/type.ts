@@ -241,7 +241,7 @@ export interface IGrid3dType {
   anchor3d?: [number, number];
 }
 
-export interface LineAxisAttributes extends AxisBaseAttributes {
+export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
    * 起始点坐标
    */

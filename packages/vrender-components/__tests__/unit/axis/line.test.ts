@@ -826,6 +826,7 @@ describe('Line Axis', () => {
 
       axis.setAttributes({
         label: {
+          visible: true,
           containerAlign: 'left'
         },
         verticalMinSize: null

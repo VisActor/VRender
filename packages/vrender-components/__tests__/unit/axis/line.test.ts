@@ -754,6 +754,196 @@ describe('Line Axis', () => {
     expect(axisTitle.attribute.x).toBe(165.5);
   });
 
+  it('should set the correct textAlign and textBaseline when set label angle', () => {
+    const axis = new LineAxis({
+      title: {
+        space: 10,
+        padding: 0,
+        textStyle: {
+          fontSize: 14,
+          fill: '#333333',
+          fontWeight: 'normal',
+          fillOpacity: 1
+        },
+        visible: true,
+        autoRotate: false,
+        shape: {},
+        background: {},
+        text: '标题',
+        maxWidth: 400,
+        pickable: false,
+        childrenPickable: false
+      },
+      label: {
+        visible: true,
+        inside: false,
+        space: 10,
+        autoRotate: true,
+        style: {
+          fontSize: 14,
+          fill: '#89909D',
+          fontWeight: 'normal',
+          fillOpacity: 1,
+          angle: -Math.PI * 0.25
+        },
+        state: {
+          hover_reverse: {
+            fill: 'red'
+          },
+          selected_reverse: {
+            fill: 'red'
+          }
+        },
+        // autoHide: true,
+        autoLimit: true
+      },
+      tick: {
+        visible: true,
+        inside: false,
+        alignWithLabel: true,
+        length: 4,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      subTick: {
+        visible: false,
+        inside: false,
+        count: 4,
+        length: 2,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      line: {
+        visible: true,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      grid: {
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: []
+        },
+        visible: false,
+        length: 424,
+        type: 'line',
+        depth: 0
+      },
+      subGrid: {
+        visible: false,
+        style: {
+          lineWidth: 1,
+          stroke: '#EBEDF2',
+          strokeOpacity: 1,
+          lineDash: [4, 4]
+        }
+      },
+      x: 50,
+      y: 436,
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 200,
+        y: 0
+      },
+      items: [
+        [
+          {
+            id: '1990',
+            label: '1990',
+            value: 0.11538461538461535,
+            rawValue: '1990'
+          },
+          {
+            id: '1995',
+            label: '1995',
+            value: 0.2692307692307692,
+            rawValue: '1995'
+          },
+          {
+            id: '2000',
+            label: '2000',
+            value: 0.423076923076923,
+            rawValue: '2000'
+          },
+          {
+            id: '2005',
+            label: '2005',
+            value: 0.5769230769230768,
+            rawValue: '2005'
+          },
+          {
+            id: '2010',
+            label: '2010',
+            value: 0.7307692307692307,
+            rawValue: '2010'
+          },
+          {
+            id: '2015',
+            label: '2015',
+            value: 0.8846153846153845,
+            rawValue: '2015'
+          }
+        ]
+      ],
+      visible: true,
+      pickable: true,
+      orient: 'bottom',
+      select: true,
+      hover: true,
+      panel: {
+        visible: true,
+        style: {
+          fillOpacity: 0
+        },
+        state: {
+          hover: {
+            fillOpacity: 0.65,
+            fill: '#DDE3E9',
+            cursor: 'pointer'
+          },
+          selected: {
+            fillOpacity: 0.65,
+            fill: '#9CCBDB',
+            cursor: 'pointer'
+          }
+        }
+      },
+      verticalFactor: 1,
+      verticalLimitSize: 150
+    });
+    stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.render();
+
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+
+    axis.setAttribute('label', {
+      style: {
+        angle: Math.PI * 0.25
+      }
+    });
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+
+    axis.setAttribute('label', {
+      style: {
+        angle: Math.PI * 0.5
+      }
+    });
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+  });
+
   describe("test axis label's containerAlign", () => {
     const domain = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
     const pointScale = new PointScale().domain(domain).range([0, 1]);

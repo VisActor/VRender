@@ -39,7 +39,7 @@ import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
-import { autoRotate as autoRotateFunc } from './overlap/auto-rotate';
+import { autoRotate as autoRotateFunc, rotateXAxis, rotateYAxis } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 
@@ -422,7 +422,13 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
-    return;
+    // 调整对齐方式
+    const orient = this.attribute.orient;
+    if (orient === 'left' || orient === 'right') {
+      rotateYAxis(orient, labelShapes);
+    } else if (orient === 'bottom' || orient === 'top') {
+      rotateXAxis(orient, labelShapes);
+    }
   }
   protected handleLabelsOverlap(
     labelShapes: IText[],

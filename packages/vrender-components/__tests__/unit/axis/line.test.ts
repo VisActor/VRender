@@ -1,5 +1,5 @@
 import { PointScale, LinearScale } from '@visactor/vscale';
-import type { IGraphic, Stage, Group, ILine, Text } from '@visactor/vrender';
+import type { IGraphic, Stage, Group, ILine, Text, IGroup, IText } from '@visactor/vrender';
 import type { Grid } from '../../../src';
 import { LineAxis, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
@@ -752,5 +752,270 @@ describe('Line Axis', () => {
     const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
     expect(axisTitle.attribute.y).toBe(20);
     expect(axisTitle.attribute.x).toBe(165.5);
+  });
+
+  describe("test axis label's containerAlign", () => {
+    const domain = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const pointScale = new PointScale().domain(domain).range([0, 1]);
+    const xItems = domain.map(value => {
+      return {
+        id: value,
+        label: value,
+        value: pointScale.scale(value),
+        rawValue: value
+      };
+    });
+
+    it("should work in `orient: 'left'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 150 },
+        end: { x: 150, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 4,
+          maxWidth: 100,
+          text: 'y 轴 -- left',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [0, 45, 90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'left'
+          // formatMethod: () => 'AAAAAAAAAAAAAA'
+        },
+        orient: 'left',
+        verticalLimitSize: 300,
+        verticalMinSize: 100,
+        panel: {
+          visible: true,
+          style: {
+            stroke: 'red'
+          }
+        }
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+
+      axis.setAttribute('label', { containerAlign: 'center' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'right' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
+      );
+
+      axis.setAttributes({
+        label: {
+          containerAlign: 'left'
+        },
+        verticalMinSize: null
+      });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+      expect((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()).toBeCloseTo(
+        11.16
+      );
+    });
+
+    it("should work in `orient: 'right'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 350, y: 150 },
+        end: { x: 350, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 10,
+          maxWidth: 100,
+          text: 'y 轴 -- Right',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [0, 45, 90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'left',
+          formatMethod: (value, datum, index, data) => {
+            if (value === 'Y') {
+              return 'AAAAAAAAAAAAAA';
+            }
+            return value;
+          }
+        },
+        orient: 'right',
+        verticalLimitSize: 130,
+        verticalMinSize: 100,
+        verticalFactor: -1,
+        panel: {
+          visible: true,
+          style: {
+            stroke: 'red'
+          }
+        }
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect(axis.AABBBounds.width()).toBeGreaterThan(100);
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+
+      axis.setAttribute('label', { containerAlign: 'center' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'right' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
+      );
+
+      axis.setAttribute('verticalMinSize', 400);
+      expect(axis.AABBBounds.width()).toBeLessThan(400);
+    });
+
+    it("should work in `orient: 'top'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 150 },
+        end: { x: 350, y: 150 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 0,
+          maxWidth: 100,
+          text: 'x 轴 -- bottom',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [45],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'bottom'
+          // formatMethod: () => 'AAAAAAAAAAAAAA',
+        },
+        orient: 'top',
+        verticalLimitSize: 60,
+        verticalMinSize: 60,
+        verticalFactor: -1
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+      );
+
+      axis.setAttribute('label', { containerAlign: 'middle' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'top' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
+      );
+    });
+
+    it("should work in `orient: 'bottom'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 350 },
+        end: { x: 350, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 0,
+          maxWidth: 100,
+          text: 'x 轴 -- bottom',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          space: 10,
+          // autoRotate: true,
+          // autoRotateAngle: [-90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'bottom'
+        },
+        orient: 'bottom',
+        verticalLimitSize: 120,
+        verticalMinSize: 120
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+      );
+
+      axis.setAttribute('label', { containerAlign: 'middle' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'top' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
+      );
+    });
   });
 });

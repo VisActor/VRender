@@ -321,7 +321,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
-      lineWidth = textTheme.lineWidth
+      lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak
     } = attribute;
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
@@ -341,6 +342,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textBaseline as any,
       lineHeight,
       ellipsis === true ? (textTheme.ellipsis as string) : ellipsis || undefined,
+      wordBreak === 'break-word',
       maxLineWidth
     );
     const { bbox } = layoutData;

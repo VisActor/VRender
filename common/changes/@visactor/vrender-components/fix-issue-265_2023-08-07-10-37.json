@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(components): overlap bitmap test will intercept invalid range, fix #265",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

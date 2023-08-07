@@ -36,6 +36,7 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
+import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
@@ -153,6 +154,7 @@ export class Stage extends Group implements IStage {
   ticker: ITicker;
 
   autoRender: boolean;
+  _enableLayout: boolean;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -264,6 +266,8 @@ export class Stage extends Group implements IStage {
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
     }
+
+    params.enableLayout && this.enableLayout();
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
     this._beforeRender = params.beforeRender;
@@ -434,6 +438,22 @@ export class Stage extends Group implements IStage {
     }
     this.dirtyBounds = null;
     this.pluginService.findPluginsByName('DirtyBoundsPlugin').forEach(plugin => {
+      plugin.deactivate(this.pluginService);
+    });
+  }
+  enableLayout() {
+    if (this._enableLayout) {
+      return;
+    }
+    this._enableLayout = true;
+    this.pluginService.register(new FlexLayoutPlugin());
+  }
+  disableLayout() {
+    if (!this._enableLayout) {
+      return;
+    }
+    this._enableLayout = false;
+    this.pluginService.findPluginsByName('FlexLayoutPlugin').forEach(plugin => {
       plugin.deactivate(this.pluginService);
     });
   }

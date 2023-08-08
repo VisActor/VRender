@@ -1,4 +1,4 @@
-import { IBoundsLike } from '@visactor/vutils';
+import type { IBoundsLike } from '@visactor/vutils';
 
 /**
  * 防重叠逻辑参考 https://github.com/vega/vega/
@@ -78,6 +78,9 @@ export function bitmap(w: number, h: number) {
      * @returns boolean
      */
     getRange: ({ x1, y1, x2, y2 }: IBoundsLike) => {
+      if (x2 < 0 || y2 < 0 || x1 > w || y1 > h) {
+        return true;
+      }
       let r = y2;
       let start;
       let end;
@@ -110,6 +113,9 @@ export function bitmap(w: number, h: number) {
     },
 
     setRange: ({ x1, y1, x2, y2 }: IBoundsLike) => {
+      if (x2 < 0 || y2 < 0 || x1 > w || y1 > h) {
+        return;
+      }
       let start;
       let end;
       let indexStart;

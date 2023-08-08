@@ -9,6 +9,7 @@ import type {
   ILynxCanvas
 } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
+import { rafBasedSto } from '../../../common/utils';
 
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -192,14 +193,17 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     // 飞书小组件，在云文档浏览器环境中，没有requestAnimationFrame
     // 但是在小组件工作台环境和模拟器中正常
     // 反馈飞书修改，目前先使用setTimeout模拟，进行测试，飞书修复后替换回requestAnimationFrame
+    // return function (callback: FrameRequestCallback) {
+    //   return setTimeout(callback, 1000 / 60, true);
+    // } as any;
     return function (callback: FrameRequestCallback) {
-      return setTimeout(callback, 1000 / 60, true);
+      return rafBasedSto.call(callback);
     } as any;
   }
 
   getCancelAnimationFrame(): (h: number) => void {
     return (h: number) => {
-      clearTimeout(h);
+      rafBasedSto.clear(h);
     };
   }
 

@@ -1,5 +1,5 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import { min } from '@visactor/vutils';
+import { last, min } from '@visactor/vutils';
 
 import type {
   IAreaSegment,
@@ -54,40 +54,55 @@ export function drawSegments(
   if (!segPath) {
     return;
   }
-  let needMoveTo: boolean = !drawConnect;
+  let needMoveTo: boolean = true;
   const { curves } = segPath;
   if (percent >= 1) {
     if (drawConnect) {
+      // return;
+      let defined0 = true;
+      let lastCurve: ICurve<IPoint>;
       curves.forEach((curve, i) => {
+        // step的逻辑
+        let p0 = curve.p0;
+        if (curve.originP1 === curve.originP2) {
+          lastCurve = curve;
+          return;
+        }
+        if (lastCurve && lastCurve.originP1 === lastCurve.originP2) {
+          p0 = lastCurve.p0;
+        }
         if (curve.defined) {
-          // connect段结束，封闭
-          if (needMoveTo) {
-            path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
-          } else if (!needMoveTo) {
-            // 持续moveTo
-            // if (curve.p2 && curve.p3) {
-            //   path.moveTo(curve.p3.x + offsetX, curve.p3.y + offsetY, offsetZ);
-            // } else {
-            //   path.moveTo(curve.p1.x + offsetX, curve.p1.y + offsetY, offsetZ);
-            // }
+          // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+          if (!defined0) {
+            path.lineTo(p0.x + offsetX, p0.y + offsetY, offsetZ);
+            defined0 = !defined0;
           }
-          needMoveTo = false;
         } else {
-          // connect段开始
-          if (!needMoveTo) {
-            path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+          // 找到合法的点
+          const { originP1, originP2 } = curve;
+          let validP: IPointLike;
+          if (originP1 && originP1.defined !== false) {
+            validP = p0;
+          } else if (originP1 && originP2.defined !== false) {
+            validP = curve.p3 ?? curve.p1;
+          }
+          // 合法/（初始）变非法，moveTo
+          if (defined0) {
+            defined0 = !defined0;
+            const x = validP ? validP.x : curve.p0.x;
+            const y = validP ? validP.y : curve.p0.y;
+            path.moveTo(x + offsetX, y + offsetY, offsetZ);
           } else {
-            // 如果是zero，那么每一段都要绘制一下（第一段不需要绘制）
-            if (mode === 'zero') {
-              path.lineTo(
-                (isFinite(zeroX) ? zeroX : curve.p0.x) + offsetX,
-                (isFinite(zeroY) ? zeroY : curve.p0.y) + offsetY,
-                offsetZ
-              );
+            // 非法变非法/合法，看情况要不要lineTo
+            if (validP) {
+              // 非法变合法，需要lineTo
+              defined0 = !defined0;
+              path.lineTo(validP.x + offsetX, validP.y + offsetY, offsetZ);
             }
           }
-          needMoveTo = true;
         }
+
+        lastCurve = curve;
       });
     } else {
       curves.forEach(curve => {
@@ -126,6 +141,8 @@ export function drawSegments(
   const totalDrawLength = percent * totalLength;
   // 直到上次绘制的长度
   let drawedLengthUntilLast = 0;
+  let defined0 = true;
+  let lastCurve: ICurve<IPoint> = null;
   for (let i = 0, n = curves.length; i < n; i++) {
     const curve = curves[i];
     const curCurveLength = curve.getLength(direction);
@@ -136,28 +153,47 @@ export function drawSegments(
     }
 
     if (drawConnect) {
+      // step的逻辑
+      let p0 = curve.p0;
+      if (curve.originP1 === curve.originP2) {
+        lastCurve = curve;
+        continue;
+      }
+      if (lastCurve && lastCurve.originP1 === lastCurve.originP2) {
+        p0 = lastCurve.p0;
+      }
       if (curve.defined) {
-        // connect段结束，封闭
-        if (needMoveTo) {
-          path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+        if (!defined0) {
+          path.lineTo(p0.x + offsetX, p0.y + offsetY, offsetZ);
+          defined0 = !defined0;
         }
-        needMoveTo = false;
       } else {
-        // connect段开始
-        if (!needMoveTo) {
-          path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        // 找到合法的点
+        const { originP1, originP2 } = curve;
+        let validP: IPointLike;
+        if (originP1 && originP1.defined !== false) {
+          validP = p0;
+        } else if (originP1 && originP2.defined !== false) {
+          validP = curve.p3 ?? curve.p1;
+        }
+        // 合法/（初始）变非法，moveTo
+        if (defined0) {
+          defined0 = !defined0;
+          const x = validP ? validP.x : curve.p0.x;
+          const y = validP ? validP.y : curve.p0.y;
+          path.moveTo(x + offsetX, y + offsetY, offsetZ);
         } else {
-          // 如果是zero，那么每一段都要绘制一下（第一段不需要绘制）
-          if (mode === 'zero') {
-            path.lineTo(
-              (isFinite(zeroX) ? zeroX : curve.p0.x) + offsetX,
-              (isFinite(zeroY) ? zeroY : curve.p0.y) + offsetY,
-              offsetZ
-            );
+          // 非法变非法/合法，看情况要不要lineTo
+          if (validP) {
+            // 非法变合法，需要lineTo
+            defined0 = !defined0;
+            path.lineTo(validP.x + offsetX, validP.y + offsetY, offsetZ);
           }
         }
-        needMoveTo = true;
       }
+
+      lastCurve = curve;
     } else {
       // 跳过这个点
       if (!curve.defined) {

@@ -428,7 +428,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
             lineWidth: 1,
-            path: text.attribute?.labelLinePath
+            path: (text.attribute as ArcLabelAttrs)?.labelLinePath
           }) as Path)
         : undefined;
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);

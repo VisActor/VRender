@@ -51,8 +51,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
     graphicAttributes?: any,
     textData?: any,
-    width?: number,
-    height?: number,
     attribute?: any
   ): { x: number; y: number } | undefined;
 
@@ -238,38 +236,23 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       const textBounds = this.getGraphicBounds(text);
       const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
 
-      if (this.attribute.type === 'arc') {
-        const graphicAttributes = baseMark.attribute;
-        const { width, height } = this.attribute as ArcLabelAttrs;
-
-        this.labeling(
-          textBounds,
-          graphicBounds,
-          isFunction(position) ? position(textData) : position,
-          offset,
-          graphicAttributes,
-          textData,
-          width,
-          height,
-          this.attribute
-        );
-        labels.push(text);
-      } else {
-        const textLocation = this.labeling(
-          textBounds,
-          graphicBounds,
-          isFunction(position) ? position(textData) : position,
-          offset
-        );
-        if (!textLocation) {
-          continue;
-        }
-        labelAttribute.x = textLocation.x;
-        labelAttribute.y = textLocation.y;
-
-        text.setAttributes(textLocation);
-        labels.push(text);
+      const textLocation = this.labeling(
+        textBounds,
+        graphicBounds,
+        isFunction(position) ? position(textData) : position,
+        offset,
+        baseMark.attribute,
+        textData,
+        this.attribute
+      );
+      if (!textLocation) {
+        continue;
       }
+      labelAttribute.x = textLocation.x;
+      labelAttribute.y = textLocation.y;
+
+      text.setAttributes(textLocation);
+      labels.push(text);
     }
 
     if (this.attribute.type === 'arc') {
@@ -286,15 +269,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         };
 
         labels[i].setAttributes(labelAttribute);
-
-        // 用于做labelLine
-        // labels[i].pointA = basedArc.pointA;
-        // labels[i].pointB = basedArc.pointB;
-        // labels[i].pointC = basedArc.pointC;
       }
     }
 
-    // console.log('labels', labels);
     return labels;
   }
 
@@ -444,12 +421,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const currentTextMap = new Map();
     const prevTextMap = this._graphicToText || new Map();
     const texts = [] as IText[];
-    const labelLines = [] as IPath[];
 
     labels.forEach((text, index) => {
-      // let labelLine: IPath;
-
-      // if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
       const labelLine: IPath = text.attribute?.labelLinePath
         ? (createPath({
             visible: text.attribute?.visible ?? true,
@@ -458,15 +431,11 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
             path: text.attribute?.labelLinePath
           }) as Path)
         : undefined;
-      // }
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
 
       if (state === 'enter') {
         texts.push(text);
-        if (labelLine) {
-          labelLines.push(labelLine);
-        }
         currentTextMap.set(relatedGraphic, text);
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');

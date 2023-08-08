@@ -135,10 +135,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     graphicBounds: IBoundsLike,
     position = 'outside',
     offset = 0,
-    graphicAttributes: any,
+    graphicAttribute: any,
     textData: any,
-    width: number,
-    height: number,
+    // width: number,
+    // height: number,
     attribute: any
   ): { x: number; y: number } | undefined {
     if (!textBounds || !graphicBounds) {
@@ -146,17 +146,18 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
 
     // setArcs : 根据 arc 设置 datum 中对应的标签数据
-    const radiusRatio = this.computeLayoutOuterRadius(graphicAttributes.outerRadius, width, height);
+    const { width, height } = attribute as ArcLabelAttrs;
+    const radiusRatio = this.computeLayoutOuterRadius(graphicAttribute.outerRadius, width, height);
     const radius = this.computeRadius(radiusRatio, width, height);
-    const center = { x: graphicAttributes?.x ?? 0, y: graphicAttributes?.y ?? 0 };
+    const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
 
     const item = textData;
 
-    const arcMiddleAngle = (graphicAttributes.startAngle + graphicAttributes.endAngle) / 2;
-    const intervalAngle = graphicAttributes.endAngle - graphicAttributes.startAngle;
-    const arcQuadrant = computeQuadrant(graphicAttributes.endAngle - intervalAngle / 2);
+    const arcMiddleAngle = (graphicAttribute.startAngle + graphicAttribute.endAngle) / 2;
+    const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;
+    const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
 
-    const arcMiddle = circlePoint(center.x, center.y, graphicAttributes.outerRadius, arcMiddleAngle);
+    const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
     const outerArcMiddle = circlePoint(center.x, center.y, radius + attribute.line.line1MinLength, arcMiddleAngle);
     const arc = new ArcInfo(item, arcMiddle, outerArcMiddle, arcQuadrant, intervalAngle, arcMiddleAngle);
 
@@ -171,7 +172,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     arc.pointA = circlePoint(
       (center as IPoint).x,
       (center as IPoint).y,
-      this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttributes.outerRadius),
+      this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
       arc.middleAngle
     );
 
@@ -180,16 +181,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       height: textBounds.y2 - textBounds.y1
     };
     if (isQuadrantRight(arc.quadrant)) {
-      arc.textAlign = 'left';
-      arc.textBaseline = 'middle';
       this._arcRight.set(arc.refDatum, arc);
     } else if (isQuadrantLeft(arc.quadrant)) {
-      arc.textAlign = 'right';
-      arc.textBaseline = 'middle';
       this._arcLeft.set(arc.refDatum, arc);
     }
 
-    // return { arcRight: this._arcRight, arcLeft: this._arcLeft };
+    return { x: 0, y: 0 };
   }
 
   // layoutLabels : 执行内部/外部标签的布局计算
@@ -257,7 +254,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       if (!isGreater(labelWidth, 0)) {
         arc.labelVisible = false;
       }
-      (arc.textAlign = 'center'), (arc.textBaseline = 'middle');
+      // (arc.textAlign = 'center'), (arc.textBaseline = 'middle');
 
       //   arc.angle = degrees(arc.middleAngle);
       arc.angle = arc.middleAngle;

@@ -262,6 +262,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return point;
   }
 
+  onAnimateBind(animate: IAnimate | ISubAnimate) {
+    this._emitCustomEvent('animate-bind', animate);
+  }
+
   protected tryUpdateAABBBounds(full?: boolean): AABBBounds {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;

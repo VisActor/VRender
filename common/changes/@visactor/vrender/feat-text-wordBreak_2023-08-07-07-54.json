@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: support text word-break",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -54,14 +54,14 @@ export function drawSegments(
   if (!segPath) {
     return;
   }
-  let needMoveTo: boolean = true;
+  let needMoveTo: boolean = !drawConnect;
   const { curves } = segPath;
   if (percent >= 1) {
     if (drawConnect) {
       curves.forEach((curve, i) => {
         if (curve.defined) {
           // connect段结束，封闭
-          if (needMoveTo && i !== 0) {
+          if (needMoveTo) {
             path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
           } else if (!needMoveTo) {
             // 持续moveTo
@@ -138,7 +138,7 @@ export function drawSegments(
     if (drawConnect) {
       if (curve.defined) {
         // connect段结束，封闭
-        if (needMoveTo && i !== 0) {
+        if (needMoveTo) {
           path.lineTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
         }
         needMoveTo = false;

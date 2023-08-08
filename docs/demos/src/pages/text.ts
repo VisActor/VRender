@@ -21,7 +21,9 @@ export const page = () => {
     fill: colorPools[5],
     fontWeight: 'bolder',
     // stroke: 'red',
-    text: 'Testabcdefg',
+    text: 'this is a text',
+    wordBreak: 'break-word',
+    maxLineWidth: 110,
     fontSize: 20,
     textBaseline: 'top'
   });
@@ -55,7 +57,8 @@ export const page = () => {
     y: 200,
     fill: colorPools[5],
     // text: ['Tffg'],
-    text: ['这是垂aaa直布局的文字(abc】', '这是垂ccc直布局的文字(abc】'],
+    text: ['这是垂aaa直textabc这是什么', '这是阿萨姆abcaaaaa'],
+    wordBreak: 'break-word',
     maxLineWidth: 200,
     // ellipsis: '',
     direction: 'vertical',

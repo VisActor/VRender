@@ -259,7 +259,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       line.id = this._getNodeId(item.id);
 
       if (isEmpty(this.attribute.tick?.state)) {
-        line.states = null;
+        line.states = DEFAULT_STATES;
       } else {
         const data = this.data[index];
         const tickLineState = merge({}, DEFAULT_STATES, this.attribute.tick.state);
@@ -288,7 +288,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           line.id = this._getNodeId(`${index}`);
 
           if (isEmpty(subTick.state)) {
-            line.states = null;
+            line.states = DEFAULT_STATES;
           } else {
             const subTickLineState = merge({}, DEFAULT_STATES, subTick.state);
             Object.keys(subTickLineState).forEach(key => {
@@ -328,7 +328,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {
-        text.states = null;
+        text.states = DEFAULT_STATES;
       } else {
         const labelState = merge({}, DEFAULT_STATES, this.attribute.label.state);
         Object.keys(labelState).forEach(key => {

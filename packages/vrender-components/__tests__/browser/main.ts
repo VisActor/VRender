@@ -3,6 +3,10 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'axis-interaction',
+    name: '轴交互'
+  },
+  {
     path: 'cartesian-axis-label-align',
     name: '轴标签整体对齐'
   },

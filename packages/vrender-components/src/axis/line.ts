@@ -83,9 +83,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       bgRect.name = AXIS_ELEMENT_NAME.background;
       bgRect.id = this._getNodeId('background');
 
-      if (!isEmpty(panel.state)) {
-        bgRect.states = merge({}, DEFAULT_STATES, panel.state);
-      }
+      bgRect.states = merge({}, DEFAULT_STATES, panel.state ?? {});
       axisContainer.insertBefore(bgRect, axisContainer.firstChild);
     }
   }
@@ -276,13 +274,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         textBaseline,
         ...textStyle
       },
-      state: isEmpty(state)
-        ? null
-        : {
-            text: state.text,
-            shape: state.shape,
-            panel: state.background
-          }
+      state: {
+        text: merge({}, DEFAULT_STATES, state?.text),
+        shape: merge({}, DEFAULT_STATES, state?.shape),
+        panel: merge({}, DEFAULT_STATES, state?.background)
+      }
     };
     attrs.angle = angle;
 

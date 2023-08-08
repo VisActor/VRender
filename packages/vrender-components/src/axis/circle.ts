@@ -150,13 +150,11 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
         textAlign: 'center',
         ...textStyle
       },
-      state: isEmpty(state)
-        ? null
-        : {
-            text: state.text,
-            shape: state.shape,
-            panel: state.background
-          }
+      state: {
+        text: merge({}, DEFAULT_STATES, state?.text),
+        shape: merge({}, DEFAULT_STATES, state?.shape),
+        panel: merge({}, DEFAULT_STATES, state?.background)
+      }
     };
 
     const { angle } = restAttrs; // 用户设置的是角度

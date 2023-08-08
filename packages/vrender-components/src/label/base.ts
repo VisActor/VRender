@@ -281,17 +281,16 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         const labelAttribute = {
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
-          // textAlign: (this.attribute as ArcLabelAttrs).textAlign ?? basedArc.textAlign,
-          // textBaseline: (this.attribute as ArcLabelAttrs).textBaseline ?? basedArc.textBaseline,
-          angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle
+          angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
+          labelLinePath: basedArc.labelLinePath
         };
 
         labels[i].setAttributes(labelAttribute);
 
         // 用于做labelLine
-        labels[i].pointA = basedArc.pointA;
-        labels[i].pointB = basedArc.pointB;
-        labels[i].pointC = basedArc.pointC;
+        // labels[i].pointA = basedArc.pointA;
+        // labels[i].pointB = basedArc.pointB;
+        // labels[i].pointC = basedArc.pointC;
       }
     }
 
@@ -448,36 +447,31 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const labelLines = [] as IPath[];
 
     labels.forEach((text, index) => {
-      // const text = this._createLabelText(label);
-      let labelLine: IPath;
+      // let labelLine: IPath;
 
-      if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
-        labelLine = createPath({
-          visible: text.attribute?.visible ?? true,
-          stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-          lineWidth: 1,
-          path:
-            `M${Math.round(text.pointA.x)},${Math.round(text.pointA.y)}` +
-            ` L${Math.round(text.pointB.x)},${Math.round(text.pointB.y)}` +
-            ` L${Math.round(text.pointC.x)},${Math.round(text.pointC.y)}`
-        }) as Path;
-      }
+      // if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+      const labelLine: IPath = text.attribute?.labelLinePath
+        ? (createPath({
+            visible: text.attribute?.visible ?? true,
+            stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
+            lineWidth: 1,
+            path: text.attribute?.labelLinePath
+          }) as Path)
+        : undefined;
+      // }
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
-      // console.log('relatedGraphic', relatedGraphic);
-      // console.log('prevTextMap', prevTextMap);
-      // console.log('state', state);
 
       if (state === 'enter') {
         texts.push(text);
-        if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+        if (labelLine) {
           labelLines.push(labelLine);
         }
         currentTextMap.set(relatedGraphic, text);
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
-          if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+          if (labelLine) {
             this.add(labelLine);
           }
           relatedGraphic.onAnimateBind = () => {
@@ -493,7 +487,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           };
         } else {
           this.add(text);
-          if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+          if (labelLine) {
             this.add(labelLine);
           }
         }

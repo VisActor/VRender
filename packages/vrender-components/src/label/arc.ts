@@ -37,6 +37,7 @@ export class ArcInfo {
   pointA!: IPoint;
   pointB!: IPoint;
   pointC!: IPoint;
+  labelLinePath!: string;
   /**
    * 象限
    */
@@ -346,6 +347,11 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       arc.labelPosition.x = isQuadrantLeft(arc.quadrant)
         ? arc.labelPosition.x
         : arc.labelPosition.x + 0.5 * arc.labelSize.width;
+
+      arc.labelLinePath =
+        `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
+        ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
+        ` L${Math.round(arc.pointC.x)},${Math.round(arc.pointC.y)}`;
     });
 
     return arcs;

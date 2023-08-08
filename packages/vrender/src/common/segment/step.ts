@@ -1,4 +1,5 @@
-import { IPointLike, abs } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { abs } from '@visactor/vutils';
 import { SegContext } from '../seg-context';
 import { genCurveSegments } from './common';
 import { Direction } from '../enums';
@@ -29,6 +30,7 @@ export class Step implements ICurvedSegment {
   private _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
+  protected lastPoint?: IPointLike;
 
   constructor(context: ISegPath2D, t: number = 0.5, startPoint?: IPointLike) {
     this.context = context;
@@ -57,7 +59,7 @@ export class Step implements ICurvedSegment {
   }
   lineEnd() {
     if (0 < this._t && this._t < 1 && this._point === 2) {
-      this.context.lineTo(this._x, this._y, this._lastDefined !== false);
+      this.context.lineTo(this._x, this._y, this._lastDefined !== false, this.lastPoint);
     }
     if (this._line || (this._line !== 0 && this._point === 1)) {
       this.context.closePath();
@@ -74,25 +76,26 @@ export class Step implements ICurvedSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false)
-          : this.context.moveTo(x, y);
+          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p)
+          : this.context.moveTo(x, y, p);
         break;
       case 1:
         this._point = 2; // falls through
       default: {
         if (this._t <= 0) {
-          this.context.lineTo(this._x, y, this._lastDefined !== false && p.defined !== false);
-          this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
+          this.context.lineTo(this._x, y, this._lastDefined !== false && p.defined !== false, this.lastPoint);
+          this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p);
         } else {
           const x1 = this._x * (1 - this._t) + x * this._t;
-          this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false);
-          this.context.lineTo(x1, y, this._lastDefined !== false && p.defined !== false);
+          this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false, this.lastPoint);
+          this.context.lineTo(x1, y, this._lastDefined !== false && p.defined !== false, p);
         }
         break;
       }
     }
     this._lastDefined = p.defined;
     (this._x = x), (this._y = y);
+    this.lastPoint = p;
   }
 
   tryUpdateLength(): number {

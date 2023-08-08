@@ -1,4 +1,4 @@
-import type { IPoint } from '@visactor/vutils';
+import type { IPoint, IPointLike } from '@visactor/vutils';
 import { abs } from '@visactor/vutils';
 import type { IAreaCacheItem, ICubicBezierCurve, ICurve, IDirection, ILineCurve, IPath2D } from '../interface';
 import { Direction } from './enums';
@@ -40,26 +40,67 @@ export function drawAreaSegments(
     const bottomList: ICurve<IPoint>[] = [];
     let lastDefined: boolean = true;
     if (drawConnect) {
-      for (let i = 0, n = top.curves.length; i < n; i++) {
-        const topCurve = top.curves[i];
-        if (lastDefined !== topCurve.defined) {
-          if (!lastDefined) {
+      let defined0 = true;
+      let lastCurve: ICurve<IPoint>;
+      let lastBottomCurve: ICurve<IPoint>;
+      const n = top.curves.length;
+      top.curves.forEach((curve, i) => {
+        // step的逻辑
+        const bototmCurve = bottom.curves[n - i - 1];
+        let currentTopCurve = curve;
+        let currentBottomCurve = bototmCurve;
+        if (curve.originP1 === curve.originP2) {
+          lastCurve = curve;
+          lastBottomCurve = bototmCurve;
+          return;
+        }
+        if (lastCurve && lastCurve.originP1 === lastCurve.originP2) {
+          currentTopCurve = lastCurve;
+          currentBottomCurve = lastBottomCurve;
+        }
+        if (curve.defined) {
+          // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+          if (!defined0) {
+            topList.push(currentTopCurve);
+            bottomList.push(currentBottomCurve);
             drawAreaConnectBlock(path, topList, bottomList, params);
             topList.length = 0;
             bottomList.length = 0;
-          } else {
-            topList.push(topCurve);
-            bottomList.push(bottom.curves[n - i - 1]);
+            defined0 = !defined0;
           }
-          lastDefined = !lastDefined;
         } else {
-          if (!lastDefined) {
-            topList.push(topCurve);
-            bottomList.push(bottom.curves[n - i - 1]);
+          // 找到合法的点
+          const { originP1, originP2 } = curve;
+          let validTopCurve: ICurve<IPoint>;
+          let validBottomCurve: ICurve<IPoint>;
+          if (originP1 && originP1.defined !== false) {
+            validTopCurve = currentTopCurve;
+            validBottomCurve = currentBottomCurve;
+          } else if (originP1 && originP2.defined !== false) {
+            validTopCurve = curve;
+            validBottomCurve = bototmCurve;
+          }
+          // 合法/（初始）变非法，moveTo
+          if (defined0) {
+            defined0 = !defined0;
+            topList.push(validTopCurve || curve);
+            bottomList.push(validBottomCurve || bototmCurve);
+          } else {
+            // 非法变非法/合法，看情况要不要lineTo
+            if (validTopCurve) {
+              // 非法变合法，需要lineTo
+              defined0 = !defined0;
+              topList.push(validTopCurve || curve);
+              bottomList.push(validBottomCurve || bototmCurve);
+              drawAreaConnectBlock(path, topList, bottomList, params);
+              topList.length = 0;
+              bottomList.length = 0;
+            }
           }
         }
-      }
-      drawAreaBlock(path, topList, bottomList, params);
+        lastCurve = curve;
+      });
+      drawAreaConnectBlock(path, topList, bottomList, params);
     } else {
       for (let i = 0, n = top.curves.length; i < n; i++) {
         const topCurve = top.curves[i];
@@ -113,6 +154,9 @@ export function drawAreaSegments(
   let lastDefined: boolean = true;
   const topList: ICurve<IPoint>[] = [];
   const bottomList: ICurve<IPoint>[] = [];
+  let defined0 = true;
+  let lastTopCurve: ICurve<IPoint>;
+  let lastBottomCurve: ICurve<IPoint>;
   for (let i = 0, n = top.curves.length; i < n; i++) {
     const topCurve = top.curves[i];
     const curCurveLength = topCurve.getLength(direction);
@@ -121,48 +165,112 @@ export function drawAreaSegments(
       break;
     }
     drawedLengthUntilLast += curCurveLength;
-    let tc: ICurve<IPoint> | null = null;
-    let bc: ICurve<IPoint> | null = null;
-    if (lastDefined !== topCurve.defined) {
-      if (lastDefined) {
-        drawAreaBlock(path, topList, bottomList, params);
-        topList.length = 0;
-        bottomList.length = 0;
+
+    if (drawConnect) {
+      // step的逻辑
+      const bototmCurve = bottom.curves[n - i - 1];
+      let currentTopCurve = topCurve;
+      let currentBottomCurve = bototmCurve;
+      if (topCurve.originP1 === topCurve.originP2) {
+        lastTopCurve = topCurve;
+        lastBottomCurve = bototmCurve;
+        continue;
+      }
+      if (lastTopCurve && lastTopCurve.originP1 === lastTopCurve.originP2) {
+        currentTopCurve = lastTopCurve;
+        currentBottomCurve = lastBottomCurve;
+      }
+      if (topCurve.defined) {
+        // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+        if (!defined0) {
+          topList.push(currentTopCurve);
+          bottomList.push(currentBottomCurve);
+          drawAreaConnectBlock(path, topList, bottomList, params);
+          topList.length = 0;
+          bottomList.length = 0;
+          defined0 = !defined0;
+        }
       } else {
-        tc = topCurve;
-        bc = bottom.curves[n - i - 1];
+        // 找到合法的点
+        const { originP1, originP2 } = topCurve;
+        let validTopCurve: ICurve<IPoint>;
+        let validBottomCurve: ICurve<IPoint>;
+        if (originP1 && originP1.defined !== false) {
+          validTopCurve = currentTopCurve;
+          validBottomCurve = currentBottomCurve;
+        } else if (originP1 && originP2.defined !== false) {
+          validTopCurve = topCurve;
+          validBottomCurve = bototmCurve;
+        }
+        // 合法/（初始）变非法，moveTo
+        if (defined0) {
+          defined0 = !defined0;
+          topList.push(validTopCurve || topCurve);
+          bottomList.push(validBottomCurve || bototmCurve);
+        } else {
+          // 非法变非法/合法，看情况要不要lineTo
+          if (validTopCurve) {
+            // 非法变合法，需要lineTo
+            defined0 = !defined0;
+            topList.push(validTopCurve || topCurve);
+            bottomList.push(validBottomCurve || bototmCurve);
+            drawAreaConnectBlock(path, topList, bottomList, params);
+            topList.length = 0;
+            bottomList.length = 0;
+          }
+        }
       }
-      lastDefined = !lastDefined;
+      lastTopCurve = topCurve;
+      // drawAreaBlock(path, topList, bottomList, params);
     } else {
-      if (lastDefined) {
-        tc = topCurve;
-        bc = bottom.curves[n - i - 1];
-      }
-    }
-
-    if (tc && bc) {
-      if (percent < 1) {
-        if (tc.p2 && tc.p3) {
-          tc = divideCubic(tc as ICubicBezierCurve, percent)[0];
+      let tc: ICurve<IPoint> | null = null;
+      let bc: ICurve<IPoint> | null = null;
+      if (lastDefined !== topCurve.defined) {
+        if (lastDefined) {
+          drawAreaBlock(path, topList, bottomList, params);
+          topList.length = 0;
+          bottomList.length = 0;
         } else {
-          tc = divideLinear(tc as ILineCurve, percent)[0];
+          tc = topCurve;
+          bc = bottom.curves[n - i - 1];
         }
-        if (bc.p2 && bc.p3) {
-          bc = divideCubic(bc as ICubicBezierCurve, 1 - percent)[1];
-        } else {
-          bc = divideLinear(bc as ILineCurve, 1 - percent)[1];
+        lastDefined = !lastDefined;
+      } else {
+        if (lastDefined) {
+          tc = topCurve;
+          bc = bottom.curves[n - i - 1];
         }
       }
-      tc.defined = lastDefined;
-      bc.defined = lastDefined;
-      topList.push(tc);
-      bottomList.push(bc);
-    }
 
-    tc = null;
-    bc = null;
+      if (tc && bc) {
+        if (percent < 1) {
+          if (tc.p2 && tc.p3) {
+            tc = divideCubic(tc as ICubicBezierCurve, percent)[0];
+          } else {
+            tc = divideLinear(tc as ILineCurve, percent)[0];
+          }
+          if (bc.p2 && bc.p3) {
+            bc = divideCubic(bc as ICubicBezierCurve, 1 - percent)[1];
+          } else {
+            bc = divideLinear(bc as ILineCurve, 1 - percent)[1];
+          }
+        }
+        tc.defined = lastDefined;
+        bc.defined = lastDefined;
+        topList.push(tc);
+        bottomList.push(bc);
+      }
+
+      tc = null;
+      bc = null;
+    }
   }
-  drawAreaBlock(path, topList, bottomList, params);
+
+  if (drawConnect) {
+    drawAreaConnectBlock(path, topList, bottomList, params);
+  } else {
+    drawAreaBlock(path, topList, bottomList, params);
+  }
 
   // const totalLength = segPath.tryUpdateLength();
 

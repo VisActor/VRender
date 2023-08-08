@@ -2,6 +2,23 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.9",
+      "tag": "@visactor/vrender-components_v0.13.9",
+      "date": "Tue, 08 Aug 2023 09:27:52 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix(components): overlap bitmap test will intercept invalid range, fix #265"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.7` to `0.13.8`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.8",
       "tag": "@visactor/vrender-components_v0.13.8",
       "date": "Thu, 03 Aug 2023 10:04:34 GMT",

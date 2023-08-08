@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+This log was last generated on Tue, 08 Aug 2023 09:27:52 GMT and should not be manually modified.
+
+## 0.13.9
+Tue, 08 Aug 2023 09:27:52 GMT
+
+### Patches
+
+- fix(components): overlap bitmap test will intercept invalid range, fix #265
 
 ## 0.13.8
 Thu, 03 Aug 2023 10:04:34 GMT

@@ -41,6 +41,8 @@ export type CommandStrType = [
 export interface ICurve<T> {
   type: number;
   defined: boolean;
+  originP1?: IPointLike;
+  originP2?: IPointLike;
   readonly p0: T;
   readonly p1?: T;
   readonly p2?: T;

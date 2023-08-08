@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import { isArray, min } from '@visactor/vutils';
+import { abs, isArray, min } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import type {
   IArea,
@@ -33,7 +33,7 @@ import {
 import { getTheme } from '../../../graphic/theme';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime } from '../../../common/enums';
+import { BaseRenderContributionTime, Direction } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawSegments } from '../../../common/render-curve';
@@ -169,7 +169,10 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
                 y: endPoint.y1 ?? endPoint.y
               });
           }
-          lastBottomSeg = calcLineCache(bottomPoints, curveType);
+          lastBottomSeg = calcLineCache(
+            bottomPoints,
+            curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+          );
           bottomCaches.unshift(lastBottomSeg);
         }
         area.cacheArea = bottomCaches.map((item, index) => ({
@@ -473,10 +476,27 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     context.beginPath();
 
     const ret: boolean = false;
+    const { points, segments } = area.attribute;
+    let direction = Direction.ROW;
+    let endP: IPointLike;
+    let startP: IPointLike;
+    if (segments) {
+      const endSeg = segments[segments.length - 1];
+      const startSeg = segments[0];
+      startP = startSeg.points[0];
+      endP = endSeg.points[endSeg.points.length - 1];
+    } else {
+      startP = points[0];
+      endP = points[points.length - 1];
+    }
+    const xTotalLength = abs(endP.x - startP.x);
+    const yTotalLength = abs(endP.y - startP.y);
+    direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
     drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
       offsetX,
       offsetY,
       offsetZ,
+      direction,
       drawConnect: connect,
       mode: connectedType,
       zeroX: connectedX,
@@ -561,7 +581,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             context.camera ? context : context.nativeContext,
             stroke[0] ? cache.top : cache.bottom,
             clipRange,
-            'auto',
+            direction === Direction.ROW ? 'x' : 'y',
             {
               offsetX,
               offsetY,

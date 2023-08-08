@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: modify arcLabel position",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

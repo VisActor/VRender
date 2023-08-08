@@ -275,6 +275,8 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   line?: IArcLabelLineSpec;
   /** 标签布局配置 */
   layout?: IArcLabelLayoutSpec;
+  /** 标签引导线path */
+  labelLinePath?: string;
 }
 
 export interface IArcLabelLineSpec {
@@ -321,7 +323,7 @@ export interface IArcLabelLayoutSpec {
 }
 
 export interface DataLabelAttrs extends IGroupGraphicAttribute {
-  dataLabels: (RectLabelAttrs | SymbolLabelAttrs)[];
+  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs)[];
   /**
    * 防重叠的区域大小
    */

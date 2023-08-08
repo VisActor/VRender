@@ -423,7 +423,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
-      const labelLine: IPath = text.attribute?.labelLinePath
+      const labelLine: IPath = (text.attribute as ArcLabelAttrs)?.labelLinePath
         ? (createPath({
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,

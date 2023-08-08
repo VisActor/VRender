@@ -137,8 +137,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     offset = 0,
     graphicAttribute: any,
     textData: any,
-    // width: number,
-    // height: number,
     attribute: any
   ): { x: number; y: number } | undefined {
     if (!textBounds || !graphicBounds) {

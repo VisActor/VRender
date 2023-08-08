@@ -119,7 +119,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
-    const { removeOnClick } = this.attribute;
+    const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
       this._container.incrementalClearChild();
       this._updateDragMaskCallback &&
@@ -128,7 +128,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
           operateMask: this._operatingMask,
           operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
         });
-    } else {
+    } else if (!this._outOfInteractiveRange(e)) {
       this._updateDragMaskCallback &&
         this._updateDragMaskCallback({
           operateType: this._activeDrawState ? IOperateType.drawEnd : IOperateType.moveEnd,
@@ -140,7 +140,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeDrawState = false;
     this._activeMoveState = false;
     this._isDrawedBeforeEnd = false;
-    this._operatingMask.setAttribute('pickable', false);
+    this._operatingMask?.setAttribute('pickable', false);
   };
 
   /**

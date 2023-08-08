@@ -4,6 +4,7 @@ import type { EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '..
 import { ICanvasLike } from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
 import { createImageElement } from './browser-contribution';
+import { rafBasedSto } from '../../../common/utils';
 
 type Canvas = any;
 
@@ -148,14 +149,17 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
   }
 
   getRequestAnimationFrame(): (callback: FrameRequestCallback) => number {
+    // return function (callback: FrameRequestCallback) {
+    //   return setTimeout(callback, 1000 / 60, true);
+    // } as any;
     return function (callback: FrameRequestCallback) {
-      return setTimeout(callback, 1000 / 60, true);
+      return rafBasedSto.call(callback);
     } as any;
   }
 
   getCancelAnimationFrame(): (h: number) => void {
     return (h: number) => {
-      clearTimeout(h);
+      rafBasedSto.clear(h);
     };
   }
 

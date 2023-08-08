@@ -79,14 +79,12 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       // 根据关联图元和配置的position计算标签坐标
       labels = this.layout(data);
 
-      if (this.attribute.type !== 'arc') {
-        if (isFunction(customOverlapFunc)) {
-          labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
-        } else {
-          // 防重叠逻辑
-          if (overlap !== false) {
-            labels = this._overlapping(labels);
-          }
+      if (isFunction(customOverlapFunc)) {
+        labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
+      } else {
+        // 防重叠逻辑
+        if (overlap !== false && this.attribute.type !== 'arc') {
+          labels = this._overlapping(labels);
         }
       }
     }
@@ -283,8 +281,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         const labelAttribute = {
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
-          textAlign: (this.attribute as ArcLabelAttrs).textAlign ?? basedArc.textAlign,
-          textBaseline: (this.attribute as ArcLabelAttrs).textBaseline ?? basedArc.textBaseline,
+          textAlign: 'center',
+          textBaseline: 'middle',
+          // textAlign: (this.attribute as ArcLabelAttrs).textAlign ?? basedArc.textAlign,
+          // textBaseline: (this.attribute as ArcLabelAttrs).textBaseline ?? basedArc.textBaseline,
           angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle
         };
 
@@ -297,6 +297,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
     }
 
+    // console.log('labels', labels);
     return labels;
   }
 
@@ -465,6 +466,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+      // console.log('relatedGraphic', relatedGraphic);
+      // console.log('prevTextMap', prevTextMap);
+      // console.log('state', state);
+
       if (state === 'enter') {
         texts.push(text);
         if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
@@ -490,6 +495,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           };
         } else {
           this.add(text);
+          if (this.attribute.type === 'arc' && this.attribute.position === 'outside') {
+            this.add(labelLine);
+          }
         }
       }
 

@@ -250,6 +250,25 @@ const pieGenerator = () => {
   return spec;
 };
 
+const originData = [
+  {
+    id: 'AAA',
+    value: 4
+  },
+  {
+    id: 'BBB',
+    value: 6
+  },
+  {
+    id: 'CCC',
+    value: 10
+  },
+  {
+    id: 'DDD',
+    value: 3
+  }
+];
+
 const latestData = [
   {
     type: 'oxygen',
@@ -380,7 +399,7 @@ function createContent(stage: Stage) {
     data: pieSpec.children.map((c, index) => {
       return {
         // text: latestData[index].type,
-        text: c._uid
+        text: originData[index].id
         // fill: c.attribute.fill,
         // line: {
         //   stroke: c.attribute.stroke
@@ -390,9 +409,16 @@ function createContent(stage: Stage) {
       };
     }),
     type: 'arc',
+    // animation: false,
+    animation: {
+      // mode: 'same-time',
+      // duration: 300,
+      // easing: 'linear'
+    },
     width: 800,
     height: 500,
     position: 'outside',
+
     // position: 'inside',
 
     // coverEnable: false,

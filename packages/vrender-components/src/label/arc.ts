@@ -102,7 +102,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       visible: true,
       fontSize: 14,
       fontWeight: 'normal',
-      fillOpacity: 1
+      fillOpacity: 1,
+      textAlign: 'center',
+      textBaseline: 'middle'
     },
     position: 'outside',
     offset: 0,
@@ -334,7 +336,18 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         arc.labelVisible = false;
       }
       arc.angle = 0;
+
+      // arc.labelPosition.x = isQuadrantLeft(arc.quadrant)
+      //   ? arc.labelPosition.x - arc.labelSize.width
+      //   : arc.labelPosition.x;
+
+      // arc.labelPosition.y = arc.labelPosition.y + 0.25 * arc.labelSize.height;
+
+      arc.labelPosition.x = isQuadrantLeft(arc.quadrant)
+        ? arc.labelPosition.x
+        : arc.labelPosition.x + 0.5 * arc.labelSize.width;
     });
+
     return arcs;
   }
 

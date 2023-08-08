@@ -1,20 +1,6 @@
-import {
-  isBoolean,
-  isNumber,
-  halfPi,
-  pi,
-  pi2,
-  max,
-  min,
-  sin,
-  cos,
-  IBounds,
-  IPointLike,
-  isArray,
-  pointAt,
-  Point
-} from '@visactor/vutils';
-import { IGraphicAttribute, IStrokeStyle } from '../interface';
+import type { IBounds, IPointLike } from '@visactor/vutils';
+import { isBoolean, isNumber, halfPi, pi, pi2, max, min, sin, cos, isArray, pointAt, Point } from '@visactor/vutils';
+import type { IGraphicAttribute, IStrokeStyle } from '../interface';
 
 // todo: 迁移到@visactor/vutils
 
@@ -329,3 +315,45 @@ export function getAttributeFromDefaultAttrList(attr: Record<string, any> | Reco
   }
   return attr[key];
 }
+
+export class RafBasedSTO {
+  static TimeOut = 1000 / 60;
+  durations: number[];
+  timeout: number;
+  lastDate: number;
+  durationsListThreshold: number;
+
+  constructor() {
+    this.durations = [];
+    this.timeout = RafBasedSTO.TimeOut;
+    this.lastDate = 0;
+    this.durationsListThreshold = 30;
+  }
+
+  call(cb: FrameRequestCallback) {
+    this.lastDate = Date.now();
+    return setTimeout(
+      () => {
+        this.appendDuration(Date.now() - this.lastDate);
+        cb(0);
+      },
+      this.timeout,
+      true
+    );
+  }
+
+  clear(h: number) {
+    clearTimeout(h);
+  }
+
+  appendDuration(d: number) {
+    this.durations.push(d);
+    if (this.durations.length > this.durationsListThreshold) {
+      this.durations.shift();
+    }
+    // 最多60fps
+    this.timeout = Math.max(this.durations.reduce((a, b) => a + b, 0) / this.durations.length, 1000 / 60);
+  }
+}
+
+export const rafBasedSto = new RafBasedSTO();

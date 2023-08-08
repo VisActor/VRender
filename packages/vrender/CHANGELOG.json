@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.8",
+      "tag": "@visactor/vrender_v0.13.8",
+      "date": "Tue, 08 Aug 2023 09:27:52 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "perf: enhance the effect of requestAnimationFrame in miniapp"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.7",
       "tag": "@visactor/vrender_v0.13.7",
       "date": "Thu, 03 Aug 2023 10:04:34 GMT",

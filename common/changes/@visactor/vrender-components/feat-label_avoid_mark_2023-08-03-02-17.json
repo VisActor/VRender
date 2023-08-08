@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "feat(vrender-components): discreate legend's item's state style supports function",
+      "comment": "feat(component): label component support avoidMarks",
       "type": "patch"
     }
   ],

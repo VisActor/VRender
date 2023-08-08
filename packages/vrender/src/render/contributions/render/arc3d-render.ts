@@ -204,9 +204,9 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
       visible = arcAttribute.visible
     } = arc.attribute;
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     const z = this.z ?? 0;
@@ -215,7 +215,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
       return;
     }
 
-    if (!(doFill || doStroke || background)) {
+    if (!(doFill || doStroke)) {
       return;
     }
 

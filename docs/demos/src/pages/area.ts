@@ -7,7 +7,7 @@ const subP1 = [
   [40, 60],
   [60, 20],
   [70, 30]
-].map(item => ({ x: item[0], y: item[1], y1: 120, defined: item[0] !== 70 }));
+].map(item => ({ x: item[0], y: item[1], y1: 120, defined: item[0] !== 20 }));
 
 const subP2 = [
   [80, 80],
@@ -28,7 +28,7 @@ const points = [
   [160, 40],
   [200, 20],
   [240, 50]
-].map(item => ({ x: item[0], y: item[1], y1: 120, defined: item[0] !== 70 }));
+].map(item => ({ x: item[0], y: item[1], y1: 120, defined: item[0] !== 40 && item[0] !== 70 }));
 
 export const page = () => {
   const graphics: IGraphic[] = [];
@@ -51,6 +51,13 @@ export const page = () => {
             { offset: 0.5, color: 'orange' },
             { offset: 1, color: 'red' }
           ]
+        },
+        clipRange: 0.3,
+        connectedType: 'connect',
+        connectedX: null,
+        connectedY: 100,
+        connectedStyle: {
+          fill: 'grey'
         }
       })
     );
@@ -65,17 +72,33 @@ export const page = () => {
         x: ((i * 300) % 900) + 100,
         y: Math.floor((i * 300) / 900) * 200,
         segments: [
-          { points: subP1, fill: colorPools[3] },
+          {
+            points: subP1,
+            fill: colorPools[3],
+            stroke: ['red', false],
+            lineWidth: 10,
+            connectedType: 'connect',
+            connectedStyle: {
+              fill: 'grey'
+            }
+          },
           {
             points: subP2,
+            stroke: ['red', false],
             fill: colorPools[2],
             texture: 'bias-rl',
             textureColor: 'grey'
           }
         ],
-        fill: true
+        connectedType: 'connect',
+        fill: true,
+        stroke: true
       })
     );
+  });
+
+  graphics.forEach(item => {
+    item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 10000, 'linear');
   });
 
   const stage = createStage({

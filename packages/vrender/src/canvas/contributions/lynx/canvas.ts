@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { ICanvas, IContext2d, CanvasConfigType, EnvType } from '../../../interface';
+import type { ICanvas, IContext2d, CanvasConfigType, EnvType } from '../../../interface';
 import { LynxContext2d } from './context';
 
 const DefaultConfig = {
@@ -34,8 +34,14 @@ export class LynxCanvas implements ICanvas {
   get x(): number {
     return this._x;
   }
+  set x(_x: number) {
+    this._x = _x;
+  }
   get y(): number {
     return this._y;
+  }
+  set y(_y: number) {
+    this._y = _y;
   }
   get nativeCanvas(): HTMLCanvasElement {
     return this._nativeCanvas;

@@ -1,6 +1,58 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 21 Jul 2023 10:50:41 GMT and should not be manually modified.
+This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+
+## 0.13.8
+Thu, 03 Aug 2023 10:04:34 GMT
+
+### Patches
+
+- feat(component): label component support custom layout and dataFilter
+- chore: trigger publish alpha version
+- fix(marker): formatMethod logic should not in vrender
+- fix(marker): formatMethod logic should not in vrender
+- fix(marker): segement support autoRotate setting
+- fix(marker): formatMethod logic should not in vrender
+
+## 0.13.7
+Wed, 02 Aug 2023 03:13:00 GMT
+
+### Patches
+
+- feat(chore): trigger publish
+- fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300
+
+## 0.13.6
+Fri, 28 Jul 2023 07:17:04 GMT
+
+### Patches
+
+- Merge pull request #225 from VisActor/sync-0.13.5
+
+Sync 0.13.5
+
+
+## 0.13.5
+Thu, 27 Jul 2023 12:27:43 GMT
+
+### Patches
+
+- feat(component): label component support custom layout and dataFilter
+- fix: fix the issue of using interactive layer in only on canvas env
+
+## 0.13.4
+Tue, 25 Jul 2023 13:33:47 GMT
+
+_Version update only_
+
+## 0.13.3
+Tue, 25 Jul 2023 07:34:59 GMT
+
+### Patches
+
+- feat(vrender-components): discreate legend's item's state style supports function
+- feat(vrender-components): axis label, tick and subTick's state style supports function
+- fix: fix the issue of maxLineWidth's value is negative
 
 ## 0.13.2
 Fri, 21 Jul 2023 10:50:41 GMT

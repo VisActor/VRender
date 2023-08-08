@@ -62,7 +62,7 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
     const z = this.z ?? 0;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);

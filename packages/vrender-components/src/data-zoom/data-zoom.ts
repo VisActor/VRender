@@ -89,7 +89,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       previewCallbackX,
       previewCallbackY,
       previewCallbackX1,
-      previewCallbackY1
+      previewCallbackY1,
+      updateStateCallback
     } = this.attribute as DataZoomAttributes;
     const { width, height } = size;
     start && (this.state.start = start);
@@ -110,6 +111,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     isFunction(previewCallbackY) && (this._previewCallbackY = previewCallbackY);
     isFunction(previewCallbackX1) && (this._previewCallbackX1 = previewCallbackX1);
     isFunction(previewCallbackY1) && (this._previewCallbackY1 = previewCallbackY1);
+    isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
   }
 
   protected bindEvents(): void {
@@ -491,7 +493,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this._layoutAttrFromConfig) {
       return this._layoutAttrFromConfig;
     }
-    const { position: positionConfig, size, orient, middleHandlerStyle } = this.attribute as DataZoomAttributes;
+    const {
+      position: positionConfig,
+      size,
+      orient,
+      middleHandlerStyle,
+      startHandlerStyle,
+      endHandlerStyle
+    } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
     const middleHandlerSize = middleHandlerStyle?.background?.size ?? 10;
 
@@ -519,6 +528,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       width = widthConfig;
       height = heightConfig;
       position = positionConfig;
+    }
+
+    const startHandlerSize = (startHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
+    const endHandlerSize = (endHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
+    // 如果startHandler显示的话，要将其宽高计入dataZoom宽高
+    if (startHandlerStyle?.visible) {
+      if (this._isHorizontal) {
+        width -= (startHandlerSize + endHandlerSize) / 2;
+        position = {
+          x: position.x + startHandlerSize / 2,
+          y: position.y
+        };
+      } else {
+        height -= (startHandlerSize + endHandlerSize) / 2;
+        position = {
+          x: position.x,
+          y: position.y + startHandlerSize
+        };
+      }
     }
 
     this._layoutAttrFromConfig = {
@@ -877,10 +905,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       ) as IArea;
     }
 
-    const { position, size, selectedBackgroundChartStyle } = this.attribute as DataZoomAttributes;
-    const { width, height } = size;
+    const { selectedBackgroundChartStyle } = this.attribute as DataZoomAttributes;
+
     const { start, end } = this.state;
-    const { basePointStart, basePointEnd } = this.computeBasePoints();
+    const { position, width, height } = this.getLayoutAttrFromConfig();
     this._selectedPreviewGroupClip.setAttributes({
       x: this._isHorizontal ? position.x + start * width : position.x,
       y: this._isHorizontal ? position.y : position.y + start * height,
@@ -933,6 +961,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setAttributes({ start, end });
+        this._updateStateCallback && this._updateStateCallback(start, end);
       }
     }
   }

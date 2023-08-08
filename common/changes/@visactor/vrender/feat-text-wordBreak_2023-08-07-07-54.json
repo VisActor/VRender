@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix: fix the issue related to load image in lynx env",
-      "type": "patch"
+      "comment": "feat: support text word-break",
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vrender"

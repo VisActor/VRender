@@ -13,6 +13,7 @@ import type {
 } from '@visactor/vrender';
 import {
   Bounds,
+  getRectIntersect,
   isArray,
   isBoolean,
   isEmpty,
@@ -154,8 +155,10 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
     const layout = position === 'auto';
     // 最多循环this.positionList次
-    for (let i = 0; i < this.positionList.length; i++) {
-      const p = layout ? this.positionList[i] : position;
+    let minifyBBoxI: number;
+    let minifyBBoxSize: number = Infinity;
+    for (let i = 0; i < this.positionList.length + 1; i++) {
+      const p = layout ? this.positionList[i === this.positionList.length ? minifyBBoxI : i] : position;
       const { angle, offset, rectOffset } = this.getAngleAndOffset(
         p,
         popTipWidth,
@@ -171,6 +174,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
             visible: bgVisible && (contentVisible || titleVisible),
             x: offsetX,
             y: 0,
+            strokeBoundsBuffer: -1,
+            boundsPadding: -2,
             anchor: [0, 0],
             symbolType: 'arrow2Left',
             angle: angle,
@@ -194,7 +199,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
             y: 0,
             width: popTipWidth,
             height: poptipHeight,
-            zIndex: -10
+            zIndex: -8
           },
           'rect'
         ) as IRect;
@@ -213,6 +218,13 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         const stageBounds = new Bounds().setValue(0, 0, range[0], range[1]);
         if (rectInsideAnotherRect(b, stageBounds, false)) {
           break;
+        } else {
+          const bbox = getRectIntersect(b, stageBounds, false);
+          const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
+          if (size < minifyBBoxSize) {
+            minifyBBoxSize = size;
+            minifyBBoxI = i;
+          }
         }
       } else {
         break;

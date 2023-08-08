@@ -1,9 +1,10 @@
-import { IPointLike, abs } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { abs } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
 import { genCurveSegments } from './common';
 import { ReflectSegContext, SegContext } from '../seg-context';
 import { Direction } from '../enums';
-import { ICurvedSegment, IGenSegmentParams, ISegPath2D } from '../../interface/curve';
+import type { ICurvedSegment, IGenSegmentParams, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -50,13 +51,22 @@ function slope2(curveClass: MonotoneX | MonotoneY, t: number) {
 // According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
 // "you can express cubic Hermite interpolation in terms of cubic Bézier curves
 // with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
-function point(curveClass: MonotoneX | MonotoneY, t0: number, t1: number, defined: boolean) {
+function point(curveClass: MonotoneX | MonotoneY, t0: number, t1: number, defined: boolean, p: IPointLike) {
   const x0 = curveClass._x0;
   const y0 = curveClass._y0;
   const x1 = curveClass._x1;
   const y1 = curveClass._y1;
   const dx = (x1 - x0) / 3;
-  curveClass.context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1, defined);
+  curveClass.context.bezierCurveTo(
+    x0 + dx,
+    y0 + dx * t0,
+    x1 - dx,
+    y1 - dx * t1,
+    x1,
+    y1,
+    defined,
+    curveClass.lastPoint1
+  );
 }
 
 export class MonotoneX implements ICurvedSegment {
@@ -66,6 +76,8 @@ export class MonotoneX implements ICurvedSegment {
   declare _t0: number;
 
   protected startPoint?: IPointLike;
+  lastPoint0?: IPointLike;
+  lastPoint1?: IPointLike;
 
   constructor(context: ISegPath2D, startPoint?: IPointLike) {
     this.context = context;
@@ -94,10 +106,10 @@ export class MonotoneX implements ICurvedSegment {
   lineEnd() {
     switch (this._point) {
       case 2:
-        this.context.lineTo(this._x1, this._y1, this._lastDefined2 !== false);
+        this.context.lineTo(this._x1, this._y1, this._lastDefined2 !== false, this.lastPoint1);
         break;
       case 3:
-        point(this, this._t0, slope2(this, this._t0), this._lastDefined2 !== false);
+        point(this, this._t0, slope2(this, this._t0), this._lastDefined2 !== false, this.lastPoint1);
         break;
     }
     if (this._line || (this._line !== 0 && this._point === 1)) {
@@ -107,7 +119,6 @@ export class MonotoneX implements ICurvedSegment {
   }
   point(p: IPointLike): void {
     let t1 = NaN;
-
     const x = p.x;
     const y = p.y;
     if (x === this._x1 && y === this._y1) {
@@ -117,8 +128,8 @@ export class MonotoneX implements ICurvedSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false)
-          : this.context.moveTo(x, y);
+          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false, p)
+          : this.context.moveTo(x, y, p);
         break;
       case 1:
         this._point = 2;
@@ -129,11 +140,18 @@ export class MonotoneX implements ICurvedSegment {
           this,
           slope2(this, (t1 = slope3(this, x, y))),
           t1,
-          this._lastDefined1 !== false && this._lastDefined2 !== false
+          this._lastDefined1 !== false && this._lastDefined2 !== false,
+          p
         );
         break;
       default:
-        point(this, this._t0, (t1 = slope3(this, x, y)), this._lastDefined1 !== false && this._lastDefined2 !== false);
+        point(
+          this,
+          this._t0,
+          (t1 = slope3(this, x, y)),
+          this._lastDefined1 !== false && this._lastDefined2 !== false,
+          p
+        );
         break;
     }
 
@@ -142,6 +160,8 @@ export class MonotoneX implements ICurvedSegment {
     this._t0 = t1;
     this._lastDefined1 = this._lastDefined2;
     this._lastDefined2 = p.defined !== false;
+    this.lastPoint0 = this.lastPoint1;
+    this.lastPoint1 = p;
   }
 
   tryUpdateLength(): number {

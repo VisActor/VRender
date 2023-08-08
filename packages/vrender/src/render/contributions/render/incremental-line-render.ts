@@ -65,7 +65,7 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
       } = line.attribute;
 
       // 不绘制或者透明
-      const fVisible = fillVisible(opacity, fillOpacity);
+      const fVisible = fillVisible(opacity, fillOpacity, fill);
       const sVisible = strokeVisible(opacity, strokeOpacity);
       const doFill = runFill(fill);
       const doStroke = runStroke(stroke, lineWidth);

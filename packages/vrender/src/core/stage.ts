@@ -36,6 +36,7 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
+import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
@@ -153,6 +154,7 @@ export class Stage extends Group implements IStage {
   ticker: ITicker;
 
   autoRender: boolean;
+  _enableLayout: boolean;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -169,6 +171,7 @@ export class Stage extends Group implements IStage {
   protected lastRenderparams?: Partial<IDrawContext>;
 
   protected interactiveLayer?: ILayer;
+  protected supportInteractiveLayer: boolean;
 
   /**
    * 所有属性都具有默认值。
@@ -263,14 +266,14 @@ export class Stage extends Group implements IStage {
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
     }
+
+    params.enableLayout && this.enableLayout();
     this.hooks.beforeRender.tap('constructor', this.beforeRender);
     this.hooks.afterRender.tap('constructor', this.afterRender);
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
     this.ticker = params.ticker || defaultTicker;
-    if (params.interactiveLayer !== false) {
-      this.initInteractiveLayer();
-    }
+    this.supportInteractiveLayer = params.interactiveLayer !== false;
   }
 
   get3dOptions(options: IOption3D) {
@@ -438,6 +441,22 @@ export class Stage extends Group implements IStage {
       plugin.deactivate(this.pluginService);
     });
   }
+  enableLayout() {
+    if (this._enableLayout) {
+      return;
+    }
+    this._enableLayout = true;
+    this.pluginService.register(new FlexLayoutPlugin());
+  }
+  disableLayout() {
+    if (!this._enableLayout) {
+      return;
+    }
+    this._enableLayout = false;
+    this.pluginService.findPluginsByName('FlexLayoutPlugin').forEach(plugin => {
+      plugin.deactivate(this.pluginService);
+    });
+  }
 
   // /**
   //  * stage的appendChild，add
@@ -489,10 +508,13 @@ export class Stage extends Group implements IStage {
   removeLayer(ILayerId: number): ILayer | false {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
   }
-  protected initInteractiveLayer() {
+  tryInitInteractiveLayer() {
     // TODO：顺序可能会存在问题
-    this.interactiveLayer = this.createLayer();
-    this.interactiveLayer.name = '_builtin_interactive';
+    // 支持交互层，且没有创建过，那就创建
+    if (this.supportInteractiveLayer && !this.interactiveLayer) {
+      this.interactiveLayer = this.createLayer();
+      this.interactiveLayer.name = '_builtin_interactive';
+    }
     // this.interactiveLayer.afterDraw(l => {
     //   l.removeAllChild();
     // });

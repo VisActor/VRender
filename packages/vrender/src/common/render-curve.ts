@@ -1,4 +1,5 @@
-import { min, IPoint, IPointLike } from '@visactor/vutils';
+import type { IPoint, IPointLike } from '@visactor/vutils';
+import { last, min } from '@visactor/vutils';
 
 import type {
   IAreaSegment,
@@ -31,24 +32,93 @@ export function drawSegments(
     offsetX?: number;
     offsetY?: number;
     offsetZ?: number;
+    drawConnect?: boolean; // 是否是绘制connect区域的效果
+    mode?: 'none' | 'connect' | 'zero';
+    zeroX?: number;
+    zeroY?: number;
   }
 ) {
-  const { offsetX = 0, offsetY = 0, offsetZ = 0 } = params || {};
+  const {
+    offsetX = 0,
+    offsetY = 0,
+    offsetZ = 0,
+    mode = 'none',
+    drawConnect = false,
+    zeroX = 0,
+    zeroY = 0
+  } = params || {};
+  // none的connect不需要draw
+  if (drawConnect && mode === 'none') {
+    return;
+  }
+  if (!segPath) {
+    return;
+  }
   let needMoveTo: boolean = true;
   const { curves } = segPath;
   if (percent >= 1) {
-    curves.forEach(curve => {
-      // 跳过这个点
-      if (!curve.defined) {
-        needMoveTo = true;
-        return;
-      }
-      if (needMoveTo) {
-        path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
-      }
-      drawSegItem(path, curve, 1, params);
-      needMoveTo = false;
-    });
+    if (drawConnect) {
+      // return;
+      let defined0 = true;
+      let lastCurve: ICurve<IPoint>;
+      curves.forEach((curve, i) => {
+        // step的逻辑
+        let p0 = curve.p0;
+        if (curve.originP1 === curve.originP2) {
+          lastCurve = curve;
+          return;
+        }
+        if (lastCurve && lastCurve.originP1 === lastCurve.originP2) {
+          p0 = lastCurve.p0;
+        }
+        if (curve.defined) {
+          // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+          if (!defined0) {
+            path.lineTo(p0.x + offsetX, p0.y + offsetY, offsetZ);
+            defined0 = !defined0;
+          }
+        } else {
+          // 找到合法的点
+          const { originP1, originP2 } = curve;
+          let validP: IPointLike;
+          if (originP1 && originP1.defined !== false) {
+            validP = p0;
+          } else if (originP1 && originP2.defined !== false) {
+            validP = curve.p3 ?? curve.p1;
+          }
+          // 合法/（初始）变非法，moveTo
+          if (defined0) {
+            defined0 = !defined0;
+            const x = validP ? validP.x : curve.p0.x;
+            const y = validP ? validP.y : curve.p0.y;
+            path.moveTo(x + offsetX, y + offsetY, offsetZ);
+          } else {
+            // 非法变非法/合法，看情况要不要lineTo
+            if (validP) {
+              // 非法变合法，需要lineTo
+              defined0 = !defined0;
+              path.lineTo(validP.x + offsetX, validP.y + offsetY, offsetZ);
+            }
+          }
+        }
+
+        lastCurve = curve;
+      });
+    } else {
+      curves.forEach(curve => {
+        // 跳过这个点
+        if (!curve.defined) {
+          needMoveTo = true;
+          return;
+        }
+        if (needMoveTo) {
+          path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+        }
+        drawSegItem(path, curve, 1, params);
+        needMoveTo = false;
+      });
+    }
+
     return;
   }
   if (percent <= 0) {
@@ -71,6 +141,8 @@ export function drawSegments(
   const totalDrawLength = percent * totalLength;
   // 直到上次绘制的长度
   let drawedLengthUntilLast = 0;
+  let defined0 = true;
+  let lastCurve: ICurve<IPoint> = null;
   for (let i = 0, n = curves.length; i < n; i++) {
     const curve = curves[i];
     const curCurveLength = curve.getLength(direction);
@@ -80,16 +152,60 @@ export function drawSegments(
       break;
     }
 
-    // 跳过这个点
-    if (!curve.defined) {
-      needMoveTo = true;
-      continue;
+    if (drawConnect) {
+      // step的逻辑
+      let p0 = curve.p0;
+      if (curve.originP1 === curve.originP2) {
+        lastCurve = curve;
+        continue;
+      }
+      if (lastCurve && lastCurve.originP1 === lastCurve.originP2) {
+        p0 = lastCurve.p0;
+      }
+      if (curve.defined) {
+        // 非法变合法需要lineTo，合法变非法需要moveTo，初始非法需要moveTo
+        if (!defined0) {
+          path.lineTo(p0.x + offsetX, p0.y + offsetY, offsetZ);
+          defined0 = !defined0;
+        }
+      } else {
+        // 找到合法的点
+        const { originP1, originP2 } = curve;
+        let validP: IPointLike;
+        if (originP1 && originP1.defined !== false) {
+          validP = p0;
+        } else if (originP1 && originP2.defined !== false) {
+          validP = curve.p3 ?? curve.p1;
+        }
+        // 合法/（初始）变非法，moveTo
+        if (defined0) {
+          defined0 = !defined0;
+          const x = validP ? validP.x : curve.p0.x;
+          const y = validP ? validP.y : curve.p0.y;
+          path.moveTo(x + offsetX, y + offsetY, offsetZ);
+        } else {
+          // 非法变非法/合法，看情况要不要lineTo
+          if (validP) {
+            // 非法变合法，需要lineTo
+            defined0 = !defined0;
+            path.lineTo(validP.x + offsetX, validP.y + offsetY, offsetZ);
+          }
+        }
+      }
+
+      lastCurve = curve;
+    } else {
+      // 跳过这个点
+      if (!curve.defined) {
+        needMoveTo = true;
+        continue;
+      }
+      if (needMoveTo) {
+        path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
+      }
+      drawSegItem(path, curve, min(_p, 1), params);
+      needMoveTo = false;
     }
-    if (needMoveTo) {
-      path.moveTo(curve.p0.x + offsetX, curve.p0.y + offsetY, offsetZ);
-    }
-    drawSegItem(path, curve, min(_p, 1), params);
-    needMoveTo = false;
   }
 }
 

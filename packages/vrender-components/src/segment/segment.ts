@@ -2,9 +2,10 @@
  * @description 标签组件
  */
 import { isEmpty, merge } from '@visactor/vutils';
-import { createSymbol, ILine, ISymbol, createLine } from '@visactor/vrender';
+import type { ILine, ISymbol } from '@visactor/vrender';
+import { createSymbol, createLine } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
-import { SegmentAttributes, SymbolAttributes } from './type';
+import type { SegmentAttributes, SymbolAttributes } from './type';
 
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
@@ -17,12 +18,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   private _endAngle!: number;
 
   static defaultAttributes: Partial<SegmentAttributes> = {
+    visible: true,
     lineStyle: {
       lineWidth: 1,
       stroke: '#000'
     },
     startSymbol: {
       visible: false,
+      autoRotate: true,
       symbolType: 'triangle',
       size: 12,
       refX: 0,
@@ -35,6 +38,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     },
     endSymbol: {
       visible: false,
+      autoRotate: true,
       symbolType: 'triangle',
       size: 12,
       refX: 0,
@@ -67,7 +71,11 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
   protected render() {
     this.removeAllChild();
-    const { points, startSymbol, endSymbol, lineStyle, state } = this.attribute as SegmentAttributes;
+    const { points, startSymbol, endSymbol, lineStyle, state, visible = true } = this.attribute as SegmentAttributes;
+
+    if (!visible) {
+      return;
+    }
 
     // 计算线的起点和终点角度
     // 计算角度的原因：
@@ -119,6 +127,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
 
   private renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
+    const { autoRotate = true } = attribute;
     let symbol;
     if (attribute?.visible) {
       const startAngle = this._startAngle;
@@ -147,7 +156,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         ...position,
         symbolType: symbolType as string,
         size,
-        angle: rotate + refAngle,
+        angle: autoRotate ? rotate + refAngle : 0,
         strokeBoundsBuffer: 0,
         ...style
       });

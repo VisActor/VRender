@@ -26,9 +26,8 @@ const legend = new DiscreteLegend({
         selectedHover: {
           opacity: 0.85
         },
-        unSelected: {
-          fill: '#D8D8D8',
-          fillOpacity: 0.5
+        unSelected: (...args) => {
+          return { opacity: 0.2 };
         }
       }
     },

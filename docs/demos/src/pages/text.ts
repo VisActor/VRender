@@ -1,39 +1,54 @@
-import { createStage, createText, global, getTextBounds, createLine, createRect, createCircle, IGraphic, createWrapText } from '@visactor/vrender';
+import {
+  createStage,
+  createText,
+  global,
+  getTextBounds,
+  createLine,
+  createRect,
+  createCircle,
+  IGraphic,
+  createWrapText
+} from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // global.setEnv('browser');
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  graphics.push(createText({
+  const t = createText({
     x: 100,
     y: 200,
     fill: colorPools[5],
-    stroke: 'red',
+    fontWeight: 'bolder',
+    // stroke: 'red',
     text: 'Testabcdefg',
     fontSize: 20,
     textBaseline: 'top'
-  }));
+  });
+  console.log(t.AABBBounds);
+  graphics.push(t);
 
-  graphics.push(createText({
-    x: 300,
-    y: 200,
-    fill: {
-      gradient: 'linear',
-      x0: 0,
-      y0: 0,
-      x1: 1,
-      y1: 1,
-      stops: [
-        { offset: 0, color: 'green' },
-        { offset: 0.5, color: 'orange' },
-        { offset: 1, color: 'red' }
-      ]
-    },
-    text: ['这'],
-    fontSize: 180,
-    textBaseline: 'top'
-  }));
+  graphics.push(
+    createText({
+      x: 300,
+      y: 200,
+      fill: {
+        gradient: 'linear',
+        x0: 0,
+        y0: 0,
+        x1: 1,
+        y1: 1,
+        stops: [
+          { offset: 0, color: 'green' },
+          { offset: 0.5, color: 'orange' },
+          { offset: 1, color: 'red' }
+        ]
+      },
+      text: ['这'],
+      fontSize: 180,
+      textBaseline: 'top'
+    })
+  );
 
   const text = createText({
     x: 500,
@@ -41,31 +56,33 @@ export const page = () => {
     fill: colorPools[5],
     // text: ['Tffg'],
     text: 'Tffgggaaaa',
-    fontSize: 15,
-    lineHeight: 30,
+    fontSize: 20,
+    stroke: 'green',
+    lineWidth: 100,
+    // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-    textBaseline: 'alphabetic',
+    textBaseline: 'alphabetic'
     // scaleX: 2,
     // scaleY: 2
-  })
+  });
   graphics.push(text);
   const circle = createCircle({
     x: 500,
     y: 200,
     fill: 'black',
     radius: 2
-  })
+  });
   graphics.push(circle);
-  
+
   const rect = createRect({
     x: text.AABBBounds.x1,
     y: text.AABBBounds.y1,
     width: text.AABBBounds.width(),
     height: text.AABBBounds.height(),
     stroke: 'red',
-    lineWidth: 1,
-  })
+    lineWidth: 1
+  });
   graphics.push(rect);
 
   const stage = createStage({
@@ -75,5 +92,5 @@ export const page = () => {
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
-  })
+  });
 };

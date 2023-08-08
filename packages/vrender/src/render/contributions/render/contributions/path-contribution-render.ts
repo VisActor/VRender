@@ -6,8 +6,6 @@ import {
 } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-export const PathRenderContribution = Symbol.for('PathRenderContribution');
-
 @injectable()
 export class DefaultPathBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution

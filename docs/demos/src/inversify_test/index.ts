@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'core-js/proposals/reflect-metadata';
 import { ContainerModule, inject, injectable, Container, multiInject } from 'inversify';
 @injectable()
 class GlobalGun {}

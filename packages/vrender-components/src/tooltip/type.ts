@@ -4,7 +4,7 @@ import type {
   IRectGraphicAttribute,
   ITextAttribute
 } from '@visactor/vrender';
-import { IBounds, IPadding } from '@visactor/vutils';
+import type { IBounds, IPadding } from '@visactor/vutils';
 
 export interface IContainerSize {
   width?: number;
@@ -57,7 +57,12 @@ export type TooltipComponentAttrs = TooltipPositionAttrs & {
 };
 
 /** tooltip 文本样式 */
-export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute>;
+export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute & IContainerSize> & {
+  /** 文本是否支持多行显示 */
+  multiLine?: boolean;
+  /** 文本换行模式 */
+  wordBreak?: string;
+};
 
 /** tooltip symbol 样式 */
 export type TooltipSymbolAttrs = Partial<IGraphicAttribute> & {

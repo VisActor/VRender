@@ -17,7 +17,7 @@ import type {
 } from '../../../interface';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { PolygonRenderContribution } from './contributions/polygon-contribution-render';
+import { PolygonRenderContribution } from './contributions/constants';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from '../../../common/enums';
@@ -71,16 +71,16 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     } = polygon.attribute;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     if (!(polygon.valid && visible)) {
       return;
     }
 
-    if (!(doFill || doStroke || background)) {
+    if (!(doFill || doStroke)) {
       return;
     }
     // 如果存在fillCb和strokeCb，那就不直接跳过
@@ -105,7 +105,20 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     this._polygonRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, fillCb, strokeCb);
+        c.drawShape(
+          polygon,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          polygonAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
 
@@ -134,7 +147,20 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     this._polygonRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(polygon, context, x, y, doFill, doStroke, fVisible, sVisible, polygonAttribute, fillCb, strokeCb);
+        c.drawShape(
+          polygon,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          polygonAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

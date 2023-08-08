@@ -10,10 +10,13 @@ import type {
   TextAlignType,
   TextBaselineType,
   FederatedPointerEvent,
-  IGraphic
+  IGraphic,
+  IText
 } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
 import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
 import type { Dict } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
@@ -72,6 +75,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected abstract getTitleAttribute(): TagAttributes;
   protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
+  protected abstract handleLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    layer: number,
+    layerCount: number
+  ): void;
 
   /**
    * 坐标轴的一个特殊的方法，用于不更新场景树来获取更新属性后的包围盒
@@ -198,7 +207,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         this.axisLabelsContainer = labelGroup;
         axisContainer.add(labelGroup);
         items.forEach((axisItems: AxisItem[], layer: number) => {
-          this.renderLabels(labelGroup, axisItems, layer);
+          const layerLabelGroup = this.renderLabels(labelGroup, axisItems, layer);
+
+          // handle overlap
+          const labels = layerLabelGroup.getChildren() as IText[];
+          this.handleLabelsOverlap(labels, axisItems, layer, items.length);
         });
       }
 
@@ -242,16 +255,26 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     tickLineGroup.id = this._getNodeId('tick-container');
     container.add(tickLineGroup);
 
-    const tickLineState = isEmpty(this.attribute.tick?.state)
-      ? null
-      : merge({}, DEFAULT_STATES, this.attribute.tick.state);
     tickLineItems.forEach((item: TickLineItem, index) => {
       const line = createLine({
         ...this._getTickLineAttribute('tick', item, index, tickLineItems)
       });
       line.name = AXIS_ELEMENT_NAME.tick;
       line.id = this._getNodeId(item.id);
-      line.states = tickLineState;
+
+      if (isEmpty(this.attribute.tick?.state)) {
+        line.states = null;
+      } else {
+        const data = this.data[index];
+        const tickLineState = merge({}, DEFAULT_STATES, this.attribute.tick.state);
+        Object.keys(tickLineState).forEach(key => {
+          if (isFunction(tickLineState[key])) {
+            tickLineState[key] = tickLineState[key](data.rawValue, index, data, this.data);
+          }
+        });
+        line.states = tickLineState;
+      }
+
       tickLineGroup.add(line);
     });
     this.tickLineItems = tickLineItems;
@@ -261,14 +284,25 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     if (subTick?.visible) {
       const subTickLineItems: TickLineItem[] = this.getSubTickLineItems();
       if (subTickLineItems.length) {
-        const subTickLineState = isEmpty(subTick.state) ? null : merge({}, DEFAULT_STATES, subTick.state);
         subTickLineItems.forEach((item: TickLineItem, index) => {
           const line = createLine({
             ...this._getTickLineAttribute('subTick', item, index, tickLineItems)
           });
           line.name = AXIS_ELEMENT_NAME.subTick;
           line.id = this._getNodeId(`${index}`);
-          line.states = subTickLineState;
+
+          if (isEmpty(subTick.state)) {
+            line.states = null;
+          } else {
+            const subTickLineState = merge({}, DEFAULT_STATES, subTick.state);
+            Object.keys(subTickLineState).forEach(key => {
+              if (isFunction(subTickLineState[key])) {
+                subTickLineState[key] = subTickLineState[key](item.value, index, item, tickLineItems);
+              }
+            });
+            line.states = subTickLineState;
+          }
+
           tickLineGroup.add(line);
         });
       }
@@ -278,12 +312,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected renderLabels(container: IGroup, items: AxisItem[], layer: number) {
-    let data: TransformedAxisItem[];
-    if (layer === 0) {
-      data = this.data;
-    } else {
-      data = this._transformItems(items);
+    const { dataFilter } = this.attribute.label;
+    if (dataFilter && isFunction(dataFilter)) {
+      items = dataFilter(items, layer) as TransformedAxisItem[];
     }
+    const data = this._transformItems(items);
+
     const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
@@ -292,15 +326,22 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let maxTextHeight = 0;
     let textAlign = 'center';
     let textBaseline = 'middle';
-    const labelState = isEmpty(this.attribute.label?.state)
-      ? null
-      : merge({}, DEFAULT_STATES, this.attribute.label.state);
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle = this._getLabelAttribute(item, index, data, layer);
       const text = createText(labelStyle);
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
-      text.states = labelState;
+      if (isEmpty(this.attribute.label?.state)) {
+        text.states = null;
+      } else {
+        const labelState = merge({}, DEFAULT_STATES, this.attribute.label.state);
+        Object.keys(labelState).forEach(key => {
+          if (isFunction(labelState[key])) {
+            labelState[key] = labelState[key](item, index, data, layer);
+          }
+        });
+        text.states = labelState;
+      }
 
       labelGroup.add(text);
       const angle = labelStyle.angle ?? 0;
@@ -320,7 +361,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       textBaseline
     };
     return labelGroup;
-    // TODO: autoOverlap
   }
 
   protected renderTitle(container: IGroup) {
@@ -369,13 +409,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const data = this.data;
     // tick 处理
     const tickLineItems: TickLineItem[] = [];
-    const { alignWithLabel, inside = false, length } = tick as TickAttributes;
+    const { alignWithLabel, inside = false, length, dataFilter } = tick as TickAttributes;
     let tickSegment = 1;
     const count = data.length;
     if (count >= 2) {
       tickSegment = data[1].value - data[0].value;
     }
-    data.forEach((item: TransformedAxisItem) => {
+
+    (dataFilter && isFunction(dataFilter) ? dataFilter(data) : data).forEach((item: TransformedAxisItem) => {
       let point = item.point;
       let tickValue = item.value;
       if (!alignWithLabel) {

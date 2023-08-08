@@ -891,6 +891,20 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
+    const {
+      scaleX = textTheme.scaleX,
+      scaleY = textTheme.scaleY,
+      shadowBlur = textTheme.shadowBlur,
+      strokeBoundsBuffer = textTheme.strokeBoundsBuffer
+    } = attribute;
+    if (shadowBlur) {
+      const shadowBlurHalfWidth = shadowBlur / Math.abs(scaleX + scaleY);
+      boundStroke(tb1, shadowBlurHalfWidth, true, strokeBoundsBuffer);
+      aabbBounds.union(tb1);
+    }
+    // 合并shadowRoot的bounds
+    this.combindShadowAABBBounds(aabbBounds, graphic);
+
     transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
     return aabbBounds;
   }
@@ -1305,7 +1319,13 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ): IAABBBounds {
-    const { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    if (outerRadius < innerRadius) {
+      // 不用解构，避免性能问题
+      const temp = outerRadius;
+      outerRadius = innerRadius;
+      innerRadius = temp;
+    }
     let { endAngle = arcTheme.endAngle, startAngle = arcTheme.startAngle } = attribute;
 
     if (startAngle > endAngle) {

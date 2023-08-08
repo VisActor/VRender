@@ -1,5 +1,6 @@
-import { abs, IPoint } from '@visactor/vutils';
-import { IAreaCacheItem, ICubicBezierCurve, ICurve, IDirection, ILineCurve, IPath2D } from '../interface';
+import type { IPoint } from '@visactor/vutils';
+import { abs } from '@visactor/vutils';
+import type { IAreaCacheItem, ICubicBezierCurve, ICurve, IDirection, ILineCurve, IPath2D } from '../interface';
 import { Direction } from './enums';
 import { divideCubic } from './segment/curve/cubic-bezier';
 import { divideLinear } from './segment/curve/line';
@@ -198,6 +199,7 @@ function drawAreaBlock(
     drawSegItem(path, curve, 1, params);
     needMoveTo = false;
   }
+  path.closePath();
 }
 
 /**

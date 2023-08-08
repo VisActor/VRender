@@ -3,7 +3,7 @@ import type { IStage } from './stage';
 
 export interface IPluginService extends Releaseable {
   register: (plugin: IPlugin) => void;
-  active: (stage: IStage) => void;
+  active: (stage: IStage, params: { pluginList?: string[] }) => void;
   actived: boolean;
   stage: IStage;
   findPluginsByName: (name: string) => IPlugin[];

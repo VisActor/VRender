@@ -13,10 +13,19 @@ import { BaseEnvContribution } from './base-contribution';
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
   createCanvas: (id: string) => any;
+  createCanvasNG: (id: string) => any;
+  createImage: (id: string) => any;
 };
 declare const SystemInfo: {
   pixelRatio: number;
 };
+
+let ng = false;
+try {
+  ng = !!lynx.createCanvasNG;
+} catch (err) {
+  // do nothing
+}
 
 // 飞书小程序canvas的wrap
 function makeUpCanvas(
@@ -29,7 +38,11 @@ function makeUpCanvas(
   const dpr = SystemInfo.pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
-    const _canvas = lynx.createCanvas(id);
+    const _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
+    _canvas.width = domref.width * dpr;
+    _canvas.height = domref.height * dpr;
+    ng && _canvas.attachToCanvasView(id);
+
     const ctx = _canvas.getContext('2d');
     ctx.draw = (a: any, b: any) => {
       b();
@@ -41,8 +54,8 @@ function makeUpCanvas(
     // };
 
     const canvas = {
-      width: domref.width,
-      height: domref.height,
+      width: domref.width * dpr,
+      height: domref.height * dpr,
       offsetWidth: domref.width,
       offsetHeight: domref.height,
       id: id ?? '',
@@ -59,6 +72,25 @@ function makeUpCanvas(
       freeCanvasList.push(canvas);
     }
   });
+}
+
+export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
+  if (isSvg) {
+    return Promise.reject();
+  }
+  const img = lynx.createImage(src);
+  // if (img.complete) {
+  //   return Promise.resolve(img);
+  // }
+  const promise: Promise<HTMLImageElement> = new Promise((resolve, reject) => {
+    img.onload = () => {
+      resolve(img);
+    };
+    img.onerror = () => {
+      reject(new Error('加载失败'));
+    };
+  });
+  return promise;
 }
 
 @injectable()
@@ -94,15 +126,38 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
       loadFeishuContributions();
     }
   }
+  /**
+   * 获取动态canvas的数量，offscreenCanvas或者framebuffer
+   */
+  getDynamicCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
+
+  /**
+   * 获取静态canvas的数量，纯粹canvas
+   */
+  getStaticCanvasCount(): number {
+    return this.freeCanvasList.length;
+  }
 
   loadImage(url: string): Promise<{
     loadState: 'success' | 'fail';
     data: HTMLImageElement | ImageData | null;
   }> {
-    return Promise.resolve({
-      data: url as unknown as HTMLImageElement,
-      loadState: 'success'
-    });
+    const imagePromise = createImageElement(url, false);
+    return imagePromise
+      .then((img: HTMLImageElement) => {
+        return {
+          data: img,
+          loadState: 'success' as const
+        };
+      })
+      .catch(() => {
+        return {
+          data: null,
+          loadState: 'fail'
+        };
+      });
   }
 
   loadSvg(url: string): Promise<{

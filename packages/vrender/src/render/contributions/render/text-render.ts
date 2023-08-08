@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { inject, injectable, named } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import type {
@@ -9,18 +9,33 @@ import type {
   IDrawContext,
   IRenderService,
   IGraphicRender,
-  IGraphicRenderDrawParams
+  IGraphicRenderDrawParams,
+  ITextRenderContribution,
+  IContributionProvider
 } from '../../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
+import { ContributionProvider } from '../../../common/contribution-provider';
+import { TextRenderContribution } from './contributions/constants';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
   type: 'text';
   numberType: number = TEXT_NUMBER_TYPE;
   z: number;
+
+  protected _textBeforeRenderContribitions: ITextRenderContribution[];
+  protected _textAfterRenderContribitions: ITextRenderContribution[];
+  constructor(
+    @inject(ContributionProvider)
+    @named(TextRenderContribution)
+    protected readonly textRenderContribitions: IContributionProvider<ITextRenderContribution>
+  ) {
+    super();
+  }
 
   drawShape(
     text: IText,
@@ -63,7 +78,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const lineHeight = text.attribute.lineHeight ?? fontSize;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);
@@ -81,6 +96,37 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const z = this.z || 0;
 
     context.beginPath();
+
+    if (!this._textBeforeRenderContribitions) {
+      const contributions = this.textRenderContribitions.getContributions() || [];
+      contributions.sort((a, b) => b.order - a.order);
+      this._textBeforeRenderContribitions = [];
+      this._textAfterRenderContribitions = [];
+      contributions.forEach(c => {
+        if (c.time === BaseRenderContributionTime.beforeFillStroke) {
+          this._textBeforeRenderContribitions.push(c);
+        } else {
+          this._textAfterRenderContribitions.push(c);
+        }
+      });
+    }
+    this._textBeforeRenderContribitions.forEach(c => {
+      c.drawShape(
+        text,
+        context,
+        x,
+        y,
+        doFill,
+        doStroke,
+        fVisible,
+        sVisible,
+        textAttribute,
+        drawContext,
+        fillCb,
+        strokeCb
+      );
+    });
+
     // shadow
     context.setShadowStyle && context.setShadowStyle(text, text.attribute, textAttribute);
 
@@ -159,6 +205,23 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       }
     }
     transform3dMatrixToContextMatrix && this.restoreTransformUseContext2d(text, textAttribute, z, context);
+
+    this._textAfterRenderContribitions.forEach(c => {
+      c.drawShape(
+        text,
+        context,
+        x,
+        y,
+        doFill,
+        doStroke,
+        fVisible,
+        sVisible,
+        textAttribute,
+        drawContext,
+        fillCb,
+        strokeCb
+      );
+    });
   }
 
   draw(text: IText, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

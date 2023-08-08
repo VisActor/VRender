@@ -1,16 +1,18 @@
-import {
+import type {
   IGraphicAttribute,
   ILineGraphicAttribute,
   SymbolType,
   ITextGraphicAttribute,
   ISymbolGraphicAttribute,
   IRectGraphicAttribute,
-  IGroupGraphicAttribute
+  IGroupGraphicAttribute,
+  IText,
+  IGroup
 } from '@visactor/vrender';
-import { Dict } from '@visactor/vutils';
-import { Point } from '../core/type';
-import { SegmentAttributes } from '../segment';
-import { TagAttributes } from '../tag';
+import type { Dict } from '@visactor/vutils';
+import type { Point } from '../core/type';
+import type { SegmentAttributes } from '../segment';
+import type { TagAttributes } from '../tag';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;
@@ -130,13 +132,17 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 垂直于坐标轴方向的因子，默认为 1
    */
   verticalFactor?: number;
+  /**
+   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
+   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
+   */
+  verticalLimitSize?: number;
+  /**
+   * 坐标轴的显示位置，用于文本的防重叠处理
+   */
+  orient?: string;
   /** 坐标轴数据 */
   items: AxisItem[][];
-  /**
-   * TODO：待支持
-   * 坐标轴组件可占用尺寸，用于组件内部的约束性布局
-   */
-  layoutSize?: [number, number];
   /**
    * 轴标题配置
    */
@@ -409,7 +415,16 @@ export interface TickAttributes {
    * 刻度线样式配置
    */
   style?: Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
+  /**
+   * 刻度线状态样式配置
+   */
+  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>>;
+  /**
+   * 用于 tick 的数据过滤
+   * @param data
+   * @returns
+   */
+  dataFilter?: (data: AxisItem[]) => AxisItem[];
 }
 
 // 子轴刻度线配置
@@ -434,15 +449,66 @@ export interface SubTickAttributes {
    * 子刻度线样式配置
    */
   style?: Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute>>;
+  /**
+   * 子刻度线状态样式配置
+   */
+  state?: AxisItemStateStyle<Partial<ILineGraphicAttribute> | callbackFunc<Partial<ILineGraphicAttribute> | undefined>>;
 }
 
-export interface LabelLayoutConfig {
-  type: 'autoHide' | 'autoRotate' | 'autoEllipsis' | 'custom';
-  [key: string]: any;
+export type CustomMethod = (items: IText[], separation: number) => IText[];
+
+export interface AxisLabelOverlap {
+  /**
+   * 自动旋转配置
+   * @default false
+   */
+  autoRotate?: boolean;
+  /**
+   * 仅当 `autoRotate` 为 true 时生效，可选的旋转范围，默认为 [0, 45, 90]
+   * @default [0, 45, 90]
+   */
+  autoRotateAngle?: number[];
+  /**
+   * 自动隐藏配置
+   * @default false
+   */
+  autoHide?: boolean;
+  /**
+   * 防重叠策略，默认为 'parity'。
+   * - 'parity': 奇偶校验，使用删除所有其他标签的策略（这对于标准线性轴非常有效）。
+   * - 'greedy': 将执行标签的线性扫描，并删除与最后一个可见标签重叠的所有标签。
+   * - 也可以传入函数用于自定义策略
+   * @default 'parity'
+   */
+  autoHideMethod?: 'parity' | 'greedy' | CustomMethod;
+  /**
+   * 仅当 `autoHide` 为 true 时生效，设置文本之间的间隔距离，单位 px
+   * @default 0
+   */
+  autoHideSeparation?: number;
+  /**
+   * 自动隐藏配置
+   * @default false
+   */
+  autoLimit?: boolean;
+  /**
+   * 仅当 `autoLimit` 为 true 时生效，省略占位符，默认为 '...'
+   * @default '...'
+   */
+  limitEllipsis?: string;
+
+  /**
+   * 自定义布局配置，如果声明了 `layoutFunc`，则默认提供的防重叠相关的配置（`autoHide`, `autoRotate`, `autoLimit`）均不生效
+   * @param labels 标签图形元素
+   * @param labelData 标签数据
+   * @param layer 当前轴的层级
+   * @param axis 当前轴组件实例
+   * @returns void
+   */
+  layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
 }
 
-export interface LabelAttributes {
+export interface LabelAttributes extends AxisLabelOverlap {
   /** 是否展示标签 */
   visible: boolean;
   /**
@@ -465,9 +531,15 @@ export interface LabelAttributes {
    */
   style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
   /**
-   * TODO：待确定逻辑及配置
-   * 标签防重叠布局配置
+   * 文本状态样式配置
    */
-  layouts?: LabelLayoutConfig[];
-  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute>>;
+  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>>;
+
+  /**
+   * 用于 label 的数据过滤
+   * @param data
+   * @param layer
+   * @returns
+   */
+  dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
 }

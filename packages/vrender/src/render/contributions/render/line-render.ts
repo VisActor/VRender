@@ -101,6 +101,9 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
+    if (!cache) {
+      return;
+    }
     context.beginPath();
 
     const z = this.z ?? 0;
@@ -172,7 +175,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     } = line.attribute;
 
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity);
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
     const sVisible = strokeVisible(opacity, strokeOpacity);
     const doFill = runFill(fill);
     const doStroke = runStroke(stroke, lineWidth);

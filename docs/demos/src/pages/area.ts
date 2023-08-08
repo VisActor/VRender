@@ -32,47 +32,53 @@ const points = [
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
-    graphics.push(createArea({
-      points,
-      curveType: type as any,
-      x: (i * 300) % 900 + 100,
-      y: (Math.floor(i * 300 / 900)) * 200,
-      fill: {
-        gradient: 'linear',
-        x0: 0,
-        y0: 0,
-        x1: 1,
-        y1: 0,
-        stops: [
-          { offset: 0, color: 'green' },
-          { offset: 0.5, color: 'orange' },
-          { offset: 1, color: 'red' }
-        ]
-      },
-    }));
-  });
+  // ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
+  //   graphics.push(
+  //     createArea({
+  //       points,
+  //       curveType: type as any,
+  //       x: ((i * 300) % 900) + 100,
+  //       y: Math.floor((i * 300) / 900) * 200,
+  //       stroke: ['black', false],
+  //       fill: {
+  //         gradient: 'linear',
+  //         x0: 0,
+  //         y0: 0,
+  //         x1: 1,
+  //         y1: 0,
+  //         stops: [
+  //           { offset: 0, color: 'green' },
+  //           { offset: 0.5, color: 'orange' },
+  //           { offset: 1, color: 'red' }
+  //         ]
+  //       }
+  //     })
+  //   );
+  // });
 
   ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
     i += 7;
-    graphics.push(createArea({
-      points,
-      curveType: type as any,
-      x: (i * 300) % 900 + 100,
-      y: (Math.floor(i * 300 / 900)) * 200,
-      segments: [
-        { points: subP1, fill: colorPools[3] },
-        {
-          points: subP2,
-          fill: colorPools[2],
-          texture: 'bias-rl',
-          textureColor: 'grey'
-        }
-      ],
-      fill: true
-    }));
+    graphics.push(
+      createArea({
+        points,
+        curveType: type as any,
+        x: ((i * 300) % 900) + 100,
+        y: Math.floor((i * 300) / 900) * 200,
+        segments: [
+          { points: subP1, fill: colorPools[3], stroke: ['red', false], lineWidth: 10 },
+          {
+            points: subP2,
+            stroke: ['red', false],
+            fill: colorPools[2],
+            texture: 'bias-rl',
+            textureColor: 'grey'
+          }
+        ],
+        fill: true,
+        stroke: true
+      })
+    );
   });
-
 
   const stage = createStage({
     canvas: document.getElementById('main'),
@@ -81,5 +87,5 @@ export const page = () => {
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
-  })
+  });
 };

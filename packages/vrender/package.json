@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.12.2",
+  "version": "0.13.7",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -21,13 +21,13 @@
     "test": "jest",
     "test-cov": "jest -w 16 --coverage",
     "prepublishOnly": "npm run build",
-    "ci": "node github-ci.js"
+    "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.11.1",
+    "@visactor/vutils": "~0.13.0",
     "color-convert": "2.0.1",
     "inversify": "6.0.1",
-    "reflect-metadata": "0.1.13"
+    "core-js": "3.31.1"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
@@ -46,6 +46,7 @@
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
+    "ts-node": "10.9.0",
     "typescript": "4.9.5",
     "node-fetch": "2.6.6",
     "form-data": "~4.0.0"

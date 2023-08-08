@@ -18,7 +18,7 @@ import type {
   IRectRenderContribution,
   IContributionProvider
 } from '../../../interface';
-import { RectRenderContribution } from './contributions/rect-contribution-render';
+import { RectRenderContribution } from './contributions/constants';
 import { drawPathProxy, rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
 
@@ -72,16 +72,16 @@ export class DefaultCanvasRectRender implements IGraphicRender {
     } = rect.attribute;
 
     // 不绘制或者透明
-    const fVisible = rectFillVisible(opacity, fillOpacity, width, height);
+    const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);
     const sVisible = rectStrokeVisible(opacity, strokeOpacity, width, height);
-    const doFill = runFill(fill);
+    const doFill = runFill(fill, background);
     const doStroke = runStroke(stroke, lineWidth);
 
     if (!(rect.valid && visible)) {
       return;
     }
 
-    if (!(doFill || doStroke || background)) {
+    if (!(doFill || doStroke)) {
       return;
     }
 
@@ -124,6 +124,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
           fVisible,
           sVisible,
           rectAttribute,
+          drawContext,
           fillCb,
           strokeCb,
           doFillOrStroke
@@ -156,7 +157,20 @@ export class DefaultCanvasRectRender implements IGraphicRender {
     this._rectRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.afterFillStroke) {
         // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(rect, context, x, y, doFill, doStroke, fVisible, sVisible, rectAttribute, fillCb, strokeCb);
+        c.drawShape(
+          rect,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          rectAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
     });
   }

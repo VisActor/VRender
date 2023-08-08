@@ -4,9 +4,9 @@ module.exports = {
   extends: ['@internal/eslint-config/profile/lib'],
   parserOptions: { tsconfigRootDir: __dirname, project: './tsconfig.eslint.json' },
   globals: {
-    __DEV__: "readonly",
-    __VERSION__: "readonly",
-    NodeJS: true,
+    __DEV__: 'readonly',
+    __VERSION__: 'readonly',
+    NodeJS: true
   },
-  // ignorePatterns: [],
+  ignorePatterns: ['scripts/**']
 };

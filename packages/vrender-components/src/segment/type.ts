@@ -1,11 +1,11 @@
-import {
+import type {
   IGraphicAttribute,
   IGroupGraphicAttribute,
   ILineGraphicAttribute,
   ISymbolGraphicAttribute,
   SymbolType
 } from '@visactor/vrender';
-import { Point, State } from '../core/type';
+import type { Point, State } from '../core/type';
 
 export type SymbolAttributes = {
   /** 是否展示 symbol */
@@ -18,6 +18,10 @@ export type SymbolAttributes = {
    * symbol 大小
    */
   size?: number;
+  /**
+   * 自动旋转，沿着线的方向，默认 true
+   */
+  autoRotate?: boolean;
   /**
    * symbol 相对line平行方向上的偏移
    */
@@ -43,6 +47,11 @@ export type SymbolAttributes = {
 };
 
 export interface SegmentAttributes extends IGroupGraphicAttribute {
+  /**
+   * 可见性
+   * @default true
+   */
+  visible?: boolean;
   points: Point[];
   /** 轴线起始点 symbol 配置 */
   startSymbol?: SymbolAttributes;

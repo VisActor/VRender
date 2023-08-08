@@ -20,15 +20,20 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
 
   labels.forEach(label => {
     // 如果水平并且文本未发生旋转，则不配置 maxLineWidth
-    const limitLabelLength =
+    let limitLabelLength =
       label.attribute.angle === 0 || isNil(label.attribute.angle)
         ? orient === 'top' || orient === 'bottom'
           ? null
           : limitLength
         : Math.abs(limitLength / Math.sin(label.attribute.angle));
+    if (isValidNumber(label.attribute.maxLineWidth)) {
+      limitLabelLength = isValidNumber(limitLabelLength)
+        ? Math.min(label.attribute.maxLineWidth, limitLabelLength)
+        : label.attribute.maxLineWidth;
+    }
     label.setAttributes({
       maxLineWidth: limitLabelLength,
-      ellipsis
+      ellipsis: label.attribute.ellipsis || ellipsis
     });
   });
 }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "math.floor axis label size to determine whether it exceeds, fixed https://github.com/VisActor/VChart/issues/477",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

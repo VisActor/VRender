@@ -394,8 +394,17 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   protected getTextAlign(vector: number[]): TextAlignType {
     let align: TextAlignType = 'center';
+
     if (isNumberClose(vector[0], 0)) {
-      align = 'center';
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
+      } else {
+        align = 'center';
+      }
     } else if (vector[0] > 0) {
       align = 'start';
     } else if (vector[0] < 0) {
@@ -547,7 +556,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
     const vector = this.getVerticalVector(offset, inside, point);
-    const text = formatMethod ? formatMethod(tickDatum.label, tickDatum, index, tickData, layer) : tickDatum.label;
+    const text = formatMethod ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer) : tickDatum.label;
     let { style: textStyle } = tagAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))

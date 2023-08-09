@@ -23,7 +23,7 @@ import { DrawItemInterceptor } from './draw-interceptor';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
 import type { ILayerService } from '../../../interface/core';
-import { Global } from '../../../constants';
+import { VGlobal } from '../../../constants';
 
 enum STATUS {
   NORMAL = 0,
@@ -47,7 +47,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
   protected lastRenderService: IRenderService;
   protected lastDrawContext: IDrawContext;
   protected count: number;
-  @inject(Global) global: IGlobal;
+  @inject(VGlobal) global: IGlobal;
 
   constructor(
     // @inject(ContributionProvider)

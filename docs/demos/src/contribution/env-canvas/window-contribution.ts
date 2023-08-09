@@ -8,7 +8,7 @@ import type {
   ICanvas,
   IDomRectLike
 } from '@visactor/vrender';
-import { Generator, Global, BaseWindowHandlerContribution } from '@visactor/vrender';
+import { Generator, VGlobal, BaseWindowHandlerContribution } from '@visactor/vrender';
 import { NodeCanvas } from './canvas';
 import type { IBoundsLike } from '@visactor/vutils';
 
@@ -21,7 +21,7 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(Global) private readonly global: IGlobal) {
+  constructor(@inject(VGlobal) private readonly global: IGlobal) {
     super();
   }
 

@@ -425,7 +425,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const { verticalFactor = 1 } = this.attribute;
     const factor = (inside ? 1 : -1) * verticalFactor;
     if (isNumberClose(vector[1], 0)) {
-      if (isNumberClose(vector[0], 0)) {
+      if (isNumberClose(vector[0], 0) && !Object.is(vector[0], -0) && !Object.is(vector[1], -0)) {
         base = factor === 1 ? 'bottom' : 'top';
       } else {
         base = 'middle';

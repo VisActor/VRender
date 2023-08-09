@@ -2,6 +2,32 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.10",
+      "tag": "@visactor/vrender-components_v0.13.10",
+      "date": "Wed, 09 Aug 2023 07:34:23 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix(brush): fix brushEnd interactive judge and reconfig operateType"
+          },
+          {
+            "comment": "fix(brush): reconfig operateType and add operateType about click space"
+          },
+          {
+            "comment": "fix: it should consider the `maxLineWidth` and \\ set in `label.style` when do auto limit, relate https://github.com/VisActor/VChart/issues/456"
+          },
+          {
+            "comment": "math.floor axis label size to determine whether it exceeds, fixed https://github.com/VisActor/VChart/issues/477"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.8` to `0.13.9`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.9",
       "tag": "@visactor/vrender-components_v0.13.9",
       "date": "Tue, 08 Aug 2023 09:27:52 GMT",

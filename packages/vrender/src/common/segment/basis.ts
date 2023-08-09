@@ -1,9 +1,10 @@
-import { abs, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { abs } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
 import { genCurveSegments } from './common';
 import { SegContext } from '../seg-context';
 import { Direction } from '../enums';
-import { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
+import type { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -24,7 +25,7 @@ import { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '.
 
 // 基于d3-shape重构
 // https://github.com/d3/d3-shape/blob/main/src/curve/basis.js
-export function point(curveClass: Basis, x: number, y: number, defined: boolean) {
+export function point(curveClass: Basis, x: number, y: number, defined: boolean, p: IPointLike) {
   curveClass.context.bezierCurveTo(
     (2 * curveClass._x0 + curveClass._x1) / 3,
     (2 * curveClass._y0 + curveClass._y1) / 3,
@@ -32,7 +33,8 @@ export function point(curveClass: Basis, x: number, y: number, defined: boolean)
     (curveClass._y0 + 2 * curveClass._y1) / 3,
     (curveClass._x0 + 4 * curveClass._x1 + x) / 6,
     (curveClass._y0 + 4 * curveClass._y1 + y) / 6,
-    defined
+    defined,
+    curveClass.lastPoint1
   );
 }
 
@@ -42,6 +44,8 @@ export class Basis implements ICurvedSegment {
   declare context: ISegPath2D;
 
   protected startPoint?: IPointLike;
+  lastPoint0?: IPointLike;
+  lastPoint1?: IPointLike;
 
   constructor(context: ISegPath2D, startPoint?: IPointLike) {
     this.context = context;
@@ -74,7 +78,8 @@ export class Basis implements ICurvedSegment {
           this,
           this._x1 * 6 - (this._x0 + 4 * this._x1),
           this._y1 * 6 - (this._y0 + 4 * this._y1),
-          this._lastDefined1 !== false && this._lastDefined2 !== false
+          this._lastDefined1 !== false && this._lastDefined2 !== false,
+          this.lastPoint1
         ); // falls through
       // case 2: this.context.lineTo(this._x1, this._y1); break;
     }
@@ -90,21 +95,23 @@ export class Basis implements ICurvedSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false)
-          : this.context.moveTo(x, y);
+          ? this.context.lineTo(x, y, this._lastDefined1 !== false && this._lastDefined2 !== false, p)
+          : this.context.moveTo(x, y, p);
         break;
       case 1:
         this._point = 2;
         break;
       // case 2: this._point = 3; this.context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6, i, defined1, defined2); // falls through
       default:
-        point(this, x, y, this._lastDefined1 !== false && this._lastDefined2 !== false);
+        point(this, x, y, this._lastDefined1 !== false && this._lastDefined2 !== false, p);
         break;
     }
     (this._x0 = this._x1), (this._x1 = x);
     (this._y0 = this._y1), (this._y1 = y);
     this._lastDefined1 = this._lastDefined2;
     this._lastDefined2 = p.defined;
+    this.lastPoint0 = this.lastPoint1;
+    this.lastPoint1 = p;
   }
 
   tryUpdateLength(): number {

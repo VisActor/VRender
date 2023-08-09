@@ -19,6 +19,8 @@ export function divideLinear(curve: ILineCurve, t: number): ILineCurve[] {
 
 export class LineCurve extends Curve implements ILineCurve {
   type: number = CurveTypeEnum.LineCurve;
+  declare originP1?: IPointLike;
+  declare originP2?: IPointLike;
   declare p0: IPoint;
   declare p1: IPoint;
   declare angle: number;

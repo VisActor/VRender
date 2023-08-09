@@ -98,6 +98,12 @@ export interface OverlapAttrs {
   avoidBaseMark?: boolean;
 
   /**
+   * 躲避指定图元
+   * @default []
+   */
+  avoidMarks?: string[] | IGraphic[];
+
+  /**
    * 发生重叠后的躲避策略
    */
   strategy?: Strategy[];

@@ -109,6 +109,10 @@ export type IFillStyle = {
   fill: IFillType;
 };
 
+export type ILayout = {
+  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+};
+
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
   distance: number | string;
 };
@@ -147,6 +151,24 @@ export type IStrokeStyle = {
 };
 
 type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
+
+export type IConnectedStyle = {
+  // 连接，取零或者断开
+  connectedType: 'connect' | 'zero' | 'none';
+  connectedStyle: {
+    stroke: IStrokeStyle['stroke'];
+    strokeOpacity: IStrokeStyle['strokeOpacity'];
+    lineDash: IStrokeStyle['lineDash'];
+    lineDashOffset: IStrokeStyle['lineDashOffset'];
+    lineCap: IStrokeStyle['lineCap'];
+    lineJoin: IStrokeStyle['lineJoin'];
+    lineWidth: IStrokeStyle['lineWidth'];
+    fill: IFillStyle['fill'];
+    fillOpacity: IFillStyle['fillOpacity'];
+  };
+  connectedX: number;
+  connectedY: number;
+};
 
 export type IGraphicStyle = IFillStyle &
   IStrokeStyle & {

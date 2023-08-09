@@ -5,7 +5,7 @@ on:
   push:
     branches: ['main']
   pull_request:
-    branches: ['main', 'develop']
+    branches: ['main', 'develop', 'dev/**']
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
 
       - name: Print All Github Environment Variables
         run: env
-        
+
       - name: Update rush
         run: node common/scripts/install-run-rush.js update --bypass-policy
 

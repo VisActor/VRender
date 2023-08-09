@@ -12,7 +12,7 @@ import type {
   IWindowParams
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { Global } from '../../../constants';
+import { VGlobal } from '../../../constants';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -57,7 +57,7 @@ export class FeishuWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(Global) private readonly global: IGlobal) {
+  constructor(@inject(VGlobal) private readonly global: IGlobal) {
     super();
   }
 

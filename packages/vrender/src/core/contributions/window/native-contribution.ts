@@ -1,6 +1,6 @@
 // import { createCanvas, createImageData, loadImage } from 'canvas';
 // import { inject, injectable } from 'inversify';
-// import { Global, IWindow, EnvType, IGlobal, IWindowHandlerContribution, IWindowParams } from '../..';
+// import { VGlobal, IWindow, EnvType, IGlobal, IWindowHandlerContribution, IWindowParams } from '../..';
 // import { BaseWindowHandlerContribution } from './base-contribution';
 
 // type NodePkg = {
@@ -27,7 +27,7 @@
 //     return null;
 //   }
 
-//   constructor(@inject(Global) private readonly global: IGlobal) {
+//   constructor(@inject(VGlobal) private readonly global: IGlobal) {
 //     super();
 //   }
 

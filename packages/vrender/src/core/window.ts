@@ -12,9 +12,9 @@ import type {
 } from '../interface';
 import { container } from '../container';
 import { SyncHook } from '../tapable';
-import { Global } from '../constants';
+import { VGlobal } from '../constants';
 
-export const Window = Symbol.for('Window');
+export const VWindow = Symbol.for('VWindow');
 
 export const WindowHandlerContribution = Symbol.for('WindowHandlerContribution');
 
@@ -74,7 +74,7 @@ export class DefaultWindow implements IWindow {
   }
 
   constructor(
-    @inject(Global) public readonly global: IGlobal // @inject(ContributionProvider) // @named(WindowHandlerContribution) // protected readonly contributions: ContributionProvider<IWindowHandlerContribution>
+    @inject(VGlobal) public readonly global: IGlobal // @inject(ContributionProvider) // @named(WindowHandlerContribution) // protected readonly contributions: ContributionProvider<IWindowHandlerContribution>
   ) {
     this._uid = Generator.GenAutoIncrementId();
   }

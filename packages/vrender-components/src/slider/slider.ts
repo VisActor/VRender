@@ -5,22 +5,17 @@ import { isNil, merge, clamp, isValid, array, isObject, isArray } from '@visacto
  * 3. step 功能开发
  * 4. tooltip 功能开发
  */
-import {
-  createGroup,
-  createText,
+import type {
   IGroup,
   ISymbol,
   IGraphic,
-  global,
-  createRect,
-  createSymbol,
   ISymbolGraphicAttribute,
   IText,
   ITextGraphicAttribute,
   FederatedPointerEvent,
-  CustomEvent,
   Cursor
 } from '@visactor/vrender';
+import { createGroup, createText, vglobal, createRect, createSymbol, CustomEvent } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
@@ -498,9 +493,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     e.stopPropagation();
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
-    if (global.env === 'browser') {
-      global.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
-      global.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
+      vglobal.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
       this._currentHandler.addEventListener(
         'pointermove',
@@ -555,9 +550,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     this._currentHandler = null;
-    if (global.env === 'browser') {
-      global.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
-      global.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
+      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
       const currentTarget = e.target;
       currentTarget.removeEventListener(
@@ -575,9 +570,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
-    if (global.env === 'browser') {
-      global.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      global.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      vglobal.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
       this._track.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
       this._track.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
@@ -638,9 +633,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
-    if (global.env === 'browser') {
-      global.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      global.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      vglobal.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
       this._track.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
       this._track.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);

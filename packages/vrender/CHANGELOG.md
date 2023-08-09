@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 08 Aug 2023 09:27:52 GMT and should not be manually modified.
+This log was last generated on Wed, 09 Aug 2023 07:34:23 GMT and should not be manually modified.
+
+## 0.13.9
+Wed, 09 Aug 2023 07:34:23 GMT
+
+### Patches
+
+- fix: fix the issue of text bounding box height
 
 ## 0.13.8
 Tue, 08 Aug 2023 09:27:52 GMT

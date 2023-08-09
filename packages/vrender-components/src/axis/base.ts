@@ -396,10 +396,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let align: TextAlignType = 'center';
 
     if (isNumberClose(vector[0], 0)) {
-      if (Object.is(vector[1], -0)) {
-        align = 'start';
-      } else if (Object.is(vector[0], -0)) {
-        align = 'end';
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
       } else {
         align = 'center';
       }

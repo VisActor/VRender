@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 08 Aug 2023 09:27:52 GMT and should not be manually modified.
+This log was last generated on Wed, 09 Aug 2023 07:34:23 GMT and should not be manually modified.
+
+## 0.13.10
+Wed, 09 Aug 2023 07:34:23 GMT
+
+### Patches
+
+- fix(brush): fix brushEnd interactive judge and reconfig operateType
+- fix(brush): reconfig operateType and add operateType about click space
+- fix: it should consider the `maxLineWidth` and \ set in `label.style` when do auto limit, relate https://github.com/VisActor/VChart/issues/456
+- math.floor axis label size to determine whether it exceeds, fixed https://github.com/VisActor/VChart/issues/477
 
 ## 0.13.9
 Tue, 08 Aug 2023 09:27:52 GMT

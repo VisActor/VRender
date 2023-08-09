@@ -47,14 +47,16 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     textBounds: IBoundsLike,
     graphicBounds: IBoundsLike,
     position?: BaseLabelAttrs['position'],
-    offset?: number,
-
-    graphicAttributes?: any,
-    textData?: any,
-    attribute?: any
+    offset?: number
   ): { x: number; y: number } | undefined;
 
-  protected layoutArcLabels(position?: BaseLabelAttrs['position'], attribute?: any, currentMarks?: IGraphic[]): any {
+  protected layoutArcLabels(
+    position?: BaseLabelAttrs['position'],
+    attribute?: any,
+    currentMarks?: IGraphic[],
+    data?: any[],
+    textBoundsArray?: any[]
+  ): any {
     const arcs: ArcInfo[] = [];
     return arcs;
   }
@@ -222,6 +224,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected layout(data: LabelItem[] = []): IText[] {
     const { textStyle = {}, position, offset } = this.attribute;
     const labels = [];
+    const textBoundsArray = [];
 
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
@@ -234,16 +237,14 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       };
       const text = this._createLabelText(labelAttribute);
       const textBounds = this.getGraphicBounds(text);
+      textBoundsArray.push(textBounds);
       const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
 
       const textLocation = this.labeling(
         textBounds,
         graphicBounds,
         isFunction(position) ? position(textData) : position,
-        offset,
-        baseMark.attribute,
-        textData,
-        this.attribute
+        offset
       );
       if (!textLocation) {
         continue;
@@ -256,7 +257,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
 
     if (this.attribute.type === 'arc') {
-      const arcs: ArcInfo[] = this.layoutArcLabels(position, this.attribute, Array.from(this._idToGraphic.values()));
+      const arcs: ArcInfo[] = this.layoutArcLabels(
+        position,
+        this.attribute,
+        Array.from(this._idToGraphic.values()),
+        data,
+        textBoundsArray
+      );
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
         const basedArc = arcs.find(arc => arc.labelText === textData.text);

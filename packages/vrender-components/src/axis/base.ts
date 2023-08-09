@@ -554,7 +554,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
     const vector = this.getVerticalVector(offset, inside, point);
-    const text = formatMethod ? formatMethod(tickDatum.label, tickDatum, index, tickData, layer) : tickDatum.label;
+    const text = formatMethod ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer) : tickDatum.label;
     let { style: textStyle } = tagAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))

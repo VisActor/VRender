@@ -3,7 +3,7 @@ import { merge } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign } from './type';
 import type { BaseLabelAttrs } from './type';
-import type { TextAlignType, TextBaselineType, IText } from '@visactor/vrender';
+import type { TextAlignType, TextBaselineType, IText, ArcAttrs } from '@visactor/vrender';
 import { isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import {
   circlePoint,
@@ -159,7 +159,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     this._arcRight.clear();
     const { width, height } = attribute as ArcLabelAttrs;
     currentMarks.forEach((currentMark, index) => {
-      const graphicAttribute = currentMark.attribute;
+      const graphicAttribute = currentMark.attribute as ArcAttrs;
       const radiusRatio = this.computeLayoutOuterRadius(graphicAttribute.outerRadius, width, height);
       const radius = this.computeRadius(radiusRatio, width, height);
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };

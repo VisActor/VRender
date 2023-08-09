@@ -109,7 +109,7 @@ function genRotateBounds(items: IText[]) {
   });
 }
 
-function rotateYAxis(orient: string, items: IText[]) {
+export function rotateYAxis(orient: string, items: IText[]) {
   //                0,      0-90,       90,     90-180,   180,    180-270, 270,     270-360,   360
   let align = ['right', 'right', 'center', 'left', 'center', 'left', 'center', 'right', 'right'];
   let baseline = ['middle', 'middle', 'top', 'top', 'middle', 'middle', 'bottom', 'bottom', 'middle'];
@@ -147,7 +147,7 @@ function rotateYAxis(orient: string, items: IText[]) {
   });
 }
 
-function rotateXAxis(orient: string, items: IText[]) {
+export function rotateXAxis(orient: string, items: IText[]) {
   //                0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
   let align = ['center', 'left', 'left', 'left', 'center', 'right', 'right', 'right', 'left'];
   let baseline = ['top', 'top', 'middle', 'bottom', 'bottom', 'bottom', 'middle', 'top', 'top'];

@@ -11,7 +11,7 @@
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
-    "@visactor/vrender-kits": "workspace:0.12.11",
+    "@visactor/vrender-kits": "workspace:0.12.12-alpha.10",
     "@visactor/vutils": "~0.13.0",
     "d3-scale-chromatic": "^3.0.0",
     "lodash": "4.17.21",
@@ -28,6 +28,6 @@
     "@antv/g": "^5.7.4"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.13.7"
+    "@visactor/vrender": "workspace:0.13.8-alpha.10"
   }
 }

@@ -19,4 +19,4 @@ export const DEFAULT_BRUSH_ATTRIBUTES = {
   }
 };
 
-export const SIZE_THRESHOLD = 5;
+export const DEFAULT_SIZE_THRESHOLD = 5;

@@ -8,7 +8,7 @@ import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle }
 import { AbstractComponent } from '../core/base';
 import type { BrushAttributes } from './type';
 import { IOperateType } from './type';
-import { DEFAULT_BRUSH_ATTRIBUTES, SIZE_THRESHOLD } from './config';
+import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
 
 const delayMap = {
   debounce: debounce,
@@ -24,7 +24,6 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   // 绘制mask时的相关属性
   private _activeDrawState = false; // 用于标记绘制状态
   private _cacheDrawPoints: IPointLike[] = []; // 用于维护鼠标走过的路径，主要用于绘制mask的点
-  private _cacheStartTime: number; // 用于记录鼠标前后的点击时间，以此判断是否为双击
   private _isDrawedBeforeEnd = false;
   // 移动mask时的相关属性
   private _activeMoveState = false; // 用于标记移动状态
@@ -203,7 +202,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
     const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
-    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > SIZE_THRESHOLD || Math.abs(y1 - y2) > SIZE_THRESHOLD);
+    const { sizeThreshold = DEFAULT_SIZE_THRESHOLD } = this.attribute as BrushAttributes;
+    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
     if (this._cacheDrawPoints.length > 0) {

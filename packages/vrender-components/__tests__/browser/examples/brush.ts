@@ -37,7 +37,8 @@ export function run() {
       maxY: guiObject.interactiveRangeY2,
       minX: guiObject.interactiveRangeX1,
       maxX: guiObject.interactiveRangeX2
-    }
+    },
+    sizeThreshold: 100
   };
 
   const brush = new Brush({

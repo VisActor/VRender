@@ -31,7 +31,7 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
         ({
           ...attr,
           text
-        } as any)
+        }) as any
     )
   };
 };

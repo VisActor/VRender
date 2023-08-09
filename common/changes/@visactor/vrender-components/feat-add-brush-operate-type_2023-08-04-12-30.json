@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(brush): fix brushEnd interactive judge and reconfig operateType",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

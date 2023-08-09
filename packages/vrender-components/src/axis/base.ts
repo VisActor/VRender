@@ -394,8 +394,15 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   protected getTextAlign(vector: number[]): TextAlignType {
     let align: TextAlignType = 'center';
+
     if (isNumberClose(vector[0], 0)) {
-      align = 'center';
+      if (Object.is(vector[1], -0)) {
+        align = 'start';
+      } else if (Object.is(vector[0], -0)) {
+        align = 'end';
+      } else {
+        align = 'center';
+      }
     } else if (vector[0] > 0) {
       align = 'start';
     } else if (vector[0] < 0) {

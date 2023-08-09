@@ -81,7 +81,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
       } else {
         // 防重叠逻辑
-        if (overlap !== false && this.attribute.type !== 'arc') {
+        if (overlap !== false) {
           labels = this._overlapping(labels);
         }
       }

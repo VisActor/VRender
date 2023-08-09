@@ -3,7 +3,7 @@ import { merge } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign } from './type';
 import type { BaseLabelAttrs } from './type';
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender';
+import type { TextAlignType, TextBaselineType, IText } from '@visactor/vrender';
 import { isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import {
   circlePoint,
@@ -128,6 +128,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   constructor(attributes: ArcLabelAttrs) {
     super(merge({}, ArcLabel.defaultAttributes, attributes));
+  }
+
+  protected _overlapping(labels: IText[]) {
+    return labels;
   }
 
   protected labeling(

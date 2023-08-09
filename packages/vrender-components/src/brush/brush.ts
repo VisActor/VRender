@@ -8,7 +8,7 @@ import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle }
 import { AbstractComponent } from '../core/base';
 import type { BrushAttributes } from './type';
 import { IOperateType } from './type';
-import { DEFAULT_BRUSH_ATTRIBUTES } from './config';
+import { DEFAULT_BRUSH_ATTRIBUTES, SIZE_THRESHOLD } from './config';
 
 const delayMap = {
   debounce: debounce,
@@ -202,7 +202,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
-    this._isDrawedBeforeEnd = true;
+    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
+    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > SIZE_THRESHOLD || Math.abs(y1 - y2) > SIZE_THRESHOLD);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
     if (this._cacheDrawPoints.length > 0) {

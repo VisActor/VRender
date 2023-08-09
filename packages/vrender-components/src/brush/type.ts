@@ -45,6 +45,10 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    */
   removeOnClick?: boolean;
   /**
+   * brush选框的大小阈值
+   */
+  sizeThreshold?: number;
+  /**
    * 事件触发延迟类型
    * @default 'throttle'
    */

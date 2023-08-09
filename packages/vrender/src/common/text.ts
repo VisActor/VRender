@@ -70,7 +70,12 @@ export function textDrawOffsetX(textAlign: TextAlignType, width: number): number
  * @param lineHeight
  * @returns
  */
-export function textLayoutOffsetY(baseline: TextBaselineType, lineHeight: number, fontSize: number): number {
+export function textLayoutOffsetY(
+  baseline: TextBaselineType,
+  lineHeight: number,
+  fontSize: number,
+  buf: number = 0
+): number {
   if (baseline === 'middle') {
     return -lineHeight / 2;
   }
@@ -78,7 +83,7 @@ export function textLayoutOffsetY(baseline: TextBaselineType, lineHeight: number
     return 0;
   }
   if (baseline === 'bottom') {
-    return -lineHeight;
+    return buf - lineHeight;
   }
   if (!baseline || baseline === 'alphabetic') {
     if (!fontSize) {

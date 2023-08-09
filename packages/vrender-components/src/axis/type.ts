@@ -43,9 +43,9 @@ export type TransformedAxisItem = AxisItem & {
 
 export type AxisItem = {
   /** 标识符，用于动画以及图形查找 */
-  id?: string;
+  id?: string | number;
   /** 显示文本 */
-  label: string;
+  label: string | number;
   /** 归一化后的数据 */
   value: number;
   /** 对应原始数据 */

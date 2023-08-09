@@ -1,4 +1,4 @@
-import { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
   /**
@@ -60,3 +60,13 @@ export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';
 export type IBrushMode = 'single' | 'multiple';
 
 export type IDelayType = 'debounce' | 'throttle';
+
+export enum IOperateType {
+  drawStart = 'drawStart',
+  drawEnd = 'drawEnd',
+  drawing = 'drawing',
+  moving = 'moving',
+  moveStart = 'moveStart',
+  moveEnd = 'moveEnd',
+  brushClear = 'brushClear'
+}

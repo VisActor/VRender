@@ -11,9 +11,9 @@ describe('Auto Limit', () => {
     stage = createStage('main');
   });
 
-  // afterAll(() => {
-  //   stage.release();
-  // });
+  afterAll(() => {
+    stage.release();
+  });
 
   it('should consider label style when do auto limit', () => {
     const axis = new LineAxis({
@@ -44,7 +44,6 @@ describe('Auto Limit', () => {
         visible: true,
         inside: false,
         space: 20,
-        padding: 0,
         style: {
           fontSize: 14,
           fill: '#89909D',
@@ -102,16 +101,7 @@ describe('Auto Limit', () => {
         type: 'line',
         depth: 0
       },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
-        },
-        type: 'line'
-      },
+
       x: 210,
       y: 12,
       start: {

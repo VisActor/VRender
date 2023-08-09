@@ -56,13 +56,13 @@ export const page = () => {
     fill: colorPools[5],
     // text: ['Tffg'],
     text: 'Tffgggaaaa',
-    fontSize: 20,
-    stroke: 'green',
-    lineWidth: 100,
+    fontSize: 26,
+    // stroke: 'green',
+    // lineWidth: 100,
     // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-    textBaseline: 'alphabetic'
+    textBaseline: 'bottom'
     // scaleX: 2,
     // scaleY: 2
   });

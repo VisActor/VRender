@@ -120,7 +120,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
-    const buf = 2;
     const attribute = this.attribute;
     const {
       maxLineWidth = textTheme.maxLineWidth,
@@ -130,9 +129,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
-      lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth
     } = attribute;
+    const buf = Math.max(2, fontSize * 0.075);
+    const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
       const dx = textDrawOffsetX(textAlign, width);
@@ -171,7 +171,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     this.clearUpdateShapeTag();
 
     const dx = textDrawOffsetX(textAlign, width);
-    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
+    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize, buf);
     this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
 
     if (stroke) {

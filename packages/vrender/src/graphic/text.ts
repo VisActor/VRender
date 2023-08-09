@@ -171,7 +171,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     this.clearUpdateShapeTag();
 
     const dx = textDrawOffsetX(textAlign, width);
-    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize, buf);
+    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize, 0);
     this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
 
     if (stroke) {

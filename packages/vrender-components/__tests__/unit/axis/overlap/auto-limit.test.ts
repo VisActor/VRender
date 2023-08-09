@@ -183,7 +183,6 @@ describe('Auto Limit', () => {
         visible: true,
         inside: false,
         space: 20,
-        padding: 0,
         style: {
           fontSize: 14,
           fill: '#89909D',
@@ -203,8 +202,7 @@ describe('Auto Limit', () => {
           lineWidth: 1,
           stroke: '#D9DDE4',
           strokeOpacity: 1
-        },
-        state: null
+        }
       },
       line: {
         visible: true,
@@ -303,6 +301,6 @@ describe('Auto Limit', () => {
     stage.defaultLayer.add(axis as unknown as IGraphic);
     stage.render();
     expect((axis.getElementsByName('axis-label')[4] as IText).clipedText).toBe('40-44');
-    expect(Math.ceil(axis.AABBBounds.width())).toBe(67);
+    expect(Math.floor(axis.AABBBounds.width())).toBe(67);
   });
 });

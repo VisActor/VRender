@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(brush): add sizeThreshold setting",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

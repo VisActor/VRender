@@ -14,7 +14,7 @@ importers:
       '@internal/ts-config': workspace:*
       '@visactor/vrender': workspace:0.14.0
       '@visactor/vrender-kits': workspace:0.12.14
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vutils': ~0.15.3
       canvas: 2.11.2
       d3-scale-chromatic: ^3.0.0
       dat.gui: ^0.7.9
@@ -56,7 +56,7 @@ importers:
       '@types/react-dom': 16.9.8
       '@types/react-reconciler': ^0.28.2
       '@visactor/vrender': workspace:0.14.0
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vutils': ~0.15.3
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
       react: 16.13.0
@@ -95,7 +95,7 @@ importers:
       '@types/react-dom': 16.9.8
       '@visactor/react-vrender': workspace:0.12.14
       '@visactor/vrender': workspace:0.14.0
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vutils': ~0.15.3
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
       react: 16.13.0
@@ -133,7 +133,7 @@ importers:
       '@types/jest': ^26.0.0
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vutils': ~0.15.3
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
       core-js: 3.31.1
@@ -185,8 +185,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
       '@visactor/vrender': workspace:0.14.0
-      '@visactor/vscale': ~0.15.0
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vscale': ~0.15.3
+      '@visactor/vutils': ~0.15.3
       eslint: ~8.18.0
       inversify: 6.0.1
       jest: ^26.0.0
@@ -225,7 +225,7 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@visactor/vrender': workspace:0.14.0
-      '@visactor/vutils': ~0.15.0
+      '@visactor/vutils': ~0.15.3
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
       core-js: 3.31.1

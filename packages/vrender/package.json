@@ -24,7 +24,7 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.15.0",
+    "@visactor/vutils": "~0.15.3",
     "color-convert": "2.0.1",
     "inversify": "6.0.1",
     "core-js": "3.31.1"

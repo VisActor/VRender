@@ -14,7 +14,6 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract updateMarker(): any;
 
   protected render() {
-    // this.removeAllChild();
     const markerVisible = this.attribute.visible ?? true;
     const markerInteractive = this.attribute.interactive ?? false;
 
@@ -25,7 +24,10 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
 
     if (markerVisible) {
       if (!this._container) {
-        const group = createGroup({});
+        const group = createGroup({
+          ...this.attribute?.clipRange,
+          clip: this.attribute?.clipRange ?? false
+        });
         group.name = 'marker-container';
         this.add(group);
         this._container = group;

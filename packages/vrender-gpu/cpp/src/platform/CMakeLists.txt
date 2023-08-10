@@ -1,0 +1,5 @@
+if ($ENV{WASMENV})
+    add_subdirectory(browser)
+elseif(APPLE)
+    add_subdirectory(darwin)
+endif()

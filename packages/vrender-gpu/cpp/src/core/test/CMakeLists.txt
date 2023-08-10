@@ -1,0 +1,6 @@
+link_libraries(core)
+#add_executable(toolTest tool.test.cpp)
+#add_executable(nodeTest node.test.cpp)
+#add_executable(layerTest layer.test.cpp)
+#add_executable(bezierTest bezier.test.cpp)
+#add_executable(lineTest line.test.cpp)

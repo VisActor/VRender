@@ -44,6 +44,12 @@
       "shouldPublish": true
     },
     {
+      "packageName": "@visactor/vrender-gpu",
+      "projectFolder": "packages/vrender-gpu",
+      "tags": ["package"],
+      "shouldPublish": true
+    },
+    {
       "packageName": "@visactor/vrender",
       "projectFolder": "packages/vrender",
       "tags": ["package"],

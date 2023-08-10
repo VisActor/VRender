@@ -1,0 +1,115 @@
+{
+  "name": "@visactor/vrender-gpu",
+  "version": "0.13.7",
+  "description": "",
+  "sideEffects": true,
+  "main": "index-node.js",
+  "module": "es/index.js",
+  "types": "es/index.d.ts",
+  "files": [
+    "cjs",
+    "es",
+    "dist"
+  ],
+  "scripts": {
+    "compile": "tsc --noEmit",
+    "eslint": "eslint --debug --fix src/",
+    "build": "bundle",
+    "dev": "bundle --clean -f es -w",
+    "start": "vite ./__tests__/wasm",
+    "test": "",
+    "prepublishOnly": "npm run build",
+    "init": "sh ./install.sh",
+    "install": "npm run build-node",
+    "build-node": "cd cpp && cross-env NODEJS=TRUE cmake-js compile --target vrender-node --out ../build",
+    "build-wasm": "cross-env WASM_OUT=1 && sh ./scripts/build-wasm.sh",
+    "build-asm": "cross-env WASM_OUT=0 && cross-env ASYNC_LOAD=0 && sh ./scripts/build-wasm.sh",
+    "build-asm-async": "cross-env WASM_OUT=0 && cross-env ASYNC_LOAD=1 && sh ./scripts/build-wasm.sh",
+    "browser-build": "webpack --config ./scripts/webpack.base.js",
+    "browser-dev": "webpack serve --config ./scripts/webpack.dev.js",
+    "start-native": "vite-node ./__tests__/native/main.ts"
+  },
+  "dependencies": {
+    "@visactor/vrender": "workspace:0.13.7",
+    "@visactor/vutils": "~0.13.0",
+    "@visactor/vscale": "~0.13.0",
+    "node-fetch": "2.6.6",
+    "@resvg/resvg-js": "2.4.1",
+    "inversify": "6.0.1",
+    "bindings": "1.5.0",
+    "node-addon-api": "5.0.0",
+    "cmake-js": "7.0.0",
+    "cross-env": "^7.0.3"
+  },
+  "devDependencies": {
+    "@internal/bundler": "workspace:*",
+    "@internal/eslint-config": "workspace:*",
+    "@internal/ts-config": "workspace:*",
+    "@rushstack/eslint-patch": "~1.1.4",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "@types/react": "16.9.49",
+    "@types/react-dom": "16.9.8",
+    "@types/node-fetch": "2.6.4",
+    "@vitejs/plugin-react": "3.1.0",
+    "@types/jest": "^26.0.0",
+    "jest": "^26.0.0",
+    "jest-electron": "^0.1.12",
+    "jest-extended": "^1.2.1",
+    "ts-jest": "^26.0.0",
+    "eslint": "~8.18.0",
+    "vite": "3.2.6",
+    "ts-node": "10.9.0",
+    "node-fetch": "2.6.6",
+    "form-data": "~4.0.0",
+    "@babel/core": "7.20.12",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "7.20.2",
+    "@babel/preset-react": "7.18.6",
+    "@babel/preset-typescript": "7.18.6",
+    "autoprefixer": "10.4.13",
+    "babel-loader": "^8.2.3",
+    "css-loader": "^6.6.0",
+    "cssnano": "^5.0.17",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.5.3",
+    "portfinder": "^1.0.28",
+    "postcss": "8.4.21",
+    "postcss-loader": "^6.2.1",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.49.8",
+    "sass-loader": "^12.6.0",
+    "typescript": "4.9.5",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4",
+    "vite-node": "0.34.1"
+  },
+  "keywords": [
+    "VisActor",
+    "graphics",
+    "renderer",
+    "vrender"
+  ],
+  "homepage": "",
+  "bugs": "https://github.com/VisActor/VRender/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VisActor/VRender.git",
+    "directory": "packages/vrender"
+  },
+  "author": {
+    "name": "VisActor",
+    "url": "https://VisActor.io/"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "import": "./es/index.js",
+      "require": "./cjs/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

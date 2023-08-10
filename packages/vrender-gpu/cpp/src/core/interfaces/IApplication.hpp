@@ -1,0 +1,38 @@
+//
+// Created by ByteDance on 2023/8/4.
+//
+
+#ifndef VRENDER_GPU_IAPPLICATION_HPP
+#define VRENDER_GPU_IAPPLICATION_HPP
+
+#include "Type.hpp"
+#include "IWindow.hpp"
+
+class IApplication;
+typedef int (*OnInit)(IApplication*);
+typedef int (*OnStart)(IApplication*);
+typedef int (*OnUpdate)(IApplication*);
+typedef int (*OnRelease)(IApplication*);
+
+class IApplication {
+public:
+    explicit IApplication(Platform platform): mPlatform{platform},
+        mOnInit{nullptr}, mOnStart{nullptr}, mOnUpdate{nullptr}, mOnRelease{nullptr},
+        mDrawInThisFrame{true} {};
+    virtual ~IApplication() = default;
+    virtual int Init() = 0;
+    virtual void Destroy() = 0;
+    virtual IWindow* CreateWindow(const WindowConf &conf) = 0;
+    virtual void Start() = 0;
+
+    bool mDrawInThisFrame;
+
+    OnInit mOnInit;
+    OnStart mOnStart;
+    OnUpdate mOnUpdate;
+    OnRelease mOnRelease;
+protected:
+    Platform mPlatform;
+};
+
+#endif //VRENDER_GPU_IAPPLICATION_HPP

@@ -22,8 +22,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     });
     groupClip.name = 'marker-container';
     const group = createGroup({
-      x: -this.attribute?.clipRange?.x ?? 0,
-      y: -this.attribute?.clipRange?.y ?? 0
+      x: -(this.attribute?.clipRange?.x ?? 0),
+      y: -(this.attribute?.clipRange?.y ?? 0)
     });
     groupClip.add(group);
     this._containerClip = groupClip;
@@ -37,8 +37,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       clip: isValid(this.attribute?.clipRange) ?? false
     });
     this._container.setAttributes({
-      x: -this.attribute?.clipRange?.x ?? 0,
-      y: -this.attribute?.clipRange?.y ?? 0
+      x: -(this.attribute?.clipRange?.x ?? 0),
+      y: -(this.attribute?.clipRange?.y ?? 0)
     });
   }
 

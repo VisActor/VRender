@@ -1,5 +1,6 @@
 import type { IGroup } from '@visactor/vrender';
 import { createGroup } from '@visactor/vrender';
+import { isValid } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';
@@ -26,7 +27,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       if (!this._container) {
         const group = createGroup({
           ...this.attribute?.clipRange,
-          clip: this.attribute?.clipRange ?? false
+          clip: isValid(this.attribute?.clipRange) ?? false
         });
         group.name = 'marker-container';
         this.add(group);

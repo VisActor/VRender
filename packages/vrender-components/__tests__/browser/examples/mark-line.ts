@@ -34,7 +34,7 @@ export function run() {
     clipRange: {
       x: 10,
       y: 100,
-      width: 200,
+      width: 300,
       height: 100
     }
   };

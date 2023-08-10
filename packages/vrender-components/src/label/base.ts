@@ -450,8 +450,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap = new Map();
-    const prevTextMap = this._graphicToText || new Map();
+    const currentTextMap: Map<any, any> = new Map();
+    const prevTextMap: Map<any, any> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {

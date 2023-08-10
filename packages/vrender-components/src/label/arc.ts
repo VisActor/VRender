@@ -347,16 +347,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
       arc.angle = 0;
 
-      // arc.labelPosition.x = isQuadrantLeft(arc.quadrant)
-      //   ? arc.labelPosition.x - arc.labelSize.width
-      //   : arc.labelPosition.x;
-
-      // arc.labelPosition.y = arc.labelPosition.y + 0.25 * arc.labelSize.height;
-
-      arc.labelPosition.x = isQuadrantLeft(arc.quadrant)
-        ? arc.labelPosition.x
-        : arc.labelPosition.x + 0.5 * arc.labelSize.width;
-
       arc.labelLinePath =
         `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
         ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
@@ -418,12 +408,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     if (labelLayoutAlign === 'edge') {
       // edge 模式下的多行文本对齐方向与其他模式相反
-      const alignOffset = this._computeAlignOffset(align, labelWidth, -flag);
+      // const alignOffset = this._computeAlignOffset(align, labelWidth, -flag);
+      const alignOffset = 0;
       // 贴近画布边缘的布局结果可能会由于 cx 的小数 pixel 导致被部分裁剪，因此额外做计算
       labelPosition.x = flag > 0 ? plotLayout.width + alignOffset : alignOffset;
     } else {
-      const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
-      labelPosition.x = cx + alignOffset + flag * spaceWidth;
+      // const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
+      const alignOffset = 0;
+      labelPosition.x = cx + alignOffset + flag * (spaceWidth + 0.5 * arc.labelSize.width);
     }
 
     arc.labelLimit = labelWidth;

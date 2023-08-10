@@ -57,7 +57,6 @@ export const page = () => {
     y: 200,
     fill: colorPools[5],
     // text: ['Tffg'],
-<<<<<<< HEAD
     text: ['这是垂aaa直textabc这是什么', '这是阿萨姆abcaaaaa'],
     wordBreak: 'break-word',
     maxLineWidth: 200,
@@ -65,21 +64,17 @@ export const page = () => {
     direction: 'vertical',
     fontSize: 20,
     stroke: 'green',
-=======
-    text: 'Tffgggaaaa',
-    fontSize: 26,
+    // wordBreak: 'break-word',
+    // maxLineWidth: 200,
+    // ellipsis: '',
+    // direction: 'vertical',
+    fontSize: 120,
     // stroke: 'green',
->>>>>>> develop
     // lineWidth: 100,
     // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-<<<<<<< HEAD
-    textBaseline: 'middle',
-    textAlign: 'center'
-=======
     textBaseline: 'bottom'
->>>>>>> develop
     // scaleX: 2,
     // scaleY: 2
   });

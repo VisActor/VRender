@@ -176,6 +176,9 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
    */
   getDynamicCanvasCount: () => number;
 
+  isChrome: () => boolean;
+  isSafari: () => boolean;
+
   /**
    * 获取环境中最大静态canvas的数量，纯粹canvas
    */

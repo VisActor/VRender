@@ -45,6 +45,8 @@ export type ITextAttribute = {
   underline: number;
   lineThrough: number;
   scaleIn3d: boolean;
+  direction: 'horizontal' | 'vertical';
+  wordBreak: 'break-word' | 'break-all';
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];
@@ -55,6 +57,7 @@ export type ITextCache = {
   clipedWidth?: number;
   // 多行文本的布局缓存
   layoutData?: LayoutType;
+  verticalList?: { text: string; width?: number; direction: number }[][];
 };
 
 export type ITextGraphicAttribute = Partial<IGraphicAttribute> & Partial<ITextAttribute>;

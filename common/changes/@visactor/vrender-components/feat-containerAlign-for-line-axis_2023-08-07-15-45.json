@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: panel only works for line axis",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

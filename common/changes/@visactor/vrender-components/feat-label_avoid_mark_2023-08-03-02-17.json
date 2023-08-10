@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(component): label component support avoidMarks",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

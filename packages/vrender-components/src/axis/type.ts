@@ -43,9 +43,9 @@ export type TransformedAxisItem = AxisItem & {
 
 export type AxisItem = {
   /** 标识符，用于动画以及图形查找 */
-  id?: string;
+  id?: string | number;
   /** 显示文本 */
-  label: string;
+  label: string | number;
   /** 归一化后的数据 */
   value: number;
   /** 对应原始数据 */
@@ -133,11 +133,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    */
   verticalFactor?: number;
   /**
-   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
-   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
-   */
-  verticalLimitSize?: number;
-  /**
    * 坐标轴的显示位置，用于文本的防重叠处理
    */
   orient?: string;
@@ -171,23 +166,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 子刻度对应网格线配置
    */
   subGrid?: SubGridAttributesForAxis;
-  /**
-   * 坐标轴背景配置
-   */
-  panel?: {
-    /**
-     * 是否绘制坐标轴背景
-     */
-    visible?: boolean;
-    /**
-     * 坐标轴背景配置
-     */
-    style?: Partial<IRectGraphicAttribute>;
-    /**
-     * 坐标轴背景交互状态样式配置
-     */
-    state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
-  };
 }
 
 export type LineGridOfLineAxisAttributes = Omit<LineGridAttributes, 'items'> & {
@@ -246,7 +224,7 @@ export interface IGrid3dType {
   anchor3d?: [number, number];
 }
 
-export interface LineAxisAttributes extends AxisBaseAttributes {
+export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
    * 起始点坐标
    */
@@ -259,6 +237,48 @@ export interface LineAxisAttributes extends AxisBaseAttributes {
    * 网格线配置
    */
   grid?: LineAxisGridAttributes;
+  /**
+   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
+   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
+   */
+  verticalLimitSize?: number;
+  /**
+   * 坐标轴垂直方向的最小空间，如果小于该值，则以该值占据显示空间。
+   * 如果同时声明了 verticalLimitSize，请保证 verticalMinSize <= verticalLimitSize，否则会以 verticalLimitSize 为准。
+   */
+  verticalMinSize?: number;
+  /**
+   * 轴标签配置
+   */
+  label?: LabelAttributes & {
+    /**
+     * label 相对于容器整体的对齐方式
+     * - `top`：整体向上对齐（垂直方向）
+     * - `middle`：整体居中对齐（垂直方向）
+     * - `bottom`：整体向下对齐（垂直方向）
+     * - `left`：整体向左对齐（水平方向）
+     * - `center`：整体居中对齐（水平方向）
+     * - `right`：整体向右对齐（水平方向）
+     */
+    containerAlign?: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle';
+  };
+  /**
+   * 坐标轴背景配置
+   */
+  panel?: {
+    /**
+     * 是否绘制坐标轴背景
+     */
+    visible?: boolean;
+    /**
+     * 坐标轴背景配置
+     */
+    style?: Partial<IRectGraphicAttribute>;
+    /**
+     * 坐标轴背景交互状态样式配置
+     */
+    state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
+  };
 }
 
 export interface CircleAxisGridAttributes extends Omit<LineGridAttributes, 'items'> {

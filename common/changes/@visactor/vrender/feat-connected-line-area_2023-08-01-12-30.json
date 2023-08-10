@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: add connect type to line and area",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

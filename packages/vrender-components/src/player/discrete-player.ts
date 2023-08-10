@@ -1,7 +1,9 @@
 import { isNil, merge } from '@visactor/vutils';
-import { FederatedPointerEvent, global } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender';
+import { vglobal } from '@visactor/vrender';
 import { BasePlayer } from './base-player';
-import { DirectionEnum, DirectionType, DiscretePlayerAttributes, PlayerAttributes, PlayerEventEnum } from './type';
+import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from './type';
+import { DirectionEnum, PlayerEventEnum } from './type';
 import { forwardStep, isReachEnd, isReachStart } from './utils';
 import { ControllerEventEnum } from './controller/constant';
 
@@ -138,7 +140,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 重置tick时间, 暂停后重新播放也会重新计时
     this._tickTime = Date.now();
     // 开启动画
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, true));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, true));
   };
 
   /**
@@ -176,7 +178,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this._isReachEnd = true;
     }
 
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, false));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, false));
   };
 
   /**
@@ -196,7 +198,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 图标切换
     this._controller.togglePlay();
     // 取消播放动画
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     // 重置ActiveIndex
     this._activeIndex = -1;
     // 播放结束时并且到达终点
@@ -211,7 +213,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       return;
     }
     this._isPlaying = false;
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
     this.dispatchCustomEvent(PlayerEventEnum.OnPause);

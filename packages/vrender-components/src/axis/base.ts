@@ -75,9 +75,24 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected abstract getTitleAttribute(): TagAttributes;
   protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
+  protected abstract beforeLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
   protected abstract handleLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
+  protected abstract afterLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
     layer: number,
     layerCount: number
   ): void;
@@ -177,8 +192,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
   };
 
-  private _renderInner(container: IGroup) {
-    const { title, label, tick, line, grid, items, panel } = this.attribute;
+  protected _renderInner(container: IGroup) {
+    const { title, label, tick, line, grid, items } = this.attribute;
 
     const axisContainer = createGroup({ x: 0, y: 0, zIndex: 1 });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
@@ -209,9 +224,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         items.forEach((axisItems: AxisItem[], layer: number) => {
           const layerLabelGroup = this.renderLabels(labelGroup, axisItems, layer);
 
-          // handle overlap
           const labels = layerLabelGroup.getChildren() as IText[];
-          this.handleLabelsOverlap(labels, axisItems, layer, items.length);
+          this.beforeLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          // handle overlap
+          this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
         });
       }
 
@@ -225,28 +242,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     if (title?.visible) {
       this.renderTitle(axisContainer);
     }
-
-    // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
-    // 坐标轴主体 panel
-    if (panel && panel.visible) {
-      const axisContainerBounds = axisContainer.AABBBounds;
-      const bgRect = createRect({
-        x: axisContainerBounds.x1,
-        y: axisContainerBounds.y1,
-        width: axisContainerBounds.width(),
-        height: axisContainerBounds.height(),
-        ...panel.style
-      });
-      bgRect.name = AXIS_ELEMENT_NAME.background;
-      bgRect.id = this._getNodeId('background');
-
-      if (!isEmpty(panel.state)) {
-        bgRect.states = merge({}, DEFAULT_STATES, panel.state);
-      }
-      axisContainer.insertBefore(bgRect, axisContainer.firstChild);
-    }
   }
-
   protected renderTicks(container: IGroup) {
     const tickLineItems = this.getTickLineItems();
 
@@ -263,7 +259,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       line.id = this._getNodeId(item.id);
 
       if (isEmpty(this.attribute.tick?.state)) {
-        line.states = null;
+        line.states = DEFAULT_STATES;
       } else {
         const data = this.data[index];
         const tickLineState = merge({}, DEFAULT_STATES, this.attribute.tick.state);
@@ -292,7 +288,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           line.id = this._getNodeId(`${index}`);
 
           if (isEmpty(subTick.state)) {
-            line.states = null;
+            line.states = DEFAULT_STATES;
           } else {
             const subTickLineState = merge({}, DEFAULT_STATES, subTick.state);
             Object.keys(subTickLineState).forEach(key => {
@@ -332,7 +328,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {
-        text.states = null;
+        text.states = DEFAULT_STATES;
       } else {
         const labelState = merge({}, DEFAULT_STATES, this.attribute.label.state);
         Object.keys(labelState).forEach(key => {
@@ -394,8 +390,17 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   protected getTextAlign(vector: number[]): TextAlignType {
     let align: TextAlignType = 'center';
+
     if (isNumberClose(vector[0], 0)) {
-      align = 'center';
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
+      } else {
+        align = 'center';
+      }
     } else if (vector[0] > 0) {
       align = 'start';
     } else if (vector[0] < 0) {
@@ -547,7 +552,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
     const vector = this.getVerticalVector(offset, inside, point);
-    const text = formatMethod ? formatMethod(tickDatum.label, tickDatum, index, tickData, layer) : tickDatum.label;
+    const text = formatMethod ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer) : tickDatum.label;
     let { style: textStyle } = tagAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))

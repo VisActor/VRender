@@ -18,3 +18,5 @@ export const DEFAULT_BRUSH_ATTRIBUTES = {
     x2: Infinity
   }
 };
+
+export const DEFAULT_SIZE_THRESHOLD = 5;

@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { IGraphicAttribute, IGraphic } from '../graphic';
+import type { IGraphicAttribute, IGraphic, IConnectedStyle } from '../graphic';
 import type { ICurveType } from '../common';
 import type { ISegPath2D } from '../curve';
 
@@ -17,7 +17,7 @@ export type ILineAttribute = {
   clipRangeByDimension: IClipRangeByDimensionType;
 };
 
-export type ILineGraphicAttribute = Partial<IGraphicAttribute> & Partial<ILineAttribute>;
+export type ILineGraphicAttribute = Partial<IGraphicAttribute> & Partial<ILineAttribute> & Partial<IConnectedStyle>;
 
 export interface ILine extends IGraphic<ILineGraphicAttribute> {
   cache?: ISegPath2D | ISegPath2D[];
@@ -28,7 +28,7 @@ type ISegmentStyle = Pick<
   'stroke' | 'strokeOpacity' | 'lineDash' | 'lineDashOffset' | 'lineCap' | 'lineJoin' | 'lineWidth' | 'miterLimit'
 >;
 
-export interface ISegment extends Partial<ISegmentStyle> {
+export interface ISegment extends Partial<ISegmentStyle>, Partial<IConnectedStyle> {
   points: IPointLike[];
   simplify?: boolean;
 }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: line axis states should set default value",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

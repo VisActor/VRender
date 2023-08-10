@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2018",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strict": false,

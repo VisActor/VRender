@@ -32,7 +32,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, IText>;
+  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: IPath }>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -527,13 +527,19 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     });
     prevTextMap.forEach(label => {
       if (disableAnimation) {
-        this.removeChild(label);
+        this.removeChild(label.text);
+        if (label?.labelLine) {
+          this.removeChild(label.labelLine);
+        }
       } else {
-        label
+        label.text
           ?.animate()
-          .to(getAnimationAttributes(label.attribute, 'fadeOut').to, duration, easing)
+          .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
           .onEnd(() => {
-            this.removeChild(label);
+            this.removeChild(label.text);
+            if (label?.labelLine) {
+              this.removeChild(label.labelLine);
+            }
           });
       }
     });

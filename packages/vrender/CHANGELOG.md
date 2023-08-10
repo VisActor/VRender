@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 09 Aug 2023 07:34:23 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Aug 2023 03:15:00 GMT and should not be manually modified.
+
+## 0.13.10
+Thu, 10 Aug 2023 03:15:00 GMT
+
+### Patches
+
+- fix: fix the error of raf in miniapp env
 
 ## 0.13.9
 Wed, 09 Aug 2023 07:34:23 GMT

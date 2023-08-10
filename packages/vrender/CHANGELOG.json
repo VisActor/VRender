@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.10",
+      "tag": "@visactor/vrender_v0.13.10",
+      "date": "Thu, 10 Aug 2023 03:15:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the error of raf in miniapp env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.9",
       "tag": "@visactor/vrender_v0.13.9",
       "date": "Wed, 09 Aug 2023 07:34:23 GMT",

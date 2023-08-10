@@ -299,4 +299,18 @@ export class DefaultGlobal implements IGlobal {
     }
     return this.envContribution.loadBlob(url);
   }
+
+  isChrome(): boolean {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this._env === 'browser' && navigator.userAgent.indexOf('Chrome') > -1;
+  }
+
+  isSafari(): boolean {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+  }
 }

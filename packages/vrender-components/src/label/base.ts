@@ -450,8 +450,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap: Map<any, any> = new Map();
-    const prevTextMap: Map<any, any> = this._graphicToText || new Map();
+    const currentTextMap: Map<any, { text: IText; labelLine?: IPath }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: IPath }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
@@ -518,9 +518,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
               );
           }
         } else {
-          prevLabel[text].setAttributes(text.attribute);
-          if (prevLabel[labelLine]) {
-            prevLabel[labelLine].setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+          prevLabel.text.setAttributes(text.attribute);
+          if (prevLabel?.labelLine) {
+            prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
           }
         }
       }

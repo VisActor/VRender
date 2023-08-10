@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.1",
+      "tag": "@visactor/vrender_v0.14.1",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the error of text bounds in safari env, closed #294"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.0",
       "tag": "@visactor/vrender_v0.14.0",
       "date": "Thu, 10 Aug 2023 07:22:55 GMT",

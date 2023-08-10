@@ -1,5 +1,5 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender';
-import { vglobal } from '@visactor/vrender';
+import { global } from '@visactor/vrender';
 import type { IPointLike } from '@visactor/vutils';
 import { array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -167,11 +167,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
-    if (vglobal.env === 'browser') {
+    if (global.env === 'browser') {
       // 拖拽时
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove.bind(this) as EventListener);
+      global.addEventListener('pointermove', this._onHandlerPointerMove.bind(this) as EventListener);
       // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+      global.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
     }
     // 拖拽时
     (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener);

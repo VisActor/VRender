@@ -2,7 +2,7 @@
  * @description 滚动条组件
  */
 import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender';
-import { CustomEvent, vglobal } from '@visactor/vrender';
+import { CustomEvent, global } from '@visactor/vrender';
 import { merge, normalizePadding, clamp, clampRange } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 
@@ -266,9 +266,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     e.stopPropagation();
     const { direction } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
-    if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onSliderPointerMove);
-      vglobal.addEventListener('pointerup', this._onSliderPointerUp);
+    if (global.env === 'browser') {
+      global.addEventListener('pointermove', this._onSliderPointerMove);
+      global.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
       this._slider.addEventListener('pointermove', this._onSliderPointerMove);
       this._slider.addEventListener('pointerup', this._onSliderPointerUp);
@@ -300,9 +300,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
-    if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onSliderPointerMove);
-      vglobal.removeEventListener('pointerup', this._onSliderPointerUp);
+    if (global.env === 'browser') {
+      global.removeEventListener('pointermove', this._onSliderPointerMove);
+      global.removeEventListener('pointerup', this._onSliderPointerUp);
     } else {
       this._slider.removeEventListener('pointermove', this._onSliderPointerMove);
       this._slider.removeEventListener('pointerup', this._onSliderPointerUp);

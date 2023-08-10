@@ -1,6 +1,6 @@
 import { isNil, merge } from '@visactor/vutils';
 import type { FederatedPointerEvent } from '@visactor/vrender';
-import { vglobal } from '@visactor/vrender';
+import { global } from '@visactor/vrender';
 import { BasePlayer } from './base-player';
 import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from './type';
 import { DirectionEnum, PlayerEventEnum } from './type';
@@ -140,7 +140,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 重置tick时间, 暂停后重新播放也会重新计时
     this._tickTime = Date.now();
     // 开启动画
-    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, true));
+    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, true));
   };
 
   /**
@@ -178,7 +178,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this._isReachEnd = true;
     }
 
-    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, false));
+    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, false));
   };
 
   /**
@@ -198,7 +198,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 图标切换
     this._controller.togglePlay();
     // 取消播放动画
-    vglobal.getCancelAnimationFrame()(this._rafId);
+    global.getCancelAnimationFrame()(this._rafId);
     // 重置ActiveIndex
     this._activeIndex = -1;
     // 播放结束时并且到达终点
@@ -213,7 +213,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       return;
     }
     this._isPlaying = false;
-    vglobal.getCancelAnimationFrame()(this._rafId);
+    global.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
     this.dispatchCustomEvent(PlayerEventEnum.OnPause);

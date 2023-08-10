@@ -8,6 +8,7 @@ import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { TextDirection, verticalLayout } from './tools';
+import { vglobal } from '../modules';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -205,8 +206,13 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     this.clearUpdateShapeTag();
 
     const dx = textDrawOffsetX(textAlign, width);
-    const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize, 0);
-    this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
+    let lh = lineHeight;
+    if (vglobal.isSafari()) {
+      // 如果是safari，那么需要额外增加高度
+      lh += fontSize * 0.2;
+    }
+    const dy = textLayoutOffsetY(textBaseline, lh, fontSize, buf);
+    this._AABBBounds.set(dx, dy, dx + width, dy + lh);
 
     if (stroke) {
       this._AABBBounds.expand(lineWidth / 2);

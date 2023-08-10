@@ -499,7 +499,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         prevTextMap.delete(relatedGraphic);
         currentTextMap.set(relatedGraphic, prevLabel);
         if (!disableAnimation) {
-          const prevText = prevLabel[text];
+          const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
           if (
             animationConfig.increaseEffect !== false &&

@@ -11,7 +11,7 @@ import type {
   IPickParams,
   PickResult
 } from '../interface';
-import { VGlobal } from '../constants';
+import { Global } from '../constants';
 
 export const BoundsPicker = Symbol.for('BoundsPicker');
 
@@ -29,7 +29,7 @@ export class DefaultGlobalPickerService implements IPickerService {
     // @inject(ContributionProvider)
     // @named(PickerContribution)
     // protected readonly contributions: ContributionProvider<IPickerContribution>,
-    @inject(VGlobal) public readonly global: IGlobal
+    @inject(Global) public readonly global: IGlobal
   ) {
     this.global.hooks.onSetEnv.tap('global-picker-service', (lastEnv, env, global) => {
       this.configure(global, env);

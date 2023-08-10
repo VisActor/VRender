@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import type { ILayer, IStage, IGlobal, ILayerParams } from '../interface';
 import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';
-import { VGlobal } from '../constants';
+import { Global } from '../constants';
 
 @injectable()
 export class DefaultLayerService implements ILayerService {
@@ -10,7 +10,7 @@ export class DefaultLayerService implements ILayerService {
   declare staticLayerCountInEnv: number;
   declare dynamicLayerCountInEnv: number;
   declare inited: boolean;
-  constructor(@inject(VGlobal) public readonly global: IGlobal) {
+  constructor(@inject(Global) public readonly global: IGlobal) {
     this.layerMap = new Map();
   }
 

@@ -24,7 +24,7 @@ import type {
   IContributionProvider,
   ILayerService
 } from '../interface';
-import { VWindow } from './window';
+import { Window } from './window';
 import type { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../container';
@@ -41,7 +41,7 @@ import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
-import { VGlobal } from '../constants';
+import { Global } from '../constants';
 import { LayerService } from './constants';
 
 const DefaultConfig = {
@@ -187,8 +187,8 @@ export class Stage extends Group implements IStage {
       beforeRender: new SyncHook(['stage']),
       afterRender: new SyncHook(['stage'])
     };
-    this.global = container.get<IGlobal>(VGlobal);
-    this.window = container.get<IWindow>(VWindow);
+    this.global = container.get<IGlobal>(Global);
+    this.window = container.get<IWindow>(Window);
     this.renderService = container.get<IRenderService>(RenderService);
     this.pickerService = container.get<IPickerService>(PickerService);
     this.pluginService = container.get<IPluginService>(PluginService);
@@ -740,7 +740,7 @@ export class Stage extends Group implements IStage {
    * @returns
    */
   renderToNewWindow(fullImage: boolean = true): IWindow {
-    const window = container.get<IWindow>(VWindow);
+    const window = container.get<IWindow>(Window);
     if (fullImage) {
       window.create({
         width: this.viewWidth,

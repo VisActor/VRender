@@ -20,7 +20,7 @@ import type {
 import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
 import { PickItemInterceptor } from './pick-interceptor';
-import { VGlobal } from '../constants';
+import { Global } from '../constants';
 
 export const GraphicPicker = Symbol.for('GraphicPicker');
 
@@ -34,7 +34,7 @@ export abstract class DefaultPickService implements IPickerService {
   declare InterceptorContributions: IPickItemInterceptorContribution[];
 
   constructor(
-    @inject(VGlobal) public readonly global: IGlobal,
+    @inject(Global) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)

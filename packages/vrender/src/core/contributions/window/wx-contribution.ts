@@ -12,7 +12,7 @@ import type {
   IWindowParams
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { VGlobal } from '../../../constants';
+import { Global } from '../../../constants';
 
 class MiniAppEventManager {
   addEventListener(type: string, func: EventListenerOrEventListenerObject) {
@@ -54,7 +54,7 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(@inject(Global) private readonly global: IGlobal) {
     super();
   }
 

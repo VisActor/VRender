@@ -33,7 +33,7 @@ import {
 import { DefaultPickService } from './picker-service';
 import { DrawContribution } from '../render';
 import { PickItemInterceptor } from './pick-interceptor';
-import { VGlobal } from '../constants';
+import { Global } from '../constants';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
@@ -63,7 +63,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
 
     @inject(DrawContribution)
     public readonly drawContribution: IDrawContribution,
-    @inject(VGlobal) public readonly global: IGlobal,
+    @inject(Global) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)

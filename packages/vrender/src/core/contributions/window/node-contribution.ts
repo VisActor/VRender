@@ -12,7 +12,7 @@ import type {
   IWindowHandlerContribution,
   IWindowParams
 } from '../../../interface';
-import { VGlobal } from '../../../constants';
+import { Global } from '../../../constants';
 
 @injectable()
 export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution implements IWindowHandlerContribution {
@@ -24,7 +24,7 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  constructor(@inject(Global) private readonly global: IGlobal) {
     super();
   }
 

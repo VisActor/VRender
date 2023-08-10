@@ -9,7 +9,7 @@ import { DefaultTextStyle } from '../graphic/config';
 import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
 import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
-import { Global } from '../constants';
+import { VGlobal } from '../constants';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -22,7 +22,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     @inject(ContributionProvider)
     @named(TextMeasureContribution)
     protected readonly contributions: IContributionProvider<ITextMeasure>,
-    @inject(Global) public readonly global: IGlobal
+    @inject(VGlobal) public readonly global: IGlobal
   ) {
     this.configured = false;
     this.global.hooks.onSetEnv.tap('graphic-util', (lastEnv, env, global) => {

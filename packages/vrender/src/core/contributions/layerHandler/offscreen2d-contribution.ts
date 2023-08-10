@@ -13,7 +13,7 @@ import type {
   ILayerHandlerDrawParams
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { Global } from '../../../constants';
+import { VGlobal } from '../../../constants';
 
 @injectable()
 export class OffscreenLayerHandlerContribution implements ILayerHandlerContribution {
@@ -22,7 +22,7 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   context: IContext2d;
   offscreen: boolean;
 
-  constructor(@inject(Global) public readonly global: IGlobal) {
+  constructor(@inject(VGlobal) public readonly global: IGlobal) {
     this.offscreen = true;
   }
 

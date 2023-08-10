@@ -20,7 +20,8 @@ export interface ISegPath2D extends ICurvePath<IPoint> {
     cp2y: number,
     x: number,
     y: number,
-    defined: boolean
+    defined: boolean,
+    p?: IPointLike // 保存原始点
   ) => void;
   closePath: () => void;
   ellipse: (
@@ -33,8 +34,8 @@ export interface ISegPath2D extends ICurvePath<IPoint> {
     endAngle: number,
     counterclockwise?: boolean
   ) => void;
-  lineTo: (x: number, y: number, defined: boolean) => void;
-  moveTo: (x: number, y: number) => void;
+  lineTo: (x: number, y: number, defined: boolean, p?: IPointLike) => void;
+  moveTo: (x: number, y: number, p?: IPointLike) => void;
   quadraticCurveTo: (cpx: number, cpy: number, x: number, y: number) => void;
 }
 

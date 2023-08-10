@@ -14,7 +14,7 @@ import type {
   IDrawContext
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { Global } from '../../../constants';
+import { VGlobal } from '../../../constants';
 
 @injectable()
 export class CanvasLayerHandlerContribution implements ILayerHandlerContribution {
@@ -25,7 +25,7 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   main: boolean;
   window: IWindow;
 
-  constructor(@inject(Global) public readonly global: IGlobal) {
+  constructor(@inject(VGlobal) public readonly global: IGlobal) {
     this.offscreen = false;
   }
 

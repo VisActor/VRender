@@ -1,8 +1,9 @@
-import { abs, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { abs } from '@visactor/vutils';
 import { SegContext } from '../seg-context';
 import { genCurveSegments } from './common';
 import { Direction } from '../enums';
-import { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
+import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -65,13 +66,13 @@ export class Linear implements ILinearSegment {
       case 0:
         this._point = 1;
         this._line
-          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false)
-          : this.context.moveTo(x, y);
+          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p)
+          : this.context.moveTo(x, y, p);
         break;
       case 1:
         this._point = 2; // falls through
       default:
-        this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false);
+        this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p);
         break;
     }
 

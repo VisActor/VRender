@@ -1,6 +1,25 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 09 Aug 2023 07:34:23 GMT and should not be manually modified.
+This log was last generated on Thu, 10 Aug 2023 07:22:55 GMT and should not be manually modified.
+
+## 0.14.0
+Thu, 10 Aug 2023 07:22:55 GMT
+
+### Minor changes
+
+- feat: add `verticalMinSize` and `containerAlign` for line type axis, `verticalMinSize` is used to set the minumum vertical size of axis, and `containerAlign` is to set the all labels's alignment in axis container, support https://github.com/VisActor/VChart/issues/380
+- refactor: rename global and window to vglobal and vwindow
+
+### Patches
+
+- feat: arc label sink
+- feat: modify arcLabel position
+- fix: the axis label's textAlign and textBaseline should auto adjust when angle is set, releate https://github.com/VisActor/VChart/issues/439
+- fix: panel only works for line axis
+- fix: line axis states should set default value
+- feat(component): label component support avoidMarks
+- feat(component): label component support custom layout and dataFilter
+- fix: fix the issue of using interactive layer in only on canvas env
 
 ## 0.13.10
 Wed, 09 Aug 2023 07:34:23 GMT

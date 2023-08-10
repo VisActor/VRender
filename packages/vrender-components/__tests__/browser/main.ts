@@ -63,6 +63,10 @@ const specs = [
     name: 'line 数据标签'
   },
   {
+    path: 'label-arc',
+    name: 'arc 数据标签'
+  },
+  {
     path: 'label-multi-mark',
     name: '混合图元 数据标签'
   },

@@ -1,4 +1,12 @@
-import type { EasingType, IGraphic, IGroupGraphicAttribute, ITextGraphicAttribute, Text } from '@visactor/vrender';
+import type {
+  EasingType,
+  IGraphic,
+  IGroupGraphicAttribute,
+  ITextGraphicAttribute,
+  Text,
+  TextAlignType,
+  TextBaselineType
+} from '@visactor/vrender';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -217,8 +225,111 @@ export interface LineLabelAttrs extends BaseLabelAttrs {
   position?: Functional<'start' | 'end'>;
 }
 
+export interface ArcLabelAttrs extends BaseLabelAttrs {
+  type: 'arc';
+
+  /**
+   *  图元 group 名称
+   */
+  baseMarkGroupName: string;
+
+  /**
+   * 标签位置
+   * @default 'outside'
+   */
+  position?: Functional<'inside' | 'outside'>;
+
+  // 画布宽度
+  width?: number;
+  // 画布高度
+  height?: number;
+
+  /**
+   * 是否允许标签重叠
+   * @default false
+   */
+  coverEnable?: boolean;
+  /**
+   * 是否允许标签旋转
+   * @default true
+   */
+  rotate?: boolean;
+
+  /**
+   * 文字与引导线间隔宽度
+   * @default 5
+   */
+  spaceWidth?: number;
+  /**
+   * 标签旋转角度
+   */
+  angle?: number;
+  /**
+   * 标签横向点对齐
+   */
+  textAlign?: TextAlignType;
+  /**
+   * 标签纵向点对齐
+   */
+  textBaseline?: TextBaselineType;
+  /**
+   * 扇区间标签的间隔
+   * @default 6
+   */
+  layoutArcGap?: number;
+  /** 标签引导线样式 */
+  line?: IArcLabelLineSpec;
+  /** 标签布局配置 */
+  layout?: IArcLabelLayoutSpec;
+  /** 标签引导线path */
+  labelLinePath?: string;
+}
+
+export interface IArcLabelLineSpec {
+  stroke?: string;
+  /**
+   * 是否显示引导线
+   * @default true
+   */
+  visible?: boolean;
+  /**
+   * 引导线 line1 部分最小长度
+   * @default 20
+   */
+  line1MinLength?: number;
+  /**
+   * 引导线 line2 部分最小长度
+   * @default 10
+   */
+  line2MinLength?: number;
+}
+
+export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';
+
+export type ArcLabelStrategyType = 'priority' | 'vertical' | 'none';
+
+export interface IArcLabelLayoutSpec {
+  /**
+   * 标签对齐方式
+   * @default 'arc'
+   */
+  textAlign?: ArcLabelAlignType;
+  /** @deprecate 建议统一使用textAlign，后续将废除 */
+  align?: ArcLabelAlignType;
+  /**
+   * 标签布局策略
+   * @default 'priority'
+   */
+  strategy?: ArcLabelStrategyType;
+  /**
+   * 是否启用切线约束
+   * @default true
+   */
+  tangentConstraint?: boolean;
+}
+
 export interface DataLabelAttrs extends IGroupGraphicAttribute {
-  dataLabels: (RectLabelAttrs | SymbolLabelAttrs)[];
+  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs)[];
   /**
    * 防重叠的区域大小
    */
@@ -237,3 +348,17 @@ export interface ILabelAnimation {
    */
   increaseEffect?: boolean;
 }
+
+export interface IPoint {
+  x: number;
+  y: number;
+}
+
+export interface IPolarPoint {
+  radius: number;
+  angle: number;
+}
+
+export type Quadrant = 1 | 2 | 3 | 4;
+
+export type TextAlign = 'left' | 'right' | 'center';

@@ -32,8 +32,8 @@ export function run() {
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
     clipRange: {
-      x: 10,
-      y: 100,
+      x: 20,
+      y: 20,
       width: 300,
       height: 100
     }

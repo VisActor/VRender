@@ -34,6 +34,10 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
         this._container = group;
         this.initMarker(group);
       } else {
+        this._container.setAttributes({
+          ...this.attribute?.clipRange,
+          clip: isValid(this.attribute?.clipRange) ?? false
+        });
         this.updateMarker();
       }
     }

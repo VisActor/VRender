@@ -12,7 +12,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@visactor/vrender-kits": "workspace:0.12.14",
-    "@visactor/vutils": "~0.13.0",
+    "@visactor/vutils": "~0.15.3",
     "d3-scale-chromatic": "^3.0.0",
     "lodash": "4.17.21",
     "dat.gui": "^0.7.9",

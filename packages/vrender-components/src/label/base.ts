@@ -468,7 +468,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
       if (state === 'enter') {
         texts.push(text);
-        currentTextMap.set(relatedGraphic, text);
+        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
@@ -495,10 +495,11 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       if (state === 'update') {
-        const prevText = prevTextMap.get(relatedGraphic);
+        const prevLabel = prevTextMap.get(relatedGraphic);
         prevTextMap.delete(relatedGraphic);
-        currentTextMap.set(relatedGraphic, prevText);
+        currentTextMap.set(relatedGraphic, prevLabel);
         if (!disableAnimation) {
+          const prevText = prevLabel[text];
           prevText.animate().to(text.attribute, duration, easing);
           if (
             animationConfig.increaseEffect !== false &&
@@ -517,7 +518,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
               );
           }
         } else {
-          prevText.setAttributes(text.attribute);
+          prevLabel[text].setAttributes(text.attribute);
+          if (prevLabel[labelLine]) {
+            prevLabel[labelLine].setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+          }
         }
       }
     });

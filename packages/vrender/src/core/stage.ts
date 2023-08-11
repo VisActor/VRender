@@ -35,6 +35,7 @@ import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
+import { HtmlAttributePlugin } from '../plugins/builtin-plugin/html-attribute-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
@@ -155,6 +156,7 @@ export class Stage extends Group implements IStage {
 
   autoRender: boolean;
   _enableLayout: boolean;
+  htmlAttribute: boolean | string | any;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -173,6 +175,8 @@ export class Stage extends Group implements IStage {
   protected interactiveLayer?: ILayer;
   protected supportInteractiveLayer: boolean;
 
+  declare params: Partial<IStageParams>;
+
   /**
    * 所有属性都具有默认值。
    * Canvas为字符串或者Canvas元素，那么默认图层就会绑定到这个Canvas上
@@ -182,6 +186,7 @@ export class Stage extends Group implements IStage {
    */
   constructor(params: Partial<IStageParams>) {
     super({});
+    this.params = params;
     this.theme = new Theme();
     this.hooks = {
       beforeRender: new SyncHook(['stage']),
@@ -265,6 +270,10 @@ export class Stage extends Group implements IStage {
     // 默认不开启dirtyBounds
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
+    }
+
+    if (params.enableHtmlAttribute) {
+      this.enableHtmlAttribute(params.enableHtmlAttribute);
     }
 
     params.enableLayout && this.enableLayout();
@@ -454,6 +463,22 @@ export class Stage extends Group implements IStage {
     }
     this._enableLayout = false;
     this.pluginService.findPluginsByName('FlexLayoutPlugin').forEach(plugin => {
+      plugin.deactivate(this.pluginService);
+    });
+  }
+  enableHtmlAttribute(container?: any) {
+    if (this.htmlAttribute) {
+      return;
+    }
+    this.htmlAttribute = container;
+    this.pluginService.register(new HtmlAttributePlugin());
+  }
+  disableHtmlAttribute() {
+    if (!this.htmlAttribute) {
+      return;
+    }
+    this.htmlAttribute = false;
+    this.pluginService.findPluginsByName('HtmlAttributePlugin').forEach(plugin => {
       plugin.deactivate(this.pluginService);
     });
   }

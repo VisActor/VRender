@@ -1,4 +1,4 @@
-import type { Dict, IPointLike } from '@visactor/vutils';
+import type { Dict, IAABBBoundsLike, IPointLike } from '@visactor/vutils';
 import type { ICanvasLike } from './canvas';
 import type { IEventElement } from './common';
 import type { IContribution } from './contribution';
@@ -44,6 +44,10 @@ export interface IEnvContribution
   createCanvas: (params: ICreateCanvasParams) => ICanvasLike | any;
   createOffscreenCanvas: (params: ICreateCanvasParams) => ICanvasLike | any;
   releaseCanvas: (canvas: ICanvasLike | string | any) => void;
+
+  getNativeAABBBounds: (dom: string | HTMLElement | any) => IAABBBoundsLike;
+  removeDom: (dom: HTMLElement) => boolean;
+  createDom: (params: CreateDOMParamsType) => HTMLElement | null;
 
   /**
    * 获取动态canvas的数量，offscreenCanvas或者framebuffer
@@ -144,6 +148,14 @@ export interface IEnvParamsMap {
   readonly lynx: any;
   readonly wx: any;
 }
+
+export type CreateDOMParamsType = {
+  tagName?: string;
+  width?: number;
+  height?: number;
+  style?: string | Record<string, any>;
+  parent?: string | HTMLElement;
+};
 export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 'removeAllListeners'> {
   // 当前代码所运行的环境
   env: EnvType;
@@ -240,4 +252,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
     loadState: 'success' | 'fail';
     data: Blob | null;
   }>;
+
+  removeDom: (dom: HTMLElement) => boolean;
+  createDom: (params: CreateDOMParamsType) => HTMLElement | null;
 }

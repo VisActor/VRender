@@ -47,6 +47,8 @@ export interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;
+  // 是否支持HTML属性
+  enableHtmlAttribute: string | boolean | HTMLElement;
   poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
@@ -81,6 +83,8 @@ export interface IStage extends INode {
   // rootNode: IStage;
   x: number;
   y: number;
+
+  params: Partial<IStageParams>;
 
   window: IWindow;
 

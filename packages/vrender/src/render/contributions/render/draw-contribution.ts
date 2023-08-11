@@ -11,20 +11,22 @@ import type {
   IContributionProvider,
   IDrawItemInterceptorContribution,
   IDrawContribution,
-  IRenderSelector
+  IRenderSelector,
+  IGlobal
 } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
 import type { IBounds } from '@visactor/vutils';
-import { Bounds, getRectIntersect, isRectIntersect } from '@visactor/vutils';
+import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
+import { VGlobal } from '../../../constants';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -38,6 +40,8 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare backupDirtyBounds: IBounds;
   declare currentRenderService: IRenderService;
   declare InterceptorContributions: IDrawItemInterceptorContribution[];
+
+  @inject(VGlobal) global: IGlobal;
 
   constructor(
     // @inject(ContributionProvider)
@@ -363,5 +367,9 @@ export class DefaultDrawContribution implements IDrawContribution {
       );
       context.fillRect(x, y, width, height);
     }
+  }
+
+  afterDraw(renderService: IRenderService, drawParams: IDrawContext) {
+    return;
   }
 }

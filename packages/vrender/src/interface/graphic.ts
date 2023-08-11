@@ -181,6 +181,16 @@ export type IGraphicStyle = IFillStyle &
     texturePadding: number; // 纹理间隙
     blur: number;
     cursor: Cursor | null; // 鼠标样式
+    // HTML的dom或者string
+    html: {
+      dom: string | HTMLElement; // dom字符串或者dom
+      container: string | HTMLElement | null; // id或者dom
+      width: number; // 容器的宽度
+      height: number; // 容器的高度
+      style: string | Record<string, any>; // 容器的样式
+      visible?: boolean;
+      anchorType?: 'position' | 'boundsLeftTop';
+    } | null;
   };
 
 export type IGraphicAttribute = IGraphicStyle &
@@ -264,6 +274,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   shadowRoot?: IShadowRoot;
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
+
+  bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
 
   valid: boolean;
   parent: IGroup | null;

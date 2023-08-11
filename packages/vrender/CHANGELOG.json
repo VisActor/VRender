@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.2",
+      "tag": "@visactor/vrender_v0.14.2",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "chore: set target to es2016"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.1",
       "tag": "@visactor/vrender_v0.14.1",
       "date": "Thu, 10 Aug 2023 12:14:14 GMT",

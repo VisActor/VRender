@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 10 Aug 2023 12:14:14 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Aug 2023 10:05:27 GMT and should not be manually modified.
+
+## 0.14.2
+Fri, 11 Aug 2023 10:05:27 GMT
+
+### Patches
+
+- chore: set target to es2016
 
 ## 0.14.1
 Thu, 10 Aug 2023 12:14:14 GMT

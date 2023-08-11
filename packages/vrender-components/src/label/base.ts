@@ -516,6 +516,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
                   easing
                 )
               );
+            if (prevLabel.labelLine) {
+              prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+            }
           }
         } else {
           prevLabel.text.setAttributes(text.attribute);

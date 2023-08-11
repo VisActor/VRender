@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "chore: set target to es2016",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

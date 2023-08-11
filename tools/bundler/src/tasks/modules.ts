@@ -1,7 +1,8 @@
 import gulp from 'gulp';
 import * as ts from 'typescript';
 import gulpSourceMaps from 'gulp-sourcemaps';
-import gulpTS, { Settings } from 'gulp-typescript';
+import type { Settings } from 'gulp-typescript';
+import gulpTS from 'gulp-typescript';
 import gulpReplace from 'gulp-replace';
 import fs from 'fs';
 import merge from 'merge2';
@@ -13,15 +14,14 @@ import { DebugCompile, DebugConfig } from '../logic/debug';
 import { alias } from '../logic/alias';
 
 export function getTSCompilerOptions(
-  moduleKind: 'esnext' | 'commonjs',
+  moduleKind: 'esnext' | 'commonjs' | 'es2015',
   userTSCompilerOptions: Record<string, unknown> = {},
   noEmitOnError: boolean
 ): Settings {
-  delete userTSCompilerOptions['outDir'];
-  return {
+  delete userTSCompilerOptions.outDir;
+  const res: Settings = {
     moduleResolution: 'node',
     target: 'es2016',
-    ...userTSCompilerOptions,
     noEmit: false,
     emitDeclarationOnly: false,
     declaration: true,
@@ -29,8 +29,11 @@ export function getTSCompilerOptions(
     allowSyntheticDefaultImports: true,
     module: moduleKind,
     skipLibCheck: true,
-    noEmitOnError: noEmitOnError
+    noEmitOnError: noEmitOnError,
+    ...userTSCompilerOptions
   };
+
+  return res;
 }
 
 // getTSCompilerOptions(ModuleKind.ESNext)
@@ -101,7 +104,7 @@ export function compile(
           process.exit(1);
         } else {
           // @ts-ignore
-          (this as NodeJS.ReadWriteStream).emit('end');
+          (this as any).emit('end');
         }
       });
 

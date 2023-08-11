@@ -15,6 +15,7 @@ import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } 
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 import type { ArcInfo } from './arc';
+import { merge } from '@visactor/vutils';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -501,6 +502,16 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         if (!disableAnimation) {
           const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
+          if (prevLabel.labelLine) {
+            // prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+            prevLabel.labelLine
+              .animate()
+              .to(
+                merge({}, prevLabel.labelLine.attribute, { path: (text.attribute as ArcLabelAttrs)?.labelLinePath }),
+                duration,
+                easing
+              );
+          }
           if (
             animationConfig.increaseEffect !== false &&
             prevText.attribute.text !== text.attribute.text &&
@@ -516,9 +527,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
                   easing
                 )
               );
-            if (prevLabel.labelLine) {
-              prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
-            }
           }
         } else {
           prevLabel.text.setAttributes(text.attribute);

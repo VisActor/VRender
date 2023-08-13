@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: change labelLine of arc label from path mark to line mark to adapt to animation'",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

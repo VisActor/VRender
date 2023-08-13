@@ -6,7 +6,8 @@ import { DebugConfig } from './logic/debug';
 import { parserCLIArgs, getDefaultConfig, getFinalConfig, loadConfigFile, DEFAULT_CONFIG_FILE } from './logic/config';
 import type { _ModuleKind } from './logic/config';
 import { loadPackageJson } from './logic/package';
-import Undertaker, { Task } from 'undertaker';
+import type { Task } from 'undertaker';
+import Undertaker from 'undertaker';
 import Spinnies from '@trufflesuite/spinnies';
 import { clean } from './tasks/clean';
 import { compile, getTSCompilerOptions, readUserTsconfig } from './tasks/modules';
@@ -36,7 +37,7 @@ async function bootstrap() {
   const args = parserCLIArgs(process.argv.slice(2));
   DebugConfig('CLI args', args);
 
-  const PROJECT_ROOT = path.resolve(process.env['__PROJECT_ROOT__'] || args.root || process.cwd());
+  const PROJECT_ROOT = path.resolve(process.env.__PROJECT_ROOT__ || args.root || process.cwd());
   DebugConfig('PROJECT_ROOT', PROJECT_ROOT);
 
   const rawPackageJson = loadPackageJson(PROJECT_ROOT);
@@ -61,11 +62,11 @@ async function bootstrap() {
   function _task(name: string, cb: () => Promise<unknown>) {
     taker.task(name, async () => {
       times[name] = { start: 0, end: 0 };
-      times[name]!['start'] = Number(new Date());
+      times[name]!.start = Number(new Date());
       spinnies.add(name, { text: `Running [${name}]` });
       await cb();
-      times[name]!['end'] = Number(new Date());
-      const diff = times[name]!['end'] - times[name]!['start'];
+      times[name]!.end = Number(new Date());
+      const diff = times[name]!.end - times[name]!.start;
       spinnies.succeed(name, { text: `Finished [${name}] +${ms(diff)}` });
     });
   }
@@ -87,8 +88,8 @@ async function bootstrap() {
 
   if (Array.isArray(config.formats) && config.formats) {
     const subBuildTasks: string[] = [];
-    const moduleKind: Record<'es' | 'cjs', 'esnext' | 'commonjs'> = {
-      es: 'esnext',
+    const moduleKind: Record<'es' | 'cjs', 'es2015' | 'commonjs'> = {
+      es: 'es2015', // default module of es is 'es2015'
       cjs: 'commonjs'
     };
     config.formats.forEach((format: _ModuleKind) => {

@@ -1,8 +1,8 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, IPath, Path } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType, createPath } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine, Line } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType, createLine } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -33,7 +33,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: IPath }>;
+  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: ILine }>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -273,6 +273,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
+          points: [basedArc.pointA, basedArc.pointB, basedArc.pointC],
           labelLinePath: basedArc.labelLinePath
         };
 
@@ -451,18 +452,18 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap: Map<any, { text: IText; labelLine?: IPath }> = new Map();
-    const prevTextMap: Map<any, { text: IText; labelLine?: IPath }> = this._graphicToText || new Map();
+    const currentTextMap: Map<any, { text: IText; labelLine?: ILine }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
-      const labelLine: IPath = (text.attribute as ArcLabelAttrs)?.labelLinePath
-        ? (createPath({
+      const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+        ? (createLine({
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
             lineWidth: 1,
-            path: (text.attribute as ArcLabelAttrs)?.labelLinePath
-          }) as Path)
+            points: (text.attribute as ArcLabelAttrs)?.points
+          }) as Line)
         : undefined;
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
@@ -503,14 +504,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
           if (prevLabel.labelLine) {
-            // prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
-            prevLabel.labelLine
-              .animate()
-              .to(
-                merge({}, prevLabel.labelLine.attribute, { path: (text.attribute as ArcLabelAttrs)?.labelLinePath }),
-                duration,
-                easing
-              );
+            prevLabel.labelLine.animate().to(
+              merge({}, prevLabel.labelLine.attribute, {
+                points: (text.attribute as ArcLabelAttrs)?.points
+              }),
+              duration,
+              easing
+            );
           }
           if (
             animationConfig.increaseEffect !== false &&

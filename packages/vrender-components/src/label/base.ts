@@ -273,8 +273,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
-          points: [basedArc.pointA, basedArc.pointB, basedArc.pointC],
-          labelLinePath: basedArc.labelLinePath
+          points: [basedArc.pointA, basedArc.pointB, basedArc.pointC]
         };
 
         labels[i].setAttributes(labelAttribute);
@@ -531,7 +530,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         } else {
           prevLabel.text.setAttributes(text.attribute);
           if (prevLabel?.labelLine) {
-            prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+            prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
           }
         }
       }

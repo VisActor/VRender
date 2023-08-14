@@ -281,8 +281,6 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   line?: IArcLabelLineSpec;
   /** 标签布局配置 */
   layout?: IArcLabelLayoutSpec;
-  /** 标签引导线path */
-  labelLinePath?: string;
   /** 标签引导线点集 */
   points?: IPoint[];
 }

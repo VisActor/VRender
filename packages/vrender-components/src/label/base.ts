@@ -4,7 +4,7 @@
 import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine, Line } from '@visactor/vrender';
 import { createText, IncreaseCount, AttributeUpdateType, createLine } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid, isString } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert } from '../util/labelSmartInvert';
@@ -15,7 +15,6 @@ import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } 
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 import type { ArcInfo } from './arc';
-import { merge } from '@visactor/vutils';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -268,8 +267,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
         const basedArc = arcs.find(arc => arc.labelText === textData.text);
-
         const labelAttribute = {
+          visible: basedArc.labelVisible,
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: basedArc.angle,

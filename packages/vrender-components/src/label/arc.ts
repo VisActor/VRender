@@ -1,10 +1,8 @@
 import type { IBoundsLike } from '@visactor/vutils';
-import { merge } from '@visactor/vutils';
+import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
-import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign } from './type';
-import type { BaseLabelAttrs } from './type';
-import type { TextAlignType, TextBaselineType, IText, IArcGraphicAttribute } from '@visactor/vrender';
-import { isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
+import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs } from './type';
+import type { IText, IArcGraphicAttribute, IGraphic } from '@visactor/vrender';
 import {
   circlePoint,
   isQuadrantRight,
@@ -14,7 +12,6 @@ import {
   checkBoundsOverlap,
   computeQuadrant
 } from './util';
-import type { IGraphic } from '@visactor/vrender';
 
 export class ArcInfo {
   key!: string;
@@ -34,10 +31,9 @@ export class ArcInfo {
   lastLabelY!: number;
   labelYRange!: [number, number];
   labelText!: string | string[];
-  pointA!: IPoint;
-  pointB!: IPoint;
-  pointC!: IPoint;
-  labelLinePath!: string;
+  pointA: IPoint;
+  pointB: IPoint;
+  pointC: IPoint;
   /**
    * 象限
    */
@@ -345,10 +341,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
       arc.angle = attribute?.textStyle?.angle ?? 0;
 
-      arc.labelLinePath =
-        `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
-        ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
-        ` L${Math.round(arc.pointC.x)},${Math.round(arc.pointC.y)}`;
+      // arc.labelLinePath =
+      //   `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
+      //   ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
+      //   ` L${Math.round(arc.pointC.x)},${Math.round(arc.pointC.y)}`;
     });
 
     return arcs;
@@ -370,7 +366,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const line2MinLength = attribute.line.line2MinLength as number;
     const labelLayoutAlign = attribute.layout?.align;
     const spaceWidth = attribute.spaceWidth as number;
-    const align = this._computeAlign(arc, attribute) as TextAlign;
+    // const align = this._computeAlign(arc, attribute) as TextAlign;
 
     const { labelPosition, quadrant, pointB } = arc;
     if (!isValidNumber(pointB.x * pointB.y)) {

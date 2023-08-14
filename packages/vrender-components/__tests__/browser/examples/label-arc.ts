@@ -425,6 +425,8 @@ function createContent(stage: Stage) {
       angle: 0
     },
 
+    // smartInvert: false,
+
     // coverEnable: false,
     // layout: {
     //   strategy: 'none'

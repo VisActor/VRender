@@ -12,9 +12,9 @@ importers:
       '@esbuild-plugins/node-modules-polyfill': 0.1.4
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vrender-kits': workspace:0.12.15
-      '@visactor/vutils': ~0.15.3
+      '@visactor/vrender': workspace:0.14.2
+      '@visactor/vrender-kits': workspace:0.12.16
+      '@visactor/vutils': ~0.15.5
       canvas: 2.11.2
       d3-scale-chromatic: ^3.0.0
       dat.gui: ^0.7.9
@@ -34,7 +34,7 @@ importers:
       '@internal/eslint-config': link:../../share/eslint-config
       '@internal/ts-config': link:../../share/ts-config
       '@visactor/vrender-kits': link:../../packages/vrender-kits
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
       canvas: 2.11.2
       d3-scale-chromatic: 3.0.0
       dat.gui: 0.7.9
@@ -55,8 +55,8 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@types/react-reconciler': ^0.28.2
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vutils': ~0.15.3
+      '@visactor/vrender': workspace:0.14.2
+      '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
       react: 16.13.0
@@ -67,7 +67,7 @@ importers:
       vite: 3.2.6
     dependencies:
       '@visactor/vrender': link:../vrender
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
       react-reconciler: 0.29.0_react@16.13.0
       tslib: 2.6.1
     devDependencies:
@@ -93,9 +93,9 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/react-vrender': workspace:0.12.15
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vutils': ~0.15.3
+      '@visactor/react-vrender': workspace:0.12.16
+      '@visactor/vrender': workspace:0.14.2
+      '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
       react: 16.13.0
@@ -107,7 +107,7 @@ importers:
     dependencies:
       '@visactor/react-vrender': link:../react-vrender
       '@visactor/vrender': link:../vrender
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
       react-reconciler: 0.29.0_react@16.13.0
       tslib: 2.6.1
     devDependencies:
@@ -133,7 +133,7 @@ importers:
       '@types/jest': ^26.0.0
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vutils': ~0.15.3
+      '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
       core-js: 3.31.1
@@ -151,7 +151,7 @@ importers:
       typescript: 4.9.5
       vite: 3.2.6
     dependencies:
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
       color-convert: 2.0.1
       core-js: 3.31.1
       inversify: 6.0.1
@@ -184,9 +184,9 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vscale': ~0.15.3
-      '@visactor/vutils': ~0.15.3
+      '@visactor/vrender': workspace:0.14.2
+      '@visactor/vscale': ~0.15.5
+      '@visactor/vutils': ~0.15.5
       eslint: ~8.18.0
       inversify: 6.0.1
       jest: ^26.0.0
@@ -197,8 +197,8 @@ importers:
       vite: 3.2.6
     dependencies:
       '@visactor/vrender': link:../vrender
-      '@visactor/vscale': 0.15.3
-      '@visactor/vutils': 0.15.3
+      '@visactor/vscale': 0.15.5
+      '@visactor/vutils': 0.15.5
       inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
@@ -224,8 +224,8 @@ importers:
       '@types/node-fetch': 2.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vutils': ~0.15.3
+      '@visactor/vrender': workspace:0.14.2
+      '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
       core-js: 3.31.1
@@ -240,7 +240,7 @@ importers:
     dependencies:
       '@resvg/resvg-js': 2.4.1
       '@visactor/vrender': link:../vrender
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
       canvas: 2.11.2
       core-js: 3.31.1
       inversify: 6.0.1
@@ -3052,14 +3052,14 @@ packages:
       eslint-visitor-keys: 3.4.2
     dev: false
 
-  /@visactor/vscale/0.15.3:
-    resolution: {integrity: sha512-qmYHpj8LxSBAwQPibYSXfeRdMwwSf1vBZoZYfQobngscgfFlNjWo3dG69IcjQcna1hhV2rgr1e0FtlHC/LzxwA==}
+  /@visactor/vscale/0.15.5:
+    resolution: {integrity: sha512-D+xkZxvskGPS/4gte4Yuc0FozQJ4/ProFXyC8SC9KCBcaNRTp0FUc9mU7fX+q0swEbyrT15fXP2ay0kAH+38Lg==}
     dependencies:
-      '@visactor/vutils': 0.15.3
+      '@visactor/vutils': 0.15.5
     dev: false
 
-  /@visactor/vutils/0.15.3:
-    resolution: {integrity: sha512-ZSeycE5ES03CN3OWQ4f4oUyrXc17lhtJrATVQx339uVdS1XYdBrndSLdQN/9oa0S9/SRW1iU98qWr9K5VdrQSA==}
+  /@visactor/vutils/0.15.5:
+    resolution: {integrity: sha512-hw65mJCt1aRfrRuGFlW4QPXCi9cHiRvV3iioWLVw19VQg/B8lZVud3+Rwo/W/z88PMqiNUN5BPwGkBmHK0IwYg==}
     dependencies:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0

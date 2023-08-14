@@ -15,6 +15,7 @@ import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } 
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 import type { ArcInfo } from './arc';
+import { merge } from '@visactor/vutils';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -32,7 +33,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, IText>;
+  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: IPath }>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -450,8 +451,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap = new Map();
-    const prevTextMap = this._graphicToText || new Map();
+    const currentTextMap: Map<any, { text: IText; labelLine?: IPath }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: IPath }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
@@ -468,7 +469,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
       if (state === 'enter') {
         texts.push(text);
-        currentTextMap.set(relatedGraphic, text);
+        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
@@ -495,11 +496,22 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       if (state === 'update') {
-        const prevText = prevTextMap.get(relatedGraphic);
+        const prevLabel = prevTextMap.get(relatedGraphic);
         prevTextMap.delete(relatedGraphic);
-        currentTextMap.set(relatedGraphic, prevText);
+        currentTextMap.set(relatedGraphic, prevLabel);
         if (!disableAnimation) {
+          const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
+          if (prevLabel.labelLine) {
+            // prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+            prevLabel.labelLine
+              .animate()
+              .to(
+                merge({}, prevLabel.labelLine.attribute, { path: (text.attribute as ArcLabelAttrs)?.labelLinePath }),
+                duration,
+                easing
+              );
+          }
           if (
             animationConfig.increaseEffect !== false &&
             prevText.attribute.text !== text.attribute.text &&
@@ -517,19 +529,28 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
               );
           }
         } else {
-          prevText.setAttributes(text.attribute);
+          prevLabel.text.setAttributes(text.attribute);
+          if (prevLabel?.labelLine) {
+            prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+          }
         }
       }
     });
     prevTextMap.forEach(label => {
       if (disableAnimation) {
-        this.removeChild(label);
+        this.removeChild(label.text);
+        if (label?.labelLine) {
+          this.removeChild(label.labelLine);
+        }
       } else {
-        label
+        label.text
           ?.animate()
-          .to(getAnimationAttributes(label.attribute, 'fadeOut').to, duration, easing)
+          .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
           .onEnd(() => {
-            this.removeChild(label);
+            this.removeChild(label.text);
+            if (label?.labelLine) {
+              this.removeChild(label.labelLine);
+            }
           });
       }
     });

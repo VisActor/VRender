@@ -22,6 +22,12 @@ export function run() {
       areaStyle: {
         cornerRadius: guiObject.cornerRadius
       }
+    },
+    clipRange: {
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200
     }
   };
 

@@ -1,6 +1,6 @@
 import { degreeToRadian } from '@visactor/vutils';
-import { Group, IGraphic, Stage } from '@visactor/vrender';
-import { Tag, Segment } from '../../../src';
+import type { Group, IGraphic, Stage } from '@visactor/vrender';
+import type { Tag, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { MarkLine } from '../../../src/marker/line';
@@ -39,7 +39,7 @@ describe('Marker', () => {
     });
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
-    const markLineContainer = markLine.children[0] as unknown as Group;
+    const markLineContainer = (markLine.children[0] as unknown as Group).children[0] as unknown as Group;
     expect(markLineContainer.childrenCount).toBe(2);
 
     // segement构造的line

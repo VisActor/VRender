@@ -1,4 +1,5 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { OBBBounds } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
@@ -7,7 +8,8 @@ import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
-import { SYMBOL_NUMBER_TYPE } from './constants';
+import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TYPE } from './constants';
+import { XMLValidator, XMLParser } from 'fast-xml-parser';
 
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -56,6 +58,49 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
       this._parsedPath = path;
       return path;
     }
+
+    // 判断是否是svg
+    const isSvg = XMLValidator.validate(symbolType, {
+      allowBooleanAttributes: true
+    });
+    if (isSvg === true) {
+      const parser = new XMLParser({ ignoreAttributes: false });
+      const { svg } = parser.parse(symbolType);
+      if (!svg) {
+        return null;
+      }
+      const path = isArray(svg.path) ? svg.path : [svg.path];
+      const b = new AABBBounds();
+      const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
+      path.forEach((item: any) => {
+        const cache = new CustomPath2D().fromString(item['@_d']);
+        const attribute = {
+          fill: 'black'
+        };
+        SVG_PARSE_ATTRIBUTE_MAP_KEYS.forEach(k => {
+          if (item[k]) {
+            attribute[SVG_PARSE_ATTRIBUTE_MAP[k]] = item[k];
+          }
+        });
+        // 查找
+        cacheList.push({
+          path: cache,
+          attribute
+        });
+        b.union(cache.bounds);
+      });
+      const width = b.width();
+      const height = b.height();
+      // 规范化到1
+      const maxWH = max(width, height);
+      const scale = 1 / maxWH;
+      cacheList.forEach(cache => cache.path.transform(0, 0, scale, scale));
+
+      this._parsedPath = new CustomSymbolClass(symbolType, cacheList, true);
+      Symbol.userSymbolMap[symbolType] = this._parsedPath;
+      return this._parsedPath;
+    }
+
     const cache = new CustomPath2D().fromString(symbolType);
     const width = cache.bounds.width();
     const height = cache.bounds.height();

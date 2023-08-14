@@ -421,12 +421,15 @@ function createContent(stage: Stage) {
 
     position: 'inside',
 
+    textStyle: {
+      angle: 0
+    },
+
     // coverEnable: false,
     // layout: {
     //   strategy: 'none'
     // },
 
-    angle: 0,
     zIndex: 302
   });
 

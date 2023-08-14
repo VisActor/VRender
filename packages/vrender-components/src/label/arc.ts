@@ -45,8 +45,6 @@ export class ArcInfo {
   radian: number;
   middleAngle: number;
   k: number;
-  textAlign: TextAlignType;
-  textBaseline: TextBaselineType;
   angle: number;
 
   constructor(
@@ -269,7 +267,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       // (arc.textAlign = 'center'), (arc.textBaseline = 'middle');
 
       //   arc.angle = degrees(arc.middleAngle);
-      arc.angle = arc.middleAngle;
+      arc.angle = attribute?.textStyle?.angle ?? arc.middleAngle;
     });
     return arcs;
   }
@@ -345,7 +343,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       ) {
         arc.labelVisible = false;
       }
-      arc.angle = 0;
+      arc.angle = attribute?.textStyle?.angle ?? 0;
 
       arc.labelLinePath =
         `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +

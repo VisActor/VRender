@@ -417,16 +417,16 @@ function createContent(stage: Stage) {
     },
     width: 800,
     height: 500,
-    position: 'outside',
+    // position: 'outside',
 
-    // position: 'inside',
+    position: 'inside',
 
     // coverEnable: false,
     // layout: {
     //   strategy: 'none'
     // },
 
-    // angle: 0,
+    angle: 0,
     zIndex: 302
   });
 

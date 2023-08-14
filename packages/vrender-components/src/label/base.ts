@@ -273,7 +273,10 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
-          points: [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+          points:
+            basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
+              ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+              : undefined
         };
 
         labels[i].setAttributes(labelAttribute);

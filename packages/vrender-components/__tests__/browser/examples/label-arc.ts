@@ -398,8 +398,8 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        text: 'test'
-        // text: latestData[index].type
+        // text: 'test'
+        text: latestData[index].type
         // text: originData[index].id
         // fill: c.attribute.fill,
         // line: {
@@ -423,7 +423,14 @@ function createContent(stage: Stage) {
     // position: 'inside',
 
     textStyle: {
-      angle: 0
+      // angle: 0
+      fontSize: 16
+    },
+    line: {
+      line1MinLength: 30
+    },
+    layout: {
+      align: 'edge'
     },
 
     // centerOffset: 10,

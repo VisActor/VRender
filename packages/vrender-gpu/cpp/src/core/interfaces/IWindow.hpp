@@ -30,6 +30,7 @@ public:
     virtual float GetRenderDpr() = 0; // 获取dpr
     [[nodiscard]] virtual const Renderer& GetRenderer() const = 0;
 
+    glm::vec4 mClearColor;
 
 protected:
     int mId;

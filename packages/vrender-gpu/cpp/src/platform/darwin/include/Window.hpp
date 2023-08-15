@@ -38,6 +38,8 @@ public:
 
     [[nodiscard]] const Renderer& GetRenderer() const override;
 
+    glm::vec4 mClearColor;
+
 private:
     int InitResourceManager(const std::vector<std::string> &shaderLists);
     GLFWwindow *mGLFWWindow;
@@ -47,7 +49,6 @@ private:
     std::string mTitle;
     bool mInited;
     bool mDestroyed;
-    glm::vec4 mClearColor;
     bool mRenderThisFrame;
 
     Renderer mRenderer;

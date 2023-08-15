@@ -46,6 +46,8 @@ public:
     float GetRenderDpr() override;
     const Renderer & GetRenderer() const override;
 
+    glm::vec4 mClearColor;
+
 private:
     int InitResourceManager(const std::vector<std::string> &shaderLists);
     float mWidth;
@@ -54,7 +56,6 @@ private:
     std::string mTitle;
     bool mInited;
     bool mDestroyed;
-    glm::vec4 mClearColor;
     EMSCRIPTEN_WEBGL_CONTEXT_HANDLE mContext;
     std::string mCanvasId;
 

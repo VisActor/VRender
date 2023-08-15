@@ -8,7 +8,7 @@ include_directories(${glfw_path}/include)
 include_directories(${FREETYPE_DIRECTORY}/include)
 # 根据环境选择不同的适配
 include_directories(${PROJECT_SOURCE_DIR}/src/platform/darwin/include)
-add_library(vrender-node SHARED hello.cpp ${CMAKE_JS_SRC})
+add_library(vrender-node SHARED AppWrap.cpp hello.cpp Init.cpp ${CMAKE_JS_SRC})
 
 set_target_properties(vrender-node PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(vrender-node ${CMAKE_JS_LIB})
@@ -24,4 +24,5 @@ string(REGEX REPLACE "[\r\n\"]" "" NODE_ADDON_API_DIR ${NODE_ADDON_API_DIR})
 target_include_directories(vrender-node PRIVATE ${NODE_ADDON_API_DIR})
 
 # define NAPI_VERSION
-add_definitions(-DNAPI_VERSION=3)
+add_definitions(-DNAPI_VERSION=7)
+add_definitions(-DNAPI_EXPERIMENTAL)

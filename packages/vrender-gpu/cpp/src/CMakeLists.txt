@@ -3,7 +3,7 @@ add_custom_target(copy_font COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT
 
 add_subdirectory(utils)
 add_subdirectory(text)
-add_subdirectory(bezier)
+# add_subdirectory(bezier)
 add_subdirectory(core)
 add_subdirectory(platform)
 

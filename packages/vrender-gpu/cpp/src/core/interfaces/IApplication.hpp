@@ -9,10 +9,14 @@
 #include "IWindow.hpp"
 
 class IApplication;
-typedef int (*OnInit)(IApplication*);
-typedef int (*OnStart)(IApplication*);
-typedef int (*OnUpdate)(IApplication*);
-typedef int (*OnRelease)(IApplication*);
+typedef std::function<int (IApplication*)> OnInit;
+typedef std::function<int (IApplication*)> OnStart;
+typedef std::function<int (IApplication*)> OnUpdate;
+typedef std::function<int (IApplication*)> OnRelease;
+//typedef int (*OnInit)(IApplication*);
+//typedef int (*OnStart)(IApplication*);
+//typedef int (*OnUpdate)(IApplication*);
+//typedef int (*OnRelease)(IApplication*);
 
 class IApplication {
 public:

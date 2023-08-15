@@ -462,7 +462,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         ? (createLine({
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-            lineWidth: 1,
+            lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
             points: (text.attribute as ArcLabelAttrs)?.points
           }) as Line)
         : undefined;

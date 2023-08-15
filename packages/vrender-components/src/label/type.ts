@@ -288,6 +288,9 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
 }
 
 export interface IArcLabelLineSpec {
+  /** 引导线线宽 */
+  lineWidth?: number;
+  /** 引导线颜色 */
   stroke?: string;
   /**
    * 是否显示引导线

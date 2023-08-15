@@ -1,4 +1,3 @@
-import { expect } from 'vitest';
 import type { IGraphic, IGroup, IText, Stage } from '@visactor/vrender';
 import { DiscreteLegend } from '../../../src';
 import { createCanvas } from '../../util/dom';
@@ -312,14 +311,6 @@ describe('DiscreteLegend', () => {
             }
           }
         },
-        focus: false,
-        focusIconStyle: {
-          size: 10,
-          symbolType:
-            'M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z',
-          fill: '#333',
-          cursor: 'pointer'
-        },
         visible: true,
         padding: 2,
         width: 121.95
@@ -343,17 +334,7 @@ describe('DiscreteLegend', () => {
           label: 'OneOneOneOneOne',
           shape: {
             fill: '#1664FF',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '26.32%',
           id: 'OneOneOneOneOne',
@@ -363,17 +344,7 @@ describe('DiscreteLegend', () => {
           label: 'Two',
           shape: {
             fill: '#1AC6FF',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '23.68%',
           id: 'Two',
@@ -383,17 +354,7 @@ describe('DiscreteLegend', () => {
           label: 'Three',
           shape: {
             fill: '#FF8A00',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '15.79%',
           id: 'Three',
@@ -403,17 +364,7 @@ describe('DiscreteLegend', () => {
           label: 'Four',
           shape: {
             fill: '#3CC780',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '13.16%',
           id: 'Four',
@@ -423,17 +374,7 @@ describe('DiscreteLegend', () => {
           label: 'Five',
           shape: {
             fill: '#7442D4',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '10.53%',
           id: 'Five',
@@ -443,17 +384,7 @@ describe('DiscreteLegend', () => {
           label: 'Six',
           shape: {
             fill: '#FFC400',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '7.89%',
           id: 'Six',
@@ -463,17 +394,7 @@ describe('DiscreteLegend', () => {
           label: 'Seven',
           shape: {
             fill: '#304D77',
-            symbolType: 'square',
-            stroke: null,
-            fillOpacity: 1,
-            strokeOpacity: 1,
-            opacity: 1,
-            texture: null,
-            texturePadding: null,
-            textureSize: null,
-            textureColor: null,
-            innerBorder: null,
-            outerBorder: null
+            symbolType: 'square'
           },
           value: '2.63%',
           id: 'Seven',

@@ -266,7 +266,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       );
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
-        const basedArc = arcs.find(arc => arc.labelText === textData.text);
+        const basedArc = arcs.find(arc => arc.refDatum.id === textData.id);
         const labelAttribute = {
           visible: basedArc.labelVisible,
           x: basedArc.labelPosition.x,

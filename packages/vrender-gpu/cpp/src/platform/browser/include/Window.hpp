@@ -19,7 +19,8 @@
 class BrowserWindow final: public IWindow {
 public:
     BrowserWindow(): IWindow(), mInited{false}, mWidth{0.f}, mHeight{0.f}, mDestroyed{false}, mContext{0}, mResourceManager{std::make_shared<ResourceManager>()},
-                     mClearColor({1.f, 1.f, 1.f, 1.f}), mCanvasId{sCanvasPrefix+std::to_string(mId)}, mDpr{1.f} {};
+                     mClearColor({1.f, 1.f, 1.f, 1.f}), mCanvasId{sCanvasPrefix+std::to_string(mId)}, mDpr{1.f},
+                     mRenderer{} {};
     ~BrowserWindow() override = default;
     int Init(const WindowConf &conf) override; // 会初始化并创建canvas
     int InitWithoutCreate(const WindowConf &conf); // 并不创建canvas，只是绑定canvas

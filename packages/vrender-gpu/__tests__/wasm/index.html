@@ -24,101 +24,45 @@
         <!-- <div id="header">
         <button class="release-button">Release</button>
       </div> -->
-        <div id="container">
+        <!-- <div id="container">
           <canvas id="main" width="1200" height="1200" style="width: 600px; height: 600px"></canvas>
           <canvas id="layout" width="1200" height="1200" style="position: fixed"></canvas>
         </div>
-        <div id="footer"></div>
+        <div id="footer"></div> -->
       </div>
     </div>
+    <script src="./stats.js"></script>
     <script type="module" src="./main.ts"></script>
     <script>
-      const module = createModule().then(module => {
-        console.log(module._callJS());
+      const stats = new Stats();
+      stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+      document.body.appendChild(stats.dom);
+      createModule().then(module => {
+        console.log(module);
+        console.time('total');
+        console.time('创建canvas生成上下文');
+        const window = module._createBrowserWindow(0, 0, 1200, 1200);
+        module._setClearColor(window, 1, 0, 1, 1);
+        module._initContext(window);
+        console.timeEnd('创建canvas生成上下文');
+        module._addLayer(window);
+        console.time('draw');
+        module._drawWindow(window);
+        console.timeEnd('draw');
+        console.timeEnd('total');
+        function animate() {
+          stats.begin();
+          // arr.forEach(rect => {
+          //   Module._setRectFillColor(rect, Math.random(), Math.random(), Math.random(), 1);
+          //   Module._setRectStrokeColor(rect, Math.random(), Math.random(), Math.random(), 1);
+          //   // Module._setRectWH(rect, Math.random() * 20, Math.random() * 20);
+          // });
+          module._drawWindow(window);
+          stats.end();
+          requestAnimationFrame(animate);
+        }
+        animate();
       });
-
-      // Module.onRuntimeInitialized = function () {
-      //   const stats = new Stats();
-      //   stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
-      //   document.body.appendChild(stats.dom);
-
-      //   console.log(document.body);
-      //   console.time('total');
-      //   console.time('创建canvas生成上下文');
-      //   const window = Module._createBrowserWindow(0, 0, 1200, 1200);
-      //   Module._setClearColor(window, 1, 0, 1, 1);
-      //   Module._initContext(window);
-      //   console.timeEnd('创建canvas生成上下文');
-      //   console.time('创建rect');
-      //   const layer = Module._addLayer(window);
-      //   const group = Module._layerAddGroup(layer, 0, 0);
-      //   const arr = [];
-      //   for (let i = 0; i < 20000; i++) {
-      //     const w = Math.random() * 30;
-      //     const h = Math.random() * 30;
-      //     const rect = Module._groupAddRect(group, Math.random() * 600, Math.random() * 600, w, h);
-      //     Module._setRectFillColor(rect, Math.random(), Math.random(), Math.random(), 1);
-      //     Module._setRectStroke(rect, true);
-      //     Module._setRectFill(rect, true);
-      //     Module._setRectBorderRadius(
-      //       rect,
-      //       (w / 2) * Math.random(),
-      //       (w / 2) * Math.random(),
-      //       (h / 2) * Math.random(),
-      //       (h / 2) * Math.random()
-      //     );
-      //     Module._setRectStrokeColor(rect, Math.random(), Math.random(), Math.random(), 1);
-      //     Module._setRectStrokeWidth(rect, Math.random() * 6);
-      //     arr.push(rect);
-      //   }
-      //   console.timeEnd('创建rect');
-      //   // console.time('创建text');
-      //   // const arr2 = [];
-      //   // for (let i = 0; i < 1; i++) {
-      //   //     const str = allocateUTF8(`WASM，单线程`);
-      //   //     const text = Module._groupAddText(group, 0, 20, str);
-      //   //     _free(str);
-      //   //     Module._setTextFill(text, true);
-      //   //     Module._setTextFillColor(text, 1.0, 0.0, 0.0, 1);
-      //   //     Module._setTextFontSize(text, 26);
-      //   //     arr2.push(text);
-      //   // }
-      //   // console.timeEnd('创建text');
-      //   // console.time('创建line');
-      //   // const arr3 = [];
-      //   // for (let i = 0; i < 2; i++) {
-      //   //     const line = Module._groupAddLine(group, 0, 0);
-      //   //     for (let j = 0; j < 8; j++) {
-      //   //         Module._addLinePoint(line, Math.random() * 800, Math.random() * 800, true);
-      //   //     }
-      //   //     const lineDashPtr = Module._malloc(8);
-      //   //     Module.HEAPF32[lineDashPtr / 4] = 6;
-      //   //     Module.HEAPF32[lineDashPtr / 4 + 1] = 12;
-      //   //     Module._setLineStroke(line, true);
-      //   //     Module._setLineStrokeWidth(line, 6);
-      //   //     Module._setLineDash(line, lineDashPtr, 2);
-      //   //     Module._setLineStrokeColor(line, Math.random(), Math.random(), Math.random(), 1);
-      //   //     arr3.push(line);
-      //   // }
-      //   // console.timeEnd('创建line');
-      //   console.time('draw');
-      //   Module._drawWindow(window);
-      //   console.timeEnd('draw');
-      //   console.timeEnd('total');
-      //   function animate() {
-      //     stats.begin();
-      //     arr.forEach(rect => {
-      //       Module._setRectFillColor(rect, Math.random(), Math.random(), Math.random(), 1);
-      //       Module._setRectStrokeColor(rect, Math.random(), Math.random(), Math.random(), 1);
-      //       // Module._setRectWH(rect, Math.random() * 20, Math.random() * 20);
-      //     });
-      //     Module._drawWindow(window);
-      //     stats.end();
-      //     requestAnimationFrame(animate);
-      //   }
-      //   // requestAnimationFrame(animate);
-      //   // Module._callJS();
-      // };
     </script>
   </body>
 </html>

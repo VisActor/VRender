@@ -7,7 +7,7 @@ Module['onRuntimeFailed'] = onRuntimeFailed;
 Module['addFailCb'] = addFailCb;
 
 if (typeof exports === 'object') {
-	exports.Module = Module;
+  exports.Module = Module;
   exports.ccall = ccall;
   exports.getValue = getValue;
   exports._getNum = _getNum;
@@ -15,12 +15,28 @@ if (typeof exports === 'object') {
   exports._freeBuffer = _freeBuffer;
   exports._callJS = _callJS;
 
+  /* window API */
+  exports._createBrowserWindow = _createBrowserWindow;
+  exports._createBrowserWindowWithCanvas = _createBrowserWindowWithCanvas;
+  exports._initContext = _initContext;
+  exports._active = _active;
+  exports._setClearColor = _setClearColor;
+  /* window API */
+  /* layer API */
+  exports._addLayer = _addLayer;
+  exports._testLayer = _testLayer;
+  /* layer API */
+
+  /* render API */
+  exports._drawWindow = _drawWindow;
+  /* render API */
+
   exports._addInitializationCb = addInitializationCb;
   exports._isInitialized = isInitialized;
   exports._addFailCb = addFailCb;
-  
+
   // 定义模块导出属性
-  exports.Module = Module
+  exports.Module = Module;
 }
 
 // (function(global, factory) {
@@ -61,7 +77,7 @@ if (typeof exports === 'object') {
 //   exports._addInitializationCb = addInitializationCb;
 //   exports._isInitialized = isInitialized;
 //   exports._addFailCb = addFailCb;
-  
+
 //   // 定义模块导出属性
 //   exports.Module = Module
 // });

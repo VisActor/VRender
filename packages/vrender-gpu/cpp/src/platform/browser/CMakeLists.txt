@@ -34,6 +34,14 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
             \"_main\",         \
             \"_free\",         \
             \"_freeBuffer\",         \
+            \"_createBrowserWindow\",         \
+            \"_createBrowserWindowWithCanvas\",         \
+            \"_initContext\",         \
+            \"_active\",         \
+            \"_setClearColor\",         \
+            \"_addLayer\",         \
+            \"_testLayer\",        \
+            \"_drawWindow\",         \
             \"_callJS\"]'              \
         -s 'EXPORTED_RUNTIME_METHODS=[     \
             \"ccall\",                           \
@@ -42,17 +50,21 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
         --js-library ${CMAKE_CURRENT_LIST_DIR}/library.js \
         --pre-js ${CMAKE_CURRENT_LIST_DIR}/pre.js \
         --post-js ${CMAKE_CURRENT_LIST_DIR}/post.js\
-        --closure 1\
+        --closure 0\
         -s MODULARIZE=1 \
         -s 'EXPORT_NAME=\"createModule\"' \
         -s WASM=${WASM} \
         -s WASM_ASYNC_COMPILATION=${ASYNC_LOAD} \
-        -s FILESYSTEM=0 \
+        -s FILESYSTEM=1 \
         -s ASSERTIONS=1 \
         -s LLD_REPORT_UNDEFINED \
         -s USE_PTHREADS=0 \
         -s FULL_ES3=1 \
         -s NO_EXIT_RUNTIME=1 \
+        -s USE_WEBGL2=1              \
+        --js-library ${CMAKE_CURRENT_LIST_DIR}/library.js      \
+        --preload-file  ../../shader/webgl2@/shader     \
+        --preload-file  ../../font@/font     \
         -s DISABLE_EXCEPTION_CATCHING=0 \
         -s INITIAL_MEMORY=125829120\
         -s ALLOW_MEMORY_GROWTH=0")

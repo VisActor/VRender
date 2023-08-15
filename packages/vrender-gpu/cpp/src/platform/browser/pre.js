@@ -19,15 +19,15 @@ function addFailCb(callback) {
   Module.onRuntimeFailed = function () {
     prev_callback();
     callback();
-  }
+  };
 }
 
 function addInitializationCb(callback) {
   let prev_callback = Module.onRuntimeInitialized;
-  Module.onRuntimeInitialized = function() {
+  Module.onRuntimeInitialized = function () {
     prev_callback();
     callback();
-  }
+  };
 }
 
 function isInitialized() {

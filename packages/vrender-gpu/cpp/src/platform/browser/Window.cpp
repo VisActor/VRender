@@ -44,13 +44,14 @@ void BrowserWindow::InitContext() {
     attrs.minorVersion = 0;
 
     std::cout<<mCanvasId.c_str()<<std::endl;
-    mContext = emscripten_webgl_create_context(mCanvasId.c_str(), &attrs);
+    std::string cid = "#"+mCanvasId;
+    mContext = emscripten_webgl_create_context(cid.c_str(), &attrs);
     if (mContext == 0) {
         throw std::runtime_error("获取context发生错误");
     }
     MakeContextCurrent();
 
-//    InitResourceManager({"default"});
+    InitResourceManager({"default"});
 
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
     glClear(GL_COLOR_BUFFER_BIT);

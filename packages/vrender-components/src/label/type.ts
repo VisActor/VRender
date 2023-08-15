@@ -283,6 +283,8 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   layout?: IArcLabelLayoutSpec;
   /** 标签引导线点集 */
   points?: IPoint[];
+  /** 饼图扇区中心偏移 */
+  centerOffset?: number;
 }
 
 export interface IArcLabelLineSpec {

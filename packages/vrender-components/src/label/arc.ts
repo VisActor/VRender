@@ -152,10 +152,11 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     this._arcLeft.clear();
     this._arcRight.clear();
     const { width, height } = attribute as ArcLabelAttrs;
+    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     currentMarks.forEach((currentMark, index) => {
       const graphicAttribute = currentMark.attribute as IArcGraphicAttribute;
       const radiusRatio = this.computeLayoutOuterRadius(graphicAttribute.outerRadius, width, height);
-      const radius = this.computeRadius(radiusRatio, width, height);
+      const radius = this.computeRadius(radiusRatio, width, height, centerOffset);
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
 
       const item = data[index];
@@ -180,7 +181,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       arc.pointA = circlePoint(
         (center as IPoint).x,
         (center as IPoint).y,
-        this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
+        this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius, centerOffset),
         arc.middleAngle
       );
 
@@ -215,6 +216,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    */
   private _layoutInsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: any[]) {
     const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
+    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     const innerRadiusRatio = this.computeLayoutOuterRadius(
       currentMarks[0].attribute.innerRadius,
       attribute.width,
@@ -230,8 +232,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     arcs.forEach((arc: ArcInfo) => {
       const { labelSize, radian } = arc;
-      const innerRadius = this.computeRadius(innerRadiusRatio, attribute.width, attribute.height, 1);
-      const outerRadius = this.computeRadius(outerRadiusRatio, attribute.width, attribute.height, 1);
+      const innerRadius = this.computeRadius(innerRadiusRatio, attribute.width, attribute.height, centerOffset, 1);
+      const outerRadius = this.computeRadius(outerRadiusRatio, attribute.width, attribute.height, centerOffset, 1);
       const minRadian = connectLineRadian(outerRadius, labelSize.height);
       let limit;
       if (radian < minRadian) {
@@ -355,6 +357,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    */
   private _computeX(arc: ArcInfo, attribute: any, currentMarks: any[]) {
     const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
+    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     const plotLayout = { width: center.x * 2, height: center.y * 2 };
     const radiusRatio = this.computeLayoutOuterRadius(
       currentMarks[0].attribute.outerRadius,
@@ -374,7 +377,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       labelPosition.x = NaN;
       arc.labelLimit = 0;
     }
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
     const flag = isQuadrantLeft(quadrant) ? -1 : 1;
     let cx: number = 0;
     const restWidth = flag > 0 ? plotLayout.width - pointB.x : pointB.x;
@@ -634,7 +637,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       };
     } else {
       const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
-      const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
+      const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
+      const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
       const { labelPosition, quadrant } = arc;
       const outerR = Math.max(radius + line1MinLength, currentMarks[0].attribute.outerRadius);
       const rd = r - outerR;
@@ -677,8 +681,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const line1MinLength = attribute.line.line1MinLength as number;
 
     const { width, height } = plotRect;
+    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
 
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
     // 出现 y 方向挤压过度必然是由于画布上下某一端被占满，此时半径是确定的
     const r = this._computeLayoutRadius(height / 2, attribute, currentMarks);
     // 所有坐标转化到以圆心为原点的坐标系计算
@@ -748,7 +753,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       attribute.width,
       attribute.height
     );
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
+    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
     const outerR = radius + line1MinLength;
 
     const a = outerR - layoutArcGap;
@@ -838,8 +844,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
-  protected computeRadius(r: number, width?: number, height?: number, k?: number): number {
-    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * r * (isNil(k) ? 1 : k);
+  protected computeRadius(r: number, width?: number, height?: number, centerOffset?: number, k?: number): number {
+    return (
+      this.computeLayoutRadius(width ? width : 0, height ? height : 0) * r * (isNil(k) ? 1 : k) + centerOffset ?? 0
+    );
   }
 
   protected computeLayoutRadius(width: number, height: number) {
@@ -850,8 +858,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return r / (Math.min(width, height) / 2);
   }
 
-  private computeDatumRadius(width?: number, height?: number, outerRadius?: any): number {
+  private computeDatumRadius(width?: number, height?: number, outerRadius?: any, centerOffset?: number): number {
     const outerRadiusRatio = this.computeLayoutOuterRadius(outerRadius, width, height); //this.getRadius(state)
-    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio;
+    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio + centerOffset ?? 0;
   }
 }

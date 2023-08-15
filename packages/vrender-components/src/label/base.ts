@@ -55,7 +55,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     attribute?: any,
     currentMarks?: IGraphic[],
     data?: any[],
-    textBoundsArray?: any[]
+    textBoundsArray?: any[],
+    ellipsisWidth?: number
   ): any {
     const arcs: ArcInfo[] = [];
     return arcs;
@@ -257,12 +258,20 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
 
     if (this.attribute.type === 'arc') {
+      const ellipsisLabelAttribute = {
+        ...this.attribute.textStyle,
+        text: '...'
+      };
+      const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+      const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+      const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
       const arcs: ArcInfo[] = this.layoutArcLabels(
         position,
         this.attribute,
         Array.from(this._idToGraphic.values()),
         data,
-        textBoundsArray
+        textBoundsArray,
+        ellipsisWidth
       );
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
@@ -272,6 +281,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: basedArc.angle,
+          maxLineWidth: basedArc.labelLimit,
           points:
             basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
               ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]

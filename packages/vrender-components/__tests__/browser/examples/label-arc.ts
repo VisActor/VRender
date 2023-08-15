@@ -398,8 +398,8 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        // text: 'test'
-        text: latestData[index].type
+        text: 'test122344556778891234550987665544'
+        // text: latestData[index].type
         // text: originData[index].id
         // fill: c.attribute.fill,
         // line: {

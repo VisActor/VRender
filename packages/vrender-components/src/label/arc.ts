@@ -146,11 +146,13 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     attribute: any,
     currentMarks?: IGraphic[],
     data?: any,
-    textBoundsArray?: any
+    textBoundsArray?: any,
+    ellipsisWidth?: number
   ) {
     // setArcs : 根据 arc 设置 datum 中对应的标签数据
     this._arcLeft.clear();
     this._arcRight.clear();
+    this._ellipsisWidth = ellipsisWidth;
     const { width, height } = attribute as ArcLabelAttrs;
     const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     currentMarks.forEach((currentMark, index) => {
@@ -401,21 +403,21 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         break;
     }
     labelWidth = Math.max(this._ellipsisWidth, labelWidth);
+    arc.labelLimit = labelWidth;
     arc.pointC = { x: cx, y: labelPosition.y };
 
+    const targetCenterOffset = 0.5 * (arc.labelLimit < arc.labelSize.width ? arc.labelLimit : arc.labelSize.width);
     if (labelLayoutAlign === 'edge') {
       // edge 模式下的多行文本对齐方向与其他模式相反
       // const alignOffset = this._computeAlignOffset(align, labelWidth, -flag);
       const alignOffset = 0;
       // 贴近画布边缘的布局结果可能会由于 cx 的小数 pixel 导致被部分裁剪，因此额外做计算
-      labelPosition.x = (flag > 0 ? plotLayout.width + alignOffset : alignOffset) - flag * (0.5 * arc.labelSize.width);
+      labelPosition.x = (flag > 0 ? plotLayout.width + alignOffset : alignOffset) - flag * targetCenterOffset;
     } else {
       // const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
       const alignOffset = 0;
-      labelPosition.x = cx + alignOffset + flag * (spaceWidth + 0.5 * arc.labelSize.width);
+      labelPosition.x = cx + alignOffset + flag * (spaceWidth + 0.5 * targetCenterOffset);
     }
-
-    arc.labelLimit = labelWidth;
   }
 
   private _computeAlignOffset(align: TextAlign, labelWidth: number, alignFlag: number): number {

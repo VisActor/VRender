@@ -435,18 +435,31 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
       if (this._itemWidthByUser) {
-        valueShape.setAttribute(
-          'maxLineWidth',
+        // 计算用来防止文本的宽度
+        const layoutWidth =
           this._itemWidthByUser -
-            parsedPadding[1] -
-            parsedPadding[3] -
-            shapeSize -
-            shapeSpace -
-            labelShape.AABBBounds.width() -
-            labelSpace -
-            focusSpace -
-            valueSpace
-        );
+          parsedPadding[1] -
+          parsedPadding[3] -
+          shapeSize -
+          shapeSpace -
+          labelSpace -
+          focusSpace -
+          valueSpace;
+        const valueBounds = valueShape.AABBBounds;
+        const labelBounds = labelShape.AABBBounds;
+        const valueWidth = valueBounds.width();
+        const labelWidth = labelBounds.width();
+        if (valueWidth + labelWidth > layoutWidth) {
+          if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
+            // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
+            labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
+          } else {
+            valueShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+            labelShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+          }
+        } else {
+          valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
+        }
         if (valueAttr.alignRight) {
           valueShape.setAttributes({
             // @ts-ignore

@@ -76,6 +76,7 @@ export class WrapText extends Text {
       if (maxLineWidth > 0) {
         for (let i = 0; i < lines.length; i++) {
           const str = lines[i] as string;
+          let needCut = true;
           // // 测量当前行宽度
           // width = Math.min(
           //   layoutObj.textMeasure.measureTextWidth(str, layoutObj.textOptions),
@@ -110,6 +111,7 @@ export class WrapText extends Text {
               clip.str = '';
               clip.width = 0;
             }
+            needCut = false;
           }
 
           linesLayout.push({
@@ -118,7 +120,7 @@ export class WrapText extends Text {
           });
           if (clip.str.length === str.length) {
             // 不需要截断
-          } else {
+          } else if (needCut) {
             const newStr = str.substring(clip.str.length);
             lines.splice(i + 1, 0, newStr);
           }

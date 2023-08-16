@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix wrapText line cut error",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

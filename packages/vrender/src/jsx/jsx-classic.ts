@@ -1,5 +1,6 @@
 import { isArray, isString } from '@visactor/vutils';
 import { graphicCreator } from '../graphic';
+import { REACT_TO_CANOPUS_EVENTS } from './graphicType';
 
 export function jsx(type: string | any, config: Record<string, any>, ...children: any) {
   const { key, attribute, ...props } = config || {};
@@ -14,7 +15,7 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
     childrenList = children.length === 1 ? children[0] : children;
   }
 
-  const g = new c(attribute);
+  const g = c.prototype.type ? new c(attribute) : c(config);
   if (childrenList && isArray(childrenList)) {
     childrenList.forEach((c: any) => {
       g.add(c);
@@ -22,6 +23,13 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
   } else {
     g.add(childrenList);
   }
+
+  Object.keys(props).forEach(k => {
+    const en = REACT_TO_CANOPUS_EVENTS[k];
+    if (en) {
+      g.on(en, props[k]);
+    }
+  });
   return g;
 }
 

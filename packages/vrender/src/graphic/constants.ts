@@ -19,3 +19,22 @@ export const TEXT_NUMBER_TYPE = genNumberType();
 
 export const GraphicService = Symbol.for('GraphicService');
 export const GraphicCreator = Symbol.for('GraphicCreator');
+
+export const VArea = 'area';
+export const VCircle = 'circle';
+export const VEllipse = 'ellipse';
+export const VLine = 'line';
+export const VRect = 'rect';
+export const VRect3d = 'rect3d';
+export const VPath = 'path';
+export const VRichText = 'richtext';
+export const VText = 'text';
+export const VArc = 'arc';
+export const VArc3d = 'arc3d';
+export const VImage = 'image';
+export const VSymbol = 'symbol';
+export const VGroup = 'group';
+export const VShadowRoot = 'shadowroot';
+export const VPolygon = 'polygon';
+export const VPyramid3d = 'pyramid3d';
+export const VGlyph = 'glyph';

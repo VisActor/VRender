@@ -1,0 +1,41 @@
+import {
+  VArc,
+  VArc3d,
+  VArea,
+  VCircle,
+  VEllipse,
+  VGlyph,
+  VGroup,
+  VImage,
+  VLine,
+  VPath,
+  VPolygon,
+  VPyramid3d,
+  VRect,
+  VRect3d,
+  VRichText,
+  VShadowRoot,
+  VSymbol,
+  VText
+} from '../graphic/constants';
+
+export {
+  VArc,
+  VArc3d,
+  VArea,
+  VCircle,
+  VEllipse,
+  VGlyph,
+  VGroup,
+  VImage,
+  VLine,
+  VPath,
+  VPolygon,
+  VPyramid3d,
+  VRect,
+  VRect3d,
+  VRichText,
+  VShadowRoot,
+  VSymbol,
+  VText
+};

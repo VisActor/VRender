@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat(marker): add clipRange config. fixed VisActor/VChart#181'",
+      "comment": "fix: fix wrapText line cut error",
       "type": "patch"
     }
   ],

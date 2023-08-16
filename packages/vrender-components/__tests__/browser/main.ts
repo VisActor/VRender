@@ -3,6 +3,14 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'axis-interaction',
+    name: '轴交互'
+  },
+  {
+    path: 'cartesian-axis-label-align',
+    name: '轴标签整体对齐'
+  },
+  {
     path: 'axis-overlap',
     name: '轴标签防重叠'
   },
@@ -53,6 +61,10 @@ const specs = [
   {
     path: 'label-line',
     name: 'line 数据标签'
+  },
+  {
+    path: 'label-arc',
+    name: 'arc 数据标签'
   },
   {
     path: 'label-multi-mark',
@@ -223,7 +235,8 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
         module.run?.();
       })
       .catch(err => {
-        // console.log(err);
+        // eslint-disable-next-line no-console
+        console.log(err);
       });
   }
 };

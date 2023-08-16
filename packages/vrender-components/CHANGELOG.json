@@ -2,6 +2,81 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.2",
+      "tag": "@visactor/vrender-components_v0.14.2",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.1",
+      "tag": "@visactor/vrender-components_v0.14.1",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.0` to `0.14.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.0",
+      "tag": "@visactor/vrender-components_v0.14.0",
+      "date": "Thu, 10 Aug 2023 07:22:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(brush): add sizeThreshold setting"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "feat: arc label sink"
+          },
+          {
+            "comment": "feat: modify arcLabel position"
+          },
+          {
+            "comment": "fix: the axis label's textAlign and textBaseline should auto adjust when angle is set, releate https://github.com/VisActor/VChart/issues/439"
+          },
+          {
+            "comment": "fix: panel only works for line axis"
+          },
+          {
+            "comment": "fix: line axis states should set default value"
+          },
+          {
+            "comment": "feat(component): label component support avoidMarks"
+          },
+          {
+            "comment": "feat(component): label component support custom layout and dataFilter"
+          },
+          {
+            "comment": "fix: fix the issue of using interactive layer in only on canvas env"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: add `verticalMinSize` and `containerAlign` for line type axis, `verticalMinSize` is used to set the minumum vertical size of axis, and `containerAlign` is to set the all labels's alignment in axis container, support https://github.com/VisActor/VChart/issues/380"
+          },
+          {
+            "comment": "refactor: rename global and window to vglobal and vwindow"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.9` to `0.14.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.10",
       "tag": "@visactor/vrender-components_v0.13.10",
       "date": "Wed, 09 Aug 2023 07:34:23 GMT",

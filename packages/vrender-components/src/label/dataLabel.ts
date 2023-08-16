@@ -1,16 +1,18 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import { IGraphic, INode } from '@visactor/vrender';
+import type { IGraphic, INode } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { bitmapTool } from './overlap';
 import { RectLabel } from './rect';
 import { SymbolLabel } from './symbol';
+import { ArcLabel } from './arc';
 import type { DataLabelAttrs } from './type';
-import { LabelBase } from './base';
+import type { LabelBase } from './base';
 
 const labelComponentMap = {
   rect: RectLabel,
-  symbol: SymbolLabel
+  symbol: SymbolLabel,
+  arc: ArcLabel
 };
 
 export class DataLabel extends AbstractComponent<DataLabelAttrs> {

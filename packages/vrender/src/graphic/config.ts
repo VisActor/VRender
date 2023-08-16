@@ -26,8 +26,14 @@ import type {
   RichTextVerticalDirection,
   RichTextGlobalAlignType,
   RichTextGlobalBaselineType,
-  IRichTextIconGraphicAttribute
+  IRichTextIconGraphicAttribute,
+  IConnectedStyle,
+  ILayout
 } from '../interface';
+
+export const DefaultLayout: ILayout = {
+  alignSelf: 'auto'
+};
 
 export const DefaultTransform: ITransform = {
   x: 0,
@@ -92,7 +98,9 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   lineHeight: undefined,
   underline: 0,
   lineThrough: 0,
-  scaleIn3d: false
+  scaleIn3d: false,
+  direction: 'horizontal',
+  wordBreak: 'break-all'
 };
 
 export const DefaultStyle: IGraphicStyle = {
@@ -106,8 +114,27 @@ export const DefaultStyle: IGraphicStyle = {
   blur: 0,
   cursor: null,
   ...DefaultFillStyle,
-  ...DefaultStrokeStyle
+  ...DefaultStrokeStyle,
+  ...DefaultLayout
 };
+
+export const DefaultConnectAttribute: Required<IConnectedStyle> = {
+  connectedType: 'none',
+  // connectedStyle: {
+  //   stroke: DefaultStrokeStyle.stroke,
+  //   strokeOpacity: DefaultStrokeStyle.strokeOpacity,
+  //   lineDash: DefaultStrokeStyle.lineDash,
+  //   lineDashOffset: DefaultStrokeStyle.lineDashOffset,
+  //   lineCap: DefaultStrokeStyle.lineCap,
+  //   lineJoin: DefaultStrokeStyle.lineJoin,
+  //   lineWidth: DefaultStrokeStyle.lineWidth,
+  //   fill: DefaultFillStyle.fill,
+  //   fillOpacity: DefaultFillStyle.fillOpacity
+  // },
+  connectedStyle: {}, // 默认全都继承父属性
+  connectedX: NaN,
+  connectedY: NaN
+} as IConnectedStyle;
 
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
@@ -149,6 +176,7 @@ export const DefaultArcAttribute: Required<IArcGraphicAttribute> = {
 
 export const DefaultAreaAttribute: Required<IAreaGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultConnectAttribute,
   points: [],
   segments: [],
   curveType: 'linear',
@@ -169,7 +197,13 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   cornerRadius: 0,
   path: [],
   clip: false,
-  visibleAll: true
+  visibleAll: true,
+  display: 'relative',
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'flex-start',
+  alignItems: 'flex-start',
+  alignContent: 'flex-start'
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
@@ -183,6 +217,7 @@ export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
 
 export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultConnectAttribute,
   points: [],
   segments: [],
   curveType: 'linear',

@@ -37,6 +37,8 @@ export function divideCubic(curve: ICubicBezierCurve, t: number): ICubicBezierCu
 
 export class CubicBezierCurve extends Curve implements ICubicBezierCurve {
   type: number = CurveTypeEnum.CubicBezierCurve;
+  declare originP1?: IPointLike;
+  declare originP2?: IPointLike;
   declare readonly p0: IPoint;
   declare readonly p1: IPoint;
   declare readonly p2: IPoint;

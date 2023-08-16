@@ -5,6 +5,9 @@ import type { IPoint, IPointLike } from '@visactor/vutils';
 
 export class QuadraticBezierCurve extends Curve implements IQuadraticBezierCurve {
   type: number = CurveTypeEnum.QuadraticBezierCurve;
+  declare originP1?: IPointLike;
+  declare originP2?: IPointLike;
+
   declare readonly p0: IPoint;
   declare readonly p1: IPoint;
   declare readonly p2: IPoint;

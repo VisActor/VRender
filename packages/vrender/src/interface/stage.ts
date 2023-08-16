@@ -39,7 +39,11 @@ export interface IStageParams {
   // 是否是受控制的canvas，如果不是的话，不会进行resize等操作，也不会修改canvas的样式
   canvasControled: boolean;
   title: string;
+  // 是否开启自动渲染
   autoRender: boolean;
+  // 是否开启布局支持
+  enableLayout: boolean;
+  // 是否关闭脏矩形检测
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;

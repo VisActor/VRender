@@ -2,6 +2,42 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.12.16",
+      "tag": "@visactor/vrender-kits_v0.12.16",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.15",
+      "tag": "@visactor/vrender-kits_v0.12.15",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.0` to `0.14.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.14",
+      "tag": "@visactor/vrender-kits_v0.12.14",
+      "date": "Thu, 10 Aug 2023 07:22:55 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.9` to `0.14.0`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.13",
       "tag": "@visactor/vrender-kits_v0.12.13",
       "date": "Wed, 09 Aug 2023 07:34:23 GMT",

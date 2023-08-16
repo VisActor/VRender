@@ -2,6 +2,65 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.2",
+      "tag": "@visactor/vrender_v0.14.2",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "chore: set target to es2016"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.1",
+      "tag": "@visactor/vrender_v0.14.1",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the error of text bounds in safari env, closed #294"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.0",
+      "tag": "@visactor/vrender_v0.14.0",
+      "date": "Thu, 10 Aug 2023 07:22:55 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: add connect type to line and area"
+          },
+          {
+            "comment": "feat: support flex layout"
+          },
+          {
+            "comment": "feat: support animate-bind event"
+          },
+          {
+            "comment": "feat: support text word-break"
+          },
+          {
+            "comment": "feat: support for vertical layout of text graphic"
+          },
+          {
+            "comment": "refactor: rename global and window to vglobal and vwindow"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix: fix the issue of area stroke with texture"
+          },
+          {
+            "comment": "fix: fix the issue of using interactive layer in only on canvas env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.9",
       "tag": "@visactor/vrender_v0.13.9",
       "date": "Wed, 09 Aug 2023 07:34:23 GMT",

@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "feat(brush): add sizeThreshold setting",
-      "type": "none"
+      "comment": "feat(marker): add clipRange config. fixed VisActor/VChart#181",
+      "type": "patch"
     }
   ],
   "packageName": "@visactor/vrender-components"

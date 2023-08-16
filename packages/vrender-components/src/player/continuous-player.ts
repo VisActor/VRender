@@ -1,6 +1,8 @@
-import { FederatedPointerEvent, global } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender';
+import { vglobal } from '@visactor/vrender';
 import { BasePlayer } from './base-player';
-import { ContinuousPlayerAttributes, PlayerEventEnum } from './type';
+import type { ContinuousPlayerAttributes } from './type';
+import { PlayerEventEnum } from './type';
 import { ControllerEventEnum } from './controller/constant';
 
 export interface IContinuousPlayer {
@@ -161,7 +163,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 事件
     this.dispatchCustomEvent(PlayerEventEnum.OnPlay);
     // 开始播放动画
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this));
   };
 
   /**
@@ -182,7 +184,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     }
 
     // 持续播放
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this));
   };
 
   /**
@@ -192,7 +194,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 播放状态更新
     this._isPlaying = false;
     // 取消播放动画
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     // 切换按钮
     this._controller.togglePlay();
     // 事件
@@ -209,7 +211,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     this._isPlaying = false;
     // 计算已流逝的时间, 需要记录下来
     this._elapsed = Date.now() - this._startTime;
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
     this.dispatchCustomEvent(PlayerEventEnum.OnPause);

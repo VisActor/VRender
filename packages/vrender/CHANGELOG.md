@@ -1,6 +1,37 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 09 Aug 2023 07:34:23 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Aug 2023 10:05:27 GMT and should not be manually modified.
+
+## 0.14.2
+Fri, 11 Aug 2023 10:05:27 GMT
+
+### Patches
+
+- chore: set target to es2016
+
+## 0.14.1
+Thu, 10 Aug 2023 12:14:14 GMT
+
+### Patches
+
+- fix: fix the error of text bounds in safari env, closed #294
+
+## 0.14.0
+Thu, 10 Aug 2023 07:22:55 GMT
+
+### Minor changes
+
+- feat: add connect type to line and area
+- feat: support flex layout
+- feat: support animate-bind event
+- feat: support text word-break
+- feat: support for vertical layout of text graphic
+- refactor: rename global and window to vglobal and vwindow
+
+### Patches
+
+- fix: fix the issue of area stroke with texture
+- fix: fix the issue of using interactive layer in only on canvas env
 
 ## 0.13.9
 Wed, 09 Aug 2023 07:34:23 GMT

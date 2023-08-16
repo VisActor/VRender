@@ -97,6 +97,15 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
    * @default true
    */
   visible?: boolean;
+  /**
+   * clip范围配置
+   */
+  clipRange?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {

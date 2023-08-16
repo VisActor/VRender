@@ -155,5 +155,9 @@ export const pages = [
   {
     title: 'animate-3d',
     path: 'animate-3d'
+  },
+  {
+    title: 'flex布局',
+    path: 'flex'
   }
 ];

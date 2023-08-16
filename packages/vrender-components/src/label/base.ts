@@ -1,10 +1,10 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, IPath, Path } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType, createPath } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine, Line } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType, createLine } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid, isString } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert } from '../util/labelSmartInvert';
@@ -15,7 +15,6 @@ import { bitmapTool, boundToRange, canPlace, canPlaceInside, clampText, place } 
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 import type { ArcInfo } from './arc';
-import { merge } from '@visactor/vutils';
 
 export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -33,7 +32,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: IPath }>;
+  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: ILine }>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -56,7 +55,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     attribute?: any,
     currentMarks?: IGraphic[],
     data?: any[],
-    textBoundsArray?: any[]
+    textBoundsArray?: any[],
+    ellipsisWidth?: number
   ): any {
     const arcs: ArcInfo[] = [];
     return arcs;
@@ -258,22 +258,34 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
 
     if (this.attribute.type === 'arc') {
+      const ellipsisLabelAttribute = {
+        ...this.attribute.textStyle,
+        text: '...'
+      };
+      const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+      const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+      const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
       const arcs: ArcInfo[] = this.layoutArcLabels(
         position,
         this.attribute,
         Array.from(this._idToGraphic.values()),
         data,
-        textBoundsArray
+        textBoundsArray,
+        ellipsisWidth
       );
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
-        const basedArc = arcs.find(arc => arc.labelText === textData.text);
-
+        const basedArc = arcs.find(arc => arc.refDatum.id === textData.id);
         const labelAttribute = {
+          visible: basedArc.labelVisible,
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
-          angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
-          labelLinePath: basedArc.labelLinePath
+          angle: basedArc.angle,
+          maxLineWidth: basedArc.labelLimit,
+          points:
+            basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
+              ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+              : undefined
         };
 
         labels[i].setAttributes(labelAttribute);
@@ -451,18 +463,18 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap: Map<any, { text: IText; labelLine?: IPath }> = new Map();
-    const prevTextMap: Map<any, { text: IText; labelLine?: IPath }> = this._graphicToText || new Map();
+    const currentTextMap: Map<any, { text: IText; labelLine?: ILine }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
-      const labelLine: IPath = (text.attribute as ArcLabelAttrs)?.labelLinePath
-        ? (createPath({
+      const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+        ? (createLine({
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-            lineWidth: 1,
-            path: (text.attribute as ArcLabelAttrs)?.labelLinePath
-          }) as Path)
+            lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
+            points: (text.attribute as ArcLabelAttrs)?.points
+          }) as Line)
         : undefined;
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
@@ -503,14 +515,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
           const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
           if (prevLabel.labelLine) {
-            // prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
-            prevLabel.labelLine
-              .animate()
-              .to(
-                merge({}, prevLabel.labelLine.attribute, { path: (text.attribute as ArcLabelAttrs)?.labelLinePath }),
-                duration,
-                easing
-              );
+            prevLabel.labelLine.animate().to(
+              merge({}, prevLabel.labelLine.attribute, {
+                points: (text.attribute as ArcLabelAttrs)?.points
+              }),
+              duration,
+              easing
+            );
           }
           if (
             animationConfig.increaseEffect !== false &&
@@ -531,7 +542,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         } else {
           prevLabel.text.setAttributes(text.attribute);
           if (prevLabel?.labelLine) {
-            prevLabel.labelLine.setAttributes({ path: (text.attribute as ArcLabelAttrs)?.labelLinePath });
+            prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
           }
         }
       }

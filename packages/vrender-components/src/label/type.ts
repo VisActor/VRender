@@ -281,11 +281,16 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   line?: IArcLabelLineSpec;
   /** 标签布局配置 */
   layout?: IArcLabelLayoutSpec;
-  /** 标签引导线path */
-  labelLinePath?: string;
+  /** 标签引导线点集 */
+  points?: IPoint[];
+  /** 饼图扇区中心偏移 */
+  centerOffset?: number;
 }
 
 export interface IArcLabelLineSpec {
+  /** 引导线线宽 */
+  lineWidth?: number;
+  /** 引导线颜色 */
   stroke?: string;
   /**
    * 是否显示引导线

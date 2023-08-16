@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.11",
+      "tag": "@visactor/vrender_v0.13.11",
+      "date": "Wed, 16 Aug 2023 08:22:12 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix wrapText line cut error"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.10",
       "tag": "@visactor/vrender_v0.13.10",
       "date": "Thu, 10 Aug 2023 03:15:00 GMT",

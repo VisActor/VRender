@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 10 Aug 2023 03:15:00 GMT and should not be manually modified.
+This log was last generated on Wed, 16 Aug 2023 08:22:12 GMT and should not be manually modified.
+
+## 0.13.11
+Wed, 16 Aug 2023 08:22:12 GMT
+
+### Patches
+
+- fix: fix wrapText line cut error
 
 ## 0.13.10
 Thu, 10 Aug 2023 03:15:00 GMT

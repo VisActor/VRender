@@ -146,7 +146,9 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       if (capWidth > epsilon && outerRadius > epsilon) {
         return {
           startAngle: startAngle - sign * capAngle * startCap,
-          endAngle: endAngle + sign * capAngle * endCap
+          endAngle: endAngle + sign * capAngle * endCap,
+          sc: sign * capAngle * startCap,
+          ec: sign * capAngle * endCap
         };
       }
     }

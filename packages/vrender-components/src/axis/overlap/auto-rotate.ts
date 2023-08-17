@@ -127,20 +127,18 @@ function clampAngle(angle = 0) {
 export function rotateYAxis(orient: string, items: IText[]) {
   // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
   items.forEach((item, i) => {
-    const angle = clampAngle(item.attribute.angle || 0);
     item.setAttributes({
-      ...getYAxisLabelAlign(orient, angle),
-      angle: angle
+      ...getYAxisLabelAlign(orient, item.attribute.angle),
+      angle: clampAngle(item.attribute.angle)
     });
   });
 }
 
 export function rotateXAxis(orient: string, items: IText[]) {
   items.forEach(item => {
-    const angle = clampAngle(item.attribute.angle || 0);
     item.setAttributes({
-      ...getXAxisLabelAlign(orient, angle),
-      angle: angle
+      ...getXAxisLabelAlign(orient, item.attribute.angle),
+      angle: clampAngle(item.attribute.angle)
     });
   });
 }
@@ -155,6 +153,7 @@ export function getXAxisLabelAlign(orient: string, angle: number = 0) {
     baseline = ['bottom', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
   }
 
+  angle = clampAngle(angle);
   const step = angle / (Math.PI * 0.5);
   let index;
   if (step === Math.floor(step)) {
@@ -180,6 +179,7 @@ export function getYAxisLabelAlign(orient: string, angle: number = 0) {
     baseline = ['middle', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
   }
 
+  angle = clampAngle(angle);
   const step = angle / (Math.PI * 0.5);
   let index;
   if (step === Math.floor(step)) {

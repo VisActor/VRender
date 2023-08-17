@@ -636,7 +636,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors } = option;
-
+    const fillStrategy = option.fillStrategy ?? 'invertSeries';
+    const strokeStrategy = option.strokeStrategy ?? 'series';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
 
@@ -666,8 +667,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
        * series（baseMark色），
        * invertSeries（执行智能反色），
        * similarSeries（智能反色的补色），
-       * null（不执行智能反色，保持fill设置的颜色） */
-
+       * null（不执行智能反色，保持fill设置的颜色）
+       * */
       const backgroundColor = baseMark.attribute.fill as IColor;
       const foregroundColor = label.attribute.fill as IColor;
       const seriesColor = backgroundColor;
@@ -734,8 +735,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
         /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
         if (label.attribute.stroke) {
-          const backgroundColor = label.attribute.stroke as IColor;
-          const foregroundColor = label.attribute.fill as IColor;
           label.setAttributes({
             fill: labelSmartInvert(
               foregroundColor,

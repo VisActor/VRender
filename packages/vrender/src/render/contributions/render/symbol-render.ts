@@ -108,12 +108,50 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       const p = context.project(x, y, z);
       const camera = context.camera;
       context.camera = null;
-      if (parsedPath.draw(context, size, p.x, p.y) === false) {
+      if (
+        parsedPath.draw(context, size, p.x, p.y, undefined, (p, a) => {
+          if (a.fill) {
+            if (fillCb) {
+              fillCb(context, symbol.attribute, symbolAttribute);
+            } else {
+              context.setCommonStyle(symbol, a, originX - x, originY - y);
+              context.fill();
+            }
+          }
+          if (a.stroke) {
+            if (strokeCb) {
+              strokeCb(context, symbol.attribute, symbolAttribute);
+            } else {
+              context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY);
+              context.stroke();
+            }
+          }
+        }) === false
+      ) {
         context.closePath();
       }
       context.camera = camera;
     } else {
-      if (parsedPath.draw(context, size, x, y, z) === false) {
+      if (
+        parsedPath.draw(context, size, x, y, z, (p, a) => {
+          if (a.fill) {
+            if (fillCb) {
+              fillCb(context, symbol.attribute, symbolAttribute);
+            } else {
+              context.setCommonStyle(symbol, a, originX - x, originY - y);
+              context.fill();
+            }
+          }
+          if (a.stroke) {
+            if (strokeCb) {
+              strokeCb(context, symbol.attribute, symbolAttribute);
+            } else {
+              context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY);
+              context.stroke();
+            }
+          }
+        }) === false
+      ) {
         context.closePath();
       }
     }
@@ -154,7 +192,8 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     // shadow
     context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
 
-    if (doFill) {
+    // svg就不用fill和stroke了
+    if (doFill && !parsedPath.isSvg) {
       if (fillCb) {
         fillCb(context, symbol.attribute, symbolAttribute);
       } else if (fVisible) {
@@ -162,7 +201,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
         context.fill();
       }
     }
-    if (doStroke) {
+    if (doStroke && !parsedPath.isSvg) {
       if (strokeCb) {
         strokeCb(context, symbol.attribute, symbolAttribute);
       } else if (sVisible) {

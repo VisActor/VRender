@@ -161,6 +161,10 @@ export const pages = [
     path: 'flex'
   },
   {
+    title: 'jsx',
+    path: 'jsx'
+  },
+  {
     title: 'html元素',
     path: 'html'
   }

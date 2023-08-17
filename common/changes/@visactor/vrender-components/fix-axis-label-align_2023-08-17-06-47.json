@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: user's align config should be first",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

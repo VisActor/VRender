@@ -30,6 +30,7 @@
     "@antv/g": "^5.7.4"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.14.1"
+    "@visactor/vrender": "workspace:0.14.1",
+    "fast-xml-parser": "4.2.7"
   }
 }

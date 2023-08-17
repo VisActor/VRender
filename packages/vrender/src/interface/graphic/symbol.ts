@@ -38,16 +38,25 @@ export interface ISymbolClass {
   type: SymbolType | string;
   path?: ICustomPath2D;
   pathStr: string;
+  isSvg?: boolean;
 
   // 返回true表示内部已经调用closePath，返回false表示没有调用closePath，外部需要调用closePath
-  draw: (ctx: IPath2D, size: number | [number, number], x: number, y: number, z?: number) => boolean;
+  draw: (
+    ctx: IPath2D,
+    size: number | [number, number],
+    x: number,
+    y: number,
+    z?: number,
+    cb?: (p: ICustomPath2D, a: any) => void
+  ) => boolean;
   drawOffset: (
     ctx: IPath2D,
     size: number | [number, number],
     x: number,
     y: number,
     offset: number,
-    z?: number
+    z?: number,
+    cb?: (p: ICustomPath2D, a: any) => void
   ) => boolean;
 
   drawToSvgPath?: (size: number | [number, number], x: number, y: number, z?: number) => string;

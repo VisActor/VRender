@@ -20,6 +20,7 @@ importers:
       canvas: 2.11.2
       d3-scale-chromatic: ^3.0.0
       dat.gui: ^0.7.9
+      fast-xml-parser: 4.2.7
       lodash: 4.17.21
       rollup-plugin-node-polyfills: 0.2.1
       rollup-plugin-typescript2: ^0.33.0
@@ -29,6 +30,7 @@ importers:
       zrender: 5.4.0
     dependencies:
       '@visactor/vrender': link:../../packages/vrender
+      fast-xml-parser: 4.2.7
     devDependencies:
       '@antv/g': 5.18.12
       '@babel/plugin-transform-react-jsx': 7.22.5
@@ -142,6 +144,7 @@ importers:
       color-convert: 2.0.1
       core-js: 3.31.1
       eslint: ~8.18.0
+      fast-xml-parser: 4.2.7
       form-data: ~4.0.0
       inversify: 6.0.1
       jest: ^26.0.0
@@ -158,6 +161,7 @@ importers:
       '@visactor/vutils': 0.15.3
       color-convert: 2.0.1
       core-js: 3.31.1
+      fast-xml-parser: 4.2.7
       inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
@@ -5354,6 +5358,13 @@ packages:
   /fast-levenshtein/2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
 
+  /fast-xml-parser/4.2.7:
+    resolution: {integrity: sha512-J8r6BriSLO1uj2miOk1NW0YVm8AGOOu3Si2HQp/cSmo6EA4m3fcwu2WKjJ4RK9wMLBtg69y1kS8baDiQBR41Ig==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: false
+
   /fastq/1.15.0:
     resolution: {integrity: sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==}
     dependencies:
@@ -9961,6 +9972,10 @@ packages:
     dependencies:
       acorn: 8.10.0
     dev: true
+
+  /strnum/1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
+    dev: false
 
   /sumchecker/3.0.1:
     resolution: {integrity: sha512-MvjXzkz/BOfyVDkG0oFOtBxHX2u3gKbMHIF/dXblZsgD3BWOFLmHovIpZY7BykJdAjcqRCBi1WYBNdEC9yI7vg==}

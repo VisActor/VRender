@@ -16,6 +16,9 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { getScaledStroke } from '../../../common/canvas-utils';
 import { BasePicker } from './base-picker';
 import { SYMBOL_NUMBER_TYPE } from '../../../graphic/constants';
+import { createRect } from '../../../graphic';
+
+const rect = createRect({});
 
 @injectable()
 export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IGraphicPicker {
@@ -32,11 +35,12 @@ export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IG
       return false;
     }
 
+    const parsedPath = symbol.getParsedPath();
     if (!pickContext.camera) {
       if (!symbol.AABBBounds.containsPoint(point)) {
         return false;
       }
-      if (symbol.attribute.pickMode === 'imprecise') {
+      if (parsedPath.isSvg || symbol.attribute.pickMode === 'imprecise') {
         return true;
       }
     }

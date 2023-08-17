@@ -1,28 +1,91 @@
-import type { IBounds } from '@visactor/vutils';
+import { isArray, type IBounds, AABBBounds } from '@visactor/vutils';
 import { renderCommandList } from '../../common/render-command-list';
-import type { IContext2d, ICustomPath2D, ISymbolClass } from '../../interface';
+import type { IContext2d, ICustomPath2D, IGraphicAttribute, ISymbolClass } from '../../interface';
 
+const tempBounds = new AABBBounds();
 export class CustomSymbolClass implements ISymbolClass {
   type: string;
   path: ICustomPath2D;
   pathStr: string = '';
+  isSvg: boolean;
+  svgCache?: { path: ICustomPath2D; attribute: Partial<IGraphicAttribute> }[];
 
-  constructor(type: string, path: ICustomPath2D) {
+  constructor(
+    type: string,
+    path: ICustomPath2D | { path: ICustomPath2D; attribute: Partial<IGraphicAttribute> }[],
+    isSvg: boolean = false
+  ) {
     this.type = type;
-    this.path = path;
+    if (isArray(path)) {
+      this.svgCache = path;
+    } else {
+      this.path = path;
+    }
+    this.isSvg = isSvg;
   }
 
-  drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {
+  drawOffset(
+    ctx: IContext2d,
+    size: number,
+    x: number,
+    y: number,
+    offset: number,
+    z?: number,
+    cb?: (path: ICustomPath2D, attribute?: Record<string, any>) => void
+  ) {
+    if (this.isSvg) {
+      if (!this.svgCache) {
+        return false;
+      }
+      this.svgCache.forEach(item => {
+        ctx.beginPath();
+        renderCommandList(item.path.commandList, ctx, x, y, size, size);
+        cb && cb(item.path, item.attribute);
+      });
+      return false;
+    }
     renderCommandList(this.path.commandList, ctx, x, y, size + offset, size + offset);
     return false;
   }
 
-  draw(ctx: IContext2d, size: number, x: number, y: number) {
+  draw(
+    ctx: IContext2d,
+    size: number,
+    x: number,
+    y: number,
+    z?: number,
+    cb?: (path: ICustomPath2D, attribute?: Record<string, any>) => void
+  ) {
+    if (this.isSvg) {
+      if (!this.svgCache) {
+        return false;
+      }
+      this.svgCache.forEach(item => {
+        ctx.beginPath();
+        renderCommandList(item.path.commandList, ctx, x, y, size, size);
+        cb && cb(item.path, item.attribute);
+      });
+      return false;
+    }
     renderCommandList(this.path.commandList, ctx, x, y, size, size);
     return false;
   }
 
   bounds(size: number, bounds: IBounds) {
+    if (this.isSvg) {
+      if (!this.svgCache) {
+        return;
+      }
+      bounds.clear();
+      this.svgCache.forEach(({ path }) => {
+        tempBounds.x1 = path.bounds.x1 * size;
+        tempBounds.y1 = path.bounds.y1 * size;
+        tempBounds.x2 = path.bounds.x2 * size;
+        tempBounds.y2 = path.bounds.y2 * size;
+        bounds.union(tempBounds);
+      });
+      return;
+    }
     if (!this.path.bounds) {
       return;
     }

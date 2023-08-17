@@ -1,7 +1,7 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, IText, TextBaselineType } from '@visactor/vrender';
+import type { IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender';
 // eslint-disable-next-line no-duplicate-imports
 import { createCircle } from '@visactor/vrender';
 import { isNil, get, merge, polarToCartesian, isNumberClose, isEmpty } from '@visactor/vutils';
@@ -360,5 +360,16 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     layerCount: number
   ): void {
     return;
+  }
+
+  protected getLabelAlign(
+    vector: [number, number],
+    inside?: boolean,
+    angle?: number
+  ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
+    return {
+      textAlign: this.getTextAlign(vector),
+      textBaseline: this.getTextBaseline(vector)
+    };
   }
 }

@@ -7,7 +7,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
-import { labelSmartInvert } from '../util/labelSmartInvert';
+import { labelSmartInvert, contrastAccessibilityChecker } from '../util/labelSmartInvert';
 import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
@@ -618,6 +618,14 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors } = option;
+    const fillStrategy = option.fillStrategy ?? 'invertSeries';
+    const strokeStrategy = option.strokeStrategy ?? 'series';
+    const brightColor = option.brightColor ?? '#ffffff';
+    const darkColor = option.darkColor ?? '#000000';
+
+    if (fillStrategy === 'null' && strokeStrategy === 'null') {
+      return;
+    }
 
     for (let i = 0; i < labels.length; i++) {
       const label = labels[i];
@@ -626,62 +634,127 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       const baseMark = this._idToGraphic.get((label.attribute as LabelItem).id);
-      let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+      // let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
 
-      if (this.attribute.type === 'arc') {
-        if (this.attribute.position === 'inside') {
-          isInside = true;
-        } else {
-          isInside = false;
-        }
-      }
+      // if (this.attribute.type === 'arc') {
+      //   if (this.attribute.position === 'inside') {
+      //     isInside = true;
+      //   } else {
+      //     isInside = false;
+      //   }
+      // }
+
+      // if (!isInside) {
+      //   continue;
+      // }
 
       /**
-       * stroke 的处理逻辑
-       * 1. 当文本在图元内部时，有两种情况：
-       *   - a. 未设置stroke：labelFill为前景色，baseMark填充色为背景色
-       *   - b. 设置了stroke：labelFill为前景色，labelStroke填充色为背景色
-       * 2. 当文本在图元外部时，有两种情况：
-       *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
-       *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
-       */
-      if (label.attribute.stroke && label.attribute.lineWidth > 0) {
-        /**
-         * 1-b, 2-b
-         * 若label存在stroke，label填充色为前景色，label描边色为背景色
-         * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
-         */
-        label.setAttributes({
-          fill: labelSmartInvert(
-            label.attribute.fill as IColor,
-            label.attribute.stroke as IColor,
-            textType,
-            contrastRatiosThreshold,
-            alternativeColors
-          )
-        });
-      } else if (isInside) {
-        /**
-         * 1-a
-         * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
-         */
-        const backgroundColor = baseMark.attribute.fill as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
-      } else if (label.attribute.lineWidth > 0) {
-        /**
-         * 2-a
-         * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
-         */
-        const backgroundColor = label.attribute.stroke as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          stroke: baseMark.attribute.fill,
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
+       * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
+       * series（baseMark色），
+       * invertSeries（执行智能反色），
+       * similarSeries（智能反色的补色），
+       * null（不执行智能反色，保持fill设置的颜色） */
+
+      const backgroundColor = baseMark.attribute.fill as IColor;
+      const foregroundColor = label.attribute.fill as IColor;
+      const seriesColor = backgroundColor;
+      const invertColor = labelSmartInvert(
+        foregroundColor,
+        backgroundColor,
+        textType,
+        contrastRatiosThreshold,
+        alternativeColors
+      );
+      const simialrColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+
+      switch (fillStrategy) {
+        case 'null':
+          break;
+        case 'series':
+          label.setAttributes({
+            fill: seriesColor
+          });
+          break;
+        case 'invertSeries':
+          label.setAttributes({
+            fill: invertColor
+          });
+          break;
+        case 'similarSeries':
+          label.setAttributes({
+            fill: simialrColor
+          });
+          break;
       }
+
+      if (label.attribute.lineWidth === 0) {
+        continue;
+      }
+      switch (strokeStrategy) {
+        case 'null':
+          break;
+        case 'series':
+          label.setAttributes({
+            stroke: seriesColor
+          });
+          break;
+        case 'invertSeries':
+          label.setAttributes({
+            stroke: invertColor
+          });
+          break;
+        case 'similarSeries':
+          label.setAttributes({
+            stroke: simialrColor
+          });
+          break;
+      }
+      // /**
+      //  * stroke 的处理逻辑
+      //  * 1. 当文本在图元内部时，有两种情况：
+      //  *   - a. 未设置stroke：labelFill为前景色，baseMark填充色为背景色
+      //  *   - b. 设置了stroke：labelFill为前景色，labelStroke填充色为背景色
+      //  * 2. 当文本在图元外部时，有两种情况：
+      //  *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
+      //  *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
+      //  */
+      // if (label.attribute.stroke && label.attribute.lineWidth > 0) {
+      //   /**
+      //    * 1-b, 2-b
+      //    * 若label存在stroke，label填充色为前景色，label描边色为背景色
+      //    * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
+      //    */
+      //   label.setAttributes({
+      //     fill: labelSmartInvert(
+      //       label.attribute.fill as IColor,
+      //       label.attribute.stroke as IColor,
+      //       textType,
+      //       contrastRatiosThreshold,
+      //       alternativeColors
+      //     )
+      //   });
+      // } else if (isInside) {
+      //   /**
+      //    * 1-a
+      //    * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
+      //    */
+      //   const backgroundColor = baseMark.attribute.fill as IColor;
+      //   const foregroundColor = label.attribute.fill as IColor;
+      //   label.setAttributes({
+      //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
+      //   });
+      // } else if (label.attribute.lineWidth > 0) {
+      //   /**
+      //    * 2-a
+      //    * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
+      //    */
+      //   const backgroundColor = label.attribute.stroke as IColor;
+      //   const foregroundColor = label.attribute.fill as IColor;
+      //   label.setAttributes({
+      //     stroke: baseMark.attribute.fill,
+      //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
+      //   });
+      // }
     }
   }
 

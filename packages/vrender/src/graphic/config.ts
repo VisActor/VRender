@@ -113,6 +113,7 @@ export const DefaultStyle: IGraphicStyle = {
   backgroundMode: 0,
   blur: 0,
   cursor: null,
+  html: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
   ...DefaultLayout

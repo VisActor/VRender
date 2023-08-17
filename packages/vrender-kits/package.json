@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.12.15",
+  "version": "0.12.16-alpha.0",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,7 +21,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.14.1",
+    "@visactor/vrender": "workspace:0.15.0-alpha.0",
     "@visactor/vutils": "~0.15.3",
     "@resvg/resvg-js": "2.4.1",
     "canvas": "2.11.2",

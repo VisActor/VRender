@@ -1,6 +1,7 @@
 import { createStage, VGroup, VSymbol, jsx } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+import { Group } from 'zrender';
 
 // container.load(roughModule);
 
@@ -45,6 +46,9 @@ export const page = () => {
     <VGroup>
       {symbolList.map((str, i) => (
         <VSymbol
+          onMouseEnter={e => {
+            e.target.setAttribute('fill', 'blue');
+          }}
           attribute={{
             symbolType: str,
             x: ((i * 100) % 500) + 100,

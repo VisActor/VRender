@@ -218,55 +218,6 @@ importers:
       typescript: 4.9.5
       vite: 3.2.6
 
-  ../../packages/vrender-jsx:
-    specifiers:
-      '@babel/plugin-transform-react-jsx': ^7.22.5
-      '@internal/bundler': workspace:*
-      '@internal/eslint-config': workspace:*
-      '@internal/ts-config': workspace:*
-      '@resvg/resvg-js': 2.4.1
-      '@rushstack/eslint-patch': ~1.1.4
-      '@types/node-fetch': 2.6.4
-      '@types/react': 16.9.49
-      '@types/react-dom': 16.9.8
-      '@visactor/vrender': workspace:0.14.1
-      '@visactor/vutils': ~0.15.3
-      '@vitejs/plugin-react': 3.1.0
-      canvas: 2.11.2
-      core-js: 3.31.1
-      eslint: ~8.18.0
-      inversify: 6.0.1
-      node-fetch: 2.6.6
-      react: 16.13.0
-      react-dom: 16.13.0
-      roughjs: 4.5.2
-      typescript: 4.9.5
-      vite: 3.2.6
-    dependencies:
-      '@resvg/resvg-js': 2.4.1
-      '@visactor/vrender': link:../vrender
-      '@visactor/vutils': 0.15.3
-      canvas: 2.11.2
-      core-js: 3.31.1
-      inversify: 6.0.1
-      node-fetch: 2.6.6
-      roughjs: 4.5.2
-    devDependencies:
-      '@babel/plugin-transform-react-jsx': 7.22.5
-      '@internal/bundler': link:../../tools/bundler
-      '@internal/eslint-config': link:../../share/eslint-config
-      '@internal/ts-config': link:../../share/ts-config
-      '@rushstack/eslint-patch': 1.1.4
-      '@types/node-fetch': 2.6.4
-      '@types/react': 16.9.49
-      '@types/react-dom': 16.9.8
-      '@vitejs/plugin-react': 3.1.0_vite@3.2.6
-      eslint: 8.18.0
-      react: 16.13.0
-      react-dom: 16.13.0_react@16.13.0
-      typescript: 4.9.5
-      vite: 3.2.6
-
   ../../packages/vrender-kits:
     specifiers:
       '@internal/bundler': workspace:*

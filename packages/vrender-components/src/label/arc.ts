@@ -416,7 +416,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     } else {
       // const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
       const alignOffset = 0;
-      labelPosition.x = cx + alignOffset + flag * (spaceWidth + 0.5 * targetCenterOffset);
+      labelPosition.x = cx + alignOffset + flag * (spaceWidth + targetCenterOffset);
     }
   }
 

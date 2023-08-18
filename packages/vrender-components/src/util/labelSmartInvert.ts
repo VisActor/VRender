@@ -1,4 +1,4 @@
-import { IColor } from '@visactor/vrender';
+import type { IColor } from '@visactor/vrender';
 import { ColorUtil } from '@visactor/vutils';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];
@@ -73,7 +73,7 @@ function improveContrastReverse(
  * @param backgroundColor
  * @returns
  */
-function contrastAccessibilityChecker(
+export function contrastAccessibilityChecker(
   foregroundColor: IColor | undefined,
   backgroundColor: IColor | undefined,
   textType?: IColor | undefined,

@@ -140,34 +140,36 @@ export const page = () => {
   //   cap: false
   // }));
 
-  // graphics.push(createArc({
-  //   innerRadius: 60,
-  //   outerRadius: 137.8,
-  //   startAngle: 0,
-  //   endAngle: Math.PI * 2,
-  //   x: 200,
-  //   y: 500,
-  //   stroke: 'green',
-  //   lineWidth: 2,
-  //   fill: {
-  //     x: 0.5,
-  //     y: 0.5,
-  //     startAngle: 0,
-  //     endAngle: 6.283185307179586,
-  //     stops: [
-  //       { offset: 0, color: 'red' },
-  //       { offset: 0.2, color: 'blue' },
-  //       { offset: 0.4, color: 'orange' },
-  //       { offset: 0.6, color: 'pink' },
-  //       { offset: 0.8, color: 'green' },
-  //       { offset: 1, color: 'purple' }
-  //     ],
-  //     gradient: 'conical'
-  //   },
-  //   cap: [false, true],
-  //   cornerRadius: 26,
-  //   forceShowCap: true
-  // }));
+  graphics.push(
+    createArc({
+      innerRadius: 60,
+      outerRadius: 137.8,
+      startAngle: 0,
+      endAngle: Math.PI * 2,
+      x: 200,
+      y: 500,
+      stroke: 'green',
+      lineWidth: 2,
+      fill: {
+        x: 0.5,
+        y: 0.5,
+        startAngle: 0,
+        endAngle: 6.283185307179586,
+        stops: [
+          { offset: 0, color: 'red' },
+          { offset: 0.2, color: 'blue' },
+          { offset: 0.4, color: 'orange' },
+          { offset: 0.6, color: 'pink' },
+          { offset: 0.8, color: 'green' },
+          { offset: 1, color: 'purple' }
+        ],
+        gradient: 'conical'
+      },
+      cap: [true, true],
+      cornerRadius: 26,
+      forceShowCap: true
+    })
+  );
 
   const stage = createStage({
     canvas: 'main',

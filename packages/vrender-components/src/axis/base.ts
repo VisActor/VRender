@@ -14,7 +14,7 @@ import type {
   IText
 } from '@visactor/vrender';
 // eslint-disable-next-line no-duplicate-imports
-import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
+import { createLine, createText, createGroup } from '@visactor/vrender';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
@@ -96,6 +96,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     layer: number,
     layerCount: number
   ): void;
+  protected abstract getLabelAlign(
+    vector: [number, number],
+    inside?: boolean,
+    angle?: number
+  ): { textAlign: TextAlignType; textBaseline: TextBaselineType };
 
   /**
    * 坐标轴的一个特殊的方法，用于不更新场景树来获取更新属性后的包围盒
@@ -557,13 +562,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
       : textStyle;
-    textStyle = merge(
-      {
-        textAlign: this.getTextAlign(vector),
-        textBaseline: this.getTextBaseline(vector, inside)
-      },
-      textStyle
-    ) as Partial<ITextGraphicAttribute>;
+
+    const labelAlign = this.getLabelAlign(vector, inside, (textStyle as ITextGraphicAttribute).angle);
+    textStyle = merge(labelAlign, textStyle) as Partial<ITextGraphicAttribute>;
     // 兼容原先 style.text 回调的方式
     if (isFunction(textStyle.text)) {
       // @ts-ignore

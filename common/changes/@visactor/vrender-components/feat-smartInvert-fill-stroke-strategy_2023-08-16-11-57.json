@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: smartInvert support fillStrategy strokeStrategy",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -133,6 +133,34 @@ export interface SmartInvertAttrs {
    * 自定义备选label颜色
    */
   alternativeColors?: string | string[];
+  /**
+   * fillStrategy四种策略：
+   * - series（baseMark色），
+   * - invertSeries（执行智能反色），
+   * - similarSeries（智能反色的补色），
+   * - null（不执行智能反色，保持fill设置的颜色）
+   * @default 'invertSeries'
+   */
+  fillStrategy?: 'series' | 'invertSeries' | 'similarSeries' | 'null';
+  /**
+   * strokeStrategy的四种策略:
+   * - series（baseMark色），
+   * - invertSeries（执行智能反色），
+   * - similarSeries（智能反色的补色），
+   * - null（不执行智能反色，保持fill设置的颜色）
+   * @default 'series'
+   */
+  strokeStrategy?: 'series' | 'invertSeries' | 'similarSeries' | 'null';
+  /**
+   * 前景色与亮色具有对比度时，similarSeries使用该色
+   * @default '#ffffff'
+   */
+  brightColor?: string;
+  /**
+   * 前景色与暗色具有对比度时，similarSeries使用该色
+   * @default '#000000'
+   */
+  darkColor?: string;
 }
 
 export type PositionStrategy = {
@@ -281,11 +309,16 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   line?: IArcLabelLineSpec;
   /** 标签布局配置 */
   layout?: IArcLabelLayoutSpec;
-  /** 标签引导线path */
-  labelLinePath?: string;
+  /** 标签引导线点集 */
+  points?: IPoint[];
+  /** 饼图扇区中心偏移 */
+  centerOffset?: number;
 }
 
 export interface IArcLabelLineSpec {
+  /** 引导线线宽 */
+  lineWidth?: number;
+  /** 引导线颜色 */
   stroke?: string;
   /**
    * 是否显示引导线

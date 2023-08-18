@@ -449,7 +449,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         const labelBounds = labelShape.AABBBounds;
         const valueWidth = valueBounds.width();
         const labelWidth = labelBounds.width();
-        if (valueWidth + labelWidth > layoutWidth) {
+        if (labelWidth > layoutWidth) {
           if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
             // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
             labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);

@@ -719,8 +719,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         if (label.attribute.stroke) {
           label.setAttributes({
             fill: labelSmartInvert(
-              label.attribute.fill,
-              label.attribute.stroke,
+              label.attribute.fill as IColor,
+              label.attribute.stroke as IColor,
               textType,
               contrastRatiosThreshold,
               alternativeColors

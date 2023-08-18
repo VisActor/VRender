@@ -429,9 +429,9 @@ function createContent(stage: Stage) {
     line: {
       line1MinLength: 30
     },
-    layout: {
-      align: 'edge'
-    },
+    // layout: {
+    //   align: 'edge'
+    // },
 
     // centerOffset: 10,
 

@@ -18,7 +18,7 @@ export const page = () => {
   // 添加10个rect
   new Array(10).fill(0).forEach(() => {
     group.add(
-      createRect({
+      createGroup({
         x: 10,
         y: 10,
         width: 70,
@@ -39,4 +39,6 @@ export const page = () => {
   stage.defaultLayer.add(group);
 
   stage.render(undefined, { renderStyle: 'rough' });
+
+  window.stage = stage;
 };

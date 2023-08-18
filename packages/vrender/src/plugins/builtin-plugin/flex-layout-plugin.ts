@@ -13,7 +13,7 @@ export class FlexLayoutPlugin implements IPlugin {
 
   tryLayout(graphic: IGraphic) {
     const p = graphic.parent;
-    if (!p) {
+    if (!p || !graphic.needUpdateLayout()) {
       return;
     }
     const theme = getTheme(p).group;
@@ -152,6 +152,12 @@ export class FlexLayoutPlugin implements IPlugin {
         });
       }
     }
+
+    // update children
+    children.forEach((child, idx) => {
+      child.addUpdatePositionTag();
+      child.clearUpdateLayoutTag();
+    });
   }
 
   layoutMain(

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 11 Aug 2023 10:05:27 GMT and should not be manually modified.
+This log was last generated on Fri, 18 Aug 2023 08:54:52 GMT and should not be manually modified.
+
+## 0.14.3
+Fri, 18 Aug 2023 08:54:52 GMT
+
+### Patches
+
+- feat(marker): add clipRange config. fixed VisActor/VChart#181'
+- fix: fix the issue with arc conical color after configuring cap, closed #455
+- fix: fix wrapText line cut error
 
 ## 0.14.2
 Fri, 11 Aug 2023 10:05:27 GMT

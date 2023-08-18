@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 11 Aug 2023 10:05:27 GMT and should not be manually modified.
+This log was last generated on Fri, 18 Aug 2023 08:54:52 GMT and should not be manually modified.
+
+## 0.14.3
+Fri, 18 Aug 2023 08:54:52 GMT
+
+### Patches
+
+- feat: change labelLine of arc label from path mark to line mark to adapt to animation'
+- feat: add legendItemAttributeUpdate event in legend
+- feat(marker): add clipRange config. fixed VisActor/VChart#181
+- feat: smartInvert support fillStrategy strokeStrategy
+- fix: user's align config should be first
+- fix: label shoud omit automaticly when label's width exceeds item's width, relate https://github.com/VisActor/VChart/issues/505
 
 ## 0.14.2
 Fri, 11 Aug 2023 10:05:27 GMT

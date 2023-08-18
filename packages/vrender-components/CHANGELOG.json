@@ -2,6 +2,32 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.4",
+      "tag": "@visactor/vrender-components_v0.14.4",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: change labelLine of arc label from path mark to line mark to adapt to animation'"
+          },
+          {
+            "comment": "feat: smartInvert support fillStrategy strokeStrategy"
+          },
+          {
+            "comment": "fix: user's align config should be first"
+          },
+          {
+            "comment": "fix: label shoud omit automaticly when label's width exceeds item's width, relate https://github.com/VisActor/VChart/issues/505"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.3` to `0.14.4`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.3",
       "tag": "@visactor/vrender-components_v0.14.3",
       "date": "Wed, 16 Aug 2023 06:46:13 GMT",

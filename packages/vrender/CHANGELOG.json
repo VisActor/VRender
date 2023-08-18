@@ -2,6 +2,21 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.4",
+      "tag": "@visactor/vrender_v0.14.4",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the issue with arc conical color after configuring cap, closed #455"
+          },
+          {
+            "comment": "fix: fix wrapText line cut error"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.3",
       "tag": "@visactor/vrender_v0.14.3",
       "date": "Wed, 16 Aug 2023 06:46:13 GMT",

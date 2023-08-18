@@ -618,12 +618,12 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors } = option;
-    const fillStrategy = option.fillStrategy ?? 'invertSeries';
-    const strokeStrategy = option.strokeStrategy ?? 'series';
+    const fillStrategy = option.fillStrategy ?? 'invertBase';
+    const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
 
-    if (option.fillStrategy === 'null' && option.strokeStrategy === 'null') {
+    if (fillStrategy === 'null' && strokeStrategy === 'null') {
       return;
     }
 
@@ -653,7 +653,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
        * */
       const backgroundColor = baseMark.attribute.fill as IColor;
       const foregroundColor = label.attribute.fill as IColor;
-      const seriesColor = backgroundColor;
+      const baseColor = backgroundColor;
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,
@@ -663,52 +663,14 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       );
       const simialrColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
-      const fillStrategy = option.fillStrategy ?? 'invertSeries';
-      const strokeStrategy = option.strokeStrategy ?? 'series';
-
       if (isInside) {
-        switch (fillStrategy) {
-          case 'null':
-            break;
-          case 'series':
-            label.setAttributes({
-              fill: seriesColor
-            });
-            break;
-          case 'invertSeries':
-            label.setAttributes({
-              fill: invertColor
-            });
-            break;
-          case 'similarSeries':
-            label.setAttributes({
-              fill: simialrColor
-            });
-            break;
-        }
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
 
         if (label.attribute.lineWidth === 0) {
           continue;
         }
-        switch (strokeStrategy) {
-          case 'null':
-            break;
-          case 'series':
-            label.setAttributes({
-              stroke: seriesColor
-            });
-            break;
-          case 'invertSeries':
-            label.setAttributes({
-              stroke: invertColor
-            });
-            break;
-          case 'similarSeries':
-            label.setAttributes({
-              stroke: simialrColor
-            });
-            break;
-        }
+
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
       } else {
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
         if (label.attribute.lineWidth === 0) {
@@ -730,45 +692,9 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         }
 
         /** 当label未设置stroke，且可设置stroke时，正常计算 */
-        switch (fillStrategy) {
-          case 'null':
-            break;
-          case 'series':
-            label.setAttributes({
-              fill: seriesColor
-            });
-            break;
-          case 'invertSeries':
-            label.setAttributes({
-              fill: invertColor
-            });
-            break;
-          case 'similarSeries':
-            label.setAttributes({
-              fill: simialrColor
-            });
-            break;
-        }
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
 
-        switch (strokeStrategy) {
-          case 'null':
-            break;
-          case 'series':
-            label.setAttributes({
-              stroke: seriesColor
-            });
-            break;
-          case 'invertSeries':
-            label.setAttributes({
-              stroke: invertColor
-            });
-            break;
-          case 'similarSeries':
-            label.setAttributes({
-              stroke: simialrColor
-            });
-            break;
-        }
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
       }
 
       // /**
@@ -817,6 +743,49 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
       //   });
       // }
+    }
+  }
+
+  setFillStrategy(fillStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (fillStrategy) {
+      case 'base':
+        label.setAttributes({
+          fill: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          fill: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          fill: simialrColor
+        });
+      default:
+        break;
+    }
+  }
+
+  setStrokeStrategy(strokeStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (strokeStrategy) {
+      case 'base':
+        label.setAttributes({
+          stroke: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          stroke: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          stroke: simialrColor
+        });
+        break;
+      default:
+        break;
     }
   }
 

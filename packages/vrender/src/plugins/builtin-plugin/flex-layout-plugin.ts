@@ -3,6 +3,9 @@ import { getTheme } from '../../graphic';
 import { graphicService } from '../../modules';
 import type { IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
+import { isNumber } from '../../canvas/util';
+import { parsePadding } from '../../common/utils';
+import { isArray } from '@visactor/vutils';
 
 export class FlexLayoutPlugin implements IPlugin {
   name: 'FlexLayoutPlugin' = 'FlexLayoutPlugin';
@@ -16,6 +19,7 @@ export class FlexLayoutPlugin implements IPlugin {
     if (!p || !graphic.needUpdateLayout()) {
       return;
     }
+    p.isLayout = true;
     const theme = getTheme(p).group;
     const { display = theme.display } = p.attribute;
     if (display !== 'flex') {
@@ -113,6 +117,10 @@ export class FlexLayoutPlugin implements IPlugin {
       } else if (alignItems === 'center') {
         const anchorPos = cross.len / 2;
         this.layoutCross(children, alignItems, cross, anchorPos, mianLenArray, mainList[0], 0);
+      } else {
+        children.forEach(child => {
+          child.attribute[cross.field] = getPadding(child, cross.field);
+        });
       }
     } else {
       if (alignContent === 'flex-start') {
@@ -155,9 +163,11 @@ export class FlexLayoutPlugin implements IPlugin {
 
     // update children
     children.forEach((child, idx) => {
+      child.addUpdateBoundTag();
       child.addUpdatePositionTag();
       child.clearUpdateLayoutTag();
     });
+    p.isLayout = false;
   }
 
   layoutMain(
@@ -172,20 +182,20 @@ export class FlexLayoutPlugin implements IPlugin {
     if (justifyContent === 'flex-start') {
       let pos = 0;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[main.field] = pos;
+        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
         pos += mianLenArray[i].mainLen;
       }
     } else if (justifyContent === 'flex-end') {
       let pos = main.len;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
         pos -= mianLenArray[i].mainLen;
-        children[i].attribute[main.field] = pos;
+        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
       }
     } else if (justifyContent === 'space-around') {
       if (currSeg.mainLen >= main.len) {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos;
+          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -193,7 +203,7 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = (main.len - currSeg.mainLen) / size / 2;
         let pos = padding;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos;
+          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
@@ -201,7 +211,7 @@ export class FlexLayoutPlugin implements IPlugin {
       if (currSeg.mainLen >= main.len) {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos;
+          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -209,7 +219,7 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = (main.len - currSeg.mainLen) / (size * 2 - 2);
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos;
+          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
@@ -227,15 +237,16 @@ export class FlexLayoutPlugin implements IPlugin {
   ) {
     if (alignItem === 'flex-end') {
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] = anchorPos - lenArray[i].crossLen;
+        children[i].attribute[cross.field] = anchorPos - lenArray[i].crossLen + getPadding(children[i], cross.field);
       }
     } else if (alignItem === 'center') {
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] = anchorPos - lenArray[i].crossLen / 2;
+        children[i].attribute[cross.field] =
+          anchorPos - lenArray[i].crossLen / 2 + getPadding(children[i], cross.field);
       }
     } else {
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] = anchorPos;
+        children[i].attribute[cross.field] = anchorPos + getPadding(children[i], cross.field);
       }
     }
   }
@@ -254,6 +265,14 @@ export class FlexLayoutPlugin implements IPlugin {
       }
       this.tryLayout(graphic);
     });
+    graphicService.hooks.afterUpdateAABBBounds.tap(this.key, graphic => {
+      if (graphic.glyphHost) {
+        graphic = graphic.glyphHost;
+      }
+      if (graphic.isContainer && !graphic.parent.isLayout) {
+        this.tryLayout(graphic);
+      }
+    });
   }
   deactivate(context: IPluginService): void {
     graphicService.hooks.onAttributeUpdate.taps = graphicService.hooks.onAttributeUpdate.taps.filter(item => {
@@ -262,5 +281,25 @@ export class FlexLayoutPlugin implements IPlugin {
     graphicService.hooks.onSetStage.taps = graphicService.hooks.onSetStage.taps.filter(item => {
       return item.name !== this.key;
     });
+    graphicService.hooks.afterUpdateAABBBounds.taps = graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
+      return item.name !== this.key;
+    });
   }
+}
+
+function getPadding(graphic: IGraphic, field: string): number {
+  if (!graphic.attribute.boundsPadding) {
+    return 0;
+  } else if (isNumber(graphic.attribute.boundsPadding)) {
+    return graphic.attribute.boundsPadding as number;
+  } else if (isArray(graphic.attribute.boundsPadding) && graphic.attribute.boundsPadding.length === 1) {
+    return graphic.attribute.boundsPadding[0];
+  }
+  const paddingArray = parsePadding(graphic.attribute.boundsPadding);
+  if (field === 'x') {
+    return paddingArray[3];
+  } else if (field === 'y') {
+    return paddingArray[0];
+  }
+  return 0;
 }

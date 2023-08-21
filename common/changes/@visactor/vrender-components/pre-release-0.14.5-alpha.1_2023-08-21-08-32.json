@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Merge pull request #340 from VisActor/sync_0.14.4\n\nSync 0.14.4\n",
+      "type": "patch",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "just_star@qq.com"
+}

@@ -637,11 +637,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
 
       if (this.attribute.type === 'arc') {
-        if (this.attribute.position === 'inside') {
-          isInside = true;
-        } else {
-          isInside = false;
-        }
+        isInside = this.attribute.position === 'inside';
       }
 
       /**

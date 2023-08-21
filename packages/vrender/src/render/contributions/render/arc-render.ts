@@ -1,4 +1,4 @@
-import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2 } from '@visactor/vutils';
+import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2, isBoolean } from '@visactor/vutils';
 import { inject, injectable, named } from 'inversify';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
@@ -17,7 +17,8 @@ import type {
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider
+  IContributionProvider,
+  IConicalGradient
 } from '../../../interface';
 import {
   cornerTangents,
@@ -271,6 +272,19 @@ export class DefaultCanvasArcRender implements IGraphicRender {
       cap = arcAttribute.cap,
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
+    // 判断是否是环形渐变，且有头部cap，那就偏移渐变色角度
+    let conicalOffset = 0;
+    const tempChangeConicalColor =
+      ((isBoolean(cap) && cap) || cap[0]) && (fill as IGradientColor).gradient === 'conical';
+    if (tempChangeConicalColor) {
+      const { sc, startAngle, endAngle } = arc.getParsedAngle();
+      if (abs(endAngle - startAngle) < pi2 - epsilon) {
+        conicalOffset = sc || 0;
+        (fill as IConicalGradient).startAngle -= conicalOffset;
+        (fill as IConicalGradient).endAngle -= conicalOffset;
+      }
+    }
+
     let beforeRenderContribitionsRuned = false;
     const { isFullStroke, stroke: arrayStroke } = parseStroke(stroke);
     if (doFill || isFullStroke) {
@@ -388,7 +402,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
     }
 
     // 绘制cap
-    if (cap && forceShowCap) {
+    if (((isBoolean(cap) && cap) || cap[1]) && forceShowCap) {
       const { startAngle: sa, endAngle: ea } = arc.getParsedAngle();
       const deltaAngle = abs(ea - sa);
       if (deltaAngle >= pi2 - epsilon) {
@@ -476,6 +490,11 @@ export class DefaultCanvasArcRender implements IGraphicRender {
         strokeCb
       );
     });
+
+    if (tempChangeConicalColor) {
+      (fill as IConicalGradient).startAngle += conicalOffset;
+      (fill as IConicalGradient).endAngle += conicalOffset;
+    }
   }
 
   draw(arc: IArc, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

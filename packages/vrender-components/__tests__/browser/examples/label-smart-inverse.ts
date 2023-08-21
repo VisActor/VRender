@@ -607,6 +607,11 @@ function createContent(stage: Stage) {
         }
       ]
     },
+    smartInvert: {
+      // strokeStrategy: 'similarSeries'
+      // brightColor: '#fff000',
+      // darkColor: '#dd0000'
+    },
 
     zIndex: 302
   });

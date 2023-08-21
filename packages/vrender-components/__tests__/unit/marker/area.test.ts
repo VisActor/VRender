@@ -1,5 +1,6 @@
-import { IGraphic, Stage, Polygon, Group } from '@visactor/vrender';
-import { Tag, MarkArea } from '../../../src';
+import type { IGraphic, Stage, Polygon, Group } from '@visactor/vrender';
+import type { Tag } from '../../../src';
+import { MarkArea } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 
@@ -42,7 +43,7 @@ describe('Marker', () => {
     stage.defaultLayer.add(markArea as unknown as IGraphic);
     stage.render();
 
-    const markAreaContainer = markArea.children[0] as unknown as Group;
+    const markAreaContainer = (markArea.children[0] as unknown as Group).children[0] as unknown as Group;
     expect(markAreaContainer.childrenCount).toBe(2);
     // ploygon图元构造的area
     expect((markAreaContainer.children[0] as Polygon).attribute.points).toEqual([

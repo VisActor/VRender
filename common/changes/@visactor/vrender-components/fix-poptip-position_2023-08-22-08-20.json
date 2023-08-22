@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the issue with poptip, closed #322",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -53,7 +53,10 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       outerBorder,
       innerBorder
     } = arc.attribute;
-    if (outerBorder) {
+    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
+    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+
+    if (outerBorder && outerBorder.visible !== false) {
       const { distance = arcAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const deltaAngle = (distance as number) / outerRadius;
@@ -70,7 +73,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
 
       if (strokeCb) {
         strokeCb(context, outerBorder, arcAttribute.outerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeOuter) {
         // 存在stroke
         const lastOpacity = (arcAttribute.outerBorder as any).opacity;
         (arcAttribute.outerBorder as any).opacity = opacity;
@@ -80,7 +83,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       }
     }
 
-    if (innerBorder) {
+    if (innerBorder && innerBorder.visible !== false) {
       const { distance = arcAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const deltaAngle = (distance as number) / outerRadius;
@@ -99,7 +102,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
 
       if (strokeCb) {
         strokeCb(context, innerBorder, arcAttribute.innerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeInner) {
         // 存在stroke
         const lastOpacity = (arcAttribute.innerBorder as any).opacity;
         (arcAttribute.innerBorder as any).opacity = opacity;

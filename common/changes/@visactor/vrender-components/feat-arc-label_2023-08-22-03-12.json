@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: config 'pickable: flase' as default",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -155,10 +155,10 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
     const layout = position === 'auto';
     // 最多循环this.positionList次
-    let minifyBBoxI: number;
-    let minifyBBoxSize: number = Infinity;
+    let maxBBoxI: number;
+    let maxBBoxSize: number = -Infinity;
     for (let i = 0; i < this.positionList.length + 1; i++) {
-      const p = layout ? this.positionList[i === this.positionList.length ? minifyBBoxI : i] : position;
+      const p = layout ? this.positionList[i === this.positionList.length ? maxBBoxI : i] : position;
       const { angle, offset, rectOffset } = this.getAngleAndOffset(
         p,
         popTipWidth,
@@ -221,9 +221,9 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         } else {
           const bbox = getRectIntersect(b, stageBounds, false);
           const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
-          if (size < minifyBBoxSize) {
-            minifyBBoxSize = size;
-            minifyBBoxI = i;
+          if (size > maxBBoxSize) {
+            maxBBoxSize = size;
+            maxBBoxI = i;
           }
         }
       } else {

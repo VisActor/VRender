@@ -12,6 +12,7 @@ import {
   createPyramid3d,
   createRect,
   createRect3d,
+  createRichText,
   createSymbol,
   createText
 } from '../graphic';
@@ -29,6 +30,9 @@ import type {
   IPyramid3dGraphicAttribute,
   IRect3dGraphicAttribute,
   IRectGraphicAttribute,
+  IRichTextCharacter,
+  IRichTextGraphicAttribute,
+  IRichTextImageCharacter,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '../interface';
@@ -137,3 +141,20 @@ export function VSymbol(params: IDefaultGraphicParamsType<ISymbolGraphicAttribut
 export function VText(params: IDefaultGraphicParamsType<ITextGraphicAttribute>) {
   return createText(params ? params.attribute : {});
 }
+export function VRichText(params: IDefaultGraphicParamsType<IRichTextGraphicAttribute>) {
+  return createRichText(params ? params.attribute : {});
+}
+
+VRichText.Text = function (params: IRichTextCharacter) {
+  return {
+    type: 'rich/text',
+    ...params
+  };
+};
+
+VRichText.Image = function (params: IRichTextImageCharacter) {
+  return {
+    type: 'rich/image',
+    ...params
+  };
+};

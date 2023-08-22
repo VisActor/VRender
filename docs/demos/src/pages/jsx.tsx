@@ -1,9 +1,12 @@
-import { createStage, VGroup, VSymbol, jsx } from '@visactor/vrender';
+import { createStage, VGroup, VSymbol, VRichText, jsx } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
 
 // container.load(roughModule);
+
+const svg =
+  '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="6" cy="6" r="6" fill="#FD9C87"></circle><circle opacity="0.6" cx="6" cy="6" r="1" stroke="white" stroke-width="2"></circle></svg>';
 
 export const page = () => {
   const symbolList = [
@@ -42,6 +45,7 @@ export const page = () => {
     autoRender: true
   });
 
+  console.log(VRichText.Text);
   stage.defaultLayer.add(
     <VGroup>
       {symbolList.map((str, i) => (
@@ -66,6 +70,10 @@ export const page = () => {
           }}
         />
       ))}
+      <VRichText attribute={{ x: 600, y: 600, width: 0, height: 0, textAlign: 'right' }}>
+        <VRichText.Text attribute={{ fill: 'red', text: 'aaa' }}>富文本全局</VRichText.Text>
+        <VRichText.Image attribute={{ image: svg, width: 30, height: 30, id: 'circle-0' }}></VRichText.Image>
+      </VRichText>
     </VGroup>
   );
 

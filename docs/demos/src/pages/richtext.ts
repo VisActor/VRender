@@ -1,4 +1,4 @@
-import { createStage, createRichText, createGroup, createCircle } from '@visactor/vrender';
+import { createStage, createRichText, createGroup, createCircle, xul } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // const urlPng = 'https://vega.github.io/images/idl-logo.png';
@@ -19,6 +19,7 @@ export const page = () => {
         {
           text: 'Mapbox',
           fontWeight: 'bold',
+          direction: 'vertical',
           fontSize: 30,
           fill: '#3f51b5'
         },
@@ -29,7 +30,6 @@ export const page = () => {
         {
           text: '替代方案',
           fontStyle: 'italic',
-
           fill: '#3f51b5'
         },
         {
@@ -649,6 +649,40 @@ export const page = () => {
     })
   );
 
+  console.log(
+    createRichText({
+      x: 600,
+      y: 600,
+      width: 0,
+      height: 0,
+      textAlign: 'right',
+      textConfig: xul(`<tc>
+      <text attribute="fill: red;">富文本全局</text>
+      <image attribute="image: ${svg
+        .replaceAll('"', '&quot')
+        .replaceAll('<', '&lt')
+        .replaceAll('>', '&gt')};; width: 30; height: 30; id: circle-0;"></image>
+      </tc>`)
+    })
+  );
+
+  shapes.push(
+    createRichText({
+      x: 600,
+      y: 600,
+      width: 0,
+      height: 0,
+      textAlign: 'right',
+      textConfig: xul(`<tc>
+        <text attribute="fill: red;">富文本全局</text>
+        <image attribute="image: ${svg
+          .replaceAll('"', '&quot')
+          .replaceAll('<', '&lt')
+          .replaceAll('>', '&gt')};; width: 30; height: 30; id: circle-0;"></image>
+        </tc>`)
+    })
+  );
+
   const stage = createStage({
     canvas: 'main',
     width: 1200,
@@ -665,6 +699,12 @@ export const page = () => {
   //   // console.log(e.clone());
   //   console.log(shapes[1].pickIcon(e.global));
   // });
+
+  // console.log(
+  //   `<image attribute="image: ${svg
+  //     .replaceAll("'", "\\'")
+  //     .replaceAll('"', '\\"')}; width: 30; height: 30; id: circle-0" />`
+  // );
 
   addShapesToStage(stage, shapes as any, true);
   stage.render();

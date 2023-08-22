@@ -43,19 +43,27 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
+    const { outerBorder, innerBorder } = circle.attribute;
+    const doOuterBorder = outerBorder && outerBorder.visible !== false;
+    const doInnerBorder = innerBorder && innerBorder.visible !== false;
+    if (!(doOuterBorder || doInnerBorder)) {
+      return;
+    }
     const {
       radius = circleAttribute.radius,
       startAngle = circleAttribute.startAngle,
       endAngle = circleAttribute.endAngle,
       opacity = circleAttribute.opacity,
-      outerBorder,
-      innerBorder
+      x: originX = circleAttribute.x,
+      y: originY = circleAttribute.y,
+      scaleX = circleAttribute.scaleX,
+      scaleY = circleAttribute.scaleY
     } = circle.attribute;
 
     const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
     const doStrokeInner = !!(innerBorder && innerBorder.stroke);
 
-    if (outerBorder && outerBorder.visible !== false) {
+    if (doOuterBorder) {
       const { distance = circleAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const dw = d;
@@ -72,13 +80,19 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
         // 存在stroke
         const lastOpacity = (circleAttribute.outerBorder as any).opacity;
         (circleAttribute.outerBorder as any).opacity = opacity;
-        context.setStrokeStyle(circle, outerBorder, x, y, circleAttribute.outerBorder as any);
+        context.setStrokeStyle(
+          circle,
+          outerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          circleAttribute.outerBorder as any
+        );
         (circleAttribute.outerBorder as any).opacity = lastOpacity;
         context.stroke();
       }
     }
 
-    if (innerBorder && innerBorder.visible !== false) {
+    if (doInnerBorder) {
       const { distance = circleAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const dw = d;
@@ -96,7 +110,13 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
         // 存在stroke
         const lastOpacity = (circleAttribute.innerBorder as any).opacity;
         (circleAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(circle, innerBorder, x, y, circleAttribute.innerBorder as any);
+        context.setStrokeStyle(
+          circle,
+          innerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          circleAttribute.innerBorder as any
+        );
         (circleAttribute.innerBorder as any).opacity = lastOpacity;
         context.stroke();
       }

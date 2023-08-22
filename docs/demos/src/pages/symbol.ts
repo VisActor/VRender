@@ -42,8 +42,28 @@ export const page = () => {
       // textureColor: 'red',
       fill: 'pink',
       outerBorder: {
-        stroke: 'false', // stroke is false
-        lineWidth: 1
+        stroke: {
+          gradient: 'radial',
+          x0: 0.5,
+          y0: 0.5,
+          r0: 0,
+          x1: 0.5,
+          y1: 0.5,
+          r1: 0.7,
+          stops: [
+            {
+              offset: 0,
+              color: 'red'
+            },
+            {
+              offset: 1,
+              color: '#6690F2'
+            }
+          ]
+        },
+        distance: 10,
+        lineWidth: 10,
+        strokeOpacity: 1
       }
     });
     symbol.addEventListener('mouseenter', () => {

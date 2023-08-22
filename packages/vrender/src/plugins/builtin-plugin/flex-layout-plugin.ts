@@ -1,11 +1,11 @@
-import type { IGraphic, IGroup, IGroupAttribute } from '../../interface';
+import type { IGraphic, IGroup, IGroupAttribute, IStage } from '../../interface';
 import { getTheme } from '../../graphic';
 import { graphicService } from '../../modules';
 import type { IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
 import { isNumber } from '../../canvas/util';
 import { parsePadding } from '../../common/utils';
-import { isArray } from '@visactor/vutils';
+import { AABBBounds, isArray } from '@visactor/vutils';
 
 export class FlexLayoutPlugin implements IPlugin {
   name: 'FlexLayoutPlugin' = 'FlexLayoutPlugin';
@@ -13,13 +13,13 @@ export class FlexLayoutPlugin implements IPlugin {
   pluginService: IPluginService;
   id: number = Generator.GenAutoIncrementId();
   key: string = this.name + this.id;
+  tempBounds: AABBBounds = new AABBBounds();
 
   tryLayout(graphic: IGraphic) {
     const p = graphic.parent;
     if (!p || !graphic.needUpdateLayout()) {
       return;
     }
-    p.isLayout = true;
     const theme = getTheme(p).group;
     const { display = theme.display } = p.attribute;
     if (display !== 'flex') {
@@ -32,12 +32,14 @@ export class FlexLayoutPlugin implements IPlugin {
       flexWrap = theme.flexWrap,
       justifyContent = theme.justifyContent,
       alignItems = theme.alignItems,
-      alignContent = theme.alignContent
+      alignContent = theme.alignContent,
+      clip = theme.clip
     } = p.attribute;
     if (!(width && height)) {
       return;
     }
 
+    this.tempBounds.copy(p.AABBBounds);
     const result = {
       main: { len: width, field: 'x' },
       cross: { len: height, field: 'y' },
@@ -167,7 +169,13 @@ export class FlexLayoutPlugin implements IPlugin {
       child.addUpdatePositionTag();
       child.clearUpdateLayoutTag();
     });
-    p.isLayout = false;
+
+    p.addUpdateLayoutTag();
+    // 更新父级元素的layout，直到存在clip
+    if (!clip && !this.tempBounds.equals(p.AABBBounds)) {
+      // 判断父元素包围盒是否发生变化
+      this.tryLayout(p);
+    }
   }
 
   layoutMain(
@@ -265,23 +273,12 @@ export class FlexLayoutPlugin implements IPlugin {
       }
       this.tryLayout(graphic);
     });
-    graphicService.hooks.afterUpdateAABBBounds.tap(this.key, graphic => {
-      if (graphic.glyphHost) {
-        graphic = graphic.glyphHost;
-      }
-      if (graphic.isContainer && !graphic.parent.isLayout) {
-        this.tryLayout(graphic);
-      }
-    });
   }
   deactivate(context: IPluginService): void {
     graphicService.hooks.onAttributeUpdate.taps = graphicService.hooks.onAttributeUpdate.taps.filter(item => {
       return item.name !== this.key;
     });
     graphicService.hooks.onSetStage.taps = graphicService.hooks.onSetStage.taps.filter(item => {
-      return item.name !== this.key;
-    });
-    graphicService.hooks.afterUpdateAABBBounds.taps = graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
       return item.name !== this.key;
     });
   }

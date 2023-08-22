@@ -344,6 +344,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   skewTo: (b: number, c: number) => this;
   addUpdateBoundTag: () => void;
   addUpdateShapeAndBoundsTag: () => void;
+  addUpdateLayoutTag: () => void;
 
   update: (d?: { bounds: boolean; trans: boolean }) => void;
 

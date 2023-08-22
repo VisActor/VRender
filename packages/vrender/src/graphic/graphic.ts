@@ -919,7 +919,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._updateTag &= UpdateTag.CLEAR_GLOBAL_MATRIX;
   }
 
-  protected addUpdateLayoutTag() {
+  addUpdateLayoutTag() {
     this._updateTag |= UpdateTag.UPDATE_LAYOUT;
   }
 

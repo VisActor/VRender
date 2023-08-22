@@ -1,4 +1,5 @@
 import { createStage, VGroup, VSymbol, VText, VImage, jsx } from '@visactor/vrender';
+import { VTag } from '@visactor/vrender-components';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
@@ -151,15 +152,32 @@ export const page = () => {
           {
             record?.tags?.length ? (
               record.tags.map((str, i) => (
-                <VText attribute={{
+                // <VText attribute={{
+                //   text: str,
+                //   fontSize: 10,
+                //   fontFamily: 'sans-serif',
+                //   fill: 'rgb(51, 101, 238)',
+                //   textAlign: 'left',
+                //   textBaseline: 'rop',
+                //   boundsPadding: [0, 0, 0, 10],
+                // }}></VText>
+                <VTag attribute={{
                   text: str,
-                  fontSize: 10,
-                  fontFamily: 'sans-serif',
-                  fill: 'rgb(51, 101, 238)',
-                  textAlign: 'left',
-                  textBaseline: 'rop',
+                  textStyle: {
+                    fontSize: 10,
+                    fontFamily: 'sans-serif',
+                    fill: 'rgb(51, 101, 238)',
+                    // textAlign: 'left',
+                    // textBaseline: 'rop',
+                  },
+                  panel: {
+                    visible: true,
+                    fill: '#e6fffb',
+                    lineWidth: 1,
+                    cornerRadius: 4
+                  },
                   boundsPadding: [0, 0, 0, 10],
-                }}></VText>
+                }}></VTag>
               ))
             ) : null
           }

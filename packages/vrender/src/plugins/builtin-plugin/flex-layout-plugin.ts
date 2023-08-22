@@ -39,6 +39,19 @@ export class FlexLayoutPlugin implements IPlugin {
       return;
     }
 
+    // judgement children bounds legal
+    let boundsLegal = 0;
+    p.forEachChildren((child: IGraphic) => {
+      const bounds = child.AABBBounds;
+      boundsLegal += bounds.x1;
+      boundsLegal += bounds.y1;
+      boundsLegal += bounds.x2;
+      boundsLegal += bounds.y2;
+    });
+    if (!isFinite(boundsLegal)) {
+      return;
+    }
+
     this.tempBounds.copy(p.AABBBounds);
     const result = {
       main: { len: width, field: 'x' },

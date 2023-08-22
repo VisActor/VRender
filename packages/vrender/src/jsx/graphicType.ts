@@ -84,11 +84,11 @@ export const REACT_TO_CANOPUS_EVENTS = {
 
 export const REACT_TO_CANOPUS_EVENTS_LIST = Object.keys(REACT_TO_CANOPUS_EVENTS);
 
-type IEventParamsType = {
+export type IEventParamsType = {
   [t in keyof typeof REACT_TO_CANOPUS_EVENTS]?: (d: any) => void;
 };
 
-type IDefaultGraphicParamsType<T> = {
+export type IDefaultGraphicParamsType<T> = {
   attribute?: T;
 } & IEventParamsType;
 

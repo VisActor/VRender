@@ -1,4 +1,4 @@
-import type { IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import { AABBBounds, Bounds, Point } from '@visactor/vutils';
 import type {
   IGraphic,
@@ -764,7 +764,7 @@ export class Stage extends Group implements IStage {
    * @param fullImage 是否是全量的image，因为可能之前的window有一部分场景树超过window的帧缓冲了
    * @returns
    */
-  renderToNewWindow(fullImage: boolean = true): IWindow {
+  renderToNewWindow(fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
     const window = container.get<IWindow>(VWindow);
     if (fullImage) {
       window.create({
@@ -776,9 +776,11 @@ export class Stage extends Group implements IStage {
         title: ''
       });
     } else {
+      const width = viewBox ? viewBox.width() : Math.min(this.viewWidth, this.window.width - this.x);
+      const height = viewBox ? viewBox.height() : Math.min(this.viewHeight, this.window.height - this.y);
       window.create({
-        width: Math.min(this.viewWidth, this.window.width - this.x),
-        height: Math.min(this.viewHeight, this.window.height - this.y),
+        width,
+        height,
         dpr: this.window.dpr,
         canvasControled: true,
         offscreen: true,
@@ -786,17 +788,19 @@ export class Stage extends Group implements IStage {
       });
     }
 
+    const x = viewBox ? -viewBox.x1 : 0;
+    const y = viewBox ? -viewBox.y1 : 0;
     this.renderTo(window, {
-      x: 0,
-      y: 0,
+      x,
+      y,
       width: window.width,
       height: window.height
     });
     return window;
   }
 
-  toCanvas(fullImage: boolean = true): HTMLCanvasElement | null {
-    const window = this.renderToNewWindow(fullImage);
+  toCanvas(fullImage: boolean = true, viewBox?: IAABBBounds): HTMLCanvasElement | null {
+    const window = this.renderToNewWindow(fullImage, viewBox);
     const c = window.getNativeHandler();
     if (c.nativeCanvas) {
       return c.nativeCanvas;

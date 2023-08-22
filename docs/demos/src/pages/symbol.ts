@@ -2,6 +2,7 @@ import { createStage, createSymbol, container, IGraphic } from '@visactor/vrende
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { XMLParser, XMLValidator } from 'fast-xml-parser';
+import { AABBBounds } from '@visactor/vutils';
 
 // container.load(roughModule);
 
@@ -72,7 +73,7 @@ export const page = () => {
     symbol.addEventListener('mouseenter', () => {
       symbol.setAttribute('fill', 'blue');
     });
-    symbol.setMode('3d');
+    // symbol.setMode('3d');
     graphics.push(symbol);
   });
 
@@ -80,12 +81,15 @@ export const page = () => {
     canvas: 'main',
     autoRender: true
   });
-  stage.set3dOptions({
-    enable: true,
-    alpha: 0.3
-  });
+  // stage.set3dOptions({
+  //   enable: true,
+  //   alpha: 0.3
+  // });
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });
+
+  const c = stage.toCanvas(false, new AABBBounds().set(100, 100, 300, 360));
+  // document.body.appendChild(c);
 };

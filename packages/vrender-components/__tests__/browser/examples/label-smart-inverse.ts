@@ -579,10 +579,11 @@ function createContent(stage: Stage) {
     baseMarkGroupName: barSpec.name,
     data: barSpec.children.map(c => {
       return {
-        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
-        fill: 'white',
-        stroke: c.attribute.fill,
-        lineWidth: 2
+        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`
+        // stroke: 'white'
+        // fill: 'white'
+        // stroke: c.attribute.fill,
+        // lineWidth: 0
       };
     }),
     type: 'rect',
@@ -606,6 +607,12 @@ function createContent(stage: Stage) {
           }
         }
       ]
+    },
+    // smartInvert: false,
+    smartInvert: {
+      strokeStrategy: 'similarBase',
+      brightColor: '#fff000',
+      darkColor: '#dd0000'
     },
 
     zIndex: 302

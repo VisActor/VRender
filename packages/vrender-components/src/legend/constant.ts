@@ -18,7 +18,8 @@ export enum LegendStateValue {
 export enum LegendEvent {
   legendItemHover = 'legendItemHover',
   legendItemUnHover = 'legendItemUnHover',
-  legendItemClick = 'legendItemClick'
+  legendItemClick = 'legendItemClick',
+  legendItemAttributeUpdate = 'legendItemAttributeUpdate'
 }
 
 export enum LEGEND_ELEMENT_NAME {

@@ -5,7 +5,7 @@ import type { IEventTarget } from '../interface/event';
 import { WILDCARD } from './constant';
 import type { FederatedEvent } from './federated-event/base-event';
 import { clock } from './util';
-import type { Cursor } from '../interface';
+import type { Cursor, IGraphic } from '../interface';
 /**
  * 代码参考自 https://github.com/pixijs/pixijs
  * The MIT License
@@ -77,7 +77,7 @@ export class EventManager {
   protected eventPool: Map<typeof FederatedEvent, FederatedEvent[]> = new Map();
 
   // 缓存上一个坐标点的拾取结果，用于优化在同一个点连续触发事件的拾取逻辑
-  private _prePointTargetCache: Dict<IEventTarget>;
+  private _prePointTargetCache: Dict<IEventTarget> & { stageRenderCount: number };
 
   constructor(root: IEventTarget) {
     this.rootTarget = root;
@@ -120,13 +120,18 @@ export class EventManager {
 
     let target;
     const cacheKey = `${e.canvasX}-${e.canvasY}`;
-    if (this._prePointTargetCache?.[cacheKey]) {
+    if (
+      this._prePointTargetCache?.[cacheKey] &&
+      (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage.renderCount ===
+        (this._prePointTargetCache?.stageRenderCount as number)
+    ) {
       target = this._prePointTargetCache[cacheKey];
     } else {
       target = this.pickTarget(e.canvasX, e.canvasY);
       // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
       this._prePointTargetCache = {
-        [cacheKey]: target
+        [cacheKey]: target,
+        stageRenderCount: target?.stage.renderCount ?? -1
       };
     }
 

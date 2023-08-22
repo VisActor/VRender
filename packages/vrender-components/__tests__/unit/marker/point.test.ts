@@ -39,7 +39,7 @@ describe('Marker', () => {
     stage.defaultLayer.add(markPoint as unknown as IGraphic);
     stage.render();
 
-    const markPointContainer = markPoint.children[0] as unknown as Group;
+    const markPointContainer = (markPoint.children[0] as unknown as Group).children[0] as unknown as Group;
     expect(markPointContainer.children[0].childrenCount).toBe(2);
     // segement构造的line
     expect((markPointContainer.children[0] as unknown as Segment).attribute.points).toEqual([

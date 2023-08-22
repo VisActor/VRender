@@ -54,7 +54,10 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       innerBorder
     } = rect.attribute;
 
-    if (outerBorder) {
+    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
+    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+
+    if (outerBorder && outerBorder.visible !== false) {
       const { distance = rectAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const nextX = x - d;
@@ -76,7 +79,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
 
       if (strokeCb) {
         strokeCb(context, outerBorder, rectAttribute.outerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeOuter) {
         // 存在stroke
         const lastOpacity = (rectAttribute.outerBorder as any).opacity;
         (rectAttribute.outerBorder as any).opacity = opacity;
@@ -86,7 +89,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       }
     }
 
-    if (innerBorder) {
+    if (innerBorder && innerBorder.visible !== false) {
       const { distance = rectAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const nextX = x + d;
@@ -108,7 +111,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
 
       if (strokeCb) {
         strokeCb(context, innerBorder, rectAttribute.innerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeInner) {
         // 存在stroke
         const lastOpacity = (rectAttribute.innerBorder as any).opacity;
         (rectAttribute.innerBorder as any).opacity = opacity;

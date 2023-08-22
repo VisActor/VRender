@@ -52,7 +52,10 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       innerBorder
     } = circle.attribute;
 
-    if (outerBorder) {
+    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
+    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+
+    if (outerBorder && outerBorder.visible !== false) {
       const { distance = circleAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const dw = d;
@@ -65,7 +68,7 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
 
       if (strokeCb) {
         strokeCb(context, outerBorder, circleAttribute.outerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeOuter) {
         // 存在stroke
         const lastOpacity = (circleAttribute.outerBorder as any).opacity;
         (circleAttribute.outerBorder as any).opacity = opacity;
@@ -75,7 +78,7 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       }
     }
 
-    if (innerBorder) {
+    if (innerBorder && innerBorder.visible !== false) {
       const { distance = circleAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const dw = d;
@@ -89,7 +92,7 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
 
       if (strokeCb) {
         strokeCb(context, innerBorder, circleAttribute.innerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeInner) {
         // 存在stroke
         const lastOpacity = (circleAttribute.innerBorder as any).opacity;
         (circleAttribute.innerBorder as any).opacity = opacity;

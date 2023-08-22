@@ -223,12 +223,6 @@ export interface SymbolLabelAttrs extends BaseLabelAttrs {
 
 export interface RectLabelAttrs extends BaseLabelAttrs {
   type: 'rect';
-
-  /**
-   *  图元 group 名称
-   */
-  baseMarkGroupName: string;
-
   /**
    * 标签位置
    * @default 'top'
@@ -240,17 +234,20 @@ export interface RectLabelAttrs extends BaseLabelAttrs {
 
 export interface LineLabelAttrs extends BaseLabelAttrs {
   type: 'line';
-
-  /**
-   *  图元 group 名称
-   */
-  baseMarkGroupName: string;
-
   /**
    * 标签位置
    * @default 'end'
    */
   position?: Functional<'start' | 'end'>;
+}
+
+export interface PolygonLabelAttrs extends BaseLabelAttrs {
+  type: 'polygon';
+  /**
+   * 标签位置
+   * @default 'center'
+   */
+  position?: Functional<'center'>;
 }
 
 export interface ArcLabelAttrs extends BaseLabelAttrs {

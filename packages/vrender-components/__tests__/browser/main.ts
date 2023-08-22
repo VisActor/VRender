@@ -67,6 +67,10 @@ const specs = [
     name: 'arc 数据标签'
   },
   {
+    path: 'label-polygon',
+    name: 'located 数据标签'
+  },
+  {
     path: 'label-multi-mark',
     name: '混合图元 数据标签'
   },

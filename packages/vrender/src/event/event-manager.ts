@@ -760,9 +760,9 @@ export class EventManager {
           listeners[i].fn.call(listeners[i].context, e);
         }
       }
-    } else {
-      this.emitDelegation(e, type);
     }
+    // 永远触发WILDCARD事件代理
+    this.emitDelegation(e, type);
   }
 
   private emitDelegation(e: FederatedEvent, type: string): void {

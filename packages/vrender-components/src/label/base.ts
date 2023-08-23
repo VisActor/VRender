@@ -76,6 +76,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
+  protected _labelLine(text: IText): ILine | undefined {
+    // 基类没有指定的图元类型，需要在 data 中指定位置，故无需进行 labeling
+    return;
+  }
+
   protected render() {
     this._prepare();
 
@@ -415,8 +420,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderLabels(labels: IText[]) {
+    const disableAnimation = this._enableAnimation === false || this.attribute.animation === false;
+
+    if (disableAnimation) {
+      this._renderWithOutAnimation(labels);
+    } else {
+      this._renderWithAnimation(labels);
+    }
+  }
+
+  protected _renderWithAnimation(labels: IText[]) {
     const animationConfig = (this.attribute.animation ?? {}) as ILabelAnimation;
-    const disableAnimation = this._enableAnimation === false || (animationConfig as unknown as boolean) === false;
+
     const mode = animationConfig.mode ?? DefaultLabelAnimation.mode;
     const duration = animationConfig.duration ?? DefaultLabelAnimation.duration;
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
@@ -427,27 +442,19 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
-      const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
-        ? (createLine({
-            visible: text.attribute?.visible ?? true,
-            stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-            lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
-            points: (text.attribute as ArcLabelAttrs)?.points
-          }) as Line)
-        : undefined;
+      const labelLine: ILine = this._labelLine(text);
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
 
       if (state === 'enter') {
         texts.push(text);
         currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
-        if (!disableAnimation && relatedGraphic) {
+        if (relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
-          if (labelLine) {
-            this.add(labelLine);
-          }
-          relatedGraphic.onAnimateBind = () => {
+          labelLine && this.add(labelLine);
+
+          relatedGraphic.once('animate-bind', () => {
             text.setAttributes(from);
             const listener = this._afterRelatedGraphicAttributeUpdate(text, texts, index, relatedGraphic, {
               mode,
@@ -457,71 +464,88 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               delay
             });
             relatedGraphic.on('afterAttributeUpdate', listener);
-          };
-        } else {
-          this.add(text);
-          if (labelLine) {
-            this.add(labelLine);
-          }
+          });
         }
-      }
-
-      if (state === 'update') {
+      } else if (state === 'update') {
         const prevLabel = prevTextMap.get(relatedGraphic);
         prevTextMap.delete(relatedGraphic);
         currentTextMap.set(relatedGraphic, prevLabel);
-        if (!disableAnimation) {
-          const prevText = prevLabel.text;
-          prevText.animate().to(text.attribute, duration, easing);
-          if (prevLabel.labelLine) {
-            prevLabel.labelLine.animate().to(
-              merge({}, prevLabel.labelLine.attribute, {
-                points: (text.attribute as ArcLabelAttrs)?.points
-              }),
-              duration,
-              easing
+        const prevText = prevLabel.text;
+        prevText.animate().to(text.attribute, duration, easing);
+        if (prevLabel.labelLine) {
+          prevLabel.labelLine.animate().to(
+            merge({}, prevLabel.labelLine.attribute, {
+              points: (text.attribute as ArcLabelAttrs)?.points
+            }),
+            duration,
+            easing
+          );
+        }
+        if (
+          animationConfig.increaseEffect !== false &&
+          prevText.attribute.text !== text.attribute.text &&
+          isValidNumber(Number(prevText.attribute.text) * Number(text.attribute.text))
+        ) {
+          prevText
+            .animate()
+            .play(
+              new IncreaseCount(
+                { text: prevText.attribute.text as string },
+                { text: text.attribute.text as string },
+                duration,
+                easing
+              )
             );
-          }
-          if (
-            animationConfig.increaseEffect !== false &&
-            prevText.attribute.text !== text.attribute.text &&
-            isValidNumber(Number(prevText.attribute.text) * Number(text.attribute.text))
-          ) {
-            prevText
-              .animate()
-              .play(
-                new IncreaseCount(
-                  { text: prevText.attribute.text as string },
-                  { text: text.attribute.text as string },
-                  duration,
-                  easing
-                )
-              );
-          }
-        } else {
-          prevLabel.text.setAttributes(text.attribute);
-          if (prevLabel?.labelLine) {
-            prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
-          }
         }
       }
     });
     prevTextMap.forEach(label => {
-      if (disableAnimation) {
-        this.removeChild(label.text);
-        if (label?.labelLine) {
-          this.removeChild(label.labelLine);
+      label.text
+        ?.animate()
+        .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
+        .onEnd(() => {
+          this.removeChild(label.text);
+          if (label?.labelLine) {
+            this.removeChild(label.labelLine);
+          }
+        });
+    });
+
+    this._graphicToText = currentTextMap;
+  }
+
+  protected _renderWithOutAnimation(labels: IText[]) {
+    const currentTextMap: Map<any, { text: IText; labelLine?: ILine }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: ILine }> = this._graphicToText || new Map();
+    const texts = [] as IText[];
+
+    labels.forEach(text => {
+      const labelLine = this._labelLine(text);
+      const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
+      const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+
+      if (state === 'enter') {
+        texts.push(text);
+        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
+        this.add(text);
+        if (labelLine) {
+          this.add(labelLine);
         }
-      } else {
-        label.text
-          ?.animate()
-          .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
-          .onEnd(() => {
-            this.removeChild(label.text);
-            if (label?.labelLine) {
-              this.removeChild(label.labelLine);
-            }
-          });
+      } else if (state === 'update') {
+        const prevLabel = prevTextMap.get(relatedGraphic);
+        prevTextMap.delete(relatedGraphic);
+        currentTextMap.set(relatedGraphic, prevLabel);
+        prevLabel.text.setAttributes(text.attribute);
+        if (prevLabel?.labelLine) {
+          prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
+        }
+      }
+    });
+
+    prevTextMap.forEach(label => {
+      this.removeChild(label.text);
+      if (label?.labelLine) {
+        this.removeChild(label.labelLine);
       }
     });
 

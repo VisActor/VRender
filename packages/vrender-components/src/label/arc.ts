@@ -2,7 +2,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem } from './type';
-import type { IText, IArcGraphicAttribute, IGraphic } from '@visactor/vrender';
+import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender';
 import {
   circlePoint,
   isQuadrantRight,
@@ -883,6 +883,18 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         arcs[i].labelVisible = false;
       }
     }
+  }
+
+  protected _labelLine(text: IText) {
+    const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+      ? createLine({
+          visible: text.attribute?.visible ?? true,
+          stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
+          lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
+          points: (text.attribute as ArcLabelAttrs)?.points
+        })
+      : undefined;
+    return labelLine;
   }
 
   protected computeRadius(r: number, width?: number, height?: number, centerOffset?: number, k?: number): number {

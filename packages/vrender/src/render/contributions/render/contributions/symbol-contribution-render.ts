@@ -43,20 +43,32 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    const {
-      size = symbolAttribute.size,
-      opacity = symbolAttribute.opacity,
-      outerBorder,
-      innerBorder
-    } = symbol.attribute;
-
     const parsedPath = symbol.getParsedPath();
     // todo: 考虑使用path
     if (!parsedPath) {
       return;
     }
 
-    if (outerBorder) {
+    const { outerBorder, innerBorder } = symbol.attribute;
+    const doOuterBorder = outerBorder && outerBorder.visible !== false;
+    const doInnerBorder = innerBorder && innerBorder.visible !== false;
+    if (!(doOuterBorder || doInnerBorder)) {
+      return;
+    }
+
+    const {
+      size = symbolAttribute.size,
+      opacity = symbolAttribute.opacity,
+      x: originX = symbolAttribute.x,
+      y: originY = symbolAttribute.y,
+      scaleX = symbolAttribute.scaleX,
+      scaleY = symbolAttribute.scaleY
+    } = symbol.attribute;
+
+    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
+    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+
+    if (doOuterBorder) {
       const { distance = symbolAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
 
@@ -70,17 +82,23 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
 
       if (strokeCb) {
         strokeCb(context, outerBorder, symbolAttribute.outerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeOuter) {
         // 存在stroke
         const lastOpacity = (symbolAttribute.outerBorder as any).opacity;
         (symbolAttribute.outerBorder as any).opacity = opacity;
-        context.setStrokeStyle(symbol, outerBorder, x, y, symbolAttribute.outerBorder as any);
+        context.setStrokeStyle(
+          symbol,
+          outerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          symbolAttribute.outerBorder as any
+        );
         (symbolAttribute.outerBorder as any).opacity = lastOpacity;
         context.stroke();
       }
     }
 
-    if (innerBorder) {
+    if (doInnerBorder) {
       const { distance = symbolAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
 
@@ -94,11 +112,17 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
 
       if (strokeCb) {
         strokeCb(context, innerBorder, symbolAttribute.innerBorder);
-      } else if (sVisible) {
+      } else if (doStrokeInner) {
         // 存在stroke
         const lastOpacity = (symbolAttribute.innerBorder as any).opacity;
         (symbolAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(symbol, innerBorder, x, y, symbolAttribute.innerBorder as any);
+        context.setStrokeStyle(
+          symbol,
+          innerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          symbolAttribute.innerBorder as any
+        );
         (symbolAttribute.innerBorder as any).opacity = lastOpacity;
         context.stroke();
       }

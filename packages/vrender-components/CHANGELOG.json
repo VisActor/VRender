@@ -2,6 +2,29 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.5",
+      "tag": "@visactor/vrender-components_v0.14.5",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: config 'pickable: flase' as default"
+          },
+          {
+            "comment": "fix: fix the issue with poptip, closed #322"
+          },
+          {
+            "comment": "fix: slider should handle the scenarios where max and min values are the same"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.4` to `0.14.5`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.4",
       "tag": "@visactor/vrender-components_v0.14.4",
       "date": "Fri, 18 Aug 2023 10:16:08 GMT",

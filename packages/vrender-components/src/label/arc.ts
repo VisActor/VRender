@@ -112,7 +112,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       align: 'arc',
       strategy: 'priority',
       tangentConstraint: true
-    }
+    },
+    pickable: false
   };
 
   private _ellipsisWidth: number = 0;
@@ -416,7 +417,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     } else {
       // const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
       const alignOffset = 0;
-      labelPosition.x = cx + alignOffset + flag * (spaceWidth + 0.5 * targetCenterOffset);
+      labelPosition.x = cx + alignOffset + flag * (spaceWidth + targetCenterOffset);
     }
   }
 

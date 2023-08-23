@@ -135,22 +135,22 @@ export interface SmartInvertAttrs {
   alternativeColors?: string | string[];
   /**
    * fillStrategy四种策略：
-   * - series（baseMark色），
-   * - invertSeries（执行智能反色），
-   * - similarSeries（智能反色的补色），
-   * - null（不执行智能反色，保持fill设置的颜色）
+   * - base（baseMark色），
+   * - invertBase（执行智能反色），
+   * - similarBase（智能反色的补色），
+   * - null（不执行智能反色，保持stroke设置的颜色）
    * @default 'invertSeries'
    */
-  fillStrategy?: 'series' | 'invertSeries' | 'similarSeries' | 'null';
+  fillStrategy?: 'base' | 'invertBase' | 'similarBase' | 'null';
   /**
    * strokeStrategy的四种策略:
-   * - series（baseMark色），
-   * - invertSeries（执行智能反色），
-   * - similarSeries（智能反色的补色），
+   * - base（baseMark色），
+   * - invertBase（执行智能反色），
+   * - similarBase（智能反色的补色），
    * - null（不执行智能反色，保持fill设置的颜色）
    * @default 'series'
    */
-  strokeStrategy?: 'series' | 'invertSeries' | 'similarSeries' | 'null';
+  strokeStrategy?: 'base' | 'invertBase' | 'similarBase' | 'null';
   /**
    * 前景色与亮色具有对比度时，similarSeries使用该色
    * @default '#ffffff'

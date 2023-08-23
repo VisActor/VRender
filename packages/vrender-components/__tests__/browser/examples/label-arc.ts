@@ -76,172 +76,234 @@ const pieGenerator = () => {
     //     children: []
     //   }
     // ]
+    // children: [
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: -1.5707963267948966,
+    //       endAngle: 1.357168026350791,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#1664FF',
+    //       stroke: '#1664FF',
+    //       pickable: true
+    //     },
+    //     _uid: 15,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 1.357168026350791,
+    //       endAngle: 3.0988669935009723,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#1AC6FF',
+    //       stroke: '#1AC6FF',
+    //       pickable: true
+    //     },
+    //     _uid: 16,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 3.0988669935009723,
+    //       endAngle: 3.609689958974673,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#FF8A00',
+    //       stroke: '#FF8A00',
+    //       pickable: true
+    //     },
+    //     _uid: 17,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 3.609689958974673,
+    //       endAngle: 3.9238492243336522,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#3CC780',
+    //       stroke: '#3CC780',
+    //       pickable: true
+    //     },
+    //     _uid: 18,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 3.9238492243336522,
+    //       endAngle: 4.151928850984271,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#7442D4',
+    //       stroke: '#7442D4',
+    //       pickable: true
+    //     },
+    //     _uid: 19,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 4.151928850984271,
+    //       endAngle: 4.329742995177454,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#FFC400',
+    //       stroke: '#FFC400',
+    //       pickable: true
+    //     },
+    //     _uid: 20,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 4.329742995177454,
+    //       endAngle: 4.492477494633405,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#304D77',
+    //       stroke: '#304D77',
+    //       pickable: true
+    //     },
+    //     _uid: 21,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       padAngle: 0,
+    //       x: 388,
+    //       y: 238,
+    //       startAngle: 4.492477494633405,
+    //       endAngle: 4.71238898038469,
+    //       outerRadius: 190.4,
+    //       innerRadius: 0,
+    //       cornerRadius: 0,
+    //       fill: '#B48DEB',
+    //       stroke: '#B48DEB',
+    //       pickable: true
+    //     },
+    //     _uid: 22,
+    //     type: 'arc',
+    //     children: []
+    //   }
+    // ]
     children: [
       {
         attribute: {
           visible: true,
+          cornerRadius: 0,
           lineWidth: 0,
           fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
+          x: 267,
           y: 238,
-          startAngle: -1.5707963267948966,
-          endAngle: 1.357168026350791,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
+          startAngle: -2.617993877991494,
+          endAngle: -0.5235987755982989,
+          outerRadius: 161.12600000000003,
+          innerRadius: 47.6,
           fill: '#1664FF',
           stroke: '#1664FF',
           pickable: true
         },
-        _uid: 15,
+        _uid: 42,
         type: 'arc',
         children: []
       },
       {
         attribute: {
           visible: true,
+          cornerRadius: 0,
           lineWidth: 0,
           fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
+          x: 267,
           y: 238,
-          startAngle: 1.357168026350791,
-          endAngle: 3.0988669935009723,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
+          startAngle: -0.5235987755982989,
+          endAngle: 1.5707963267948963,
+          outerRadius: 83.30000000000001,
+          innerRadius: 47.6,
           fill: '#1AC6FF',
           stroke: '#1AC6FF',
           pickable: true
         },
-        _uid: 16,
+        _uid: 43,
         type: 'arc',
         children: []
       },
       {
         attribute: {
           visible: true,
+          cornerRadius: 0,
           lineWidth: 0,
           fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
+          x: 267,
           y: 238,
-          startAngle: 3.0988669935009723,
-          endAngle: 3.609689958974673,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
+          startAngle: 1.5707963267948963,
+          endAngle: 3.6651914291880923,
+          outerRadius: 56.882000000000005,
+          innerRadius: 47.6,
           fill: '#FF8A00',
           stroke: '#FF8A00',
           pickable: true
         },
-        _uid: 17,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          lineWidth: 0,
-          fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
-          y: 238,
-          startAngle: 3.609689958974673,
-          endAngle: 3.9238492243336522,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
-          fill: '#3CC780',
-          stroke: '#3CC780',
-          pickable: true
-        },
-        _uid: 18,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          lineWidth: 0,
-          fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
-          y: 238,
-          startAngle: 3.9238492243336522,
-          endAngle: 4.151928850984271,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
-          fill: '#7442D4',
-          stroke: '#7442D4',
-          pickable: true
-        },
-        _uid: 19,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          lineWidth: 0,
-          fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
-          y: 238,
-          startAngle: 4.151928850984271,
-          endAngle: 4.329742995177454,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
-          fill: '#FFC400',
-          stroke: '#FFC400',
-          pickable: true
-        },
-        _uid: 20,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          lineWidth: 0,
-          fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
-          y: 238,
-          startAngle: 4.329742995177454,
-          endAngle: 4.492477494633405,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
-          fill: '#304D77',
-          stroke: '#304D77',
-          pickable: true
-        },
-        _uid: 21,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          lineWidth: 0,
-          fillOpacity: 1,
-          padAngle: 0,
-          x: 388,
-          y: 238,
-          startAngle: 4.492477494633405,
-          endAngle: 4.71238898038469,
-          outerRadius: 190.4,
-          innerRadius: 0,
-          cornerRadius: 0,
-          fill: '#B48DEB',
-          stroke: '#B48DEB',
-          pickable: true
-        },
-        _uid: 22,
+        _uid: 44,
         type: 'arc',
         children: []
       }
@@ -398,8 +460,8 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        text: 'test122344556778891234550987665544'
-        // text: latestData[index].type
+        // text: 'test122344556778891234550987665544'
+        text: latestData[index].type
         // text: originData[index].id
         // fill: c.attribute.fill,
         // line: {
@@ -430,7 +492,8 @@ function createContent(stage: Stage) {
       line1MinLength: 30
     },
     layout: {
-      align: 'edge'
+      // align: 'edge'
+      // tangentConstraint: false
     },
 
     // centerOffset: 10,

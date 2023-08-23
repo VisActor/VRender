@@ -618,8 +618,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors } = option;
-    const fillStrategy = option.fillStrategy ?? 'invertSeries';
-    const strokeStrategy = option.strokeStrategy ?? 'series';
+    const fillStrategy = option.fillStrategy ?? 'invertBase';
+    const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
 
@@ -634,30 +634,22 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       const baseMark = this._idToGraphic.get((label.attribute as LabelItem).id);
-      // let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+      let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
 
-      // if (this.attribute.type === 'arc') {
-      //   if (this.attribute.position === 'inside') {
-      //     isInside = true;
-      //   } else {
-      //     isInside = false;
-      //   }
-      // }
-
-      // if (!isInside) {
-      //   continue;
-      // }
+      if (this.attribute.type === 'arc') {
+        isInside = this.attribute.position === 'inside';
+      }
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
        * series（baseMark色），
        * invertSeries（执行智能反色），
        * similarSeries（智能反色的补色），
-       * null（不执行智能反色，保持fill设置的颜色） */
-
+       * null（不执行智能反色，保持fill设置的颜色）
+       * */
       const backgroundColor = baseMark.attribute.fill as IColor;
       const foregroundColor = label.attribute.fill as IColor;
-      const seriesColor = backgroundColor;
+      const baseColor = backgroundColor;
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,
@@ -667,48 +659,40 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       );
       const simialrColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
-      switch (fillStrategy) {
-        case 'null':
-          break;
-        case 'series':
+      if (isInside) {
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+
+        if (label.attribute.lineWidth === 0) {
+          continue;
+        }
+
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
+      } else {
+        /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
+        if (label.attribute.lineWidth === 0) {
+          continue;
+        }
+
+        /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
+        if (label.attribute.stroke) {
           label.setAttributes({
-            fill: seriesColor
+            fill: labelSmartInvert(
+              label.attribute.fill as IColor,
+              label.attribute.stroke as IColor,
+              textType,
+              contrastRatiosThreshold,
+              alternativeColors
+            )
           });
-          break;
-        case 'invertSeries':
-          label.setAttributes({
-            fill: invertColor
-          });
-          break;
-        case 'similarSeries':
-          label.setAttributes({
-            fill: simialrColor
-          });
-          break;
+          continue;
+        }
+
+        /** 当label未设置stroke，且可设置stroke时，正常计算 */
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
       }
 
-      if (label.attribute.lineWidth === 0) {
-        continue;
-      }
-      switch (strokeStrategy) {
-        case 'null':
-          break;
-        case 'series':
-          label.setAttributes({
-            stroke: seriesColor
-          });
-          break;
-        case 'invertSeries':
-          label.setAttributes({
-            stroke: invertColor
-          });
-          break;
-        case 'similarSeries':
-          label.setAttributes({
-            stroke: simialrColor
-          });
-          break;
-      }
       // /**
       //  * stroke 的处理逻辑
       //  * 1. 当文本在图元内部时，有两种情况：
@@ -755,6 +739,49 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
       //   });
       // }
+    }
+  }
+
+  setFillStrategy(fillStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (fillStrategy) {
+      case 'base':
+        label.setAttributes({
+          fill: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          fill: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          fill: simialrColor
+        });
+      default:
+        break;
+    }
+  }
+
+  setStrokeStrategy(strokeStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (strokeStrategy) {
+      case 'base':
+        label.setAttributes({
+          stroke: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          stroke: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          stroke: simialrColor
+        });
+        break;
+      default:
+        break;
     }
   }
 

@@ -1,4 +1,3 @@
-import { isNil, merge, clamp, isValid, array, isObject, isArray } from '@visactor/vutils';
 /**
  * @description slider 滑块组件
  * TODO:
@@ -15,6 +14,7 @@ import type {
   FederatedPointerEvent,
   Cursor
 } from '@visactor/vrender';
+import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
 import { createGroup, createText, vglobal, createRect, createSymbol, CustomEvent } from '@visactor/vrender';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -121,8 +121,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
    * 更新值域
    */
   setValue(value: number | number[]) {
-    const [startValue, endValue] = array(value);
     const { layout, railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    if (max === min) {
+      return;
+    }
+
+    const [startValue, endValue] = array(value);
+
     const { startHandler, endHandler } = this._getHandlers();
     const railLen = layout === 'vertical' ? railHeight : railWidth;
     const startPos = ((startValue - min) / (max - min)) * railLen;
@@ -279,9 +284,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const railLen = isHorizontal ? railWidth : railHeight;
 
     const [startValue, endValue] = convertValueToRange(value);
-
     // 单滑块
-    const handlerStart = (((startValue as number) - min) / (max - min)) * railLen;
+    const handlerStart = max === min ? (range ? 0 : railLen) : (((startValue as number) - min) / (max - min)) * railLen;
     const startHandler = this._renderHandler({
       x: isHorizontal ? handlerStart : railWidth / 2,
       y: isHorizontal ? railHeight / 2 : handlerStart,
@@ -296,7 +300,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._currentValue.startPos = handlerStart;
 
     if (handlerTextVisible) {
-      const startHandlerText = this._renderHandlerText(startValue);
+      const startHandlerText = this._renderHandlerText(startValue, range ? 'start' : 'end');
       startHandlerText.name = SLIDER_ELEMENT_NAME.startHandlerText;
       container.add(startHandlerText);
 
@@ -306,7 +310,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (range) {
       // 绘制第二个滑块
       // 单滑块
-      const handlerEnd = (((endValue as number) - min) / (max - min)) * railLen;
+      const handlerEnd = max === min ? railLen : (((endValue as number) - min) / (max - min)) * railLen;
       const endHandler = this._renderHandler({
         x: isHorizontal ? handlerEnd : railWidth / 2,
         y: isHorizontal ? railHeight / 2 : handlerEnd,
@@ -321,7 +325,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       this._currentValue.endPos = handlerEnd;
 
       if (handlerTextVisible) {
-        const endHandlerText = this._renderHandlerText(endValue);
+        const endHandlerText = this._renderHandlerText(endValue, 'end');
         endHandlerText.name = SLIDER_ELEMENT_NAME.endHandlerText;
         container.add(endHandlerText);
 
@@ -332,17 +336,34 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   // 渲染选中区域
   protected _renderTrack(container: IGroup) {
-    const { range, min, max, railHeight, railWidth, trackStyle, railStyle, slidable } = this
+    const { range, min, max, railHeight, railWidth, trackStyle, railStyle, slidable, value } = this
       .attribute as SliderAttributes;
-    let { value } = this.attribute as SliderAttributes;
+
+    let startValue;
+    let endValue;
+
     if (isNil(value)) {
-      value = [min, max];
+      if (range) {
+        startValue = min;
+        endValue = max;
+      } else {
+        startValue = endValue = min;
+      }
+    } else {
+      if (range) {
+        const clampValue = clampRange(value as [number, number], min, max);
+        startValue = clampValue[0];
+        endValue = clampValue[1];
+      } else {
+        startValue = min;
+        endValue = clamp(value as number, min, max);
+      }
     }
 
     const isHorizontal = this._isHorizontal;
     const railLen = isHorizontal ? railWidth : railHeight;
     // eslint-disable-next-line prefer-const
-    let [startValue, endValue] = convertValueToRange(value);
+    // let [startValue, endValue] = convertValueToRange(value);
 
     if (!range) {
       startValue = min;
@@ -371,10 +392,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       cursor = getDefaultCursor(isHorizontal);
     }
 
-    const trackWidth = ((endValue - startValue) / (max - min)) * railLen;
+    const trackWidth = max === min ? railLen : ((endValue - startValue) / (max - min)) * railLen;
+    const startPos = max === min ? 0 : ((startValue - min) / (max - min)) * railLen;
     const track = createRect({
-      x: isHorizontal ? ((startValue - min) / (max - min)) * railLen : 0,
-      y: isHorizontal ? 0 : ((startValue - min) / (max - min)) * railLen,
+      x: isHorizontal ? startPos : 0,
+      y: isHorizontal ? 0 : startPos,
       width: isHorizontal ? trackWidth : railWidth,
       height: isHorizontal ? railHeight : trackWidth,
       cursor,
@@ -393,7 +415,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return handler;
   }
 
-  private _renderHandlerText(value: number) {
+  private _renderHandlerText(value: number, position: string) {
     const {
       align,
       min,
@@ -407,7 +429,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const isHorizontal = this._isHorizontal;
     const railLen = isHorizontal ? railWidth : railHeight;
-    const handlerStart = (((value as number) - min) / (max - min)) * railLen;
+    const handlerStart =
+      max === min ? (position === 'start' ? 0 : railLen) : (((value as number) - min) / (max - min)) * railLen;
     const textSpace = handlerText.space ?? 4;
     const textStyle: ITextGraphicAttribute = {
       text: handlerText?.formatter ? handlerText.formatter(value) : value.toFixed(handlerText?.precision ?? 0),
@@ -515,6 +538,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    if (max === min) {
+      return;
+    }
 
     let currentPos;
     let delta = 0;
@@ -583,6 +609,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+
+    if (max === min) {
+      return;
+    }
     const { startHandler, endHandler } = this._getHandlers();
 
     let currentPos;
@@ -646,6 +676,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+
+    if (max === min) {
+      return;
+    }
+
     const startHandler = this._startHandler as ISymbol;
     const endHandler = this._endHandler;
 

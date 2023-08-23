@@ -18,10 +18,10 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
   const g = c.prototype.type ? new c(attribute) : c(config);
   if (childrenList && isArray(childrenList)) {
     childrenList.forEach((c: any) => {
-      g.add(c);
+      c && g.add(c);
     });
   } else {
-    g.add(childrenList);
+    childrenList && g.add(childrenList);
   }
 
   Object.keys(props).forEach(k => {

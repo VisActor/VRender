@@ -982,6 +982,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.stage = stage;
       this.layer = layer;
       this.setStageToShadowRoot(stage, layer);
+      if (this.animates && this.animates.size) {
+        const timeline = stage.getTimeline();
+        this.animates.forEach(a => {
+          a.setTimeline(timeline);
+        });
+      }
       this._onSetStage && this._onSetStage(this, stage, layer);
       application.graphicService.onSetStage(this, stage);
     }

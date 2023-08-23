@@ -17,6 +17,7 @@
 export * from './node-tree';
 export * from './circle';
 export * from './text';
+export * from './wrap-text';
 export * from './symbol';
 export * from './builtin-symbol';
 export * from './line';

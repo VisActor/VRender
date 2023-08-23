@@ -45,19 +45,27 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
+    const { outerBorder, innerBorder } = rect.attribute;
+    const doOuterBorder = outerBorder && outerBorder.visible !== false;
+    const doInnerBorder = innerBorder && innerBorder.visible !== false;
+    if (!(doOuterBorder || doInnerBorder)) {
+      return;
+    }
     const {
       width = rectAttribute.width,
       height = rectAttribute.height,
       cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
-      outerBorder,
-      innerBorder
+      x: originX = rectAttribute.x,
+      y: originY = rectAttribute.y,
+      scaleX = rectAttribute.scaleX,
+      scaleY = rectAttribute.scaleY
     } = rect.attribute;
 
     const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
     const doStrokeInner = !!(innerBorder && innerBorder.stroke);
 
-    if (outerBorder && outerBorder.visible !== false) {
+    if (doOuterBorder) {
       const { distance = rectAttribute.outerBorder.distance } = outerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const nextX = x - d;
@@ -83,13 +91,19 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
         // 存在stroke
         const lastOpacity = (rectAttribute.outerBorder as any).opacity;
         (rectAttribute.outerBorder as any).opacity = opacity;
-        context.setStrokeStyle(rect, outerBorder, x, y, rectAttribute.outerBorder as any);
+        context.setStrokeStyle(
+          rect,
+          outerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          rectAttribute.outerBorder as any
+        );
         (rectAttribute.outerBorder as any).opacity = lastOpacity;
         context.stroke();
       }
     }
 
-    if (innerBorder && innerBorder.visible !== false) {
+    if (doInnerBorder) {
       const { distance = rectAttribute.innerBorder.distance } = innerBorder;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const nextX = x + d;
@@ -115,7 +129,13 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
         // 存在stroke
         const lastOpacity = (rectAttribute.innerBorder as any).opacity;
         (rectAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(rect, innerBorder, x, y, rectAttribute.innerBorder as any);
+        context.setStrokeStyle(
+          rect,
+          innerBorder,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          rectAttribute.innerBorder as any
+        );
         (rectAttribute.innerBorder as any).opacity = lastOpacity;
         context.stroke();
       }

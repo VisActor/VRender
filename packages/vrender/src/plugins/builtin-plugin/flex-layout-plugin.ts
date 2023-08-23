@@ -26,8 +26,8 @@ export class FlexLayoutPlugin implements IPlugin {
       return;
     }
     const {
-      width,
-      height,
+      // width,
+      // height,
       flexDirection = theme.flexDirection,
       flexWrap = theme.flexWrap,
       justifyContent = theme.justifyContent,
@@ -35,24 +35,43 @@ export class FlexLayoutPlugin implements IPlugin {
       alignContent = theme.alignContent,
       clip = theme.clip
     } = p.attribute;
-    if (!(width && height)) {
-      return;
-    }
+    // if (!(width && height)) {
+    //   return;
+    // }
 
-    // judgement children bounds legal
+    let childrenWidth = 0;
+    let childrenHeight = 0;
     let boundsLegal = 0;
     p.forEachChildren((child: IGraphic) => {
       const bounds = child.AABBBounds;
+      if (flexDirection === 'column' || flexDirection === 'column-reverse') {
+        childrenHeight += bounds.height();
+        childrenWidth = Math.max(childrenWidth, bounds.width());
+      } else {
+        childrenWidth += bounds.width();
+        childrenHeight = Math.max(childrenHeight, bounds.height());
+      }
       boundsLegal += bounds.x1;
       boundsLegal += bounds.y1;
       boundsLegal += bounds.x2;
       boundsLegal += bounds.y2;
     });
+    // judgement children bounds legal
     if (!isFinite(boundsLegal)) {
       return;
     }
+    const width = p.attribute.width || childrenWidth;
+    const height = p.attribute.height || childrenHeight;
+    if (!p.attribute.width) {
+      p.attribute.width = 0;
+    }
+    if (!p.attribute.height) {
+      p.attribute.height = 0;
+    }
 
-    this.tempBounds.copy(p.AABBBounds);
+    // 这里使用p._AABBBounds可能会将非布局造成的bounds更新也会触发重新布局
+    // TODO: 增加layout前预处理，在非递归布局前将子节点及其全部父节点_AABBBounds更新
+    this.tempBounds.copy(p._AABBBounds);
     const result = {
       main: { len: width, field: 'x' },
       cross: { len: height, field: 'y' },

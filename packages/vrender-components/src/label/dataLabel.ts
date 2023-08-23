@@ -8,6 +8,7 @@ import { SymbolLabel } from './symbol';
 import { ArcLabel } from './arc';
 import type { DataLabelAttrs } from './type';
 import type { LabelBase } from './base';
+import { LabelBase as PointLabel } from './base';
 
 const labelComponentMap = {
   rect: RectLabel,
@@ -50,7 +51,8 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
 
     for (let i = 0; i < dataLabels.length; i++) {
       const dataLabel = dataLabels[i];
-      if (labelComponentMap[dataLabel.type]) {
+      const labelComponent = labelComponentMap[dataLabel.type] || PointLabel;
+      if (labelComponent) {
         const { baseMarkGroupName } = dataLabel;
         let component = this._componentMap.get(baseMarkGroupName);
         if (component) {
@@ -59,7 +61,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
           component.setAttributes(dataLabel);
           currentComponentMap.set(baseMarkGroupName, component);
         } else {
-          component = new labelComponentMap[dataLabel.type](dataLabel as any);
+          component = new labelComponent(dataLabel as any);
           component.setBitmap(bitmap);
           component.setBitmapTool(tool);
           this.add(component as unknown as INode);

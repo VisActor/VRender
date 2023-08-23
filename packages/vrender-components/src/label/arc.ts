@@ -142,8 +142,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return { x: 0, y: 0 };
   }
 
-  protected layout(data: LabelItem[] = []) {
-    const labels = super.layout(data);
+  protected _layout(data: LabelItem[] = []) {
+    const labels = super._layout(data);
     const textBoundsArray = labels.map(label => this.getGraphicBounds(label));
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,

@@ -7,7 +7,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
-import { labelSmartInvert, contrastAccessibilityChecker } from '../util/labelSmartInvert';
+import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/labelSmartInvert';
 import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
@@ -15,12 +15,24 @@ import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap'
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 
-export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
+export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
 
   protected _baseMarks?: IGraphic[];
 
   protected _bitmap?: Bitmap;
+
+  static defaultAttributes: Partial<BaseLabelAttrs> = {
+    textStyle: {
+      fontSize: 12,
+      fill: '#000',
+      textAlign: 'center',
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+    },
+    offset: 0,
+    pickable: false
+  };
 
   setBitmap(bitmap: Bitmap) {
     this._bitmap = bitmap;
@@ -42,12 +54,27 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
   private _enableAnimation: boolean;
 
-  protected abstract labeling(
+  constructor(attributes: BaseLabelAttrs) {
+    super(merge({}, LabelBase.defaultAttributes, attributes));
+  }
+
+  /**
+   * 计算 text 的最终位置属性x, y
+   * @param textBounds
+   * @param graphicBounds
+   * @param position
+   * @param offset
+   * @returns
+   */
+  protected labeling(
     textBounds: IBoundsLike,
     graphicBounds: IBoundsLike,
     position?: BaseLabelAttrs['position'],
     offset?: number
-  ): { x: number; y: number } | undefined;
+  ): { x: number; y: number } | undefined {
+    // 基类没有指定的图元类型，需要在 data 中指定位置，故无需进行 labeling
+    return;
+  }
 
   protected render() {
     this._prepare();
@@ -65,7 +92,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       labels = customLayoutFunc(data, (d: LabelItem) => this._idToGraphic.get(d.id));
     } else {
       // 根据关联图元和配置的position计算标签坐标
-      labels = this.layout(data);
+      labels = this._layout(data);
 
       if (isFunction(customOverlapFunc)) {
         labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
@@ -209,7 +236,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
   }
 
-  protected layout(data: LabelItem[] = []): IText[] {
+  protected _layout(data: LabelItem[] = []): IText[] {
     const { textStyle = {}, position, offset } = this.attribute;
     const labels = [];
 
@@ -232,13 +259,13 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         isFunction(position) ? position(textData) : position,
         offset
       );
-      if (!textLocation) {
-        continue;
-      }
-      labelAttribute.x = textLocation.x;
-      labelAttribute.y = textLocation.y;
 
-      text.setAttributes(textLocation);
+      if (textLocation) {
+        labelAttribute.x = textLocation.x;
+        labelAttribute.y = textLocation.y;
+        text.setAttributes(textLocation);
+      }
+
       labels.push(text);
     }
 
@@ -603,16 +630,18 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         contrastRatiosThreshold,
         alternativeColors
       );
-      const simialrColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+      const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
       if (isInside) {
-        this._setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+        const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
+        fill && label.setAttributes({ fill });
 
         if (label.attribute.lineWidth === 0) {
           continue;
         }
 
-        this._setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
+        const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+        stroke && label.setAttributes({ stroke });
       } else {
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
         if (label.attribute.lineWidth === 0) {
@@ -634,65 +663,12 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
         }
 
         /** 当label未设置stroke，且可设置stroke时，正常计算 */
-        this._setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+        const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
+        fill && label.setAttributes({ fill });
 
-        this._setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
+        const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+        stroke && label.setAttributes({ stroke });
       }
-    }
-  }
-
-  protected _setFillStrategy(
-    fillStrategy: any,
-    label: IText,
-    baseColor: IColor,
-    invertColor: IColor,
-    simialrColor: IColor
-  ) {
-    switch (fillStrategy) {
-      case 'base':
-        label.setAttributes({
-          fill: baseColor
-        });
-        break;
-      case 'invertBase':
-        label.setAttributes({
-          fill: invertColor
-        });
-        break;
-      case 'similarBase':
-        label.setAttributes({
-          fill: simialrColor
-        });
-      default:
-        break;
-    }
-  }
-
-  protected _setStrokeStrategy(
-    strokeStrategy: any,
-    label: IText,
-    baseColor: IColor,
-    invertColor: IColor,
-    simialrColor: IColor
-  ) {
-    switch (strokeStrategy) {
-      case 'base':
-        label.setAttributes({
-          stroke: baseColor
-        });
-        break;
-      case 'invertBase':
-        label.setAttributes({
-          stroke: invertColor
-        });
-        break;
-      case 'similarBase':
-        label.setAttributes({
-          stroke: simialrColor
-        });
-        break;
-      default:
-        break;
     }
   }
 

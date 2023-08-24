@@ -112,7 +112,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       align: 'arc',
       strategy: 'priority',
       tangentConstraint: true
-    }
+    },
+    pickable: false
   };
 
   private _ellipsisWidth: number = 0;

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 18 Aug 2023 10:16:08 GMT and should not be manually modified.
+This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+
+## 0.14.5
+Wed, 23 Aug 2023 11:53:28 GMT
+
+### Patches
+
+- feat: config 'pickable: flase' as default
+- fix: fix the issue with poptip, closed #322
+- fix: slider should handle the scenarios where max and min values are the same
 
 ## 0.14.4
 Fri, 18 Aug 2023 10:16:08 GMT

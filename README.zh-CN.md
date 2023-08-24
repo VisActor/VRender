@@ -16,13 +16,13 @@
 VRender，不只是一个功能丰富的可视化渲染引可视化渲染擎，更是一支得心应手的生花妙笔。
 
 <p align="center">
-  <a href="">简介</a> •
-  <a href="">demo</a> •
-  <a href="">教程</a> •
-  <a href="">API</a>•
-  <a href="">跨端</a>
+  <a href="https://www.visactor.io/vrender">简介</a> •
+  <a href="https://www.visactor.io/vrender/example">demo</a> •
+  <a href="https://www.visactor.io/vrender/guide/">教程</a> •
 </p>
 
+![image test](https://github.com/visactor/vrender/actions/workflows/bug-server.yml/badge.svg?event=push)
+![unit test](https://github.com/visactor/vrender/actions/workflows/unit-test.yml/badge.svg?event=push)
 [![npm Version](https://img.shields.io/npm/v/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vrender/blob/main/LICENSE)

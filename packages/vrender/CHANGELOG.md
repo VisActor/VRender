@@ -1,6 +1,38 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 10 Aug 2023 12:14:14 GMT and should not be manually modified.
+This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+
+## 0.14.5
+Wed, 23 Aug 2023 11:53:28 GMT
+
+### Patches
+
+- fix: fix _prePointTargetCache error in EventManager
+- fix: fix the issue of * event invalidation when * and named event exist simultaneously
+- fix: fix the outerBorder issue with false stroke, closed #342
+- fix: fix the issue with outerborder gradient color, closed #343
+
+## 0.14.4
+Fri, 18 Aug 2023 10:16:08 GMT
+
+### Patches
+
+- fix: fix the issue with arc conical color after configuring cap, closed #455
+- fix: fix wrapText line cut error
+
+## 0.14.3
+Wed, 16 Aug 2023 06:46:13 GMT
+
+### Patches
+
+- fix: fix wrapText line cut error
+
+## 0.14.2
+Fri, 11 Aug 2023 10:05:27 GMT
+
+### Patches
+
+- chore: set target to es2016
 
 ## 0.14.1
 Thu, 10 Aug 2023 12:14:14 GMT

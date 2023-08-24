@@ -71,7 +71,7 @@ export interface IArc extends IGraphic<IArcGraphicAttribute> {
   cache?: ICustomPath2D;
 
   getParsedCornerRadius: () => number;
-  getParsedAngle: () => { startAngle: number; endAngle: number };
+  getParsedAngle: () => { startAngle: number; endAngle: number; sc?: number; ec?: number };
   getParsePadAngle: (
     startAngle: number,
     endAngle: number

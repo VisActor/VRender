@@ -115,6 +115,7 @@ export type ILayout = {
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
   distance: number | string;
+  visible?: boolean;
 };
 
 export type IStrokeType = boolean | string | IColor | null;

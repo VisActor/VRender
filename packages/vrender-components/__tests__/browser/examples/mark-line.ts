@@ -30,6 +30,12 @@ export function run() {
       refX: guiObject.labelRefX,
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
+    },
+    clipRange: {
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200
     }
   };
   const markLine = new MarkLine({

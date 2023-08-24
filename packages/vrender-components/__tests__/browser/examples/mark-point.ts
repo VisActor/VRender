@@ -89,6 +89,12 @@ export function run() {
       imageStyle: {
         image: `${window.location.origin}/__tests__/browser/sources/shape_logo.png`
       }
+    },
+    clipRange: {
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200
     }
   };
 

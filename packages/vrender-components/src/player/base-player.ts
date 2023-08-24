@@ -1,10 +1,13 @@
-import { CustomEvent, INode } from '@visactor/vrender';
+import type { INode } from '@visactor/vrender';
+import { CustomEvent } from '@visactor/vrender';
 import { isNumber, isValidNumber, max, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { OrientType } from '../interface';
-import { Slider, SliderAttributes } from '../slider';
-import { Controller, ControllerAttributes } from './controller';
-import {
+import type { OrientType } from '../interface';
+import type { SliderAttributes } from '../slider';
+import { Slider } from '../slider';
+import type { ControllerAttributes } from './controller';
+import { Controller } from './controller';
+import type {
   Datum,
   PlayerEventEnum,
   PlayerAttributes,
@@ -32,6 +35,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       width: 300
     },
     slider: {
+      visible: true,
       space: 10,
       dx: 0,
       dy: 0,
@@ -42,6 +46,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       handlerStyle: {}
     },
     controller: {
+      visible: true,
       start: { ...defaultControllerAttributes, key: 'start', position: 'start', space: 0 },
       pause: { ...defaultControllerAttributes, key: 'pause', position: 'start' },
       forward: { ...defaultControllerAttributes, key: 'forward', position: 'end' },
@@ -59,11 +64,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   protected _maxIndex: number;
 
   // 滑轨属性
+  private _sliderVisible: boolean;
   private _railStyle: RailStyleType;
   private _trackStyle: TrackStyleType;
   private _handlerStyle: HandlerStyleType;
 
   // 控件属性
+  private _controllerVisible: boolean;
   private _start: ControllerType;
   private _pause: ControllerType;
   private _forward: ControllerType;
@@ -107,11 +114,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     this._maxIndex = this._data.length - 1;
 
     // 轨道样式
+    this._sliderVisible = this.attribute?.slider?.visible;
     this._railStyle = { ...this.attribute?.slider?.railStyle };
     this._trackStyle = { ...this.attribute?.slider?.trackStyle };
     this._handlerStyle = { ...this.attribute?.slider?.handlerStyle };
 
     // 控制器样式
+    this._controllerVisible = this.attribute?.controller?.visible;
     this._start = { ...this.attribute?.controller?.start };
     this._pause = { ...this.attribute?.controller?.pause };
     this._forward = { ...this.attribute?.controller?.forward };
@@ -201,6 +210,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     }
 
     const attrs: SliderAttributes = {
+      visible: this._sliderVisible,
       // 重要参数
       min: this._minIndex,
       max: this._maxIndex,
@@ -215,7 +225,6 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       dy: this.attribute.slider.dy,
       dx: this.attribute.slider.dx,
       slidable: true,
-      visible: true,
       range: false,
       handlerText: { visible: false },
       startText: { visible: false },
@@ -254,7 +263,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   private _initSlider = () => {
     const attrs = this._updateSliderAttrs();
     this._slider = new Slider(attrs);
-    this.add(this._slider as unknown as INode);
+    if (this._sliderVisible) {
+      this.add(this._slider as unknown as INode);
+    }
   };
 
   /**
@@ -262,7 +273,6 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
    */
   private _updateControllerAttrs = () => {
     const attrs: ControllerAttributes = {
-      visible: true,
       start: this._start,
       pause: this._pause,
       forward: this._forward,
@@ -272,6 +282,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     if (isHorizontal(this._orient)) {
       attrs.layout = 'horizontal';
       attrs.start = {
+        ...attrs.start,
         style: {
           ...attrs.start.style,
           x: this._layoutInfo.start.x,
@@ -279,6 +290,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.pause = {
+        ...attrs.pause,
         // 暂停按钮, 复用开始按钮的布局
         style: {
           ...attrs.pause.style,
@@ -287,6 +299,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.backward = {
+        ...attrs.backward,
         style: {
           ...attrs.backward.style,
           x: this._layoutInfo.backward.x,
@@ -294,6 +307,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.forward = {
+        ...attrs.forward,
         style: {
           ...attrs.forward.style,
           x: this._layoutInfo.forward.x,
@@ -305,6 +319,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     else {
       attrs.layout = 'vertical';
       attrs.start = {
+        ...attrs.start,
         style: {
           ...attrs.start.style,
           x: this._layoutInfo.start.x,
@@ -312,6 +327,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.pause = {
+        ...attrs.pause,
         style: {
           ...attrs.pause.style,
           // 暂停按钮, 复用开始按钮的布局
@@ -320,6 +336,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.backward = {
+        ...attrs.backward,
         style: {
           ...attrs.backward.style,
           x: this._layoutInfo.backward.x,
@@ -327,6 +344,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
         }
       };
       attrs.forward = {
+        ...attrs.forward,
         style: {
           ...attrs.forward.style,
           x: this._layoutInfo.forward.x,
@@ -340,7 +358,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   private _initController = () => {
     const attrs = this._updateControllerAttrs();
     this._controller = new Controller(attrs);
-    this.add(this._controller as unknown as INode);
+    if (this._controllerVisible) {
+      this.add(this._controller as unknown as INode);
+    }
   };
 
   /**

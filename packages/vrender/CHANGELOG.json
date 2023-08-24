@@ -2,6 +2,27 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.5",
+      "tag": "@visactor/vrender_v0.14.5",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix _prePointTargetCache error in EventManager"
+          },
+          {
+            "comment": "fix: fix the issue of * event invalidation when * and named event exist simultaneously"
+          },
+          {
+            "comment": "fix: fix the outerBorder issue with false stroke, closed #342"
+          },
+          {
+            "comment": "fix: fix the issue with outerborder gradient color, closed #343"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.4",
       "tag": "@visactor/vrender_v0.14.4",
       "date": "Fri, 18 Aug 2023 10:16:08 GMT",

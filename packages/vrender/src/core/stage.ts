@@ -288,6 +288,7 @@ export class Stage extends Group implements IStage {
     this.supportInteractiveLayer = params.interactiveLayer !== false;
     this.timeline = new DefaultTimeline();
     this.ticker.addTimeline(this.timeline);
+    this.timeline.pause();
   }
 
   getTimeline() {

@@ -13,13 +13,23 @@ export const page = () => {
   group.createOrUpdateChild(
     'wrap-text',
     {
-      text: ['这是abc'],
-      x: 100,
-      y: 100,
-      fill: 'green',
+      fontFamily: 'sans-serif',
+      fontSize: 14,
+      fontWeight: null,
+      wordBreak: 'break-word',
+      fill: '#000',
       textAlign: 'left',
-      textBaseline: 'alphabetic',
-      maxLineWidth: 600
+      textBaseline: 'top',
+      lineHeight: 14,
+      ellipsis: '...',
+      text: ['back-end engineer'],
+      maxLineWidth: 93,
+      // autoWrapText: true,
+      heightLimit: -1,
+      pickable: false,
+      dx: 0,
+      x: 16,
+      y: 10
     },
     'wrapText'
   );
@@ -39,23 +49,24 @@ export const page = () => {
     'wrapText'
   );
 
-  group.createOrUpdateChild('text-error', {
-    "text": [
-      "饼图"
-    ],
-    "ellipsis": "...",
-    "fill": "#333",
-    "fontSize": 14,
-    "fontWeight": "bold",
-    "textAlign": "left",
-    "textBaseline": "top",
-    // "width": 12,
-    // "fontColor": "#333",
-    "maxLineWidth": 12,
-    "x": 200,
-    "y": 200
-  },
-  'wrapText');
+  group.createOrUpdateChild(
+    'text-error',
+    {
+      text: ['饼图'],
+      ellipsis: '...',
+      fill: '#333',
+      fontSize: 14,
+      fontWeight: 'bold',
+      textAlign: 'left',
+      textBaseline: 'top',
+      // "width": 12,
+      // "fontColor": "#333",
+      maxLineWidth: 12,
+      x: 200,
+      y: 200
+    },
+    'wrapText'
+  );
 
   shapes.push(group.children[0]);
   shapes.push(group.children[1]);
@@ -102,7 +113,7 @@ export const page = () => {
   //     text: ['多行自动换行高度限制多行多行'],
   //     maxLineWidth: 60,
   //     heightLimit: 50,
-  //     
+  //
   //     ellipsis: ''
   //   })
   // );

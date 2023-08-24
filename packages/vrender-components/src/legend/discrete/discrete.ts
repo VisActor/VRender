@@ -435,18 +435,31 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
       if (this._itemWidthByUser) {
-        valueShape.setAttribute(
-          'maxLineWidth',
+        // 计算用来防止文本的宽度
+        const layoutWidth =
           this._itemWidthByUser -
-            parsedPadding[1] -
-            parsedPadding[3] -
-            shapeSize -
-            shapeSpace -
-            labelShape.AABBBounds.width() -
-            labelSpace -
-            focusSpace -
-            valueSpace
-        );
+          parsedPadding[1] -
+          parsedPadding[3] -
+          shapeSize -
+          shapeSpace -
+          labelSpace -
+          focusSpace -
+          valueSpace;
+        const valueBounds = valueShape.AABBBounds;
+        const labelBounds = labelShape.AABBBounds;
+        const valueWidth = valueBounds.width();
+        const labelWidth = labelBounds.width();
+        if (labelWidth > layoutWidth) {
+          if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
+            // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
+            labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
+          } else {
+            valueShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+            labelShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+          }
+        } else {
+          valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
+        }
         if (valueAttr.alignRight) {
           valueShape.setAttributes({
             // @ts-ignore
@@ -678,12 +691,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       // @ts-ignore
       const legendItem = target.delegate;
 
+      let attributeUpdate = false;
+      if (
+        legendItem.hasState(LegendStateValue.unSelectedHover) ||
+        legendItem.hasState(LegendStateValue.selectedHover)
+      ) {
+        attributeUpdate = true;
+      }
       legendItem.removeState(LegendStateValue.unSelectedHover);
       legendItem.removeState(LegendStateValue.selectedHover);
       legendItem
         .getChildren()[0]
         .getChildren()
         .forEach((child: any) => {
+          if (
+            !attributeUpdate &&
+            (child.hasState(LegendStateValue.unSelectedHover) || child.hasState(LegendStateValue.selectedHover))
+          ) {
+            attributeUpdate = true;
+          }
           (child as unknown as IGraphic).removeState(LegendStateValue.unSelectedHover);
           (child as unknown as IGraphic).removeState(LegendStateValue.selectedHover);
         });
@@ -696,6 +722,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         focusButton.setAttribute('visible', false);
       }
 
+      if (attributeUpdate) {
+        this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+      }
       this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem);
     }
   };
@@ -781,20 +810,34 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   };
 
   private _setLegendItemState(legendItem: IGroup, stateName: string, keepCurrentStates = true) {
+    let attributeUpdate = false;
+    if (!legendItem.hasState(stateName)) {
+      attributeUpdate = true;
+    }
     legendItem.addState(stateName, keepCurrentStates);
     // TODO: 这个比较 hack
     legendItem
       .getChildren()[0]
       .getChildren()
-      .forEach(child => {
+      .forEach((child: IGraphic) => {
         if (child.name !== LEGEND_ELEMENT_NAME.focus) {
+          if (!attributeUpdate && !child.hasState(stateName)) {
+            attributeUpdate = true;
+          }
           (child as unknown as IGraphic).addState(stateName, keepCurrentStates);
         }
       });
+    if (attributeUpdate) {
+      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+    }
   }
 
   private _removeLegendItemState(legendItem: IGroup, stateNames: string[]) {
+    let attributeUpdate = false;
     stateNames.forEach(name => {
+      if (!attributeUpdate && legendItem.hasState(name)) {
+        attributeUpdate = true;
+      }
       legendItem.removeState(name);
     });
     // TODO: 这个比较 hack
@@ -804,10 +847,16 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       .forEach(child => {
         if (child.name !== LEGEND_ELEMENT_NAME.focus) {
           stateNames.forEach(name => {
+            if (!attributeUpdate && (child as unknown as IGraphic).hasState(name)) {
+              attributeUpdate = true;
+            }
             (child as unknown as IGraphic).removeState(name);
           });
         }
       });
+    if (attributeUpdate) {
+      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+    }
   }
 
   // 获取当前选中的图例项

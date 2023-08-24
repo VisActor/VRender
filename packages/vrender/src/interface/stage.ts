@@ -3,7 +3,7 @@ import type { ILayer } from './layer';
 import type { IGraphic } from './graphic';
 import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
-import type { IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
@@ -153,7 +153,7 @@ export interface IStage extends INode {
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 
-  toCanvas: (fullImage?: boolean) => HTMLCanvasElement | null;
+  toCanvas: (fullImage?: boolean, viewBox?: IAABBBounds) => HTMLCanvasElement | null;
 
   setBeforeRender: (cb: (stage: IStage) => void) => void;
 

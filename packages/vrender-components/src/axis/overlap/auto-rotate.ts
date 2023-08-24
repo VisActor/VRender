@@ -109,7 +109,66 @@ function genRotateBounds(items: IText[]) {
   });
 }
 
+function clampAngle(angle = 0) {
+  if (angle < 0) {
+    while (angle < 0) {
+      angle += Math.PI * 2;
+    }
+  }
+  if (angle > 0) {
+    while (angle >= Math.PI * 2) {
+      angle -= Math.PI * 2;
+    }
+  }
+
+  return angle;
+}
+
 export function rotateYAxis(orient: string, items: IText[]) {
+  // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
+  items.forEach((item, i) => {
+    item.setAttributes({
+      ...getYAxisLabelAlign(orient, item.attribute.angle),
+      angle: clampAngle(item.attribute.angle)
+    });
+  });
+}
+
+export function rotateXAxis(orient: string, items: IText[]) {
+  items.forEach(item => {
+    item.setAttributes({
+      ...getXAxisLabelAlign(orient, item.attribute.angle),
+      angle: clampAngle(item.attribute.angle)
+    });
+  });
+}
+
+export function getXAxisLabelAlign(orient: string, angle: number = 0) {
+  //                0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
+  let align = ['center', 'left', 'left', 'left', 'center', 'right', 'right', 'right', 'left'];
+  let baseline = ['top', 'top', 'middle', 'bottom', 'bottom', 'bottom', 'middle', 'top', 'top'];
+  if (orient === 'top') {
+    //            0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
+    align = ['center', 'right', 'right', 'right', 'center', 'left', 'left', 'left', 'right'];
+    baseline = ['bottom', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
+  }
+
+  angle = clampAngle(angle);
+  const step = angle / (Math.PI * 0.5);
+  let index;
+  if (step === Math.floor(step)) {
+    index = Math.floor(step) * 2;
+  } else {
+    index = Math.floor(step) * 2 + 1;
+  }
+
+  return {
+    textAlign: align[index] as TextAlignType,
+    textBaseline: baseline[index] as TextBaselineType
+  };
+}
+
+export function getYAxisLabelAlign(orient: string, angle: number = 0) {
   //                0,      0-90,       90,     90-180,   180,    180-270, 270,     270-360,   360
   let align = ['right', 'right', 'center', 'left', 'center', 'left', 'center', 'right', 'right'];
   let baseline = ['middle', 'middle', 'top', 'top', 'middle', 'middle', 'bottom', 'bottom', 'middle'];
@@ -119,68 +178,18 @@ export function rotateYAxis(orient: string, items: IText[]) {
     align = ['left', 'right', 'right', 'right', 'left', 'left', 'left', 'left', 'right'];
     baseline = ['middle', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
   }
-  // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
-  items.forEach((item, i) => {
-    let angle = item.attribute.angle || 0;
-    if (angle < 0) {
-      while (angle < 0) {
-        angle += Math.PI * 2;
-      }
-    }
-    if (angle > 0) {
-      while (angle >= Math.PI * 2) {
-        angle -= Math.PI * 2;
-      }
-    }
-    const step = angle / (Math.PI * 0.5);
-    let index;
-    if (step === Math.floor(step)) {
-      index = Math.floor(step) * 2;
-    } else {
-      index = Math.floor(step) * 2 + 1;
-    }
-    item.setAttributes({
-      textAlign: align[index] as TextAlignType,
-      textBaseline: baseline[index] as TextBaselineType,
-      angle: angle
-    });
-  });
-}
 
-export function rotateXAxis(orient: string, items: IText[]) {
-  //                0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
-  let align = ['center', 'left', 'left', 'left', 'center', 'right', 'right', 'right', 'left'];
-  let baseline = ['top', 'top', 'middle', 'bottom', 'bottom', 'bottom', 'middle', 'top', 'top'];
-  if (orient === 'top') {
-    //            0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
-    align = ['center', 'right', 'right', 'right', 'center', 'left', 'left', 'left', 'right'];
-    baseline = ['bottom', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
+  angle = clampAngle(angle);
+  const step = angle / (Math.PI * 0.5);
+  let index;
+  if (step === Math.floor(step)) {
+    index = Math.floor(step) * 2;
+  } else {
+    index = Math.floor(step) * 2 + 1;
   }
-  items.forEach(item => {
-    let angle = item.attribute.angle || 0;
-    // todo angle为0跳过会导致下轴高度有bug
-    // if (angle === 0) return;
-    if (angle < 0) {
-      while (angle < 0) {
-        angle += Math.PI * 2;
-      }
-    }
-    if (angle > 0) {
-      while (angle >= Math.PI * 2) {
-        angle -= Math.PI * 2;
-      }
-    }
-    const step = angle / (Math.PI * 0.5);
-    let index;
-    if (step === Math.floor(step)) {
-      index = Math.floor(step) * 2;
-    } else {
-      index = Math.floor(step) * 2 + 1;
-    }
-    item.setAttributes({
-      textAlign: align[index] as TextAlignType,
-      textBaseline: baseline[index] as TextBaselineType,
-      angle
-    });
-  });
+
+  return {
+    textAlign: align[index] as TextAlignType,
+    textBaseline: baseline[index] as TextBaselineType
+  };
 }

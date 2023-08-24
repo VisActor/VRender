@@ -2,6 +2,79 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.5",
+      "tag": "@visactor/vrender-components_v0.14.5",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: config 'pickable: flase' as default"
+          },
+          {
+            "comment": "fix: fix the issue with poptip, closed #322"
+          },
+          {
+            "comment": "fix: slider should handle the scenarios where max and min values are the same"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.4` to `0.14.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.4",
+      "tag": "@visactor/vrender-components_v0.14.4",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: change labelLine of arc label from path mark to line mark to adapt to animation'"
+          },
+          {
+            "comment": "feat: smartInvert support fillStrategy strokeStrategy"
+          },
+          {
+            "comment": "fix: user's align config should be first"
+          },
+          {
+            "comment": "fix: label shoud omit automaticly when label's width exceeds item's width, relate https://github.com/VisActor/VChart/issues/505"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.3` to `0.14.4`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.3",
+      "tag": "@visactor/vrender-components_v0.14.3",
+      "date": "Wed, 16 Aug 2023 06:46:13 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.2` to `0.14.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.14.2",
+      "tag": "@visactor/vrender-components_v0.14.2",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.1",
       "tag": "@visactor/vrender-components_v0.14.1",
       "date": "Thu, 10 Aug 2023 12:14:14 GMT",

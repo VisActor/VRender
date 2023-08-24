@@ -2,6 +2,54 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.12.19",
+      "tag": "@visactor/react-vrender_v0.12.19",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.4` to `0.14.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.18",
+      "tag": "@visactor/react-vrender_v0.12.18",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.3` to `0.14.4`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.17",
+      "tag": "@visactor/react-vrender_v0.12.17",
+      "date": "Wed, 16 Aug 2023 06:46:13 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.2` to `0.14.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.16",
+      "tag": "@visactor/react-vrender_v0.12.16",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.15",
       "tag": "@visactor/react-vrender_v0.12.15",
       "date": "Thu, 10 Aug 2023 12:14:14 GMT",

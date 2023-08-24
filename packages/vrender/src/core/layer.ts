@@ -207,8 +207,8 @@ export class Layer extends Group implements ILayer {
         // TODO: 多图层时不应该再用默认background
         background: params.background ?? this.background,
         renderService: params.renderService,
-        x: this.stage.x,
-        y: this.stage.y,
+        x: params.x ?? this.stage.x,
+        y: params.y ?? this.stage.y,
         width: this.viewWidth,
         height: this.viewHeight,
         stage: this.stage,
@@ -235,8 +235,8 @@ export class Layer extends Group implements ILayer {
       // TODO: 多图层时不应该再用默认background
       background: params.background ?? this.background,
       renderService: params.renderService,
-      x: this.stage.x,
-      y: this.stage.y,
+      x: params.x ?? this.stage.x,
+      y: params.y ?? this.stage.y,
       width: this.viewWidth,
       height: this.viewHeight,
       stage: this.stage,

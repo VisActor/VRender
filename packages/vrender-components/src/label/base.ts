@@ -1,13 +1,13 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, IPath, Path } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType, createPath } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine, Line } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType, createLine } from '@visactor/vrender';
 import type { IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid, isString } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
-import { labelSmartInvert } from '../util/labelSmartInvert';
+import { labelSmartInvert, contrastAccessibilityChecker } from '../util/labelSmartInvert';
 import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
@@ -32,7 +32,7 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, IText>;
+  protected _graphicToText: Map<IGraphic, { text: IText; labelLine?: ILine }>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -55,7 +55,8 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     attribute?: any,
     currentMarks?: IGraphic[],
     data?: any[],
-    textBoundsArray?: any[]
+    textBoundsArray?: any[],
+    ellipsisWidth?: number
   ): any {
     const arcs: ArcInfo[] = [];
     return arcs;
@@ -257,22 +258,34 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     }
 
     if (this.attribute.type === 'arc') {
+      const ellipsisLabelAttribute = {
+        ...this.attribute.textStyle,
+        text: '...'
+      };
+      const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+      const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+      const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
       const arcs: ArcInfo[] = this.layoutArcLabels(
         position,
         this.attribute,
         Array.from(this._idToGraphic.values()),
         data,
-        textBoundsArray
+        textBoundsArray,
+        ellipsisWidth
       );
       for (let i = 0; i < data.length; i++) {
         const textData = data[i];
-        const basedArc = arcs.find(arc => arc.labelText === textData.text);
-
+        const basedArc = arcs.find(arc => arc.refDatum.id === textData.id);
         const labelAttribute = {
+          visible: basedArc.labelVisible,
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
-          angle: (this.attribute as ArcLabelAttrs).angle ?? basedArc.angle,
-          labelLinePath: basedArc.labelLinePath
+          angle: basedArc.angle,
+          maxLineWidth: basedArc.labelLimit,
+          points:
+            basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
+              ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+              : undefined
         };
 
         labels[i].setAttributes(labelAttribute);
@@ -344,24 +357,6 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
 
         if (checkBounds && baseMark?.AABBBounds && canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push(text);
-          continue;
-        }
-      }
-
-      // 尝试向内挤压
-      if (clampForce) {
-        const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
-        if (
-          !(dx === 0 && dy === 0) &&
-          canPlace(bmpTool, bitmap, {
-            x1: text.AABBBounds.x1 + dx,
-            x2: text.AABBBounds.x2 + dx,
-            y1: text.AABBBounds.y1 + dy,
-            y2: text.AABBBounds.y2 + dy
-          })
-        ) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
           result.push(text);
           continue;
         }
@@ -450,25 +445,25 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
     const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
     const delay = animationConfig.delay ?? 0;
 
-    const currentTextMap = new Map();
-    const prevTextMap = this._graphicToText || new Map();
+    const currentTextMap: Map<any, { text: IText; labelLine?: ILine }> = new Map();
+    const prevTextMap: Map<any, { text: IText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
-      const labelLine: IPath = (text.attribute as ArcLabelAttrs)?.labelLinePath
-        ? (createPath({
+      const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+        ? (createLine({
             visible: text.attribute?.visible ?? true,
             stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-            lineWidth: 1,
-            path: (text.attribute as ArcLabelAttrs)?.labelLinePath
-          }) as Path)
+            lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
+            points: (text.attribute as ArcLabelAttrs)?.points
+          }) as Line)
         : undefined;
       const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
 
       if (state === 'enter') {
         texts.push(text);
-        currentTextMap.set(relatedGraphic, text);
+        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
         if (!disableAnimation && relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
@@ -495,11 +490,21 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       }
 
       if (state === 'update') {
-        const prevText = prevTextMap.get(relatedGraphic);
+        const prevLabel = prevTextMap.get(relatedGraphic);
         prevTextMap.delete(relatedGraphic);
-        currentTextMap.set(relatedGraphic, prevText);
+        currentTextMap.set(relatedGraphic, prevLabel);
         if (!disableAnimation) {
+          const prevText = prevLabel.text;
           prevText.animate().to(text.attribute, duration, easing);
+          if (prevLabel.labelLine) {
+            prevLabel.labelLine.animate().to(
+              merge({}, prevLabel.labelLine.attribute, {
+                points: (text.attribute as ArcLabelAttrs)?.points
+              }),
+              duration,
+              easing
+            );
+          }
           if (
             animationConfig.increaseEffect !== false &&
             prevText.attribute.text !== text.attribute.text &&
@@ -517,19 +522,28 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
               );
           }
         } else {
-          prevText.setAttributes(text.attribute);
+          prevLabel.text.setAttributes(text.attribute);
+          if (prevLabel?.labelLine) {
+            prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
+          }
         }
       }
     });
     prevTextMap.forEach(label => {
       if (disableAnimation) {
-        this.removeChild(label);
+        this.removeChild(label.text);
+        if (label?.labelLine) {
+          this.removeChild(label.labelLine);
+        }
       } else {
-        label
+        label.text
           ?.animate()
-          .to(getAnimationAttributes(label.attribute, 'fadeOut').to, duration, easing)
+          .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
           .onEnd(() => {
-            this.removeChild(label);
+            this.removeChild(label.text);
+            if (label?.labelLine) {
+              this.removeChild(label.labelLine);
+            }
           });
       }
     });
@@ -604,6 +618,14 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors } = option;
+    const fillStrategy = option.fillStrategy ?? 'invertBase';
+    const strokeStrategy = option.strokeStrategy ?? 'base';
+    const brightColor = option.brightColor ?? '#ffffff';
+    const darkColor = option.darkColor ?? '#000000';
+
+    if (fillStrategy === 'null' && strokeStrategy === 'null') {
+      return;
+    }
 
     for (let i = 0; i < labels.length; i++) {
       const label = labels[i];
@@ -615,59 +637,151 @@ export abstract class LabelBase<T extends BaseLabelAttrs> extends AbstractCompon
       let isInside = canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
 
       if (this.attribute.type === 'arc') {
-        if (this.attribute.position === 'inside') {
-          isInside = true;
-        } else {
-          isInside = false;
-        }
+        isInside = this.attribute.position === 'inside';
       }
 
       /**
-       * stroke 的处理逻辑
-       * 1. 当文本在图元内部时，有两种情况：
-       *   - a. 未设置stroke：labelFill为前景色，baseMark填充色为背景色
-       *   - b. 设置了stroke：labelFill为前景色，labelStroke填充色为背景色
-       * 2. 当文本在图元外部时，有两种情况：
-       *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
-       *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
-       */
-      if (label.attribute.stroke && label.attribute.lineWidth > 0) {
-        /**
-         * 1-b, 2-b
-         * 若label存在stroke，label填充色为前景色，label描边色为背景色
-         * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
-         */
-        label.setAttributes({
-          fill: labelSmartInvert(
-            label.attribute.fill as IColor,
-            label.attribute.stroke as IColor,
-            textType,
-            contrastRatiosThreshold,
-            alternativeColors
-          )
-        });
-      } else if (isInside) {
-        /**
-         * 1-a
-         * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
-         */
-        const backgroundColor = baseMark.attribute.fill as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
-      } else if (label.attribute.lineWidth > 0) {
-        /**
-         * 2-a
-         * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
-         */
-        const backgroundColor = label.attribute.stroke as IColor;
-        const foregroundColor = label.attribute.fill as IColor;
-        label.setAttributes({
-          stroke: baseMark.attribute.fill,
-          fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
-        });
+       * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
+       * series（baseMark色），
+       * invertSeries（执行智能反色），
+       * similarSeries（智能反色的补色），
+       * null（不执行智能反色，保持fill设置的颜色）
+       * */
+      const backgroundColor = baseMark.attribute.fill as IColor;
+      const foregroundColor = label.attribute.fill as IColor;
+      const baseColor = backgroundColor;
+      const invertColor = labelSmartInvert(
+        foregroundColor,
+        backgroundColor,
+        textType,
+        contrastRatiosThreshold,
+        alternativeColors
+      );
+      const simialrColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+
+      if (isInside) {
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+
+        if (label.attribute.lineWidth === 0) {
+          continue;
+        }
+
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
+      } else {
+        /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
+        if (label.attribute.lineWidth === 0) {
+          continue;
+        }
+
+        /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
+        if (label.attribute.stroke) {
+          label.setAttributes({
+            fill: labelSmartInvert(
+              label.attribute.fill as IColor,
+              label.attribute.stroke as IColor,
+              textType,
+              contrastRatiosThreshold,
+              alternativeColors
+            )
+          });
+          continue;
+        }
+
+        /** 当label未设置stroke，且可设置stroke时，正常计算 */
+        this.setFillStrategy(fillStrategy, label, baseColor, invertColor, simialrColor);
+
+        this.setStrokeStrategy(strokeStrategy, label, baseColor, invertColor, simialrColor);
       }
+
+      // /**
+      //  * stroke 的处理逻辑
+      //  * 1. 当文本在图元内部时，有两种情况：
+      //  *   - a. 未设置stroke：labelFill为前景色，baseMark填充色为背景色
+      //  *   - b. 设置了stroke：labelFill为前景色，labelStroke填充色为背景色
+      //  * 2. 当文本在图元外部时，有两种情况：
+      //  *   - a. 未设置stroke：此时设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。避免文字一半在图元内部，一半在图元外部时，在图元外部文字不可见。
+      //  *   - b. 设置了stroke：保持strokeColor。labelFill为前景色，labelStroke填充色为背景色。
+      //  */
+      // if (label.attribute.stroke && label.attribute.lineWidth > 0) {
+      //   /**
+      //    * 1-b, 2-b
+      //    * 若label存在stroke，label填充色为前景色，label描边色为背景色
+      //    * WCAG 2 字母周围的文本发光/光晕可用作背景颜色
+      //    */
+      //   label.setAttributes({
+      //     fill: labelSmartInvert(
+      //       label.attribute.fill as IColor,
+      //       label.attribute.stroke as IColor,
+      //       textType,
+      //       contrastRatiosThreshold,
+      //       alternativeColors
+      //     )
+      //   });
+      // } else if (isInside) {
+      //   /**
+      //    * 1-a
+      //    * label在图元内部时，label填充色为前景色，baseMark填充色为背景色
+      //    */
+      //   const backgroundColor = baseMark.attribute.fill as IColor;
+      //   const foregroundColor = label.attribute.fill as IColor;
+      //   label.setAttributes({
+      //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
+      //   });
+      // } else if (label.attribute.lineWidth > 0) {
+      //   /**
+      //    * 2-a
+      //    * 当文本在图元外部时，设置strokeColor为backgroundColor。labelFill为前景色，labelStroke填充色为背景色。
+      //    */
+      //   const backgroundColor = label.attribute.stroke as IColor;
+      //   const foregroundColor = label.attribute.fill as IColor;
+      //   label.setAttributes({
+      //     stroke: baseMark.attribute.fill,
+      //     fill: labelSmartInvert(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, alternativeColors)
+      //   });
+      // }
+    }
+  }
+
+  setFillStrategy(fillStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (fillStrategy) {
+      case 'base':
+        label.setAttributes({
+          fill: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          fill: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          fill: simialrColor
+        });
+      default:
+        break;
+    }
+  }
+
+  setStrokeStrategy(strokeStrategy: any, label: IText, baseColor: IColor, invertColor: IColor, simialrColor: IColor) {
+    switch (strokeStrategy) {
+      case 'base':
+        label.setAttributes({
+          stroke: baseColor
+        });
+        break;
+      case 'invertBase':
+        label.setAttributes({
+          stroke: invertColor
+        });
+        break;
+      case 'similarBase':
+        label.setAttributes({
+          stroke: simialrColor
+        });
+        break;
+      default:
+        break;
     }
   }
 

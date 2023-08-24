@@ -1,6 +1,35 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 10 Aug 2023 12:14:14 GMT and should not be manually modified.
+This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+
+## 0.14.5
+Wed, 23 Aug 2023 11:53:28 GMT
+
+### Patches
+
+- feat: config 'pickable: flase' as default
+- fix: fix the issue with poptip, closed #322
+- fix: slider should handle the scenarios where max and min values are the same
+
+## 0.14.4
+Fri, 18 Aug 2023 10:16:08 GMT
+
+### Patches
+
+- feat: change labelLine of arc label from path mark to line mark to adapt to animation'
+- feat: smartInvert support fillStrategy strokeStrategy
+- fix: user's align config should be first
+- fix: label shoud omit automaticly when label's width exceeds item's width, relate https://github.com/VisActor/VChart/issues/505
+
+## 0.14.3
+Wed, 16 Aug 2023 06:46:13 GMT
+
+_Version update only_
+
+## 0.14.2
+Fri, 11 Aug 2023 10:05:27 GMT
+
+_Version update only_
 
 ## 0.14.1
 Thu, 10 Aug 2023 12:14:14 GMT

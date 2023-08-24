@@ -1,0 +1,33 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@visactor/vrender": ["../../packages/vrender/src"],
+      "@visactor/vrender-components": ["../../packages/vrender-components/src"]
+    },
+    "target": "ES2016",
+    "useDefineForClassFields": true,
+    "module": "ES2015",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true
+  },
+  "references": [
+    {
+      "path": "../../packages/vrender-components"
+    },
+    {
+      "path": "../../packages/vrender"
+    }
+  ],
+  "include": ["src", "scripts"]
+}

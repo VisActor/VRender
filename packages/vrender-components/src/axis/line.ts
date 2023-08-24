@@ -16,6 +16,7 @@ import {
   isValid,
   normalizePadding
 } from '@visactor/vutils';
+import type { TextAlignType } from '@visactor/vrender';
 import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
@@ -40,7 +41,7 @@ import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
-import { autoRotate as autoRotateFunc, rotateXAxis, rotateYAxis } from './overlap/auto-rotate';
+import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 
@@ -438,6 +439,27 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     return base;
   }
 
+  protected getLabelAlign(
+    vector: [number, number],
+    inside?: boolean,
+    angle?: number
+  ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
+    const orient = this.attribute.orient;
+    if (isValidNumber(angle)) {
+      if (orient === 'top' || orient === 'bottom') {
+        return getXAxisLabelAlign(orient, angle);
+      }
+      if (orient === 'left' || orient === 'right') {
+        return getYAxisLabelAlign(orient, angle);
+      }
+    }
+
+    return {
+      textAlign: this.getTextAlign(vector),
+      textBaseline: this.getTextBaseline(vector, inside)
+    };
+  }
+
   protected beforeLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
@@ -445,13 +467,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
-    // 调整对齐方式
-    const orient = this.attribute.orient;
-    if (orient === 'left' || orient === 'right') {
-      rotateYAxis(orient, labelShapes);
-    } else if (orient === 'bottom' || orient === 'top') {
-      rotateXAxis(orient, labelShapes);
-    }
+    return;
   }
   protected handleLabelsOverlap(
     labelShapes: IText[],

@@ -40,6 +40,7 @@ export class WrapText extends Text {
       maxLineWidth,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak,
       // widthLimit,
       heightLimit = 0,
       lineClamp
@@ -86,7 +87,13 @@ export class WrapText extends Text {
           // 判断是否超过高度限制
           if (i === lineCountLimit - 1) {
             // 当前行为最后一行
-            const clip = layoutObj.textMeasure.clipTextWithSuffix(str, layoutObj.textOptions, maxLineWidth, ellipsis);
+            const clip = layoutObj.textMeasure.clipTextWithSuffix(
+              str,
+              layoutObj.textOptions,
+              maxLineWidth,
+              ellipsis,
+              wordBreak === 'break-word'
+            );
             linesLayout.push({
               str: clip.str,
               width: clip.width
@@ -95,14 +102,20 @@ export class WrapText extends Text {
           }
 
           // 测量截断位置
-          const clip = layoutObj.textMeasure.clipText(str, layoutObj.textOptions, maxLineWidth);
+          const clip = layoutObj.textMeasure.clipText(
+            str,
+            layoutObj.textOptions,
+            maxLineWidth,
+            wordBreak === 'break-word'
+          );
           if (str !== '' && clip.str === '') {
             if (ellipsis) {
               const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
                 str,
                 layoutObj.textOptions,
                 maxLineWidth,
-                ellipsis
+                ellipsis,
+                wordBreak === 'break-word'
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -145,7 +158,8 @@ export class WrapText extends Text {
             lines[i],
             layoutObj.textOptions,
             maxLineWidth,
-            ellipsis
+            ellipsis,
+            wordBreak === 'break-word'
           );
           linesLayout.push({
             str: clip.str,
@@ -156,7 +170,7 @@ export class WrapText extends Text {
         }
 
         text = lines[i] as string;
-        width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions);
+        width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions, wordBreak === 'break-word');
         lineWidth = Math.max(lineWidth, width);
         linesLayout.push({ str: text, width });
       }

@@ -3,12 +3,28 @@ import * as path from 'path';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfill';
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   server: {
     open: true,
     port: 3012
   },
+  plugins: [
+    react({
+      babel: {
+        plugins: [
+          [
+            '@babel/plugin-transform-react-jsx',
+            {
+              pragma: 'jsx',
+              pragmaFrag: 'Fragment'
+            }
+          ]
+        ]
+      }
+    })
+  ],
   resolve: {
     alias: {
       '@visactor/vrender': path.resolve('../../packages/vrender/src/index.ts'),

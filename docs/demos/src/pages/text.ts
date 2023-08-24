@@ -62,7 +62,6 @@ export const page = () => {
     maxLineWidth: 200,
     // ellipsis: '',
     direction: 'vertical',
-    fontSize: 20,
     stroke: 'green',
     // wordBreak: 'break-word',
     // maxLineWidth: 200,

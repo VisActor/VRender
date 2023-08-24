@@ -44,7 +44,7 @@ export function arrow2Left(ctx: IContext2d, r: number, transX: number, transY: n
 export class Arrow2LeftSymbol implements ISymbolClass {
   type: SymbolType = 'arrow2Left';
   /* eslint-disable max-len */
-  pathStr: string = 'M 0.25 -0.5 L -0.25 0 l 0.5 0.5';
+  pathStr: string = 'M 0.25 -0.5 L -0.25 0 l 0.25 0.5';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
     const r = size / 4;

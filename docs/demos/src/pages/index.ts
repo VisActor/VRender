@@ -159,5 +159,13 @@ export const pages = [
   {
     title: 'flex布局',
     path: 'flex'
+  },
+  {
+    title: 'jsx',
+    path: 'jsx'
+  },
+  {
+    title: 'html元素',
+    path: 'html'
   }
 ];

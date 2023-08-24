@@ -3,7 +3,7 @@ import type { ILayer } from './layer';
 import type { IGraphic } from './graphic';
 import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
-import type { IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
@@ -47,6 +47,8 @@ export interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;
+  // 是否支持HTML属性
+  enableHtmlAttribute: string | boolean | HTMLElement;
   poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
@@ -81,6 +83,8 @@ export interface IStage extends INode {
   // rootNode: IStage;
   x: number;
   y: number;
+
+  params: Partial<IStageParams>;
 
   window: IWindow;
 
@@ -149,7 +153,7 @@ export interface IStage extends INode {
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 
-  toCanvas: (fullImage?: boolean) => HTMLCanvasElement | null;
+  toCanvas: (fullImage?: boolean, viewBox?: IAABBBounds) => HTMLCanvasElement | null;
 
   setBeforeRender: (cb: (stage: IStage) => void) => void;
 

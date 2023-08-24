@@ -47,3 +47,4 @@ export * from './plugins/constants';
 
 export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';
+export * from './jsx';

@@ -1,4 +1,4 @@
-import type { IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import { AABBBounds, Bounds, Point } from '@visactor/vutils';
 import type {
   IGraphic,
@@ -35,6 +35,7 @@ import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
+import { HtmlAttributePlugin } from '../plugins/builtin-plugin/html-attribute-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
@@ -155,6 +156,7 @@ export class Stage extends Group implements IStage {
 
   autoRender: boolean;
   _enableLayout: boolean;
+  htmlAttribute: boolean | string | any;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -173,6 +175,8 @@ export class Stage extends Group implements IStage {
   protected interactiveLayer?: ILayer;
   protected supportInteractiveLayer: boolean;
 
+  declare params: Partial<IStageParams>;
+
   /**
    * 所有属性都具有默认值。
    * Canvas为字符串或者Canvas元素，那么默认图层就会绑定到这个Canvas上
@@ -182,6 +186,7 @@ export class Stage extends Group implements IStage {
    */
   constructor(params: Partial<IStageParams>) {
     super({});
+    this.params = params;
     this.theme = new Theme();
     this.hooks = {
       beforeRender: new SyncHook(['stage']),
@@ -265,6 +270,10 @@ export class Stage extends Group implements IStage {
     // 默认不开启dirtyBounds
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
+    }
+
+    if (params.enableHtmlAttribute) {
+      this.enableHtmlAttribute(params.enableHtmlAttribute);
     }
 
     params.enableLayout && this.enableLayout();
@@ -454,6 +463,22 @@ export class Stage extends Group implements IStage {
     }
     this._enableLayout = false;
     this.pluginService.findPluginsByName('FlexLayoutPlugin').forEach(plugin => {
+      plugin.deactivate(this.pluginService);
+    });
+  }
+  enableHtmlAttribute(container?: any) {
+    if (this.htmlAttribute) {
+      return;
+    }
+    this.htmlAttribute = container;
+    this.pluginService.register(new HtmlAttributePlugin());
+  }
+  disableHtmlAttribute() {
+    if (!this.htmlAttribute) {
+      return;
+    }
+    this.htmlAttribute = false;
+    this.pluginService.findPluginsByName('HtmlAttributePlugin').forEach(plugin => {
       plugin.deactivate(this.pluginService);
     });
   }
@@ -739,7 +764,7 @@ export class Stage extends Group implements IStage {
    * @param fullImage 是否是全量的image，因为可能之前的window有一部分场景树超过window的帧缓冲了
    * @returns
    */
-  renderToNewWindow(fullImage: boolean = true): IWindow {
+  renderToNewWindow(fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
     const window = container.get<IWindow>(VWindow);
     if (fullImage) {
       window.create({
@@ -751,9 +776,11 @@ export class Stage extends Group implements IStage {
         title: ''
       });
     } else {
+      const width = viewBox ? viewBox.width() : Math.min(this.viewWidth, this.window.width - this.x);
+      const height = viewBox ? viewBox.height() : Math.min(this.viewHeight, this.window.height - this.y);
       window.create({
-        width: Math.min(this.viewWidth, this.window.width - this.x),
-        height: Math.min(this.viewHeight, this.window.height - this.y),
+        width,
+        height,
         dpr: this.window.dpr,
         canvasControled: true,
         offscreen: true,
@@ -761,17 +788,19 @@ export class Stage extends Group implements IStage {
       });
     }
 
+    const x = viewBox ? -viewBox.x1 : 0;
+    const y = viewBox ? -viewBox.y1 : 0;
     this.renderTo(window, {
-      x: 0,
-      y: 0,
+      x,
+      y,
       width: window.width,
       height: window.height
     });
     return window;
   }
 
-  toCanvas(fullImage: boolean = true): HTMLCanvasElement | null {
-    const window = this.renderToNewWindow(fullImage);
+  toCanvas(fullImage: boolean = true, viewBox?: IAABBBounds): HTMLCanvasElement | null {
+    const window = this.renderToNewWindow(fullImage, viewBox);
     const c = window.getNativeHandler();
     if (c.nativeCanvas) {
       return c.nativeCanvas;

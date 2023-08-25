@@ -3,6 +3,8 @@ import { VTag } from '@visactor/vrender-components';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
+import { IGroup } from '@visactor/vrender';
+import { IFederatedEvent } from '@visactor/vrender';
 
 // container.load(roughModule);
 const base64 =
@@ -223,6 +225,19 @@ export const page = () => {
           opacity: 0.1,
           alignItems: 'flex-end'
         }}
+        stateProxy={(stateName: string) => {
+          if (stateName === 'hover') {
+            return {
+              fill: '#080'
+            };
+          }
+        }}
+        onMouseEnter={(event: IFederatedEvent) => {
+          event.currentTarget.addState('hover', true, true);
+        }}
+        onMouseLeave={(event: IFederatedEvent) => {
+          event.currentTarget.removeState('hover', true);
+        }}
       >
         <VImage
           attribute={{
@@ -231,8 +246,26 @@ export const page = () => {
               '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M5.81235 11.3501C5.48497 11.612 5 11.3789 5 10.9597L5 5.04031C5 4.62106 5.48497 4.38797 5.81235 4.64988L9.51196 7.60957C9.76216 7.80973 9.76216 8.19027 9.51196 8.39044L5.81235 11.3501Z" fill="#141414" fill-opacity="0.65"/></svg>',
             width: 18,
             height: 15,
-            boundsPadding: [10, 0, 0, 0]
+            boundsPadding: [10, 0, 0, 0],
           }}
+          stateProxy={(stateName: string) => {
+            if (stateName === 'hover') {
+              return {
+                background: {
+                  fill: '#888',
+                  cornerRadius: 5,
+                  expandX: 2,
+                  expandY: 2,
+                },
+              };
+            }
+          }}
+          onMouseEnter={(event: IFederatedEvent) => {
+            event.currentTarget.addState('hover', true, true);
+          }}
+          onMouseLeave={(event: IFederatedEvent) => {
+            event.currentTarget.removeState('hover', true);
+          }}  
         ></VImage>
       </VGroup>
       <VGroup

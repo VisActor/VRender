@@ -9,7 +9,8 @@ import {
   has,
   isString,
   isValidUrl,
-  isBase64
+  isBase64,
+  isObject
 } from '@visactor/vutils';
 import type {
   GraphicType,
@@ -1227,7 +1228,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
-    if (!image) {
+    if (!image || isObject(image)) {
       return;
     }
     const url = image;

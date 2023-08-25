@@ -10,7 +10,7 @@ function flatten(list: any, out: any[]): void {
 }
 
 export function jsx(type: string | any, config: Record<string, any>, ...children: any) {
-  const { key, attribute, ...props } = config || {};
+  const { key, attribute, stateProxy, ...props } = config || {};
 
   let c = type;
   if (isString(type)) {
@@ -26,6 +26,10 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
   }
   const g = c.prototype.type ? new c(attribute) : c(config);
   parseToGraphic(g, childrenList, props);
+
+  if (stateProxy) {
+    g.stateProxy = stateProxy;
+  }
 
   return g;
 }

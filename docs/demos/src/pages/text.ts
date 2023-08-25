@@ -21,9 +21,10 @@ export const page = () => {
     fill: colorPools[5],
     fontWeight: 'bolder',
     // stroke: 'red',
-    text: 'this is a text',
+    text: ['this is a text', 'abcdefg'],
     wordBreak: 'break-word',
-    maxLineWidth: 110,
+    maxLineWidth: 600,
+    textAlign: 'center',
     fontSize: 20,
     textBaseline: 'top'
   });
@@ -87,10 +88,10 @@ export const page = () => {
   graphics.push(circle);
 
   const rect = createRect({
-    x: text.AABBBounds.x1,
-    y: text.AABBBounds.y1,
-    width: text.AABBBounds.width(),
-    height: text.AABBBounds.height(),
+    x: t.AABBBounds.x1,
+    y: t.AABBBounds.y1,
+    width: t.AABBBounds.width(),
+    height: t.AABBBounds.height(),
     stroke: 'red',
     lineWidth: 1
   });

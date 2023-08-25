@@ -133,6 +133,8 @@ export class CanvasTextLayout {
     }
     bboxWH[1] = linesLayout.length * lineHeight;
 
+    bboxWH[0] = linesLayout.reduce((a, b) => Math.max(a, b.width), 0);
+
     const bbox: TextLayoutBBox = {
       xOffset: 0,
       yOffset: 0,

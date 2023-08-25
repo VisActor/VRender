@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.13.14",
+      "tag": "@visactor/vrender-components_v0.13.14",
+      "date": "Fri, 25 Aug 2023 05:39:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: poptip support wrap"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.13",
       "tag": "@visactor/vrender-components_v0.13.13",
       "date": "Fri, 25 Aug 2023 03:38:23 GMT",

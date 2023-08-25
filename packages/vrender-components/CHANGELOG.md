@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 16 Aug 2023 08:22:12 GMT and should not be manually modified.
+This log was last generated on Fri, 25 Aug 2023 03:38:23 GMT and should not be manually modified.
+
+## 0.13.13
+Fri, 25 Aug 2023 03:38:23 GMT
+
+### Patches
+
+- fix: fix the issue with poptip, closed #322
 
 ## 0.13.12
 Wed, 16 Aug 2023 08:22:12 GMT

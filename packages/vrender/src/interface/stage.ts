@@ -9,7 +9,7 @@ import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
-import type { ITicker } from './animate';
+import type { ITicker, ITimeline } from './animate';
 import type { IPickerService } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
@@ -125,6 +125,8 @@ export interface IStage extends INode {
   getLayer: (name: string) => ILayer;
   sortLayer: (cb: (layer1: ILayer, layer2: ILayer) => number) => void;
   removeLayer: (layerId: number) => ILayer | false;
+
+  getTimeline: () => ITimeline;
 
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;
   renderNextFrame: (layers?: ILayer[]) => void;

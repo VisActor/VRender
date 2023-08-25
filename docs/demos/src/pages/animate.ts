@@ -311,6 +311,31 @@ export const page = () => {
     stage.defaultLayer.add(text as any);
   });
 
+  addCase('multi-animate', container, stage => {
+    const symbol = createSymbol({
+      x: 100,
+      y: 100,
+      symbolType: 'circle',
+      size: 100,
+      fill: 'red'
+    });
+    symbol.animate().to({ size: 1000 }, 1000, 'linear');
+    const stage2 = createStage({ container: 'container', width: 500, height: 500, autoRender: true });
+    stage.defaultLayer.add(symbol);
+    console.time();
+    new Array(6000000).fill(0).forEach(item => {
+      const s = createSymbol({
+        x: Math.random() * 1000,
+        y: Math.random() * 1000,
+        symbolType: 'circle',
+        size: 100,
+        fill: 'red'
+      });
+      stage2.defaultLayer.add(s);
+    });
+    console.timeEnd();
+  });
+
   // addCase('numberIncrease', container, stage => {
   //   const text = createText({
   //     text: 10000,

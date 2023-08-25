@@ -22,7 +22,8 @@ import type {
   IWindow,
   IPlugin,
   IContributionProvider,
-  ILayerService
+  ILayerService,
+  ITimeline
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -44,6 +45,7 @@ import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
 import { VGlobal } from '../constants';
 import { LayerService } from './constants';
+import { DefaultTimeline } from '../animate';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -174,6 +176,7 @@ export class Stage extends Group implements IStage {
 
   protected interactiveLayer?: ILayer;
   protected supportInteractiveLayer: boolean;
+  protected timeline: ITimeline;
 
   declare params: Partial<IStageParams>;
 
@@ -283,6 +286,13 @@ export class Stage extends Group implements IStage {
     this._afterRender = params.afterRender;
     this.ticker = params.ticker || defaultTicker;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
+    this.timeline = new DefaultTimeline();
+    this.ticker.addTimeline(this.timeline);
+    this.timeline.pause();
+  }
+
+  getTimeline() {
+    return this.timeline;
   }
 
   get3dOptions(options: IOption3D) {
@@ -551,6 +561,7 @@ export class Stage extends Group implements IStage {
 
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
     this.ticker.start();
+    this.timeline.resume();
     this.lastRenderparams = params;
     this.hooks.beforeRender.call(this);
     (layers || this).forEach<ILayer>((layer, i) => {
@@ -600,6 +611,7 @@ export class Stage extends Group implements IStage {
 
   _doRenderInThisFrame() {
     if (this.nextFrameRenderLayerSet.size) {
+      this.timeline.resume();
       this.ticker.start();
       this.hooks.beforeRender.call(this);
       this.forEach((layer: Layer) => {

@@ -201,6 +201,14 @@ export class Animate implements IAnimate {
     this.timeline.addAnimate(this);
   }
 
+  setTimeline(timeline: ITimeline) {
+    if (timeline === this.timeline) {
+      return;
+    }
+    this.timeline.removeAnimate(this, false);
+    timeline.addAnimate(this);
+  }
+
   getStartTime(): number {
     return this._startTime;
   }

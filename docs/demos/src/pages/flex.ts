@@ -11,12 +11,12 @@ export const page = () => {
     height: 400,
     display: 'flex',
     flexWrap: 'wrap',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
     alignContent: 'center'
   });
 
   // 添加10个rect
-  new Array(10).fill(0).forEach(() => {
+  new Array(10).fill(0).forEach((b, i) => {
     group.add(
       createRect({
         x: 10,
@@ -24,10 +24,15 @@ export const page = () => {
         width: 70,
         height: 60,
         fill: 'green',
-        boundsPadding: [0, 6, 6, 0]
+        boundsPadding: [0, 6, 6, 0],
+        pickable: true
       })
     );
   });
+
+  group.addEventListener('click', (e)=> {
+    console.log('click', e.clone())
+  })
 
   const stage = createStage({
     canvas: 'main',
@@ -39,4 +44,6 @@ export const page = () => {
   stage.defaultLayer.add(group);
 
   stage.render(undefined, { renderStyle: 'rough' });
+
+  window.stage = stage;
 };

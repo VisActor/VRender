@@ -9,7 +9,8 @@ import {
   has,
   isString,
   isValidUrl,
-  isBase64
+  isBase64,
+  isObject
 } from '@visactor/vutils';
 import type {
   GraphicType,
@@ -277,6 +278,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
+    this.addUpdateLayoutTag();
     application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
     return bounds;
   }
@@ -433,6 +435,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.addUpdateBoundTag();
     }
     this.addUpdatePositionTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
   }
 
@@ -451,6 +454,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
           this.addUpdateBoundTag();
         }
         this.addUpdatePositionTag();
+        this.addUpdateLayoutTag();
         this.onAttributeUpdate(context);
       }
     } else {
@@ -522,6 +526,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -545,6 +550,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     attribute.y = y;
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -580,6 +586,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -603,6 +610,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     attribute.scaleY = scaleY;
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -623,6 +631,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     attribute.angle = (attribute.angle ?? DefaultTransform.angle) + angle;
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -645,6 +654,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     attribute.angle = angle;
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
+    this.addUpdateLayoutTag();
     this.onAttributeUpdate(context);
     return this;
   }
@@ -909,6 +919,19 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected clearUpdateGlobalPositionTag() {
     this._updateTag &= UpdateTag.CLEAR_GLOBAL_MATRIX;
   }
+
+  addUpdateLayoutTag() {
+    this._updateTag |= UpdateTag.UPDATE_LAYOUT;
+  }
+
+  protected clearUpdateLayoutTag() {
+    this._updateTag &= UpdateTag.CLEAR_LAYOUT;
+  }
+
+  protected needUpdateLayout(): boolean {
+    return !!(this._updateTag & UpdateTag.UPDATE_LAYOUT);
+  }
+
   /**
    * 更新局部matrix的具体函数
    */
@@ -1205,7 +1228,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
-    if (!image) {
+    if (!image || isObject(image)) {
       return;
     }
     const url = image;

@@ -293,7 +293,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   width: 0,
   height: 0,
   ...DefaultAttribute,
-  fill: true
+  fill: true,
+  cornerRadius: 0
 };
 
 export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribute> = {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "perf: improve animate by skip render without window",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

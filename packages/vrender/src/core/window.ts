@@ -194,4 +194,12 @@ export class DefaultWindow implements IWindow {
   clearViewBox(viewBox: IBoundsLike, color?: string) {
     this._handler.clearViewBox(viewBox, color);
   }
+
+  isVisible(bbox?: IBoundsLike): boolean {
+    return this._handler.isVisible(bbox);
+  }
+
+  onVisibleChange(cb: (currentVisible: boolean) => void) {
+    return this._handler.onVisibleChange(cb);
+  }
 }

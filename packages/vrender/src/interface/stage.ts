@@ -57,7 +57,14 @@ export interface IStageParams {
   renderStyle?: string;
   ticker?: ITicker;
   pluginList?: string[];
+  // 优化配置
+  optimize?: IOptimizeType;
 }
+
+export type IOptimizeType = {
+  // 视口不在可视区，跳过渲染，默认为true
+  skipRenderWithOutRange?: boolean;
+};
 
 export interface IOption3D {
   enableView3dTransform?: boolean; // 是否开启view3d自动旋转

@@ -22,7 +22,9 @@ import type {
   IWindow,
   IPlugin,
   IContributionProvider,
-  ILayerService
+  ILayerService,
+  ITimeline,
+  IOptimizeType
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -44,6 +46,7 @@ import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
 import { VGlobal } from '../constants';
 import { LayerService } from './constants';
+import { DefaultTimeline } from '../animate';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -67,14 +70,6 @@ const DefaultConfig = {
 export class Stage extends Group implements IStage {
   declare parent: IStage | null;
 
-  // protected _x: number;
-  // protected _y: number;
-  // // 窗口的宽高
-  // private _width: number;
-  // private _height: number;
-  // 视口的宽高
-  // private _viewWidth: number;
-  // private _viewHeight: number;
   protected _viewBox: AABBBounds;
   private _background: string | IColor;
   private _subView: boolean; // 是否是存在子视图
@@ -169,11 +164,13 @@ export class Stage extends Group implements IStage {
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
+  protected _skipRender?: number;
   protected _afterNextRenderCbs?: ((stage: IStage) => void)[];
   protected lastRenderparams?: Partial<IDrawContext>;
 
   protected interactiveLayer?: ILayer;
   protected supportInteractiveLayer: boolean;
+  protected timeline: ITimeline;
 
   declare params: Partial<IStageParams>;
 
@@ -283,6 +280,41 @@ export class Stage extends Group implements IStage {
     this._afterRender = params.afterRender;
     this.ticker = params.ticker || defaultTicker;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
+    this.timeline = new DefaultTimeline();
+    this.ticker.addTimeline(this.timeline);
+    this.timeline.pause();
+    this.optmize(params.optimize);
+  }
+
+  // 优化策略
+  optmize(params?: IOptimizeType) {
+    this.optmizeRender(params?.skipRenderWithOutRange);
+  }
+
+  // 优化渲染
+  protected optmizeRender(skipRenderWithOutRange: boolean = true) {
+    if (!skipRenderWithOutRange) {
+      return;
+    }
+    // 不在视口内的时候，跳过渲染
+    this._skipRender = this.window.isVisible() ? 0 : 1;
+    this.window.onVisibleChange(visible => {
+      if (visible) {
+        if (this.dirtyBounds) {
+          this.dirtyBounds.setValue(0, 0, this._viewBox.width(), this._viewBox.height());
+        }
+        if (this._skipRender > 1) {
+          this.renderNextFrame();
+        }
+        this._skipRender = 0;
+      } else {
+        this._skipRender = 1;
+      }
+    });
+  }
+
+  getTimeline() {
+    return this.timeline;
   }
 
   get3dOptions(options: IOption3D) {
@@ -551,21 +583,25 @@ export class Stage extends Group implements IStage {
 
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
     this.ticker.start();
-    this.lastRenderparams = params;
-    this.hooks.beforeRender.call(this);
-    (layers || this).forEach<ILayer>((layer, i) => {
-      layer.render(
-        {
-          renderService: this.renderService,
-          background: layer === this.defaultLayer ? this.background : undefined,
-          updateBounds: !!this.dirtyBounds
-        },
-        { renderStyle: this.renderStyle, ...params }
-      );
-    });
-    this.combineLayersToWindow();
-    this.nextFrameRenderLayerSet.clear();
-    this.hooks.afterRender.call(this);
+    this.timeline.resume();
+    if (!this._skipRender) {
+      this.lastRenderparams = params;
+      this.hooks.beforeRender.call(this);
+      (layers || this).forEach<ILayer>((layer, i) => {
+        layer.render(
+          {
+            renderService: this.renderService,
+            background: layer === this.defaultLayer ? this.background : undefined,
+            updateBounds: !!this.dirtyBounds
+          },
+          { renderStyle: this.renderStyle, ...params }
+        );
+      });
+      this.combineLayersToWindow();
+      this.nextFrameRenderLayerSet.clear();
+      this.hooks.afterRender.call(this);
+    }
+    this._skipRender && this._skipRender++;
   }
 
   protected combineLayersToWindow() {
@@ -599,8 +635,9 @@ export class Stage extends Group implements IStage {
   }
 
   _doRenderInThisFrame() {
-    if (this.nextFrameRenderLayerSet.size) {
-      this.ticker.start();
+    this.timeline.resume();
+    this.ticker.start();
+    if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
       this.forEach((layer: Layer) => {
         if (this.nextFrameRenderLayerSet.has(layer)) {
@@ -618,6 +655,7 @@ export class Stage extends Group implements IStage {
       this.hooks.afterRender.call(this);
       this.nextFrameRenderLayerSet.clear();
     }
+    this._skipRender && this._skipRender++;
   }
 
   resizeWindow(w: number, h: number, rerender: boolean = true) {

@@ -145,6 +145,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const selfChange = this.shouldSelfChangeUpdateAABBBounds();
     const bounds = this.doUpdateAABBBounds();
+    this.addUpdateLayoutTag();
     application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
     return bounds;
   }

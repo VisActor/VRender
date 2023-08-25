@@ -74,4 +74,12 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
   abstract getStyle(): CSSStyleDeclaration | Record<string, any>;
   abstract setStyle(style: CSSStyleDeclaration | Record<string, any>): void;
   abstract getBoundingClientRect(): IDomRectLike;
+
+  isVisible(bbox?: IBoundsLike) {
+    return true;
+  }
+
+  onVisibleChange(cb: (currentVisible: boolean) => void) {
+    return;
+  }
 }

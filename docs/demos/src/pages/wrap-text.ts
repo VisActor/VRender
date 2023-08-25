@@ -1,5 +1,7 @@
-import { createGroup, createStage, createWrapText } from '@visactor/vrender';
+import { createGroup, createStage, createWrapText, vglobal } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
+
+vglobal.setEnv('browser');
 
 export const page = () => {
   const shapes: any = [];
@@ -41,7 +43,8 @@ export const page = () => {
       textAlign: 'left',
       textBaseline: 'alphabetic',
       fill: 'red',
-      maxLineWidth: 600
+      maxLineWidth: 600,
+      background: 'yellow'
     },
     'wrapText'
   );

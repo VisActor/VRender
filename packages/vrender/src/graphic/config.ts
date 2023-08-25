@@ -100,7 +100,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   lineThrough: 0,
   scaleIn3d: false,
   direction: 'horizontal',
-  wordBreak: 'break-all'
+  wordBreak: 'break-all',
+  ignoreBuf: false
 };
 
 export const DefaultStyle: IGraphicStyle = {

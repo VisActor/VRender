@@ -42,10 +42,11 @@ export class WrapText extends Text {
       lineWidth = textTheme.lineWidth,
       wordBreak = textTheme.wordBreak,
       // widthLimit,
+      ignoreBuf = textTheme.ignoreBuf,
       heightLimit = 0,
       lineClamp
     } = this.attribute;
-    const buf = 2;
+    const buf = ignoreBuf ? 0 : 2;
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
       this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);

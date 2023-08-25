@@ -159,9 +159,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
-      wordBreak = textTheme.wordBreak
+      wordBreak = textTheme.wordBreak,
+      ignoreBuf = textTheme.ignoreBuf
     } = attribute;
-    const buf = Math.max(2, fontSize * 0.075);
+    const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
@@ -231,8 +232,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
-    const buf = 2;
     const attribute = this.attribute;
+    const { ignoreBuf = textTheme.ignoreBuf } = attribute;
+    const buf = ignoreBuf ? 0 : 2;
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,
@@ -374,8 +376,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textTheme = getTheme(this).text;
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
-    const buf = 2;
     const attribute = this.attribute;
+    const { ignoreBuf = textTheme.ignoreBuf } = attribute;
+    const buf = ignoreBuf ? 0 : 2;
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,

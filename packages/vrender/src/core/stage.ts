@@ -831,8 +831,8 @@ export class Stage extends Group implements IStage {
     this.renderTo(window, {
       x,
       y,
-      width: window.width,
-      height: window.height
+      width: viewBox ? viewBox.x2 : window.width,
+      height: viewBox ? viewBox.y2 : window.height
     });
     return window;
   }

@@ -145,11 +145,16 @@ export const page = () => {
       innerRadius: 60,
       outerRadius: 137.8,
       startAngle: 0,
-      endAngle: Math.PI * 2,
+      endAngle: Math.PI,
       x: 200,
       y: 500,
-      stroke: 'green',
-      lineWidth: 2,
+      stroke: ['green', false, false, false],
+      outerBorder: {
+        stroke: ['red', false, false, false],
+        distance: 30,
+        lineWidth: 10
+      },
+      lineWidth: 5,
       fill: {
         x: 0.5,
         y: 0.5,

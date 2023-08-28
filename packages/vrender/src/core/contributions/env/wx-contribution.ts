@@ -23,17 +23,26 @@ async function makeUpCanvas(
   canvasIdLists: string[],
   canvasMap: Map<string, ITTCanvas>,
   freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[]
+  freeCanvasList: ITTCanvas[],
+  compoient: any
 ) {
   const dpr = wx.getSystemInfoSync().pixelRatio;
 
   for (let i = 0; i < canvasIdLists.length; i++) {
     const id = canvasIdLists[i];
     await new Promise(resolve => {
-      wx.createSelectorQuery()
+      let data = wx.createSelectorQuery();
+      if (compoient) {
+        data = data.in(compoient);
+      }
+      // @ts-ignore
+      data
         .select(`#${id}`) // 在 WXML 中填入的 id
         .fields({ node: true, size: true })
         .exec((res: any) => {
+          if (!res[0]) {
+            return;
+          }
           const canvas = res[0].node;
           const width = res[0].width;
           const height = res[0].height;
@@ -125,7 +134,7 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number }) {
+  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; compoient: any }) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
       return makeUpCanvas(
@@ -133,7 +142,8 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
         params.canvasIdLists,
         this.canvasMap,
         params.freeCanvasIdx,
-        this.freeCanvasList
+        this.freeCanvasList,
+        params.compoient
       ).then(() => {
         loadFeishuContributions();
       });

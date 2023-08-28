@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: stage support setDpr, closed #382",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

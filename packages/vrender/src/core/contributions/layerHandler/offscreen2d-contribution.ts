@@ -27,6 +27,7 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   }
 
   setDpr(dpr: number) {
+    this.canvas.dpr = dpr;
     return;
   }
 

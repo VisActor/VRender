@@ -90,7 +90,7 @@ export class BrowserCanvas implements ICanvas {
   set dpr(dpr: number) {
     // this._lastPixelRatio = this._pixelRatio;
     this._dpr = dpr;
-    this.resize(this.width, this.height);
+    this.resize(this._displayWidth, this._displayHeight);
   }
 
   /**

@@ -30,6 +30,7 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   }
 
   setDpr(dpr: number) {
+    this.canvas.dpr = dpr;
     return;
   }
 

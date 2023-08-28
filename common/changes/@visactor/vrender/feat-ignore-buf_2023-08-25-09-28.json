@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: support ignoreBuf config, closed #374",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -154,13 +154,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       ellipsis = textTheme.ellipsis,
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
+      fontFamily = textTheme.fontFamily,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
-      wordBreak = textTheme.wordBreak
+      wordBreak = textTheme.wordBreak,
+      ignoreBuf = textTheme.ignoreBuf
     } = attribute;
-    const buf = Math.max(2, fontSize * 0.075);
+    const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
@@ -178,7 +180,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
         const data = textMeasure.clipTextWithSuffix(
           text.toString(),
-          { fontSize, fontWeight },
+          { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
           wordBreak === 'break-word'
@@ -188,7 +190,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       } else {
         const data = textMeasure.clipText(
           text.toString(),
-          { fontSize, fontWeight },
+          { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           wordBreak === 'break-word'
         );
@@ -199,7 +201,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       this.cache.clipedWidth = width;
       // todo 计算原本的宽度
     } else {
-      width = textMeasure.measureTextWidth(text.toString(), { fontSize, fontWeight });
+      width = textMeasure.measureTextWidth(text.toString(), { fontSize, fontWeight, fontFamily });
       this.cache.clipedText = text.toString();
       this.cache.clipedWidth = width;
     }
@@ -230,8 +232,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
-    const buf = 2;
     const attribute = this.attribute;
+    const { ignoreBuf = textTheme.ignoreBuf } = attribute;
+    const buf = ignoreBuf ? 0 : 2;
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,
@@ -239,6 +242,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
+      fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth,
@@ -263,7 +267,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
         const data = textMeasure.clipTextWithSuffixVertical(
           verticalList[0],
-          { fontSize, fontWeight },
+          { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
           wordBreak === 'break-word'
@@ -273,7 +277,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       } else {
         const data = textMeasure.clipTextVertical(
           verticalList[0],
-          { fontSize, fontWeight },
+          { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           wordBreak === 'break-word'
         );
@@ -289,7 +293,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         const w =
           t.direction === TextDirection.HORIZONTAL
             ? fontSize
-            : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight });
+            : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight, fontFamily });
 
         width += w;
         t.width = w;
@@ -372,13 +376,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const textTheme = getTheme(this).text;
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
-    const buf = 2;
     const attribute = this.attribute;
+    const { ignoreBuf = textTheme.ignoreBuf } = attribute;
+    const buf = ignoreBuf ? 0 : 2;
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
+      fontFamily = textTheme.fontFamily,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
@@ -411,7 +417,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           const strEllipsis = (ellipsis === true ? textTheme.ellipsis : ellipsis) as string;
           const data = textMeasure.clipTextWithSuffixVertical(
             verticalData,
-            { fontSize, fontWeight },
+            { fontSize, fontWeight, fontFamily },
             maxLineWidth,
             strEllipsis,
             wordBreak === 'break-word'
@@ -421,7 +427,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         } else {
           const data = textMeasure.clipTextVertical(
             verticalData,
-            { fontSize, fontWeight },
+            { fontSize, fontWeight, fontFamily },
             maxLineWidth,
             wordBreak === 'break-word'
           );
@@ -436,7 +442,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           const w =
             t.direction === TextDirection.HORIZONTAL
               ? fontSize
-              : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight });
+              : textMeasure.measureTextWidth(t.text, { fontSize, fontWeight, fontFamily });
 
           width += w;
           t.width = w;

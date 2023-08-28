@@ -9,7 +9,7 @@ import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
-import type { ITicker } from './animate';
+import type { ITicker, ITimeline } from './animate';
 import type { IPickerService } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
@@ -57,7 +57,14 @@ export interface IStageParams {
   renderStyle?: string;
   ticker?: ITicker;
   pluginList?: string[];
+  // 优化配置
+  optimize?: IOptimizeType;
 }
+
+export type IOptimizeType = {
+  // 视口不在可视区，跳过渲染，默认为true
+  skipRenderWithOutRange?: boolean;
+};
 
 export interface IOption3D {
   enableView3dTransform?: boolean; // 是否开启view3d自动旋转
@@ -125,6 +132,8 @@ export interface IStage extends INode {
   getLayer: (name: string) => ILayer;
   sortLayer: (cb: (layer1: ILayer, layer2: ILayer) => number) => void;
   removeLayer: (layerId: number) => ILayer | false;
+
+  getTimeline: () => ITimeline;
 
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;
   renderNextFrame: (layers?: ILayer[]) => void;

@@ -19,6 +19,8 @@ import { ImageRenderContribution } from './contributions/constants';
 import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { isArray } from '@visactor/vutils';
+import { createRectPath } from '../../../common/shape/rect';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
@@ -59,6 +61,7 @@ export class DefaultCanvasImageRender implements IGraphicRender {
       visible = imageAttribute.visible,
       repeatX = imageAttribute.repeatX,
       repeatY = imageAttribute.repeatY,
+      cornerRadius = imageAttribute.cornerRadius,
       image: url
     } = image.attribute;
 
@@ -106,6 +109,19 @@ export class DefaultCanvasImageRender implements IGraphicRender {
         if (res.state !== 'success') {
           return;
         }
+
+        // deal with cornerRadius
+        let needRestore = false;
+        if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
+          // 不需要处理圆角
+        } else {
+          context.beginPath();
+          createRectPath(context, x, y, width, height, cornerRadius);
+          context.save();
+          context.clip();
+          needRestore = true;
+        }
+
         context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
         let repeat = 0;
         if (repeatX === 'repeat') {
@@ -120,6 +136,10 @@ export class DefaultCanvasImageRender implements IGraphicRender {
           context.fillRect(x, y, width, height);
         } else {
           context.drawImage(res.data, x, y, width, height);
+        }
+
+        if (needRestore) {
+          context.restore();
         }
       }
     }

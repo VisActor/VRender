@@ -21,3 +21,4 @@ export * from './player';
 export * from './brush';
 export * from './tooltip';
 export * from './interface';
+export * from './jsx';

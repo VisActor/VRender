@@ -71,7 +71,7 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   dataFilter?: (data: LabelItem[]) => LabelItem[];
 
   /** 自定义布局函数
-   * @description 当配置了 customLayoutFunc 后，默认布局和防重叠逻辑将不再生效。（overlap/position/offset不生效）
+   * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
   customLayoutFunc?: (data: LabelItem[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
 

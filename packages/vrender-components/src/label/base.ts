@@ -1,8 +1,8 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine, Line } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType, createLine } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine } from '@visactor/vrender';
+import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -98,14 +98,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     } else {
       // 根据关联图元和配置的position计算标签坐标
       labels = this._layout(data);
+    }
 
-      if (isFunction(customOverlapFunc)) {
-        labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
-      } else {
-        // 防重叠逻辑
-        if (overlap !== false) {
-          labels = this._overlapping(labels);
-        }
+    if (isFunction(customOverlapFunc)) {
+      labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
+    } else {
+      // 防重叠逻辑
+      if (overlap !== false) {
+        labels = this._overlapping(labels);
       }
     }
 

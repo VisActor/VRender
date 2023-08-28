@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: axis label's flush should handle before overlap",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

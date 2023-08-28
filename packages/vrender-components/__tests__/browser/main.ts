@@ -68,7 +68,7 @@ const specs = [
   },
   {
     path: 'label-polygon',
-    name: 'located 数据标签'
+    name: 'polygon 数据标签'
   },
   {
     path: 'label-multi-mark',

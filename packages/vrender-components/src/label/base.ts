@@ -25,7 +25,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   static defaultAttributes: Partial<BaseLabelAttrs> = {
     textStyle: {
       fontSize: 12,
-      fill: '#000',
+      // FIXME: we need a default color. Yet in current logic, textStyle will override fill from baseMark.
+      // This need a new config option like `colorFull`
+      // fill: '#000',
       textAlign: 'center',
       textBaseline: 'middle',
       boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf

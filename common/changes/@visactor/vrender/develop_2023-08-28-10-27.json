@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: increase robustness for wx compatibility",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

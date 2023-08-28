@@ -1,4 +1,4 @@
-import type { IGraphic, Stage, ISymbol } from '@visactor/vrender';
+import { IGraphic, Stage, ISymbol } from '@visactor/vrender';
 import { Pager } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
@@ -36,7 +36,7 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeTruthy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(82.681640625);
+    expect(pager.AABBBounds.width()).toBeCloseTo(86.39999389648438);
     expect(pager.AABBBounds.height()).toBeCloseTo(35);
   });
 

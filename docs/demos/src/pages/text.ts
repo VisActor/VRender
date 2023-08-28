@@ -16,23 +16,16 @@ import { addShapesToStage, colorPools } from '../utils';
 export const page = () => {
   const graphics: IGraphic[] = [];
   const t = createText({
-    fontFamily: 'Arial',
-    fontSize: 14,
-    fontWeight: null,
-    fill: '#000',
-    textAlign: 'left',
-    textBaseline: 'top',
-    lineHeight: 14,
-    ellipsis: '...',
-    text: 'US-2019-1357144',
-    maxLineWidth: 119,
-    autoWrapText: true,
+    x: 100,
+    y: 200,
+    fill: colorPools[5],
+    fontWeight: 'bolder',
+    // stroke: 'red',
+    text: 'this is a text',
     wordBreak: 'break-word',
-    heightLimit: 20,
-    pickable: false,
-    dx: 0,
-    x: 16,
-    y: 12
+    maxLineWidth: 110,
+    fontSize: 20,
+    textBaseline: 'top'
   });
   console.log(t.AABBBounds);
   graphics.push(t);

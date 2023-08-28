@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the circluar dependecies issue caused by importing global from index.js",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -26,6 +26,10 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
     this.offscreen = true;
   }
 
+  setDpr(dpr: number) {
+    return;
+  }
+
   init(layer: ILayer, window: IWindow, params: ILayerHandlerInitParams): void {
     this.layer = layer;
     const nativeCanvas = this.global.createOffscreenCanvas({

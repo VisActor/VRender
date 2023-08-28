@@ -29,6 +29,10 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
     this.offscreen = false;
   }
 
+  setDpr(dpr: number) {
+    return;
+  }
+
   init(layer: ILayer, window: IWindow, params: ILayerHandlerInitParams): void {
     this.layer = layer;
     this.window = window;

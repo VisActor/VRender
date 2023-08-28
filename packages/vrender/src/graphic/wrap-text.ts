@@ -41,6 +41,7 @@ export class WrapText extends Text {
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
       wordBreak = textTheme.wordBreak,
+      fontWeight = textTheme.fontWeight,
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
       heightLimit = 0,
@@ -57,7 +58,7 @@ export class WrapText extends Text {
     }
 
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure as any) as any;
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure as any) as any;
 
     // layoutObj内逻辑
     const lines = text.map(l => l.toString()) as string[];

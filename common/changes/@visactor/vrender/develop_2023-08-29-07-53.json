@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the issue of area stroke, closed #392",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

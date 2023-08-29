@@ -172,3 +172,25 @@ function formatColorToHex(originColor: IColor | undefined) {
   const { r, g, b } = c.color;
   return '#' + ColorUtil.rgbToHex(r, g, b);
 }
+
+export function smartInvertStrategy(
+  fillStrategy: string,
+  baseColor: IColor,
+  invertColor: IColor,
+  similarColor: IColor
+) {
+  let result;
+  switch (fillStrategy) {
+    case 'base':
+      result = baseColor;
+      break;
+    case 'invertBase':
+      result = invertColor;
+      break;
+    case 'similarBase':
+      result = similarColor;
+    default:
+      break;
+  }
+  return result;
+}

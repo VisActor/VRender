@@ -1,8 +1,8 @@
-import type { IBoundsLike } from '@visactor/vutils';
+import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
-import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs } from './type';
-import type { IText, IArcGraphicAttribute, IGraphic } from '@visactor/vrender';
+import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem } from './type';
+import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender';
 import {
   circlePoint,
   isQuadrantRight,
@@ -140,6 +140,44 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
 
     return { x: 0, y: 0 };
+  }
+
+  protected _layout(data: LabelItem[] = []) {
+    const labels = super._layout(data);
+    const textBoundsArray = labels.map(label => this.getGraphicBounds(label));
+    const ellipsisLabelAttribute = {
+      ...this.attribute.textStyle,
+      text: '...'
+    };
+    const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+    const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+    const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    const arcs: ArcInfo[] = this.layoutArcLabels(
+      this.attribute.position,
+      this.attribute,
+      Array.from(this._idToGraphic.values()),
+      data,
+      textBoundsArray,
+      ellipsisWidth
+    );
+    for (let i = 0; i < data.length; i++) {
+      const textData = data[i];
+      const basedArc = arcs.find(arc => arc.refDatum.id === textData.id);
+      const labelAttribute = {
+        visible: basedArc.labelVisible,
+        x: basedArc.labelPosition.x,
+        y: basedArc.labelPosition.y,
+        angle: basedArc.angle,
+        maxLineWidth: basedArc.labelLimit,
+        points:
+          basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
+            ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+            : undefined
+      };
+
+      labels[i].setAttributes(labelAttribute);
+    }
+    return labels;
   }
 
   protected layoutArcLabels(
@@ -847,6 +885,18 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
+  protected _labelLine(text: IText) {
+    const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+      ? createLine({
+          visible: text.attribute?.visible ?? true,
+          stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
+          lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
+          points: (text.attribute as ArcLabelAttrs)?.points
+        })
+      : undefined;
+    return labelLine;
+  }
+
   protected computeRadius(r: number, width?: number, height?: number, centerOffset?: number, k?: number): number {
     return (
       this.computeLayoutRadius(width ? width : 0, height ? height : 0) * r * (isNil(k) ? 1 : k) + centerOffset ?? 0
@@ -855,6 +905,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   protected computeLayoutRadius(width: number, height: number) {
     return Math.min(width / 2, height / 2);
+  }
+
+  protected _canPlaceInside(textBound: IBoundsLike, shapeBound: IAABBBounds) {
+    return this.attribute.position === 'inside';
   }
 
   private computeLayoutOuterRadius(r: number, width: number, height: number) {

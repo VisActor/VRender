@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(component): support label overlapPadding for sparse display",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

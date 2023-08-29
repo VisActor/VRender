@@ -50,9 +50,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   protected bindBrushEvents(): void {
     const { delayType = 'throttle', delayTime = 0 } = this.attribute as BrushAttributes;
     // 拖拽绘制开始
-    this.stage.addEventListener('pointerdown', this._onBrushStart as EventListener);
+    this.stage.on('pointerdown', this._onBrushStart as EventListener);
     // 拖拽绘制时
-    this.stage.addEventListener('pointermove', delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.on('pointermove', delayMap[delayType](this._onBrushing, delayTime) as EventListener);
     // 拖拽绘制结束
     this.stage.addEventListener('pointerup', this._onBrushEnd as EventListener);
     this.stage.addEventListener('pointerupoutside', this._onBrushEnd as EventListener);
@@ -379,5 +379,13 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     }) => void
   ) {
     isFunction(callback) && (this._updateDragMaskCallback = callback);
+  }
+
+  releaseBrushEvents(): void {
+    const { delayType = 'throttle', delayTime = 0 } = this.attribute as BrushAttributes;
+    this.stage.removeEventListener('pointerdown', this._onBrushStart as EventListener);
+    this.stage.removeEventListener('pointermove', delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.removeEventListener('pointerup', this._onBrushEnd as EventListener);
+    this.stage.removeEventListener('pointerupoutside', this._onBrushEnd as EventListener);
   }
 }

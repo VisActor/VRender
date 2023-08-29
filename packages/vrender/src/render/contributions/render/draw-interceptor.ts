@@ -8,6 +8,7 @@ import type {
   IDrawContribution,
   IDrawItemInterceptorContribution,
   IGraphic,
+  IGraphicAttribute,
   IGraphicRenderDrawParams,
   IGroup,
   IRenderService
@@ -33,6 +34,32 @@ const tempDirtyBounds = new AABBBounds();
 export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   afterDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+      this.drawItem(graphic, renderService, drawContext, drawContribution, params);
+    }
+    return false;
+  }
+
+  beforeDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    if (graphic.attribute.shadowRootIdx < 0) {
+      this.drawItem(graphic, renderService, drawContext, drawContribution, params);
+    }
+    return false;
+  }
+
+  protected drawItem(
     graphic: IGraphic,
     renderService: IRenderService,
     drawContext: IDrawContext,

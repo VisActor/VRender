@@ -10,7 +10,7 @@ export const page = () => {
     x: 100,
     y: 100
   });
-  group.createOrUpdateChild(
+  const g = group.createOrUpdateChild(
     'wrap-text',
     {
       fontFamily: 'sans-serif',
@@ -22,10 +22,10 @@ export const page = () => {
       textBaseline: 'top',
       lineHeight: 14,
       ellipsis: '...',
-      text: ['back-end engineer'],
-      maxLineWidth: 93,
+      text: ['back-end engineer 这是什么 what is this abcdefg'],
+      maxLineWidth: 0,
       // autoWrapText: true,
-      heightLimit: -1,
+      heightLimit: 60,
       pickable: false,
       dx: 0,
       x: 16,
@@ -33,6 +33,8 @@ export const page = () => {
     },
     'wrapText'
   );
+
+  g.animate().to({ maxLineWidth: 300 }, 30000, 'linear');
 
   group.createOrUpdateChild(
     'text',

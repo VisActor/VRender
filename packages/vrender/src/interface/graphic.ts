@@ -241,6 +241,7 @@ export type IGraphicAttribute = IGraphicStyle &
      * true: 始终控制方向朝摄像机
      */
     keepDirIn3d?: boolean;
+    shadowRootIdx: number;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

@@ -13,6 +13,9 @@ export default defineConfig({
   plugins: [
     react({
       babel: {
+        parserOpts: {
+          plugins: ['decorators-legacy', 'classProperties']
+        },
         plugins: [
           [
             '@babel/plugin-transform-react-jsx',

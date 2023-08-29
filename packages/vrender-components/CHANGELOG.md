@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+This log was last generated on Tue, 29 Aug 2023 11:30:33 GMT and should not be manually modified.
+
+## 0.14.6
+Tue, 29 Aug 2023 11:30:33 GMT
+
+### Patches
+
+- feat: support simple polygon and point label
+- feat(component): support label overlapPadding for sparse display
+- fix: axis label's flush should handle before overlap
+- feat(brush): add event release function
 
 ## 0.14.5
 Wed, 23 Aug 2023 11:53:28 GMT

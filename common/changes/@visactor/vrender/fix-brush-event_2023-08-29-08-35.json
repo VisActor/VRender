@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat(brush): add event release function",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

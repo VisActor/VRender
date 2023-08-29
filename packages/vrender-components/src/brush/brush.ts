@@ -380,4 +380,12 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   ) {
     isFunction(callback) && (this._updateDragMaskCallback = callback);
   }
+
+  releaseBrushEvents(): void {
+    const { delayType = 'throttle', delayTime = 0 } = this.attribute as BrushAttributes;
+    this.stage.removeEventListener('pointerdown', this._onBrushStart as EventListener);
+    this.stage.removeEventListener('pointermove', delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.removeEventListener('pointerup', this._onBrushEnd as EventListener);
+    this.stage.removeEventListener('pointerupoutside', this._onBrushEnd as EventListener);
+  }
 }

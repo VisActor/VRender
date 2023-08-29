@@ -127,19 +127,21 @@ function clampAngle(angle = 0) {
 export function rotateYAxis(orient: string, items: IText[]) {
   // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
   items.forEach((item, i) => {
-    item.setAttributes({
-      ...getYAxisLabelAlign(orient, item.attribute.angle),
-      angle: clampAngle(item.attribute.angle)
-    });
+    item.attribute.angle &&
+      item.setAttributes({
+        ...getYAxisLabelAlign(orient, item.attribute.angle),
+        angle: clampAngle(item.attribute.angle)
+      });
   });
 }
 
 export function rotateXAxis(orient: string, items: IText[]) {
   items.forEach(item => {
-    item.setAttributes({
-      ...getXAxisLabelAlign(orient, item.attribute.angle),
-      angle: clampAngle(item.attribute.angle)
-    });
+    item.attribute.angle &&
+      item.setAttributes({
+        ...getXAxisLabelAlign(orient, item.attribute.angle),
+        angle: clampAngle(item.attribute.angle)
+      });
   });
 }
 

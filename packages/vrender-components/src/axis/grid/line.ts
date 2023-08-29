@@ -1,7 +1,8 @@
 /**
  * @description 直线型坐标轴的网格线
+ * - `type: 'line'` 用于直角坐标系下的坐标轴网格线绘制
+ * - `type: 'circle'` 或者 `type: 'polygon'` 用于极坐标半径轴的网格线绘制
  */
-
 import type { IPointLike } from '@visactor/vutils';
 import { PointService, merge, polarToCartesian, mixin } from '@visactor/vutils';
 import { BaseGrid } from './base';

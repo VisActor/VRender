@@ -297,7 +297,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       return labels;
     }
 
-    const { avoidBaseMark, strategy = [], hideOnHit = true, clampForce = true, avoidMarks = [] } = option;
+    const {
+      avoidBaseMark,
+      strategy = [],
+      hideOnHit = true,
+      clampForce = true,
+      avoidMarks = [],
+      overlapPadding
+    } = option;
     const bmpTool = this._bmpTool || bitmapTool(size.width, size.height);
     const bitmap = this._bitmap || bmpTool.bitmap();
     const checkBounds = strategy.some(s => s.type === 'bound');
@@ -335,7 +342,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
 
       // 默认位置可以放置
-      if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce)) {
+      if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce, overlapPadding)) {
         // 如果配置了限制在图形内部，需要提前判断；
         if (!checkBounds) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
@@ -374,12 +381,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const { dx = 0, dy = 0 } = clampText(text, bmpTool.width, bmpTool.height);
         if (
           !(dx === 0 && dy === 0) &&
-          canPlace(bmpTool, bitmap, {
-            x1: text.AABBBounds.x1 + dx,
-            x2: text.AABBBounds.x2 + dx,
-            y1: text.AABBBounds.y1 + dy,
-            y2: text.AABBBounds.y2 + dy
-          })
+          canPlace(
+            bmpTool,
+            bitmap,
+            {
+              x1: text.AABBBounds.x1 + dx,
+              x2: text.AABBBounds.x2 + dx,
+              y1: text.AABBBounds.y1 + dy,
+              y2: text.AABBBounds.y2 + dy
+            },
+            undefined,
+            overlapPadding
+          )
         ) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));

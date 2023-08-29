@@ -115,6 +115,12 @@ export interface OverlapAttrs {
    * 发生重叠后的躲避策略
    */
   strategy?: Strategy[];
+
+  /**
+   * 文字在防重叠计算中预留的边距。
+   * @default 0
+   */
+  overlapPadding?: number;
 }
 
 export interface SmartInvertAttrs {

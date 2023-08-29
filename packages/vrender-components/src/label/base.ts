@@ -4,7 +4,7 @@
 import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine } from '@visactor/vrender';
 import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid, isString, merge } from '@visactor/vutils';
+import { isFunction, isValidNumber, isEmpty, isValid, isString, merge, isRectIntersect } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/labelSmartInvert';
@@ -326,9 +326,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (labels[i].visible === false) {
         continue;
       }
+
       const text = labels[i] as IText;
       const baseMark = this._idToGraphic.get((text.attribute as LabelItem).id);
       text.update();
+      if (!isRectIntersect(baseMark.AABBBounds, { x1: 0, x2: bmpTool.width, y1: 0, y2: bmpTool.height }, true)) {
+        continue;
+      }
 
       // 默认位置可以放置
       if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce)) {

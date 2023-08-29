@@ -94,7 +94,7 @@ export class WrapText extends Text {
               layoutObj.textOptions,
               maxLineWidth,
               ellipsis,
-              wordBreak === 'break-word'
+              false
             );
             linesLayout.push({
               str: clip.str,
@@ -117,7 +117,7 @@ export class WrapText extends Text {
                 layoutObj.textOptions,
                 maxLineWidth,
                 ellipsis,
-                wordBreak === 'break-word'
+                false
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -161,7 +161,7 @@ export class WrapText extends Text {
             layoutObj.textOptions,
             maxLineWidth,
             ellipsis,
-            wordBreak === 'break-word'
+            false
           );
           linesLayout.push({
             str: clip.str,

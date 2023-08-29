@@ -8,6 +8,7 @@ export * from './poptip';
 export * from './crosshair';
 export * from './label';
 export * from './axis';
+export * from './axis/grid';
 export * from './segment';
 export * from './data-zoom';
 export * from './marker';

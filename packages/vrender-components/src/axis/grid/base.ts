@@ -1,11 +1,14 @@
 /**
  * @description 网格线
  */
-import { isFunction, isArray, isEmpty, merge, PointService, abs, pi } from '@visactor/vutils';
-import { createPath, Path } from '@visactor/vrender';
-import { AbstractComponent } from '../core/base';
-import { Point } from '../core/type';
-import { LineGridAttributes, GridItem, GridAttributes, CircleGridAttributes } from './type';
+import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
+import type { IGroup, Path } from '@visactor/vrender';
+import { createGroup, createPath } from '@visactor/vrender';
+import { AbstractComponent } from '../../core/base';
+import type { Point } from '../../core/type';
+import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
+import type { AxisItem, TransformedAxisItem } from '../type';
+import { AXIS_ELEMENT_NAME } from '../constant';
 
 function getLinePath(points: Point[], closed: boolean) {
   let path = '';
@@ -89,36 +92,97 @@ function getRegionPath(from: Point[], to: Point[], attribute: GridAttributes) {
   return regionPath;
 }
 
-export class Grid extends AbstractComponent<Required<GridAttributes>> {
-  name = 'grid';
+export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractComponent<Required<T>> {
+  name = 'axis-grid';
 
-  static defaultAttributes: Partial<GridAttributes> = {
+  static defaultAttributes: Partial<GridBaseAttributes> = {
     style: {
       lineWidth: 1,
-      stroke: '#416180'
+      stroke: '#999',
+      strokeOpacity: 1,
+      lineDash: [4, 4]
     },
-    zIndex: 0
+    subGrid: {
+      visible: false,
+      style: {
+        lineWidth: 1,
+        stroke: '#999',
+        strokeOpacity: 1,
+        lineDash: [4, 4]
+      }
+    }
   };
 
-  constructor(attributes: GridAttributes) {
-    super(merge({}, Grid.defaultAttributes, attributes));
+  protected _innerView: IGroup;
+  getInnerView() {
+    return this._innerView;
   }
+
+  protected _prevInnerView: IGroup; // 缓存旧场景树，用于自定义动画
+  /**
+   * 获取更新前的旧场景树
+   * @returns 返回更新前的旧场景树
+   */
+  getPrevInnerView() {
+    return this._prevInnerView;
+  }
+
+  // 经过处理后的坐标轴点数据
+  protected data: TransformedAxisItem[] = [];
+  abstract getTickCoord(value: number): Point;
+  abstract isInValidValue(value: number): boolean;
+  abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
+  protected abstract getGridAttribute(isSubGrid: boolean): T;
 
   protected render(): void {
     this.removeAllChild();
-    const {
-      type,
-      items,
-      style,
-      closed,
-      alternateColor,
-      // zIndex = 0,
-      depth = 0
-    } = this.attribute as GridAttributes & { depth?: number };
+    this._prevInnerView = this._innerView;
+    this._innerView = createGroup({ x: 0, y: 0, pickable: false });
+    this.add(this._innerView);
 
-    if (isEmpty(items)) {
-      return;
+    const { items, visible } = this.attribute;
+    if (items && items.length && visible !== false) {
+      this.data = this._transformItems(items);
+      this._renderGrid(this._innerView);
     }
+  }
+
+  protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
+    const vector = this.getVerticalVector(offset, inside, point);
+    return {
+      x: point.x + vector[0],
+      y: point.y + vector[1]
+    };
+  }
+
+  private _transformItems(items: AxisItem[]) {
+    const data: TransformedAxisItem[] = [];
+    items.forEach((item: AxisItem) => {
+      data.push({
+        ...item,
+        point: this.getTickCoord(item.value),
+        id: item.id ?? item.label
+      });
+    });
+    return data;
+  }
+  private _renderGrid(container: any) {
+    // 渲染 subGrid
+    const { visible } = this.attribute.subGrid || {};
+    if (visible) {
+      this._renderGridByType(true, container);
+    }
+
+    // 渲染 Grid，Grid 需要在 subGrid 上层渲染
+    this._renderGridByType(false, container);
+  }
+
+  private _renderGridByType(isSubGrid: boolean, container: IGroup) {
+    const gridAttrs = merge({}, this.attribute, this.getGridAttribute(isSubGrid));
+
+    const { type, items, style, closed, alternateColor, depth = 0 } = gridAttrs;
+    const name = isSubGrid ? `${AXIS_ELEMENT_NAME.grid}-sub` : `${AXIS_ELEMENT_NAME.grid}`;
+
     // 绘制网格线
     items.forEach((item: GridItem, index: number) => {
       const { id, points } = item;
@@ -126,17 +190,17 @@ export class Grid extends AbstractComponent<Required<GridAttributes>> {
       if (type === 'line' || type === 'polygon') {
         path = getLinePath(points, !!closed);
       } else if (type === 'circle') {
-        const { center } = this.attribute as CircleGridAttributes;
+        const { center } = this.attribute as unknown as CircleGridAttributes;
         path = getArcPath(center, points, false, !!closed);
       }
       const shape = createPath({
         path,
         z: depth,
-        ...(isFunction(style) ? merge({}, Grid.defaultAttributes.style, style(item, index)) : style)
+        ...(isFunction(style) ? merge({}, BaseGrid.defaultAttributes.style, style(item, index)) : style)
       }) as Path;
-      shape.name = `${this.name}-line`;
-      shape.id = this._getNodeId(`path-${id}`);
-      this.add(shape);
+      shape.name = `${name}-line`;
+      shape.id = this._getNodeId(`${name}-path-${id}`);
+      container.add(shape);
     });
 
     // 添加额外的3d线段
@@ -159,11 +223,11 @@ export class Grid extends AbstractComponent<Required<GridAttributes>> {
           alpha: deltaX > deltaY ? ((points[1].x - points[0].x > 0 ? -1 : 1) * pi) / 2 : 0,
           beta: deltaX < deltaY ? -pi / 2 : 0,
           anchor3d: deltaX > deltaY ? [nextPoints[0].x, 0] : [0, nextPoints[0].y],
-          ...(isFunction(style) ? merge({}, Grid.defaultAttributes.style, style(item, index)) : style)
+          ...(isFunction(style) ? merge({}, BaseGrid.defaultAttributes.style, style(item, index)) : style)
         }) as Path;
-        shape.name = `${this.name}-line`;
-        shape.id = this._getNodeId(`path-${id}`);
-        this.add(shape);
+        shape.name = `${name}-line`;
+        shape.id = this._getNodeId(`${name}-path-${id}`);
+        container.add(shape);
       });
     }
 
@@ -177,14 +241,14 @@ export class Grid extends AbstractComponent<Required<GridAttributes>> {
       // const regions: any[] = [];
       for (let index = 0; index < items.length - 1; index++) {
         const [prev, curr] = [items[index].points, items[index + 1].points];
-        const path = getRegionPath(prev, curr, this.attribute as GridAttributes);
+        const path = getRegionPath(prev, curr, gridAttrs);
         const shape = createPath({
           path,
           fill: getColor(index)
         }) as Path;
-        shape.name = `${this.name}-region`;
-        shape.id = this._getNodeId(`region-${index}`);
-        this.add(shape);
+        shape.name = `${name}-region`;
+        shape.id = this._getNodeId(`${name}-region-${index}`);
+        container.add(shape);
       }
     }
   }

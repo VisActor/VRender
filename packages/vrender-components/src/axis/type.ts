@@ -261,6 +261,11 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * - `right`：整体向右对齐（水平方向）
      */
     containerAlign?: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle';
+    /**
+     * 坐标轴首尾文字向内收缩
+     * @default false
+     */
+    flush?: boolean;
   };
   /**
    * 坐标轴背景配置

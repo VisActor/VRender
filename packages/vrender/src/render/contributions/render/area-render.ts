@@ -574,7 +574,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       if (strokeCb) {
         strokeCb(context, attribute, defaultAttribute);
       } else {
-        const { stroke } = attribute;
+        const { stroke = defaultAttribute && defaultAttribute[1] && defaultAttribute[1].stroke } = attribute;
         if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
           context.beginPath();
           drawSegments(

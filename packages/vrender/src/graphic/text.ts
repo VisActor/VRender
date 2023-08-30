@@ -183,17 +183,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          wordBreak === 'break-word'
+          false
         );
         str = data.str;
         width = data.width;
       } else {
-        const data = textMeasure.clipText(
-          text.toString(),
-          { fontSize, fontWeight, fontFamily },
-          maxLineWidth,
-          wordBreak === 'break-word'
-        );
+        const data = textMeasure.clipText(text.toString(), { fontSize, fontWeight, fontFamily }, maxLineWidth, false);
         str = data.str;
         width = data.width;
       }
@@ -270,7 +265,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          wordBreak === 'break-word'
+          false
         );
         verticalList = [data.verticalList];
         width = data.width;
@@ -279,7 +274,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           verticalList[0],
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
-          wordBreak === 'break-word'
+          false
         );
         verticalList = [data.verticalList];
         width = data.width;
@@ -352,7 +347,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textBaseline as any,
       lineHeight,
       ellipsis === true ? (textTheme.ellipsis as string) : ellipsis || undefined,
-      wordBreak === 'break-word',
+      false,
       maxLineWidth
     );
     const { bbox } = layoutData;
@@ -420,7 +415,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             { fontSize, fontWeight, fontFamily },
             maxLineWidth,
             strEllipsis,
-            wordBreak === 'break-word'
+            false
           );
           verticalLists[i] = data.verticalList;
           width = data.width;
@@ -429,7 +424,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             verticalData,
             { fontSize, fontWeight, fontFamily },
             maxLineWidth,
-            wordBreak === 'break-word'
+            false
           );
           verticalLists[i] = data.verticalList;
           width = data.width;

@@ -11,7 +11,7 @@ describe('Pager', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
   it('Pager in horizontal should be render correctly', () => {
     const pager = new Pager({

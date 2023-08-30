@@ -196,8 +196,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     let maxRadius = 0;
     currentMarks.forEach(currentMarks => {
-      if (currentMarks.attribute.outerRadius > maxRadius) {
-        maxRadius = currentMarks.attribute.outerRadius;
+      if ((currentMarks.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMarks.attribute as IArcGraphicAttribute).outerRadius;
       }
     });
 

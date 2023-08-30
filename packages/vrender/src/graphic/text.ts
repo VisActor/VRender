@@ -165,7 +165,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
-      width = this.cache.clipedWidth;
+      width = this.cache.clipedWidth ?? 0;
       const dx = textDrawOffsetX(textAlign, width);
       const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
       this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
@@ -338,9 +338,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       }
       return this._AABBBounds;
     }
-
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight }, textMeasure);
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
       textAlign,

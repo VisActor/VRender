@@ -192,12 +192,17 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     this._arcLeft.clear();
     this._arcRight.clear();
     this._ellipsisWidth = ellipsisWidth;
-    const { width, height } = attribute as ArcLabelAttrs;
     const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
+
+    let maxRadius = 0;
+    currentMarks.forEach(currentMarks => {
+      if (currentMarks.attribute.outerRadius > maxRadius) {
+        maxRadius = currentMarks.attribute.outerRadius;
+      }
+    });
+
     currentMarks.forEach((currentMark, index) => {
       const graphicAttribute = currentMark.attribute as IArcGraphicAttribute;
-      const radiusRatio = this.computeLayoutOuterRadius(graphicAttribute.outerRadius, width, height);
-      const radius = this.computeRadius(radiusRatio, width, height, centerOffset);
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
 
       const item = data[index];
@@ -208,7 +213,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
 
       const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
-      const outerArcMiddle = circlePoint(center.x, center.y, radius + attribute.line.line1MinLength, arcMiddleAngle);
+      const outerArcMiddle = circlePoint(center.x, center.y, maxRadius + attribute.line.line1MinLength, arcMiddleAngle);
       const arc = new ArcInfo(item, arcMiddle, outerArcMiddle, arcQuadrant, intervalAngle, arcMiddleAngle);
 
       // refDatum: any,

@@ -305,7 +305,7 @@ describe('Graphic-Bounds', () => {
     let text = createText({
       x: 100,
       y: 100,
-      fontFamily: 'sans-serif',
+      fontFamily: 'Arial',
       text: 'aaa这是aaa',
       fill: 'red'
     });
@@ -318,7 +318,7 @@ describe('Graphic-Bounds', () => {
     text = createText({
       x: 100,
       y: 100,
-      fontFamily: 'sans-serif',
+      fontFamily: 'Arial',
       text: ['aaa这是aaa', 'aa这是aa'],
       fontSize: 16,
       fill: 'red'
@@ -326,7 +326,7 @@ describe('Graphic-Bounds', () => {
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
     expect(text.AABBBounds.y1).toBeCloseTo(74.72);
-    expect(text.AABBBounds.x2).toBeCloseTo(185.66);
+    expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
     expect(text.AABBBounds.y2).toBeCloseTo(106.72);
   });
 

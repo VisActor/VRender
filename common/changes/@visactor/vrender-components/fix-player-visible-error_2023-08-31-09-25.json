@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix player visible error and rename event name",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

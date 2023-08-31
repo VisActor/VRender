@@ -3,7 +3,16 @@
   "compilerOptions": {
     "jsx": "react",
     "baseUrl": ".",
-    "outDir": "output"
+    "outDir": "./es",
+    "rootDir": "./src"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../vrender"
+    },
+    {
+      "path": "../react-vrender"
+    }
+  ]
 }

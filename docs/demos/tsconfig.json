@@ -18,5 +18,13 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
+  "references": [
+    {
+      "path": "../../packages/vrender/"
+    },
+    {
+      "path": "../../packages/vrender-kits/"
+    }
+  ],
   "include": ["src"]
 }

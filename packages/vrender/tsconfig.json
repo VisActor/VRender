@@ -2,11 +2,9 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./es",
-    "composite": true,
+    "composite": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

@@ -102,6 +102,7 @@ const layoutPlayer3 = new ContinuousPlayer({
   },
   orient: 'bottom',
   slider: {
+    visible: false,
     railStyle: {
       cornerRadius: 40,
 
@@ -137,8 +138,10 @@ const layoutPlayer4 = new ContinuousPlayer({
   visible: true,
   orient: 'left',
   slider: {
+    visible: true,
     space: 10,
     railStyle: {
+      visible: true,
       width: 5
     },
     trackStyle: {
@@ -147,7 +150,9 @@ const layoutPlayer4 = new ContinuousPlayer({
     }
   },
   controller: {
+    visible: false,
     start: {
+      visible: true,
       order: 1,
       position: 'start',
       style: {
@@ -155,16 +160,19 @@ const layoutPlayer4 = new ContinuousPlayer({
       }
     },
     pause: {
+      visible: true,
       style: {
         size: 50
       }
     },
     backward: {
+      visible: true,
       order: 0,
       position: 'start',
       style: {}
     },
     forward: {
+      visible: false,
       position: 'end',
       order: 3
     }

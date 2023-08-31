@@ -8,7 +8,7 @@ const setJsonFileByKey = require('./set-json-file');
 function writePrereleaseVersion(nextBump, preReleaseName) {
   const rushJson = getPackageJson(path.join(__dirname, '../../rush.json'));
   const projects = rushJson.projects;
-  const mainPackage = projects.find((project) => project.packageName === '@visactor/vgrammar');
+  const mainPackage = projects.find((project) => project.packageName === '@visactor/vrender');
 
   if (!mainPackage) {
     return;

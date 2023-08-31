@@ -43,7 +43,7 @@ const writeNextBump = (
 }
 
 const readNextBumpFromChanges = () => {
-  const changeRoot = path.join(__dirname, '../changes/@visactor/vgrammar');
+  const changeRoot = path.join(__dirname, '../changes/@visactor/vrender');
   const filenames = fs.readdirSync(changeRoot);
 
   if (filenames && filenames.length) {

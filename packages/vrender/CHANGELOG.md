@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 29 Aug 2023 11:30:33 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Aug 2023 10:03:38 GMT and should not be manually modified.
+
+## 0.14.7
+Thu, 31 Aug 2023 10:03:38 GMT
+
+### Patches
+
+- fix: poptip fix width error and add maxWidthPercent
 
 ## 0.14.6
 Tue, 29 Aug 2023 11:30:33 GMT

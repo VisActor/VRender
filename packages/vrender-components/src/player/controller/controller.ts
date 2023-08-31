@@ -1,14 +1,16 @@
 import { isNil, merge } from '@visactor/vutils';
-import { CustomEvent, FederatedPointerEvent, ISymbolGraphicAttribute } from '@visactor/vrender';
+import type { FederatedPointerEvent, ISymbolGraphicAttribute } from '@visactor/vrender';
+import { CustomEvent } from '@visactor/vrender';
 import { AbstractComponent } from '../../core/base';
-import { BaseGraphicAttributes } from '../../core/type';
-import { ControllerAttributes, LayoutType } from './type';
+import type { BaseGraphicAttributes } from '../../core/type';
+import type { ControllerAttributes, LayoutType } from './type';
 import { iconRight, iconPause, iconPlay, iconLeft, iconUp, iconDown } from './assets';
 import { PlayerIcon } from './icon';
 import { ControllerEventEnum, ControllerTypeEnum } from './constant';
 
 export class Controller extends AbstractComponent<Required<ControllerAttributes>> {
   static defaultControllerAttr: ISymbolGraphicAttribute = {
+    visible: true,
     x: 0,
     y: 0,
     size: 20,
@@ -17,7 +19,6 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
     cursor: 'pointer'
   };
   static defaultAttributes: ControllerAttributes = {
-    visible: true,
     [ControllerTypeEnum.Start]: {},
     [ControllerTypeEnum.Pause]: {},
     [ControllerTypeEnum.Backward]: {},
@@ -49,6 +50,7 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
       style: {
         symbolType: iconPlay,
         ...Controller.defaultControllerAttr,
+        visible: this.attribute.start.visible,
         ...this.attribute.start.style
       }
     };
@@ -56,18 +58,21 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
       style: {
         symbolType: iconPause,
         ...Controller.defaultControllerAttr,
+        visible: this.attribute.pause.visible,
         ...this.attribute.pause.style
       }
     };
     this._forwardAttr = {
       style: {
         ...Controller.defaultControllerAttr,
+        visible: this.attribute.forward.visible,
         ...this.attribute.forward.style
       }
     };
     this._backwardAttr = {
       style: {
         ...Controller.defaultControllerAttr,
+        visible: this.attribute.backward.visible,
         ...this.attribute.backward.style
       }
     };

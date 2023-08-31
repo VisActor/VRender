@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.7",
+      "tag": "@visactor/vrender_v0.14.7",
+      "date": "Thu, 31 Aug 2023 10:03:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: poptip fix width error and add maxWidthPercent"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.6",
       "tag": "@visactor/vrender_v0.14.6",
       "date": "Tue, 29 Aug 2023 11:30:33 GMT",

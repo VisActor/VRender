@@ -1,4 +1,5 @@
 export const defaultControllerAttributes = {
+  visible: true,
   style: {
     x: 0,
     y: 0,

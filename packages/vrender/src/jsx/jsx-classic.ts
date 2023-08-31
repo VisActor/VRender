@@ -1,5 +1,5 @@
 import { isArray, isString } from '@visactor/vutils';
-import { graphicCreator } from '../graphic';
+import { Group, graphicCreator } from '../graphic';
 import { REACT_TO_CANOPUS_EVENTS } from './graphicType';
 
 function flatten(list: any, out: any[]): void {
@@ -22,9 +22,7 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
     flatten(children.length === 1 ? children[0] : children, childrenList);
   }
 
-  if (c.type === 'richtext') {
-  }
-  const g = c.prototype.type ? new c(attribute) : c(config);
+  const g = c.name === 'Group' ? new c(attribute) : c(config);
   parseToGraphic(g, childrenList, props);
 
   if (stateProxy) {
@@ -68,9 +66,4 @@ function parseToGraphic(g: any, childrenList: any[], props: any) {
   }
 }
 
-export class Fragment {
-  children: any[] = [];
-  add(g: any) {
-    this.children.push(g);
-  }
-}
+export const Fragment = Group;

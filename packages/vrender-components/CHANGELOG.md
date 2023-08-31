@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Aug 2023 09:38:48 GMT and should not be manually modified.
+
+## 0.14.6
+Thu, 31 Aug 2023 09:38:48 GMT
+
+### Patches
+
+- feat: support simple polygon and point label
+- feat(component): support label overlapPadding for sparse display
+- fix: rose chart label layout 
+- fix: axis label's flush should handle before overlap
+- feat(brush): add event release function
+- fix player visible error and rename event name
+- fix: fix the issue with poptip, closed #322
+- feat: poptip support wrap
 
 ## 0.14.5
 Wed, 23 Aug 2023 11:53:28 GMT

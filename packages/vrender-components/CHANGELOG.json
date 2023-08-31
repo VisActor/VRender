@@ -2,6 +2,44 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.6",
+      "tag": "@visactor/vrender-components_v0.14.6",
+      "date": "Thu, 31 Aug 2023 09:38:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: support simple polygon and point label"
+          },
+          {
+            "comment": "feat(component): support label overlapPadding for sparse display"
+          },
+          {
+            "comment": "fix: rose chart label layout "
+          },
+          {
+            "comment": "fix: axis label's flush should handle before overlap"
+          },
+          {
+            "comment": "feat(brush): add event release function"
+          },
+          {
+            "comment": "fix player visible error and rename event name"
+          },
+          {
+            "comment": "fix: fix the issue with poptip, closed #322"
+          },
+          {
+            "comment": "feat: poptip support wrap"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.5` to `0.14.6`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.5",
       "tag": "@visactor/vrender-components_v0.14.5",
       "date": "Wed, 23 Aug 2023 11:53:28 GMT",

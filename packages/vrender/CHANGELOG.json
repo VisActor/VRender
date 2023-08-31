@@ -2,6 +2,33 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.6",
+      "tag": "@visactor/vrender_v0.14.6",
+      "date": "Thu, 31 Aug 2023 09:38:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: increase robustness for wx compatibility"
+          },
+          {
+            "comment": "fix: fix the issue of area stroke, closed #392"
+          },
+          {
+            "comment": "fix: poptip fix width error and add maxWidthPercent"
+          },
+          {
+            "comment": "feat(brush): add event release function"
+          },
+          {
+            "comment": "fix: stage support setDpr, closed #382"
+          },
+          {
+            "comment": "fix: fix the circluar dependecies issue caused by importing global from index.js"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.5",
       "tag": "@visactor/vrender_v0.14.5",
       "date": "Wed, 23 Aug 2023 11:53:28 GMT",

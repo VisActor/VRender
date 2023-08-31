@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 23 Aug 2023 11:53:28 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Aug 2023 09:38:48 GMT and should not be manually modified.
+
+## 0.14.6
+Thu, 31 Aug 2023 09:38:48 GMT
+
+### Patches
+
+- fix: increase robustness for wx compatibility
+- fix: fix the issue of area stroke, closed #392
+- fix: poptip fix width error and add maxWidthPercent
+- feat(brush): add event release function
+- fix: stage support setDpr, closed #382
+- fix: fix the circluar dependecies issue caused by importing global from index.js
 
 ## 0.14.5
 Wed, 23 Aug 2023 11:53:28 GMT

@@ -145,14 +145,14 @@ export function VRichText(params: IDefaultGraphicParamsType<IRichTextGraphicAttr
   return createRichText(params ? params.attribute : {});
 }
 
-VRichText.Text = function (params: IRichTextCharacter) {
+VRichText.Text = function (params: IDefaultGraphicParamsType<IRichTextCharacter>) {
   return {
     type: 'rich/text',
     ...params
   };
 };
 
-VRichText.Image = function (params: IRichTextImageCharacter) {
+VRichText.Image = function (params: IDefaultGraphicParamsType<IRichTextImageCharacter>) {
   return {
     type: 'rich/image',
     ...params

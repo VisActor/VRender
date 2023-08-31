@@ -85,7 +85,6 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
-  graphics.push(tt);
   const circle = createCircle({
     x: 500,
     y: 200,

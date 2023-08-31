@@ -12,6 +12,7 @@ import type {
   TextBaselineType
 } from '@visactor/vrender';
 import {
+  AABBBounds,
   Bounds,
   getRectIntersect,
   isArray,
@@ -27,6 +28,8 @@ import {
 import { AbstractComponent } from '../core/base';
 import type { BackgroundAttributes } from '../interface';
 import type { PopTipAttributes } from './type';
+
+const _tBounds = new AABBBounds();
 
 export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   name = 'poptip';
@@ -48,6 +51,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textAlign: 'left',
       textBaseline: 'top'
     },
+    maxWidthPercent: 0.8,
     space: 8,
     padding: 10
   };
@@ -68,6 +72,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       minWidth = 0,
       maxWidth = Infinity,
       padding = 4,
+      maxWidthPercent,
       visible,
       state,
       dx = 0,
@@ -159,11 +164,12 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     if (range) {
       // 尝试进行换行
       const b = (this as any).AABBBounds;
-      const leftWidth = b.x1;
+      const leftWidth = this.attribute.x ?? b.x1;
       const rightWidth = range[0] - b.x1;
       let maxSpace = Math.max(leftWidth, rightWidth);
-      // 减一些buffer，buffer不能超过maxSpace的30%
-      maxSpace = Math.max(maxSpace - 10, maxSpace * 0.7);
+      // 减一些buffer，buffer不能超过maxSpace的20%
+      const buf = (isArray(symbolSize) ? symbolSize[0] : 12) + 3;
+      maxSpace = Math.min(maxSpace - buf, maxSpace * maxWidthPercent);
       // 需要进行换行
       if (maxSpace < popTipWidth) {
         popTipWidth = maxSpace;
@@ -239,7 +245,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       });
 
       if (layout && range) {
-        const b = (this as any).AABBBounds;
+        _tBounds.setValue(0, 0, popTipWidth, poptipHeight).transformWithMatrix(group.globalTransMatrix);
+        const b = _tBounds;
         const stageBounds = new Bounds().setValue(0, 0, range[0], range[1]);
         if (rectInsideAnotherRect(b, stageBounds, false)) {
           break;

@@ -1234,7 +1234,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   loadImage(image: any, background: boolean = false) {
-    if (!image || isObject(image)) {
+    if (!image || (background && backgroundNotImage(image))) {
       return;
     }
     const url = image;
@@ -1342,3 +1342,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 }
 
 Graphic.mixin(EventTarget);
+
+function backgroundNotImage(image: any) {
+  if (image.fill || image.stroke) {
+    return true;
+  }
+  return false;
+}

@@ -61,6 +61,9 @@ export type PopTipAttributes = {
    */
   maxWidth?: number;
 
+  // 最大宽度比例
+  maxWidthPercent?: number;
+
   visible?: boolean;
   visibleFunc?: (graphic: IGraphic) => boolean;
   state?: StateStyle;

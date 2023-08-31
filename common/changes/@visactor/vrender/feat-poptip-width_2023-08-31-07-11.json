@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: poptip fix width error and add maxWidthPercent",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

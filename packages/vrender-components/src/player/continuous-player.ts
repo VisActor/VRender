@@ -41,7 +41,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     super._initAttributes();
     // 新增一个占位数据
     this._maxIndex = this._data.length;
-    this._slider.setAttribute('max', this._maxIndex);
+    this._slider?.setAttribute('max', this._maxIndex);
 
     this._isPlaying = false;
     this._elapsed = 0;
@@ -85,7 +85,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
       this.backward();
     });
 
-    this._slider.addEventListener('change', (e: FederatedPointerEvent) => {
+    this._slider?.addEventListener('change', (e: FederatedPointerEvent) => {
       e.stopPropagation();
       /**
        * 根据value, 反推开始时间
@@ -116,7 +116,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
   private _updateSlider = () => {
     const value = this._getSliderValue();
     this._dataIndex = Math.floor(value);
-    this._slider.setValue(Math.min(value, this._maxIndex));
+    this._slider?.setValue(Math.min(value, this._maxIndex));
     this._dispatchChange(Math.floor(value));
   };
 

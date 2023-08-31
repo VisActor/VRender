@@ -20,6 +20,7 @@ const layoutPlayer1 = new DiscretePlayer({
   },
   slider: {
     space: 10,
+    visible: false,
     trackStyle: {
       fillOpacity: 1,
       cornerRadius: 5,
@@ -208,6 +209,7 @@ setInterval(() => {
     y: 450,
     orient: 'bottom',
     slider: {
+      visible: false,
       railStyle: {
         cornerRadius: 40,
 

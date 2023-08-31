@@ -1,10 +1,13 @@
-import { CustomEvent, INode } from '@visactor/vrender';
+import type { INode } from '@visactor/vrender';
+import { CustomEvent } from '@visactor/vrender';
 import { isNumber, isValidNumber, max, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { OrientType } from '../interface';
-import { Slider, SliderAttributes } from '../slider';
-import { Controller, ControllerAttributes } from './controller';
-import {
+import type { OrientType } from '../interface';
+import type { SliderAttributes } from '../slider';
+import { Slider } from '../slider';
+import type { ControllerAttributes } from './controller';
+import { Controller } from './controller';
+import type {
   Datum,
   PlayerEventEnum,
   PlayerAttributes,
@@ -59,6 +62,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   protected _maxIndex: number;
 
   // 滑轨属性
+  private _sliderVisible: boolean;
   private _railStyle: RailStyleType;
   private _trackStyle: TrackStyleType;
   private _handlerStyle: HandlerStyleType;
@@ -107,6 +111,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     this._maxIndex = this._data.length - 1;
 
     // 轨道样式
+    this._sliderVisible = this.attribute?.slider?.visible ?? true;
     this._railStyle = { ...this.attribute?.slider?.railStyle };
     this._trackStyle = { ...this.attribute?.slider?.trackStyle };
     this._handlerStyle = { ...this.attribute?.slider?.handlerStyle };
@@ -137,7 +142,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     }, 0);
 
     // 2. 计算slider的总占据像素
-    const sliderPx = (isHorizontal(this._orient) ? this._size?.width : this._size?.height) - controllerPx;
+    const sliderPx = this._sliderVisible
+      ? (isHorizontal(this._orient) ? this._size?.width : this._size?.height) - controllerPx
+      : 0;
 
     // 3. 计算slider滑轨的总占据像素
     const railPx = sliderPx - this.attribute.slider.space;
@@ -252,9 +259,11 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   };
 
   private _initSlider = () => {
-    const attrs = this._updateSliderAttrs();
-    this._slider = new Slider(attrs);
-    this.add(this._slider as unknown as INode);
+    if (this._sliderVisible) {
+      const attrs = this._updateSliderAttrs();
+      this._slider = new Slider(attrs);
+      this.add(this._slider as unknown as INode);
+    }
   };
 
   /**
@@ -356,8 +365,10 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
    * 更新滑动条
    */
   renderSlider() {
-    const attrs = this._updateSliderAttrs();
-    this._slider.setAttributes(attrs);
+    if (this._sliderVisible) {
+      const attrs = this._updateSliderAttrs();
+      this._slider.setAttributes(attrs);
+    }
   }
 
   /**

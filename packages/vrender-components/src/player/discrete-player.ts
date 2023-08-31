@@ -56,7 +56,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
         : this._maxIndex
       : this.attribute.dataIndex ?? 0;
 
-    this._slider.setAttribute('value', this._dataIndex);
+    this._slider?.setAttribute('value', this._dataIndex);
   };
 
   /**
@@ -80,7 +80,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this.backward();
     });
 
-    this._slider.addEventListener('change', (e: FederatedPointerEvent & { detail: { value: number } }) => {
+    this._slider?.addEventListener('change', (e: FederatedPointerEvent & { detail: { value: number } }) => {
       const middle = Math.floor(e.detail.value) + 0.5;
       this._dataIndex = e.detail.value >= middle ? Math.ceil(e.detail.value) : Math.floor(e.detail.value);
       this._slider.setValue(this._dataIndex);
@@ -186,7 +186,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    */
   private _updateDataIndex = (dataIndex: number) => {
     this._dataIndex = dataIndex;
-    this._slider.setValue(this._dataIndex);
+    this._slider?.setValue(this._dataIndex);
   };
 
   /**

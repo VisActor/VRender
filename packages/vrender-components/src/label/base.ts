@@ -218,12 +218,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._baseMarks = currentBaseMarks;
 
     if (!currentBaseMarks || currentBaseMarks.length === 0) {
+      this._idToGraphic.set(null, null);
       return;
     }
 
     const { data } = this.attribute;
 
     if (!data || data.length === 0) {
+      this._idToGraphic.set(null, null);
       return;
     }
 

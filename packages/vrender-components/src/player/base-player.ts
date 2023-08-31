@@ -146,7 +146,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     }, 0);
 
     // 2. 计算slider的总占据像素
-    const sliderPx = (isHorizontal(this._orient) ? this._size?.width : this._size?.height) - controllerPx;
+    const sliderPx = this._sliderVisible
+      ? (isHorizontal(this._orient) ? this._size?.width : this._size?.height) - controllerPx
+      : 0;
 
     // 3. 计算slider滑轨的总占据像素
     const railPx = sliderPx - this.attribute.slider.space;

@@ -68,7 +68,11 @@ export class BrowserWindowHandlerContribution
   }
 
   protected postInit() {
-    this.observerCanvas();
+    try {
+      this.observerCanvas();
+    } catch (err) {
+      console.error('发生错误，该环境不存在IntersectionObserver');
+    }
   }
 
   isElementVisible(el: HTMLElement) {

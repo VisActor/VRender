@@ -2,6 +2,32 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.7",
+      "tag": "@visactor/vrender-components_v0.14.7",
+      "date": "Thu, 31 Aug 2023 10:03:38 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: rose chart label layout "
+          },
+          {
+            "comment": "fix player visible error and rename event name"
+          },
+          {
+            "comment": "fix: fix the issue with poptip, closed #322"
+          },
+          {
+            "comment": "feat: poptip support wrap"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.6` to `0.14.7`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.6",
       "tag": "@visactor/vrender-components_v0.14.6",
       "date": "Tue, 29 Aug 2023 11:30:33 GMT",

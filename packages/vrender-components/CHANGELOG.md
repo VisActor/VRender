@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 29 Aug 2023 11:30:33 GMT and should not be manually modified.
+This log was last generated on Thu, 31 Aug 2023 10:03:38 GMT and should not be manually modified.
+
+## 0.14.7
+Thu, 31 Aug 2023 10:03:38 GMT
+
+### Patches
+
+- fix: rose chart label layout 
+- fix player visible error and rename event name
+- fix: fix the issue with poptip, closed #322
+- feat: poptip support wrap
 
 ## 0.14.6
 Tue, 29 Aug 2023 11:30:33 GMT

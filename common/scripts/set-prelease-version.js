@@ -17,7 +17,9 @@ function writePrereleaseVersion(nextBump, preReleaseName) {
   const mainPkgJsonPath = path.join(__dirname, '../../', mainPackage.projectFolder, 'package.json')
   const mainPkgJson = getPackageJson(mainPkgJsonPath)
   const mainVersion = mainPkgJson.version;
+  console.log(`The version of main project is ${mainVersion}`);
   const version = parseVersion(mainVersion);
+  console.log('Parsed version:', version);
 
   if (!version) {
     return;
@@ -35,11 +37,14 @@ function writePrereleaseVersion(nextBump, preReleaseName) {
 
   const nextVersion = `${version.major}.${version.minor}.${version.patch}-${preReleaseName}`;
   const published = projects.filter(project => project.shouldPublish).map(project => project.packageName);
+  console.log(`next version is: ${nextVersion}`);
 
   projects.forEach(project => {
     const pkgJsonPath = path.join( __dirname, '../../', project.projectFolder, 'package.json')
     let jsonFile = fs.readFileSync(pkgJsonPath, { encoding: 'utf-8' })
     const pkgJson = JSON.parse(jsonFile);
+
+    console.log(`handle project: ${project.packageName}, from ${pkgJson.version} to ${nextVersion}`);
 
     if (project.shouldPublish) {
       jsonFile = setJsonFileByKey(jsonFile, pkgJson, ['version'], nextVersion);

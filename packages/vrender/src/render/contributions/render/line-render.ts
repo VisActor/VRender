@@ -254,25 +254,40 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       const _points = points;
       if (segments && segments.length) {
         let startPoint: IPointLike;
-        let lastSeg: ISegPath2D;
-        line.cache = segments.map((seg, index) => {
-          // 添加上一个segment结束的点作为这个segment的起始点
-          if (index === 1) {
-            startPoint = {
-              x: lastSeg.endX,
-              y: lastSeg.endY,
-              defined: lastSeg.curves[lastSeg.curves.length - 1].defined
-            };
-          } else if (index > 1) {
-            startPoint.x = lastSeg.endX;
-            startPoint.y = lastSeg.endY;
-            startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
-          }
-          lastSeg = calcLineCache(seg.points, curveType, {
-            startPoint
-          });
-          return lastSeg;
-        });
+        let lastSeg: { endX: number; endY: number; curves: Array<{ defined: boolean }> };
+        line.cache = segments
+          .map((seg, index) => {
+            if (seg.points.length <= 1) {
+              // 第一个点的话，直接设置lastTopSeg
+              if (index === 0) {
+                seg.points[0] &&
+                  (lastSeg = {
+                    endX: seg.points[0].x,
+                    endY: seg.points[0].y,
+                    curves: [{ defined: seg.points[0].defined !== false }]
+                  });
+                return null;
+              }
+            }
+            // 添加上一个segment结束的点作为这个segment的起始点
+            if (index === 1) {
+              startPoint = {
+                x: lastSeg.endX,
+                y: lastSeg.endY,
+                defined: lastSeg.curves[lastSeg.curves.length - 1].defined
+              };
+            } else if (index > 1) {
+              startPoint.x = lastSeg.endX;
+              startPoint.y = lastSeg.endY;
+              startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
+            }
+            const data = calcLineCache(seg.points, curveType, {
+              startPoint
+            });
+            lastSeg = data;
+            return data;
+          })
+          .filter(item => !!item);
       } else if (points && points.length) {
         line.cache = calcLineCache(_points, curveType);
       } else {
@@ -287,6 +302,11 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       line.attribute;
 
     if (Array.isArray(line.cache)) {
+      const segments = line.attribute.segments.filter(item => item.points.length);
+      // 如果第一个seg只有一个点，那么shift出去
+      if (segments[0].points.length === 1) {
+        segments.shift();
+      }
       if (clipRange === 1) {
         let skip = false;
         // 性能优化，不需要clip的线段不需要计算长度
@@ -301,7 +321,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             !!stroke,
             fillOpacity,
             strokeOpacity,
-            line.attribute.segments[index],
+            segments[index],
             [lineAttribute, line.attribute],
             clipRange,
             clipRangeByDimension,
@@ -336,7 +356,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
               !!stroke,
               fillOpacity,
               strokeOpacity,
-              line.attribute.segments[index],
+              segments[index],
               [lineAttribute, line.attribute],
               min(_cr, 1),
               clipRangeByDimension,

@@ -13,8 +13,8 @@ importers:
       '@esbuild-plugins/node-modules-polyfill': 0.1.4
       '@internal/eslint-config': workspace:*
       '@internal/ts-config': workspace:*
-      '@visactor/vrender': workspace:0.14.5
-      '@visactor/vrender-kits': workspace:0.12.19
+      '@visactor/vrender': workspace:0.14.7
+      '@visactor/vrender-kits': workspace:0.12.21
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
@@ -61,7 +61,7 @@ importers:
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
       '@types/react-reconciler': ^0.28.2
-      '@visactor/vrender': workspace:0.14.5
+      '@visactor/vrender': workspace:0.14.7
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -99,8 +99,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/react-vrender': workspace:0.12.19
-      '@visactor/vrender': workspace:0.14.5
+      '@visactor/react-vrender': workspace:0.12.21
+      '@visactor/vrender': workspace:0.14.7
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -186,7 +186,7 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
-      '@visactor/vrender': workspace:0.14.5
+      '@visactor/vrender': workspace:0.14.7
       '@visactor/vscale': ~0.15.5
       '@visactor/vutils': ~0.15.5
       eslint: ~8.18.0
@@ -226,7 +226,7 @@ importers:
       '@types/node-fetch': 2.6.4
       '@types/react': 16.9.49
       '@types/react-dom': 16.9.8
-      '@visactor/vrender': workspace:0.14.5
+      '@visactor/vrender': workspace:0.14.7
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
@@ -310,8 +310,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/node': '*'
       '@types/node-fetch': 2.6.4
-      '@visactor/vrender': workspace:0.14.5
-      '@visactor/vrender-components': workspace:0.14.5
+      '@visactor/vrender': workspace:0.14.7
+      '@visactor/vrender-components': workspace:0.14.7
       eslint: ~8.18.0
       form-data: ~4.0.0
       node-fetch: 2.6.6
@@ -572,7 +572,7 @@ packages:
       '@babel/helper-compilation-targets': 7.22.10
       '@babel/helper-module-transforms': 7.22.9_@babel+core@7.20.12
       '@babel/helpers': 7.22.11
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.11
       '@babel/types': 7.22.11
@@ -807,8 +807,8 @@ packages:
       chalk: 2.4.2
       js-tokens: 4.0.0
 
-  /@babel/parser/7.22.13:
-    resolution: {integrity: sha512-3l6+4YOvc9wx7VlCSw4yQfcBo01ECA8TicQfbnCPuCEpRQrf+gTUyGdxNw+pyTUyywp6JRD1w0YQs9TpBXYlkw==}
+  /@babel/parser/7.22.14:
+    resolution: {integrity: sha512-1KucTHgOvaw/LzCVrEOAyXkr9rQlp0A1HiHRYnSUE9dmb8PvPW7o5sscg+5169r54n3vGlbx6GevTE/Iw/P3AQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -1795,7 +1795,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.22.13
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/types': 7.22.11
 
   /@babel/traverse/7.22.11:
@@ -1808,7 +1808,7 @@ packages:
       '@babel/helper-function-name': 7.22.5
       '@babel/helper-hoist-variables': 7.22.5
       '@babel/helper-split-export-declaration': 7.22.6
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/types': 7.22.11
       debug: 4.3.4
       globals: 11.12.0
@@ -2645,7 +2645,7 @@ packages:
   /@types/babel__core/7.20.0:
     resolution: {integrity: sha512-+n8dL/9GWblDO0iU6eZAwEIJVr5DWigtle+Q6HLOrh/pdbXOhOtqzq8VPPE2zvNJzSKY4vH/z3iT3tn0A3ypiQ==}
     dependencies:
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/types': 7.22.11
       '@types/babel__generator': 7.6.4
       '@types/babel__template': 7.4.1
@@ -2659,7 +2659,7 @@ packages:
   /@types/babel__template/7.4.1:
     resolution: {integrity: sha512-azBFKemX6kMg5Io+/rdGT0dkGreboUVR0Cdm3fz9QJWpaQGJRQXl7C+6hOTCZcMll7KFyEQpgbYI2lHdsS4U7g==}
     dependencies:
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/types': 7.22.11
 
   /@types/babel__traverse/7.20.1:
@@ -2889,15 +2889,15 @@ packages:
       '@types/node': 20.5.7
     dev: true
 
-  /@types/undertaker-registry/1.0.1:
-    resolution: {integrity: sha512-Z4TYuEKn9+RbNVk1Ll2SS4x1JeLHecolIbM/a8gveaHsW0Hr+RQMraZACwTO2VD7JvepgA6UO1A1VrbktQrIbQ==}
+  /@types/undertaker-registry/1.0.2:
+    resolution: {integrity: sha512-O9CqcXYnCsHUSd71+hohlhEaP57dThYQQ8/cDwskhTCJ1kA3E5CVaK1sbEnukP2eWlpSgae/8KqgJBw3w/DmoQ==}
     dev: true
 
   /@types/undertaker/1.2.8:
     resolution: {integrity: sha512-gW3PRqCHYpo45XFQHJBhch7L6hytPsIe0QeLujlnFsjHPnXLhJcPdN6a9368d7aIQgH2I/dUTPFBlGeSNA3qOg==}
     dependencies:
       '@types/node': 20.5.7
-      '@types/undertaker-registry': 1.0.1
+      '@types/undertaker-registry': 1.0.2
       async-done: 1.3.2
     dev: true
 
@@ -3530,8 +3530,8 @@ packages:
       postcss: ^8.1.0
     dependencies:
       browserslist: 4.21.10
-      caniuse-lite: 1.0.30001524
-      fraction.js: 4.3.1
+      caniuse-lite: 1.0.30001525
+      fraction.js: 4.3.5
       normalize-range: 0.1.2
       picocolors: 1.0.0
       postcss: 8.4.21
@@ -3821,8 +3821,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
     dependencies:
-      caniuse-lite: 1.0.30001524
-      electron-to-chromium: 1.4.505
+      caniuse-lite: 1.0.30001525
+      electron-to-chromium: 1.4.508
       node-releases: 2.0.13
       update-browserslist-db: 1.0.11_browserslist@4.21.10
 
@@ -3909,8 +3909,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  /caniuse-lite/1.0.30001524:
-    resolution: {integrity: sha512-Jj917pJtYg9HSJBF95HVX3Cdr89JUyLT4IZ8SvM5aDRni95swKgYi3TgYLH5hnGfPE/U1dg6IfZ50UsIlLkwSA==}
+  /caniuse-lite/1.0.30001525:
+    resolution: {integrity: sha512-/3z+wB4icFt3r0USMwxujAqRvaD/B7rvGTsKhbhSQErVrJvkZCLhgNLJxU8MevahQVH6hCU9FsHdNUFbiwmE7Q==}
 
   /canvas/2.11.2:
     resolution: {integrity: sha512-ItanGBMrmRV7Py2Z+Xhs7cT+FNt5K0vPL4p9EZ/UX/Mu7hFbkxSjKF2KVtPwX7UYWp7dRKnrTvReflgrItJbdw==}
@@ -4568,8 +4568,8 @@ packages:
       safer-buffer: 2.1.2
     dev: true
 
-  /electron-to-chromium/1.4.505:
-    resolution: {integrity: sha512-0A50eL5BCCKdxig2SsCXhpuztnB9PfUgRMojj5tMvt8O54lbwz3t6wNgnpiTRosw5QjlJB7ixhVyeg8daLQwSQ==}
+  /electron-to-chromium/1.4.508:
+    resolution: {integrity: sha512-FFa8QKjQK/A5QuFr2167myhMesGrhlOBD+3cYNxO9/S4XzHEXesyTD/1/xF644gC8buFPz3ca6G1LOQD0tZrrg==}
 
   /electron/11.5.0:
     resolution: {integrity: sha512-WjNDd6lGpxyiNjE3LhnFCAk/D9GIj1rU3GSDealVShhkkkPR3Vh4q8ErXGDl1OAO/faomVa10KoFPUN/pLbNxg==}
@@ -5520,8 +5520,8 @@ packages:
       mime-types: 2.1.35
     dev: true
 
-  /fraction.js/4.3.1:
-    resolution: {integrity: sha512-nx0cki48JBA6ThPeUpeKCNpdhEl/9bRS+dAEYnRUod+Z1jhFfC3K/mBLorZZntqHM+GTH3/dkkpfoT3QITYe7g==}
+  /fraction.js/4.3.5:
+    resolution: {integrity: sha512-58DncB2bO/8ZvTHapG7U2KEbeFFyUbbrFFkHakecpdUSqJrQnEuBeTUPEggIVkx5cnugZJ4IVzk2Nbb32MOxBg==}
     dev: false
 
   /fragment-cache/0.2.1:
@@ -6535,7 +6535,7 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       '@babel/generator': 7.21.1
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@babel/template': 7.22.5
       '@babel/traverse': 7.22.11
       '@babel/types': 7.22.11
@@ -6561,7 +6561,7 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       '@babel/core': 7.20.12
-      '@babel/parser': 7.22.13
+      '@babel/parser': 7.22.14
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.0
       semver: 6.3.1
@@ -8248,8 +8248,8 @@ packages:
       es-abstract: 1.22.1
     dev: false
 
-  /object.getownpropertydescriptors/2.1.6:
-    resolution: {integrity: sha512-lq+61g26E/BgHv0ZTFgRvi7NMEPuAxLkFU7rukXjc/AlwH4Am5xXVnIXy3un1bg/JPbXHrixRkK1itUzzPiIjQ==}
+  /object.getownpropertydescriptors/2.1.7:
+    resolution: {integrity: sha512-PrJz0C2xJ58FNn11XV2lr4Jt5Gzl94qpy9Lu0JlfEj14z88sqbSBJCBEzdlNUCzY2gburhbrwOZ5BHCmuNUy0g==}
     engines: {node: '>= 0.8'}
     dependencies:
       array.prototype.reduce: 1.0.6
@@ -10380,7 +10380,7 @@ packages:
       for-each: 0.3.3
       has-proto: 1.0.1
       has-symbols: 1.0.3
-      object.getownpropertydescriptors: 2.1.6
+      object.getownpropertydescriptors: 2.1.7
       safe-array-concat: 1.0.0
     dev: true
 

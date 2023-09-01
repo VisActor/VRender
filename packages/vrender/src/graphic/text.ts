@@ -8,7 +8,6 @@ import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { TextDirection, verticalLayout } from './tools';
-import { vglobal } from '../modules';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -204,7 +203,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
     const dx = textDrawOffsetX(textAlign, width);
     let lh = lineHeight;
-    if (vglobal.isSafari()) {
+    if (application.global && application.global.isSafari()) {
       // 如果是safari，那么需要额外增加高度
       lh += fontSize * 0.2;
     }

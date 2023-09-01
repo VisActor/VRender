@@ -12,7 +12,8 @@ import {
   isValidNumber,
   isValid,
   normalizePadding,
-  mixin
+  mixin,
+  last as peek
 } from '@visactor/vutils';
 import type { TextAlignType } from '@visactor/vrender';
 // eslint-disable-next-line no-duplicate-imports
@@ -305,6 +306,99 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
+    const { flush = false } = this.attribute.label || {};
+    if (flush) {
+      // 首尾标签向内偏移
+      const { orient, start, end } = this.attribute;
+      const isX = orient === 'bottom' || orient === 'top';
+      const first = labelShapes[0];
+      const last = peek(labelShapes);
+      const isInverse = isX ? first.attribute.x > last.attribute.x : first.attribute.y < last.attribute.y;
+
+      if (isX) {
+        const width = Math.abs(start.x - end.x);
+        if (isInverse) {
+          const start = width;
+          const end = 0;
+          const startBound = first.AABBBounds.x2;
+          const endBound = last.AABBBounds.x1;
+
+          if (startBound > start) {
+            first.setAttributes({
+              x: start,
+              textAlign: 'right'
+            });
+          }
+
+          if (endBound < end) {
+            last.setAttributes({
+              x: end,
+              textAlign: 'left'
+            });
+          }
+        } else {
+          const start = 0;
+          const end = width;
+          const startBound = first.AABBBounds.x1;
+          const endBound = last.AABBBounds.x2;
+          if (startBound < start) {
+            first.setAttributes({
+              x: start,
+              textAlign: 'left'
+            });
+          }
+
+          if (endBound > end) {
+            last.setAttributes({
+              x: end,
+              textAlign: 'right'
+            });
+          }
+        }
+      } else {
+        const height = Math.abs(start.y - end.y);
+        if (isInverse) {
+          const startBound = first.AABBBounds.y1;
+          const endBound = last.AABBBounds.y2;
+          const start = 0;
+          const end = height;
+
+          if (startBound < start) {
+            first.setAttributes({
+              y: start,
+              textBaseline: 'top'
+            });
+          }
+
+          if (endBound > end) {
+            last.setAttributes({
+              y: end,
+              textBaseline: 'bottom'
+            });
+          }
+        } else {
+          const start = height;
+          const end = 0;
+          const startBound = first.AABBBounds.y2;
+          const endBound = last.AABBBounds.y1;
+
+          if (startBound > start) {
+            first.setAttributes({
+              y: start,
+              textBaseline: 'bottom'
+            });
+          }
+
+          if (endBound < end) {
+            last.setAttributes({
+              y: end,
+              textBaseline: 'top'
+            });
+          }
+        }
+      }
+    }
+
     return;
   }
   protected handleLabelsOverlap(

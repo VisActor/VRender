@@ -85,7 +85,6 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
-  graphics.push(tt);
   const circle = createCircle({
     x: 500,
     y: 200,
@@ -107,6 +106,11 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true
+  });
+
+  window.visualViewport.addEventListener('resize', e => {
+    console.log(e.currentTarget.scale);
+    stage.setDpr(e.currentTarget.scale * window.devicePixelRatio);
   });
 
   graphics.forEach(g => {

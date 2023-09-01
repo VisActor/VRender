@@ -9,7 +9,8 @@ import {
   createPath,
   createArc,
   createArea,
-  createCircle
+  createCircle,
+  createPolygon
 } from '@visactor/vrender';
 
 import { array } from '@visactor/vutils';
@@ -73,5 +74,7 @@ export function _add(group, json) {
     group.add(createArea(json.attribute));
   } else if (json.type === 'circle') {
     group.add(createCircle(json.attribute));
+  } else if (json.type === 'polygon') {
+    group.add(createPolygon(json.attribute));
   }
 }

@@ -715,11 +715,13 @@ export class Stage extends Group implements IStage {
     });
     isRerender && this.render();
   }
-  setDpr(dpr: number): void {
+  setDpr(dpr: number, rerender: boolean = true): void {
     // this.window.setDpr(dpr);
     this.forEachChildren<ILayer>(c => {
       c.setDpr(dpr);
     });
+
+    rerender && this.render();
   }
   setOrigin(x: number, y: number): void {
     throw new Error('暂不支持');

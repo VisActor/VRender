@@ -103,6 +103,7 @@ export interface ILayerHandlerContribution extends Releaseable {
   init: (layer: ILayer, window: IWindow, params: ILayerHandlerInitParams) => void;
   resize: (w: number, h: number) => void;
   resizeView: (w: number, h: number) => void;
+  setDpr: (dpr: number) => void;
   render: (group: IGroup[], params: ILayerHandlerDrawParams, userParams?: Partial<IDrawContext>) => void;
   prepare: (dirtyBounds: IBoundsLike, params: IRenderServiceDrawParams) => void;
   drawTo: (target: IWindow, group: IGroup[], params: IDrawToParams & ILayerHandlerDrawParams) => void;

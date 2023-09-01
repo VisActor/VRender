@@ -1,6 +1,5 @@
 import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
-import type { ITextGraphicAttribute } from '@visactor/vrender';
 import type { SymbolLabelAttrs } from './type';
 import { LabelBase } from './base';
 

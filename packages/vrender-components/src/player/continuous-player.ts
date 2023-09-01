@@ -130,7 +130,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
       this._activeIndex = index;
 
       if (index !== this._maxIndex) {
-        this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+        this.dispatchCustomEvent(PlayerEventEnum.change);
       }
     }
   };
@@ -161,7 +161,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 此时此刻减去已流逝的时间, 则为起点对应的时间戳.
     this._startTime = Date.now() - this._elapsed;
     // 事件
-    this.dispatchCustomEvent(PlayerEventEnum.OnPlay);
+    this.dispatchCustomEvent(PlayerEventEnum.play);
     // 开始播放动画
     this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this));
   };
@@ -198,7 +198,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 切换按钮
     this._controller.togglePlay();
     // 事件
-    this.dispatchCustomEvent(PlayerEventEnum.OnEnd);
+    this.dispatchCustomEvent(PlayerEventEnum.end);
   };
 
   /**
@@ -214,7 +214,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnPause);
+    this.dispatchCustomEvent(PlayerEventEnum.pause);
   };
 
   /**
@@ -241,7 +241,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 更新slider
     this._updateSlider();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnBackward);
+    this.dispatchCustomEvent(PlayerEventEnum.backward);
   };
 
   /**
@@ -267,7 +267,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 更新slider
     this._updateSlider();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnForward);
+    this.dispatchCustomEvent(PlayerEventEnum.forward);
   };
 
   render() {

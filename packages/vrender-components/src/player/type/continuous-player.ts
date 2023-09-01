@@ -1,5 +1,5 @@
-import { BasePlayerAttributes } from './base';
-import { BasePlayerLayoutAttributes } from './layout';
+import type { BasePlayerAttributes } from './base';
+import type { BasePlayerLayoutAttributes } from './layout';
 
 export type ContinuousPlayerAttributes = {
   /**

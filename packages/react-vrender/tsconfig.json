@@ -2,9 +2,15 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react",
-    "jsx": "react",
     "baseUrl": ".",
-    "outDir": "output"
+    "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../vrender"
+    }
+  ]
 }

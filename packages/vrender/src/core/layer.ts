@@ -181,7 +181,7 @@ export class Layer extends Group implements ILayer {
     this.layerHandler.resizeView(w, h);
   }
   setDpr(dpr: number) {
-    throw new Error('暂不支持');
+    this.layerHandler.setDpr(dpr);
   }
   afterDraw(cb: (l: this) => void) {
     this.afterDrawCbs.push(cb);

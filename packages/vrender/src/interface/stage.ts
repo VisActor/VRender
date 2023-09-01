@@ -147,7 +147,7 @@ export interface IStage extends INode {
     | ((viewBox: IBoundsLike, rerender: boolean) => void)
     | ((x: number, y: number, w: number, h: number, rerender: boolean) => void)
     | ((x: number | IBoundsLike, y: number | boolean, w?: number, h?: number, rerender?: boolean) => void);
-  setDpr: (dpr: number) => void;
+  setDpr: (dpr: number, rerender?: boolean) => void;
   setOrigin: (x: number, y: number) => void;
   export: (type: IExportType) => HTMLCanvasElement | ImageData;
   pick: (x: number, y: number) => { graphic: IGraphic | null; group: IGroup | null } | false;

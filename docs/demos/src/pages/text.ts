@@ -108,6 +108,11 @@ export const page = () => {
     autoRender: true
   });
 
+  window.visualViewport.addEventListener('resize', e => {
+    console.log(e.currentTarget.scale);
+    stage.setDpr(e.currentTarget.scale * window.devicePixelRatio);
+  });
+
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });

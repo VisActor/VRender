@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 01 Sep 2023 02:42:47 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Sep 2023 03:55:49 GMT and should not be manually modified.
+
+## 0.13.13
+Mon, 04 Sep 2023 03:55:49 GMT
+
+### Patches
+
+- feat: poptip support formatMethod
 
 ## 0.13.12
 Fri, 01 Sep 2023 02:42:47 GMT

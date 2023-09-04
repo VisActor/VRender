@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.13.13",
+      "tag": "@visactor/vrender_v0.13.13",
+      "date": "Mon, 04 Sep 2023 03:55:49 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: poptip support formatMethod"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.13.12",
       "tag": "@visactor/vrender_v0.13.12",
       "date": "Fri, 01 Sep 2023 02:42:47 GMT",

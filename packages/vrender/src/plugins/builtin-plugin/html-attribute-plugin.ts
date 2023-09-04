@@ -48,6 +48,13 @@ export class HtmlAttributePlugin implements IPlugin {
   renderGraphicHTML(graphic: IGraphic) {
     const { html } = graphic.attribute;
     if (!html) {
+      if (graphic.bindDom && graphic.bindDom.size) {
+        // 删除dom
+        graphic.bindDom.forEach(item => {
+          item.dom && item.dom.parentElement.removeChild(item.dom);
+        });
+        graphic.bindDom.clear();
+      }
       return;
     }
     const stage = graphic.stage;
@@ -99,6 +106,7 @@ export class HtmlAttributePlugin implements IPlugin {
     // 定位wrapGroup
     if (!wrapGroup.style.position) {
       wrapGroup.style.position = 'absolute';
+      nativeContainer.style.position = 'relative';
     }
     let left: number = 0;
     let top: number = 0;
@@ -111,7 +119,14 @@ export class HtmlAttributePlugin implements IPlugin {
       left = b.x1;
       top = b.y1;
     }
-    wrapGroup.style.left = `${left}px`;
-    wrapGroup.style.top = `${top}px`;
+    // 查看wrapGroup的位置
+    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
+    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
+    const windowTL = stage.window.getTopLeft(false);
+    const offsetX = left + windowTL.left - containerTL.left;
+    const offsetTop = top + windowTL.top - containerTL.top;
+    // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
+    wrapGroup.style.left = `${offsetX}px`;
+    wrapGroup.style.top = `${offsetTop}px`;
   }
 }

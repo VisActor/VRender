@@ -65,6 +65,8 @@ export interface IWindow
   isVisible: (bbox?: IBoundsLike) => boolean;
 
   onVisibleChange: (cb: (currentVisible: boolean) => void) => void;
+
+  getTopLeft: (baseWindow?: boolean) => { top: number; left: number };
 }
 
 export interface IWindowHandlerContribution
@@ -96,4 +98,5 @@ export interface IWindowHandlerContribution
   isVisible: (bbox?: IBoundsLike) => boolean;
 
   onVisibleChange: (cb: (currentVisible: boolean) => void) => void;
+  getTopLeft: (baseWindow?: boolean) => { top: number; left: number };
 }

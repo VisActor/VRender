@@ -300,4 +300,8 @@ export class BrowserWindowHandlerContribution
   onVisibleChange(cb: (currentVisible: boolean) => void) {
     this._onVisibleChangeCb = cb;
   }
+
+  getTopLeft(baseWindow?: boolean): { top: number; left: number } {
+    return this.global.getElementTopLeft(this.canvas.nativeCanvas, baseWindow);
+  }
 }

@@ -336,4 +336,23 @@ export class DefaultGlobal implements IGlobal {
     }
     return this.envContribution.createDom(params);
   }
+
+  getElementTop(dom: any, baseWindow: boolean = false): number {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementTop(dom, baseWindow);
+  }
+  getElementLeft(dom: any, baseWindow: boolean = false): number {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementLeft(dom, baseWindow);
+  }
+  getElementTopLeft(dom: any, baseWindow: boolean = false): { top: number; left: number } {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementTopLeft(dom, baseWindow);
+  }
 }

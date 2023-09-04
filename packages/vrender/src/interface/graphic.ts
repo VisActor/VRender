@@ -195,6 +195,8 @@ export type IGraphicStyle = IFillStyle &
     html: {
       dom: string | HTMLElement; // dom字符串或者dom
       container: string | HTMLElement | null; // id或者dom
+      type: 'native' | 'react' | 'vue';
+      params: any;
       width: number; // 容器的宽度
       height: number; // 容器的高度
       style: string | Record<string, any>; // 容器的样式

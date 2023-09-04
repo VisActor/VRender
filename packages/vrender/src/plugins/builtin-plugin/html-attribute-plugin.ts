@@ -51,7 +51,7 @@ export class HtmlAttributePlugin implements IPlugin {
       if (graphic.bindDom && graphic.bindDom.size) {
         // 删除dom
         graphic.bindDom.forEach(item => {
-          item.dom && item.dom.parentElement.removeChild(item.dom);
+          application.global.removeDom(item.wrapGroup);
         });
         graphic.bindDom.clear();
       }
@@ -61,7 +61,7 @@ export class HtmlAttributePlugin implements IPlugin {
     if (!stage) {
       return;
     }
-    const { dom, container, width, height, style, anchorType = 'boundsLeftTop' } = html;
+    const { dom, container, width, height, style, anchorType = 'boundsLeftTop', type = 'native', params } = html;
     if (!graphic.bindDom) {
       graphic.bindDom = new Map();
     }
@@ -98,8 +98,9 @@ export class HtmlAttributePlugin implements IPlugin {
     // 创建wrapGroup
     const wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
     if (wrapGroup) {
-      wrapGroup.appendChild(nativeDom);
       graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
+    } else {
+      return;
     }
     // 事件穿透
     wrapGroup.style.pointerEvents = 'none';
@@ -128,5 +129,27 @@ export class HtmlAttributePlugin implements IPlugin {
     // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
     wrapGroup.style.left = `${offsetX}px`;
     wrapGroup.style.top = `${offsetTop}px`;
+
+    if (type === 'native') {
+      wrapGroup.appendChild(nativeDom);
+    } else if (type === 'react') {
+      if (params.ReactDOM) {
+        params.ReactDOM.render(nativeDom, wrapGroup);
+      } else {
+        application.global.removeDom(wrapGroup);
+        graphic.bindDom.delete(dom);
+      }
+    } else if (type === 'vue') {
+      if (params.createApp) {
+        wrapGroup.id = Math.random() + '';
+        params.createApp({
+          el: wrapGroup.id,
+          render: (h: any) => h(nativeDom)
+        });
+      } else {
+        application.global.removeDom(wrapGroup);
+        graphic.bindDom.delete(dom);
+      }
+    }
   }
 }

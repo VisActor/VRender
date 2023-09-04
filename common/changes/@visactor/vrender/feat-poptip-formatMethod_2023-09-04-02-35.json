@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: poptip support formatMethod",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

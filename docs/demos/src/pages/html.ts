@@ -47,12 +47,17 @@ export const page = () => {
       textureColor: 'red'
     });
     symbol.addEventListener('mouseenter', () => {
-      symbol.setAttribute('fill', 'blue');
-      symbol.setAttribute('html', {
-        dom: '<div xmlns="http://www.w3.org/1999/xhtml">被hover了</div>',
-        width: 60,
-        height: 60
-      });
+      if (Math.random() > 0.5) {
+        symbol.setAttribute('fill', 'blue');
+        symbol.setAttribute('html', {
+          dom: '<div xmlns="http://www.w3.org/1999/xhtml">被hover了</div>',
+          width: 60,
+          height: 60
+        });
+      } else {
+        symbol.setAttribute('fill', 'green');
+        symbol.setAttribute('html', null);
+      }
     });
     graphics.push(symbol);
   });
@@ -60,7 +65,7 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
-    enableHtmlAttribute: document.body
+    enableHtmlAttribute: true
   });
 
   graphics.forEach(g => {

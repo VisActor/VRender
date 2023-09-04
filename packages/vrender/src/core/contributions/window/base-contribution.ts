@@ -12,7 +12,7 @@ import type {
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
 
-type OnchangeCbType = (params: { x: number; y: number; width: number; height: number }) => void;
+type OnchangeCbType = (params?: { x?: number; y?: number; width?: number; height?: number }) => void;
 
 @injectable()
 export abstract class BaseWindowHandlerContribution implements IWindowHandlerContribution {
@@ -81,5 +81,12 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
 
   onVisibleChange(cb: (currentVisible: boolean) => void) {
     return;
+  }
+
+  getTopLeft(baseWindow?: boolean): { top: number; left: number } {
+    return {
+      top: 0,
+      left: 0
+    };
   }
 }

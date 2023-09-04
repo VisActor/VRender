@@ -48,6 +48,9 @@ export interface IEnvContribution
   getNativeAABBBounds: (dom: string | HTMLElement | any) => IAABBBoundsLike;
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+  getElementTop: (dom: any, baseWindow?: boolean) => number;
+  getElementLeft: (dom: any, baseWindow?: boolean) => number;
+  getElementTopLeft: (dom: any, baseWindow?: boolean) => { top: number; left: number };
 
   /**
    * 获取动态canvas的数量，offscreenCanvas或者framebuffer
@@ -255,4 +258,8 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+
+  getElementTop: (dom: any, baseWindow?: boolean) => number;
+  getElementLeft: (dom: any, baseWindow?: boolean) => number;
+  getElementTopLeft: (dom: any, baseWindow?: boolean) => { top: number; left: number };
 }

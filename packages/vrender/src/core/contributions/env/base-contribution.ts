@@ -168,4 +168,14 @@ export abstract class BaseEnvContribution implements IEnvContribution {
         };
       });
   }
+
+  getElementTop(dom: any, baseWindow?: boolean) {
+    return 0;
+  }
+  getElementLeft(dom: any, baseWindow?: boolean) {
+    return 0;
+  }
+  getElementTopLeft(dom: any, baseWindow?: boolean): { top: number; left: number } {
+    return { top: 0, left: 0 };
+  }
 }

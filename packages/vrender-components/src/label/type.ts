@@ -319,10 +319,6 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
 }
 
 export interface IArcLabelLineSpec {
-  /** 引导线线宽 */
-  lineWidth?: number;
-  /** 引导线颜色 */
-  stroke?: string;
   /**
    * 是否显示引导线
    * @default true
@@ -338,6 +334,15 @@ export interface IArcLabelLineSpec {
    * @default 10
    */
   line2MinLength?: number;
+  /** 引导线线宽 */
+  lineWidth?: number;
+  /** 引导线颜色 */
+  stroke?: string;
+  /**
+   * 引导线是否光滑
+   * @default false
+   */
+  smooth?: boolean;
 }
 
 export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';

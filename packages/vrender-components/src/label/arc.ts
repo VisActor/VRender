@@ -1,7 +1,7 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
-import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem } from './type';
+import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
 import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender';
 import {
   circlePoint,
@@ -34,6 +34,7 @@ export class ArcInfo {
   pointA: IPoint;
   pointB: IPoint;
   pointC: IPoint;
+  labelLine: IArcLabelLineSpec;
   /**
    * 象限
    */
@@ -172,7 +173,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         points:
           basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
             ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
-            : undefined
+            : undefined,
+        line: basedArc?.labelLine
       };
 
       labels[i].setAttributes(labelAttribute);
@@ -389,10 +391,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
       arc.angle = attribute?.textStyle?.angle ?? 0;
 
-      // arc.labelLinePath =
-      //   `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
-      //   ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
-      //   ` L${Math.round(arc.pointC.x)},${Math.round(arc.pointC.y)}`;
+      arc.labelLine = {
+        ...attribute?.line
+      };
     });
 
     return arcs;
@@ -893,10 +894,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   protected _labelLine(text: IText) {
     const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
       ? createLine({
-          visible: text.attribute?.visible ?? true,
+          visible:
+            ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
+            text.attribute?.visible ??
+            true,
           stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
           lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
-          points: (text.attribute as ArcLabelAttrs)?.points
+          points: (text.attribute as ArcLabelAttrs)?.points,
+          curveType: (text.attribute as ArcLabelAttrs)?.line?.smooth ? 'basis' : null
         })
       : undefined;
     return labelLine;

@@ -71,6 +71,7 @@ export function run() {
         y: 100,
         poptip: {
           position: 'auto',
+          contentFormatMethod: t => t + '=========aaa=====',
           panel: {
             size: 0,
             space: 12

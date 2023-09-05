@@ -8,7 +8,6 @@ import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { TextDirection, verticalLayout } from './tools';
-import { vglobal } from '../modules';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -68,7 +67,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
-    return this.clipedText !== attribute.text;
+    return this.clipedText !== attribute.text.toString();
   }
   get multilineLayout(): LayoutType | undefined {
     if (!Array.isArray(this.attribute.text)) {
@@ -165,7 +164,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
     if (!this.shouldUpdateShape() && this.cache) {
-      width = this.cache.clipedWidth;
+      width = this.cache.clipedWidth ?? 0;
       const dx = textDrawOffsetX(textAlign, width);
       const dy = textLayoutOffsetY(textBaseline, lineHeight, fontSize);
       this._AABBBounds.set(dx, dy, dx + width, dy + lineHeight);
@@ -183,17 +182,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          wordBreak === 'break-word'
+          false
         );
         str = data.str;
         width = data.width;
       } else {
-        const data = textMeasure.clipText(
-          text.toString(),
-          { fontSize, fontWeight, fontFamily },
-          maxLineWidth,
-          wordBreak === 'break-word'
-        );
+        const data = textMeasure.clipText(text.toString(), { fontSize, fontWeight, fontFamily }, maxLineWidth, false);
         str = data.str;
         width = data.width;
       }
@@ -209,7 +203,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
     const dx = textDrawOffsetX(textAlign, width);
     let lh = lineHeight;
-    if (vglobal.isSafari()) {
+    if (application.global && application.global.isSafari()) {
       // 如果是safari，那么需要额外增加高度
       lh += fontSize * 0.2;
     }
@@ -270,7 +264,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          wordBreak === 'break-word'
+          false
         );
         verticalList = [data.verticalList];
         width = data.width;
@@ -279,7 +273,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           verticalList[0],
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
-          wordBreak === 'break-word'
+          false
         );
         verticalList = [data.verticalList];
         width = data.width;
@@ -343,16 +337,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       }
       return this._AABBBounds;
     }
-
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight }, textMeasure);
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
       textAlign,
       textBaseline as any,
       lineHeight,
       ellipsis === true ? (textTheme.ellipsis as string) : ellipsis || undefined,
-      wordBreak === 'break-word',
+      false,
       maxLineWidth
     );
     const { bbox } = layoutData;
@@ -420,7 +413,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             { fontSize, fontWeight, fontFamily },
             maxLineWidth,
             strEllipsis,
-            wordBreak === 'break-word'
+            false
           );
           verticalLists[i] = data.verticalList;
           width = data.width;
@@ -429,7 +422,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             verticalData,
             { fontSize, fontWeight, fontFamily },
             maxLineWidth,
-            wordBreak === 'break-word'
+            false
           );
           verticalLists[i] = data.verticalList;
           width = data.width;

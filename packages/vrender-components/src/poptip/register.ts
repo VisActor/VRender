@@ -6,19 +6,22 @@ import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
 import type { PopTipAttributes } from './type';
 import { DEFAULT_THEME, theme } from './theme';
 
-export const popTipModule = new ContainerModule(bind => {
-  bind(PopTipRenderContribution).toSelf().inSingletonScope();
-  bind(InteractiveSubRenderContribution).toService(PopTipRenderContribution);
-
-  bind(PopTipPlugin).toSelf().inSingletonScope();
-  bind(AutoEnablePlugins).toService(PopTipPlugin);
-
-  bind(PopTipForClipedTextPlugin).toSelf().inSingletonScope();
-  bind(AutoEnablePlugins).toService(PopTipForClipedTextPlugin);
+export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+  if (!isBound(PopTipRenderContribution)) {
+    bind(PopTipRenderContribution).toSelf().inSingletonScope();
+    bind(InteractiveSubRenderContribution).toService(PopTipRenderContribution);
+  }
+  if (!isBound(PopTipPlugin)) {
+    bind(PopTipPlugin).toSelf();
+    bind(AutoEnablePlugins).toService(PopTipPlugin);
+  }
+  if (!isBound(PopTipForClipedTextPlugin)) {
+    bind(PopTipForClipedTextPlugin).toSelf();
+    bind(AutoEnablePlugins).toService(PopTipForClipedTextPlugin);
+  }
 });
 
-export function loadPoptip(defaultPoptipTheme: PopTipAttributes) {
-  merge(theme.poptip, defaultPoptipTheme);
+export function loadPoptip() {
   container.load(popTipModule);
 }
 

@@ -71,7 +71,7 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   dataFilter?: (data: LabelItem[]) => LabelItem[];
 
   /** 自定义布局函数
-   * @description 当配置了 customLayoutFunc 后，默认布局和防重叠逻辑将不再生效。（overlap/position/offset不生效）
+   * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
   customLayoutFunc?: (data: LabelItem[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
 
@@ -115,6 +115,12 @@ export interface OverlapAttrs {
    * 发生重叠后的躲避策略
    */
   strategy?: Strategy[];
+
+  /**
+   * 文字在防重叠计算中预留的边距。
+   * @default 0
+   */
+  overlapPadding?: number;
 }
 
 export interface SmartInvertAttrs {
@@ -223,12 +229,6 @@ export interface SymbolLabelAttrs extends BaseLabelAttrs {
 
 export interface RectLabelAttrs extends BaseLabelAttrs {
   type: 'rect';
-
-  /**
-   *  图元 group 名称
-   */
-  baseMarkGroupName: string;
-
   /**
    * 标签位置
    * @default 'top'
@@ -240,17 +240,20 @@ export interface RectLabelAttrs extends BaseLabelAttrs {
 
 export interface LineLabelAttrs extends BaseLabelAttrs {
   type: 'line';
-
-  /**
-   *  图元 group 名称
-   */
-  baseMarkGroupName: string;
-
   /**
    * 标签位置
    * @default 'end'
    */
   position?: Functional<'start' | 'end'>;
+}
+
+export interface PolygonLabelAttrs extends BaseLabelAttrs {
+  type: 'polygon';
+  /**
+   * 标签位置
+   * @default 'center'
+   */
+  position?: Functional<'center'>;
 }
 
 export interface ArcLabelAttrs extends BaseLabelAttrs {

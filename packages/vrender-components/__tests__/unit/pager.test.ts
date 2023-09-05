@@ -11,7 +11,7 @@ describe('Pager', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
   it('Pager in horizontal should be render correctly', () => {
     const pager = new Pager({
@@ -36,7 +36,7 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeTruthy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(82.681640625);
+    expect(pager.AABBBounds.width()).toBeCloseTo(86.39999389648438);
     expect(pager.AABBBounds.height()).toBeCloseTo(35);
   });
 

@@ -127,8 +127,8 @@ function createContent(stage: Stage) {
     type: 'symbol',
     animation: false,
     overlap: {
-      enable: overlap,
       avoidBaseMark,
+      overlapPadding: 10,
       size: { width: 500, height: 500 },
       strategy: [
         {

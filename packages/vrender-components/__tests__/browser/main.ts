@@ -3,6 +3,10 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'grid',
+    name: '坐标轴网格线'
+  },
+  {
     path: 'axis-interaction',
     name: '轴交互'
   },
@@ -65,6 +69,10 @@ const specs = [
   {
     path: 'label-arc',
     name: 'arc 数据标签'
+  },
+  {
+    path: 'label-polygon',
+    name: 'polygon 数据标签'
   },
   {
     path: 'label-multi-mark',

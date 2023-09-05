@@ -283,4 +283,43 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
   release(...params: any): void {
     return;
   }
+
+  getElementTop(element: HTMLElement, baseWindow?: boolean) {
+    let actualTop = element.offsetTop;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualTop += current.offsetTop;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return actualTop;
+  }
+  getElementLeft(element: HTMLElement, baseWindow?: boolean) {
+    let actualLeft = element.offsetLeft;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualLeft += current.offsetLeft;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return actualLeft;
+  }
+  getElementTopLeft(element: HTMLElement, baseWindow?: boolean): { top: number; left: number } {
+    let actualTop = element.offsetTop;
+    let actualLeft = element.offsetLeft;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualTop += current.offsetTop;
+      actualLeft += current.offsetLeft;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return {
+      top: actualTop,
+      left: actualLeft
+    };
+  }
 }

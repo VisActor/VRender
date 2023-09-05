@@ -89,18 +89,6 @@ describe('Auto Limit', () => {
           strokeOpacity: 1
         }
       },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: []
-        },
-        visible: true,
-        length: 306,
-        type: 'line',
-        depth: 0
-      },
 
       x: 210,
       y: 12,

@@ -222,7 +222,8 @@ export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   segments: [],
   curveType: 'linear',
   clipRange: 1,
-  clipRangeByDimension: 'default'
+  clipRangeByDimension: 'default',
+  closePath: false
 };
 
 export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {

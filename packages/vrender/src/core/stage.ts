@@ -571,6 +571,7 @@ export class Stage extends Group implements IStage {
     if (this.supportInteractiveLayer && !this.interactiveLayer) {
       this.interactiveLayer = this.createLayer();
       this.interactiveLayer.name = '_builtin_interactive';
+      this.nextFrameRenderLayerSet.add(this.interactiveLayer as any); // to be fixed
     }
     // this.interactiveLayer.afterDraw(l => {
     //   l.removeAllChild();

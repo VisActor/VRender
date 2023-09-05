@@ -40,8 +40,11 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
         return;
       }
       const attribute = {};
-      (graphic.attribute as any).poptip &&
-        merge(attribute, PopTip.defaultAttributes, (graphic.attribute as any).poptip);
+      merge(
+        attribute,
+        PopTip.defaultAttributes,
+        (graphic.attribute as any).poptip ? (graphic.attribute as any).poptip : {}
+      );
       if (!this.poptipComponent) {
         this.poptipComponent = new PopTip(attribute);
       } else {

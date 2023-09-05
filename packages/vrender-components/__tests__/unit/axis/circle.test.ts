@@ -1,14 +1,16 @@
 import { BandScale } from '@visactor/vscale';
-import { IGraphic, Stage, Group, Circle, Text, IGroup } from '@visactor/vrender';
-import { Grid, CircleAxis } from '../../../src';
+import type { IGraphic, Stage, Group, Circle, Text } from '@visactor/vrender';
+import { IGroup } from '@visactor/vrender';
+import { CircleAxis, CircleAxisGrid } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
-import { Tag } from '../../../src/tag/tag';
+import type { Tag } from '../../../src/tag/tag';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
 
 describe('Circle Axis', () => {
   let stage: Stage;
   let axis: CircleAxis;
+  let grid: CircleAxisGrid;
   beforeAll(() => {
     createCanvas(document.body, 'main');
     stage = createStage('main');
@@ -38,19 +40,25 @@ describe('Circle Axis', () => {
       title: {
         visible: true,
         text: '我是标题'
+      }
+    });
+    grid = new CircleAxisGrid({
+      center: {
+        x: 250,
+        y: 250
       },
-      grid: {
-        type: 'line',
-        visible: true,
-        alternateColor: ['pink', 'purple'],
-        smoothLink: true
-      },
+      radius: 200,
+      innerRadius: 0,
+      items,
+      alternateColor: ['pink', 'purple'],
+      smoothLink: true,
       subGrid: {
         visible: true,
         alternateColor: 'yellow'
       }
     });
     stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
   });
 
@@ -78,14 +86,14 @@ describe('Circle Axis', () => {
     expect(tickLineGroup.children.filter(child => child.name === AXIS_ELEMENT_NAME.subTick)).toHaveLength(32);
 
     // grid
-    const gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    const gridLineGroup = stage.getElementsByName('axis-grid')[0];
     expect(gridLineGroup).toBeDefined();
-    expect(gridLineGroup.attribute.items?.length).toBe(9);
+    expect(grid.getElementsByName('axis-grid-line').length).toBe(9);
 
     // subGrid
-    const subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup).toBeDefined();
-    expect(subGridLineGroup.attribute.items?.length).toBe(41);
+    const subGridLines = grid.getElementsByName('axis-grid-sub-line');
+    // expect(subGridLineGroup).toBeDefined();
+    expect(subGridLines.length).toBe(41);
 
     // title
     const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;

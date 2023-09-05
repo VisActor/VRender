@@ -100,7 +100,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   lineThrough: 0,
   scaleIn3d: false,
   direction: 'horizontal',
-  wordBreak: 'break-all'
+  wordBreak: 'break-all',
+  ignoreBuf: false
 };
 
 export const DefaultStyle: IGraphicStyle = {
@@ -113,6 +114,7 @@ export const DefaultStyle: IGraphicStyle = {
   backgroundMode: 0,
   blur: 0,
   cursor: null,
+  html: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
   ...DefaultLayout
@@ -292,7 +294,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   width: 0,
   height: 0,
   ...DefaultAttribute,
-  fill: true
+  fill: true,
+  cornerRadius: 0
 };
 
 export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribute> = {

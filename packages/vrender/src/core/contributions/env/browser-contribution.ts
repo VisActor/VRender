@@ -1,8 +1,42 @@
 import { injectable } from 'inversify';
 import { Generator } from '../../../common/generator';
-import { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution } from '../../../interface';
+import type {
+  ICanvasLike,
+  EnvType,
+  ICreateCanvasParams,
+  IEnvContribution,
+  CreateDOMParamsType
+} from '../../../interface';
 import { BaseEnvContribution } from './base-contribution';
-import { IPointLike, isValidNumber } from '@visactor/vutils';
+import type { IBoundsLike, IPointLike } from '@visactor/vutils';
+import { AABBBounds, isString, isValidNumber } from '@visactor/vutils';
+
+class DynamicB {
+  get x1(): number {
+    return this.dom.getBoundingClientRect().left;
+  }
+  get x2(): number {
+    return this.dom.getBoundingClientRect().right;
+  }
+  get y1(): number {
+    return this.dom.getBoundingClientRect().top;
+  }
+  get y2(): number {
+    return this.dom.getBoundingClientRect().bottom;
+  }
+  get width(): number {
+    return this.dom.getBoundingClientRect().width;
+  }
+  get height(): number {
+    return this.dom.getBoundingClientRect().height;
+  }
+
+  dom: HTMLElement;
+
+  constructor(dom: HTMLElement) {
+    this.dom = dom;
+  }
+}
 
 export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
   const img = document.createElement('img');
@@ -66,6 +100,52 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
       x: nativeEvent.offsetX,
       y: nativeEvent.offsetY
     };
+  }
+
+  getNativeAABBBounds(_dom: any): IBoundsLike {
+    let dom = _dom;
+    if (typeof _dom === 'string') {
+      dom = new DOMParser().parseFromString(_dom, 'text/xml').firstChild;
+    }
+    if (dom.getBoundingClientRect) {
+      const b = dom.getBoundingClientRect();
+      return new DynamicB(b);
+    }
+    return new AABBBounds();
+  }
+
+  removeDom(dom: HTMLElement): boolean {
+    dom.parentElement.removeChild(dom);
+    return true;
+  }
+
+  createDom(params: CreateDOMParamsType): HTMLElement | null {
+    const { tagName = 'div', width, height, style, parent } = params;
+    const element = document.createElement(tagName);
+    if (style) {
+      if (isString(style)) {
+        element.setAttribute('style', style);
+      } else {
+        Object.keys(style).forEach(k => {
+          element.setAttribute(k, style[k]);
+        });
+      }
+    }
+    if (width != null) {
+      element.style.width = `${width}px`;
+    }
+    if (height != null) {
+      element.style.height = `${height}px`;
+    }
+
+    if (parent) {
+      const pd = isString(parent) ? this.getElementById(parent) : parent;
+      if (pd && pd.appendChild) {
+        pd.appendChild(element);
+      }
+    }
+
+    return element;
   }
 
   loadImage(url: string): Promise<{
@@ -202,5 +282,44 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
 
   release(...params: any): void {
     return;
+  }
+
+  getElementTop(element: HTMLElement, baseWindow?: boolean) {
+    let actualTop = element.offsetTop;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualTop += current.offsetTop;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return actualTop;
+  }
+  getElementLeft(element: HTMLElement, baseWindow?: boolean) {
+    let actualLeft = element.offsetLeft;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualLeft += current.offsetLeft;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return actualLeft;
+  }
+  getElementTopLeft(element: HTMLElement, baseWindow?: boolean): { top: number; left: number } {
+    let actualTop = element.offsetTop;
+    let actualLeft = element.offsetLeft;
+    let current = element.offsetParent as HTMLElement;
+
+    while (current !== null) {
+      actualTop += current.offsetTop;
+      actualLeft += current.offsetLeft;
+      current = current.offsetParent as HTMLElement;
+    }
+
+    return {
+      top: actualTop,
+      left: actualLeft
+    };
   }
 }

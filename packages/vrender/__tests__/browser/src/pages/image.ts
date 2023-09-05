@@ -21,7 +21,8 @@ export const page = () => {
       height: 200,
       image: urlPng,
       repeatX: 'repeat',
-      repeatY: 'repeat'
+      repeatY: 'repeat',
+      cornerRadius: 100
     })
   );
 

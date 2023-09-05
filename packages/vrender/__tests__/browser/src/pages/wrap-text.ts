@@ -13,13 +13,23 @@ export const page = () => {
   group.createOrUpdateChild(
     'wrap-text',
     {
-      text: ['这是abc'],
-      x: 100,
-      y: 100,
-      fill: 'green',
+      fontFamily: 'sans-serif',
+      fontSize: 14,
+      fontWeight: null,
+      wordBreak: 'break-word',
+      fill: '#000',
       textAlign: 'left',
-      textBaseline: 'alphabetic',
-      maxLineWidth: 600
+      textBaseline: 'top',
+      lineHeight: 14,
+      ellipsis: '...',
+      text: ['back-end engineer'],
+      maxLineWidth: 93,
+      // autoWrapText: true,
+      heightLimit: -1,
+      pickable: false,
+      dx: 0,
+      x: 16,
+      y: 10
     },
     'wrapText'
   );
@@ -33,7 +43,8 @@ export const page = () => {
       textAlign: 'left',
       textBaseline: 'alphabetic',
       fill: 'red',
-      maxLineWidth: 600
+      maxLineWidth: 600,
+      background: 'yellow'
     },
     'wrapText'
   );

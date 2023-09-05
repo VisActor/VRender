@@ -50,6 +50,7 @@ export class DefaultRenderService implements IRenderService {
   }
   // 渲染后流程
   afterDraw(params: IRenderServiceDrawParams): void {
+    this.drawContribution.afterDraw && this.drawContribution.afterDraw(this, { ...this.drawParams });
     return;
   }
   // 对外暴露的绘制方法

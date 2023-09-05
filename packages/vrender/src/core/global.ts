@@ -2,6 +2,7 @@ import { inject, injectable, named } from 'inversify';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';
 import type {
+  CreateDOMParamsType,
   EnvType,
   IContributionProvider,
   ICreateCanvasParams,
@@ -12,6 +13,7 @@ import type {
 } from '../interface';
 import { SyncHook } from '../tapable';
 import { EnvContribution } from '../constants';
+import type { IAABBBoundsLike } from '@visactor/vutils';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
@@ -312,5 +314,45 @@ export class DefaultGlobal implements IGlobal {
       this.setEnv('browser');
     }
     return this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+  }
+
+  getNativeAABBBounds(dom: string | HTMLElement | any): IAABBBoundsLike {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getNativeAABBBounds(dom);
+  }
+
+  removeDom(dom: HTMLElement): boolean {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.removeDom(dom);
+  }
+
+  createDom(params: CreateDOMParamsType): HTMLElement | null {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.createDom(params);
+  }
+
+  getElementTop(dom: any, baseWindow: boolean = false): number {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementTop(dom, baseWindow);
+  }
+  getElementLeft(dom: any, baseWindow: boolean = false): number {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementLeft(dom, baseWindow);
+  }
+  getElementTopLeft(dom: any, baseWindow: boolean = false): { top: number; left: number } {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.getElementTopLeft(dom, baseWindow);
   }
 }

@@ -1,5 +1,5 @@
 import { LinearScale, BandScale } from '@visactor/vscale';
-import { LineAxis, CircleAxis, GroupTransition } from '../../../src';
+import { LineAxis, CircleAxis, GroupTransition, LineAxisGrid, CircleAxisGrid } from '../../../src';
 import render from '../../util/render';
 
 const scale = new LinearScale().domain([0, 100]).range([0, 1]).nice();
@@ -63,18 +63,21 @@ const radiusAxis = new LineAxis({
   end: { x: 450, y: 250 },
   items: [items],
   label: {
-    visible: true
-  },
-  grid: {
     visible: true,
-    type: 'circle',
-    center: { x: 250, y: 250 },
-    style: {
-      lineDash: [0]
-    },
-    sides: 8,
-    closed: true
+    autoHide: true
+  }
+});
+const radiusAxisGrid = new LineAxisGrid({
+  start: { x: 350, y: 250 },
+  end: { x: 450, y: 250 },
+  items,
+  type: 'circle',
+  center: { x: 250, y: 250 },
+  style: {
+    lineDash: [0]
   },
+  sides: 8,
+  closed: true,
   subGrid: {
     visible: false,
     style: {
@@ -119,17 +122,6 @@ const angleAxis = new CircleAxis({
       background: stateStyle
     }
   },
-  grid: {
-    type: 'line',
-    visible: true,
-    // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)'],
-    smoothLink: true
-    // alignWithLabel: false
-  },
-  subGrid: {
-    visible: true
-    // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)']
-  },
   hover: true,
   select: true,
   label: {
@@ -138,13 +130,36 @@ const angleAxis = new CircleAxis({
   }
 });
 
-const stage = render([angleAxis], 'main');
+const angleAxisGrid = new CircleAxisGrid({
+  center: {
+    x: 250,
+    y: 250
+  },
+  radius: 200,
+  innerRadius: 100,
+  inside: true,
+  items: xItems,
+  type: 'line',
+  visible: true,
+  // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)'],
+  smoothLink: true,
+  // alignWithLabel: false
+  subGrid: {
+    visible: true
+    // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)']
+  }
+});
+
+const stage = render([angleAxis, radiusAxis, angleAxisGrid, radiusAxisGrid], 'main');
 
 setTimeout(() => {
   angleAxis.setAttributes({
     items: [xItems, nextItems]
   });
+  angleAxisGrid.setAttributes({
+    items: xItems
+  });
   angleAxis.animate().play(new GroupTransition(null, null, 1000, 'linear'));
-}, 1000);
 
-console.log(angleAxis);
+  angleAxisGrid.animate().play(new GroupTransition(null, null, 1000, 'linear'));
+}, 1000);

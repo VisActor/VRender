@@ -53,70 +53,6 @@ export type AxisItem = {
   [key: string]: any;
 };
 
-export type GridItem = {
-  /**
-   * 标识符
-   */
-  id?: string | number;
-  /** 网格线点集合 */
-  points: Point[];
-  [key: string]: any;
-};
-
-// 网格线配置
-export type GridBaseAttributes = {
-  type: 'line' | 'circle' | 'polygon';
-  /**
-   * 网格线绘制点数据
-   */
-  items: GridItem[];
-  /**
-   * 栅格线是否封闭
-   */
-  closed?: boolean;
-  /**
-   * 线样式配置
-   */
-  style?: ILineGraphicAttribute | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  /**
-   * 两个栅格线间的填充色
-   */
-  alternateColor?: string | string[];
-  /**
-   * 网格线的绘图层级
-   */
-  zIndex?: number;
-  /** grid 是否与 label 对齐 */
-  alignWithLabel?: boolean;
-} & IGroupGraphicAttribute;
-
-export type LineGridAttributes = {
-  type: 'line';
-  /**
-   * 当用户配置了 alternateColor 属性时，填充区域是否进行弧线连接
-   */
-  smoothLink?: boolean;
-  center?: Point;
-  /**
-   * 3d网格线的深度
-   */
-  depth?: number;
-} & GridBaseAttributes;
-
-export type PolygonGridAttributes = {
-  type: 'polygon';
-} & GridBaseAttributes;
-
-export type CircleGridAttributes = {
-  type: 'circle';
-  /**
-   * 用于圆弧型网格线的圆心位置声明
-   */
-  center: Point;
-} & GridBaseAttributes;
-
-export type GridAttributes = LineGridAttributes | CircleGridAttributes | PolygonGridAttributes;
-
 export interface AxisBaseAttributes extends IGroupGraphicAttribute {
   /**
    * 是否开启选中交互
@@ -158,69 +94,10 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 轴线配置
    */
   line?: LineAttributes;
-  /**
-   * 网格线配置
-   */
-  grid?: LineAxisGridAttributes | CircleAxisGridAttributes;
-  /**
-   * 子刻度对应网格线配置
-   */
-  subGrid?: SubGridAttributesForAxis;
 }
-
-export type LineGridOfLineAxisAttributes = Omit<LineGridAttributes, 'items'> & {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-  /**
-   * 网格线的长度
-   */
-  length: number;
-};
-
-export type PolarGridOfLineAxisAttributes = (
-  | Omit<PolygonGridAttributes, 'items'>
-  | Omit<CircleGridAttributes, 'items'>
-) & {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-  /**
-   * 圆心
-   */
-  center?: Point;
-  /**
-   * 边数
-   */
-  sides?: number;
-  /**
-   * **弧度值**，起始弧度，默认 -0.5 * Math.PI
-   *
-   */
-  startAngle?: number;
-  /**
-   * **弧度值**，结束弧度，默认 1.5 * Math.PI
-   */
-  endAngle?: number;
-};
-
-export type LineAxisGridAttributes = LineGridOfLineAxisAttributes | PolarGridOfLineAxisAttributes;
-export type SubGridAttributesForAxis = {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-} & Pick<GridBaseAttributes, 'alternateColor' | 'style' | 'zIndex'>;
 
 export interface ILine3dType {
   alpha: number;
-  anchor3d?: [number, number];
-}
-
-export interface IGrid3dType {
-  beta: number;
   anchor3d?: [number, number];
 }
 
@@ -233,10 +110,6 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
    * 结束点坐标
    */
   end: Point;
-  /**
-   * 网格线配置
-   */
-  grid?: LineAxisGridAttributes;
   /**
    * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
    * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
@@ -286,14 +159,6 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   };
 }
 
-export interface CircleAxisGridAttributes extends Omit<LineGridAttributes, 'items'> {
-  type: 'line';
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-}
-
 export interface CircleAxisAttributes extends AxisBaseAttributes {
   /**
    * 当配置了 innerRadius 时，可以通过设置 inside: true，将坐标轴战士在内圆半径上。
@@ -319,10 +184,6 @@ export interface CircleAxisAttributes extends AxisBaseAttributes {
   radius: number;
   /** 内半径 */
   innerRadius?: number;
-  /**
-   * 网格线配置
-   */
-  grid?: CircleAxisGridAttributes;
 }
 
 // 坐标轴标题配置

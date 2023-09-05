@@ -171,17 +171,36 @@ export type IConnectedStyle = {
   connectedY: number;
 };
 
+export type IBackgroundConfig = {
+  stroke?: string | boolean;
+  fill?: string | boolean;
+  lineWidth?: number;
+  cornerRadius?: number;
+  expandX?: number;
+  expandY?: number;
+};
+
 export type IGraphicStyle = IFillStyle &
   IStrokeStyle & {
     opacity: number;
     backgroundMode: number; // 填充模式（与具体图元有关）
-    background: string | HTMLImageElement | HTMLCanvasElement | null; // 背景，可以与fill同时存在
+    background: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig | null; // 背景，可以与fill同时存在
     texture: TextureType | string; // 纹理
     textureColor: string; // 纹理颜色
     textureSize: number; // 纹理大小
     texturePadding: number; // 纹理间隙
     blur: number;
     cursor: Cursor | null; // 鼠标样式
+    // HTML的dom或者string
+    html: {
+      dom: string | HTMLElement; // dom字符串或者dom
+      container: string | HTMLElement | null; // id或者dom
+      width: number; // 容器的宽度
+      height: number; // 容器的高度
+      style: string | Record<string, any>; // 容器的样式
+      visible?: boolean;
+      anchorType?: 'position' | 'boundsLeftTop';
+    } | null;
   };
 
 export type IGraphicAttribute = IGraphicStyle &
@@ -266,6 +285,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
 
+  bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
+
   valid: boolean;
   parent: IGroup | null;
   isContainer?: boolean;
@@ -333,6 +354,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   skewTo: (b: number, c: number) => this;
   addUpdateBoundTag: () => void;
   addUpdateShapeAndBoundsTag: () => void;
+  addUpdateLayoutTag: () => void;
 
   update: (d?: { bounds: boolean; trans: boolean }) => void;
 
@@ -380,7 +402,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   toCustomPath?: () => ICustomPath2D;
 
   resources?: Map<
-    string | HTMLImageElement | HTMLCanvasElement,
+    string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig,
     { state: 'init' | 'loading' | 'success' | 'fail'; data?: HTMLImageElement | HTMLCanvasElement }
   >;
   imageLoadSuccess: (url: string, data: HTMLImageElement) => void;

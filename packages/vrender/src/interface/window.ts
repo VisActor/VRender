@@ -61,6 +61,12 @@ export interface IWindow
   clearViewBox: (viewBox: IBoundsLike, color?: string) => void;
 
   getBoundingClientRect: () => IDomRectLike;
+
+  isVisible: (bbox?: IBoundsLike) => boolean;
+
+  onVisibleChange: (cb: (currentVisible: boolean) => void) => void;
+
+  getTopLeft: (baseWindow?: boolean) => { top: number; left: number };
 }
 
 export interface IWindowHandlerContribution
@@ -89,4 +95,8 @@ export interface IWindowHandlerContribution
 
   getBoundingClientRect: () => IDomRectLike;
   clearViewBox: (vb: IBoundsLike, color?: string) => void;
+  isVisible: (bbox?: IBoundsLike) => boolean;
+
+  onVisibleChange: (cb: (currentVisible: boolean) => void) => void;
+  getTopLeft: (baseWindow?: boolean) => { top: number; left: number };
 }

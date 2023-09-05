@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: increase IntersectionObserver robustness in browser env",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

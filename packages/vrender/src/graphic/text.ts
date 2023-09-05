@@ -67,7 +67,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
-    return this.clipedText !== attribute.text;
+    return this.clipedText !== attribute.text.toString();
   }
   get multilineLayout(): LayoutType | undefined {
     if (!Array.isArray(this.attribute.text)) {

@@ -4,6 +4,7 @@
 import {
   createGroup,
   INode,
+  matrixAllocate,
   type IGraphic,
   type IGroup,
   type IGroupGraphicAttribute,
@@ -21,6 +22,8 @@ import {
   AABBBounds,
   Bounds,
   IAABBBounds,
+  IMatrix,
+  Matrix,
   getRectIntersect,
   isArray,
   isBoolean,
@@ -158,7 +161,7 @@ export class TranformComponent extends AbstractComponent<Required<TransformAttri
           const dir = dirList[0];
           const h = dir === 'left' || dir === 'right';
           this.horizontalResizble = h ? (dirList[0] === 'left' ? -1 : 1) : 0;
-          this.verticalResizble = h ? 0 : dirList[1] === 'top' ? -1 : 1;
+          this.verticalResizble = h ? 0 : dirList[0] === 'top' ? -1 : 1;
         }
         this.rotatable = 0;
       } else if (type === 'rotate') {
@@ -176,56 +179,120 @@ export class TranformComponent extends AbstractComponent<Required<TransformAttri
     }
   }
 
+  handleScale(dx: number, dy: number) {
+    const container = this._firstChild as IGroup;
+    if (!container) {
+      return;
+    }
+    // 投影得到真实的dx和dy
+    const angle = this.getAngle();
+    const _dx = dx;
+    const _dy = dy;
+    dx = Math.cos(angle) * _dx + Math.sin(angle) * _dy;
+    dy = Math.cos(angle + pi / 2) * _dx + Math.sin(angle + pi / 2) * _dy;
+    const originB = this.containerB;
+    const originW = originB.width();
+    const originH = originB.height();
+    const dScaleX = (this.horizontalResizble * dx) / originW;
+    const dScaleY = (this.verticalResizble * dy) / originH;
+
+    container.scale(1 + dScaleX, 1 + dScaleY, {
+      x: this.horizontalResizble > 0 ? originB.x1 : originB.x2,
+      y: this.verticalResizble > 0 ? originB.y1 : originB.y2
+    });
+  }
+
+  getAngle(): number {
+    const m = this.attribute.postMatrix;
+    if (!m) {
+      return 0;
+    }
+    return Math.atan2(m.b, m.a);
+  }
+
+  handleRotate(dx: number, dy: number) {
+    const container = this._firstChild as IGroup;
+    if (!container) {
+      return;
+    }
+    const dir1 = [0, -1];
+    const m = this.attribute.postMatrix;
+    if (m) {
+      dir1[0] = -m.c;
+      dir1[1] = -m.d;
+    }
+    let len = Math.sqrt(dir1[0] * dir1[0] + dir1[1] * dir1[1]);
+    dir1[0] /= len;
+    dir1[1] /= len;
+    const dir1v = [-dir1[1], dir1[0]];
+
+    const dir2 = [dx, dy];
+    len = Math.sqrt(dx * dx + dy * dy);
+    dir2[0] /= len;
+    dir2[1] /= len;
+    // 点积算delta
+    let deltaAngle = dir1v[0] * dir2[0] + dir1v[1] * dir2[1];
+
+    const a = deltaAngle * 0.04;
+    const originB = this.containerB;
+    let cx = (originB.x1 + originB.x2) / 2;
+    let cy = (originB.y1 + originB.y2) / 2;
+
+    // 转化到m的坐标系中
+    if (m) {
+      const _x = cx;
+      const _y = cy;
+      cx = m.a * _x + m.c * _y + m.e;
+      cy = m.b * _x + m.d * _y + m.f;
+    }
+    this.rotate(a, {
+      x: cx,
+      y: cy
+    });
+  }
+
+  handleTranslate(dx: number, dy: number) {
+    const container = this._firstChild as IGroup;
+    if (!container) {
+      return;
+    }
+    if (this.attribute.postMatrix) {
+      this.translate(dx, dy);
+    } else {
+      container.translate(dx, dy);
+    }
+  }
+
   protected handleMouseDown = (e: any) => {
     this.dragOffsetX = e.offset.x;
     this.dragOffsetY = e.offset.y;
+
+    const _handleMouseMove = (e: any, cb: (e: any, dx: number, dy: number) => void) => {
+      const dx = e.offset.x - this.dragOffsetX;
+      const dy = e.offset.y - this.dragOffsetY;
+
+      if (dx === 0 && dy === 0) {
+        return;
+      }
+
+      cb(e, dx, dy);
+
+      this.dragOffsetX = e.offset.x;
+      this.dragOffsetY = e.offset.y;
+    };
 
     // 开启move
     if (e.pickParams && this.stage) {
       const { shadowTarget } = e.pickParams || {};
       this.setActiveGraphic(shadowTarget);
       const handleMouseMove = (e: any) => {
-        const container = this._firstChild as IGroup;
-        if (!container) {
-          return;
-        }
-        const dx = e.offset.x - this.dragOffsetX;
-        const dy = e.offset.y - this.dragOffsetY;
-
-        // 计算总共需要scale的大小
-        // const totalB = this.AABBBounds;
-        // const totalW = totalB.width();
-        // const totalH = totalB.height();
-        const originB = this.subGraphicB;
-        const originW = originB.width();
-        const originH = originB.height();
-        const dScaleX = (this.horizontalResizble * dx) / originW;
-        const dScaleY = (this.verticalResizble * dy) / originH;
-        const angle = container.attribute.angle ?? (Math.PI / 2) * 3;
-        const dir1 = [Math.cos(angle), Math.sin(angle), 0];
-        const dir2 = [dx, dy, 0];
-        const len = Math.sqrt(dx * dx + dy * dy);
-        dir2[0] /= len;
-        dir2[1] /= len;
-        // 点积算delta
-        let deltaAngle = Math.abs(dir1[0] * dir2[0] + dir1[1] * dir2[1]);
-        // 叉积算方向
-        let dir = dir1[0] * dir2[1] - dir1[1] * dir2[0] > 0 ? 1 : -1;
-        container.setAttributes({
-          scaleX: (container.attribute.scaleX ?? 1) + dScaleX,
-          scaleY: (container.attribute.scaleY ?? 1) + dScaleY,
-          angle: (container.attribute.angle ?? 0) + this.rotatable * dir * deltaAngle * 0.01
+        _handleMouseMove(e, (e, dx, dy) => {
+          if (this.rotatable) {
+            this.handleRotate(dx, dy);
+          } else {
+            this.handleScale(dx, dy);
+          }
         });
-        // console.log(container.attribute.scaleX, dScaleX);
-        // const targetW = totalW + dx;
-        // const targetH = totalH + dy;
-        // const scaleX = targetW / originW;
-        // const scaleY = targetH / originH;
-        // console.log(scaleX, scaleY);
-        // this.scaleTo(scaleX, scaleY);
-
-        this.dragOffsetX = e.offset.x;
-        this.dragOffsetY = e.offset.y;
       };
       const handleMouseup = () => {
         this.dragOffsetX = 0;
@@ -235,6 +302,22 @@ export class TranformComponent extends AbstractComponent<Required<TransformAttri
       };
       this.stage.addEventListener('mousemove', handleMouseMove);
       this.stage.addEventListener('mouseup', handleMouseup, { once: true });
+    } else {
+      if (e.target !== this._firstChild) {
+        const handleMouseMove = (e: any) => {
+          _handleMouseMove(e, (e, dx, dy) => {
+            this.handleTranslate(dx, dy);
+          });
+        };
+        const handleMouseup = () => {
+          this.dragOffsetX = 0;
+          this.dragOffsetY = 0;
+          this.setActiveGraphic(null);
+          this.stage && this.stage.removeEventListener('mousemove', handleMouseMove);
+        };
+        this.stage.addEventListener('mousemove', handleMouseMove);
+        this.stage.addEventListener('mouseup', handleMouseup, { once: true });
+      }
     }
   };
 

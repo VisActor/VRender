@@ -615,20 +615,30 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this;
   }
 
-  rotate(angle: number) {
+  rotate(angle: number, rotateCenter?: IPointLike) {
     if (angle === 0) {
       return this;
     }
     const context = { type: AttributeUpdateType.ROTATE };
     const params =
       this.onBeforeAttributeUpdate &&
-      this.onBeforeAttributeUpdate(angle, this.attribute, tempConstantAngleKey, context);
+      this.onBeforeAttributeUpdate({ angle, rotateCenter }, this.attribute, tempConstantAngleKey, context);
     if (params) {
+      delete params.angle;
       this._setAttributes(params, false, context);
-      return this;
+      // return this;
     }
     const attribute = this.attribute;
-    attribute.angle = (attribute.angle ?? DefaultTransform.angle) + angle;
+    if (!rotateCenter) {
+      attribute.angle = (attribute.angle ?? DefaultTransform.angle) + angle;
+    } else {
+      let { postMatrix } = this.attribute;
+      if (!postMatrix) {
+        postMatrix = new Matrix();
+        attribute.postMatrix = postMatrix;
+      }
+      application.transformUtil.fromMatrix(postMatrix, postMatrix).rotate(angle, rotateCenter);
+    }
     this.addUpdatePositionTag();
     this.addUpdateBoundTag();
     this.addUpdateLayoutTag();

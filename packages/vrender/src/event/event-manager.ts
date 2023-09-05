@@ -797,7 +797,9 @@ export class EventManager {
     } else {
       target = null;
     }
-    e.pickParams = pickResult.params;
+    if (e) {
+      e.pickParams = pickResult.params;
+    }
     return target;
   }
 }

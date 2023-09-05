@@ -29,6 +29,7 @@ export default defineConfig({
     alias: {
       '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts'),
       '@visactor/vrender-kits': path.resolve(__dirname, '../../../vrender-kits/src/index.ts'),
+      '@visactor/vrender-components': path.resolve(__dirname, '../../../vrender-components/src/index.ts'),
       util: 'rollup-plugin-node-polyfills/polyfills/util'
     }
   },

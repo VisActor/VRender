@@ -44,6 +44,13 @@
       "shellCommand": "ts-node common/autoinstallers/run-script/run.ts"
     },
     {
+      "commandKind": "global",
+      "name": "docs",
+      "summary": "Start the document development server",
+      "description": "Run this command to start document development server",
+      "shellCommand": "rush run -p @internal/docs -s start"
+    },
+    {
       "name": "commitlint",
       "commandKind": "global",
       "summary": "Used by the commit-msg Git hook. This command invokes commitlint to lint commit message.",

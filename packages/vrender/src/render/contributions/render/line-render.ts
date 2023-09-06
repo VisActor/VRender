@@ -250,7 +250,11 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
 
     // 更新cache
     if (line.shouldUpdateShape()) {
-      const { points, segments, curveType = lineAttribute.curveType } = line.attribute;
+      const { points, segments, closePath } = line.attribute;
+      let { curveType = lineAttribute.curveType } = line.attribute;
+      if (closePath && curveType === 'linear') {
+        curveType = 'linearClosed';
+      }
       const _points = points;
       if (segments && segments.length) {
         let startPoint: IPointLike;
@@ -268,11 +272,29 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
             startPoint.y = lastSeg.endY;
             startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
           }
-          lastSeg = calcLineCache(seg.points, curveType, {
+          lastSeg = calcLineCache(seg.points, curveType === 'linearClosed' ? 'linear' : curveType, {
             startPoint
           });
           return lastSeg;
         });
+
+        // 如果lineClosed，那就绘制到第一个点
+        if (curveType === 'linearClosed') {
+          let startP: IPointLike;
+          for (let i = 0; i < line.cache.length; i++) {
+            const cacheItem = line.cache[i];
+            for (let i = 0; i < cacheItem.curves.length; i++) {
+              if (cacheItem.curves[i].defined) {
+                startP = cacheItem.curves[i].p0;
+                break;
+              }
+            }
+            if (startP) {
+              break;
+            }
+          }
+          lastSeg.lineTo(startP.x, startP.y, true);
+        }
       } else if (points && points.length) {
         line.cache = calcLineCache(_points, curveType);
       } else {

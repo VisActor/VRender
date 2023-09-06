@@ -919,6 +919,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       scaleX = DefaultTransform.scaleX,
       scaleY = DefaultTransform.scaleY,
       angle = DefaultTransform.angle,
+      scaleCenter,
       anchor,
       postMatrix
     } = this.attribute;
@@ -939,7 +940,20 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         _anchor[1] = anchor[1];
       }
     }
-    normalTransform(this._transMatrix, this._transMatrix.reset(), x, y, scaleX, scaleY, angle, anchor && _anchor);
+    if (scaleCenter && (scaleX !== 1 || scaleY !== 1)) {
+      const m = this._transMatrix;
+      m.reset();
+      m.translate(_anchor[0], _anchor[1]);
+      m.rotate(angle);
+      m.translate(-_anchor[0], -_anchor[1]);
+
+      m.translate(x, y);
+      // m.translate(scaleCenter[0] * scaleX, scaleCenter[1] * scaleY);
+      application.transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: scaleCenter[0], y: scaleCenter[1] });
+      // m.translate(-scaleCenter[0], -scaleCenter[1]);
+    } else {
+      normalTransform(this._transMatrix, this._transMatrix.reset(), x, y, scaleX, scaleY, angle, anchor && _anchor);
+    }
     const p = this.getOffsetXY(DefaultTransform);
     this._transMatrix.e += p.x;
     this._transMatrix.f += p.y;

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: pie label line support smooth line",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -1,6 +1,7 @@
 import { createStage, createGroup, createRect, container, IGraphic, DragNDrop, createSymbol } from '@visactor/vrender';
 import { loadEditable } from './editor/register';
 import { TranformComponent } from './editor/transform-component';
+import { TranformComponent2 } from './editor/transform-component2';
 // container.load(roughModule);
 
 loadEditable();
@@ -64,6 +65,61 @@ export const page = () => {
 
   stage.defaultLayer.add(group);
   stage.defaultLayer.add(c);
+
+  const r = createRect({
+    x: 0,
+    y: 0,
+    width: 100,
+    height: 100,
+    fill: 'orange'
+  });
+
+  const c2 = new TranformComponent2({}, r.AABBBounds);
+  stage.defaultLayer.add(c2);
+
+  c2.onUpdate(data => {
+    r.setAttributes({
+      x: data.x,
+      y: data.y,
+      angle: data.angle,
+      width: data.width,
+      height: data.height,
+      anchor: data.anchor
+    });
+  });
+
+  let offsetX, offsetY;
+  let start = false;
+  stage.addEventListener('mousedown', e => {
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+    if (e.target === r) {
+      start = true;
+    }
+  });
+
+  stage.addEventListener('mousemove', e => {
+    if (!start) {
+      return;
+    }
+    if (isFinite(offsetX)) {
+      c2.moveTo(e.offsetX - offsetX, e.offsetY - offsetY);
+    }
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+  stage.addEventListener('mouseup', e => {
+    start = false;
+  });
+  // r.addEventListener('on', e => {
+  //   if (isFinite(offsetX)) {
+  //     c2.moveTo(e.offsetX - offsetX, e.offsetY - offsetY);
+  //   }
+  //   offsetX = e.offsetX;
+  //   offsetY = e.offsetY;
+  // });
+
+  stage.defaultLayer.add(r);
 
   stage.render(undefined, { renderStyle: 'rough' });
 

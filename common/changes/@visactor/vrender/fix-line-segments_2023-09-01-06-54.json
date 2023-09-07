@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: increase the robustness of segments, closed #424",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

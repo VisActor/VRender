@@ -860,13 +860,13 @@ function createContent(stage: Stage) {
       // angle: 0
       fontSize: 16
     },
-    // line: {
-    //   line1MinLength: 30,
-    //   lineWidth: 2,
-    //   smooth: true
-    //   // stroke: 'red'
-    //   // visible: false
-    // },
+    line: {
+      line1MinLength: 30,
+      lineWidth: 2
+      // smooth: true
+      // stroke: 'red'
+      // visible: false
+    },
     layout: {
       // align: 'edge'
       tangentConstraint: false

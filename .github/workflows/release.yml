@@ -38,7 +38,7 @@ jobs:
         id: semver_parser
         uses: xile611/read-package-version-action@main
         with:
-          path: packages/vgrammar
+          path: packages/vrender
           semver_string: ${{ github.ref_name }}
           semver_pattern: '^release/(.*)$' # ^v?(.*)$ by default
 

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.14.8",
+      "tag": "@visactor/vrender-components_v0.14.8",
+      "date": "Thu, 07 Sep 2023 11:56:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix: fix the bug of rose chart label conflict with legend, fixed the issue #453"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.7",
       "tag": "@visactor/vrender-components_v0.14.7",
       "date": "Thu, 31 Aug 2023 10:03:38 GMT",

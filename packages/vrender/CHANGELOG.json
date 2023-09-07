@@ -2,6 +2,27 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.14.8",
+      "tag": "@visactor/vrender_v0.14.8",
+      "date": "Thu, 07 Sep 2023 11:56:00 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: line support closePath attribute as another definition of linearClosed, closed #423"
+          },
+          {
+            "comment": "feat: poptip support formatMethod"
+          },
+          {
+            "comment": "feat: add scaleCenter attribute"
+          },
+          {
+            "comment": "fix: increase the robustness of segments, closed #424"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.7",
       "tag": "@visactor/vrender_v0.14.7",
       "date": "Thu, 31 Aug 2023 10:03:38 GMT",

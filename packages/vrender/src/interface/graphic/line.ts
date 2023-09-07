@@ -15,6 +15,7 @@ export type ILineAttribute = {
   curveType: ICurveType;
   clipRange: number;
   clipRangeByDimension: IClipRangeByDimensionType;
+  closePath: boolean; // 是否封闭路径
 };
 
 export type ILineGraphicAttribute = Partial<IGraphicAttribute> & Partial<ILineAttribute> & Partial<IConnectedStyle>;

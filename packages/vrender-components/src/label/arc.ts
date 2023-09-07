@@ -1,7 +1,7 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
-import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem } from './type';
+import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
 import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender';
 import {
   circlePoint,
@@ -34,6 +34,7 @@ export class ArcInfo {
   pointA: IPoint;
   pointB: IPoint;
   pointC: IPoint;
+  labelLine: IArcLabelLineSpec;
   /**
    * 象限
    */
@@ -172,7 +173,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         points:
           basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
             ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
-            : undefined
+            : undefined,
+        line: basedArc?.labelLine
       };
 
       labels[i].setAttributes(labelAttribute);
@@ -389,10 +391,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
       arc.angle = attribute?.textStyle?.angle ?? 0;
 
-      // arc.labelLinePath =
-      //   `M${Math.round(arc.pointA.x)},${Math.round(arc.pointA.y)}` +
-      //   ` L${Math.round(arc.pointB.x)},${Math.round(arc.pointB.y)}` +
-      //   ` L${Math.round(arc.pointC.x)},${Math.round(arc.pointC.y)}`;
+      arc.labelLine = {
+        ...attribute?.line
+      };
     });
 
     return arcs;
@@ -405,11 +406,15 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
     const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     const plotLayout = { width: center.x * 2, height: center.y * 2 };
-    const radiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.outerRadius,
-      attribute.width,
-      attribute.height
-    );
+
+    let maxRadius = 0;
+    currentMarks.forEach((currentMark: IGraphic) => {
+      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      }
+    });
+
+    const radiusRatio = this.computeLayoutOuterRadius(maxRadius, attribute.width, attribute.height);
 
     const line1MinLength = attribute.line.line1MinLength as number;
     const line2MinLength = attribute.line.line2MinLength as number;
@@ -667,11 +672,15 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    */
   private _computePointB(arc: ArcInfo, r: number, attribute: any, currentMarks: any[]) {
     const labelConfig = attribute;
-    const radiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.outerRadius,
-      attribute.width,
-      attribute.height
-    );
+
+    let maxRadius = 0;
+    currentMarks.forEach((currentMark: IGraphic) => {
+      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      }
+    });
+
+    const radiusRatio = this.computeLayoutOuterRadius(maxRadius, attribute.width, attribute.height);
     const line1MinLength = labelConfig.line.line1MinLength as number;
     const labelLayout = labelConfig.layout;
 
@@ -719,11 +728,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
     const plotRect = { width: center.x * 2, height: center.y * 2 };
 
-    const radiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.outerRadius,
-      attribute.width,
-      attribute.height
-    );
+    let maxRadius = 0;
+    currentMarks.forEach((currentMark: IGraphic) => {
+      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      }
+    });
+
+    const radiusRatio = this.computeLayoutOuterRadius(maxRadius, attribute.width, attribute.height);
     const line1MinLength = attribute.line.line1MinLength as number;
 
     const { width, height } = plotRect;
@@ -794,11 +806,15 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const labelConfig = attribute;
     const layoutArcGap = labelConfig.layoutArcGap as number;
     const line1MinLength = labelConfig.line.line1MinLength as number;
-    const radiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.outerRadius,
-      attribute.width,
-      attribute.height
-    );
+
+    let maxRadius = 0;
+    currentMarks.forEach((currentMark: IGraphic) => {
+      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      }
+    });
+
+    const radiusRatio = this.computeLayoutOuterRadius(maxRadius, attribute.width, attribute.height);
     const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
     const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
     const outerR = radius + line1MinLength;
@@ -893,7 +909,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   protected _labelLine(text: IText) {
     const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
       ? createLine({
-          visible: text.attribute?.visible ?? true,
+          visible:
+            ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
+            text.attribute?.visible ??
+            true,
           stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
           lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
           points: (text.attribute as ArcLabelAttrs)?.points

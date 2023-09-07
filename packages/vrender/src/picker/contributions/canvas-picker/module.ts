@@ -14,6 +14,7 @@ import {
   CanvasAreaPicker,
   CanvasCirclePicker,
   CanvasGlyphPicker,
+  CanvasGroupPicker,
   CanvasImagePicker,
   CanvasLinePicker,
   CanvasPathPicker,
@@ -33,6 +34,7 @@ import { DefaultCanvasGlyphPicker } from './glyph-picker';
 import { DefaultCanvasRect3dPicker } from './rect3d-picker';
 import { DefaultCanvasPyramid3dPicker } from './pyramid3d-picker';
 import { DefaultCanvasArc3dPicker } from './arc3d-picker';
+import { DefaultCanvasGroupPicker } from './group-picker';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
   // circle picker
@@ -108,6 +110,10 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
   bind(DefaultCanvasGlyphPicker).toSelf().inSingletonScope();
   bind(CanvasGlyphPicker).toService(DefaultCanvasGlyphPicker);
   bind(CanvasPickerContribution).toService(CanvasGlyphPicker);
+  // group picker
+  bind(DefaultCanvasGroupPicker).toSelf().inSingletonScope();
+  bind(CanvasGroupPicker).toService(DefaultCanvasGroupPicker);
+  bind(CanvasPickerContribution).toService(CanvasGroupPicker);
 
   bindContributionProvider(bind, CanvasPickerContribution);
 });

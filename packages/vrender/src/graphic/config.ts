@@ -150,6 +150,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   customPickShape: null,
   boundsMode: 'accurate',
   keepDirIn3d: true,
+  shadowRootIdx: 1,
   ...DefaultStyle,
   ...DefaultTransform
 };

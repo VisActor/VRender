@@ -167,5 +167,9 @@ export const pages = [
   {
     title: 'html元素',
     path: 'html'
+  },
+  {
+    title: '编辑器',
+    path: 'editor'
   }
 ];

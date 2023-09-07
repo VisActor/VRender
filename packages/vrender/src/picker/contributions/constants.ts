@@ -23,6 +23,7 @@ export const CanvasPolygonPicker = Symbol.for('CanvasPolygonPicker');
 export const CanvasPyramid3dPicker = Symbol.for('CanvasPyramid3dPicker');
 export const CanvasRichTextPicker = Symbol.for('CanvasRichTextPicker');
 export const CanvasGlyphPicker = Symbol.for('CanvasGlyphPicker');
+export const CanvasGroupPicker = Symbol.for('CanvasGroupPicker');
 export const CanvasPickerContribution = Symbol.for('CanvasPickerContribution');
 
 export const MathArcPicker = Symbol.for('MathArcPicker');

@@ -200,7 +200,9 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
   }
 
   protected handleScale(dx: number, dy: number) {
-    // 投影得到真实的dx和dy
+    // dx = 10;
+    // dy = -10;
+    // 投影得到旋转前的dx和dy
     const angle = this.getAngle();
     const _dx = dx;
     const _dy = dy;
@@ -210,12 +212,78 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
     dx *= this.horizontalResizble;
     dy *= this.verticalResizble;
 
+    // console.log(dx, dy);
+
     const { x, y, width, height } = this.rect.attribute;
+
+    const m = this.transMatrix;
+    // 原始的x和y位置
+    const nextP1 = {
+      x: m.a * x + m.c * y + m.e,
+      y: m.b * x + m.d * y + m.f
+    };
+    const nextP2 = {
+      x: m.a * (x + width) + m.c * (y + height) + m.e,
+      y: m.b * (x + width) + m.d * (y + height) + m.f
+    };
+    console.log(nextP1, nextP2, this.horizontalResizble);
+    if (this.horizontalResizble < 0) {
+      nextP1.x -= Math.cos(angle) * dx;
+      nextP1.y -= Math.sin(angle) * dx;
+    } else if (this.horizontalResizble > 0) {
+      nextP2.x += Math.cos(angle) * dx;
+      nextP2.y += Math.sin(angle) * dx;
+    }
+
+    if (this.verticalResizble < 0) {
+      nextP1.x -= Math.cos(angle + pi / 2) * dy;
+      nextP1.y -= Math.sin(angle + pi / 2) * dy;
+    } else if (this.verticalResizble > 0) {
+      nextP2.x += Math.cos(angle + pi / 2) * dy;
+      nextP2.y += Math.sin(angle + pi / 2) * dy;
+    }
+    // if (this.verticalResizble < 0) {
+    //   nextP1.x -= Math.cos(angle) * dy;
+    //   nextP1.y -= Math.sin(angle) * dy;
+    // }
+    // if (this.horizontalResizble < 0) {
+    //   nextP1.x -= dx;
+    //   nextP1.y += dy;
+    // }
+    // if (this.horizontalResizble > 0) {
+    //   nextP1.x -= dx;
+    // } else if (this.horizontalResizble < 0) {
+    //   nextP2.x -= dx;
+    // }
+
+    // if (this.verticalResizble > 0) {
+    //   nextP1.y += dy;
+    // } else if (this.verticalResizble < 0) {
+    //   nextP2.y -= dy;
+    // }
+
+    const center = {
+      x: (nextP1.x + nextP2.x) / 2,
+      y: (nextP1.y + nextP2.y) / 2
+    };
+
+    const tw = width + dx;
+    const th = height + dy;
+
+    // this.rect.setAttributes({
+    //   width: tw,
+    //   height: th,
+    //   x: x + (this.horizontalResizble > 0 ? 0 : -1) * dx,
+    //   y: y + (this.verticalResizble > 0 ? 0 : -1) * dy
+    // });
     this.rect.setAttributes({
-      width: width + dx,
-      height: height + dy,
-      x: x + (this.horizontalResizble > 0 ? 0 : -1) * dx,
-      y: y + (this.verticalResizble > 0 ? 0 : -1) * dy
+      width: tw,
+      height: th,
+      x: center.x - tw / 2,
+      y: center.y - th / 2
+    });
+    this.setAttributes({
+      anchor: [center.x, center.y]
     });
   }
 
@@ -241,24 +309,11 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
     let cx = (originB.x1 + originB.x2) / 2;
     let cy = (originB.y1 + originB.y2) / 2;
 
-    // 转化到m的坐标系中
-    if (m) {
-      const _x = cx;
-      const _y = cy;
-      cx = m.a * _x + m.c * _y + m.e;
-      cy = m.b * _x + m.d * _y + m.f;
-    }
     const { angle = 0 } = this.attribute;
-    // this.setAttributes({
-    //   angle: angle + a,
-    //   anchor: [cx, cy]
-    // });
-    this.rotate(a, {
-      x: cx,
-      y: cy
+    this.setAttributes({
+      angle: angle + a,
+      anchor: [cx, cy]
     });
-
-    console.log(this);
   }
 
   getAngle(): number {
@@ -348,6 +403,7 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
     const { x = 0, y = 0, width: w = 0, height: h = 0 } = this.rect.attribute;
     this.rectB.setValue(x, y, x + w, y + h);
 
+    console.log('render', x, y, w, h);
     const minX = x - parsedPadding[3];
     const minY = y - parsedPadding[0];
     const width = w + parsedPadding[1] + parsedPadding[3];
@@ -406,50 +462,44 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
     });
   }
 
-  moveTo(dx: number, dy: number): this {
-    if (!this.attribute.postMatrix) {
-      const { x, y, width, height } = this.rect.attribute;
-      this.rect.setAttributes({
-        width: width,
-        height: height,
-        x: x + dx,
-        y: y + dy
-      });
-    } else {
-      this.translate(dx, dy);
-    }
+  moveBy(dx: number, dy: number): this {
+    const { x, y, width, height } = this.rect.attribute;
+    this.rect.setAttributes({
+      width: width,
+      height: height,
+      x: x + dx,
+      y: y + dy
+    });
+    this.setAttributes({
+      anchor: [x + dx + width / 2, y + dy + height / 2]
+    });
     this.dispatchUpdate();
     return this;
   }
 
   dispatchUpdate() {
     const { x, y, width, height } = this.rect.attribute;
-    // const {} = this.
+    const { angle, anchor } = this.attribute;
     const out = {
       x,
       y,
       width,
       height,
-      angle: 0,
-      anchor: [0, 0]
+      angle,
+      anchor
     };
-    let angle = 0;
-    if (this.attribute.postMatrix) {
-      normalTransform(_matrix, _matrix.reset(), x, y, 1, 1, 0);
-      const nextM = matrixAllocate.allocateByObj(this.attribute.postMatrix);
-      nextM.multiply(_matrix.a, _matrix.b, _matrix.c, _matrix.d, _matrix.e, _matrix.f);
-      const offsetX = width / 2;
-      const offsetY = height / 2;
-      angle = Math.atan2(nextM.b, nextM.a);
-      const rcx = nextM.e + nextM.a * offsetX + nextM.c * offsetY;
-      const rcy = nextM.f + nextM.b * offsetX + nextM.d * offsetY;
-      out.x = rcx - offsetX;
-      out.y = rcy - offsetY;
-      out.angle = angle;
-      out.anchor = [rcx, rcy];
-    }
     this.updateCbs.forEach(cb => {
-      cb(out);
+      const data = cb(out);
+      if (data) {
+        console.log('设置宽高', data);
+        const { x, y, width, height, anchor, angle } = data;
+        Number.isFinite(x) && this.rect.setAttribute('x', x);
+        Number.isFinite(y) && this.rect.setAttribute('y', y);
+        Number.isFinite(width) && this.rect.setAttribute('width', width);
+        Number.isFinite(height) && this.rect.setAttribute('height', height);
+        anchor && this.setAttribute('anchor', anchor);
+        Number.isFinite(angle) && this.setAttribute('angle', angle);
+      }
     });
   }
 

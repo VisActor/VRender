@@ -78,6 +78,7 @@ export const page = () => {
   stage.defaultLayer.add(c2);
 
   c2.onUpdate(data => {
+    // console.log(data.anchor);
     r.setAttributes({
       x: data.x,
       y: data.y,
@@ -86,6 +87,15 @@ export const page = () => {
       height: data.height,
       anchor: data.anchor
     });
+    const out = {};
+    if (data.width < 0) {
+      out.width = 0;
+    }
+    if (data.height < 0) {
+      out.height = 0;
+    }
+
+    return out;
   });
 
   let offsetX, offsetY;
@@ -103,7 +113,7 @@ export const page = () => {
       return;
     }
     if (isFinite(offsetX)) {
-      c2.moveTo(e.offsetX - offsetX, e.offsetY - offsetY);
+      c2.moveBy(e.offsetX - offsetX, e.offsetY - offsetY);
     }
     offsetX = e.offsetX;
     offsetY = e.offsetY;

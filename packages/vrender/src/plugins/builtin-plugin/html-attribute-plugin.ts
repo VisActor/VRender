@@ -41,7 +41,11 @@ export class HtmlAttributePlugin implements IPlugin {
   renderGroupHTML(group: IGroup) {
     this.renderGraphicHTML(group);
     group.forEachChildren((g: IGraphic) => {
-      this.renderGraphicHTML(g);
+      if (g.isContainer) {
+        this.renderGroupHTML(g as IGroup);
+      } else {
+        this.renderGraphicHTML(g);
+      }
     });
   }
 

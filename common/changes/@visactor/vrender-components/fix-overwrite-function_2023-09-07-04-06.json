@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: overwrite function attribute for components",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

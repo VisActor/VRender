@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 31 Aug 2023 10:03:38 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+
+## 0.14.8
+Thu, 07 Sep 2023 11:56:00 GMT
+
+_Version update only_
 
 ## 0.12.21
 Thu, 31 Aug 2023 10:03:38 GMT
@@ -157,6 +162,10 @@ Fri, 16 Jun 2023 03:13:09 GMT
 - upgrade vrender
 - fix enableView3dTranform
 - upgrade vrender
+
+### Updates
+
+- release
 
 ## 0.9.1
 Thu, 08 Jun 2023 11:34:32 GMT

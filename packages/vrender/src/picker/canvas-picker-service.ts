@@ -1,4 +1,4 @@
-import type { IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line
 import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
@@ -103,7 +103,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, params: IPickParams): IGraphic | null {
+  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params: IPickParams): IGraphic | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }
@@ -112,8 +112,9 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
       for (let i = 0; i < this.InterceptorContributions.length; i++) {
         const drawContribution = this.InterceptorContributions[i];
         if (drawContribution.beforePickItem) {
-          if (drawContribution.beforePickItem(graphic, this, point, params)) {
-            return graphic;
+          const ret = drawContribution.beforePickItem(graphic, this, point, params, { parentMatrix });
+          if (ret) {
+            return ret === true ? graphic : ret.graphic;
           }
         }
       }
@@ -122,6 +123,23 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     if (!picker) {
       return null;
     }
-    return picker.contains(graphic, point, params) ? graphic : null;
+    const data = picker.contains(graphic, point, params) ? graphic : null;
+
+    if (data) {
+      return data;
+    }
+    // 添加拦截器
+    if (this.InterceptorContributions.length) {
+      for (let i = 0; i < this.InterceptorContributions.length; i++) {
+        const drawContribution = this.InterceptorContributions[i];
+        if (drawContribution.afterPickItem) {
+          const ret = drawContribution.afterPickItem(graphic, this, point, params, { parentMatrix });
+          if (ret) {
+            return ret === true ? graphic : ret.graphic;
+          }
+        }
+      }
+    }
+    return data;
   }
 }

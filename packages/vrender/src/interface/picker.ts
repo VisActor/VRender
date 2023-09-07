@@ -8,6 +8,9 @@ import type { IDrawContribution } from './render';
 export type PickResult = {
   graphic: IGraphic | null;
   group: IGroup | null;
+  params?: {
+    shadowTarget?: IGraphic;
+  };
 };
 
 export interface IGraphicPicker {
@@ -36,7 +39,12 @@ export interface IPickerService {
   configure: (global: IGlobal, env: EnvType) => void;
   pick: (group: IGraphic[], point: IPoint, params?: IPickParams) => PickResult;
   pickGroup: (group: IGroup, point: IPointLike, parentMatrix: IMatrix, params: IPickParams) => PickResult;
-  pickItem: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => IGraphic | null;
+  pickItem: (
+    graphic: IGraphic,
+    point: IPointLike,
+    parentMatrix: IMatrix | null,
+    params?: IPickParams
+  ) => IGraphic | null;
   containsPoint: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
   drawContribution?: IDrawContribution;
 }
@@ -45,6 +53,18 @@ export interface IPickItemInterceptorContribution {
   order: number;
   // null代表没匹配到，boolean代表是否pick中
   beforePickItem?: (
+    graphic: IGraphic,
+    pickerService: IPickerService,
+    point: IPointLike,
+    drawContext: {
+      in3dInterceptor?: boolean;
+    },
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ) => boolean | PickResult | null;
+
+  afterPickItem?: (
     graphic: IGraphic,
     pickerService: IPickerService,
     point: IPointLike,

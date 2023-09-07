@@ -241,6 +241,7 @@ export type IGraphicAttribute = IGraphicStyle &
      * true: 始终控制方向朝摄像机
      */
     keepDirIn3d?: boolean;
+    shadowRootIdx: number;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
@@ -349,7 +350,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   translateTo: (x: number, y: number) => this;
   scale: (scaleX: number, scaleY: number, scaleCenter?: IPointLike) => this;
   scaleTo: (scaleX: number, scaleY: number) => this;
-  rotate: (angle: number) => this;
+  rotate: (angle: number, rotateCenter?: IPointLike) => this;
   rotateTo: (angle: number) => this;
   skewTo: (b: number, c: number) => this;
   addUpdateBoundTag: () => void;

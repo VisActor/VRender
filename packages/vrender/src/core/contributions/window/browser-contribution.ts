@@ -93,7 +93,7 @@ export class BrowserWindowHandlerContribution
       entries.forEach(entry => {
         if (this._canvasIsIntersecting !== entry.isIntersecting) {
           this._canvasIsIntersecting = entry.isIntersecting;
-          this._onVisibleChangeCb(entry.isIntersecting);
+          this._onVisibleChangeCb && this._onVisibleChangeCb(entry.isIntersecting);
         } else {
           this._canvasIsIntersecting = entry.isIntersecting;
         }

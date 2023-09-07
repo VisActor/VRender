@@ -57,7 +57,7 @@ export class DefaultGlobalPickerService implements IPickerService {
       if (graphics[i].isContainer) {
         result = this.pickGroup(graphics[i] as IGroup, point, parentMatrix, params);
       } else {
-        result.graphic = this.pickItem(graphics[i], point, params);
+        result.graphic = this.pickItem(graphics[i], point, parentMatrix, params);
       }
       if (result.graphic) {
         break;
@@ -69,11 +69,24 @@ export class DefaultGlobalPickerService implements IPickerService {
     if (!result.graphic) {
       result.group = group;
     }
+    // 判断是否有shadow-dom
+    if (result.graphic) {
+      let g = result.graphic;
+      while (g.parent) {
+        g = g.parent;
+      }
+      if (g.shadowHost) {
+        result.params = {
+          shadowTarget: result.graphic
+        };
+        result.graphic = g.shadowHost;
+      }
+    }
     return result;
   }
 
   containsPoint(graphic: IGraphic, point: IPointLike, params?: IPickParams): boolean {
-    return !!this.pickItem(graphic, point, params);
+    return !!this.pickItem(graphic, point, null, params);
   }
 
   pickGroup(group: IGroup, point: IPointLike, parentMatrix: IMatrix, params?: IPickParams): PickResult {
@@ -106,7 +119,7 @@ export class DefaultGlobalPickerService implements IPickerService {
         } else {
           const newPoint: IPoint = new Point(point.x, point.y);
           parentMatrix.transformPoint(newPoint, newPoint);
-          result.graphic = this.pickItem(graphic, newPoint, params);
+          result.graphic = this.pickItem(graphic, newPoint, parentMatrix, params);
         }
         return !!result.graphic || !!result.group;
       });
@@ -120,7 +133,7 @@ export class DefaultGlobalPickerService implements IPickerService {
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, params?: IPickParams): IGraphic | null {
+  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params?: IPickParams): IGraphic | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }

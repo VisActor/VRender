@@ -1,20 +1,6 @@
 import { createStage, createGroup, createRect, container, IGraphic, global } from '@visactor/vrender';
 
-// container.load(roughModule);
-
 export const page = () => {
-  const group = createGroup({
-    x: 100,
-    y: 100,
-    background: 'red',
-    width: 300,
-    height: 400,
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    alignContent: 'center'
-  });
-
   // 添加10个rect
   new Array(10).fill(0).forEach((b, i) => {
     group.add(

@@ -308,6 +308,253 @@ const pieGenerator = () => {
     //     children: []
     //   }
     // ]
+    // children: [
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#2E62F1',
+    //       stroke: '#2E62F1',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: -1.832595714594046,
+    //       endAngle: -1.3089969389957472,
+    //       outerRadius: 174.9244056767206,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 105,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#4F44CF',
+    //       stroke: '#4F44CF',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: -1.3089969389957472,
+    //       endAngle: -0.7853981633974485,
+    //       outerRadius: 116.50796003236482,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 106,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#4DC36A',
+    //       stroke: '#4DC36A',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: -0.7853981633974483,
+    //       endAngle: -0.2617993877991495,
+    //       outerRadius: 69.75215161125244,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 107,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#FF6341',
+    //       stroke: '#FF6341',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: -0.2617993877991494,
+    //       endAngle: 0.2617993877991494,
+    //       outerRadius: 64.2079052714386,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 108,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#FF8406',
+    //       stroke: '#FF8406',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 0.2617993877991493,
+    //       endAngle: 0.7853981633974481,
+    //       outerRadius: 47.60042294494964,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 109,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#5AC8FA',
+    //       stroke: '#5AC8FA',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 0.7853981633974481,
+    //       endAngle: 1.3089969389957468,
+    //       outerRadius: 42.68391001012817,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 110,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#003A8C',
+    //       stroke: '#003A8C',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 1.3089969389957472,
+    //       endAngle: 1.832595714594046,
+    //       outerRadius: 24.53880218925232,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 111,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#98DD62',
+    //       stroke: '#98DD62',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 1.832595714594046,
+    //       endAngle: 2.3561944901923444,
+    //       outerRadius: 20.797393185242615,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 112,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#07A199',
+    //       stroke: '#07A199',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 2.3561944901923444,
+    //       endAngle: 2.879793265790643,
+    //       outerRadius: 19.381967826377565,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 113,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#FFCC00',
+    //       stroke: '#FFCC00',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 2.8797932657906435,
+    //       endAngle: 3.4033920413889422,
+    //       outerRadius: 13.31776892117981,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 114,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#B08AE2',
+    //       stroke: '#B08AE2',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 3.403392041388942,
+    //       endAngle: 3.926990816987241,
+    //       outerRadius: 12.487696501669921,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 115,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#87DBDD',
+    //       stroke: '#87DBDD',
+    //       x: 359.5,
+    //       y: 238,
+    //       startAngle: 3.926990816987241,
+    //       endAngle: 4.4505895925855405,
+    //       outerRadius: 5.705389211535645,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 116,
+    //     type: 'arc',
+    //     children: []
+    //   }
+    // ]
+    /** legend2
+     * #FF8406
+     * #4DC36A
+     *
+     */
     children: [
       {
         attribute: {
@@ -315,37 +562,17 @@ const pieGenerator = () => {
           cornerRadius: 0,
           lineWidth: 0,
           fillOpacity: 1,
-          fill: '#2E62F1',
-          stroke: '#2E62F1',
-          x: 359.5,
-          y: 238,
-          startAngle: -1.832595714594046,
-          endAngle: -1.3089969389957472,
-          outerRadius: 174.9244056767206,
+          fill: '#FF8406',
+          stroke: '#FF8406',
+          x: 301,
+          y: 230,
+          startAngle: 1.5707963267948963,
+          endAngle: 3.6651914291880923,
+          outerRadius: 53.19603101629562,
           innerRadius: 0,
           pickable: true
         },
-        _uid: 105,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#4F44CF',
-          stroke: '#4F44CF',
-          x: 359.5,
-          y: 238,
-          startAngle: -1.3089969389957472,
-          endAngle: -0.7853981633974485,
-          outerRadius: 116.50796003236482,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 106,
+        _uid: 194,
         type: 'arc',
         children: []
       },
@@ -357,15 +584,15 @@ const pieGenerator = () => {
           fillOpacity: 1,
           fill: '#4DC36A',
           stroke: '#4DC36A',
-          x: 359.5,
-          y: 238,
-          startAngle: -0.7853981633974483,
-          endAngle: -0.2617993877991495,
-          outerRadius: 69.75215161125244,
+          x: 301,
+          y: 230,
+          startAngle: -0.5235987755982989,
+          endAngle: 1.5707963267948963,
+          outerRadius: 94.81139665690232,
           innerRadius: 0,
           pickable: true
         },
-        _uid: 107,
+        _uid: 227,
         type: 'arc',
         children: []
       },
@@ -375,181 +602,84 @@ const pieGenerator = () => {
           cornerRadius: 0,
           lineWidth: 0,
           fillOpacity: 1,
-          fill: '#FF6341',
-          stroke: '#FF6341',
-          x: 359.5,
-          y: 238,
-          startAngle: -0.2617993877991494,
-          endAngle: 0.2617993877991494,
-          outerRadius: 64.2079052714386,
+          fill: '#2E62F1',
+          stroke: '#2E62F1',
+          x: 301,
+          y: 230,
+          startAngle: -2.617993877991494,
+          endAngle: -0.5235987755982989,
+          outerRadius: 147.6613283727806,
           innerRadius: 0,
           pickable: true
         },
-        _uid: 108,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#FF8406',
-          stroke: '#FF8406',
-          x: 359.5,
-          y: 238,
-          startAngle: 0.2617993877991493,
-          endAngle: 0.7853981633974481,
-          outerRadius: 47.60042294494964,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 109,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#5AC8FA',
-          stroke: '#5AC8FA',
-          x: 359.5,
-          y: 238,
-          startAngle: 0.7853981633974481,
-          endAngle: 1.3089969389957468,
-          outerRadius: 42.68391001012817,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 110,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#003A8C',
-          stroke: '#003A8C',
-          x: 359.5,
-          y: 238,
-          startAngle: 1.3089969389957472,
-          endAngle: 1.832595714594046,
-          outerRadius: 24.53880218925232,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 111,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#98DD62',
-          stroke: '#98DD62',
-          x: 359.5,
-          y: 238,
-          startAngle: 1.832595714594046,
-          endAngle: 2.3561944901923444,
-          outerRadius: 20.797393185242615,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 112,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#07A199',
-          stroke: '#07A199',
-          x: 359.5,
-          y: 238,
-          startAngle: 2.3561944901923444,
-          endAngle: 2.879793265790643,
-          outerRadius: 19.381967826377565,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 113,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#FFCC00',
-          stroke: '#FFCC00',
-          x: 359.5,
-          y: 238,
-          startAngle: 2.8797932657906435,
-          endAngle: 3.4033920413889422,
-          outerRadius: 13.31776892117981,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 114,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#B08AE2',
-          stroke: '#B08AE2',
-          x: 359.5,
-          y: 238,
-          startAngle: 3.403392041388942,
-          endAngle: 3.926990816987241,
-          outerRadius: 12.487696501669921,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 115,
-        type: 'arc',
-        children: []
-      },
-      {
-        attribute: {
-          visible: true,
-          cornerRadius: 0,
-          lineWidth: 0,
-          fillOpacity: 1,
-          fill: '#87DBDD',
-          stroke: '#87DBDD',
-          x: 359.5,
-          y: 238,
-          startAngle: 3.926990816987241,
-          endAngle: 4.4505895925855405,
-          outerRadius: 5.705389211535645,
-          innerRadius: 0,
-          pickable: true
-        },
-        _uid: 116,
+        _uid: 359,
         type: 'arc',
         children: []
       }
     ]
+    /** legend3 */
+    // children: [
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#2E62F1',
+    //       stroke: '#2E62F1',
+    //       x: 301,
+    //       y: 230,
+    //       startAngle: -2.617993877991494,
+    //       endAngle: -0.5235987755982989,
+    //       outerRadius: 147.6613283727806,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 722,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#4DC36A',
+    //       stroke: '#4DC36A',
+    //       x: 301,
+    //       y: 230,
+    //       startAngle: -0.5235987755982989,
+    //       endAngle: 1.5707963267948963,
+    //       outerRadius: 94.81139665690232,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 821,
+    //     type: 'arc',
+    //     children: []
+    //   },
+    //   {
+    //     attribute: {
+    //       visible: true,
+    //       cornerRadius: 0,
+    //       lineWidth: 0,
+    //       fillOpacity: 1,
+    //       fill: '#FF8406',
+    //       stroke: '#FF8406',
+    //       x: 301,
+    //       y: 230,
+    //       startAngle: 1.5707963267948963,
+    //       endAngle: 3.6651914291880923,
+    //       outerRadius: 53.19603101629562,
+    //       innerRadius: 0,
+    //       pickable: true
+    //     },
+    //     _uid: 887,
+    //     type: 'arc',
+    //     children: []
+    //   }
+    // ]
   };
   return spec;
 };
@@ -702,8 +832,8 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        text: 'test122344556778891234550987665544'
-        // text: latestData[index].type
+        // text: 'test122344556778891234550987665544'
+        text: latestData[index].type
         // text: originData[index].id
         // fill: c.attribute.fill,
         // line: {
@@ -731,11 +861,15 @@ function createContent(stage: Stage) {
       fontSize: 16
     },
     line: {
-      line1MinLength: 30
+      line1MinLength: 30,
+      lineWidth: 2
+      // smooth: true
+      // stroke: 'red'
+      // visible: false
     },
     layout: {
       // align: 'edge'
-      // tangentConstraint: false
+      tangentConstraint: false
     },
 
     // centerOffset: 10,

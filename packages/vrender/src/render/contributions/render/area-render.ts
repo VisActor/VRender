@@ -134,20 +134,30 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
       const { points, segments, curveType = areaAttribute.curveType } = area.attribute;
       if (segments && segments.length) {
         let startPoint: IPointLike;
-        let lastTopSeg: ISegPath2D;
-        const topCaches = segments.map((seg, index) => {
-          // 添加上一个segment结束的点作为这个segment的起始点
-          if (index === 1) {
-            startPoint = { x: lastTopSeg.endX, y: lastTopSeg.endY };
-          } else if (index > 1) {
-            startPoint.x = lastTopSeg.endX;
-            startPoint.y = lastTopSeg.endY;
-          }
-          lastTopSeg = calcLineCache(seg.points, curveType, {
-            startPoint
-          });
-          return lastTopSeg;
-        });
+        let lastTopSeg: { endX: number; endY: number };
+        const topCaches = segments
+          .map((seg, index) => {
+            if (seg.points.length <= 1) {
+              // 第一个点的话，直接设置lastTopSeg
+              if (index === 0) {
+                seg.points[0] && (lastTopSeg = { endX: seg.points[0].x, endY: seg.points[0].y });
+                return null;
+              }
+            }
+            // 添加上一个segment结束的点作为这个segment的起始点
+            if (index === 1) {
+              startPoint = { x: lastTopSeg.endX, y: lastTopSeg.endY };
+            } else if (index > 1) {
+              startPoint.x = lastTopSeg.endX;
+              startPoint.y = lastTopSeg.endY;
+            }
+            const data = calcLineCache(seg.points, curveType, {
+              startPoint
+            });
+            lastTopSeg = data;
+            return data;
+          })
+          .filter(item => !!item);
         let lastBottomSeg: ISegPath2D;
         const bottomCaches = [];
         for (let i = segments.length - 1; i >= 0; i--) {
@@ -205,6 +215,11 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     }
 
     if (Array.isArray(area.cacheArea)) {
+      const segments = area.attribute.segments.filter(item => item.points.length);
+      // 如果第一个seg只有一个点，那么shift出去
+      if (segments[0].points.length === 1) {
+        segments.shift();
+      }
       if (clipRange === 1) {
         let skip = false;
         // 性能优化，不需要clip的线段不需要计算长度
@@ -219,7 +234,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
             fillOpacity,
             doStroke,
             strokeOpacity,
-            area.attribute.segments[index],
+            segments[index],
             [areaAttribute, area.attribute],
             clipRange,
             x,
@@ -255,7 +270,7 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
               fillOpacity,
               doStroke,
               strokeOpacity,
-              area.attribute.segments[index],
+              segments[index],
               [areaAttribute, area.attribute],
               min(_cr, 1),
               x,

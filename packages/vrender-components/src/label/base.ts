@@ -498,6 +498,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (prevLabel.labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {
+              visible:
+                ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
+                text.attribute?.visible ??
+                true,
               points: (text.attribute as ArcLabelAttrs)?.points
             }),
             duration,

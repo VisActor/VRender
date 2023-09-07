@@ -50,6 +50,7 @@ export const DefaultTransform: ITransform = {
   angle: 0,
   alpha: 0,
   beta: 0,
+  scaleCenter: [0, 0],
   anchor: [0, 0],
   anchor3d: [0, 0],
   postMatrix: new Matrix()
@@ -222,7 +223,8 @@ export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   segments: [],
   curveType: 'linear',
   clipRange: 1,
-  clipRangeByDimension: 'default'
+  clipRangeByDimension: 'default',
+  closePath: false
 };
 
 export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {

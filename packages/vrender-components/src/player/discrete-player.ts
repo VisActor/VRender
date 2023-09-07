@@ -84,7 +84,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       const middle = Math.floor(e.detail.value) + 0.5;
       this._dataIndex = e.detail.value >= middle ? Math.ceil(e.detail.value) : Math.floor(e.detail.value);
       this._slider.setValue(this._dataIndex);
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
     });
   };
 
@@ -134,7 +134,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     }
 
     // 事件触发
-    this.dispatchCustomEvent(PlayerEventEnum.OnPlay);
+    this.dispatchCustomEvent(PlayerEventEnum.play);
     // 重置结束状态
     this._isReachEnd = false;
     // 重置tick时间, 暂停后重新播放也会重新计时
@@ -159,7 +159,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
 
     // 第一个播放帧, 立即执行
     if (isFirstPlay && this._activeIndex !== this._dataIndex) {
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
       this._activeIndex = this._dataIndex;
     }
     // 中间播放帧, 每一个interval执行一次
@@ -167,7 +167,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this._tickTime = now;
       this._updateDataIndex(forwardStep(this._direction, this._dataIndex, this._minIndex, this._maxIndex));
       this._activeIndex = this._dataIndex;
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
     }
 
     // 终止条件
@@ -202,7 +202,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 重置ActiveIndex
     this._activeIndex = -1;
     // 播放结束时并且到达终点
-    this.dispatchCustomEvent(PlayerEventEnum.OnEnd);
+    this.dispatchCustomEvent(PlayerEventEnum.end);
   };
 
   /**
@@ -216,7 +216,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnPause);
+    this.dispatchCustomEvent(PlayerEventEnum.pause);
   };
 
   /**
@@ -226,8 +226,8 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     const index = Math.max(this._dataIndex - 1, this._minIndex);
     this._updateDataIndex(index);
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnChange);
-    this.dispatchCustomEvent(PlayerEventEnum.OnBackward);
+    this.dispatchCustomEvent(PlayerEventEnum.change);
+    this.dispatchCustomEvent(PlayerEventEnum.backward);
   };
 
   /**
@@ -237,7 +237,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     const index = Math.min(this._dataIndex + 1, this._maxIndex);
     this._updateDataIndex(index);
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnChange);
-    this.dispatchCustomEvent(PlayerEventEnum.OnForward);
+    this.dispatchCustomEvent(PlayerEventEnum.change);
+    this.dispatchCustomEvent(PlayerEventEnum.forward);
   };
 }

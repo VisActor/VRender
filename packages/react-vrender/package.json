@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vrender",
-  "version": "0.12.19",
+  "version": "0.12.21",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -24,7 +24,7 @@
     "react": "^18.2.0"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.14.5",
+    "@visactor/vrender": "workspace:0.14.7",
     "@visactor/vutils": "~0.15.5",
     "react-reconciler": "^0.29.0",
     "tslib": "^2.3.1"

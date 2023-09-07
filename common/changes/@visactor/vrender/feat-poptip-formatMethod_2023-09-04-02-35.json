@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix: stage support setDpr, closed #382",
+      "comment": "feat: poptip support formatMethod",
       "type": "patch"
     }
   ],

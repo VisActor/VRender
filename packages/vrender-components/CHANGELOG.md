@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 31 Aug 2023 10:03:38 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+
+## 0.14.8
+Thu, 07 Sep 2023 11:56:00 GMT
+
+### Patches
+
+- fix: fix the bug of rose chart label conflict with legend, fixed the issue #453
 
 ## 0.14.7
 Thu, 31 Aug 2023 10:03:38 GMT
@@ -75,6 +82,10 @@ Thu, 10 Aug 2023 07:22:55 GMT
 - feat(component): label component support custom layout and dataFilter
 - fix: fix the issue of using interactive layer in only on canvas env
 
+### Updates
+
+- feat(brush): add sizeThreshold setting
+
 ## 0.13.10
 Wed, 09 Aug 2023 07:34:23 GMT
 
@@ -111,6 +122,11 @@ Wed, 02 Aug 2023 03:13:00 GMT
 
 - feat(chore): trigger publish
 - fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300
+
+### Updates
+
+- feat(marker): add formatMethod of label
+- fix(dataZoom): updateStateCallback don not effect when setStartAndEnd
 
 ## 0.13.6
 Fri, 28 Jul 2023 07:17:04 GMT
@@ -152,6 +168,10 @@ Fri, 21 Jul 2023 10:50:41 GMT
 - fix(vrender-components): fix the calculation of axis title offset
 - fix(vrender-components): fix the issue of bounds when labelContainer is empty
 
+### Updates
+
+- fix: fix the poptip not work due to mount and unmount issue
+
 ## 0.13.1
 Thu, 20 Jul 2023 10:41:23 GMT
 
@@ -173,6 +193,10 @@ Wed, 19 Jul 2023 08:29:52 GMT
 - feat(axis): support custom method for autohide
 - feat: tooltip supports rich text which can wrap
 - fix(legend): compact the undefiend scene when use Object.keys
+
+### Updates
+
+- perf(marker): performance enhance
 
 ## 0.12.3
 Wed, 12 Jul 2023 12:30:46 GMT
@@ -208,6 +232,11 @@ Thu, 06 Jul 2023 09:09:12 GMT
 - fix: tooltip should not throw error when title not exist
 
 
+
+### Updates
+
+- fix(marker): pickable problem
+- fix(marker): add interactive config
 
 ## 0.11.1
 Tue, 27 Jun 2023 13:38:36 GMT
@@ -257,6 +286,10 @@ Fri, 16 Jun 2023 03:13:09 GMT
 - fix enableView3dTranform
 - fix legend shape's color does not change in unselected state
 - upgrade vrender
+
+### Updates
+
+- release
 
 ## 0.9.1
 Thu, 08 Jun 2023 11:34:32 GMT

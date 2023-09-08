@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 31 Aug 2023 10:03:38 GMT and should not be manually modified.
+This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+
+## 0.14.8
+Thu, 07 Sep 2023 11:56:00 GMT
+
+### Patches
+
+- feat: line support closePath attribute as another definition of linearClosed, closed #423
+- feat: poptip support formatMethod
+- feat: add scaleCenter attribute
+- fix: increase the robustness of segments, closed #424
 
 ## 0.14.7
 Thu, 31 Aug 2023 10:03:38 GMT
@@ -164,6 +174,10 @@ Wed, 19 Jul 2023 08:29:52 GMT
 
 
 
+### Updates
+
+- perf(marker): performance enhance
+
 ## 0.12.3
 Wed, 12 Jul 2023 12:30:46 GMT
 
@@ -280,6 +294,10 @@ Fri, 16 Jun 2023 03:13:09 GMT
 - fix the bug that will be overwritten after stage.setCursor
 - fix the bug of strokeText in 3d mode
 - fix the bug in css transform
+
+### Updates
+
+- release
 
 ## 0.9.1
 Thu, 08 Jun 2023 11:34:32 GMT

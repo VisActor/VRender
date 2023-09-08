@@ -338,11 +338,6 @@ export interface IArcLabelLineSpec {
   lineWidth?: number;
   /** 引导线颜色 */
   stroke?: string;
-  /**
-   * 引导线是否光滑
-   * @default false
-   */
-  smooth?: boolean;
 }
 
 export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';

@@ -62,10 +62,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
   protected render() {
     const {
-      title = '',
       titleStyle = {} as ITextGraphicAttribute,
       position,
-      content = '',
       contentStyle = {} as ITextGraphicAttribute,
       panel = {} as BackgroundAttributes & ISymbolGraphicAttribute & { space?: number },
       space = 4,
@@ -78,6 +76,11 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       dx = 0,
       dy = 0
     } = this.attribute as PopTipAttributes;
+
+    let { title = '', content = '' } = this.attribute as PopTipAttributes;
+
+    title = this.attribute.titleFormatMethod ? this.attribute.titleFormatMethod(title) : title;
+    content = this.attribute.contentFormatMethod ? this.attribute.contentFormatMethod(content) : content;
 
     const parsedPadding = normalizePadding(padding);
 

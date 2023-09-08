@@ -862,8 +862,8 @@ function createContent(stage: Stage) {
     },
     line: {
       line1MinLength: 30,
-      lineWidth: 2
-      // smooth: true
+      lineWidth: 2,
+      smooth: true
       // stroke: 'red'
       // visible: false
     },

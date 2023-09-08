@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: wrapText support wordBreak",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

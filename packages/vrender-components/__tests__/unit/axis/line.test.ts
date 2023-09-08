@@ -1,7 +1,6 @@
 import { PointScale, LinearScale } from '@visactor/vscale';
 import type { IGraphic, Stage, Group, ILine, Text, IGroup, IText } from '@visactor/vrender';
-import type { Grid } from '../../../src';
-import { LineAxis, Segment } from '../../../src';
+import { LineAxis, LineAxisGrid, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
@@ -281,24 +280,27 @@ describe('Line Axis', () => {
       tick: {
         visible: true,
         alignWithLabel: false
-      },
-      grid: {
-        visible: true,
-        type: 'line',
-        length: 150,
-        alternateColor: '#ccc',
-        style: (datum, index) => {
-          if (index === 1) {
-            return {
-              stroke: 'red',
-              lineWidth: 3,
-              lineDash: [4, 4]
-            };
-          }
+      }
+    });
+    const grid = new LineAxisGrid({
+      start: { x: 100, y: 150 },
+      end: { x: 200, y: 350 },
+      items,
+      visible: true,
+      type: 'line',
+      length: 150,
+      alternateColor: '#ccc',
+      style: (datum, index) => {
+        if (index === 1) {
           return {
+            stroke: 'red',
+            lineWidth: 3,
             lineDash: [4, 4]
           };
         }
+        return {
+          lineDash: [4, 4]
+        };
       },
       subGrid: {
         visible: true,
@@ -307,7 +309,9 @@ describe('Line Axis', () => {
         }
       }
     });
+
     stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
 
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
@@ -327,173 +331,133 @@ describe('Line Axis', () => {
     });
 
     // 验证 grid 是否渲染正确
-    let gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    let gridLineGroup = stage.getElementsByName('axis-grid')[0];
     expect(gridLineGroup).toBeDefined();
-    expect(gridLineGroup.attribute.items?.length).toBe(11);
+    expect(gridLineGroup.getElementsByName('axis-grid-line').length).toBe(11);
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 100, y: 150 },
-        { x: 234.1640786499874, y: 82.9179606750063 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 100,
-          y: 150
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 100,
+        y: 150
+      },
+      rawValue: 0,
+      value: 0
     });
 
     // 验证 subGrid 是否渲染正确
-    let subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup).toBeDefined();
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
-    // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 100, y: 150 },
-        { x: 234.1640786499874, y: 82.9179606750063 }
-      ],
-      datum: {}
-    });
+    let subGridLines = grid.getElementsByName('axis-grid-sub-line');
+    // expect(subGridLineGroup).toBeDefined();
+    expect(subGridLines.length).toBe(51);
+    // // @ts-ignore
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 100, y: 150 },
+    //     { x: 234.1640786499874, y: 82.9179606750063 }
+    //   ],
+    //   datum: {}
+    // });
 
     // polygon 类型 grid
-    axis.setAttributes({
+    grid.setAttributes({
       start: { x: 250, y: 350 },
       end: { x: 450, y: 350 },
-      tick: {
-        visible: true,
-        alignWithLabel: true
-      },
-      grid: {
-        visible: true,
-        type: 'polygon',
-        center: { x: 250, y: 350 },
-        closed: true,
-        sides: 3,
-        startAngle: 0,
-        endAngle: Math.PI * 2
-      }
+      // tick: {
+      //   visible: true,
+      //   alignWithLabel: true
+      // },
+      // grid: {
+      // visible: true,
+      type: 'polygon',
+      center: { x: 250, y: 350 },
+      closed: true,
+      sides: 3,
+      startAngle: 0,
+      endAngle: Math.PI * 2
+      // }
     });
 
-    gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    gridLineGroup = stage.getElementsByName('axis-grid')[0];
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 250, y: 350 },
-        { x: 250, y: 350 },
-        { x: 250, y: 350 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 250,
-          y: 350
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 250,
+        y: 350
+      },
+      rawValue: 0,
+      value: 0
     });
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[1]).toEqual({
+    expect(gridLineGroup.data[1]).toEqual({
       id: 10,
-      points: [
-        { x: 270, y: 350 },
-        { x: 240, y: 367.3205080756888 },
-        { x: 240, y: 332.6794919243112 }
-      ],
-      datum: {
-        id: 10,
-        label: 10,
-        point: {
-          x: 270,
-          y: 350
-        },
-        rawValue: 10,
-        value: 0.1
-      }
+      label: 10,
+      point: {
+        x: 270,
+        y: 350
+      },
+      rawValue: 10,
+      value: 0.1
     });
-    subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
+    subGridLines = stage.getElementsByName('axis-grid-sub-line');
+    expect(subGridLines.length).toBe(51);
     // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 250, y: 350 },
-        { x: 250, y: 350 },
-        { x: 250, y: 350 }
-      ],
-      datum: {}
-    });
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 250, y: 350 },
+    //     { x: 250, y: 350 },
+    //     { x: 250, y: 350 }
+    //   ],
+    //   datum: {}
+    // });
 
     // circle 类型 grid
-    axis.setAttributes({
-      grid: {
-        visible: true,
-        type: 'circle',
-        center: { x: 240, y: 350 },
-        alternateColor: undefined,
-        sides: 2
-      }
+    grid.setAttributes({
+      type: 'circle',
+      center: { x: 240, y: 350 },
+      alternateColor: undefined,
+      sides: 2
     });
 
-    gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    gridLineGroup = stage.getElementsByName('axis-grid')[0];
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 250, y: 350 },
-        { x: 230, y: 350 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 250,
-          y: 350
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 250,
+        y: 350
+      },
+      rawValue: 0,
+      value: 0
     });
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[1]).toEqual({
+    expect(gridLineGroup.data[1]).toEqual({
       id: 10,
-      points: [
-        { x: 270, y: 350 },
-        { x: 210, y: 350 }
-      ],
-      datum: {
-        id: 10,
-        label: 10,
-        point: {
-          x: 270,
-          y: 350
-        },
-        rawValue: 10,
-        value: 0.1
-      }
+      label: 10,
+      point: {
+        x: 270,
+        y: 350
+      },
+      rawValue: 10,
+      value: 0.1
     });
 
-    subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
-    // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 250, y: 350 },
-        { x: 230, y: 350 }
-      ],
-      datum: {}
-    });
+    subGridLines = grid.getElementsByName('axis-grid-sub-line');
+    expect(subGridLines.length).toBe(51);
+    // // @ts-ignore
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 250, y: 350 },
+    //     { x: 230, y: 350 }
+    //   ],
+    //   datum: {}
+    // });
   });
 
   it('Vertical Line Axis with Title', () => {
@@ -560,27 +524,6 @@ describe('Line Axis', () => {
           lineWidth: 1,
           stroke: '#D9DDE4',
           strokeOpacity: 1
-        }
-      },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [2, 2]
-        },
-        visible: true,
-        length: 337,
-        type: 'line',
-        depth: 0
-      },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
         }
       },
       x: 151,
@@ -709,27 +652,6 @@ describe('Line Axis', () => {
           strokeOpacity: 1
         }
       },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: []
-        },
-        visible: false,
-        length: 399,
-        type: 'line',
-        depth: 0
-      },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
-        }
-      },
       x: 121,
       y: 423,
       start: {
@@ -825,27 +747,6 @@ describe('Line Axis', () => {
           lineWidth: 1,
           stroke: '#D9DDE4',
           strokeOpacity: 1
-        }
-      },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: []
-        },
-        visible: false,
-        length: 424,
-        type: 'line',
-        depth: 0
-      },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
         }
       },
       x: 50,

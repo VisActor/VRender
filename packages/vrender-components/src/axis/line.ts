@@ -1,42 +1,29 @@
 /**
  * @description 直线型坐标轴
  */
-import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import {
   get,
   isNil,
   merge,
-  polarToCartesian,
-  PointService,
   isNumberClose,
   isEmpty,
   isFunction,
   isValidNumber,
   isValid,
   normalizePadding,
+  mixin,
   last as peek
 } from '@visactor/vutils';
 import type { TextAlignType } from '@visactor/vrender';
+// eslint-disable-next-line no-duplicate-imports
 import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
-import type { Point } from '../core/type';
-import { angleTo, normalize, scale } from '../util/matrix';
+import { angleTo } from '../util/matrix';
 import type { TagAttributes } from '../tag';
-import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
-import type {
-  GridItem,
-  LineAxisGridAttributes,
-  LineAttributes,
-  LineAxisAttributes,
-  TitleAttributes,
-  LineGridOfLineAxisAttributes,
-  PolarGridOfLineAxisAttributes,
-  TransformedAxisItem,
-  AxisItem
-} from './type';
+import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
@@ -45,16 +32,11 @@ import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
+import { LineAxisMixin } from './mixin/line';
 
-function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
-  const points: Point[] = [];
-  const range = endAngle - startAngle;
-  for (let i = 0; i < count; i++) {
-    const angle = startAngle + (i * range) / count;
-    points.push(polarToCartesian(center, radius, angle));
-  }
-  return points;
-}
+export interface LineAxis
+  extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
+    AxisBase<LineAxisAttributes> {}
 
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
@@ -114,32 +96,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     axisLineGroup.name = AXIS_ELEMENT_NAME.line;
     axisLineGroup.id = this._getNodeId('line');
     container.add(axisLineGroup as unknown as INode);
-  }
-
-  protected isInValidValue(value: number) {
-    return value < 0 || value > 1;
-  }
-
-  protected getTickCoord(tickValue: number): Point {
-    const { start } = this.attribute as LineAxisAttributes;
-    const axisVector = this.getRelativeVector();
-    return {
-      x: start.x + axisVector[0] * tickValue,
-      y: start.y + axisVector[1] * tickValue
-    };
-  }
-
-  protected getRelativeVector(): [number, number] {
-    const { start, end } = this.attribute as LineAxisAttributes;
-    return [end.x - start.x, end.y - start.y];
-  }
-
-  protected getVerticalVector(offset: number, inside = false) {
-    const { verticalFactor = 1 } = this.attribute;
-    const axisVector = this.getRelativeVector();
-    const normalizedAxisVector = normalize(axisVector);
-    const verticalVector: [number, number] = [normalizedAxisVector[1], normalizedAxisVector[0] * -1];
-    return scale(verticalVector, offset * (inside ? 1 : -1) * verticalFactor);
   }
 
   // TODO: 太 hack 了，需要静心优化
@@ -235,7 +191,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
 
     const offset = tickLength + labelLength + space;
     const titlePoint = this.getVerticalCoord(point, offset, false); // 标题的点
-    const vector = this.getVerticalVector(offset, false);
+    const vector = this.getVerticalVector(offset, false, { x: 0, y: 0 });
 
     let { angle } = restAttrs; // 用户设置的是角度
     let textAlign;
@@ -302,124 +258,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
 
     return attrs;
-  }
-
-  private _getGridPoint(gridType: string, point: IPointLike): Point[] {
-    let gridPoints;
-    if (gridType === 'line') {
-      const { length } = this.attribute.grid as LineGridOfLineAxisAttributes;
-      const endPoint = this.getVerticalCoord(point, length as number, true);
-
-      gridPoints = [point, endPoint];
-    } else if (gridType === 'circle' || gridType === 'polygon') {
-      const {
-        center,
-        sides,
-        startAngle = POLAR_START_ANGLE,
-        endAngle = POLAR_END_ANGLE
-      } = this.attribute.grid as PolarGridOfLineAxisAttributes;
-      const distance = PointService.distancePP(center as Point, point);
-      gridPoints = getCirclePoints(center as Point, sides as number, distance, startAngle, endAngle);
-    }
-
-    return gridPoints;
-  }
-
-  protected getGridAttribute(type: string) {
-    const { type: gridType, alignWithLabel = true } = this.attribute.grid as LineAxisGridAttributes;
-
-    let tickSegment = 1;
-    const count = this.data.length;
-    if (count >= 2) {
-      tickSegment = this.data[1].value - this.data[0].value;
-    }
-    let gridAttribute;
-    let items: GridItem[] = [];
-    if (type === 'grid') {
-      gridAttribute = this.attribute.grid;
-      // 计算 grid Items
-      const gridItems: GridItem[] = [];
-      this.data.forEach(item => {
-        let { point } = item;
-
-        if (!alignWithLabel) {
-          // tickLine 不同 tick 对齐时需要调整 point
-          const value = item.value - tickSegment / 2;
-          if (this.isInValidValue(value)) {
-            return;
-          }
-          point = this.getTickCoord(value);
-        }
-
-        gridItems.push({
-          id: item.label,
-          datum: item,
-          points: this._getGridPoint(gridType, point)
-        });
-      });
-      items = gridItems;
-    } else {
-      // 渲染 subGrid
-      gridAttribute = merge({}, this.attribute.grid, this.attribute.subGrid);
-      // 计算 grid Items
-      const subGridItems: GridItem[] = [];
-      const { count: subCount = 4 } = this.attribute.subTick || {};
-      const tickLineCount = this.data.length;
-      // 刻度线的数量大于 2 时，才绘制子刻度
-      if (tickLineCount >= 2) {
-        const points: { value: number }[] = [];
-        this.data.forEach((item: TransformedAxisItem) => {
-          let tickValue = item.value;
-          if (!alignWithLabel) {
-            // tickLine 不同 tick 对齐时需要调整 point
-            const value = item.value - tickSegment / 2;
-            if (this.isInValidValue(value)) {
-              return;
-            }
-            tickValue = value;
-          }
-          points.push({
-            value: tickValue
-          });
-        });
-
-        for (let i = 0; i < points.length - 1; i++) {
-          const pre = points[i];
-          const next = points[i + 1];
-          subGridItems.push({
-            id: `sub-${i}-0`,
-            points: this._getGridPoint(gridType, this.getTickCoord(pre.value)),
-            // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
-            datum: {}
-          });
-          for (let j = 0; j < subCount; j++) {
-            const percent = (j + 1) / (subCount + 1);
-            const value = (1 - percent) * pre.value + percent * next.value;
-            const point = this.getTickCoord(value);
-            subGridItems.push({
-              id: `sub-${i}-${j + 1}`,
-              points: this._getGridPoint(gridType, point),
-              // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
-              datum: {}
-            });
-          }
-          if (i === points.length - 2) {
-            subGridItems.push({
-              id: `sub-${i}-${subCount + 1}`,
-              points: this._getGridPoint(gridType, this.getTickCoord(next.value)),
-              // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
-              datum: {}
-            });
-          }
-        }
-        items = subGridItems;
-      }
-    }
-
-    return {
-      ...gridAttribute,
-      items
-    };
   }
 
   protected getTextBaseline(vector: number[], inside?: boolean): TextBaselineType {
@@ -699,3 +537,5 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     return limitLength;
   }
 }
+
+mixin(LineAxis, LineAxisMixin);

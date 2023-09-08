@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: enhance timeline funciton, closed #348",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

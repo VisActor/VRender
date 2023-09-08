@@ -15,6 +15,11 @@ import triangleDown from './triangle-down';
 import thinTriangle from './thin-triangle';
 import arrow2Left from './arrow2-left';
 import arrow2Right from './arrow2-right';
+import arrow2Up from './arrow2-up';
+import arrow2Down from './arrow2-down';
+import lineV from './line-v';
+import lineH from './line-h';
+import close from './close';
 import rect from './rect';
 import type { ISymbolClass } from '../../interface';
 
@@ -36,7 +41,12 @@ export const builtinSymbols = [
   triangleDown,
   arrow2Left,
   arrow2Right,
-  rect
+  arrow2Up,
+  arrow2Down,
+  rect,
+  lineV,
+  lineH,
+  close
 ];
 export const builtinSymbolsMap: Record<string, ISymbolClass> = {};
 

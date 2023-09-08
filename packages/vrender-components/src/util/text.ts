@@ -32,7 +32,7 @@ export function measureTextSize(text: string | number | string[] | number[], tex
   }
   const bounds = getTextBounds({
     text,
-    fontFamily: textSpec.fontFamily ?? '',
+    fontFamily: textSpec.fontFamily,
     fontSize: textSpec.fontSize || 12,
     fontWeight: textSpec.fontWeight as any,
     textAlign: textSpec.textAlign ?? 'center',

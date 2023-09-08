@@ -159,9 +159,32 @@ export class DefaultTransformUtil implements ITransformUtil {
     this.outTargetMatrix.multiply(_matrix.a, _matrix.b, _matrix.c, _matrix.d, _matrix.e, _matrix.f);
     return this;
   }
+
+  private rotateMatrix(angle: number, center?: IPointLike): this {
+    const sMatrix = this.outSourceMatrix;
+    _matrix.setValue(sMatrix.a, sMatrix.b, sMatrix.c, sMatrix.d, sMatrix.e, sMatrix.f);
+    this.outTargetMatrix.reset();
+    if (center) {
+      const { x, y } = center;
+      this.outTargetMatrix.translate(x, y);
+      this.outTargetMatrix.rotate(angle);
+      this.outTargetMatrix.translate(-x, -y);
+    } else {
+      this.outTargetMatrix.rotate(angle);
+    }
+
+    this.outTargetMatrix.multiply(_matrix.a, _matrix.b, _matrix.c, _matrix.d, _matrix.e, _matrix.f);
+    return this;
+  }
   scale(sx: number, sy: number, center?: IPointLike): this {
     if (this.mode === TransformMode.matrix) {
       return this.scaleMatrix(sx, sy, center);
+    }
+    return this;
+  }
+  rotate(angle: number, center?: IPointLike): this {
+    if (this.mode === TransformMode.matrix) {
+      return this.rotateMatrix(angle, center);
     }
     return this;
   }

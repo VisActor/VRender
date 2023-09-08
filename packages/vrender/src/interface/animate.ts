@@ -192,6 +192,8 @@ export interface IAnimate {
   getStartProps: () => Record<string, any>;
   getEndProps: () => Record<string, any>;
 
+  setTimeline: (timeline: ITimeline) => void;
+
   bind: (target: IAnimateTarget) => this;
   to: (props: Record<string, any>, duration: number, easing: EasingType, params?: IStepConfig) => this;
   from: (props: Record<string, any>, duration: number, easing: EasingType, params?: IStepConfig) => this;
@@ -301,7 +303,7 @@ export interface ITimeline {
   id: number;
   animateCount: number;
   addAnimate: (animate: IAnimate) => void;
-  removeAnimate: (animate: IAnimate) => void;
+  removeAnimate: (animate: IAnimate, release?: boolean) => void;
   tick: (delta: number) => void;
   clear: () => void;
   pause: () => void;
@@ -339,4 +341,5 @@ export interface ITicker {
    */
   start: (force?: boolean) => boolean;
   stop: () => void;
+  addTimeline: (timeline: ITimeline) => void;
 }

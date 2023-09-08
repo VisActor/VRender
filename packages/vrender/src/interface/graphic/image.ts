@@ -8,6 +8,7 @@ export type IImageAttribute = {
   repeatX: IRepeatType;
   repeatY: IRepeatType;
   image: string | HTMLImageElement | HTMLCanvasElement;
+  cornerRadius: number | number[];
 };
 
 export type IImageGraphicAttribute = Partial<IGraphicAttribute> & Partial<IImageAttribute>;

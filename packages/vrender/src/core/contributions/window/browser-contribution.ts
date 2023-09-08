@@ -27,12 +27,16 @@ export class BrowserWindowHandlerContribution
 
   observer?: MutationObserver;
 
+  protected _canvasIsIntersecting: boolean;
+  protected _onVisibleChangeCb: (currentVisible: boolean) => void;
+
   get container(): HTMLElement | null {
     return this.canvas.nativeCanvas.parentElement;
   }
 
   constructor(@inject(VGlobal) private readonly global: IGlobal) {
     super();
+    this._canvasIsIntersecting = true;
   }
 
   getTitle(): string {
@@ -58,7 +62,47 @@ export class BrowserWindowHandlerContribution
       this.createWindowByCanvas(params);
     }
 
+    this.postInit();
+
     // this.bindOnChangeEvent();
+  }
+
+  protected postInit() {
+    try {
+      this.observerCanvas();
+    } catch (err) {
+      console.error('发生错误，该环境不存在IntersectionObserver');
+    }
+  }
+
+  isElementVisible(el: HTMLElement) {
+    const rect = el.getBoundingClientRect();
+    const vWidth = window.innerWidth || document.documentElement.clientWidth;
+    const vHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    if (rect.right < 0 || rect.bottom < 0 || rect.left > vWidth || rect.top > vHeight) {
+      return false;
+    }
+
+    return true;
+  }
+
+  protected observerCanvas() {
+    this._canvasIsIntersecting = this.isElementVisible(this.canvas.nativeCanvas);
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (this._canvasIsIntersecting !== entry.isIntersecting) {
+          this._canvasIsIntersecting = entry.isIntersecting;
+          this._onVisibleChangeCb && this._onVisibleChangeCb(entry.isIntersecting);
+        } else {
+          this._canvasIsIntersecting = entry.isIntersecting;
+        }
+      });
+    });
+    if (!observer) {
+      return;
+    }
+    observer.observe(this.canvas.nativeCanvas);
   }
 
   // private bindOnChangeEvent() {
@@ -247,5 +291,17 @@ export class BrowserWindowHandlerContribution
       context.fillRect(vb.x1, vb.y1, vb.x2 - vb.x1, vb.y2 - vb.y1);
     }
     context.nativeContext.restore();
+  }
+
+  isVisible(bbox?: IBoundsLike) {
+    return this._canvasIsIntersecting;
+  }
+
+  onVisibleChange(cb: (currentVisible: boolean) => void) {
+    this._onVisibleChangeCb = cb;
+  }
+
+  getTopLeft(baseWindow?: boolean): { top: number; left: number } {
+    return this.global.getElementTopLeft(this.canvas.nativeCanvas, baseWindow);
   }
 }

@@ -1,5 +1,5 @@
 import { application } from '../../application';
-import { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
+import type { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 
 export const DIRECTION_KEY = {
   horizontal: {
@@ -36,7 +36,7 @@ const defaultFormatting = {
 };
 const nbsp = String.fromCharCode(160);
 
-export const regLetter = /\w|\(|\)/;
+export const regLetter = /\w|\(|\)|-/;
 const regPunctuation = /[.?!,;:/，。？！、；：]/;
 export const regFirstSpace = /\S/;
 // Applies the style of a run to the canvas context

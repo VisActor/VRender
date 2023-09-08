@@ -1,5 +1,5 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
-import { pi2 } from '@visactor/vutils';
+import { Point, pi2 } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { ARC3D_NUMBER_TYPE } from '../graphic/constants';
 import type {
@@ -12,9 +12,88 @@ import type {
   IPickerService,
   PickResult
 } from '../interface';
+import { matrixAllocate } from '../allocator/matrix-allocate';
 
 // 拦截器
 export const PickItemInterceptor = Symbol.for('PickItemInterceptor');
+
+/**
+ * 影子节点拦截器，用于渲染影子节点
+ */
+@injectable()
+export class ShadowRootPickItemInterceptorContribution implements IPickItemInterceptorContribution {
+  order: number = 1;
+  afterPickItem(
+    graphic: IGraphic,
+    pickerService: IPickerService,
+    point: IPointLike,
+    pickParams: IPickParams,
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ): boolean | PickResult {
+    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+      return this._pickItem(graphic, pickerService, point, pickParams, params);
+    }
+    return false;
+  }
+
+  beforePickItem(
+    graphic: IGraphic,
+    pickerService: IPickerService,
+    point: IPointLike,
+    pickParams: IPickParams,
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ): boolean | PickResult {
+    if (graphic.attribute.shadowRootIdx < 0) {
+      return this._pickItem(graphic, pickerService, point, pickParams, params);
+    }
+    return false;
+  }
+
+  protected _pickItem(
+    graphic: IGraphic,
+    pickerService: IPickerService,
+    point: IPointLike,
+    pickParams: IPickParams,
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ): boolean | PickResult {
+    if (!graphic.shadowRoot) {
+      return false;
+    }
+    const { parentMatrix } = params || {};
+    if (!parentMatrix) {
+      return false;
+    }
+
+    const context = pickerService.pickContext;
+    context.highPerformanceSave();
+
+    const g = graphic.shadowRoot;
+    const currentGroupMatrix = matrixAllocate.allocateByObj(parentMatrix);
+    const newPoint = new Point(point.x, point.y);
+    parentMatrix.transformPoint(newPoint, newPoint);
+    const transMatrix = graphic.transMatrix;
+    currentGroupMatrix.multiply(
+      transMatrix.a,
+      transMatrix.b,
+      transMatrix.c,
+      transMatrix.d,
+      transMatrix.e,
+      transMatrix.f
+    );
+
+    const result = pickerService.pickGroup(g, newPoint.clone(), currentGroupMatrix, pickParams);
+
+    context.highPerformanceRestore();
+
+    return result;
+  }
+}
 
 /**
  * 3d拦截器，用于渲染3d视角
@@ -158,11 +237,11 @@ export class Canvas3DPickItemInterceptor implements IPickItemInterceptorContribu
       }
 
       context.camera = null;
-      context.restore();
 
       pickParams.in3dInterceptor = false;
       return result;
     }
+    context.restore();
     return null;
   }
 

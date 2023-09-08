@@ -26,7 +26,12 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
-          # Install rush
+      # # 查看字体
+      # - name: View Fonts
+      #   run: |
+      #     fc-list
+
+      # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - run: node common/scripts/install-run-rush.js build --only tag:package

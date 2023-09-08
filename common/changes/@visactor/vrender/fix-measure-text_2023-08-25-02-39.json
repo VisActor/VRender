@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: pass fontFamily in measureText",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

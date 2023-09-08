@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: symbol support more type and support svg format, closed #110 #313",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -127,12 +127,15 @@ export class EventManager {
     ) {
       target = this._prePointTargetCache[cacheKey];
     } else {
-      target = this.pickTarget(e.canvasX, e.canvasY);
+      target = this.pickTarget(e.canvasX, e.canvasY, e);
       // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
-      this._prePointTargetCache = {
-        [cacheKey]: target,
-        stageRenderCount: target?.stage.renderCount ?? -1
-      };
+      // 如果存在params，那么就不缓存
+      if (!(e as any).pickParams) {
+        this._prePointTargetCache = {
+          [cacheKey]: target,
+          stageRenderCount: target?.stage.renderCount ?? -1
+        };
+      }
     }
 
     if (mappers) {
@@ -603,7 +606,7 @@ export class EventManager {
     if (target) {
       event.target = target;
     } else {
-      event.target = this.pickTarget(event.global.x, event.global.y);
+      event.target = this.pickTarget(event.global.x, event.global.y, event);
     }
 
     if (typeof type === 'string') {
@@ -622,7 +625,7 @@ export class EventManager {
 
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
-    event.target = target || this.pickTarget(event.global.x, event.global.y);
+    event.target = target || this.pickTarget(event.global.x, event.global.y, event);
 
     return event;
   }
@@ -699,6 +702,7 @@ export class EventManager {
     to.which = from.which;
     to.layer.copyFrom(from.layer);
     to.page.copyFrom(from.page);
+    (to as any).pickParams = (from as any).pickParams;
   }
 
   protected trackingData(id: number): TrackingData {
@@ -779,7 +783,7 @@ export class EventManager {
     }
   }
 
-  private pickTarget(x: number, y: number) {
+  private pickTarget(x: number, y: number, e: any) {
     let target;
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -792,6 +796,9 @@ export class EventManager {
       target = this.rootTarget;
     } else {
       target = null;
+    }
+    if (e) {
+      e.pickParams = pickResult.params;
     }
     return target;
   }

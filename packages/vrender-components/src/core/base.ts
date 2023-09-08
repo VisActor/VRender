@@ -1,8 +1,9 @@
 /**
  * @description 组件基类
  */
-import { Group, IGroupGraphicAttribute } from '@visactor/vrender';
-import { merge, isPlainObject, isNil } from '@visactor/vutils';
+import type { IGroupGraphicAttribute } from '@visactor/vrender';
+import { Group } from '@visactor/vrender';
+import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 
 const GROUP_ATTRIBUTES = [
   'x',
@@ -52,7 +53,8 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
    */
   // @ts-ignore
   setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
-    if (isPlainObject(this.attribute[key])) {
+    // overwrite when previous or next attribute is function
+    if (isPlainObject(this.attribute[key]) && !isFunction(this.attribute[key]) && !isFunction(value)) {
       merge(this.attribute[key], value);
     } else {
       this.attribute[key] = value;
@@ -100,7 +102,8 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     }
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as keyof Partial<T>;
-      if (isPlainObject(this.attribute[key])) {
+      // overwrite when previous or next attribute is function
+      if (isPlainObject(this.attribute[key]) && !isFunction(this.attribute[key]) && !isFunction(params[key])) {
         merge(this.attribute[key], params[key]);
       } else {
         this.attribute[key] = params[key];

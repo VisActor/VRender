@@ -14,13 +14,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.3.0
       '@visactor/vgrammar': ~0.5.7
-      '@antv/g': ^5.7.4
-      '@esbuild-plugins/node-globals-polyfill': 0.1.1
-      '@esbuild-plugins/node-modules-polyfill': 0.1.4
-      '@internal/eslint-config': workspace:*
-      '@internal/ts-config': workspace:*
       '@visactor/vrender': workspace:0.14.8
-      '@visactor/vrender-kits': workspace:0.14.8
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -326,8 +320,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/node': '*'
       '@types/node-fetch': 2.6.4
-      '@visactor/vrender': workspace:0.14.7
-      '@visactor/vrender-components': workspace:0.14.7
+      '@visactor/vrender': workspace:0.14.8
+      '@visactor/vrender-components': workspace:0.14.8
       eslint: ~8.18.0
       form-data: ~4.0.0
       node-fetch: 2.6.6

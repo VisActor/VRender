@@ -210,8 +210,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   private _prepare() {
-    const baseMarks = getMarksByName(this.getRootNode() as IGroup, this.attribute.baseMarkGroupName);
     const currentBaseMarks: IGraphic[] = [];
+    let baseMarks;
+    if (isFunction(this.attribute.getBaseMarks)) {
+      baseMarks = this.attribute.getBaseMarks();
+    } else {
+      baseMarks = getMarksByName(this.getRootNode() as IGroup, this.attribute.baseMarkGroupName);
+    }
+
     baseMarks.forEach(mark => {
       if ((mark as any).releaseStatus !== 'willRelease') {
         currentBaseMarks.push(mark);

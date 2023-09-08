@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: pie chart labels are not drawn as expected when animation is turned on, #750",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

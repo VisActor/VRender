@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -26,7 +27,7 @@ export function square(ctx: IContext2d, r: number, x: number, y: number) {
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class SquareSymbol implements ISymbolClass {
+export class SquareSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'square';
   pathStr: string = 'M-0.5,-0.5h1v1h-1Z';
 
@@ -38,14 +39,6 @@ export class SquareSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {
     const r = size / 2 + offset;
     return square(ctx, r, x, y);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

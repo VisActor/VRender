@@ -1,6 +1,7 @@
 import type { IBounds } from '@visactor/vutils';
 import { sqrt } from '@visactor/vutils';
 import type { IContext2d, ISymbolClass, SymbolType } from '../../interface';
+import { BaseSymbol } from './base';
 /**
  * 部分源码参考 https://github.com/vega/vega/blob/main/packages/vega-scenegraph/src/path/symbols.js
  * Copyright (c) 2015-2023, University of Washington Interactive Data Lab
@@ -54,7 +55,7 @@ export function arrow(ctx: IContext2d, r: number, transX: number, transY: number
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class ArrowSymbol implements ISymbolClass {
+export class ArrowSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'arrow';
   /* eslint-disable max-len */
   pathStr: string =
@@ -68,14 +69,6 @@ export class ArrowSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
     const r = size / 2 + offset;
     return arrow(ctx, r, transX, transY);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

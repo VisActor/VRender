@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -54,7 +55,7 @@ export function crossOffset(ctx: IContext2d, r: number, x: number, y: number, of
 }
 
 // 以中心为锚点，size为circle外接正方形的边长
-export class CrossSymbol implements ISymbolClass {
+export class CrossSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'cross';
   /* eslint-disable max-len */
   pathStr: string =
@@ -68,14 +69,6 @@ export class CrossSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
     const r = size / 6;
     return crossOffset(ctx, r, x, y, offset, z);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

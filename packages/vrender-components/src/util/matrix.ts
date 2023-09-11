@@ -3,7 +3,7 @@ export type Vector2 = [number, number];
 /**
  * Scales a vec2 by a scalar number
  */
-export function scale(vector: Vector2, scale: number) {
+export function scale(vector: Vector2, scale: number): [number, number] {
   return [vector[0] * scale, vector[1] * scale];
 }
 

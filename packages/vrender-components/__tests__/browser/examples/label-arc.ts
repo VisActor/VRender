@@ -1000,10 +1000,11 @@ function createContent(stage: Stage) {
     },
     line: {
       line1MinLength: 30,
-      lineWidth: 2
-      // smooth: true
-      // stroke: 'red'
-      // visible: false
+      smooth: true,
+      style: {
+        lineWidth: 2,
+        stroke: 'red'
+      }
     },
     layout: {
       // align: 'edge'

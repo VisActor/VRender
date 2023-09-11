@@ -1,6 +1,6 @@
 import { pi } from '@visactor/vutils';
 import { BandScale, LinearScale, PointScale } from '@visactor/vscale';
-import { CircleAxis, LineAxis } from '../../../src';
+import { CircleAxis, LineAxis, LineAxisGrid, CircleAxisGrid } from '../../../src';
 import render from '../../util/render';
 
 const scale = new LinearScale().domain([0, 100]).range([0, 1]).nice();
@@ -116,12 +116,6 @@ const xAxisBottom = new LineAxis({
     space: 0,
     state: stateStyle
   },
-  subGrid: {
-    visible: true,
-    style: {
-      stroke: 'red'
-    }
-  },
   hover: true,
   select: true,
   panel: {
@@ -160,12 +154,6 @@ const xAxisTop = new LineAxis({
   label: {
     visible: true,
     space: 0
-  },
-  subGrid: {
-    visible: true,
-    style: {
-      stroke: 'red'
-    }
   },
   panel: {
     visible: true,
@@ -296,15 +284,6 @@ const yAxis3d = new LineAxis(
       maxWidth: 60,
       text: 'y 轴'
     },
-    grid: {
-      visible: true,
-      type: 'line',
-      depth: 300,
-      length: 300,
-      style: {
-        lineDash: [0]
-      }
-    },
     label: {
       visible: true
       // space: 0
@@ -335,15 +314,6 @@ const xAxis3d = new LineAxis(
       maxWidth: 60,
       text: 'x 轴',
       space: 0
-    },
-    grid: {
-      visible: true,
-      type: 'line',
-      depth: 300,
-      length: 250,
-      style: {
-        lineDash: [0]
-      }
     },
     tick: {
       visible: true
@@ -386,15 +356,6 @@ const zAxis3d = new LineAxis(
     tick: {
       visible: true
     },
-    grid: {
-      visible: true,
-      type: 'line',
-      depth: 300,
-      length: 250,
-      style: {
-        lineDash: [0]
-      }
-    },
     label: {
       visible: true,
       space: 0,
@@ -430,7 +391,7 @@ const zAxis3d = new LineAxis(
 // stage.render();
 // const stage = render([xAxisTop, xAxisBottom, yAxisLeft, yAxisRight, yAxis], 'main');
 
-const axisWidthGird = new LineAxis({
+const lineAxis = new LineAxis({
   start: { x: 100, y: 200 },
   end: { x: 100, y: 10 },
   items: [items],
@@ -464,28 +425,31 @@ const axisWidthGird = new LineAxis({
     length: 12,
     alignWithLabel: false
   },
-  grid: {
-    type: 'line',
-    visible: true,
-    length: 300,
-    alignWithLabel: false,
-    style: {
-      stroke: 'red'
-    },
-    zIndex: 1,
-    alternateColor: ['#ccc', '#000']
-  },
-  subGrid: {
-    visible: true
-    // alternateColor: ['red', 'yellow']
-  },
   subTick: {
     visible: true,
     length: 6
   }
 });
+const lineAxisGrid = new LineAxisGrid({
+  type: 'line',
+  start: { x: 100, y: 200 },
+  end: { x: 100, y: 10 },
+  items,
+  verticalFactor: -1,
+  length: 300,
+  alignWithLabel: false,
+  style: {
+    stroke: 'red'
+  },
+  zIndex: 1,
+  alternateColor: ['#ccc', '#000'],
+  subGrid: {
+    visible: true
+    // alternateColor: ['red', 'yellow']
+  }
+});
 
-const angleAxisWithGrid = new CircleAxis({
+const angleAxis = new CircleAxis({
   center: {
     x: 250,
     y: 350
@@ -505,23 +469,29 @@ const angleAxisWithGrid = new CircleAxis({
       stroke: 'blue'
     }
   },
-  grid: {
-    type: 'line',
-    visible: true,
-    alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)'],
-    smoothLink: true,
-    alignWithLabel: false
-  },
-  // subGrid: {
-  //   visible: true,
-  //   style: {
-  //     stroke: 'blue'
-  //   }
-  //   // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)']
-  // },
   label: {
     visible: true
   }
 });
+const angleAxisGrid = new CircleAxisGrid({
+  center: {
+    x: 250,
+    y: 350
+  },
+  radius: 100,
+  innerRadius: 20,
+  items: angleItems,
+  visible: true,
+  alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)'],
+  smoothLink: true,
+  alignWithLabel: false,
+  subGrid: {
+    // visible: true,
+    // style: {
+    //   stroke: 'blue'
+    // }
+    // // alternateColor: ['rgba(0, 0, 0, 0.3)', 'rgba(200, 0, 0, 0.3)']
+  }
+});
 
-render([axisWidthGird, angleAxisWithGrid], 'main');
+render([lineAxis, lineAxisGrid, angleAxis, angleAxisGrid], 'main');

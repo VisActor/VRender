@@ -68,6 +68,7 @@ export interface IDrawContribution {
   defaultRenderMap: Map<number, IGraphicRender>;
   styleRenderMap: Map<string, Map<number, IGraphicRender>>;
   draw: (renderService: IRenderService, drawParams: IDrawContext) => MaybePromise<void>;
+  afterDraw?: (renderService: IRenderService, drawParams: IDrawContext) => MaybePromise<void>;
   getRenderContribution: (graphic: IGraphic) => IGraphicRender | null;
   renderGroup: (group: IGroup, drawContext: IDrawContext, skipSort?: boolean) => void;
   renderItem: (graphic: IGraphic, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) => void;

@@ -32,7 +32,7 @@ export class DefaultMathGlyphPicker implements IGraphicPicker {
         if (picked) {
           return;
         }
-        picked = !!pickerService.pickItem(g, point, params);
+        picked = !!pickerService.pickItem(g, point, null, params);
       });
       return picked;
     }

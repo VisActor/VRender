@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "refactor: seperate grid from axis, relate #327",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

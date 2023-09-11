@@ -25,8 +25,7 @@
   "dependencies": {
     "@visactor/vutils": "~0.15.5",
     "color-convert": "2.0.1",
-    "inversify": "6.0.1",
-    "fast-xml-parser": "4.2.7"
+    "inversify": "6.0.1"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

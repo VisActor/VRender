@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "refactor: minify fast-xml-parser, closed #468",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

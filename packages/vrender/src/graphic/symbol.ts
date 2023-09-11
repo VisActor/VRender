@@ -9,7 +9,8 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TYPE } from './constants';
-import { XMLValidator, XMLParser } from 'fast-xml-parser';
+import { XMLParser } from '../common/xml';
+import { isSvg } from '../common/xml/parser';
 
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -60,11 +61,9 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     }
 
     // 判断是否是svg
-    const isSvg = XMLValidator.validate(symbolType, {
-      allowBooleanAttributes: true
-    });
-    if (isSvg === true) {
-      const parser = new XMLParser({ ignoreAttributes: false });
+    const valid = isSvg(symbolType);
+    if (valid === true) {
+      const parser = new XMLParser();
       const { svg } = parser.parse(symbolType);
       if (!svg) {
         return null;
@@ -73,7 +72,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
       const b = new AABBBounds();
       const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
       path.forEach((item: any) => {
-        const cache = new CustomPath2D().fromString(item['@_d']);
+        const cache = new CustomPath2D().fromString(item.d);
         const attribute = {
           fill: 'black'
         };

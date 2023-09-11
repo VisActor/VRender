@@ -5,6 +5,7 @@ import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
 import type { MarkAreaAttrs } from './type';
+import { limitShapeInBounds } from './util';
 
 export class MarkArea extends Marker<MarkAreaAttrs> {
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
@@ -79,6 +80,15 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
         ...label.textStyle
       }
     });
+
+    if (this.attribute.clipRange && this.attribute.label?.autoRange) {
+      limitShapeInBounds(this._label, {
+        x1: this.attribute.clipRange.x,
+        y1: this.attribute.clipRange.y,
+        x2: this.attribute.clipRange.x + this.attribute.clipRange.width,
+        y2: this.attribute.clipRange.y + this.attribute.clipRange.height
+      });
+    }
   }
 
   protected initMarker(container: IGroup) {

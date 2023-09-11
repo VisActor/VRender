@@ -5,6 +5,7 @@ import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './config';
 import type { MarkLineAttrs } from './type';
+import { limitShapeInBounds } from './util';
 
 export class MarkLine extends Marker<MarkLineAttrs> {
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;
@@ -44,6 +45,14 @@ export class MarkLine extends Marker<MarkLineAttrs> {
         ...label.textStyle
       }
     });
+    if (this.attribute.clipRange && this.attribute.label?.autoRange) {
+      limitShapeInBounds(this._label, {
+        x1: this.attribute.clipRange.x,
+        y1: this.attribute.clipRange.y,
+        x2: this.attribute.clipRange.x + this.attribute.clipRange.width,
+        y2: this.attribute.clipRange.y + this.attribute.clipRange.height
+      });
+    }
   }
 
   protected initMarker(container: IGroup) {

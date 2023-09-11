@@ -6,8 +6,7 @@ import type {
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
 } from '@visactor/vrender';
-import { IGraphic } from '@visactor/vrender';
-import type { Dict, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
 
@@ -98,7 +97,7 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
    */
   visible?: boolean;
   /**
-   * clip范围配置
+   * clip 范围配置
    */
   clipRange?: {
     x: number;
@@ -122,6 +121,10 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
      * label 相对line的位置
      */
     position?: keyof typeof IMarkLineLabelPosition;
+    /**
+     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     */
+    autoRange?: boolean;
   } & IMarkRef &
     IMarkLabel;
 }
@@ -137,6 +140,10 @@ export interface MarkAreaAttrs extends MarkerAttrs {
    */
   label?: {
     position?: IMarkAreaLabelPosition;
+    /**
+     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     */
+    autoRange?: boolean;
   } & IMarkLabel;
   /**
    * area的样式

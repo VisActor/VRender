@@ -1,19 +1,5 @@
-import { ContainerModule } from 'inversify';
 import { NodeCanvas } from './canvas';
 import { NodeContext2d } from './context';
-import { CanvasFactory, Context2dFactory } from '../../constants';
-import type { CanvasConfigType, ICanvas } from '../../../interface';
+import { createModule } from '../create-canvas-module';
 
-export default new ContainerModule(bind => {
-  bind(CanvasFactory)
-    .toDynamicValue(() => {
-      return (params: CanvasConfigType) => new NodeCanvas(params);
-    })
-    .whenTargetNamed(NodeCanvas.env);
-
-  bind(Context2dFactory)
-    .toDynamicValue(() => {
-      return (params: ICanvas, dpr: number) => new NodeContext2d(params, dpr);
-    })
-    .whenTargetNamed(NodeContext2d.env);
-});
+export default createModule(NodeCanvas, NodeContext2d);

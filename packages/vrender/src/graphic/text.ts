@@ -471,23 +471,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return textTheme[name];
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < TEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = TEXT_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTags(keys: string[], k = TEXT_UPDATE_TAG_KEY): boolean {
+    return super.needUpdateTags(keys, k);
   }
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < TEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = TEXT_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTag(key: string, k = TEXT_UPDATE_TAG_KEY): boolean {
+    return super.needUpdateTag(key, k);
   }
 
   clone(): Text {

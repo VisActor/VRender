@@ -61,23 +61,11 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     return circleTheme[name];
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < CIRCLE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = CIRCLE_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTags(keys: string[]): boolean {
+    return super.needUpdateTags(keys, CIRCLE_UPDATE_TAG_KEY);
   }
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < CIRCLE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = CIRCLE_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTag(key: string): boolean {
+    return super.needUpdateTag(key, CIRCLE_UPDATE_TAG_KEY);
   }
 
   toCustomPath() {

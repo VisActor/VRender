@@ -211,23 +211,10 @@ export class WrapText extends Text {
     return this._AABBBounds;
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < WRAP_TEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = WRAP_TEXT_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return super.needUpdateTags(keys);
+  protected needUpdateTags(keys: string[]): boolean {
+    return super.needUpdateTags(keys, WRAP_TEXT_UPDATE_TAG_KEY);
   }
-
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < WRAP_TEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = WRAP_TEXT_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return super.needUpdateTag(key);
+  protected needUpdateTag(key: string): boolean {
+    return super.needUpdateTag(key, WRAP_TEXT_UPDATE_TAG_KEY);
   }
 }

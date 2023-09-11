@@ -72,23 +72,11 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     return lineTheme[name];
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < LINE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = LINE_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTags(keys: string[]): boolean {
+    return super.needUpdateTags(keys, LINE_UPDATE_TAG_KEY);
   }
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < LINE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = LINE_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTag(key: string): boolean {
+    return super.needUpdateTag(key, LINE_UPDATE_TAG_KEY);
   }
 
   toCustomPath() {

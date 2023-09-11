@@ -170,10 +170,10 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     throw new Error('暂不支持');
   }
 
-  needUpdateTags(keys: string[]): boolean {
+  protected needUpdateTags(keys: string[]): boolean {
     return false;
   }
-  needUpdateTag(key: string): boolean {
+  protected needUpdateTag(key: string): boolean {
     return false;
   }
 

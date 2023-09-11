@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "refactor: minify graphic code, closed #443",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

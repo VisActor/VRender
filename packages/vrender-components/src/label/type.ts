@@ -5,7 +5,8 @@ import type {
   ITextGraphicAttribute,
   Text,
   TextAlignType,
-  TextBaselineType
+  TextBaselineType,
+  ILineGraphicAttribute
 } from '@visactor/vrender';
 
 export type LabelItemStateStyle<T> = {
@@ -334,15 +335,15 @@ export interface IArcLabelLineSpec {
    * @default 10
    */
   line2MinLength?: number;
-  /** 引导线线宽 */
-  lineWidth?: number;
-  /** 引导线颜色 */
-  stroke?: string;
   /**
    * 引导线是否光滑
    * @default false
    */
   smooth?: boolean;
+  /**
+   * 引导线样式
+   */
+  style?: Partial<ILineGraphicAttribute>;
 }
 
 export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';

@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 部分源码参考 https://github.com/vega/vega/blob/main/packages/vega-scenegraph/src/path/symbols.js
@@ -42,7 +43,7 @@ export function wedge(ctx: IContext2d, r: number, transX: number, transY: number
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class WedgeSymbol implements ISymbolClass {
+export class WedgeSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'wedge';
   pathStr: string = 'M0,-0.5773502691896257L-0.125,0.28867513459481287L0.125,0.28867513459481287Z';
 
@@ -54,14 +55,6 @@ export class WedgeSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
     const r = size / 2 + offset;
     return wedge(ctx, r, transX, transY);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

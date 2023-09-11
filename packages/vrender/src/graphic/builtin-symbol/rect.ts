@@ -1,6 +1,7 @@
 import type { IBounds } from '@visactor/vutils';
 import { isNumber } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 部分源码参考 https://github.com/vega/vega/blob/main/packages/vega-scenegraph/src/path/symbols.js
@@ -39,7 +40,7 @@ export function rect(ctx: IContext2d, size: [number, number], x: number, y: numb
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class RectSymbol implements ISymbolClass {
+export class RectSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'rect';
   pathStr: string = 'M-0.5,-0.5h1v1h-1Z';
 
@@ -53,14 +54,6 @@ export class RectSymbol implements ISymbolClass {
       ? [size + 2 * offset, size + 2 * offset]
       : [size[0] + 2 * offset, size[1] + 2 * offset];
     return rect(ctx, rectSize, x, y);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const rectSize: [number, number] = isNumber(size) ? [size, size] : size;
-    bounds.x1 = -rectSize[0] / 2;
-    bounds.x2 = rectSize[0] / 2;
-    bounds.y1 = -rectSize[1] / 2;
-    bounds.y2 = rectSize[1] / 2;
   }
 }
 

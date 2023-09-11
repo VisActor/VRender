@@ -1,6 +1,7 @@
 import type { IBounds } from '@visactor/vutils';
 import { tau } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass, IPath2D } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -31,7 +32,7 @@ export function circle(ctx: IContext2d, r: number, x: number, y: number, z?: num
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class CircleSymbol implements ISymbolClass {
+export class CircleSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'circle';
   pathStr: string = 'M0.5,0A0.5,0.5,0,1,1,-0.5,0A0.5,0.5,0,1,1,0.5,0';
 
@@ -48,14 +49,6 @@ export class CircleSymbol implements ISymbolClass {
   drawToSvgPath(size: number, x: number, y: number, z?: number): string {
     const r = size / 2;
     return `M ${x - r}, ${y} a ${r},${r} 0 1,0 ${r * 2},0 a ${r},${r} 0 1,0 -${r * 2},0`;
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

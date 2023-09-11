@@ -1,6 +1,7 @@
 import type { IBounds } from '@visactor/vutils';
 import { tau } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -42,7 +43,7 @@ export function star(ctx: IContext2d, r: number, transX: number, transY: number)
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class StarSymbol implements ISymbolClass {
+export class StarSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'star';
   /* eslint-disable max-len */
   pathStr: string =
@@ -57,14 +58,6 @@ export class StarSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
     const r = size / 2 + offset;
     return star(ctx, r, transX, transY);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

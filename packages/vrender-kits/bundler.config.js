@@ -10,5 +10,5 @@ module.exports = {
     '@visactor/vrender': 'VRender',
     '@visactor/vutils': 'VUtils'
   },
-  external: ['inversify', 'core-js/proposals/reflect-metadata', '@visactor/vrender', '@visactor/vutils']
+  external: ['inversify', '@visactor/vrender', '@visactor/vutils']
 };

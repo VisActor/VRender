@@ -152,7 +152,6 @@ importers:
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
-      core-js: 3.31.1
       eslint: ~8.18.0
       fast-xml-parser: 4.2.7
       inversify: 6.0.1
@@ -167,7 +166,6 @@ importers:
     dependencies:
       '@visactor/vutils': 0.15.10
       color-convert: 2.0.1
-      core-js: 3.31.1
       fast-xml-parser: 4.2.7
       inversify: 6.0.1
     devDependencies:
@@ -240,7 +238,6 @@ importers:
       '@visactor/vutils': ~0.15.5
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
-      core-js: 3.31.1
       eslint: ~8.18.0
       inversify: 6.0.1
       node-fetch: 2.6.6
@@ -254,7 +251,6 @@ importers:
       '@visactor/vrender': link:../vrender
       '@visactor/vutils': 0.15.10
       canvas: 2.11.2
-      core-js: 3.31.1
       inversify: 6.0.1
       node-fetch: 2.6.6
       roughjs: 4.5.2

@@ -31,6 +31,11 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    */
   baseMarkGroupName: string;
   /**
+   * @hack not recommend to use
+   * @returns
+   */
+  getBaseMarks?: () => IGraphic[];
+  /**
    * 是否开启选中交互
    * @default false
    */

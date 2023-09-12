@@ -125,7 +125,7 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
     /**
      * 当 mark 配置了 clip 之后，label 是否自动调整位置
      */
-    autoRange?: boolean;
+    confineInClipRange?: boolean;
   } & IMarkRef &
     IMarkLabel;
 }
@@ -144,7 +144,7 @@ export interface MarkAreaAttrs extends MarkerAttrs {
     /**
      * 当 mark 配置了 clip 之后，label 是否自动调整位置
      */
-    autoRange?: boolean;
+    confineInClipRange?: boolean;
   } & IMarkLabel;
   /**
    * area的样式
@@ -189,7 +189,7 @@ export interface IItemContent extends IMarkRef {
   /**
    * 当 mark 配置了 clip 之后，label 是否自动调整位置
    */
-  autoRange?: boolean;
+  confineInClipRange?: boolean;
 }
 
 export type IItemLine = {

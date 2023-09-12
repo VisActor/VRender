@@ -19,7 +19,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
 
   protected setLabelPos() {
     const { label = {}, clipRange } = this.attribute as MarkLineAttrs;
-    const { position = 'end', refX = 0, refY = 0, autoRange } = label;
+    const { position = 'end', refX = 0, refY = 0, confineInClipRange } = label;
     const points = this._line.getMainSegmentPoints();
     const labelAngle = this._line.getEndAngle() ?? 0;
     const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
@@ -49,7 +49,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
         ...label.textStyle
       }
     });
-    if (clipRange && autoRange) {
+    if (clipRange && confineInClipRange) {
       const { x, y, width, height } = clipRange;
       limitShapeInBounds(this._label, {
         x1: x,

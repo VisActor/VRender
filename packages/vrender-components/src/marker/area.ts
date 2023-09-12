@@ -62,7 +62,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
         }
       });
 
-      if (this.attribute.clipRange && label?.autoRange) {
+      if (this.attribute.clipRange && label?.confineInClipRange) {
         const { x, y, width, height } = this.attribute.clipRange;
         limitShapeInBounds(this._label, {
           x1: x,

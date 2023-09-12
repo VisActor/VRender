@@ -85,12 +85,15 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   }
 
   protected updateMarker() {
-    const { points, startSymbol, endSymbol, label, lineStyle } = this.attribute as MarkLineAttrs;
+    const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
+      .attribute as MarkLineAttrs;
     this._line?.setAttributes({
       points,
       startSymbol,
       endSymbol,
-      lineStyle
+      lineStyle,
+      mainSegmentIndex,
+      multiSegment
     });
 
     this._label?.setAttributes({

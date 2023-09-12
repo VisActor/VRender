@@ -12,7 +12,7 @@ describe('Marker', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
 
   it('MarkPoint Text', () => {

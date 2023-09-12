@@ -6,9 +6,9 @@ import type {
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
 } from '@visactor/vrender';
-import type { IPointLike } from '@visactor/vutils';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
+import type { Point } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -112,7 +112,8 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
   /**
    * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
    */
-  points: IPointLike[];
+  points: Point[] | Point[][];
+
   /**
    * 标签
    */
@@ -134,7 +135,7 @@ export interface MarkAreaAttrs extends MarkerAttrs {
   /**
    * 构成area的点
    */
-  points: IPointLike[];
+  points: Point[];
   /**
    * 标签
    */
@@ -185,6 +186,10 @@ export interface IItemContent extends IMarkRef {
    * type为custom时，允许以callback的方式传入需要render的item
    */
   renderCustomCallback?: () => IGroup;
+  /**
+   * 当 mark 配置了 clip 之后，label 是否自动调整位置
+   */
+  autoRange?: boolean;
 }
 
 export type IItemLine = {
@@ -204,7 +209,7 @@ export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
   /**
    * markPoint的位置（也是path的起点）
    */
-  position: IPointLike;
+  position: Point;
   /**
    * 标注引导线
    */

@@ -13,7 +13,7 @@ describe('Marker', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
 
   it('MarkLine', () => {

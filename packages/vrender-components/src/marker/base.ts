@@ -6,6 +6,7 @@ import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';
 
 export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
+  name = 'marker';
   private _containerClip!: IGroup;
   private _container!: IGroup;
 

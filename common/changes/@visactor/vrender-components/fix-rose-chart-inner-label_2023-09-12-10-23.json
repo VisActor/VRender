@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: the layout of the inner label when the pie chart has a center offset",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

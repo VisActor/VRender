@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.14.8",
+  "version": "0.15.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",

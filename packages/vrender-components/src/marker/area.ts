@@ -100,6 +100,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
       ...areaStyle
     });
     this._label?.setAttributes({
+      dx: 0,
+      dy: 0, // 需要进行复位
       ...label
     });
     this.setLabelPos();

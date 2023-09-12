@@ -22,7 +22,6 @@ import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
-import { limitShapeInBounds } from '../util/limit-shape';
 
 export class MarkPoint extends Marker<MarkPointAttrs> {
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
@@ -88,15 +87,15 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
       angle: autoRotate && itemAngle + refAngle
     });
 
-    if (this.attribute.limitRect && this.attribute.itemContent?.confine) {
-      const { x, y, width, height } = this.attribute.limitRect;
-      limitShapeInBounds(item, {
-        x1: x,
-        y1: y,
-        x2: x + width,
-        y2: y + height
-      });
-    }
+    // if (this.attribute.limitRect && this.attribute.itemContent?.confine) {
+    //   const { x, y, width, height } = this.attribute.limitRect;
+    //   limitShapeInBounds(item, {
+    //     x1: x,
+    //     y1: y,
+    //     x2: x + width,
+    //     y2: y + height
+    //   });
+    // }
   }
 
   protected getItemDx(

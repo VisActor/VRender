@@ -191,10 +191,10 @@ export interface IItemContent extends IMarkRef {
    * type为custom时，允许以callback的方式传入需要render的item
    */
   renderCustomCallback?: () => IGroup;
-  /**
-   * 当 mark 配置了 clip 之后，label 是否自动调整位置
-   */
-  confine?: boolean;
+  // /**
+  //  * 当 mark 配置了 clip 之后，label 是否自动调整位置
+  //  */
+  // confine?: boolean;
 }
 
 export type IItemLine = {

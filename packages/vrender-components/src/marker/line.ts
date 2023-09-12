@@ -94,6 +94,8 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     });
 
     this._label?.setAttributes({
+      dx: 0,
+      dy: 0, // 需要进行复位
       ...label
     });
 

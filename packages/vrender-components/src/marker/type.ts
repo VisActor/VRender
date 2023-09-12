@@ -97,9 +97,14 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
    */
   visible?: boolean;
   /**
-   * clip 范围配置
+   * 是否将组件在绘制区域内进行剪切
+   * @default true
    */
-  clipRange?: {
+  clipInRange?: boolean;
+  /**
+   * 组件绘制范围配置
+   */
+  limitRect?: {
     x: number;
     y: number;
     width: number;
@@ -125,7 +130,7 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
     /**
      * 当 mark 配置了 clip 之后，label 是否自动调整位置
      */
-    confineInClipRange?: boolean;
+    confine?: boolean;
   } & IMarkRef &
     IMarkLabel;
 }
@@ -144,7 +149,7 @@ export interface MarkAreaAttrs extends MarkerAttrs {
     /**
      * 当 mark 配置了 clip 之后，label 是否自动调整位置
      */
-    confineInClipRange?: boolean;
+    confine?: boolean;
   } & IMarkLabel;
   /**
    * area的样式
@@ -189,7 +194,7 @@ export interface IItemContent extends IMarkRef {
   /**
    * 当 mark 配置了 clip 之后，label 是否自动调整位置
    */
-  confineInClipRange?: boolean;
+  confine?: boolean;
 }
 
 export type IItemLine = {

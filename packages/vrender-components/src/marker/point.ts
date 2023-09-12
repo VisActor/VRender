@@ -88,8 +88,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
       angle: autoRotate && itemAngle + refAngle
     });
 
-    if (this.attribute.clipRange && this.attribute.itemContent?.confineInClipRange) {
-      const { x, y, width, height } = this.attribute.clipRange;
+    if (this.attribute.limitRect && this.attribute.itemContent?.confine) {
+      const { x, y, width, height } = this.attribute.limitRect;
       limitShapeInBounds(item, {
         x1: x,
         y1: y,

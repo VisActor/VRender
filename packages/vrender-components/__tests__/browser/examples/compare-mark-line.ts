@@ -64,7 +64,7 @@ export function run() {
       }
       // ...getTextOffset(startPoint, endPoint, direction, offset)
     }
-    // clipRange: {
+    // limitRect: {
     //   x: 50,
     //   y: 50,
     //   width: 200,

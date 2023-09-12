@@ -17,29 +17,37 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract updateMarker(): any;
 
   private _initContainer() {
-    const groupClip = createGroup({
-      ...this.attribute?.clipRange,
-      clip: isValid(this.attribute?.clipRange) ?? false
-    });
-    groupClip.name = 'marker-container';
+    const { limitRect, clipInRange } = this.attribute;
+
     const group = createGroup({
-      x: -(this.attribute?.clipRange?.x ?? 0),
-      y: -(this.attribute?.clipRange?.y ?? 0)
+      x: -(limitRect?.x ?? 0),
+      y: -(limitRect?.y ?? 0)
     });
-    groupClip.add(group);
-    this._containerClip = groupClip;
-    this.add(groupClip);
+    group.name = 'marker-container';
+    if (clipInRange) {
+      // 如果用户配置了剪切
+      const groupClip = createGroup({
+        ...limitRect,
+        clip: true,
+        pickable: false
+      });
+      groupClip.add(group);
+      this._containerClip = groupClip;
+      this.add(groupClip);
+    } else {
+      this.add(group);
+    }
     this._container = group;
   }
 
   private _updateContainer() {
-    this._containerClip.setAttributes({
-      ...this.attribute?.clipRange,
-      clip: isValid(this.attribute?.clipRange) ?? false
+    const { limitRect } = this.attribute;
+    this._containerClip?.setAttributes({
+      ...limitRect
     });
     this._container.setAttributes({
-      x: -(this.attribute?.clipRange?.x ?? 0),
-      y: -(this.attribute?.clipRange?.y ?? 0)
+      x: -(limitRect?.x ?? 0),
+      y: -(limitRect?.y ?? 0)
     });
   }
 
@@ -53,7 +61,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     }
 
     if (markerVisible) {
-      if (!this._containerClip) {
+      if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
       } else {

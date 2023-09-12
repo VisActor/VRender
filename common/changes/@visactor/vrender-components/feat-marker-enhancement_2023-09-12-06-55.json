@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: add `clipInRange` property to control whether do the clip for mark component, and rename clipRange to limitRect",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

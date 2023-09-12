@@ -43,7 +43,7 @@ describe('Marker', () => {
     stage.defaultLayer.add(markArea as unknown as IGraphic);
     stage.render();
 
-    const markAreaContainer = (markArea.children[0] as unknown as Group).children[0] as unknown as Group;
+    const markAreaContainer = markArea.children[0] as unknown as Group;
     expect(markAreaContainer.childrenCount).toBe(2);
     // ploygon图元构造的area
     expect((markAreaContainer.children[0] as Polygon).attribute.points).toEqual([

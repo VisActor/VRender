@@ -12,9 +12,9 @@ describe('Marker', () => {
     stage = createStage('main');
   });
 
-  afterAll(() => {
-    stage.release();
-  });
+  // afterAll(() => {
+  //   stage.release();
+  // });
 
   it('MarkLine', () => {
     const markLine = new MarkLine({
@@ -39,7 +39,7 @@ describe('Marker', () => {
     });
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
-    const markLineContainer = (markLine.children[0] as unknown as Group).children[0] as unknown as Group;
+    const markLineContainer = markLine.children[0] as unknown as Group;
     expect(markLineContainer.childrenCount).toBe(2);
 
     // segement构造的line

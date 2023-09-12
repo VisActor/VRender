@@ -184,7 +184,8 @@ export const DefaultAreaAttribute: Required<IAreaGraphicAttribute> = {
   points: [],
   segments: [],
   curveType: 'linear',
-  clipRange: 1
+  clipRange: 1,
+  closePath: false
 };
 
 export const DefaultCircleAttribute: Required<ICircleGraphicAttribute> = {

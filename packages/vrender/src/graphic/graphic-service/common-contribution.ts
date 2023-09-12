@@ -1,6 +1,6 @@
-import { IAABBBounds } from '@visactor/vutils';
-import { injectable } from 'inversify';
-import { IGraphicAttribute, IGraphic } from '../../interface';
+import type { IAABBBounds } from '@visactor/vutils';
+import { injectable } from '../../common/inversify-lite';
+import type { IGraphicAttribute, IGraphic } from '../../interface';
 
 @injectable()
 export class DefaultOuterBorderBoundsContribution {

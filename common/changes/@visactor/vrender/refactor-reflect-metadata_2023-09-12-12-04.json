@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "refactor: rewrite inversify-lite, closed #476",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { application } from '../../../application';
 import type { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../../interface';
 import { BrowserContext2d } from './context';

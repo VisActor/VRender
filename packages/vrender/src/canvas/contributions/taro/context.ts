@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type {
   ICommonStyleParams,
   IContext2d,

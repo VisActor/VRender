@@ -1,6 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
 import { min, isArray } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   ILine,

@@ -1,5 +1,5 @@
 import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2, isBoolean } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports

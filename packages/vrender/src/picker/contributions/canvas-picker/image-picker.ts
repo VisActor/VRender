@@ -1,5 +1,5 @@
-import { injectable } from 'inversify';
 import type { IPoint } from '@visactor/vutils';
+import { injectable } from '../../../common/inversify-lite';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGraphicPicker, IImage, IPickParams } from '../../../interface';
 

@@ -1,6 +1,6 @@
 import type { vec3 } from '@visactor/vutils';
 import { abs, cos, epsilon, sin, pi2, pi } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IContext2d,

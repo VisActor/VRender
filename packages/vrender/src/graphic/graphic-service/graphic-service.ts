@@ -1,4 +1,4 @@
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../common/inversify-lite';
 import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
 import { AABBBounds, epsilon, isArray, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';

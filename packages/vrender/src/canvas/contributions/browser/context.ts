@@ -25,7 +25,7 @@
  */
 import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
 import { Matrix, pi, pi2 } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { DefaultFillStyle, DefaultStrokeStyle, DefaultTextStyle } from '../../../graphic';
 import type {
   ICamera,

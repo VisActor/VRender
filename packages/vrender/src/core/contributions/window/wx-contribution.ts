@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { WxCanvas } from '../../../canvas/contributions/wx';
 import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';

@@ -1,4 +1,3 @@
-// import { inject, injectable, named, postConstruct } from 'inversify';
 // import { ContributionProvider } from '../../common/contribution-provider';
 // import {
 //   ICircleGraphicAttribute,

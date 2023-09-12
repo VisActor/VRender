@@ -1,6 +1,6 @@
 import { Matrix } from '@visactor/vutils';
-import { injectable } from 'inversify';
-import {
+import { injectable } from '../common/inversify-lite';
+import type {
   ICanvas,
   ICommonStyleParams,
   IContext2d,

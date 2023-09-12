@@ -1,5 +1,5 @@
 import type { IPoint } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { GLYPH_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGlyph, IGraphicPicker, IGraphicRender, IPickParams } from '../../../interface';
 import { GlyphRender } from '../../../render';

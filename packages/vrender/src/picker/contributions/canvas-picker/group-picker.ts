@@ -1,5 +1,5 @@
 import type { IPoint } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import type { IGraphicPicker, IGraphicRender, IPickParams, IGroup } from '../../../interface';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 

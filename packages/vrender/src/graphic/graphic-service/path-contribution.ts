@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../common/inversify-lite';
 import { DefaultOuterBorderBoundsContribution } from './common-contribution';
 import type { IPathBoundsContribution } from '../../interface/graphic-service';
 

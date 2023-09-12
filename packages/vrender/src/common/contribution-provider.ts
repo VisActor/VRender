@@ -1,4 +1,4 @@
-import type { interfaces } from 'inversify';
+import type { interfaces } from '../common/inversify-lite';
 import type { IContributionProvider } from '../interface';
 
 export const ContributionProvider = Symbol('ContributionProvider');

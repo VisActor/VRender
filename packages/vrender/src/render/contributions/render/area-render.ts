@@ -1,6 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
 import { abs, isArray, min } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../../common/inversify-lite';
 import type {
   IArea,
   IAreaCacheItem,

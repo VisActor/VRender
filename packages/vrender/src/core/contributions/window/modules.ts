@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../../common/inversify-lite';
 import { WindowHandlerContribution } from '../../window';
 import { BrowserWindowHandlerContribution } from './browser-contribution';
 import { FeishuWindowHandlerContribution } from './feishu-contribution';

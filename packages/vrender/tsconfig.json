@@ -4,6 +4,7 @@
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./es",
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "composite": true
   },
   "include": ["src"]

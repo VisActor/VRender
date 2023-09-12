@@ -1,4 +1,4 @@
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../../common/inversify-lite';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { renderCommandList } from '../../../common/render-command-list';

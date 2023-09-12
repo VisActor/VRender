@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { createRectPath } from '../../../common/shape/rect';
 import { getTheme } from '../../../graphic/theme';
 import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';

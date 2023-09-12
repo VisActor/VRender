@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { injectable, inject } from '../common/inversify-lite';
 import type { IAABBBounds, IBounds } from '@visactor/vutils';
 import type { IGroup, IGraphic, IRenderService, IRenderServiceDrawParams, IDrawContribution } from '../interface';
 import { DrawContribution } from './contributions/render';

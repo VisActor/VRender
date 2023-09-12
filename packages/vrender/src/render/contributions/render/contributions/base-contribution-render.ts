@@ -8,7 +8,7 @@ import type {
   IContributionProvider,
   IDrawContext
 } from '../../../../interface';
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../../../common/inversify-lite';
 import { getTheme } from '../../../../graphic';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
 import { pi2 } from '@visactor/vutils';

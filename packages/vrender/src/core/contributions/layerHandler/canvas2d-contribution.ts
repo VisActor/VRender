@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { wrapCanvas } from '../../../canvas/util';
 import type {
   IGlobal,

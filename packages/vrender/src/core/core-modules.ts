@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../common/inversify-lite';
 import { DefaultGlobal } from './global';
 import { DefaultGraphicUtil, DefaultTransformUtil } from './graphic-utils';
 import { DefaultLayerService } from './layer-service';

@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../common/inversify-lite';
 import { bindContributionProvider } from '../../common/contribution-provider';
 import { ArcBoundsContribution, DefaultArcOuterBorderBoundsContribution } from './arc-contribution';
 import { CircleBoundsContribution, DefaultCircleOuterBorderBoundsContribution } from './circle-contribution';

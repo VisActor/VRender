@@ -1,5 +1,5 @@
 import { Matrix } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IContext2d, IConicalGradientData, EnvType } from '../../../interface';
 import { BrowserContext2d } from '../browser';
 

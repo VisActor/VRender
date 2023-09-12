@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../../common/inversify-lite';
 import { LayerHandlerContribution } from '../../layer';
 import { CanvasLayerHandlerContribution } from './canvas2d-contribution';
 import { OffscreenLayerHandlerContribution } from './offscreen2d-contribution';

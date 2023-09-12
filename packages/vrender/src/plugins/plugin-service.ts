@@ -1,4 +1,4 @@
-import { injectable, inject, named } from 'inversify';
+import { injectable, inject, named } from '../common/inversify-lite';
 import type { IContributionProvider, IPlugin, IPluginService, IStage } from '../interface';
 import { ContributionProvider } from '../common/contribution-provider';
 import { AutoEnablePlugins } from './constants';

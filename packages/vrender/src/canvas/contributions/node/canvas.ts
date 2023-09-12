@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { EnvType, CanvasConfigType, ICanvas, IContext2d } from '../../../interface';
 import { NodeContext2d } from './context';
 import { isFunction } from '@visactor/vutils';

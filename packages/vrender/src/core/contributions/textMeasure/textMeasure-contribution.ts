@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { ATextMeasure } from './AtextMeasure';
 
 export const TextMeasureContribution = Symbol.for('TextMeasureContribution');

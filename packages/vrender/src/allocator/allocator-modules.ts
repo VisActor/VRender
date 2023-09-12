@@ -1,4 +1,3 @@
-// import { ContainerModule } from 'inversify';
 // import { DefaultCanvasAllocate } from './canvas-allocate';
 // import {
 //   DefaultRectAllocate,

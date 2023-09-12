@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { ICanvas, IContext2d, CanvasConfigType, EnvType } from '../../../interface';
 import { TaroContext2d } from './context';
 

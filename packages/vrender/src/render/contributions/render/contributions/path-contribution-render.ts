@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../../common/inversify-lite';
 import type { IPathRenderContribution } from '../../../../interface';
 import {
   DefaultBaseBackgroundRenderContribution,

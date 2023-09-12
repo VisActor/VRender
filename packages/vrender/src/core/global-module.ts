@@ -1,4 +1,3 @@
-// import { ContainerModule } from 'inversify';
 // import type { IGlobal } from '../interface';
 // import { container } from '../container';
 // import { DefaultGlobal } from './global';

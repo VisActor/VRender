@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../../common/inversify-lite';
 import { NodeCanvas } from './canvas';
 import { NodeContext2d } from './context';
 import { CanvasFactory, Context2dFactory } from '../../constants';

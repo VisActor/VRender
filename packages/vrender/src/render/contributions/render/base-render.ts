@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
 import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';

@@ -1,4 +1,3 @@
-import { Container } from 'inversify';
 import coreModule from './core/core-modules';
 import renderModule from './render/render-modules';
 import pickModule from './picker/pick-modules';

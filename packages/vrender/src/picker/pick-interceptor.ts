@@ -1,6 +1,6 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 import { Point, pi2 } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../common/inversify-lite';
 import { ARC3D_NUMBER_TYPE } from '../graphic/constants';
 import type {
   IArc,

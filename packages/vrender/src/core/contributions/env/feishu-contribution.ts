@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,

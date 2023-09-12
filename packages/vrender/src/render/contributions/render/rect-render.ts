@@ -1,5 +1,5 @@
 import { isArray } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { RECT_NUMBER_TYPE } from '../../../graphic/constants';
 import { createRectPath } from '../../../common/shape/rect';

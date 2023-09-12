@@ -1,5 +1,4 @@
 // import { createCanvas, createImageData, loadImage } from 'canvas';
-// import { inject, injectable } from 'inversify';
 // import { VGlobal, IWindow, EnvType, IGlobal, IWindowHandlerContribution, IWindowParams } from '../..';
 // import { BaseWindowHandlerContribution } from './base-contribution';
 

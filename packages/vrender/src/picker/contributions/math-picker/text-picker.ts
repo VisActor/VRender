@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IPoint } from '@visactor/vutils';
 import { TEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGraphicPicker, IPickParams, IText } from '../../../interface';

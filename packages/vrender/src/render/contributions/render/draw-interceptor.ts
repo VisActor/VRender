@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds, pi2 } from '@visactor/vutils';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
 import type {

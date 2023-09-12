@@ -197,7 +197,8 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       const changeEvent = new CustomEvent('toPrev', {
         current: this._current,
         total: this._total,
-        direction: 'pre'
+        direction: 'pre',
+        event: e
       });
       // FIXME: 需要在 vrender 的事件系统支持
       // @ts-ignore
@@ -220,7 +221,8 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       const changeEvent = new CustomEvent('toNext', {
         current: this._current,
         total: this._total,
-        direction: 'next'
+        direction: 'next',
+        event: e
       });
       // FIXME: 需要在 vrender 的事件系统支持
       // @ts-ignore

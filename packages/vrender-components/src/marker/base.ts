@@ -18,12 +18,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
 
   private _initContainer() {
     const { limitRect, clipInRange } = this.attribute;
-
-    const group = createGroup({
-      x: -(limitRect?.x ?? 0),
-      y: -(limitRect?.y ?? 0)
-    });
-    group.name = 'marker-container';
+    let group;
     if (clipInRange) {
       // 如果用户配置了剪切
       const groupClip = createGroup({
@@ -31,23 +26,32 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
         clip: true,
         pickable: false
       });
+      group = createGroup({
+        x: -(limitRect?.x ?? 0),
+        y: -(limitRect?.y ?? 0)
+      });
       groupClip.add(group);
       this._containerClip = groupClip;
       this.add(groupClip);
     } else {
+      group = createGroup({
+        x: 0,
+        y: 0
+      });
       this.add(group);
     }
+    group.name = 'marker-container';
     this._container = group;
   }
 
   private _updateContainer() {
-    const { limitRect } = this.attribute;
+    const { limitRect, clipInRange } = this.attribute;
     this._containerClip?.setAttributes({
       ...limitRect
     });
     this._container.setAttributes({
-      x: -(limitRect?.x ?? 0),
-      y: -(limitRect?.y ?? 0)
+      x: clipInRange ? -(limitRect?.x ?? 0) : 0,
+      y: clipInRange ? -(limitRect?.y ?? 0) : 0
     });
   }
 

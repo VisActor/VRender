@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the typo issue in wx env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

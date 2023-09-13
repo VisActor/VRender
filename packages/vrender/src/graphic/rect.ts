@@ -1,5 +1,5 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
 import type { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
@@ -11,6 +11,8 @@ const RECT_UPDATE_TAG_KEY = ['width', 'height', 'cornerRadius', ...GRAPHIC_UPDAT
 
 export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   type: GraphicType = 'rect';
+
+  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
 
   constructor(params: IRectGraphicAttribute) {
     super(params);

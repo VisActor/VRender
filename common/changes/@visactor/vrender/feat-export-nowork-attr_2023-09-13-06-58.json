@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: export no work animate attr, closed #483",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

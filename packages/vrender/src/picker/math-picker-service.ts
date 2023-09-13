@@ -1,4 +1,4 @@
-import type { IPointLike } from '@visactor/vutils';
+import type { IMatrix, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line
 import { ContributionProvider } from '../common/contribution-provider';
 import { inject, injectable, named, postConstruct } from 'inversify';
@@ -61,7 +61,7 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, params?: IPickParams): IGraphic | null {
+  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params?: IPickParams): IGraphic | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }

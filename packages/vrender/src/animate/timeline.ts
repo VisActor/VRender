@@ -70,7 +70,7 @@ export class DefaultTimeline implements ITimeline {
     this.animateCount = 0;
   }
 
-  removeAnimate(animate: IAnimate) {
+  removeAnimate(animate: IAnimate, release: boolean = true) {
     animate._onRemove && animate._onRemove.forEach(cb => cb());
     if (animate === this.animateHead) {
       this.animateHead = animate.nextAnimate;
@@ -93,7 +93,7 @@ export class DefaultTimeline implements ITimeline {
       // animate.prevAnimate = null;
       // animate.nextAnimate = null;
     }
-    animate.release();
+    release && animate.release();
 
     return;
   }

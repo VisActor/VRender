@@ -3,13 +3,13 @@ import type { ILayer } from './layer';
 import type { IGraphic } from './graphic';
 import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
-import type { IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
-import type { ITicker } from './animate';
+import type { ITicker, ITimeline } from './animate';
 import type { IPickerService } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
@@ -47,6 +47,8 @@ export interface IStageParams {
   disableDirtyBounds: boolean;
   // 是否支持interactiveLayer，默认为true
   interactiveLayer: boolean;
+  // 是否支持HTML属性
+  enableHtmlAttribute: string | boolean | HTMLElement;
   poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;
@@ -55,7 +57,14 @@ export interface IStageParams {
   renderStyle?: string;
   ticker?: ITicker;
   pluginList?: string[];
+  // 优化配置
+  optimize?: IOptimizeType;
 }
+
+export type IOptimizeType = {
+  // 视口不在可视区，跳过渲染，默认为true
+  skipRenderWithOutRange?: boolean;
+};
 
 export interface IOption3D {
   enableView3dTransform?: boolean; // 是否开启view3d自动旋转
@@ -81,6 +90,8 @@ export interface IStage extends INode {
   // rootNode: IStage;
   x: number;
   y: number;
+
+  params: Partial<IStageParams>;
 
   window: IWindow;
 
@@ -122,6 +133,8 @@ export interface IStage extends INode {
   sortLayer: (cb: (layer1: ILayer, layer2: ILayer) => number) => void;
   removeLayer: (layerId: number) => ILayer | false;
 
+  getTimeline: () => ITimeline;
+
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;
   renderNextFrame: (layers?: ILayer[]) => void;
   tryInitInteractiveLayer: () => void;
@@ -149,7 +162,7 @@ export interface IStage extends INode {
 
   renderToNewWindow: (fullImage?: boolean) => IWindow;
 
-  toCanvas: (fullImage?: boolean) => HTMLCanvasElement | null;
+  toCanvas: (fullImage?: boolean, viewBox?: IAABBBounds) => HTMLCanvasElement | null;
 
   setBeforeRender: (cb: (stage: IStage) => void) => void;
 

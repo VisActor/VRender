@@ -1,5 +1,14 @@
 import { injectable } from 'inversify';
-import type { ICanvasLike, EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
+import type {
+  ICanvasLike,
+  EnvType,
+  ICreateCanvasParams,
+  IEnvContribution,
+  IGlobal,
+  CreateDOMParamsType
+} from '../../../interface';
+import type { IBoundsLike } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 
 @injectable()
 export abstract class BaseEnvContribution implements IEnvContribution {
@@ -15,6 +24,18 @@ export abstract class BaseEnvContribution implements IEnvContribution {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
     }
+  }
+
+  getNativeAABBBounds(dom: any): IBoundsLike {
+    return new AABBBounds();
+  }
+
+  removeDom(dom: HTMLElement): boolean {
+    return false;
+  }
+
+  createDom(params: CreateDOMParamsType): any {
+    return null;
   }
 
   /**
@@ -146,5 +167,15 @@ export abstract class BaseEnvContribution implements IEnvContribution {
           loadState: 'fail'
         };
       });
+  }
+
+  getElementTop(dom: any, baseWindow?: boolean) {
+    return 0;
+  }
+  getElementLeft(dom: any, baseWindow?: boolean) {
+    return 0;
+  }
+  getElementTopLeft(dom: any, baseWindow?: boolean): { top: number; left: number } {
+    return { top: 0, left: 0 };
   }
 }

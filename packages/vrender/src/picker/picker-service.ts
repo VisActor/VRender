@@ -78,7 +78,7 @@ export abstract class DefaultPickService implements IPickerService {
       if (graphics[i].isContainer) {
         result = this.pickGroup(graphics[i] as IGroup, point, parentMatrix, params);
       } else {
-        result.graphic = this.pickItem(graphics[i], point, params);
+        result.graphic = this.pickItem(graphics[i], point, parentMatrix, params);
       }
       if (result.graphic) {
         break;
@@ -93,11 +93,25 @@ export abstract class DefaultPickService implements IPickerService {
     if (this.pickContext) {
       this.pickContext.inuse = false;
     }
+
+    // 判断是否有shadow-dom
+    if (result.graphic) {
+      let g = result.graphic;
+      while (g.parent) {
+        g = g.parent;
+      }
+      if (g.shadowHost) {
+        result.params = {
+          shadowTarget: result.graphic
+        };
+        result.graphic = g.shadowHost;
+      }
+    }
     return result;
   }
 
   containsPoint(graphic: IGraphic, point: IPointLike, params: IPickParams): boolean {
-    return !!this.pickItem(graphic, point, params);
+    return !!this.pickItem(graphic, point, null, params);
   }
 
   // TODO: 支持3d模式的拾取和自定义path的拾取
@@ -155,6 +169,11 @@ export abstract class DefaultPickService implements IPickerService {
     if (!insideGroup && !group.stage.camera) {
       return result;
     }
+    // pickGroup，Group目前只支持拦截模式（用于shadow节点）
+    const pickedItem = this.pickItem(group, newPoint.clone(), parentMatrix, params);
+    if (pickedItem) {
+      result.graphic = pickedItem;
+    }
     const groupPicked = group.attribute.pickable !== false && insideGroup;
 
     currentGroupMatrix.multiply(
@@ -165,7 +184,7 @@ export abstract class DefaultPickService implements IPickerService {
       transMatrix.e,
       transMatrix.f
     );
-    if (group.attribute.childrenPickable !== false) {
+    if (group.attribute.childrenPickable !== false && !pickedItem) {
       foreach(
         group,
         DefaultAttribute.zIndex,
@@ -186,7 +205,7 @@ export abstract class DefaultPickService implements IPickerService {
             const { scrollX = theme.scrollX, scrollY = theme.scrollY } = group.attribute;
             newPoint.x -= scrollX;
             newPoint.y -= scrollY;
-            const pickedItem = this.pickItem(graphic, newPoint, params);
+            const pickedItem = this.pickItem(graphic, newPoint, parentMatrix, params);
             result.graphic = pickedItem;
           }
           return !!result.graphic || !!result.group;
@@ -208,7 +227,12 @@ export abstract class DefaultPickService implements IPickerService {
   }
 
   // todo: switch统一改为数字map
-  abstract pickItem(graphic: IGraphic, point: IPointLike, params: IPickParams): IGraphic | null;
+  abstract pickItem(
+    graphic: IGraphic,
+    point: IPointLike,
+    parentMatrix: IMatrix | null,
+    params: IPickParams
+  ): IGraphic | null;
 
   protected selectPicker(graphic: IGraphic): IGraphicPicker | null {
     const picker = this.pickerMap.get(graphic.numberType);

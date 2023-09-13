@@ -19,3 +19,29 @@ export const TEXT_NUMBER_TYPE = genNumberType();
 
 export const GraphicService = Symbol.for('GraphicService');
 export const GraphicCreator = Symbol.for('GraphicCreator');
+
+export const SVG_ATTRIBUTE_MAP = {
+  'stroke-linecap': 'lineCap',
+  'stroke-linejoin': 'lineJoin',
+  'stroke-dasharray': 'lineDash',
+  'stroke-dashoffset': 'lineDashOffset',
+  'stroke-width': 'lineWidth',
+  'fill-opacity': 'fillOpacity',
+  'stroke-opacity': 'strokeOpacity'
+};
+
+export const SVG_ATTRIBUTE_MAP_KEYS = Object.keys(SVG_ATTRIBUTE_MAP);
+
+export const SVG_PARSE_ATTRIBUTE_MAP = {
+  '@_stroke-linecap': 'lineCap',
+  '@_stroke-linejoin': 'lineJoin',
+  '@_stroke-dasharray': 'lineDash',
+  '@_stroke-dashoffset': 'lineDashOffset',
+  '@_stroke-width': 'lineWidth',
+  '@_fill-opacity': 'fillOpacity',
+  '@_stroke-opacity': 'strokeOpacity',
+  '@_stroke': 'stroke',
+  '@_fill': 'fill'
+};
+
+export const SVG_PARSE_ATTRIBUTE_MAP_KEYS = Object.keys(SVG_PARSE_ATTRIBUTE_MAP);

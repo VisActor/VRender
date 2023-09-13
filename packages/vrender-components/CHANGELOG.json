@@ -2,6 +2,37 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.15.0",
+      "tag": "@visactor/vrender-components_v0.15.0",
+      "date": "Tue, 12 Sep 2023 12:20:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "feat: pie label line support smooth line"
+          },
+          {
+            "comment": "fix: legend custom event should contain the nativeEvent object"
+          },
+          {
+            "comment": "fix: overwrite function attribute for components"
+          }
+        ],
+        "none": [
+          {
+            "comment": "fix: fix empty items error in axis component when label flush is true"
+          },
+          {
+            "comment": "fix: pie chart labels are not drawn as expected when animation is turned on, #750"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "refactor: seperate grid from axis, relate #327"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.8",
       "tag": "@visactor/vrender-components_v0.14.8",
       "date": "Thu, 07 Sep 2023 11:56:00 GMT",

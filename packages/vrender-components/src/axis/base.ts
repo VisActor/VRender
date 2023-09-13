@@ -26,7 +26,6 @@ import { DEFAULT_STATES, StateValue } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
 import type {
-  GridAttributes,
   LabelAttributes,
   AxisBaseAttributes,
   AxisItem,
@@ -36,7 +35,6 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
-import { Grid } from './grid';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -68,12 +66,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   private _lastSelect: IGraphic;
 
   protected abstract renderLine(container: IGroup): void;
-  protected abstract isInValidValue(value: number): boolean;
-  protected abstract getTickCoord(value: number): Point;
-  protected abstract getVerticalVector(offset: number, inside: boolean, point?: Point): any;
-  protected abstract getRelativeVector(point: Point): [number, number];
+  abstract isInValidValue(value: number): boolean;
+  abstract getTickCoord(value: number): Point;
+  abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
+  abstract getRelativeVector(point?: Point): [number, number];
   protected abstract getTitleAttribute(): TagAttributes;
-  protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
   protected abstract beforeLabelsOverlap(
     labelShapes: IText[],
@@ -198,7 +195,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   };
 
   protected _renderInner(container: IGroup) {
-    const { title, label, tick, line, grid, items } = this.attribute;
+    const { title, label, tick, line, items } = this.attribute;
 
     const axisContainer = createGroup({ x: 0, y: 0, zIndex: 1 });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
@@ -235,11 +232,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
           this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
         });
-      }
-
-      // 渲染网格线
-      if (grid?.visible) {
-        this.renderGrid(container);
       }
     }
 
@@ -372,17 +364,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     axisTitle.name = AXIS_ELEMENT_NAME.title;
     axisTitle.id = this._getNodeId('title');
     container.add(axisTitle as unknown as INode);
-  }
-
-  protected renderGrid(container: IGroup): void {
-    // 渲染 subGrid
-    const { visible } = this.attribute.subGrid || {};
-    if (visible) {
-      this._renderGridByType('subGrid', container);
-    }
-
-    // 渲染 Grid，Grid 需要在 subGrid 上层渲染
-    this._renderGridByType('grid', container);
   }
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
@@ -594,19 +575,5 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       });
     });
     return data;
-  }
-
-  private _renderGridByType(type: string, container: IGroup) {
-    const gridAttrs = this.getGridAttribute(type);
-
-    const gridGroup = new Grid({
-      // 默认关闭
-      pickable: false,
-      ...gridAttrs,
-      zIndex: 0
-    });
-    gridGroup.name = type === 'subGrid' ? `${AXIS_ELEMENT_NAME.grid}-sub` : `${AXIS_ELEMENT_NAME.grid}`;
-    gridGroup.id = this._getNodeId(type);
-    container.add(gridGroup as unknown as INode);
   }
 }

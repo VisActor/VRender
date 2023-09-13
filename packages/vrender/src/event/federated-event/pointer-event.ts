@@ -28,6 +28,7 @@ import { FederatedMouseEvent } from './mouse-event';
  * A FederatedEvent for pointer events.
  */
 export class FederatedPointerEvent extends FederatedMouseEvent implements PointerEvent {
+  pickParams?: any;
   /**
    * The unique identifier of the pointer.
    */

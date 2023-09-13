@@ -40,11 +40,14 @@ export class WrapText extends Text {
       maxLineWidth,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak,
+      fontWeight = textTheme.fontWeight,
       // widthLimit,
+      ignoreBuf = textTheme.ignoreBuf,
       heightLimit = 0,
       lineClamp
     } = this.attribute;
-    const buf = 2;
+    const buf = ignoreBuf ? 0 : 2;
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
       this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
@@ -55,7 +58,7 @@ export class WrapText extends Text {
     }
 
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize }, textMeasure as any) as any;
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure as any) as any;
 
     // layoutObj内逻辑
     const lines = text.map(l => l.toString()) as string[];
@@ -86,7 +89,13 @@ export class WrapText extends Text {
           // 判断是否超过高度限制
           if (i === lineCountLimit - 1) {
             // 当前行为最后一行
-            const clip = layoutObj.textMeasure.clipTextWithSuffix(str, layoutObj.textOptions, maxLineWidth, ellipsis);
+            const clip = layoutObj.textMeasure.clipTextWithSuffix(
+              str,
+              layoutObj.textOptions,
+              maxLineWidth,
+              ellipsis,
+              false
+            );
             linesLayout.push({
               str: clip.str,
               width: clip.width
@@ -95,14 +104,20 @@ export class WrapText extends Text {
           }
 
           // 测量截断位置
-          const clip = layoutObj.textMeasure.clipText(str, layoutObj.textOptions, maxLineWidth);
+          const clip = layoutObj.textMeasure.clipText(
+            str,
+            layoutObj.textOptions,
+            maxLineWidth,
+            wordBreak === 'break-word'
+          );
           if (str !== '' && clip.str === '') {
             if (ellipsis) {
               const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
                 str,
                 layoutObj.textOptions,
                 maxLineWidth,
-                ellipsis
+                ellipsis,
+                false
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -145,7 +160,8 @@ export class WrapText extends Text {
             lines[i],
             layoutObj.textOptions,
             maxLineWidth,
-            ellipsis
+            ellipsis,
+            false
           );
           linesLayout.push({
             str: clip.str,
@@ -156,7 +172,7 @@ export class WrapText extends Text {
         }
 
         text = lines[i] as string;
-        width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions);
+        width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions, wordBreak === 'break-word');
         lineWidth = Math.max(lineWidth, width);
         linesLayout.push({ str: text, width });
       }

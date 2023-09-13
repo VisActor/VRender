@@ -93,3 +93,6 @@ tsconfig.tsbuildinfo
 common/scripts/pre-commit
 
 docs/demos/src/node/image.png
+
+# generated documents
+docs/public/documents

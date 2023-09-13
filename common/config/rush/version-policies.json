@@ -1,8 +1,1 @@
-[
-  {
-    "definitionName": "lockStepVersion",
-    "policyName": "vrenderMain",
-    "version": "0.14.8",
-    "nextBump": "patch"
-  }
-]
+[{"definitionName":"lockStepVersion","policyName":"vrenderMain","version":"0.15.0","nextBump":"minor"}]

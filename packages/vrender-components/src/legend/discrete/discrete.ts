@@ -667,10 +667,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       if (selected) {
         // use selectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.selectedHover);
+        this._setLegendItemState(legendItem, LegendStateValue.selectedHover, e);
       } else {
         // use unSelectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover);
+        this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover, e);
       }
 
       const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
@@ -681,7 +681,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         focusButton.setAttribute('visible', true);
       }
 
-      this._dispatchEvent(LegendEvent.legendItemHover, legendItem);
+      this._dispatchEvent(LegendEvent.legendItemHover, legendItem, e);
     }
   };
 
@@ -723,9 +723,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
 
       if (attributeUpdate) {
-        this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+        this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
       }
-      this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem);
+      this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem, e);
     }
   };
 
@@ -743,25 +743,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         if (isFocusSelected) {
           // 当前为选中态，则再次点击变成全选
           this._itemsContainer?.getChildren().forEach(item => {
-            this._removeLegendItemState(item as unknown as IGroup, [
-              LegendStateValue.unSelected,
-              LegendStateValue.unSelectedHover,
-              LegendStateValue.focus
-            ]);
-            this._setLegendItemState(item as unknown as IGroup, LegendStateValue.selected);
+            this._removeLegendItemState(
+              item as unknown as IGroup,
+              [LegendStateValue.unSelected, LegendStateValue.unSelectedHover, LegendStateValue.focus],
+              e
+            );
+            this._setLegendItemState(item as unknown as IGroup, LegendStateValue.selected, e);
           });
         } else {
-          this._setLegendItemState(legendItem, LegendStateValue.selected);
-          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+          this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
           // 单选逻辑，当前被点击的图例项设置为选中态，其他全部设置为非选中态
           this._itemsContainer?.getChildren().forEach(item => {
             if (legendItem !== item) {
-              this._removeLegendItemState(item as unknown as IGroup, [
-                LegendStateValue.selected,
-                LegendStateValue.selectedHover,
-                LegendStateValue.focus
-              ]);
-              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected);
+              this._removeLegendItemState(
+                item as unknown as IGroup,
+                [LegendStateValue.selected, LegendStateValue.selectedHover, LegendStateValue.focus],
+                e
+              );
+              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected, e);
             }
           });
         }
@@ -775,41 +775,43 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         const currentSelectedItems = this._getSelectedLegends();
         if (selectMode === 'multiple') {
           if (allowAllCanceled === false && isSelected && currentSelectedItems.length === 1) {
-            this._dispatchEvent(LegendEvent.legendItemClick, legendItem);
+            this._dispatchEvent(LegendEvent.legendItemClick, legendItem, e);
             return;
           }
           // 多选逻辑
           if (isSelected) {
             // 如果当前为选中状态，则取消选中
-            this._removeLegendItemState(legendItem, [LegendStateValue.selected, LegendStateValue.selectedHover]);
-            this._setLegendItemState(legendItem, LegendStateValue.unSelected);
+            this._removeLegendItemState(legendItem, [LegendStateValue.selected, LegendStateValue.selectedHover], e);
+            this._setLegendItemState(legendItem, LegendStateValue.unSelected, e);
           } else {
             // 如果当前为非选中态，则设置为选中状态
-            this._setLegendItemState(legendItem, LegendStateValue.selected);
-            this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+            this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+            this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
           }
         } else {
-          this._setLegendItemState(legendItem, LegendStateValue.selected);
-          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+          this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
 
           // 单选逻辑，当前被点击的图例项设置为选中态，其他全部设置为非选中态
           this._itemsContainer?.getChildren().forEach(item => {
             if (legendItem !== item) {
-              this._removeLegendItemState(item as unknown as IGroup, [
-                LegendStateValue.selected,
-                LegendStateValue.selectedHover
-              ]);
-              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected);
+              this._removeLegendItemState(
+                item as unknown as IGroup,
+                [LegendStateValue.selected, LegendStateValue.selectedHover],
+                e
+              );
+              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected, e);
             }
           });
         }
       }
 
-      this._dispatchEvent(LegendEvent.legendItemClick, legendItem);
+      this._dispatchEvent(LegendEvent.legendItemClick, legendItem, e);
     }
   };
 
-  private _setLegendItemState(legendItem: IGroup, stateName: string, keepCurrentStates = true) {
+  private _setLegendItemState(legendItem: IGroup, stateName: string, e?: FederatedPointerEvent) {
+    const keepCurrentStates = true;
     let attributeUpdate = false;
     if (!legendItem.hasState(stateName)) {
       attributeUpdate = true;
@@ -828,11 +830,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
       });
     if (attributeUpdate) {
-      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
     }
   }
 
-  private _removeLegendItemState(legendItem: IGroup, stateNames: string[]) {
+  private _removeLegendItemState(legendItem: IGroup, stateNames: string[], e?: FederatedPointerEvent) {
     let attributeUpdate = false;
     stateNames.forEach(name => {
       if (!attributeUpdate && legendItem.hasState(name)) {
@@ -855,7 +857,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
       });
     if (attributeUpdate) {
-      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem);
+      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
     }
   }
 
@@ -879,7 +881,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     shape.states = merge({}, DEFAULT_STATES, states);
   }
 
-  private _dispatchEvent(eventName: string, legendItem: any) {
+  private _dispatchEvent(eventName: string, legendItem: any, event: FederatedPointerEvent) {
     const currentSelectedItems = this._getSelectedLegends();
     // 需要保持显示顺序
     currentSelectedItems.sort((pre: LegendItemDatum, next: LegendItemDatum) => pre.index - next.index);
@@ -892,7 +894,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       data: legendItem.data, // 当前图例项的数据
       selected: legendItem.hasState(LegendStateValue.selected), // 当前图例项是否被选中
       currentSelectedItems,
-      currentSelected
+      currentSelected,
+      event
     });
     // FIXME: 需要在 vrender 的事件系统支持
     // @ts-ignore

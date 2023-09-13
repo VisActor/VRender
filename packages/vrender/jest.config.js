@@ -22,6 +22,7 @@ module.exports = {
   verbose: true,
   coverageReporters: ['json-summary', 'lcov', 'text'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
+  testPathIgnorePatterns: ['__tests__/browser'],
   collectCoverageFrom: [
     '**/src/**',
     '!**/cjs/**',

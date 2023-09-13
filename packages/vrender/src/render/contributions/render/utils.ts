@@ -12,7 +12,8 @@ import type {
   IArc,
   IPath2D,
   IGraphicRenderDrawParams,
-  IDrawContext
+  IDrawContext,
+  IBackgroundConfig
 } from '../../../interface';
 
 /**
@@ -20,7 +21,10 @@ import type {
  * @param fill
  * @returns
  */
-export function runFill(fill: IFillType, background?: string | HTMLImageElement | HTMLCanvasElement) {
+export function runFill(
+  fill: IFillType,
+  background?: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig
+) {
   return !!(fill || background);
 }
 /**

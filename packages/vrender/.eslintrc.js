@@ -8,5 +8,5 @@ module.exports = {
     __VERSION__: 'readonly',
     NodeJS: true
   },
-  ignorePatterns: ['scripts/**']
+  ignorePatterns: ['scripts/**', '__tests__/browser/**']
 };

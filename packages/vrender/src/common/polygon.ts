@@ -1,5 +1,5 @@
-import { IPointLike } from '@visactor/vutils';
-import { IPath2D } from '../interface';
+import type { IPointLike } from '@visactor/vutils';
+import type { IPath2D } from '../interface';
 
 /**
  * 绘制闭合的常规多边形
@@ -24,17 +24,25 @@ export function drawRoundedPolygon(
   points: IPointLike[],
   x: number,
   y: number,
-  cornerRadius: number | number[]
+  cornerRadius: number | number[],
+  closePath: boolean = true
 ) {
   if (points.length < 3) {
     drawPolygon(path, points, x, y);
     return;
   }
 
-  for (let i = 0; i < points.length; i++) {
-    const p1 = points[i];
-    const angularPoint = points[(i + 1) % points.length];
-    const p2 = points[(i + 2) % points.length];
+  let startI = 0;
+  let endI = points.length - 1;
+  if (!closePath) {
+    startI += 1;
+    endI -= 1;
+    path.moveTo(points[0].x + x, points[0].y + y);
+  }
+  for (let i = startI; i <= endI; i++) {
+    const p1 = points[i === 0 ? endI : (i - 1) % points.length];
+    const angularPoint = points[i % points.length];
+    const p2 = points[(i + 1) % points.length];
 
     //Vector 1
     const dx1 = angularPoint.x - p1.x;
@@ -109,6 +117,10 @@ export function drawRoundedPolygon(
     }
 
     path.lineTo(p2Cross.x + x, p2Cross.y + y);
+  }
+
+  if (!closePath) {
+    path.lineTo(points[endI + 1].x + x, points[endI + 1].y + y);
   }
 }
 

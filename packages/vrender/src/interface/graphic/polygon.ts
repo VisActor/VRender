@@ -5,6 +5,7 @@ export type IPolygonAttribute = {
   // ? 不需要x2/y2
   points: IPointLike[];
   cornerRadius?: number | number[];
+  closePath?: boolean;
 };
 
 export type IPolygonGraphicAttribute = Partial<IGraphicAttribute> & Partial<IPolygonAttribute>;

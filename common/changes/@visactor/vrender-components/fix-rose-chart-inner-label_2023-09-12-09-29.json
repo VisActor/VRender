@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: roseChart inner labels are unclear, #884",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

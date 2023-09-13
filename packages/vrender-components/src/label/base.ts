@@ -7,7 +7,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge, isRectIntersect, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
-import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/labelSmartInvert';
+import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';

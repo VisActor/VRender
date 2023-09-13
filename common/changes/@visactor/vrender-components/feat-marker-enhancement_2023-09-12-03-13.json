@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: segment and markLine component supports multiple segment draw",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

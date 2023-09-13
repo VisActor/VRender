@@ -1,6 +1,6 @@
 import { LinearScale, PointScale } from '@visactor/vscale';
 import { GroupFadeIn, GroupFadeOut } from '@visactor/vrender';
-import { LineAxis, GroupTransition } from '../../../src';
+import { LineAxis, GroupTransition, LineAxisGrid } from '../../../src';
 import render from '../../util/render';
 
 const data = [
@@ -70,14 +70,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -89,7 +89,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -182,14 +182,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -201,7 +201,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -399,14 +399,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -418,7 +418,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -616,14 +616,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -635,7 +635,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -833,14 +833,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -852,7 +852,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1050,14 +1050,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1069,7 +1069,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1267,14 +1267,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1286,7 +1286,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1484,14 +1484,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1503,7 +1503,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1701,14 +1701,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1720,7 +1720,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1918,14 +1918,14 @@ const data = [
       visible: true,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1
       }
     },
     grid: {
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -1937,7 +1937,7 @@ const data = [
       visible: false,
       style: {
         lineWidth: 1,
-        stroke: '#dfdfdf',
+        stroke: 'red',
         strokeOpacity: 1,
         lineDash: [4, 4]
       },
@@ -2076,23 +2076,31 @@ const axis = new LineAxis({
   // animation: false
 });
 
+const grid = new LineAxisGrid({
+  ...data[3],
+  items: data[3].items[0],
+  ...data[3].grid
+});
 axis.animate().play(new GroupFadeIn(600, 'cubicOut'));
-render([axis], 'main');
-
-// const axisContainer = axis.getChildByName('axis-container', treu);
-// axisContainer?.addEventListener('pointerdown', () => {
-//   console.log(2222);
-// });
+grid.animate().play(new GroupFadeIn(600, 'cubicOut'));
+render([axis, grid], 'main');
 
 for (let index = 1; index < data.length; index++) {
   const attrs = data[index];
 
   setTimeout(() => {
     axis.setAttributes(attrs);
+    grid.setAttributes({
+      ...attrs,
+      items: attrs.items[0],
+      ...attrs.grid
+    });
     axis.animate().play(new GroupTransition(null, null, 600, 'linear'));
+    grid.animate().play(new GroupTransition(null, null, 600, 'linear'));
   }, index * 600);
 }
 
 setTimeout(() => {
   axis.animate().play(new GroupFadeOut(600, 'linear'));
+  grid.animate().play(new GroupFadeOut(600, 'linear'));
 }, 600 * (data.length - 1));

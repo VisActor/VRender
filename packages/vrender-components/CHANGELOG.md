@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Sep 2023 12:20:48 GMT and should not be manually modified.
+
+## 0.15.0
+Tue, 12 Sep 2023 12:20:48 GMT
+
+### Minor changes
+
+- refactor: seperate grid from axis, relate #327
+
+### Patches
+
+- feat: pie label line support smooth line
+- fix: legend custom event should contain the nativeEvent object
+- fix: overwrite function attribute for components
+
+### Updates
+
+- fix: fix empty items error in axis component when label flush is true
+- fix: pie chart labels are not drawn as expected when animation is turned on, #750
 
 ## 0.14.8
 Thu, 07 Sep 2023 11:56:00 GMT

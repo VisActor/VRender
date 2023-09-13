@@ -30,3 +30,9 @@ export function bindContributionProvider(bind: interfaces.Bind, id: any): void {
     .inSingletonScope()
     .whenTargetNamed(id);
 }
+
+export function bindContributionProviderNoSingletonScope(bind: interfaces.Bind, id: any): void {
+  bind(ContributionProvider)
+    .toDynamicValue(({ container }) => new ContributionProviderCache(id, container))
+    .whenTargetNamed(id);
+}

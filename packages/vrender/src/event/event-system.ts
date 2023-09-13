@@ -131,7 +131,6 @@ export class EventSystem {
     }
     this.currentCursor = mode;
     const style = this.cursorStyles[mode];
-
     if (style) {
       if (typeof style === 'string' && applyStyles) {
         domElement.style.cursor = style;

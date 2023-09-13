@@ -913,9 +913,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
             ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
             text.attribute?.visible ??
             true,
-          stroke: (text.attribute as ArcLabelAttrs)?.line?.stroke ?? text.attribute?.fill,
-          lineWidth: (text.attribute as ArcLabelAttrs)?.line?.lineWidth ?? 1,
-          points: (text.attribute as ArcLabelAttrs)?.points
+          stroke: (text.attribute as ArcLabelAttrs)?.line?.style?.stroke ?? text.attribute?.fill,
+          lineWidth: (text.attribute as ArcLabelAttrs)?.line?.style?.lineWidth ?? 1,
+          points: (text.attribute as ArcLabelAttrs)?.points,
+          curveType: (text.attribute as ArcLabelAttrs)?.line?.smooth ? 'basis' : null
         })
       : undefined;
     return labelLine;

@@ -1,6 +1,7 @@
 import { application } from '../application';
-import type { IGraphic, IGroup, ILayer, IStage } from '../interface';
-import type { IAABBBounds } from '@visactor/vutils';
+import type { IGraphic, IGroup, ILayer, IRichTextCharacter, IRichTextImageCharacter, IStage } from '../interface';
+import { isArray, type IAABBBounds } from '@visactor/vutils';
+import { XMLValidator, XMLParser } from 'fast-xml-parser';
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {
@@ -131,4 +132,76 @@ function rotateText(c: string) {
     rotate = true;
   }
   return rotate;
+}
+
+export function xul(str: string | string[]): IRichTextCharacter[] {
+  const xmlStr = isArray(str) ? str[0] : str;
+  const config: IRichTextCharacter[] = [];
+  if (!xmlStr) {
+    return config;
+  }
+  const isXML = XMLValidator.validate(xmlStr, {
+    allowBooleanAttributes: true
+  });
+  if (isXML === true) {
+    const parser = new XMLParser({ ignoreAttributes: false });
+    const data = parser.parse(xmlStr);
+    data.tc &&
+      Object.keys(data.tc).forEach(k => {
+        if (k === 'text') {
+          config.push(parseRTTextXML(data.tc[k]));
+        } else {
+          config.push(parseRTImageXML(data.tc[k]));
+        }
+      });
+  }
+  return config;
+}
+
+function parseRTTextXML(str: string): IRichTextCharacter {
+  const output: IRichTextCharacter = { text: '' };
+  parseCommonXML(str, output);
+  const inlineText = str['#text'];
+  if (inlineText) {
+    output.text = inlineText;
+  }
+
+  return output;
+}
+
+function parseCommonXML(str: string, output: IRichTextCharacter) {
+  const attr = str['@_attribute'];
+  if (attr) {
+    const attrList = attr.split(';');
+    attrList.forEach((attrItem: string) => {
+      if (!attrItem) {
+        return;
+      }
+      const kv = attrItem.split(':');
+
+      if (kv.length === 2) {
+        const val = parseFloat(kv[1]);
+        output[kv[0].trim()] = isFinite(val) ? val : kv[1].trim();
+      } else {
+        let val = '';
+        for (let i = 1; i < kv.length; i++) {
+          if (i > 1) {
+            val += ':';
+          }
+          val += kv[i].trim();
+        }
+        output[kv[0].trim()] = val;
+      }
+    });
+  }
+}
+
+function parseRTImageXML(str: string): IRichTextCharacter {
+  const output: IRichTextImageCharacter = { image: '', width: 0, height: 0 };
+  parseCommonXML(str, output);
+  const image = output.image as string;
+  if (image) {
+    output.image = (image as any).replaceAll('&quot', '"').replaceAll('&lt', '<').replaceAll('&gt', '>');
+  }
+  return output;
 }

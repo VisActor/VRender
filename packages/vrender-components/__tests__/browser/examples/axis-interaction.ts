@@ -82,28 +82,6 @@ const axis = new LineAxis({
     startSymbol: {},
     endSymbol: {}
   },
-  grid: {
-    style: {
-      lineWidth: 1,
-      stroke: '#DADCDD',
-      strokeOpacity: 1,
-      lineDash: [4, 2]
-    },
-    visible: false,
-    length: 461,
-    type: 'line',
-    depth: 0
-  },
-  subGrid: {
-    visible: false,
-    style: {
-      lineWidth: 1,
-      stroke: '#EBEDF2',
-      strokeOpacity: 1,
-      lineDash: [4, 4]
-    },
-    type: 'line'
-  },
   x: 397,
   y: 12,
   start: {

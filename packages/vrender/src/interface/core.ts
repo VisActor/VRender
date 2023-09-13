@@ -27,6 +27,7 @@ export interface ITransformUtil {
   init: (origin: TransformType) => ITransformUtil;
   fromMatrix: (source: IMatrix, target: IMatrix) => ITransformUtil;
   scale: (sx: number, sy: number, center?: IPointLike) => ITransformUtil;
+  rotate: (angle: number, center?: IPointLike) => ITransformUtil;
   translate: (dx: number, dy: number) => ITransformUtil;
 }
 

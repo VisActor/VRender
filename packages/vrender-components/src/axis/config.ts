@@ -50,22 +50,5 @@ export const DEFAULT_AXIS_THEME = {
       stroke: '#000',
       strokeOpacity: 1
     }
-  },
-  grid: {
-    style: {
-      lineWidth: 1,
-      stroke: '#999',
-      strokeOpacity: 1,
-      lineDash: [4, 4]
-    }
-  },
-  subGrid: {
-    visible: false,
-    style: {
-      lineWidth: 1,
-      stroke: '#999',
-      strokeOpacity: 1,
-      lineDash: [4, 4]
-    }
   }
 };

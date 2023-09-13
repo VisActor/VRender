@@ -4,13 +4,15 @@ export enum UpdateTag {
   UPDATE_SHAPE = 0b00000010, // shape有更新
   CLEAR_SHAPE = 0b11111101,
   UPDATE_SHAPE_AND_BOUNDS = 0b00000011, // shape&bounds有更新
-  INIT = 0b00110011,
+  INIT = 0b10110011,
   CLEAR_BOUNDS = 0b11111110, // 清除bounds更新位
   UPDATE_GLOBAL_MATRIX = 0b00100000, // 更新全局matrix
   CLEAR_GLOBAL_MATRIX = 0b11011111, // 清除全局matrix
   UPDATE_LOCAL_MATRIX = 0b00010000, // 更新局部matrix
   CLEAR_LOCAL_MATRIX = 0b11101111, // 清除局部matrix
-  UPDATE_GLOBAL_LOCAL_MATRIX = 0b00110000 // 更新全局和局部matrix
+  UPDATE_GLOBAL_LOCAL_MATRIX = 0b00110000, // 更新全局和局部matrix
+  UPDATE_LAYOUT = 0b10000000, // 布局需要更新
+  CLEAR_LAYOUT = 0b01111111 // 清楚布局更新
 }
 
 export enum IContainPointMode {

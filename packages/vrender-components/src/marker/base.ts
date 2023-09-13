@@ -6,6 +6,7 @@ import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';
 
 export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
+  name = 'marker';
   private _containerClip!: IGroup;
   private _container!: IGroup;
 
@@ -16,29 +17,41 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract updateMarker(): any;
 
   private _initContainer() {
-    const groupClip = createGroup({
-      ...this.attribute?.clipRange,
-      clip: isValid(this.attribute?.clipRange) ?? false
-    });
-    groupClip.name = 'marker-container';
-    const group = createGroup({
-      x: -(this.attribute?.clipRange?.x ?? 0),
-      y: -(this.attribute?.clipRange?.y ?? 0)
-    });
-    groupClip.add(group);
-    this._containerClip = groupClip;
-    this.add(groupClip);
+    const { limitRect, clipInRange } = this.attribute;
+    let group;
+    if (clipInRange) {
+      // 如果用户配置了剪切
+      const groupClip = createGroup({
+        ...limitRect,
+        clip: true,
+        pickable: false
+      });
+      group = createGroup({
+        x: -(limitRect?.x ?? 0),
+        y: -(limitRect?.y ?? 0)
+      });
+      groupClip.add(group);
+      this._containerClip = groupClip;
+      this.add(groupClip);
+    } else {
+      group = createGroup({
+        x: 0,
+        y: 0
+      });
+      this.add(group);
+    }
+    group.name = 'marker-container';
     this._container = group;
   }
 
   private _updateContainer() {
-    this._containerClip.setAttributes({
-      ...this.attribute?.clipRange,
-      clip: isValid(this.attribute?.clipRange) ?? false
+    const { limitRect, clipInRange } = this.attribute;
+    this._containerClip?.setAttributes({
+      ...limitRect
     });
     this._container.setAttributes({
-      x: -(this.attribute?.clipRange?.x ?? 0),
-      y: -(this.attribute?.clipRange?.y ?? 0)
+      x: clipInRange ? -(limitRect?.x ?? 0) : 0,
+      y: clipInRange ? -(limitRect?.y ?? 0) : 0
     });
   }
 
@@ -52,7 +65,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     }
 
     if (markerVisible) {
-      if (!this._containerClip) {
+      if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
       } else {

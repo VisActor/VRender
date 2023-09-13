@@ -52,7 +52,17 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
    * @default true
    */
   visible?: boolean;
-  points: Point[];
+  /**
+   * 是否对 points 进行多段处理，默认为 false，即直接将所有的点连接成线。
+   * 如果需要进行多段处理，需要将 points 属性配置为 Point[][] 类型
+   * @default false
+   */
+  multiSegment?: boolean;
+  /**
+   * 在 `multiSegment` 属性开启的前提下，用于声明那一段线段用来作为主线段，如果不声明，默认全段为主线段
+   */
+  mainSegmentIndex?: number;
+  points: Point[] | Point[][];
   /** 轴线起始点 symbol 配置 */
   startSymbol?: SymbolAttributes;
   /** 轴线末端 symbol 配置 */
@@ -60,10 +70,10 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
   /**
    * 线样式配置
    */
-  lineStyle?: Partial<ILineGraphicAttribute>;
+  lineStyle?: Partial<ILineGraphicAttribute> | Partial<ILineGraphicAttribute>[];
 
   state?: {
-    line?: State<Partial<ILineGraphicAttribute>>;
+    line?: State<Partial<ILineGraphicAttribute> | Partial<ILineGraphicAttribute>[]>;
     symbol?: State<Partial<ISymbolGraphicAttribute>>;
   };
 }

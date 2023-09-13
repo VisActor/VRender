@@ -3,6 +3,14 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'multiple-segment',
+    name: '多段绘制线段'
+  },
+  {
+    path: 'compare-mark-line',
+    name: '差异标注组件'
+  },
+  {
     path: 'grid',
     name: '坐标轴网格线'
   },

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.14.8",
+  "version": "0.15.1",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -23,7 +23,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.15.5",
+    "@visactor/vutils": "~0.15.14",
     "color-convert": "2.0.1",
     "inversify": "6.0.1"
   },

@@ -1,5 +1,5 @@
 import type { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
-import { Graphic } from './graphic';
+import { Graphic, NOWORK_ANIMATE_KEY } from './graphic';
 import type {
   GraphicType,
   IGraphic,
@@ -31,6 +31,8 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     subAttributes: Partial<IGraphicAttribute>[];
   };
   protected declare subGraphic: IGraphic[];
+
+  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
 
   constructor(params: Partial<IGlyphGraphicAttribute>) {
     super(params);

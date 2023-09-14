@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: symbol support more type and support svg format, closed #110 #313",
-      "type": "minor"
+      "comment": "refactor: minify color code, closed #438, closed #396",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

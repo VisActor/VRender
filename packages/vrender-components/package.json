@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.14.8",
+  "version": "0.15.1",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -24,8 +24,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.14.8",
-    "@visactor/vutils": "~0.15.5",
+    "@visactor/vutils": "~0.15.14",
+    "@visactor/vrender": "workspace:0.15.1",
     "@visactor/vscale": "~0.15.5",
     "inversify": "6.0.1"
   },

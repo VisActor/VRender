@@ -124,23 +124,11 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     return DefaultImageAttribute[name];
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < IMAGE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = IMAGE_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTags(keys: string[]): boolean {
+    return super.needUpdateTags(keys, IMAGE_UPDATE_TAG_KEY);
   }
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < IMAGE_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = IMAGE_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTag(key: string): boolean {
+    return super.needUpdateTag(key, IMAGE_UPDATE_TAG_KEY);
   }
 
   clone() {

@@ -189,23 +189,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return DefaultRichTextAttribute[name];
   }
 
-  needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < RICHTEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = RICHTEXT_UPDATE_TAG_KEY[i];
-      if (keys.indexOf(attrKey) !== -1) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTags(keys: string[]): boolean {
+    return super.needUpdateTags(keys, RICHTEXT_UPDATE_TAG_KEY);
   }
-  needUpdateTag(key: string): boolean {
-    for (let i = 0; i < RICHTEXT_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = RICHTEXT_UPDATE_TAG_KEY[i];
-      if (key === attrKey) {
-        return true;
-      }
-    }
-    return false;
+  protected needUpdateTag(key: string): boolean {
+    return super.needUpdateTag(key, RICHTEXT_UPDATE_TAG_KEY);
   }
   getFrameCache(): Frame {
     if (this.shouldUpdateShape()) {

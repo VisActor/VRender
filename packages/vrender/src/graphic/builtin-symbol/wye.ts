@@ -1,6 +1,7 @@
 import type { IBounds } from '@visactor/vutils';
 import { sqrt } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -45,7 +46,7 @@ export function wye(ctx: IContext2d, r: number, transX: number, transY: number) 
 }
 
 // 以中心为锚点，size为wye外接正方形的面积
-export class WyeSymbol implements ISymbolClass {
+export class WyeSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'wye';
   /* eslint-disable max-len */
   pathStr: string =
@@ -62,15 +63,6 @@ export class WyeSymbol implements ISymbolClass {
     const r = size / 2 + offset;
     // const r = sqrt(size / a);
     return wye(ctx, r, transX, transY);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    // const r = sqrt(size / a);//d3 用的这个
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

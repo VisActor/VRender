@@ -498,9 +498,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
-  protected needUpdateTags(keys: string[]): boolean {
-    for (let i = 0; i < GRAPHIC_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = GRAPHIC_UPDATE_TAG_KEY[i];
+  protected needUpdateTags(keys: string[], k: string[] = GRAPHIC_UPDATE_TAG_KEY): boolean {
+    for (let i = 0; i < k.length; i++) {
+      const attrKey = k[i];
       if (keys.indexOf(attrKey) !== -1) {
         return true;
       }
@@ -508,9 +508,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return false;
   }
 
-  protected needUpdateTag(key: string): boolean {
-    for (let i = 0; i < GRAPHIC_UPDATE_TAG_KEY.length; i++) {
-      const attrKey = GRAPHIC_UPDATE_TAG_KEY[i];
+  protected needUpdateTag(key: string, k: string[] = GRAPHIC_UPDATE_TAG_KEY): boolean {
+    for (let i = 0; i < k.length; i++) {
+      const attrKey = k[i];
       if (key === attrKey) {
         return true;
       }

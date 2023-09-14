@@ -2,22 +2,7 @@
 import { Matrix } from '@visactor/vutils';
 import { injectable } from 'inversify';
 import { BrowserContext2d } from '../browser';
-import {
-  ICommonStyleParams,
-  IContext2d,
-  ISetCommonStyleParams,
-  ISetStrokeStyleParams,
-  IStrokeStyleParams,
-  ITextStyleParams,
-  IConicalGradientData,
-  EnvType,
-  ICanvas
-} from '../../../interface';
-import { createColor, getScaledStroke } from '../../../common/canvas-utils';
-import { getContextFont } from '../../../common/text';
-
-// https://github.com/konvajs/konva/blob/master/src/Context.ts
-const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+import type { IContext2d, EnvType, ICanvas } from '../../../interface';
 
 @injectable()
 export class NodeContext2d extends BrowserContext2d implements IContext2d {

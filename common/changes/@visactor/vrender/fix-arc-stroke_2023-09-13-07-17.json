@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: support html attribute plugin, closed #153",
-      "type": "minor"
+      "comment": "fix: fix arc stroke error, closed #481",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

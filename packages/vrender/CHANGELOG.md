@@ -1,6 +1,33 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Sep 2023 02:21:59 GMT and should not be manually modified.
+
+## 0.15.1
+Wed, 13 Sep 2023 02:21:59 GMT
+
+_Version update only_
+
+## 0.15.0
+Tue, 12 Sep 2023 12:20:48 GMT
+
+### Minor changes
+
+- feat: toCanvas api support viewBox params, closed #272
+- feat: support html attribute plugin, closed #153
+- feat: support ignoreBuf config, closed #374
+- feat: support jsx describe, closed #320
+- feat: symbol support more type and support svg format, closed #110 #313
+- fix: wrapText support wordBreak
+
+### Patches
+
+- feat: poptip support formatMethod
+- fix: poptip fix width error and add maxWidthPercent
+- feat: text limit ignore wordBreak, closed #389
+- feat: enhance timeline funciton, closed #348
+- fix: increase IntersectionObserver robustness in browser env
+- fix: pass fontFamily in measureText
+- perf: improve animate by skip render without window
 
 ## 0.14.8
 Thu, 07 Sep 2023 11:56:00 GMT

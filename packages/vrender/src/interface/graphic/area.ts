@@ -8,6 +8,7 @@ export type IAreaAttribute = {
   points: IPointLike[];
   curveType: ICurveType;
   clipRange: number;
+  closePath: boolean;
 };
 
 export type IAreaCacheItem = {

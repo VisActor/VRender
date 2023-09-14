@@ -16,7 +16,7 @@ $ npm install @visactor/vrender
 $ yarn add @visactor/vrender
 ```
 
-For how to use it when getting, see [How to Import VRender in a Project](/tutorials/Basic/How_to_Import_VRender).
+For how to use it when getting, see [How to Import VRender in a Project](./How_to_Import_VRender).
 
 ## cdn Get
 

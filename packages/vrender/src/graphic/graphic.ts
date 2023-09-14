@@ -111,6 +111,39 @@ const tempConstantAngleKey = ['angle'];
 
 const point = new Point();
 
+export const NOWORK_ANIMATE_KEY = {
+  strokeSeg: 1,
+  boundsPadding: 2,
+  pickMode: 1,
+  boundsMode: 1,
+  customPickShape: 1,
+  pickable: 1,
+  childrenPickable: 1,
+  visible: 1,
+  zIndex: 1,
+  layout: 1,
+  keepDirIn3d: 1,
+
+  outerBorder: 1,
+  innerBorder: 1,
+  lineDash: 1,
+  lineCap: 1,
+  lineJoin: 1,
+  miterLimit: 2,
+  strokeBoundsBuffer: 2,
+
+  scaleCenter: 1,
+  anchor: 1,
+  anchor3d: 1,
+  postMatrix: 1,
+
+  backgroundMode: 2,
+  background: 1,
+  texture: 1,
+  cursor: 1,
+  html: 1
+};
+
 /**
  * globalTransMatrix更新逻辑
  * 1. group的transform修改，会下发到所有下层group，将所有下层的tag修改

@@ -67,7 +67,8 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
       opacity = polygonAttribute.opacity,
       visible = polygonAttribute.visible,
       x: originX = polygonAttribute.x,
-      y: originY = polygonAttribute.y
+      y: originY = polygonAttribute.y,
+      closePath = polygonAttribute.closePath
     } = polygon.attribute;
 
     // 不绘制或者透明
@@ -93,10 +94,10 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
       drawPolygon(context.camera ? context : context.nativeContext, points, x, y);
     } else {
       // FIXME: type
-      drawRoundedPolygon(context.camera ? context : context.nativeContext, points, x, y, cornerRadius);
+      drawRoundedPolygon(context.camera ? context : context.nativeContext, points, x, y, cornerRadius, closePath);
     }
     // polygon 默认闭合
-    context.closePath();
+    closePath && context.closePath();
 
     if (!this._polygonRenderContribitions) {
       this._polygonRenderContribitions = this.polygonRenderContribitions.getContributions() || [];

@@ -131,7 +131,11 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
 
     // 更新cache
     if (area.shouldUpdateShape()) {
-      const { points, segments, curveType = areaAttribute.curveType } = area.attribute;
+      const { points, segments, closePath } = area.attribute;
+      let { curveType = areaAttribute.curveType } = area.attribute;
+      if (closePath && curveType === 'linear') {
+        curveType = 'linearClosed';
+      }
       if (segments && segments.length) {
         let startPoint: IPointLike;
         let lastTopSeg: { endX: number; endY: number };

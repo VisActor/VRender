@@ -7,10 +7,13 @@ import { application } from '../application';
 import { Polygon } from './polygon';
 import { getTheme } from './theme';
 import { PYRAMID3D_NUMBER_TYPE } from './constants';
+import { NOWORK_ANIMATE_KEY } from './graphic';
 
 export class Pyramid3d extends Polygon implements IPyramid3d {
   type: GraphicType = 'pyramid3d';
   declare attribute: IPyramid3dGraphicAttribute;
+
+  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
 
   constructor(params: IPyramid3dGraphicAttribute) {
     super(params);

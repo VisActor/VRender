@@ -17,9 +17,9 @@ import type {
   IRenderService
 } from '../../../interface';
 import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
+import { ColorStore, ColorType } from '../../../color-string';
 
 @injectable()
 export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> implements IGraphicRender {
@@ -137,7 +137,7 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    const rgbArray = colorString.get(fillColor).value;
+    const rgbArray = ColorStore.Get(fillColor as string, ColorType.Color255);
 
     // 上下左右前后
     // 0,1,2,3,4,5
@@ -204,7 +204,7 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
       if (fillCb) {
         fillCb(context, pyramid3d.attribute, pyramid3dAttribute);
       } else {
-        context.fillStyle = light ? light.computeColor(normal, rgbArray) : fillColor;
+        context.fillStyle = light ? light.computeColor(normal, rgbArray as any) : fillColor;
         context.fill();
       }
     });

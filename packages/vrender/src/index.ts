@@ -50,3 +50,4 @@ export * from './allocator/matrix-allocate';
 export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './jsx';
+export * from './common/xml';

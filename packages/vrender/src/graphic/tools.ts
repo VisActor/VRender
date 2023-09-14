@@ -1,7 +1,8 @@
 import { application } from '../application';
+import { isXML } from '../common/xml/parser';
 import type { IGraphic, IGroup, ILayer, IRichTextCharacter, IRichTextImageCharacter, IStage } from '../interface';
 import { isArray, type IAABBBounds } from '@visactor/vutils';
-import { XMLValidator, XMLParser } from 'fast-xml-parser';
+import { XMLParser } from '../common/xml';
 
 // 不触发外部的render
 export function incrementalAddTo(group: IGroup, graphic: IGraphic) {
@@ -140,11 +141,9 @@ export function xul(str: string | string[]): IRichTextCharacter[] {
   if (!xmlStr) {
     return config;
   }
-  const isXML = XMLValidator.validate(xmlStr, {
-    allowBooleanAttributes: true
-  });
-  if (isXML === true) {
-    const parser = new XMLParser({ ignoreAttributes: false });
+  const valid = isXML(xmlStr);
+  if (valid === true) {
+    const parser = new XMLParser();
     const data = parser.parse(xmlStr);
     data.tc &&
       Object.keys(data.tc).forEach(k => {

@@ -16,10 +16,10 @@ import type {
   IGraphicRenderDrawParams
 } from '../../../interface';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
+import { ColorStore, ColorType } from '../../../color-string';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -231,7 +231,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
       height = 10
     } = arc.attribute;
 
-    const rgbArray = colorString.get(fill).value;
+    const rgbArray = ColorStore.Get(fill as string, ColorType.Color255);
     const { light } = drawContext.stage || {};
     const face = drawContext.hack_pieFace;
 
@@ -260,7 +260,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray as any) : (fill as string);
           context.fill();
         }
       }
@@ -317,7 +317,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
           fillCb(context, arc.attribute, arcAttribute);
         } else if (fVisible) {
           context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray) : (fill as string);
+          context.fillStyle = light ? light.computeColor(n_face[face], rgbArray as any) : (fill as string);
           context.fill();
         }
       }

@@ -15,10 +15,10 @@ import type {
   IRenderService
 } from '../../../interface';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
-import { colorString } from '../../../color-string';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
+import { ColorStore, ColorType } from '../../../color-string';
 @injectable()
 export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IGraphicRender {
   type = 'rect3d';
@@ -130,7 +130,7 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    const rgbArray = colorString.get(fillColor).value;
+    const rgbArray = ColorStore.Get(fillColor as string, ColorType.Color255);
     // 上下左右前后
     // 0,1,2,3,4,5
     const vertices = face3d.vertices;
@@ -194,7 +194,7 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
       if (fillCb) {
         fillCb(context, null, null);
       } else {
-        context.fillStyle = light ? light.computeColor(normal, rgbArray) : fillColor;
+        context.fillStyle = light ? light.computeColor(normal, rgbArray as any) : fillColor;
         context.fill();
       }
     });

@@ -54,7 +54,7 @@ jobs:
       - name: Build packages
         run: node common/scripts/install-run-rush.js build --only tag:package
 
-      - name: Run bug server
+      - name: Run CI
         working-directory: ./tools/bugserver-trigger
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}

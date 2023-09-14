@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest # 如果用了electron，记得改成 macOS-latest
+    runs-on: ubuntu-latest # 如果用了electron，记得改成 macOS-latest
     permissions:
       contents: write
       pull-requests: write
@@ -30,6 +30,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
+      - name: Print All Github Environment Variables
+        run:
+          env
           # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy

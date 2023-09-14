@@ -307,7 +307,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     layerCount: number
   ): void {
     const { flush = false } = this.attribute.label || {};
-    if (flush) {
+    if (flush && labelShapes.length) {
       // 首尾标签向内偏移
       const { orient, start, end } = this.attribute;
       const isX = orient === 'bottom' || orient === 'top';

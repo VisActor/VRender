@@ -6,10 +6,9 @@ import type {
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
 } from '@visactor/vrender';
-import { IGraphic } from '@visactor/vrender';
-import type { Dict, IPointLike } from '@visactor/vutils';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
+import type { Point } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -98,9 +97,14 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
    */
   visible?: boolean;
   /**
-   * clip范围配置
+   * 是否将组件在绘制区域内进行剪切
+   * @default true
    */
-  clipRange?: {
+  clipInRange?: boolean;
+  /**
+   * 组件绘制范围配置
+   */
+  limitRect?: {
     x: number;
     y: number;
     width: number;
@@ -113,7 +117,8 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
   /**
    * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
    */
-  points: IPointLike[];
+  points: Point[] | Point[][];
+
   /**
    * 标签
    */
@@ -122,6 +127,10 @@ export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
      * label 相对line的位置
      */
     position?: keyof typeof IMarkLineLabelPosition;
+    /**
+     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     */
+    confine?: boolean;
   } & IMarkRef &
     IMarkLabel;
 }
@@ -131,12 +140,16 @@ export interface MarkAreaAttrs extends MarkerAttrs {
   /**
    * 构成area的点
    */
-  points: IPointLike[];
+  points: Point[];
   /**
    * 标签
    */
   label?: {
     position?: IMarkAreaLabelPosition;
+    /**
+     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     */
+    confine?: boolean;
   } & IMarkLabel;
   /**
    * area的样式
@@ -178,6 +191,10 @@ export interface IItemContent extends IMarkRef {
    * type为custom时，允许以callback的方式传入需要render的item
    */
   renderCustomCallback?: () => IGroup;
+  // /**
+  //  * 当 mark 配置了 clip 之后，label 是否自动调整位置
+  //  */
+  // confine?: boolean;
 }
 
 export type IItemLine = {
@@ -197,7 +214,7 @@ export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
   /**
    * markPoint的位置（也是path的起点）
    */
-  position: IPointLike;
+  position: Point;
   /**
    * 标注引导线
    */

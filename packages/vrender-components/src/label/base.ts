@@ -7,7 +7,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge, isRectIntersect, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
-import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/labelSmartInvert';
+import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
@@ -210,8 +210,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   private _prepare() {
-    const baseMarks = getMarksByName(this.getRootNode() as IGroup, this.attribute.baseMarkGroupName);
     const currentBaseMarks: IGraphic[] = [];
+    let baseMarks;
+    if (isFunction(this.attribute.getBaseMarks)) {
+      baseMarks = this.attribute.getBaseMarks();
+    } else {
+      baseMarks = getMarksByName(this.getRootNode() as IGroup, this.attribute.baseMarkGroupName);
+    }
+
     baseMarks.forEach(mark => {
       if ((mark as any).releaseStatus !== 'willRelease') {
         currentBaseMarks.push(mark);
@@ -498,6 +504,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (prevLabel.labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {
+              visible:
+                ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
+                text.attribute?.visible ??
+                true,
               points: (text.attribute as ArcLabelAttrs)?.points
             }),
             duration,

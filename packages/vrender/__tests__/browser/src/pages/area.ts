@@ -1,4 +1,4 @@
-import { createStage, createArea, container, IGraphic, global } from '@visactor/vrender';
+import { createStage, createArea, container, IGraphic, global, createLine } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 const subP1 = [
@@ -35,99 +35,132 @@ export const page = () => {
   ['linear'].forEach((type, i) => {
     graphics.push(
       createArea({
-        lineDash: [0],
-        texture: null,
-        y1: 0,
+        defined: true,
         enableSegments: true,
-        segments: [
+        segments: null,
+        points: [
           {
-            x: 0,
-            y: 0,
-            lineDash: [0],
-            texture: null,
-            y1: 370,
-            points: [
-              {
-                x: 143.52631578947364,
-                y: 338.7054,
-                context: 0,
-                y1: 370
-              },
-              {
-                x: 334.8947368421052,
-                y: 340.90319999999997,
-                context: 4,
-                y1: 370
-              },
-              {
-                x: 526.2631578947368,
-                y: 331.3646,
-                context: 8,
-                y1: 370
-              },
-              {
-                x: 717.6315789473684,
-                y: 301.5056,
-                context: 12,
-                y1: 370
-              },
-              {
-                x: 909,
-                y: 345.5208,
-                context: 16,
-                y1: 370
-              },
-              {
-                x: 1100.3684210526314,
-                y: 329.8032,
-                context: 20,
-                y1: 370
-              },
-              {
-                x: 1291.7368421052631,
-                y: 268.61260000000004,
-                context: 24,
-                y1: 370
-              }
-            ]
+            x: 230.5,
+            y: 151.1037915390441,
+            x1: 230.5,
+            y1: 250,
+            context: 0
           },
           {
-            x: 0,
-            y: 0,
-            lineDash: [5, 5],
-            texture: 'bias-rl',
-            y1: 370,
-            points: [
-              {
-                x: 1483.1052631578946,
-                y: 340.3408,
-                context: 28,
-                y1: 370
-              },
-              {
-                x: 1674.4736842105262,
-                y: 231.53119999999998,
-                context: 32,
-                y1: 370
-              }
-            ]
+            x: 308.6643884293173,
+            y: 204.8717692992912,
+            x1: 230.5,
+            y1: 250,
+            context: 1
+          },
+          {
+            x: 230.5,
+            y: 250,
+            x1: 230.5,
+            y1: 250,
+            context: 2,
+            defined: false
+          },
+          {
+            x: 230.5,
+            y: 280.05866037183256,
+            x1: 230.5,
+            y1: 250,
+            context: 3
+          },
+          {
+            x: 188.87948429636262,
+            y: 274.0296159453061,
+            x1: 230.5,
+            y1: 250,
+            context: 4
+          },
+          {
+            x: 98.35502938981602,
+            y: 173.70606564615522,
+            x1: 230.5,
+            y1: 250,
+            context: 5
           }
         ],
-        points: null,
+        fill: 'red',
         visible: true,
-        lineWidth: 2,
+        lineWidth: 6,
         lineCap: 'round',
-        fillOpacity: 0.5,
-        textureColor: '#fff',
-        textureSize: 14,
-        fill: '#1664FF',
-        stroke: ['#1664FF', false, false, false],
-        defined: true,
-        connectedType: 'none',
+        lineJoin: 'round',
+        curveType: 'linear',
+        lineDash: [4, 2],
+        stroke: ['orange', false, false, false],
+        connectedType: 'connect',
+        closePath: true,
         x: 0,
-        y: 0,
-        x1: 0,
-        pickable: true
+        y: 0
+        // "pickable": true
+      })
+    );
+    graphics.push(
+      createLine({
+        defined: true,
+        enableSegments: true,
+        segments: null,
+        points: [
+          {
+            x: 230.5,
+            y: 151.1037915390441,
+            x1: 230.5,
+            y1: 250,
+            context: 0
+          },
+          {
+            x: 308.6643884293173,
+            y: 204.8717692992912,
+            x1: 230.5,
+            y1: 250,
+            context: 1
+          },
+          {
+            x: 230.5,
+            y: 250,
+            x1: 230.5,
+            y1: 250,
+            context: 2,
+            defined: false
+          },
+          {
+            x: 230.5,
+            y: 280.05866037183256,
+            x1: 230.5,
+            y1: 250,
+            context: 3
+          },
+          {
+            x: 188.87948429636262,
+            y: 274.0296159453061,
+            x1: 230.5,
+            y1: 250,
+            context: 4
+          },
+          {
+            x: 98.35502938981602,
+            y: 173.70606564615522,
+            x1: 230.5,
+            y1: 250,
+            context: 5
+          }
+        ],
+        // fill: 'red',
+        visible: true,
+        lineWidth: 1,
+        lineCap: 'round',
+        lineJoin: 'round',
+        curveType: 'linearClosed',
+        lineDash: [4, 2],
+        stroke: '#2E62F1',
+        connectedType: 'connect',
+        closePath: true,
+        x: 0,
+        y: 0
+        // "pickable": true
       })
     );
   });

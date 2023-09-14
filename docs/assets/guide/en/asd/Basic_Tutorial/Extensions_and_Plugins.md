@@ -9,7 +9,6 @@ Users can write their own rendering extensions to achieve the desired effects. I
 1. Write the RoughCanvasRectRender class, which implements the `IGraphicRender` interface
 
 ```ts
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IRenderService,
@@ -22,7 +21,7 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme } from '@visactor/vrender';
+import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
@@ -261,3 +260,4 @@ export class AutoRenderPlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string
+```

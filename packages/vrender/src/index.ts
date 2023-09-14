@@ -51,3 +51,4 @@ export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './jsx';
 export * from './common/xml';
+export * from './common/inversify-lite';

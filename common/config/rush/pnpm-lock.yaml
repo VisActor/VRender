@@ -153,7 +153,6 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
       eslint: ~8.18.0
-      inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       jest-extended: ^1.2.1
@@ -165,7 +164,6 @@ importers:
     dependencies:
       '@visactor/vutils': 0.15.14
       color-convert: 2.0.1
-      inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config
@@ -196,7 +194,6 @@ importers:
       '@visactor/vscale': ~0.15.14
       '@visactor/vutils': ~0.15.14
       eslint: ~8.18.0
-      inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lil-gui: ^0.17.0
@@ -207,7 +204,6 @@ importers:
       '@visactor/vrender': link:../vrender
       '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
-      inversify: 6.0.1
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config
@@ -237,7 +233,6 @@ importers:
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
       eslint: ~8.18.0
-      inversify: 6.0.1
       node-fetch: 2.6.6
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -249,7 +244,6 @@ importers:
       '@visactor/vrender': link:../vrender
       '@visactor/vutils': 0.15.14
       canvas: 2.11.2
-      inversify: 6.0.1
       node-fetch: 2.6.6
       roughjs: 4.5.2
     devDependencies:

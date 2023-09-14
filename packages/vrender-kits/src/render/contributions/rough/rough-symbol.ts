@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IRenderService,
@@ -11,7 +10,15 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { SYMBOL_NUMBER_TYPE, DefaultCanvasSymbolRender, BaseRender, getTheme, CustomPath2D } from '@visactor/vrender';
+import {
+  SYMBOL_NUMBER_TYPE,
+  DefaultCanvasSymbolRender,
+  BaseRender,
+  getTheme,
+  CustomPath2D,
+  inject,
+  injectable
+} from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

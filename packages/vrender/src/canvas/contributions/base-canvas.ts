@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../common/inversify-lite';
 import type { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../interface';
 
 const DefaultConfig = {

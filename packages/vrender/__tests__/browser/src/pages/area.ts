@@ -88,11 +88,11 @@ export const page = () => {
         lineWidth: 6,
         lineCap: 'round',
         lineJoin: 'round',
-        curveType: 'linear',
+        curveType: 'linearClosed',
         lineDash: [4, 2],
         stroke: ['orange', false, false, false],
         connectedType: 'connect',
-        closePath: true,
+        // closePath: true,
         x: 0,
         y: 0
         // "pickable": true

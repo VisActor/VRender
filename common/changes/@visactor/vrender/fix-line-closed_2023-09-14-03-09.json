@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix the line closed issue, closed #487",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -195,9 +195,10 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
       '@visactor/vrender': workspace:0.14.8
-      '@visactor/vscale': ~0.15.5
+      '@visactor/vscale': ~0.15.14
       '@visactor/vutils': ~0.15.14
       eslint: ~8.18.0
+      inversify: 6.0.1
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lil-gui: ^0.17.0
@@ -206,7 +207,7 @@ importers:
       vite: 3.2.6
     dependencies:
       '@visactor/vrender': link:../vrender
-      '@visactor/vscale': 0.15.10
+      '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
       inversify: 6.0.1
     devDependencies:
@@ -3083,7 +3084,7 @@ packages:
       '@visactor/vgrammar-wordcloud-shape': 0.6.6
       '@visactor/vrender': 0.14.7
       '@visactor/vrender-components': 0.14.7
-      '@visactor/vscale': 0.15.10
+      '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
     dev: false
 
@@ -3168,7 +3169,7 @@ packages:
       '@visactor/vgrammar': 0.6.6
       '@visactor/vgrammar-util': 0.6.6
       '@visactor/vrender': 0.14.7
-      '@visactor/vscale': 0.15.10
+      '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
     dev: false
 
@@ -3199,7 +3200,7 @@ packages:
       '@visactor/vgrammar-util': 0.6.6
       '@visactor/vrender': 0.14.7
       '@visactor/vrender-components': 0.14.7
-      '@visactor/vscale': 0.15.10
+      '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
     dev: false
 
@@ -3216,7 +3217,7 @@ packages:
     resolution: {integrity: sha512-iMOsjUszEJ8eF1L8WIDhJoEZjJAs+NMxEYSQ5EjBDbuPnbQ9GP20E0kaClnEQfRPwS4dc3q+HolUdlIwuEOrYA==}
     dependencies:
       '@visactor/vrender': 0.14.7
-      '@visactor/vscale': 0.15.10
+      '@visactor/vscale': 0.15.14
       '@visactor/vutils': 0.15.14
       inversify: 6.0.1
     dev: false
@@ -3245,10 +3246,10 @@ packages:
       '@visactor/vutils': 0.13.3
     dev: false
 
-  /@visactor/vscale/0.15.10:
-    resolution: {integrity: sha512-WqC11Gkn2WjNP6DH02UvRyB08ey9br7vTVkpCzQGCIA2v2r4tH/09qygDQaWBsDLzV7z3eb7JzwZkxl8WTMDKg==}
+  /@visactor/vscale/0.15.14:
+    resolution: {integrity: sha512-ttGdvS49APcO23WFfsbq9zyQ1y767LjqchPPL78KOrd4UjhYQXRCdeqz7K4A57e333R37oLnPfSuIVFz9qJGYw==}
     dependencies:
-      '@visactor/vutils': 0.15.10
+      '@visactor/vutils': 0.15.14
     dev: false
 
   /@visactor/vutils/0.13.3:

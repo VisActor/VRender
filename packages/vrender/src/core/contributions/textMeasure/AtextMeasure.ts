@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicUtil } from '../../../interface/core';
 import type { ICanvas, IContext2d, EnvType } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';

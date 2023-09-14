@@ -1,6 +1,6 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
 import { Matrix, Point } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../common/inversify-lite';
 import type {
   IGraphic,
   IGroup,

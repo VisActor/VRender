@@ -1,4 +1,4 @@
-import { injectable, inject, named, multiInject } from 'inversify';
+import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IGraphic,
   IGroup,

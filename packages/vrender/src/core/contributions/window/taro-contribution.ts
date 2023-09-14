@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { TaroCanvas } from '../../../canvas/contributions/taro';
 import { Generator } from '../../../common/generator';
 import { BaseWindowHandlerContribution } from './base-contribution';

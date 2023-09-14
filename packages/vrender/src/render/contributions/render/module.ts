@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../../common/inversify-lite';
 import { bindContributionProvider } from '../../../common/contribution-provider';
 import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultCanvasRectRender } from './rect-render';

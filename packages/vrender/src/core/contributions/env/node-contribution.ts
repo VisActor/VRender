@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { loadTaroContributions } from '../../../kits';
 import type { EnvType, ICreateCanvasParams, IEnvContribution, IGlobal } from '../../../interface';
 import { ICanvasLike } from '../../../interface';

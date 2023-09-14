@@ -1,7 +1,7 @@
 import type { IMatrix, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line
 import { ContributionProvider } from '../common/contribution-provider';
-import { inject, injectable, named, postConstruct } from 'inversify';
+import { inject, injectable, named, postConstruct } from '../common/inversify-lite';
 import { BrowserCanvas } from '../canvas/contributions/browser';
 import type {
   ICanvas,

@@ -1,4 +1,4 @@
-import type { Container } from 'inversify';
+import type { Container } from '../../common/inversify-lite';
 import envModules from './env/modules';
 import windowModules from './window/modules';
 import textMeasureModules from './textMeasure/modules';

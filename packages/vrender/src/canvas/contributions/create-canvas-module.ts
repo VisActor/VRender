@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../common/inversify-lite';
 import type { CanvasConfigType, ICanvas } from '../../interface';
 import { CanvasFactory, Context2dFactory } from '../constants';
 

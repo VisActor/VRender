@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import type {
   IGraphicAttribute,

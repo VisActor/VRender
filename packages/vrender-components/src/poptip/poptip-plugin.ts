@@ -1,6 +1,5 @@
-import { injectable } from 'inversify';
 import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender';
-import { Generator } from '@visactor/vrender';
+import { Generator, injectable } from '@visactor/vrender';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 

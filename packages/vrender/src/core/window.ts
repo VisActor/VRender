@@ -1,4 +1,4 @@
-import { inject, injectable, postConstruct } from 'inversify';
+import { inject, injectable, postConstruct } from '../common/inversify-lite';
 import type { IBoundsLike } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type {

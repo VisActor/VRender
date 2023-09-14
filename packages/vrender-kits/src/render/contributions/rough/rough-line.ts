@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IContext2d,
@@ -16,7 +15,8 @@ import {
   DefaultCanvasLineRender,
   getTheme,
   CustomPath2D,
-  drawSegments
+  drawSegments,
+  injectable
 } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';

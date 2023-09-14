@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../common/inversify-lite';
 import type { ILayer, IStage, IGlobal, ILayerParams } from '../interface';
 import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';

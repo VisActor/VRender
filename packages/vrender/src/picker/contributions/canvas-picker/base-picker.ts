@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicAttribute, IGraphic } from '../../../interface';
 import { BaseRender } from '../../../render/contributions/render/base-render';
 

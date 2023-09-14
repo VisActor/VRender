@@ -1,4 +1,4 @@
-import type { Container } from 'inversify';
+import type { Container } from '../../common/inversify-lite';
 import browserModule from './browser/modules';
 import taroModule from './taro/modules';
 import feishuModule from './feishu/modules';

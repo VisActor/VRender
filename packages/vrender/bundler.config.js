@@ -7,7 +7,6 @@ module.exports = {
   umdOutputFilename: 'index',
   external: [],
   globals: {
-    inversify: 'inversify',
     '@visactor/vutils': 'VUtils'
   }
 };

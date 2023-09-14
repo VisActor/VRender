@@ -1,4 +1,4 @@
-import { injectable, inject, postConstruct, named, multiInject } from 'inversify';
+import { injectable, inject, postConstruct, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   MaybePromise,

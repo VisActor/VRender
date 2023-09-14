@@ -1,6 +1,6 @@
 // 参考konva
 import { Matrix } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { BrowserContext2d } from '../browser';
 import type { IContext2d, EnvType, ICanvas } from '../../../interface';
 

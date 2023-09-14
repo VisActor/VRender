@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../common/inversify-lite';
 import { PluginService } from './constants';
 import { DefaultPluginService } from './plugin-service';
 import { bindContributionProviderNoSingletonScope } from '../common/contribution-provider';

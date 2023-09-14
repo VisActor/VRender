@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../common/inversify-lite';
 import { PickerService } from './picker-service';
 import { DefaultGlobalPickerService, GlobalPickerService } from './global-picker-service';
 import { DefaultCanvasPickerService } from './canvas-picker-service';

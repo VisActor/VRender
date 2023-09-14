@@ -1,5 +1,4 @@
-import { CircleRender, PathRender, RectRender, GraphicRender } from '@visactor/vrender';
-import { ContainerModule } from 'inversify';
+import { ContainerModule, GraphicRender } from '@visactor/vrender';
 import { RoughCanvasArcRender } from './rough-arc';
 import { RoughCanvasAreaRender } from './rough-area';
 import { RoughCanvasCircleRender } from './rough-circle';

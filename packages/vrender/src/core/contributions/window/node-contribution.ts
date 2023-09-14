@@ -1,4 +1,4 @@
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import type { IBoundsLike } from '@visactor/vutils';
 import { NodeCanvas } from '../../../canvas/contributions/node';
 import { Generator } from '../../../common/generator';

@@ -1,4 +1,4 @@
-import { injectable, inject, named } from 'inversify';
+import { injectable, inject, named } from '../common/inversify-lite';
 import type { ICanvas, IContext2d, EnvType, IGlobal, ITextAttribute, IContributionProvider } from '../interface';
 import type { ITextMeasure, TextOptionsType } from '../interface/text';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';

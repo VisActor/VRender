@@ -1,7 +1,7 @@
 import type { IPoint } from '@visactor/vutils';
 import { isArray, isNumber, AABBBounds } from '@visactor/vutils';
 import { getScaledStroke } from '../../../common/canvas-utils';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic';
 import type {
   IGraphicAttribute,

@@ -1,6 +1,6 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
 import { Matrix, Point, IBounds } from '@visactor/vutils';
-import { inject, injectable, named } from 'inversify';
+import { inject, injectable, named } from '../common/inversify-lite';
 import { foreach } from '../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';

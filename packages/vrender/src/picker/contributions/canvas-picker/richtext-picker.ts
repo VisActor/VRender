@@ -1,6 +1,6 @@
 import type { IPoint } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
-import { inject, injectable } from 'inversify';
+import { inject, injectable } from '../../../common/inversify-lite';
 import { RICHTEXT_NUMBER_TYPE } from '../../../graphic/constants';
 import type { IGraphicPicker, IGraphicRender, IPickParams, IRichText } from '../../../interface';
 import { RichTextRender } from '../../../render';

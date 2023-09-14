@@ -1,4 +1,3 @@
-// import { injectable } from 'inversify';
 // import { Point, IPoint, IPointLike } from '@visactor/vutils';
 // import { IAllocate } from './interface';
 // import { Disposable } from '../interface';

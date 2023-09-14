@@ -1,5 +1,5 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../common/inversify-lite';
 import { boundStroke } from '../tools';
 import type { IGraphic, ISymbolBoundsContribution, ISymbolGraphicAttribute } from '../../interface';
 import { DefaultOuterBorderBoundsContribution } from './common-contribution';

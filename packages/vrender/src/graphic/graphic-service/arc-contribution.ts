@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../common/inversify-lite';
 import type { IArcBoundsContribution } from '../../interface';
 import { DefaultOuterBorderBoundsContribution } from './common-contribution';
 

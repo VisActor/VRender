@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { PYRAMID3D_NUMBER_TYPE } from '../../../graphic/constants';
 import type {

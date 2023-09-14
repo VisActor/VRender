@@ -1,4 +1,4 @@
-import { ContainerModule } from 'inversify';
+import { ContainerModule } from '../../../common/inversify-lite';
 import { DefaultCanvasCirclePicker } from './circle-picker';
 import { DefaultCanvasRectPicker } from './rect-picker';
 import { DefaultCanvasArcPicker } from './arc-picker';

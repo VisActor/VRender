@@ -203,10 +203,25 @@ export const page = () => {
   //   item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 10000, 'linear');
   // });
 
+  console.time();
   const stage = createStage({
     canvas: document.getElementById('main'),
-    autoRender: true
+    width: 500,
+    height: 500,
+    renderStyle: 'default',
+    // viewBox: viewOptions.viewBox,
+    dpr: 2,
+    // canvas: viewOptions.renderCanvas,
+    canvasControled: false,
+    // container: viewOptions.container,
+    // title: viewOptions.rendererTitle,
+    beforeRender: () => {},
+    afterRender: () => {},
+    disableDirtyBounds: false,
+    autoRender: true,
+    pluginList: ['poptip']
   });
+  console.timeEnd();
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);

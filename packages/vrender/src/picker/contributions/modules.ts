@@ -1,4 +1,4 @@
-import { Container } from 'inversify';
+import type { Container } from '../../common/inversify-lite';
 // import { PickerContribution } from '../picker-service';
 import canvasPickModule from './canvas-picker/module';
 import mathPickModule from './math-picker/module';

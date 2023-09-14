@@ -1,4 +1,3 @@
-// import { injectable } from 'inversify';
 // // import { IMatrix, IMatrixLike, Matrix } from '@visactor/vutils';
 // import { IAllocate } from './interface';
 // import {

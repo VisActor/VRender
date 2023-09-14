@@ -1,5 +1,5 @@
 import { isArray } from '@visactor/vutils';
-import { injectable } from 'inversify';
+import { injectable } from '../../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,

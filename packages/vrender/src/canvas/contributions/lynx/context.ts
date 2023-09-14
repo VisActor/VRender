@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable } from 'inversify';
+import { injectable } from '../../../common/inversify-lite';
 import type { IContext2d, EnvType, ISetStrokeStyleParams, IStrokeStyleParams } from '../../../interface';
 import { createColor, getScaledStroke } from '../../../common/canvas-utils';
 import { BrowserContext2d } from '../browser';

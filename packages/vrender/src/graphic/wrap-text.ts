@@ -211,7 +211,7 @@ export class WrapText extends Text {
     return this._AABBBounds;
   }
 
-  needUpdateTags(keys: string[]): boolean {
+  protected needUpdateTags(keys: string[]): boolean {
     for (let i = 0; i < WRAP_TEXT_UPDATE_TAG_KEY.length; i++) {
       const attrKey = WRAP_TEXT_UPDATE_TAG_KEY[i];
       if (keys.indexOf(attrKey) !== -1) {
@@ -221,7 +221,7 @@ export class WrapText extends Text {
     return super.needUpdateTags(keys);
   }
 
-  needUpdateTag(key: string): boolean {
+  protected needUpdateTag(key: string): boolean {
     for (let i = 0; i < WRAP_TEXT_UPDATE_TAG_KEY.length; i++) {
       const attrKey = WRAP_TEXT_UPDATE_TAG_KEY[i];
       if (key === attrKey) {

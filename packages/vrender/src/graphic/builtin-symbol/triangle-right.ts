@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -37,7 +38,7 @@ export function trianglRightOffset(ctx: IContext2d, r: number, x: number, y: num
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class TriangleRightSymbol implements ISymbolClass {
+export class TriangleRightSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'triangleRight';
   pathStr: string = 'M-0.5,0.5 L0.5,0 L-0.5,-0.5 Z';
 
@@ -49,14 +50,6 @@ export class TriangleRightSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {
     const r = size / 2;
     return trianglRightOffset(ctx, r, x, y, offset);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 export function arrow2Down(ctx: IContext2d, r: number, transX: number, transY: number) {
   const r2 = r * 2;
@@ -11,7 +12,7 @@ export function arrow2Down(ctx: IContext2d, r: number, transX: number, transY: n
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class Arrow2DownSymbol implements ISymbolClass {
+export class Arrow2DownSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'arrow2Down';
   /* eslint-disable max-len */
   pathStr: string = 'M -0.5 -0.25 L 0 0.25 l 0.5 -0.25';
@@ -24,14 +25,6 @@ export class Arrow2DownSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
     const r = size / 4 + offset;
     return arrow2Down(ctx, r, transX, transY);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

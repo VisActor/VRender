@@ -46,14 +46,6 @@ export class ThinTriangleSymbol extends TriangleUpSymbol implements ISymbolClass
     const r = size / 2 / sqrt3 + offset;
     return thinTriangle(ctx, r, x, y);
   }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
-  }
 }
 
 export default new ThinTriangleSymbol();

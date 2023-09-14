@@ -1,5 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -31,7 +32,7 @@ export function diamond(ctx: IContext2d, r: number, x: number, y: number, z?: nu
 // const sqrtdiv2 = sqrt(2);
 
 // 以中心为锚点，size为circle外接正方形的面积
-export class DiamondSymbol implements ISymbolClass {
+export class DiamondSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'diamond';
   pathStr: string = 'M-0.5,0L0,-0.5L0.5,0L0,0.5Z';
 
@@ -49,14 +50,6 @@ export class DiamondSymbol implements ISymbolClass {
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
     const r = size / 2 + offset;
     return diamond(ctx, r, x, y, z);
-  }
-
-  bounds(size: number, bounds: IBounds) {
-    const r = size / 2;
-    bounds.x1 = -r;
-    bounds.x2 = r;
-    bounds.y1 = -r;
-    bounds.y2 = r;
   }
 }
 

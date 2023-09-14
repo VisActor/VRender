@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: support jsx describe, closed #320",
-      "type": "minor"
+      "comment": "feat: polygon support closePath, closed #482",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

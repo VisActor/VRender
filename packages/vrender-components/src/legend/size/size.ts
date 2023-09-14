@@ -1,13 +1,14 @@
 /**
  * @description 连续尺寸图例
  */
-import { createGroup, createPath, FederatedPointerEvent, INode } from '@visactor/vrender';
+import type { FederatedPointerEvent, INode } from '@visactor/vrender';
+import { createGroup, createPath } from '@visactor/vrender';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
-import { OrientType } from '../../interface';
-import { SizeLegendAttributes } from './type';
+import type { OrientType } from '../../interface';
+import type { SizeLegendAttributes } from './type';
 
 export function getSizeHandlerPath(align: OrientType = 'bottom') {
   let centerX = 0;

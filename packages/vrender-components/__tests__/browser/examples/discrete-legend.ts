@@ -326,9 +326,9 @@ const legend = new DiscreteLegend({
 const stage = render([hLegend, vLegend, legend], 'main');
 
 vLegend.addEventListener('legendItemClick', e => {
-  console.log(e.detail.currentSelected);
+  console.log(e, e.detail.currentSelected);
 });
 
 hLegend.addEventListener('legendItemClick', e => {
-  console.log(e.detail.currentSelected);
+  console.log(e, e.detail.currentSelected);
 });

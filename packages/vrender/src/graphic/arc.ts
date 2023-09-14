@@ -1,7 +1,7 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt } from '@visactor/vutils';
 import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
@@ -45,9 +45,9 @@ const ARC_UPDATE_TAG_KEY = [
 export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   type: GraphicType = 'arc';
 
-  static NOWORK_ANIMATE_KEY = {
+  static NOWORK_ANIMATE_ATTR = {
     cap: 1,
-    ...NOWORK_ANIMATE_KEY
+    ...NOWORK_ANIMATE_ATTR
   };
 
   // static parseCornerRadius(r: IArcGraphicAttribute['cornerRadius']) {
@@ -313,6 +313,10 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
   clone() {
     return new Arc({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Arc.NOWORK_ANIMATE_ATTR;
   }
 }
 

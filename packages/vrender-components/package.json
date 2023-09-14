@@ -24,16 +24,16 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.15.14",
     "@visactor/vrender": "workspace:0.15.1",
-    "@visactor/vscale": "~0.15.14"
+    "@visactor/vutils": "~0.16.0",
+    "@visactor/vscale": "~0.16.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~0.15.14",
+    "@visactor/vscale": "~0.16.0",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

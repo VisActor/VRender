@@ -1,6 +1,6 @@
 import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
 import type { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding, pointsInterpolation } from '../common/utils';
 import { getTheme } from './theme';
@@ -12,10 +12,10 @@ const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDAT
 export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
   type: 'area' = 'area';
 
-  static NOWORK_ANIMATE_KEY = {
+  static NOWORK_ANIMATE_ATTR = {
     segments: 1,
     curveType: 1,
-    ...NOWORK_ANIMATE_KEY
+    ...NOWORK_ANIMATE_ATTR
   };
 
   cache?: IAreaCacheItem;
@@ -184,5 +184,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
 
   clone() {
     return new Area({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Area.NOWORK_ANIMATE_ATTR;
   }
 }

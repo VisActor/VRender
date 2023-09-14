@@ -25,9 +25,9 @@
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.15.14",
     "@visactor/vrender": "workspace:0.15.1",
     "@visactor/react-vrender": "workspace:0.15.1",
+    "@visactor/vutils": "~0.16.0",
     "react-reconciler": "^0.29.0",
     "tslib": "^2.3.1"
   },

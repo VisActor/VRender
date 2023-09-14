@@ -3,7 +3,7 @@ import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
@@ -22,9 +22,9 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
   static userSymbolMap: Record<string, ISymbolClass> = {};
 
-  static NOWORK_ANIMATE_KEY = {
+  static NOWORK_ANIMATE_ATTR = {
     symbolType: 1,
-    ...NOWORK_ANIMATE_KEY
+    ...NOWORK_ANIMATE_ATTR
   };
 
   constructor(params: ISymbolGraphicAttribute = { symbolType: 'circle' }) {
@@ -169,6 +169,10 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
   clone() {
     return new Symbol({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Symbol.NOWORK_ANIMATE_ATTR;
   }
 }
 

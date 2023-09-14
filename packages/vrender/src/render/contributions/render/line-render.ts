@@ -34,31 +34,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
   declare z: number;
 
   draw(line: ILine, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-
-    context.highPerformanceSave();
-
-    // const lineAttribute = graphicService.themeService.getCurrentTheme().lineAttribute;
     const lineAttribute = getTheme(line, params?.theme).line;
-    const data = this.transform(line, lineAttribute, context);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-
-    if (drawPathProxy(line, context, x, y, drawContext)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(line, context, x, y, drawContext, params);
-    this.z = 0;
-
-    if (context.modelMatrix !== lastModelMatrix) {
-      mat4Allocate.free(context.modelMatrix);
-    }
-    context.modelMatrix = lastModelMatrix;
-
-    context.highPerformanceRestore();
+    this._draw(line, lineAttribute, false, drawContext, params);
   }
 
   /**

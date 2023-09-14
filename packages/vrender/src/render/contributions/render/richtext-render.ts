@@ -11,9 +11,10 @@ import type {
   IGraphicRender
 } from '../../../interface';
 import { fillVisible } from './utils';
+import { BaseRender } from './base-render';
 
 @injectable()
-export class DefaultCanvasRichTextRender implements IGraphicRender {
+export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implements IGraphicRender {
   type: 'richtext';
   numberType: number = RICHTEXT_NUMBER_TYPE;
 
@@ -106,32 +107,7 @@ export class DefaultCanvasRichTextRender implements IGraphicRender {
   }
 
   draw(richtext: IRichText, renderService: IRenderService, drawContext: IDrawContext) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const richtextAttribute = getTheme(richtext).richtext;
-    let { x = richtextAttribute.x, y = richtextAttribute.y } = richtext.attribute;
-
-    if (!richtext.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(richtext.transMatrix, true);
-    } else {
-      const point = richtext.getOffsetXY(richtextAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
-
-    this.drawShape(richtext, context, x, y, drawContext);
-
-    context.highPerformanceRestore();
+    this._draw(richtext, richtextAttribute, false, drawContext);
   }
 }

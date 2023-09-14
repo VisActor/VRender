@@ -1,12 +1,25 @@
 import type { IPointLike } from '@visactor/vutils';
 import { injectable } from '../../../common/inversify-lite';
-import type { IGraphicAttribute, ICamera, IContext2d, IGraphic, mat4 } from '../../../interface';
+import type {
+  IGraphicAttribute,
+  ICamera,
+  IContext2d,
+  IGraphic,
+  mat4,
+  IRenderService,
+  IDrawContext,
+  IGraphicRenderDrawParams,
+  IMarkAttribute,
+  IThemeAttribute
+} from '../../../interface';
 import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import { drawPathProxy } from './utils';
 
 @injectable()
 export abstract class BaseRender<T extends IGraphic> {
   camera: ICamera;
+  declare z: number;
 
   /**
    * 进行2d或3d变换
@@ -180,39 +193,58 @@ export abstract class BaseRender<T extends IGraphic> {
     context.setTransformForCurrent();
   }
 
-  // draw(graphic: T, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-  //   const { context } = drawContext;
-  //   if (!context) {
-  //     return;
-  //   }
+  _draw(
+    graphic: T,
+    defaultAttr: IGraphicAttribute,
+    computed3dMatrix: boolean,
+    drawContext: IDrawContext,
+    params?: IGraphicRenderDrawParams
+  ) {
+    const { context } = drawContext;
+    if (!context) {
+      return;
+    }
 
-  //   const themeAttribute = getTheme(graphic)[graphic.type];
+    context.highPerformanceSave();
 
-  //   context.highPerformanceSave();
+    const data = this.transform(graphic, defaultAttr, context, computed3dMatrix);
+    const { x, y, z, lastModelMatrix } = data;
 
-  //   let { x = themeAttribute.x, y = themeAttribute.y } = graphic.attribute;
-  //   if (!graphic.transMatrix.onlyTranslate()) {
-  //     // 性能较差
-  //     x = 0;
-  //     y = 0;
-  //     context.transformFromMatrix(graphic.transMatrix, true);
-  //   } else {
-  //     const point = graphic.getOffsetXY(themeAttribute);
-  //     x += point.x;
-  //     y += point.y;
-  //     // 当前context有rotate/scale，重置matrix
-  //     context.setTransformForCurrent();
-  //   }
+    this.z = z;
+    if (drawPathProxy(graphic, context, x, y, drawContext, params)) {
+      context.highPerformanceRestore();
+      return;
+    }
 
-  //   if (this.drawPathProxy(graphic, context, x, y, drawContext, params)) {
-  //     context.highPerformanceRestore();
-  //     return;
-  //   }
+    this.drawShape(graphic, context, x, y, drawContext, params);
+    this.z = 0;
 
-  //   this.drawShape(graphic, context, x, y, drawContext, params);
+    if (context.modelMatrix !== lastModelMatrix) {
+      mat4Allocate.free(context.modelMatrix);
+    }
+    context.modelMatrix = lastModelMatrix;
 
-  //   context.highPerformanceRestore();
-  // }
+    context.highPerformanceRestore();
+  }
+
+  drawShape?(
+    path: T,
+    context: IContext2d,
+    x: number,
+    y: number,
+    drawContext: IDrawContext,
+    params?: IGraphicRenderDrawParams,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ): void;
 
   // abstract drawShape(
   //   graphic: T,

@@ -321,28 +321,11 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
   }
 
   draw(text: IText, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
     const textAttribute = getTheme(text, params?.theme).text;
-
     const { keepDirIn3d = textAttribute.keepDirIn3d } = text.attribute;
     // 文字如果需要变换，那就一定要计算3d矩阵
     const computed3dMatrix = !keepDirIn3d;
-    const data = this.transform(text, textAttribute, context, computed3dMatrix);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-    this.drawShape(text, context, x, y, drawContext, params);
-    this.z = 0;
-
-    context.modelMatrix = lastModelMatrix;
-
-    context.highPerformanceRestore();
+    this._draw(text, textAttribute, computed3dMatrix, drawContext, params);
   }
 
   drawUnderLine(

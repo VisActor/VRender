@@ -338,34 +338,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
   }
 
   draw(arc: IArc3d, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
     const arcAttribute = getTheme(arc, params?.theme).arc;
-
-    context.save();
-
-    const data = this.transform(arc, arcAttribute, context);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-    if (drawPathProxy(arc, context, x, y, drawContext, params)) {
-      context.restore();
-      return;
-    }
-
-    this.drawShape(arc, context, x, y, drawContext, params);
-
-    this.z = 0;
-
-    if (context.modelMatrix !== lastModelMatrix) {
-      mat4Allocate.free(context.modelMatrix);
-    }
-    context.modelMatrix = lastModelMatrix;
-
-    context.restore();
+    this._draw(arc, arcAttribute, false, drawContext, params);
   }
 }

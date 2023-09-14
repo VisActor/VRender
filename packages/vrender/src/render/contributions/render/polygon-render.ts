@@ -21,9 +21,10 @@ import { PolygonRenderContribution } from './contributions/constants';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { BaseRender } from './base-render';
 
 @injectable()
-export class DefaultCanvasPolygonRender implements IGraphicRender {
+export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements IGraphicRender {
   type: 'polygon';
   numberType: number = POLYGON_NUMBER_TYPE;
 
@@ -33,7 +34,9 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(PolygonRenderContribution)
     protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   drawShape(
     polygon: IPolygon,
@@ -167,35 +170,7 @@ export class DefaultCanvasPolygonRender implements IGraphicRender {
   }
 
   draw(polygon: IPolygon, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
-    // const polygonAttribute = graphicService.themeService.getCurrentTheme().polygonAttribute;
     const polygonAttribute = getTheme(polygon, params?.theme).polygon;
-    let { x = polygonAttribute.x, y = polygonAttribute.y } = polygon.attribute;
-
-    if (!polygon.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(polygon.transMatrix, true);
-    } else {
-      const point = polygon.getOffsetXY(polygonAttribute);
-      x += point.x;
-      y += point.y;
-      context.setTransformForCurrent();
-    }
-    if (drawPathProxy(polygon, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(polygon, context, x, y, drawContext, params);
-
-    context.highPerformanceRestore();
+    this._draw(polygon, polygonAttribute, false, drawContext, params);
   }
 }

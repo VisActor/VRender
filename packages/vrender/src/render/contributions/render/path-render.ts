@@ -168,33 +168,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   }
 
   draw(path: IPath, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
-    // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = getTheme(path, params?.theme).path;
-
-    const data = this.transform(path, pathAttribute, context);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-    if (drawPathProxy(path, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(path, context, x, y, drawContext, params);
-    this.z = 0;
-
-    if (context.modelMatrix !== lastModelMatrix) {
-      mat4Allocate.free(context.modelMatrix);
-    }
-    context.modelMatrix = lastModelMatrix;
-
-    context.highPerformanceRestore();
+    this._draw(path, pathAttribute, false, drawContext, params);
   }
 }

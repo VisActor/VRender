@@ -1,6 +1,6 @@
 import { createStage, createGroup, createArc3d, IArc, IGraphic } from '@visactor/vrender';
-import { pi2 } from '@visactor/vrender-common';
 import { colorPools } from '../utils';
+import { pi2 } from '@visactor/vutils';
 
 function drawChartCanopus() {
   // 创建stage

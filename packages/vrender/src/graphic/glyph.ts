@@ -1,5 +1,5 @@
 import type { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
-import { Graphic, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import type {
   GraphicType,
   IGraphic,
@@ -32,7 +32,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   };
   protected declare subGraphic: IGraphic[];
 
-  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
+  static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
   constructor(params: Partial<IGlyphGraphicAttribute>) {
     super(params);
@@ -238,5 +238,9 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     const glyph = new Glyph({ ...this.attribute });
     glyph.setSubGraphic(this.subGraphic.map(g => g.clone()));
     return glyph;
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Glyph.NOWORK_ANIMATE_ATTR;
   }
 }

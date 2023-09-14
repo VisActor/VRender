@@ -12,7 +12,7 @@ import type {
   GraphicType
 } from '../interface';
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
-import { Graphic, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme, Theme } from './theme';
 import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
@@ -35,7 +35,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   declare theme?: ITheme;
 
-  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
+  static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
   constructor(params: IGroupGraphicAttribute) {
     super(params);
@@ -373,5 +373,9 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   clone() {
     return new Group({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Group.NOWORK_ANIMATE_ATTR;
   }
 }

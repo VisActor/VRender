@@ -1,6 +1,35 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 07 Sep 2023 11:56:00 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Sep 2023 02:21:58 GMT and should not be manually modified.
+
+## 0.15.1
+Wed, 13 Sep 2023 02:21:58 GMT
+
+### Updates
+
+- feat: support `label.autoRange` for markLine and markPoint components
+- feat: segment and markLine component supports multiple segment draw
+- feat: add `clipInRange` property to control whether do the clip for mark component, and rename clipRange to limitRect
+- fix: roseChart inner labels are unclear, #884
+- fix: the layout of the inner label when the pie chart has a center offset
+
+## 0.15.0
+Tue, 12 Sep 2023 12:20:48 GMT
+
+### Minor changes
+
+- refactor: seperate grid from axis, relate #327
+
+### Patches
+
+- feat: pie label line support smooth line
+- fix: legend custom event should contain the nativeEvent object
+- fix: overwrite function attribute for components
+
+### Updates
+
+- fix: fix empty items error in axis component when label flush is true
+- fix: pie chart labels are not drawn as expected when animation is turned on, #750
 
 ## 0.14.8
 Thu, 07 Sep 2023 11:56:00 GMT

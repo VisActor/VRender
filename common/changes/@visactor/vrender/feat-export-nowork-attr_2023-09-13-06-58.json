@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix: increase IntersectionObserver robustness in browser env",
-      "type": "patch"
+      "comment": "feat: export no work animate attr, closed #483",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

@@ -72,7 +72,7 @@ function generateMenuItem(node: IMenuItem, assetDirectory: string, language: Lan
           top: 0
           // behavior: 'smooth',
         });
-        navigate(`/${assetDirectory}${node.fullPath}`, { replace: true });
+        navigate(`/vrender/${assetDirectory}${node.fullPath}`, { replace: true });
       }}
     >
       {node.title[language]}
@@ -96,7 +96,7 @@ function Outline(props: IOutlineProps) {
         paddingBottom: 20
       }}
     >
-      <Menu selectedKeys={[fullPath]}>
+      <Menu selectedKeys={[fullPath]} autoOpen>
         {(props.menuItems ?? []).map((node: any) => generateMenuItem(node, props.assetDirectory, language, navigate))}
       </Menu>
     </div>
@@ -154,7 +154,7 @@ export function Markdown() {
 
   const location = useLocation();
   const { pathname: pathName } = location;
-  const assetDirectory = pathName.split('/')[1];
+  const assetDirectory = pathName.split('/')[2];
 
   const [outline, setOutline] = useState<any>([]);
   const [content, setContent] = useState<string>('');

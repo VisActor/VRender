@@ -140,6 +140,7 @@ export const page = () => {
   //   cap: false
   // }));
 
+  graphics.length = 0;
   graphics.push(
     createArc({
       innerRadius: 60,
@@ -148,7 +149,7 @@ export const page = () => {
       endAngle: Math.PI,
       x: 200,
       y: 500,
-      stroke: ['green', false, false, false],
+      stroke: [false, 'green', false, 'green'],
       outerBorder: {
         stroke: ['red', false, false, false],
         distance: 30,
@@ -170,8 +171,8 @@ export const page = () => {
         ],
         gradient: 'conical'
       },
-      cap: [true, true],
-      cornerRadius: 26,
+      // cap: [true, true],
+      // cornerRadius: 26,
       forceShowCap: true
     })
   );

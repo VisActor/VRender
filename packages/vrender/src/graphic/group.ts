@@ -12,7 +12,7 @@ import type {
   GraphicType
 } from '../interface';
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
-import { Graphic } from './graphic';
+import { Graphic, NOWORK_ANIMATE_KEY } from './graphic';
 import { getTheme, Theme } from './theme';
 import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
@@ -34,6 +34,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   declare _childUpdateTag: number;
 
   declare theme?: ITheme;
+
+  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
 
   constructor(params: IGroupGraphicAttribute) {
     super(params);

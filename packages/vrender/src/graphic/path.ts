@@ -1,6 +1,6 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { isString, isNil } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
 import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
 import { parsePadding } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -13,6 +13,12 @@ const PATH_UPDATE_TAG_KEY = ['path', 'customPath', ...GRAPHIC_UPDATE_TAG_KEY];
 export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
   type: 'path' = 'path';
   cache?: ICustomPath2D;
+
+  static NOWORK_ANIMATE_KEY = {
+    path: 1,
+    customPath: 1,
+    ...NOWORK_ANIMATE_KEY
+  };
 
   constructor(params: IPathGraphicAttribute) {
     super(params);

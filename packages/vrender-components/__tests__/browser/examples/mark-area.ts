@@ -23,7 +23,8 @@ export function run() {
         cornerRadius: guiObject.cornerRadius
       }
     },
-    clipRange: {
+    clipInRange: true,
+    limitRect: {
       x: 50,
       y: 50,
       width: 200,

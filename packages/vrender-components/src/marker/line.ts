@@ -1,10 +1,12 @@
 import type { IGroup, INode } from '@visactor/vrender';
-import { merge } from '@visactor/vutils';
+import { flattenArray, isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './config';
 import type { MarkLineAttrs } from './type';
+import { limitShapeInBounds } from '../util/limit-shape';
+import type { Point } from '../core/type';
 
 export class MarkLine extends Marker<MarkLineAttrs> {
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;
@@ -16,43 +18,58 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   }
 
   protected setLabelPos() {
-    const { points, label } = this.attribute as MarkLineAttrs;
-    const labelPosition = label?.position ?? 'end';
-    const labelAngle = this._line.getEndAngle();
-    const labelOffsetX = label?.refX * Math.cos(labelAngle) + label.refY * Math.cos(labelAngle - Math.PI / 2);
-    const labelOffsetY = label?.refX * Math.sin(labelAngle) + label.refY * Math.sin(labelAngle - Math.PI / 2);
-    if (labelPosition.includes('start') || labelPosition.includes('Start')) {
-      this._label?.setAttributes({
+    const { label = {}, limitRect } = this.attribute as MarkLineAttrs;
+    const { position = 'end', refX = 0, refY = 0, confine } = label;
+    const points = this._line.getMainSegmentPoints();
+    const labelAngle = this._line.getEndAngle() ?? 0;
+    const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
+    const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
+    let labelPoint: Point;
+    if (position.includes('start') || position.includes('Start')) {
+      labelPoint = {
         x: points[0].x + labelOffsetX,
         y: points[0].y + labelOffsetY
-      });
-    } else if (labelPosition.includes('middle') || labelPosition.includes('Middle')) {
-      this._label?.setAttributes({
+      };
+    } else if (position.includes('middle') || position.includes('Middle')) {
+      labelPoint = {
         x: (points[0].x + points[points.length - 1].x) / 2 + labelOffsetX,
         y: (points[0].y + points[points.length - 1].y) / 2 + labelOffsetY
-      });
+      };
     } else {
-      this._label?.setAttributes({
+      labelPoint = {
         x: points[points.length - 1].x + labelOffsetX,
         y: points[points.length - 1].y + labelOffsetY
-      });
+      };
     }
     this._label.setAttributes({
-      angle: label.autoRotate && labelAngle + (label?.refAngle ?? 0),
+      ...labelPoint,
+      angle: label.autoRotate ? labelAngle + (label?.refAngle ?? 0) : 0,
       textStyle: {
-        ...DEFAULT_MARK_LINE_TEXT_STYLE_MAP[labelPosition],
+        ...DEFAULT_MARK_LINE_TEXT_STYLE_MAP[position],
         ...label.textStyle
       }
     });
+    if (limitRect && confine) {
+      const { x, y, width, height } = limitRect;
+      limitShapeInBounds(this._label, {
+        x1: x,
+        y1: y,
+        x2: x + width,
+        y2: y + height
+      });
+    }
   }
 
   protected initMarker(container: IGroup) {
-    const { points, startSymbol, endSymbol, label, lineStyle } = this.attribute as MarkLineAttrs;
+    const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
+      .attribute as MarkLineAttrs;
     const line = new Segment({
       points,
       startSymbol,
       endSymbol,
-      lineStyle
+      lineStyle,
+      mainSegmentIndex,
+      multiSegment
     });
     line.name = 'mark-line-line';
     this._line = line;
@@ -68,15 +85,20 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   }
 
   protected updateMarker() {
-    const { points, startSymbol, endSymbol, label, lineStyle } = this.attribute as MarkLineAttrs;
+    const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
+      .attribute as MarkLineAttrs;
     this._line?.setAttributes({
       points,
       startSymbol,
       endSymbol,
-      lineStyle
+      lineStyle,
+      mainSegmentIndex,
+      multiSegment
     });
 
     this._label?.setAttributes({
+      dx: 0,
+      dy: 0, // 需要进行复位
       ...label
     });
 

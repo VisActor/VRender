@@ -90,7 +90,8 @@ export function run() {
         image: `${window.location.origin}/__tests__/browser/sources/shape_logo.png`
       }
     },
-    clipRange: {
+    clipInRange: true,
+    limitRect: {
       x: 50,
       y: 50,
       width: 200,

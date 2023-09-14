@@ -111,7 +111,7 @@ const tempConstantAngleKey = ['angle'];
 
 const point = new Point();
 
-export const NOWORK_ANIMATE_KEY = {
+export const NOWORK_ANIMATE_ATTR = {
   strokeSeg: 1,
   boundsPadding: 2,
   pickMode: 1,
@@ -1394,6 +1394,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.dispatchEvent(changeEvent);
     }
   }
+
+  abstract getNoWorkAnimateAttr(): Record<string, number>;
 
   abstract clone(): Graphic<any>;
 }

@@ -1,5 +1,5 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
 import { parsePadding, pointsInterpolation } from '../common/utils';
@@ -13,7 +13,7 @@ const POLYGON_UPDATE_TAG_KEY = ['points', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_
 export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolygon {
   type: GraphicType = 'polygon';
 
-  static NOWORK_ANIMATE_KEY = NOWORK_ANIMATE_KEY;
+  static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
   constructor(params: IPolygonGraphicAttribute) {
     super(params);
@@ -103,5 +103,9 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
 
   clone() {
     return new Polygon({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Polygon.NOWORK_ANIMATE_ATTR;
   }
 }

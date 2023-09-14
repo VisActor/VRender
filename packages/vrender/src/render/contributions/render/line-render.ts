@@ -114,8 +114,14 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       offsetZ: z
     });
 
-    // 如果是一根线，且是Closed，需要close
-    if (line.cache && !isArray(line.cache) && line.attribute.curveType && line.attribute.curveType.includes('Closed')) {
+    // 如果是一根线，且是Closed，并且没有defined为false的点，需要close
+    if (
+      line.cache &&
+      !isArray(line.cache) &&
+      line.cache.curves.every(c => c.defined) &&
+      line.attribute.curveType &&
+      line.attribute.curveType.includes('Closed')
+    ) {
       context.closePath();
     }
 

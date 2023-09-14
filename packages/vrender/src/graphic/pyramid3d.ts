@@ -7,10 +7,13 @@ import { application } from '../application';
 import { Polygon } from './polygon';
 import { getTheme } from './theme';
 import { PYRAMID3D_NUMBER_TYPE } from './constants';
+import { NOWORK_ANIMATE_ATTR } from './graphic';
 
 export class Pyramid3d extends Polygon implements IPyramid3d {
   type: GraphicType = 'pyramid3d';
   declare attribute: IPyramid3dGraphicAttribute;
+
+  static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
   constructor(params: IPyramid3dGraphicAttribute) {
     super(params);
@@ -130,5 +133,9 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
 
   protected _isValid(): boolean {
     return super._isValid() && this.attribute.points.length === 4;
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Pyramid3d.NOWORK_ANIMATE_ATTR;
   }
 }

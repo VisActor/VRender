@@ -5,10 +5,16 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { parsePadding } from '../common/utils';
 import { ARC3D_NUMBER_TYPE } from './constants';
+import { NOWORK_ANIMATE_ATTR } from './graphic';
 
 export class Arc3d extends Arc implements IArc3d {
   type: GraphicType = 'arc3d';
   declare attribute: IArc3dGraphicAttribute;
+
+  static NOWORK_ANIMATE_ATTR = {
+    cap: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   constructor(params: IArc3dGraphicAttribute) {
     super(params);
@@ -36,5 +42,9 @@ export class Arc3d extends Arc implements IArc3d {
     this.clearUpdateBoundTag();
 
     return this._AABBBounds;
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Arc3d.NOWORK_ANIMATE_ATTR;
   }
 }

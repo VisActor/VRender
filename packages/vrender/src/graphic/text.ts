@@ -3,7 +3,7 @@ import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/te
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutType } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
@@ -19,11 +19,24 @@ const TEXT_UPDATE_TAG_KEY = [
   'fontWeight',
   'ellipsis',
   'lineHeight',
+  'direction',
+  'wordBreak',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
 export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   type: 'text' = 'text';
+
+  static NOWORK_ANIMATE_ATTR = {
+    ellipsis: 1,
+    wordBreak: 1,
+    direction: 1,
+    textAlign: 1,
+    textBaseline: 1,
+    fontFamily: 1,
+    fontWeight: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   cache: ITextCache;
   _font: string;
@@ -492,6 +505,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   clone(): Text {
     return new Text({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Text.NOWORK_ANIMATE_ATTR;
   }
 }
 

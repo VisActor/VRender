@@ -242,7 +242,8 @@ export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
 export const DefaultPolygonAttribute: Required<IPolygonGraphicAttribute> = {
   ...DefaultAttribute,
   points: [],
-  cornerRadius: 0
+  cornerRadius: 0,
+  closePath: true
 };
 
 export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {

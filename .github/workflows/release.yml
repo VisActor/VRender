@@ -30,6 +30,9 @@ jobs:
           cache: 'npm'
           cache-dependency-path: './common/config/rush/pnpm-lock.yaml'
 
+      - name: Print All Github Environment Variables
+        run:
+          env
           # Install rush
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
@@ -52,7 +55,13 @@ jobs:
         run: node common/scripts/install-run-rush.js version --bump
 
       - name: Build packages
-        run: node common/scripts/install-run-rush.js build --only tag:package
+        run: node common/scripts/install-run-rush.js build --only tag:package -t @internal/bugserver-trigger
+
+      - name: Run CI
+        working-directory: ./tools/bugserver-trigger
+        env:
+          BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
+        run: node ../../common/scripts/install-run-rushx.js ci
 
       - name: Publish to npm
         env:

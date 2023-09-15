@@ -71,6 +71,7 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
   verticalResizble: number;
   rotatable: number;
   rect: IRect;
+  editBorder: IRect;
   // 是否正在执行addChildUpdateBoundTag，避免循环调用
   runningAddChildUpdateBoundTag: boolean;
 
@@ -106,8 +107,6 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
         attributes
       )
     );
-    this.attachShadow();
-    this.initEvent();
     this.rectB = new AABBBounds();
     this.dragOffsetX = 0;
     this.dragOffsetY = 0;
@@ -117,12 +116,21 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
     this.rotatable = 0;
     this.runningAddChildUpdateBoundTag = false;
     this.rect = createRect({
-      fill: 'transparent',
+      fill: false,
+      stroke: false,
+      pickable: false
+    });
+    // this.rect.attachShadow();
+    this.editBorder = createRect({
+      fill: false,
       stroke: false
     });
+    this.editBorder.attachShadow();
     this.add(this.rect);
+    this.add(this.editBorder);
     this.updateSubBounds(bounds);
     this.updateCbs = [];
+    this.initEvent();
   }
 
   updateSubBounds(bounds: IAABBBoundsLike) {
@@ -136,7 +144,7 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
 
   protected initEvent() {
     // curser
-    this.addEventListener('mousemove', this.handleMouseMove);
+    this.editBorder.addEventListener('mousemove', this.handleMouseMove);
     this.addEventListener('mouseout', this.handleMouseOut);
 
     // drag
@@ -145,6 +153,7 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
   }
 
   protected handleMouseMove = (e: any) => {
+    console.log(e.pickParams);
     if (e.pickParams) {
       const { shadowTarget } = e.pickParams;
       this.setCursor(shadowTarget.attribute.cursor);
@@ -394,7 +403,7 @@ export class TranformComponent2 extends AbstractComponent<Required<TransformAttr
   protected render() {
     const { bbox, padding, cornerRect, handlerLine } = this.attribute as TransformAttributes;
 
-    const root = this.shadowRoot;
+    const root = this.editBorder.shadowRoot;
     if (!root || this.count === 1) {
       return;
     }

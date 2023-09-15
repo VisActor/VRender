@@ -28,7 +28,8 @@ import type {
   RichTextGlobalBaselineType,
   IRichTextIconGraphicAttribute,
   IConnectedStyle,
-  ILayout
+  ILayout,
+  IDebugType
 } from '../interface';
 
 export const DefaultLayout: ILayout = {
@@ -139,6 +140,10 @@ export const DefaultConnectAttribute: Required<IConnectedStyle> = {
   connectedY: NaN
 } as IConnectedStyle;
 
+export const DefaultDebugAttribute: Required<IDebugType> = {
+  _debug_bounds: false
+};
+
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
   pickable: true,
@@ -152,6 +157,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   boundsMode: 'accurate',
   keepDirIn3d: true,
   shadowRootIdx: 1,
+  ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform
 };

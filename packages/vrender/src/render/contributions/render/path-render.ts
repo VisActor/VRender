@@ -28,9 +28,6 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
   type: 'path';
   numberType: number = PATH_NUMBER_TYPE;
-  declare z: number;
-
-  protected _pathRenderContribitions: IPathRenderContribution[];
 
   constructor(
     @inject(ContributionProvider)
@@ -38,6 +35,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
+    this.init(pathRenderContribitions);
   }
 
   drawShape(
@@ -60,39 +58,15 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   ) {
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = getTheme(path, params?.theme).path;
-    const {
-      fill = pathAttribute.fill,
-      stroke = pathAttribute.stroke,
-      fillOpacity = pathAttribute.fillOpacity,
-      strokeOpacity = pathAttribute.strokeOpacity,
-      opacity = pathAttribute.opacity,
-      background,
-      lineWidth = pathAttribute.lineWidth,
-      visible = pathAttribute.visible,
-      x: originX = pathAttribute.x,
-      y: originY = pathAttribute.y
-    } = path.attribute;
+    const { x: originX = pathAttribute.x, y: originY = pathAttribute.y } = path.attribute;
 
     const z = this.z ?? 0;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(path.valid && visible)) {
+    const data = this.valid(path, pathAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
     context.beginPath();
     if (path.pathShape) {
@@ -102,29 +76,20 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       renderCommandList((path2D as ICustomPath2D).commandList, context, x, y, 1, 1, z);
     }
 
-    if (!this._pathRenderContribitions) {
-      this._pathRenderContribitions = this.pathRenderContribitions.getContributions() || [];
-      this._pathRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-    this._pathRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          path,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          pathAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.beforeRenderStep(
+      path,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      pathAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(path, path.attribute, pathAttribute);
@@ -146,25 +111,20 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       }
     }
 
-    this._pathRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          path,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          pathAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.afterRenderStep(
+      path,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      pathAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(path: IPath, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

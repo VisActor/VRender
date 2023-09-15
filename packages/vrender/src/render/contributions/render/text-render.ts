@@ -27,16 +27,14 @@ import { max } from '@visactor/vutils';
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
   type: 'text';
   numberType: number = TEXT_NUMBER_TYPE;
-  z: number;
 
-  protected _textBeforeRenderContribitions: ITextRenderContribution[];
-  protected _textAfterRenderContribitions: ITextRenderContribution[];
   constructor(
     @inject(ContributionProvider)
     @named(TextRenderContribution)
     protected readonly textRenderContribitions: IContributionProvider<ITextRenderContribution>
   ) {
     super();
+    this.init(textRenderContribitions);
   }
 
   drawShape(
@@ -81,19 +79,12 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
 
     const lineHeight = text.attribute.lineHeight ?? fontSize;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(text.valid && visible)) {
+    const data = this.valid(text, textAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
-    if (!(doFill || doStroke || fVisible || sVisible)) {
-      return;
-    }
     // 文字如果需要变换，那就需要将3dmatrix转成context的2dmatrix
     const transform3dMatrixToContextMatrix = !keepDirIn3d;
 
@@ -101,35 +92,20 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
 
     context.beginPath();
 
-    if (!this._textBeforeRenderContribitions) {
-      const contributions = this.textRenderContribitions.getContributions() || [];
-      contributions.sort((a, b) => b.order - a.order);
-      this._textBeforeRenderContribitions = [];
-      this._textAfterRenderContribitions = [];
-      contributions.forEach(c => {
-        if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-          this._textBeforeRenderContribitions.push(c);
-        } else {
-          this._textAfterRenderContribitions.push(c);
-        }
-      });
-    }
-    this._textBeforeRenderContribitions.forEach(c => {
-      c.drawShape(
-        text,
-        context,
-        x,
-        y,
-        doFill,
-        doStroke,
-        fVisible,
-        sVisible,
-        textAttribute,
-        drawContext,
-        fillCb,
-        strokeCb
-      );
-    });
+    this.beforeRenderStep(
+      text,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      textAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(text, text.attribute, textAttribute);
@@ -302,22 +278,20 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     }
     transform3dMatrixToContextMatrix && this.restoreTransformUseContext2d(text, textAttribute, z, context);
 
-    this._textAfterRenderContribitions.forEach(c => {
-      c.drawShape(
-        text,
-        context,
-        x,
-        y,
-        doFill,
-        doStroke,
-        fVisible,
-        sVisible,
-        textAttribute,
-        drawContext,
-        fillCb,
-        strokeCb
-      );
-    });
+    this.afterRenderStep(
+      text,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      textAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(text: IText, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

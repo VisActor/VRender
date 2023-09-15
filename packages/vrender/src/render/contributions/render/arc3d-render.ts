@@ -193,36 +193,14 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
     const arcAttribute = getTheme(arc, params?.theme).arc;
 
-    const {
-      fill = arcAttribute.fill,
-      background,
-      stroke = arcAttribute.stroke,
-      opacity = arcAttribute.opacity,
-      fillOpacity = arcAttribute.fillOpacity,
-      lineWidth = arcAttribute.lineWidth,
-      strokeOpacity = arcAttribute.strokeOpacity,
-      visible = arcAttribute.visible
-    } = arc.attribute;
+    const { fill = arcAttribute.fill } = arc.attribute;
     // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-
+    const data = this.valid(arc, arcAttribute, fillCb, strokeCb);
+    if (!data) {
+      return;
+    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
     const z = this.z ?? 0;
-
-    if (!(arc.valid && visible)) {
-      return;
-    }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
 
     const {
       outerRadius = arcAttribute.outerRadius,

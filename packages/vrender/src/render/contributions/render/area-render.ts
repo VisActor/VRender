@@ -71,13 +71,13 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
   type: 'area';
   numberType: number = AREA_NUMBER_TYPE;
 
-  protected _areaRenderContribitions: IAreaRenderContribution[];
   constructor(
     @inject(ContributionProvider)
     @named(AreaRenderContribution)
     protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
   ) {
     super();
+    this.init(areaRenderContribitions);
   }
 
   drawShape(
@@ -100,35 +100,16 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
   ) {
     const areaAttribute = getTheme(area, params?.theme).area;
     const {
-      fill = areaAttribute.fill,
       fillOpacity = areaAttribute.fillOpacity,
-      opacity = areaAttribute.opacity,
-      visible = areaAttribute.visible,
       z = areaAttribute.z,
-      background,
-      stroke = area.attribute.stroke,
-      lineWidth = areaAttribute.lineWidth,
       strokeOpacity = areaAttribute.strokeOpacity
     } = area.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-
-    if (!(area.valid && visible)) {
+    const data = this.valid(area, areaAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!doFill && !doStroke) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || fillCb) && !sVisible && !strokeCb) {
-      return;
-    }
+    const { doFill, doStroke } = data;
 
     const { clipRange = areaAttribute.clipRange } = area.attribute;
 
@@ -498,30 +479,21 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       zeroY: connectedY
     });
 
-    if (!this._areaRenderContribitions) {
-      this._areaRenderContribitions = this.areaRenderContribitions.getContributions() || [];
-      this._areaRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-    this._areaRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-        c.drawShape(
-          area,
-          context,
-          offsetX,
-          offsetY,
-          !!fillOpacity,
-          false,
-          fill,
-          false,
-          defaultAttribute as any,
-          drawContext,
-          fillCb,
-          null,
-          { attribute }
-        );
-      }
-    });
+    this.beforeRenderStep(
+      area,
+      context,
+      offsetX,
+      offsetY,
+      !!fillOpacity,
+      false,
+      fill,
+      false,
+      defaultAttribute as any,
+      drawContext,
+      fillCb,
+      null,
+      { attribute }
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(area, attribute, defaultAttribute);
@@ -542,28 +514,21 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     }
 
-    if (!this._areaRenderContribitions) {
-      this._areaRenderContribitions = this.areaRenderContribitions.getContributions() || [];
-    }
-    this._areaRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        c.drawShape(
-          area,
-          context,
-          offsetX,
-          offsetY,
-          !!fillOpacity,
-          false,
-          fill,
-          false,
-          defaultAttribute as any,
-          drawContext,
-          fillCb,
-          null,
-          { attribute }
-        );
-      }
-    });
+    this.afterRenderStep(
+      area,
+      context,
+      offsetX,
+      offsetY,
+      !!fillOpacity,
+      false,
+      fill,
+      false,
+      defaultAttribute as any,
+      drawContext,
+      fillCb,
+      null,
+      { attribute }
+    );
 
     if (stroke !== false) {
       if (strokeCb) {

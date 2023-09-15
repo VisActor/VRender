@@ -205,31 +205,15 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     const {
       fill = lineAttribute.fill,
       stroke = lineAttribute.stroke,
-      opacity = lineAttribute.opacity,
       fillOpacity = lineAttribute.fillOpacity,
-      strokeOpacity = lineAttribute.strokeOpacity,
-      lineWidth = lineAttribute.lineWidth,
-      visible = lineAttribute.visible
+      strokeOpacity = lineAttribute.strokeOpacity
     } = line.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(line.valid && visible)) {
+    const data = this.valid(line, lineAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb)) {
-      return;
-    }
+    // const { fVisible, sVisible, doFill, doStroke } = data;
 
     // 更新cache
     if (line.shouldUpdateShape()) {

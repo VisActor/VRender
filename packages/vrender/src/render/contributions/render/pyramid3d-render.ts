@@ -50,35 +50,16 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
     const {
       fill = pyramidAttribute.fill,
       stroke = pyramidAttribute.stroke,
-      opacity = pyramidAttribute.opacity,
-      fillOpacity = pyramidAttribute.fillOpacity,
-      lineWidth = pyramidAttribute.lineWidth,
-      strokeOpacity = pyramidAttribute.strokeOpacity,
-      visible = pyramidAttribute.visible,
-      points,
       face = [true, true, true, true, true, true]
     } = pyramid3d.attribute;
 
     const z = this.z ?? 0;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(pyramid3d.valid && visible && points.length === 4)) {
+    const data = this.valid(pyramid3d, pyramidAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb)) {
-      return;
-    }
+    // const { fVisible, sVisible, doFill, doStroke } = data;
 
     const { light, camera } = drawContext.stage || {};
 

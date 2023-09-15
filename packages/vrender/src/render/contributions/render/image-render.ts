@@ -30,14 +30,13 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
   type: 'image';
   numberType: number = IMAGE_NUMBER_TYPE;
 
-  protected _imageRenderContribitions: IImageRenderContribution[];
-
   constructor(
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
     protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {
     super();
+    this.init(imageRenderContribitions);
   }
 
   drawShape(
@@ -56,44 +55,21 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
     const imageAttribute = getTheme(image).image;
     const {
-      fill = imageAttribute.fill,
       width = imageAttribute.width,
       height = imageAttribute.height,
-      opacity = imageAttribute.opacity,
-      fillOpacity = imageAttribute.fillOpacity,
-      visible = imageAttribute.visible,
       repeatX = imageAttribute.repeatX,
       repeatY = imageAttribute.repeatY,
       cornerRadius = imageAttribute.cornerRadius,
       image: url
     } = image.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const doFill = runFill(fill);
-
-    if (!(image.valid && visible)) {
+    const data = this.valid(image, imageAttribute, fillCb);
+    if (!data) {
       return;
     }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
-    if (!doFill) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || fillCb)) {
-      return;
-    }
-
-    if (!this._imageRenderContribitions) {
-      this._imageRenderContribitions = this.imageRenderContribitions.getContributions() || [];
-    }
-    this._imageRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
-      }
-    });
+    this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
 
     // context.beginPath();
     // context.image(x, y, width, height);
@@ -147,12 +123,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       }
     }
 
-    this._imageRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        // c.useStyle && context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        c.drawShape(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
-      }
-    });
+    this.afterRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
   }
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {

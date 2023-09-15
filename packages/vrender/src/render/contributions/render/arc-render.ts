@@ -57,14 +57,13 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
-  protected _arcBeforeRenderContribitions: IArcRenderContribution[];
-  protected _arcAfterRenderContribitions: IArcRenderContribution[];
   constructor(
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
     protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
   ) {
     super();
+    this.init(arcRenderContribitions);
   }
 
   // 绘制尾部cap
@@ -240,34 +239,15 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     const arcAttribute = getTheme(arc, params?.theme).arc;
     const {
       fill = arcAttribute.fill,
-      background,
       stroke = arcAttribute.stroke,
-      opacity = arcAttribute.opacity,
-      fillOpacity = arcAttribute.fillOpacity,
-      lineWidth = arcAttribute.lineWidth,
-      strokeOpacity = arcAttribute.strokeOpacity,
-      visible = arcAttribute.visible,
       x: originX = arcAttribute.x,
       y: originY = arcAttribute.y
     } = arc.attribute;
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(arc.valid && visible)) {
+    const data = this.valid(arc, arcAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，以及background那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
     const {
       outerRadius = arcAttribute.outerRadius,
@@ -305,36 +285,21 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此arc不再使用cache
       drawArcPath(arc, context, x, y, outerRadius, innerRadius);
 
-      if (!this._arcBeforeRenderContribitions) {
-        this._arcBeforeRenderContribitions = [];
-        this._arcAfterRenderContribitions = [];
-        const contributions = this.arcRenderContribitions.getContributions() || [];
-        contributions.sort((a, b) => b.order - a.order);
-        contributions.forEach(c => {
-          if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-            this._arcBeforeRenderContribitions.push(c);
-          } else {
-            this._arcAfterRenderContribitions.push(c);
-          }
-        });
-      }
       beforeRenderContribitionsRuned = true;
-      this._arcBeforeRenderContribitions.forEach(c => {
-        c.drawShape(
-          arc,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          arcAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      });
+      this.beforeRenderStep(
+        arc,
+        context,
+        x,
+        y,
+        doFill,
+        doStroke,
+        fVisible,
+        sVisible,
+        arcAttribute,
+        drawContext,
+        fillCb,
+        strokeCb
+      );
 
       // shadow
       context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
@@ -364,36 +329,20 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       const collapsedToLine = drawArcPath(arc, context, x, y, outerRadius, innerRadius, arrayStroke);
 
       if (!beforeRenderContribitionsRuned) {
-        if (!this._arcBeforeRenderContribitions) {
-          this._arcBeforeRenderContribitions = [];
-          this._arcAfterRenderContribitions = [];
-          const contributions = this.arcRenderContribitions.getContributions() || [];
-          contributions.sort((a, b) => b.order - a.order);
-          contributions.forEach(c => {
-            if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-              this._arcBeforeRenderContribitions.push(c);
-            } else {
-              this._arcAfterRenderContribitions.push(c);
-            }
-          });
-        }
-        beforeRenderContribitionsRuned = true;
-        this._arcBeforeRenderContribitions.forEach(c => {
-          c.drawShape(
-            arc,
-            context,
-            x,
-            y,
-            doFill,
-            doStroke,
-            fVisible,
-            sVisible,
-            arcAttribute,
-            drawContext,
-            fillCb,
-            strokeCb
-          );
-        });
+        this.beforeRenderStep(
+          arc,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          arcAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
       }
 
       if (strokeCb) {
@@ -418,36 +367,20 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
         this.drawArcTailCapPath(arc, context, x, y, outerRadius, innerRadius, startAngle, startAngle + capAngle);
 
         if (!beforeRenderContribitionsRuned) {
-          if (!this._arcBeforeRenderContribitions) {
-            this._arcBeforeRenderContribitions = [];
-            this._arcAfterRenderContribitions = [];
-            const contributions = this.arcRenderContribitions.getContributions() || [];
-            contributions.sort((a, b) => b.order - a.order);
-            contributions.forEach(c => {
-              if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-                this._arcBeforeRenderContribitions.push(c);
-              } else {
-                this._arcAfterRenderContribitions.push(c);
-              }
-            });
-          }
-          beforeRenderContribitionsRuned = true;
-          this._arcBeforeRenderContribitions.forEach(c => {
-            c.drawShape(
-              arc,
-              context,
-              x,
-              y,
-              doFill,
-              doStroke,
-              fVisible,
-              sVisible,
-              arcAttribute,
-              drawContext,
-              fillCb,
-              strokeCb
-            );
-          });
+          this.beforeRenderStep(
+            arc,
+            context,
+            x,
+            y,
+            doFill,
+            doStroke,
+            fVisible,
+            sVisible,
+            arcAttribute,
+            drawContext,
+            fillCb,
+            strokeCb
+          );
         }
 
         if (doFill) {
@@ -477,22 +410,20 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       }
     }
 
-    this._arcAfterRenderContribitions.forEach(c => {
-      c.drawShape(
-        arc,
-        context,
-        x,
-        y,
-        doFill,
-        doStroke,
-        fVisible,
-        sVisible,
-        arcAttribute,
-        drawContext,
-        fillCb,
-        strokeCb
-      );
-    });
+    this.afterRenderStep(
+      arc,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      arcAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     if (tempChangeConicalColor) {
       (fill as IConicalGradient).startAngle += conicalOffset;

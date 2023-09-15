@@ -10,16 +10,162 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams,
   IMarkAttribute,
-  IThemeAttribute
+  IThemeAttribute,
+  IContributionProvider,
+  ICircleRenderContribution,
+  IBaseRenderContribution
 } from '../../../interface';
 import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
-import { drawPathProxy } from './utils';
+import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
+import { BaseRenderContributionTime } from '../../../common/enums';
 
 @injectable()
 export abstract class BaseRender<T extends IGraphic> {
   camera: ICamera;
   declare z: number;
+
+  declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
+
+  protected _beforeRenderContribitions: IBaseRenderContribution<T, T['attribute']>[];
+  protected _afterRenderContribitions: IBaseRenderContribution<T, T['attribute']>[];
+  protected _renderContribitions: IBaseRenderContribution<T, T['attribute']>[];
+
+  init(contributions?: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>) {
+    if (contributions) {
+      this.renderContribitions = contributions;
+      this._renderContribitions = contributions.getContributions();
+      if (this._renderContribitions.length) {
+        this._renderContribitions.sort((a, b) => b.order - a.order);
+        this._beforeRenderContribitions = this._renderContribitions.filter(
+          c => c.time === BaseRenderContributionTime.beforeFillStroke
+        );
+        this._afterRenderContribitions = this._renderContribitions.filter(
+          c => c.time === BaseRenderContributionTime.afterFillStroke
+        );
+      }
+    }
+  }
+
+  beforeRenderStep(
+    graphic: T,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    graphicAttribute: Required<T['attribute']>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    params?: any
+  ) {
+    this._beforeRenderContribitions &&
+      this._beforeRenderContribitions.forEach(c => {
+        c.drawShape(
+          graphic,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          graphicAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
+      });
+  }
+
+  afterRenderStep(
+    graphic: T,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    graphicAttribute: Required<T['attribute']>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    params?: any
+  ) {
+    this._afterRenderContribitions &&
+      this._afterRenderContribitions.forEach(c => {
+        c.drawShape(
+          graphic,
+          context,
+          x,
+          y,
+          doFill,
+          doStroke,
+          fVisible,
+          sVisible,
+          graphicAttribute,
+          drawContext,
+          fillCb,
+          strokeCb
+        );
+      });
+  }
+
+  valid(graphic: IGraphic, defaultAttribute: IGraphicAttribute, fillCb?: any, strokeCb?: any) {
+    const {
+      fill = defaultAttribute.fill,
+      background,
+      stroke = defaultAttribute.stroke,
+      opacity = defaultAttribute.opacity,
+      fillOpacity = defaultAttribute.fillOpacity,
+      lineWidth = defaultAttribute.lineWidth,
+      strokeOpacity = defaultAttribute.strokeOpacity,
+      visible = defaultAttribute.visible
+    } = graphic.attribute;
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
+    const sVisible = strokeVisible(opacity, strokeOpacity);
+    const doFill = runFill(fill, background);
+    const doStroke = runStroke(stroke, lineWidth);
+
+    if (!(graphic.valid && visible)) {
+      return false;
+    }
+
+    if (!(doFill || doStroke)) {
+      return false;
+    }
+
+    // 如果存在fillCb和strokeCb，以及background那就不直接跳过
+    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
+      return false;
+    }
+    return {
+      fVisible,
+      sVisible,
+      doFill,
+      doStroke
+    };
+  }
 
   /**
    * 进行2d或3d变换

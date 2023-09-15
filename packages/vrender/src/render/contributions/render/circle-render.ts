@@ -26,14 +26,13 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
   type: 'circle';
   numberType: number = CIRCLE_NUMBER_TYPE;
 
-  protected _circleRenderContribitions: ICircleRenderContribution[];
-
   constructor(
     @inject(ContributionProvider)
     @named(CircleRenderContribution)
     protected readonly circleRenderContribitions: IContributionProvider<ICircleRenderContribution>
   ) {
     super();
+    this.init(circleRenderContribitions);
   }
 
   drawShape(
@@ -57,68 +56,37 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
     // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
     const circleAttribute = getTheme(circle, params?.theme).circle;
     const {
-      fill = circleAttribute.fill,
-      background,
-      stroke = circleAttribute.stroke,
       radius = circleAttribute.radius,
       startAngle = circleAttribute.startAngle,
       endAngle = circleAttribute.endAngle,
-      fillOpacity = circleAttribute.fillOpacity,
-      strokeOpacity = circleAttribute.strokeOpacity,
-      opacity = circleAttribute.opacity,
-      lineWidth = circleAttribute.lineWidth,
-      visible = circleAttribute.visible,
       x: originX = circleAttribute.x,
       y: originY = circleAttribute.y
     } = circle.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(circle.valid && visible)) {
+    const data = this.valid(circle, circleAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
     context.beginPath();
     context.arc(x, y, radius, startAngle, endAngle);
     context.closePath();
 
-    if (!this._circleRenderContribitions) {
-      this._circleRenderContribitions = this.circleRenderContribitions.getContributions() || [];
-      this._circleRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-
-    this._circleRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(circle, circle.attribute, x, y, circleAttribute);
-        c.drawShape(
-          circle,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          circleAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.beforeRenderStep(
+      circle,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      circleAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
@@ -141,25 +109,20 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
       }
     }
 
-    this._circleRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        // c.useStyle && context.setCommonStyle(circle, circle.attribute, x, y, circleAttribute);
-        c.drawShape(
-          circle,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          circleAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.afterRenderStep(
+      circle,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      circleAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(circle: ICircle, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

@@ -27,9 +27,6 @@ import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from '.
 export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
   type: 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
-  declare z: number;
-
-  protected _symbolRenderContribitions: ISymbolRenderContribution[];
 
   constructor(
     @inject(ContributionProvider)
@@ -37,6 +34,7 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     protected readonly symbolRenderContribitions: IContributionProvider<ISymbolRenderContribution>
   ) {
     super();
+    this.init(symbolRenderContribitions);
   }
 
   drawShape(
@@ -62,38 +60,17 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
 
     const {
       size = symbolAttribute.size,
-      fill = symbolAttribute.fill,
-      background,
-      fillOpacity = symbolAttribute.fillOpacity,
-      strokeOpacity = symbolAttribute.strokeOpacity,
-      opacity = symbolAttribute.opacity,
-      lineWidth = symbolAttribute.lineWidth,
-      stroke = symbolAttribute.stroke,
-      visible = symbolAttribute.visible,
       x: originX = symbolAttribute.x,
       y: originY = symbolAttribute.y,
       scaleX = symbolAttribute.scaleX,
       scaleY = symbolAttribute.scaleY
     } = symbol.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
-
-    if (!(symbol.valid && visible)) {
+    const data = this.valid(symbol, symbolAttribute, fillCb, strokeCb);
+    if (!data) {
       return;
     }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
     const parsedPath = symbol.getParsedPath();
     // todo: 考虑使用path
@@ -156,29 +133,20 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       }
     }
 
-    if (!this._symbolRenderContribitions) {
-      this._symbolRenderContribitions = this.symbolRenderContribitions.getContributions() || [];
-      this._symbolRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-    this._symbolRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(symbol, symbol.attribute, x, y, symbolAttribute);
-        c.drawShape(
-          symbol,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          symbolAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.beforeRenderStep(
+      symbol,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      symbolAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     // if (fill !== false) {
     //   context.setCommonStyle(symbol.attribute, symbolAttribute);
@@ -216,24 +184,20 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       }
     }
 
-    this._symbolRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        c.drawShape(
-          symbol,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          symbolAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.afterRenderStep(
+      symbol,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      symbolAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(symbol: ISymbol, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

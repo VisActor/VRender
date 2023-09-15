@@ -28,14 +28,13 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
   type = 'rect';
   numberType: number = RECT_NUMBER_TYPE;
 
-  protected _rectRenderContribitions: IRectRenderContribution[];
-
   constructor(
     @inject(ContributionProvider)
     @named(RectRenderContribution)
     protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
   ) {
     super();
+    this.init(rectRenderContribitions);
   }
 
   drawShape(
@@ -104,36 +103,26 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       createRectPath(context, x, y, width, height, cornerRadius);
     }
 
-    if (!this._rectRenderContribitions) {
-      this._rectRenderContribitions = this.rectRenderContribitions.getContributions() || [];
-      this._rectRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-
     const doFillOrStroke = {
       doFill,
       doStroke
     };
 
-    this._rectRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          rect,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          rectAttribute,
-          drawContext,
-          fillCb,
-          strokeCb,
-          doFillOrStroke
-        );
-      }
-    });
+    this.beforeRenderStep(
+      rect,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      rectAttribute,
+      drawContext,
+      fillCb,
+      strokeCb,
+      doFillOrStroke
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
@@ -157,25 +146,20 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       }
     }
 
-    this._rectRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          rect,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          rectAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.afterRenderStep(
+      rect,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      rectAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(rect: IRect, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

@@ -28,14 +28,13 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
   type: 'polygon';
   numberType: number = POLYGON_NUMBER_TYPE;
 
-  protected _polygonRenderContribitions: IPolygonRenderContribution[];
-
   constructor(
     @inject(ContributionProvider)
     @named(PolygonRenderContribution)
     protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
   ) {
     super();
+    this.init(polygonRenderContribitions);
   }
 
   drawShape(
@@ -60,37 +59,18 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     const polygonAttribute = getTheme(polygon, params?.theme).polygon;
     const {
       points = polygonAttribute.points,
-      fill = polygonAttribute.fill,
-      stroke = polygonAttribute.stroke,
       cornerRadius = polygonAttribute.cornerRadius,
-      fillOpacity = polygonAttribute.fillOpacity,
-      background,
-      strokeOpacity = polygonAttribute.strokeOpacity,
-      lineWidth = polygonAttribute.lineWidth,
-      opacity = polygonAttribute.opacity,
-      visible = polygonAttribute.visible,
       x: originX = polygonAttribute.x,
       y: originY = polygonAttribute.y,
       closePath = polygonAttribute.closePath
     } = polygon.attribute;
 
-    // 不绘制或者透明
-    const fVisible = fillVisible(opacity, fillOpacity, fill);
-    const sVisible = strokeVisible(opacity, strokeOpacity);
-    const doFill = runFill(fill, background);
-    const doStroke = runStroke(stroke, lineWidth);
+    const data = this.valid(polygon, polygonAttribute, fillCb, strokeCb);
+    if (!data) {
+      return;
+    }
+    const { fVisible, sVisible, doFill, doStroke } = data;
 
-    if (!(polygon.valid && visible)) {
-      return;
-    }
-
-    if (!(doFill || doStroke)) {
-      return;
-    }
-    // 如果存在fillCb和strokeCb，那就不直接跳过
-    if (!(fVisible || sVisible || fillCb || strokeCb || background)) {
-      return;
-    }
     context.beginPath();
 
     if ((cornerRadius as number) <= 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
@@ -102,29 +82,20 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     // polygon 默认闭合
     closePath && context.closePath();
 
-    if (!this._polygonRenderContribitions) {
-      this._polygonRenderContribitions = this.polygonRenderContribitions.getContributions() || [];
-      this._polygonRenderContribitions.sort((a, b) => b.order - a.order);
-    }
-    this._polygonRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.beforeFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          polygon,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          polygonAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.beforeRenderStep(
+      polygon,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      polygonAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
 
     // shadow
     context.setShadowStyle && context.setShadowStyle(polygon, polygon.attribute, polygonAttribute);
@@ -132,7 +103,7 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     if (doFill) {
       if (fillCb) {
         fillCb(context, polygon.attribute, polygonAttribute);
-      } else if (fillOpacity) {
+      } else if (fVisible) {
         // 存在fill
         context.setCommonStyle(polygon, polygon.attribute, originX - x, originY - y, polygonAttribute);
         context.fill();
@@ -141,32 +112,27 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     if (doStroke) {
       if (strokeCb) {
         strokeCb(context, polygon.attribute, polygonAttribute);
-      } else if (strokeOpacity) {
+      } else if (sVisible) {
         // 存在stroke
         context.setStrokeStyle(polygon, polygon.attribute, originX - x, originY - y, polygonAttribute);
         context.stroke();
       }
     }
 
-    this._polygonRenderContribitions.forEach(c => {
-      if (c.time === BaseRenderContributionTime.afterFillStroke) {
-        // c.useStyle && context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);
-        c.drawShape(
-          polygon,
-          context,
-          x,
-          y,
-          doFill,
-          doStroke,
-          fVisible,
-          sVisible,
-          polygonAttribute,
-          drawContext,
-          fillCb,
-          strokeCb
-        );
-      }
-    });
+    this.afterRenderStep(
+      polygon,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      polygonAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   draw(polygon: IPolygon, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

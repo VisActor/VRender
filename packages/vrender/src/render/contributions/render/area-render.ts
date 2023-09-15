@@ -37,6 +37,7 @@ import { BaseRenderContributionTime, Direction } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawSegments } from '../../../common/render-curve';
+import { BaseRender } from './base-render';
 
 function calcLineCache(
   points: IPointLike[],
@@ -66,7 +67,7 @@ function calcLineCache(
 }
 
 @injectable()
-export class DefaultCanvasAreaRender implements IGraphicRender {
+export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraphicRender {
   type: 'area';
   numberType: number = AREA_NUMBER_TYPE;
 
@@ -75,7 +76,9 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(AreaRenderContribution)
     protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   drawShape(
     area: IArea,
@@ -311,35 +314,8 @@ export class DefaultCanvasAreaRender implements IGraphicRender {
   }
 
   draw(area: IArea, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-
-    // const areaAttribute = graphicService.themeService.getCurrentTheme().areaAttribute;
     const areaAttribute = getTheme(area, params?.theme).area;
-    let { x = areaAttribute.x, y = areaAttribute.y } = area.attribute;
-
-    context.highPerformanceSave();
-
-    if (!area.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(area.transMatrix, true);
-    } else {
-      const point = area.getOffsetXY(areaAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
-
-    if (drawPathProxy(area, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(area, context, x, y, drawContext, params);
-
-    context.highPerformanceRestore();
+    this._draw(area, areaAttribute, false, drawContext, params);
   }
 
   /**

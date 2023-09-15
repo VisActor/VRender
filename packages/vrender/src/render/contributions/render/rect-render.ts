@@ -21,9 +21,10 @@ import type {
 import { RectRenderContribution } from './contributions/constants';
 import { drawPathProxy, rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { BaseRender } from './base-render';
 
 @injectable()
-export class DefaultCanvasRectRender implements IGraphicRender {
+export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraphicRender {
   type = 'rect';
   numberType: number = RECT_NUMBER_TYPE;
 
@@ -33,7 +34,9 @@ export class DefaultCanvasRectRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(RectRenderContribution)
     protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   drawShape(
     rect: IRect,
@@ -176,37 +179,7 @@ export class DefaultCanvasRectRender implements IGraphicRender {
   }
 
   draw(rect: IRect, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const rectAttribute = getTheme(rect, params?.theme).rect;
-    let { x = rectAttribute.x, y = rectAttribute.y } = rect.attribute;
-
-    if (!rect.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(rect.transMatrix, true);
-    } else {
-      const point = rect.getOffsetXY(rectAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
-
-    if (drawPathProxy(rect, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(rect, context, x, y, drawContext, params);
-
-    context.highPerformanceRestore();
+    this._draw(rect, rectAttribute, false, drawContext, params);
   }
 }

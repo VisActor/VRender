@@ -19,9 +19,10 @@ import { CircleRenderContribution } from './contributions/constants';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { BaseRender } from './base-render';
 
 @injectable()
-export class DefaultCanvasCircleRender implements IGraphicRender {
+export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IGraphicRender {
   type: 'circle';
   numberType: number = CIRCLE_NUMBER_TYPE;
 
@@ -31,7 +32,9 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(CircleRenderContribution)
     protected readonly circleRenderContribitions: IContributionProvider<ICircleRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   drawShape(
     circle: ICircle,
@@ -160,36 +163,7 @@ export class DefaultCanvasCircleRender implements IGraphicRender {
   }
 
   draw(circle: ICircle, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-
-    // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
     const circleAttribute = getTheme(circle, params?.theme).circle;
-    let { x = circleAttribute.x, y = circleAttribute.y } = circle.attribute;
-    if (!circle.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(circle.transMatrix, true);
-    } else {
-      const point = circle.getOffsetXY(circleAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
-
-    if (drawPathProxy(circle, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(circle, context, x, y, drawContext, params);
-
-    context.highPerformanceRestore();
+    this._draw(circle, circleAttribute, false, drawContext, params);
   }
 }

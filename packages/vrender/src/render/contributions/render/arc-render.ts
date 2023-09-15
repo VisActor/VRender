@@ -34,6 +34,7 @@ import { getConicGradientAt } from '../../../canvas/contributions/browser/conica
 import { ArcRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
+import { BaseRender } from './base-render';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
  * Copyright 2010-2022 Mike Bostock
@@ -52,7 +53,7 @@ import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
  */
 
 @injectable()
-export class DefaultCanvasArcRender implements IGraphicRender {
+export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphicRender {
   type: 'arc';
   numberType: number = ARC_NUMBER_TYPE;
 
@@ -62,7 +63,9 @@ export class DefaultCanvasArcRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(ArcRenderContribution)
     protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   // 绘制尾部cap
   drawArcTailCapPath(
@@ -498,37 +501,7 @@ export class DefaultCanvasArcRender implements IGraphicRender {
   }
 
   draw(arc: IArc, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
     const arcAttribute = getTheme(arc, params?.theme).arc;
-
-    context.highPerformanceSave();
-
-    let { x = arcAttribute.x, y = arcAttribute.y } = arc.attribute;
-    if (!arc.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(arc.transMatrix, true);
-    } else {
-      const point = arc.getOffsetXY(arcAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
-    }
-
-    if (drawPathProxy(arc, context, x, y, drawContext, params)) {
-      context.highPerformanceRestore();
-      return;
-    }
-
-    this.drawShape(arc, context, x, y, drawContext, params);
-
-    context.highPerformanceRestore();
+    this._draw(arc, arcAttribute, false, drawContext, params);
   }
 }

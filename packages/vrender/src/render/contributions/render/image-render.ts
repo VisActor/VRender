@@ -21,11 +21,12 @@ import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { isArray } from '@visactor/vutils';
 import { createRectPath } from '../../../common/shape/rect';
+import { BaseRender } from './base-render';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
 @injectable()
-export class DefaultCanvasImageRender implements IGraphicRender {
+export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGraphicRender {
   type: 'image';
   numberType: number = IMAGE_NUMBER_TYPE;
 
@@ -35,7 +36,9 @@ export class DefaultCanvasImageRender implements IGraphicRender {
     @inject(ContributionProvider)
     @named(ImageRenderContribution)
     protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
-  ) {}
+  ) {
+    super();
+  }
 
   drawShape(
     image: IImage,
@@ -153,14 +156,6 @@ export class DefaultCanvasImageRender implements IGraphicRender {
   }
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {
-    const { context } = renderService.drawParams;
-    if (!context) {
-      return;
-    }
-
-    // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
-    const imageAttribute = getTheme(image).image;
-    let { x = imageAttribute.x, y = imageAttribute.y } = image.attribute;
     const { image: url } = image.attribute;
     if (!url || !image.resources) {
       return;
@@ -170,22 +165,11 @@ export class DefaultCanvasImageRender implements IGraphicRender {
       return;
     }
 
-    context.highPerformanceSave();
-    if (!image.transMatrix.onlyTranslate()) {
-      // 性能较差
-      x = 0;
-      y = 0;
-      context.transformFromMatrix(image.transMatrix, true);
-    } else {
-      const point = image.getOffsetXY(imageAttribute);
-      x += point.x;
-      y += point.y;
-      // 当前context有rotate/scale，重置matrix
-      context.setTransformForCurrent();
+    const { context } = renderService.drawParams;
+    if (!context) {
+      return;
     }
-
-    this.drawShape(image, context, x, y, drawContext);
-
-    context.highPerformanceRestore();
+    const imageAttribute = getTheme(image).image;
+    this._draw(image, imageAttribute, false, drawContext);
   }
 }

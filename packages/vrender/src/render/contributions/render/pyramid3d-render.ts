@@ -211,26 +211,7 @@ export class DefaultCanvasPyramid3dRender extends BaseRender<IPyramid3d> impleme
   }
 
   draw(pyramid3d: IPyramid3d, renderService: IRenderService, drawContext: IDrawContext) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
-    context.highPerformanceSave();
     const pyramid3dAttribute = getTheme(pyramid3d).polygon;
-    const data = this.transform(pyramid3d, pyramid3dAttribute, context);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-    this.drawShape(pyramid3d, context, x, y, drawContext);
-    this.z = 0;
-
-    if (context.modelMatrix !== lastModelMatrix) {
-      mat4Allocate.free(context.modelMatrix);
-    }
-    context.modelMatrix = lastModelMatrix;
-
-    context.highPerformanceRestore();
+    this._draw(pyramid3d, pyramid3dAttribute, false, drawContext);
   }
 }

@@ -201,27 +201,7 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
   }
 
   draw(rect: IRect3d, renderService: IRenderService, drawContext: IDrawContext) {
-    const { context } = drawContext;
-    if (!context) {
-      return;
-    }
-
-    context.highPerformanceSave();
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
     const rectAttribute = getTheme(rect).rect;
-
-    const data = this.transform(rect, rectAttribute, context);
-    const { x, y, z, lastModelMatrix } = data;
-
-    this.z = z;
-    this.drawShape(rect, context, x, y, drawContext);
-    this.z = 0;
-
-    if (context.modelMatrix !== lastModelMatrix) {
-      mat4Allocate.free(context.modelMatrix);
-    }
-    context.modelMatrix = lastModelMatrix;
-
-    context.highPerformanceRestore();
+    this._draw(rect, rectAttribute, false, drawContext);
   }
 }

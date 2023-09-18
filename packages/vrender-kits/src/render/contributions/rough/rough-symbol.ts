@@ -9,7 +9,7 @@ import type {
   IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
   SYMBOL_NUMBER_TYPE,
   DefaultCanvasSymbolRender,
@@ -18,7 +18,7 @@ import {
   CustomPath2D,
   inject,
   injectable
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

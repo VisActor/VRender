@@ -9,7 +9,7 @@ import type {
   IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
   ARC_NUMBER_TYPE,
   DefaultCanvasArcRender,
@@ -18,7 +18,7 @@ import {
   drawArcPath,
   inject,
   injectable
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

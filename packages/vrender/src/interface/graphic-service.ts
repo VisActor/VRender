@@ -45,12 +45,14 @@ export interface IGraphicService {
   onAttributeUpdate: (graphic: IGraphic) => void;
   onSetStage: (graphic: IGraphic, stage: IStage) => void;
   onRemove: (graphic: IGraphic) => void;
+  onRelease: (graphic: IGraphic) => void;
   onAddIncremental: (graphic: IGraphic, group: IGroup, stage: IStage) => void;
   onClearIncremental: (group: IGroup, stage: IStage) => void;
   hooks: {
     onAttributeUpdate: ISyncHook<[IGraphic]>;
     onSetStage: ISyncHook<[IGraphic, IStage]>;
     onRemove: ISyncHook<[IGraphic]>;
+    onRelease: ISyncHook<[IGraphic]>;
     onAddIncremental: ISyncHook<[IGraphic, IGroup, IStage]>;
     onClearIncremental: ISyncHook<[IGroup, IStage]>;
     beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;

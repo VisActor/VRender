@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(label): fix the issue of invalid position in overlap strategy might throw error",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

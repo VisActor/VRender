@@ -32,7 +32,6 @@ export class Layer extends Group implements ILayer {
   declare main: boolean;
   declare renderCount: number;
 
-  declare readonly layerMode: LayerMode;
   declare afterDrawCbs: ((l: this) => void)[];
 
   declare imageData?: ImageData;
@@ -50,6 +49,10 @@ export class Layer extends Group implements ILayer {
 
   get offscreen(): boolean {
     return this.layerHandler.offscreen;
+  }
+
+  get layerMode(): LayerMode {
+    return this.layerHandler.type;
   }
 
   // stage控制
@@ -114,7 +117,6 @@ export class Layer extends Group implements ILayer {
     this.subLayers = new Map();
     this.theme = new Theme();
     this.background = 'rgba(0, 0, 0, 0)';
-    this.layerMode = params.layerMode;
     this.afterDrawCbs = [];
   }
 

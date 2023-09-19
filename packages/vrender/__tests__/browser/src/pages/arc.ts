@@ -184,7 +184,7 @@ export const page = () => {
     poptip: true
   });
 
-  const layer = stage.createLayer('static');
+  const layer = stage.createLayer('virtual');
   const t = createText({
     text: '这是第二个图层',
     x: 100,
@@ -192,7 +192,7 @@ export const page = () => {
     fill: 'red'
   });
   layer.add(t);
-  t.animate().to({ y: 300 }, 1000, 'linear');
+  // t.animate().to({ y: 300 }, 1000, 'linear');
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });

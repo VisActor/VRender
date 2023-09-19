@@ -644,7 +644,18 @@ export class Stage extends Group implements IStage {
   }
 
   protected renderLayerList(layerList: ILayer[], params?: Partial<IDrawContext>) {
-    layerList.forEach(layer => {
+    const list: ILayer[] = [];
+    // 只需要render main layer即可
+    for (let i = 0; i < layerList.length; i++) {
+      let l = layerList[i];
+      if (l.layerMode === 'virtual') {
+        l = l.getNativeHandler().mainHandler.layer;
+      }
+      if (!list.includes(l)) {
+        list.push(l);
+      }
+    }
+    list.forEach(layer => {
       // 记录当前的stamp，避免重复绘制layer（如果存在virtual layer）
       if (layer.renderCount > this.renderCount) {
         return;

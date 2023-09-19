@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix arc stroke issue",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

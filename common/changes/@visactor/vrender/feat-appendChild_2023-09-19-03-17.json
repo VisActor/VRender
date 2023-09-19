@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: appendChild add highPerformance params",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

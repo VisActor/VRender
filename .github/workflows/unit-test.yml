@@ -32,6 +32,8 @@ jobs:
       #     fc-list
 
       # Install rush
+      - name: Update rush
+        run: node common/scripts/install-run-rush.js update --bypass-policy
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - run: node common/scripts/install-run-rush.js build --only tag:package

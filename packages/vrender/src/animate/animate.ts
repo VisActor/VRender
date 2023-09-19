@@ -122,10 +122,15 @@ export abstract class ACustomAnimate<T> implements ICustomAnimate {
   update(end: boolean, ratio: number, out: Record<string, any>): void {
     if (this.updateCount === 0) {
       this.onFirstRun();
+      // out添加之前的props
+      const props = this.step.getLastProps();
+      Object.keys(props).forEach(k => {
+        if (this.subAnimate.animate.validAttr(k)) {
+          out[k] = props[k];
+        }
+      });
     }
     this.updateCount += 1;
-    // out添加之前的props
-    Object.assign(out, this.step.getLastProps());
     this.onUpdate(end, ratio, out);
     if (end) {
       this.onEnd();

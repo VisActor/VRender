@@ -7,7 +7,8 @@ import {
   IGraphic,
   createRect,
   createGlyph,
-  createSymbol
+  createSymbol,
+  createText
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';
@@ -183,6 +184,15 @@ export const page = () => {
     poptip: true
   });
 
+  const layer = stage.createLayer('static');
+  const t = createText({
+    text: '这是第二个图层',
+    x: 100,
+    y: 100,
+    fill: 'red'
+  });
+  layer.add(t);
+  t.animate().to({ y: 300 }, 1000, 'linear');
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });

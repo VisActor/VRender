@@ -32,7 +32,9 @@ export interface ITransformUtil {
 }
 
 export interface ILayerService {
-  createLayer: (stage: IStage, options?: ILayerParams) => ILayer;
+  createLayer: (stage: IStage, options?: Partial<ILayerParams>) => ILayer;
+  // stage绘制前调用
+  prepareStageLayer: (stage: IStage) => void;
   releaseLayer: (stage: IStage, layer: ILayer) => void;
   restLayerCount: (stage: IStage) => number;
   getStageLayer: (stage: IStage) => ILayer[];

@@ -7,12 +7,15 @@ import type { IStage } from './stage';
 import type { Releaseable } from './common';
 import type { IContext2d } from './context';
 import type { IWindow } from './window';
+import { ICanvasLike } from './canvas';
 
+export type LayerMode = 'static' | 'dynamic' | 'virtual';
 export interface ILayerParams {
   main: boolean;
   zIndex?: number;
+  layerMode: LayerMode;
+  layerHandler: ILayerHandlerContribution;
   canvasId?: string;
-  virtual?: boolean;
 }
 
 export interface ILayerDrawParams {
@@ -42,7 +45,8 @@ export interface ILayer extends IGroup {
   viewWidth: number;
   viewHeight: number;
 
-  readonly virtual: boolean;
+  readonly layerMode: LayerMode;
+  renderCount: number;
 
   offscreen: boolean;
   subLayers: Map<number, { layer: ILayer; group?: IGroup; zIndex: number; drawContribution?: IDrawContribution }>;
@@ -100,6 +104,11 @@ export interface ILayerHandlerInitParams {
 // 具体的Layer实现
 // Canvas2d的Layer可以对应一个Canvas或者ImageData
 export interface ILayerHandlerContribution extends Releaseable {
+  // 所绑定的副layer handler
+  secondaryHandlers?: ILayerHandlerContribution[];
+  // 所依赖的主layer handler
+  mainHandler?: ILayerHandlerContribution;
+  type: LayerMode;
   init: (layer: ILayer, window: IWindow, params: ILayerHandlerInitParams) => void;
   resize: (w: number, h: number) => void;
   resizeView: (w: number, h: number) => void;
@@ -110,4 +119,5 @@ export interface ILayerHandlerContribution extends Releaseable {
   merge: (layerHandlers: ILayerHandlerContribution[]) => void;
   getContext: () => IContext2d;
   offscreen: boolean;
+  layer: ILayer;
 }

@@ -11,7 +11,8 @@ import type {
   IWindow,
   ILayerHandlerInitParams,
   ILayerHandlerDrawParams,
-  IDrawContext
+  IDrawContext,
+  LayerMode
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
 import { VGlobal } from '../../../constants';
@@ -24,6 +25,9 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   offscreen: boolean;
   main: boolean;
   window: IWindow;
+  type: LayerMode = 'static';
+  // 所绑定的副layer handler
+  secondaryHandlers: ILayerHandlerContribution[];
 
   constructor(@inject(VGlobal) public readonly global: IGlobal) {
     this.offscreen = false;

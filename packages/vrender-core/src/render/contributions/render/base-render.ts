@@ -84,7 +84,8 @@ export abstract class BaseRender<T extends IGraphic> {
           graphicAttribute,
           drawContext,
           fillCb,
-          strokeCb
+          strokeCb,
+          params
         );
       });
   }
@@ -126,7 +127,8 @@ export abstract class BaseRender<T extends IGraphic> {
           graphicAttribute,
           drawContext,
           fillCb,
-          strokeCb
+          strokeCb,
+          params
         );
       });
   }

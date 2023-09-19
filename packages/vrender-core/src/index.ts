@@ -1,9 +1,6 @@
 // import 'core-js/proposals/reflect-metadata';
 import './modules';
 
-// 导出版本号
-export const version = __VERSION__;
-
 export * from './container';
 export * from './core/global';
 export * from './graphic';

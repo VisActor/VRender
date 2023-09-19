@@ -37,4 +37,6 @@ jobs:
       - name: Install rush
         run: node common/scripts/install-run-rush.js install --bypass-policy
       - run: node common/scripts/install-run-rush.js build --only tag:package
+      - name: Pre unit test
+        run: cd packages/vrender && rushx test && cd ../..
       - run: node common/scripts/install-run-rush.js test --only tag:package

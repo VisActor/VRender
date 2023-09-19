@@ -49,14 +49,14 @@
     "VisActor",
     "graphics",
     "renderer",
-    "vrender"
+    "vrender-core"
   ],
   "homepage": "",
   "bugs": "https://github.com/VisActor/VRender/issues",
   "repository": {
     "type": "git",
     "url": "https://github.com/VisActor/VRender.git",
-    "directory": "packages/vrender"
+    "directory": "packages/vrender-core"
   },
   "author": {
     "name": "VisActor",

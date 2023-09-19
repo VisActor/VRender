@@ -21,7 +21,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.15.1",
+    "@visactor/vrender-core": "workspace:0.15.1",
     "@visactor/vutils": "~0.16.0",
     "@resvg/resvg-js": "2.4.1",
     "canvas": "2.11.2",

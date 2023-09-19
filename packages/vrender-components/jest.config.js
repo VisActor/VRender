@@ -15,6 +15,7 @@ module.exports = {
       tsconfig: './tsconfig.test.json'
     }
   },
+  setupFiles: ['./setup-mock.js'],
   verbose: true,
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.ts', '!**/type/**'],
@@ -22,6 +23,7 @@ module.exports = {
   setupFiles: ['./setup-mock.js'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings', 'type.ts'],
   moduleNameMapper: {
-    '@visactor/vrender': path.resolve(__dirname, '../vrender/src/index.ts')
+    '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
+    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts')
   }
 };

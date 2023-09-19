@@ -8,7 +8,7 @@ import type {
   ILine,
   ILineGraphicAttribute,
   IClipRangeByDimensionType
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
   IRenderService,
   IGraphic,
@@ -17,7 +17,7 @@ import {
   CustomPath2D,
   drawSegments,
   injectable
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

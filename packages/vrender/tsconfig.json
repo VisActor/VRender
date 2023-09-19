@@ -7,5 +7,13 @@
     "typeRoots": ["./node_modules/@types", "./src/types"],
     "composite": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    },
+    {
+      "path": "../vrender-kits"
+    }
+  ]
 }

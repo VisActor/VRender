@@ -1,4 +1,4 @@
-import { ContainerModule, GraphicRender } from '@visactor/vrender';
+import { ContainerModule, GraphicRender } from '@visactor/vrender-core';
 import { RoughCanvasArcRender } from './rough-arc';
 import { RoughCanvasAreaRender } from './rough-area';
 import { RoughCanvasCircleRender } from './rough-circle';

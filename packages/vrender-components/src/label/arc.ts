@@ -208,7 +208,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
 
       const item = data[index] ? data[index] : null;
-      const textBounds = textBoundsArray[index] ? textBoundsArray[index] : 0;
+      const textBounds = textBoundsArray[index] ? textBoundsArray[index] : { x1: 0, x2: 0, y1: 0, y2: 0 };
 
       const arcMiddleAngle = (graphicAttribute.startAngle + graphicAttribute.endAngle) / 2;
       const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;

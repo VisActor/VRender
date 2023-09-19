@@ -71,7 +71,8 @@ export const page = () => {
     y: 0,
     width: 100,
     height: 100,
-    fill: 'orange'
+    fill: 'orange',
+    _debug_bounds: c => (c.strokeStyle = 'red')
   });
 
   const c2 = new TranformComponent2(

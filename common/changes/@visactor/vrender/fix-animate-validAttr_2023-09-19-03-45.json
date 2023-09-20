@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: custom animate solve validattr issue",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

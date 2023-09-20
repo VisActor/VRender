@@ -24,45 +24,53 @@ import { lynxCanvasModule } from '../canvas/contributions/lynx/modules';
 import { nodeCanvasModule } from '../canvas/contributions/node/modules';
 import { taroCanvasModule } from '../canvas/contributions/taro/modules';
 import { wxCanvasModule } from '../canvas/contributions/wx/modules';
+import { loadCanvasPicker, loadMathPicker } from '../picker';
 
 export function loadAllModule(container: Container) {
   container.load(allEnvModule);
   loadAllCavnvas(container);
   container.load(allWindowModule);
+  loadCanvasPicker(container);
 }
 
 export function loadBrowserEnv(container: Container) {
   container.load(browserEnvModule);
   container.load(browserCanvasModule);
   container.load(browserWindowModule);
+  loadCanvasPicker(container);
 }
 
 export function loadFeishuEnv(container: Container) {
   container.load(feishuEnvModule);
   container.load(feishuCanvasModule);
   container.load(feishuWindowModule);
+  loadMathPicker(container);
 }
 
 export function loadLynxEnv(container: Container) {
   container.load(lynxEnvModule);
   container.load(lynxCanvasModule);
   container.load(lynxWindowModule);
+  loadMathPicker(container);
 }
 
 export function loadNodeEnv(container: Container) {
   container.load(nodeEnvModule);
   container.load(nodeCanvasModule);
   container.load(nodeWindowModule);
+  loadMathPicker(container);
 }
 
 export function loadTaroEnv(container: Container) {
   container.load(taroEnvModule);
   container.load(taroCanvasModule);
   container.load(taroWindowModule);
+  loadMathPicker(container);
 }
 
 export function loadWxEnv(container: Container) {
   container.load(wxEnvModule);
   container.load(wxCanvasModule);
   container.load(wxWindowModule);
+  loadMathPicker(container);
 }

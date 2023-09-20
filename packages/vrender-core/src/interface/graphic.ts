@@ -243,6 +243,7 @@ export type IGraphicAttribute = IGraphicStyle &
      */
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
+    interactive: boolean;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
@@ -265,6 +266,7 @@ export type ISetAttributeContext = {
     /** is animation end? */
     end?: boolean;
   };
+  skipUpdateCallback?: boolean;
 };
 
 export type IGraphicAnimateParams = {

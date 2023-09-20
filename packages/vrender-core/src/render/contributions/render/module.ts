@@ -39,6 +39,7 @@ import {
 import {
   Canvas3DDrawItemInterceptor,
   DrawItemInterceptor,
+  InteractiveDrawItemInterceptorContribution,
   ShadowRootDrawItemInterceptorContribution
 } from './draw-interceptor';
 import { DefaultCanvasRect3dRender } from './rect3d-render';
@@ -284,5 +285,7 @@ export default new ContainerModule(bind => {
   bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
   bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
+  bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  bind(DrawItemInterceptor).toService(InteractiveDrawItemInterceptorContribution);
   bindContributionProvider(bind, DrawItemInterceptor);
 });

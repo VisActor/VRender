@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support interactive config, closed #446",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -2,11 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-<<<<<<<< HEAD:common/changes/@visactor/vrender/refactor-xml_2023-09-11-10-30.json
-      "comment": "refactor: minify fast-xml-parser, closed #468",
-========
       "comment": "fix: fix the line closed issue, closed #487",
->>>>>>>> develop:common/changes/@visactor/vrender/fix-line-closed_2023-09-14-03-09.json
       "type": "none"
     }
   ],

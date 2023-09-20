@@ -152,6 +152,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   boundsMode: 'accurate',
   keepDirIn3d: true,
   shadowRootIdx: 1,
+  interactive: false,
   ...DefaultStyle,
   ...DefaultTransform
 };

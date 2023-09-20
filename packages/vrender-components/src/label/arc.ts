@@ -216,53 +216,60 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       const graphicAttribute = currentMark.attribute as IArcGraphicAttribute;
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
 
-      const item = data[index] ? data[index] : null;
-      const textBounds = textBoundsArray[index] ? textBoundsArray[index] : { x1: 0, x2: 0, y1: 0, y2: 0 };
+      if (!isNil(data[index]) && !isNil(textBoundsArray[index])) {
+        const item = data[index] ? data[index] : null;
+        const textBounds = textBoundsArray[index] ? textBoundsArray[index] : { x1: 0, x2: 0, y1: 0, y2: 0 };
 
-      const arcMiddleAngle = (graphicAttribute.startAngle + graphicAttribute.endAngle) / 2;
-      const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;
-      const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
+        const arcMiddleAngle = (graphicAttribute.startAngle + graphicAttribute.endAngle) / 2;
+        const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;
+        const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
 
-      const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
-      const outerArcMiddle = circlePoint(center.x, center.y, maxRadius + attribute.line.line1MinLength, arcMiddleAngle);
-      const arc = new ArcInfo(
-        item,
-        arcMiddle,
-        outerArcMiddle,
-        arcQuadrant,
-        intervalAngle,
-        arcMiddleAngle,
-        graphicAttribute.innerRadius,
-        graphicAttribute.outerRadius,
-        center
-      );
+        const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
+        const outerArcMiddle = circlePoint(
+          center.x,
+          center.y,
+          maxRadius + attribute.line.line1MinLength,
+          arcMiddleAngle
+        );
+        const arc = new ArcInfo(
+          item,
+          arcMiddle,
+          outerArcMiddle,
+          arcQuadrant,
+          intervalAngle,
+          arcMiddleAngle,
+          graphicAttribute.innerRadius,
+          graphicAttribute.outerRadius,
+          center
+        );
 
-      // refDatum: any,
-      // center: IPoint,
-      // outerCenter: IPoint,
-      // quadrant: Quadrant,
-      // radian: number,
-      // middleAngle: number,
-      // innerRadius: number,
-      // outerRadius: number,
-      // circleCenter: IPoint
+        // refDatum: any,
+        // center: IPoint,
+        // outerCenter: IPoint,
+        // quadrant: Quadrant,
+        // radian: number,
+        // middleAngle: number,
+        // innerRadius: number,
+        // outerRadius: number,
+        // circleCenter: IPoint
 
-      arc.pointA = circlePoint(
-        (center as IPoint).x,
-        (center as IPoint).y,
-        this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
-        arc.middleAngle
-      );
+        arc.pointA = circlePoint(
+          (center as IPoint).x,
+          (center as IPoint).y,
+          this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
+          arc.middleAngle
+        );
 
-      arc.labelSize = {
-        width: textBounds.x2 - textBounds.x1,
-        height: textBounds.y2 - textBounds.y1
-      };
+        arc.labelSize = {
+          width: textBounds.x2 - textBounds.x1,
+          height: textBounds.y2 - textBounds.y1
+        };
 
-      if (isQuadrantRight(arc.quadrant)) {
-        this._arcRight.set(arc.refDatum, arc);
-      } else if (isQuadrantLeft(arc.quadrant)) {
-        this._arcLeft.set(arc.refDatum, arc);
+        if (isQuadrantRight(arc.quadrant)) {
+          this._arcRight.set(arc.refDatum, arc);
+        } else if (isQuadrantLeft(arc.quadrant)) {
+          this._arcLeft.set(arc.refDatum, arc);
+        }
       }
     });
 

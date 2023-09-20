@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 14 Sep 2023 09:55:56 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Sep 2023 13:12:13 GMT and should not be manually modified.
+
+## 0.15.3
+Wed, 20 Sep 2023 13:12:13 GMT
+
+### Updates
+
+- feat: appendChild add highPerformance params
+- feat: add _debug_bounds attribute to draw bounds, closed #500
+- feat: text support verticalMode, closed #503
+- fix: custom animate solve validattr issue
+- fix: fix arc stroke issue
+- feat: emit change events of data-zoom
+
+
+- feat: brush support attributes: trigger, udpateTrigger, endTrigger, resetTrigger, hasMask
+
+
+- fix: fix release graphic don't remove html issue, closed #502
 
 ## 0.15.2
 Thu, 14 Sep 2023 09:55:56 GMT

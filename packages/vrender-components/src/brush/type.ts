@@ -1,6 +1,22 @@
-import type { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
+import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
+  /**
+   * 触发框选的事件名称
+   */
+  trigger?: GraphicEventType;
+  /**
+   * 更新框选的事件名称
+   */
+  updateTrigger?: GraphicEventType;
+  /**
+   * 结束框选的事件名称
+   */
+  endTrigger?: GraphicEventType;
+  /**
+   * 清空框选的事件名称
+   */
+  resetTrigger?: GraphicEventType;
   /**
    * 可交互范围
    */
@@ -30,6 +46,8 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default [0,0]
    */
   yRange?: [number, number];
+  /** 是否展示brush mask */
+  hasMask?: boolean;
   /**
    * 框选区域的样式
    */

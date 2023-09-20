@@ -136,7 +136,13 @@ export interface IStage extends INode {
   getTimeline: () => ITimeline;
 
   render: (layers?: ILayer[], params?: Partial<IDrawContext>) => void;
-  renderNextFrame: (layers?: ILayer[]) => void;
+  /**
+   * 下一帧渲染
+   * @param layers 渲染的图层
+   * @param force 是否强行下一帧渲染，不采取优化方案
+   * @returns
+   */
+  renderNextFrame: (layers?: ILayer[], force?: boolean) => void;
   tryInitInteractiveLayer: () => void;
 
   // 画布操作

@@ -96,6 +96,74 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
 }
 
 /**
+ * 交互层节点拦截器，用于支持交互层图元
+ */
+@injectable()
+export class InteractiveDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
+  order: number = 1;
+  // afterDrawItem(
+  //   graphic: IGraphic,
+  //   renderService: IRenderService,
+  //   drawContext: IDrawContext,
+  //   drawContribution: IDrawContribution,
+  //   params?: IGraphicRenderDrawParams
+  // ): boolean {
+
+  //   if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+  //     this.drawItem(graphic, renderService, drawContext, drawContribution, params);
+  //   }
+  //   return false;
+  // }
+
+  beforeDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    let interactiveGraphic: IGraphic;
+    if (graphic.attribute.interactive) {
+      interactiveGraphic = graphic.interactiveGraphic;
+      if (!interactiveGraphic) {
+        interactiveGraphic = graphic.clone();
+        graphic.interactiveGraphic = interactiveGraphic;
+      }
+      // 设置位置
+      const m = graphic.globalTransMatrix;
+      interactiveGraphic.setAttributes(
+        {
+          x: 0,
+          y: 0,
+          scaleX: 1,
+          scaleY: 1,
+          angle: 0,
+          postMatrix: m,
+          interactive: false
+        },
+        false,
+        { skipUpdateCallback: true }
+      );
+      // 添加到交互层中
+      drawContext.stage.tryInitInteractiveLayer();
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      if (interactiveLayer) {
+        interactiveLayer.add(interactiveGraphic);
+      }
+      return true;
+    } else if (interactiveGraphic) {
+      // 从交互层中删除
+      drawContext.stage.tryInitInteractiveLayer();
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      if (interactiveLayer) {
+        interactiveLayer.removeChild(interactiveGraphic);
+      }
+    }
+    return false;
+  }
+}
+
+/**
  * 3d拦截器，用于渲染3d视角
  */
 @injectable()

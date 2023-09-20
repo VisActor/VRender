@@ -728,6 +728,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   onAttributeUpdate(context?: ISetAttributeContext) {
+    if (context && context.skipUpdateCallback) {
+      return;
+    }
     application.graphicService.onAttributeUpdate(this);
     this._emitCustomEvent('afterAttributeUpdate', context);
   }

@@ -57,6 +57,8 @@ const DefaultConfig = {
   BACKGROUND: 'white'
 };
 
+type IStageState = 'rendering' | 'normal';
+
 /**
  * Stage是一个舞台或一个视口，并不直接对应一个或多个Canvas，逻辑上和Canvas无关
  *
@@ -70,6 +72,8 @@ const DefaultConfig = {
  */
 export class Stage extends Group implements IStage {
   declare parent: IStage | null;
+
+  declare state: IStageState;
 
   protected _viewBox: AABBBounds;
   private _background: string | IColor;
@@ -215,6 +219,7 @@ export class Stage extends Group implements IStage {
       this._viewBox.setValue(0, 0, this.width, this.height);
     }
 
+    this.state = 'normal';
     this.renderCount = 0;
 
     // // 没有传入xy就默认为0
@@ -586,6 +591,8 @@ export class Stage extends Group implements IStage {
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
     this.ticker.start();
     this.timeline.resume();
+    const state = this.state;
+    this.state = 'rendering';
     this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
@@ -595,6 +602,7 @@ export class Stage extends Group implements IStage {
       this.nextFrameRenderLayerSet.clear();
       this.hooks.afterRender.call(this);
     }
+    this.state = state;
     this._skipRender && this._skipRender++;
   }
 
@@ -614,7 +622,11 @@ export class Stage extends Group implements IStage {
     // });
   }
 
-  renderNextFrame(layers?: ILayer[]): void {
+  renderNextFrame(layers?: ILayer[], force?: boolean): void {
+    // render状态中调用的不会触发nextFrame，避免loop
+    if (this.state === 'rendering' && !force) {
+      return;
+    }
     // 性能优化，避免重复add
     if (this.nextFrameRenderLayerSet.size !== this.childrenCount) {
       (layers || this).forEach<ILayer>((layer: any) => {
@@ -632,6 +644,8 @@ export class Stage extends Group implements IStage {
   _doRenderInThisFrame() {
     this.timeline.resume();
     this.ticker.start();
+    const state = this.state;
+    this.state = 'rendering';
     this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
@@ -640,6 +654,7 @@ export class Stage extends Group implements IStage {
       this.hooks.afterRender.call(this);
       this.nextFrameRenderLayerSet.clear();
     }
+    this.state = state;
     this._skipRender && this._skipRender++;
   }
 

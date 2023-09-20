@@ -25,7 +25,8 @@ import type {
   ILayerService,
   ITimeline,
   IOptimizeType,
-  LayerMode
+  LayerMode,
+  PickResult
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -759,7 +760,7 @@ export class Stage extends Group implements IStage {
   export(type: IExportType): HTMLCanvasElement | ImageData {
     throw new Error('暂不支持');
   }
-  pick(x: number, y: number): { graphic: IGraphic | null; group: IGroup | null } | false {
+  pick(x: number, y: number): PickResult | false {
     // 暂时不提供layer的pick
     const result = this.pickerService.pick(this.children as unknown as IGraphic[], new Point(x, y), {
       bounds: this.AABBBounds

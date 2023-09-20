@@ -204,7 +204,11 @@ export type IGraphicStyle = IFillStyle &
     } | null;
   };
 
-export type IGraphicAttribute = IGraphicStyle &
+export type IDebugType = {
+  _debug_bounds: boolean | ((c: any, g: any) => void);
+};
+export type IGraphicAttribute = IDebugType &
+  IGraphicStyle &
   ITransform & {
     /**
      * stroke百分比

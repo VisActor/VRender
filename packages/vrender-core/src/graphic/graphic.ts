@@ -1386,6 +1386,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   release(): void {
     this.releaseStatus = 'released';
+    application.graphicService.onRelease(this);
   }
 
   protected _emitCustomEvent(type: string, context?: any) {

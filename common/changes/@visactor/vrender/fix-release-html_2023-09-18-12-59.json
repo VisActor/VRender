@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: text support verticalMode, closed #503",
+      "comment": "fix: fix release graphic don't remove html issue, closed #502",
       "type": "none"
     }
   ],

@@ -74,7 +74,7 @@ export abstract class DefaultPickService implements IPickerService {
       if (graphics[i].isContainer) {
         result = this.pickGroup(graphics[i] as IGroup, point, parentMatrix, params);
       } else {
-        result.graphic = this.pickItem(graphics[i], point, parentMatrix, params);
+        result = this.pickItem(graphics[i], point, parentMatrix, params);
       }
       if (result.graphic) {
         break;
@@ -149,7 +149,7 @@ export abstract class DefaultPickService implements IPickerService {
               mat4Allocate.free(context.modelMatrix);
             }
             context.modelMatrix = lastMatrix;
-            return result as PickResult;
+            return result;
           }
         }
       }
@@ -167,8 +167,9 @@ export abstract class DefaultPickService implements IPickerService {
     }
     // pickGroup，Group目前只支持拦截模式（用于shadow节点）
     const pickedItem = this.pickItem(group, newPoint.clone(), parentMatrix, params);
-    if (pickedItem) {
-      result.graphic = pickedItem;
+    if (pickedItem && pickedItem.graphic) {
+      result.graphic = pickedItem.graphic;
+      result.params = pickedItem.params;
     }
     const groupPicked = group.attribute.pickable !== false && insideGroup;
 
@@ -180,7 +181,7 @@ export abstract class DefaultPickService implements IPickerService {
       transMatrix.e,
       transMatrix.f
     );
-    if (group.attribute.childrenPickable !== false && !pickedItem) {
+    if (group.attribute.childrenPickable !== false && !(pickedItem && pickedItem.graphic)) {
       foreach(
         group,
         DefaultAttribute.zIndex,
@@ -202,7 +203,10 @@ export abstract class DefaultPickService implements IPickerService {
             newPoint.x -= scrollX;
             newPoint.y -= scrollY;
             const pickedItem = this.pickItem(graphic, newPoint, parentMatrix, params);
-            result.graphic = pickedItem;
+            if (pickedItem && pickedItem.graphic) {
+              result.graphic = pickedItem.graphic;
+              result.params = pickedItem.params;
+            }
           }
           return !!result.graphic || !!result.group;
         },
@@ -228,7 +232,7 @@ export abstract class DefaultPickService implements IPickerService {
     point: IPointLike,
     parentMatrix: IMatrix | null,
     params: IPickParams
-  ): IGraphic | null;
+  ): PickResult | null;
 
   protected selectPicker(graphic: IGraphic): IGraphicPicker | null {
     const picker = this.pickerMap.get(graphic.numberType);

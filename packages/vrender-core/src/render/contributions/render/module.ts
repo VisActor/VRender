@@ -38,6 +38,7 @@ import {
 } from './symbol';
 import {
   Canvas3DDrawItemInterceptor,
+  CommonDrawItemInterceptorContribution,
   DrawItemInterceptor,
   InteractiveDrawItemInterceptorContribution,
   ShadowRootDrawItemInterceptorContribution
@@ -283,6 +284,8 @@ export default new ContainerModule(bind => {
   // interceptor
   bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
+  bind(CommonDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  bind(DrawItemInterceptor).toService(CommonDrawItemInterceptorContribution);
   bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
   bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();

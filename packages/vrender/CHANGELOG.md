@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 13 Sep 2023 02:21:59 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Sep 2023 09:55:56 GMT and should not be manually modified.
+
+## 0.15.2
+Thu, 14 Sep 2023 09:55:56 GMT
+
+### Updates
+
+- feat: export no work animate attr, closed #483
+- feat: polygon support closePath, closed #482
+- fix: fix arc stroke error, closed #481
+- fix: fix the line closed issue, closed #487
+- fix: fix the typo issue in wx env
 
 ## 0.15.1
 Wed, 13 Sep 2023 02:21:59 GMT

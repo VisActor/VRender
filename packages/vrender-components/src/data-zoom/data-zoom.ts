@@ -1,5 +1,5 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender';
-import { vglobal } from '@visactor/vrender';
+import { vglobal, CustomEvent } from '@visactor/vrender';
 import type { IPointLike } from '@visactor/vutils';
 import { array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -280,6 +280,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         end: this.state.end
       });
       this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
+      this._dispatchChangeEvent(this.state.start, this.state.end);
     }
   };
 
@@ -307,6 +308,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         end: this.state.end
       });
       this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
+      this._dispatchChangeEvent(this.state.start, this.state.end);
     }
   }
 
@@ -953,6 +955,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return labelShape;
   }
 
+  private _dispatchChangeEvent(start: number, end: number) {
+    const changeEvent = new CustomEvent('change', {
+      start,
+      end
+    });
+    // FIXME: 需要在 vrender 的事件系统支持
+    // @ts-ignore
+    changeEvent.manager = this.stage?.eventSystem.manager;
+    this.dispatchEvent(changeEvent);
+  }
+
   /** 外部重置组件的起始状态 */
   setStartAndEnd(start?: number, end?: number) {
     const { start: startAttr, end: endAttr } = this.attribute as DataZoomAttributes;
@@ -962,6 +975,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setAttributes({ start, end });
         this._updateStateCallback && this._updateStateCallback(start, end);
+        this._dispatchChangeEvent(start, end);
       }
     }
   }

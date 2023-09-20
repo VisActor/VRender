@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: brush support attributes: trigger, udpateTrigger, endTrigger, resetTrigger, hasMask\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender"
+    }
+  ],
+  "packageName": "@visactor/vrender",
+  "email": "dingling112@gmail.com"
+}

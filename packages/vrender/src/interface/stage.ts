@@ -10,7 +10,7 @@ import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
 import type { ITicker, ITimeline } from './animate';
-import type { IPickerService } from './picker';
+import type { IPickerService, PickResult } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
 import type { ILayerService } from './core';
@@ -150,7 +150,7 @@ export interface IStage extends INode {
   setDpr: (dpr: number, rerender?: boolean) => void;
   setOrigin: (x: number, y: number) => void;
   export: (type: IExportType) => HTMLCanvasElement | ImageData;
-  pick: (x: number, y: number) => { graphic: IGraphic | null; group: IGroup | null } | false;
+  pick: (x: number, y: number) => PickResult | false;
 
   // 动画相关
   startAnimate: (t: number) => void;

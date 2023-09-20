@@ -57,7 +57,11 @@ export class DefaultGlobalPickerService implements IPickerService {
       if (graphics[i].isContainer) {
         result = this.pickGroup(graphics[i] as IGroup, point, parentMatrix, params);
       } else {
-        result.graphic = this.pickItem(graphics[i], point, parentMatrix, params);
+        const data = this.pickItem(graphics[i], point, parentMatrix, params);
+        if (data) {
+          result.graphic = data.graphic;
+          result.params = data.params;
+        }
       }
       if (result.graphic) {
         break;
@@ -119,7 +123,11 @@ export class DefaultGlobalPickerService implements IPickerService {
         } else {
           const newPoint: IPoint = new Point(point.x, point.y);
           parentMatrix.transformPoint(newPoint, newPoint);
-          result.graphic = this.pickItem(graphic, newPoint, parentMatrix, params);
+          const data = this.pickItem(graphic, newPoint, parentMatrix, params);
+          if (data) {
+            result.graphic = data.graphic;
+            result.params = data.params;
+          }
         }
         return !!result.graphic || !!result.group;
       });
@@ -133,12 +141,19 @@ export class DefaultGlobalPickerService implements IPickerService {
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params?: IPickParams): IGraphic | null {
+  pickItem(
+    graphic: IGraphic,
+    point: IPointLike,
+    parentMatrix: IMatrix | null,
+    params?: IPickParams
+  ): PickResult | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }
     if (graphic.AABBBounds.containsPoint(point)) {
-      return graphic;
+      return {
+        graphic: graphic
+      };
     }
     return null;
   }

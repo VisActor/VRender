@@ -95,6 +95,64 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
   }
 }
 
+@injectable()
+export class CommonDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
+  order: number = 1;
+  afterDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+      this.drawItem(graphic, renderService, drawContext, drawContribution, params);
+    }
+    return false;
+  }
+
+  beforeDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    if (graphic.attribute.shadowRootIdx < 0) {
+      this.drawItem(graphic, renderService, drawContext, drawContribution, params);
+    }
+    return false;
+  }
+
+  protected drawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    if (!graphic.attribute._debug_bounds) {
+      return false;
+    }
+
+    const { context } = drawContext;
+    context.highPerformanceSave();
+    // 直接transform
+    // context.transformFromMatrix(graphic.transMatrix, true);
+
+    const b = graphic.AABBBounds;
+
+    if (graphic.attribute._debug_bounds !== true) {
+      graphic.attribute._debug_bounds(context, graphic);
+    }
+    context.strokeRect(b.x1, b.y1, b.width(), b.height());
+
+    context.highPerformanceRestore();
+
+    return true;
+  }
+}
+
 /**
  * 3d拦截器，用于渲染3d视角
  */

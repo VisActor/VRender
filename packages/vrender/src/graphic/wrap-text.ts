@@ -230,4 +230,8 @@ export class WrapText extends Text {
     }
     return super.needUpdateTag(key);
   }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return WrapText.NOWORK_ANIMATE_ATTR;
+  }
 }

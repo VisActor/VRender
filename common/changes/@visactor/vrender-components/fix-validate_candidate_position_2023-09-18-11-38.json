@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "fix: overwrite function attribute for components",
-      "type": "patch"
+      "comment": "fix(label): fix the issue of invalid position in overlap strategy might throw error",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender-components"

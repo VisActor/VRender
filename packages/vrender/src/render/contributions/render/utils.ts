@@ -305,7 +305,6 @@ export function drawArcPath(
     let yore: number;
     let xirs: number;
     let yirs: number;
-
     if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
       xore = outerRadius * cos(outerEndAngle);
       yore = outerRadius * sin(outerEndAngle);
@@ -403,7 +402,7 @@ export function drawArcPath(
         context.moveTo(cx + xors, cy + yors);
         context.arc(cx, cy, outerRadius, outerStartAngle, outerEndAngle, !clockwise);
       } else {
-        // context.moveTo(cx + outerRadius * cos(outerEndAngle), cy + yore);
+        context.moveTo(cx + outerRadius * cos(outerEndAngle), cy + outerRadius * sin(outerEndAngle));
       }
     }
     // Is there no inner ring, and it’s a circular sector?
@@ -494,7 +493,7 @@ export function drawArcPath(
   if (!partStroke) {
     context.closePath();
   } else if (partStroke[3]) {
-    context.lineTo(cx + outerRadius * cos(endAngle), cy + outerRadius * cos(endAngle));
+    context.lineTo(cx + outerRadius * cos(startAngle), cy + outerRadius * sin(startAngle));
   }
 
   return collapsedToLine;

@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: support ignoreBuf config, closed #374",
-      "type": "minor"
+      "comment": "feat: appendChild add highPerformance params",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

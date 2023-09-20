@@ -46,6 +46,7 @@ export type ITextAttribute = {
   lineThrough: number;
   scaleIn3d: boolean;
   direction: 'horizontal' | 'vertical';
+  verticalMode: number; // 垂直布局的模式，0代表默认（横向textAlign，纵向textBaseline），1代表特殊（横向textBaseline，纵向textAlign）
   wordBreak: 'break-word' | 'break-all';
   ignoreBuf: boolean;
   // textDecoration: number;
@@ -76,6 +77,9 @@ export interface IText extends IGraphic<ITextGraphicAttribute> {
   multilineLayout?: LayoutType;
   font?: string;
   cache?: ITextCache;
+
+  getBaselineMapAlign: () => Record<string, string>;
+  getAlignMapBaseline: () => Record<string, string>;
 
   updateMultilineAABBBounds: (text: (number | string)[]) => IAABBBounds;
   updateSingallineAABBBounds: (text: number | string) => IAABBBounds;

@@ -204,7 +204,11 @@ export type IGraphicStyle = IFillStyle &
     } | null;
   };
 
-export type IGraphicAttribute = IGraphicStyle &
+export type IDebugType = {
+  _debug_bounds: boolean | ((c: any, g: any) => void);
+};
+export type IGraphicAttribute = IDebugType &
+  IGraphicStyle &
   ITransform & {
     /**
      * stroke百分比
@@ -412,6 +416,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   clone: () => IGraphic;
   stopAnimates: (stopChildren?: boolean) => void;
+  getNoWorkAnimateAttr: () => Record<string, number>;
 }
 
 export interface IRoot extends IGraphic {

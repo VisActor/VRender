@@ -3,6 +3,7 @@ import type { GraphicType, IFace3d, IRect3d, IRect3dGraphicAttribute } from '../
 import { Rect } from './rect';
 import { getTheme } from './theme';
 import { RECT3D_NUMBER_TYPE } from './constants';
+import { NOWORK_ANIMATE_ATTR } from './graphic';
 
 const CUBE_VERTICES = [
   [0, 0, 0],
@@ -18,6 +19,8 @@ const CUBE_VERTICES = [
 export class Rect3d extends Rect implements IRect3d {
   type: GraphicType = 'rect3d';
   declare attribute: IRect3dGraphicAttribute;
+
+  static NOWORK_ANIMATE_ATTR = NOWORK_ANIMATE_ATTR;
 
   constructor(params: IRect3dGraphicAttribute) {
     super(params);
@@ -66,5 +69,9 @@ export class Rect3d extends Rect implements IRect3d {
     ];
 
     return faces;
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Rect3d.NOWORK_ANIMATE_ATTR;
   }
 }

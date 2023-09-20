@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: support html attribute plugin, closed #153",
-      "type": "minor"
+      "comment": "fix: custom animate solve validattr issue",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

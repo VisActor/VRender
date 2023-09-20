@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix: increase IntersectionObserver robustness in browser env",
-      "type": "patch"
+      "comment": "feat: text support verticalMode, closed #503",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

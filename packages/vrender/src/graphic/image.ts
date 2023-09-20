@@ -1,6 +1,6 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import type { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
 import { application } from '../application';
@@ -18,6 +18,13 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
   // 资源加载完成后回调，外部通过回调获取图片资源尺寸
   successCallback?: () => void;
   failCallback?: () => void;
+
+  static NOWORK_ANIMATE_ATTR = {
+    image: 1,
+    repeatX: 1,
+    repeatY: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   constructor(params: IImageGraphicAttribute) {
     super(params);
@@ -138,5 +145,9 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
 
   clone() {
     return new Image({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Image.NOWORK_ANIMATE_ATTR;
   }
 }

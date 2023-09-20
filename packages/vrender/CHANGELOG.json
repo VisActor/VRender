@@ -2,6 +2,86 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.15.2",
+      "tag": "@visactor/vrender_v0.15.2",
+      "date": "Thu, 14 Sep 2023 09:55:56 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: export no work animate attr, closed #483"
+          },
+          {
+            "comment": "feat: polygon support closePath, closed #482"
+          },
+          {
+            "comment": "fix: fix arc stroke error, closed #481"
+          },
+          {
+            "comment": "fix: fix the line closed issue, closed #487"
+          },
+          {
+            "comment": "fix: fix the typo issue in wx env"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.15.1",
+      "tag": "@visactor/vrender_v0.15.1",
+      "date": "Wed, 13 Sep 2023 02:21:59 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.0",
+      "tag": "@visactor/vrender_v0.15.0",
+      "date": "Tue, 12 Sep 2023 12:20:48 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "feat: toCanvas api support viewBox params, closed #272"
+          },
+          {
+            "comment": "feat: support html attribute plugin, closed #153"
+          },
+          {
+            "comment": "feat: support ignoreBuf config, closed #374"
+          },
+          {
+            "comment": "feat: support jsx describe, closed #320"
+          },
+          {
+            "comment": "feat: symbol support more type and support svg format, closed #110 #313"
+          },
+          {
+            "comment": "fix: wrapText support wordBreak"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "feat: poptip support formatMethod"
+          },
+          {
+            "comment": "fix: poptip fix width error and add maxWidthPercent"
+          },
+          {
+            "comment": "feat: text limit ignore wordBreak, closed #389"
+          },
+          {
+            "comment": "feat: enhance timeline funciton, closed #348"
+          },
+          {
+            "comment": "fix: increase IntersectionObserver robustness in browser env"
+          },
+          {
+            "comment": "fix: pass fontFamily in measureText"
+          },
+          {
+            "comment": "perf: improve animate by skip render without window"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.8",
       "tag": "@visactor/vrender_v0.14.8",
       "date": "Thu, 07 Sep 2023 11:56:00 GMT",

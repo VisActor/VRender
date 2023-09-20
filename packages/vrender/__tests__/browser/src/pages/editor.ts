@@ -71,11 +71,17 @@ export const page = () => {
     y: 0,
     width: 100,
     height: 100,
-    fill: 'orange'
+    fill: 'orange',
+    _debug_bounds: c => (c.strokeStyle = 'red')
   });
 
-  const c2 = new TranformComponent2({}, r.AABBBounds);
-  stage.defaultLayer.add(c2);
+  const c2 = new TranformComponent2(
+    {
+      childrenPickable: true,
+      pickable: false
+    },
+    r.AABBBounds
+  );
 
   c2.onUpdate(data => {
     // console.log(data.anchor);
@@ -128,8 +134,12 @@ export const page = () => {
   //   offsetX = e.offsetX;
   //   offsetY = e.offsetY;
   // });
+  // const rg = createGroup({});
+  // rg.add(r);
 
   stage.defaultLayer.add(r);
+  // r.attachShadow(c2);
+  stage.defaultLayer.add(c2);
 
   stage.render(undefined, { renderStyle: 'rough' });
 

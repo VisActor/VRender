@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "fix: wrapText support wordBreak",
-      "type": "minor"
+      "comment": "feat: add _debug_bounds attribute to draw bounds, closed #500",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

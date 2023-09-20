@@ -41,6 +41,10 @@ export class ArcInfo {
   quadrant: Quadrant;
   radian: number;
   middleAngle: number;
+  innerRadius: number;
+  outerRadius: number;
+  /** 扇形圆心点坐标 */
+  circleCenter: IPoint;
   k: number;
   angle: number;
 
@@ -50,7 +54,10 @@ export class ArcInfo {
     outerCenter: IPoint,
     quadrant: Quadrant,
     radian: number,
-    middleAngle: number
+    middleAngle: number,
+    innerRadius: number,
+    outerRadius: number,
+    circleCenter: IPoint
   ) {
     this.refDatum = refDatum;
     this.center = center;
@@ -58,6 +65,9 @@ export class ArcInfo {
     this.quadrant = quadrant;
     this.radian = radian;
     this.middleAngle = middleAngle;
+    this.innerRadius = innerRadius;
+    this.outerRadius = outerRadius;
+    this.circleCenter = circleCenter;
     this.labelVisible = true;
     this.labelLimit = 0;
   }
@@ -194,7 +204,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     this._arcLeft.clear();
     this._arcRight.clear();
     this._ellipsisWidth = ellipsisWidth;
-    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
 
     let maxRadius = 0;
     currentMarks.forEach(currentMarks => {
@@ -216,7 +225,17 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
       const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
       const outerArcMiddle = circlePoint(center.x, center.y, maxRadius + attribute.line.line1MinLength, arcMiddleAngle);
-      const arc = new ArcInfo(item, arcMiddle, outerArcMiddle, arcQuadrant, intervalAngle, arcMiddleAngle);
+      const arc = new ArcInfo(
+        item,
+        arcMiddle,
+        outerArcMiddle,
+        arcQuadrant,
+        intervalAngle,
+        arcMiddleAngle,
+        graphicAttribute.innerRadius,
+        graphicAttribute.outerRadius,
+        center
+      );
 
       // refDatum: any,
       // center: IPoint,
@@ -224,12 +243,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       // quadrant: Quadrant,
       // radian: number,
       // middleAngle: number,
-      // k: number
+      // innerRadius: number,
+      // outerRadius: number,
+      // circleCenter: IPoint
 
       arc.pointA = circlePoint(
         (center as IPoint).x,
         (center as IPoint).y,
-        this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius, centerOffset),
+        this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
         arc.middleAngle
       );
 
@@ -263,25 +284,13 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    * 布局内部标签
    */
   private _layoutInsideLabels(arcs: ArcInfo[], attribute: any, currentMarks: any[]) {
-    const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
-    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
-    const innerRadiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.innerRadius,
-      attribute.width,
-      attribute.height
-    );
-    const outerRadiusRatio = this.computeLayoutOuterRadius(
-      currentMarks[0].attribute.outerRadius,
-      attribute.width,
-      attribute.height
-    );
     const labelConfig = attribute;
     const spaceWidth = labelConfig.spaceWidth as number;
 
     arcs.forEach((arc: ArcInfo) => {
       const { labelSize, radian } = arc;
-      const innerRadius = this.computeRadius(innerRadiusRatio, attribute.width, attribute.height, centerOffset, 1);
-      const outerRadius = this.computeRadius(outerRadiusRatio, attribute.width, attribute.height, centerOffset, 1);
+      const innerRadius = arc.innerRadius;
+      const outerRadius = arc.outerRadius;
       const minRadian = connectLineRadian(outerRadius, labelSize.height);
       let limit;
       if (radian < minRadian) {
@@ -305,7 +314,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       const align = this._computeAlign(arc, attribute);
       const alignOffset = align === 'left' ? labelWidth : align === 'right' ? 0 : labelWidth / 2;
       const labelRadius = outerRadius - spaceWidth - alignOffset;
-      arc.labelPosition = circlePoint((center as IPoint).x, (center as IPoint).y, labelRadius, arc.middleAngle);
+      arc.labelPosition = circlePoint(arc.circleCenter.x, arc.circleCenter.y, labelRadius, arc.middleAngle);
       arc.labelLimit = labelWidth;
       if (!isGreater(labelWidth, 0)) {
         arc.labelVisible = false;
@@ -403,8 +412,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    * 计算 pointC 以及 label limit 与 position
    */
   private _computeX(arc: ArcInfo, attribute: any, currentMarks: any[]) {
-    const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
-    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
+    const center = arc.circleCenter;
     const plotLayout = { width: center.x * 2, height: center.y * 2 };
 
     let maxRadius = 0;
@@ -428,7 +436,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       labelPosition.x = NaN;
       arc.labelLimit = 0;
     }
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
     const flag = isQuadrantLeft(quadrant) ? -1 : 1;
     let cx: number = 0;
     const restWidth = flag > 0 ? plotLayout.width - pointB.x : pointB.x;
@@ -691,11 +699,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         y: arc.outerCenter.y
       };
     } else {
-      const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
-      const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
-      const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
+      const center = arc.circleCenter;
+      const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
       const { labelPosition, quadrant } = arc;
-      const outerR = Math.max(radius + line1MinLength, currentMarks[0].attribute.outerRadius);
+      const outerR = Math.max(radius + line1MinLength, arc.outerRadius);
       const rd = r - outerR;
       // x 为 pointB.x 与圆心的差值
       const x = Math.sqrt(r ** 2 - Math.abs((center as IPoint).y - labelPosition.y) ** 2) - rd;
@@ -725,7 +732,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    * 计算圆弧切线所限制的标签 Y 值范围
    */
   private _computeYRange(arc: ArcInfo, attribute: any, currentMarks: any[]) {
-    const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
+    const center = arc.circleCenter;
     const plotRect = { width: center.x * 2, height: center.y * 2 };
 
     let maxRadius = 0;
@@ -739,9 +746,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const line1MinLength = attribute.line.line1MinLength as number;
 
     const { width, height } = plotRect;
-    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
 
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
     // 出现 y 方向挤压过度必然是由于画布上下某一端被占满，此时半径是确定的
     const r = this._computeLayoutRadius(height / 2, attribute, currentMarks);
     // 所有坐标转化到以圆心为原点的坐标系计算
@@ -815,8 +821,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     });
 
     const radiusRatio = this.computeLayoutOuterRadius(maxRadius, attribute.width, attribute.height);
-    const centerOffset = (attribute as ArcLabelAttrs)?.centerOffset ?? 0;
-    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height, centerOffset);
+    const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
     const outerR = radius + line1MinLength;
 
     const a = outerR - layoutArcGap;
@@ -922,10 +927,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return labelLine;
   }
 
-  protected computeRadius(r: number, width?: number, height?: number, centerOffset?: number, k?: number): number {
-    return (
-      this.computeLayoutRadius(width ? width : 0, height ? height : 0) * r * (isNil(k) ? 1 : k) + centerOffset ?? 0
-    );
+  protected computeRadius(r: number, width?: number, height?: number, k?: number): number {
+    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * r * (isNil(k) ? 1 : k);
   }
 
   protected computeLayoutRadius(width: number, height: number) {
@@ -940,8 +943,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return r / (Math.min(width, height) / 2);
   }
 
-  private computeDatumRadius(width?: number, height?: number, outerRadius?: any, centerOffset?: number): number {
+  private computeDatumRadius(width?: number, height?: number, outerRadius?: any): number {
     const outerRadiusRatio = this.computeLayoutOuterRadius(outerRadius, width, height); //this.getRadius(state)
-    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio + centerOffset ?? 0;
+    return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio;
   }
 }

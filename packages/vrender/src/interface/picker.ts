@@ -6,8 +6,8 @@ import type { IGroup } from './graphic/group';
 import type { IDrawContribution } from './render';
 
 export type PickResult = {
-  graphic: IGraphic | null;
-  group: IGroup | null;
+  graphic?: IGraphic | null;
+  group?: IGroup | null;
   params?: {
     shadowTarget?: IGraphic;
   };
@@ -44,7 +44,7 @@ export interface IPickerService {
     point: IPointLike,
     parentMatrix: IMatrix | null,
     params?: IPickParams
-  ) => IGraphic | null;
+  ) => PickResult | null;
   containsPoint: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
   drawContribution?: IDrawContribution;
 }
@@ -62,7 +62,7 @@ export interface IPickItemInterceptorContribution {
     params?: {
       parentMatrix: IMatrix;
     }
-  ) => boolean | PickResult | null;
+  ) => PickResult | null;
 
   afterPickItem?: (
     graphic: IGraphic,
@@ -74,7 +74,7 @@ export interface IPickItemInterceptorContribution {
     params?: {
       parentMatrix: IMatrix;
     }
-  ) => boolean | PickResult | null;
+  ) => PickResult | null;
   // afterPickItem?: (
   //   graphic: IGraphic,
   //   pickerService: IPickerService,

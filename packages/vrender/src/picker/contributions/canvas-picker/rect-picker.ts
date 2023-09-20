@@ -60,9 +60,10 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
     }
 
     let picked = true;
-    // 处理圆角情况，无圆角直接使用bounds判断结果
+    // 处理圆角情况，或者存在shadowRoot的情况，无圆角直接使用bounds判断结果
     if (
       !onlyTranslate ||
+      rect.shadowRoot ||
       (isNumber(cornerRadius, true) && cornerRadius !== 0) ||
       (isArray(cornerRadius) && (<number[]>cornerRadius).some(num => num !== 0))
     ) {
@@ -102,7 +103,7 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
           return picked;
         }
       );
-    } else if (picked) {
+    } else {
       // 如果只有描边那需要测试描边
       const {
         fill = rectAttribute.fill,

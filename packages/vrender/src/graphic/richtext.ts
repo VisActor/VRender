@@ -13,7 +13,7 @@ import type {
   ILayer,
   IRichTextIcon
 } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultRichTextAttribute } from './config';
 import Frame from './richtext/frame';
 import Paragraph from './richtext/paragraph';
@@ -45,6 +45,17 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
   _frameCache: Frame; // 富文本布局画布
   _currentHoverIcon: IRichTextIcon | null = null;
+
+  static NOWORK_ANIMATE_ATTR = {
+    ellipsis: 1,
+    wordBreak: 1,
+    verticalDirection: 1,
+    textAlign: 1,
+    textBaseline: 1,
+    textConfig: 1,
+    layoutDirection: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   constructor(params?: IRichTextGraphicAttribute) {
     super(params);
@@ -360,5 +371,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     });
 
     return pickIcon;
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return RichText.NOWORK_ANIMATE_ATTR;
   }
 }

@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.15.2",
+      "tag": "@visactor/vrender-kits_v0.15.2",
+      "date": "Thu, 14 Sep 2023 09:55:56 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.1",
+      "tag": "@visactor/vrender-kits_v0.15.1",
+      "date": "Wed, 13 Sep 2023 02:21:58 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.0",
+      "tag": "@visactor/vrender-kits_v0.15.0",
+      "date": "Tue, 12 Sep 2023 12:20:48 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.14.8",
       "tag": "@visactor/vrender-kits_v0.14.8",
       "date": "Thu, 07 Sep 2023 11:56:00 GMT",

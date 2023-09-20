@@ -1,6 +1,6 @@
 import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
 import type { ILine, ILineGraphicAttribute } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { parsePadding, pointsInterpolation } from '../common/utils';
@@ -16,6 +16,12 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     super(params);
     this.numberType = LINE_NUMBER_TYPE;
   }
+
+  static NOWORK_ANIMATE_ATTR = {
+    segments: 1,
+    curveType: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   isValid(): boolean {
     return super.isValid() && this._isValid();
@@ -127,6 +133,10 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
 
   clone() {
     return new Line({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Line.NOWORK_ANIMATE_ATTR;
   }
 }
 

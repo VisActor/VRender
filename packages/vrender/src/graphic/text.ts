@@ -3,7 +3,7 @@ import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/te
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutType } from '../interface';
-import { Graphic, GRAPHIC_UPDATE_TAG_KEY } from './graphic';
+import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
@@ -19,11 +19,24 @@ const TEXT_UPDATE_TAG_KEY = [
   'fontWeight',
   'ellipsis',
   'lineHeight',
+  'direction',
+  'wordBreak',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
 export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   type: 'text' = 'text';
+
+  static NOWORK_ANIMATE_ATTR = {
+    ellipsis: 1,
+    wordBreak: 1,
+    direction: 1,
+    textAlign: 1,
+    textBaseline: 1,
+    fontFamily: 1,
+    fontWeight: 1,
+    ...NOWORK_ANIMATE_ATTR
+  };
 
   cache: ITextCache;
   _font: string;
@@ -217,6 +230,26 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this._AABBBounds;
   }
 
+  getBaselineMapAlign(): Record<string, string> {
+    return Text.baselineMapAlign;
+  }
+
+  getAlignMapBaseline(): Record<string, string> {
+    return Text.alignMapBaseline;
+  }
+
+  static baselineMapAlign = {
+    top: 'left',
+    bottom: 'right',
+    middle: 'center'
+  };
+
+  static alignMapBaseline = {
+    left: 'top',
+    right: 'bottom',
+    center: 'middle'
+  };
+
   /**
    * 计算垂直布局的单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
@@ -232,16 +265,21 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,
-      textAlign = textTheme.textAlign,
-      textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth,
-      wordBreak = textTheme.wordBreak
+      verticalMode = textTheme.verticalMode
     } = attribute;
+
+    let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
+    if (!verticalMode) {
+      const t = textAlign;
+      textAlign = Text.baselineMapAlign[textBaseline] ?? 'left';
+      textBaseline = Text.alignMapBaseline[t] ?? 'top';
+    }
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
       const dx = textDrawOffsetX(textAlign, width);
@@ -375,16 +413,21 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const {
       maxLineWidth = textTheme.maxLineWidth,
       ellipsis = textTheme.ellipsis,
-      textAlign = textTheme.textAlign,
-      textBaseline = textTheme.textBaseline,
       fontFamily = textTheme.fontFamily,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth,
-      wordBreak = textTheme.wordBreak
+      // wordBreak = textTheme.wordBreak,
+      verticalMode = textTheme.verticalMode
     } = attribute;
+    let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
+    if (!verticalMode) {
+      const t = textAlign;
+      textAlign = Text.baselineMapAlign[textBaseline] ?? 'left';
+      textBaseline = Text.alignMapBaseline[t] ?? 'top';
+    }
     width = 0;
     if (!this.shouldUpdateShape() && this.cache) {
       this.cache.verticalList.forEach(item => {
@@ -492,6 +535,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   clone(): Text {
     return new Text({ ...this.attribute });
+  }
+
+  getNoWorkAnimateAttr(): Record<string, number> {
+    return Text.NOWORK_ANIMATE_ATTR;
   }
 }
 

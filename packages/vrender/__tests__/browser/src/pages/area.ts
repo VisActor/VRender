@@ -1,4 +1,4 @@
-import { createStage, createArea, container, IGraphic, global } from '@visactor/vrender';
+import { createStage, createArea, container, IGraphic, global, createLine } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 const subP1 = [
@@ -35,105 +35,132 @@ export const page = () => {
   ['linear'].forEach((type, i) => {
     graphics.push(
       createArea({
-        x1: 0,
-        y1: 0,
+        defined: true,
+        enableSegments: true,
+        segments: null,
         points: [
           {
-            x: 301.00000000000006,
-            y: 161.7421686746988,
-            x1: 301,
-            y1: 186.7289156626506,
-            context: 'Jan._B_0'
+            x: 230.5,
+            y: 151.1037915390441,
+            x1: 230.5,
+            y1: 250,
+            context: 0
           },
           {
-            x: 335.30769230769226,
-            y: 163.57733383263698,
-            x1: 321.9276923076923,
-            y1: 186.75217363790856,
-            context: 'Feb._B_0'
+            x: 308.6643884293173,
+            y: 204.8717692992912,
+            x1: 230.5,
+            y1: 250,
+            context: 1
           },
           {
-            x: 386.3031337513188,
-            y: 173.75021276595746,
-            x1: 346.36351621457413,
-            y1: 196.80936170212766,
-            context: 'Mar._B_0'
+            x: 230.5,
+            y: 250,
+            x1: 230.5,
+            y1: 250,
+            context: 2,
+            defined: false
           },
           {
-            x: 387.7891891891892,
-            y: 223,
-            x1: 352.5310810810811,
-            y1: 223,
-            context: 'Apr._B_0'
+            x: 230.5,
+            y: 280.05866037183256,
+            x1: 230.5,
+            y1: 250,
+            context: 3
           },
           {
-            x: 370.27261898314873,
-            y: 262.99456521739125,
-            x1: 329.9685497565895,
-            y1: 239.725,
-            context: 'May._B_0'
+            x: 188.87948429636262,
+            y: 274.0296159453061,
+            x1: 230.5,
+            y1: 250,
+            context: 4
           },
           {
-            x: 327.48125,
-            y: 268.8668704479333,
-            x1: 317.725,
-            y1: 251.96854975658945,
-            context: 'Jun._B_0'
-          },
-          {
-            x: 301,
-            y: 294.2035087719298,
-            x1: 301,
-            y1: 248.82105263157894,
-            context: 'Jul._B_0'
-          },
-          {
-            x: 256.7279411764706,
-            y: 299.68145523803094,
-            x1: 280.339705882353,
-            y1: 258.7846791110811,
-            context: 'Aug._B_0'
-          },
-          {
-            x: 233.29822079358865,
-            y: 262.08764044943825,
-            x1: 263.8942171657169,
-            y1: 244.4230337078652,
-            context: 'Sep._B_0'
-          },
-          {
-            x: 231.79310344827587,
-            y: 223,
-            x1: 260.2448275862069,
-            y1: 223,
-            context: 'Oct._B_0'
-          },
-          {
-            x: 229.94956520606036,
-            y: 181.97901234567905,
-            x1: 268.0974496591823,
-            y1: 204.00370370370374,
-            context: 'Nov._B_0'
-          },
-          {
-            x: 245.33138686131375,
-            y: 126.57913365689937,
-            x1: 281.4671532846715,
-            y1: 189.16811707259626,
-            context: 'Dec._B_0'
+            x: 98.35502938981602,
+            y: 173.70606564615522,
+            x1: 230.5,
+            y1: 250,
+            context: 5
           }
         ],
-        segments: null,
+        fill: 'red',
         visible: true,
-        lineWidth: 0,
-        fillOpacity: 0.2,
-        fill: '#1AC6FF',
-        closePath: true,
-        // curveType: 'linearClosed',
-        stroke: '#1AC6FF',
+        lineWidth: 6,
+        lineCap: 'round',
+        lineJoin: 'round',
+        curveType: 'linearClosed',
+        lineDash: [4, 2],
+        stroke: ['orange', false, false, false],
+        connectedType: 'connect',
+        // closePath: true,
         x: 0,
-        y: 0,
-        pickable: true
+        y: 0
+        // "pickable": true
+      })
+    );
+    graphics.push(
+      createLine({
+        defined: true,
+        enableSegments: true,
+        segments: null,
+        points: [
+          {
+            x: 230.5,
+            y: 151.1037915390441,
+            x1: 230.5,
+            y1: 250,
+            context: 0
+          },
+          {
+            x: 308.6643884293173,
+            y: 204.8717692992912,
+            x1: 230.5,
+            y1: 250,
+            context: 1
+          },
+          {
+            x: 230.5,
+            y: 250,
+            x1: 230.5,
+            y1: 250,
+            context: 2,
+            defined: false
+          },
+          {
+            x: 230.5,
+            y: 280.05866037183256,
+            x1: 230.5,
+            y1: 250,
+            context: 3
+          },
+          {
+            x: 188.87948429636262,
+            y: 274.0296159453061,
+            x1: 230.5,
+            y1: 250,
+            context: 4
+          },
+          {
+            x: 98.35502938981602,
+            y: 173.70606564615522,
+            x1: 230.5,
+            y1: 250,
+            context: 5
+          }
+        ],
+        // fill: 'red',
+        visible: true,
+        lineWidth: 1,
+        lineCap: 'round',
+        lineJoin: 'round',
+        curveType: 'linearClosed',
+        lineDash: [4, 2],
+        stroke: '#2E62F1',
+        connectedType: 'connect',
+        closePath: true,
+        x: 0,
+        y: 0
+        // "pickable": true
       })
     );
   });

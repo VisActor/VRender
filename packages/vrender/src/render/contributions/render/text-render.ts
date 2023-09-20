@@ -73,12 +73,17 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       direction = textAttribute.direction,
       // lineHeight = textAttribute.lineHeight,
       fontSize = textAttribute.fontSize,
-      textBaseline = textAttribute.textBaseline,
-      textAlign = textAttribute.textAlign,
+      verticalMode = textAttribute.verticalMode,
       x: originX = textAttribute.x,
       y: originY = textAttribute.y
     } = text.attribute;
 
+    let { textAlign = textAttribute.textAlign, textBaseline = textAttribute.textBaseline } = text.attribute;
+    if (!verticalMode && direction === 'vertical') {
+      const t = textAlign;
+      textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
+      textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);
+    }
     const lineHeight = text.attribute.lineHeight ?? fontSize;
 
     // 不绘制或者透明

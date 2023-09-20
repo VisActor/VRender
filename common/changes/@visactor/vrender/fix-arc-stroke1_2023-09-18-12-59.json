@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "feat: symbol support more type and support svg format, closed #110 #313",
-      "type": "minor"
+      "comment": "fix: fix arc stroke issue",
+      "type": "none"
     }
   ],
   "packageName": "@visactor/vrender"

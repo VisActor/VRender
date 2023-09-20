@@ -30,7 +30,8 @@ export class DefaultCanvasGlyphPicker implements IGraphicPicker {
         if (picked) {
           return;
         }
-        picked = !!pickerService.pickItem(g, point, null, params);
+        const data = pickerService.pickItem(g, point, null, params);
+        picked = !!(data && data.graphic);
       });
       return picked;
     }

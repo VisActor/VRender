@@ -1,6 +1,6 @@
 import type { IText, Text } from '@visactor/vrender';
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
-import { isFunction } from '@visactor/vutils';
+import { isFunction, isValid } from '@visactor/vutils';
 import type { PointLocationCfg } from '../../core/type';
 import type { LabelBase } from '../base';
 import type { BaseLabelAttrs, OverlapAttrs, Strategy } from '../type';
@@ -81,14 +81,15 @@ export function placeToCandidates(
   clampForce = true,
   pad = 0
 ): PointLocationCfg | false {
-  for (let i = 0; i < candidates.length; i++) {
+  const validCandidates = candidates.filter(candidate => isValid(candidate));
+  for (let i = 0; i < validCandidates.length; i++) {
     const tempText = text.clone();
-    tempText.setAttributes(candidates[i]);
+    tempText.setAttributes(validCandidates[i]);
     tempText.update();
 
     if (canPlace($, bitmap, boundToRange($, tempText.AABBBounds), clampForce, pad)) {
       bitmap.setRange(boundToRange($, tempText.AABBBounds, true));
-      return candidates[i];
+      return validCandidates[i];
     }
   }
   return false;

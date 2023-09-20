@@ -127,11 +127,11 @@ export class Node extends EventEmitter<any, any> implements INode {
    * 不能append父级元素
    * @param node 要插入的节点
    */
-  appendChild(node: INode): INode | null {
+  appendChild(node: INode, highPerformance: boolean = true): INode | null {
     if (this._uid === node._uid) {
       return null;
     }
-    if (node.isAncestorsOf(this)) {
+    if (!highPerformance && node.isAncestorsOf(this)) {
       throw new Error('【Node::appendChild】不能将父辈元素append为子元素');
     }
 

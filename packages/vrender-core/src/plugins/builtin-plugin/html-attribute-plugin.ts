@@ -19,6 +19,9 @@ export class HtmlAttributePlugin implements IPlugin {
 
       this.drawHTML(context.stage.renderService);
     });
+    application.graphicService.hooks.onRelease.tap(this.key, graphic => {
+      this.removeDom(graphic);
+    });
   }
   deactivate(context: IPluginService): void {
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
@@ -47,6 +50,16 @@ export class HtmlAttributePlugin implements IPlugin {
         this.renderGraphicHTML(g);
       }
     });
+  }
+
+  removeDom(graphic: IGraphic) {
+    if (graphic.bindDom && graphic.bindDom.size) {
+      // 删除dom
+      graphic.bindDom.forEach(item => {
+        item.dom && item.dom.parentElement.removeChild(item.dom);
+      });
+      graphic.bindDom.clear();
+    }
   }
 
   renderGraphicHTML(graphic: IGraphic) {

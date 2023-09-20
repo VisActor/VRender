@@ -79,7 +79,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     } = text.attribute;
 
     let { textAlign = textAttribute.textAlign, textBaseline = textAttribute.textBaseline } = text.attribute;
-    if (!verticalMode) {
+    if (!verticalMode && direction === 'vertical') {
       const t = textAlign;
       textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
       textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);

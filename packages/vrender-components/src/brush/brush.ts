@@ -121,6 +121,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
       this._container.incrementalClearChild();
+      this._brushMaskAABBBoundsDict = {};
       this._updateDragMaskCallback &&
         this._updateDragMaskCallback({
           operateType: IOperateType.brushClear,
@@ -152,6 +153,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._cacheDrawPoints = [pos];
     this._isDrawedBeforeEnd = false;
     if (brushMode === 'single') {
+      this._brushMaskAABBBoundsDict = {};
       this._container.incrementalClearChild();
     }
     this._addBrushMask();
@@ -202,18 +204,24 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
     const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
-    const { sizeThreshold = DEFAULT_SIZE_THRESHOLD } = this.attribute as BrushAttributes;
+    const { sizeThreshold = DEFAULT_SIZE_THRESHOLD, brushType } = this.attribute as BrushAttributes;
+
+    const cacheLength = this._cacheDrawPoints.length;
     this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
-    if (this._cacheDrawPoints.length > 0) {
+    if (cacheLength > 0) {
       const lastPos = this._cacheDrawPoints[this._cacheDrawPoints.length - 1];
       if (pos.x === lastPos?.x && pos.y === lastPos?.y) {
         return;
       }
     }
     // 更新交互位置
-    this._cacheDrawPoints.push(pos);
+    if (brushType === 'polygon' || cacheLength <= 1) {
+      this._cacheDrawPoints.push(pos);
+    } else {
+      this._cacheDrawPoints[cacheLength - 1] = pos;
+    }
     // 更新mask形状
     const maskPoints = this._computeMaskPoints();
     this._operatingMask.setAttribute('points', maskPoints);

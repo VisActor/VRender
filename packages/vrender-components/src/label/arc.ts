@@ -173,7 +173,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     );
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
-      const basedArc = arcs.find(arc => arc.refDatum.id === textData.id);
+      const basedArc = arcs.find(arc => arc.refDatum?.id === textData.id);
       const labelAttribute = {
         visible: basedArc.labelVisible,
         x: basedArc.labelPosition.x,
@@ -508,7 +508,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   private _getFormatLabelText(value: any, limit?: number) {
-    return value.text;
+    return value?.text ?? '';
   }
 
   /**

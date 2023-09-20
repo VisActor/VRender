@@ -10,7 +10,8 @@ import type {
   ILayerHandlerContribution,
   ILayerHandlerInitParams,
   IWindow,
-  ILayerHandlerDrawParams
+  ILayerHandlerDrawParams,
+  LayerMode
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
 import { VGlobal } from '../../../constants';
@@ -21,6 +22,9 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   canvas: ICanvas;
   context: IContext2d;
   offscreen: boolean;
+  type: LayerMode = 'dynamic';
+  // 所绑定的副layer handler
+  secondaryHandlers: ILayerHandlerContribution[];
 
   constructor(@inject(VGlobal) public readonly global: IGlobal) {
     this.offscreen = true;

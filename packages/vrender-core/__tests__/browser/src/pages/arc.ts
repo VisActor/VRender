@@ -7,7 +7,8 @@ import {
   IGraphic,
   createRect,
   createGlyph,
-  createSymbol
+  createSymbol,
+  createText
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';

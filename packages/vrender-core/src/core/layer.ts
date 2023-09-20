@@ -14,12 +14,11 @@ import type {
   ILayerHandlerDrawParams,
   IDrawContribution,
   IWindow,
-  ILayerParams
+  ILayerParams,
+  LayerMode
 } from '../interface';
 import { Theme } from '../graphic/theme';
 import { Group } from '../graphic/group';
-
-export const LayerHandlerContribution = Symbol.for('LayerHandlerContribution');
 
 type BlendMode = 'normal';
 
@@ -31,8 +30,8 @@ export class Layer extends Group implements ILayer {
 
   declare _dpr: number;
   declare main: boolean;
+  declare renderCount: number;
 
-  declare readonly virtual: boolean;
   declare afterDrawCbs: ((l: this) => void)[];
 
   declare imageData?: ImageData;
@@ -50,6 +49,10 @@ export class Layer extends Group implements ILayer {
 
   get offscreen(): boolean {
     return this.layerHandler.offscreen;
+  }
+
+  get layerMode(): LayerMode {
+    return this.layerHandler.type;
   }
 
   // stage控制
@@ -101,7 +104,8 @@ export class Layer extends Group implements ILayer {
     this.global = global;
     this.window = window;
     this.main = params.main;
-    this.layerHandler = container.get<ILayerHandlerContribution>(LayerHandlerContribution);
+    this.layerHandler = params.layerHandler;
+    // this.layerHandler = container.get<ILayerHandlerContribution>(LayerHandlerContribution);
     this.layerHandler.init(this, window, {
       main: params.main,
       canvasId: params.canvasId,
@@ -113,7 +117,6 @@ export class Layer extends Group implements ILayer {
     this.subLayers = new Map();
     this.theme = new Theme();
     this.background = 'rgba(0, 0, 0, 0)';
-    this.virtual = !!params.virtual;
     this.afterDrawCbs = [];
   }
 
@@ -153,6 +156,15 @@ export class Layer extends Group implements ILayer {
   pick(x: number, y: number): { graphic?: IGraphic; group?: IGroup } | false {
     throw new Error('暂不支持');
   }
+  // 绘制依赖的副layer
+  protected tryRenderSecondaryLayer(params: ILayerDrawParams, userParams?: Partial<IDrawContext>) {
+    if (this.layerHandler.secondaryHandlers && this.layerHandler.secondaryHandlers.length) {
+      this.layerHandler.secondaryHandlers.forEach(h => {
+        h.layer.renderCount = this.renderCount;
+        h.layer.render(params, userParams);
+      });
+    }
+  }
   // 绘制图层
   render(params: ILayerDrawParams, userParams?: Partial<IDrawContext>) {
     const stage = this.stage;
@@ -173,6 +185,7 @@ export class Layer extends Group implements ILayer {
       userParams
     );
     this.afterDrawCbs.forEach(c => c(this));
+    this.tryRenderSecondaryLayer(params, userParams);
   }
   resize(w: number, h: number) {
     this.layerHandler.resize(w, h);

@@ -1,8 +1,14 @@
 import { inject, injectable } from '../common/inversify-lite';
-import type { ILayer, IStage, IGlobal, ILayerParams } from '../interface';
+import type { ILayer, IStage, IGlobal, ILayerParams, LayerMode, ILayerHandlerContribution } from '../interface';
 import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';
 import { VGlobal } from '../constants';
+import { container } from '../container';
+import {
+  DynamicLayerHandlerContribution,
+  StaticLayerHandlerContribution,
+  VirtualLayerHandlerContribution
+} from './constants';
 
 @injectable()
 export class DefaultLayerService implements ILayerService {
@@ -26,11 +32,40 @@ export class DefaultLayerService implements ILayerService {
     return this.layerMap.get(stage);
   }
 
-  createLayer(stage: IStage, options: ILayerParams = { main: false }): ILayer {
+  getRecommendedLayerType(layerMode?: LayerMode): LayerMode {
+    if (layerMode) {
+      return layerMode;
+    }
+    // 默认推荐实体canvas，不行就推荐离屏canvas，最次才是virtual
+    if (this.staticLayerCountInEnv !== 0) {
+      return 'static';
+    } else if (this.dynamicLayerCountInEnv !== 0) {
+      return 'dynamic';
+    }
+    return 'virtual';
+  }
+
+  getLayerHandler(layerMode: LayerMode) {
+    let layerHandler: ILayerHandlerContribution;
+    if (layerMode === 'static') {
+      layerHandler = container.get<ILayerHandlerContribution>(StaticLayerHandlerContribution);
+    } else if (layerMode === 'dynamic') {
+      layerHandler = container.get<ILayerHandlerContribution>(DynamicLayerHandlerContribution);
+    } else {
+      layerHandler = container.get<ILayerHandlerContribution>(VirtualLayerHandlerContribution);
+    }
+    return layerHandler;
+  }
+
+  createLayer(stage: IStage, options: Partial<ILayerParams> = { main: false }): ILayer {
     this.tryInit();
+    const layerMode = this.getRecommendedLayerType(options.layerMode);
+    const layerHandler = this.getLayerHandler(layerMode);
     const layer = new Layer(stage, this.global, stage.window, {
+      main: false,
       ...options,
-      virtual: this.staticLayerCountInEnv === 0
+      layerMode,
+      layerHandler
     });
     const stageLayers = this.layerMap.get(stage) || [];
     stageLayers.push(layer);
@@ -38,6 +73,21 @@ export class DefaultLayerService implements ILayerService {
     this.staticLayerCountInEnv--;
     return layer;
   }
+
+  prepareStageLayer(stage: IStage) {
+    let mainHandler: ILayerHandlerContribution;
+    stage.forEachChildren((l: ILayer) => {
+      const handler = l.getNativeHandler();
+      if (handler.type === 'virtual') {
+        handler.mainHandler = mainHandler;
+        mainHandler.secondaryHandlers.push(handler);
+      } else {
+        mainHandler = handler;
+        mainHandler.secondaryHandlers = [];
+      }
+    });
+  }
+
   releaseLayer(stage: IStage, layer: ILayer): void {
     layer.release();
     const stageLayers = this.layerMap.get(stage) || [];

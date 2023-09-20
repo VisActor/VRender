@@ -16,7 +16,7 @@ export interface IRenderServiceDrawParams {
   context?: IContext2d;
 
   // 绘制的区域以及是否需要清屏
-  clear?: string | IColor;
+  clear?: string | IColor | boolean;
   width: number;
   height: number;
   x: number;

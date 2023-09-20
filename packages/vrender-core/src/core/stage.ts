@@ -24,7 +24,8 @@ import type {
   IContributionProvider,
   ILayerService,
   ITimeline,
-  IOptimizeType
+  IOptimizeType,
+  LayerMode
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -544,11 +545,11 @@ export class Stage extends Group implements IStage {
   }
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
-  createLayer(canvasId?: string): ILayer {
+  createLayer(layerMode?: LayerMode): ILayer {
     // 创建一个默认layer图层
     const layer = this.layerService.createLayer(this, {
       main: false,
-      canvasId
+      layerMode
     });
     this.appendChild(layer);
     return layer;
@@ -592,19 +593,11 @@ export class Stage extends Group implements IStage {
     this.timeline.resume();
     const state = this.state;
     this.state = 'rendering';
+    this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
-      (layers || this).forEach<ILayer>((layer, i) => {
-        layer.render(
-          {
-            renderService: this.renderService,
-            background: layer === this.defaultLayer ? this.background : undefined,
-            updateBounds: !!this.dirtyBounds
-          },
-          { renderStyle: this.renderStyle, ...params }
-        );
-      });
+      this.renderLayerList(this.children as ILayer[]);
       this.combineLayersToWindow();
       this.nextFrameRenderLayerSet.clear();
       this.hooks.afterRender.call(this);
@@ -614,18 +607,19 @@ export class Stage extends Group implements IStage {
   }
 
   protected combineLayersToWindow() {
-    this.forEach<ILayer>((layer, i) => {
-      layer.combineTo(this.window, {
-        clear: i === 0,
-        x: this.x,
-        y: this.y,
-        width: this.viewWidth,
-        height: this.viewHeight,
-        renderService: this.renderService,
-        background: layer === this.defaultLayer ? this.background : undefined,
-        updateBounds: !!this.dirtyBounds
-      });
-    });
+    return;
+    // this.forEach<ILayer>((layer, i) => {
+    //   layer.combineTo(this.window, {
+    //     clear: i === 0,
+    //     x: this.x,
+    //     y: this.y,
+    //     width: this.viewWidth,
+    //     height: this.viewHeight,
+    //     renderService: this.renderService,
+    //     background: layer === this.defaultLayer ? this.background : undefined,
+    //     updateBounds: !!this.dirtyBounds
+    //   });
+    // });
   }
 
   renderNextFrame(layers?: ILayer[], force?: boolean): void {
@@ -652,26 +646,46 @@ export class Stage extends Group implements IStage {
     this.ticker.start();
     const state = this.state;
     this.state = 'rendering';
+    this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
-      this.forEach((layer: Layer) => {
-        if (this.nextFrameRenderLayerSet.has(layer)) {
-          layer.render(
-            {
-              renderService: this.renderService,
-              background: layer === this.defaultLayer ? this.background : undefined,
-              updateBounds: !!this.dirtyBounds
-            },
-            { renderStyle: this.renderStyle, ...(this.lastRenderparams || {}) }
-          );
-        }
-      });
+      this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
       this.combineLayersToWindow();
       this.hooks.afterRender.call(this);
       this.nextFrameRenderLayerSet.clear();
     }
     this.state = state;
     this._skipRender && this._skipRender++;
+  }
+
+  protected renderLayerList(layerList: ILayer[], params?: Partial<IDrawContext>) {
+    const list: ILayer[] = [];
+    // 只需要render main layer即可
+    for (let i = 0; i < layerList.length; i++) {
+      let l = layerList[i];
+      if (l.layerMode === 'virtual') {
+        l = l.getNativeHandler().mainHandler.layer;
+      }
+      if (!list.includes(l)) {
+        list.push(l);
+      }
+    }
+    list.forEach(layer => {
+      // 记录当前的stamp，避免重复绘制layer（如果存在virtual layer）
+      if (layer.renderCount > this.renderCount) {
+        return;
+      }
+      layer.renderCount = this.renderCount + 1;
+
+      layer.render(
+        {
+          renderService: this.renderService,
+          background: layer === this.defaultLayer ? this.background : undefined,
+          updateBounds: !!this.dirtyBounds
+        },
+        { renderStyle: this.renderStyle, ...params }
+      );
+    });
   }
 
   resizeWindow(w: number, h: number, rerender: boolean = true) {

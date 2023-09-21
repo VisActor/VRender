@@ -766,21 +766,41 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
     if (hasAnimation) {
       const keys = Object.keys(attrs);
-      const animateAttrs = isClear
-        ? keys.reduce((res, key) => {
-            res[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
+      const noWorkAAttr = this.getNoWorkAnimateAttr();
+      const animateAttrs: Partial<T> = {};
+      let noAnimateAttrs: Partial<T> | undefined;
+      if (isClear) {
+        keys.forEach(key => {
+          if (!noWorkAAttr[key]) {
+            animateAttrs[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
+          } else {
+            if (!noAnimateAttrs) {
+              noAnimateAttrs = {};
+            }
+            noAnimateAttrs[key] = attrs[key];
+          }
+        });
+      } else {
+        keys.forEach(key => {
+          if (!noWorkAAttr[key]) {
+            animateAttrs[key] = attrs[key];
+          } else {
+            if (!noAnimateAttrs) {
+              noAnimateAttrs = {};
+            }
+            noAnimateAttrs[key] = attrs[key];
+          }
+        });
+      }
 
-            return res;
-          }, {})
-        : attrs;
       const animate = this.animate();
-
       (animate as any).stateNames = stateNames;
       animate.to(
         animateAttrs,
         this.stateAnimateConfig?.duration ?? DefaultStateAnimateConfig.duration,
         this.stateAnimateConfig?.easing ?? DefaultStateAnimateConfig.easing
       );
+      noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
       this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
     }

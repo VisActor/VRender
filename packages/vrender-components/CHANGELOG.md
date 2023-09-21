@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 14 Sep 2023 09:55:56 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Sep 2023 13:12:13 GMT and should not be manually modified.
+
+## 0.15.3
+Wed, 20 Sep 2023 13:12:13 GMT
+
+### Updates
+
+- fix: label not show when dataFilter
+- feat: emit change events of data-zoom
+
+
+- feat: brush support attributes: trigger, udpateTrigger, endTrigger, resetTrigger, hasMask
+
+
+- fix(label): fix the issue of invalid position in overlap strategy might throw error
 
 ## 0.15.2
 Thu, 14 Sep 2023 09:55:56 GMT

@@ -300,3 +300,57 @@ export type RenderConfig = {
 };
 
 export type NativeEvent = MouseEvent | PointerEvent | TouchEvent;
+
+export type GraphicEventType =
+  | 'pointerdown'
+  | 'pointerup'
+  // 指针抬起与按下的图形不同时触发
+  | 'pointerupoutside'
+  | 'pointertap'
+  | 'pointerover'
+  | 'pointerenter'
+  | 'pointerleave'
+  | 'pointerout'
+  | 'mousedown'
+  | 'mouseup'
+  | 'mouseupoutside'
+  // 右键操作
+  | 'rightdown'
+  | 'rightup'
+  | 'rightupoutside'
+  | 'click'
+  // 双击
+  | 'dblclick'
+  | 'mousemove'
+  | 'mouseover'
+  | 'mouseout'
+  // 不会冒泡
+  | 'mouseenter'
+  // 不会冒泡
+  | 'mouseleave'
+  | 'wheel'
+  | 'tap'
+  | 'touchstart'
+  | 'touchend'
+  | 'touchendoutside'
+  | 'touchmove'
+  | 'touchcancel'
+  // dragNdrop
+  | 'dragstart'
+  | 'drag'
+  | 'dragenter'
+  | 'dragleave'
+  | 'dragover'
+  | 'dragend'
+  | 'drop'
+  // gesture
+  | 'pan'
+  | 'panstart'
+  | 'panend'
+  | 'press'
+  | 'pressup'
+  | 'pressend'
+  | 'pinch'
+  | 'pinchstart'
+  | 'pinchend'
+  | 'swipe';

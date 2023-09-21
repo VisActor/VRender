@@ -80,7 +80,9 @@ export const page = () => {
     // lineHeight: 30,
     // lineThrough: 1,
     // underline: 1,
-    textBaseline: 'bottom'
+    textAlign: 'left',
+    textBaseline: 'middle'
+    // textBaseline: 'bottom'
     // scaleX: 2,
     // scaleY: 2
   });

@@ -14,7 +14,8 @@ import type {
   IDrawContribution,
   IContributionProvider,
   IPickItemInterceptorContribution,
-  IPickParams
+  IPickParams,
+  PickResult
 } from '../interface';
 import {
   CanvasArcPicker,
@@ -103,7 +104,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params: IPickParams): IGraphic | null {
+  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params: IPickParams): PickResult | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }
@@ -114,7 +115,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
         if (drawContribution.beforePickItem) {
           const ret = drawContribution.beforePickItem(graphic, this, point, params, { parentMatrix });
           if (ret) {
-            return ret === true ? graphic : ret.graphic;
+            return ret;
           }
         }
       }
@@ -123,9 +124,12 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     if (!picker) {
       return null;
     }
-    const data = picker.contains(graphic, point, params) ? graphic : null;
+    const g = picker.contains(graphic, point, params) ? graphic : null;
 
-    if (data) {
+    const data = {
+      graphic: g
+    };
+    if (g) {
       return data;
     }
     // 添加拦截器
@@ -135,7 +139,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
         if (drawContribution.afterPickItem) {
           const ret = drawContribution.afterPickItem(graphic, this, point, params, { parentMatrix });
           if (ret) {
-            return ret === true ? graphic : ret.graphic;
+            return ret;
           }
         }
       }

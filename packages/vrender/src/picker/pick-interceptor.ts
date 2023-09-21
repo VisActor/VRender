@@ -31,11 +31,11 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
     params?: {
       parentMatrix: IMatrix;
     }
-  ): boolean | PickResult {
+  ): null | PickResult {
     if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
       return this._pickItem(graphic, pickerService, point, pickParams, params);
     }
-    return false;
+    return null;
   }
 
   beforePickItem(
@@ -46,11 +46,11 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
     params?: {
       parentMatrix: IMatrix;
     }
-  ): boolean | PickResult {
+  ): null | PickResult {
     if (graphic.attribute.shadowRootIdx < 0) {
       return this._pickItem(graphic, pickerService, point, pickParams, params);
     }
-    return false;
+    return null;
   }
 
   protected _pickItem(
@@ -61,13 +61,13 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
     params?: {
       parentMatrix: IMatrix;
     }
-  ): boolean | PickResult {
+  ): PickResult | null {
     if (!graphic.shadowRoot) {
-      return false;
+      return null;
     }
     const { parentMatrix } = params || {};
     if (!parentMatrix) {
-      return false;
+      return null;
     }
 
     const context = pickerService.pickContext;

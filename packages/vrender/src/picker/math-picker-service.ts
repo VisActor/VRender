@@ -12,7 +12,8 @@ import type {
   IPickerService,
   IContributionProvider,
   IPickItemInterceptorContribution,
-  IPickParams
+  IPickParams,
+  PickResult
 } from '../interface';
 import { DefaultPickService } from './picker-service';
 import { EmptyContext2d } from '../canvas';
@@ -61,7 +62,12 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
   }
 
   // todo: switch统一改为数字map
-  pickItem(graphic: IGraphic, point: IPointLike, parentMatrix: IMatrix | null, params?: IPickParams): IGraphic | null {
+  pickItem(
+    graphic: IGraphic,
+    point: IPointLike,
+    parentMatrix: IMatrix | null,
+    params?: IPickParams
+  ): PickResult | null {
     if (graphic.attribute.pickable === false) {
       return null;
     }
@@ -69,6 +75,12 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
     if (!picker) {
       return null;
     }
-    return picker.contains(graphic, point, params) ? graphic : null;
+    const g = picker.contains(graphic, point, params) ? graphic : null;
+    if (g) {
+      return {
+        graphic: g
+      };
+    }
+    return null;
   }
 }

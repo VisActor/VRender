@@ -613,6 +613,7 @@ export class DefaultGraphicService implements IGraphicService {
     onAttributeUpdate: ISyncHook<[IGraphic]>;
     onSetStage: ISyncHook<[IGraphic, IStage]>;
     onRemove: ISyncHook<[IGraphic]>;
+    onRelease: ISyncHook<[IGraphic]>;
     onAddIncremental: ISyncHook<[IGraphic, IGroup, IStage]>;
     onClearIncremental: ISyncHook<[IGroup, IStage]>;
     beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
@@ -649,6 +650,7 @@ export class DefaultGraphicService implements IGraphicService {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),
       onSetStage: new SyncHook<[IGraphic, IStage]>(['graphic', 'stage']),
       onRemove: new SyncHook<[IGraphic]>(['graphic']),
+      onRelease: new SyncHook<[IGraphic]>(['graphic']),
       onAddIncremental: new SyncHook<[IGraphic, IGroup, IStage]>(['graphic', 'group', 'stage']),
       onClearIncremental: new SyncHook<[IGroup, IStage]>(['graphic', 'group', 'stage']),
       beforeUpdateAABBBounds: new SyncHook<[IGraphic, IStage, boolean, IAABBBounds]>([
@@ -681,6 +683,11 @@ export class DefaultGraphicService implements IGraphicService {
   onRemove(graphic: IGraphic<Partial<IGraphicAttribute>>): void {
     if (this.hooks.onRemove.taps.length) {
       this.hooks.onRemove.call(graphic);
+    }
+  }
+  onRelease(graphic: IGraphic<Partial<IGraphicAttribute>>): void {
+    if (this.hooks.onRelease.taps.length) {
+      this.hooks.onRelease.call(graphic);
     }
   }
   onAddIncremental(graphic: IGraphic, group: IGroup, stage: IStage): void {

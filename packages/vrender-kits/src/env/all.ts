@@ -1,4 +1,4 @@
-import { container, type Container } from '@visactor/vrender-core';
+import { container, vglobal, type Container } from '@visactor/vrender-core';
 import { loadBrowserEnv } from './browser';
 import { loadFeishuEnv } from './feishu';
 import { loadLynxEnv } from './lynx';
@@ -19,6 +19,9 @@ export function loadAllModule(container: Container) {
   loadTaroEnv(container, false);
   loadWxEnv(container, false);
   loadCanvasPicker(container);
+  vglobal.hooks.onSetEnv.tap('loadMathPicker', env => {
+    env !== 'browser' && loadCanvasPicker(container);
+  });
 }
 
 export function initAllEnv() {

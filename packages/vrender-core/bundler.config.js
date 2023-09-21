@@ -5,7 +5,7 @@ module.exports = {
   formats: ['cjs', 'es', 'umd'],
   name: 'VRenderCore',
   umdOutputFilename: 'index',
-  external: [],
+  external: ['@visactor/vutils'],
   globals: {
     '@visactor/vutils': 'VUtils'
   }

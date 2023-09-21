@@ -1,4 +1,12 @@
-import { inject, injectable, Generator, BaseWindowHandlerContribution, VGlobal } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  Generator,
+  BaseWindowHandlerContribution,
+  VGlobal,
+  ContainerModule,
+  WindowHandlerContribution
+} from '@visactor/vrender-core';
 import type {
   IContext2d,
   ICanvas,
@@ -302,3 +310,11 @@ export class BrowserWindowHandlerContribution
     return this.global.getElementTopLeft(this.canvas.nativeCanvas, baseWindow);
   }
 }
+
+export const browserWindowModule = new ContainerModule(bind => {
+  // browser
+  bind(BrowserWindowHandlerContribution).toSelf();
+  bind(WindowHandlerContribution)
+    .toDynamicValue(ctx => ctx.container.get(BrowserWindowHandlerContribution))
+    .whenTargetNamed(BrowserWindowHandlerContribution.env);
+});

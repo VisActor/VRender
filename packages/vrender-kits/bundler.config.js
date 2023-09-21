@@ -6,8 +6,8 @@ module.exports = {
   name: 'VRender.Kits',
   umdOutputFilename: 'index',
   globals: {
-    '@visactor/vrender': 'VRender',
+    '@visactor/vrender-core': 'VRenderCore',
     '@visactor/vutils': 'VUtils'
   },
-  external: ['@visactor/vrender', '@visactor/vutils']
+  external: ['@visactor/vrender-core', '@visactor/vutils']
 };

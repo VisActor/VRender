@@ -1,4 +1,12 @@
-import { inject, injectable, Generator, BaseWindowHandlerContribution, VGlobal } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  Generator,
+  BaseWindowHandlerContribution,
+  VGlobal,
+  ContainerModule,
+  WindowHandlerContribution
+} from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -231,3 +239,11 @@ export class FeishuWindowHandlerContribution
     context.nativeContext.restore();
   }
 }
+
+export const feishuWindowModule = new ContainerModule(bind => {
+  // feishu
+  bind(FeishuWindowHandlerContribution).toSelf();
+  bind(WindowHandlerContribution)
+    .toDynamicValue(ctx => ctx.container.get(FeishuWindowHandlerContribution))
+    .whenTargetNamed(FeishuWindowHandlerContribution.env);
+});

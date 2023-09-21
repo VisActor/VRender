@@ -1,6 +1,6 @@
 import { isNil, merge } from '@visactor/vutils';
-import type { FederatedPointerEvent } from '@visactor/vrender';
-import { vglobal } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { BasePlayer } from './base-player';
 import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from './type';
 import { DirectionEnum, PlayerEventEnum } from './type';

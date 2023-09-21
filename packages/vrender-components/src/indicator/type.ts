@@ -1,4 +1,4 @@
-import type { IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
 
 export interface IndicatorAttributes extends IGroupGraphicAttribute {
   /**

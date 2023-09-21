@@ -1,5 +1,5 @@
-import { IGroupGraphicAttribute, ILineGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender';
-import { Point } from '../core/type';
+import type { IGroupGraphicAttribute, ILineGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender-core';
+import type { Point } from '../core/type';
 
 export interface BaseCrosshairAttrs extends IGroupGraphicAttribute {
   type?: 'line' | 'rect' | 'circle' | 'polygon' | 'sector';

@@ -1,8 +1,8 @@
 /**
  * @description 连续尺寸图例
  */
-import type { FederatedPointerEvent, INode } from '@visactor/vrender';
-import { createGroup, createPath } from '@visactor/vrender';
+import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
+import { createGroup, createPath } from '@visactor/vrender-core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';

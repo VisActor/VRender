@@ -10,7 +10,7 @@ import type {
   ITextGraphicAttribute,
   TextAlignType,
   TextBaselineType
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
   AABBBounds,
   Bounds,

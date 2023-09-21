@@ -1,5 +1,5 @@
 import { GUI } from 'lil-gui';
-import { createGroup, Stage, createArc } from '@visactor/vrender';
+import { createGroup, Stage, createArc } from '@visactor/vrender-core';
 import { createRenderer } from '../../util/render';
 import { ArcLabel } from '../../../src';
 

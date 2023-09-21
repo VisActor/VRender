@@ -1,4 +1,4 @@
-import type { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
   /**

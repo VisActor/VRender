@@ -1,4 +1,4 @@
-import { Stage } from '@visactor/vrender';
+import { Stage } from '@visactor/vrender-core';
 import { createRenderer, _add } from '../../util/render';
 import { DataLabel, OverlapAttrs } from '../../../src';
 

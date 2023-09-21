@@ -1,5 +1,10 @@
-import type { IGroupGraphicAttribute, ITextGraphicAttribute, IRichTextCharacter, RichTextWordBreak } from '@visactor/vrender';
-import { Padding } from '../core/type';
+import type {
+  IGroupGraphicAttribute,
+  ITextGraphicAttribute,
+  IRichTextCharacter,
+  RichTextWordBreak
+} from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export interface TitleAttrs extends IGroupGraphicAttribute {
   /**

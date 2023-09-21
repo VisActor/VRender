@@ -1,8 +1,8 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender';
-import { builtinSymbolsMap } from '@visactor/vrender';
+import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender-core';
+import { builtinSymbolsMap } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';

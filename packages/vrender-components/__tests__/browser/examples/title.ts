@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { createLine } from '@visactor/vrender';
+import { createLine } from '@visactor/vrender-core';
 import render from '../../util/render';
 import { Title } from '../../../src';
 

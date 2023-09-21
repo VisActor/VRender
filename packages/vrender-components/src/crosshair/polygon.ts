@@ -1,11 +1,11 @@
 /**
  * @description polygon 类型 crosshair，用于极坐标系下
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge, polarToCartesian, PointService } from '@visactor/vutils';
-import { PointLocationCfg } from '../core/type';
+import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
-import { PolygonCrosshairAttrs } from './type';
+import type { PolygonCrosshairAttrs } from './type';
 
 export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
   static defaultAttributes = {

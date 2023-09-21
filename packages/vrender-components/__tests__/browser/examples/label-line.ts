@@ -1,4 +1,4 @@
-import { ILine, ISymbol, Stage, Symbol } from '@visactor/vrender';
+import { ILine, ISymbol, Stage, Symbol } from '@visactor/vrender-core';
 import { createRenderer, _add } from '../../util/render';
 import { LineLabel, SymbolLabel } from '../../../src';
 

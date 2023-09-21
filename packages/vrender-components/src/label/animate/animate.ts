@@ -1,5 +1,5 @@
-import { EasingType, ITextGraphicAttribute } from '@visactor/vrender';
-import { ILabelAnimation } from '../type';
+import type { EasingType, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { ILabelAnimation } from '../type';
 
 const fadeIn = (textAttribute: ITextGraphicAttribute = {}) => {
   return {

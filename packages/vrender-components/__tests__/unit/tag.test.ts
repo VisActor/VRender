@@ -1,7 +1,9 @@
-import { IGraphic, Stage, IRect } from '@visactor/vrender';
+import type { IGraphic, Stage, IRect } from '@visactor/vrender-core';
 import { Tag } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Tag', () => {
   let stage: Stage;

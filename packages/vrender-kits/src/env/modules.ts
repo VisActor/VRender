@@ -1,4 +1,4 @@
-import type { Container } from '@visactor/vrender-core';
+import { container, type Container } from '@visactor/vrender-core';
 import {
   allEnvModule,
   browserEnvModule,
@@ -25,6 +25,10 @@ import { nodeCanvasModule } from '../canvas/contributions/node/modules';
 import { taroCanvasModule } from '../canvas/contributions/taro/modules';
 import { wxCanvasModule } from '../canvas/contributions/wx/modules';
 import { loadCanvasPicker, loadMathPicker } from '../picker';
+
+export function loadAllEnv(container: Container) {
+  loadAllModule(container);
+}
 
 export function loadAllModule(container: Container) {
   container.load(allEnvModule);
@@ -73,4 +77,26 @@ export function loadWxEnv(container: Container) {
   container.load(wxCanvasModule);
   container.load(wxWindowModule);
   loadMathPicker(container);
+}
+
+export function initAllEnv() {
+  loadAllEnv(container);
+}
+export function initBrowserEnv() {
+  loadBrowserEnv(container);
+}
+export function initFeishuEnv() {
+  loadFeishuEnv(container);
+}
+export function initLynxEnv() {
+  loadLynxEnv(container);
+}
+export function initNodeEnv() {
+  loadNodeEnv(container);
+}
+export function initTaroEnv() {
+  loadTaroEnv(container);
+}
+export function initWxEnv() {
+  loadWxEnv(container);
 }

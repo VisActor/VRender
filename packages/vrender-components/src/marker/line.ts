@@ -1,4 +1,4 @@
-import type { IGroup, INode } from '@visactor/vrender';
+import type { IGroup, INode } from '@visactor/vrender-core';
 import { flattenArray, isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import { Tag } from '../tag';

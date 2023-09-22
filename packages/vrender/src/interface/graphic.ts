@@ -94,7 +94,7 @@ export type ITransform = {
   angle: number;
   alpha: number;
   beta: number;
-  scaleCenter: [number, number];
+  scaleCenter: [number | string, number | string];
   anchor: [number | string, number | string]; // 基于AABB的锚点位置，用于简单的定位某些path
   anchor3d: [number | string, number | string, number] | [number | string, number | string]; // 3d的锚点位置
   postMatrix: IMatrix;

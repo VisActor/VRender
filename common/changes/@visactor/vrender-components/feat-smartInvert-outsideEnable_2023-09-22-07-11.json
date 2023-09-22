@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: add outsideEnable config of smartInvert",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

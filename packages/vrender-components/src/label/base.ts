@@ -656,6 +656,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
+    const outsideEnable = option.outsideEnable ?? false;
 
     if (fillStrategy === 'null' && strokeStrategy === 'null') {
       return;
@@ -689,7 +690,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
-      if (isInside) {
+      if (isInside || outsideEnable) {
         const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });
 

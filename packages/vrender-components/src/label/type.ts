@@ -173,6 +173,10 @@ export interface SmartInvertAttrs {
    * @default '#000000'
    */
   darkColor?: string;
+  /**
+   * label超出mark范围，也以mark作为背景色进行反色
+   */
+  outsideEnable?: boolean;
 }
 
 export type PositionStrategy = {

@@ -579,8 +579,9 @@ function createContent(stage: Stage) {
     baseMarkGroupName: barSpec.name,
     data: barSpec.children.map(c => {
       return {
-        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`
-        // stroke: 'white'
+        // text: '12345678901234567890',
+        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+        stroke: 'red'
         // fill: 'white'
         // stroke: c.attribute.fill,
         // lineWidth: 0
@@ -610,9 +611,10 @@ function createContent(stage: Stage) {
     },
     // smartInvert: false,
     smartInvert: {
-      strokeStrategy: 'similarBase',
-      brightColor: '#fff000',
-      darkColor: '#dd0000'
+      outsideEnable: true
+      // strokeStrategy: 'similarBase',
+      // brightColor: '#fff000',
+      // darkColor: '#dd0000'
     },
 
     zIndex: 302

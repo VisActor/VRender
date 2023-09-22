@@ -6,6 +6,7 @@ import { loadNodeEnv } from './node';
 import { loadTaroEnv } from './taro';
 import { loadWxEnv } from './wx';
 import { loadCanvasPicker } from '../picker/canvas-module';
+import { loadMathPicker } from '../picker';
 
 export function loadAllEnv(container: Container) {
   loadAllModule(container);
@@ -19,8 +20,8 @@ export function loadAllModule(container: Container) {
   loadTaroEnv(container, false);
   loadWxEnv(container, false);
   loadCanvasPicker(container);
-  vglobal.hooks.onSetEnv.tap('loadMathPicker', env => {
-    env !== 'browser' && loadCanvasPicker(container);
+  vglobal.hooks.onSetEnv.tap('loadMathPicker', (lastEnv, env) => {
+    env !== 'browser' && loadMathPicker(container);
   });
 }
 

@@ -546,7 +546,7 @@ export class Stage extends Group implements IStage {
   }
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
-  createLayer(layerMode?: LayerMode): ILayer {
+  createLayer(canvasId?: string, layerMode?: LayerMode): ILayer {
     // 创建一个默认layer图层
     const layer = this.layerService.createLayer(this, {
       main: false,

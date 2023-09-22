@@ -1,5 +1,5 @@
-import type { INode } from '@visactor/vrender';
-import { CustomEvent } from '@visactor/vrender';
+import type { INode } from '@visactor/vrender-core';
+import { CustomEvent } from '@visactor/vrender-core';
 import { isNumber, isValidNumber, max, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { OrientType } from '../interface';

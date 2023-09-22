@@ -1,6 +1,6 @@
 import { isNil, merge } from '@visactor/vutils';
-import type { FederatedPointerEvent, ISymbolGraphicAttribute } from '@visactor/vrender';
-import { CustomEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent, ISymbolGraphicAttribute } from '@visactor/vrender-core';
+import { CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
 import type { BaseGraphicAttributes } from '../../core/type';
 import type { ControllerAttributes, LayoutType } from './type';

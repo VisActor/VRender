@@ -1,4 +1,4 @@
-import type { IColor } from '@visactor/vrender';
+import type { IColor } from '@visactor/vrender-core';
 import { ColorUtil } from '@visactor/vutils';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];

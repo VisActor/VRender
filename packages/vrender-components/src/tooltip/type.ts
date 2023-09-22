@@ -3,7 +3,7 @@ import type {
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
   ITextAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { IBounds, IPadding } from '@visactor/vutils';
 
 export interface IContainerSize {

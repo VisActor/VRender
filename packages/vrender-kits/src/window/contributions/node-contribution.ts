@@ -1,4 +1,12 @@
-import { inject, injectable, Generator, BaseWindowHandlerContribution, VGlobal } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  Generator,
+  BaseWindowHandlerContribution,
+  VGlobal,
+  ContainerModule,
+  WindowHandlerContribution
+} from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 import type {
   EnvType,
@@ -155,3 +163,11 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return;
   }
 }
+
+export const nodeWindowModule = new ContainerModule(bind => {
+  // node
+  bind(NodeWindowHandlerContribution).toSelf();
+  bind(WindowHandlerContribution)
+    .toDynamicValue(ctx => ctx.container.get(NodeWindowHandlerContribution))
+    .whenTargetNamed(NodeWindowHandlerContribution.env);
+});

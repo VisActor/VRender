@@ -3,7 +3,7 @@ import type {
   ISymbolGraphicAttribute,
   IGroupGraphicAttribute,
   IRectGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { Padding, State } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
 

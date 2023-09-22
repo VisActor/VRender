@@ -1,5 +1,5 @@
 import { LinearScale, PointScale } from '@visactor/vscale';
-import { GroupFadeIn, GroupFadeOut } from '@visactor/vrender';
+import { GroupFadeIn, GroupFadeOut } from '@visactor/vrender-core';
 import { LineAxis, GroupTransition } from '../../../src';
 import render from '../../util/render';
 

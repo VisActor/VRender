@@ -1,4 +1,9 @@
-import { container, InteractiveSubRenderContribution, AutoEnablePlugins, ContainerModule } from '@visactor/vrender';
+import {
+  container,
+  InteractiveSubRenderContribution,
+  AutoEnablePlugins,
+  ContainerModule
+} from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';

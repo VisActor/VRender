@@ -1,9 +1,9 @@
 /**
  * @description 翻页器
  */
-import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender';
+import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender';
+import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender-core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';

@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { createLine, createText, IText } from '@visactor/vrender';
+import { createLine, createText, IText } from '@visactor/vrender-core';
 import render from '../../util/render';
 import { PopTip, loadPoptip } from '../../../src';
 loadPoptip();

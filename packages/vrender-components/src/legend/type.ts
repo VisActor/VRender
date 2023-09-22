@@ -1,10 +1,10 @@
-import {
+import type {
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender';
-import { Padding } from '../core/type';
+} from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export type LegendTitle = {
   /**

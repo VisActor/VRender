@@ -1,7 +1,8 @@
 /**
  * TODO: 待 vrender 修复后可删除
  */
-import { ACustomAnimate, EasingType, IGroup } from '@visactor/vrender';
+import type { EasingType, IGroup } from '@visactor/vrender-core';
+import { ACustomAnimate } from '@visactor/vrender-core';
 
 export class GroupFadeIn extends ACustomAnimate<any> {
   declare target: IGroup;

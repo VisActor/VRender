@@ -1,7 +1,7 @@
 /**
  * @description 标签组件
  */
-import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender';
+import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';

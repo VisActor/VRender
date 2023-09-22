@@ -1,4 +1,4 @@
-import type { IRectGraphicAttribute, ISymbolGraphicAttribute } from '@visactor/vrender';
+import type { IRectGraphicAttribute, ISymbolGraphicAttribute } from '@visactor/vrender-core';
 import type { OrientType } from '../../interface';
 import type { BaseGraphicAttributes } from '../../core/type';
 import type { ControllerTypeEnum } from '../controller/constant';

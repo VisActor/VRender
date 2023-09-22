@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix shadow bounds error while have outerborder",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

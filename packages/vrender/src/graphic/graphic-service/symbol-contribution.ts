@@ -28,7 +28,7 @@ export class DefaultSymbolOuterBorderBoundsContribution
       const { distance = defaultOuterBorder.distance, lineWidth = defaultOuterBorder.lineWidth } = outerBorder;
 
       // Symbol的distance一定是number
-      boundStroke(aabbBounds, (distance as number) + shadowBlur + lineWidth / 2, true, strokeBoundsBuffer);
+      boundStroke(aabbBounds, (distance as number) + (shadowBlur + lineWidth) / 2, true, strokeBoundsBuffer);
     }
     return aabbBounds;
   }

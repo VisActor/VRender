@@ -8,8 +8,8 @@
     "ci": "ts-node --transpileOnly --skipProject ./scripts/trigger-test.ts"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.15.2",
-    "@visactor/vrender-components": "workspace:0.15.2"
+    "@visactor/vrender": "workspace:0.16.0-alpha.4",
+    "@visactor/vrender-components": "workspace:0.16.0-alpha.4"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "~1.1.4",

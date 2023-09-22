@@ -669,7 +669,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
 
       const baseMark = this._idToGraphic.get((label.attribute as LabelItem).id);
-      const isInside = this._canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
@@ -690,7 +689,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
-      if (isInside || outsideEnable) {
+      if (outsideEnable) {
         const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });
 
@@ -701,31 +700,44 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
         stroke && label.setAttributes({ stroke });
       } else {
-        /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
-        if (label.attribute.lineWidth === 0) {
-          continue;
+        const isInside = this._canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+        if (isInside) {
+          const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
+          fill && label.setAttributes({ fill });
+
+          if (label.attribute.lineWidth === 0) {
+            continue;
+          }
+
+          const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+          stroke && label.setAttributes({ stroke });
+        } else {
+          /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
+          if (label.attribute.lineWidth === 0) {
+            continue;
+          }
+
+          /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
+          if (label.attribute.stroke) {
+            label.setAttributes({
+              fill: labelSmartInvert(
+                label.attribute.fill as IColor,
+                label.attribute.stroke as IColor,
+                textType,
+                contrastRatiosThreshold,
+                alternativeColors
+              )
+            });
+            continue;
+          }
+
+          /** 当label未设置stroke，且可设置stroke时，正常计算 */
+          const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
+          fill && label.setAttributes({ fill });
+
+          const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+          stroke && label.setAttributes({ stroke });
         }
-
-        /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
-        if (label.attribute.stroke) {
-          label.setAttributes({
-            fill: labelSmartInvert(
-              label.attribute.fill as IColor,
-              label.attribute.stroke as IColor,
-              textType,
-              contrastRatiosThreshold,
-              alternativeColors
-            )
-          });
-          continue;
-        }
-
-        /** 当label未设置stroke，且可设置stroke时，正常计算 */
-        const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
-        fill && label.setAttributes({ fill });
-
-        const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
-        stroke && label.setAttributes({ stroke });
       }
     }
   }

@@ -150,8 +150,8 @@ export interface SmartInvertAttrs {
    * - base（baseMark色），
    * - invertBase（执行智能反色），
    * - similarBase（智能反色的补色），
-   * - null（不执行智能反色，保持stroke设置的颜色）
-   * @default 'invertSeries'
+   * - null（不执行智能反色，保持fill设置的颜色）
+   * @default 'invertBase'
    */
   fillStrategy?: 'base' | 'invertBase' | 'similarBase' | 'null';
   /**
@@ -159,8 +159,8 @@ export interface SmartInvertAttrs {
    * - base（baseMark色），
    * - invertBase（执行智能反色），
    * - similarBase（智能反色的补色），
-   * - null（不执行智能反色，保持fill设置的颜色）
-   * @default 'series'
+   * - null（不执行智能反色，保持stroke设置的颜色）
+   * @default 'base'
    */
   strokeStrategy?: 'base' | 'invertBase' | 'similarBase' | 'null';
   /**

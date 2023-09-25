@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 20 Sep 2023 13:12:13 GMT and should not be manually modified.
+This log was last generated on Mon, 25 Sep 2023 03:05:18 GMT and should not be manually modified.
+
+## 0.15.4
+Mon, 25 Sep 2023 03:05:18 GMT
+
+### Updates
+
+- feat: add outsideEnable config of smartInvert
 
 ## 0.15.3
 Wed, 20 Sep 2023 13:12:13 GMT

@@ -73,6 +73,9 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
     context.arc(x, y, radius, startAngle, endAngle);
     context.closePath();
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(circle, circle.attribute, circleAttribute);
+
     this.beforeRenderStep(
       circle,
       context,
@@ -87,9 +90,6 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
       fillCb,
       strokeCb
     );
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
 
     if (doFill) {
       if (fillCb) {

@@ -2,11 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-<<<<<<<< HEAD:common/changes/@visactor/vrender/refactor-reflect-metadata_2023-09-11-02-58.json
       "comment": "refactor: rewrite reflect-metadata to minify code, closed #442",
-========
-      "comment": "feat: add _debug_bounds attribute to draw bounds, closed #500",
->>>>>>>> develop:common/changes/@visactor/vrender/feat-debug-bounds_2023-09-15-08-36.json
       "type": "none"
     }
   ],

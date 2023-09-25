@@ -82,6 +82,9 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     // polygon 默认闭合
     closePath && context.closePath();
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(polygon, polygon.attribute, polygonAttribute);
+
     this.beforeRenderStep(
       polygon,
       context,
@@ -96,9 +99,6 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
       fillCb,
       strokeCb
     );
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(polygon, polygon.attribute, polygonAttribute);
 
     if (doFill) {
       if (fillCb) {

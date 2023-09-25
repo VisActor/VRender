@@ -154,7 +154,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     }
 
     // shadow
-    context.setShadowStyle && context.setShadowStyle(group, group.attribute, groupAttribute);
+    context.setShadowBlendStyle && context.setShadowBlendStyle(group, group.attribute, groupAttribute);
 
     if (doFillOrStroke.doFill) {
       if (fillCb) {

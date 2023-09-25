@@ -496,7 +496,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     );
 
     // shadow
-    context.setShadowStyle && context.setShadowStyle(area, attribute, defaultAttribute);
+    context.setShadowBlendStyle && context.setShadowBlendStyle(area, attribute, defaultAttribute);
 
     const { x: originX = 0, x: originY = 0 } = attribute;
     if (fill !== false) {

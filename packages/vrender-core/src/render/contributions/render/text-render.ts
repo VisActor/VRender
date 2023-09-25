@@ -97,6 +97,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
 
     context.beginPath();
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(text, text.attribute, textAttribute);
+
     this.beforeRenderStep(
       text,
       context,
@@ -111,9 +114,6 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fillCb,
       strokeCb
     );
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(text, text.attribute, textAttribute);
 
     transform3dMatrixToContextMatrix && this.transformUseContext2d(text, textAttribute, z, context);
 

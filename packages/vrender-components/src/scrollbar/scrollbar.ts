@@ -3,7 +3,7 @@
  */
 import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender';
 import { CustomEvent, vglobal } from '@visactor/vrender';
-import { merge, normalizePadding, clamp, clampRange } from '@visactor/vutils';
+import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 
 import type { ScrollBarAttributes } from './type';
@@ -15,6 +15,11 @@ type ComponentBounds = {
   y2: number;
   width: number;
   height: number;
+};
+
+const delayMap = {
+  debounce: debounce,
+  throttle: throttle
 };
 
 export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> {
@@ -31,7 +36,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       fill: 'rgba(0, 0, 0, .0)'
     },
     padding: 2,
-    scrollRange: [0, 1]
+    scrollRange: [0, 1],
+    delayType: 'throttle',
+    delayTime: 0
   };
 
   private _container!: IGroup;
@@ -90,9 +97,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   // 绑定事件
   protected bindEvents(): void {
+    const { delayType = 'throttle', delayTime = 0 } = this.attribute as ScrollBarAttributes;
     // TODO: wheel 事件支持
     if (this._rail) {
-      this._rail.addEventListener('pointerdown', this._onRailPointerDown as EventListener);
+      this._rail.addEventListener(
+        'pointerdown',
+        delayMap[delayType](this._onRailPointerDown, delayTime) as EventListener
+      );
     }
     if (this._slider) {
       this._slider.addEventListener('pointerdown', this._onSliderPointerDown as EventListener);
@@ -264,13 +275,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
-    const { direction } = this.attribute as ScrollBarAttributes;
+    const { direction, delayType = 'throttle', delayTime = 0 } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onSliderPointerMove);
+      vglobal.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this._slider.addEventListener('pointermove', this._onSliderPointerMove);
+      this._slider.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
       this._slider.addEventListener('pointerup', this._onSliderPointerUp);
       this._slider.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }

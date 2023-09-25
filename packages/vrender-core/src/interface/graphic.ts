@@ -248,6 +248,7 @@ export type IGraphicAttribute = IDebugType &
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
     globalZIndex: number;
+    globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

@@ -1,5 +1,5 @@
 import type { INode } from './node-tree';
-import type { ILayer } from './layer';
+import type { ILayer, LayerMode } from './layer';
 import type { IGraphic } from './graphic';
 import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
@@ -128,7 +128,7 @@ export interface IStage extends INode {
   readonly layerService: ILayerService;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
-  createLayer: (canvasId?: string) => ILayer;
+  createLayer: (canvasId?: string, layerMode?: LayerMode) => ILayer;
   getLayer: (name: string) => ILayer;
   sortLayer: (cb: (layer1: ILayer, layer2: ILayer) => number) => void;
   removeLayer: (layerId: number) => ILayer | false;

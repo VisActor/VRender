@@ -72,7 +72,7 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       context.closePath();
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(circle, circle.attribute, circleAttribute);
 
       if (strokeCb) {
         strokeCb(context, outerBorder, circleAttribute.outerBorder);
@@ -102,7 +102,7 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       context.closePath();
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(circle, circle.attribute, circleAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(circle, circle.attribute, circleAttribute);
 
       if (strokeCb) {
         strokeCb(context, innerBorder, circleAttribute.innerBorder);

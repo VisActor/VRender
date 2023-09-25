@@ -78,7 +78,7 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       }
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);
 
       if (strokeCb) {
         strokeCb(context, outerBorder, symbolAttribute.outerBorder);
@@ -108,7 +108,7 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       }
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);
 
       if (strokeCb) {
         strokeCb(context, innerBorder, symbolAttribute.innerBorder);

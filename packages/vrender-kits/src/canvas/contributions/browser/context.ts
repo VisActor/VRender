@@ -989,29 +989,30 @@ export class BrowserContext2d implements IContext2d {
     }
   }
 
-  setShadowStyle(
+  setShadowBlendStyle(
     params: ISetCommonStyleParams,
     attribute: ICommonStyleParams,
     defaultParams?: ICommonStyleParams | Partial<ICommonStyleParams>[]
   ) {
     if (Array.isArray(defaultParams)) {
       if (defaultParams.length <= 1) {
-        return this._setShadowStyle(params, defaultParams[0]);
+        return this._setShadowBlendStyle(params, defaultParams[0]);
       }
       // TODO 是否存在性能问题？
       const dp = {};
       defaultParams.forEach(p => {
         Object.assign(dp, p);
       });
-      return this._setShadowStyle(params, attribute, dp as Required<ICommonStyleParams>);
+      return this._setShadowBlendStyle(params, attribute, dp as Required<ICommonStyleParams>);
     }
-    return this._setShadowStyle(params, attribute, defaultParams);
+    return this._setShadowBlendStyle(params, attribute, defaultParams);
   }
 
   protected _clearShadowStyle = false;
   protected _clearFilterStyle = false;
+  protected _clearGlobalCompositeOperationStyle = false;
 
-  protected _setShadowStyle(
+  protected _setShadowBlendStyle(
     params: ISetCommonStyleParams,
     attribute: ICommonStyleParams,
     defaultParams?: ICommonStyleParams
@@ -1026,7 +1027,8 @@ export class BrowserContext2d implements IContext2d {
       shadowColor = defaultParams.shadowColor,
       shadowOffsetX = defaultParams.shadowOffsetX,
       shadowOffsetY = defaultParams.shadowOffsetY,
-      blur = defaultParams.blur
+      blur = defaultParams.blur,
+      globalCompositeOperation = defaultParams.globalCompositeOperation
     } = attribute;
     if (opacity <= 1e-12) {
       return;
@@ -1050,6 +1052,14 @@ export class BrowserContext2d implements IContext2d {
     } else if (this._clearFilterStyle) {
       _context.filter = 'blur(0px)';
       this._clearFilterStyle = false;
+    }
+
+    if (globalCompositeOperation) {
+      _context.globalCompositeOperation = globalCompositeOperation;
+      this._clearGlobalCompositeOperationStyle = true;
+    } else if (this._clearGlobalCompositeOperationStyle) {
+      _context.globalCompositeOperation = 'source-over';
+      this._clearGlobalCompositeOperationStyle = false;
     }
   }
 

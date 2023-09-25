@@ -76,6 +76,9 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       renderCommandList((path2D as ICustomPath2D).commandList, context, x, y, 1, 1, z);
     }
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(path, path.attribute, pathAttribute);
+
     this.beforeRenderStep(
       path,
       context,
@@ -90,9 +93,6 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       fillCb,
       strokeCb
     );
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(path, path.attribute, pathAttribute);
 
     if (doStroke) {
       if (strokeCb) {

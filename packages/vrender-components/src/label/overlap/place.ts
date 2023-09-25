@@ -1,4 +1,4 @@
-import type { IText, Text } from '@visactor/vrender';
+import type { IText, Text } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValid } from '@visactor/vutils';
 import type { PointLocationCfg } from '../../core/type';

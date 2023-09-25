@@ -1,4 +1,4 @@
-import { createRect } from '@visactor/vrender';
+import { createRect } from '@visactor/vrender-core';
 import { SizeContinuousLegend, Segment } from '../../../src';
 import render from '../../util/render';
 

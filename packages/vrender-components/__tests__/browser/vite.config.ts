@@ -12,7 +12,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts')
+      '@visactor/vrender-core': path.resolve(__dirname, '../../../vrender/src/index.ts')
     }
   }
 });

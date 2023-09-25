@@ -83,7 +83,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       }
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
 
       if (strokeCb) {
         strokeCb(context, outerBorder, rectAttribute.outerBorder);
@@ -121,7 +121,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       }
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
 
       if (strokeCb) {
         strokeCb(context, innerBorder, rectAttribute.innerBorder);

@@ -7,7 +7,7 @@ import type {
   TextAlignType,
   TextBaselineType,
   ILineGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;

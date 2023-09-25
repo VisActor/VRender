@@ -128,7 +128,7 @@ export function drawPathProxy(
   renderCommandList(path.commandList, context, x, y);
 
   // shadow
-  context.setShadowStyle && context.setShadowStyle(graphic, graphic.attribute, themeAttributes);
+  context.setShadowBlendStyle && context.setShadowBlendStyle(graphic, graphic.attribute, themeAttributes);
 
   if (doStroke) {
     if (strokeCb) {

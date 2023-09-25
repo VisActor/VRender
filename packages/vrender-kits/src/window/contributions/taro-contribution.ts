@@ -1,4 +1,12 @@
-import { inject, injectable, Generator, BaseWindowHandlerContribution, VGlobal } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  Generator,
+  BaseWindowHandlerContribution,
+  VGlobal,
+  ContainerModule,
+  WindowHandlerContribution
+} from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -245,3 +253,11 @@ export class TaroWindowHandlerContribution extends BaseWindowHandlerContribution
     context.nativeContext.restore();
   }
 }
+
+export const taroWindowModule = new ContainerModule(bind => {
+  // taro
+  bind(TaroWindowHandlerContribution).toSelf();
+  bind(WindowHandlerContribution)
+    .toDynamicValue(ctx => ctx.container.get(TaroWindowHandlerContribution))
+    .whenTargetNamed(TaroWindowHandlerContribution.env);
+});

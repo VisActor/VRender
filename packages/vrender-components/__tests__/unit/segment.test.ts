@@ -1,7 +1,9 @@
-import type { IGraphic, ILine, ILineGraphicAttribute, Stage } from '@visactor/vrender';
+import type { IGraphic, ILine, ILineGraphicAttribute, Stage } from '@visactor/vrender-core';
 import { Segment } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Segment', () => {
   let stage: Stage;

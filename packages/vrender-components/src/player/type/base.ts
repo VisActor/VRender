@@ -1,4 +1,4 @@
-import { IGroupGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
 
 export type Datum = any;
 

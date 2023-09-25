@@ -1,8 +1,8 @@
 /**
  * @description 框选组件
  */
-import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender';
-import { createPolygon } from '@visactor/vrender';
+import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
+import { createPolygon } from '@visactor/vrender-core';
 import type { IBounds, IPointLike } from '@visactor/vutils';
 import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';

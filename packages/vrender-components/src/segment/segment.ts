@@ -2,8 +2,8 @@
  * @description 标签组件
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
-import type { ISymbol } from '@visactor/vrender';
-import { createSymbol, createLine } from '@visactor/vrender';
+import type { ISymbol } from '@visactor/vrender-core';
+import { createSymbol, createLine } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';

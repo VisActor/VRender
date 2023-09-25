@@ -1,8 +1,10 @@
-import type { Group, IGraphic, Stage } from '@visactor/vrender';
+import type { Group, IGraphic, Stage } from '@visactor/vrender-core';
 import type { Tag, Segment } from '../../../src';
 import { MarkPoint } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Marker', () => {
   let stage: Stage;

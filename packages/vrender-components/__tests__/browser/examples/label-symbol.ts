@@ -1,5 +1,5 @@
 import { GUI } from 'lil-gui';
-import { createSymbol, createGroup, Stage } from '@visactor/vrender';
+import { createSymbol, createGroup, Stage } from '@visactor/vrender-core';
 import { createRenderer } from '../../util/render';
 import { SymbolLabel } from '../../../src';
 

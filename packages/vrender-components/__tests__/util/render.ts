@@ -1,4 +1,4 @@
-import type { IGraphic, IStageParams } from '@visactor/vrender';
+import type { IGraphic, IStageParams } from '@visactor/vrender-core';
 import {
   createStage,
   createGroup,
@@ -11,7 +11,7 @@ import {
   createArea,
   createCircle,
   createPolygon
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
 

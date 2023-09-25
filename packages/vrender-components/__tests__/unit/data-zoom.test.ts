@@ -1,9 +1,11 @@
-import type { IArea, IGroup, ILine, IRect, ISymbol, Stage } from '@visactor/vrender';
-import { Group } from '@visactor/vrender';
+import type { IArea, IGroup, ILine, IRect, ISymbol, Stage } from '@visactor/vrender-core';
+import { Group } from '@visactor/vrender-core';
 import type { Tag } from '../../src';
 import { DataZoom } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('DataZoom component test', () => {
   let stage: Stage;

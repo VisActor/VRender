@@ -108,7 +108,7 @@ export class DefaultIncrementalCanvasAreaRender extends DefaultCanvasAreaRender 
     });
 
     // shadow
-    context.setShadowStyle && context.setShadowStyle(area, attribute, defaultAttribute);
+    context.setShadowBlendStyle && context.setShadowBlendStyle(area, attribute, defaultAttribute);
     context.setCommonStyle(area, attribute, offsetX, offsetY, defaultAttribute);
     context.fill();
   }

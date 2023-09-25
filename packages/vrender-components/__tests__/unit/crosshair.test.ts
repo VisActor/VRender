@@ -1,8 +1,10 @@
 import { degreeToRadian } from '@visactor/vutils';
-import type { IGraphic, Stage, Arc, Path, Rect } from '@visactor/vrender';
+import type { IGraphic, Stage, Arc, Path, Rect } from '@visactor/vrender-core';
 import { LineCrosshair, CircleCrosshair, PolygonCrosshair, RectCrosshair, SectorCrosshair, Tag } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Crosshair', () => {
   let stage: Stage;

@@ -1,4 +1,12 @@
-import { inject, injectable, Generator, BaseWindowHandlerContribution, VGlobal } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  Generator,
+  BaseWindowHandlerContribution,
+  VGlobal,
+  ContainerModule,
+  WindowHandlerContribution
+} from '@visactor/vrender-core';
 import type {
   EnvType,
   IGlobal,
@@ -228,3 +236,11 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     context.nativeContext.restore();
   }
 }
+
+export const wxWindowModule = new ContainerModule(bind => {
+  // wx
+  bind(WxWindowHandlerContribution).toSelf();
+  bind(WindowHandlerContribution)
+    .toDynamicValue(ctx => ctx.container.get(WxWindowHandlerContribution))
+    .whenTargetNamed(WxWindowHandlerContribution.env);
+});

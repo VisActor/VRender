@@ -1,12 +1,12 @@
 /**
  * @description 矩形类型 crosshair
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
-import { RegionLocationCfg } from '../core/type';
-import { Tag } from '../tag';
+import type { RegionLocationCfg } from '../core/type';
+import type { Tag } from '../tag';
 import { CrosshairBase } from './base';
-import { RectCrosshairAttrs } from './type';
+import type { RectCrosshairAttrs } from './type';
 
 export class RectCrosshair extends CrosshairBase<RectCrosshairAttrs> {
   static defaultAttributes = {

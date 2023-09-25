@@ -3,10 +3,12 @@
  * 1. 事件测试
  * 2. setValue 测试
  */
-import { IGraphic, Stage, ISymbol, IGroup, IRect, IText } from '@visactor/vrender';
+import type { IGraphic, Stage, ISymbol, IGroup, IRect, IText } from '@visactor/vrender-core';
 import { Slider, SLIDER_ELEMENT_NAME } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Slider', () => {
   let stage: Stage;

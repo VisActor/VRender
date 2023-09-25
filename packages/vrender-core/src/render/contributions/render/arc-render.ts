@@ -286,6 +286,8 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       drawArcPath(arc, context, x, y, outerRadius, innerRadius);
 
       beforeRenderContribitionsRuned = true;
+      // shadow
+      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
       this.beforeRenderStep(
         arc,
         context,
@@ -300,9 +302,6 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
         fillCb,
         strokeCb
       );
-
-      // shadow
-      context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
 
       if (doFill) {
         if (fillCb) {

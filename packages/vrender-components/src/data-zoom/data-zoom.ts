@@ -1,12 +1,19 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
-import { array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
+import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
+// eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { DataZoomActiveTag, DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
 import type { DataZoomAttributes } from './type';
+
+const delayMap = {
+  debounce: debounce,
+  throttle: throttle
+};
 
 export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   name = 'dataZoom';
@@ -66,12 +73,13 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     start: 0,
     end: 1
   };
+  protected _spanCache: number;
 
   /** 回调函数 */
-  private _previewCallbackX!: (datum: any) => number;
-  private _previewCallbackY!: (datum: any) => number;
-  private _previewCallbackX1!: (datum: any) => number;
-  private _previewCallbackY1!: (datum: any) => number;
+  private _previewPointsX!: (datum: any) => number;
+  private _previewPointsY!: (datum: any) => number;
+  private _previewPointsX1!: (datum: any) => number;
+  private _previewPointsY1!: (datum: any) => number;
   private _updateStateCallback!: (start: number, end: number) => void;
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
@@ -86,15 +94,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       showDetail,
       position,
       previewData,
-      previewCallbackX,
-      previewCallbackY,
-      previewCallbackX1,
-      previewCallbackY1,
+      previewPointsX,
+      previewPointsY,
+      previewPointsX1,
+      previewPointsY1,
       updateStateCallback
     } = this.attribute as DataZoomAttributes;
     const { width, height } = size;
     start && (this.state.start = start);
     end && (this.state.end = end);
+    this._spanCache = this.state.end - this.state.start;
     this._isHorizontal = orient === 'top' || orient === 'bottom';
     this._layoutCache.max = this._isHorizontal ? width : height;
     this._layoutCache.attPos = this._isHorizontal ? 'x' : 'y';
@@ -107,10 +116,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this._showText = showDetail as boolean;
     }
     previewData && (this._previewData = previewData);
-    isFunction(previewCallbackX) && (this._previewCallbackX = previewCallbackX);
-    isFunction(previewCallbackY) && (this._previewCallbackY = previewCallbackY);
-    isFunction(previewCallbackX1) && (this._previewCallbackX1 = previewCallbackX1);
-    isFunction(previewCallbackY1) && (this._previewCallbackY1 = previewCallbackY1);
+    isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
+    isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
+    isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
+    isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
     isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
   }
 
@@ -118,7 +127,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (this.attribute.disableTriggerEvent) {
       return;
     }
-    const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
+    const { showDetail, brushSelect, delayType = 'throttle', delayTime = 0 } = this.attribute as DataZoomAttributes;
     // 拖拽开始
     if (this._startHandler) {
       this._startHandler.addEventListener(
@@ -172,16 +181,24 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
     if (vglobal.env === 'browser') {
       // 拖拽时
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove.bind(this) as EventListener, {
-        capture: true
-      });
+      vglobal.addEventListener(
+        'pointermove',
+        delayMap[delayType](this._onHandlerPointerMove.bind(this), delayTime) as EventListener,
+        {
+          capture: true
+        }
+      );
       // 拖拽结束
       vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
     }
     // 拖拽时
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener, {
-      capture: true
-    });
+    (this as unknown as IGroup).addEventListener(
+      'pointermove',
+      delayMap[delayType](this._onHandlerPointerMove, delayTime) as EventListener,
+      {
+        capture: true
+      }
+    );
     // 拖拽结束
     (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
     (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
@@ -202,6 +219,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       return position[attPos] - this._activeCache.startPos[attPos];
     }
     return this._activeCache.lastPos[attPos] - this._activeCache.startPos[attPos];
+  }
+
+  /** state 边界处理 */
+  protected setStateAttr(start: number, end: number, shouldRender: boolean) {
+    const { zoomLock = false, minSpan = 0, maxSpan = 1 } = this.attribute as DataZoomAttributes;
+    const span = end - start;
+    if (span !== this._spanCache && (zoomLock || span < minSpan || span > maxSpan)) {
+      return;
+    }
+    this._spanCache = span;
+    this.state.start = start;
+    this.state.end = end;
+    shouldRender && this.setAttributes({ start, end });
   }
 
   /** 事件系统坐标转换为stage坐标 */
@@ -250,46 +280,46 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    */
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
-    const { start, end, brushSelect } = this.attribute as DataZoomAttributes;
+    const { start: startAttr, end: endAttr, brushSelect } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max } = this._layoutCache;
     const dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
+
+    let { start, end } = this.state;
+    // this._activeState= false;
     if (this._activeState) {
       // if (this._activeTag === DataZoomActiveTag.background) {
       // } else
       if (this._activeTag === DataZoomActiveTag.middleHandler) {
         this.moveZoomWithMiddle((this.state.start + this.state.end) / 2 + dis);
       } else if (this._activeTag === DataZoomActiveTag.startHandler) {
-        if (this.state.start + dis > this.state.end) {
-          this.state.start = this.state.end;
-          this.state.end = this.state.start + dis;
+        if (start + dis > end) {
+          start = end;
+          end = start + dis;
           this._activeTag = DataZoomActiveTag.endHandler;
         } else {
-          this.state.start = this.state.start + dis;
+          start = start + dis;
         }
       } else if (this._activeTag === DataZoomActiveTag.endHandler) {
-        if (this.state.end + dis < this.state.start) {
-          this.state.end = this.state.start;
-          this.state.start = this.state.end + dis;
+        if (end + dis < start) {
+          end = start;
+          start = end + dis;
           this._activeTag = DataZoomActiveTag.startHandler;
         } else {
-          this.state.end = this.state.end + dis;
+          end = end + dis;
         }
       }
       this._activeCache.lastPos = pos;
       brushSelect && this.renderDragMask();
     }
-    this.state.start = Math.min(Math.max(this.state.start, 0), 1);
-    this.state.end = Math.min(Math.max(this.state.end, 0), 1);
+    start = Math.min(Math.max(start, 0), 1);
+    end = Math.min(Math.max(end, 0), 1);
 
     // 避免attributes相同时, 重复渲染
-    if (start !== this.state.start || end !== this.state.end) {
-      this.setAttributes({
-        start: this.state.start,
-        end: this.state.end
-      });
-      this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
-      this._dispatchChangeEvent(this.state.start, this.state.end);
+    if (startAttr !== start || endAttr !== end) {
+      this.setStateAttr(start, end, true);
+      this._updateStateCallback && this._updateStateCallback(start, end);
+      this._dispatchChangeEvent(start, end);
     }
   };
 
@@ -313,10 +343,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     // 避免attributes相同时, 重复渲染
     if (start !== this.state.start || end !== this.state.end) {
-      this.setAttributes({
-        start: this.state.start,
-        end: this.state.end
-      });
+      this.setStateAttr(this.state.start, this.state.end, true);
       this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
       this._dispatchChangeEvent(this.state.start, this.state.end);
     }
@@ -352,8 +379,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (Math.abs(start - end) < 0.01) {
       this.moveZoomWithMiddle(start);
     } else {
-      this.state.start = start;
-      this.state.end = end;
+      this.setStateAttr(start, end, false);
     }
   }
 
@@ -372,8 +398,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         offset = -this.state.start;
       }
     }
-    this.state.start = this.state.start + offset;
-    this.state.end = this.state.end + offset;
+    this.setStateAttr(this.state.start + offset, this.state.end + offset, false);
   }
 
   protected renderDragMask() {
@@ -828,8 +853,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   protected getPreviewLinePoints() {
     const previewPoints = this._previewData.map(d => {
       return {
-        x: this._previewCallbackX && this._previewCallbackX(d),
-        y: this._previewCallbackY && this._previewCallbackY(d)
+        x: this._previewPointsX && this._previewPointsX(d),
+        y: this._previewPointsY && this._previewPointsY(d)
       };
     });
     // 仅在有数据的时候增加base point, 以弥补背景图表两端的不连续缺口。不然的话没有数据时，会因为base point而仍然绘制图形
@@ -843,10 +868,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   protected getPreviewAreaPoints() {
     const previewPoints = this._previewData.map(d => {
       return {
-        x: this._previewCallbackX && this._previewCallbackX(d),
-        y: this._previewCallbackY && this._previewCallbackY(d),
-        x1: this._previewCallbackX1 && this._previewCallbackX1(d),
-        y1: this._previewCallbackY1 && this._previewCallbackY1(d)
+        x: this._previewPointsX && this._previewPointsX(d),
+        y: this._previewPointsY && this._previewPointsY(d),
+        x1: this._previewPointsX1 && this._previewPointsX1(d),
+        y1: this._previewPointsY1 && this._previewPointsY1(d)
       };
     });
     // 仅在有数据的时候增加base point, 以弥补背景图表两端的不连续缺口。不然的话没有数据时，会因为base point而仍然绘制图形
@@ -985,7 +1010,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.start = start;
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
-        this.setAttributes({ start, end });
+        this.setStateAttr(start, end, true);
         this._updateStateCallback && this._updateStateCallback(start, end);
         this._dispatchChangeEvent(start, end);
       }
@@ -1028,17 +1053,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   /** 外部传入数据映射 */
-  setPreviewCallbackX(callback: (d: any) => number) {
-    isFunction(callback) && (this._previewCallbackX = callback);
+  setpreviewPointsX(callback: (d: any) => number) {
+    isFunction(callback) && (this._previewPointsX = callback);
   }
-  setPreviewCallbackY(callback: (d: any) => number) {
-    isFunction(callback) && (this._previewCallbackY = callback);
+  setpreviewPointsY(callback: (d: any) => number) {
+    isFunction(callback) && (this._previewPointsY = callback);
   }
-  setPreviewCallbackX1(callback: (d: any) => number) {
-    isFunction(callback) && (this._previewCallbackX1 = callback);
+  setpreviewPointsX1(callback: (d: any) => number) {
+    isFunction(callback) && (this._previewPointsX1 = callback);
   }
-  setPreviewCallbackY1(callback: (d: any) => number) {
-    isFunction(callback) && (this._previewCallbackY1 = callback);
+  setpreviewPointsY1(callback: (d: any) => number) {
+    isFunction(callback) && (this._previewPointsY1 = callback);
   }
   setStatePointToData(callback: (state: number) => any) {
     isFunction(callback) && (this._statePointToData = callback);

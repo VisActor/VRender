@@ -69,13 +69,13 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     }
     const { fVisible, sVisible, doFill, doStroke } = data;
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(image, imageAttribute);
+
     this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
 
     // context.beginPath();
     // context.image(x, y, width, height);
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(image, imageAttribute);
 
     if (doFill) {
       if (fillCb) {

@@ -103,7 +103,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     }
 
     // shadow
-    context.setShadowStyle && context.setShadowStyle(line, attribute, defaultAttribute);
+    context.setShadowBlendStyle && context.setShadowBlendStyle(line, attribute, defaultAttribute);
 
     const { x: originX = 0, x: originY = 0 } = attribute;
     const ret: boolean = false;

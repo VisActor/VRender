@@ -19,6 +19,7 @@ export interface ICommonStyleParams {
   shadowColor?: string;
   shadowOffsetX?: number;
   shadowOffsetY?: number;
+  globalCompositeOperation?: CanvasRenderingContext2D['globalCompositeOperation'] | '';
   opacity?: number;
   blur?: number;
 }
@@ -290,7 +291,7 @@ export interface IContext2d extends Releaseable {
     defultParams?: ICommonStyleParams | Partial<ICommonStyleParams>[]
   ) => void;
 
-  setShadowStyle?: (
+  setShadowBlendStyle?: (
     params: ISetCommonStyleParams,
     attribute: ICommonStyleParams,
     defultParams?: ICommonStyleParams | Partial<ICommonStyleParams>[]

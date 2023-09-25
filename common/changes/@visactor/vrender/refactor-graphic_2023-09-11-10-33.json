@@ -2,11 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-<<<<<<<< HEAD:common/changes/@visactor/vrender/refactor-graphic_2023-09-11-10-33.json
       "comment": "refactor: minify graphic code, closed #443",
-========
-      "comment": "fix: custom animate solve validattr issue",
->>>>>>>> develop:common/changes/@visactor/vrender/fix-animate-validAttr_2023-09-19-03-45.json
       "type": "none"
     }
   ],

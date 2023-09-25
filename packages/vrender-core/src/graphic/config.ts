@@ -159,6 +159,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   keepDirIn3d: true,
   shadowRootIdx: 1,
   interactive: false,
+  globalCompositeOperation: '',
   ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform

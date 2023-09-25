@@ -77,7 +77,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       context.beginPath();
       drawArcPath(arc, context, x, y, outerRadius + d, innerRadius - d);
       // shadow
-      context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
 
       if (strokeCb) {
         strokeCb(context, outerBorder, arcAttribute.outerBorder);
@@ -112,7 +112,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       // arc.setAttributes({ outerRadius: outerRadius, innerRadius: innerRadius });
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
 
       if (strokeCb) {
         strokeCb(context, innerBorder, arcAttribute.innerBorder);

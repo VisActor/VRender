@@ -231,7 +231,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
       drawArcPath(arc, context, x, y, z_face[face], outerRadius, innerRadius);
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
 
       if (doFill) {
         if (fillCb) {
@@ -288,7 +288,7 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
       );
 
       // shadow
-      context.setShadowStyle && context.setShadowStyle(arc, arc.attribute, arcAttribute);
+      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
 
       if (doFill) {
         if (fillCb) {

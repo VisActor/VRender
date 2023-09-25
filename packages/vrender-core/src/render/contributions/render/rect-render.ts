@@ -19,8 +19,7 @@ import type {
   IContributionProvider
 } from '../../../interface';
 import { RectRenderContribution } from './contributions/constants';
-import { drawPathProxy, rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
-import { BaseRenderContributionTime } from '../../../common/enums';
+import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRender } from './base-render';
 
 @injectable()
@@ -108,6 +107,9 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       doStroke
     };
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
+
     this.beforeRenderStep(
       rect,
       context,
@@ -123,9 +125,6 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       strokeCb,
       doFillOrStroke
     );
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(rect, rect.attribute, rectAttribute);
 
     if (doFillOrStroke.doFill) {
       if (fillCb) {

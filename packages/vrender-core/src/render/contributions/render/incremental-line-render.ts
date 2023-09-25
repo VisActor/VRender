@@ -120,7 +120,7 @@ export class DefaultIncrementalCanvasLineRender extends DefaultCanvasLineRender 
     drawIncrementalSegments(context.nativeContext, lastSeg, seg, { offsetX, offsetY });
 
     // shadow
-    context.setShadowStyle && context.setShadowStyle(line, attribute, defaultAttribute);
+    context.setShadowBlendStyle && context.setShadowBlendStyle(line, attribute, defaultAttribute);
     context.setStrokeStyle(line, attribute, offsetX, offsetY, defaultAttribute);
     context.stroke();
   }

@@ -133,6 +133,9 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       }
     }
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);
+
     this.beforeRenderStep(
       symbol,
       context,
@@ -156,9 +159,6 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     //   context.setStrokeStyle(symbol.attribute, symbolAttribute);
     //   context.stroke();
     // }
-
-    // shadow
-    context.setShadowStyle && context.setShadowStyle(symbol, symbol.attribute, symbolAttribute);
 
     // svg就不用fill和stroke了
     if (doFill && !parsedPath.isSvg) {

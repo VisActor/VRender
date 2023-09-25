@@ -95,6 +95,37 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
   }
 }
 
+@injectable()
+export class InteractivePickItemInterceptorContribution implements IPickItemInterceptorContribution {
+  order: number = 1;
+
+  beforePickItem(
+    graphic: IGraphic,
+    pickerService: IPickerService,
+    point: IPointLike,
+    pickParams: IPickParams,
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ): null | PickResult {
+    const originGraphic = graphic.baseGraphic;
+    if (originGraphic && originGraphic.parent) {
+      const newPoint = new Point(point.x, point.y);
+      const context = pickerService.pickContext;
+      context.highPerformanceSave();
+      const parentMatrix = originGraphic.parent.globalTransMatrix;
+      parentMatrix.transformPoint(newPoint, newPoint);
+
+      const result = originGraphic.isContainer
+        ? pickerService.pickGroup(originGraphic, newPoint.clone(), parentMatrix, pickParams)
+        : pickerService.pickItem(originGraphic, newPoint.clone(), parentMatrix, pickParams);
+      context.highPerformanceRestore();
+      return result;
+    }
+    return null;
+  }
+}
+
 /**
  * 3d拦截器，用于渲染3d视角
  */

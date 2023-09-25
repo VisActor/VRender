@@ -625,9 +625,10 @@ export class Stage extends Group implements IStage {
 
   renderNextFrame(layers?: ILayer[], force?: boolean): void {
     // render状态中调用的不会触发nextFrame，避免loop
-    if (this.state === 'rendering' && !force) {
-      return;
-    }
+    // if (this.state === 'rendering' && !force) {
+    //   console.log('abc');
+    //   return;
+    // }
     // 性能优化，避免重复add
     if (this.nextFrameRenderLayerSet.size !== this.childrenCount) {
       (layers || this).forEach<ILayer>((layer: any) => {
@@ -687,6 +688,17 @@ export class Stage extends Group implements IStage {
         { renderStyle: this.renderStyle, ...params }
       );
     });
+
+    // 添加交互层渲染
+    if (this.interactiveLayer && !layerList.includes(this.interactiveLayer)) {
+      this.interactiveLayer.render(
+        {
+          renderService: this.renderService,
+          updateBounds: !!this.dirtyBounds
+        },
+        { renderStyle: this.renderStyle, ...params }
+      );
+    }
   }
 
   resizeWindow(w: number, h: number, rerender: boolean = true) {

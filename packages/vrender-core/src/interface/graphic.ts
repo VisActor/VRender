@@ -247,7 +247,7 @@ export type IGraphicAttribute = IDebugType &
      */
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
-    interactive: boolean;
+    globalZIndex: number;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

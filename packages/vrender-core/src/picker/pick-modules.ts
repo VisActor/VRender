@@ -5,6 +5,7 @@ import { DefaultGlobalPickerService } from './global-picker-service';
 // import { DefaultMathPickerService } from './math-picker-service';
 import {
   Canvas3DPickItemInterceptor,
+  InteractivePickItemInterceptorContribution,
   PickItemInterceptor,
   ShadowRootPickItemInterceptorContribution
 } from './pick-interceptor';
@@ -20,7 +21,12 @@ export default new ContainerModule(bind => {
   bind(Canvas3DPickItemInterceptor).toSelf().inSingletonScope();
   bind(PickItemInterceptor).toService(Canvas3DPickItemInterceptor);
 
+  // shadow root
   bind(ShadowRootPickItemInterceptorContribution).toSelf().inSingletonScope();
   bind(PickItemInterceptor).toService(ShadowRootPickItemInterceptorContribution);
+
+  // interactive
+  bind(InteractivePickItemInterceptorContribution).toSelf().inSingletonScope();
+  bind(PickItemInterceptor).toService(InteractivePickItemInterceptorContribution);
   bindContributionProvider(bind, PickItemInterceptor);
 });

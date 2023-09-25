@@ -27,10 +27,10 @@ export function run() {
     },
     brushSelect: false,
     previewData: data,
-    previewCallbackX: d => d.x,
-    previewCallbackY: d => d.y,
-    previewCallbackX1: d => 265,
-    previewCallbackY1: d => d.y
+    previewPointsX: d => d.x,
+    previewPointsY: d => d.y,
+    previewPointsX1: d => 265,
+    previewPointsY1: d => d.y
   });
 
   dataZoom.setUpdateStateCallback((start, end) => console.log('start: ' + start + ', end: ' + end));

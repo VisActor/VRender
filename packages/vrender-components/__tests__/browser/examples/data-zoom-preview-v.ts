@@ -28,13 +28,17 @@ export function run() {
       width: 400,
       height: 30
     },
-    brushSelect: false
+    brushSelect: false,
+    minSpan: 0.3,
+    maxSpan: 0.6,
+    delayTime: 0,
+    zoomLock: false
   });
   dataZoom.setPreviewData(data);
-  dataZoom.setPreviewCallbackX(d => d.x);
-  dataZoom.setPreviewCallbackY(d => d.y);
-  dataZoom.setPreviewCallbackX1(d => d.x);
-  dataZoom.setPreviewCallbackY1(d => 265);
+  dataZoom.setpreviewPointsX(d => d.x);
+  dataZoom.setpreviewPointsY(d => d.y);
+  dataZoom.setpreviewPointsX1(d => d.x);
+  dataZoom.setpreviewPointsY1(d => 265);
 
   const stage = render([dataZoom], 'main');
 }

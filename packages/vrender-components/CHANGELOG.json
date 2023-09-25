@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.15.4",
+      "tag": "@visactor/vrender-components_v0.15.4",
+      "date": "Mon, 25 Sep 2023 03:05:18 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add outsideEnable config of smartInvert"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.3",
       "tag": "@visactor/vrender-components_v0.15.3",
       "date": "Wed, 20 Sep 2023 13:12:13 GMT",

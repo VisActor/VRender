@@ -74,8 +74,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fill: '#D8D8D8'
-            // stroke: '#D8D8D8'
+            opacity: 0.5
           }
         }
       },

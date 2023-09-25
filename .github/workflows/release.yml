@@ -61,7 +61,7 @@ jobs:
         working-directory: ./tools/bugserver-trigger
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
-        run: node ../../common/scripts/install-run-rushx.js ci
+        run: node ../../common/scripts/install-run-rushx.js ci -t @internal/bugserver-trigger
 
       - name: Publish to npm
         env:

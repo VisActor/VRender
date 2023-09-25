@@ -80,6 +80,7 @@ import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enu
  */
 
 const tempMatrix = new Matrix();
+const tempBounds = new AABBBounds();
 
 export const PURE_STYLE_KEY = [
   'stroke',
@@ -769,21 +770,41 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
     if (hasAnimation) {
       const keys = Object.keys(attrs);
-      const animateAttrs = isClear
-        ? keys.reduce((res, key) => {
-            res[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
+      const noWorkAAttr = this.getNoWorkAnimateAttr();
+      const animateAttrs: Partial<T> = {};
+      let noAnimateAttrs: Partial<T> | undefined;
+      if (isClear) {
+        keys.forEach(key => {
+          if (!noWorkAAttr[key]) {
+            animateAttrs[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
+          } else {
+            if (!noAnimateAttrs) {
+              noAnimateAttrs = {};
+            }
+            noAnimateAttrs[key] = attrs[key];
+          }
+        });
+      } else {
+        keys.forEach(key => {
+          if (!noWorkAAttr[key]) {
+            animateAttrs[key] = attrs[key];
+          } else {
+            if (!noAnimateAttrs) {
+              noAnimateAttrs = {};
+            }
+            noAnimateAttrs[key] = attrs[key];
+          }
+        });
+      }
 
-            return res;
-          }, {})
-        : attrs;
       const animate = this.animate();
-
       (animate as any).stateNames = stateNames;
       animate.to(
         animateAttrs,
         this.stateAnimateConfig?.duration ?? DefaultStateAnimateConfig.duration,
         this.stateAnimateConfig?.easing ?? DefaultStateAnimateConfig.easing
       );
+      noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
       this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
     }
@@ -978,6 +999,41 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return !!(this._updateTag & UpdateTag.UPDATE_LAYOUT);
   }
 
+  protected getAnchor(anchor: [string | number, string | number], params: { b?: IAABBBounds }) {
+    const _anchor: [number, number] = [0, 0];
+    const getBounds = () => {
+      if (params.b) {
+        return params.b;
+      }
+      const { scaleX, scaleY, angle } = this.attribute;
+      // 拷贝一份，避免计算bounds的过程中计算matrix，然后matrix又修改了bounds
+      tempBounds.copy(this._AABBBounds);
+      // @ts-ignore
+      this.setAttributes({ scaleX: 1, scaleY: 1, angle: 0 });
+      params.b = this.AABBBounds.clone();
+      this._AABBBounds.copy(tempBounds);
+      // @ts-ignore
+      this.setAttributes({ scaleX, scaleY, angle });
+      return params.b;
+    };
+    if (typeof anchor[0] === 'string') {
+      const ratio = parseFloat(anchor[0]) / 100;
+      const bounds = getBounds();
+      _anchor[0] = bounds.x1 + (bounds.x2 - bounds.x1) * ratio;
+    } else {
+      _anchor[0] = anchor[0];
+    }
+    if (typeof anchor[1] === 'string') {
+      const ratio = parseFloat(anchor[1]) / 100;
+      const bounds = getBounds();
+      _anchor[1] = bounds.y1 + (bounds.y2 - bounds.y1) * ratio;
+    } else {
+      _anchor[1] = anchor[1];
+    }
+
+    return _anchor;
+  }
+
   /**
    * 更新局部matrix的具体函数
    */
@@ -992,22 +1048,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       anchor,
       postMatrix
     } = this.attribute;
-    const _anchor: [number, number] = [0, 0];
+    let _anchor: [number, number] = [0, 0];
+    const params = {};
     if (anchor) {
-      if (typeof anchor[0] === 'string') {
-        const ratio = parseFloat(anchor[0]) / 100;
-        const bounds = this.AABBBounds;
-        _anchor[0] = bounds.x1 + (bounds.x2 - bounds.x1) * ratio;
-      } else {
-        _anchor[0] = anchor[0];
-      }
-      if (typeof anchor[1] === 'string') {
-        const ratio = parseFloat(anchor[1]) / 100;
-        const bounds = this.AABBBounds;
-        _anchor[1] = bounds.x1 + (bounds.x2 - bounds.x1) * ratio;
-      } else {
-        _anchor[1] = anchor[1];
-      }
+      _anchor = this.getAnchor(anchor, params);
     }
     if (scaleCenter && (scaleX !== 1 || scaleY !== 1)) {
       const m = this._transMatrix;
@@ -1018,7 +1062,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
       m.translate(x, y);
       // m.translate(scaleCenter[0] * scaleX, scaleCenter[1] * scaleY);
-      application.transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: scaleCenter[0], y: scaleCenter[1] });
+      // 计算bounds
+      _anchor = this.getAnchor(scaleCenter, params);
+      application.transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: _anchor[0], y: _anchor[1] });
       // m.translate(-scaleCenter[0], -scaleCenter[1]);
     } else {
       normalTransform(this._transMatrix, this._transMatrix.reset(), x, y, scaleX, scaleY, angle, anchor && _anchor);

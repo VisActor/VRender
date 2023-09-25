@@ -2,6 +2,7 @@ import type { IColor } from '@visactor/vrender-core';
 import { ColorUtil } from '@visactor/vutils';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];
+const { Color } = ColorUtil;
 
 /**
  * 标签智能反色
@@ -16,8 +17,11 @@ export function labelSmartInvert(
   contrastRatiosThreshold?: number,
   alternativeColors?: string | string[]
 ): IColor | undefined {
-  const foregroundColor = formatColorToHex(foregroundColorOrigin);
-  const backgroundColor = formatColorToHex(backgroundColorOrogin);
+  if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrogin !== 'string') {
+    return foregroundColorOrigin;
+  }
+  const foregroundColor = new Color(foregroundColorOrigin as string).toHex();
+  const backgroundColor = new Color(backgroundColorOrogin as string).toHex();
   if (!contrastAccessibilityChecker(foregroundColor, backgroundColor, textType, contrastRatiosThreshold)) {
     return improveContrastReverse(
       foregroundColor,

@@ -247,7 +247,7 @@ export type IGraphicAttribute = IDebugType &
      */
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
-    interactive: boolean;
+    globalZIndex: number;
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
   };
 

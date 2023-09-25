@@ -1,6 +1,6 @@
 import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds, pi2 } from '@visactor/vutils';
-import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
+import { createGroup, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
 import type {
   IArc,
   IContext2d,
@@ -11,6 +11,7 @@ import type {
   IGraphicAttribute,
   IGraphicRenderDrawParams,
   IGroup,
+  ILayer,
   IRenderService
 } from '../../../interface';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
@@ -159,6 +160,7 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
 @injectable()
 export class InteractiveDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
+  processing: boolean;
   // afterDrawItem(
   //   graphic: IGraphic,
   //   renderService: IRenderService,
@@ -180,24 +182,44 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    let interactiveGraphic: IGraphic;
-    if (graphic.attribute.interactive) {
-      interactiveGraphic = graphic.interactiveGraphic;
+    if (this.processing) {
+      return false;
+    }
+    // 判断是否在交互层
+    if (graphic.baseGraphic) {
+      return this.beforeDrawInteractive(graphic, renderService, drawContext, drawContribution, params);
+    }
+    return this.beforeSetInteractive(graphic, renderService, drawContext, drawContribution, params);
+  }
+
+  /**
+   * 用于提升interactive
+   * @param graphic
+   * @param renderService
+   * @param drawContext
+   * @param drawContribution
+   * @param params
+   */
+  beforeSetInteractive(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    let interactiveGraphic: IGraphic = graphic.interactiveGraphic;
+    if (graphic.attribute.globalZIndex) {
       if (!interactiveGraphic) {
         interactiveGraphic = graphic.clone();
         graphic.interactiveGraphic = interactiveGraphic;
+        interactiveGraphic.baseGraphic = graphic;
       }
       // 设置位置
-      const m = graphic.globalTransMatrix;
+      // const m = graphic.globalTransMatrix;
       interactiveGraphic.setAttributes(
         {
-          x: 0,
-          y: 0,
-          scaleX: 1,
-          scaleY: 1,
-          angle: 0,
-          postMatrix: m,
-          interactive: false
+          globalZIndex: 0,
+          zIndex: graphic.attribute.globalZIndex
         },
         false,
         { skipUpdateCallback: true }
@@ -206,7 +228,8 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       drawContext.stage.tryInitInteractiveLayer();
       const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
-        interactiveLayer.add(interactiveGraphic);
+        const shadowRoot = this.getShadowRoot(interactiveLayer);
+        shadowRoot.add(interactiveGraphic);
       }
       return true;
     } else if (interactiveGraphic) {
@@ -214,10 +237,60 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       drawContext.stage.tryInitInteractiveLayer();
       const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
       if (interactiveLayer) {
-        interactiveLayer.removeChild(interactiveGraphic);
+        const shadowRoot = this.getShadowRoot(interactiveLayer);
+        shadowRoot.removeChild(interactiveGraphic);
       }
+      graphic.interactiveGraphic = null;
+      interactiveGraphic.baseGraphic = null;
     }
     return false;
+  }
+
+  /**
+   * 用于绘制interactive
+   * @param graphic
+   * @param renderService
+   * @param drawContext
+   * @param drawContribution
+   * @param params
+   */
+  beforeDrawInteractive(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    // 默认使用原始的图元
+    const baseGraphic = graphic.baseGraphic as IGraphic;
+    if (baseGraphic) {
+      this.processing = true;
+      const { context } = drawContext;
+      context.highPerformanceSave();
+      // 直接transform
+      context.setTransformFromMatrix(baseGraphic.parent.globalTransMatrix, true);
+      // context.fillRect(0, 0, 100, 100);
+      // 设置context的transform到上一个节点
+      baseGraphic.isContainer
+        ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext)
+        : drawContribution.renderItem(baseGraphic, drawContext);
+
+      context.highPerformanceRestore();
+      this.processing = false;
+
+      return true;
+    }
+    return false;
+  }
+  getShadowRoot(interactiveLayer: ILayer) {
+    // 获取绑定影子节点的group
+    let group = interactiveLayer.getElementById('_interactive_group') as IGroup;
+    if (!group) {
+      group = createGroup({});
+      group.id = '_interactive_group';
+      interactiveLayer.add(group);
+    }
+    return group.shadowRoot ?? group.attachShadow();
   }
 }
 

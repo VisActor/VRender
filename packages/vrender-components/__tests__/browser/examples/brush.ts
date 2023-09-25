@@ -43,6 +43,7 @@ export function run() {
 
   const brush = new Brush({
     ...attr,
+    hasMask: false,
     interactiveRange: {
       minX: 0,
       minY: 0,
@@ -57,6 +58,10 @@ export function run() {
       stroke: '#B0C8F9',
       strokeWidth: 2
     }
+  });
+
+  brush.setUpdateDragMaskCallback(a => {
+    console.log(a);
   });
 
   const brush2 = new Brush({

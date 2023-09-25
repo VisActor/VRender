@@ -18,28 +18,30 @@ export const page = () => {
     })
   );
 
-  graphics.push(
-    createRect({
-      x: 300,
-      y: 100,
-      width: 100,
-      height: 100,
-      fill: {
-        gradient: 'linear',
-        x0: 0,
-        y0: 0,
-        x1: 1,
-        y1: 0,
-        stops: [
-          { offset: 0, color: 'green' },
-          { offset: 0.5, color: 'orange' },
-          { offset: 1, color: 'red' }
-        ]
-      },
-      cornerRadius: [5, 10, 15, 20],
-      lineWidth: 5
-    })
-  );
+  const r = createRect({
+    x: 300,
+    y: 100,
+    width: 100,
+    height: 100,
+    scaleCenter: ['50%', '50%'],
+    _debug_bounds: true,
+    fill: {
+      gradient: 'linear',
+      x0: 0,
+      y0: 0,
+      x1: 1,
+      y1: 0,
+      stops: [
+        { offset: 0, color: 'green' },
+        { offset: 0.5, color: 'orange' },
+        { offset: 1, color: 'red' }
+      ]
+    },
+    cornerRadius: [5, 10, 15, 20],
+    lineWidth: 5
+  });
+  graphics.push(r);
+  r.animate().to({ scaleX: 2, scaleY: 2 }, 1000, 'linear');
 
   graphics.push(
     createRect({

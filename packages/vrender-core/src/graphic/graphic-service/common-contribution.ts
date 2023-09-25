@@ -16,7 +16,7 @@ export class DefaultOuterBorderBoundsContribution {
       const { distance = defaultOuterBorder.distance, lineWidth = defaultOuterBorder.lineWidth } = outerBorder;
 
       // rect的distance一定是number
-      aabbBounds.expand((distance as number) + shadowBlur + lineWidth / 2);
+      aabbBounds.expand((distance as number) + (shadowBlur + lineWidth) / 2);
     }
     return aabbBounds;
   }

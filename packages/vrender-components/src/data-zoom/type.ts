@@ -9,6 +9,7 @@ import type {
 import type { IPointLike } from '@visactor/vutils';
 import type { OrientType } from '../interface';
 import type { TagAttributes } from '../tag';
+import type { IDelayType } from '../common/type';
 
 export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
@@ -187,5 +188,3 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   previewPointsY1?: (datum: any) => number;
   updateStateCallback?: (start: number, end: number) => any;
 }
-
-export type IDelayType = 'debounce' | 'throttle';

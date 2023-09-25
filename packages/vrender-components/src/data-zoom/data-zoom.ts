@@ -1039,16 +1039,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   /** 外部传入数据映射 */
-  setpreviewPointsX(callback: (d: any) => number) {
+  setPreviewPointsX(callback: (d: any) => number) {
     isFunction(callback) && (this._previewPointsX = callback);
   }
-  setpreviewPointsY(callback: (d: any) => number) {
+  setPreviewPointsY(callback: (d: any) => number) {
     isFunction(callback) && (this._previewPointsY = callback);
   }
-  setpreviewPointsX1(callback: (d: any) => number) {
+  setPreviewPointsX1(callback: (d: any) => number) {
     isFunction(callback) && (this._previewPointsX1 = callback);
   }
-  setpreviewPointsY1(callback: (d: any) => number) {
+  setPreviewPointsY1(callback: (d: any) => number) {
     isFunction(callback) && (this._previewPointsY1 = callback);
   }
   setStatePointToData(callback: (state: number) => any) {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(datazoom): support zoomlock & span & throttle setting and rename callback",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -278,7 +278,7 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
    * 标签位置
    * @default 'outside'
    */
-  position?: Functional<'inside' | 'outside'>;
+  position?: Functional<'inside' | 'outside' | 'inside-inner' | 'inside-outer'>;
 
   // 画布宽度
   width?: number;
@@ -305,6 +305,14 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
    * 标签旋转角度
    */
   angle?: number;
+  /**
+   * 标签旋转角度的偏移角度
+   */
+  offsetAngle?: number;
+  /**
+   * 标签相对于 `outerRadius` 的径向偏移，目前仅作用于 inside 标签
+   */
+  offsetRadius?: number;
   /**
    * 标签横向点对齐
    */

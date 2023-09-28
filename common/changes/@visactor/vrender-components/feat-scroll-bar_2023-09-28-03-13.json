@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support scrollbar, closed #529",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

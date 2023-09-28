@@ -7,5 +7,10 @@
     "rootDir": "./"
   },
   "include": ["src", "__tests__", "examples"],
-  "exclude": ["bugserver-config"]
+  "exclude": ["bugserver-config"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    }
+  ]
 }

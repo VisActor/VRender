@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender';
-import { vglobal, CustomEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import { array, clamp, isFunction, isValid, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';

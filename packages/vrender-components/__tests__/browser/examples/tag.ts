@@ -1,4 +1,5 @@
 import GUI from 'lil-gui';
+import '@visactor/vrender';
 import { createLine } from '@visactor/vrender';
 import render from '../../util/render';
 import { Tag } from '../../../src';

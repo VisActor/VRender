@@ -1,4 +1,5 @@
 import { ColorContinuousLegend } from '../../../src';
+import '@visactor/vrender';
 import render from '../../util/render';
 
 const hbLegend = new ColorContinuousLegend({

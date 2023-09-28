@@ -1,0 +1,14 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["jest", "node"],
+    "lib": ["DOM", "ESNext", "ES2021.String"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true
+  },
+  "include": ["src", "__tests__", "examples"],
+  "exclude": ["bugserver-config", "src/common/inversify-lite"]
+}

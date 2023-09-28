@@ -23,11 +23,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.16.0",
-    "color-convert": "2.0.1",
-    "inversify": "6.0.1",
-    "core-js": "3.31.1",
-    "fast-xml-parser": "4.2.7"
+    "@visactor/vrender-core": "workspace:0.15.5",
+    "@visactor/vrender-kits": "workspace:0.15.5"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

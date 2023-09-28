@@ -1,8 +1,10 @@
-import type { IGraphic, Stage, Group, ILine, Text, IText } from '@visactor/vrender';
+import type { IGraphic, Stage, Group, ILine, Text, IText } from '@visactor/vrender-core';
 import { LineAxis } from '../../../../src';
 import { createCanvas } from '../../../util/dom';
 import { createStage } from '../../../util/vrender';
 import { AXIS_ELEMENT_NAME } from '../../../../src/axis/constant';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Auto Limit', () => {
   let stage: Stage;

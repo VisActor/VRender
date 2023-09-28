@@ -1,8 +1,8 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine } from '@visactor/vrender';
-import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender';
+import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine } from '@visactor/vrender-core';
+import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { isFunction, isValidNumber, isEmpty, isValid, isString, merge, isRectIntersect, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';

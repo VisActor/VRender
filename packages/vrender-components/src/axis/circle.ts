@@ -1,9 +1,9 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender';
+import type { IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createCircle } from '@visactor/vrender';
+import { createCircle } from '@visactor/vrender-core';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';

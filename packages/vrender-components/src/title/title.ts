@@ -1,10 +1,10 @@
 /**
  * @description 标题组件
  */
-import { IGroup, IText, IRichText } from '@visactor/vrender';
+import type { IGroup, IText, IRichText } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { TitleAttrs } from './type';
+import type { TitleAttrs } from './type';
 
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';

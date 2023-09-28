@@ -1,4 +1,4 @@
-import type { IGraphic } from '@visactor/vrender';
+import type { IGraphic } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 
 export function limitShapeInBounds(shape: IGraphic, bounds: IBoundsLike) {

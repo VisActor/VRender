@@ -1,5 +1,6 @@
 import { GUI } from 'lil-gui';
-import { createGroup, Stage, createRect } from '@visactor/vrender-core';
+import '@visactor/vrender';
+import { createGroup, Stage, createRect } from '@visactor/vrender';
 import { createRenderer } from '../../util/render';
 import { RectLabel } from '../../../src';
 

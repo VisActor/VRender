@@ -18,7 +18,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
-import type { IBounds } from '@visactor/vutils';
+import type { IAABBBounds, IBounds } from '@visactor/vutils';
 import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
@@ -311,7 +311,23 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
+    let retrans: boolean = false;
+    let tempBounds: IAABBBounds;
+
+    if (graphic.parent) {
+      const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
+      retrans = !!(scrollX || scrollY);
+      if (retrans) {
+        tempBounds = this.dirtyBounds.clone();
+        // 变换dirtyBounds
+        const m = graphic.globalTransMatrix.getInverse();
+        this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(m);
+        this.dirtyBounds.translate(-scrollX, -scrollY);
+      }
+    }
+
     if (!(graphic.isContainer || isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false))) {
+      retrans && this.dirtyBounds.copy(tempBounds);
       return;
     }
 
@@ -325,6 +341,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     } else {
       renderer.draw(graphic, this.currentRenderService, drawContext, params);
     }
+
+    retrans && this.dirtyBounds.copy(tempBounds);
 
     // 添加拦截器
     if (this.InterceptorContributions.length) {

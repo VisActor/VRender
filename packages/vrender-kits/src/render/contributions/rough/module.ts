@@ -7,7 +7,7 @@ import { RoughCanvasPathRender } from './rough-path';
 import { RoughCanvasRectRender } from './rough-rect';
 import { RoughCanvasSymbolRender } from './rough-symbol';
 
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+export default new ContainerModule(bind => {
   // circle
   bind(RoughCanvasCircleRender).toSelf().inSingletonScope();
   bind(GraphicRender).to(RoughCanvasCircleRender);

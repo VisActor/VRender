@@ -1,7 +1,10 @@
 import GUI from 'lil-gui';
-import { createLine, createText, IText } from '@visactor/vrender-core';
+import '@visactor/vrender';
+import { createLine, createText, IText } from '@visactor/vrender';
 import render from '../../util/render';
 import { PopTip, loadPoptip } from '../../../src';
+// import { initBrowserEnv } from '@visactor/vrender-kits';
+// initBrowserEnv();
 loadPoptip();
 
 export function run() {

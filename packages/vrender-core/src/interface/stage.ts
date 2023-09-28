@@ -49,6 +49,8 @@ export interface IStageParams {
   interactiveLayer: boolean;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
+  // 是否支持滚动条
+  enableScroll: boolean;
   poptip: boolean;
   // 绘制之前的钩子函数
   beforeRender: (stage: IStage) => void;

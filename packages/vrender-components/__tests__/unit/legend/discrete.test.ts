@@ -1,7 +1,9 @@
-import type { IGraphic, IGroup, IText, Stage } from '@visactor/vrender';
+import type { IGraphic, IGroup, IText, Stage } from '@visactor/vrender-core';
 import { DiscreteLegend } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('DiscreteLegend', () => {
   let stage: Stage;

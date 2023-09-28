@@ -2,7 +2,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
-import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender';
+import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender-core';
 import {
   circlePoint,
   isQuadrantRight,

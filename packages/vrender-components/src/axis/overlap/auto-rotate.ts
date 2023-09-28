@@ -1,7 +1,7 @@
 /**
  * @description 坐标轴标签自动旋转
  */
-import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender';
+import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { degreeToRadian, isEmpty, isRotateAABBIntersect } from '@visactor/vutils';
 
 type RotateConfig = {

@@ -2,8 +2,8 @@
  * @description 网格线
  */
 import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
-import type { IGroup, Path } from '@visactor/vrender';
-import { createGroup, createPath } from '@visactor/vrender';
+import type { IGroup, Path } from '@visactor/vrender-core';
+import { createGroup, createPath } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
 import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';

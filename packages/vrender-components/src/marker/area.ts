@@ -1,5 +1,5 @@
-import type { IGroup, INode, IPolygon } from '@visactor/vrender';
-import { createPolygon } from '@visactor/vrender';
+import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
+import { createPolygon } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { Tag } from '../tag';
 import { Marker } from './base';

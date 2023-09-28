@@ -1,11 +1,11 @@
 /**
  * @description 直线类型 crosshair
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
-import { RegionLocationCfg } from '../core/type';
+import type { RegionLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
-import { LineCrosshairAttrs } from './type';
+import type { LineCrosshairAttrs } from './type';
 
 export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
   static defaultAttributes = {

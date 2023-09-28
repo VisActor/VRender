@@ -171,5 +171,9 @@ export const pages = [
   {
     title: '编辑器',
     path: 'editor'
+  },
+  {
+    title: 'globalCompositeOperation',
+    path: 'globalCompositeOperation'
   }
 ];

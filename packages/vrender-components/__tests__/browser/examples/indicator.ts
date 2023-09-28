@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { createLine } from '@visactor/vrender';
 import render from '../../util/render';
 import { Indicator } from '../../../src';

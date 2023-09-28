@@ -1,6 +1,6 @@
-import type { ITextGraphicAttribute } from '@visactor/vrender';
+import type { ITextGraphicAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { getTextBounds } from '@visactor/vrender';
+import { getTextBounds } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { TextMeasure } from '@visactor/vutils';

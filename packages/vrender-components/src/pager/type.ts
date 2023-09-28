@@ -1,5 +1,5 @@
-import { ISymbolGraphicAttribute, IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
-import { Padding } from '../core/type';
+import type { ISymbolGraphicAttribute, IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export type PagerAttributes = {
   /**

@@ -1,4 +1,5 @@
 import GUI from 'lil-gui';
+import '@visactor/vrender';
 import render from '../../util/render';
 import { Brush } from '../../../src';
 

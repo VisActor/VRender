@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { DiscreteLegend, Pager } from '../../../src';
 import render from '../../util/render';
 

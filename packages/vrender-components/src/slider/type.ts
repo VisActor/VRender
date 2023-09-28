@@ -1,9 +1,9 @@
-import {
+import type {
   ISymbolGraphicAttribute,
   IRectGraphicAttribute,
   ITextGraphicAttribute,
   IGroupGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 type Text = string | number;
 

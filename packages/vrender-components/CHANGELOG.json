@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.0",
+      "tag": "@visactor/vrender-components_v0.16.0",
+      "date": "Thu, 28 Sep 2023 07:23:52 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support scrollbar, closed #529"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.5",
       "tag": "@visactor/vrender-components_v0.15.5",
       "date": "Wed, 27 Sep 2023 09:33:50 GMT",

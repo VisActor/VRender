@@ -24,6 +24,9 @@
       "path": "../../packages/vrender/"
     },
     {
+      "path": "../../packages/vrender-core/"
+    },
+    {
       "path": "../../packages/vrender-kits/"
     }
   ],

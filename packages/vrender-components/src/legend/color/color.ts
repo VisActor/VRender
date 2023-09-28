@@ -4,12 +4,13 @@
  * showHandlers 测试
  */
 import { merge, isEmpty, get } from '@visactor/vutils';
-import { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender';
-import { LinearScale, ILinearScale } from '@visactor/vscale';
+import type { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender-core';
+import type { ILinearScale } from '@visactor/vscale';
+import { LinearScale } from '@visactor/vscale';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
-import { ColorLegendAttributes } from './type';
+import type { ColorLegendAttributes } from './type';
 
 export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   name = 'colorLegend';

@@ -1,4 +1,5 @@
 import render from '../../util/render';
+import '@visactor/vrender';
 import { CircleCrosshair } from '../../../src';
 
 export function run() {

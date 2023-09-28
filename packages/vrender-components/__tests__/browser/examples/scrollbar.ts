@@ -1,8 +1,7 @@
+import '@visactor/vrender';
 import render from '../../util/render';
 import { ScrollBar, loadScrollbar } from '../../../src';
-import { initBrowserEnv } from '@visactor/vrender-kits';
-import { createGroup, createRect } from '@visactor/vrender-core';
-initBrowserEnv();
+import { createGroup, createRect } from '@visactor/vrender';
 loadScrollbar();
 
 export function run() {

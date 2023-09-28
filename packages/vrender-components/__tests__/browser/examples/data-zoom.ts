@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
 import { DataZoom } from '../../../src';

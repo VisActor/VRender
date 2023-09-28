@@ -1,4 +1,5 @@
 import { LinearScale, BandScale } from '@visactor/vscale';
+import '@visactor/vrender';
 import { LineAxis, CircleAxis, GroupTransition, LineAxisGrid, CircleAxisGrid } from '../../../src';
 import render from '../../util/render';
 

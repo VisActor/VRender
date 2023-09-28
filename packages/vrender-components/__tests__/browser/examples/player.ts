@@ -1,4 +1,5 @@
-import { IGraphic } from '@visactor/vrender-core';
+import '@visactor/vrender';
+import { IGraphic } from '@visactor/vrender';
 import { ContinuousPlayer, DiscretePlayer, PlayerEventEnum } from '../../../src';
 import render from '../../util/render';
 

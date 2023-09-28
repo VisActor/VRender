@@ -48,6 +48,13 @@
       "versionPolicyName": "vrenderMain"
     },
     {
+      "packageName": "@visactor/vrender-core",
+      "projectFolder": "packages/vrender-core",
+      "tags": ["package"],
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
+    },
+    {
       "packageName": "@visactor/vrender",
       "projectFolder": "packages/vrender",
       "tags": ["package"],

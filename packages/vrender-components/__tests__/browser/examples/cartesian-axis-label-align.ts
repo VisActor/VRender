@@ -1,5 +1,6 @@
 import { AABBBounds } from '@visactor/vutils';
 import { PointScale } from '@visactor/vscale';
+import '@visactor/vrender';
 import { LineAxis } from '../../../src';
 import { alignAxisLabels } from '../../../src/util/align';
 import render from '../../util/render';

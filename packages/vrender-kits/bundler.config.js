@@ -6,9 +6,8 @@ module.exports = {
   name: 'VRender.Kits',
   umdOutputFilename: 'index',
   globals: {
-    inversify: 'inversify',
-    '@visactor/vrender': 'VRender',
+    '@visactor/vrender-core': 'VRenderCore',
     '@visactor/vutils': 'VUtils'
   },
-  external: ['inversify', 'core-js/proposals/reflect-metadata', '@visactor/vrender', '@visactor/vutils']
+  external: ['@visactor/vrender-core', '@visactor/vutils']
 };

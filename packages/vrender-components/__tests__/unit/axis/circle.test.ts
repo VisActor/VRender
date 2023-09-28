@@ -1,11 +1,13 @@
 import { BandScale } from '@visactor/vscale';
-import type { IGraphic, Stage, Group, Circle, Text } from '@visactor/vrender';
-import { IGroup } from '@visactor/vrender';
+import type { IGraphic, Stage, Group, Circle, Text } from '@visactor/vrender-core';
+import { IGroup } from '@visactor/vrender-core';
 import { CircleAxis, CircleAxisGrid } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import type { Tag } from '../../../src/tag/tag';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Circle Axis', () => {
   let stage: Stage;

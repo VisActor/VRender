@@ -1,4 +1,5 @@
 import { PointScale } from '@visactor/vscale';
+import '@visactor/vrender';
 import { LineAxis } from '../../../src';
 import render from '../../util/render';
 

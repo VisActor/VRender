@@ -1,8 +1,8 @@
 /**
  * @description 滚动条组件
  */
-import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender';
-import { CustomEvent, vglobal } from '@visactor/vrender';
+import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender-core';
+import { CustomEvent, vglobal } from '@visactor/vrender-core';
 import { merge, normalizePadding, clamp, clampRange } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 

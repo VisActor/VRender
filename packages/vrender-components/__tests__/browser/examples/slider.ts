@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { Slider } from '../../../src';
 import render from '../../util/render';
 

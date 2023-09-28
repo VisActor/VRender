@@ -1,4 +1,5 @@
 import { pi } from '@visactor/vutils';
+import '@visactor/vrender';
 import { BandScale, LinearScale, PointScale } from '@visactor/vscale';
 import { CircleAxis, LineAxis, LineAxisGrid, CircleAxisGrid } from '../../../src';
 import render from '../../util/render';

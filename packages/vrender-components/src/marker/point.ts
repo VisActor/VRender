@@ -8,9 +8,9 @@ import type {
   IRichTextGraphicAttribute,
   ILine,
   ILineGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender';
+import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';

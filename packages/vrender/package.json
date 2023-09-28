@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.15.5",
+  "version": "0.16.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -23,8 +23,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.15.5",
-    "@visactor/vrender-kits": "workspace:0.15.5"
+    "@visactor/vrender-core": "workspace:0.16.0",
+    "@visactor/vrender-kits": "workspace:0.16.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

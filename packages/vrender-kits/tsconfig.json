@@ -4,10 +4,7 @@
     "baseUrl": ".",
     "outDir": "./es",
     "rootDir": "./src",
-    "composite": true,
-    "paths": {
-      "@visactor/vrender-core": ["../vrender-core/src"]
-    }
+    "composite": true
   },
   "include": ["src"],
   "references": [

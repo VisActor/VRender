@@ -5,11 +5,7 @@
     "rootDir": "./src",
     "outDir": "./es",
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "composite": true,
-    "paths": {
-      "@visactor/vrender-core": ["../vrender-core/src"],
-      "@visactor/vrender-kits": ["../vrender-kits/src"]
-    }
+    "composite": true
   },
   "include": ["src"],
   "references": [

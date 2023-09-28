@@ -35,7 +35,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: false,
+    disableDirtyBounds: true,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {
@@ -44,7 +44,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       x2: 550,
       y2: 550
     },
-    pluginList: ['poptipForText'],
+    pluginList: ['poptipForText', 'scrollbar'],
     ...option
   });
 }

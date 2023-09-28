@@ -249,6 +249,8 @@ export type IGraphicAttribute = IDebugType &
     shadowRootIdx: number;
     globalZIndex: number;
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
+    // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
+    overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

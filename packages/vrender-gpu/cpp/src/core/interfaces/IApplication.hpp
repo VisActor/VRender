@@ -28,6 +28,7 @@ public:
     virtual void Destroy() = 0;
     virtual IWindow* CreateWindow(const WindowConf &conf) = 0;
     virtual void Start() = 0;
+    virtual bool RunFrame() = 0;
 
     bool mDrawInThisFrame;
 

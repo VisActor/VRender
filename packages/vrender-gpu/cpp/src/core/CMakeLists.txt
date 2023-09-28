@@ -3,13 +3,24 @@ set(glad_path ${PROJECT_SOURCE_DIR}/src/platform/libs/glad)
 include_directories(include)
 include_directories(${glad_path}/include)
 include_directories(algorithm/include)
+include_directories(geometry/include)
+include_directories(material/include)
+include_directories(mesh/include)
+include_directories(lights/include)
 #include_directories(Mark/include)
 #include_directories(render/include)
 
 add_library(core
+        PerspectiveCamera.cpp
+        material/Material.cpp material/MeshBasicMaterial.cpp
+        mesh/Mesh.cpp
+        lights/AmbientLight.cpp
+        Model.cpp
         ResourceManager.cpp FontManager.cpp Shader.cpp Texture2D.cpp stb_image.cpp
-        graphic/Node.cpp graphic/Container.cpp Layer.cpp Matrix.cpp Bounds.cpp
-        Camera.cpp SpinLock.cpp Renderer.cpp algorithm/Bezier.cpp)
+        graphic/Node.cpp graphic/Container.cpp graphic/Sprite.cpp Layer.cpp
+        Matrix.cpp Bounds.cpp
+        Camera.cpp SpinLock.cpp Renderer.cpp algorithm/Bezier.cpp
+        geometry/Geometry.cpp geometry/BoxGeometry.cpp)
 
 #add_library(core
 #        stb_image.cpp Shader.cpp Texture2D.cpp ResourceManager.cpp Mesh.cpp Geometry.cpp Tools.cpp

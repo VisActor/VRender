@@ -8,17 +8,17 @@
 #include "IApplication.hpp"
 #include "Window.hpp"
 
-class DarwinApplication final: public IApplication {
+class BrowserApplication final: public IApplication {
 public:
-    DarwinApplication(): IApplication{Platform::Darwin}, mExit{false}, mWindow{nullptr} {};
-    ~DarwinApplication() override = default;
+    BrowserApplication(): IApplication{Platform::Darwin}, mExit{false}, mWindow{nullptr} {};
+    ~BrowserApplication() override = default;
     int Init() override;
     void Destroy() override;
     IWindow* CreateWindow(const WindowConf &conf) override;
     void Start() override;
     bool RunFrame() override;
 
-    DarwinWindow* mWindow;
+    BrowserWindow* mWindow;
 private:
     bool mExit;
 };

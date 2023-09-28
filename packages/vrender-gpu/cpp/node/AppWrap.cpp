@@ -12,6 +12,7 @@ Napi::Object AppWrap::Init(Napi::Env env, Napi::Object exports) {
             InstanceMethod<&AppWrap::SetClearColor>("SetClearColor", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
             InstanceMethod<&AppWrap::AddLayer>("AddLayer", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
             InstanceMethod<&AppWrap::Start>("Start", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
+            InstanceMethod<&AppWrap::RunFrame>("RunFrame", static_cast<napi_property_attributes>(napi_writable | napi_configurable)),
     });
 
     Napi::FunctionReference *constructor = new Napi::FunctionReference();
@@ -93,6 +94,16 @@ Napi::Value AppWrap::Start(const Napi::CallbackInfo &info) {
 //    };
     mApplication->Start();
 }
+
+Napi::Value AppWrap::RunFrame(const Napi::CallbackInfo &info) {
+  if (mApplication == nullptr) {
+      std::cout<<"发生错误，找不到application"<<std::endl;
+  }
+  std::cout<<"run frame!"<<std::endl;
+  auto destroy = mApplication->RunFrame();
+  return Napi::Boolean::New(info.Env(), destroy);
+}
+
 
 Napi::Value AppWrap::SetClearColor(const Napi::CallbackInfo &info) {
     auto r = info[0].As<Napi::Number>().FloatValue();

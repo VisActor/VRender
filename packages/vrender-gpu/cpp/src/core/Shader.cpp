@@ -6,6 +6,8 @@
 #include <iostream>
 #include <exception>
 
+GLuint Shader::sId = 0;
+
 Shader& Shader::Use() {
     glUseProgram(mId);
     return *this;

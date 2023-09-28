@@ -19,4 +19,9 @@ struct WindowConf {
     std::string title;
 };
 
+enum class BoundingBoxType {
+    AABB,
+    Sphere
+};
+
 #endif //VRENDER_GPU_TYPE_HPP

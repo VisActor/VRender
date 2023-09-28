@@ -5,14 +5,14 @@
 #include <GLFW/glfw3.h>
 #include "Application.hpp"
 
-int DarwinApplication::Init() {
+int BrowserApplication::Init() {
     if (mOnInit != nullptr) {
         mOnInit(this);
     }
     return 0;
 }
 
-void DarwinApplication::Destroy() {
+void BrowserApplication::Destroy() {
     if (mWindow) {
         if (mOnRelease) {
             mOnRelease(this);
@@ -22,20 +22,20 @@ void DarwinApplication::Destroy() {
     }
 }
 
-IWindow * DarwinApplication::CreateWindow(const WindowConf &conf) {
-    mWindow = new DarwinWindow();
+IWindow * BrowserApplication::CreateWindow(const WindowConf &conf) {
+    mWindow = new BrowserWindow();
     mWindow->Init(conf);
     return mWindow;
 }
 
-bool DarwinApplication::RunFrame() {
+bool BrowserApplication::RunFrame() {
     if (mWindow->IsDestroyed()) return false;
     mWindow->RenderAllLayer();
     mWindow->SwapFrame();
     return true;
 }
 
-void DarwinApplication::Start() {
+void BrowserApplication::Start() {
     if (mOnStart) {
         mOnStart(this);
     }

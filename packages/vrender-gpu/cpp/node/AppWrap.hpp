@@ -17,6 +17,7 @@ public:
 private:
     Napi::Value CreateWindow(const Napi::CallbackInfo& info);
     Napi::Value Start(const Napi::CallbackInfo& info);
+    Napi::Value RunFrame(const Napi::CallbackInfo& info);
     Napi::Value SetClearColor(const Napi::CallbackInfo &info);
     Napi::Value AddLayer(const Napi::CallbackInfo &info);
     std::shared_ptr<DarwinApplication> mApplication;

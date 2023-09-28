@@ -9,9 +9,9 @@
 #include <glm/glm.hpp>
 #include "Struct.hpp"
 
-class Bound {
+class Bound2D {
 public:
-    Bound(): mBound{0, 0, 0, 0} {};
+    Bound2D(): mBound{0, 0, 0, 0} {};
     inline float Width() { return mBound[2] - mBound[0]; }
     inline float Height() { return mBound[3] - mBound[1]; }
     inline void SetBound(float x1, float y1, float x2, float y2) { mBound[0] = x1; mBound[1] = y1; mBound[2] = x2; mBound[3] = y2; }
@@ -54,5 +54,18 @@ private:
     static void GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const glm::vec2 &data);
 };
 
+class AABBBounds {
+public:
+    AABBBounds(const glm::vec3 &min, const glm::vec3 &max): mMin{min}, mMax{max} {}
+    glm::vec3 mMin;
+    glm::vec3 mMax;
+};
+
+class SphereBounds {
+public:
+    SphereBounds(const glm::vec3 &center, float r): mCenter{center}, mRadius{r} {}
+    glm::vec3 mCenter;
+    float mRadius;
+};
 
 #endif //VRENDER_GPU_BOUNDS_HPP

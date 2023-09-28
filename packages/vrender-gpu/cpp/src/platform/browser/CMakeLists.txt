@@ -24,7 +24,7 @@ if (CMAKE_SYSTEM_NAME STREQUAL Emscripten)
     # WASM_ASYNC_COMPILATION 控制是否异步加载asm.js
     # PTHREAD_POOL_SIZE这是设置线程池的数量，如果不设置的话会开线程阻塞会直接阻塞主线程
     # 正式版本请使用-03优化
-    add_executable(vrender_wasm main.cpp Window.cpp bridge.cpp)
+    add_executable(vrender_wasm main.cpp Application.cpp Window.cpp bridge.cpp)
     target_link_libraries(vrender_wasm core)
     set_target_properties(vrender_wasm PROPERTIES
             LINK_FLAGS "-O3                \

@@ -4,7 +4,7 @@
 #include "Bounds.hpp"
 #include "Tools.hpp"
 
-void Bound::Calc(float x, float y, float w, float h, const glm::mat4 &matrix) {
+void Bound2D::Calc(float x, float y, float w, float h, const glm::mat4 &matrix) {
     float &minX = mBound.x, &minY = mBound.y, &maxX = mBound.z, &maxY = mBound.w;
     minX = minY = std::numeric_limits<float>::max();
     maxX = maxY = -std::numeric_limits<float>::max();
@@ -18,7 +18,7 @@ void Bound::Calc(float x, float y, float w, float h, const glm::mat4 &matrix) {
     GetMinMax(minX, minY, maxX, maxY, data);
 }
 
-void Bound::Calc(const glm::vec2 &pos, float w, float h, const glm::mat4 &matrix) {
+void Bound2D::Calc(const glm::vec2 &pos, float w, float h, const glm::mat4 &matrix) {
     float &minX = mBound.x, &minY = mBound.y, &maxX = mBound.z, &maxY = mBound.w;
     minX = minY = std::numeric_limits<float>::max();
     maxX = maxY = -std::numeric_limits<float>::max();
@@ -38,7 +38,7 @@ void Bound::Calc(const glm::vec2 &pos, float w, float h, const glm::mat4 &matrix
 }
 
 
-void Bound::GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const glm::vec4 &data) {
+void Bound2D::GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const glm::vec4 &data) {
     if (data.x < minX) {
         minX = data.x;
     } else if (data.x > maxX) {
@@ -51,7 +51,7 @@ void Bound::GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const 
     }
 }
 
-void Bound::GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const glm::vec2 &data) {
+void Bound2D::GetMinMax(float &minX, float &minY, float &maxX, float &maxY, const glm::vec2 &data) {
     if (data.x < minX) {
         minX = data.x;
     } else if (data.x > maxX) {

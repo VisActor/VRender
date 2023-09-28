@@ -20,7 +20,7 @@ public:
         PROGRAM
     };
 
-    explicit Shader(std::string name): mId{0}, mShaderName{std::move(name)}, mLastCommonUniformUpdateStamp{0} {}
+    explicit Shader(std::string name): mId{sId++}, mShaderName{std::move(name)}, mLastCommonUniformUpdateStamp{0} {}
 
     void Compile(const GLchar *vertexSource, const GLchar *fragmentSource, const GLchar *geometrySource = nullptr);
     Shader& Use();
@@ -86,6 +86,7 @@ public:
 
     GLuint mId;
 private:
+    static GLuint sId;
     std::string mShaderName;
     size_t mLastCommonUniformUpdateStamp; // 记录上次更新CommonUniform的stamp
 };

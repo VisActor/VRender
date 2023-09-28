@@ -135,8 +135,8 @@ std::shared_ptr<Layer> DarwinWindow::AddLayer() {
 }
 
 void DarwinWindow::RenderAllLayer() {
-    mRenderer.RenderInThread(mLayerList);
-//    mRenderer.Render(mLayerList);
+//    mRenderer.RenderInThread(mLayerList);
+    mRenderer.Render(mLayerList);
 }
 
 float DarwinWindow::GetDpr() {

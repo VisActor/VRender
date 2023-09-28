@@ -4,6 +4,11 @@
 
 #include <iostream>
 #include "Application.hpp"
+#include "BoxGeometry.hpp"
+#include "MeshBasicMaterial.hpp"
+#include "Mesh.hpp"
+#include "Model.hpp"
+#include "Sprite.hpp"
 //#include "Group.hpp"
 //#include "Rect.hpp"
 //#include "Text.hpp"
@@ -17,6 +22,16 @@ int main() {
     auto *window = application->CreateWindow({1200, 600, "这是标题"});
     window->SetClearColor(1, 0, 0, 1);
     auto layer = window->AddLayer();
+    auto cubeGeo = std::make_shared<BoxGeometry>();
+    cubeGeo->InIt(10);
+    auto material = std::make_shared<MeshBasicMaterial>();
+    auto mesh = std::make_shared<Mesh>();
+    mesh->Init(cubeGeo, material);
+    auto model = std::make_shared<Model>();
+    model->Init(mesh);
+    auto cubeSprite = std::make_shared<Sprite>();
+    cubeSprite->Init(model);
+    layer->AppendChild(cubeSprite);
 //    auto group = std::make_shared<Group>(0, 0);
 //    auto rect1 = std::make_shared<Rect>(200, 200, 100, 100);
 //    rect1->SetBorderRadius(20, 30, 20, 30);
@@ -71,8 +86,8 @@ int main() {
         return 0;
     };
     application->Start();
-    bool needUpdateLabel{false};
-    float compileShaderTime{0.f}, buildLayerTime{0.f}, drawTime{0.f};
+//    bool needUpdateLabel{false};
+//    float compileShaderTime{0.f}, buildLayerTime{0.f}, drawTime{0.f};
 //    while(true) {
 //        if (window->IsDestroyed()) break;
 //        window->SetClearColor(Random(0.f, 1.f), Random(0.f, 1.f), Random(0.f, 1.f), 1.f);

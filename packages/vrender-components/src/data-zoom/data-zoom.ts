@@ -169,12 +169,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
     if (vglobal.env === 'browser') {
       // 拖拽时
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove.bind(this) as EventListener);
+      vglobal.addEventListener('pointermove', this._onHandlerPointerMove.bind(this) as EventListener, {
+        capture: true
+      });
       // 拖拽结束
       vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
     }
     // 拖拽时
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener);
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove as EventListener, {
+      capture: true
+    });
     // 拖拽结束
     (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
     (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);

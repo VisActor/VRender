@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Application.hpp"
 #include "BoxGeometry.hpp"
+#include "SphereGeometry.hpp"
 #include "MeshBasicMaterial.hpp"
 #include "Mesh.hpp"
 #include "Model.hpp"
@@ -22,20 +23,26 @@ int main() {
     auto *window = application->CreateWindow({1200, 600, "这是标题"});
     window->SetClearColor(0, 0, 1, 1);
     auto layer = window->AddLayer();
-    auto cubeGeo = std::make_shared<BoxGeometry>();
-    cubeGeo->InIt(10);
+//    auto cubeGeo = std::make_shared<BoxGeometry>();
+//    cubeGeo->InIt(10);
+    auto sphereGeo = std::make_shared<SphereGeometry>();
+    sphereGeo->InIt(10);
     auto material = std::make_shared<MeshBasicMaterial>();
     material->Init(application->GetResourceManager());
+    material->mColor.r = 1.f;
+    material->mColor.g = 1.f;
+    material->mColor.b = 1.f;
     auto resourceManager = application->GetResourceManager();
-    auto texture = resourceManager->LoadTexture("../../resources/image/bg1.jpg", true, "worldmap", true);
+    auto texture = resourceManager->LoadTexture("../../resources/image/world-map.jpg", true, "worldmap", false);
     material->mTextures.push_back({texture, "texture_diffuse"});
     auto mesh = std::make_shared<Mesh>();
-    mesh->Init(cubeGeo, material);
+    mesh->Init(sphereGeo, material);
     auto model = std::make_shared<Model>();
     model->Init(mesh);
     auto cubeSprite = std::make_shared<Sprite>();
     cubeSprite->Init(model);
     layer->AppendChild(cubeSprite);
+    cubeSprite->SetRotateX(-90);
 //    auto group = std::make_shared<Group>(0, 0);
 //    auto rect1 = std::make_shared<Rect>(200, 200, 100, 100);
 //    rect1->SetBorderRadius(20, 30, 20, 30);
@@ -101,9 +108,9 @@ int main() {
             i++;
             cubeSprite->SetRotateZ(i * 0.1);
 //            cubeSprite->SetPosition({i * 0.001, 0, 0});
-            material->mColor.r = Random(0.f, 1.f);
-            material->mColor.g = Random(0.f, 1.f);
-            material->mColor.b = Random(0.f, 1.f);
+//            material->mColor.r = Random(0.f, 1.f);
+//            material->mColor.g = Random(0.f, 1.f);
+//            material->mColor.b = Random(0.f, 1.f);
             app->mWindow->SetClearColor(Random(0.f, 1.f), Random(0.f, 1.f), Random(0.f, 1.f), 1.f);
             app->mDrawInThisFrame = true;
         }

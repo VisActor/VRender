@@ -20,7 +20,7 @@ add_library(core
         graphic/Node.cpp graphic/Container.cpp graphic/Sprite.cpp Layer.cpp
         Matrix.cpp Bounds.cpp
         Camera.cpp SpinLock.cpp Renderer.cpp algorithm/Bezier.cpp
-        geometry/Geometry.cpp geometry/BoxGeometry.cpp)
+        geometry/Geometry.cpp geometry/BoxGeometry.cpp geometry/SphereGeometry.cpp)
 
 #add_library(core
 #        stb_image.cpp Shader.cpp Texture2D.cpp ResourceManager.cpp Mesh.cpp Geometry.cpp Tools.cpp

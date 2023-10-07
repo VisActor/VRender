@@ -71,7 +71,6 @@ export default class Line {
         : this.paragraphs[0].character.textAlign) || 'left'; // 对齐方式选择第一个paragraph属性
     this.direction = direction;
     this.directionKey = DIRECTION_KEY[this.direction];
-    const directionKey = this.directionKey;
 
     this.actualWidth = 0;
     let maxHeight = 0;
@@ -90,7 +89,14 @@ export default class Line {
     this.height = maxHeight;
 
     this.blankWidth = !isWidthMax ? this.width - this.actualWidth : 0;
+
+    this.calcOffset(width, isWidthMax);
+  }
+
+  calcOffset(width: number, isWidthMax: boolean) {
     // 处理对齐方式，计算左侧偏移距离和字符之间间距
+    const directionKey = this.directionKey;
+    const maxHeight = this.height;
     let x = this.left;
     let spacing = 0;
     if (this.actualWidth < width && !isWidthMax) {

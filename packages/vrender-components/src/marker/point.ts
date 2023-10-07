@@ -100,7 +100,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   protected getItemDx(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const width = (item as IGroup)?.AABBBounds?.width() ?? (style?.width || 0);
@@ -115,7 +115,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   protected getItemDy(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const height = (item as IGroup)?.AABBBounds?.height() ?? (style?.height || 0);

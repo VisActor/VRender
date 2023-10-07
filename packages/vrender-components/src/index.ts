@@ -23,3 +23,4 @@ export * from './brush';
 export * from './tooltip';
 export * from './interface';
 export * from './jsx';
+export * from './checkbox';

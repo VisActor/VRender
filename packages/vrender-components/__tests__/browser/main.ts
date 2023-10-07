@@ -205,6 +205,10 @@ const specs = [
   {
     path: 'brush',
     name: 'brush'
+  },
+  {
+    path: 'checkbox',
+    name: 'checkbox'
   }
 ];
 

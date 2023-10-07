@@ -11,12 +11,11 @@ module.exports = {
   silent: true,
   globals: {
     'ts-jest': {
-      tsconfig: {
-        resolveJsonModule: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'ESNext'
-      }
+      resolveJsonModule: true,
+      esModuleInterop: true,
+      experimentalDecorators: true,
+      module: 'ESNext',
+      tsconfig: './tsconfig.test.json'
     },
     __DEV__: true
   },

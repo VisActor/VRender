@@ -7,6 +7,10 @@ const specs = [
     name: '可拖拽的均值线'
   },
   {
+    path: 'draggable-mark-area',
+    name: '可拖拽的辅助框'
+  },
+  {
     path: 'multiple-segment',
     name: '多段绘制线段'
   },

@@ -9,6 +9,7 @@ int DarwinApplication::Init() {
     if (mOnInit != nullptr) {
         mOnInit(this);
     }
+    mResourceManager = std::make_shared<ResourceManager>();
     return 0;
 }
 
@@ -20,6 +21,10 @@ void DarwinApplication::Destroy() {
         mWindow->Destroy();
         glfwTerminate(); // 销毁所有的窗口
     }
+}
+
+std::shared_ptr<ResourceManager> DarwinApplication::GetResourceManager() {
+    return mResourceManager;
 }
 
 IWindow * DarwinApplication::CreateWindow(const WindowConf &conf) {

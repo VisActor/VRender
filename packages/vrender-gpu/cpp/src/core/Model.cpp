@@ -12,6 +12,33 @@ void Model::Init(const std::shared_ptr<Mesh>& mesh) {
     mMeshes.push_back(mesh);
 }
 
+void Model::Build() {
+    for (auto mesh : mMeshes) {
+
+    }
+}
+
+void Model::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, const glm::mat4& modelMatrix) {
+    for (auto mesh : mMeshes) {
+        mesh->UseShader(resourceManager);
+
+        const auto &shader = mesh->GetShader(resourceManager);
+        shader->SetMatrix4("u_model", modelMatrix, false);
+        shader->SetMatrix4("u_view", camera->GetViewMatrix(), false);
+        shader->SetMatrix4("u_projection", camera->GetProjectionMatrix(), false);
+//        if (shader->NeedUpdateCommonUniform(mCommonUniformStore.mStamp)) {
+//            shader->SetMatrix4("u_preModelMatrix", mCommonUniformStore.mPreModelMatrixUniform.data);
+//            shader->ResetLastCommonUniformUpdateStamp(mCommonUniformStore.mStamp);
+//        }
+
+        mesh->BufferData();
+        mesh->SetUniformData();
+        // 设置绘制模式
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        mesh->Draw();
+    }
+}
+
 void Model::GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin,
                      glm::vec3 &aabbMax) {
     if (mShouldUpdate) {

@@ -6,6 +6,7 @@
 #define VRENDER_GPU_RENDER_HPP
 
 #include "Layer.hpp"
+#include "PerspectiveCamera.hpp"
 
 struct Performance {
     float compileShaderTime{0.f};
@@ -15,6 +16,8 @@ struct Performance {
 
 class Renderer {
 public:
+    Renderer(): mCamera{nullptr} {};
+    void Init();
     void Render(std::vector<std::shared_ptr<Layer>> &layerList);
     void RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList);
 
@@ -24,6 +27,7 @@ private:
     void BuildLayer(std::shared_ptr<Layer> &layer);
 //    std::thread BuildLayerInThread(std::shared_ptr<Layer> &layer);
     void Draw(std::shared_ptr<Layer> &layer);
+    std::shared_ptr<ICamera> mCamera;
 };
 
 #endif //VRENDER_GPU_RENDER_HPP

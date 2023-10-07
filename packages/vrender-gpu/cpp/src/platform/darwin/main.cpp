@@ -20,11 +20,15 @@ int main() {
         std::cout<<"初始化application失败"<<std::endl;
     }
     auto *window = application->CreateWindow({1200, 600, "这是标题"});
-    window->SetClearColor(1, 0, 0, 1);
+    window->SetClearColor(0, 0, 1, 1);
     auto layer = window->AddLayer();
     auto cubeGeo = std::make_shared<BoxGeometry>();
     cubeGeo->InIt(10);
     auto material = std::make_shared<MeshBasicMaterial>();
+    material->Init(application->GetResourceManager());
+    auto resourceManager = application->GetResourceManager();
+    auto texture = resourceManager->LoadTexture("../../resources/image/bg1.jpg", true, "worldmap", true);
+    material->mTextures.push_back({texture, "texture_diffuse"});
     auto mesh = std::make_shared<Mesh>();
     mesh->Init(cubeGeo, material);
     auto model = std::make_shared<Model>();
@@ -76,9 +80,30 @@ int main() {
 //        rectList.push_back(rect);
 //    }
 
-    application->mOnUpdate = [](IApplication* application1){
+//    application->mOnStart = [](IApplication* application1) {
+//        // 创建一个box
+//        const auto geometry = std::make_shared<BoxGeometry>();
+//        geometry->InIt(10);
+//        const auto material = std::make_shared<MeshBasicMaterial>();
+//        material->Init();
+//        const auto mesh = std::make_shared<Mesh>();
+//        mesh->Init(geometry, material);
+//        const auto model = std::make_shared<Model>();
+//        model->Init(mesh);
+//        const auto sprite = std::make_shared<Sprite>();
+//        sprite->Init(model);
+//        return 0;
+//    };
+    int i = 0;
+    application->mOnUpdate = [&](IApplication* application1){
         auto *app = dynamic_cast<DarwinApplication *>(application1);
         if (app != nullptr) {
+            i++;
+            cubeSprite->SetRotateZ(i * 0.1);
+//            cubeSprite->SetPosition({i * 0.001, 0, 0});
+            material->mColor.r = Random(0.f, 1.f);
+            material->mColor.g = Random(0.f, 1.f);
+            material->mColor.b = Random(0.f, 1.f);
             app->mWindow->SetClearColor(Random(0.f, 1.f), Random(0.f, 1.f), Random(0.f, 1.f), 1.f);
             app->mDrawInThisFrame = true;
         }

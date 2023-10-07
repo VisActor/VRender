@@ -9,7 +9,7 @@ void PerspectiveCamera::Init() {
 
 glm::mat4 PerspectiveCamera::GetViewMatrix() {
     if (mShouldUpdate & UPDATE_TYPE::UPDATE_VIEW) {
-        mViewMatrix = glm::lookAt(mPosition, mDirection, mUp);
+        mViewMatrix = glm::lookAt(mPosition, mPosition + mDirection, mUp);
         mShouldUpdate &= ~UPDATE_TYPE::UPDATE_VIEW;
     }
     return mViewMatrix;

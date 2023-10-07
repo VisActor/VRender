@@ -29,7 +29,7 @@ public:
     virtual IWindow* CreateWindow(const WindowConf &conf) = 0;
     virtual void Start() = 0;
     virtual bool RunFrame() = 0;
-
+    virtual std::shared_ptr<ResourceManager> GetResourceManager() = 0;
     bool mDrawInThisFrame;
 
     OnInit mOnInit;
@@ -38,6 +38,7 @@ public:
     OnRelease mOnRelease;
 protected:
     Platform mPlatform;
+    std::shared_ptr<ResourceManager> mResourceManager;
 };
 
 #endif //VRENDER_GPU_IAPPLICATION_HPP

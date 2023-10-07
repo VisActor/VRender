@@ -44,7 +44,7 @@ int DarwinWindow::Init(const WindowConf &conf) {
     InitGlad();
 
     // 初始化资源
-    InitResourceManager({"default"});
+    InitResourceManager({});
 
     // 获取dpr
     int physicalWidth, physicalHeight;
@@ -54,6 +54,8 @@ int DarwinWindow::Init(const WindowConf &conf) {
 
     mGLFWWindow = window;
     mInited = true;
+
+    mRenderer.Init();
 
     return 0;
 }
@@ -74,8 +76,8 @@ void DarwinWindow::GetSize(int *width, int *height) {
 }
 
 void DarwinWindow::SwapFrame() {
-    glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
-    glClear(GL_COLOR_BUFFER_BIT);
+    // glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
+    // glClear(GL_COLOR_BUFFER_BIT);
 
     glfwSwapBuffers(mGLFWWindow);
     glfwPollEvents();
@@ -128,6 +130,7 @@ int DarwinWindow::InitResourceManager(const std::vector<std::string> &shaderList
 
 std::shared_ptr<Layer> DarwinWindow::AddLayer() {
     auto layer = std::make_shared<Layer>(mWidth, mHeight, mResourceManager);
+    layer->SetClearColor(mClearColor);
     layer->SetDpr(GetDpr());
     layer->SetRenderDpr(GetRenderDpr());
     mLayerList.push_back(layer);

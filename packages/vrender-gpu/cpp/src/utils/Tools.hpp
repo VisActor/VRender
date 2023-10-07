@@ -10,6 +10,8 @@
 #include <type_traits>
 #include "Vector.hpp"
 
+#define PI 3.1415926f
+
 extern double Random(double left, double right);
 extern glm::vec2 Random(glm::vec2 left, glm::vec2 right);
 extern glm::vec3 Random(glm::vec3 left, glm::vec3 right);

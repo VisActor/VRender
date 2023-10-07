@@ -45,7 +45,7 @@ public:
 
     float GetDpr() override;
     float GetRenderDpr() override;
-    const Renderer & GetRenderer() const override;
+    [[nodiscard]] const Renderer & GetRenderer() const override;
 
     glm::vec4 mClearColor;
 

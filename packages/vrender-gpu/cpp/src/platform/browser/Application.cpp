@@ -9,6 +9,7 @@ int BrowserApplication::Init() {
     if (mOnInit != nullptr) {
         mOnInit(this);
     }
+    mResourceManager = std::make_shared<ResourceManager>();
     return 0;
 }
 
@@ -52,4 +53,8 @@ void BrowserApplication::Start() {
         }
         mDrawInThisFrame = false;
     }
+}
+
+std::shared_ptr<ResourceManager> BrowserApplication::GetResourceManager() {
+    return mResourceManager;
 }

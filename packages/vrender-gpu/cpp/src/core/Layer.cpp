@@ -4,11 +4,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "GL.hpp"
 #include "Layer.hpp"
+#include "Sprite.hpp"
 
 int Layer::sListId{0};
 
 void Layer::Build() {
     for (auto &child : mChildren) {
+        std::dynamic_pointer_cast<Sprite>(child)->Build(mResourceManager);
 //        if (child->mType == NodeType::GROUP) {
 //            std::dynamic_pointer_cast<Group>(child)->Build(Group::UPDATE_TYPE::NONE, mResourceManager, mFontManager, mInsMeshQueue);
 //        } else {
@@ -18,12 +20,19 @@ void Layer::Build() {
     }
 }
 
-void Layer::Draw() {
+void Layer::SetClearColor(const glm::vec4 &c) {
+    mClearColor.r = c.r;
+    mClearColor.g = c.g;
+    mClearColor.b = c.b;
+    mClearColor.a = c.a;
+}
+
+void Layer::Draw(std::shared_ptr<ICamera> camera) {
     mStamp++;
     // 背景色
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
     if (mEnableDepth) {
-        glClearDepth(-1.f);
+//        glClearDepth(-10.f);
         glDepthMask(true);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     } else {
@@ -34,20 +43,21 @@ void Layer::Draw() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         if (mBlendOptions.mUseSeparate) {
-//            auto &functionSeparate = mBlendOptions.mOptions.mFunctionSeparate;
-//            glBlendFuncSeparate(functionSeparate.mSrcRGB, functionSeparate.mDstRGB, functionSeparate.mSrcAlpha, functionSeparate.mDstAlpha);
+            auto &functionSeparate = mBlendOptions.mOptions.mFunctionSeparate;
+            glBlendFuncSeparate(functionSeparate.mSrcRGB, functionSeparate.mDstRGB, functionSeparate.mSrcAlpha, functionSeparate.mDstAlpha);
         }
     }
     // 深度测试
     if (mDepthOptions.mEnableDepth) {
-
+        glEnable(GL_DEPTH_TEST);
     } else {
         glDisable(GL_DEPTH_TEST);
     }
     // 绘制所有instance mesh
-    DrawInstanceMesh(mStamp);
+//    DrawInstanceMesh(mStamp);
     // 绘制所有mark
     for (auto &child : mChildren) {
+        std::dynamic_pointer_cast<Sprite>(child)->Draw(camera, mResourceManager);
 //        if (child->mType == NodeType::GROUP) {
 //            std::dynamic_pointer_cast<Group>(child)->Draw(mCamera, mResourceManager);
 //        } else {
@@ -57,62 +67,62 @@ void Layer::Draw() {
     }
 }
 
-void Layer::DrawInstanceMesh(int stamp) {
-    ConsoleTime(true, "layer绘制实例mesh");
-    DrawInsFillRectMesh(stamp);
-    DrawInsStrokeRectMesh(stamp);
-    ConsoleTime(false, "layer绘制实例mesh");
-}
-
-void Layer::DrawInsFillRectMesh(int stamp) {
-    static const std::string shaderName{"insRect"};
-//    auto &rectMeshList = mInsMeshQueue.GetFillRectMeshList();
-//    for (auto &rectMesh : rectMeshList) {
-//        if (rectMesh->NeedSetShader()) {
-//            auto shader = mResourceManager->GetShader(shaderName);
-//            if (!shader) {
-//                shader = mResourceManager->LoadShader(shaderName, ResourceManager::ShaderType::VERTEX | ResourceManager::ShaderType::FRAGMENT);
-//            }
-//            if (!shader) throw std::runtime_error("获取shader"+shaderName+"失败");
-//            rectMesh->SetShader(shader);
-//        }
-//        rectMesh->UseShader();
-//        const auto &rectShader = rectMesh->GetShader();
-//        rectShader->SetMatrix4("projectionMatrix", mCamera.GetProjectionMatrix().GetMatrix(), false);
-//        if (rectShader->NeedUpdateCommonUniform(mCommonUniformStore.mStamp)) {
-//            rectShader->SetMatrix4("u_preModelMatrix", mCommonUniformStore.mPreModelMatrixUniform.data);
-//            rectShader->ResetLastCommonUniformUpdateStamp(mCommonUniformStore.mStamp);
-//        }
-//        rectMesh->BufferData(nullptr, nullptr);
-//        rectMesh->SetUniformData();
-//        rectMesh->Draw(true);
-//    }
-}
-
-void Layer::DrawInsStrokeRectMesh(int stamp) {
-    static const std::string shaderName{"insStrokeRect"};
-//    auto &rectMeshList = mInsMeshQueue.GetStrokeRectMeshList();
-//    for (auto &rectMesh : rectMeshList) {
-//        if (rectMesh->NeedSetShader()) {
-//            auto shader = mResourceManager->GetShader(shaderName);
-//            if (!shader) {
-//                shader = mResourceManager->LoadShader(shaderName, ResourceManager::ShaderType::VERTEX | ResourceManager::ShaderType::FRAGMENT);
-//            }
-//            if (!shader) throw std::runtime_error("获取shader"+shaderName+"失败");
-//            rectMesh->SetShader(shader);
-//        }
-//        rectMesh->UseShader();
-//        const auto &rectShader = rectMesh->GetShader();
-//        rectShader->SetMatrix4("projectionMatrix",  mCamera.GetProjectionMatrix().GetMatrix(), false);
-//        if (rectShader->NeedUpdateCommonUniform(mCommonUniformStore.mStamp)) {
-//            rectShader->SetUniform<glm::mat4>(mCommonUniformStore.mPreModelMatrixUniform);
-//            rectShader->ResetLastCommonUniformUpdateStamp(mCommonUniformStore.mStamp);
-//        }
-//        rectMesh->BufferData(nullptr, nullptr);
-//        rectMesh->SetUniformData();
-//        rectMesh->Draw(true);
-//    }
-}
+//void Layer::DrawInstanceMesh(int stamp) {
+//    ConsoleTime(true, "layer绘制实例mesh");
+//    DrawInsFillRectMesh(stamp);
+//    DrawInsStrokeRectMesh(stamp);
+//    ConsoleTime(false, "layer绘制实例mesh");
+//}
+//
+//void Layer::DrawInsFillRectMesh(int stamp) {
+//    static const std::string shaderName{"insRect"};
+////    auto &rectMeshList = mInsMeshQueue.GetFillRectMeshList();
+////    for (auto &rectMesh : rectMeshList) {
+////        if (rectMesh->NeedSetShader()) {
+////            auto shader = mResourceManager->GetShader(shaderName);
+////            if (!shader) {
+////                shader = mResourceManager->LoadShader(shaderName, ResourceManager::ShaderType::VERTEX | ResourceManager::ShaderType::FRAGMENT);
+////            }
+////            if (!shader) throw std::runtime_error("获取shader"+shaderName+"失败");
+////            rectMesh->SetShader(shader);
+////        }
+////        rectMesh->UseShader();
+////        const auto &rectShader = rectMesh->GetShader();
+////        rectShader->SetMatrix4("projectionMatrix", mCamera.GetProjectionMatrix().GetMatrix(), false);
+////        if (rectShader->NeedUpdateCommonUniform(mCommonUniformStore.mStamp)) {
+////            rectShader->SetMatrix4("u_preModelMatrix", mCommonUniformStore.mPreModelMatrixUniform.data);
+////            rectShader->ResetLastCommonUniformUpdateStamp(mCommonUniformStore.mStamp);
+////        }
+////        rectMesh->BufferData(nullptr, nullptr);
+////        rectMesh->SetUniformData();
+////        rectMesh->Draw(true);
+////    }
+//}
+//
+//void Layer::DrawInsStrokeRectMesh(int stamp) {
+//    static const std::string shaderName{"insStrokeRect"};
+////    auto &rectMeshList = mInsMeshQueue.GetStrokeRectMeshList();
+////    for (auto &rectMesh : rectMeshList) {
+////        if (rectMesh->NeedSetShader()) {
+////            auto shader = mResourceManager->GetShader(shaderName);
+////            if (!shader) {
+////                shader = mResourceManager->LoadShader(shaderName, ResourceManager::ShaderType::VERTEX | ResourceManager::ShaderType::FRAGMENT);
+////            }
+////            if (!shader) throw std::runtime_error("获取shader"+shaderName+"失败");
+////            rectMesh->SetShader(shader);
+////        }
+////        rectMesh->UseShader();
+////        const auto &rectShader = rectMesh->GetShader();
+////        rectShader->SetMatrix4("projectionMatrix",  mCamera.GetProjectionMatrix().GetMatrix(), false);
+////        if (rectShader->NeedUpdateCommonUniform(mCommonUniformStore.mStamp)) {
+////            rectShader->SetUniform<glm::mat4>(mCommonUniformStore.mPreModelMatrixUniform);
+////            rectShader->ResetLastCommonUniformUpdateStamp(mCommonUniformStore.mStamp);
+////        }
+////        rectMesh->BufferData(nullptr, nullptr);
+////        rectMesh->SetUniformData();
+////        rectMesh->Draw(true);
+////    }
+//}
 
 void Layer::PreCompileAllShader() {
 //    const auto rectShader = mResourceManager->LoadShader("rect", ResourceManager::ShaderType::VERTEX | ResourceManager::ShaderType::FRAGMENT);

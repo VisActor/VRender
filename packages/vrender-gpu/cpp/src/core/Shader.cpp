@@ -67,6 +67,10 @@ void Shader::InitTextureUniform(int num) {
         name = "texture"+std::to_string(i);
         SetInt(name.c_str(), i);
     }
+    for (int i = 0; i < 4; i++) {
+        name = "texture"+std::to_string(i)+"Loaded";
+        SetInt(name.c_str(), int(num > i));
+    }
 }
 
 void Shader::SetInt(const GLchar *name, GLint value, GLboolean useShader) {

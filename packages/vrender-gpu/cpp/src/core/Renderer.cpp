@@ -4,6 +4,11 @@
 #include <thread>
 #include "Renderer.hpp"
 #include "Tools.hpp"
+#include "PerspectiveCamera.hpp"
+
+void Renderer::Init() {
+    mCamera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+}
 
 void Renderer::Render(std::vector<std::shared_ptr<Layer>> &layerList) {
     assert(layerList.size() == 1);
@@ -49,5 +54,5 @@ void Renderer::BuildLayer(std::shared_ptr<Layer> &layer) {
 }
 
 void Renderer::Draw(std::shared_ptr<Layer> &layer) {
-    layer->Draw();
+    layer->Draw(mCamera);
 }

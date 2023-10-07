@@ -1,5 +1,6 @@
 add_custom_target(copy_shader COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/src/shader ${CMAKE_CURRENT_BINARY_DIR}/shader)
 add_custom_target(copy_font COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/src/font ${CMAKE_CURRENT_BINARY_DIR}/font)
+add_custom_target(copy_resources COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/src/resources ${CMAKE_CURRENT_BINARY_DIR}/resources)
 
 add_subdirectory(utils)
 add_subdirectory(text)
@@ -7,7 +8,7 @@ add_subdirectory(text)
 add_subdirectory(core)
 add_subdirectory(platform)
 
-add_dependencies(core copy_shader copy_font)
+add_dependencies(core copy_shader copy_font copy_resources)
 
 # 这个执行文件是跨平台的，会根据平台选择对应的library
 #add_executable(vrender-gpu main.cpp)

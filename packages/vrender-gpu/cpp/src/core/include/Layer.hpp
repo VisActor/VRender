@@ -12,6 +12,7 @@
 #include "Camera.hpp"
 #include "SpinLock.hpp"
 #include "FontManager.hpp"
+#include "ICamera.hpp"
 
 typedef struct CommonUniformStore {
     CommonUniformStore(): mStamp{0}, mPreModelMatrixUniform{ "u_preModelMatrix", glm::mat4{1.f} } {};
@@ -24,7 +25,7 @@ public:
     Layer(float w, float h, std::shared_ptr<ResourceManager> resourceManager = nullptr):
             Container{}, mWidth{w}, mHeight{h}, mType{NodeType::LAYER}, mBuildMutex{}, mBuildThread{}, mBuildSpinMutex{}, mDpr{1.f}, mCommonUniformStore{},
             mRoot{this}, mResourceManager{resourceManager}, mCamera{0, float(w), 0, float(h)}, mFontManager{std::make_shared<FontManager>(resourceManager)},
-            mClearColor{1.f, 1.f, 1.f, 1.f}, mEnableDepth{true}, mDepthOptions{false}, mRenderDpr{1.f}, mStamp{0},
+            mClearColor{1.f, 1.f, 1.f, 1.f}, mEnableDepth{true}, mDepthOptions{true}, mRenderDpr{1.f}, mStamp{0},
             mBlendOptions{true, true, {GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA}} {
     };
 
@@ -41,9 +42,10 @@ public:
     void BuildInThread(MUTEX_TYPE type);
     void Build();
     void WaitForBuild(MUTEX_TYPE type);
-    void Draw();
+    void Draw(std::shared_ptr<ICamera> camera);
     void SetDpr(float dpr);
     void SetRenderDpr(float dpr);
+    void SetClearColor(const glm::vec4 &c);
 
     const NodeType mType;
     float mWidth;
@@ -84,9 +86,9 @@ private:
         bool mEnableDepth;
     } mDepthOptions;
 
-    void DrawInstanceMesh(int stamp);
-    void DrawInsFillRectMesh(int stamp);
-    void DrawInsStrokeRectMesh(int stamp);
+//    void DrawInstanceMesh(int stamp);
+//    void DrawInsFillRectMesh(int stamp);
+//    void DrawInsStrokeRectMesh(int stamp);
 };
 
 #endif //VRENDER_GPU_LAYER_HPP

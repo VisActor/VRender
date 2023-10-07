@@ -139,6 +139,6 @@ std::vector<glm::vec<2, float>> BoxGeometry::sTextureCoords{
 void BoxGeometry::InIt(float size) {
     // todo 每个面可以优化到4个点
     mVertices = BoxGeometry::sCommonVertices;
-    mNormals = BoxGeometry::mNormals;
-    mTextureCoords = BoxGeometry::mTextureCoords;
+    mNormals = BoxGeometry::sCommonNormals;
+    mTextureCoords = BoxGeometry::sTextureCoords;
 }

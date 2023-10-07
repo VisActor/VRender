@@ -12,7 +12,7 @@ class PerspectiveCamera final: public ICamera {
 public:
     PerspectiveCamera(float fov, float aspect, float near, float far):
         mFov{fov}, mAspect{aspect}, mNear{near}, mFar{far}, mShouldUpdate{UPDATE_TYPE::UPDATE_ALL},
-        mPosition{}, mDirection{}, mUp{}, mRight{}, mViewMatrix{}, mProjectionMatrix{} {}
+        mPosition{0.f, 0.f, 6.f}, mDirection{0.f, 0.f, -1.f}, mUp{0.f, 1.f, 0.f}, mRight{}, mViewMatrix{}, mProjectionMatrix{} {}
     ~PerspectiveCamera() = default;
 
     inline void SetPosition(float x, float y, float z) override {

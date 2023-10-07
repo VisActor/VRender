@@ -17,6 +17,7 @@ public:
     IWindow* CreateWindow(const WindowConf &conf) override;
     void Start() override;
     bool RunFrame() override;
+    std::shared_ptr<ResourceManager> GetResourceManager() override;
 
     DarwinWindow* mWindow;
 private:

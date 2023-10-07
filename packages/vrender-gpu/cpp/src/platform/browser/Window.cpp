@@ -22,6 +22,7 @@ int BrowserWindow::Init(const WindowConf &conf) {
 
     emscripten::val window = emscripten::val::global("window");
     mDpr = window["devicePixelRatio"].as<float>();
+    mRenderer.Init();
     return 0;
 }
 

@@ -75,18 +75,26 @@ bool PointAbovePlane(const std::array<glm::vec3, 3> &plane, glm::vec3 point) {
     return glm::dot(point - A, normal) > 0;
 }
 
+glm::mat4 GeneratorModelMatrix(glm::mat4 &out, const glm::vec3 &position, const glm::vec3 &scale,
+                               const glm::mat4 &rotate) {
+    // 当试图在一个场景中用旋转矩阵和缩放矩阵放置一个对象的时候，建议是首先做缩放变换，再旋转，最后才是位移变换。
+    // 因为矩阵乘法是从右向左执行的，所以我们变换的矩阵顺序是相反的：移动，旋转，缩放。
+
+    out = glm::translate(out, position); // 移动
+//    out = glm::translate(out, glm::vec3{.5f} * scale); // 设置锚点为左上角
+    out *= rotate;
+//    out = glm::translate(out, glm::vec3{-.5f} * scale); // 设置锚点为矩形中心
+    out = glm::scale(out, scale); // 缩放
+
+    return out;
+}
+
 glm::mat4 GeneratorModelMatrix(const glm::vec3 &position, const glm::vec3 &scale,
                                const glm::mat4 &rotate) {
     // 当试图在一个场景中用旋转矩阵和缩放矩阵放置一个对象的时候，建议是首先做缩放变换，再旋转，最后才是位移变换。
     // 因为矩阵乘法是从右向左执行的，所以我们变换的矩阵顺序是相反的：移动，旋转，缩放。
     glm::mat4 model{1.0f};
-    model = glm::translate(model, position); // 移动
-    model = glm::translate(model, glm::vec3{.5f} * scale); // 设置锚点为左上角
-    model *= rotate;
-    model = glm::translate(model, glm::vec3{-.5f} * scale); // 设置锚点为矩形中心
-    model = glm::scale(model, scale); // 缩放
-
-    return model;
+    return GeneratorModelMatrix(model, position, scale, rotate);
 }
 
 void Transform2D(glm::mat4 &out, const glm::mat4 &origin, const glm::vec2 &translate, const glm::vec2 &scale,

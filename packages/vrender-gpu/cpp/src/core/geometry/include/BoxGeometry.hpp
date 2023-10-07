@@ -9,8 +9,11 @@
 
 class BoxGeometry: public Geometry {
 public:
+    BoxGeometry(): Geometry() {
+        mUpdateIndices = false;
+        mUseIndices = false;
+    };
     void InIt(float size) override;
-
 private:
     static std::vector<glm::vec<3, float>> sCommonVertices;
     static std::vector<glm::vec<3, float>> sCommonNormals;

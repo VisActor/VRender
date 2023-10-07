@@ -12,7 +12,9 @@
 
 class Mesh: public Pickable {
 public:
-    Mesh(): Pickable{}, mGeometry{nullptr}, mMaterial{nullptr} {};
+    Mesh(): Pickable{},
+    mGeometry{nullptr}, mMaterial{nullptr},
+    mVao{0}, mVbo{0}, mEbo{0}, mNormalPtr{0}, mTexCoordPtr{0} {};
     void Init(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material);
     void GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin, glm::vec3 &aabbMax) override;
     void GetBoundingSphere(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &center, float &radius) override;
@@ -42,6 +44,12 @@ public:
     inline void UnBindEbo() const {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
+    inline void InitTexCoordsPtr() {
+        glGenBuffers(1, &mTexCoordPtr);
+    }
+    inline void BindTexCoordsPtr() const {
+        glBindBuffer(GL_ARRAY_BUFFER, mTexCoordPtr);
+    }
     static inline void CreateBuffer(GLuint &bufId) {
         glGenBuffers(1, &bufId);
     }
@@ -56,17 +64,26 @@ public:
     }
     /* attribute相关 */
 
-    virtual void Draw(bool useIndices) {
+    void BufferData();
+    void UseShader(std::shared_ptr<ResourceManager> resourceManager);
+    std::shared_ptr<Shader> GetShader(std::shared_ptr<ResourceManager> resourceManager);
+
+    void SetUniformData();
+
+    virtual void Draw() {
+        if (!mGeometry) {
+            return;
+        }
         BindVao();
-        if (useIndices) {
+        if (mGeometry->mUseIndices) {
             BindEbo();
             const auto &indices = mGeometry->GetIndices();
             if (indices.empty()) return;
-            glDrawElements(GL_TRIANGLES, indices.size() * 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, int(indices.size()) * 3, GL_UNSIGNED_INT, 0);
         } else {
             const auto &vertices = mGeometry->GetVertices();
             if (vertices.empty()) return;
-            glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+            glDrawArrays(GL_TRIANGLES, 0, int(vertices.size()));
         }
     }
 
@@ -75,17 +92,14 @@ protected:
     std::shared_ptr<Geometry> mGeometry;
     std::shared_ptr<Material> mMaterial;
 
-    std::unordered_map<std::string, Vec2UniformItem> mVec2UniformMap;
-    std::unordered_map<std::string, Vec2iUniformItem> mVec2iUniformMap;
-    std::unordered_map<std::string, Vec3UniformItem> mVec3UniformMap;
-    std::unordered_map<std::string, Vec4UniformItem> mVec4UniformMap;
-    std::unordered_map<std::string, FloatUniformItem> mFloatUniformMap;
-    std::unordered_map<std::string, IntUniformItem> mIntUniformMap;
-    std::unordered_map<std::string, FloatArrUniformItem> mFloatArrUniformMap;
-
     GLuint mVao;
     GLuint mVbo;
     GLuint mEbo;
+
+    GLuint mNormalPtr;
+    GLuint mTexCoordPtr;
+
+    void _BufferData();
 };
 
 #endif //VRENDER_GPU_MESH_HPP

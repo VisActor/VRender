@@ -20,7 +20,7 @@ if ($ENV{WASMENV})
     add_definitions(-DBrowserEnv)
 else()
     if ($ENV{NODEJS})
-        add_definitions(-DDarwinEnv -DSHADER_ROOT="./build/src/shader/" -DFONT_ROOT="./build/src/font/") # node-addon
+        add_definitions(-DDarwinEnv -DSHADER_ROOT="./build/src/shader/" -DSHADER_ROOT="./build/src/resources/image/" -DFONT_ROOT="./build/src/font/") # node-addon
     else()
         add_definitions(-DDarwinEnv -DSHADER_ROOT="../../shader/" -DFONT_ROOT="../../font/") # native
     endif()

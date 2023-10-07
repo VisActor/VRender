@@ -17,8 +17,13 @@ public:
     [[nodiscard]] const std::vector<glm::vec<2, float>>& GetTextureCoords() const { return mTextureCoords; }
     [[nodiscard]] const std::vector<glm::vec<3, unsigned int>>& GetIndices() const { return mIndices; }
 
+    bool mUpdateVertices;
+    bool mUpdateIndices;
+    bool mUpdateTexCoords;
+    bool mUseIndices;
+
 protected:
-    Geometry(): mVertices{}, mNormals{}, mIndices{} {
+    Geometry(): mVertices{}, mNormals{}, mTextureCoords{}, mIndices{}, mUpdateIndices{false}, mUseIndices{false}, mUpdateVertices{true}, mUpdateTexCoords{true} {
     };
     virtual ~Geometry() = default;
     std::vector<glm::vec<3, float>> mVertices;

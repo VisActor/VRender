@@ -139,7 +139,10 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
     const { context } = drawContext;
     context.highPerformanceSave();
     // 直接transform
-    context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+    graphic.parent && context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+    graphic.glyphHost &&
+      graphic.glyphHost.parent &&
+      context.setTransformFromMatrix(graphic.glyphHost.parent.globalTransMatrix, true);
 
     const b = graphic.AABBBounds;
 

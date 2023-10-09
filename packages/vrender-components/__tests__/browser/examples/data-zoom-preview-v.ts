@@ -36,7 +36,7 @@ export function run() {
   dataZoom.setPreviewCallbackX1(d => d.x);
   dataZoom.setPreviewCallbackY1(d => 265);
 
-  const dataZoomDisableActiveEffect = new DataZoom({
+  const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,
     end: 0.5,
     position: {
@@ -59,8 +59,8 @@ export function run() {
     middleHandlerStyle: {
       visible: true
     },
-    disableActiveEffect: true
+    disableTriggerEvent: true
   });
 
-  const stage = render([dataZoom, dataZoomDisableActiveEffect], 'main');
+  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
 }

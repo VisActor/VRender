@@ -80,7 +80,7 @@ const vrLegend = new ColorContinuousLegend({
     cornerRadius: 5
   }
 });
-const disableActiveEffectLegend = new ColorContinuousLegend({
+const disableTriggerEventLegend = new ColorContinuousLegend({
   x: 20,
   y: 280,
   title: {
@@ -99,9 +99,9 @@ const disableActiveEffectLegend = new ColorContinuousLegend({
   railStyle: {
     cornerRadius: 5
   }
-  // disableActiveEffect: true
+  // disableTriggerEvent: true
 });
-const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableActiveEffectLegend], 'main');
+const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableTriggerEventLegend], 'main');
 // const stage = render([htLegend], 'main');
 
 console.log(htLegend);

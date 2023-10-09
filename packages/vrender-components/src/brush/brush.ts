@@ -48,7 +48,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected bindBrushEvents(): void {
-    if (this.attribute.disableActiveEffect) {
+    if (this.attribute.disableTriggerEvent) {
       return;
     }
     const {

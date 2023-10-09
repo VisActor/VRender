@@ -97,7 +97,7 @@ const vrLegend = new SizeContinuousLegend({
   value: [50, 100]
 });
 
-const disableActiveEffectLegend = new SizeContinuousLegend({
+const disableTriggerEventLegend = new SizeContinuousLegend({
   x: 200,
   y: 300,
   title: {
@@ -112,9 +112,9 @@ const disableActiveEffectLegend = new SizeContinuousLegend({
   min: 20,
   max: 200,
   value: [50, 100],
-  disableActiveEffect: true
+  disableTriggerEvent: true
 });
-const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableActiveEffectLegend], 'main');
+const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableTriggerEventLegend], 'main');
 
 stage.defaultLayer.add(segment as any);
 stage.render();

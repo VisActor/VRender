@@ -68,7 +68,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
    * 初始化事件
    */
   private _initEvents = () => {
-    if (this.attribute.disableActiveEffect) {
+    if (this.attribute.disableTriggerEvent) {
       return;
     }
     this._controller.addEventListener(ControllerEventEnum.OnPlay, (e: FederatedPointerEvent) => {

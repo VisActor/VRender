@@ -95,7 +95,7 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * 关闭交互效果
    * @default false
    */
-  disableActiveEffect?: boolean;
+  disableTriggerEvent?: boolean;
 }
 
 export interface OverlapAttrs {

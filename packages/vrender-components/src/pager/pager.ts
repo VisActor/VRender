@@ -157,7 +157,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   }
 
   private _bindEvents(): void {
-    if (this.attribute.disableActiveEffect) {
+    if (this.attribute.disableTriggerEvent) {
       return;
     }
     if (this.preHandler) {

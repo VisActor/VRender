@@ -31,7 +31,7 @@ export function run() {
     }
   });
 
-  const dataZoomDisableActiveEffect = new DataZoom({
+  const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,
     end: 0.5,
     position: {
@@ -54,10 +54,10 @@ export function run() {
     middleHandlerStyle: {
       visible: true
     },
-    disableActiveEffect: true
+    disableTriggerEvent: true
   });
 
-  const stage = render([dataZoom, dataZoomDisableActiveEffect], 'main');
+  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

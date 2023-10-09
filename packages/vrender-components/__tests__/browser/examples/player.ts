@@ -234,7 +234,7 @@ const layoutPlayer5 = new ContinuousPlayer({
       order: 3
     }
   },
-  disableActiveEffect: true
+  disableTriggerEvent: true
 });
 
 const layoutPlayer6 = new DiscretePlayer({
@@ -251,7 +251,7 @@ const layoutPlayer6 = new DiscretePlayer({
     width: 50
   },
   orient: 'right',
-  disableActiveEffect: true
+  disableTriggerEvent: true
 });
 
 layoutPlayer4.addEventListener(PlayerEventEnum.OnChange, e => {

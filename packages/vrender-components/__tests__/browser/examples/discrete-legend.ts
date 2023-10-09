@@ -324,10 +324,10 @@ const legend = new DiscreteLegend({
   y: 422
 });
 
-const disableActiveEffectLegend = new DiscreteLegend({
+const disableTriggerEventLegend = new DiscreteLegend({
   x: 20,
   y: 110,
-  disableActiveEffect: true,
+  disableTriggerEvent: true,
   // ==== 测试使用 ====
   stroke: 'red',
   // ==== 测试使用 end ====
@@ -392,7 +392,7 @@ const disableActiveEffectLegend = new DiscreteLegend({
   }
 });
 
-const stage = render([hLegend, vLegend, legend, disableActiveEffectLegend], 'main');
+const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend], 'main');
 
 vLegend.addEventListener('legendItemClick', e => {
   console.log(e, e.detail.currentSelected);

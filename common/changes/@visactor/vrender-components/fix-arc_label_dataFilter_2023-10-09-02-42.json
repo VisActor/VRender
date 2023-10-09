@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the issue of dataFilter result in incorrect arc label layout",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

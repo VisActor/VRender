@@ -10,6 +10,221 @@ export const page = () => {
 
   shapes.push(
     createRichText({
+      visible: true,
+      fontSize: 26,
+      width: 0,
+      // "textAlign": "center",
+      textConfig: [
+        {
+          text: '我',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '们',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '是',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缘',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '故',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '的',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '尘',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '埃\n',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缘',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '故',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '的',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '游',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '走\n',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '黑',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '暗',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '只',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '需',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '要',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '张',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '开',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '一',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '张',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缝',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '隙\n',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '就',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '能',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '挂',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '起',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '飓',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '风\n',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        }
+      ]
+    })
+  );
+
+  shapes.push(
+    createRichText({
       x: 100,
       y: 100,
       width: 300,

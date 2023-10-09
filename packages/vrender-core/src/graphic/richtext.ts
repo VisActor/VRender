@@ -254,14 +254,35 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
 
     // 2. 布局，生成frame
-    const frameHeight =
-      typeof maxHeight === 'number' && (!height || height > maxHeight) // height = 0或height>maxHeight，使用maxHeight布局
-        ? maxHeight
-        : height;
-    const frameWidth =
-      typeof maxWidth === 'number' && (!width || width > maxWidth) // height = 0或height>maxWidth，使用maxWidth布局
-        ? maxWidth
-        : width;
+    // const frameHeight =
+    //   typeof maxHeight === 'number' && (!height || height > maxHeight) // height = 0或height>maxHeight，使用maxHeight布局
+    //     ? maxHeight
+    //     : height;
+    // const frameWidth =
+    //   typeof maxWidth === 'number' && (!width || width > maxWidth) // height = 0或height>maxWidth，使用maxWidth布局
+    //     ? maxWidth
+    //     : width;
+
+    const maxWidthFinite = typeof maxWidth === 'number' && Number.isFinite(maxWidth) && maxWidth > 0;
+    const maxHeightFinite = typeof maxHeight === 'number' && Number.isFinite(maxHeight) && maxHeight > 0;
+
+    const richTextWidthEnable =
+      typeof width === 'number' &&
+      Number.isFinite(width) &&
+      width > 0 &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      (!maxWidthFinite || width <= maxWidth);
+    const richTextHeightEnable =
+      typeof height === 'number' &&
+      Number.isFinite(height) &&
+      height > 0 &&
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      (!maxHeightFinite || height <= maxHeight);
+
+    const frameWidth = richTextWidthEnable ? width : maxWidthFinite ? maxWidth : 0;
+    const frameHeight = richTextHeightEnable ? height : maxHeightFinite ? maxHeight : 0;
 
     const frame = new Frame(
       0,
@@ -274,8 +295,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textAlign,
       textBaseline,
       layoutDirection || 'horizontal',
-      typeof maxWidth === 'number' && (!width || width > maxWidth),
-      typeof maxHeight === 'number' && (!height || height > maxHeight),
+      // typeof maxWidth === 'number' && (!width || width > maxWidth),
+      // typeof maxHeight === 'number' && (!height || height > maxHeight),
+      !richTextWidthEnable && maxWidthFinite,
+      !richTextHeightEnable && maxHeightFinite,
       singleLine || false,
       this._frameCache?.icons
     );
@@ -285,6 +308,28 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
 
     wrapper.send(); // 最后一行手动输出
+
+    // 如果对应的配置宽度不可用，那么需要额外进行一次对齐
+    const directionEnable = frame.layoutDirection === 'horizontal' ? richTextWidthEnable : richTextHeightEnable;
+    if (!directionEnable) {
+      // 使用实际宽度
+      const frameSize = frame.getActualSizeWidthEllipsis();
+      let offsetSize = frame.layoutDirection === 'horizontal' ? frameSize.width : frameSize.height;
+      // 如果最大值可用
+      if (frame.layoutDirection === 'horizontal' ? maxWidthFinite : maxHeightFinite) {
+        // 取2者中的较小值
+        offsetSize = Math.min(
+          offsetSize,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          frame.layoutDirection === 'horizontal' ? maxWidth : maxHeight
+        );
+      }
+
+      frame.lines.forEach(function (l) {
+        l.calcOffset(offsetSize, false);
+      });
+    }
 
     this._frameCache = frame;
 

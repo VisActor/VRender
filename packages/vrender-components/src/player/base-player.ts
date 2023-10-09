@@ -230,7 +230,8 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       range: false,
       handlerText: { visible: false },
       startText: { visible: false },
-      endText: { visible: false }
+      endText: { visible: false },
+      disableActiveEffect: this.attribute.disableActiveEffect
     };
 
     // 横向布局
@@ -278,7 +279,8 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       start: this._start,
       pause: this._pause,
       forward: this._forward,
-      backward: this._backward
+      backward: this._backward,
+      disableActiveEffect: this.attribute.disableActiveEffect
     };
     // 横向布局
     if (isHorizontal(this._orient)) {

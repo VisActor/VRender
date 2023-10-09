@@ -91,6 +91,11 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
    */
   customOverlapFunc?: (label: Text[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableActiveEffect?: boolean;
 }
 
 export interface OverlapAttrs {

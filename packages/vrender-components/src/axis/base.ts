@@ -132,6 +132,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   private _bindEvent() {
+    if (this.attribute.disableActiveEffect) {
+      return;
+    }
     const { hover, select } = this.attribute;
 
     if (hover) {

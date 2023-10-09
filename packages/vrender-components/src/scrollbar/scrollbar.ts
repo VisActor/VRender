@@ -90,6 +90,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   // 绑定事件
   protected bindEvents(): void {
+    if (this.attribute.disableActiveEffect) {
+      return;
+    }
     // TODO: wheel 事件支持
     if (this._rail) {
       this._rail.addEventListener('pointerdown', this._onRailPointerDown as EventListener);

@@ -63,6 +63,9 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    * 初始化事件
    */
   private _initEvents = () => {
+    if (this.attribute.disableActiveEffect) {
+      return;
+    }
     this._controller.addEventListener(ControllerEventEnum.OnPlay, (e: FederatedPointerEvent) => {
       e.stopPropagation();
       this.play();

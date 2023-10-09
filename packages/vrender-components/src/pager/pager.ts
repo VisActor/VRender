@@ -157,6 +157,9 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   }
 
   private _bindEvents(): void {
+    if (this.attribute.disableActiveEffect) {
+      return;
+    }
     if (this.preHandler) {
       this.preHandler.addEventListener('pointerenter', this._onHover as EventListenerOrEventListenerObject);
       this.preHandler.addEventListener('pointerleave', this._onUnHover as EventListenerOrEventListenerObject);

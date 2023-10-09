@@ -31,7 +31,33 @@ export function run() {
     }
   });
 
-  const stage = render([dataZoom], 'main');
+  const dataZoomDisableActiveEffect = new DataZoom({
+    start: 0.2,
+    end: 0.5,
+    position: {
+      x: 50,
+      y: 75
+    },
+    size: {
+      width: 400,
+      height: 30
+    },
+    // brushSelect: false,
+    backgroundChartStyle: {
+      line: {
+        visible: false
+      },
+      area: {
+        visible: false
+      }
+    },
+    middleHandlerStyle: {
+      visible: true
+    },
+    disableActiveEffect: true
+  });
+
+  const stage = render([dataZoom, dataZoomDisableActiveEffect], 'main');
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

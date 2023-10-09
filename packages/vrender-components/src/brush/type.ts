@@ -76,6 +76,11 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default 0
    */
   delayTime?: number;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableActiveEffect?: boolean;
 }
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';

@@ -33,4 +33,9 @@ export interface ScrollBarAttributes extends IGroupGraphicAttribute {
    * 滑块限制的滚动范围，数值为 0 - 1
    */
   limitRange?: [number, number];
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableActiveEffect?: boolean;
 }

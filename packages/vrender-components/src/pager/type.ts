@@ -58,4 +58,9 @@ export type PagerAttributes = {
   textStyle?: Partial<ITextGraphicAttribute>;
   /** 整体的内边距配置 */
   padding?: Padding;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableActiveEffect?: boolean;
 } & Partial<IGroupGraphicAttribute>;

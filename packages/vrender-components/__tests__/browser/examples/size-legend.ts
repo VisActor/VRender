@@ -96,7 +96,25 @@ const vrLegend = new SizeContinuousLegend({
   max: 200,
   value: [50, 100]
 });
-const stage = render([hbLegend, htLegend, vlLegend, vrLegend], 'main');
+
+const disableActiveEffectLegend = new SizeContinuousLegend({
+  x: 200,
+  y: 300,
+  title: {
+    visible: true,
+    text: '颜色图例 关闭交互'
+  },
+  sizeRange: [10, 20],
+  layout: 'vertical',
+  align: 'right',
+  railWidth: 6,
+  railHeight: 200,
+  min: 20,
+  max: 200,
+  value: [50, 100],
+  disableActiveEffect: true
+});
+const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableActiveEffectLegend], 'main');
 
 stage.defaultLayer.add(segment as any);
 stage.render();

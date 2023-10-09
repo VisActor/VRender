@@ -115,6 +115,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected bindEvents(): void {
+    if (this.attribute.disableActiveEffect) {
+      return;
+    }
     const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
     // 拖拽开始
     if (this._startHandler) {

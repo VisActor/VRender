@@ -80,7 +80,28 @@ const vrLegend = new ColorContinuousLegend({
     cornerRadius: 5
   }
 });
-const stage = render([hbLegend, htLegend, vlLegend, vrLegend], 'main');
+const disableActiveEffectLegend = new ColorContinuousLegend({
+  x: 20,
+  y: 280,
+  title: {
+    visible: true,
+    text: '关闭交互颜色图例'
+  },
+  colors: ['#AEE2FF', '#00328E'],
+  slidable: false,
+  layout: 'horizontal',
+  align: 'top',
+  railWidth: 200,
+  railHeight: 8,
+  min: 0,
+  max: 100,
+  value: [0, 100],
+  railStyle: {
+    cornerRadius: 5
+  }
+  // disableActiveEffect: true
+});
+const stage = render([hbLegend, htLegend, vlLegend, vrLegend, disableActiveEffectLegend], 'main');
 // const stage = render([htLegend], 'main');
 
 console.log(htLegend);

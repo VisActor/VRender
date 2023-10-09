@@ -1277,6 +1277,7 @@ function createContent(stage: Stage) {
         // ...latestData[index]
       };
     }),
+    // dataFilter: data => data.splice(0, 1),
     type: 'arc',
     // animation: false,
     animation: {

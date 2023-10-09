@@ -17,6 +17,8 @@ export class NodeCanvas extends BaseCanvas implements ICanvas {
 
   init() {
     this._context = new NodeContext2d(this, this._dpr);
+    this.nativeCanvas.width = this._pixelWidth;
+    this.nativeCanvas.height = this._pixelHeight;
   }
 
   release(...params: any): void {

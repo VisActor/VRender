@@ -6,44 +6,71 @@ import { LynxEnvContribution } from './lynx-contribution';
 import { WxEnvContribution } from './wx-contribution';
 import { NodeEnvContribution } from './node-contribution';
 
+let isBrowserBound = false;
 export const browserEnvModule = new ContainerModule(bind => {
   // browser
-  bind(BrowserEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(BrowserEnvContribution);
+  if (!isBrowserBound) {
+    isBrowserBound = true;
+    bind(BrowserEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(BrowserEnvContribution);
+  }
 });
 
+let isFeishuBound = false;
 export const feishuEnvModule = new ContainerModule(bind => {
   // feishu
-  bind(FeishuEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(FeishuEnvContribution);
+  if (!isFeishuBound) {
+    isFeishuBound = true;
+    bind(FeishuEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(FeishuEnvContribution);
+  }
 });
 
+let isTaroBound = false;
 export const taroEnvModule = new ContainerModule(bind => {
   // taro
-  bind(TaroEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(TaroEnvContribution);
+  if (!isTaroBound) {
+    isTaroBound = true;
+    bind(TaroEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(TaroEnvContribution);
+  }
 });
 
+let isTTBound = false;
 export const ttEnvModule = new ContainerModule(bind => {
-  // taro
-  bind(TaroEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(TaroEnvContribution);
+  if (!isTTBound) {
+    isTTBound = true;
+    bind(TaroEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(TaroEnvContribution);
+  }
 });
 
+let isLynxBound = false;
 export const lynxEnvModule = new ContainerModule(bind => {
   // lynx
-  bind(LynxEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(LynxEnvContribution);
+  if (!isLynxBound) {
+    isLynxBound = true;
+    bind(LynxEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(LynxEnvContribution);
+  }
 });
 
+let isWxBound = false;
 export const wxEnvModule = new ContainerModule(bind => {
   // wx
-  bind(WxEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(WxEnvContribution);
+  if (!isWxBound) {
+    isWxBound = true;
+    bind(WxEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(WxEnvContribution);
+  }
 });
 
+let isNodeBound = false;
 export const nodeEnvModule = new ContainerModule(bind => {
   // node
-  bind(NodeEnvContribution).toSelf().inSingletonScope();
-  bind(EnvContribution).toService(NodeEnvContribution);
+  if (!isNodeBound) {
+    isNodeBound = true;
+    bind(NodeEnvContribution).toSelf().inSingletonScope();
+    bind(EnvContribution).toService(NodeEnvContribution);
+  }
 });

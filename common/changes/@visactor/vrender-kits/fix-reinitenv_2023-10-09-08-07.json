@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "fix: fix reinit env issue",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

@@ -4,11 +4,15 @@ import { nodeEnvModule } from './contributions/module';
 import { nodeCanvasModule } from '../canvas/contributions/node/modules';
 import { nodeWindowModule } from '../window/contributions/node-contribution';
 
+let loaded = false;
 export function loadNodeEnv(container: Container, loadPicker: boolean = true) {
-  container.load(nodeEnvModule);
-  container.load(nodeCanvasModule);
-  container.load(nodeWindowModule);
-  loadPicker && loadMathPicker(container);
+  if (!loaded) {
+    loaded = true;
+    container.load(nodeEnvModule);
+    container.load(nodeCanvasModule);
+    container.load(nodeWindowModule);
+    loadPicker && loadMathPicker(container);
+  }
 }
 
 export function initNodeEnv() {

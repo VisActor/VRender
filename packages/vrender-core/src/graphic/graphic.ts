@@ -853,11 +853,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   clearStates(hasAnimation?: boolean) {
     if (this.hasState() && this.normalAttrs) {
+      this.currentStates = [];
       this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
+    } else {
+      this.currentStates = [];
     }
-
     this.normalAttrs = null;
-    this.currentStates = [];
   }
 
   removeState(stateName: string, hasAnimation?: boolean) {

@@ -139,11 +139,24 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
   }
 
-  private _setStates(target: IGraphic) {
+  private _setStatesOfText(target: IGraphic) {
     if (!target) {
       return;
     }
     const state = this.attribute.state;
+
+    if (!state || isEmpty(state)) {
+      return;
+    }
+
+    target.states = state;
+  }
+
+  private _setStatesOfLabelLine(target: IGraphic) {
+    if (!target) {
+      return;
+    }
+    const state = this.attribute.labelLineState;
 
     if (!state || isEmpty(state)) {
       return;
@@ -205,7 +218,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected _createLabelText(attributes: LabelItem) {
     const text = createText(attributes);
     this._bindEvent(text);
-    this._setStates(text);
+    this._setStatesOfText(text);
     return text;
   }
 
@@ -481,8 +494,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
-          labelLine && this.add(labelLine);
 
+          if (labelLine) {
+            this._setStatesOfLabelLine(labelLine);
+            this.add(labelLine);
+          }
+
+          this._syncStateWithRelatedGraphic(relatedGraphic);
           relatedGraphic.once('animate-bind', () => {
             text.setAttributes(from);
             const listener = this._afterRelatedGraphicAttributeUpdate(text, texts, index, relatedGraphic, {
@@ -564,6 +582,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (labelLine) {
           this.add(labelLine);
         }
+
+        this._syncStateWithRelatedGraphic(relatedGraphic);
       } else if (state === 'update') {
         const prevLabel = prevTextMap.get(relatedGraphic);
         prevTextMap.delete(relatedGraphic);
@@ -583,6 +603,29 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     });
 
     this._graphicToText = currentTextMap;
+  }
+
+  protected _handleRelatedGraphicSetState = (e: any) => {
+    if (e.detail?.type === AttributeUpdateType.STATE) {
+      const currentStates = e.target?.currentStates ?? [];
+      const label = this._graphicToText.get(e.target);
+
+      if (label) {
+        if (label.text) {
+          label.text.useStates(currentStates);
+        }
+
+        if (label.labelLine) {
+          label.labelLine.useStates(currentStates);
+        }
+      }
+    }
+  };
+
+  protected _syncStateWithRelatedGraphic(relatedGraphic: IGraphic) {
+    if (this.attribute.syncState) {
+      relatedGraphic.on('afterAttributeUpdate', this._handleRelatedGraphicSetState);
+    }
   }
 
   protected _afterRelatedGraphicAttributeUpdate(

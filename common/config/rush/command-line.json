@@ -4,7 +4,7 @@
     {
       "name": "rebuild",
       "summary": "",
-      "enableParallelism": true,
+      "enableParallelism": false,
       "commandKind": "bulk",
       "ignoreMissingScript": true,
       "allowWarningsInSuccessfulBuild": true
@@ -20,7 +20,7 @@
     {
       "name": "eslint",
       "summary": "",
-      "enableParallelism": true,
+      "enableParallelism": false,
       "commandKind": "bulk",
       "ignoreMissingScript": true,
       "ignoreDependencyOrder": true,
@@ -29,7 +29,7 @@
     {
       "name": "test",
       "summary": "",
-      "enableParallelism": true,
+      "enableParallelism": false,
       "commandKind": "bulk",
       "ignoreMissingScript": true,
       "ignoreDependencyOrder": true,

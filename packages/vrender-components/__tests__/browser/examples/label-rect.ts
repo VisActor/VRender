@@ -1,3 +1,4 @@
+import { mat4 } from './../../../../vrender-core/src/common/matrix';
 import { GUI } from 'lil-gui';
 import '@visactor/vrender';
 import { createGroup, Stage, createRect } from '@visactor/vrender';
@@ -585,6 +586,11 @@ function createContent(stage: Stage) {
     position: data => {
       return Number(data.text) < 0 ? 'bottom' : 'top';
     },
+    syncState: true,
+    state: {
+      highlight: { opacity: 1 },
+      blur: { opacity: 0.2 }
+    },
     animation: false,
     overlap: {
       enable: true,
@@ -605,6 +611,31 @@ function createContent(stage: Stage) {
     zIndex: 302
   });
   stage.defaultLayer.add(barLabel);
+
+  stage.on('click', (e: any) => {
+    if (e.target.type === 'rect') {
+      const fillColor = e.target.attribute.fill;
+
+      const allRects = stage.findAll(child => {
+        return child.type === 'rect';
+      }, true);
+
+      allRects.forEach(rect => {
+        if (!rect.states) {
+          rect.states = {
+            highlight: { stroke: 'black' },
+            blur: { fillOpacity: 0.2 }
+          };
+        }
+
+        if (rect.attribute.fill === fillColor) {
+          rect.useStates(['highlight']);
+        } else {
+          rect.useStates(['blur']);
+        }
+      });
+    }
+  });
   return { bar: barGroup, label: barLabel };
 }
 

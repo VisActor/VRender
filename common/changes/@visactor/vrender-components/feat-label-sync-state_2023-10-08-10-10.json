@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "    feat: support `syncState` in label component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

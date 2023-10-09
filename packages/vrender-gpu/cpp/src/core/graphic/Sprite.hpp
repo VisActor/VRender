@@ -11,10 +11,12 @@
 #include "Model.hpp"
 #include "ResourceManager.hpp"
 #include "ICamera.hpp"
+#include "Type.hpp"
+#include "ILight.hpp"
 
 class Sprite: public Node {
 public:
-    Sprite(): UPDATE_TYPE{}, mPosition{}, mSize{}, mRotate{}, mScale{1.f, 1.f, 1.f}, mModelMatrix{}, mModel{}, mUpdateType{0}, mUpdateTypeBeforeDraw{0} {};
+    Sprite(): UPDATE_TYPE{}, mCalcLight{CalcLight::LIGHT}, mPosition{}, mSize{}, mRotate{}, mScale{1.f, 1.f, 1.f}, mModelMatrix{}, mModel{}, mUpdateType{0}, mUpdateTypeBeforeDraw{0} {};
     ~Sprite() override = default;
     void Init(std::shared_ptr<Model> model);
     typedef struct RotateType {
@@ -38,9 +40,11 @@ public:
     inline void SetRotateY(float rotate) { mRotate.y = rotate; }
     [[nodiscard]] inline float GetRotateZ() const { return mRotate.z; }
     inline void SetRotateZ(float rotate) { mRotate.z = rotate; }
+    inline void SetScale(const glm::vec3 &scale) { mScale = scale; };
+    inline void SetScale(const glm::vec3 &&scale) { mScale = scale; };
 
     void Build(std::shared_ptr<ResourceManager> &resourceManager);
-    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager);
+    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light);
 
     enum UPDATE_TYPE {
         NONE            = 0b000000000, // 没有变化
@@ -65,6 +69,7 @@ protected:
     RotateType mRotate;
     glm::vec3 mScale;
     glm::mat4 mModelMatrix;
+    CalcLight mCalcLight;
 
     std::shared_ptr<Model> mModel;
 };

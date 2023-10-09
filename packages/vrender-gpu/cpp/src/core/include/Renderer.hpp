@@ -7,6 +7,7 @@
 
 #include "Layer.hpp"
 #include "PerspectiveCamera.hpp"
+#include "ILight.hpp"
 
 struct Performance {
     float compileShaderTime{0.f};
@@ -16,18 +17,18 @@ struct Performance {
 
 class Renderer {
 public:
-    Renderer(): mCamera{nullptr} {};
+    Renderer() {};
     void Init();
-    void Render(std::vector<std::shared_ptr<Layer>> &layerList);
-    void RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList);
+    void Render(std::vector<std::shared_ptr<Layer>> &layerList, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light);
+    void RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light);
 
     Performance mPerformance{};
 
 private:
     void BuildLayer(std::shared_ptr<Layer> &layer);
 //    std::thread BuildLayerInThread(std::shared_ptr<Layer> &layer);
-    void Draw(std::shared_ptr<Layer> &layer);
-    std::shared_ptr<ICamera> mCamera;
+    void Draw(std::shared_ptr<Layer> &layer, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light);
+
 };
 
 #endif //VRENDER_GPU_RENDER_HPP

@@ -8,12 +8,14 @@
 #include <iostream>
 #include "Shader.hpp"
 #include "ResourceManager.hpp"
+#include "ILight.hpp"
 
 class Material {
 public:
     virtual std::shared_ptr<Shader> GetShader(std::shared_ptr<ResourceManager> resourceManager) = 0;
     virtual void Init(std::shared_ptr<ResourceManager> resourceManager) = 0;
     virtual void UpdateUniform() = 0;
+    virtual void UpdateLightUniform(std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr) = 0;
 
     /**
      * 添加uniform，会判断是否重复

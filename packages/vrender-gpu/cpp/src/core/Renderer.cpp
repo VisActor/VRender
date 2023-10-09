@@ -7,10 +7,9 @@
 #include "PerspectiveCamera.hpp"
 
 void Renderer::Init() {
-    mCamera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 }
 
-void Renderer::Render(std::vector<std::shared_ptr<Layer>> &layerList) {
+void Renderer::Render(std::vector<std::shared_ptr<Layer>> &layerList, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light) {
     assert(layerList.size() == 1);
     ConsoleTime(true, "编译着色器 ");
     // Debug使用，用来移除着色器对耗时的影响，预编译
@@ -25,7 +24,7 @@ void Renderer::Render(std::vector<std::shared_ptr<Layer>> &layerList) {
     ConsoleTime(false, "BuildLayer ");
     ConsoleTime(true, "Draw ");
     Time(true);
-    Draw(layerList[0]);
+    Draw(layerList[0], camera, light);
     mPerformance.drawTime = Time(false);
     ConsoleTime(false, "Draw ");
 }
@@ -34,7 +33,7 @@ void Renderer::Render(std::vector<std::shared_ptr<Layer>> &layerList) {
  * 这个函数只能在主线程中调用
  * @param layerList
  */
-void Renderer::RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList) {
+void Renderer::RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light) {
     assert(layerList.size() == 1);
     ConsoleTime(true, "并行build以及构建着色器");
     /* 并行支持 */
@@ -46,13 +45,13 @@ void Renderer::RenderInThread(std::vector<std::shared_ptr<Layer>> &layerList) {
     layerList[0]->WaitForBuild(Layer::MUTEX_TYPE::HANG);
     ConsoleTime(false, "并行build以及构建着色器");
 
-    Draw(layerList[0]);
+    Draw(layerList[0], camera, light);
 }
 
 void Renderer::BuildLayer(std::shared_ptr<Layer> &layer) {
     layer->Build();
 }
 
-void Renderer::Draw(std::shared_ptr<Layer> &layer) {
-    layer->Draw(mCamera);
+void Renderer::Draw(std::shared_ptr<Layer> &layer, std::shared_ptr<ICamera> &camera, std::vector<std::shared_ptr<ILight>> &light) {
+    layer->Draw(camera, light);
 }

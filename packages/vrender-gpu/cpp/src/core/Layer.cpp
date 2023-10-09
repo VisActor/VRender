@@ -27,7 +27,7 @@ void Layer::SetClearColor(const glm::vec4 &c) {
     mClearColor.a = c.a;
 }
 
-void Layer::Draw(std::shared_ptr<ICamera> camera) {
+void Layer::Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light) {
     mStamp++;
     // 背景色
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
@@ -57,7 +57,7 @@ void Layer::Draw(std::shared_ptr<ICamera> camera) {
 //    DrawInstanceMesh(mStamp);
     // 绘制所有mark
     for (auto &child : mChildren) {
-        std::dynamic_pointer_cast<Sprite>(child)->Draw(camera, mResourceManager);
+        std::dynamic_pointer_cast<Sprite>(child)->Draw(camera, mResourceManager, light);
 //        if (child->mType == NodeType::GROUP) {
 //            std::dynamic_pointer_cast<Group>(child)->Draw(mCamera, mResourceManager);
 //        } else {

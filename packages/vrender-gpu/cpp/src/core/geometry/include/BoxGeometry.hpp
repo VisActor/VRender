@@ -13,6 +13,7 @@ public:
         mUpdateIndices = false;
         mUseIndices = false;
     };
+    ~BoxGeometry() override = default;
     void InIt(float size) override;
 private:
     static std::vector<glm::vec<3, float>> sCommonVertices;

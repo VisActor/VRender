@@ -31,6 +31,11 @@ void Mesh::SetUniformData() {
     mMaterial->SetUniformData();
 }
 
+void
+Mesh::SetLightUniform(std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr) {
+    mMaterial->UpdateLightUniform(resourceManager, lightArr);
+}
+
 void Mesh::BufferData() {
     if (!mVao) {
         InitVao();
@@ -63,8 +68,23 @@ void Mesh::_BufferData() {
         BindEbo();
         const auto &indices = mGeometry->GetIndices();
         GLsizei sizePerLine = 3 * sizeof(unsigned int);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizePerLine, &indices[0], GL_STATIC_DRAW);
+        if (!indices.empty()) {
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizePerLine, &indices[0], GL_STATIC_DRAW);
+        }
         mGeometry->mUpdateIndices = false;
+    }
+    // normal
+    if (mGeometry->mUpdateNormals) {
+        if (!mNormalPtr) InitNormalPtr();
+        BindNormalPtr();
+        const auto &normals = mGeometry->GetNormals();
+        GLsizei sizePerLine = 3 * sizeof(float);
+        if (!normals.empty()) {
+            glBufferData(GL_ARRAY_BUFFER, normals.size() * sizePerLine, &normals[0], GL_STATIC_DRAW);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizePerLine, nullptr);
+        }
+        mGeometry->mUpdateNormals = false;
     }
     // texture
     if (mGeometry->mUpdateTexCoords) {
@@ -78,6 +98,19 @@ void Mesh::_BufferData() {
             glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizePerLine, nullptr);
         }
         mGeometry->mUpdateTexCoords = false;
+    }
+    // colors
+    if (mGeometry->mUpdateColors) {
+        if (!mColorPtr) InitColorPtr();
+        BindColorPtr();
+        const auto &colors = mGeometry->GetColors();
+        GLsizei sizePerLine = 4 * sizeof(float);
+        if (!colors.empty()) {
+            glBufferData(GL_ARRAY_BUFFER, colors.size() * sizePerLine, &colors[0], GL_STATIC_DRAW);
+            glEnableVertexAttribArray(3);
+            glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizePerLine, nullptr);
+        }
+        mGeometry->mUpdateColors = false;
     }
 }
 

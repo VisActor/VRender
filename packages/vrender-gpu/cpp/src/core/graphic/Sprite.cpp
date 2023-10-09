@@ -25,8 +25,13 @@ void Sprite::Build(std::shared_ptr<ResourceManager> &resourceManager) {
 //    }
 }
 
-void Sprite::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager) {
-    mModel->Draw(camera, resourceManager, GetModelMatrix());
+void Sprite::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light) {
+    static std::vector<std::shared_ptr<ILight>> temp{};
+    if (mCalcLight == CalcLight::LIGHT) {
+        mModel->Draw(camera, resourceManager, light, GetModelMatrix());
+    } else {
+        mModel->Draw(camera, resourceManager, temp, GetModelMatrix());
+    }
 }
 
 void Sprite::UpdatePosMatrix() {

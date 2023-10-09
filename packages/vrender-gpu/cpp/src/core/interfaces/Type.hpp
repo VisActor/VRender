@@ -24,4 +24,25 @@ enum class BoundingBoxType {
     Sphere
 };
 
+// 计算光照
+enum class CalcLight {
+    DEFAULT=0,
+    LIGHT,
+};
+
+// 绘制点线面
+enum class DrawMode {
+    DEFAULT,
+    TRIANGLE,
+    POINT,
+    LINE
+};
+
+// 投影矩阵
+enum class ProjectionMode {
+    DEFAULT,
+    ORTHGRAPHIC,
+    PERSPECTIVE
+};
+
 #endif //VRENDER_GPU_TYPE_HPP

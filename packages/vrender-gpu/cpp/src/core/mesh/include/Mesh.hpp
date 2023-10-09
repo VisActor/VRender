@@ -14,7 +14,7 @@ class Mesh: public Pickable {
 public:
     Mesh(): Pickable{},
     mGeometry{nullptr}, mMaterial{nullptr},
-    mVao{0}, mVbo{0}, mEbo{0}, mNormalPtr{0}, mTexCoordPtr{0} {};
+    mVao{0}, mVbo{0}, mEbo{0}, mNormalPtr{0}, mTexCoordPtr{0}, mColorPtr{0} {};
     void Init(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material);
     void GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin, glm::vec3 &aabbMax) override;
     void GetBoundingSphere(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &center, float &radius) override;
@@ -50,6 +50,18 @@ public:
     inline void BindTexCoordsPtr() const {
         glBindBuffer(GL_ARRAY_BUFFER, mTexCoordPtr);
     }
+    inline void InitNormalPtr() {
+        glGenBuffers(1, &mNormalPtr);
+    }
+    inline void BindNormalPtr() const {
+        glBindBuffer(GL_ARRAY_BUFFER, mNormalPtr);
+    }
+    inline void InitColorPtr() {
+        glGenBuffers(1, &mColorPtr);
+    }
+    inline void BindColorPtr() const {
+        glBindBuffer(GL_ARRAY_BUFFER, mColorPtr);
+    }
     static inline void CreateBuffer(GLuint &bufId) {
         glGenBuffers(1, &bufId);
     }
@@ -69,6 +81,7 @@ public:
     std::shared_ptr<Shader> GetShader(std::shared_ptr<ResourceManager> resourceManager);
 
     void SetUniformData();
+    void SetLightUniform(std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr);
 
     virtual void Draw() {
         if (!mGeometry) {
@@ -98,6 +111,7 @@ protected:
 
     GLuint mNormalPtr;
     GLuint mTexCoordPtr;
+    GLuint mColorPtr;
 
     void _BufferData();
 };

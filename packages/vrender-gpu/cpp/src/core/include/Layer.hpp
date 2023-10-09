@@ -13,6 +13,7 @@
 #include "SpinLock.hpp"
 #include "FontManager.hpp"
 #include "ICamera.hpp"
+#include "ILight.hpp"
 
 typedef struct CommonUniformStore {
     CommonUniformStore(): mStamp{0}, mPreModelMatrixUniform{ "u_preModelMatrix", glm::mat4{1.f} } {};
@@ -42,7 +43,7 @@ public:
     void BuildInThread(MUTEX_TYPE type);
     void Build();
     void WaitForBuild(MUTEX_TYPE type);
-    void Draw(std::shared_ptr<ICamera> camera);
+    void Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light);
     void SetDpr(float dpr);
     void SetRenderDpr(float dpr);
     void SetClearColor(const glm::vec4 &c);

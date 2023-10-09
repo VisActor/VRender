@@ -7,15 +7,14 @@
 
 #include <string>
 #include <glm/glm.hpp>
-#include "Light.hpp"
+#include "ILight.hpp"
 
-class AmbientLight: public Light {
+class AmbientLight: public ILight {
 public:
-    AmbientLight(): mColor{glm::vec3{1.f}}, mPosition{glm::vec3{.5f}}, mName{"AmbientLight"}, mType(LightType::AMBIENT_LIGHT), mStrength(.06f) {};
-
-    inline glm::vec3 GetColor() const override { return mColor; }
-    inline glm::vec3 GetPosition() const override { return mPosition; }
-    inline CommonLightAttr GetLightAttr() const override { return CommonLightAttr{mPosition, mColor, mType, mStrength}; }
+    AmbientLight(): mColor{glm::vec3{1.f}}, mPosition{glm::vec3{.5f}}, mName{"AmbientLight"}, mType(LightType::AMBIENT_LIGHT), mStrength(.1f) {};
+    ~AmbientLight() override = default;
+    [[nodiscard]] inline glm::vec3 GetColor() const override { return mColor; }
+    [[nodiscard]] inline CommonLightAttr GetLightAttr() const override { return CommonLightAttr{mType, {mColor, mStrength}}; }
 
 private:
     glm::vec3 mColor;

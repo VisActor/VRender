@@ -48,4 +48,8 @@ private:
 //    TextureData mTextureData;
 };
 
+typedef struct {
+    std::shared_ptr<Texture2D> texture2D;
+    std::string type; // texture_diffuse | texture_specular
+} Texture;
 #endif //VRENDER_GPU_TEXTURE2D_HPP

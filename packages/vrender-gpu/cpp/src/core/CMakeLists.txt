@@ -1,4 +1,5 @@
 set(glad_path ${PROJECT_SOURCE_DIR}/src/platform/libs/glad)
+set(assimp_path ${PROJECT_SOURCE_DIR}/src/core/libs/assimp-5.3.1)
 
 include_directories(include)
 include_directories(${glad_path}/include)
@@ -7,20 +8,27 @@ include_directories(geometry/include)
 include_directories(material/include)
 include_directories(mesh/include)
 include_directories(lights/include)
+include_directories(${assimp_path}/include)
 #include_directories(Mark/include)
 #include_directories(render/include)
 
+set(BUILD_ASSIMP_TOOLS  ON)
+set(ASSIMP_BUILD_STATIC_LIB ON)
+set(ASSIMP_BUILD_DRACO ON)
+
+add_subdirectory(${assimp_path})
+
 add_library(core
         PerspectiveCamera.cpp
-        material/Material.cpp material/MeshBasicMaterial.cpp
+        material/Material.cpp material/MeshBasicMaterial.cpp material/MeshPhongMaterial.cpp
         mesh/Mesh.cpp
-        lights/AmbientLight.cpp
+        lights/AmbientLight.cpp lights/DirectLight.cpp
         Model.cpp
         ResourceManager.cpp FontManager.cpp Shader.cpp Texture2D.cpp stb_image.cpp
         graphic/Node.cpp graphic/Container.cpp graphic/Sprite.cpp Layer.cpp
         Matrix.cpp Bounds.cpp
         Camera.cpp SpinLock.cpp Renderer.cpp algorithm/Bezier.cpp
-        geometry/Geometry.cpp geometry/BoxGeometry.cpp geometry/SphereGeometry.cpp)
+        geometry/Geometry.cpp geometry/BufferGeometry.cpp geometry/BoxGeometry.cpp geometry/SphereGeometry.cpp)
 
 #add_library(core
 #        stb_image.cpp Shader.cpp Texture2D.cpp ResourceManager.cpp Mesh.cpp Geometry.cpp Tools.cpp
@@ -36,6 +44,6 @@ add_library(core
 #        )
 set_target_properties(core PROPERTIES
         LINK_FLAGS "-pthread")
-target_link_libraries(core font_lib utils)
+target_link_libraries(core assimp font_lib utils)
 add_subdirectory(test)
 enable_testing()

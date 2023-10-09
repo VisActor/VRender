@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the problem of drag events not being consumed in the component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -12,17 +12,21 @@ export function loadAllEnv(container: Container) {
   loadAllModule(container);
 }
 
+let loaded = false;
 export function loadAllModule(container: Container) {
-  loadBrowserEnv(container, false);
-  loadFeishuEnv(container, false);
-  loadLynxEnv(container, false);
-  loadNodeEnv(container, false);
-  loadTaroEnv(container, false);
-  loadWxEnv(container, false);
-  loadCanvasPicker(container);
-  vglobal.hooks.onSetEnv.tap('loadMathPicker', (lastEnv, env) => {
-    env !== 'browser' && loadMathPicker(container);
-  });
+  if (!loaded) {
+    loaded = true;
+    loadBrowserEnv(container, false);
+    loadFeishuEnv(container, false);
+    loadLynxEnv(container, false);
+    loadNodeEnv(container, false);
+    loadTaroEnv(container, false);
+    loadWxEnv(container, false);
+    loadCanvasPicker(container);
+    vglobal.hooks.onSetEnv.tap('loadMathPicker', (lastEnv, env) => {
+      env !== 'browser' && loadMathPicker(container);
+    });
+  }
 }
 
 export function initAllEnv() {

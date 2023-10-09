@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix the problem of stopPropagation not work",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

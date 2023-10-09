@@ -1,8 +1,22 @@
 import { createStage, createGroup, createRect, container, IGraphic, global } from '@visactor/vrender';
 
+// container.load(roughModule);
+
 export const page = () => {
+  const group = createGroup({
+    x: 100,
+    y: 100,
+    background: 'red',
+    width: 300,
+    height: 400,
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    alignContent: 'center'
+  });
+
   // 添加10个rect
-  new Array(10).fill(0).forEach((b, i) => {
+  new Array(1).fill(0).forEach(() => {
     group.add(
       createRect({
         x: 10,
@@ -10,14 +24,9 @@ export const page = () => {
         width: 70,
         height: 60,
         fill: 'green',
-        boundsPadding: [0, 6, 6, 0],
-        pickable: true
+        boundsPadding: [0, 6, 6, 0]
       })
     );
-  });
-
-  group.addEventListener('click', e => {
-    console.log('click', e.clone());
   });
 
   const stage = createStage({
@@ -30,6 +39,4 @@ export const page = () => {
   stage.defaultLayer.add(group);
 
   stage.render(undefined, { renderStyle: 'rough' });
-
-  window.stage = stage;
 };

@@ -175,6 +175,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   stopPropagation(): void {
+    if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
+      this.nativeEvent.stopPropagation();
+    }
+
     this.propagationStopped = true;
   }
 

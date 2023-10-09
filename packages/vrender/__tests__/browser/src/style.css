@@ -20,7 +20,7 @@ body p {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* text-align: center; */
+  text-align: center;
   color: #2c3e50;
   display: flex;
 }
@@ -31,12 +31,18 @@ body p {
   border-right: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+#app .sidebar > div {
+  height: 100%;
+}
+
 #app .sidebar .sidebar-title {
   font-weight: 700;
   line-height: 5em;
 }
 
 #app .sidebar .menu-list {
+  height: calc(100% - 5em);
+  overflow-y: scroll;
 }
 
 #app .sidebar .menu-item {
@@ -44,6 +50,16 @@ body p {
   text-align: left;
   padding: 0 1em;
   cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#app .sidebar .menu-item.menu-title {
+  line-height: 1.4em;
+  margin-left: -0.5em;
+  color: #999;
+  cursor: default;
 }
 
 #app .sidebar .menu-item.menu-item-active {
@@ -81,4 +97,19 @@ body p {
   font-size: 14px;
   border-radius: 2px;
   cursor: pointer;
+}
+
+.vgrammar-bind {
+  margin: 4px 10px;
+  text-align: left;
+}
+
+.vgrammar-bind .vgrammar-bind-name {
+  margin-right: 16px;
+  font-weight: bold;
+}
+
+#container {
+  width: 100%;
+  height: 400px;
 }

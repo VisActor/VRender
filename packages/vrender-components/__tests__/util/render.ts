@@ -14,6 +14,8 @@ import {
 } from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 export default function render(component: IGraphic | IGraphic[], canvasId: string) {
   // 创建舞台实例

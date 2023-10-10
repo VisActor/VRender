@@ -1,5 +1,6 @@
 import type { AABBBounds, Matrix, OBBBounds } from '@visactor/vutils';
-import { Point, transformBounds } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
+import { Point } from '@visactor/vutils';
 import { application } from '../application';
 import type {
   IStage,

@@ -98,9 +98,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   name = 'arc-label';
 
   static defaultAttributes: Partial<ArcLabelAttrs> = {
-    // visible: true,
-    // showRule: 'all',
-    // rotate: true,
     coverEnable: false,
     spaceWidth: 5,
     layoutArcGap: 6,
@@ -149,7 +146,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     if (!textBounds || !graphicBounds) {
       return;
     }
-
     return { x: 0, y: 0 };
   }
 
@@ -163,6 +159,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
     const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
     const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+
     const arcs: ArcInfo[] = this.layoutArcLabels(
       this.attribute.position,
       this.attribute,
@@ -196,7 +193,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     position: BaseLabelAttrs['position'],
     attribute: any,
     currentMarks?: IGraphic[],
-    data?: any,
+    data?: LabelItem[],
     textBoundsArray?: any,
     ellipsisWidth?: number
   ) {
@@ -212,10 +209,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
     });
 
-    currentMarks.forEach((currentMark, index) => {
+    data.forEach((d, index) => {
+      const currentMark = this._idToGraphic.get(d.id);
       const graphicAttribute = currentMark.attribute as IArcGraphicAttribute;
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
-
       if (!isNil(data[index]) && !isNil(textBoundsArray[index])) {
         const item = data[index] ? data[index] : null;
         const textBounds = textBoundsArray[index] ? textBoundsArray[index] : { x1: 0, x2: 0, y1: 0, y2: 0 };
@@ -242,16 +239,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           graphicAttribute.outerRadius,
           center
         );
-
-        // refDatum: any,
-        // center: IPoint,
-        // outerCenter: IPoint,
-        // quadrant: Quadrant,
-        // radian: number,
-        // middleAngle: number,
-        // innerRadius: number,
-        // outerRadius: number,
-        // circleCenter: IPoint
 
         arc.pointA = circlePoint(
           (center as IPoint).x,
@@ -342,9 +329,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       if (!isGreater(labelWidth, 0)) {
         arc.labelVisible = false;
       }
-      // (arc.textAlign = 'center'), (arc.textBaseline = 'middle');
 
-      //   arc.angle = degrees(arc.middleAngle);
       arc.angle = attribute?.textStyle?.angle ?? arc.middleAngle;
       let offsetAngle = labelConfig?.offsetAngle ?? 0;
       if (['inside-inner', 'inside-outer'].includes(position as string)) {
@@ -459,7 +444,6 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const line2MinLength = attribute.line.line2MinLength as number;
     const labelLayoutAlign = attribute.layout?.align;
     const spaceWidth = attribute.spaceWidth as number;
-    // const align = this._computeAlign(arc, attribute) as TextAlign;
 
     const { labelPosition, quadrant, pointB } = arc;
     if (!isValidNumber(pointB.x * pointB.y)) {
@@ -497,26 +481,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const targetCenterOffset = 0.5 * (arc.labelLimit < arc.labelSize.width ? arc.labelLimit : arc.labelSize.width);
     if (labelLayoutAlign === 'edge') {
       // edge 模式下的多行文本对齐方向与其他模式相反
-      // const alignOffset = this._computeAlignOffset(align, labelWidth, -flag);
       const alignOffset = 0;
       // 贴近画布边缘的布局结果可能会由于 cx 的小数 pixel 导致被部分裁剪，因此额外做计算
       labelPosition.x = (flag > 0 ? plotLayout.width + alignOffset : alignOffset) - flag * targetCenterOffset;
     } else {
-      // const alignOffset = this._computeAlignOffset(align, labelWidth, flag);
       const alignOffset = 0;
       labelPosition.x = cx + alignOffset + flag * (spaceWidth + targetCenterOffset);
-    }
-  }
-
-  private _computeAlignOffset(align: TextAlign, labelWidth: number, alignFlag: number): number {
-    switch (align) {
-      case 'left':
-        return alignFlag < 0 ? -labelWidth : 0;
-      case 'right':
-        return alignFlag < 0 ? 0 : labelWidth;
-      case 'center':
-      default:
-        return (labelWidth / 2) * alignFlag;
     }
   }
 

@@ -25,398 +25,468 @@ import { roughModule } from '@visactor/vrender-kits';
 
 const json = {
   attribute: {},
-  _uid: 2,
+  _uid: 267,
   type: 'group',
   children: [
     {
       attribute: {},
-      _uid: 6,
+      _uid: 271,
       type: 'group',
       children: [
         {
           attribute: {
             x: 0,
             y: 0,
-            width: 1135,
+            width: 500,
             height: 500,
             sizeAttrs: {
               x: 0,
               y: 0,
-              width: 1135,
+              width: 500,
               height: 500
             }
           },
-          _uid: 9,
+          _uid: 276,
           type: 'group',
           name: 'root',
           children: [
             {
               attribute: {
-                visible: true,
-                clip: false,
-                x: 0,
-                y: 30,
-                width: 1135,
-                height: 392,
-                sizeAttrs: {
-                  x: 0,
-                  y: 30,
-                  width: 1135,
-                  height: 392
-                },
                 pickable: false,
-                zIndex: 450
+                zIndex: 0
               },
-              _uid: 10,
+              _uid: 277,
               type: 'group',
-              name: 'regionGroup_4',
+              name: 'VGRAMMAR_MARK_8',
               children: [
                 {
                   attribute: {
-                    visible: true,
+                    title: {
+                      space: 4,
+                      padding: [0, 0, 0, 0],
+                      textStyle: {
+                        fontSize: 12,
+                        fill: '#333333',
+                        fontWeight: 'normal',
+                        fillOpacity: 1
+                      },
+                      text: 'theta'
+                    },
+                    label: {
+                      visible: true,
+                      inside: false,
+                      space: 4,
+                      padding: 0,
+                      style: {
+                        fontSize: 12,
+                        fill: '#6F6F6F',
+                        fontWeight: 'normal',
+                        fillOpacity: 1
+                      }
+                    },
+                    tick: {
+                      visible: true,
+                      inside: false,
+                      alignWithLabel: true,
+                      length: 4,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
+                    subTick: {
+                      visible: false,
+                      inside: false,
+                      count: 4,
+                      length: 2,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
+                    line: {
+                      visible: true,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
                     x: 0,
                     y: 0,
-                    clip: false,
-                    sizeAttrs: {
+                    start: {
                       x: 0,
                       y: 0
                     },
-                    pickable: false,
-                    zIndex: 0
+                    end: {
+                      x: 0,
+                      y: 0
+                    },
+                    items: [
+                      [
+                        {
+                          id: 0,
+                          label: 'test0',
+                          value: 0.08333333333333338,
+                          rawValue: 'test0'
+                        },
+                        {
+                          id: 1,
+                          label: 'test1',
+                          value: 0.25000000000000006,
+                          rawValue: 'test1'
+                        },
+                        {
+                          id: 2,
+                          label: 'test2',
+                          value: 0.4166666666666667,
+                          rawValue: 'test2'
+                        },
+                        {
+                          id: 3,
+                          label: 'test3',
+                          value: 0.5833333333333334,
+                          rawValue: 'test3'
+                        },
+                        {
+                          id: 4,
+                          label: 'test4',
+                          value: 0.75,
+                          rawValue: 'test4'
+                        },
+                        {
+                          id: 5,
+                          label: 'test5',
+                          value: 0.9166666666666666,
+                          rawValue: 'test5'
+                        }
+                      ]
+                    ],
+                    startAngle: 0,
+                    endAngle: 6.283185307179586,
+                    radius: 210,
+                    innerRadius: 0,
+                    center: {
+                      x: 250,
+                      y: 250
+                    },
+                    grid: {
+                      visible: true
+                    }
                   },
-                  _uid: 11,
+                  _uid: 278,
                   type: 'group',
-                  name: 'seriesGroup_funnel3d_5_8',
+                  name: 'axis',
                   children: [
                     {
                       attribute: {
-                        pickable: false,
-                        zIndex: 300
+                        x: 0,
+                        y: 0,
+                        pickable: false
                       },
-                      _uid: 41,
+                      _uid: 297,
                       type: 'group',
-                      name: 'funnel3d_9',
                       children: [
                         {
                           attribute: {
                             x: 0,
                             y: 0,
-                            stroke: false,
-                            visible: true,
-                            points: [
-                              {
-                                x: 367.5,
-                                y: 0
-                              },
-                              {
-                                x: 767.5,
-                                y: 0
-                              },
-                              {
-                                x: 732.5,
-                                y: 78.4
-                              },
-                              {
-                                x: 402.5,
-                                y: 78.4
-                              }
-                            ],
-                            fill: '#1664FF',
-                            z: 0,
-                            pickable: true
+                            zIndex: 1
                           },
-                          _uid: 42,
-                          type: 'pyramid3d',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            x: 0,
-                            y: 0,
-                            stroke: false,
-                            visible: true,
-                            points: [
-                              {
-                                x: 402.5,
-                                y: 78.4
+                          _uid: 298,
+                          type: 'group',
+                          name: 'axis-container',
+                          children: [
+                            {
+                              attribute: {
+                                x: 250,
+                                y: 250,
+                                startAngle: 0,
+                                endAngle: 6.283185307179586,
+                                radius: 210,
+                                innerRadius: 0,
+                                lineWidth: 1,
+                                stroke: '#D9DDE4',
+                                strokeOpacity: 1
                               },
-                              {
-                                x: 732.5,
-                                y: 78.4
-                              },
-                              {
-                                x: 697.5,
-                                y: 156.8
-                              },
-                              {
-                                x: 437.5,
-                                y: 156.8
-                              }
-                            ],
-                            fill: '#1AC6FF',
-                            z: 35,
-                            pickable: true
-                          },
-                          _uid: 43,
-                          type: 'pyramid3d',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            x: 0,
-                            y: 0,
-                            stroke: false,
-                            visible: true,
-                            points: [
-                              {
-                                x: 437.5,
-                                y: 156.8
-                              },
-                              {
-                                x: 697.5,
-                                y: 156.8
-                              },
-                              {
-                                x: 662.5,
-                                y: 235.2
-                              },
-                              {
-                                x: 472.5,
-                                y: 235.2
-                              }
-                            ],
-                            fill: '#FF8A00',
-                            z: 70,
-                            pickable: true
-                          },
-                          _uid: 44,
-                          type: 'pyramid3d',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            x: 0,
-                            y: 0,
-                            stroke: false,
-                            visible: true,
-                            points: [
-                              {
-                                x: 472.5,
-                                y: 235.20000000000005
-                              },
-                              {
-                                x: 662.5,
-                                y: 235.20000000000005
-                              },
-                              {
-                                x: 627.5,
-                                y: 313.6
-                              },
-                              {
-                                x: 507.5,
-                                y: 313.6
-                              }
-                            ],
-                            fill: '#3CC780',
-                            z: 105,
-                            pickable: true
-                          },
-                          _uid: 45,
-                          type: 'pyramid3d',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            x: 0,
-                            y: 0,
-                            stroke: false,
-                            visible: true,
-                            points: [
-                              {
-                                x: 507.5,
-                                y: 313.6
-                              },
-                              {
-                                x: 627.5,
-                                y: 313.6
-                              },
-                              {
-                                x: 592.5,
-                                y: 392
-                              },
-                              {
-                                x: 542.5,
-                                y: 392
-                              }
-                            ],
-                            fill: '#7442D4',
-                            z: 140,
-                            pickable: true
-                          },
-                          _uid: 46,
-                          type: 'pyramid3d',
-                          children: []
-                        }
-                      ]
-                    },
-                    {
-                      attribute: {
-                        pickable: false,
-                        zIndex: 300
-                      },
-                      _uid: 35,
-                      type: 'group',
-                      name: 'label_11',
-                      children: [
-                        {
-                          attribute: {
-                            visible: true,
-                            angle: 0,
-                            textAlign: 'center',
-                            lineWidth: 2,
-                            fontSize: 14,
-                            fontWeight: 'normal',
-                            fillOpacity: 1,
-                            fill: 'white',
-                            textBaseline: 'middle',
-                            x: 567.5,
-                            y: 39.2,
-                            text: 'Step1 100',
-                            limit: 400,
-                            stroke: '#1664FF',
-                            z: 0,
-                            limitAttrs: {
-                              text: 'Step1 100',
-                              limit: 400
+                              _uid: 299,
+                              type: 'circle',
+                              name: 'axis-line',
+                              children: []
                             },
-                            maxLineWidth: 400,
-                            pickable: true,
-                            opacity: 1,
-                            strokeOpacity: 1
-                          },
-                          _uid: 36,
-                          type: 'text',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            visible: true,
-                            angle: 0,
-                            textAlign: 'center',
-                            lineWidth: 2,
-                            fontSize: 14,
-                            fontWeight: 'normal',
-                            fillOpacity: 1,
-                            fill: 'white',
-                            textBaseline: 'middle',
-                            x: 567.5,
-                            y: 117.60000000000001,
-                            text: 'Step2 80',
-                            limit: 400,
-                            stroke: '#1AC6FF',
-                            z: 35,
-                            limitAttrs: {
-                              text: 'Step2 80',
-                              limit: 400
+                            {
+                              attribute: {
+                                x: 0,
+                                y: 0,
+                                pickable: false
+                              },
+                              _uid: 300,
+                              type: 'group',
+                              name: 'axis-tick-container',
+                              children: [
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 431.8653347947321,
+                                        y: 355.00000000000006
+                                      },
+                                      {
+                                        x: 435.32943640986986,
+                                        y: 357.00000000000006
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 301,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 249.99999999999991,
+                                        y: 460
+                                      },
+                                      {
+                                        x: 249.99999999999991,
+                                        y: 464
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 302,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 68.13466520526788,
+                                        y: 355
+                                      },
+                                      {
+                                        x: 64.67056359013013,
+                                        y: 357
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 303,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 68.13466520526791,
+                                        y: 144.99999999999997
+                                      },
+                                      {
+                                        x: 64.67056359013016,
+                                        y: 142.99999999999997
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 304,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 249.99999999999997,
+                                        y: 40
+                                      },
+                                      {
+                                        x: 249.99999999999997,
+                                        y: 36
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 305,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 431.86533479473206,
+                                        y: 144.9999999999999
+                                      },
+                                      {
+                                        x: 435.3294364098698,
+                                        y: 142.9999999999999
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 306,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                }
+                              ]
                             },
-                            maxLineWidth: 400,
-                            pickable: true,
-                            opacity: 1,
-                            strokeOpacity: 1
-                          },
-                          _uid: 37,
-                          type: 'text',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            visible: true,
-                            angle: 0,
-                            textAlign: 'center',
-                            lineWidth: 2,
-                            fontSize: 14,
-                            fontWeight: 'normal',
-                            fillOpacity: 1,
-                            fill: 'white',
-                            textBaseline: 'middle',
-                            x: 567.5,
-                            y: 196,
-                            text: 'Step3 60',
-                            limit: 400,
-                            stroke: '#FF8A00',
-                            z: 70,
-                            limitAttrs: {
-                              text: 'Step3 60',
-                              limit: 400
-                            },
-                            maxLineWidth: 400,
-                            pickable: true,
-                            opacity: 1,
-                            strokeOpacity: 1
-                          },
-                          _uid: 38,
-                          type: 'text',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            visible: true,
-                            angle: 0,
-                            textAlign: 'center',
-                            lineWidth: 2,
-                            fontSize: 14,
-                            fontWeight: 'normal',
-                            fillOpacity: 1,
-                            fill: 'white',
-                            textBaseline: 'middle',
-                            x: 567.5,
-                            y: 274.40000000000003,
-                            text: 'Step4 40',
-                            limit: 400,
-                            stroke: '#3CC780',
-                            z: 105,
-                            limitAttrs: {
-                              text: 'Step4 40',
-                              limit: 400
-                            },
-                            maxLineWidth: 400,
-                            pickable: true,
-                            opacity: 1,
-                            strokeOpacity: 1
-                          },
-                          _uid: 39,
-                          type: 'text',
-                          children: []
-                        },
-                        {
-                          attribute: {
-                            visible: true,
-                            angle: 0,
-                            textAlign: 'center',
-                            lineWidth: 2,
-                            fontSize: 14,
-                            fontWeight: 'normal',
-                            fillOpacity: 1,
-                            fill: 'white',
-                            textBaseline: 'middle',
-                            x: 567.5,
-                            y: 352.8,
-                            text: 'Step5 20',
-                            limit: 400,
-                            stroke: '#7442D4',
-                            z: 140,
-                            limitAttrs: {
-                              text: 'Step5 20',
-                              limit: 400
-                            },
-                            maxLineWidth: 400,
-                            pickable: true,
-                            opacity: 1,
-                            strokeOpacity: 1
-                          },
-                          _uid: 40,
-                          type: 'text',
-                          children: []
+                            {
+                              attribute: {
+                                x: 0,
+                                y: 0,
+                                pickable: false
+                              },
+                              _uid: 307,
+                              type: 'group',
+                              name: 'axis-label-container',
+                              children: [
+                                {
+                                  attribute: {
+                                    x: 0,
+                                    y: 0,
+                                    pickable: false
+                                  },
+                                  _uid: 308,
+                                  type: 'group',
+                                  name: 'axis-label-container-layer-0',
+                                  children: [
+                                    {
+                                      attribute: {
+                                        x: 438.79353802500765,
+                                        y: 359.00000000000006,
+                                        text: 'test0',
+                                        lineHeight: 12,
+                                        textAlign: 'start',
+                                        textBaseline: 'middle',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 309,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 249.99999999999991,
+                                        y: 468,
+                                        text: 'test1',
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 310,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 61.20646197499237,
+                                        y: 359,
+                                        text: 'test2',
+                                        lineHeight: 12,
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 311,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 61.2064619749924,
+                                        y: 140.99999999999997,
+                                        text: 'test3',
+                                        lineHeight: 12,
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 312,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 249.99999999999997,
+                                        y: 32,
+                                        text: 'test4',
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'bottom',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 313,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 438.7935380250076,
+                                        y: 140.9999999999999,
+                                        text: 'test5',
+                                        lineHeight: 12,
+                                        textAlign: 'start',
+                                        textBaseline: 'middle',
+                                        fontSize: 12,
+                                        fill: '#6F6F6F',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 314,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
@@ -426,569 +496,536 @@ const json = {
             },
             {
               attribute: {
-                layout: 'horizontal',
-                title: {
-                  align: 'start',
-                  space: 12,
-                  textStyle: {
-                    fontSize: 12,
-                    fontWeight: 'bold',
-                    fill: '#2C3542'
-                  }
-                },
-                item: {
-                  spaceCol: 10,
-                  spaceRow: 10,
-                  shape: {
-                    space: 4,
-                    style: {
-                      size: 10,
-                      cursor: 'pointer'
-                    },
-                    state: {
-                      selectedHover: {
-                        opacity: 0.85
-                      },
-                      unSelected: {
-                        fill: '#D8D8D8',
-                        fillOpacity: 0.5
-                      }
-                    }
-                  },
-                  label: {
-                    space: 4,
-                    style: {
-                      fontSize: 14,
-                      fill: '#89909D',
-                      cursor: 'pointer'
-                    },
-                    state: {
-                      selectedHover: {
-                        opacity: 0.85
-                      },
-                      unSelected: {
-                        fill: '#D8D8D8',
-                        fillOpacity: 0.5
-                      }
-                    }
-                  },
-                  value: {
-                    alignRight: false,
-                    style: {
-                      fontSize: 12,
-                      fill: '#ccc',
-                      cursor: 'pointer'
-                    },
-                    state: {
-                      selectedHover: {
-                        opacity: 0.85
-                      },
-                      unSelected: {
-                        fill: '#D8D8D8'
-                      }
-                    }
-                  },
-                  background: {
-                    style: {
-                      cursor: 'pointer'
-                    },
-                    state: {
-                      selectedHover: {
-                        fill: 'gray',
-                        fillOpacity: 0.7
-                      },
-                      unSelectedHover: {
-                        fill: 'gray',
-                        fillOpacity: 0.2
-                      }
-                    }
-                  },
-                  focus: false,
-                  focusIconStyle: {
-                    size: 10,
-                    symbolType:
-                      'M8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8C1 4.13401 4.13401 1 8 1ZM8.75044 2.55077L8.75 3.75H7.25L7.25006 2.5507C4.81247 2.88304 2.88304 4.81247 2.5507 7.25006L3.75 7.25V8.75L2.55077 8.75044C2.8833 11.1878 4.81264 13.117 7.25006 13.4493L7.25 12.25H8.75L8.75044 13.4492C11.1876 13.1167 13.1167 11.1876 13.4492 8.75044L12.25 8.75V7.25L13.4493 7.25006C13.117 4.81264 11.1878 2.8833 8.75044 2.55077ZM8 5.5C9.38071 5.5 10.5 6.61929 10.5 8C10.5 9.38071 9.38071 10.5 8 10.5C6.61929 10.5 5.5 9.38071 5.5 8C5.5 6.61929 6.61929 5.5 8 5.5ZM8 7C7.44772 7 7 7.44772 7 8C7 8.55228 7.44772 9 8 9C8.55228 9 9 8.55228 9 8C9 7.44772 8.55228 7 8 7Z',
-                    fill: '#333',
-                    cursor: 'pointer'
-                  },
-                  visible: true,
-                  padding: 2
-                },
-                autoPage: true,
-                pager: {
-                  space: 12,
-                  handler: {
-                    style: {
-                      size: 10
-                    },
-                    space: 4
-                  }
-                },
-                hover: true,
-                select: true,
-                selectMode: 'multiple',
-                allowAllCanceled: false,
-                items: [
-                  {
-                    label: 'Step1',
-                    shape: {
-                      fill: '#1664FF',
-                      symbolType: 'square',
-                      stroke: false,
-                      fillOpacity: 1,
-                      strokeOpacity: 1,
-                      opacity: 1,
-                      texture: null,
-                      texturePadding: null,
-                      textureSize: null,
-                      textureColor: null,
-                      innerBorder: null,
-                      outerBorder: null
-                    },
-                    id: 'Step1',
-                    index: 0
-                  },
-                  {
-                    label: 'Step2',
-                    shape: {
-                      fill: '#1AC6FF',
-                      symbolType: 'square',
-                      stroke: false,
-                      fillOpacity: 1,
-                      strokeOpacity: 1,
-                      opacity: 1,
-                      texture: null,
-                      texturePadding: null,
-                      textureSize: null,
-                      textureColor: null,
-                      innerBorder: null,
-                      outerBorder: null
-                    },
-                    id: 'Step2',
-                    index: 1
-                  },
-                  {
-                    label: 'Step3',
-                    shape: {
-                      fill: '#FF8A00',
-                      symbolType: 'square',
-                      stroke: false,
-                      fillOpacity: 1,
-                      strokeOpacity: 1,
-                      opacity: 1,
-                      texture: null,
-                      texturePadding: null,
-                      textureSize: null,
-                      textureColor: null,
-                      innerBorder: null,
-                      outerBorder: null
-                    },
-                    id: 'Step3',
-                    index: 2
-                  },
-                  {
-                    label: 'Step4',
-                    shape: {
-                      fill: '#3CC780',
-                      symbolType: 'square',
-                      stroke: false,
-                      fillOpacity: 1,
-                      strokeOpacity: 1,
-                      opacity: 1,
-                      texture: null,
-                      texturePadding: null,
-                      textureSize: null,
-                      textureColor: null,
-                      innerBorder: null,
-                      outerBorder: null
-                    },
-                    id: 'Step4',
-                    index: 3
-                  },
-                  {
-                    label: 'Step5',
-                    shape: {
-                      fill: '#7442D4',
-                      symbolType: 'square',
-                      stroke: false,
-                      fillOpacity: 1,
-                      strokeOpacity: 1,
-                      opacity: 1,
-                      texture: null,
-                      texturePadding: null,
-                      textureSize: null,
-                      textureColor: null,
-                      innerBorder: null,
-                      outerBorder: null
-                    },
-                    id: 'Step5',
-                    index: 4
-                  }
-                ],
-                zIndex: 500,
-                maxWidth: 1075,
-                maxHeight: 410,
-                defaultSelected: ['Step1', 'Step2', 'Step3', 'Step4', 'Step5'],
-                width: 318.1737823486328,
-                height: 18,
-                dx: 378.4131088256836,
-                dy: 0,
-                x: 30,
-                y: 452
+                pickable: false,
+                zIndex: 0
               },
-              _uid: 12,
+              _uid: 315,
               type: 'group',
-              name: 'legend',
+              name: 'VGRAMMAR_MARK_9',
               children: [
                 {
                   attribute: {
-                    x: 0,
-                    y: 0,
-                    pickable: true,
-                    childrenPickable: true
+                    title: {
+                      space: 4,
+                      padding: 0,
+                      textStyle: {
+                        fontSize: 12,
+                        fill: '#333333',
+                        fontWeight: 'normal',
+                        fillOpacity: 1
+                      }
+                    },
+                    label: {
+                      visible: true,
+                      inside: false,
+                      space: 4,
+                      padding: 0,
+                      style: {
+                        fontSize: 12,
+                        fill: '#89909d',
+                        fontWeight: 'normal',
+                        fillOpacity: 1
+                      }
+                    },
+                    tick: {
+                      visible: true,
+                      inside: false,
+                      alignWithLabel: true,
+                      length: 4,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
+                    subTick: {
+                      visible: false,
+                      inside: false,
+                      count: 4,
+                      length: 2,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
+                    line: {
+                      visible: true,
+                      style: {
+                        lineWidth: 1,
+                        stroke: '#D9DDE4',
+                        strokeOpacity: 1
+                      }
+                    },
+                    x: 250,
+                    y: 250,
+                    start: {
+                      x: 0,
+                      y: 0
+                    },
+                    end: {
+                      x: 210,
+                      y: 0
+                    },
+                    items: [
+                      [
+                        {
+                          id: 0,
+                          label: -1000,
+                          value: 0,
+                          rawValue: -1000
+                        },
+                        {
+                          id: 1,
+                          label: -500,
+                          value: 0.16666666666666666,
+                          rawValue: -500
+                        },
+                        {
+                          id: 2,
+                          label: 0,
+                          value: 0.3333333333333333,
+                          rawValue: 0
+                        },
+                        {
+                          id: 3,
+                          label: 500,
+                          value: 0.5,
+                          rawValue: 500
+                        },
+                        {
+                          id: 4,
+                          label: 1000,
+                          value: 0.6666666666666666,
+                          rawValue: 1000
+                        },
+                        {
+                          id: 5,
+                          label: 1500,
+                          value: 0.8333333333333334,
+                          rawValue: 1500
+                        },
+                        {
+                          id: 6,
+                          label: 2000,
+                          value: 1,
+                          rawValue: 2000
+                        }
+                      ]
+                    ],
+                    grid: {
+                      visible: true,
+                      center: {
+                        x: 0,
+                        y: 0
+                      },
+                      type: 'circle',
+                      closed: true,
+                      sides: 10
+                    }
                   },
-                  _uid: 13,
+                  _uid: 316,
                   type: 'group',
-                  name: 'innerView',
+                  name: 'axis',
                   children: [
                     {
                       attribute: {
                         x: 0,
-                        y: 0
+                        y: 0,
+                        pickable: false
                       },
-                      _uid: 14,
+                      _uid: 338,
                       type: 'group',
                       children: [
                         {
                           attribute: {
                             x: 0,
                             y: 0,
-                            cursor: 'pointer',
-                            width: 53.40596008300781,
-                            height: 18
+                            zIndex: 1
                           },
-                          _uid: 15,
+                          _uid: 339,
                           type: 'group',
-                          name: 'legendItem',
+                          name: 'axis-container',
                           children: [
                             {
                               attribute: {
-                                x: 7,
-                                y: 9,
-                                pickable: false
+                                visible: true,
+                                lineStyle: {
+                                  lineWidth: 1,
+                                  stroke: '#D9DDE4',
+                                  strokeOpacity: 1
+                                },
+                                startSymbol: {
+                                  visible: false,
+                                  autoRotate: true,
+                                  symbolType: 'triangle',
+                                  size: 12,
+                                  refX: 0,
+                                  refY: 0,
+                                  refAngle: 0,
+                                  style: {
+                                    fill: '#000',
+                                    zIndex: 1
+                                  }
+                                },
+                                endSymbol: {
+                                  visible: false,
+                                  autoRotate: true,
+                                  symbolType: 'triangle',
+                                  size: 12,
+                                  refX: 0,
+                                  refY: 0,
+                                  refAngle: 0,
+                                  style: {
+                                    fill: '#000',
+                                    zIndex: 1
+                                  }
+                                },
+                                points: [
+                                  {
+                                    x: 0,
+                                    y: 0
+                                  },
+                                  {
+                                    x: 210,
+                                    y: 0
+                                  }
+                                ]
                               },
-                              _uid: 16,
+                              _uid: 340,
                               type: 'group',
+                              name: 'axis-line',
                               children: [
                                 {
                                   attribute: {
-                                    x: 0,
-                                    y: 0,
-                                    symbolType: 'square',
-                                    strokeBoundsBuffer: 0,
-                                    fill: '#1664FF',
-                                    stroke: false,
-                                    fillOpacity: 1,
+                                    points: [
+                                      {
+                                        x: 0,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 210,
+                                        y: 0
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
                                     strokeOpacity: 1,
-                                    opacity: 1,
-                                    texture: null,
-                                    texturePadding: null,
-                                    textureSize: null,
-                                    textureColor: null,
-                                    innerBorder: null,
-                                    outerBorder: null,
-                                    size: 10,
-                                    cursor: 'pointer'
+                                    fill: false
                                   },
-                                  _uid: 17,
-                                  type: 'symbol',
-                                  name: 'legendItemShape',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    x: 9,
-                                    y: 0,
-                                    textAlign: 'start',
-                                    textBaseline: 'middle',
-                                    lineHeight: 14,
-                                    fontSize: 14,
-                                    fill: '#89909D',
-                                    cursor: 'pointer',
-                                    text: 'Step1'
-                                  },
-                                  _uid: 18,
-                                  type: 'text',
-                                  name: 'legendItemLabel',
+                                  _uid: 341,
+                                  type: 'line',
+                                  name: 'axis-line-line',
                                   children: []
                                 }
                               ]
-                            }
-                          ]
-                        },
-                        {
-                          attribute: {
-                            x: 63.40596008300781,
-                            y: 0,
-                            cursor: 'pointer',
-                            width: 56.19195556640625,
-                            height: 18
-                          },
-                          _uid: 19,
-                          type: 'group',
-                          name: 'legendItem',
-                          children: [
+                            },
                             {
                               attribute: {
-                                x: 7,
-                                y: 9,
+                                x: 0,
+                                y: 0,
                                 pickable: false
                               },
-                              _uid: 20,
+                              _uid: 342,
                               type: 'group',
+                              name: 'axis-tick-container',
                               children: [
                                 {
                                   attribute: {
-                                    x: 0,
-                                    y: 0,
-                                    symbolType: 'square',
-                                    strokeBoundsBuffer: 0,
-                                    fill: '#1AC6FF',
-                                    stroke: false,
-                                    fillOpacity: 1,
-                                    strokeOpacity: 1,
-                                    opacity: 1,
-                                    texture: null,
-                                    texturePadding: null,
-                                    textureSize: null,
-                                    textureColor: null,
-                                    innerBorder: null,
-                                    outerBorder: null,
-                                    size: 10,
-                                    cursor: 'pointer'
+                                    points: [
+                                      {
+                                        x: 0,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 0,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
                                   },
-                                  _uid: 21,
-                                  type: 'symbol',
-                                  name: 'legendItemShape',
+                                  _uid: 343,
+                                  type: 'line',
+                                  name: 'axis-tick',
                                   children: []
                                 },
                                 {
                                   attribute: {
-                                    x: 9,
-                                    y: 0,
-                                    textAlign: 'start',
-                                    textBaseline: 'middle',
-                                    lineHeight: 14,
-                                    fontSize: 14,
-                                    fill: '#89909D',
-                                    cursor: 'pointer',
-                                    text: 'Step2'
+                                    points: [
+                                      {
+                                        x: 35,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 35,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
                                   },
-                                  _uid: 22,
-                                  type: 'text',
-                                  name: 'legendItemLabel',
+                                  _uid: 344,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 70,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 70,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 345,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 105,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 105,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 346,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 140,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 140,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 347,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 175,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 175,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 348,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
+                                      {
+                                        x: 210,
+                                        y: 0
+                                      },
+                                      {
+                                        x: 210,
+                                        y: 4
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#D9DDE4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 349,
+                                  type: 'line',
+                                  name: 'axis-tick',
                                   children: []
                                 }
                               ]
-                            }
-                          ]
-                        },
-                        {
-                          attribute: {
-                            x: 129.59791564941406,
-                            y: 0,
-                            cursor: 'pointer',
-                            width: 56.19195556640625,
-                            height: 18
-                          },
-                          _uid: 23,
-                          type: 'group',
-                          name: 'legendItem',
-                          children: [
+                            },
                             {
                               attribute: {
-                                x: 7,
-                                y: 9,
+                                x: 0,
+                                y: 0,
                                 pickable: false
                               },
-                              _uid: 24,
+                              _uid: 350,
                               type: 'group',
+                              name: 'axis-label-container',
                               children: [
                                 {
                                   attribute: {
                                     x: 0,
                                     y: 0,
-                                    symbolType: 'square',
-                                    strokeBoundsBuffer: 0,
-                                    fill: '#FF8A00',
-                                    stroke: false,
-                                    fillOpacity: 1,
-                                    strokeOpacity: 1,
-                                    opacity: 1,
-                                    texture: null,
-                                    texturePadding: null,
-                                    textureSize: null,
-                                    textureColor: null,
-                                    innerBorder: null,
-                                    outerBorder: null,
-                                    size: 10,
-                                    cursor: 'pointer'
+                                    pickable: false
                                   },
-                                  _uid: 25,
-                                  type: 'symbol',
-                                  name: 'legendItemShape',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    x: 9,
-                                    y: 0,
-                                    textAlign: 'start',
-                                    textBaseline: 'middle',
-                                    lineHeight: 14,
-                                    fontSize: 14,
-                                    fill: '#89909D',
-                                    cursor: 'pointer',
-                                    text: 'Step3'
-                                  },
-                                  _uid: 26,
-                                  type: 'text',
-                                  name: 'legendItemLabel',
-                                  children: []
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          attribute: {
-                            x: 195.7898712158203,
-                            y: 0,
-                            cursor: 'pointer',
-                            width: 56.19195556640625,
-                            height: 18
-                          },
-                          _uid: 27,
-                          type: 'group',
-                          name: 'legendItem',
-                          children: [
-                            {
-                              attribute: {
-                                x: 7,
-                                y: 9,
-                                pickable: false
-                              },
-                              _uid: 28,
-                              type: 'group',
-                              children: [
-                                {
-                                  attribute: {
-                                    x: 0,
-                                    y: 0,
-                                    symbolType: 'square',
-                                    strokeBoundsBuffer: 0,
-                                    fill: '#3CC780',
-                                    stroke: false,
-                                    fillOpacity: 1,
-                                    strokeOpacity: 1,
-                                    opacity: 1,
-                                    texture: null,
-                                    texturePadding: null,
-                                    textureSize: null,
-                                    textureColor: null,
-                                    innerBorder: null,
-                                    outerBorder: null,
-                                    size: 10,
-                                    cursor: 'pointer'
-                                  },
-                                  _uid: 29,
-                                  type: 'symbol',
-                                  name: 'legendItemShape',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    x: 9,
-                                    y: 0,
-                                    textAlign: 'start',
-                                    textBaseline: 'middle',
-                                    lineHeight: 14,
-                                    fontSize: 14,
-                                    fill: '#89909D',
-                                    cursor: 'pointer',
-                                    text: 'Step4'
-                                  },
-                                  _uid: 30,
-                                  type: 'text',
-                                  name: 'legendItemLabel',
-                                  children: []
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          attribute: {
-                            x: 261.98182678222656,
-                            y: 0,
-                            cursor: 'pointer',
-                            width: 56.19195556640625,
-                            height: 18
-                          },
-                          _uid: 31,
-                          type: 'group',
-                          name: 'legendItem',
-                          children: [
-                            {
-                              attribute: {
-                                x: 7,
-                                y: 9,
-                                pickable: false
-                              },
-                              _uid: 32,
-                              type: 'group',
-                              children: [
-                                {
-                                  attribute: {
-                                    x: 0,
-                                    y: 0,
-                                    symbolType: 'square',
-                                    strokeBoundsBuffer: 0,
-                                    fill: '#7442D4',
-                                    stroke: false,
-                                    fillOpacity: 1,
-                                    strokeOpacity: 1,
-                                    opacity: 1,
-                                    texture: null,
-                                    texturePadding: null,
-                                    textureSize: null,
-                                    textureColor: null,
-                                    innerBorder: null,
-                                    outerBorder: null,
-                                    size: 10,
-                                    cursor: 'pointer'
-                                  },
-                                  _uid: 33,
-                                  type: 'symbol',
-                                  name: 'legendItemShape',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    x: 9,
-                                    y: 0,
-                                    textAlign: 'start',
-                                    textBaseline: 'middle',
-                                    lineHeight: 14,
-                                    fontSize: 14,
-                                    fill: '#89909D',
-                                    cursor: 'pointer',
-                                    text: 'Step5'
-                                  },
-                                  _uid: 34,
-                                  type: 'text',
-                                  name: 'legendItemLabel',
-                                  children: []
+                                  _uid: 351,
+                                  type: 'group',
+                                  name: 'axis-label-container-layer-0',
+                                  children: [
+                                    {
+                                      attribute: {
+                                        x: 0,
+                                        y: 8,
+                                        text: -1000,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 352,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 35,
+                                        y: 8,
+                                        text: -500,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 353,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 70,
+                                        y: 8,
+                                        text: 0,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 354,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 105,
+                                        y: 8,
+                                        text: 500,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 355,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 140,
+                                        y: 8,
+                                        text: 1000,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 356,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 175,
+                                        y: 8,
+                                        text: 1500,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 357,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    },
+                                    {
+                                      attribute: {
+                                        x: 210,
+                                        y: 8,
+                                        text: 2000,
+                                        lineHeight: 12,
+                                        textAlign: 'center',
+                                        textBaseline: 'top',
+                                        fontSize: 12,
+                                        fill: '#89909d',
+                                        fontWeight: 'normal',
+                                        fillOpacity: 1
+                                      },
+                                      _uid: 358,
+                                      type: 'text',
+                                      name: 'axis-label',
+                                      children: []
+                                    }
+                                  ]
                                 }
                               ]
                             }
@@ -997,6 +1034,180 @@ const json = {
                       ]
                     }
                   ]
+                }
+              ]
+            },
+            {
+              attribute: {
+                pickable: false,
+                zIndex: 0
+              },
+              _uid: 359,
+              type: 'group',
+              name: 'VGRAMMAR_MARK_10',
+              children: [
+                {
+                  attribute: {
+                    sectorStyle: {
+                      fill: '#b2bacf',
+                      opacity: 0.2
+                    },
+                    start: {
+                      x: 0,
+                      y: 0
+                    },
+                    end: {
+                      x: 0,
+                      y: 0
+                    }
+                  },
+                  _uid: 360,
+                  type: 'group',
+                  name: 'crosshair',
+                  children: [
+                    {
+                      attribute: {
+                        innerRadius: 0,
+                        fill: '#b2bacf',
+                        opacity: 0.2
+                      },
+                      _uid: 361,
+                      type: 'arc',
+                      name: 'crosshair-sector',
+                      children: []
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              attribute: {
+                pickable: false,
+                zIndex: 0
+              },
+              _uid: 362,
+              type: 'group',
+              name: 'VGRAMMAR_MARK_11',
+              children: [
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 0.5235987755982991,
+                    anchor: [250, 250],
+                    max: 432,
+                    q3: 404,
+                    median: 376,
+                    q1: 369,
+                    min: 355,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#6690F2',
+                    opacity: 1
+                  },
+                  _uid: 363,
+                  type: 'glyph',
+                  children: []
+                },
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 1.5707963267948968,
+                    anchor: [250, 250],
+                    max: 453,
+                    q3: 390,
+                    median: 348,
+                    q1: 341,
+                    min: 327,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#70D6A3',
+                    opacity: 1
+                  },
+                  _uid: 369,
+                  type: 'glyph',
+                  children: []
+                },
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 2.6179938779914944,
+                    anchor: [250, 250],
+                    max: 411,
+                    q3: 404,
+                    median: 334,
+                    q1: 313,
+                    min: 285,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#B4E6E2',
+                    opacity: 1
+                  },
+                  _uid: 375,
+                  type: 'glyph',
+                  children: []
+                },
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 3.6651914291880923,
+                    anchor: [250, 250],
+                    max: 418,
+                    q3: 390,
+                    median: 383,
+                    q1: 376,
+                    min: 355,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#63B5FC',
+                    opacity: 1
+                  },
+                  _uid: 381,
+                  type: 'glyph',
+                  children: []
+                },
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 4.71238898038469,
+                    anchor: [250, 250],
+                    max: 404,
+                    q3: 355,
+                    median: 348,
+                    q1: 313,
+                    min: 292,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#FF8F62',
+                    opacity: 1
+                  },
+                  _uid: 387,
+                  type: 'glyph',
+                  children: []
+                },
+                {
+                  attribute: {
+                    y: 250,
+                    angle: 5.759586531581287,
+                    anchor: [250, 250],
+                    max: 418,
+                    q3: 390,
+                    median: 383,
+                    q1: 369,
+                    min: 341,
+                    boxHeight: 30,
+                    ruleHeight: 20,
+                    stroke: 'black',
+                    fill: '#FFDC83',
+                    opacity: 1
+                  },
+                  _uid: 393,
+                  type: 'glyph',
+                  children: []
                 }
               ]
             }

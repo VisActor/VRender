@@ -1,5 +1,4 @@
-import { container, AutoEnablePlugins } from '@visactor/vrender';
-import { ContainerModule } from 'inversify';
+import { container, AutoEnablePlugins, ContainerModule } from '@visactor/vrender';
 import { DraggablePlugin } from './draggable-plugin';
 
 export const editableModule = new ContainerModule(bind => {

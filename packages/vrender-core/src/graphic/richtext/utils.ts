@@ -74,7 +74,7 @@ export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphC
     return;
   }
   ctx.globalAlpha = 1;
-  ctx.lineWidth = 1;
+  ctx.lineWidth = character && typeof character.lineHeight === 'number' ? character.lineHeight : 1;
   ctx.strokeStyle = strokeStyle as string;
 
   let fontSize = character.fontSize || 16;

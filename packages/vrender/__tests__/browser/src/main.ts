@@ -5,12 +5,20 @@ const LOCAL_STORAGE_KEY = 'CANOPUS_DEMOS';
 
 const createSidebar = (node: HTMLDivElement) => {
   const specsHtml = pages.map(entry => {
-    return `<p class="menu-item" data-path="${entry.path}">${entry.title}</p>`;
+    if (entry.menu && entry.children && entry.children.length) {
+      const childrenItems = entry.children.map(child => {
+        return `<p class="menu-item" data-path="${child.path}"data-type="${child.type ?? 'spec'}">${child.name}</p>`;
+      });
+
+      return `<p class="menu-item menu-title">${entry.menu}</p>${childrenItems.join('')}`;
+    }
+
+    return `<p class="menu-item" data-path="${entry.path}">${entry.name}</p>`;
   });
 
   node.innerHTML = `
     <div>
-      <p class="sidebar-title">页面列表</p>
+      <p class="sidebar-title">组件列表</p>
       <div class="menu-list">
         ${specsHtml.join('')}
       </div>
@@ -53,6 +61,21 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
       .catch(err => {
         console.log(err);
       });
+  }
+};
+
+let chartInstance: any = null;
+
+const resetFooterContent = (
+  callback?: (chartInstance?: any, container?: HTMLDivElement) => ((e: MouseEvent) => void) | void,
+  binds?: any[]
+) => {
+  const footerNode = document.querySelector<HTMLDivElement>('#footer')!;
+
+  footerNode.innerHTML = '';
+
+  if (callback) {
+    callback(chartInstance);
   }
 };
 

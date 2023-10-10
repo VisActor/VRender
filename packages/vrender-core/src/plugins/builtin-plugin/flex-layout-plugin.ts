@@ -1,11 +1,14 @@
 import type { IGraphic, IGroup, IGroupAttribute, IStage } from '../../interface';
 import { getTheme } from '../../graphic';
-import { graphicService } from '../../modules';
 import type { IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
 import { isNumber } from '../../canvas/util';
 import { parsePadding } from '../../common/utils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds, isArray } from '@visactor/vutils';
+import { application } from '../../application';
+
+const _tempBounds = new AABBBounds();
 
 export class FlexLayoutPlugin implements IPlugin {
   name: 'FlexLayoutPlugin' = 'FlexLayoutPlugin';
@@ -293,13 +296,42 @@ export class FlexLayoutPlugin implements IPlugin {
 
   activate(context: IPluginService): void {
     this.pluginService = context;
-    graphicService.hooks.onAttributeUpdate.tap(this.key, graphic => {
+    application.graphicService.hooks.onAttributeUpdate.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
       this.tryLayout(graphic);
     });
-    graphicService.hooks.onSetStage.tap(this.key, graphic => {
+    application.graphicService.hooks.beforeUpdateAABBBounds.tap(
+      this.key,
+      (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
+        if (graphic.glyphHost) {
+          graphic = graphic.glyphHost;
+        }
+        if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
+          return;
+        }
+        _tempBounds.copy(bounds);
+      }
+    );
+    application.graphicService.hooks.afterUpdateAABBBounds.tap(
+      this.key,
+      (
+        graphic: IGraphic,
+        stage: IStage,
+        bounds: IAABBBounds,
+        params: { globalAABBBounds: IAABBBounds },
+        selfChange: boolean
+      ) => {
+        if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
+          return;
+        }
+        if (!_tempBounds.equals(bounds)) {
+          this.tryLayout(graphic);
+        }
+      }
+    );
+    application.graphicService.hooks.onSetStage.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
@@ -307,10 +339,11 @@ export class FlexLayoutPlugin implements IPlugin {
     });
   }
   deactivate(context: IPluginService): void {
-    graphicService.hooks.onAttributeUpdate.taps = graphicService.hooks.onAttributeUpdate.taps.filter(item => {
-      return item.name !== this.key;
-    });
-    graphicService.hooks.onSetStage.taps = graphicService.hooks.onSetStage.taps.filter(item => {
+    application.graphicService.hooks.onAttributeUpdate.taps =
+      application.graphicService.hooks.onAttributeUpdate.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.onSetStage.taps = application.graphicService.hooks.onSetStage.taps.filter(item => {
       return item.name !== this.key;
     });
   }

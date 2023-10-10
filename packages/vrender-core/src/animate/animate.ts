@@ -728,6 +728,8 @@ export class SubAnimate implements ISubAnimate {
           }
         });
       }
+      // 重置propKeys
+      step.propKeys = Object.keys(step.props);
       lastStep = lastStep.prev;
     }
 

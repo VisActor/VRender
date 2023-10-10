@@ -14,6 +14,7 @@ export type LabelItemStateStyle<T> = {
   hover_reverse?: T;
   selected?: T;
   selected_reverse?: T;
+  [key: string]: T;
 };
 
 export type LabelItem = {
@@ -55,6 +56,11 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 文本交互样式 */
   state?: LabelItemStateStyle<ITextGraphicAttribute>;
+
+  /** 连线的交互样式 */
+  labelLineState?: LabelItemStateStyle<ILineGraphicAttribute>;
+
+  syncState?: boolean;
 
   /** 标签默认位置 */
   position?: Functional<string>;

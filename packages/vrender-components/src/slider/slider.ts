@@ -517,12 +517,15 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
+      vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       vglobal.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
       this._currentHandler.addEventListener(
         'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject
+        this._onHandlerPointerMove as EventListenerOrEventListenerObject,
+        { capture: true }
       );
       this._currentHandler.addEventListener(
         'pointerup',
@@ -577,13 +580,16 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     e.preventDefault();
     this._currentHandler = null;
     if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
+      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       vglobal.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
       const currentTarget = e.target;
       currentTarget.removeEventListener(
         'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject
+        this._onHandlerPointerMove as EventListenerOrEventListenerObject,
+        { capture: true }
       );
       currentTarget.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
       currentTarget.removeEventListener(
@@ -597,10 +603,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     e.stopPropagation();
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       vglobal.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      this._track.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       this._track.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
       this._track.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }

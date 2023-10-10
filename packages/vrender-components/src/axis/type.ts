@@ -94,6 +94,11 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 轴线配置
    */
   line?: LineAttributes;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export interface ILine3dType {

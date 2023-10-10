@@ -296,6 +296,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   protected _bindEvents() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (!this._itemsContainer) {
       return;
     }
@@ -498,7 +501,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderPager(isHorizontal: boolean) {
     const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
+    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {}, disableTriggerEvent } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
     const {
@@ -529,7 +532,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             }
           },
           pageStyle
-        )
+        ),
+        disableTriggerEvent
       });
       this._pager = pagerComp;
       this._innerView.add(pagerComp as unknown as INode);
@@ -570,7 +574,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       // 垂直布局，支持左右翻页
       pagerComp = new Pager({
         layout: 'horizontal',
-        total: 99, // 用于估算
+        total: 99, // 用于估算,
+        disableTriggerEvent,
         ...pageStyle
       });
       this._pager = pagerComp;

@@ -84,4 +84,9 @@ export type LegendBaseAttributes = IGroupGraphicAttribute & {
    * 图例容器内边距， [top, right, bottom, left]
    */
   padding?: Padding;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 };

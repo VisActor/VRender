@@ -474,6 +474,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   private _bindEvents() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const { slidable, range } = this.attribute as SliderAttributes;
     if (slidable) {
       if (this._startHandler) {

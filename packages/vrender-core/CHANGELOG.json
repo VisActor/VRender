@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.1",
+      "tag": "@visactor/vrender-core_v0.16.1",
+      "date": "Mon, 09 Oct 2023 09:51:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the `currentStates` when use `clearStates()`"
+          },
+          {
+            "comment": "fix: fix the problem of stopPropagation not work"
+          },
+          {
+            "comment": "fix: fix flex issue, closed, fix node dpr issue, closed #554, closed #555"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.0",
       "tag": "@visactor/vrender-core_v0.16.0",
       "date": "Thu, 28 Sep 2023 07:23:52 GMT",

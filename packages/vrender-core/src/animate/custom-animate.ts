@@ -797,6 +797,7 @@ type RotateSphereParams =
   | {
       center: { x: number; y: number; z: number };
       r: number;
+      cb?: (out: any) => void;
     }
   | (() => any);
 
@@ -831,7 +832,7 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
     if (this.phi == null || this.theta == null) {
       return;
     }
-    const { center, r } = typeof this.params === 'function' ? this.params() : this.params;
+    const { center, r, cb } = typeof this.params === 'function' ? this.params() : this.params;
     const deltaAngle = Math.PI * 2 * ratio;
     const theta = this.theta + deltaAngle;
     const phi = this.phi;
@@ -849,6 +850,8 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
     out.alpha = pi2 - out.alpha;
 
     out.zIndex = out.z * -10000;
+
+    cb && cb(out);
   }
 }
 

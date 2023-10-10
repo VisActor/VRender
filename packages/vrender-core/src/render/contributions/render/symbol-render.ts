@@ -22,6 +22,7 @@ import { BaseRender } from './base-render';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { SymbolRenderContribution } from './contributions/constants';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
+import { isArray } from '@visactor/vutils';
 
 @injectable()
 export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
@@ -86,24 +87,31 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       const camera = context.camera;
       context.camera = null;
       if (
-        parsedPath.draw(context, size, p.x, p.y, undefined, (p, a) => {
-          if (a.fill) {
-            if (fillCb) {
-              fillCb(context, symbol.attribute, symbolAttribute);
-            } else {
-              context.setCommonStyle(symbol, a, originX - x, originY - y);
-              context.fill();
+        parsedPath.draw(
+          context,
+          isArray(size) ? [size[0] * scaleX, size[1] * scaleY] : size * scaleX,
+          p.x,
+          p.y,
+          undefined,
+          (p, a) => {
+            if (a.fill) {
+              if (fillCb) {
+                fillCb(context, symbol.attribute, symbolAttribute);
+              } else {
+                context.setCommonStyle(symbol, a, originX - x, originY - y);
+                context.fill();
+              }
+            }
+            if (a.stroke) {
+              if (strokeCb) {
+                strokeCb(context, symbol.attribute, symbolAttribute);
+              } else {
+                context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY);
+                context.stroke();
+              }
             }
           }
-          if (a.stroke) {
-            if (strokeCb) {
-              strokeCb(context, symbol.attribute, symbolAttribute);
-            } else {
-              context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY);
-              context.stroke();
-            }
-          }
-        }) === false
+        ) === false
       ) {
         context.closePath();
       }

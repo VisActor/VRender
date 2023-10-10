@@ -180,6 +180,80 @@ const layoutPlayer4 = new ContinuousPlayer({
   }
 });
 
+const layoutPlayer5 = new ContinuousPlayer({
+  x: 150,
+  y: 200,
+  size: {
+    height: 300,
+    width: 100
+  },
+  type: 'continuous',
+  data: [1, 2, 3, 4],
+  dataIndex: 0,
+  interval: 1000,
+  auto: false,
+  visible: true,
+  orient: 'left',
+  slider: {
+    visible: true,
+    space: 10,
+    railStyle: {
+      visible: true,
+      width: 5
+    },
+    trackStyle: {
+      dx: 15,
+      width: 20
+    }
+  },
+  controller: {
+    visible: false,
+    start: {
+      visible: true,
+      order: 1,
+      position: 'start',
+      style: {
+        size: 50
+      }
+    },
+    pause: {
+      visible: true,
+      style: {
+        size: 50
+      }
+    },
+    backward: {
+      visible: true,
+      order: 0,
+      position: 'start',
+      style: {}
+    },
+    forward: {
+      visible: false,
+      position: 'end',
+      order: 3
+    }
+  },
+  disableTriggerEvent: true
+});
+
+const layoutPlayer6 = new DiscretePlayer({
+  data,
+  type: 'discrete',
+  direction: 'reverse',
+  x: 250,
+  y: 200,
+  auto: false,
+  width: 10,
+  height: 300,
+  size: {
+    height: 200,
+    width: 50
+  },
+  orient: 'right',
+  disableTriggerEvent: true
+});
+
 layoutPlayer4.addEventListener(PlayerEventEnum.OnChange, e => {
   console.log('change!', e.detail);
 });
@@ -205,7 +279,7 @@ layoutPlayer4.addEventListener(PlayerEventEnum.OnEnd, () => {
 });
 
 // Layout 测试
-const LAYOUT = [layoutPlayer1, layoutPlayer2, layoutPlayer3, layoutPlayer4];
+const LAYOUT = [layoutPlayer1, layoutPlayer2, layoutPlayer3, layoutPlayer4, layoutPlayer5, layoutPlayer6];
 LAYOUT.forEach(d => d.play());
 
 render(LAYOUT as IGraphic[], 'main');

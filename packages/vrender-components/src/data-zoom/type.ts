@@ -162,4 +162,9 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   previewCallbackX1?: (datum: any) => number;
   previewCallbackY1?: (datum: any) => number;
   updateStateCallback?: (start: number, end: number) => any;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }

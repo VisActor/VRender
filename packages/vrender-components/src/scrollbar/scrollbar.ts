@@ -90,6 +90,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   // 绑定事件
   protected bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     // TODO: wheel 事件支持
     if (this._rail) {
       this._rail.addEventListener('pointerdown', this._onRailPointerDown as EventListener);
@@ -301,10 +304,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
     if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onSliderPointerMove);
+      vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this._slider.removeEventListener('pointermove', this._onSliderPointerMove);
+      this._slider.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       this._slider.removeEventListener('pointerup', this._onSliderPointerUp);
       this._slider.removeEventListener('pointerupoutside', this._onSliderPointerUp);
     }

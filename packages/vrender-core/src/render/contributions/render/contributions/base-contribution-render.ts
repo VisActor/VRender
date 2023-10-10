@@ -161,15 +161,20 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     cb: (r: number, targetContext: IContext2d) => void
   ) {
     const r = (size - padding * 2) / 2;
-    const canvas = canvasAllocate.allocate({ width: size, height: size, dpr: 1 });
+    const dpr = targetContext.dpr;
+    const canvas = canvasAllocate.allocate({ width: size, height: size, dpr });
     const ctx = canvas.getContext('2d');
     if (!ctx) {
       return null;
     }
+    ctx.inuse = true;
+    ctx.clearMatrix();
+    ctx.setTransformForCurrent(true);
     ctx.clearRect(0, 0, size, size);
     //setup up design for pattern
     cb(r, ctx);
     const pattern = targetContext.createPattern(canvas.nativeCanvas, 'repeat');
+    pattern.setTransform && pattern.setTransform(new DOMMatrix([1 / dpr, 0, 0, 1 / dpr, 0, 0]));
 
     canvasAllocate.free(canvas);
     return pattern;

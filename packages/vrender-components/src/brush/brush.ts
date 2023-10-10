@@ -48,6 +48,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected bindBrushEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const {
       delayType = 'throttle',
       delayTime = 0,

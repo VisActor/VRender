@@ -80,7 +80,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     } = this.attribute as ColorLegendAttributes;
 
     // 创建 colorScale
@@ -118,7 +119,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     });
     this._innerView.add(slider as unknown as INode);
     this._slider = slider;
@@ -132,6 +134,9 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   }
 
   protected _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
     }

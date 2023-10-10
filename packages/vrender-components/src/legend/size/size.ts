@@ -117,7 +117,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
-      sizeBackground
+      sizeBackground,
+      disableTriggerEvent
     } = this.attribute as SizeLegendAttributes;
     const isHorizontal = layout === 'horizontal';
 
@@ -154,7 +155,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     });
     mainContainer.add(slider as unknown as INode);
 
@@ -200,6 +202,9 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   }
 
   protected _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
     }

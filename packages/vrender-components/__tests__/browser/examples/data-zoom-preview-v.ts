@@ -36,5 +36,31 @@ export function run() {
   dataZoom.setPreviewCallbackX1(d => d.x);
   dataZoom.setPreviewCallbackY1(d => 265);
 
-  const stage = render([dataZoom], 'main');
+  const dataZoomdisableTriggerEvent = new DataZoom({
+    start: 0.2,
+    end: 0.5,
+    position: {
+      x: 50,
+      y: 75
+    },
+    size: {
+      width: 400,
+      height: 30
+    },
+    // brushSelect: false,
+    backgroundChartStyle: {
+      line: {
+        visible: false
+      },
+      area: {
+        visible: false
+      }
+    },
+    middleHandlerStyle: {
+      visible: true
+    },
+    disableTriggerEvent: true
+  });
+
+  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
 }

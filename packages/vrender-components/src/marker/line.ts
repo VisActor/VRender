@@ -1,5 +1,5 @@
 import type { IGroup, INode } from '@visactor/vrender-core';
-import { flattenArray, isValidNumber, merge } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import { Tag } from '../tag';
 import { Marker } from './base';
@@ -12,6 +12,12 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;
 
   private _line!: Segment;
+  getLine() {
+    return this._line;
+  }
+  getLabel() {
+    return this._label;
+  }
 
   constructor(attributes: MarkLineAttrs) {
     super(merge({}, MarkLine.defaultAttributes, attributes));

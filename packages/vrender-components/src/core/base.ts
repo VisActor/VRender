@@ -19,7 +19,8 @@ const GROUP_ATTRIBUTES = [
   'clip',
   'pickable',
   'childrenPickable',
-  'zIndex'
+  'zIndex',
+  'cursor'
 ];
 
 export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGroupGraphicAttribute> extends Group {

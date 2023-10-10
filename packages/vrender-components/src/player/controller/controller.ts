@@ -128,6 +128,9 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
    * 1. 注册
    */
   private _initEvents = () => {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     this._playController.addEventListener('pointerdown', (e: FederatedPointerEvent) => {
       e.stopPropagation();
 

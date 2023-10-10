@@ -160,4 +160,9 @@ export type SliderAttributes = {
    * handler tooltip 配置
    */
   tooltip?: TooltipConfig;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 } & IGroupGraphicAttribute;

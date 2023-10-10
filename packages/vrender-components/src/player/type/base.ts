@@ -18,4 +18,9 @@ export type BasePlayerAttributes = {
    * 数据下标
    */
   dataIndex?: number;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 } & IGroupGraphicAttribute;

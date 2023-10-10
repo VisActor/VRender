@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 09 Oct 2023 09:51:01 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Oct 2023 11:48:48 GMT and should not be manually modified.
+
+## 0.16.2
+Tue, 10 Oct 2023 11:48:48 GMT
+
+### Updates
+
+- feat: provide disableActiveEffect api to support users to close the interactive effect of components
+
+
+- fix: fix pattern blur issue, closed #567
 
 ## 0.16.1
 Mon, 09 Oct 2023 09:51:01 GMT

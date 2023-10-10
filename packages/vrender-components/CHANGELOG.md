@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 09 Oct 2023 09:51:01 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Oct 2023 11:48:48 GMT and should not be manually modified.
+
+## 0.16.2
+Tue, 10 Oct 2023 11:48:48 GMT
+
+### Updates
+
+- feat: add checkbox component
+- feat: provide disableActiveEffect api to support users to close the interactive effect of components
+
+
+- fix: fix event not remove as expected due to capture, closed #570
+- refactor: use polygon to replace line to support cornerRadius
+- feat: add `getArea()` `getLine()` and `getLabel()` method for markLine markArea component
 
 ## 0.16.1
 Mon, 09 Oct 2023 09:51:01 GMT

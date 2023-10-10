@@ -32,10 +32,10 @@ export function run() {
   });
   dataZoom.setStatePointToData(state => state + '_value');
   dataZoom.setPreviewData(data);
-  dataZoom.setPreviewCallbackX(d => d.x);
-  dataZoom.setPreviewCallbackY(d => d.y);
-  dataZoom.setPreviewCallbackX1(d => d.x);
-  dataZoom.setPreviewCallbackY1(d => 265);
+  dataZoom.setPreviewPointsX(d => d.x);
+  dataZoom.setPreviewPointsY(d => d.y);
+  dataZoom.setPreviewPointsX1(d => d.x);
+  dataZoom.setPreviewPointsY1(d => 265);
 
   const stage = render([dataZoom], 'main');
 }

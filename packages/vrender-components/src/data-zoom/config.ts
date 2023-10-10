@@ -8,6 +8,11 @@ export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
   orient: 'bottom',
   showDetail: 'auto',
   brushSelect: true,
+  zoomLock: false,
+  minSpan: 0,
+  maxSpan: 1,
+  delayType: 'throttle',
+  delayTime: 0,
   backgroundStyle: {
     fill: 'white',
     stroke: '#D1DBEE',

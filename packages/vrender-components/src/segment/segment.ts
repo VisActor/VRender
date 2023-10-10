@@ -2,8 +2,8 @@
  * @description 标签组件
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
-import type { ISymbol } from '@visactor/vrender';
-import { createSymbol, createLine } from '@visactor/vrender';
+import type { ISymbol } from '@visactor/vrender-core';
+import { createSymbol, createLine, createPolygon } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
@@ -129,10 +129,11 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         this.add(line);
       });
     } else {
-      const line = createLine({
+      const line = createPolygon({
         points: this._clipPoints(this.attribute.points as Point[]),
         ...array(lineStyle)[0],
-        fill: false
+        fill: false,
+        closePath: false
       });
 
       line.name = `${this.name}-line`;

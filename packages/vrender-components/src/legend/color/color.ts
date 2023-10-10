@@ -4,12 +4,13 @@
  * showHandlers 测试
  */
 import { merge, isEmpty, get } from '@visactor/vutils';
-import { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender';
-import { LinearScale, ILinearScale } from '@visactor/vscale';
+import type { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender-core';
+import type { ILinearScale } from '@visactor/vscale';
+import { LinearScale } from '@visactor/vscale';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
-import { ColorLegendAttributes } from './type';
+import type { ColorLegendAttributes } from './type';
 
 export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   name = 'colorLegend';
@@ -79,7 +80,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     } = this.attribute as ColorLegendAttributes;
 
     // 创建 colorScale
@@ -117,7 +119,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     });
     this._innerView.add(slider as unknown as INode);
     this._slider = slider;
@@ -131,6 +134,9 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   }
 
   protected _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
     }

@@ -1,5 +1,5 @@
 import { array, isNil, merge } from '@visactor/vutils';
-import type { IRichTextGraphicAttribute } from '@visactor/vrender';
+import type { IRichTextGraphicAttribute } from '@visactor/vrender-core';
 import type { TooltipRowAttrs, TooltipRowStyleAttrs, TooltipTextAttrs } from './type';
 
 export const mergeRowAttrs = (
@@ -31,7 +31,7 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
         ({
           ...attr,
           text
-        } as any)
+        }) as any
     )
   };
 };

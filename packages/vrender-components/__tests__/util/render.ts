@@ -1,4 +1,4 @@
-import type { IGraphic, IStageParams } from '@visactor/vrender';
+import type { IGraphic, IStageParams } from '@visactor/vrender-core';
 import {
   createStage,
   createGroup,
@@ -11,9 +11,11 @@ import {
   createArea,
   createCircle,
   createPolygon
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 export default function render(component: IGraphic | IGraphic[], canvasId: string) {
   // 创建舞台实例
@@ -35,7 +37,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: false,
+    disableDirtyBounds: true,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {
@@ -44,7 +46,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       x2: 550,
       y2: 550
     },
-    pluginList: ['poptipForText'],
+    pluginList: ['poptipForText', 'scrollbar'],
     ...option
   });
 }

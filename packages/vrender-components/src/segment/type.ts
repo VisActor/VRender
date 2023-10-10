@@ -4,7 +4,7 @@ import type {
   ILineGraphicAttribute,
   ISymbolGraphicAttribute,
   SymbolType
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { Point, State } from '../core/type';
 
 export type SymbolAttributes = {
@@ -70,10 +70,17 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
   /**
    * 线样式配置
    */
-  lineStyle?: Partial<ILineGraphicAttribute> | Partial<ILineGraphicAttribute>[];
+  lineStyle?: ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[];
 
   state?: {
-    line?: State<Partial<ILineGraphicAttribute> | Partial<ILineGraphicAttribute>[]>;
+    line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
     symbol?: State<Partial<ISymbolGraphicAttribute>>;
   };
+}
+
+interface ILineGraphicWithCornerRadius extends Partial<ILineGraphicAttribute> {
+  /**
+   * 折现拐角处的圆角配置
+   */
+  cornerRadius?: number;
 }

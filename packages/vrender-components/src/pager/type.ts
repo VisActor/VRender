@@ -1,5 +1,5 @@
-import { ISymbolGraphicAttribute, IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
-import { Padding } from '../core/type';
+import type { ISymbolGraphicAttribute, IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export type PagerAttributes = {
   /**
@@ -58,4 +58,9 @@ export type PagerAttributes = {
   textStyle?: Partial<ITextGraphicAttribute>;
   /** 整体的内边距配置 */
   padding?: Padding;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 } & Partial<IGroupGraphicAttribute>;

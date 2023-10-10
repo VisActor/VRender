@@ -1,6 +1,29 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Mon, 25 Sep 2023 03:05:18 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Oct 2023 09:51:01 GMT and should not be manually modified.
+
+## 0.16.1
+Mon, 09 Oct 2023 09:51:01 GMT
+
+### Updates
+
+- fix: fix reinit env issue
+
+## 0.16.0
+Thu, 28 Sep 2023 07:23:52 GMT
+
+### Updates
+
+- refactor: minify color code, closed #438, closed #396
+- refactor: minify graphic code, closed #443
+- refactor: rewrite reflect-metadata to minify code, closed #442
+- refactor: rewrite inversify-lite, closed #476
+- feat: text support verticalMode, closed #503
+
+## 0.15.5
+Wed, 27 Sep 2023 09:33:50 GMT
+
+_Version update only_
 
 ## 0.15.4
 Mon, 25 Sep 2023 03:05:18 GMT

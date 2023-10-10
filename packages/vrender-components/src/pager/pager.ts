@@ -1,9 +1,9 @@
 /**
  * @description 翻页器
  */
-import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender';
+import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender';
+import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender-core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
@@ -157,6 +157,9 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   }
 
   private _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this.preHandler) {
       this.preHandler.addEventListener('pointerenter', this._onHover as EventListenerOrEventListenerObject);
       this.preHandler.addEventListener('pointerleave', this._onUnHover as EventListenerOrEventListenerObject);

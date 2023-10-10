@@ -1,4 +1,4 @@
-import type { IText } from '@visactor/vrender';
+import type { IText } from '@visactor/vrender-core';
 
 export function alignAxisLabels(labels: IText[], start: number, containerSize: number, orient: string, align: string) {
   if (orient === 'right' || orient === 'left') {

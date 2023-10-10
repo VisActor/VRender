@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@visactor/vrender-core": ["../vrender-core/src"],
+      "@visactor/vrender-kits": ["../vrender-kits/src"]
+    }
+  },
+  "references": []
+}

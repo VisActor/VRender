@@ -1,15 +1,14 @@
 # 扩展和插件
 
-VRender支持注册扩展和插件，并且内置的某些功能就是通过扩展和插件进行支持的，下面通过几个例子介绍如何编写扩展和插件
+VRender 支持注册扩展和插件，并且内置的某些功能就是通过扩展和插件进行支持的，下面通过几个例子介绍如何编写扩展和插件
 
 ## 自定义渲染扩展
 
-用户可以通过编写自己的渲染扩展，来实现自己想要的效果，如果我们想将现有的rect渲染替换成手绘风格的渲染，那么需要：
+用户可以通过编写自己的渲染扩展，来实现自己想要的效果，如果我们想将现有的 rect 渲染替换成手绘风格的渲染，那么需要：
 
-1. 编写RoughCanvasRectRender类，该类实现了`IGraphicRender`接口
+1. 编写 RoughCanvasRectRender 类，该类实现了`IGraphicRender`接口
 
 ```ts
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IRenderService,
@@ -22,7 +21,7 @@ import type {
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender';
-import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme } from '@visactor/vrender';
+import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
@@ -162,7 +161,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 });
 ```
 
-3. 在代码运行之前，加载你的module
+3. 在代码运行之前，加载你的 module
 
 ```ts
 container.load(your module);
@@ -170,9 +169,9 @@ container.load(your module);
 
 ## 渲染流程注入自定义修改
 
-如果你并不想修改整个渲染逻辑，而只是想在渲染前后进行一些操作，比如你需要在rect的渲染前绘制一次背景，那么流程如下：
+如果你并不想修改整个渲染逻辑，而只是想在渲染前后进行一些操作，比如你需要在 rect 的渲染前绘制一次背景，那么流程如下：
 
-1. 编写contribution，实现IBaseRenderContribution接口
+1. 编写 contribution，实现 IBaseRenderContribution 接口
 
 ```ts
 @injectable()
@@ -242,7 +241,7 @@ export default new ContainerModule((bind, unbind, isBound, rebind) => {
 });
 ```
 
-3. 在代码运行之前，加载你的module
+3. 在代码运行之前，加载你的 module
 
 ```ts
 container.load(your module);
@@ -293,16 +292,16 @@ export class AutoRenderPlugin implements IPlugin {
 }
 ```
 
-2. 将插件注册到plugin-service中
+2. 将插件注册到 plugin-service 中
 
 ```ts
-stage.pluginService.register(new AutoRenderPlugin())
+stage.pluginService.register(new AutoRenderPlugin());
 ```
 
 3. 如果要卸载插件，调用插件的`plugin.deactivate`即可
 
 ```ts
 stage.pluginService.findPluginsByName('AutoRenderPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+  plugin.deactivate(this.pluginService);
 });
 ```

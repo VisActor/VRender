@@ -1,5 +1,5 @@
-import type { IGroup, INode, IPolygon } from '@visactor/vrender';
-import { createPolygon } from '@visactor/vrender';
+import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
+import { createPolygon } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { Tag } from '../tag';
 import { Marker } from './base';
@@ -10,6 +10,13 @@ import { limitShapeInBounds } from '../util/limit-shape';
 export class MarkArea extends Marker<MarkAreaAttrs> {
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
   private _area!: IPolygon;
+  getArea() {
+    return this._area;
+  }
+
+  getLabel() {
+    return this._label;
+  }
 
   constructor(attributes: MarkAreaAttrs) {
     super(merge({}, MarkArea.defaultAttributes, attributes));

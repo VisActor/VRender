@@ -7,13 +7,14 @@ import type {
   TextAlignType,
   TextBaselineType,
   ILineGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
   hover_reverse?: T;
   selected?: T;
   selected_reverse?: T;
+  [key: string]: T;
 };
 
 export type LabelItem = {
@@ -56,6 +57,11 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 文本交互样式 */
   state?: LabelItemStateStyle<ITextGraphicAttribute>;
 
+  /** 连线的交互样式 */
+  labelLineState?: LabelItemStateStyle<ILineGraphicAttribute>;
+
+  syncState?: boolean;
+
   /** 标签默认位置 */
   position?: Functional<string>;
 
@@ -85,6 +91,11 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
    */
   customOverlapFunc?: (label: Text[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export interface OverlapAttrs {
@@ -278,7 +289,7 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
    * 标签位置
    * @default 'outside'
    */
-  position?: Functional<'inside' | 'outside'>;
+  position?: Functional<'inside' | 'outside' | 'inside-inner' | 'inside-outer'>;
 
   // 画布宽度
   width?: number;
@@ -305,6 +316,14 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
    * 标签旋转角度
    */
   angle?: number;
+  /**
+   * 标签旋转角度的偏移角度
+   */
+  offsetAngle?: number;
+  /**
+   * 标签相对于 `outerRadius` 的径向偏移，目前仅作用于 inside 标签
+   */
+  offsetRadius?: number;
   /**
    * 标签横向点对齐
    */

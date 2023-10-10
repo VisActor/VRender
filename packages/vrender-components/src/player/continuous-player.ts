@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent } from '@visactor/vrender';
-import { vglobal } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { BasePlayer } from './base-player';
 import type { ContinuousPlayerAttributes } from './type';
 import { PlayerEventEnum } from './type';
@@ -68,6 +68,9 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
    * 初始化事件
    */
   private _initEvents = () => {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     this._controller.addEventListener(ControllerEventEnum.OnPlay, (e: FederatedPointerEvent) => {
       e.stopPropagation();
       this.play();

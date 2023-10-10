@@ -1,8 +1,9 @@
 /**
  * @description 框选组件
  */
-import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender';
-import { createPolygon } from '@visactor/vrender';
+import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
+import { createPolygon } from '@visactor/vrender-core';
 import type { IBounds, IPointLike } from '@visactor/vutils';
 import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -48,6 +49,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected bindBrushEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const {
       delayType = 'throttle',
       delayTime = 0,

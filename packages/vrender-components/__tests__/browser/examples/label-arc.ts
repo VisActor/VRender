@@ -1,4 +1,5 @@
 import { GUI } from 'lil-gui';
+import '@visactor/vrender';
 import { createGroup, Stage, createArc } from '@visactor/vrender';
 import { createRenderer } from '../../util/render';
 import { ArcLabel } from '../../../src';
@@ -1152,7 +1153,7 @@ const latestData = [
     // VGRAMMAR_DATA_ID_KEY_16: 0
   },
   {
-    type: 'silicon',
+    type: 'silicon11111111',
     value: '27.72',
     __VCHART_DEFAULT_DATA_INDEX: 1,
     __VCHART_DEFAULT_DATA_KEY: 'silicon_silicon_0',
@@ -1276,6 +1277,7 @@ function createContent(stage: Stage) {
         // ...latestData[index]
       };
     }),
+    // dataFilter: data => data.splice(0, 1),
     type: 'arc',
     // animation: false,
     animation: {
@@ -1287,7 +1289,7 @@ function createContent(stage: Stage) {
     height: 500,
     // position: 'outside',
 
-    position: 'inside',
+    position: 'inside-outer',
 
     textStyle: {
       // angle: 0
@@ -1306,7 +1308,7 @@ function createContent(stage: Stage) {
       tangentConstraint: false
     },
 
-    // centerOffset: 10,
+    offsetRadius: -50,
 
     // smartInvert: false,
 

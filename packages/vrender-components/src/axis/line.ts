@@ -15,9 +15,9 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import type { TextAlignType } from '@visactor/vrender';
+import type { TextAlignType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender';
+import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';

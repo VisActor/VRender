@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: provide disableActiveEffect api to support users to close the interactive effect of components\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "lixuef1313@163.com"
+}

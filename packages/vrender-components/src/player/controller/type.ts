@@ -1,4 +1,4 @@
-import type { ISymbolGraphicAttribute } from '@visactor/vrender';
+import type { ISymbolGraphicAttribute } from '@visactor/vrender-core';
 import type { BaseGraphicAttributes } from '../../core/type';
 
 /**
@@ -12,6 +12,11 @@ export interface ControllerAttributes {
   pause: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
   forward: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
   backward: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export type LayoutType = 'horizontal' | 'vertical';

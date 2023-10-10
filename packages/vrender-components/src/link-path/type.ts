@@ -1,4 +1,4 @@
-import type { IGroupGraphicAttribute, IGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, IGraphicAttribute } from '@visactor/vrender-core';
 import type { Direction } from '../interface';
 
 export interface LinkPathAttributes extends IGroupGraphicAttribute {

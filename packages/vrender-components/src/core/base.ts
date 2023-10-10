@@ -1,8 +1,8 @@
 /**
  * @description 组件基类
  */
-import type { IGroupGraphicAttribute } from '@visactor/vrender';
-import { Group } from '@visactor/vrender';
+import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
+import { Group } from '@visactor/vrender-core';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 
 const GROUP_ATTRIBUTES = [
@@ -19,7 +19,8 @@ const GROUP_ATTRIBUTES = [
   'clip',
   'pickable',
   'childrenPickable',
-  'zIndex'
+  'zIndex',
+  'cursor'
 ];
 
 export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGroupGraphicAttribute> extends Group {

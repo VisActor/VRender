@@ -8,9 +8,9 @@ import type {
   IRichTextGraphicAttribute,
   ILine,
   ILineGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender';
+import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';
@@ -100,7 +100,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   protected getItemDx(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const width = (item as IGroup)?.AABBBounds?.width() ?? (style?.width || 0);
@@ -115,7 +115,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   protected getItemDy(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const height = (item as IGroup)?.AABBBounds?.height() ?? (style?.height || 0);

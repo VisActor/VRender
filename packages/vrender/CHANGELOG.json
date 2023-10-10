@@ -2,6 +2,48 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.16.1",
+      "tag": "@visactor/vrender_v0.16.1",
+      "date": "Mon, 09 Oct 2023 09:51:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix reinit env issue"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.0",
+      "tag": "@visactor/vrender_v0.16.0",
+      "date": "Thu, 28 Sep 2023 07:23:52 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "refactor: minify color code, closed #438, closed #396"
+          },
+          {
+            "comment": "refactor: minify graphic code, closed #443"
+          },
+          {
+            "comment": "refactor: rewrite reflect-metadata to minify code, closed #442"
+          },
+          {
+            "comment": "refactor: rewrite inversify-lite, closed #476"
+          },
+          {
+            "comment": "feat: text support verticalMode, closed #503"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.15.5",
+      "tag": "@visactor/vrender_v0.15.5",
+      "date": "Wed, 27 Sep 2023 09:33:50 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.15.4",
       "tag": "@visactor/vrender_v0.15.4",
       "date": "Mon, 25 Sep 2023 03:05:18 GMT",

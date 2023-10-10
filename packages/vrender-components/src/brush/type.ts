@@ -1,4 +1,4 @@
-import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
+import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
 import type { IDelayType } from '../common/type';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
@@ -77,6 +77,11 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default 0
    */
   delayTime?: number;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';

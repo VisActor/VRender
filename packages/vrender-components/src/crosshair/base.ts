@@ -1,10 +1,10 @@
 /**
  * @description Crosshair 基类
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
-import { LocationCfg } from '../core/type';
-import { BaseCrosshairAttrs } from './type';
+import type { LocationCfg } from '../core/type';
+import type { BaseCrosshairAttrs } from './type';
 
 export abstract class CrosshairBase<T extends BaseCrosshairAttrs> extends AbstractComponent<Required<T>> {
   name = 'crosshair';

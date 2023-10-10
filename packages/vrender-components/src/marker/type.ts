@@ -5,7 +5,7 @@ import type {
   IPolygonAttribute,
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
 import type { Point } from '../core/type';
@@ -145,7 +145,7 @@ export interface MarkAreaAttrs extends MarkerAttrs {
    * 标签
    */
   label?: {
-    position?: IMarkAreaLabelPosition;
+    position?: keyof typeof IMarkAreaLabelPosition;
     /**
      * 当 mark 配置了 clip 之后，label 是否自动调整位置
      */
@@ -162,7 +162,7 @@ export interface IItemContent extends IMarkRef {
    * 标注类型
    */
   type?: 'symbol' | 'text' | 'image' | 'richText' | 'custom';
-  position?: IMarkPointItemPosition;
+  position?: keyof typeof IMarkPointItemPosition;
   /**
    * x 方向偏移量
    */

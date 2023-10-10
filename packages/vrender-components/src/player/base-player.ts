@@ -1,5 +1,5 @@
-import type { INode } from '@visactor/vrender';
-import { CustomEvent } from '@visactor/vrender';
+import type { INode } from '@visactor/vrender-core';
+import { CustomEvent } from '@visactor/vrender-core';
 import { isNumber, isValidNumber, max, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { OrientType } from '../interface';
@@ -230,7 +230,8 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       range: false,
       handlerText: { visible: false },
       startText: { visible: false },
-      endText: { visible: false }
+      endText: { visible: false },
+      disableTriggerEvent: this.attribute.disableTriggerEvent
     };
 
     // 横向布局
@@ -278,7 +279,8 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       start: this._start,
       pause: this._pause,
       forward: this._forward,
-      backward: this._backward
+      backward: this._backward,
+      disableTriggerEvent: this.attribute.disableTriggerEvent
     };
     // 横向布局
     if (isHorizontal(this._orient)) {

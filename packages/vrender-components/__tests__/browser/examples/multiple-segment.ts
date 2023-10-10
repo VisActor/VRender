@@ -1,4 +1,5 @@
 import { degreeToRadian } from '@visactor/vutils';
+import '@visactor/vrender';
 import render from '../../util/render';
 import { Segment } from '../../../src';
 import { getInsertPoints } from '../../util/graphic';

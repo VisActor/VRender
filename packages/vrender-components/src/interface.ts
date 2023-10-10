@@ -1,4 +1,4 @@
-import { IRectGraphicAttribute } from '@visactor/vrender';
+import type { IRectGraphicAttribute } from '@visactor/vrender-core';
 
 export type Direction = 'horizontal' | 'vertical';
 

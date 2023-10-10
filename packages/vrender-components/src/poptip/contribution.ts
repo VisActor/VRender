@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import type {
   IContext2d,
   IGraphic,
@@ -6,7 +5,8 @@ import type {
   IInteractiveSubRenderContribution,
   IThemeAttribute,
   IDrawContext
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { injectable } from '@visactor/vrender-core';
 import { PopTip } from './poptip';
 import { merge } from '@visactor/vutils';
 import { theme } from './theme';

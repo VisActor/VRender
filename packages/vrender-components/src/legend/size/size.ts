@@ -1,8 +1,8 @@
 /**
  * @description 连续尺寸图例
  */
-import type { FederatedPointerEvent, INode } from '@visactor/vrender';
-import { createGroup, createPath } from '@visactor/vrender';
+import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
+import { createGroup, createPath } from '@visactor/vrender-core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
@@ -117,7 +117,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
-      sizeBackground
+      sizeBackground,
+      disableTriggerEvent
     } = this.attribute as SizeLegendAttributes;
     const isHorizontal = layout === 'horizontal';
 
@@ -154,7 +155,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     });
     mainContainer.add(slider as unknown as INode);
 
@@ -200,6 +202,9 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   }
 
   protected _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
     }

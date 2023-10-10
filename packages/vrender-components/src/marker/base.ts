@@ -1,5 +1,5 @@
-import type { IGroup } from '@visactor/vrender';
-import { createGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
+import { createGroup } from '@visactor/vrender-core';
 import { isValid } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';

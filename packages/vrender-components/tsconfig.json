@@ -10,6 +10,12 @@
   "references": [
     {
       "path": "../vrender"
+    },
+    {
+      "path": "../vrender-core"
+    },
+    {
+      "path": "../vrender-kits"
     }
   ]
 }

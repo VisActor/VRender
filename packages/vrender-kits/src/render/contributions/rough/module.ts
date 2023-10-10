@@ -1,5 +1,4 @@
-import { CircleRender, PathRender, RectRender, GraphicRender } from '@visactor/vrender';
-import { ContainerModule } from 'inversify';
+import { ContainerModule, GraphicRender } from '@visactor/vrender-core';
 import { RoughCanvasArcRender } from './rough-arc';
 import { RoughCanvasAreaRender } from './rough-area';
 import { RoughCanvasCircleRender } from './rough-circle';
@@ -8,7 +7,7 @@ import { RoughCanvasPathRender } from './rough-path';
 import { RoughCanvasRectRender } from './rough-rect';
 import { RoughCanvasSymbolRender } from './rough-symbol';
 
-export default new ContainerModule((bind, unbind, isBound, rebind) => {
+export default new ContainerModule(bind => {
   // circle
   bind(RoughCanvasCircleRender).toSelf().inSingletonScope();
   bind(GraphicRender).to(RoughCanvasCircleRender);

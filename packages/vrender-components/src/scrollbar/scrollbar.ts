@@ -98,6 +98,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   // 绑定事件
   protected bindEvents(): void {
     const { delayType = 'throttle', delayTime = 0 } = this.attribute as ScrollBarAttributes;
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     // TODO: wheel 事件支持
     if (this._rail) {
       this._rail.addEventListener(
@@ -278,10 +281,14 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const { direction, delayType = 'throttle', delayTime = 0 } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
+      vglobal.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime), {
+        capture: true
+      });
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this._slider.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
+      this._slider.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime), {
+        capture: true
+      });
       this._slider.addEventListener('pointerup', this._onSliderPointerUp);
       this._slider.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }

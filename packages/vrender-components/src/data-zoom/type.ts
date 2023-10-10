@@ -5,7 +5,7 @@ import type {
   ILineGraphicAttribute,
   IRectGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import type { OrientType } from '../interface';
 import type { TagAttributes } from '../tag';
@@ -187,4 +187,9 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   previewPointsX1?: (datum: any) => number;
   previewPointsY1?: (datum: any) => number;
   updateStateCallback?: (start: number, end: number) => any;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }

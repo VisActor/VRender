@@ -5,11 +5,17 @@ import {
   createGlyph,
   createSymbol,
   createGroup,
-  FederatedEvent
+  FederatedEvent,
+  initBrowserEnv,
+  initAllEnv,
+  initFeishuEnv
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 // container.load(roughModule);
+initBrowserEnv();
+initFeishuEnv();
+initAllEnv();
 
 export const page = () => {
   const shapes = [];
@@ -33,8 +39,12 @@ export const page = () => {
     x: 300,
     y: 100,
     stroke: 'green',
-    lineWidth: 10
+    // angle: Math.PI / 100,
+    // anchor: [350, 150],
+    lineWidth: 10,
+    _debug_bounds: true
   });
+  g.animate().to({ angle: 10 }, 10000, 'linear');
 
   const subGraphic = [];
 

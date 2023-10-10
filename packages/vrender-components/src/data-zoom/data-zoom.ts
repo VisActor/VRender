@@ -1,6 +1,5 @@
-import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender';
-// eslint-disable-next-line no-duplicate-imports
-import { vglobal, CustomEvent } from '@visactor/vrender';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -125,6 +124,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const { showDetail, brushSelect, delayType = 'throttle', delayTime = 0 } = this.attribute as DataZoomAttributes;
     // 拖拽开始
     if (this._startHandler) {
@@ -181,7 +183,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // 拖拽时
       vglobal.addEventListener(
         'pointermove',
-        delayMap[delayType](this._onHandlerPointerMove.bind(this), delayTime) as EventListener
+        delayMap[delayType](this._onHandlerPointerMove.bind(this), delayTime) as EventListener,
+        {
+          capture: true
+        }
       );
       // 拖拽结束
       vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
@@ -189,7 +194,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 拖拽时
     (this as unknown as IGroup).addEventListener(
       'pointermove',
-      delayMap[delayType](this._onHandlerPointerMove, delayTime) as EventListener
+      delayMap[delayType](this._onHandlerPointerMove, delayTime) as EventListener,
+      {
+        capture: true
+      }
     );
     // 拖拽结束
     (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);

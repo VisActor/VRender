@@ -1,6 +1,27 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 25 Sep 2023 03:05:18 GMT and should not be manually modified.
+This log was last generated on Mon, 09 Oct 2023 09:51:01 GMT and should not be manually modified.
+
+## 0.16.1
+Mon, 09 Oct 2023 09:51:01 GMT
+
+### Updates
+
+-     feat: support `syncState` in label component
+- fix: fix the issue of dataFilter result in incorrect arc label layout
+- fix: fix the problem of drag events not being consumed in the component
+
+## 0.16.0
+Thu, 28 Sep 2023 07:23:52 GMT
+
+### Updates
+
+- feat: support scrollbar, closed #529
+
+## 0.15.5
+Wed, 27 Sep 2023 09:33:50 GMT
+
+_Version update only_
 
 ## 0.15.4
 Mon, 25 Sep 2023 03:05:18 GMT

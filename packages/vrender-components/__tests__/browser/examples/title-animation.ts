@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { createLine, InputText, FadeInPlus } from '@visactor/vrender';
 import render from '../../util/render';
 import { Title } from '../../../src';
@@ -79,5 +80,8 @@ export function run() {
   );
 
   // 主标题增添fadeIn动画
-  title._mainTitle.animate().wait(10).play(new FadeInPlus(0, {}, 2000, 'quadIn'));
+  title._mainTitle
+    .animate()
+    .wait(10)
+    .play(new FadeInPlus(0, {}, 2000, 'quadIn'));
 }

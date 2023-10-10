@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.15.4",
+  "version": "0.16.1",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,13 +21,9 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.15.4",
+    "@visactor/vrender-core": "workspace:0.16.1",
     "@visactor/vutils": "~0.16.0",
     "@resvg/resvg-js": "2.4.1",
-    "canvas": "2.11.2",
-    "inversify": "6.0.1",
-    "node-fetch": "2.6.6",
-    "core-js": "3.31.1",
     "roughjs": "4.5.2"
   },
   "devDependencies": {
@@ -35,6 +31,8 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
+    "canvas": "2.11.2",
+    "node-fetch": "2.6.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@types/react": "^18.0.0",

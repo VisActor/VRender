@@ -1,10 +1,10 @@
-import {
+import type {
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender';
-import { Padding } from '../core/type';
+} from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export type LegendTitle = {
   /**
@@ -84,4 +84,9 @@ export type LegendBaseAttributes = IGroupGraphicAttribute & {
    * 图例容器内边距， [top, right, bottom, left]
    */
   padding?: Padding;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 };

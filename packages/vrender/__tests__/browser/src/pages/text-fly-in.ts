@@ -42,14 +42,14 @@ class TextFlyInComponents extends AbstractComponent<ITextFlyInParams> {
     const group = this.createOrUpdateChild('container', {}, 'group') as IGroup;
     this.container = group;
     const { title, content } = this.attribute;
-    this.container.createOrUpdateChild(
-      'debug-symbol',
-      {
-        symbolType: 'circle',
-        fill: 'green'
-      },
-      'symbol'
-    );
+    // this.container.createOrUpdateChild(
+    //   'debug-symbol',
+    //   {
+    //     symbolType: 'circle',
+    //     fill: 'green'
+    //   },
+    //   'symbol'
+    // );
     // 布局
     const layoutText = createText({
       text: [title.text],
@@ -72,6 +72,10 @@ class TextFlyInComponents extends AbstractComponent<ITextFlyInParams> {
               x: x + l.leftOffset,
               y: y + l.topOffset,
               keepDirIn3d: false,
+              shadowBlur: 10,
+              shadowColor: 'white',
+              shadowOffsetX: 3,
+              shadowOffsetY: 3,
               ...attribute,
               textAlign: 'left',
               textBaseline: 'alphabetic'
@@ -178,7 +182,8 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
-    enableLayout: true
+    enableLayout: true,
+    background: 'black'
   });
 
   const tfc = new TextFlyInComponents({
@@ -191,15 +196,16 @@ export const page = () => {
       attribute: {
         fontSize: 60,
         textAlign: 'center',
-        fill: 'red'
+        fill: 'white'
       }
     },
     content: {
       text: ['我们是无缘无故的尘埃', '无缘无故的游走', '黑暗只需要张开一张缝隙', '就能挂起飓风'],
       attribute: {
-        fontSize: 26,
+        fontSize: 18,
         textAlign: 'center',
-        fill: 'red'
+        lineHeight: 50,
+        fill: 'white'
       }
     },
     during: 6000

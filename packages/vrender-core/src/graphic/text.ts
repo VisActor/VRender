@@ -1,8 +1,8 @@
-import { max, type AABBBounds, type OBBBounds } from '@visactor/vutils';
+import { max, type AABBBounds, type OBBBounds, isArray } from '@visactor/vutils';
 import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
-import type { IText, ITextCache, ITextGraphicAttribute, LayoutType } from '../interface';
+import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { parsePadding } from '../common/utils';
@@ -21,6 +21,8 @@ const TEXT_UPDATE_TAG_KEY = [
   'lineHeight',
   'direction',
   'wordBreak',
+  'heightLimit',
+  'lineClamp',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -101,6 +103,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   }
   protected _isValid(): boolean {
     const { text } = this.attribute;
+    if (isArray(text)) {
+      return !(text as any[]).every((t: any) => t == null || t === '');
+    }
     return text != null && text !== '';
   }
 
@@ -123,6 +128,195 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
     this.clearUpdateBoundTag();
     return bounds;
+  }
+
+  /**
+   * 更新换行文字的bounds，在支持wrap的时候调用
+   * TODO 目前仅支持水平
+   * @param text
+   * @returns
+   */
+  updateWrapAABBBounds(text: (number | string)[]) {
+    const textTheme = getTheme(this).text;
+    const {
+      fontFamily = textTheme.fontFamily,
+      textAlign = textTheme.textAlign,
+      textBaseline = textTheme.textBaseline,
+      fontSize = textTheme.fontSize,
+      lineHeight = this.attribute.lineHeight || this.attribute.fontSize || textTheme.fontSize,
+      ellipsis = textTheme.ellipsis,
+      maxLineWidth,
+      stroke = textTheme.stroke,
+      lineWidth = textTheme.lineWidth,
+      wordBreak = textTheme.wordBreak,
+      fontWeight = textTheme.fontWeight,
+      // widthLimit,
+      ignoreBuf = textTheme.ignoreBuf,
+      heightLimit = 0,
+      lineClamp
+    } = this.attribute;
+    const buf = ignoreBuf ? 0 : 2;
+    if (!this.shouldUpdateShape() && this.cache?.layoutData) {
+      const bbox = this.cache.layoutData.bbox;
+      this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
+      if (stroke) {
+        this._AABBBounds.expand(lineWidth / 2);
+      }
+      return this._AABBBounds;
+    }
+
+    const textMeasure = application.graphicUtil.textMeasure;
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure as any) as any;
+
+    // layoutObj内逻辑
+    const lines = text.map(l => l.toString()) as string[];
+    const linesLayout: LayoutItemType[] = [];
+    const bboxWH: [number, number] = [0, 0];
+
+    let lineCountLimit = Infinity;
+    if (heightLimit > 0) {
+      lineCountLimit = Math.max(Math.floor(heightLimit / lineHeight), 1);
+    }
+    if (lineClamp) {
+      // 处理行数限制
+      lineCountLimit = Math.min(lineCountLimit, lineClamp);
+    }
+
+    if (typeof maxLineWidth === 'number' && maxLineWidth !== Infinity) {
+      // widthLimit > 0
+      if (maxLineWidth > 0) {
+        for (let i = 0; i < lines.length; i++) {
+          const str = lines[i] as string;
+          let needCut = true;
+          // // 测量当前行宽度
+          // width = Math.min(
+          //   layoutObj.textMeasure.measureTextWidth(str, layoutObj.textOptions),
+          //   maxLineWidth
+          // );
+
+          // 判断是否超过高度限制
+          if (i === lineCountLimit - 1) {
+            // 当前行为最后一行
+            const clip = layoutObj.textMeasure.clipTextWithSuffix(
+              str,
+              layoutObj.textOptions,
+              maxLineWidth,
+              ellipsis,
+              false
+            );
+            linesLayout.push({
+              str: clip.str,
+              width: clip.width
+            });
+            break; // 不处理后续行
+          }
+
+          // 测量截断位置
+          const clip = layoutObj.textMeasure.clipText(
+            str,
+            layoutObj.textOptions,
+            maxLineWidth,
+            wordBreak === 'break-word'
+          );
+          if (str !== '' && clip.str === '') {
+            if (ellipsis) {
+              const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
+                str,
+                layoutObj.textOptions,
+                maxLineWidth,
+                ellipsis,
+                false
+              );
+              clip.str = clipEllipsis.str ?? '';
+              clip.width = clipEllipsis.width ?? 0;
+            } else {
+              // 宽度限制不足一个字符，不显示
+              clip.str = '';
+              clip.width = 0;
+            }
+            needCut = false;
+          }
+
+          linesLayout.push({
+            str: clip.str,
+            width: clip.width
+          });
+          if (clip.str.length === str.length) {
+            // 不需要截断
+          } else if (needCut) {
+            const newStr = str.substring(clip.str.length);
+            lines.splice(i + 1, 0, newStr);
+          }
+        }
+      }
+      // bboxWH[0] = maxLineWidth;
+      let maxWidth = 0;
+      linesLayout.forEach(layout => {
+        maxWidth = Math.max(maxWidth, layout.width);
+      });
+      bboxWH[0] = maxWidth;
+    } else {
+      // 使用所有行中最长的作为lineWidth
+      let lineWidth = 0;
+      let width: number;
+      let text: string;
+      for (let i = 0, len = lines.length; i < len; i++) {
+        // 判断是否超过高度限制
+        if (i === lineCountLimit - 1) {
+          // 当前行为最后一行
+          const clip = layoutObj.textMeasure.clipTextWithSuffix(
+            lines[i],
+            layoutObj.textOptions,
+            maxLineWidth,
+            ellipsis,
+            false
+          );
+          linesLayout.push({
+            str: clip.str,
+            width: clip.width
+          });
+          lineWidth = Math.max(lineWidth, clip.width);
+          break; // 不处理后续行
+        }
+
+        text = lines[i] as string;
+        width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions, wordBreak === 'break-word');
+        lineWidth = Math.max(lineWidth, width);
+        linesLayout.push({ str: text, width });
+      }
+      bboxWH[0] = lineWidth;
+    }
+    bboxWH[1] = linesLayout.length * (lineHeight + buf);
+
+    const bbox = {
+      xOffset: 0,
+      yOffset: 0,
+      width: bboxWH[0],
+      height: bboxWH[1]
+    };
+
+    layoutObj.LayoutBBox(bbox, textAlign, textBaseline as any);
+
+    const layoutData = layoutObj.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline as any, lineHeight);
+
+    // const layoutData = layoutObj.GetLayoutByLines(
+    //   text,
+    //   textAlign,
+    //   textBaseline as any,
+    //   lineHeight,
+    //   ellipsis === true ? (DefaultTextAttribute.ellipsis as string) : ellipsis || undefined,
+    //   maxLineWidth
+    // );
+    // const { bbox } = layoutData;
+    this.cache.layoutData = layoutData;
+    this.clearUpdateShapeTag();
+    this._AABBBounds.set(bbox.xOffset, bbox.yOffset, bbox.xOffset + bbox.width, bbox.yOffset + bbox.height);
+
+    if (stroke) {
+      this._AABBBounds.expand(lineWidth / 2);
+    }
+
+    return this._AABBBounds;
   }
 
   /**
@@ -157,6 +351,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalSinglelineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds([text]);
+    }
+
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
@@ -352,6 +551,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalMultilineAABBBounds(text: (number | string)[]): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds(text);
+    }
+
     const attribute = this.attribute;
     const {
       fontFamily = textTheme.fontFamily,

@@ -10,13 +10,15 @@ export const page = () => {
     width: 300,
     height: 400,
     display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    alignContent: 'center'
+    flexDirection: 'column',
+    // flexDirection: 'row',
+    // flexWrap: 'wrap',
+    justifyContent: 'center',
+    alignItems: 'center'
   });
 
   // 添加10个rect
-  new Array(1).fill(0).forEach(() => {
+  new Array(2).fill(0).forEach(() => {
     group.add(
       createRect({
         x: 10,

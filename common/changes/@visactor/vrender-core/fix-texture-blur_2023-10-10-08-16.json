@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix pattern blur issue, closed #567",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

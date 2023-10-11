@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.15.6",
+      "tag": "@visactor/vrender_v0.15.6",
+      "date": "Wed, 11 Oct 2023 11:33:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix monotine defined, closed #547"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.5",
       "tag": "@visactor/vrender_v0.15.5",
       "date": "Wed, 27 Sep 2023 09:33:50 GMT",

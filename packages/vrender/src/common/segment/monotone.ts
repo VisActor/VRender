@@ -106,10 +106,21 @@ export class MonotoneX implements ICurvedSegment {
   lineEnd() {
     switch (this._point) {
       case 2:
-        this.context.lineTo(this._x1, this._y1, this._lastDefined2 !== false, this.lastPoint1);
+        this.context.lineTo(
+          this._x1,
+          this._y1,
+          this._lastDefined1 !== false && this._lastDefined2 !== false,
+          this.lastPoint1
+        );
         break;
       case 3:
-        point(this, this._t0, slope2(this, this._t0), this._lastDefined2 !== false, this.lastPoint1);
+        point(
+          this,
+          this._t0,
+          slope2(this, this._t0),
+          this._lastDefined1 !== false && this._lastDefined2 !== false,
+          this.lastPoint1
+        );
         break;
     }
     if (this._line || (this._line !== 0 && this._point === 1)) {

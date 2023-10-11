@@ -177,6 +177,11 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
    * @default 0
    */
   delayTime?: number;
+  /**
+   * 是否在操作时动态更新视图
+   * @default true
+   */
+  realTime?: boolean;
 
   /**
    * 绘制背景图表的数据 & 映射函数

@@ -38,7 +38,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     padding: 2,
     scrollRange: [0, 1],
     delayType: 'throttle',
-    delayTime: 0
+    delayTime: 0,
+    realTime: true
   };
 
   private _container!: IGroup;
@@ -61,7 +62,12 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   }
 
   setScrollRange(range: [number, number], render = true) {
-    const { direction = 'horizontal', limitRange = [0, 1], range: preRange } = this.attribute as ScrollBarAttributes;
+    const {
+      direction = 'horizontal',
+      limitRange = [0, 1],
+      range: preRange,
+      realTime = true
+    } = this.attribute as ScrollBarAttributes;
 
     const currScrollRange = clampRange(range, limitRange[0], limitRange[1]);
     if (render) {
@@ -81,10 +87,12 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     }
     (this.attribute as ScrollBarAttributes).range = currScrollRange;
     // 发射 change 事件
-    this._onChange({
-      pre: preRange,
-      value: currScrollRange
-    });
+    if (realTime) {
+      this._onChange({
+        pre: preRange,
+        value: currScrollRange
+      });
+    }
   }
 
   getScrollRange(): [number, number] {
@@ -294,14 +302,12 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     }
   };
 
-  private _onSliderPointerMove = (e: any) => {
-    e.stopPropagation();
-
+  private _computeScrollValue = (e: any) => {
     const { direction } = this.attribute as ScrollBarAttributes;
     let currentScrollValue;
     let currentPos;
     let delta = 0;
-    const preScrollRange = this.getScrollRange();
+
     const { width, height } = this._getSliderRenderBounds();
     if (direction === 'vertical') {
       currentPos = e.clientY;
@@ -312,12 +318,30 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       delta = currentPos - this._prePos;
       currentScrollValue = delta / width;
     }
+    return [currentPos, currentScrollValue];
+  };
+
+  private _onSliderPointerMove = (e: any) => {
+    e.stopPropagation();
+    const preScrollRange = this.getScrollRange();
+    const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     this.setScrollRange([preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue], true);
     this._prePos = currentPos;
   };
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
+    const { realTime = true, range: preRange, limitRange = [0, 1] } = this.attribute as ScrollBarAttributes;
+    // 发射 change 事件
+    const preScrollRange = this.getScrollRange();
+    const [currentPos, currentScrollValue] = this._computeScrollValue(e);
+    const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
+    if (!realTime) {
+      this._onChange({
+        pre: preRange,
+        value: clampRange(range, limitRange[0], limitRange[1])
+      });
+    }
     if (vglobal.env === 'browser') {
       vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);

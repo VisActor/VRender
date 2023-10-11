@@ -13,6 +13,7 @@ export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
   maxSpan: 1,
   delayType: 'throttle',
   delayTime: 0,
+  realTime: true,
   backgroundStyle: {
     fill: 'white',
     stroke: '#D1DBEE',

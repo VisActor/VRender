@@ -677,10 +677,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       vglobal.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
+      this._track.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
       this._track.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
       this._track.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }

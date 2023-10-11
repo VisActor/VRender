@@ -35,9 +35,9 @@ type IModalParams = {
 } & IGroupGraphicAttribute;
 
 class ModalComponents extends AbstractComponent<IModalParams> {
-  title: IText;
-  content: IText;
-  container: IGroup;
+  title!: IText;
+  content!: IText;
+  container!: IGroup;
 
   constructor(params: IModalParams) {
     super({
@@ -57,8 +57,8 @@ class ModalComponents extends AbstractComponent<IModalParams> {
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
-        width: panel.width,
-        height: panel.height,
+        width: panel!.width,
+        height: panel!.height,
         ...panel
       },
       'group'
@@ -69,6 +69,7 @@ class ModalComponents extends AbstractComponent<IModalParams> {
         'title',
         {
           text: title.text,
+          fillOpacity: 0,
           ...title.attribute
         },
         'text'
@@ -78,19 +79,37 @@ class ModalComponents extends AbstractComponent<IModalParams> {
     this.content = group.createOrUpdateChild(
       'content',
       {
-        text: content.text,
+        text: content!.text,
         dy: this.title ? this.title.AABBBounds.height() / 2 : 0,
         maxLineWidth: 600,
         textBaseline: 'top',
+        fillOpacity: 0,
         wrap: true,
         wordBreak: 'break-word',
         textAlign: 'left',
-        ...content.attribute
+        ...content!.attribute
       },
       'text'
     ) as IText;
   }
-  play(during?: number): void {}
+  play(during?: number): void {
+    this.title &&
+      this.title.animate().to(
+        {
+          fillOpacity: 1
+        },
+        (during ?? 2000) / 2,
+        'linear'
+      );
+    this.content &&
+      this.content.animate().to(
+        {
+          fillOpacity: 1
+        },
+        (during ?? 2000) / 2,
+        'linear'
+      );
+  }
 }
 
 // global.setEnv('browser');
@@ -102,6 +121,8 @@ export const page = () => {
     canvas: 'main',
     autoRender: true,
     enableLayout: true,
+    width: 660,
+    height: 560,
     background: 'black'
   });
 
@@ -112,10 +133,7 @@ export const page = () => {
     height: stage.height,
     title: false,
     content: {
-      text: [
-        '每一颗尘埃对应一例真实的新冠肺炎确诊病例，自1月26日至武汉解封4月8日，共计83332例确诊',
-        '点击左侧具体日期查看该日期累计确诊数量'
-      ],
+      text: ['地图散点图显示了美国各州的疫情蔓延情况', '随着时间的推移', '各州的确诊人数不断增加'],
       attribute: {
         fontSize: 18,
         lineHeight: 80,

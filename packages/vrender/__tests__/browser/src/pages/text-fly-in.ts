@@ -181,6 +181,8 @@ export const page = () => {
 
   const stage = createStage({
     canvas: 'main',
+    width: 640,
+    height: 360,
     autoRender: true,
     enableLayout: true,
     background: 'black'

@@ -13,6 +13,7 @@ export function run() {
     width: 500,
     height: 12,
     padding: [2, 0],
+    realTime: false,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
     },
@@ -22,6 +23,7 @@ export function run() {
 
   const vScrollBar = new ScrollBar({
     direction: 'vertical',
+    realTime: false,
     x: 0,
     y: 0,
     width: 12,

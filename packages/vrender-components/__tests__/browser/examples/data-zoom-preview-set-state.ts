@@ -25,13 +25,14 @@ export function run() {
       width: 400,
       height: 30
     },
+    realTime: false,
     brushSelect: false,
     updateStateCallback: (start, end) => {
       console.log('setCallback', start, end);
     }
   });
 
-  dataZoom.setStartAndEnd(0, 1);
+  // dataZoom.setStartAndEnd(0, 1);
   dataZoom.setPreviewData(data);
   dataZoom.setPreviewPointsX(d => d.x);
   dataZoom.setPreviewPointsY(d => d.y);

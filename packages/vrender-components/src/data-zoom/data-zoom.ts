@@ -269,7 +269,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 4. 在endHandler上拖拽，同上
    */
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
-    const { start: startAttr, end: endAttr, brushSelect } = this.attribute as DataZoomAttributes;
+    const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max } = this._layoutCache;
     const dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
@@ -307,7 +307,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-      this._updateStateCallback && this._updateStateCallback(start, end);
+      realTime && this._updateStateCallback && this._updateStateCallback(start, end);
       this._dispatchChangeEvent(start, end);
     }
   };
@@ -317,7 +317,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
   private _onHandlerPointerUp(e: FederatedPointerEvent) {
-    const { start, end, brushSelect } = this.attribute as DataZoomAttributes;
+    const { start, end, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     if (this._activeState) {
       if (this._activeTag === DataZoomActiveTag.background) {
         const pos = this.eventPosToStagePos(e);
@@ -330,7 +330,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     brushSelect && this.renderDragMask();
 
     // 避免attributes相同时, 重复渲染
-    if (start !== this.state.start || end !== this.state.end) {
+    if (!realTime || start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
       this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
       this._dispatchChangeEvent(this.state.start, this.state.end);

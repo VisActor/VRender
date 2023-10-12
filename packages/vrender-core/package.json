@@ -2,7 +2,7 @@
   "name": "@visactor/vrender-core",
   "version": "0.16.1",
   "description": "",
-  "sideEffects": false,
+  "sideEffects": true,
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",

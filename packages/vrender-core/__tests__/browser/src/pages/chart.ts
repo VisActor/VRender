@@ -1096,7 +1096,6 @@ export const page = () => {
   //   .play(new GroupFadeIn(1000, 'quadIn'))
   //   .wait(3000)
   //   .play(new GroupFadeOut(1000, 'quadIn'));
-
   stage.render(undefined, {});
 
   const button = document.createElement('button');

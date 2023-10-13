@@ -54,6 +54,7 @@ include_directories(
         ${PROJECT_SOURCE_DIR}/src/core/material/include
         ${PROJECT_SOURCE_DIR}/src/core/mesh/include
         ${PROJECT_SOURCE_DIR}/src/core/lights/include
+        ${PROJECT_SOURCE_DIR}/src/core/animation/include
         ${PROJECT_SOURCE_DIR}/src/utils
         ${PROJECT_SOURCE_DIR}/src/platform
         ${PROJECT_SOURCE_DIR}/src/platform/libs/glad/include

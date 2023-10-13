@@ -6,6 +6,7 @@ include_directories(${glad_path}/include)
 include_directories(algorithm/include)
 include_directories(geometry/include)
 include_directories(material/include)
+include_directories(animation/include)
 include_directories(mesh/include)
 include_directories(lights/include)
 include_directories(${assimp_path}/include)
@@ -27,6 +28,8 @@ add_library(core
         ResourceManager.cpp FontManager.cpp Shader.cpp Texture2D.cpp stb_image.cpp
         graphic/Node.cpp graphic/Container.cpp graphic/Sprite.cpp Layer.cpp
         Matrix.cpp Bounds.cpp
+        animation/Animate.cpp animation/AnimateTicker.cpp animation/AnimateTimeline.cpp
+        animation/AnimateSlice.cpp animation/AnimateInfo.cpp
         Camera.cpp SpinLock.cpp Renderer.cpp algorithm/Bezier.cpp
         geometry/Geometry.cpp geometry/BufferGeometry.cpp geometry/BoxGeometry.cpp geometry/SphereGeometry.cpp)
 

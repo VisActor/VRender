@@ -5,17 +5,20 @@
 #ifndef VRENDER_GPU_MESH_HPP
 #define VRENDER_GPU_MESH_HPP
 
+#include <assimp/mesh.h>
+#include <assimp/scene.h>
 #include <glm/glm.hpp>
 #include "Pickable.hpp"
-#include "Geometry.hpp"
+#include "BufferGeometry.hpp"
 #include "Material.hpp"
+#include "Animate.hpp"
 
 class Mesh: public Pickable {
 public:
     Mesh(): Pickable{},
-    mGeometry{nullptr}, mMaterial{nullptr},
+    mGeometry{nullptr}, mMaterial{nullptr}, mAnimate{nullptr},
     mVao{0}, mVbo{0}, mEbo{0}, mNormalPtr{0}, mTexCoordPtr{0}, mColorPtr{0} {};
-    void Init(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material);
+    void Init(std::shared_ptr<BufferGeometry> geometry, std::shared_ptr<Material> material);
     void GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin, glm::vec3 &aabbMax) override;
     void GetBoundingSphere(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &center, float &radius) override;
 
@@ -80,7 +83,7 @@ public:
     void UseShader(std::shared_ptr<ResourceManager> resourceManager);
     std::shared_ptr<Shader> GetShader(std::shared_ptr<ResourceManager> resourceManager);
 
-    void SetUniformData();
+    void SetUniformData(std::shared_ptr<ResourceManager> &resourceManager);
     void SetLightUniform(std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr);
 
     virtual void Draw() {
@@ -100,10 +103,21 @@ public:
         }
     }
 
+    inline void SetAnimate(const std::shared_ptr<Animate> &animate) {mAnimate = animate;}
+    inline std::shared_ptr<Animate> GetAnimate() { return mAnimate; }
+    inline void SetAnimate(const aiMesh *aimesh, const aiScene *aiscene) {
+        mAnimate = std::make_shared<Animate>();
+        mAnimate->Init(mGeometry, aimesh, aiscene);
+    }
+
+    void Build(double time, double deltaTime);
+    void PreDraw(double time, double deltaTime);
+
     ~Mesh() = default;
 protected:
-    std::shared_ptr<Geometry> mGeometry;
+    std::shared_ptr<BufferGeometry> mGeometry;
     std::shared_ptr<Material> mMaterial;
+    std::shared_ptr<Animate> mAnimate;
 
     GLuint mVao;
     GLuint mVbo;

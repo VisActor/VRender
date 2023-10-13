@@ -9,6 +9,7 @@
 #include "Layer.hpp"
 #include "Renderer.hpp"
 #include "ILight.hpp"
+#include "AnimateTicker.hpp"
 
 class IWindow {
 public:
@@ -38,13 +39,18 @@ public:
     inline void SetCamera(const std::shared_ptr<ICamera> &camera) { mCamera = camera; };
     inline std::shared_ptr<ICamera> GetCamera() { return mCamera; };
 
+    // Ticker
+    inline void SetTicker(const std::shared_ptr<AnimateTicker> &ticker) { mAnimateTicker = ticker; }
+    inline std::shared_ptr<AnimateTicker> GetTicker() { return mAnimateTicker; };
+
     glm::vec4 mClearColor;
 
 protected:
-    IWindow(): mId{sId++}, mLights{}, mClearColor{1.f}, mCamera{nullptr} {}
+    IWindow(): mId{sId++}, mLights{}, mClearColor{1.f}, mCamera{nullptr}, mAnimateTicker{nullptr} {}
     int mId;
     std::vector<std::shared_ptr<ILight>> mLights;
     std::shared_ptr<ICamera> mCamera;
+    std::shared_ptr<AnimateTicker> mAnimateTicker;
 
 private:
     static int sId;

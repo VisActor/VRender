@@ -69,21 +69,24 @@ std::shared_ptr<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std
         position.z = v.z;
         _vertices.emplace_back(position);
 
-        glm::vec3 normal{};
-        const auto &n = mesh->mNormals[i];
-        normal.x = n.x;
-        normal.y = n.y;
-        normal.z = n.z;
-        _normals.emplace_back(normal);
+        if (mesh->HasNormals()) {
+            glm::vec3 normal{};
+            const auto &n = mesh->mNormals[i];
+            normal.x = n.x;
+            normal.y = n.y;
+            normal.z = n.z;
+            _normals.emplace_back(normal);
+        }
 
-        if (mesh->mTextureCoords[0] != nullptr) {
+        if (mesh->HasTextureCoords(0)) {
             glm::vec2 texCoords{};
             const auto &t = mesh->mTextureCoords[0][i];
             texCoords.x = t.x;
             texCoords.y = t.y;
             _texCoords.emplace_back(texCoords);
         }
-        if (mesh->mColors[0] != nullptr) {
+
+        if (mesh->HasVertexColors(0)) {
             glm::vec4 colors{};
             const auto &c = mesh->mColors[0][i];
             colors.r = c.r;
@@ -101,8 +104,6 @@ std::shared_ptr<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std
             _indices.emplace_back(face.mIndices[j], face.mIndices[j+1], face.mIndices[j+2]);
         }
     }
-
-    std::cout<<"a"<<mesh->mMaterialIndex<<std::endl;
 
     // texture
     if (mesh->mMaterialIndex >= 0) {
@@ -129,10 +130,10 @@ std::shared_ptr<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std
         auto heightMaps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height", resourceManager);
         textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
-        for (int i = 0; i <= aiTextureType_TRANSMISSION; i++) {
-            auto maps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_diffuse", resourceManager);
-            textures.insert(textures.end(), maps.begin(), maps.end());
-        }
+//        for (int i = 0; i <= aiTextureType_TRANSMISSION; i++) {
+//            auto maps = LoadMaterialTextures(material, aiTextureType_AMBIENT, "texture_diffuse", resourceManager);
+//            textures.insert(textures.end(), maps.begin(), maps.end());
+//        }
     }
 
     if (_indices.empty()) {
@@ -142,7 +143,11 @@ std::shared_ptr<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std
         outBufferGeometry->SetIndices(_indices);
     }
     outBufferGeometry->SetVertices(_vertices);
-    outBufferGeometry->SetNormals(_normals);
+    if (_normals.empty()) {
+        outBufferGeometry->mUpdateNormals = false;
+    } else {
+        outBufferGeometry->SetNormals(_normals);
+    }
     outBufferGeometry->SetTextureCoords(_texCoords);
     if (_colors.empty()) {
         outBufferGeometry->mUseColors = false;
@@ -151,11 +156,39 @@ std::shared_ptr<Mesh> Model::ProcessMesh(aiMesh *mesh, const aiScene *scene, std
         outBufferGeometry->SetColors(_colors);
     }
 
-    std::cout<<"b"<<outMaterial->mTextures.size()<<", "<<outBufferGeometry->GetIndices().size()<<std::endl;
     outMesh->Init(outBufferGeometry, outMaterial);
 
+    if (mesh->mAnimMeshes) {
+        outMesh->SetAnimate(mesh, scene);
+    }
     return outMesh;
 }
+//
+//void Model::ProcessAnim(const aiScene *scene, std::shared_ptr<ResourceManager> &resourceManager) {
+//    if(scene->mNumAnimations) {
+//        for (int i = 0; i < scene->mNumAnimations; i++) {
+//            auto &anim = scene->mAnimations[i];
+//            mAnimateInfo.mDuration = anim->mDuration;
+//            mAnimateInfo.mTickPerSecond = anim->mTicksPerSecond;
+//
+//            ProcessMorphAnim(anim, resourceManager);
+//        }
+//    }
+//}
+//
+//void Model::ProcessMorphAnim(const aiAnimation *animation, std::shared_ptr<ResourceManager> &resourceManager) {
+//    auto numMorphChannel = animation->mNumMorphMeshChannels;
+//    for (int i = 0; i < numMorphChannel; i++) {
+//        auto channel = animation->mMorphMeshChannels[i];
+//        if (channel->mNumKeys) {
+//            MorphInfo morphInfo{};
+//            auto &key = channel->mKeys[i];
+//            morphInfo.mNumValuesAndWeights = key.mNumValuesAndWeights;
+//            morphInfo.mTime = key.mTime;
+//
+//        }
+//    }
+//}
 
 std::vector<Texture>
 Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName, std::shared_ptr<ResourceManager> &resourceManager) {
@@ -173,13 +206,13 @@ Model::LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::strin
     return textures;
 }
 
-void Model::Build() {
+void Model::Build(const std::shared_ptr<AnimateTicker> &ticker) {
     for (auto mesh : mMeshes) {
-
+        mesh->Build(ticker->GetTime(), ticker->GetDeltaTime());
     }
 }
 
-void Model::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr, const glm::mat4& modelMatrix) {
+void Model::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &lightArr, const glm::mat4& modelMatrix, const std::shared_ptr<AnimateTicker> &ticker) {
     for (auto mesh : mMeshes) {
         mesh->UseShader(resourceManager);
 
@@ -193,8 +226,9 @@ void Model::Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManag
 //        }
 
         mesh->BufferData();
-        mesh->SetUniformData();
+        mesh->SetUniformData(resourceManager);
         mesh->SetLightUniform(resourceManager, lightArr);
+        mesh->PreDraw(ticker->GetTime(), ticker->GetDeltaTime());
         // 设置绘制模式
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         mesh->Draw();

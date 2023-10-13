@@ -14,6 +14,7 @@
 #include "FontManager.hpp"
 #include "ICamera.hpp"
 #include "ILight.hpp"
+#include "AnimateTicker.hpp"
 
 typedef struct CommonUniformStore {
     CommonUniformStore(): mStamp{0}, mPreModelMatrixUniform{ "u_preModelMatrix", glm::mat4{1.f} } {};
@@ -40,10 +41,10 @@ public:
     // 预编译所有的着色器，只能在主线程运行
     void PreCompileAllShader();
 
-    void BuildInThread(MUTEX_TYPE type);
-    void Build();
-    void WaitForBuild(MUTEX_TYPE type);
-    void Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light);
+    void BuildInThread(MUTEX_TYPE type, const std::shared_ptr<AnimateTicker> &ticker);
+    void Build(const std::shared_ptr<AnimateTicker> &ticker);
+    void WaitForBuild(MUTEX_TYPE type, const std::shared_ptr<AnimateTicker> &ticker);
+    void Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light, const std::shared_ptr<AnimateTicker> &ticker);
     void SetDpr(float dpr);
     void SetRenderDpr(float dpr);
     void SetClearColor(const glm::vec4 &c);

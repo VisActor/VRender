@@ -43,8 +43,8 @@ public:
     inline void SetScale(const glm::vec3 &scale) { mScale = scale; };
     inline void SetScale(const glm::vec3 &&scale) { mScale = scale; };
 
-    void Build(std::shared_ptr<ResourceManager> &resourceManager);
-    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light);
+    void Build(std::shared_ptr<ResourceManager> &resourceManager, const std::shared_ptr<AnimateTicker> &ticker);
+    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light, const std::shared_ptr<AnimateTicker> &ticker);
 
     enum UPDATE_TYPE {
         NONE            = 0b000000000, // 没有变化

@@ -68,9 +68,16 @@ struct LightStrengthAttr {
 
 class ILight {
 public:
+    ILight(): mColor{glm::vec3{1.f}}, mStrength{} {}
     virtual ~ILight() = default;
-    virtual glm::vec3 GetColor() const = 0;
-    virtual CommonLightAttr GetLightAttr() const = 0;
+    inline void SetStrength(float s) { mStrength = s; }
+    [[nodiscard]] inline float GetStrength() const { return mStrength; }
+    inline void SetColor(const glm::vec3 &color) { mColor = color; }
+    [[nodiscard]] inline glm::vec3 GetColor() const { return mColor; }
+    [[nodiscard]] virtual CommonLightAttr GetLightAttr() const = 0;
+protected:
+    glm::vec3 mColor;
+    float mStrength;
 };
 
 #endif //VRENDER_GPU_ILIGHT_HPP

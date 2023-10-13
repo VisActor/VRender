@@ -20,7 +20,6 @@
     "test": "",
     "prepublishOnly": "npm run build",
     "init": "sh ./install.sh",
-    "install": "npm run build-node",
     "build-node": "cd cpp && cross-env NODEJS=TRUE cmake-js compile --target vrender-node --out ../build",
     "build-wasm": "cross-env WASM_OUT=1 && sh ./scripts/build-wasm.sh",
     "build-asm": "cross-env WASM_OUT=0 && cross-env ASYNC_LOAD=0 && sh ./scripts/build-wasm.sh",

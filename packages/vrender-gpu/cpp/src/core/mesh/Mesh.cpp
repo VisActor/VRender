@@ -9,7 +9,7 @@
 #include "Bounds.hpp"
 //#include <utility>
 
-void Mesh::Init(std::shared_ptr<Geometry> geometry, std::shared_ptr<Material> material) {
+void Mesh::Init(std::shared_ptr<BufferGeometry> geometry, std::shared_ptr<Material> material) {
     mGeometry = std::move(geometry);
     mMaterial = std::move(material);
 }
@@ -26,9 +26,12 @@ std::shared_ptr<Shader> Mesh::GetShader(std::shared_ptr<ResourceManager> resourc
     return mMaterial->GetShader(std::move(resourceManager));
 }
 
-void Mesh::SetUniformData() {
+void Mesh::SetUniformData(std::shared_ptr<ResourceManager> &resourceManager) {
     mMaterial->UpdateUniform();
     mMaterial->SetUniformData();
+    if (mAnimate) {
+        mAnimate->SetUniformData(GetShader(resourceManager));
+    }
 }
 
 void
@@ -52,7 +55,10 @@ void Mesh::_BufferData() {
     if (mGeometry->mUpdateVertices) {
         if (!mVbo) InitVbo();
         BindVbo();
-        const auto &vertices =  mGeometry->GetVertices();
+        auto vertices =  mGeometry->GetVertices();
+        if (mAnimate) {
+            vertices = mAnimate->GetGeometries()[2]->GetVertices();
+        }
         GLsizei sizePerLine = 3 * sizeof(float);
         if (!vertices.empty()) {
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizePerLine, &vertices[0], GL_STATIC_DRAW);
@@ -112,6 +118,15 @@ void Mesh::_BufferData() {
         }
         mGeometry->mUpdateColors = false;
     }
+}
+
+void Mesh::Build(double time, double deltaTime) {
+}
+
+void Mesh::PreDraw(double time, double deltaTime) {
+    if (!mAnimate) return;
+    mAnimate->Interpolate(time, deltaTime);
+    auto &size = mAnimate->GetSize();
 }
 
 void Mesh::GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin,

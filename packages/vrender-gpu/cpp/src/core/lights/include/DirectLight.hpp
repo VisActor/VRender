@@ -11,17 +11,16 @@
 
 class DirectLight: public ILight {
 public:
-    DirectLight(): mColor{glm::vec3{1.f}},
-                   mName{"DirectLight"}, mType{LightType::DIRECT_LIGHT}, mStrength{.3f}, mDirection{glm::vec3{1.f, 1.f, 1.f}} {};
+    DirectLight(): ILight(),
+                   mName{"DirectLight"}, mType{LightType::DIRECT_LIGHT}, mDirection{glm::vec3{1.f, 1.f, 1.f}} {
+        mStrength = .6f;
+    };
 
     ~DirectLight() override = default;
-    [[nodiscard]] inline glm::vec3 GetColor() const override { return mColor; }
     [[nodiscard]] inline CommonLightAttr GetLightAttr() const override { return CommonLightAttr{mType, {mColor, mStrength, mDirection}}; }
 
-private:
-    glm::vec3 mColor;
+protected:
     std::string mName;
-    float mStrength;
     LightType mType;
     glm::vec3 mDirection;
 };

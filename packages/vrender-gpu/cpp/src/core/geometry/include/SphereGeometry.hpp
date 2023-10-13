@@ -5,11 +5,11 @@
 #ifndef VRENDER_GPU_SPHEREGEOMETRY_HPP
 #define VRENDER_GPU_SPHEREGEOMETRY_HPP
 
-#include "Geometry.hpp"
+#include "BufferGeometry.hpp"
 
-class SphereGeometry: public Geometry {
+class SphereGeometry: public BufferGeometry {
 public:
-    SphereGeometry(): Geometry() {
+    SphereGeometry(): BufferGeometry() {
         mUpdateIndices = true;
         mUseIndices = true;
     };

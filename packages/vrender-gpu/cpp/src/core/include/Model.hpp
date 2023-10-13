@@ -17,17 +17,18 @@
 #include "Type.hpp"
 #include "BufferGeometry.hpp"
 #include "MeshPhongMaterial.hpp"
+#include "AnimateTicker.hpp"
 
 class Model: public Pickable {
 public:
-    Model(): Pickable{}, mMeshes{}, mModelDirectory{""} {};
+    Model(): Pickable{}, mMeshes{}, mModelDirectory{} {};
     ~Model() = default;
     void Init(std::vector<std::shared_ptr<Mesh>> meshes);
     void Init(const std::shared_ptr<Mesh>& mesh);
     void Init(const std::string &path, std::shared_ptr<ResourceManager> &resourceManager);
 
-    void Build();
-    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light, const glm::mat4& modelMatrix);
+    void Build(const std::shared_ptr<AnimateTicker> &ticker);
+    void Draw(std::shared_ptr<ICamera> &camera, std::shared_ptr<ResourceManager> &resourceManager, std::vector<std::shared_ptr<ILight>> &light, const glm::mat4& modelMatrix, const std::shared_ptr<AnimateTicker> &ticker);
 
     void GetAABBBounds(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &aabbMin, glm::vec3 &aabbMax) override;
     void GetBoundingSphere(const glm::vec3 &position, const glm::vec3 &scale, const glm::mat4 &rotate, glm::vec3 &center, float &radius) override;
@@ -43,6 +44,8 @@ protected:
     std::vector<Texture> LoadMaterialTextures(aiMaterial *material, aiTextureType type, std::string typeName, std::shared_ptr<ResourceManager> &resourceManager);
 
     std::string mModelDirectory;
+
+    std::shared_ptr<AnimateTicker> mAnimateTicker;
 };
 
 #endif //VRENDER_GPU_MODEL_HPP

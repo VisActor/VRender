@@ -8,9 +8,9 @@
 
 int Layer::sListId{0};
 
-void Layer::Build() {
+void Layer::Build(const std::shared_ptr<AnimateTicker> &ticker) {
     for (auto &child : mChildren) {
-        std::dynamic_pointer_cast<Sprite>(child)->Build(mResourceManager);
+        std::dynamic_pointer_cast<Sprite>(child)->Build(mResourceManager, ticker);
 //        if (child->mType == NodeType::GROUP) {
 //            std::dynamic_pointer_cast<Group>(child)->Build(Group::UPDATE_TYPE::NONE, mResourceManager, mFontManager, mInsMeshQueue);
 //        } else {
@@ -27,7 +27,7 @@ void Layer::SetClearColor(const glm::vec4 &c) {
     mClearColor.a = c.a;
 }
 
-void Layer::Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light) {
+void Layer::Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<ILight>> &light, const std::shared_ptr<AnimateTicker> &ticker) {
     mStamp++;
     // 背景色
     glClearColor(mClearColor.r, mClearColor.g, mClearColor.b, mClearColor.a);
@@ -57,7 +57,7 @@ void Layer::Draw(std::shared_ptr<ICamera> camera, std::vector<std::shared_ptr<IL
 //    DrawInstanceMesh(mStamp);
     // 绘制所有mark
     for (auto &child : mChildren) {
-        std::dynamic_pointer_cast<Sprite>(child)->Draw(camera, mResourceManager, light);
+        std::dynamic_pointer_cast<Sprite>(child)->Draw(camera, mResourceManager, light, ticker);
 //        if (child->mType == NodeType::GROUP) {
 //            std::dynamic_pointer_cast<Group>(child)->Draw(mCamera, mResourceManager);
 //        } else {
@@ -149,17 +149,17 @@ void Layer::PreCompileAllShader() {
 //    }
 }
 
-void Layer::BuildInThread(MUTEX_TYPE type) {
+void Layer::BuildInThread(MUTEX_TYPE type, const std::shared_ptr<AnimateTicker> &ticker) {
     std::lock_guard guard(mBuildMutex);
     if (type == MUTEX_TYPE::SPIN) {
         mBuildSpinMutex.UnLock();
         mBuildSpinMutex.Lock();
     }
     // 自动线程转移~
-    mBuildThread = std::thread([this, type]() {
+    mBuildThread = std::thread([this, type, ticker]() {
         ConsoleTime(true, "构建Layer");
         try {
-            Build();
+            Build(ticker);
         } catch (std::runtime_error &err) {
             std::cout<<err.what()<<std::endl;
         }
@@ -169,7 +169,7 @@ void Layer::BuildInThread(MUTEX_TYPE type) {
     if (type == MUTEX_TYPE::SPIN) mBuildThread.detach();
 }
 
-void Layer::WaitForBuild(MUTEX_TYPE type) {
+void Layer::WaitForBuild(MUTEX_TYPE type, const std::shared_ptr<AnimateTicker> &ticker) {
     if (type == MUTEX_TYPE::SPIN) {
         mBuildSpinMutex.Lock();
     } else if (type == MUTEX_TYPE::HANG) {

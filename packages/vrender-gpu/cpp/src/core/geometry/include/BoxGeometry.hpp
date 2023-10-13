@@ -5,11 +5,11 @@
 #ifndef VRENDER_GPU_BOXGEOMETRY_HPP
 #define VRENDER_GPU_BOXGEOMETRY_HPP
 
-#include "Geometry.hpp"
+#include "BufferGeometry.hpp"
 
-class BoxGeometry: public Geometry {
+class BoxGeometry: public BufferGeometry {
 public:
-    BoxGeometry(): Geometry() {
+    BoxGeometry(): BufferGeometry() {
         mUpdateIndices = false;
         mUseIndices = false;
     };

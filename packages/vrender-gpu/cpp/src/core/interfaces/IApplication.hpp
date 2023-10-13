@@ -7,6 +7,7 @@
 
 #include "Type.hpp"
 #include "IWindow.hpp"
+#include "AnimateTicker.hpp"
 
 class IApplication;
 typedef std::function<int (IApplication*)> OnInit;
@@ -22,7 +23,7 @@ class IApplication {
 public:
     explicit IApplication(Platform platform): mPlatform{platform},
         mOnInit{nullptr}, mOnStart{nullptr}, mOnUpdate{nullptr}, mOnRelease{nullptr},
-        mDrawInThisFrame{true} {};
+        mDrawInThisFrame{true}, mAnimateTicker{nullptr} {};
     virtual ~IApplication() = default;
     virtual int Init() = 0;
     virtual void Destroy() = 0;
@@ -39,6 +40,7 @@ public:
 protected:
     Platform mPlatform;
     std::shared_ptr<ResourceManager> mResourceManager;
+    std::shared_ptr<AnimateTicker> mAnimateTicker;
 };
 
 #endif //VRENDER_GPU_IAPPLICATION_HPP

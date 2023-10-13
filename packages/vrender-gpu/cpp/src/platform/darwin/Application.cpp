@@ -10,6 +10,7 @@ int DarwinApplication::Init() {
         mOnInit(this);
     }
     mResourceManager = std::make_shared<ResourceManager>();
+    mAnimateTicker = std::make_shared<AnimateTicker>();
     return 0;
 }
 
@@ -30,11 +31,13 @@ std::shared_ptr<ResourceManager> DarwinApplication::GetResourceManager() {
 IWindow * DarwinApplication::CreateWindow(const WindowConf &conf) {
     mWindow = new DarwinWindow();
     mWindow->Init(conf);
+    mWindow->SetTicker(mAnimateTicker);
     return mWindow;
 }
 
 bool DarwinApplication::RunFrame() {
     if (mWindow->IsDestroyed()) return false;
+    mAnimateTicker->Tick(glfwGetTime() * 1000);
     mWindow->RenderAllLayer();
     mWindow->SwapFrame();
     return true;
@@ -49,6 +52,7 @@ void DarwinApplication::Start() {
             mOnUpdate(this);
         }
         if (mWindow->IsDestroyed()) break;
+        mAnimateTicker->Tick(glfwGetTime() * 1000);
         if (mDrawInThisFrame) {
             mWindow->RenderAllLayer();
             mWindow->SwapFrame();

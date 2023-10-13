@@ -11,18 +11,15 @@
 
 class AmbientLight: public ILight {
 public:
-    AmbientLight(): mColor{glm::vec3{1.f}}, mPosition{glm::vec3{.5f}}, mName{"AmbientLight"}, mType(LightType::AMBIENT_LIGHT), mStrength(.1f) {};
+    AmbientLight(): ILight(), mName{"AmbientLight"}, mType(LightType::AMBIENT_LIGHT) {
+        mStrength = .3f;
+    };
     ~AmbientLight() override = default;
-    [[nodiscard]] inline glm::vec3 GetColor() const override { return mColor; }
     [[nodiscard]] inline CommonLightAttr GetLightAttr() const override { return CommonLightAttr{mType, {mColor, mStrength}}; }
 
 private:
-    glm::vec3 mColor;
     std::string mName;
-    float mStrength;
     LightType mType;
-
-    glm::vec3 mPosition;
 };
 
 #endif //VRENDER_GPU_AMBIENTLIGHT_HPP

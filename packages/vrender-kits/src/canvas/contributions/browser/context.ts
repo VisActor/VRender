@@ -841,14 +841,22 @@ export class BrowserContext2d implements IContext2d {
       return this.nativeContext.measureText(text);
     }
     if (!this.mathTextMeasure) {
-      this.mathTextMeasure = application.graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas);
+      this.mathTextMeasure = application.graphicUtil.createTextMeasureInstance({}, {}, () => this.canvas.nativeCanvas);
     }
-    this.mathTextMeasure.textSpec.fontFamily = this.fontFamily ?? DefaultTextStyle.fontFamily;
-    this.mathTextMeasure.textSpec.fontSize = this.fontSize ?? DefaultTextStyle.fontSize;
-    this.mathTextMeasure._numberCharSize = null;
-    this.mathTextMeasure._fullCharSize = null;
-    this.mathTextMeasure._letterCharSize = null;
-    this.mathTextMeasure._specialCharSizeMap = {};
+
+    const fontFamily = this.fontFamily ?? DefaultTextStyle.fontFamily;
+    const fontSize = this.fontSize ?? DefaultTextStyle.fontSize;
+    if (
+      this.mathTextMeasure.textSpec.fontFamily !== fontFamily ||
+      this.mathTextMeasure.textSpec.fontSize !== fontSize
+    ) {
+      this.mathTextMeasure.textSpec.fontFamily = fontFamily;
+      this.mathTextMeasure.textSpec.fontSize = fontSize;
+      this.mathTextMeasure._numberCharSize = null;
+      this.mathTextMeasure._fullCharSize = null;
+      this.mathTextMeasure._letterCharSize = null;
+      this.mathTextMeasure._specialCharSizeMap = {};
+    }
     return this.mathTextMeasure.measure(text, method);
   }
 

@@ -19,6 +19,8 @@ const defaultEnv: EnvType = 'browser';
 @injectable()
 export class DefaultGlobal implements IGlobal {
   private _env: EnvType;
+  private _isSafari?: boolean;
+  private _isChrome?: boolean;
   get env(): EnvType {
     return this._env;
   }
@@ -303,17 +305,26 @@ export class DefaultGlobal implements IGlobal {
   }
 
   isChrome(): boolean {
+    if (this._isChrome != null) {
+      return this._isChrome;
+    }
     if (!this._env) {
       this.setEnv('browser');
     }
-    return this._env === 'browser' && navigator.userAgent.indexOf('Chrome') > -1;
+    this._isChrome = this._env === 'browser' && navigator.userAgent.indexOf('Chrome') > -1;
+    return this._isChrome;
   }
 
   isSafari(): boolean {
+    if (this._isSafari != null) {
+      return this._isSafari;
+    }
     if (!this._env) {
       this.setEnv('browser');
     }
-    return this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    this._isSafari =
+      this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    return this._isSafari;
   }
 
   getNativeAABBBounds(dom: string | HTMLElement | any): IAABBBoundsLike {

@@ -283,13 +283,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
-    const { direction, delayType = 'throttle', delayTime = 0 } = this.attribute as ScrollBarAttributes;
+    const { direction } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
+      vglobal.addEventListener('pointermove', this._onSliderPointerMove);
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this._slider.addEventListener('pointermove', delayMap[delayType](this._onSliderPointerMove, delayTime));
+      this._slider.addEventListener('pointermove', this._onSliderPointerMove);
       this._slider.addEventListener('pointerup', this._onSliderPointerUp);
       this._slider.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }
@@ -314,13 +314,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     return [currentPos, currentScrollValue];
   };
 
-  private _onSliderPointerMove = (e: any) => {
+  private _onSliderPointerMove = delayMap[this.attribute.delayType]((e: any) => {
     e.stopPropagation();
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     this.setScrollRange([preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue], true);
     this._prePos = currentPos;
-  };
+  }, this.attribute.delayTime);
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();

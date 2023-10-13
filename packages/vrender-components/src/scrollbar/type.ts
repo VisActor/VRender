@@ -1,7 +1,6 @@
 import type { IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender-core';
-import type { Direction } from '../interface';
+import type { Direction, IDelayType } from '../interface';
 import type { Padding } from '../core/type';
-import type { IDelayType } from '../common/type';
 export interface ScrollBarAttributes extends IGroupGraphicAttribute {
   x: number;
   y: number;

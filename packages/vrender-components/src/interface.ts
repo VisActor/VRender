@@ -10,3 +10,5 @@ export type BackgroundAttributes = {
    */
   visible: boolean;
 } & Partial<IRectGraphicAttribute>;
+
+export type IDelayType = 'debounce' | 'throttle';

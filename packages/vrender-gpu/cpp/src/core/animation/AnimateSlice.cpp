@@ -35,12 +35,12 @@ void AnimateSlice::Interpolate(double t, double pTime) {
         auto &&k = (time - curKey.mTime) / deltaTime;
 
         std::set<unsigned int> values;
-        std::vector<float> morphTargetInfluences{};
+        mMorphTargetInfluences.clear();
 
         for (int i = 0, n = curKey.mValues.size(); i < n; i++) {
             auto curValue = curKey.mWeights[i];
             auto nextValue = nextKey.mWeights[i];
-            morphTargetInfluences.push_back(curValue + (nextValue - curValue) * k);
+            mMorphTargetInfluences.push_back(curValue + (nextValue - curValue) * k);
         }
     }
 }

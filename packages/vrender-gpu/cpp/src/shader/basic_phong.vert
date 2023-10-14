@@ -15,7 +15,8 @@ uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 uniform float u_morphTargetInfluences[MORPHTARGETS_COUNT];
-uniform int u_morphTargetCount;
+uniform ivec2 u_morphTargetSize;
+uniform sampler2D u_morphTargetsTexture;
 
 void main() {
     vec3 position = aPos;
@@ -23,5 +24,19 @@ void main() {
     TexCoord = aTexCoord;
     FragPosition = vec3(u_model * vec4(aPos, 1.0));
     Color = vec4(aColor.xyz, 1.0);
-    gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
+    // TODO 条件语句
+    if (u_morphTargetSize.x > 0) {
+        gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0) + 10.1;
+    } else {
+        gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
+    }
+    vec3 transform = vec3(0.0, 0.0, 0.0);
+    for (int i = 0; i < MORPHTARGETS_COUNT; i++) {
+        if (i > u_morphTargetSize.y) {
+            break;
+        }
+        vec4 p = texelFetch(u_morphTargetsTexture, ivec2(gl_VertexID, i), 0);
+        transform = transform + vec3(p.xyz) * u_morphTargetInfluences[i];
+    }
+    gl_Position = u_projection * u_view * u_model * vec4(transform, 1.0);
 }

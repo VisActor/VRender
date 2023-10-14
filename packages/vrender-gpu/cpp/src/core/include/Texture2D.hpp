@@ -17,6 +17,7 @@ public:
     // 从图像数据生成纹理
     void GenerateFromImage(unsigned int width, unsigned int height, unsigned char* data);
     void GenerateGPUTextTexture(unsigned int width, unsigned int height, unsigned char* data);
+    void GenerateFloatTexture(unsigned int width, unsigned int height, float* data);
     void Bind() const;
     void BindAndActive(int i) const;
     void UnBindAndActive(int i) const;

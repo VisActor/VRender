@@ -10,16 +10,19 @@
 
 class AnimateSlice {
 public:
-    AnimateSlice(): mDuring{0}, mTicksPerSecond{0}, mMorphMeshChannels{} {};
+    AnimateSlice(): mDuring{0}, mTicksPerSecond{0}, mMorphMeshChannels{}, mMorphTargetInfluences{} {};
     ~AnimateSlice() = default;
     void Init(const aiAnimation * anim);
 
     void Interpolate(double t, double delta);
+
+    const std::vector<float>& GetMorphTargetInfluences() { return mMorphTargetInfluences; }
 protected:
     float mDuring;
     float mTicksPerSecond;
 
     std::vector<MorphMeshChannel> mMorphMeshChannels;
+    std::vector<float> mMorphTargetInfluences;
 };
 
 #endif //VRENDER_GPU_ANIMATESLICE_HPP

@@ -8,10 +8,30 @@ void Animate::Init(std::shared_ptr<BufferGeometry> &geo, const aiMesh *mesh, con
     mGeometry = geo;
     LoadGeometries(mesh);
     LoadAnimateInfo(mesh, scene);
+    BuildTexture();
 }
 
 void Animate::Build(double time, double deltaTime) {
+}
 
+void Animate::BuildTexture() {
+    if (mGeometries.empty()) return;
+    auto texture2D = std::make_shared<Texture2D>("morphTargetsTexture");
+    mTexture.texture2D = texture2D;
+
+    std::vector<float> buf{};
+    for (auto &g : mGeometries) {
+        auto &v = g->GetVertices();
+        for (auto &p : v) {
+            buf.push_back(p.x);
+            buf.push_back(p.y);
+            buf.push_back(p.z);
+            buf.push_back(1.f);
+        }
+    }
+    auto h = mGeometries.size();
+    auto w = buf.size() / 4 / h;
+    texture2D->GenerateFloatTexture(w, h, &buf[0]);
 }
 
 void Animate::LoadAnimateInfo(const aiMesh *mesh, const aiScene *aScene) {
@@ -60,7 +80,27 @@ void Animate::LoadGeometries(const aiMesh *aMesh) {
 }
 
 void Animate::SetUniformData(std::shared_ptr<Shader> shader) {
+    // TODO 后续进行封装
+    // 纹理
+    if (!mTexture.texture2D) return;
+    shader->SetInt("u_morphTargetsTexture", 5);
+    glActiveTexture(GL_TEXTURE0 + 5);
+    mTexture.texture2D->Bind();
 
+    // 动画帧序列
+    for (auto &as : mAnimateSlice) {
+        auto &influence = as->GetMorphTargetInfluences();
+        for (int i = 0; i < influence.size(); i++) {
+            if (i > 20) break;
+            const auto &&name = "u_morphTargetInfluences["+std::to_string(i)+"]";
+            shader->SetFloat(name.c_str(), influence[i]);
+        }
+    }
+
+    int w = mTexture.texture2D->mWidth;
+    int h = mTexture.texture2D->mHeight;
+    // 设置大小
+    shader->SetVector2i("u_morphTargetSize", glm::vec<2, int>{w, h});
 }
 
 void Animate::Interpolate(double t, double delta) {

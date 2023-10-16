@@ -68,7 +68,7 @@ export function run() {
         textBaseline: 'middle',
         fill: 'red',
         x: 160,
-        y: 100,
+        y: 400,
         poptip: {
           position: 'auto',
           contentFormatMethod: t => t + '=========aaa=====',

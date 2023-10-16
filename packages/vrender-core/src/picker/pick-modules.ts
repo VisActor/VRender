@@ -14,8 +14,8 @@ import { bindContributionProvider } from '../common/contribution-provider';
 export default new ContainerModule(bind => {
   bind(PickerService).toService(GlobalPickerService);
 
-  bind(DefaultGlobalPickerService).toSelf().inSingletonScope();
-  bind(GlobalPickerService).toService(DefaultGlobalPickerService);
+  // bind(DefaultGlobalPickerService).toSelf().inSingletonScope();
+  // bind(GlobalPickerService).toService(DefaultGlobalPickerService);
 
   // interceptor
   bind(Canvas3DPickItemInterceptor).toSelf().inSingletonScope();

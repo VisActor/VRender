@@ -98,7 +98,6 @@ export class DefaultWindow implements IWindow {
     //   handlerContribution.configure(this, this.global);
     // });
     this.actived = true;
-    this._handler;
   }
 
   get style(): CSSStyleDeclaration | Record<string, any> {

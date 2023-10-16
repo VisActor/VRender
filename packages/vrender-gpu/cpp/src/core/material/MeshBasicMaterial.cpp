@@ -21,6 +21,7 @@ void MeshBasicMaterial::UpdateLightUniform(std::shared_ptr<ResourceManager> &res
 
 void MeshBasicMaterial::UpdateUniform() {
     mVec4UniformMap["u_color"] = {"u_color", mColor};
+    mVec2iUniformMap["u_morphTargetSize"] = {"u_morphTargetSize", {0.f, 0.f}};
 }
 
 void MeshBasicMaterial::SetDefaultUniform() {

@@ -19,7 +19,6 @@ uniform ivec2 u_morphTargetSize;
 uniform sampler2D u_morphTargetsTexture;
 
 void main() {
-    vec3 position = aPos;
     Normal = mat3(transpose(inverse(u_model))) * aNormal;
     TexCoord = aTexCoord;
     FragPosition = vec3(u_model * vec4(aPos, 1.0));
@@ -38,5 +37,7 @@ void main() {
         vec4 p = texelFetch(u_morphTargetsTexture, ivec2(gl_VertexID, i), 0);
         transform = transform + vec3(p.xyz) * u_morphTargetInfluences[i];
     }
-    gl_Position = u_projection * u_view * u_model * vec4(transform, 1.0);
+    float useTextureVert = step(0.5, u_morphTargetSize.x);
+    vec3 position = useTextureVert * transform + (1.0 - useTextureVert) * aPos;
+    gl_Position = u_projection * u_view * u_model * vec4(position, 1.0);
 }

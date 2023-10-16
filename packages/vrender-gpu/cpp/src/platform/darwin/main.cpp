@@ -25,7 +25,7 @@ int main() {
     }
     auto *window = application->CreateWindow({1200, 600, "这是标题"});
     window->SetClearColor(0, 0, 1, 1);
-    auto camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+    auto camera = std::make_shared<PerspectiveCamera>(glm::radians(45.0f), 1200.0f / 600.0f, 0.1f, 100.0f);
     camera->SetPosition(0.f, 0.f, 10.f);
     window->SetCamera(camera);
 

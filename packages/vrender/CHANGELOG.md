@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 27 Sep 2023 09:33:50 GMT and should not be manually modified.
+This log was last generated on Wed, 11 Oct 2023 11:33:03 GMT and should not be manually modified.
+
+## 0.15.6
+Wed, 11 Oct 2023 11:33:03 GMT
+
+### Updates
+
+- fix: fix monotine defined, closed #547
 
 ## 0.15.5
 Wed, 27 Sep 2023 09:33:50 GMT

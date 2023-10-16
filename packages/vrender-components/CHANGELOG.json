@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.15.7",
+      "tag": "@visactor/vrender-components_v0.15.7",
+      "date": "Mon, 16 Oct 2023 09:24:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue with poptip does not disappear when scrolling, closed #580"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.6",
       "tag": "@visactor/vrender-components_v0.15.6",
       "date": "Wed, 11 Oct 2023 11:33:03 GMT",

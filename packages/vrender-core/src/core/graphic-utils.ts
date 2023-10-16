@@ -10,6 +10,7 @@ import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
 import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
 import { VGlobal } from '../constants';
+import { canvasAllocate } from '../allocator/canvas-allocate';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -42,9 +43,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     if (this.configured) {
       return;
     }
-    const canvas = wrapCanvas({
-      nativeCanvas: global.createCanvas({ width: 100, height: 100 })
-    });
+    const canvas = canvasAllocate.getCommonCanvas();
     this.canvas = canvas;
     this.context = canvas.getContext('2d');
     this.contributions.getContributions().forEach(contribution => {

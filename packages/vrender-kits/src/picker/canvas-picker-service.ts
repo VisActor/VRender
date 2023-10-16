@@ -40,6 +40,7 @@ import {
   CanvasTextPicker,
   CanvasRichTextPicker
 } from './contributions/constants';
+import { canvasAllocate } from '../../../vrender-core/src/allocator/canvas-allocate';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
@@ -98,14 +99,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // });
 
     // 创建pick canvas
-    const options = {
-      width: 100,
-      height: 100,
-      nativeCanvas: global.createCanvas({ width: 100, height: 100 }),
-      id: 'for-pick'
-    };
-
-    this.pickCanvas = wrapCanvas(options);
+    this.pickCanvas = canvasAllocate.getCommonCanvas();
     this.pickContext = this.pickCanvas.getContext('2d');
   }
 

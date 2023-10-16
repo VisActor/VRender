@@ -27,6 +27,7 @@ import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
 import { VGlobal } from '../../../constants';
+import { boundsAllocate } from '../../../allocator/bounds-allocate';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -182,7 +183,7 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    const tempBounds = this.dirtyBounds.clone();
+    const tempBounds = boundsAllocate.allocateByObj(this.dirtyBounds);
 
     // 变换dirtyBounds
     const m = group.globalTransMatrix.getInverse();
@@ -221,6 +222,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     });
 
     this.dirtyBounds.copy(tempBounds);
+    boundsAllocate.free(tempBounds);
   }
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {

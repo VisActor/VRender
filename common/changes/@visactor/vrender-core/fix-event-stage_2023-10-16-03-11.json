@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix event issue of graphic.stage is null, closed #578",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -122,6 +122,7 @@ export class EventManager {
     const cacheKey = `${e.canvasX}-${e.canvasY}`;
     if (
       this._prePointTargetCache?.[cacheKey] &&
+      (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage &&
       (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage.renderCount ===
         (this._prePointTargetCache?.stageRenderCount as number)
     ) {

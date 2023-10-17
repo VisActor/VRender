@@ -142,10 +142,10 @@ const specs = [
     path: 'pick-test',
     name: '拾取测试'
   },
-  // {
-  //   path: 'data-zoom',
-  //   name: '水平 dataZoom'
-  // },
+  {
+    path: 'data-zoom',
+    name: '水平 dataZoom'
+  },
   {
     path: 'data-zoom-preview-v',
     name: '水平 背景图表 dataZoom'
@@ -309,6 +309,15 @@ const run = () => {
     },
     true
   );
+
+  document.addEventListener('mousedown', () => {
+    // eslint-disable-next-line no-console
+    console.log('document mousedown');
+    document.addEventListener('mousemove', () => {
+      // eslint-disable-next-line no-console
+      console.log('document mousemove');
+    });
+  });
 };
 
 run();

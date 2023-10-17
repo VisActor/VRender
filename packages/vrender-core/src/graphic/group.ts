@@ -168,6 +168,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       postMatrix
     } = this.attribute;
     if (x === 0 && y === 0 && scaleX === 1 && scaleY === 1 && angle === 0 && !postMatrix) {
+      this._transMatrix.reset();
       return;
     }
     return super.doUpdateLocalMatrix();

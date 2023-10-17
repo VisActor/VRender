@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: brush and data-zoom should stop event propagation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

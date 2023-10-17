@@ -218,6 +218,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 开启activeState + 通过tag判断事件在哪个元素上触发 并 更新交互坐标
    */
   private _onHandlerPointerDown = (e: FederatedPointerEvent, tag: string) => {
+    e.stopPropagation();
     if (tag === 'start') {
       this._activeTag = DataZoomActiveTag.startHandler;
       this._activeItem = this._startHandler;
@@ -248,6 +249,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 4. 在endHandler上拖拽，同上
    */
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
+    e.stopPropagation();
     const { start, end, brushSelect } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max } = this._layoutCache;
@@ -296,6 +298,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
   private _onHandlerPointerUp(e: FederatedPointerEvent) {
+    e.preventDefault();
     const { start, end, brushSelect } = this.attribute as DataZoomAttributes;
     if (this._activeState) {
       if (this._activeTag === DataZoomActiveTag.background) {
@@ -324,6 +327,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 鼠标进入选中部分出现start和end文字
    */
   private _onHandlerPointerEnter(e: FederatedPointerEvent) {
+    e.stopPropagation();
     this._showText = true;
     this.renderText();
   }
@@ -333,6 +337,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 鼠标移出选中部分不出现start和end文字
    */
   private _onHandlerPointerLeave(e: FederatedPointerEvent) {
+    e.stopPropagation();
     this._showText = false;
     this.renderText();
   }

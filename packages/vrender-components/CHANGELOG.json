@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.2",
+      "tag": "@visactor/vrender-components_v0.16.2",
+      "date": "Tue, 10 Oct 2023 11:48:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add checkbox component"
+          },
+          {
+            "comment": "feat: provide disableActiveEffect api to support users to close the interactive effect of components\n\n"
+          },
+          {
+            "comment": "fix: fix event not remove as expected due to capture, closed #570"
+          },
+          {
+            "comment": "refactor: use polygon to replace line to support cornerRadius"
+          },
+          {
+            "comment": "feat: add `getArea()` `getLine()` and `getLabel()` method for markLine markArea component"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.1",
       "tag": "@visactor/vrender-components_v0.16.1",
       "date": "Mon, 09 Oct 2023 09:51:01 GMT",

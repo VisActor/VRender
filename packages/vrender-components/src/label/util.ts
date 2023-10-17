@@ -234,15 +234,17 @@ export const getPointsOfLineArea = (graphic: ILine | IArea): IPointLike[] => {
   const { points, segments } = graphic.attribute;
 
   if (segments && segments.length) {
-    return segments.reduce((res: IPointLike[], seg: ISegment | IAreaSegment) => {
+    const res: IPointLike[] = [];
+
+    segments.forEach(seg => {
       const segPoints = seg.points;
 
       segPoints.forEach(point => {
         res.push(point);
       });
+    });
 
-      return res;
-    }, []);
+    return res;
   }
 
   return points;

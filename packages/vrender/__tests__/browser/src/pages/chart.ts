@@ -3521,11 +3521,23 @@ export const page = () => {
   json.children[0].children.forEach(item => {
     _add(layer, item);
   });
+  stage.render();
 
-  const t = performance.now();
-  const b = layer.AABBBounds;
-  console.log(performance.now() - t);
-  console.log(b);
+  setTimeout(() => {
+    stage.render();
+  }, 2000);
+
+  // const t = performance.now();
+  // const b = layer.AABBBounds;
+  // console.log(performance.now() - t);
+  // console.log(b);
+
+  // const btn = document.createElement('button');
+  // btn.innerHTML = 'render';
+  // document.body.appendChild(btn);
+  // btn.addEventListener('click', () => {
+  //   stage.render();
+  // });
   // stage.set3dOptions({
   //   alpha: 0,
   //   // beta: 0,

@@ -10,7 +10,7 @@ import {
   DrawContribution,
   PickItemInterceptor,
   VGlobal,
-  wrapCanvas
+  canvasAllocate
 } from '@visactor/vrender-core';
 import type {
   ICanvas,
@@ -40,7 +40,6 @@ import {
   CanvasTextPicker,
   CanvasRichTextPicker
 } from './contributions/constants';
-import { canvasAllocate } from '../../../vrender-core/src/allocator/canvas-allocate';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin

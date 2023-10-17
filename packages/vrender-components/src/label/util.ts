@@ -1,6 +1,6 @@
-import type { IArea, ILine } from '@visactor/vrender-core';
+import type { IArea, IAreaSegment, ILine, ISegment } from '@visactor/vrender-core';
 import type { IPolarPoint, IPoint, Quadrant } from './type';
-import type { IBoundsLike } from '@visactor/vutils';
+import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 import { radianToDegree, isValidNumber } from '@visactor/vutils';
 
 /**
@@ -226,7 +226,7 @@ export const labelingPoint = (textBounds: IBoundsLike, graphicBounds: IBoundsLik
   return { x, y };
 };
 
-export const getPointsOfLineArea = (graphic: ILine | IArea) => {
+export const getPointsOfLineArea = (graphic: ILine | IArea): IPointLike[] => {
   if (!graphic || !graphic.attribute) {
     return [];
   }
@@ -234,7 +234,7 @@ export const getPointsOfLineArea = (graphic: ILine | IArea) => {
   const { points, segments } = graphic.attribute;
 
   if (segments && segments.length) {
-    return segments.reduce((res, seg) => {
+    return segments.reduce((res: IPointLike[], seg: ISegment | IAreaSegment) => {
       const segPoints = seg.points;
 
       segPoints.forEach(point => {

@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.2",
+      "tag": "@visactor/vrender-core_v0.16.2",
+      "date": "Tue, 10 Oct 2023 11:48:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: provide disableActiveEffect api to support users to close the interactive effect of components\n\n"
+          },
+          {
+            "comment": "fix: fix pattern blur issue, closed #567"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.1",
       "tag": "@visactor/vrender-core_v0.16.1",
       "date": "Mon, 09 Oct 2023 09:51:01 GMT",

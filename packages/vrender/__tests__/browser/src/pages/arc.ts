@@ -8,12 +8,38 @@ import {
   createRect,
   createGlyph,
   createSymbol,
-  createText
+  createText,
+  createGroup
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';
 
 export const page = () => {
+  // 构建场景树
+  const tree = [1, 2, 2, 3, 3, 12];
+  function abc(count: number, group: any) {
+    for (let i = 0; i < count; i++) {
+      const g = createGroup({});
+      group.add(g);
+    }
+    return group.children;
+  }
+
+  const g = createGroup({});
+  let children = [g];
+  tree.forEach(item => {
+    const nextChildren = [];
+    children.forEach(g => {
+      nextChildren.push(...abc(item, g));
+    });
+    children = nextChildren;
+  });
+  console.time();
+  console.log(g.AABBBounds);
+  console.timeEnd();
+  console.log(g);
+  return;
+
   const graphics: IGraphic[] = [];
   const startAngle = pi + pi / 20;
   const endAngle = pi2 - pi / 20;

@@ -1469,7 +1469,7 @@ export class DefaultGraphicService implements IGraphicService {
     } = attribute;
     const tb1 = this.tempAABBBounds1;
     const tb2 = this.tempAABBBounds2;
-    if (stroke) {
+    if (stroke && lineWidth) {
       const scaledHalfLineWidth = lineWidth / Math.abs(scaleX + scaleY);
       boundStroke(tb1, scaledHalfLineWidth, miter, strokeBoundsBuffer);
       aabbBounds.union(tb1);

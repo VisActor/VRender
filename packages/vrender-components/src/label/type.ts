@@ -8,6 +8,7 @@ import type {
   TextBaselineType,
   ILineGraphicAttribute
 } from '@visactor/vrender-core';
+import type { IPointLike } from '@visactor/vutils';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -85,12 +86,20 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 自定义布局函数
    * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
-  customLayoutFunc?: (data: LabelItem[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  customLayoutFunc?: (
+    data: LabelItem[],
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    getRelatedPoint?: (data: LabelItem) => IPointLike
+  ) => Text[];
 
   /** 自定义标签躲避函数
    * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
    */
-  customOverlapFunc?: (label: Text[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  customOverlapFunc?: (
+    label: Text[],
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    getRelatedPoint?: (data: LabelItem) => IPointLike
+  ) => Text[];
   /**
    * 关闭交互效果
    * @default false
@@ -268,6 +277,18 @@ export interface LineLabelAttrs extends BaseLabelAttrs {
   position?: Functional<'start' | 'end'>;
 }
 
+export interface LineDataLabelAttrs extends BaseLabelAttrs {
+  type: 'line-data';
+
+  /**
+   * 标签位置
+   * @default 'top'
+   */
+  position?: Functional<
+    'top' | 'bottom' | 'left' | 'right' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center'
+  >;
+}
+
 export interface PolygonLabelAttrs extends BaseLabelAttrs {
   type: 'polygon';
   /**
@@ -399,7 +420,7 @@ export interface IArcLabelLayoutSpec {
 }
 
 export interface DataLabelAttrs extends IGroupGraphicAttribute {
-  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs)[];
+  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs | LineDataLabelAttrs)[];
   /**
    * 防重叠的区域大小
    */

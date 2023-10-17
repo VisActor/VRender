@@ -9,11 +9,13 @@ import { ArcLabel } from './arc';
 import type { DataLabelAttrs } from './type';
 import type { LabelBase } from './base';
 import { LabelBase as PointLabel } from './base';
+import { LineDataLabel } from './line-data';
 
 const labelComponentMap = {
   rect: RectLabel,
   symbol: SymbolLabel,
-  arc: ArcLabel
+  arc: ArcLabel,
+  'line-data': LineDataLabel
 };
 
 export class DataLabel extends AbstractComponent<DataLabelAttrs> {

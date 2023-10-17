@@ -80,6 +80,10 @@ const specs = [
   },
   {
     path: 'label-line',
+    name: 'line 标签'
+  },
+  {
+    path: 'label-line-data',
     name: 'line 数据标签'
   },
   {

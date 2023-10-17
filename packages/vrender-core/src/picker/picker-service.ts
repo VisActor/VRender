@@ -1,5 +1,5 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
-import { Matrix, Point, IBounds } from '@visactor/vutils';
+import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable, named } from '../common/inversify-lite';
 import { foreach } from '../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -107,7 +107,8 @@ export abstract class DefaultPickService implements IPickerService {
   }
 
   containsPoint(graphic: IGraphic, point: IPointLike, params: IPickParams): boolean {
-    return !!this.pickItem(graphic, point, null, params);
+    return !!this.pickItem(graphic, point, null, params ?? { pickContext: this.pickContext, pickerService: this })
+      ?.graphic;
   }
 
   // TODO: 支持3d模式的拾取和自定义path的拾取

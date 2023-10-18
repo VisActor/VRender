@@ -27,9 +27,9 @@ export class LynxCanvas extends BaseCanvas implements ICanvas {
 
     this._nativeCanvas.width = this._pixelWidth;
     this._nativeCanvas.height = this._pixelHeight;
-    if ((this.nativeCanvas as any).nativeCanvas) {
-      (this.nativeCanvas as any).nativeCanvas.width = this._pixelWidth;
-      (this.nativeCanvas as any).nativeCanvas.height = this._pixelHeight;
+    if ((this._nativeCanvas as any).nativeCanvas) {
+      (this._nativeCanvas as any).nativeCanvas.width = this._pixelWidth;
+      (this._nativeCanvas as any).nativeCanvas.height = this._pixelHeight;
     }
 
     // 设置context的dpr

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "fix: add canvas resize support in lynx env, closed #581",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

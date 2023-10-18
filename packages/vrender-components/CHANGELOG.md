@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 04 Sep 2023 03:55:49 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 07:13:18 GMT and should not be manually modified.
+
+## 0.13.17
+Wed, 18 Oct 2023 07:13:18 GMT
+
+_Version update only_
 
 ## 0.13.16
 Mon, 04 Sep 2023 03:55:49 GMT

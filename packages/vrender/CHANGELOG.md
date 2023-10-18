@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Mon, 04 Sep 2023 03:55:49 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 07:13:18 GMT and should not be manually modified.
+
+## 0.13.14
+Wed, 18 Oct 2023 07:13:18 GMT
+
+### Patches
+
+- fix: add canvas resize support in lynx env, closed #581
 
 ## 0.13.13
 Mon, 04 Sep 2023 03:55:49 GMT

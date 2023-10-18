@@ -10,6 +10,7 @@ import type { IStage } from './stage';
 import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
+import type { IPickerService } from './picker';
 
 type IStrokeSeg = {
   start: number; // 百分比
@@ -349,7 +350,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   getOffsetXY: (attr?: ITransform) => IPoint;
 
   // function
-  containsPoint: (x: number, y: number, mode?: IContainPointMode) => boolean;
+  containsPoint: (x: number, y: number, mode?: IContainPointMode, picker?: IPickerService) => boolean;
 
   setMode: (mode: '3d' | '2d') => void;
   isValid: () => boolean;

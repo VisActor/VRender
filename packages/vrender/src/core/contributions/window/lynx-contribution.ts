@@ -136,7 +136,7 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
     return;
   }
   resizeWindow(width: number, height: number): void {
-    return;
+    this.canvas.resize(width, height);
   }
   setDpr(dpr: number): void {
     this.canvas.dpr = dpr;

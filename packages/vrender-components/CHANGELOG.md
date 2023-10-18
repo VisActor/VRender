@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 10 Oct 2023 11:48:48 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 07:43:09 GMT and should not be manually modified.
+
+## 0.16.3
+Wed, 18 Oct 2023 07:43:09 GMT
+
+### Updates
+
+- fix: fix the issue with poptip does not disappear when scrolling, closed #580
+- fix: brush and data-zoom should stop event propagation
+- fix: fix title component layout height
+- feat(vrender-components): add LineDataLabel support DataLabel of line
+
+
 
 ## 0.16.2
 Tue, 10 Oct 2023 11:48:48 GMT

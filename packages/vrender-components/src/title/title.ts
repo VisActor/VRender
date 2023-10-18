@@ -189,7 +189,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     if (isValid(verticalAlign) || isValid(textStyle?.verticalAlign)) {
       const mainTitleVerticalAlign = textStyle?.verticalAlign ? textStyle?.verticalAlign : verticalAlign;
-      const mainTitleHeight = textStyle?.height ? textStyle?.height : titleWidth;
+      const mainTitleHeight = textStyle?.height ? textStyle?.height : titleHeight;
       if (mainTitleVerticalAlign === 'top') {
         this._mainTitle?.setAttribute('y', 0);
         this._mainTitle?.setAttribute('textBaseline', 'top');

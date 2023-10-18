@@ -100,6 +100,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._outOfInteractiveRange(e)) {
       return;
     }
+    e.stopPropagation();
+
     const brushMoved = this.attribute?.brushMoved ?? true;
     this._activeMoveState = brushMoved && this._isPosInBrushMask(e); // 如果是移动状态，在这里会标记operatingMask为正在移动的mask
     this._activeDrawState = !this._activeMoveState;
@@ -118,6 +120,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._outOfInteractiveRange(e)) {
       return;
     }
+    e.stopPropagation();
 
     this._activeDrawState && this._drawing(e); // 如果是绘制状态，在这里会标记operatingMask为正在绘制的mask
     this._activeMoveState && this._moving(e);
@@ -128,6 +131,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
+    e.preventDefault();
     const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
       this._container.incrementalClearChild();

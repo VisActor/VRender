@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.3",
+      "tag": "@visactor/vrender-core_v0.16.3",
+      "date": "Wed, 18 Oct 2023 07:43:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix event issue of graphic.stage is null, closed #578"
+          },
+          {
+            "comment": "feat: set some params: `supportEvent` `supportsTouchEvents` `supportsPointerEvents` `supportsMouseEvents` `applyStyles` be writeable"
+          },
+          {
+            "comment": "fix: fix monotine defined, closed #547"
+          },
+          {
+            "comment": "fix: fix sideEffect of @visactor/vrender-core"
+          },
+          {
+            "comment": "feat(vrender-components): add LineDataLabel support DataLabel of line\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.2",
       "tag": "@visactor/vrender-core_v0.16.2",
       "date": "Tue, 10 Oct 2023 11:48:48 GMT",

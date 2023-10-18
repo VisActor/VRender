@@ -18,7 +18,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
-import type { IAABBBounds, IBounds } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrixLike } from '@visactor/vutils';
 import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
@@ -28,6 +28,7 @@ import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
 import { VGlobal } from '../../../constants';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
+import { matrixAllocate } from '../../../allocator/matrix-allocate';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -140,7 +141,7 @@ export class DefaultDrawContribution implements IDrawContribution {
         return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
       })
       .forEach(group => {
-        this.renderGroup(group as IGroup, drawContext);
+        this.renderGroup(group as IGroup, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0));
       });
 
     context.restore();
@@ -169,7 +170,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
 
-  renderGroup(group: IGroup, drawContext: IDrawContext, skipSort?: boolean) {
+  renderGroup(group: IGroup, drawContext: IDrawContext, parentMatrix: IMatrixLike, skipSort?: boolean) {
     if (drawContext.break || group.attribute.visibleAll === false) {
       return;
     }
@@ -186,8 +187,10 @@ export class DefaultDrawContribution implements IDrawContribution {
     const tempBounds = boundsAllocate.allocateByObj(this.dirtyBounds);
 
     // 变换dirtyBounds
-    const m = group.globalTransMatrix.getInverse();
-    this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(m);
+    const gm = group.transMatrix;
+    const nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
+    // const m = group.globalTransMatrix.getInverse();
+    this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
 
     this.renderItem(group, drawContext, {
       drawingCb: () => {
@@ -197,7 +200,7 @@ export class DefaultDrawContribution implements IDrawContribution {
                 return;
               }
               if (item.isContainer) {
-                this.renderGroup(item as IGroup, drawContext);
+                this.renderGroup(item as IGroup, drawContext, nextM);
               } else {
                 this.renderItem(item, drawContext);
               }
@@ -210,7 +213,7 @@ export class DefaultDrawContribution implements IDrawContribution {
                   return;
                 }
                 if (item.isContainer) {
-                  this.renderGroup(item as IGroup, drawContext);
+                  this.renderGroup(item as IGroup, drawContext, nextM);
                 } else {
                   this.renderItem(item, drawContext);
                 }
@@ -223,6 +226,7 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     this.dirtyBounds.copy(tempBounds);
     boundsAllocate.free(tempBounds);
+    matrixAllocate.free(nextM);
   }
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {

@@ -1485,7 +1485,13 @@ export class DefaultGraphicService implements IGraphicService {
     // 合并shadowRoot的bounds
     this.combindShadowAABBBounds(aabbBounds, graphic);
 
-    transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
+    // 性能优化逻辑，group类型变换较少，不需要矩阵变换
+    let updateMatrix = true;
+    const m = graphic.transMatrix;
+    if (graphic && graphic.isContainer) {
+      updateMatrix = !(m.a === 1 && m.b === 0 && m.c === 0 && m.d === 1 && m.e === 0 && m.f === 0);
+    }
+    updateMatrix && transformBoundsWithMatrix(aabbBounds, aabbBounds, m);
 
     // TODO 加上锚点
     // transformBounds(aabbBounds, x, y, scaleX, scaleY, angle);

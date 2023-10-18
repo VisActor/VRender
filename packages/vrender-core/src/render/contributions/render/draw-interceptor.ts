@@ -84,7 +84,7 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     }
 
     // 设置context的transform到上一个节点
-    drawContribution.renderGroup(graphic.shadowRoot, drawContext);
+    drawContribution.renderGroup(graphic.shadowRoot, drawContext, graphic.parent.globalTransMatrix);
 
     context.highPerformanceRestore();
 
@@ -275,7 +275,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       // context.fillRect(0, 0, 100, 100);
       // 设置context的transform到上一个节点
       baseGraphic.isContainer
-        ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext)
+        ? drawContribution.renderGroup(baseGraphic as IGroup, drawContext, baseGraphic.parent.globalTransMatrix)
         : drawContribution.renderItem(baseGraphic, drawContext);
 
       context.highPerformanceRestore();
@@ -390,14 +390,15 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
         sortedChildren.forEach(c => {
           graphic.appendChild(c);
         });
+        const m = graphic.parent.globalTransMatrix;
         drawContext.hack_pieFace = 'outside';
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
         // 绘制内部
         drawContext.hack_pieFace = 'inside';
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
         // 绘制顶部
         drawContext.hack_pieFace = 'top';
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
         graphic.removeAllChild();
         children.forEach(c => {
           c._next = null;
@@ -433,7 +434,7 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
           graphic.add(i.g);
         });
 
-        drawContribution.renderGroup(graphic as IGroup, drawContext, true);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, graphic.parent.globalTransMatrix, true);
 
         graphic.removeAllChild();
         children.forEach(g => {
@@ -445,7 +446,7 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
           graphic.add(g);
         });
       } else {
-        drawContribution.renderGroup(graphic as IGroup, drawContext);
+        drawContribution.renderGroup(graphic as IGroup, drawContext, graphic.parent.globalTransMatrix);
       }
     } else {
       drawContribution.renderItem(graphic, drawContext);

@@ -264,7 +264,19 @@ export interface RectLabelAttrs extends BaseLabelAttrs {
    * @default 'top'
    */
   position?: Functional<
-    'top' | 'bottom' | 'left' | 'right' | 'inside' | 'inside-top' | 'inside-bottom' | 'inside-right' | 'inside-left'
+    | 'top'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'inside'
+    | 'inside-top'
+    | 'inside-bottom'
+    | 'inside-right'
+    | 'inside-left'
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
   >;
 }
 

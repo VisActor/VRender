@@ -79,6 +79,10 @@ const specs = [
     name: 'rect 数据标签'
   },
   {
+    path: 'label-rect-horizontal',
+    name: 'rect 水平方向数据标签'
+  },
+  {
     path: 'label-line',
     name: 'line 标签'
   },

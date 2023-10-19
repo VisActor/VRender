@@ -110,7 +110,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected render() {
     this._prepare();
 
-    if ((this._isCollectionBase && isNil(this._idToPoint)) || (!this._isCollectionBase && isNil(this._idToGraphic))) {
+    if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
 
@@ -286,30 +286,36 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (!data || data.length === 0) {
       return;
     }
+    if (!this._idToGraphic) {
+      this._idToGraphic = new Map();
+    }
 
     // generate id mapping before data filter
     if (this._isCollectionBase) {
       if (!this._idToPoint) {
         this._idToPoint = new Map();
       }
-      const baseMark = currentBaseMarks[0];
-      const points = getPointsOfLineArea(baseMark as ILine | IArea);
+      let cur = 0;
+      for (let i = 0; i < currentBaseMarks.length; i++) {
+        const baseMark = currentBaseMarks[i];
+        const points = getPointsOfLineArea(baseMark as ILine | IArea);
 
-      if (points?.length) {
-        for (let i = 0; i < points.length; i++) {
-          const textData = data[i];
-          if (textData && points[i]) {
-            if (!isValid(textData.id)) {
-              textData.id = `vrender-component-${this.name}-${i}`;
+        if (points?.length) {
+          for (let j = 0; j < points.length; j++) {
+            const textData = data[cur];
+            if (textData && points[j]) {
+              if (!isValid(textData.id)) {
+                textData.id = `vrender-component-${this.name}-${cur}`;
+              }
+              this._idToPoint.set(textData.id, points[j]);
+              this._idToGraphic.set(textData.id, baseMark);
             }
-            this._idToPoint.set(textData.id, points[i]);
+
+            cur++;
           }
         }
       }
     } else {
-      if (!this._idToGraphic) {
-        this._idToGraphic = new Map();
-      }
       for (let i = 0; i < currentBaseMarks.length; i++) {
         const textData = data[i];
         const baseMark = currentBaseMarks[i] as IGraphic;
@@ -324,7 +330,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected getRelatedGrphic(item: LabelItem) {
-    return this._isCollectionBase ? this._baseMarks[0] : this._idToGraphic.get(item.id);
+    return this._idToGraphic.get(item.id);
   }
 
   protected _layout(data: LabelItem[] = []): IText[] {

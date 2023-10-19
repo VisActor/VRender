@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: add getCurrentEnv function",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

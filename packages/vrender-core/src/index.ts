@@ -50,3 +50,4 @@ export * from './common/xml';
 export * from './common/inversify-lite';
 export * from './constants';
 export * from './application';
+export * from './env-check';

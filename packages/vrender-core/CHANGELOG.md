@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 10 Oct 2023 11:48:48 GMT and should not be manually modified.
+This log was last generated on Wed, 18 Oct 2023 07:43:09 GMT and should not be manually modified.
+
+## 0.16.3
+Wed, 18 Oct 2023 07:43:09 GMT
+
+### Updates
+
+- fix: fix event issue of graphic.stage is null, closed #578
+- feat: set some params: `supportEvent` `supportsTouchEvents` `supportsPointerEvents` `supportsMouseEvents` `applyStyles` be writeable
+- fix: fix monotine defined, closed #547
+- fix: fix sideEffect of @visactor/vrender-core
+- feat(vrender-components): add LineDataLabel support DataLabel of line
+
+
 
 ## 0.16.2
 Tue, 10 Oct 2023 11:48:48 GMT

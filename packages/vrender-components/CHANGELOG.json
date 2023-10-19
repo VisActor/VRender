@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.3",
+      "tag": "@visactor/vrender-components_v0.16.3",
+      "date": "Wed, 18 Oct 2023 07:43:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue with poptip does not disappear when scrolling, closed #580"
+          },
+          {
+            "comment": "fix: brush and data-zoom should stop event propagation"
+          },
+          {
+            "comment": "fix: fix title component layout height"
+          },
+          {
+            "comment": "feat(vrender-components): add LineDataLabel support DataLabel of line\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.2",
       "tag": "@visactor/vrender-components_v0.16.2",
       "date": "Tue, 10 Oct 2023 11:48:48 GMT",

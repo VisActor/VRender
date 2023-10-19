@@ -59,12 +59,13 @@ export class DefaultLayerService implements ILayerService {
 
   createLayer(stage: IStage, options: Partial<ILayerParams> = { main: false }): ILayer {
     this.tryInit();
-    const layerMode = this.getRecommendedLayerType(options.layerMode);
+    let layerMode = this.getRecommendedLayerType(options.layerMode);
+    layerMode = options.canvasId ? 'static' : layerMode;
     const layerHandler = this.getLayerHandler(layerMode);
     const layer = new Layer(stage, this.global, stage.window, {
       main: false,
       ...options,
-      layerMode: options.layerMode ? 'static' : layerMode,
+      layerMode,
       canvasId: options.canvasId,
       layerHandler
     });

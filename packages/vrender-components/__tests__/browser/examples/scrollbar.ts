@@ -13,20 +13,24 @@ export function run() {
     width: 500,
     height: 12,
     padding: [2, 0],
+    realTime: false,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
     },
-    range: [0, 0.05]
+    range: [0, 0.05],
+    delayTime: 10
     // scrollRange: [0.4, 0.8]
   });
 
   const vScrollBar = new ScrollBar({
     direction: 'vertical',
+    realTime: false,
     x: 0,
     y: 0,
     width: 12,
     height: 500,
     padding: [0, 2],
+    delayTime: 110,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
       //

@@ -154,34 +154,34 @@ const specs = [
     path: 'data-zoom-preview-v',
     name: '水平 背景图表 dataZoom'
   },
-  // {
-  //   path: 'data-zoom-left',
-  //   name: '垂直 左 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-right',
-  //   name: '垂直 右 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-h',
-  //   name: '垂直 背景图表 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-set-state',
-  //   name: '改变状态 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-text-visible',
-  //   name: '文字显示 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-style',
-  //   name: '背景图表样式 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-middle-handler',
-  //   name: '中间手柄 dataZoom'
-  // },
+  {
+    path: 'data-zoom-left',
+    name: '垂直 左 dataZoom'
+  },
+  {
+    path: 'data-zoom-right',
+    name: '垂直 右 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-h',
+    name: '垂直 背景图表 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-set-state',
+    name: '改变状态 dataZoom'
+  },
+  {
+    path: 'data-zoom-text-visible',
+    name: '文字显示 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-style',
+    name: '背景图表样式 dataZoom'
+  },
+  {
+    path: 'data-zoom-middle-handler',
+    name: '中间手柄 dataZoom'
+  },
   {
     path: 'title',
     name: '标题'

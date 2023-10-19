@@ -64,7 +64,7 @@ export class DefaultLayerService implements ILayerService {
     const layer = new Layer(stage, this.global, stage.window, {
       main: false,
       ...options,
-      layerMode: options.canvasId ? 'static' : layerMode,
+      layerMode: options.layerMode ? 'static' : layerMode,
       canvasId: options.canvasId,
       layerHandler
     });

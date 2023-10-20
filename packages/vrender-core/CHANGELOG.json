@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.5",
+      "tag": "@visactor/vrender-core_v0.16.5",
+      "date": "Fri, 20 Oct 2023 04:22:42 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: `onStart` is missing in `AnimateGroup`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.4",
       "tag": "@visactor/vrender-core_v0.16.4",
       "date": "Thu, 19 Oct 2023 10:30:12 GMT",

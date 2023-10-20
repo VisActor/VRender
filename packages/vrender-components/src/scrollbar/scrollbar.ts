@@ -292,9 +292,9 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       vglobal.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this._slider.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
-      this._slider.addEventListener('pointerup', this._onSliderPointerUp);
-      this._slider.addEventListener('pointerupoutside', this._onSliderPointerUp);
+      this.stage.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      this.stage.addEventListener('pointerup', this._onSliderPointerUp);
+      this.stage.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }
   };
 

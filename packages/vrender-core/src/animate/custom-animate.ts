@@ -996,6 +996,12 @@ export class AnimateGroup extends ACustomAnimate<any> {
     return;
   }
 
+  onStart(): void {
+    this.customAnimates.forEach(a => {
+      a.onStart();
+    });
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (this.updating) {
       return;

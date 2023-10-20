@@ -550,7 +550,8 @@ export class Stage extends Group implements IStage {
     // 创建一个默认layer图层
     const layer = this.layerService.createLayer(this, {
       main: false,
-      layerMode
+      layerMode,
+      canvasId
     });
     this.appendChild(layer);
     return layer;

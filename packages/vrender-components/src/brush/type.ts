@@ -1,4 +1,5 @@
 import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
+import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
   /**
@@ -85,8 +86,6 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';
 export type IBrushMode = 'single' | 'multiple';
-
-export type IDelayType = 'debounce' | 'throttle';
 
 export enum IOperateType {
   drawStart = 'drawStart',

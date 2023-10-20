@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.4",
+      "tag": "@visactor/vrender-components_v0.16.4",
+      "date": "Thu, 19 Oct 2023 10:30:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(datazoom): support zoomlock & span & throttle setting and rename callback"
+          },
+          {
+            "comment": "feat: datazoom and scrollbar support realtime"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.3",
       "tag": "@visactor/vrender-components_v0.16.3",
       "date": "Wed, 18 Oct 2023 07:43:09 GMT",

@@ -1,5 +1,5 @@
 import type { IGroupGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender-core';
-import type { Direction } from '../interface';
+import type { Direction, IDelayType } from '../interface';
 import type { Padding } from '../core/type';
 export interface ScrollBarAttributes extends IGroupGraphicAttribute {
   x: number;
@@ -38,4 +38,20 @@ export interface ScrollBarAttributes extends IGroupGraphicAttribute {
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /*
+   * 事件触发延迟类型
+   * @default 'throttle'
+   */
+  delayType?: IDelayType;
+
+  /**
+   * 事件触发延迟时长
+   * @default 0
+   */
+  delayTime?: number;
+  /**
+   * 是否在操作时动态更新视图
+   * @default true
+   */
+  realTime?: boolean;
 }

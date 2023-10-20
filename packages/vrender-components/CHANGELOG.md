@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 19 Oct 2023 10:30:12 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Oct 2023 04:22:42 GMT and should not be manually modified.
+
+## 0.16.5
+Fri, 20 Oct 2023 04:22:42 GMT
+
+### Updates
+
+- fix: fix the data-label of line/area, when the group has multiple lines/areas
+
+
+- fix: if in non browser, use this.stage
 
 ## 0.16.4
 Thu, 19 Oct 2023 10:30:12 GMT

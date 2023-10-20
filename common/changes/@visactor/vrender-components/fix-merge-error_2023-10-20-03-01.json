@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: if in non browser, use this.stage",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

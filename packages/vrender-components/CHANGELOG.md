@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 18 Oct 2023 07:43:09 GMT and should not be manually modified.
+This log was last generated on Thu, 19 Oct 2023 10:30:12 GMT and should not be manually modified.
+
+## 0.16.4
+Thu, 19 Oct 2023 10:30:12 GMT
+
+### Updates
+
+- feat(datazoom): support zoomlock & span & throttle setting and rename callback
+- feat: datazoom and scrollbar support realtime
 
 ## 0.16.3
 Wed, 18 Oct 2023 07:43:09 GMT

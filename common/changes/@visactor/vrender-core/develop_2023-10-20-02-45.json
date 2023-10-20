@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: `onStart` is missing in `AnimateGroup`",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

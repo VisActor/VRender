@@ -1,6 +1,5 @@
 import { BandScale } from '@visactor/vscale';
 import type { IGraphic, Stage, Group, Circle, Text } from '@visactor/vrender-core';
-import { IGroup } from '@visactor/vrender-core';
 import { CircleAxis, CircleAxisGrid } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
@@ -77,10 +76,10 @@ describe('Circle Axis', () => {
     // label
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
     expect(axisLabels.childrenCount).toBe(8);
-    expect((axisLabels.children[1] as unknown as Text).attribute.textAlign).toBe('start');
+    expect((axisLabels.children[1] as unknown as Text).attribute.textAlign).toBe('center');
     expect((axisLabels.children[1] as unknown as Text).attribute.textBaseline).toBe('middle');
-    expect((axisLabels.children[5] as unknown as Text).attribute.textAlign).toBe('end');
-    expect((axisLabels.children[5] as unknown as Text).attribute.textBaseline).toBe('top');
+    expect((axisLabels.children[5] as unknown as Text).attribute.textAlign).toBe('center');
+    expect((axisLabels.children[5] as unknown as Text).attribute.textBaseline).toBe('middle');
 
     // tick & subTick
     const tickLineGroup = axis.getElementsByName(AXIS_ELEMENT_NAME.tickContainer)[0] as unknown as Group;

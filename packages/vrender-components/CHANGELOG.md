@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 23 Oct 2023 08:53:33 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Oct 2023 11:38:47 GMT and should not be manually modified.
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+### Updates
+
+- fix: fix the issue of error position of focus when legend item just has label
 
 ## 0.16.7
 Mon, 23 Oct 2023 08:53:33 GMT

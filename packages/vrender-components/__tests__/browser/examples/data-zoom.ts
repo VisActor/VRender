@@ -1,3 +1,4 @@
+import { vglobal } from '@visactor/vrender-core';
 import '@visactor/vrender';
 import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
@@ -56,6 +57,8 @@ export function run() {
     },
     disableTriggerEvent: true
   });
+
+  vglobal.supportsPointerEvents = false;
 
   const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
 

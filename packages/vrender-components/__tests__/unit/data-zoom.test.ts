@@ -319,10 +319,10 @@ describe('DataZoom component test', () => {
       }
     });
     dataZoom.setPreviewData(data);
-    dataZoom.setPreviewCallbackX(d => d.x);
-    dataZoom.setPreviewCallbackY(d => d.y);
-    dataZoom.setPreviewCallbackX1(d => d.x);
-    dataZoom.setPreviewCallbackY1(d => 265);
+    dataZoom.setPreviewPointsX(d => d.x);
+    dataZoom.setPreviewPointsY(d => d.y);
+    dataZoom.setPreviewPointsX1(d => d.x);
+    dataZoom.setPreviewPointsY1(d => 265);
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 
@@ -411,10 +411,10 @@ describe('DataZoom component test', () => {
       }
     });
     dataZoom.setPreviewData(data);
-    dataZoom.setPreviewCallbackX(d => d.x);
-    dataZoom.setPreviewCallbackY(d => d.y);
-    dataZoom.setPreviewCallbackX1(d => 265);
-    dataZoom.setPreviewCallbackY1(d => d.y);
+    dataZoom.setPreviewPointsX(d => d.x);
+    dataZoom.setPreviewPointsY(d => d.y);
+    dataZoom.setPreviewPointsX1(d => 265);
+    dataZoom.setPreviewPointsY1(d => d.y);
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 

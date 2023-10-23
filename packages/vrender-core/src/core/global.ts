@@ -40,11 +40,25 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.supportEvent;
   }
 
+  set supportEvent(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportEvent = support;
+  }
+
   get supportsTouchEvents(): boolean {
     if (!this._env) {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.supportsTouchEvents;
+  }
+
+  set supportsTouchEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsTouchEvents = support;
   }
 
   get supportsPointerEvents(): boolean {
@@ -54,6 +68,13 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.supportsPointerEvents;
   }
 
+  set supportsPointerEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsPointerEvents = support;
+  }
+
   get supportsMouseEvents(): boolean {
     if (!this._env) {
       this.setEnv(defaultEnv);
@@ -61,11 +82,25 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.supportsMouseEvents;
   }
 
+  set supportsMouseEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsMouseEvents = support;
+  }
+
   get applyStyles(): boolean {
     if (!this._env) {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.applyStyles;
+  }
+
+  set applyStyles(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.applyStyles = support;
   }
 
   envParams?: any;

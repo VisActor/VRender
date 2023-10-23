@@ -16,7 +16,9 @@ export default {
   },
   resolve: {
     alias: {
-      '@visactor/vrender': path.resolve('../packages/vrender/src/index.ts')
+      '@visactor/vrender': path.resolve('../packages/vrender/src/index.ts'),
+      '@visactor/vrender-core': path.resolve('../packages/vrender-core/src/index.ts'),
+      '@visactor/vrender-kits': path.resolve('../packages/vrender-kits/src/index.ts')
     }
   },
   plugins: [react()]

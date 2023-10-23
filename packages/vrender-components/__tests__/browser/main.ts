@@ -80,6 +80,10 @@ const specs = [
   },
   {
     path: 'label-line',
+    name: 'line 标签'
+  },
+  {
+    path: 'label-line-data',
     name: 'line 数据标签'
   },
   {
@@ -142,42 +146,42 @@ const specs = [
     path: 'pick-test',
     name: '拾取测试'
   },
-  // {
-  //   path: 'data-zoom',
-  //   name: '水平 dataZoom'
-  // },
+  {
+    path: 'data-zoom',
+    name: '水平 dataZoom'
+  },
   {
     path: 'data-zoom-preview-v',
     name: '水平 背景图表 dataZoom'
   },
-  // {
-  //   path: 'data-zoom-left',
-  //   name: '垂直 左 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-right',
-  //   name: '垂直 右 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-h',
-  //   name: '垂直 背景图表 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-set-state',
-  //   name: '改变状态 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-text-visible',
-  //   name: '文字显示 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-style',
-  //   name: '背景图表样式 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-middle-handler',
-  //   name: '中间手柄 dataZoom'
-  // },
+  {
+    path: 'data-zoom-left',
+    name: '垂直 左 dataZoom'
+  },
+  {
+    path: 'data-zoom-right',
+    name: '垂直 右 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-h',
+    name: '垂直 背景图表 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-set-state',
+    name: '改变状态 dataZoom'
+  },
+  {
+    path: 'data-zoom-text-visible',
+    name: '文字显示 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-style',
+    name: '背景图表样式 dataZoom'
+  },
+  {
+    path: 'data-zoom-middle-handler',
+    name: '中间手柄 dataZoom'
+  },
   {
     path: 'title',
     name: '标题'
@@ -213,6 +217,10 @@ const specs = [
   {
     path: 'brush',
     name: 'brush'
+  },
+  {
+    path: 'checkbox',
+    name: 'checkbox'
   }
 ];
 
@@ -305,6 +313,15 @@ const run = () => {
     },
     true
   );
+
+  document.addEventListener('mousedown', () => {
+    // eslint-disable-next-line no-console
+    console.log('document mousedown');
+    document.addEventListener('mousemove', () => {
+      // eslint-disable-next-line no-console
+      console.log('document mousemove');
+    });
+  });
 };
 
 run();

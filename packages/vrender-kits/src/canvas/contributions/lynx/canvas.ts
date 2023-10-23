@@ -18,6 +18,25 @@ export class LynxCanvas extends BaseCanvas implements ICanvas {
     this._context = new LynxContext2d(this, this._dpr);
   }
 
+  resize(width: number, height: number): void {
+    // 设置Canvas的w和h
+    this._pixelWidth = width * this._dpr;
+    this._pixelHeight = height * this._dpr;
+    this._displayWidth = width;
+    this._displayHeight = height;
+
+    this._nativeCanvas.width = this._pixelWidth;
+    this._nativeCanvas.height = this._pixelHeight;
+    if ((this._nativeCanvas as any).nativeCanvas) {
+      (this._nativeCanvas as any).nativeCanvas.width = this._pixelWidth;
+      (this._nativeCanvas as any).nativeCanvas.height = this._pixelHeight;
+    }
+
+    // 设置context的dpr
+    const _context = this._context;
+    _context.dpr = this._dpr;
+  }
+
   release(...params: any): void {
     return;
   }

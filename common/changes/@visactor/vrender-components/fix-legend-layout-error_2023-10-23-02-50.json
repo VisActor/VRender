@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "refactor: use polygon to replace line to support cornerRadius",
+      "comment": "fix: fix the layout issue of legend item because of the error logic of `focusStartX`",
       "type": "none"
     }
   ],

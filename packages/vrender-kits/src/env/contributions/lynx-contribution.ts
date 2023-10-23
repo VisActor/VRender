@@ -63,7 +63,8 @@ function makeUpCanvas(
       getBoundingClientRect: () => ({
         height: domref.height,
         width: domref.width
-      })
+      }),
+      nativeCanvas: _canvas
     };
 
     canvasMap.set(id, canvas);

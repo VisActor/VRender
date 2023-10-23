@@ -484,6 +484,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       );
 
       focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+    } else {
+      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
     }
 
     if (focusShape) {

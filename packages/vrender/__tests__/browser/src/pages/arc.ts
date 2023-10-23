@@ -184,7 +184,7 @@ export const page = () => {
     poptip: true
   });
 
-  const layer = stage.createLayer('virtual');
+  const layer = stage.createLayer(null, 'virtual');
   const t = createText({
     text: '这是第二个图层',
     x: 100,

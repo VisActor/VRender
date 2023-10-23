@@ -227,6 +227,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const itemHeight = itemGroup.attribute.height;
       this._itemHeight = Math.max(this._itemHeight, itemHeight);
       maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
+
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
       if (isHorizontal) {
@@ -420,12 +421,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(labelShape);
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
-
-    focusStartX += shapeSize / 2 + shapeSpace + labelShape.AABBBounds.width() + labelSpace;
     if (isValid(value)) {
       const valueSpace = get(valueAttr, 'space', focus ? DEFAULT_VALUE_SPACE : 0);
       const valueShape = createText({
-        x: focusStartX + labelSpace,
+        x: 0,
         y: 0,
         textAlign: 'start',
         textBaseline: 'middle',
@@ -462,13 +461,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         } else {
           valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
         }
+
         if (valueAttr.alignRight) {
           valueShape.setAttributes({
             // @ts-ignore
             textAlign: 'right',
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
+        } else {
+          valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
         }
+      } else {
+        valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
       }
       focusStartX = valueShape.AABBBounds.x2 + valueSpace;
 
@@ -478,6 +482,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         'maxLineWidth',
         this._itemWidthByUser - parsedPadding[1] - parsedPadding[3] - shapeSize - shapeSpace - focusSpace
       );
+
+      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
     }
 
     if (focusShape) {

@@ -487,9 +487,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               x2: text.AABBBounds.x2 + dx,
               y1: text.AABBBounds.y1 + dy,
               y2: text.AABBBounds.y2 + dy
-            },
-            undefined,
-            overlapPadding
+            }
+            // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
           )
         ) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });

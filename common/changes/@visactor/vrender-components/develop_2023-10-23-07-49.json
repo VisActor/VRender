@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

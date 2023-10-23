@@ -1,5 +1,5 @@
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { AABBBounds, Bounds, Point } from '@visactor/vutils';
+import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
   IGroup,
@@ -236,7 +236,13 @@ export class Stage extends Group implements IStage {
 
     // 创建一个默认layer图层
     // this.appendChild(new Layer(this, this.global, this.window, { main: true }));
-    this.appendChild(this.layerService.createLayer(this, { main: true }));
+    this.appendChild(
+      this.layerService.createLayer(
+        this,
+        // 如果传入的canvas是string的id，就传入，避免被判定要使用离屏canvas
+        params.canvas && isString(params.canvas) ? { main: true, canvasId: params.canvas } : { main: true }
+      )
+    );
 
     this.nextFrameRenderLayerSet = new Set();
     this.willNextFrameRender = false;

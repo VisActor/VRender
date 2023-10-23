@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.7",
+      "tag": "@visactor/vrender-components_v0.16.7",
+      "date": "Mon, 23 Oct 2023 08:53:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.6",
       "tag": "@visactor/vrender-components_v0.16.6",
       "date": "Mon, 23 Oct 2023 06:30:33 GMT",

@@ -561,11 +561,20 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     return {
-      ...point,
+      ...this.getLabelPosition(point, vector, text, textStyle),
       text,
       lineHeight: textStyle?.fontSize,
       ...textStyle
     };
+  }
+
+  protected getLabelPosition(
+    point: Point,
+    vector: [number, number],
+    text: string | number,
+    style: Partial<ITextGraphicAttribute>
+  ) {
+    return point;
   }
 
   private _transformItems(items: AxisItem[]) {

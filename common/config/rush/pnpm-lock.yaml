@@ -14,7 +14,7 @@ importers:
       '@types/react-dom': ^18.0.0
       '@visactor/vchart': 1.3.0
       '@visactor/vgrammar': ~0.5.7
-      '@visactor/vrender': workspace:0.16.5
+      '@visactor/vrender': workspace:0.16.6
       '@visactor/vutils': ~0.16.0
       '@vitejs/plugin-react': 3.1.0
       axios: ^1.4.0
@@ -71,7 +71,7 @@ importers:
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
       '@types/react-reconciler': ^0.28.2
-      '@visactor/vrender': workspace:0.16.5
+      '@visactor/vrender': workspace:0.16.6
       '@visactor/vutils': ~0.16.0
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -109,8 +109,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/react-vrender': workspace:0.16.5
-      '@visactor/vrender': workspace:0.16.5
+      '@visactor/react-vrender': workspace:0.16.6
+      '@visactor/vrender': workspace:0.16.6
       '@visactor/vutils': ~0.16.0
       '@vitejs/plugin-react': 3.1.0
       eslint: ~8.18.0
@@ -149,8 +149,9 @@ importers:
       '@types/jest': ^26.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vrender-core': workspace:0.16.5
-      '@visactor/vrender-kits': workspace:0.16.5
+      '@visactor/vrender-core': workspace:0.16.6
+      '@visactor/vrender-kits': workspace:0.16.6
+      '@visactor/vutils': ~0.16.0
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
       eslint: ~8.18.0
@@ -173,6 +174,7 @@ importers:
       '@types/jest': 26.0.24
       '@types/react': 18.2.25
       '@types/react-dom': 18.2.11
+      '@visactor/vutils': 0.16.1
       '@vitejs/plugin-react': 3.1.0_vite@3.2.6
       canvas: 2.11.2
       eslint: 8.18.0
@@ -192,8 +194,8 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
-      '@visactor/vrender-core': workspace:0.16.5
-      '@visactor/vrender-kits': workspace:0.16.5
+      '@visactor/vrender-core': workspace:0.16.6
+      '@visactor/vrender-kits': workspace:0.16.6
       '@visactor/vscale': ~0.16.0
       '@visactor/vutils': ~0.16.0
       eslint: ~8.18.0
@@ -275,7 +277,7 @@ importers:
       '@types/node-fetch': 2.6.4
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vrender-core': workspace:0.16.5
+      '@visactor/vrender-core': workspace:0.16.6
       '@visactor/vutils': ~0.16.0
       '@vitejs/plugin-react': 3.1.0
       canvas: 2.11.2
@@ -355,8 +357,8 @@ importers:
       '@rushstack/eslint-patch': ~1.1.4
       '@types/node': '*'
       '@types/node-fetch': 2.6.4
-      '@visactor/vrender': workspace:0.16.5
-      '@visactor/vrender-components': workspace:0.16.5
+      '@visactor/vrender': workspace:0.16.6
+      '@visactor/vrender-components': workspace:0.16.6
       eslint: ~8.18.0
       form-data: ~4.0.0
       node-fetch: 2.6.6
@@ -2704,13 +2706,11 @@ packages:
 
   /@turf/helpers/6.5.0:
     resolution: {integrity: sha512-VbI1dV5bLFzohYYdgqwikdMVpe7pJ9X3E+dlr425wa2/sMJqYDhTO++ec38/pcPvPE6oD9WEEeU3Xu3gza+VPw==}
-    dev: false
 
   /@turf/invariant/6.5.0:
     resolution: {integrity: sha512-Wv8PRNCtPD31UVbdJE/KVAWKe7l6US+lJItRR/HOEW3eh+U/JwRCSUl/KZ7bmjM/C+zLNoreM2TU6OoLACs4eg==}
     dependencies:
       '@turf/helpers': 6.5.0
-    dev: false
 
   /@turf/meta/3.14.0:
     resolution: {integrity: sha512-OtXqLQuR9hlQ/HkAF/OdzRea7E0eZK1ay8y8CBXkoO2R6v34CsDrWYLMSo0ZzMsaQDpKo76NPP2GGo+PyG1cSg==}
@@ -3375,7 +3375,6 @@ packages:
       '@turf/helpers': 6.5.0
       '@turf/invariant': 6.5.0
       eventemitter3: 4.0.7
-    dev: false
 
   /@vitejs/plugin-react/3.1.0_vite@3.2.6:
     resolution: {integrity: sha512-AfgcRL8ZBhAlc3BFdigClmTUMISmmzHn7sB2h9U1odvc5U/MjWXsAaz18b/WoppUTDBzxOJwo2VdClfUcItu9g==}
@@ -5629,7 +5628,6 @@ packages:
 
   /eventemitter3/4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
-    dev: false
 
   /exec-sh/0.3.6:
     resolution: {integrity: sha512-nQn+hI3yp+oD0huYhKwvYI32+JFeq+XkNcD1GAo3Y/MjxsfVGmrrzrnzjWiNY6f+pUCP440fThsFh5gZrRAU/w==}

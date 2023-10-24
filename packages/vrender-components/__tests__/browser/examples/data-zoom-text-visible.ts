@@ -15,7 +15,7 @@ export function run() {
   console.log('DataZoom');
 
   const dataZoom = new DataZoom({
-    start: 0.2,
+    start: 0,
     end: 0.5,
     position: {
       x: 50,
@@ -26,10 +26,10 @@ export function run() {
       height: 30
     },
     brushSelect: false,
+    showDetail: 'auto',
     startTextStyle: {
       formatMethod: text => text + '_format'
-    },
-    showDetail: true
+    }
   });
   dataZoom.setStatePointToData(state => state + '_value');
   dataZoom.setPreviewData(data);
@@ -39,4 +39,5 @@ export function run() {
   dataZoom.setPreviewPointsY1(d => 265);
 
   const stage = render([dataZoom], 'main');
+  console.log('dataz', dataZoom);
 }

@@ -673,7 +673,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     /** 中间手柄 */
 
     /** 左右文字 */
-    this.renderText();
+    if (this._showText) {
+      this.renderText();
+    }
 
     /** 左右 和 中间手柄 */
     if (this._isHorizontal) {

@@ -75,7 +75,8 @@ export class MarkLine extends Marker<MarkLineAttrs> {
       endSymbol,
       lineStyle,
       mainSegmentIndex,
-      multiSegment
+      multiSegment,
+      pickable: false // 组件容器本身不参与拾取
     });
     line.name = 'mark-line-line';
     this._line = line;

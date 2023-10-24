@@ -250,7 +250,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     };
 
     const line = new Segment({
-      points: []
+      points: [],
+      pickable: false // 组件容器本身不参与拾取
     });
     line.name = 'mark-point-line';
     this._line = line;

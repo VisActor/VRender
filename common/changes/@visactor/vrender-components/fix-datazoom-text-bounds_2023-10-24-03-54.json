@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "fix: fix the issue of error position of focus when legend item just has label",
+      "comment": "fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281",
       "type": "none"
     }
   ],

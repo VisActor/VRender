@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: add checkbox indeterminate state",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

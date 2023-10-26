@@ -55,7 +55,12 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
   // @ts-ignore
   setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
     // overwrite when previous or next attribute is function
-    if (isPlainObject(this.attribute[key]) && !isFunction(this.attribute[key]) && !isFunction(value)) {
+    if (
+      isPlainObject(this.attribute[key]) &&
+      isPlainObject(value) &&
+      !isFunction(this.attribute[key]) &&
+      !isFunction(value)
+    ) {
       merge(this.attribute[key], value);
     } else {
       this.attribute[key] = value;

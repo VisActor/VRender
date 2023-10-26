@@ -297,6 +297,9 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     this.optmize(params.optimize);
+    if (this._background && isString(this._background)) {
+      this.setAttributes({ background: this._background });
+    }
   }
 
   // 优化策略

@@ -1358,12 +1358,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.resources.set(url, cache);
     if (typeof image === 'string') {
       cache.state = 'loading';
-      if (isValidUrl(image) || isBase64(image)) {
-        ResourceLoader.GetImage(image, this);
-        this.backgroundImg = this.backgroundImg || background;
-      } else if (image.startsWith('<svg')) {
+      if (image.startsWith('<svg')) {
         // TODO 封装isSvg到@visactor/vutils
         ResourceLoader.GetSvg(image, this);
+        this.backgroundImg = this.backgroundImg || background;
+      } else if (isValidUrl(image) || image.includes('/') || isBase64(image)) {
+        ResourceLoader.GetImage(image, this);
         this.backgroundImg = this.backgroundImg || background;
       }
     } else {

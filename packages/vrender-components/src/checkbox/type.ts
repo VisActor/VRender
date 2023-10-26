@@ -11,7 +11,10 @@ export type CheckboxText = {
   disableFill?: IColor;
 } & IWrapTextGraphicAttribute;
 
-export type CheckboxIcon = IImageGraphicAttribute;
+export type CheckboxIcon = {
+  checkIconImage?: string | HTMLImageElement | HTMLCanvasElement;
+  indeterminateIconImage?: string | HTMLImageElement | HTMLCanvasElement;
+} & Omit<IImageGraphicAttribute, 'image'>;
 
 export type CheckboxRect = {
   disableFill?: IColor;
@@ -25,6 +28,7 @@ export type CheckboxAttributes = IGroupGraphicAttribute & {
   interactive?: boolean;
   disabled?: boolean;
   checked?: boolean;
+  indeterminate?: boolean;
   /**
    * 图例文字
    */

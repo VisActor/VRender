@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 23 Oct 2023 11:38:47 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Oct 2023 02:21:19 GMT and should not be manually modified.
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: stage background support image
 
 ## 0.16.8
 Mon, 23 Oct 2023 11:38:47 GMT

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-core_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: stage background support image"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.8",
       "tag": "@visactor/vrender-core_v0.16.8",
       "date": "Mon, 23 Oct 2023 11:38:47 GMT",

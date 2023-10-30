@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "fix: fix issue with xul and html attribute, closed #634",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

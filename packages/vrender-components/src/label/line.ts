@@ -26,7 +26,7 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
   }
 
   protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}) {
-    if (graphic.type !== 'line') {
+    if (!graphic || graphic.type !== 'line') {
       return super.getGraphicBounds(graphic, point);
     }
     const { position = 'end' } = this.attribute;

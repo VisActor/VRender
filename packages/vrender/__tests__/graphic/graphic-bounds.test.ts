@@ -154,7 +154,7 @@ describe('Graphic-Bounds', () => {
     rect = createRect({
       x: 100,
       y: 100,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(100);
@@ -164,7 +164,7 @@ describe('Graphic-Bounds', () => {
 
     rect = createRect({
       y: 100,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(0);
@@ -175,7 +175,7 @@ describe('Graphic-Bounds', () => {
     rect = createRect({
       y: 100,
       x: NaN,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(Number.MAX_VALUE);

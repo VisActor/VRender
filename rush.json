@@ -23,19 +23,22 @@
       "packageName": "@visactor/vrender-components",
       "projectFolder": "packages/vrender-components",
       "tags": ["package"],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
     },
     {
       "packageName": "@visactor/react-vrender-utils",
       "projectFolder": "packages/react-vrender-utils",
       "tags": ["package"],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
     },
     {
       "packageName": "@visactor/react-vrender",
       "projectFolder": "packages/react-vrender",
       "tags": ["package"],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
     },
     {
       "packageName": "@visactor/vrender-kits",
@@ -48,13 +51,15 @@
       "packageName": "@visactor/vrender-core",
       "projectFolder": "packages/vrender-core",
       "tags": ["package"],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
     },
     {
       "packageName": "@visactor/vrender",
       "projectFolder": "packages/vrender",
       "tags": ["package"],
-      "shouldPublish": false
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
     },
     {
       "packageName": "@internal/bundler",

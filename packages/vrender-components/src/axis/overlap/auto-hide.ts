@@ -117,8 +117,8 @@ export function autoHide(labels: IText[], config: HideConfig) {
     if (items.length < 3 && !last(source).attribute.opacity) {
       if (items.length > 1) {
         last(items).setAttribute('opacity', 0);
+        last(source).setAttribute('opacity', 1);
       }
-      // last(source).setAttribute('opacity', 1);
     }
   }
 

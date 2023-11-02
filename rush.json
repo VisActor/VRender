@@ -37,8 +37,7 @@
       "packageName": "@visactor/react-vrender",
       "projectFolder": "packages/react-vrender",
       "tags": ["package"],
-      "shouldPublish": true,
-      "versionPolicyName": "vrenderMain"
+      "shouldPublish": false
     },
     {
       "packageName": "@visactor/vrender-kits",

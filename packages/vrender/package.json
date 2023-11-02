@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@visactor/vrender-core": "workspace:0.16.9",
-    "@visactor/vrender-kits": "workspace:0.16.9"
+    "@visactor/vrender-kits": "workspace:0.16.10"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

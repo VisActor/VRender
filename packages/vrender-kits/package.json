@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.16.9",
+  "version": "0.16.10",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the lastvisible logic of axis's auto-hide",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

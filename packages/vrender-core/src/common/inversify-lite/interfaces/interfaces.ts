@@ -149,8 +149,8 @@ export namespace interfaces {
   }
 
   export interface QueryableString {
-    startsWith(searchString: string): boolean;
-    endsWith(searchString: string): boolean;
+    // startsWith(searchString: string): boolean;
+    // endsWith(searchString: string): boolean;
     contains(searchString: string): boolean;
     equals(compareString: string): boolean;
     value(): string;

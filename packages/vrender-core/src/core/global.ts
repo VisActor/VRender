@@ -15,6 +15,10 @@ import { SyncHook } from '../tapable';
 import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
 
+const canvas = document.createElement('canvas');
+canvas.width = 500;
+canvas.height = 500;
+
 const defaultEnv: EnvType = 'browser';
 @injectable()
 export class DefaultGlobal implements IGlobal {
@@ -103,6 +107,8 @@ export class DefaultGlobal implements IGlobal {
     this.envContribution.applyStyles = support;
   }
 
+  optimizeVisible: boolean;
+
   envParams?: any;
   declare measureTextMethod: 'native' | 'simple' | 'quick';
   declare hooks: {
@@ -119,6 +125,7 @@ export class DefaultGlobal implements IGlobal {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])
     };
     this.measureTextMethod = 'native';
+    this.optimizeVisible = false;
   }
 
   protected bindContribution(params?: any): void | Promise<any> {

@@ -21,6 +21,13 @@ import type {
 import { RectRenderContribution } from './contributions/constants';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
 import { BaseRender } from './base-render';
+import {
+  defaultRectBackgroundRenderContribution,
+  defaultRectRenderContribution,
+  defaultRectTextureRenderContribution,
+  splitRectAfterRenderContribution,
+  splitRectBeforeRenderContribution
+} from './contributions';
 
 @injectable()
 export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraphicRender {
@@ -33,6 +40,13 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
     protected readonly rectRenderContribitions: IContributionProvider<IRectRenderContribution>
   ) {
     super();
+    this.builtinContributions = [
+      defaultRectRenderContribution,
+      defaultRectBackgroundRenderContribution,
+      defaultRectTextureRenderContribution,
+      splitRectAfterRenderContribution,
+      splitRectBeforeRenderContribution
+    ];
     this.init(rectRenderContribitions);
   }
 

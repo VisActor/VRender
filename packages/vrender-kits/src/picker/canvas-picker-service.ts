@@ -9,8 +9,8 @@ import {
   DefaultPickService,
   DrawContribution,
   PickItemInterceptor,
-  VGlobal,
-  canvasAllocate
+  canvasAllocate,
+  application
 } from '@visactor/vrender-core';
 import type {
   ICanvas,
@@ -55,27 +55,15 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     @inject(ContributionProvider)
     @named(CanvasPickerContribution)
     protected readonly contributions: IContributionProvider<IGraphicPicker>,
-    @inject(CanvasCirclePicker) private readonly circlePicker: IGraphicPicker, // 默认的circlePicker
-    @inject(CanvasRectPicker) private readonly rectPicker: IGraphicPicker, // 默认的rectPicker
-    @inject(CanvasArcPicker) private readonly arcPicker: IGraphicPicker, // 默认的arcPicker
-    @inject(CanvasAreaPicker) private readonly areaPicker: IGraphicPicker, // 默认的areaPicker
-    @inject(CanvasImagePicker) private readonly imagePicker: IGraphicPicker, // 默认的imagePicker
-    @inject(CanvasLinePicker) private readonly linePicker: IGraphicPicker, // 默认的linePicker
-    @inject(CanvasPathPicker) private readonly pathPicker: IGraphicPicker, // 默认的pathPicker
-    @inject(CanvasSymbolPicker) private readonly symbolPicker: IGraphicPicker, // 默认的symbolPicker
-    @inject(CanvasTextPicker) private readonly textPicker: IGraphicPicker, // 默认的textPicker
-    @inject(CanvasPolygonPicker) private readonly polygonPicker: IGraphicPicker, // 默认的polygonPicker
-    @inject(CanvasRichTextPicker) private readonly richtextPicker: IGraphicPicker, // 默认的richtextPicker
 
     @inject(DrawContribution)
     public readonly drawContribution: IDrawContribution,
-    @inject(VGlobal) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
     protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {
-    super(global, pickItemInterceptorContributions);
+    super(pickItemInterceptorContributions);
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {
       this.configure(global, env);
     });

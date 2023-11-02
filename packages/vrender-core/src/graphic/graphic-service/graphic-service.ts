@@ -47,13 +47,9 @@ import type {
   IPathBoundsContribution,
   IContributionProvider
 } from '../../interface';
-import { RectBoundsContribution } from './rect-contribution';
 import { textDrawOffsetX } from '../../common/text';
-import { SymbolBoundsContribution } from './symbol-contribution';
+import { DefaultSymbolOuterBorderBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
-import { CircleBoundsContribution } from './circle-contribution';
-import { ArcBoundsContribution } from './arc-contribution';
-import { PathBoundsContribution } from './path-contribution';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../common/contribution-provider';
@@ -61,6 +57,7 @@ import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { circleBounds } from '../../common/utils';
 import { GraphicCreator } from '../constants';
+import { DefaultOuterBorderBoundsContribution } from './common-contribution';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix
@@ -628,24 +625,7 @@ export class DefaultGraphicService implements IGraphicService {
   // 临时bounds，用作缓存
   protected tempAABBBounds1: AABBBounds;
   protected tempAABBBounds2: AABBBounds;
-  constructor(
-    @inject(GraphicCreator) public readonly creator: IGraphicCreator,
-    @inject(ContributionProvider)
-    @named(RectBoundsContribution)
-    protected readonly rectBoundsContribitions: IContributionProvider<IRectBoundsContribution>,
-    @inject(ContributionProvider)
-    @named(SymbolBoundsContribution)
-    protected readonly symbolBoundsContribitions: IContributionProvider<ISymbolBoundsContribution>,
-    @inject(ContributionProvider)
-    @named(CircleBoundsContribution)
-    protected readonly circleBoundsContribitions: IContributionProvider<ICircleBoundsContribution>,
-    @inject(ContributionProvider)
-    @named(ArcBoundsContribution)
-    protected readonly arcBoundsContribitions: IContributionProvider<IArcBoundsContribution>,
-    @inject(ContributionProvider)
-    @named(PathBoundsContribution)
-    protected readonly pathBoundsContribitions: IContributionProvider<IPathBoundsContribution>
-  ) {
+  constructor(@inject(GraphicCreator) public readonly creator: IGraphicCreator) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),
       onSetStage: new SyncHook<[IGraphic, IStage]>(['graphic', 'stage']),
@@ -669,6 +649,11 @@ export class DefaultGraphicService implements IGraphicService {
     };
     this.tempAABBBounds1 = new AABBBounds();
     this.tempAABBBounds2 = new AABBBounds();
+    this._rectBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
+    this._symbolBoundsContribitions = [new DefaultSymbolOuterBorderBoundsContribution()];
+    this._circleBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
+    this._arcBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
+    this._pathBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
   }
   onAttributeUpdate(graphic: IGraphic) {
     if (this.hooks.onAttributeUpdate.taps.length) {
@@ -742,9 +727,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    if (!this._rectBoundsContribitions) {
-      this._rectBoundsContribitions = this.rectBoundsContribitions.getContributions() || [];
-    }
     this._rectBoundsContribitions.length &&
       this._rectBoundsContribitions.forEach(c => {
         c.updateBounds(attribute, rectTheme, tb1, graphic);
@@ -930,9 +912,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    if (!this._pathBoundsContribitions) {
-      this._pathBoundsContribitions = this.pathBoundsContribitions.getContributions() || [];
-    }
     this._pathBoundsContribitions.length &&
       this._pathBoundsContribitions.forEach(c => {
         c.updateBounds(attribute, pathTheme, tb1, graphic);
@@ -1226,10 +1205,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    // 额外扩展bounds
-    if (!this._circleBoundsContribitions) {
-      this._circleBoundsContribitions = this.circleBoundsContribitions.getContributions() || [];
-    }
     this._circleBoundsContribitions.length &&
       this._circleBoundsContribitions.forEach(c => {
         c.updateBounds(attribute, circleTheme, tb1, graphic);
@@ -1291,10 +1266,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    // 额外扩展bounds
-    if (!this._arcBoundsContribitions) {
-      this._arcBoundsContribitions = this.arcBoundsContribitions.getContributions() || [];
-    }
     this._arcBoundsContribitions.length &&
       this._arcBoundsContribitions.forEach(c => {
         c.updateBounds(attribute, arcTheme, tb1, graphic);
@@ -1371,10 +1342,6 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    // 额外扩展bounds
-    if (!this._symbolBoundsContribitions) {
-      this._symbolBoundsContribitions = this.symbolBoundsContribitions.getContributions() || [];
-    }
     this._symbolBoundsContribitions.length &&
       this._symbolBoundsContribitions.forEach(c => {
         c.updateBounds(attribute, symbolTheme, tb1, graphic);

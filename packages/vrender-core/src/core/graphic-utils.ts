@@ -4,13 +4,12 @@ import type { ITextMeasure, TextOptionsType } from '../interface/text';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../common/contribution-provider';
-import { wrapCanvas } from '../canvas/util';
 import { DefaultTextStyle } from '../graphic/config';
 import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
 import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
-import { VGlobal } from '../constants';
 import { canvasAllocate } from '../allocator/canvas-allocate';
+import { application } from '../application';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -18,14 +17,15 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   context?: IContext2d | null;
   _textMeasure: ITextMeasure;
   configured: boolean;
+  global: IGlobal;
 
   constructor(
     @inject(ContributionProvider)
     @named(TextMeasureContribution)
-    protected readonly contributions: IContributionProvider<ITextMeasure>,
-    @inject(VGlobal) public readonly global: IGlobal
+    protected readonly contributions: IContributionProvider<ITextMeasure>
   ) {
     this.configured = false;
+    this.global = application.global;
     this.global.hooks.onSetEnv.tap('graphic-util', (lastEnv, env, global) => {
       this.configured = false;
       this.configure(global, env);

@@ -20,15 +20,14 @@ import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
 import type { IAABBBounds, IBounds, IMatrixLike } from '@visactor/vutils';
 import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
-import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
-import { VGlobal } from '../../../constants';
 import { boundsAllocate } from '../../../allocator/bounds-allocate';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
+import { application } from '../../../application';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -43,15 +42,15 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare currentRenderService: IRenderService;
   declare InterceptorContributions: IDrawItemInterceptorContribution[];
 
-  @inject(VGlobal) global: IGlobal;
+  declare global: IGlobal;
+  declare layerService: ILayerService;
 
   constructor(
     // @inject(ContributionProvider)
     // @named(GraphicRender)
     // protected readonly contributions: ContributionProvider<IGraphicRender>,
     @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
-    @inject(LayerService) protected readonly layerService: ILayerService, // 默认的polygonRender
+    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
@@ -62,6 +61,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.styleRenderMap = new Map();
     this.dirtyBounds = new Bounds();
     this.backupDirtyBounds = new Bounds();
+    this.global = application.global;
+    this.layerService = application.layerService;
   }
 
   @postConstruct()
@@ -289,7 +290,8 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   getRenderContribution(graphic: IGraphic): IGraphicRender | null {
-    let renderer = this.renderSelector.selector(graphic);
+    // let renderer = this.renderSelector.selector(graphic);
+    let renderer;
     if (!renderer) {
       renderer = this.selectRenderByNumberType(graphic.numberType);
     }

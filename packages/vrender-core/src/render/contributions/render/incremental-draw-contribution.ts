@@ -22,8 +22,6 @@ import { DrawItemInterceptor } from './draw-interceptor';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { foreachAsync } from '../../../common/sort';
-import type { ILayerService } from '../../../interface/core';
-import { VGlobal } from '../../../constants';
 
 enum STATUS {
   NORMAL = 0,
@@ -47,23 +45,21 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
   protected lastRenderService: IRenderService;
   protected lastDrawContext: IDrawContext;
   protected count: number;
-  @inject(VGlobal) global: IGlobal;
 
   constructor(
     // @inject(ContributionProvider)
     // @named(GraphicRender)
     // protected readonly contributions: ContributionProvider<IGraphicRender>,
     @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
+    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     @inject(DefaultIncrementalCanvasLineRender) protected readonly lineRender: IGraphicRender, // 默认的lineRender
     @inject(DefaultIncrementalCanvasAreaRender) protected readonly areaRender: IGraphicRender, // 默认的lineRender
-    @inject(LayerService) protected readonly layerService: ILayerService, // 默认的polygonRender
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
     protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
-    super(contributions, renderSelector, layerService, drawItemInterceptorContributions);
+    super(contributions, drawItemInterceptorContributions);
   }
 
   init(): void {

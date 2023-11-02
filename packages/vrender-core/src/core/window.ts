@@ -12,7 +12,7 @@ import type {
 } from '../interface';
 import { container } from '../container';
 import { SyncHook } from '../tapable';
-import { VGlobal } from '../constants';
+import { application } from '../application';
 
 export const VWindow = Symbol.for('VWindow');
 
@@ -69,14 +69,14 @@ export class DefaultWindow implements IWindow {
   declare mainCanvas: ICanvas;
   declare layerCanvas: ICanvas[];
   declare actived: boolean;
+  declare global: IGlobal;
   get dpr(): number {
     return this._handler.getDpr();
   }
 
-  constructor(
-    @inject(VGlobal) public readonly global: IGlobal // @inject(ContributionProvider) // @named(WindowHandlerContribution) // protected readonly contributions: ContributionProvider<IWindowHandlerContribution>
-  ) {
+  constructor() {
     this._uid = Generator.GenAutoIncrementId();
+    this.global = application.global;
   }
 
   @postConstruct()

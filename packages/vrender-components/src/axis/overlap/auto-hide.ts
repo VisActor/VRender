@@ -7,6 +7,7 @@ import type { IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { isEmpty, isFunction, isRectIntersect, isRotateAABBIntersect, last } from '@visactor/vutils';
 import type { CustomMethod } from '../type';
+import { genRotateBounds } from './util';
 
 function itemIntersect(item1: IText, item2: IText) {
   return (
@@ -24,7 +25,7 @@ const methods = {
   greedy: function (items: IText[], sep: number) {
     let a: IText;
     return items.filter((b, i) => {
-      if (!i || !intersect(a.AABBBounds, b.AABBBounds, sep)) {
+      if (!i || !intersect(a, b, sep)) {
         a = b;
         return 1;
       }
@@ -33,13 +34,26 @@ const methods = {
   }
 };
 
-function intersect(a: IBounds, b: IBounds, sep: number) {
-  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+function intersect(textA: IText, textB: IText, sep: number) {
+  const a = textA.AABBBounds;
+  const b = textB.AABBBounds;
+  return (
+    sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2) &&
+    (textA.rotatedBounds && textB.rotatedBounds
+      ? sep >
+        Math.max(
+          textB.rotatedBounds.x1 - textA.rotatedBounds.x2,
+          textA.rotatedBounds.x1 - textB.rotatedBounds.x2,
+          textB.rotatedBounds.y1 - textA.rotatedBounds.y2,
+          textA.rotatedBounds.y1 - textB.rotatedBounds.y2
+        )
+      : true)
+  );
 }
 
 function hasOverlap(items: IText[], pad: number) {
-  for (let i = 1, n = items.length, a = items[0].AABBBounds, b; i < n; a = b, ++i) {
-    if (intersect(a, (b = items[i].AABBBounds), pad)) {
+  for (let i = 1, n = items.length, a = items[0], b; i < n; a = b, ++i) {
+    if (intersect(a, (b = items[i]), pad)) {
       return true;
     }
   }
@@ -88,6 +102,9 @@ export function autoHide(labels: IText[], config: HideConfig) {
 
   items = reset(source);
 
+  // 计算旋转包围盒
+  genRotateBounds(items);
+
   const { method = 'parity', separation: sep = 0 } = config;
 
   const reduce = isFunction(method) ? method : methods[method] || methods.parity;
@@ -100,8 +117,8 @@ export function autoHide(labels: IText[], config: HideConfig) {
     if (items.length < 3 && !last(source).attribute.opacity) {
       if (items.length > 1) {
         last(items).setAttribute('opacity', 0);
+        last(source).setAttribute('opacity', 1);
       }
-      // last(source).setAttribute('opacity', 1);
     }
   }
 

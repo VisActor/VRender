@@ -76,4 +76,28 @@ describe('Marker', () => {
       (markAreaContainer.children[1] as unknown as any).getChildByName('tag-content').children[0].attribute.text
     ).toBe('markArea-label');
   });
+
+  it('MarkArea with invalid points', () => {
+    const markArea = new MarkArea({
+      points: [
+        {
+          x: 100,
+          y: 250
+        },
+        {
+          x: 200,
+          y: 250
+        }
+      ],
+      label: {
+        text: 'markArea-label',
+        dx: 10
+      }
+    });
+    stage.defaultLayer.add(markArea as unknown as IGraphic);
+    stage.render();
+
+    const markAreaContainer = markArea.children[0] as unknown as Group;
+    expect(markAreaContainer.childrenCount).toBe(0);
+  });
 });

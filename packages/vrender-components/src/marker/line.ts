@@ -69,6 +69,9 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   protected initMarker(container: IGroup) {
     const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as MarkLineAttrs;
+    if (!points || points.length < 2) {
+      return;
+    }
     const line = new Segment({
       points,
       startSymbol,
@@ -94,6 +97,9 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   protected updateMarker() {
     const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as MarkLineAttrs;
+    if (!points || points.length < 2) {
+      return;
+    }
     this._line?.setAttributes({
       points,
       startSymbol,

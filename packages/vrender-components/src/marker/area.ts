@@ -83,6 +83,9 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected initMarker(container: IGroup) {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    if (!points || points.length < 3) {
+      return;
+    }
     const area = createPolygon({
       points: points,
       ...areaStyle
@@ -102,6 +105,9 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected updateMarker() {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    if (!points || points.length < 3) {
+      return;
+    }
     this._area?.setAttributes({
       points: points,
       ...areaStyle

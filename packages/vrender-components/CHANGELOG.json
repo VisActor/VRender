@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender-components_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133"
+          },
+          {
+            "comment": "fix: flush should not sue width height"
+          },
+          {
+            "comment": "fix: fix the lastvisible logic of axis's auto-hide"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.9",
       "tag": "@visactor/vrender-components_v0.16.9",
       "date": "Fri, 27 Oct 2023 02:21:19 GMT",

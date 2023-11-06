@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 27 Oct 2023 02:21:19 GMT and should not be manually modified.
+This log was last generated on Thu, 02 Nov 2023 13:43:18 GMT and should not be manually modified.
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133
+- fix: flush should not sue width height
+- fix: fix the lastvisible logic of axis's auto-hide
 
 ## 0.16.9
 Fri, 27 Oct 2023 02:21:19 GMT

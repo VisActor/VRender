@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 27 Oct 2023 02:21:19 GMT and should not be manually modified.
+This log was last generated on Thu, 02 Nov 2023 13:43:18 GMT and should not be manually modified.
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: fix issue with xul and html attribute, closed #634
 
 ## 0.16.9
 Fri, 27 Oct 2023 02:21:19 GMT

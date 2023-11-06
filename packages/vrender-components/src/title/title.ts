@@ -54,11 +54,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     const parsedPadding = normalizePadding(padding);
 
-    const group = this.createOrUpdateChild(
-      'title-container',
-      { x: parsedPadding[3], y: parsedPadding[0], zIndex: 1 },
-      'group'
-    ) as IGroup;
+    const group = this.createOrUpdateChild('title-container', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
 
     if (this.attribute?.visible !== false && textStyle?.visible !== false) {
       if (textStyle && isValid(textStyle?.character)) {
@@ -168,8 +164,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    group.attribute.width = titleWidth + parsedPadding[1] + parsedPadding[3];
-    group.attribute.height = titleHeight + parsedPadding[0] + parsedPadding[2];
+    group.attribute.width = titleWidth;
+    group.attribute.height = titleHeight;
+    group.attribute.boundsPadding = parsedPadding;
 
     // 设置对齐
     if (isValid(align) || isValid(textStyle?.align)) {

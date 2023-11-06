@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-components_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add checkbox indeterminate state"
+          },
+          {
+            "comment": "feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.8",
       "tag": "@visactor/vrender-components_v0.16.8",
       "date": "Mon, 23 Oct 2023 11:38:47 GMT",

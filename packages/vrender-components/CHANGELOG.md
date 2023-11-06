@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 23 Oct 2023 11:38:47 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Oct 2023 02:21:19 GMT and should not be manually modified.
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: add checkbox indeterminate state
+- feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`
+- fix: all the group container of marker do not trigger event
+- fix: all the group container of marker do not trigger event
+- fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281
 
 ## 0.16.8
 Mon, 23 Oct 2023 11:38:47 GMT

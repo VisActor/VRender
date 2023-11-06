@@ -198,6 +198,10 @@ export class OrderedObjParser {
           const propIndex = jPath.lastIndexOf('.');
           jPath = jPath.substring(0, propIndex);
           currentNode = this.tagsNodeStack.pop();
+          if (currentNode && currentNode.child && textData) {
+            currentNode.child[currentNode.child.length - 1][':@'] &&
+              (currentNode.child[currentNode.child.length - 1][':@'].text = textData);
+          }
           textData = '';
           i = closeIndex;
         } else if (xmlData[i + 1] === '?') {

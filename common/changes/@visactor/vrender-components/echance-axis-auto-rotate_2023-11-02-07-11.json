@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`",
+      "comment": "fix: fix the lastvisible logic of axis's auto-hide",
       "type": "none"
     }
   ],

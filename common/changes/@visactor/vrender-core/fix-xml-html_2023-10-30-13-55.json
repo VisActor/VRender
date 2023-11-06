@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: stage background support image",
+      "comment": "fix: fix issue with xul and html attribute, closed #634",
       "type": "none"
     }
   ],

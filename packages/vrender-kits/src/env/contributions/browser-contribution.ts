@@ -103,7 +103,7 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
   getNativeAABBBounds(_dom: any): IBoundsLike {
     let dom = _dom;
     if (typeof _dom === 'string') {
-      dom = new DOMParser().parseFromString(_dom, 'text/xml').firstChild;
+      dom = new DOMParser().parseFromString(_dom, 'text/html').firstChild;
     }
     if (dom.getBoundingClientRect) {
       const b = dom.getBoundingClientRect();

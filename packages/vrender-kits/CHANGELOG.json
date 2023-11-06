@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.16.10",
+      "tag": "@visactor/vrender-kits_v0.16.10",
+      "date": "Thu, 02 Nov 2023 11:17:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with xul and html attribute, closed #634"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-kits_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.16.8",
       "tag": "@visactor/vrender-kits_v0.16.8",
       "date": "Mon, 23 Oct 2023 11:38:47 GMT",

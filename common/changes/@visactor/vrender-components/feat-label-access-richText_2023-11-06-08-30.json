@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: padding of title component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

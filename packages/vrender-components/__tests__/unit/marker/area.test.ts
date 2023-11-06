@@ -96,8 +96,73 @@ describe('Marker', () => {
     });
     stage.defaultLayer.add(markArea as unknown as IGraphic);
     stage.render();
+    expect(markArea.childrenCount).toBe(0);
+  });
 
+  it('MarkArea with update invalid points', () => {
+    const markArea = new MarkArea({
+      points: [
+        {
+          x: 100,
+          y: 250
+        },
+        {
+          x: 200,
+          y: 250
+        },
+        {
+          x: 200,
+          y: 450
+        },
+        {
+          x: 100,
+          y: 450
+        }
+      ],
+      label: {
+        text: 'markArea-label',
+        dx: 10
+      }
+    });
+    stage.defaultLayer.add(markArea as unknown as IGraphic);
+    stage.render();
+    markArea.setAttributes({
+      points: []
+    });
+    expect(markArea.childrenCount).toBe(0);
+  });
+
+  it('MarkArea with update valid points', () => {
+    const markArea = new MarkArea({
+      points: [],
+      label: {
+        text: 'markArea-label',
+        dx: 10
+      }
+    });
+    stage.defaultLayer.add(markArea as unknown as IGraphic);
+    stage.render();
+    markArea.setAttributes({
+      points: [
+        {
+          x: 100,
+          y: 250
+        },
+        {
+          x: 200,
+          y: 250
+        },
+        {
+          x: 200,
+          y: 450
+        },
+        {
+          x: 100,
+          y: 450
+        }
+      ]
+    });
     const markAreaContainer = markArea.children[0] as unknown as Group;
-    expect(markAreaContainer.childrenCount).toBe(0);
+    expect(markAreaContainer.childrenCount).toBe(2);
   });
 });

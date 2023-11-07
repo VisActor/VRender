@@ -71,7 +71,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
         this._initContainer();
         this.initMarker(this._container);
       } else {
-        if (this.name === 'markLine' || (this.name === 'markArea' && !this.isValidPoints())) {
+        if ((this.name === 'markLine' || this.name === 'markArea') && !this.isValidPoints()) {
           this._container = null;
           this.removeAllChild();
         } else {

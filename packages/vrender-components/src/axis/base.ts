@@ -13,11 +13,12 @@ import type {
   IGraphic,
   IText
 } from '@visactor/vrender-core';
+import { defaultGraphicMemoryManager, defaultTextAllocate } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { createLine, createText, createGroup } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
+import { AABBBounds, abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
@@ -111,11 +112,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       x: this.attribute.x,
       y: this.attribute.y
     });
-    this.add(offscreenGroup);
+    // this.add(offscreenGroup);
 
     this._renderInner(offscreenGroup);
 
-    this.removeChild(offscreenGroup);
+    // this.removeChild(offscreenGroup);
     this.attribute = currentAttribute;
     return offscreenGroup.AABBBounds;
   }
@@ -324,7 +325,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let textBaseline = 'middle';
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle = this._getLabelAttribute(item, index, data, layer);
-      const text = createText(labelStyle);
+      const text = defaultTextAllocate.allocate(labelStyle);
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {

@@ -124,7 +124,7 @@ export class DefaultGlobal implements IGlobal {
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])
     };
-    this.measureTextMethod = 'native';
+    this.measureTextMethod = 'quick';
     this.optimizeVisible = false;
   }
 

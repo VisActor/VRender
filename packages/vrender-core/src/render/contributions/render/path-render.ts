@@ -23,6 +23,10 @@ import { PathRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import {
+  defaultPathBackgroundRenderContribution,
+  defaultPathTextureRenderContribution
+} from './contributions/path-contribution-render';
 
 @injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
@@ -35,6 +39,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultPathBackgroundRenderContribution, defaultPathTextureRenderContribution];
     this.init(pathRenderContribitions);
   }
 

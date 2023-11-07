@@ -2,13 +2,13 @@ import { inject, injectable } from '../common/inversify-lite';
 import type { ILayer, IStage, IGlobal, ILayerParams, LayerMode, ILayerHandlerContribution } from '../interface';
 import { Layer } from './layer';
 import type { ILayerService } from '../interface/core';
-import { VGlobal } from '../constants';
 import { container } from '../container';
 import {
   DynamicLayerHandlerContribution,
   StaticLayerHandlerContribution,
   VirtualLayerHandlerContribution
 } from './constants';
+import { application } from '../application';
 
 @injectable()
 export class DefaultLayerService implements ILayerService {
@@ -16,8 +16,10 @@ export class DefaultLayerService implements ILayerService {
   declare staticLayerCountInEnv: number;
   declare dynamicLayerCountInEnv: number;
   declare inited: boolean;
-  constructor(@inject(VGlobal) public readonly global: IGlobal) {
+  declare global: IGlobal;
+  constructor() {
     this.layerMap = new Map();
+    this.global = application.global;
   }
 
   tryInit() {

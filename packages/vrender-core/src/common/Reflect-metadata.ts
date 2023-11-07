@@ -572,6 +572,7 @@ export default (function (Reflect) {
     //   return descriptor;
     // }
     function GetOrCreateMetadataMap(O, P, Create) {
+      // console.count('GetOrCreateMetadataMap');
       let targetMetadata = Metadata.get(O);
       if (IsUndefined(targetMetadata)) {
         if (!Create) {

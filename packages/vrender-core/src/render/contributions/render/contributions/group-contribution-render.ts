@@ -10,7 +10,6 @@ import type {
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultGroupBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution
   implements IGroupRenderContribution
@@ -57,3 +56,5 @@ export class DefaultGroupBackgroundRenderContribution
     }
   }
 }
+
+export const defaultGroupBackgroundRenderContribution = new DefaultGroupBackgroundRenderContribution();

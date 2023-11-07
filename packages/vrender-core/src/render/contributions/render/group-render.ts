@@ -22,6 +22,7 @@ import { GroupRenderContribution } from './contributions/constants';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { defaultGroupBackgroundRenderContribution } from './contributions';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -120,6 +121,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
 
     if (!this._groupRenderContribitions) {
       this._groupRenderContribitions = this.groupRenderContribitions.getContributions() || [];
+      this._groupRenderContribitions.push(defaultGroupBackgroundRenderContribution);
     }
 
     const doFillOrStroke = {

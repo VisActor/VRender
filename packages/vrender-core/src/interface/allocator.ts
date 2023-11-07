@@ -11,6 +11,7 @@ import type { IText } from './graphic/text';
 
 export interface IAllocate<T> {
   allocate: (...d: any) => T;
+  getCommon?: () => T;
   allocateByObj: (obj: T) => T;
   free: (d: T) => void;
   length: number;

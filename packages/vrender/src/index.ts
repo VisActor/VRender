@@ -1,10 +1,10 @@
 import { container } from '@visactor/vrender-core';
-import { loadAllModule } from '@visactor/vrender-kits';
+import { loadBrowserEnv } from '@visactor/vrender-kits';
 
 // 导出版本号
 export const version = __VERSION__;
 
-loadAllModule(container);
+loadBrowserEnv(container);
 
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';

@@ -12,13 +12,12 @@ import type {
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { createRectPath } from '../../../../common/shape/rect';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultRectRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -143,23 +142,6 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
   }
 }
 
-@injectable()
-export class DefaultRectBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements IRectRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
-export class DefaultRectTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements IRectRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
-
-@injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -196,7 +178,6 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   }
 }
 
-@injectable()
 export class SplitRectAfterRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -268,3 +249,9 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     context.stroke();
   }
 }
+
+export const defaultRectRenderContribution = new DefaultRectRenderContribution();
+export const splitRectBeforeRenderContribution = new SplitRectBeforeRenderContribution();
+export const splitRectAfterRenderContribution = new SplitRectAfterRenderContribution();
+export const defaultRectTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultRectBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

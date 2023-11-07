@@ -11,12 +11,11 @@ import type {
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultCircleRenderContribution implements ICircleRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -124,18 +123,6 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
   }
 }
 
-@injectable()
-export class DefaultCircleBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements ICircleRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
-export class DefaultCircleTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements ICircleRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
+export const defaultCircleRenderContribution = new DefaultCircleRenderContribution();
+export const defaultCircleTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultCircleBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

@@ -3,6 +3,13 @@ import { colorPools } from '../utils';
 import { createGroup } from '@visactor/vrender';
 
 export const page = () => {
+  const t = performance.now();
+  const stage = createStage({
+    canvas: 'main',
+    autoRender: true
+  });
+  const delta = performance.now() - t;
+  window.delta = delta;
   const graphics: IGraphic[] = [];
   // graphics.push(createCircle({
   //   radius: 50,
@@ -66,11 +73,6 @@ export const page = () => {
   });
 
   graphics.push(group);
-
-  const stage = createStage({
-    canvas: 'main',
-    autoRender: true
-  });
 
   stage.setTheme({
     common: {

@@ -25,23 +25,19 @@ import { DefaultMathGlyphPicker } from './glyph-picker';
 
 export default new ContainerModule(bind => {
   // circle picker
-  bind(DefaultMathCirclePicker).toSelf().inSingletonScope();
-  bind(MathCirclePicker).toService(DefaultMathCirclePicker);
+  bind(MathCirclePicker).to(DefaultMathCirclePicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathCirclePicker);
 
   // rect picker
-  bind(DefaultMathRectPicker).toSelf().inSingletonScope();
-  bind(MathRectPicker).toService(DefaultMathRectPicker);
+  bind(MathRectPicker).to(DefaultMathRectPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathRectPicker);
 
   // arc picker
-  bind(DefaultMathArcPicker).toSelf().inSingletonScope();
-  bind(MathArcPicker).toService(DefaultMathArcPicker);
+  bind(MathArcPicker).to(DefaultMathArcPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathArcPicker);
 
   // area picker
-  bind(DefaultMathAreaPicker).toSelf().inSingletonScope();
-  bind(MathAreaPicker).toService(DefaultMathAreaPicker);
+  bind(MathAreaPicker).to(DefaultMathAreaPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathAreaPicker);
 
   // // image picker
@@ -50,33 +46,27 @@ export default new ContainerModule(bind => {
   // bind(PickerContribution).toService(ImagePicker);
 
   // line picker
-  bind(DefaultMathLinePicker).toSelf().inSingletonScope();
-  bind(MathLinePicker).toService(DefaultMathLinePicker);
+  bind(MathLinePicker).to(DefaultMathLinePicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathLinePicker);
 
   // path picker
-  bind(DefaultMathPathPicker).toSelf().inSingletonScope();
-  bind(MathPathPicker).toService(DefaultMathPathPicker);
+  bind(MathPathPicker).to(DefaultMathPathPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathPathPicker);
 
   // symbol picker
-  bind(DefaultMathSymbolPicker).toSelf().inSingletonScope();
-  bind(MathSymbolPicker).toService(DefaultMathSymbolPicker);
+  bind(MathSymbolPicker).to(DefaultMathSymbolPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathSymbolPicker);
 
   // text picker
-  bind(DefaultMathTextPicker).toSelf().inSingletonScope();
-  bind(MathTextPicker).toService(DefaultMathTextPicker);
+  bind(MathTextPicker).to(DefaultMathTextPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathTextPicker);
 
   // polygon picker
-  bind(DefaultMathPolygonPicker).toSelf().inSingletonScope();
-  bind(MathPolygonPicker).toService(DefaultMathPolygonPicker);
+  bind(MathPolygonPicker).to(DefaultMathPolygonPicker).inSingletonScope();
   bind(MathPickerContribution).toService(MathPolygonPicker);
 
   // glyph picker
-  bind(DefaultMathGlyphPicker).toSelf().inSingletonScope();
-  bind(MathGlyphPicker).toService(DefaultMathGlyphPicker);
+  bind(MathGlyphPicker).to(DefaultMathGlyphPicker).inSingletonScope();
   bind(DefaultMathGlyphPicker).toService(MathGlyphPicker);
 
   bindContributionProvider(bind, MathPickerContribution);

@@ -4,6 +4,13 @@ import { wrapCanvas } from '../canvas/util';
 
 export class DefaultCanvasAllocate implements IAllocate<ICanvas>, Releaseable {
   protected pools: ICanvas[] = [];
+  protected _commonCanvas: any;
+  getCommonCanvas(): ICanvas {
+    if (!this._commonCanvas) {
+      this._commonCanvas = this.allocate({ width: 100, height: 100, dpr: 2 });
+    }
+    return this._commonCanvas;
+  }
   allocate(data: { width: number; height: number; dpr: number }): ICanvas {
     if (!this.pools.length) {
       return wrapCanvas({

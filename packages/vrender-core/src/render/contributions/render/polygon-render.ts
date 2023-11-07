@@ -22,6 +22,10 @@ import { PolygonRenderContribution } from './contributions/constants';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
+import {
+  defaultPolygonBackgroundRenderContribution,
+  defaultPolygonTextureRenderContribution
+} from './contributions/polygon-contribution-render';
 
 @injectable()
 export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements IGraphicRender {
@@ -34,6 +38,7 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
     protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultPolygonBackgroundRenderContribution, defaultPolygonTextureRenderContribution];
     this.init(polygonRenderContribitions);
   }
 

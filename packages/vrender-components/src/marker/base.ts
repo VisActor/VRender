@@ -14,6 +14,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract setLabelPos(): any;
   protected abstract initMarker(container: IGroup): any;
   protected abstract updateMarker(): any;
+  protected abstract isValidPoints(): any;
 
   private _initContainer() {
     const { limitRect, clipInRange } = this.attribute;
@@ -66,12 +67,17 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     }
 
     if (markerVisible) {
-      if (!this._container) {
+      if (!this._container && this.isValidPoints()) {
         this._initContainer();
         this.initMarker(this._container);
       } else {
-        this._updateContainer();
-        this.updateMarker();
+        if (!this.isValidPoints()) {
+          this._container = null;
+          this.removeAllChild();
+        } else {
+          this._updateContainer();
+          this.updateMarker();
+        }
       }
     }
   }

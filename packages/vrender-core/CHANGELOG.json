@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-core_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optimize text increase animation"
+          },
+          {
+            "comment": "fix: fix node-canvas max count issue"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.11",
       "tag": "@visactor/vrender-core_v0.16.11",
       "date": "Thu, 02 Nov 2023 13:43:18 GMT",

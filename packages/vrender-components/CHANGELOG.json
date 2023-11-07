@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-components_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: padding of title component"
+          },
+          {
+            "comment": "fix: padding offset of AABBbounds"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.11",
       "tag": "@visactor/vrender-components_v0.16.11",
       "date": "Thu, 02 Nov 2023 13:43:18 GMT",

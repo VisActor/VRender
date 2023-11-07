@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: optmize bounds performance",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

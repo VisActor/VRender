@@ -63,9 +63,13 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
       return;
     }
     if (end) {
-      out.text = this.toNumber.toFixed();
+      out.text = this.toNumber;
     } else {
-      out.text = (this.fromNumber + (this.toNumber - this.fromNumber) * ratio).toFixed(this.params?.fixed ?? 0);
+      let outText: string | number = this.fromNumber + (this.toNumber - this.fromNumber) * ratio;
+      if (this.params?.fixed >= 0) {
+        outText = outText.toFixed(this.params.fixed);
+      }
+      out.text = outText;
     }
   }
 }

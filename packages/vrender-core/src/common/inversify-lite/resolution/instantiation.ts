@@ -59,30 +59,14 @@ function _createInstance<T>(
       result = createInstanceWithInjections(createInstanceWithInjectionsArg);
     }
   } else {
-    if (!(window as any).constr) {
-      (window as any).constr = 0;
-      (window as any).map = new Map();
-    }
-    const t = performance.now();
     result = new constr();
-    const delta = performance.now() - t;
-    (window as any).map.set(result, delta);
-    (window as any).constr += delta;
   }
 
   return result;
 }
 
 function createInstanceWithInjections<T>(args: CreateInstanceWithInjectionArg<T>): T {
-  if (!(window as any).constr) {
-    (window as any).constr = 0;
-    (window as any).map = new Map();
-  }
-  const t = performance.now();
   const instance = new args.constr(...args.constructorInjections);
-  const delta = performance.now() - t;
-  (window as any).map.set(instance, delta);
-  (window as any).constr += delta;
   args.propertyRequests.forEach((r: interfaces.Request, index: number) => {
     const property = r.target.identifier;
     const injection = args.propertyInjections[index];

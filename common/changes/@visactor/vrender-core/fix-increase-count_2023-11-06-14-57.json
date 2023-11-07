@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: increaseCount animation may change the final text attribute",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: increaseCount animation may change the final text attribute",
+      "comment": "feat: optimize text increase animation",
       "type": "none"
     }
   ],

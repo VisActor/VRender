@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: padding offset of AABBbounds",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

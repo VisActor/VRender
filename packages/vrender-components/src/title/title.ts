@@ -54,7 +54,11 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     const parsedPadding = normalizePadding(padding);
 
-    const group = this.createOrUpdateChild('title-container', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
+    const group = this.createOrUpdateChild(
+      'title-container',
+      { x: parsedPadding[3], y: parsedPadding[0], zIndex: 1 },
+      'group'
+    ) as IGroup;
 
     if (this.attribute?.visible !== false && textStyle?.visible !== false) {
       if (textStyle && isValid(textStyle?.character)) {

@@ -15,10 +15,6 @@ import { SyncHook } from '../tapable';
 import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
 
-const canvas = document.createElement('canvas');
-canvas.width = 500;
-canvas.height = 500;
-
 const defaultEnv: EnvType = 'browser';
 @injectable()
 export class DefaultGlobal implements IGlobal {

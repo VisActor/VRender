@@ -162,12 +162,14 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     const {
       x = DefaultTransform.x,
       y = DefaultTransform.y,
+      dx = DefaultTransform.dx,
+      dy = DefaultTransform.dy,
       scaleX = DefaultTransform.scaleX,
       scaleY = DefaultTransform.scaleY,
       angle = DefaultTransform.angle,
       postMatrix
     } = this.attribute;
-    if (x === 0 && y === 0 && scaleX === 1 && scaleY === 1 && angle === 0 && !postMatrix) {
+    if (x === 0 && y === 0 && dx === 0 && dy === 0 && scaleX === 1 && scaleY === 1 && angle === 0 && !postMatrix) {
       this._transMatrix.reset();
       return;
     }

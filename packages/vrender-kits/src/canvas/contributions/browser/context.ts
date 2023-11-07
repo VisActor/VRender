@@ -962,8 +962,12 @@ export class BrowserContext2d implements IContext2d {
         return this._setCommonStyle(params, attribute, offsetX, offsetY, defaultParams[0]);
       }
       // TODO 是否存在性能问题？
-      const dp = {};
-      defaultParams.forEach(p => {
+      // TODO 默认第一个是theme
+      const dp = Object.create(defaultParams[0]);
+      defaultParams.forEach((p, i) => {
+        if (i === 0) {
+          return;
+        }
         Object.assign(dp, p);
       });
       return this._setCommonStyle(params, attribute, offsetX, offsetY, dp as Required<ICommonStyleParams>);
@@ -1007,8 +1011,12 @@ export class BrowserContext2d implements IContext2d {
         return this._setShadowBlendStyle(params, defaultParams[0]);
       }
       // TODO 是否存在性能问题？
-      const dp = {};
-      defaultParams.forEach(p => {
+      // TODO 默认第一个是theme
+      const dp = Object.create(defaultParams[0]);
+      defaultParams.forEach((p, i) => {
+        if (i === 0) {
+          return;
+        }
         Object.assign(dp, p);
       });
       return this._setShadowBlendStyle(params, attribute, dp as Required<ICommonStyleParams>);
@@ -1084,8 +1092,12 @@ export class BrowserContext2d implements IContext2d {
         return this._setStrokeStyle(params, attribute, offsetX, offsetY, defaultParams[0]);
       }
       // TODO 是否存在性能问题？
-      const dp = {};
-      defaultParams.forEach(p => {
+      // TODO 默认第一个是theme
+      const dp = Object.create(defaultParams[0]);
+      defaultParams.forEach((p, i) => {
+        if (i === 0) {
+          return;
+        }
         Object.assign(dp, p);
       });
       return this._setStrokeStyle(params, attribute, offsetX, offsetY, dp as IStrokeStyleParams);

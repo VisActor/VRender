@@ -160,6 +160,7 @@ export interface MarkAreaAttrs extends MarkerAttrs {
 export interface IItemContent extends IMarkRef {
   /**
    * 标注类型
+   * Tips: 保留'richText'与之前的定义做兼容
    */
   type?: 'symbol' | 'text' | 'image' | 'richText' | 'custom';
   position?: keyof typeof IMarkPointItemPosition;
@@ -181,6 +182,7 @@ export interface IItemContent extends IMarkRef {
   imageStyle?: IImageGraphicAttribute;
   /**
    * type为text时, text的配置
+   * 'text'类型的ItemContent新增三种子类型：'text','rich','html'。配置在textStyle.type上，继承自TagAttributes。
    */
   textStyle?: IMarkLabel;
   /**

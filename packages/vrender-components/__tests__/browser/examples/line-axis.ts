@@ -416,10 +416,39 @@ const lineAxis = new LineAxis({
     },
     padding: 4,
     // maxWidth: 60,
-    text: 'y 轴 - right'
+    // text: 'y 轴 - right'
+
+    type: 'rich',
+    text: [
+      {
+        text: 'Axis Title',
+        fontWeight: 'bold',
+        fontSize: 25,
+        fill: '#3f51b5'
+      },
+      {
+        text: '替代方案',
+        fontStyle: 'italic',
+        textDecoration: 'underline',
+        fill: '#3f51b5'
+      }
+    ]
+
+    // type: 'html',
+    // text: '<p>这是一个html字符串</p>'
   },
   label: {
-    visible: true
+    visible: true,
+    type: 'rich',
+    text: [
+      {
+        text: 'axis label',
+        fontSize: 12,
+        fontStyle: 'italic',
+        textDecoration: 'underline',
+        fill: '#3f51b5'
+      }
+    ]
   },
   tick: {
     visible: true,

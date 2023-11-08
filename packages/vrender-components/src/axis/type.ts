@@ -7,7 +7,8 @@ import type {
   IRectGraphicAttribute,
   IGroupGraphicAttribute,
   IText,
-  IGroup
+  IGroup,
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import type { Point } from '../core/type';
@@ -209,10 +210,13 @@ export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' |
    * 标题是否自动旋转以和坐标轴平行
    */
   autoRotate?: boolean;
+  /** 文本类型：text, rich, html */
+  type?: string;
   /**
    * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+   * 支持富文本内容, 如textConfig, html
    */
-  text?: string | string[] | number | number[];
+  text?: string | string[] | number | number[] | IRichTextCharacter[];
   shape?: {
     /**
      * 是否展示 shape
@@ -399,7 +403,7 @@ export interface AxisLabelOverlap {
   layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
 }
 
-export interface LabelAttributes extends AxisLabelOverlap {
+export interface LabelAttributes extends Omit<AxisLabelOverlap, 'text'> {
   /** 是否展示标签 */
   visible: boolean;
   /**
@@ -433,4 +437,11 @@ export interface LabelAttributes extends AxisLabelOverlap {
    * @returns
    */
   dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
+  /** 文本类型：text, rich, html */
+  type?: string;
+  /**
+   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+   * 支持富文本内容, 如textConfig, html
+   */
+  text?: string | string[] | number | number[] | IRichTextCharacter[];
 }

@@ -37,7 +37,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
   protected render() {
     const {
+      textType,
       text,
+      subtextType,
       textStyle,
       subtext,
       subtextStyle,
@@ -61,7 +63,40 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     ) as IGroup;
 
     if (this.attribute?.visible !== false && textStyle?.visible !== false) {
-      if (textStyle && isValid(textStyle?.character)) {
+      if (textType === 'rich') {
+        const attr = {
+          x: textStyle.x ?? 0,
+          y: textStyle.y ?? 0,
+          width: textStyle.width ?? width ?? 0,
+          height: textStyle.height ?? height ?? 0,
+          ellipsis: textStyle.ellipsis ?? true,
+          wordBreak: textStyle.wordBreak ?? 'break-word',
+          maxHeight: textStyle.maxHeight,
+          maxWidth: textStyle.maxWidth,
+          textConfig: text,
+          ...textStyle
+        };
+        this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
+      } else if (textType === 'html') {
+        const attr = {
+          html: {
+            dom: text,
+            ...textStyle
+          },
+          x: textStyle.x ?? 0,
+          y: textStyle.y ?? 0,
+          width: textStyle.width ?? width ?? 0,
+          height: textStyle.height ?? height ?? 0,
+          ellipsis: textStyle.ellipsis ?? true,
+          wordBreak: textStyle.wordBreak ?? 'break-word',
+          maxHeight: textStyle.maxHeight,
+          maxWidth: textStyle.maxWidth,
+          textConfig: [] as any[],
+          ...textStyle
+        };
+        this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
+      } else if (textStyle && isValid(textStyle?.character)) {
+        // 富文本的老配置方法
         const attr = {
           x: textStyle.x ?? 0,
           y: textStyle.y ?? 0,
@@ -96,7 +131,40 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     const maintextWidth = this._mainTitle ? this._mainTitle?.AABBBounds.width() : 0;
 
     if (this.attribute?.visible !== false && subtextStyle?.visible !== false) {
-      if (subtextStyle && isValid(subtextStyle?.character)) {
+      if (subtextType === 'rich') {
+        const attr = {
+          x: subtextStyle.x ?? 0,
+          y: subtextStyle.y ?? 0,
+          width: subtextStyle.width ?? width ?? 0,
+          height: subtextStyle.height ?? height ?? 0,
+          ellipsis: subtextStyle.ellipsis ?? true,
+          wordBreak: subtextStyle.wordBreak ?? 'break-word',
+          maxHeight: subtextStyle.maxHeight,
+          maxWidth: subtextStyle.maxWidth,
+          textConfig: subtext,
+          ...subtextStyle
+        };
+        this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
+      } else if (textType === 'html') {
+        const attr = {
+          html: {
+            dom: subtext,
+            ...subtextStyle
+          },
+          x: subtextStyle.x ?? 0,
+          y: subtextStyle.y ?? 0,
+          width: subtextStyle.width ?? width ?? 0,
+          height: subtextStyle.height ?? height ?? 0,
+          ellipsis: subtextStyle.ellipsis ?? true,
+          wordBreak: subtextStyle.wordBreak ?? 'break-word',
+          maxHeight: subtextStyle.maxHeight,
+          maxWidth: subtextStyle.maxWidth,
+          textConfig: [] as any[],
+          ...subtextStyle
+        };
+        this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
+      } else if (subtextStyle && isValid(subtextStyle?.character)) {
+        // 富文本的老配置方法
         const attr = {
           x: subtextStyle.x ?? 0,
           y: subtextStyle.y ?? maintextHeight,

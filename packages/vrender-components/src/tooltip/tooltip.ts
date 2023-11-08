@@ -88,7 +88,43 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     ) as ISymbol;
 
     // 文本
-    if (titleAttr.value.multiLine) {
+    if (titleAttr.value.type === 'rich') {
+      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+        {
+          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+          width: titleAttr.value.width,
+          height: titleAttr.value.height,
+          wordBreak: titleAttr.value.wordBreak as any,
+          textAlign: titleAttr.value.textAlign as any,
+          textBaseline: titleAttr.value.textBaseline as any,
+          singleLine: false,
+          textConfig: titleAttr.value.text,
+          ...titleAttr.value
+        },
+        'richtext'
+      ) as IRichText;
+    } else if (titleAttr.value.type === 'html') {
+      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+        {
+          html: {
+            dom: titleAttr.value.text,
+            ...titleAttr.value
+          },
+          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+          width: titleAttr.value.width,
+          height: titleAttr.value.height,
+          wordBreak: titleAttr.value.wordBreak as any,
+          textAlign: titleAttr.value.textAlign as any,
+          textBaseline: titleAttr.value.textBaseline as any,
+          singleLine: false,
+          textConfig: [],
+          ...titleAttr.value
+        },
+        'richtext'
+      ) as IRichText;
+    } else if (titleAttr.value.multiLine) {
       this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
         `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
         {

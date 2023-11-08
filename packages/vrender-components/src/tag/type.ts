@@ -2,7 +2,8 @@ import type {
   ITextGraphicAttribute,
   ISymbolGraphicAttribute,
   IGroupGraphicAttribute,
-  IRectGraphicAttribute
+  IRectGraphicAttribute,
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import type { Padding, State } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
@@ -24,9 +25,14 @@ type StateStyle = {
 
 export type TagAttributes = {
   /**
-   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+   * 文本类型：text, rich, html
    */
-  text?: string | string[] | number | number[];
+  type?: string;
+  /**
+   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+   * 支持富文本内容, 如textConfig, html
+   */
+  text?: string | string[] | number | number[] | IRichTextCharacter[];
   /** 文本样式 */
   textStyle?: Partial<ITextGraphicAttribute>;
   /** 文本前 mark 图元 */

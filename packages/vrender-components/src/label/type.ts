@@ -6,7 +6,8 @@ import type {
   Text,
   TextAlignType,
   TextBaselineType,
-  ILineGraphicAttribute
+  ILineGraphicAttribute,
+  IRichTextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 
@@ -24,7 +25,9 @@ export type LabelItem = {
   // 原始数据
   data?: any;
   [key: string]: any;
-} & ITextGraphicAttribute;
+  // 文本类型：text, rich, html
+  type?: string;
+} & (ITextGraphicAttribute | IRichTextGraphicAttribute);
 
 export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   type: string;

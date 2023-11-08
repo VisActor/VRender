@@ -11,7 +11,13 @@ import type {
   ILine,
   IArea
 } from '@visactor/vrender-core';
-import { createText, IncreaseCount, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
+import {
+  createText,
+  IncreaseCount,
+  AttributeUpdateType,
+  IContainPointMode,
+  createRichText
+} from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 import {
   isFunction,
@@ -251,6 +257,25 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   };
 
   protected _createLabelText(attributes: LabelItem) {
+    if (attributes.type === 'rich') {
+      attributes.textConfig = attributes.text;
+      attributes.width = attributes.width ?? 0;
+      attributes.height = attributes.height ?? 0;
+      const text = createRichText(attributes);
+      this._bindEvent(text);
+      this._setStatesOfText(text);
+      return text;
+    } else if (attributes.type === 'html') {
+      attributes.textConfig = [];
+      attributes.html = {
+        dom: attributes.text,
+        ...attributes
+      };
+      const text = createRichText(attributes);
+      this._bindEvent(text);
+      this._setStatesOfText(text);
+      return text;
+    }
     const text = createText(attributes);
     this._bindEvent(text);
     this._setStatesOfText(text);

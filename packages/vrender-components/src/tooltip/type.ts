@@ -2,7 +2,8 @@ import type {
   IGraphicAttribute,
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
-  ITextAttribute
+  ITextAttribute,
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import type { IBounds, IPadding } from '@visactor/vutils';
 
@@ -58,6 +59,16 @@ export type TooltipComponentAttrs = TooltipPositionAttrs & {
 
 /** tooltip 文本样式 */
 export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute & IContainerSize> & {
+  /**
+   * 文本类型（默认类型为text）
+   * text, rich, html
+   */
+  type?: string;
+  /**
+   * 文本内容
+   * - 支持富文本配置
+   */
+  text?: string | number | string[] | number[] | IRichTextCharacter[];
   /** 文本是否支持多行显示 */
   multiLine?: boolean;
   /** 文本换行模式 */

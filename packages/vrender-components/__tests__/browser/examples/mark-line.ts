@@ -25,20 +25,40 @@ export function run() {
       // refAngle: degreeToRadian(-90)
     },
     label: {
-      text: '平均值: 17.7',
+      // text: '平均值: 17.7',
+      type: 'rich',
+      text: [
+        {
+          text: 'Mapbox',
+          fontWeight: 'bold',
+          fontSize: 25,
+          fill: '#3f51b5',
+          height: 25
+        },
+        {
+          text: '替代方案',
+          fontStyle: 'italic',
+          textDecoration: 'underline',
+          fill: '#3f51b5',
+          height: 25
+        }
+      ],
+      panel: {
+        visible: false
+      },
       position: guiObject.labelPos,
       autoRotate: guiObject.labelAutoRotate,
       refX: guiObject.labelRefX,
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
-    clipInRange: true,
-    limitRect: {
-      x: 50,
-      y: 50,
-      width: 200,
-      height: 200
-    }
+    clipInRange: false
+    // limitRect: {
+    //   x: 50,
+    //   y: 50,
+    //   width: 200,
+    //   height: 200
+    // }
   };
   const markLine = new MarkLine({
     points: [

@@ -1,7 +1,15 @@
 /**
  * @description 标签组件
  */
-import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  IGroup,
+  IRect,
+  ISymbol,
+  IText,
+  ITextAttribute,
+  ITextGraphicAttribute,
+  IRichText
+} from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
@@ -42,7 +50,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       maxWidth,
       padding = 4,
       visible,
-      state
+      state,
+      type = 'text'
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -83,98 +92,165 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     tagWidth += symbolPlaceWidth;
     textX += symbolPlaceWidth;
 
-    const textAttrs = {
-      text,
-      visible: isValid(text) && visible !== false,
-      lineHeight: textStyle?.fontSize,
-      ...textStyle,
-      x: textX,
-      y: 0
-    };
-    if (isNil(textAttrs.lineHeight)) {
-      textAttrs.lineHeight = textAttrs.fontSize;
-    }
-    const textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
-    if (!isEmpty(state?.text)) {
-      textShape.states = state.text;
-    }
+    let textShape;
+    if (type === 'rich') {
+      const richTextAttrs = {
+        textConfig: text,
+        visible: isValid(text) && visible !== false,
+        ...textStyle,
+        x: textX,
+        y: 0,
+        width: textStyle.width ?? 0,
+        height: textStyle.height ?? 0
+      };
+      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
 
-    // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
-    const textBounds = measureTextSize(textAttrs.text, textStyle);
-    const textWidth = textBounds.width;
-    const textHeight = textBounds.height;
-    tagWidth += textWidth;
-    const size = shape.size ?? 10;
-    const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
-    tagHeight += Math.max(textHeight, shape?.visible ? maxSize : 0);
-
-    const { textAlign, textBaseline } = textStyle as ITextAttribute;
-
-    if (isValid(minWidth) || isValid(maxWidth)) {
-      if (isValid(minWidth) && tagWidth < minWidth) {
-        tagWidth = minWidth;
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x: textShape.AABBBounds.x1,
+            y: textShape.AABBBounds.y1,
+            width: textShape.AABBBounds.width(),
+            height: textShape.AABBBounds.height()
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
       }
-      if (isValid(maxWidth) && tagWidth > maxWidth) {
-        tagWidth = maxWidth;
-        textShape.setAttribute('maxLineWidth', maxWidth - parsedPadding[1] - parsedPadding[2]);
-      }
-    }
-
-    let x = 0;
-    let y = 0;
-    if (textAlign === 'center') {
-      x -= tagWidth / 2;
-      if (symbol) {
-        symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
-      }
-
-      group.setAttribute('x', -symbolPlaceWidth / 2);
-    } else if (textAlign === 'right' || textAlign === 'end') {
-      x -= tagWidth;
-      if (symbol) {
-        symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
-      }
-
-      group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
-    } else if (textAlign === 'left' || textAlign === 'start') {
-      group.setAttribute('x', parsedPadding[3]);
-    }
-    if (textBaseline === 'middle') {
-      y -= tagHeight / 2;
-      if (symbol) {
-        symbol.setAttribute('y', 0);
-      }
-    } else if (textBaseline === 'bottom') {
-      y -= tagHeight;
-      if (symbol) {
-        symbol.setAttribute('y', -textHeight / 2);
-      }
-
-      group.setAttribute('y', -parsedPadding[2]);
-    } else if (textBaseline === 'top') {
-      group.setAttribute('y', parsedPadding[0]);
-      if (symbol) {
-        symbol.setAttribute('y', textHeight / 2);
-      }
-    }
-
-    // 绘制背景层
-    const { visible: bgVisible, ...backgroundStyle } = panel;
-    if (visible && isBoolean(bgVisible)) {
-      const bgRect = this.createOrUpdateChild(
-        'tag-panel',
-        {
-          ...backgroundStyle,
-          visible: bgVisible && !!text,
-          x,
-          y,
-          width: tagWidth,
-          height: tagHeight
+    } else if (type === 'html') {
+      const richTextAttrs = {
+        textConfig: [],
+        visible: isValid(text) && visible !== false,
+        html: {
+          dom: text,
+          ...textStyle
         },
-        'rect'
-      ) as IRect;
-      if (!isEmpty(state?.panel)) {
-        bgRect.states = state.panel;
+        ...textStyle,
+        x: textX,
+        y: 0
+      };
+      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
+
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x: textShape.AABBBounds.x1,
+            y: textShape.AABBBounds.y1,
+            width: textShape.AABBBounds.width(),
+            height: textShape.AABBBounds.height()
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
+      }
+    } else {
+      const textAttrs = {
+        text,
+        visible: isValid(text) && visible !== false,
+        lineHeight: textStyle?.fontSize,
+        ...textStyle,
+        x: textX,
+        y: 0
+      };
+      if (isNil(textAttrs.lineHeight)) {
+        textAttrs.lineHeight = textAttrs.fontSize;
+      }
+      textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
+      if (!isEmpty(state?.text)) {
+        textShape.states = state.text;
+      }
+
+      // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
+      const textBounds = measureTextSize(textAttrs.text, textStyle);
+      const textWidth = textBounds.width;
+      const textHeight = textBounds.height;
+      tagWidth += textWidth;
+      const size = shape.size ?? 10;
+      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      tagHeight += Math.max(textHeight, shape?.visible ? maxSize : 0);
+
+      const { textAlign, textBaseline } = textStyle as ITextAttribute;
+
+      if (isValid(minWidth) || isValid(maxWidth)) {
+        if (isValid(minWidth) && tagWidth < minWidth) {
+          tagWidth = minWidth;
+        }
+        if (isValid(maxWidth) && tagWidth > maxWidth) {
+          tagWidth = maxWidth;
+          textShape.setAttribute('maxLineWidth', maxWidth - parsedPadding[1] - parsedPadding[2]);
+        }
+      }
+
+      let x = 0;
+      let y = 0;
+      if (textAlign === 'center') {
+        x -= tagWidth / 2;
+        if (symbol) {
+          symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
+        }
+
+        group.setAttribute('x', -symbolPlaceWidth / 2);
+      } else if (textAlign === 'right' || textAlign === 'end') {
+        x -= tagWidth;
+        if (symbol) {
+          symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
+        }
+
+        group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
+      } else if (textAlign === 'left' || textAlign === 'start') {
+        group.setAttribute('x', parsedPadding[3]);
+      }
+      if (textBaseline === 'middle') {
+        y -= tagHeight / 2;
+        if (symbol) {
+          symbol.setAttribute('y', 0);
+        }
+      } else if (textBaseline === 'bottom') {
+        y -= tagHeight;
+        if (symbol) {
+          symbol.setAttribute('y', -textHeight / 2);
+        }
+
+        group.setAttribute('y', -parsedPadding[2]);
+      } else if (textBaseline === 'top') {
+        group.setAttribute('y', parsedPadding[0]);
+        if (symbol) {
+          symbol.setAttribute('y', textHeight / 2);
+        }
+      }
+
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x,
+            y,
+            width: tagWidth,
+            height: tagHeight
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
       }
     }
   }

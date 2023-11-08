@@ -30,22 +30,54 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     if (isValid(title)) {
       if (title.visible !== false) {
         const titleStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'title.style'), title.style);
-        this._title = group.createOrUpdateChild(
-          'indicator-title',
-          {
-            ...titleStyle,
-            /**
-             * 加入以下逻辑：如果没有声明lineHeight，默认 lineHeight 等于 fontSize
-             * 因为如果不声明 vrender 底层会默认给文本加上 2px 的高度，会影响布局计算
-             * 注意：在autoFit改变fontsize时，lineHeight也要同步修改
-             */
-            lineHeight: isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize,
-            visible: title.visible,
-            x: 0,
-            y: 0
-          },
-          'text'
-        ) as IText;
+        if (titleStyle.type === 'rich') {
+          this._title = group.createOrUpdateChild(
+            'indicator-title',
+            {
+              textConfig: titleStyle.text,
+              ...titleStyle,
+              visible: title.visible,
+              x: 0,
+              y: 0,
+              width: titleStyle.width ?? 0,
+              height: titleStyle.height ?? 0
+            },
+            'richtext'
+          ) as IText;
+        } else if (titleStyle.type === 'html') {
+          this._title = group.createOrUpdateChild(
+            'indicator-title',
+            {
+              textConfig: [],
+              html: {
+                dom: titleStyle.text,
+                ...titleStyle
+              },
+              ...titleStyle,
+              visible: title.visible,
+              x: 0,
+              y: 0
+            },
+            'richtext'
+          ) as IText;
+        } else {
+          this._title = group.createOrUpdateChild(
+            'indicator-title',
+            {
+              ...titleStyle,
+              /**
+               * 加入以下逻辑：如果没有声明lineHeight，默认 lineHeight 等于 fontSize
+               * 因为如果不声明 vrender 底层会默认给文本加上 2px 的高度，会影响布局计算
+               * 注意：在autoFit改变fontsize时，lineHeight也要同步修改
+               */
+              lineHeight: isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize,
+              visible: title.visible,
+              x: 0,
+              y: 0
+            },
+            'text'
+          ) as IText;
+        }
 
         // auto-fit
         if (title.autoFit && isValidNumber(limit)) {
@@ -78,17 +110,50 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
       contents.forEach((contentItem, i) => {
         if (contentItem.visible !== false) {
           const contentStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'content.style'), contentItem.style);
-          const contentComponent = group.createOrUpdateChild(
-            'indicator-content-' + i,
-            {
-              ...contentStyle,
-              lineHeight: isValid(contentStyle.lineHeight) ? contentStyle.lineHeight : contentStyle.fontSize,
-              visible: contentItem.visible,
-              x: 0,
-              y: titleHeight + titleSpace + lastContentHeight
-            },
-            'text'
-          ) as IText;
+          let contentComponent;
+          if (contentStyle.type === 'rich') {
+            contentComponent = group.createOrUpdateChild(
+              'indicator-content-' + i,
+              {
+                textConfig: contentStyle.text,
+                ...contentStyle,
+                visible: title.visible,
+                x: 0,
+                y: titleHeight + titleSpace + lastContentHeight,
+                width: contentStyle.width ?? 0,
+                height: contentStyle.height ?? 0
+              },
+              'richtext'
+            ) as IText;
+          } else if (contentStyle.type === 'html') {
+            contentComponent = group.createOrUpdateChild(
+              'indicator-content-' + i,
+              {
+                textConfig: [],
+                html: {
+                  dom: contentStyle.text,
+                  ...contentStyle
+                },
+                ...contentStyle,
+                visible: title.visible,
+                x: 0,
+                y: titleHeight + titleSpace + lastContentHeight
+              },
+              'richtext'
+            ) as IText;
+          } else {
+            contentComponent = group.createOrUpdateChild(
+              'indicator-content-' + i,
+              {
+                ...contentStyle,
+                lineHeight: isValid(contentStyle.lineHeight) ? contentStyle.lineHeight : contentStyle.fontSize,
+                visible: contentItem.visible,
+                x: 0,
+                y: titleHeight + titleSpace + lastContentHeight
+              },
+              'text'
+            ) as IText;
+          }
 
           // auto-fit
           if (contentItem.autoFit && isValidNumber(limit)) {

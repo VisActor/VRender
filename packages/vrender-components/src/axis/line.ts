@@ -13,9 +13,7 @@ import {
   isValid,
   normalizePadding,
   mixin,
-  last as peek,
-  AABBBounds,
-  cloneDeep
+  last as peek
 } from '@visactor/vutils';
 import type { TextAlignType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
@@ -42,24 +40,13 @@ export interface LineAxis
 
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
-  // 判定是否是第一次run，第一次不用渲染
-  // skipRenderOnce: boolean;
 
   constructor(attributes: LineAxisAttributes, mode?: '2d' | '3d') {
     super(merge({}, LineAxis.defaultAttributes, attributes), mode);
     if (mode === '3d') {
       this.setMode(mode);
     }
-    // this.skipRenderOnce = true;
   }
-
-  // protected render(): void {
-  //   if (this.skipRenderOnce) {
-  //     this.skipRenderOnce = false;
-  //     return;
-  //   }
-  //   super.render();
-  // }
 
   protected _renderInner(container: IGroup) {
     super._renderInner(container);

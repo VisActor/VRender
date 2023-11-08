@@ -40,20 +40,9 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     this.attribute = attributes;
     // 这里调用渲染和事件绑定逻辑
     this.onSetStage(() => {
-      this.renderOnSetStage() && this.render();
+      this.render();
       this.bindEvents();
     });
-  }
-
-  renderOnSetStage() {
-    return true;
-  }
-
-  shouldAttributesUpdate(params: Partial<T>, forceUpdateTag?: boolean | undefined) {
-    return true;
-  }
-  shouldAttributeUpdate(key: keyof T, value: any, forceUpdateTag?: boolean | undefined) {
-    return true;
   }
 
   /**
@@ -73,7 +62,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     }
 
     // HACK: 待优化
-    if (this.shouldAttributeUpdate(key, value, forceUpdateTag) && !GROUP_ATTRIBUTES.includes(key as string)) {
+    if (!GROUP_ATTRIBUTES.includes(key as string)) {
       this.render();
     }
 
@@ -93,10 +82,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     this._mergeAttributes(params, keys);
 
     // HACK: 待优化
-    if (
-      this.shouldAttributesUpdate(params, forceUpdateTag) &&
-      !keys.every(key => GROUP_ATTRIBUTES.includes(key as string))
-    ) {
+    if (!keys.every(key => GROUP_ATTRIBUTES.includes(key as string))) {
       this.render();
     }
 

@@ -1,6 +1,45 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 20 Oct 2023 04:22:42 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Nov 2023 10:52:54 GMT and should not be manually modified.
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- feat: optimize text increase animation
+- fix: fix node-canvas max count issue
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: fix issue with xul and html attribute, closed #634
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: stage background support image
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+_Version update only_
+
+## 0.16.7
+Mon, 23 Oct 2023 08:53:33 GMT
+
+### Updates
+
+- fix: fix issue with creating multi chart in miniapp
+
+## 0.16.6
+Mon, 23 Oct 2023 06:30:33 GMT
+
+_Version update only_
 
 ## 0.16.5
 Fri, 20 Oct 2023 04:22:42 GMT

@@ -1,7 +1,6 @@
 /**
  * 自动省略
  */
-
 import type { IText } from '@visactor/vrender-core';
 import { isEmpty, isNil, isValidNumber } from '@visactor/vutils';
 

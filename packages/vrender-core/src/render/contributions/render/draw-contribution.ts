@@ -382,16 +382,24 @@ export class DefaultDrawContribution implements IDrawContribution {
       const x = 0;
       const y = 0;
       context.clearRect(x, y, width, height);
-      context.fillStyle = createColor(
-        context,
-        clear,
-        {
-          AABBBounds: { x1: x, y1: y, x2: x + width, y2: y + height }
-        },
-        0,
-        0
-      );
-      context.fillRect(x, y, width, height);
+      const stage = renderService.drawParams?.stage;
+      if (stage && (stage as any).backgroundImg && (stage as any).resources) {
+        const res = (stage as any).resources.get(clear);
+        if (res && res.state === 'success' && res.data) {
+          context.drawImage(res.data, x, y, width, height);
+        }
+      } else {
+        context.fillStyle = createColor(
+          context,
+          clear,
+          {
+            AABBBounds: { x1: x, y1: y, x2: x + width, y2: y + height }
+          },
+          0,
+          0
+        );
+        context.fillRect(x, y, width, height);
+      }
     }
   }
 

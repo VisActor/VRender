@@ -2,6 +2,42 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.8",
+      "tag": "@visactor/vrender_v0.16.8",
+      "date": "Mon, 23 Oct 2023 11:38:47 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.7",
+      "tag": "@visactor/vrender_v0.16.7",
+      "date": "Mon, 23 Oct 2023 08:53:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.6",
+      "tag": "@visactor/vrender_v0.16.6",
+      "date": "Mon, 23 Oct 2023 06:30:33 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.16.5",
       "tag": "@visactor/vrender_v0.16.5",
       "date": "Fri, 20 Oct 2023 04:22:42 GMT",

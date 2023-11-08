@@ -94,7 +94,7 @@ export class HtmlAttributePlugin implements IPlugin {
     // 转化这个dom为nativeDOM
     let nativeDom: HTMLElement;
     if (typeof dom === 'string') {
-      nativeDom = new DOMParser().parseFromString(dom, 'text/xml').firstChild as any;
+      nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
     } else {
       nativeDom = dom;
     }

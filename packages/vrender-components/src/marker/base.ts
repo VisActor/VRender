@@ -1,6 +1,5 @@
 import type { IGroup } from '@visactor/vrender-core';
 import { createGroup } from '@visactor/vrender-core';
-import { isValid } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';
@@ -15,6 +14,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract setLabelPos(): any;
   protected abstract initMarker(container: IGroup): any;
   protected abstract updateMarker(): any;
+  protected abstract isValidPoints(): any;
 
   private _initContainer() {
     const { limitRect, clipInRange } = this.attribute;
@@ -28,7 +28,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       });
       group = createGroup({
         x: -(limitRect?.x ?? 0),
-        y: -(limitRect?.y ?? 0)
+        y: -(limitRect?.y ?? 0),
+        pickable: false
       });
       groupClip.add(group);
       this._containerClip = groupClip;
@@ -36,7 +37,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     } else {
       group = createGroup({
         x: 0,
-        y: 0
+        y: 0,
+        pickable: false
       });
       this.add(group);
     }
@@ -56,21 +58,26 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   }
 
   protected render() {
-    const markerVisible = this.attribute.visible ?? true;
-    const markerInteractive = this.attribute.interactive ?? false;
+    // 因为标注本身不规则，所以默认将组件的 group 设置为不可拾取
+    this.setAttribute('pickable', false);
 
-    if (!markerInteractive) {
-      this.setAttribute('pickable', false);
+    const markerVisible = this.attribute.visible ?? true;
+    if (this.attribute.interactive === false) {
       this.setAttribute('childrenPickable', false);
     }
 
     if (markerVisible) {
-      if (!this._container) {
+      if (!this._container && this.isValidPoints()) {
         this._initContainer();
         this.initMarker(this._container);
       } else {
-        this._updateContainer();
-        this.updateMarker();
+        if (!this.isValidPoints()) {
+          this._container = null;
+          this.removeAllChild();
+        } else {
+          this._updateContainer();
+          this.updateMarker();
+        }
       }
     }
   }

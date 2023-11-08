@@ -1,6 +1,56 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 20 Oct 2023 04:22:42 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Nov 2023 10:52:54 GMT and should not be manually modified.
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: padding of title component
+- fix: padding offset of AABBbounds
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133
+- fix: flush should not sue width height
+- fix: fix the lastvisible logic of axis's auto-hide
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: add checkbox indeterminate state
+- feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`
+- fix: all the group container of marker do not trigger event
+- fix: all the group container of marker do not trigger event
+- fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+### Updates
+
+- fix: fix the issue of error position of focus when legend item just has label
+
+## 0.16.7
+Mon, 23 Oct 2023 08:53:33 GMT
+
+### Updates
+
+- fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured
+
+## 0.16.6
+Mon, 23 Oct 2023 06:30:33 GMT
+
+### Updates
+
+- feat: optimize the layout method of circle axis label
+- fix: fix the layout issue of legend item because of the error logic of `focusStartX`
 
 ## 0.16.5
 Fri, 20 Oct 2023 04:22:42 GMT

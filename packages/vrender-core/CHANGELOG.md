@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 02 Nov 2023 13:43:18 GMT and should not be manually modified.
+This log was last generated on Tue, 07 Nov 2023 10:52:54 GMT and should not be manually modified.
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- feat: optimize text increase animation
+- fix: fix node-canvas max count issue
 
 ## 0.16.11
 Thu, 02 Nov 2023 13:43:18 GMT

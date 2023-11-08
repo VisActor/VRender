@@ -8,6 +8,7 @@ import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 
 export class MarkArea extends Marker<MarkAreaAttrs> {
+  name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
   private _area!: IPolygon;
   getArea() {
@@ -112,5 +113,13 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
       ...label
     });
     this.setLabelPos();
+  }
+
+  protected isValidPoints() {
+    const { points } = this.attribute as MarkAreaAttrs;
+    if (!points || points.length < 3) {
+      return false;
+    }
+    return true;
   }
 }

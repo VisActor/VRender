@@ -61,16 +61,7 @@ export function run() {
     // }
   };
   const markLine = new MarkLine({
-    points: [
-      {
-        x: 100,
-        y: 50
-      },
-      {
-        x: 400,
-        y: 50
-      }
-    ],
+    points: [],
     ...(styleAttr as any)
   });
 
@@ -102,9 +93,21 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLines = [markLine, markLine2, markLine3];
+  const markLines = [markLine];
 
   const stage = render(markLines, 'main');
+  markLine.setAttributes({
+    points: [
+      {
+        x: 100,
+        y: 250
+      },
+      {
+        x: 400,
+        y: 150
+      }
+    ]
+  });
 
   // gui
   const gui = new GUI();

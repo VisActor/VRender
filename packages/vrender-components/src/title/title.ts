@@ -236,8 +236,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    group.attribute.width = titleWidth + parsedPadding[1] + parsedPadding[3];
-    group.attribute.height = titleHeight + parsedPadding[0] + parsedPadding[2];
+    group.attribute.width = titleWidth;
+    group.attribute.height = titleHeight;
+    group.attribute.boundsPadding = parsedPadding;
 
     // 设置对齐
     if (isValid(align) || isValid(textStyle?.align)) {

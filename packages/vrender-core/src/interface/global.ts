@@ -180,6 +180,9 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   // node环境不需要事件
   supportEvent: boolean;
 
+  // 是否在不显示canvas的时候停止绘图操作，默认false
+  optimizeVisible: boolean;
+
   setEnv: (env: EnvType, params?: IEnvParamsMap[EnvType]) => void;
   setActiveEnvContribution: (contribution: IEnvContribution) => void;
   createCanvas: (params: ICreateCanvasParams) => HTMLCanvasElement | any;

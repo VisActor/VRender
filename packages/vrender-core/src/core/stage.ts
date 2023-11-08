@@ -46,9 +46,9 @@ import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { DirectionalLight } from './light';
 import { OrthoCamera } from './camera';
-import { VGlobal } from '../constants';
 import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
+import { application } from '../application';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -163,7 +163,7 @@ export class Stage extends Group implements IStage {
   readonly window: IWindow;
   private readonly global: IGlobal;
   readonly renderService: IRenderService;
-  readonly pickerService: IPickerService;
+  pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
   private readonly eventSystem?: EventSystem;
@@ -195,10 +195,9 @@ export class Stage extends Group implements IStage {
       beforeRender: new SyncHook(['stage']),
       afterRender: new SyncHook(['stage'])
     };
-    this.global = container.get<IGlobal>(VGlobal);
+    this.global = application.global;
     this.window = container.get<IWindow>(VWindow);
     this.renderService = container.get<IRenderService>(RenderService);
-    this.pickerService = container.get<IPickerService>(PickerService);
     this.pluginService = container.get<IPluginService>(PluginService);
     this.layerService = container.get<ILayerService>(LayerService);
     this.pluginService.active(this, params);
@@ -783,6 +782,9 @@ export class Stage extends Group implements IStage {
     throw new Error('暂不支持');
   }
   pick(x: number, y: number): PickResult | false {
+    if (!this.pickerService) {
+      this.pickerService = container.get<IPickerService>(PickerService);
+    }
     // 暂时不提供layer的pick
     const result = this.pickerService.pick(this.children as unknown as IGraphic[], new Point(x, y), {
       bounds: this.AABBBounds

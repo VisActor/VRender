@@ -41,6 +41,7 @@ const _resolveRequest =
   };
 
 const _resolveFactoryFromBinding = <T>(binding: interfaces.Binding<T>, context: interfaces.Context): T | Promise<T> => {
+  // console.count('_resolveFactoryFromBinding');
   const factoryDetails = getFactoryDetails(binding);
   return tryAndThrowErrorIfStackOverflow(
     () => (factoryDetails.factory as interfaces.FactoryTypeFunction<T>).bind(binding)(context),
@@ -59,6 +60,13 @@ const _getResolvedFromBinding = <T = unknown>(
   request: interfaces.Request,
   binding: interfaces.Binding<T>
 ): T | Promise<T> => {
+  // console.count('_getResolvedFromBinding');
+  // console.log('_getResolvedFromBinding', binding);
+  // if (!(window as any).map) {
+  //   (window as any).map = new Map();
+  // }
+  // const d = (window as any).map.get(binding.serviceIdentifier) || [];
+  // (window as any).map.set(binding.serviceIdentifier, [...d, binding]);
   let result: T | Promise<T> | undefined;
   const childRequests = request.childRequests;
 

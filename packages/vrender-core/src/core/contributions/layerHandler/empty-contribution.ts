@@ -12,22 +12,25 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { VGlobal } from '../../../constants';
+import { application } from '../../../application';
 
 @injectable()
 export class EmptyLayerHandlerContribution implements ILayerHandlerContribution {
-  layer: ILayer;
-  canvas: null;
-  context: null;
-  offscreen: boolean;
-  main: boolean;
-  window: IWindow;
-  type: LayerMode = 'virtual';
+  declare layer: ILayer;
+  declare canvas: null;
+  declare context: null;
+  declare offscreen: boolean;
+  declare main: boolean;
+  declare window: IWindow;
+  declare type: LayerMode;
   // 所依赖的主layer handler
-  mainHandler: ILayerHandlerContribution;
+  declare mainHandler: ILayerHandlerContribution;
+  declare global: IGlobal;
 
-  constructor(@inject(VGlobal) public readonly global: IGlobal) {
+  constructor() {
     this.offscreen = false;
+    this.type = 'virtual';
+    this.global = application.global;
   }
 
   setDpr(dpr: number) {

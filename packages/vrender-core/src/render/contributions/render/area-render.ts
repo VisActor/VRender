@@ -38,6 +38,10 @@ import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawSegments } from '../../../common/render-curve';
 import { BaseRender } from './base-render';
+import {
+  defaultAreaBackgroundRenderContribution,
+  defaultAreaTextureRenderContribution
+} from './contributions/area-contribution-render';
 
 function calcLineCache(
   points: IPointLike[],
@@ -77,6 +81,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     protected readonly areaRenderContribitions: IContributionProvider<IAreaRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultAreaTextureRenderContribution, defaultAreaBackgroundRenderContribution];
     this.init(areaRenderContribitions);
   }
 

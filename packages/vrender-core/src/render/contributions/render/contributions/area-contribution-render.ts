@@ -10,21 +10,12 @@ import type {
   IDrawContext
 } from '../../../../interface';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  DefaultBaseTextureRenderContribution,
+  defaultBaseBackgroundRenderContribution
 } from './base-contribution-render';
 import { getAttributeFromDefaultAttrList } from '../../../../common/utils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
-export class DefaultAreaBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements IAreaRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
 export class DefaultAreaTextureRenderContribution
   extends DefaultBaseTextureRenderContribution
   implements IAreaRenderContribution
@@ -104,3 +95,6 @@ export class DefaultAreaTextureRenderContribution
     }
   }
 }
+
+export const defaultAreaTextureRenderContribution = new DefaultAreaTextureRenderContribution();
+export const defaultAreaBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

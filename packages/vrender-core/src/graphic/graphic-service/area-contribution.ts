@@ -1,6 +1,6 @@
-export const AreaBoundsContribution = Symbol.for('AreaBoundsContribution');
+// export const AreaBoundsContribution = Symbol.for('AreaBoundsContribution');
 
-// @injectable()
-// export class DefaultArcOuterBorderBoundsContribution
-//   extends DefaultOuterBorderBoundsContribution
-//   implements IArcBoundsContribution {}
+// // @injectable()
+// // export class DefaultArcOuterBorderBoundsContribution
+// //   extends DefaultOuterBorderBoundsContribution
+// //   implements IArcBoundsContribution {}

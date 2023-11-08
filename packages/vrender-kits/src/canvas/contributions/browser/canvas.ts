@@ -40,9 +40,9 @@ export class BrowserCanvas extends BaseCanvas implements ICanvas {
     if (!isOffscreen) {
       this.setCanvasStyle(nativeCanvas, this._x, this._y, this._displayWidth, this._displayHeight);
     }
-    if (this.id != null) {
-      nativeCanvas.id = this.id.toString();
-    }
+    // if (this.id != null) {
+    //   nativeCanvas.id = this.id.toString();
+    // }
     if (this._container) {
       this._container.appendChild(nativeCanvas);
     }
@@ -95,10 +95,10 @@ export class BrowserCanvas extends BaseCanvas implements ICanvas {
     if (!this.controled) {
       return;
     }
-    canvas.style.padding = '0';
-    canvas.style.margin = '0';
-    canvas.style.border = '0';
-    canvas.style.background = 'transparent';
+    // canvas.style.padding = '0';
+    // canvas.style.margin = '0';
+    // canvas.style.border = '0';
+    // canvas.style.background = 'transparent';
     // canvas.style.position = 'absolute';
     // canvas.style.top = `${y}px`;
     // canvas.style.left = `${x}px`;

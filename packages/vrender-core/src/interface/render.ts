@@ -1,4 +1,4 @@
-import type { IAABBBounds, IBounds } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrixLike } from '@visactor/vutils';
 import type { IColor } from './color';
 import type { IContext2d } from './context';
 import type { IGraphic, IGraphicAttribute } from './graphic';
@@ -70,7 +70,7 @@ export interface IDrawContribution {
   draw: (renderService: IRenderService, drawParams: IDrawContext) => MaybePromise<void>;
   afterDraw?: (renderService: IRenderService, drawParams: IDrawContext) => MaybePromise<void>;
   getRenderContribution: (graphic: IGraphic) => IGraphicRender | null;
-  renderGroup: (group: IGroup, drawContext: IDrawContext, skipSort?: boolean) => void;
+  renderGroup: (group: IGroup, drawContext: IDrawContext, matrix: IMatrixLike, skipSort?: boolean) => void;
   renderItem: (graphic: IGraphic, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) => void;
 }
 

@@ -11,12 +11,11 @@ import type {
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultSymbolRenderContribution implements ISymbolRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -130,16 +129,6 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
   }
 }
 
-export class DefaultSymbolBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements ISymbolRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-export class DefaultSymbolTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements ISymbolRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
+export const defaultSymbolRenderContribution = new DefaultSymbolRenderContribution();
+export const defaultSymbolTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultSymbolBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

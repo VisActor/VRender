@@ -36,8 +36,8 @@ export type TagAttributes = {
   /** 文本样式 */
   textStyle?: Partial<ITextGraphicAttribute> & {
     /** 富文本或html时配置生效 */
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
   };
   /** 文本前 mark 图元 */
   shape?: TagShapeAttributes;

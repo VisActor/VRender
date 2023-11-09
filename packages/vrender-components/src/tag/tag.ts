@@ -129,7 +129,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         textConfig: [],
         visible: isValid(text) && visible !== false,
         html: {
-          dom: text,
+          dom: text as string,
           ...textStyle
         },
         ...textStyle,
@@ -175,7 +175,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
 
       // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
-      const textBounds = measureTextSize(textAttrs.text, textStyle);
+      const textBounds = measureTextSize(textAttrs.text as string, textStyle);
       const textWidth = textBounds.width;
       const textHeight = textBounds.height;
       tagWidth += textWidth;

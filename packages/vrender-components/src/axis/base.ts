@@ -323,7 +323,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let textAlign = 'center';
     let textBaseline = 'middle';
     data.forEach((item: TransformedAxisItem, index: number) => {
-      const labelStyle = this._getLabelAttribute(item, index, data, layer);
+      const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
       let text;
       if (labelStyle?.type === 'rich') {
         labelStyle.textConfig = labelStyle.text;
@@ -331,14 +331,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         labelStyle.height = labelStyle.height ?? 0;
         text = createRichText(labelStyle);
       } else if (labelStyle?.type === 'html') {
-        labelStyle.textConfig = [];
+        labelStyle.textConfig = [] as any;
         labelStyle.html = {
-          dom: labelStyle.text,
+          dom: labelStyle.text as string,
           ...labelStyle
         };
-        text = createRichText(labelStyle);
+        text = createRichText(labelStyle as any);
       } else {
-        text = createText(labelStyle);
+        text = createText(labelStyle as any);
       }
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
@@ -532,7 +532,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       inside = false,
       formatMethod,
       type = 'text',
-      text = '',
+      text,
       // layouts = [],
       ...tagAttributes
     } = this.attribute.label as LabelAttributes;

@@ -50,7 +50,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
             {
               textConfig: [],
               html: {
-                dom: titleStyle.text,
+                dom: titleStyle.text as string,
                 ...titleStyle
               },
               ...titleStyle,
@@ -131,7 +131,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
               {
                 textConfig: [],
                 html: {
-                  dom: contentStyle.text,
+                  dom: contentStyle.text as string,
                   ...contentStyle
                 },
                 ...contentStyle,

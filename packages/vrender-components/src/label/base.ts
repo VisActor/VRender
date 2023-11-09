@@ -268,7 +268,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     } else if (attributes.type === 'html') {
       attributes.textConfig = [];
       attributes.html = {
-        dom: attributes.text,
+        dom: attributes.text as string,
         ...attributes
       };
       const text = createRichText(attributes);

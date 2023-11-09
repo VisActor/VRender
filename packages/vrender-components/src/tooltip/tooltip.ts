@@ -1,7 +1,7 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender-core';
+import type { IGroup, IText, IRichText, IRect, ISymbol, IRichTextCharacter } from '@visactor/vrender-core';
 import { builtinSymbolsMap } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -99,7 +99,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
           textAlign: titleAttr.value.textAlign as any,
           textBaseline: titleAttr.value.textBaseline as any,
           singleLine: false,
-          textConfig: titleAttr.value.text,
+          textConfig: titleAttr.value.text as IRichTextCharacter[],
           ...titleAttr.value
         },
         'richtext'
@@ -109,7 +109,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
         `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
         {
           html: {
-            dom: titleAttr.value.text,
+            dom: titleAttr.value.text as string,
             ...titleAttr.value
           },
           visible: isVisible(titleAttr) && isVisible(titleAttr.value),

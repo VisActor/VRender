@@ -1,7 +1,7 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText } from '@visactor/vrender-core';
+import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
@@ -73,14 +73,14 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           wordBreak: textStyle.wordBreak ?? 'break-word',
           maxHeight: textStyle.maxHeight,
           maxWidth: textStyle.maxWidth,
-          textConfig: text,
+          textConfig: text as IRichTextCharacter[],
           ...textStyle
         };
         this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
       } else if (textType === 'html') {
         const attr = {
           html: {
-            dom: text,
+            dom: text as string,
             ...textStyle
           },
           x: textStyle.x ?? 0,
@@ -132,7 +132,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     if (this.attribute?.visible !== false && subtextStyle?.visible !== false) {
       if (subtextType === 'rich') {
-        const attr = {
+        const attr: any = {
           x: subtextStyle.x ?? 0,
           y: subtextStyle.y ?? 0,
           width: subtextStyle.width ?? width ?? 0,
@@ -146,9 +146,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         };
         this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
       } else if (textType === 'html') {
-        const attr = {
+        const attr: any = {
           html: {
-            dom: subtext,
+            dom: subtext as string,
             ...subtextStyle
           },
           x: subtextStyle.x ?? 0,

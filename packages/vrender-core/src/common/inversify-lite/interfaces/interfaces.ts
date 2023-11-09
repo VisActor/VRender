@@ -268,10 +268,6 @@ export namespace interfaces {
     registry: ContainerModuleCallBack;
   }
 
-  export interface AsyncContainerModule extends ContainerModuleBase {
-    registry: AsyncContainerModuleCallBack;
-  }
-
   export interface ModuleActivationHandlers {
     onActivations: Lookup<BindingActivation<unknown>>;
     onDeactivations: Lookup<BindingDeactivation<unknown>>;
@@ -300,8 +296,6 @@ export namespace interfaces {
     // onActivation: interfaces.Container['onActivation'],
     // onDeactivation: interfaces.Container['onDeactivation']
   ) => void;
-
-  export type AsyncContainerModuleCallBack = AsyncCallback<ContainerModuleCallBack>;
 
   // export interface ContainerSnapshot {
   //   bindings: Lookup<Binding<unknown>>;

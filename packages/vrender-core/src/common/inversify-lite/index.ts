@@ -30,5 +30,5 @@ export { multiInject } from './annotation/multi_inject';
 export { injectable } from './annotation/injectable';
 export { named } from './annotation/named';
 export { Container } from './container/container';
-export { postConstruct } from './annotation/post_construct';
+// export { postConstruct } from './annotation/post_construct';
 export * from './interfaces/interfaces';

@@ -5,7 +5,6 @@ import {
   inject,
   injectable,
   named,
-  postConstruct,
   DefaultPickService,
   EmptyContext2d,
   PickItemInterceptor
@@ -50,9 +49,9 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
     });
     this.configure(this.global, this.global.env);
     this.pickerMap = new Map();
+    this.init();
   }
 
-  @postConstruct()
   init() {
     this.contributions.getContributions().forEach(item => {
       this.pickerMap.set(item.numberType, item);

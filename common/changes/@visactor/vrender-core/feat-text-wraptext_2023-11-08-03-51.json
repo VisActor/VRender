@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: merge wrap text function to text",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

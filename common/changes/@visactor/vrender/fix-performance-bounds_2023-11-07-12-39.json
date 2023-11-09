@@ -3,7 +3,7 @@
     {
       "packageName": "@visactor/vrender",
       "comment": "feat: optmize bounds performance",
-      "type": "none"
+      "type": "minor"
     }
   ],
   "packageName": "@visactor/vrender"

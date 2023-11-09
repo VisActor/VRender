@@ -49,23 +49,16 @@ function performance(stage: any) {
 export const page = () => {
   const graphics: IGraphic[] = [];
   const t = createText({
-    fontFamily: 'Arial',
-    fontSize: 14,
-    fontWeight: null,
-    fill: '#000',
-    textAlign: 'left',
-    textBaseline: 'top',
-    lineHeight: 14,
-    ellipsis: '...',
-    text: 'US-2019-1357144',
-    maxLineWidth: 119,
-    autoWrapText: true,
-    wordBreak: 'break-word',
-    heightLimit: 20,
-    pickable: false,
-    dx: 0,
-    x: 16,
-    y: 12
+    x: 100,
+    y: 100,
+    fill: 'red',
+    text: ['这是垂aaa直布局的文字(abc】', '这是垂ccc直布局的文字(abc】'],
+    maxLineWidth: 200,
+    direction: 'vertical',
+    fontSize: 20,
+    stroke: 'green',
+    textBaseline: 'middle',
+    textAlign: 'center'
   });
   console.log(t.AABBBounds);
   graphics.push(t);

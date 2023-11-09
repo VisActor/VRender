@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: skip update bounds while render small node-tree",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

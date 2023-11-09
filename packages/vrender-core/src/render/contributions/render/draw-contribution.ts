@@ -18,7 +18,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
-import type { IAABBBounds, IBounds, IMatrixLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IMatrixLike } from '@visactor/vutils';
 import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
@@ -39,6 +39,8 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare styleRenderMap: Map<string, Map<number, IGraphicRender>>;
   declare dirtyBounds: IBounds;
   declare backupDirtyBounds: IBounds;
+  // 是否使用dirtyBounds
+  declare useDirtyBounds: boolean;
   declare currentRenderService: IRenderService;
   declare InterceptorContributions: IDrawItemInterceptorContribution[];
 
@@ -81,7 +83,18 @@ export class DefaultDrawContribution implements IDrawContribution {
       .sort((a, b) => a.order - b.order);
   }
 
+  prepareForDraw(renderService: IRenderService, drawContext: IDrawContext) {
+    const count = renderService.renderTreeRoots.reduce((a, b) => a + b.count, 0);
+    // 小于500个元素就不用计算dirtyBounds了
+    if (count < 500) {
+      this.useDirtyBounds = false;
+    } else {
+      this.useDirtyBounds = true;
+    }
+  }
+
   draw(renderService: IRenderService, drawContext: IDrawContext): MaybePromise<void> {
+    this.prepareForDraw(renderService, drawContext);
     drawContext.drawContribution = this;
     this.currentRenderMap = this.styleRenderMap.get(drawContext.renderStyle) || this.defaultRenderMap;
     // this.startAtId = drawParams.startAtId;
@@ -181,17 +194,21 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    if (!isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
+    if (this.useDirtyBounds && !isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
       return;
     }
 
-    const tempBounds = boundsAllocate.allocateByObj(this.dirtyBounds);
+    let nextM: IMatrix;
+    let tempBounds: IBounds;
 
-    // 变换dirtyBounds
-    const gm = group.transMatrix;
-    const nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
-    // const m = group.globalTransMatrix.getInverse();
-    this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
+    if (this.useDirtyBounds) {
+      tempBounds = boundsAllocate.allocateByObj(this.dirtyBounds);
+      // 变换dirtyBounds
+      const gm = group.transMatrix;
+      nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
+      // const m = group.globalTransMatrix.getInverse();
+      this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
+    }
 
     this.renderItem(group, drawContext, {
       drawingCb: () => {
@@ -225,9 +242,11 @@ export class DefaultDrawContribution implements IDrawContribution {
       }
     });
 
-    this.dirtyBounds.copy(tempBounds);
-    boundsAllocate.free(tempBounds);
-    matrixAllocate.free(nextM);
+    if (this.useDirtyBounds) {
+      this.dirtyBounds.copy(tempBounds);
+      boundsAllocate.free(tempBounds);
+      matrixAllocate.free(nextM);
+    }
   }
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {
@@ -334,7 +353,7 @@ export class DefaultDrawContribution implements IDrawContribution {
       }
     }
 
-    if (!(graphic.isContainer || isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false))) {
+    if (this.useDirtyBounds && !(graphic.isContainer || isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false))) {
       retrans && this.dirtyBounds.copy(tempBounds);
       return;
     }

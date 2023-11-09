@@ -485,8 +485,9 @@ export class Stage extends Group implements IStage {
     if (!plugin) {
       plugin = new DirtyBoundsPlugin();
       this.pluginService.register(plugin);
+    } else {
+      plugin.activate(this.pluginService);
     }
-    plugin.activate(this.pluginService);
   }
   disableDirtyBounds() {
     if (!this.dirtyBounds) {

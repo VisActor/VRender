@@ -183,7 +183,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const bounds = application.graphicService.updateGroupAABBBounds(
       attribute,
-      getTheme(this).group,
+      groupTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

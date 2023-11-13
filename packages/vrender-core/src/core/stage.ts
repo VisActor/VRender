@@ -166,7 +166,11 @@ export class Stage extends Group implements IStage {
   pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
-  private readonly eventSystem?: EventSystem;
+  private _eventSystem?: EventSystem;
+  private get eventSystem(): EventSystem {
+    this.tryInitEventSystem();
+    return this._eventSystem;
+  }
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
@@ -242,30 +246,6 @@ export class Stage extends Group implements IStage {
     this.stage = this;
     this.renderStyle = params.renderStyle;
 
-    if (this.global.supportEvent) {
-      this.eventSystem = new EventSystem({
-        targetElement: this.window,
-        resolution: this.window.dpr || this.global.devicePixelRatio,
-        rootNode: this as any,
-        global: this.global,
-        viewport: {
-          viewBox: this._viewBox,
-          get x(): number {
-            return this.viewBox.x1;
-          },
-          get y(): number {
-            return this.viewBox.y1;
-          },
-          get width(): number {
-            return this.viewBox.width();
-          },
-          get height(): number {
-            return this.viewBox.height();
-          }
-        }
-      });
-    }
-
     // this.autoRender = params.autoRender;
     if (params.autoRender) {
       this.enableAutoRender();
@@ -292,13 +272,39 @@ export class Stage extends Group implements IStage {
     this.optmize(params.optimize);
   }
 
+  protected tryInitEventSystem() {
+    if (this.global.supportEvent && !this._eventSystem) {
+      this._eventSystem = new EventSystem({
+        targetElement: this.window,
+        resolution: this.window.dpr || this.global.devicePixelRatio,
+        rootNode: this as any,
+        global: this.global,
+        viewport: {
+          viewBox: this._viewBox,
+          get x(): number {
+            return this.viewBox.x1;
+          },
+          get y(): number {
+            return this.viewBox.y1;
+          },
+          get width(): number {
+            return this.viewBox.width();
+          },
+          get height(): number {
+            return this.viewBox.height();
+          }
+        }
+      });
+    }
+  }
+
   // 优化策略
   optmize(params?: IOptimizeType) {
     this.optmizeRender(params?.skipRenderWithOutRange);
   }
 
   // 优化渲染
-  protected optmizeRender(skipRenderWithOutRange: boolean = true) {
+  protected optmizeRender(skipRenderWithOutRange: boolean = false) {
     if (!skipRenderWithOutRange) {
       return;
     }

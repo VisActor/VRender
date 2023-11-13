@@ -1,5 +1,6 @@
 import { Metadata } from '../meta-data';
 import { TAGGED } from '../metadata_keys';
+import Reflect from '../../Reflect-metadata';
 
 function _tagParameterOrProperty(
   metadataKey: string,

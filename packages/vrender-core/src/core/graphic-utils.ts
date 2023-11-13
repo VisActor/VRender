@@ -13,8 +13,16 @@ import { application } from '../application';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
-  canvas?: ICanvas;
-  context?: IContext2d | null;
+  get canvas(): ICanvas {
+    this.tryInitCanvas();
+    return this._canvas;
+  }
+  get context(): IContext2d | null {
+    this.tryInitCanvas();
+    return this._context;
+  }
+  _canvas?: ICanvas;
+  _context?: IContext2d | null;
   _textMeasure: ITextMeasure;
   configured: boolean;
   global: IGlobal;
@@ -50,10 +58,10 @@ export class DefaultGraphicUtil implements IGraphicUtil {
   }
 
   tryInitCanvas() {
-    if (!this.canvas) {
+    if (!this._canvas) {
       const canvas = canvasAllocate.shareCanvas();
-      this.canvas = canvas;
-      this.context = canvas.getContext('2d');
+      this._canvas = canvas;
+      this._context = canvas.getContext('2d');
     }
   }
 
@@ -83,7 +91,6 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     getCanvasForMeasure?: () => any
   ) {
     this.configure(this.global, this.global.env);
-    this.tryInitCanvas();
     return new TextMeasure<ITextAttribute>(
       {
         defaultFontParams: {

@@ -1,4 +1,4 @@
-import { createStage, DragNDrop, createCircle, IGraphic } from '@visactor/vrender';
+import { createStage, DragNDrop, createCircle, IGraphic, vglobal } from '@visactor/vrender';
 import { colorPools } from '../utils';
 import { createGroup } from '@visactor/vrender';
 

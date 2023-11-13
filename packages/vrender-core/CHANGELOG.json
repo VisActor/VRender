@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-core_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add preventRender function"
+          },
+          {
+            "comment": "feat: merge wrap text function to text"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.12",
       "tag": "@visactor/vrender-core_v0.16.12",
       "date": "Tue, 07 Nov 2023 10:52:54 GMT",

@@ -5,7 +5,7 @@ import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { parsePadding } from '../common/utils';
+import { calculateLineHeight, parsePadding } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { TextDirection, verticalLayout } from './tools';
 
@@ -139,7 +139,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
-      lineHeight = this.attribute.lineHeight || this.attribute.fontSize || textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
@@ -151,6 +150,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       heightLimit = 0,
       lineClamp
     } = this.attribute;
+    const lineHeight =
+      calculateLineHeight(this.attribute.lineHeight, this.attribute.fontSize || textTheme.fontSize) ??
+      (this.attribute.fontSize || textTheme.fontSize);
     const buf = ignoreBuf ? 0 : 2;
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
@@ -369,7 +371,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this.updateWrapAABBBounds(text);
     }
     const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
-    const { lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf } = attribute;
+    const textFontSize = attribute.fontSize || textTheme.fontSize;
+    const lineHeight = calculateLineHeight(attribute.lineHeight, textFontSize) ?? textFontSize + buf;
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth ?? 0;
       const dx = textDrawOffsetX(textAlign, width);
@@ -463,10 +466,13 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
-      lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth,
       verticalMode = textTheme.verticalMode
     } = attribute;
+
+    const lineHeight =
+      calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
+      (attribute.fontSize || textTheme.fontSize) + buf;
 
     let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
     if (!verticalMode) {
@@ -553,13 +559,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
-      lineHeight = attribute.lineHeight || attribute.fontSize || textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace
     } = attribute;
+    const lineHeight =
+      calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
+      (attribute.fontSize || textTheme.fontSize);
     if (whiteSpace === 'normal') {
       return this.updateWrapAABBBounds(text);
     }
@@ -613,11 +621,13 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontSize = textTheme.fontSize,
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
-      lineHeight = attribute.lineHeight ?? (attribute.fontSize || textTheme.fontSize) + buf,
       lineWidth = textTheme.lineWidth,
       // wordBreak = textTheme.wordBreak,
       verticalMode = textTheme.verticalMode
     } = attribute;
+    const lineHeight =
+      calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
+      (attribute.fontSize || textTheme.fontSize) + buf;
     let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
     if (!verticalMode) {
       const t = textAlign;

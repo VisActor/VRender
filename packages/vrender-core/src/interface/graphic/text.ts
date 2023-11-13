@@ -41,7 +41,7 @@ export type ITextAttribute = {
   ellipsis: boolean | string;
   fontVariant: string;
   fontStyle: string;
-  lineHeight: number;
+  lineHeight: number | string;
   underline: number;
   lineThrough: number;
   scaleIn3d: boolean;

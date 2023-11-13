@@ -10,6 +10,7 @@ import type { IMatrix, IPointLike, ITextMeasureOption } from '@visactor/vutils';
 import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
 import { VGlobal } from '../constants';
+import { calculateLineHeight } from '../common/utils';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -79,7 +80,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     getCanvasForMeasure?: () => any
   ) {
     this.configure(this.global, this.global.env);
-    return new TextMeasure<ITextAttribute>(
+    return new TextMeasure<Omit<ITextAttribute, 'lineHeight'> & { lineHeight?: number }>(
       {
         defaultFontParams: {
           fontFamily: DefaultTextStyle.fontFamily,
@@ -90,7 +91,10 @@ export class DefaultGraphicUtil implements IGraphicUtil {
         specialCharSet: '-/: .,@%\'"~' + TextMeasure.ALPHABET_CHAR_SET + TextMeasure.ALPHABET_CHAR_SET.toUpperCase(),
         ...(option ?? {})
       },
-      textSpec
+      {
+        ...textSpec,
+        lineHeight: calculateLineHeight(textSpec?.lineHeight, textSpec?.fontSize)
+      }
     );
   }
 }

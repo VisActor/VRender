@@ -1,6 +1,6 @@
 import type { ITextGraphicAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { getTextBounds } from '@visactor/vrender-core';
+import { calculateLineHeight, getTextBounds } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { TextMeasure } from '@visactor/vutils';
@@ -10,8 +10,8 @@ export const initTextMeasure = (
   textSpec?: Partial<ITextGraphicAttribute>,
   option?: Partial<ITextMeasureOption>,
   useNaiveCanvas?: boolean
-): TextMeasure<ITextGraphicAttribute> => {
-  return new TextMeasure<ITextGraphicAttribute>(
+): TextMeasure<Omit<ITextGraphicAttribute, 'lineHeight'> & { lineHeight?: number }> => {
+  return new TextMeasure<Omit<ITextGraphicAttribute, 'lineHeight'> & { lineHeight?: number }>(
     {
       defaultFontParams: {
         fontFamily: DEFAULT_TEXT_FONT_FAMILY,
@@ -21,7 +21,10 @@ export const initTextMeasure = (
       specialCharSet: '-/: .,@%\'"~' + TextMeasure.ALPHABET_CHAR_SET + TextMeasure.ALPHABET_CHAR_SET.toUpperCase(),
       ...(option ?? {})
     },
-    textSpec
+    {
+      ...textSpec,
+      lineHeight: calculateLineHeight(textSpec?.lineHeight, textSpec?.fontSize)
+    }
   );
 };
 

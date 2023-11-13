@@ -3,6 +3,7 @@ import { merge } from '@visactor/vutils';
 import type { SymbolLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingPoint } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
   name = 'symbol-label';
@@ -20,8 +21,8 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: SymbolLabelAttrs) {
-    super(merge({}, SymbolLabel.defaultAttributes, attributes));
+  constructor(attributes: SymbolLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, SymbolLabel.defaultAttributes, attributes));
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {

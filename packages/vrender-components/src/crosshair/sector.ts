@@ -7,6 +7,7 @@ import type { PointLocationCfg } from '../core/type';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import { CrosshairBase } from './base';
 import type { SectorCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
   static defaultAttributes = {
@@ -16,8 +17,8 @@ export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: SectorCrosshairAttrs) {
-    super(merge({}, SectorCrosshair.defaultAttributes, attributes));
+  constructor(attributes: SectorCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, SectorCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

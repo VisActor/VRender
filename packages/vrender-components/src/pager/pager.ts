@@ -8,6 +8,7 @@ import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { PagerAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
@@ -46,8 +47,8 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     }
   };
 
-  constructor(attributes: PagerAttributes) {
-    super(merge({}, Pager.defaultAttributes, attributes));
+  constructor(attributes: PagerAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Pager.defaultAttributes, attributes));
   }
 
   protected render() {

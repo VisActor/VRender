@@ -4,6 +4,7 @@
 import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
 import { Group } from '@visactor/vrender-core';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
+import type { ComponentOptions } from '../interface';
 
 const GROUP_ATTRIBUTES = [
   'x',
@@ -26,11 +27,22 @@ const GROUP_ATTRIBUTES = [
 export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGroupGraphicAttribute> extends Group {
   declare attribute: Partial<T>;
 
-  protected mode: '2d' | '3d';
+  protected mode?: '2d' | '3d';
 
-  constructor(attributes: T, mode: '2d' | '3d' = '2d') {
+  protected skipDefault?: boolean;
+
+  constructor(attributes: T, options?: ComponentOptions) {
     super(attributes);
-    this.mode = mode;
+
+    if (options?.mode) {
+      this.mode = options.mode;
+
+      this.setMode(options.mode);
+    }
+
+    if (options?.skipDefault) {
+      this.skipDefault = true;
+    }
     // 组件需要精准 bounds，所以将这个 strokeBoundsBuffer 设置为 0，否则会影响包围盒的获取
     this.setTheme({
       common: {

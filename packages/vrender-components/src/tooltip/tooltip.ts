@@ -110,6 +110,10 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
         {
           html: {
             dom: titleAttr.value.text as string,
+            container: '',
+            width: 30,
+            height: 30,
+            style: {},
             ...titleAttr.value
           },
           visible: isVisible(titleAttr) && isVisible(titleAttr.value),

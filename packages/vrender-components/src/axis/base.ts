@@ -334,6 +334,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         labelStyle.textConfig = [] as any;
         labelStyle.html = {
           dom: labelStyle.text as string,
+          container: '',
+          width: 30,
+          height: 30,
+          style: {},
           ...labelStyle
         };
         text = createRichText(labelStyle as any);

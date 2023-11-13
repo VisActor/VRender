@@ -3,7 +3,8 @@ import type {
   ISymbolGraphicAttribute,
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
-  IRichTextCharacter
+  IRichTextCharacter,
+  IRichTextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { Padding, State } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
@@ -34,11 +35,12 @@ export type TagAttributes = {
    */
   text?: string | string[] | number | number[] | IRichTextCharacter[];
   /** 文本样式 */
-  textStyle?: Partial<ITextGraphicAttribute> & {
-    /** 富文本或html时配置生效 */
-    width?: number;
-    height?: number;
-  };
+  textStyle?: Partial<ITextGraphicAttribute> | Partial<IRichTextGraphicAttribute>;
+  // & {
+  //   /** 富文本或html时配置生效 */
+  //   width?: number;
+  //   height?: number;
+  // };
   /** 文本前 mark 图元 */
   shape?: TagShapeAttributes;
   /**

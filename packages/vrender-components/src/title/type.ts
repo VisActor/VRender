@@ -1,6 +1,7 @@
 import type {
   IGroupGraphicAttribute,
   ITextGraphicAttribute,
+  IRichTextGraphicAttribute,
   IRichTextCharacter,
   RichTextWordBreak
 } from '@visactor/vrender-core';
@@ -117,7 +118,12 @@ export interface TitleAttrs extends IGroupGraphicAttribute {
      * 富文本配置（暂时保留旧设置）
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+    /**
+     * text兼容IText和IRichtext
+     */
+    text?: string | number | string[] | number[] | IRichTextCharacter[];
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
   /**
    * 副标题样式
    */
@@ -162,5 +168,6 @@ export interface TitleAttrs extends IGroupGraphicAttribute {
      * 富文本配置（暂时保留旧设置）
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
 }

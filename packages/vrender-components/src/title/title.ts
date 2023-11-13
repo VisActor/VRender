@@ -81,6 +81,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         const attr = {
           html: {
             dom: text as string,
+            container: '',
+            width: 30,
+            height: 30,
+            style: '',
             ...textStyle
           },
           x: textStyle.x ?? 0,
@@ -149,6 +153,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         const attr: any = {
           html: {
             dom: subtext as string,
+            container: '',
+            width: 30,
+            height: 30,
+            style: {},
             ...subtextStyle
           },
           x: subtextStyle.x ?? 0,

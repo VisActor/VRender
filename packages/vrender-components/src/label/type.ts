@@ -3,11 +3,13 @@ import type {
   IGraphic,
   IGroupGraphicAttribute,
   ITextGraphicAttribute,
+  IRichTextGraphicAttribute,
   Text,
   TextAlignType,
   TextBaselineType,
   ILineGraphicAttribute,
-  IRichTextGraphicAttribute
+  IRichTextCharacter,
+  RichText
 } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 
@@ -27,7 +29,20 @@ export type LabelItem = {
   [key: string]: any;
   // 文本类型：text, rich, html
   type?: string;
-} & (ITextGraphicAttribute | IRichTextGraphicAttribute);
+  /**
+   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+   * 支持富文本内容, 如textConfig, html
+   */
+  text?: string | string[] | number | number[] | IRichTextCharacter[];
+  /**
+   * 兼容ITextGraphicAttribute与IRichTextGraphicAttribute的textAlign属性
+   */
+  textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
+  textBaseline?: 'top' | 'middle' | 'bottom' | 'alphabetic';
+} & Omit<Partial<ITextGraphicAttribute>, 'textAlign' | 'textBaseline'> &
+  Omit<Partial<IRichTextGraphicAttribute>, 'textAlign' | 'textBaseline'>;
+// Omit<Partial<ITextGraphicAttribute>, 'text' | 'textAlign'> &
+//   Omit<Partial<IRichTextGraphicAttribute>, 'text' | 'textAlign'>;
 
 export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   type: string;
@@ -93,16 +108,16 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
     data: LabelItem[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
     getRelatedPoint?: (data: LabelItem) => IPointLike
-  ) => Text[];
+  ) => (Text | RichText)[];
 
   /** 自定义标签躲避函数
    * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
    */
   customOverlapFunc?: (
-    label: Text[],
+    label: (Text | RichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
     getRelatedPoint?: (data: LabelItem) => IPointLike
-  ) => Text[];
+  ) => (Text | RichText)[];
   /**
    * 关闭交互效果
    * @default false

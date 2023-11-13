@@ -8,7 +8,9 @@ import type {
   IText,
   ITextAttribute,
   ITextGraphicAttribute,
-  IRichText
+  IRichTextGraphicAttribute,
+  IRichText,
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -42,7 +44,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
   protected render() {
     const {
       text = '',
-      textStyle = {} as ITextGraphicAttribute,
+      textStyle = {} as ITextGraphicAttribute | IRichTextGraphicAttribute,
       shape = {} as TagShapeAttributes,
       panel = {} as BackgroundAttributes,
       space = 4,
@@ -95,13 +97,13 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     let textShape;
     if (type === 'rich') {
       const richTextAttrs = {
-        textConfig: text,
+        textConfig: text as IRichTextCharacter[],
         visible: isValid(text) && visible !== false,
-        ...textStyle,
+        ...(textStyle as IRichTextGraphicAttribute),
         x: textX,
         y: 0,
-        width: textStyle.width ?? 0,
-        height: textStyle.height ?? 0
+        width: (textStyle as IRichTextGraphicAttribute).width ?? 0,
+        height: (textStyle as IRichTextGraphicAttribute).height ?? 0
       };
       textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
 
@@ -126,13 +128,17 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
     } else if (type === 'html') {
       const richTextAttrs = {
-        textConfig: [],
+        textConfig: [] as IRichTextCharacter[],
         visible: isValid(text) && visible !== false,
         html: {
           dom: text as string,
+          container: '',
+          width: 30,
+          height: 30,
+          style: {},
           ...textStyle
         },
-        ...textStyle,
+        ...(textStyle as IRichTextGraphicAttribute),
         x: textX,
         y: 0
       };
@@ -159,15 +165,15 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
     } else {
       const textAttrs = {
-        text,
+        text: text as string | number | string[] | number[],
         visible: isValid(text) && visible !== false,
-        lineHeight: textStyle?.fontSize,
-        ...textStyle,
+        lineHeight: (textStyle as ITextGraphicAttribute)?.fontSize,
+        ...(textStyle as ITextGraphicAttribute),
         x: textX,
         y: 0
       };
       if (isNil(textAttrs.lineHeight)) {
-        textAttrs.lineHeight = textAttrs.fontSize;
+        textAttrs.lineHeight = (textStyle as ITextGraphicAttribute).fontSize;
       }
       textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
       if (!isEmpty(state?.text)) {

@@ -1,4 +1,5 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
@@ -7,7 +8,9 @@ import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
-import { DataZoomActiveTag, DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
+import { DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
+import { DataZoomActiveTag } from './type';
+// eslint-disable-next-line no-duplicate-imports
 import type { DataZoomAttributes } from './type';
 
 const delayMap = {
@@ -49,7 +52,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _selectedPreviewArea!: IArea;
 
   /** 交互状态 */
-  protected _activeTag!: string;
+  protected _activeTag!: DataZoomActiveTag;
   protected _activeItem!: any;
   protected _activeState = false;
   protected _activeCache: {
@@ -80,7 +83,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _previewPointsY!: (datum: any) => number;
   private _previewPointsX1!: (datum: any) => number;
   private _previewPointsY1!: (datum: any) => number;
-  private _updateStateCallback!: (start: number, end: number) => void;
+  private _updateStateCallback!: (start: number, end: number, trigger?: DataZoomActiveTag) => void;
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
@@ -318,7 +321,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-      realTime && this._updateStateCallback && this._updateStateCallback(start, end);
+      realTime && this._updateStateCallback?.(start, end, this._activeTag);
       this._dispatchChangeEvent(start, end);
     }
   };
@@ -344,7 +347,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (!realTime || start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
-      this._updateStateCallback && this._updateStateCallback(this.state.start, this.state.end);
+      this._updateStateCallback?.(this.state.start, this.state.end, this._activeTag);
       this._dispatchChangeEvent(this.state.start, this.state.end);
     }
   }
@@ -1013,7 +1016,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setStateAttr(start, end, true);
-        this._updateStateCallback && this._updateStateCallback(start, end);
+        this._updateStateCallback?.(start, end, this._activeTag);
         this._dispatchChangeEvent(start, end);
       }
     }
@@ -1050,7 +1053,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   /** 外部传入start和end状态更新后的逻辑 */
-  setUpdateStateCallback(callback: (start: number, end: number) => void) {
+  setUpdateStateCallback(callback: (start: number, end: number, trigger?: DataZoomActiveTag) => void) {
     isFunction(callback) && (this._updateStateCallback = callback);
   }
 

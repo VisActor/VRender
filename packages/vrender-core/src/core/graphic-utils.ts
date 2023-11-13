@@ -43,13 +43,18 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     if (this.configured) {
       return;
     }
-    const canvas = canvasAllocate.getCommonCanvas();
-    this.canvas = canvas;
-    this.context = canvas.getContext('2d');
     this.contributions.getContributions().forEach(contribution => {
       contribution.configure(this, env);
     });
     this.configured = true;
+  }
+
+  tryInitCanvas() {
+    if (!this.canvas) {
+      const canvas = canvasAllocate.shareCanvas();
+      this.canvas = canvas;
+      this.context = canvas.getContext('2d');
+    }
   }
 
   bindTextMeasure(tm: ITextMeasure) {
@@ -78,6 +83,7 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     getCanvasForMeasure?: () => any
   ) {
     this.configure(this.global, this.global.env);
+    this.tryInitCanvas();
     return new TextMeasure<ITextAttribute>(
       {
         defaultFontParams: {

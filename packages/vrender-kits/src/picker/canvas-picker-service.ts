@@ -85,7 +85,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // });
 
     // 创建pick canvas
-    this.pickCanvas = canvasAllocate.getCommonCanvas();
+    this.pickCanvas = canvasAllocate.shareCanvas();
     this.pickContext = this.pickCanvas.getContext('2d');
   }
 

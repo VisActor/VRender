@@ -17,7 +17,7 @@ export interface IGraphicUtil {
     textSpec?: Partial<ITextAttribute>,
     option?: Partial<ITextMeasureOption>,
     getCanvasForMeasure?: () => any
-  ) => TextMeasure<Omit<ITextAttribute, 'lineHeight'> & { lineHeight?: number }>;
+  ) => TextMeasure<ITextAttribute>;
 }
 
 export type TransformType = Pick<IGraphicAttribute, 'x' | 'y' | 'scaleX' | 'scaleY' | 'angle' | 'dx' | 'dy'> & {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: datazoom update callback supports new trigger tag param",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

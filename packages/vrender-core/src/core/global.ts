@@ -108,7 +108,7 @@ export class DefaultGlobal implements IGlobal {
 
   // 是否在不显示canvas的时候停止绘图操作，默认false
   optimizeVisible: boolean;
-  // 在场景树小于某个数的情况下，不进行图元超出边界判断，默认300
+  // 在场景树小于某个数的情况下，不进行图元超出边界判断，默认0
   optmizeSkipCheckBoundariesThreshold: number;
 
   envParams?: any;
@@ -129,7 +129,7 @@ export class DefaultGlobal implements IGlobal {
     };
     this.measureTextMethod = 'native';
     this.optimizeVisible = false;
-    this.optmizeSkipCheckBoundariesThreshold = 300;
+    this.optmizeSkipCheckBoundariesThreshold = 0;
   }
 
   protected bindContribution(params?: any): void | Promise<any> {

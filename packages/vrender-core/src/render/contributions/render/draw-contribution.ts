@@ -86,7 +86,7 @@ export class DefaultDrawContribution implements IDrawContribution {
   prepareForDraw(renderService: IRenderService, drawContext: IDrawContext) {
     const count = renderService.renderTreeRoots.reduce((a, b) => a + b.count, 0);
     // 小于500个元素就不用计算dirtyBounds了
-    if (count < 500) {
+    if (count < this.global.optmizeSkipCheckBoundariesThreshold) {
       this.useDirtyBounds = false;
     } else {
       this.useDirtyBounds = true;

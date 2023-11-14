@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "perf: add option `skipDefault` to vrender-components",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

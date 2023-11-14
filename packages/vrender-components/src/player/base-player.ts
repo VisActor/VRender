@@ -2,7 +2,7 @@ import type { INode } from '@visactor/vrender-core';
 import { CustomEvent } from '@visactor/vrender-core';
 import { isNumber, isValidNumber, max, merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { OrientType } from '../interface';
+import type { ComponentOptions, OrientType } from '../interface';
 import type { SliderAttributes } from '../slider';
 import { Slider } from '../slider';
 import type { ControllerAttributes } from './controller';
@@ -91,8 +91,8 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     forward?: { x: number; y: number; size: number };
   } = {};
 
-  constructor(attributes: T) {
-    super(merge({}, BasePlayer.defaultAttributes, attributes));
+  constructor(attributes: T, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, BasePlayer.defaultAttributes, attributes));
     // 先初始化属性, 再初始化Slider、Controller, 最后初始化事件.
     this._initAttributes();
     this._initLayoutInfo();

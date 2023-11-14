@@ -6,6 +6,7 @@ import { merge } from '@visactor/vutils';
 import type { RegionLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { LineCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
   static defaultAttributes = {
@@ -16,8 +17,8 @@ export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: LineCrosshairAttrs) {
-    super(merge({}, LineCrosshair.defaultAttributes, attributes));
+  constructor(attributes: LineCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

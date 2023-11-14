@@ -54,4 +54,15 @@ builtinSymbols.forEach(symbol => {
   builtinSymbolsMap[symbol.type] = symbol;
 });
 
+export const builtInSymbolStrMap: Record<string, string> = {
+  arrowLeft: 'M 0.25 -0.5 L -0.25 0 l 0.5 0.5',
+  arrowRight: 'M -0.25 -0.5 l 0.5 0.5 l -0.5 0.5',
+  rect: 'M -0.5,0.25 L 0.5,0.25 L 0.5,-0.25,L -0.5,-0.25 Z',
+  rectRound:
+    // eslint-disable-next-line max-len
+    'M 0.3 -0.5 C 0.41 -0.5 0.5 -0.41 0.5 -0.3 C 0.5 -0.3 0.5 0.3 0.5 0.3 C 0.5 0.41 0.41 0.5 0.3 0.5 C 0.3 0.5 -0.3 0.5 -0.3 0.5 C -0.41 0.5 -0.5 0.41 -0.5 0.3 C -0.5 0.3 -0.5 -0.3 -0.5 -0.3 C -0.5 -0.41 -0.41 -0.5 -0.3 -0.5 C -0.3 -0.5 0.3 -0.5 0.3 -0.5 Z',
+  roundLine:
+    'M 1.2392 -0.258 L -1.3432 -0.258 C -1.4784 -0.258 -1.588 -0.1436 -1.588 -0.002 c 0 0.1416 0.1096 0.256 0.2448 0.256 l 2.5824 0 c 0.1352 0 0.2448 -0.1144 0.2448 -0.256 C 1.484 -0.1436 1.3744 -0.258 1.2392 -0.258 z'
+};
+
 export * from './utils';

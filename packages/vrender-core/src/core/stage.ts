@@ -690,7 +690,7 @@ export class Stage extends Group implements IStage {
         {
           renderService: this.renderService,
           background: layer === this.defaultLayer ? this.background : undefined,
-          updateBounds: !!this.dirtyBounds
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -701,7 +701,7 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.render(
         {
           renderService: this.renderService,
-          updateBounds: !!this.dirtyBounds
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -847,7 +847,7 @@ export class Stage extends Group implements IStage {
         renderService: this.renderService,
         background: layer === this.defaultLayer ? this.background : undefined,
         clear: i === 0, // 第一个layer需要clear
-        updateBounds: !!this.dirtyBounds
+        updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
       });
     });
   }

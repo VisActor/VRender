@@ -10,3 +10,13 @@ export class ContainerModule implements interfaces.ContainerModule {
     this.registry = registry;
   }
 }
+
+export class AsyncContainerModule implements interfaces.AsyncContainerModule {
+  id: number;
+  registry: interfaces.AsyncContainerModuleCallBack;
+
+  constructor(registry: interfaces.AsyncContainerModuleCallBack) {
+    this.id = id();
+    this.registry = registry;
+  }
+}

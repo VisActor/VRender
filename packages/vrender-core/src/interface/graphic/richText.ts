@@ -31,7 +31,7 @@ export type RichTextTextDecoration = 'none' | 'underline' | 'line-through';
 export type RichTextScript = 'normal' | 'sub' | 'super';
 
 export type IRichTextBasicCharacter = {
-  lineHeight?: number;
+  lineHeight?: number | string;
   textAlign?: CanvasTextAlign; // left, right, center
   textBaseline?: CanvasTextBaseline;
   direction?: RichTextLayoutDirectionType;

@@ -9,6 +9,7 @@ import { AbstractComponent } from '../core/base';
 import type { BrushAttributes } from './type';
 import { IOperateType } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
+import type { ComponentOptions } from '../interface';
 
 const delayMap = {
   debounce: debounce,
@@ -43,8 +44,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     operatedMaskAABBBounds: { [name: string]: IBounds };
   }) => void;
 
-  constructor(attributes: BrushAttributes) {
-    super(merge({}, Brush.defaultAttributes, attributes));
+  constructor(attributes: BrushAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Brush.defaultAttributes, attributes));
   }
 
   protected bindBrushEvents(): void {

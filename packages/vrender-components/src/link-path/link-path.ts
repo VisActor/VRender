@@ -6,6 +6,7 @@ import type { IGroup, IPath } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { LinkPathAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 export const getHorizontalPath = (options: LinkPathAttributes, ratio?: number) => {
   let x0 = options.x0;
@@ -121,8 +122,8 @@ export class LinkPath extends AbstractComponent<Required<LinkPathAttributes>> {
   private _backPath?: IPath;
   private _frontPath?: IPath;
 
-  constructor(attributes: LinkPathAttributes) {
-    super(merge({}, LinkPath.defaultAttributes, attributes));
+  constructor(attributes: LinkPathAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LinkPath.defaultAttributes, attributes));
   }
 
   protected render() {

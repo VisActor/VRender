@@ -17,9 +17,11 @@
     "build": "bundle --clean",
     "build-umd": "bundle --clean -f umd",
     "dev": "bundle --clean -f es -w",
-    "start": "vite ./__tests__/browser",
+    "start": "vite ./__tests__/browser --host",
     "test": "jest",
     "test-cov": "jest -w 16 --coverage",
+    "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
+    "test-watch": "DEBUG_MODE=1 jest --watch",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

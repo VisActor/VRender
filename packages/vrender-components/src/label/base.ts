@@ -34,6 +34,7 @@ import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap'
 import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
 import { getPointsOfLineArea } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -80,8 +81,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   private _enableAnimation: boolean;
 
-  constructor(attributes: BaseLabelAttrs) {
-    super(merge({}, LabelBase.defaultAttributes, attributes));
+  constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LabelBase.defaultAttributes, attributes));
   }
 
   /**

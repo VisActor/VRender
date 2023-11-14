@@ -3,6 +3,7 @@ import { merge } from '@visactor/vutils';
 import type { LineDataLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingPoint } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class LineDataLabel extends LabelBase<LineDataLabelAttrs> {
   name = 'line-data-label';
@@ -20,8 +21,8 @@ export class LineDataLabel extends LabelBase<LineDataLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: LineDataLabelAttrs) {
-    super(merge({}, LineDataLabel.defaultAttributes, attributes));
+  constructor(attributes: LineDataLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineDataLabel.defaultAttributes, attributes));
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {

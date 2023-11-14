@@ -5,6 +5,7 @@ import type { IGroup, IText, IRichText } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';
@@ -31,8 +32,8 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     }
   };
 
-  constructor(attributes: TitleAttrs) {
-    super(merge({}, Title.defaultAttributes, attributes));
+  constructor(attributes: TitleAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Title.defaultAttributes, attributes));
   }
 
   protected render() {

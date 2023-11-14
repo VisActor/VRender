@@ -11,6 +11,7 @@ import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
 import type { ColorLegendAttributes } from './type';
+import type { ComponentOptions } from '../../interface';
 
 export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   name = 'colorLegend';
@@ -43,8 +44,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   private _colorScale!: ILinearScale;
   private _color: IColor | undefined;
 
-  constructor(attributes: ColorLegendAttributes) {
-    super(merge({}, ColorContinuousLegend.defaultAttributes, attributes));
+  constructor(attributes: ColorLegendAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, ColorContinuousLegend.defaultAttributes, attributes));
   }
 
   /**

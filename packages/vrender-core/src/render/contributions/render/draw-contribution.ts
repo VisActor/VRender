@@ -1,4 +1,4 @@
-import { injectable, inject, postConstruct, named, multiInject } from '../../../common/inversify-lite';
+import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   MaybePromise,
@@ -65,9 +65,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.backupDirtyBounds = new Bounds();
     this.global = application.global;
     this.layerService = application.layerService;
+    this.init();
   }
 
-  @postConstruct()
   init() {
     this.contributions.forEach(item => {
       if (item.style) {

@@ -14,10 +14,13 @@ import type {
 import { SyncHook } from '../tapable';
 import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
+import { container } from '../container';
+import { Generator } from '../common/generator';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
 export class DefaultGlobal implements IGlobal {
+  readonly id: number;
   private _env: EnvType;
   private _isSafari?: boolean;
   private _isChrome?: boolean;
@@ -120,6 +123,7 @@ export class DefaultGlobal implements IGlobal {
     @named(EnvContribution)
     protected readonly contributions: IContributionProvider<IEnvContribution>
   ) {
+    this.id = Generator.GenAutoIncrementId();
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])
     };

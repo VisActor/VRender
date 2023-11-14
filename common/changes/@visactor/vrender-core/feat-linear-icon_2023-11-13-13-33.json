@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: add round line symbol, closed #1458",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

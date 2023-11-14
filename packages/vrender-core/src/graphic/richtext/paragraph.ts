@@ -1,3 +1,4 @@
+import { calculateLineHeight } from '../../common/utils';
 import type { IContext2d, IRichTextParagraphCharacter } from '../../interface';
 import { measureTextCanvas, applyFillStyle, applyStrokeStyle, getStrByWithCanvas } from './utils';
 
@@ -62,8 +63,9 @@ export default class Paragraph {
     // 处理行高：
     // lineHeight为数字时，大于fontSize取lineHeight，小于fontSize时取fontSize
     // lineHeight不为数字时，统一认为lineHeight为'normal'，值取1.2 * fontSize
-    if (typeof character.lineHeight === 'number') {
-      this.lineHeight = character.lineHeight > this.fontSize ? character.lineHeight : this.fontSize;
+    const lineHeight = calculateLineHeight(character.lineHeight, this.fontSize);
+    if (typeof lineHeight === 'number') {
+      this.lineHeight = lineHeight > this.fontSize ? lineHeight : this.fontSize;
     } else {
       this.lineHeight = Math.floor(1.2 * this.fontSize);
     }

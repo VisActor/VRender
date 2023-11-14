@@ -4,6 +4,7 @@ import type { IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
 import { application } from '../application';
 import { Text } from './text';
 import { getTheme } from './theme';
+import { calculateLineHeight } from '../common/utils';
 
 const WRAP_TEXT_UPDATE_TAG_KEY = ['heightLimit', 'lineClamp'];
 
@@ -35,7 +36,6 @@ export class WrapText extends Text {
       textAlign = textTheme.textAlign,
       textBaseline = textTheme.textBaseline,
       fontSize = textTheme.fontSize,
-      lineHeight = this.attribute.lineHeight || this.attribute.fontSize || textTheme.fontSize,
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
@@ -47,6 +47,9 @@ export class WrapText extends Text {
       heightLimit = 0,
       lineClamp
     } = this.attribute;
+    const lineHeight =
+      calculateLineHeight(this.attribute.lineHeight, this.attribute.fontSize || textTheme.fontSize) ??
+      (this.attribute.fontSize || textTheme.fontSize);
     const buf = ignoreBuf ? 0 : 2;
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;

@@ -2,7 +2,7 @@ import type { OBBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
-import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
+import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
@@ -55,7 +55,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
   protected doUpdateParsedPath(): ISymbolClass {
     const symbolTheme = getTheme(this).symbol;
     // 查找内置symbol
-    const { symbolType = symbolTheme.symbolType } = this.attribute;
+    let { symbolType = symbolTheme.symbolType } = this.attribute;
     let path = builtinSymbolsMap[symbolType];
     if (path) {
       this._parsedPath = path;
@@ -67,6 +67,8 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
       return path;
     }
 
+    const _symbolType = builtInSymbolStrMap[symbolType];
+    symbolType = _symbolType || symbolType;
     // 判断是否是svg
     const valid = isSvg(symbolType);
     if (valid === true) {

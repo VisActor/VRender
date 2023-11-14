@@ -15,13 +15,12 @@ import type {
 } from '../../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
-import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { TextRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { max } from '@visactor/vutils';
+import { calculateLineHeight } from '../../../common/utils';
 
 @injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
@@ -75,7 +74,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
       textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);
     }
-    const lineHeight = text.attribute.lineHeight ?? fontSize;
+    const lineHeight = calculateLineHeight(text.attribute.lineHeight, fontSize) ?? fontSize;
 
     const data = this.valid(text, textAttribute, fillCb, strokeCb);
     if (!data) {

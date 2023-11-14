@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~0.16.6"
+    "@visactor/vutils": "0.16.8-alpha.1"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

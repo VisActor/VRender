@@ -336,26 +336,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     if (this.attribute.animation !== false) {
       this._animationConfig = {
-        enter: merge(
-          {},
-          DefaultLabelAnimation,
-          this.attribute.animation === true ? {} : this.attribute.animation,
-          this.attribute.animationEnter ?? {}
-        ),
-        exit: merge(
-          {},
-          DefaultLabelAnimation,
-          this.attribute.animation === true ? {} : this.attribute.animation,
-          this.attribute.animationExit ?? {}
-        ),
+        enter: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationEnter ?? {}),
+        exit: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationExit ?? {}),
         update: isArray(this.attribute.animationUpdate)
           ? this.attribute.animationUpdate
-          : merge(
-              {},
-              DefaultLabelAnimation,
-              this.attribute.animation === true ? {} : this.attribute.animation,
-              this.attribute.animationUpdate ?? {}
-            )
+          : merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationUpdate ?? {})
       };
     }
   }

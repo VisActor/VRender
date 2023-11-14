@@ -3,12 +3,8 @@
 import { FactoryType } from '../utils/factory_type';
 
 export namespace interfaces {
-  export type DynamicValue<T> = (context: interfaces.Context) => T | Promise<T>;
+  export type DynamicValue<T> = (context: interfaces.Context) => T;
   export type ContainerResolution<T> = T | Promise<T> | (T | Promise<T>)[];
-
-  type AsyncCallback<TCallback> = TCallback extends (...args: infer TArgs) => infer TResult
-    ? (...args: TArgs) => Promise<TResult>
-    : never;
 
   export type BindingScope = 'Singleton' | 'Transient' | 'Request';
 
@@ -25,7 +21,6 @@ export namespace interfaces {
   export type TargetType = 'ConstructorArgument' | 'ClassProperty' | 'Variable';
 
   export interface BindingScopeEnum {
-    Request: interfaces.BindingScope;
     Singleton: interfaces.BindingScope;
     Transient: interfaces.BindingScope;
   }
@@ -77,8 +72,8 @@ export namespace interfaces {
     implementationType: Newable<TActivated> | TActivated | null;
     factory: FactoryCreator<unknown> | null;
     provider: ProviderCreator<unknown> | null;
-    onActivation: BindingActivation<TActivated> | null;
-    onDeactivation: BindingDeactivation<TActivated> | null;
+    // onActivation: BindingActivation<TActivated> | null;
+    // onDeactivation: BindingDeactivation<TActivated> | null;
     cache: null | TActivated | Promise<TActivated>;
   }
 
@@ -322,47 +317,25 @@ export namespace interfaces {
     // onDeactivation(fn: (injectable: T) => void | Promise<void>): BindingWhenSyntax<T>;
   }
 
-  export interface BindingWhenSyntax<T> {
-    // when(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
-    whenTargetNamed(name: string | number | symbol): BindingOnSyntax<T>;
-    // whenTargetIsDefault(): BindingOnSyntax<T>;
-    // whenTargetTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
-    // whenInjectedInto(parent: NewableFunction | string): BindingOnSyntax<T>;
-    // whenParentNamed(name: string | number | symbol): BindingOnSyntax<T>;
-    // whenParentTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
-    // whenAnyAncestorIs(ancestor: NewableFunction | string): BindingOnSyntax<T>;
-    // whenNoAncestorIs(ancestor: NewableFunction | string): BindingOnSyntax<T>;
-    // whenAnyAncestorNamed(name: string | number | symbol): BindingOnSyntax<T>;
-    // whenAnyAncestorTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
-    // whenNoAncestorNamed(name: string | number | symbol): BindingOnSyntax<T>;
-    // whenNoAncestorTagged(tag: string | number | symbol, value: unknown): BindingOnSyntax<T>;
-    // whenAnyAncestorMatches(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
-    // whenNoAncestorMatches(constraint: (request: Request) => boolean): BindingOnSyntax<T>;
-  }
-
-  export interface BindingWhenOnSyntax<T> extends BindingWhenSyntax<T>, BindingOnSyntax<T> {}
+  // export interface BindingWhenOnSyntax<T> extends BindingWhenSyntax<T>, BindingOnSyntax<T> {}
 
   export interface BindingInSyntax<T> {
-    inSingletonScope(): BindingWhenOnSyntax<T>;
-    inTransientScope(): BindingWhenOnSyntax<T>;
-    inRequestScope(): BindingWhenOnSyntax<T>;
+    inSingletonScope(): BindingInSyntax<T>;
+    inTransientScope(): BindingInSyntax<T>;
+    whenTargetNamed(name: string | number | symbol): BindingOnSyntax<T>;
+    // inRequestScope(): BindingInSyntax<T>;
   }
 
-  export interface BindingInWhenOnSyntax<T> extends BindingInSyntax<T>, BindingWhenOnSyntax<T> {}
+  export interface BindingInWhenOnSyntax<T> extends BindingInSyntax<T>, BindingInSyntax<T> {}
 
   export interface BindingToSyntax<T> {
     to(constructor: Newable<T>): BindingInWhenOnSyntax<T>;
     toSelf(): BindingInWhenOnSyntax<T>;
-    toConstantValue(value: T): BindingWhenOnSyntax<T>;
+    toConstantValue(value: T): BindingInWhenOnSyntax<T>;
     toDynamicValue(func: DynamicValue<T>): BindingInWhenOnSyntax<T>;
-    toConstructor<T2>(constructor: Newable<T2>): BindingWhenOnSyntax<T>;
     toFactory<T2, T3 extends unknown[] = unknown[], T4 extends unknown[] = unknown[]>(
       factory: FactoryCreator<T2, T3, T4>
-    ): BindingWhenOnSyntax<T>;
-    toFunction(func: T): BindingWhenOnSyntax<T>;
-    toAutoFactory<T2>(serviceIdentifier: ServiceIdentifier<T2>): BindingWhenOnSyntax<T>;
-    toAutoNamedFactory<T2>(serviceIdentifier: ServiceIdentifier<T2>): BindingWhenOnSyntax<T>;
-    toProvider<T2>(provider: ProviderCreator<T2>): BindingWhenOnSyntax<T>;
+    ): BindingInWhenOnSyntax<T>;
     toService(service: ServiceIdentifier<T>): void;
   }
 

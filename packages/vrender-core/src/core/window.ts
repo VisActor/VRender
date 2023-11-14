@@ -1,4 +1,4 @@
-import { inject, injectable, postConstruct } from '../common/inversify-lite';
+import { inject, injectable } from '../common/inversify-lite';
 import type { IBoundsLike } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type {
@@ -77,9 +77,9 @@ export class DefaultWindow implements IWindow {
   constructor() {
     this._uid = Generator.GenAutoIncrementId();
     this.global = application.global;
+    this.postInit();
   }
 
-  @postConstruct()
   protected postInit() {
     this.global.hooks.onSetEnv.tap('window', () => {
       this.active();

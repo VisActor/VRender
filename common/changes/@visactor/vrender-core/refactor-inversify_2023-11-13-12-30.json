@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "refactor: refact inversify completely, closed #657",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -49,6 +49,7 @@ import { OrthoCamera } from './camera';
 import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
+import { isBrowserEnv } from '../env-check';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -201,6 +202,10 @@ export class Stage extends Group implements IStage {
       afterRender: new SyncHook(['stage'])
     };
     this.global = application.global;
+    if (!this.global.env && isBrowserEnv()) {
+      // 如果是浏览器环境，默认设置env
+      this.global.setEnv('browser');
+    }
     this.window = container.get<IWindow>(VWindow);
     this.renderService = container.get<IRenderService>(RenderService);
     this.pluginService = container.get<IPluginService>(PluginService);

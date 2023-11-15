@@ -48,7 +48,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
   private _pager!: Pager;
-  private _lastActiveItem;
+  private _lastActiveItem: IGroup;
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',

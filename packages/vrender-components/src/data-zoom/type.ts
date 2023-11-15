@@ -10,6 +10,13 @@ import type { IPointLike } from '@visactor/vutils';
 import type { IDelayType, OrientType } from '../interface';
 import type { TagAttributes } from '../tag';
 
+export enum DataZoomActiveTag {
+  startHandler = 'startHandler',
+  endHandler = 'endHandler',
+  middleHandler = 'middleHandler',
+  background = 'background'
+}
+
 export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
    * DataZoom位置

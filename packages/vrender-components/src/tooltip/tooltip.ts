@@ -7,7 +7,7 @@ import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
-import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
+import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipRichTextAttrs } from './type';
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 
@@ -88,46 +88,53 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     ) as ISymbol;
 
     // 文本
-    if (titleAttr.value.type === 'rich') {
-      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
-        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-        {
-          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
-          width: titleAttr.value.width,
-          height: titleAttr.value.height,
-          wordBreak: titleAttr.value.wordBreak as any,
-          textAlign: titleAttr.value.textAlign as any,
-          textBaseline: titleAttr.value.textBaseline as any,
-          singleLine: false,
-          textConfig: titleAttr.value.text as IRichTextCharacter[],
-          ...titleAttr.value
-        },
-        'richtext'
-      ) as IRichText;
-    } else if (titleAttr.value.type === 'html') {
-      this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
-        `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-        {
-          html: {
-            dom: titleAttr.value.text as string,
-            container: '',
-            width: 30,
-            height: 30,
-            style: {},
+    if (
+      typeof titleAttr.value.text === 'object' &&
+      titleAttr.value.text !== null &&
+      ((titleAttr.value.text as TooltipRichTextAttrs).type === 'rich' ||
+        (titleAttr.value.text as TooltipRichTextAttrs).type === 'html')
+    ) {
+      if ((titleAttr.value.text as TooltipRichTextAttrs).type === 'rich') {
+        this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+          `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+            width: titleAttr.value.width,
+            height: titleAttr.value.height,
+            wordBreak: titleAttr.value.wordBreak as any,
+            textAlign: titleAttr.value.textAlign as any,
+            textBaseline: titleAttr.value.textBaseline as any,
+            singleLine: false,
+            textConfig: (titleAttr.value.text as TooltipRichTextAttrs).text as IRichTextCharacter[],
             ...titleAttr.value
           },
-          visible: isVisible(titleAttr) && isVisible(titleAttr.value),
-          width: titleAttr.value.width,
-          height: titleAttr.value.height,
-          wordBreak: titleAttr.value.wordBreak as any,
-          textAlign: titleAttr.value.textAlign as any,
-          textBaseline: titleAttr.value.textBaseline as any,
-          singleLine: false,
-          textConfig: [],
-          ...titleAttr.value
-        },
-        'richtext'
-      ) as IRichText;
+          'richtext'
+        ) as IRichText;
+      } else if ((titleAttr.value.text as TooltipRichTextAttrs).type === 'html') {
+        this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+          `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            html: {
+              dom: (titleAttr.value.text as TooltipRichTextAttrs).text as string,
+              container: '',
+              width: 30,
+              height: 30,
+              style: {},
+              ...titleAttr.value
+            },
+            visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+            width: titleAttr.value.width,
+            height: titleAttr.value.height,
+            wordBreak: titleAttr.value.wordBreak as any,
+            textAlign: titleAttr.value.textAlign as any,
+            textBaseline: titleAttr.value.textBaseline as any,
+            singleLine: false,
+            textConfig: [],
+            ...titleAttr.value
+          },
+          'richtext'
+        ) as IRichText;
+      }
     } else if (titleAttr.value.multiLine) {
       this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
         `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,

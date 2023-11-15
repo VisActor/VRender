@@ -91,7 +91,7 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
 
       return {
         x: (x - rect.left) / (isValidNumber(scaleX) ? scaleX : 1),
-        y: (y - rect.top) / (isValidNumber(scaleY) ? scaleX : 1)
+        y: (y - rect.top) / (isValidNumber(scaleY) ? scaleY : 1)
       };
     }
     return {

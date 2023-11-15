@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with render while in scale transform",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -41,7 +41,7 @@ export type ITextAttribute = {
   ellipsis: boolean | string;
   fontVariant: string;
   fontStyle: string;
-  lineHeight: number;
+  lineHeight: number | string;
   underline: number;
   lineThrough: number;
   scaleIn3d: boolean;
@@ -49,6 +49,9 @@ export type ITextAttribute = {
   verticalMode: number; // 垂直布局的模式，0代表默认（横向textAlign，纵向textBaseline），1代表特殊（横向textBaseline，纵向textAlign）
   wordBreak: 'break-word' | 'break-all';
   ignoreBuf: boolean;
+  whiteSpace: 'normal' | 'no-wrap';
+  heightLimit?: number;
+  lineClamp?: number;
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

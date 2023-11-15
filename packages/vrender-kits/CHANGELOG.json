@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-kits_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: temp fix issue with lynx measuretext"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.12",
       "tag": "@visactor/vrender-kits_v0.16.12",
       "date": "Tue, 07 Nov 2023 10:52:54 GMT",

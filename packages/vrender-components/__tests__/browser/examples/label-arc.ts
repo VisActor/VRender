@@ -1276,7 +1276,7 @@ function createContent(stage: Stage) {
         // // lineWidth: 0
         // // ...latestData[index]
 
-        type: 'rich',
+        textType: 'rich',
         text: [
           // {
           //   text: `NO.${index}🐾`,

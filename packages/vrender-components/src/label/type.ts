@@ -27,8 +27,8 @@ export type LabelItem = {
   // 原始数据
   data?: any;
   [key: string]: any;
-  // 文本类型：text, rich, html
-  type?: string;
+  // 文本类型：text, rich, html (区分于图元类型)
+  textType?: string;
   /**
    * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    * 支持富文本内容, 如textConfig, html

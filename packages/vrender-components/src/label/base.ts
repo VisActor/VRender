@@ -261,7 +261,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   };
 
   protected _createLabelText(attributes: LabelItem) {
-    if (attributes.type === 'rich') {
+    if (attributes.textType === 'rich') {
       attributes.textConfig = attributes.text as IRichTextCharacter[];
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
@@ -269,7 +269,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       this._bindEvent(text);
       this._setStatesOfText(text);
       return text;
-    } else if (attributes.type === 'html') {
+    } else if (attributes.textType === 'html') {
       attributes.textConfig = [] as IRichTextCharacter[];
       attributes.html = {
         dom: attributes.text as string,

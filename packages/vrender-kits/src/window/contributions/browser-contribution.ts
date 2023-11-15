@@ -186,12 +186,12 @@ export class BrowserWindowHandlerContribution
     }
     // 如果没有dpr，就使用canvas的原始dpr
     let dpr = params.dpr;
-    if (params.canvasControled === false) {
-      if (dpr) {
-        console.warn('canvasControled为false后，dpr参数将无效');
-      }
-      dpr = null;
-    }
+    // if (params.canvasControled === false) {
+    //   if (dpr) {
+    //     console.warn('canvasControled为false后，dpr参数将无效');
+    //   }
+    //   dpr = null;
+    // }
     if (dpr == null) {
       const ctx = canvas.getContext('2d');
       // 兼容XTable

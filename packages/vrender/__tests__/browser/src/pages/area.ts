@@ -58,8 +58,8 @@ export const page = () => {
             y: 250,
             x1: 230.5,
             y1: 250,
-            context: 2,
-            defined: false
+            context: 2
+            // defined: false
           },
           {
             x: 230.5,
@@ -88,7 +88,7 @@ export const page = () => {
         lineWidth: 6,
         lineCap: 'round',
         lineJoin: 'round',
-        curveType: 'linearClosed',
+        curveType: 'linear',
         lineDash: [4, 2],
         stroke: ['orange', false, false, false],
         connectedType: 'connect',
@@ -98,71 +98,71 @@ export const page = () => {
         // "pickable": true
       })
     );
-    graphics.push(
-      createLine({
-        defined: true,
-        enableSegments: true,
-        segments: null,
-        points: [
-          {
-            x: 230.5,
-            y: 151.1037915390441,
-            x1: 230.5,
-            y1: 250,
-            context: 0
-          },
-          {
-            x: 308.6643884293173,
-            y: 204.8717692992912,
-            x1: 230.5,
-            y1: 250,
-            context: 1
-          },
-          {
-            x: 230.5,
-            y: 250,
-            x1: 230.5,
-            y1: 250,
-            context: 2,
-            defined: false
-          },
-          {
-            x: 230.5,
-            y: 280.05866037183256,
-            x1: 230.5,
-            y1: 250,
-            context: 3
-          },
-          {
-            x: 188.87948429636262,
-            y: 274.0296159453061,
-            x1: 230.5,
-            y1: 250,
-            context: 4
-          },
-          {
-            x: 98.35502938981602,
-            y: 173.70606564615522,
-            x1: 230.5,
-            y1: 250,
-            context: 5
-          }
-        ],
-        // fill: 'red',
-        visible: true,
-        lineWidth: 1,
-        lineCap: 'round',
-        lineJoin: 'round',
-        curveType: 'linearClosed',
-        lineDash: [4, 2],
-        stroke: '#2E62F1',
-        connectedType: 'connect',
-        closePath: true,
-        x: 0,
-        y: 0
-        // "pickable": true
-      })
-    );
+    // graphics.push(
+    //   createLine({
+    //     defined: true,
+    //     enableSegments: true,
+    //     segments: null,
+    //     points: [
+    //       {
+    //         x: 230.5,
+    //         y: 151.1037915390441,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 0
+    //       },
+    //       {
+    //         x: 308.6643884293173,
+    //         y: 204.8717692992912,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 1
+    //       },
+    //       {
+    //         x: 230.5,
+    //         y: 250,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 2,
+    //         defined: false
+    //       },
+    //       {
+    //         x: 230.5,
+    //         y: 280.05866037183256,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 3
+    //       },
+    //       {
+    //         x: 188.87948429636262,
+    //         y: 274.0296159453061,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 4
+    //       },
+    //       {
+    //         x: 98.35502938981602,
+    //         y: 173.70606564615522,
+    //         x1: 230.5,
+    //         y1: 250,
+    //         context: 5
+    //       }
+    //     ],
+    //     // fill: 'red',
+    //     visible: true,
+    //     lineWidth: 1,
+    //     lineCap: 'round',
+    //     lineJoin: 'round',
+    //     curveType: 'linearClosed',
+    //     lineDash: [4, 2],
+    //     stroke: '#2E62F1',
+    //     connectedType: 'connect',
+    //     closePath: true,
+    //     x: 0,
+    //     y: 0
+    //     // "pickable": true
+    //   })
+    // );
   });
 
   // ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
@@ -210,7 +210,7 @@ export const page = () => {
     height: 500,
     renderStyle: 'default',
     // viewBox: viewOptions.viewBox,
-    dpr: 2,
+    // dpr: 2,
     // canvas: viewOptions.renderCanvas,
     canvasControled: false,
     // container: viewOptions.container,

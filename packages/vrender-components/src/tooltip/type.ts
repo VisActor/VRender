@@ -58,7 +58,7 @@ export type TooltipComponentAttrs = TooltipPositionAttrs & {
 };
 
 /** tooltip 文本样式 */
-export type TooltipTextAttrs = Partial<ITextAttribute & IGraphicAttribute & IContainerSize> & {
+export type TooltipTextAttrs = Omit<Partial<ITextAttribute & IGraphicAttribute & IContainerSize>, 'text'> & {
   /**
    * 文本内容
    * - 支持富文本配置

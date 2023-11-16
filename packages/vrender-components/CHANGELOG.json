@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.15",
+      "tag": "@visactor/vrender-components_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: legendItemHover and legendItemUnHover should trigger once"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.14",
       "tag": "@visactor/vrender-components_v0.16.14",
       "date": "Wed, 15 Nov 2023 09:56:28 GMT",

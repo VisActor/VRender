@@ -127,25 +127,25 @@ const vLegend = new DiscreteLegend({
         }
       }
     },
-    background: {
-      style: {
-        stroke: '#000',
-        lineWidth: 1
-        // cornerRadius: 5
-      },
-      state: {
-        selectedHover: {
-          fill: 'rgba(0,0,0,.3)'
-        },
-        selected: {
-          fill: 'pink',
-          fillOpacity: 0.5
-        },
-        unSelected: {
-          fill: 'blue'
-        }
-      }
-    },
+    // background: {
+    //   style: {
+    //     stroke: '#000',
+    //     lineWidth: 1
+    //     // cornerRadius: 5
+    //   },
+    //   state: {
+    //     selectedHover: {
+    //       fill: 'rgba(0,0,0,.3)'
+    //     },
+    //     selected: {
+    //       fill: 'pink',
+    //       fillOpacity: 0.5
+    //     },
+    //     unSelected: {
+    //       fill: 'blue'
+    //     }
+    //   }
+    // },
     focus: true
   },
   items: [
@@ -398,6 +398,12 @@ vLegend.addEventListener('legendItemClick', e => {
   console.log(e, e.detail.currentSelected);
 });
 
-hLegend.addEventListener('legendItemClick', e => {
-  console.log(e, e.detail.currentSelected);
+vLegend.addEventListener('legendItemHover', e => {
+  console.log('legendItemHover');
 });
+
+vLegend.addEventListener('legendItemUnHover', e => {
+  console.log('legendItemUnHover');
+});
+
+window.vLegend = vLegend;

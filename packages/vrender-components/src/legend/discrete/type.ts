@@ -75,6 +75,7 @@ export type LegendItem = {
    * 图例项的 shape 图标的配置
    */
   shape?: {
+    visible?: boolean;
     /** shape 同后面 label 的间距 */
     space?: number;
   } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute> | StyleCallback<Partial<ISymbolGraphicAttribute>>>;

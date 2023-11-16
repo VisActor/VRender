@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: assign symbol rect function to old",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

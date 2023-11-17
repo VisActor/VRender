@@ -13,25 +13,11 @@ MERCHANTABLITY OR NON-INFRINGEMENT.
 See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
-let Reflect;
 export default (function (Reflect) {
   // Metadata Proposal
   // https://rbuckton.github.io/reflect-metadata/
   (function (factory) {
-    const root =
-      typeof global === 'object'
-        ? global
-        : typeof self === 'object'
-        ? self
-        : typeof this === 'object'
-        ? this
-        : Function('return this;')();
-    let exporter = makeExporter(Reflect);
-    if (typeof root.Reflect === 'undefined') {
-      root.Reflect = Reflect;
-    } else {
-      exporter = makeExporter(root.Reflect, exporter);
-    }
+    const exporter = makeExporter(Reflect);
     factory(exporter);
     function makeExporter(target, previous) {
       return function (key, value) {
@@ -245,9 +231,9 @@ export default (function (Reflect) {
       if (!IsObject(target)) {
         throw new TypeError();
       }
-      if (!IsUndefined(propertyKey)) {
-        propertyKey = ToPropertyKey(propertyKey);
-      }
+      // if (!IsUndefined(propertyKey)) {
+      //   propertyKey = ToPropertyKey(propertyKey);
+      // }
       return OrdinaryDefineOwnMetadata(metadataKey, metadataValue, target, propertyKey);
     }
     exporter('defineMetadata', defineMetadata);
@@ -1214,4 +1200,4 @@ export default (function (Reflect) {
   });
 
   return Reflect;
-})(Reflect || (Reflect = {}));
+})({});

@@ -515,6 +515,10 @@ export class EventManager {
         }
       } else if (clickEvent.pointerType === 'touch') {
         this.dispatchEvent(clickEvent, 'tap');
+        if (clickHistory.clickCount === 2) {
+          // 双击
+          this.dispatchEvent(clickEvent, 'dbltap');
+        }
       }
 
       this.dispatchEvent(clickEvent, 'pointertap');

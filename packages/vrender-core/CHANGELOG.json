@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.16",
+      "tag": "@visactor/vrender-core_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: assign symbol rect function to old"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.15",
       "tag": "@visactor/vrender-core_v0.16.15",
       "date": "Thu, 16 Nov 2023 02:46:27 GMT",

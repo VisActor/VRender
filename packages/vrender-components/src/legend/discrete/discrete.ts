@@ -362,33 +362,37 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.add(innerGroup);
 
     let focusStartX = 0;
-    const shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
-    const shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
-    const itemShape = createSymbol({
-      x: 0,
-      y: 0,
-      symbolType: 'circle',
-      strokeBoundsBuffer: 0,
-      ...shape,
-      ...shapeAttr.style
-    });
-    // 处理下 shape 的 fill stroke
-    Object.keys(shapeAttr.state || {}).forEach(key => {
-      const color =
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
-      if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
-      }
+    let shapeSize = 0;
+    let shapeSpace = 0;
+    if (shapeAttr?.visible !== false) {
+      shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
+      shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
+      const itemShape = createSymbol({
+        x: 0,
+        y: 0,
+        symbolType: 'circle',
+        strokeBoundsBuffer: 0,
+        ...shape,
+        ...shapeAttr.style
+      });
+      // 处理下 shape 的 fill stroke
+      Object.keys(shapeAttr.state || {}).forEach(key => {
+        const color =
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
+        if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
+        }
 
-      if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
-      }
-    });
-    this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
+        if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
+        }
+      });
+      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
 
-    itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
-    innerGroup.add(itemShape);
+      itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
+      innerGroup.add(itemShape);
+    }
 
     let focusShape;
     let focusSpace = 0;

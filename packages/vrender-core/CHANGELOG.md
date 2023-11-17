@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 16 Nov 2023 02:46:27 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: assign symbol rect function to old
 
 ## 0.16.15
 Thu, 16 Nov 2023 02:46:27 GMT

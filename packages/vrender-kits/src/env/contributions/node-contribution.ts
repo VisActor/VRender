@@ -47,7 +47,7 @@ export class NodeEnvContribution extends BaseEnvContribution implements IEnvCont
    * 获取静态canvas的数量，纯粹canvas
    */
   getStaticCanvasCount(): number {
-    return 1;
+    return 999;
   }
 
   loadJson(url: string): Promise<{

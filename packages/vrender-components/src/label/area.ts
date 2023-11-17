@@ -1,15 +1,15 @@
 import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
-import type { ILine } from '@visactor/vrender-core';
+import type { IArea } from '@visactor/vrender-core';
 import type { PointLocationCfg } from '../core/type';
-import type { LineLabelAttrs } from './type';
+import type { AreaLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingLineOrArea } from './util';
 
-export class LineLabel extends LabelBase<LineLabelAttrs> {
+export class AreaLabel extends LabelBase<AreaLabelAttrs> {
   name = 'line-label';
 
-  static defaultAttributes: Partial<LineLabelAttrs> = {
+  static defaultAttributes: Partial<AreaLabelAttrs> = {
     textStyle: {
       fontSize: 12,
       fill: '#000',
@@ -22,12 +22,12 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: LineLabelAttrs) {
-    super(merge({}, LineLabel.defaultAttributes, attributes));
+  constructor(attributes: AreaLabelAttrs) {
+    super(merge({}, AreaLabel.defaultAttributes, attributes));
   }
 
-  protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}) {
-    if (!graphic || graphic.type !== 'line') {
+  protected getGraphicBounds(graphic: IArea, point: Partial<PointLocationCfg> = {}) {
+    if (graphic.type !== 'area') {
       return super.getGraphicBounds(graphic, point);
     }
     const { position = 'end' } = this.attribute;

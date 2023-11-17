@@ -2,7 +2,7 @@
  * @description 标题组件
  */
 import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender-core';
-import { builtinSymbolsMap } from '@visactor/vrender-core';
+import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
@@ -165,7 +165,9 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               x: itemAttr.shape.size / 2,
               y:
                 itemAttr.shape.size / 2 +
-                ((itemAttr.key.lineHeight ?? itemAttr.key.fontSize) - itemAttr.shape.size) / 2,
+                ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -
+                  itemAttr.shape.size) /
+                  2,
               ...itemAttr.shape
             },
             'symbol'

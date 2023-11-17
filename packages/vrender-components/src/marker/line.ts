@@ -9,6 +9,7 @@ import { limitShapeInBounds } from '../util/limit-shape';
 import type { Point } from '../core/type';
 
 export class MarkLine extends Marker<MarkLineAttrs> {
+  name = 'markLine';
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;
 
   private _line!: Segment;
@@ -94,6 +95,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   protected updateMarker() {
     const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as MarkLineAttrs;
+
     this._line?.setAttributes({
       points,
       startSymbol,
@@ -110,5 +112,13 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     });
 
     this.setLabelPos();
+  }
+
+  protected isValidPoints() {
+    const { points } = this.attribute as MarkLineAttrs;
+    if (!points || points.length < 2) {
+      return false;
+    }
+    return true;
   }
 }

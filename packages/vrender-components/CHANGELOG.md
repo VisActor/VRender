@@ -1,6 +1,62 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 23 Oct 2023 11:38:47 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+### Updates
+
+- fix: legendItemHover and legendItemUnHover should trigger once
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+### Updates
+
+- feat: datazoom update callback supports new trigger tag param
+- feat(label): support line/area label
+- feat: lineHeight support string, which means percent
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+_Version update only_
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: padding of title component
+- fix: padding offset of AABBbounds
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133
+- fix: flush should not sue width height
+- fix: fix the lastvisible logic of axis's auto-hide
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: add checkbox indeterminate state
+- feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`
+- fix: all the group container of marker do not trigger event
+- fix: all the group container of marker do not trigger event
+- fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281
 
 ## 0.16.8
 Mon, 23 Oct 2023 11:38:47 GMT

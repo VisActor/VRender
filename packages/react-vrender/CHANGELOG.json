@@ -2,6 +2,48 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.16.16",
+      "tag": "@visactor/react-vrender_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.15",
+      "tag": "@visactor/react-vrender_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.14",
+      "tag": "@visactor/react-vrender_v0.16.14",
+      "date": "Wed, 15 Nov 2023 09:56:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.13",
+      "tag": "@visactor/react-vrender_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.12",
+      "tag": "@visactor/react-vrender_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/react-vrender_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/react-vrender_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.16.8",
       "tag": "@visactor/react-vrender_v0.16.8",
       "date": "Mon, 23 Oct 2023 11:38:47 GMT",

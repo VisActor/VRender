@@ -1,5 +1,5 @@
 import type { IBounds, IPointLike } from '@visactor/vutils';
-import { isBoolean, isNumber, halfPi, pi, pi2, max, min, sin, cos, isArray, pointAt, Point } from '@visactor/vutils';
+import { isBoolean, halfPi, pi, pi2, sin, cos, isArray, pointAt, Point, isString } from '@visactor/vutils';
 import type { IGraphicAttribute, IStrokeStyle } from '../interface';
 
 // todo: 迁移到@visactor/vutils
@@ -360,3 +360,11 @@ export class RafBasedSTO {
 }
 
 export const rafBasedSto = new RafBasedSTO();
+
+export const calculateLineHeight = (lineHeight: string | number, fontSize: number): number => {
+  if (isString(lineHeight) && lineHeight[lineHeight.length - 1] === '%') {
+    const scale = Number.parseFloat(lineHeight.substring(0, lineHeight.length - 1)) / 100;
+    return fontSize * scale;
+  }
+  return lineHeight as number;
+};

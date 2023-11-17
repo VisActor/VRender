@@ -67,4 +67,85 @@ describe('Marker', () => {
         .text
     ).toBe('markLine-label');
   });
+
+  it('MarkLine with invalid type', () => {
+    const markLine = new MarkLine({
+      points: [
+        {
+          x: 100,
+          y: 50
+        }
+      ],
+      label: {
+        text: 'markLine-label',
+        refX: 10
+      },
+      endSymbol: {
+        visible: true,
+        refAngle: degreeToRadian(90)
+      }
+    });
+    stage.defaultLayer.add(markLine as unknown as IGraphic);
+    stage.render();
+    expect(markLine.childrenCount).toBe(0);
+  });
+
+  it('MarkArea with update invalid points', () => {
+    const markLine = new MarkLine({
+      points: [
+        {
+          x: 100,
+          y: 50
+        },
+        {
+          x: 400,
+          y: 50
+        }
+      ],
+      label: {
+        text: 'markLine-label',
+        refX: 10
+      },
+      endSymbol: {
+        visible: true,
+        refAngle: degreeToRadian(90)
+      }
+    });
+    stage.defaultLayer.add(markLine as unknown as IGraphic);
+    stage.render();
+    markLine.setAttributes({
+      points: []
+    });
+    expect(markLine.childrenCount).toBe(0);
+  });
+
+  it('MarkLine with update valid points', () => {
+    const markLine = new MarkLine({
+      points: [],
+      label: {
+        text: 'markLine-label',
+        refX: 10
+      },
+      endSymbol: {
+        visible: true,
+        refAngle: degreeToRadian(90)
+      }
+    });
+    stage.defaultLayer.add(markLine as unknown as IGraphic);
+    stage.render();
+    markLine.setAttributes({
+      points: [
+        {
+          x: 100,
+          y: 50
+        },
+        {
+          x: 400,
+          y: 50
+        }
+      ]
+    });
+    const markAreaContainer = markLine.children[0] as unknown as Group;
+    expect(markAreaContainer.childrenCount).toBe(2);
+  });
 });

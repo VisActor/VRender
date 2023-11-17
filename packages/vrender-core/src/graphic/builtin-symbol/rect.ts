@@ -34,26 +34,37 @@ import { BaseSymbol } from './base';
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export function rect(ctx: IContext2d, size: [number, number], x: number, y: number) {
+export function rectSizeArray(ctx: IContext2d, size: [number, number], x: number, y: number) {
   ctx.rect(x - size[0] / 2, y - size[1] / 2, size[0], size[1]);
+  return false;
+}
+
+export function rectSize(ctx: IContext2d, size: number, x: number, y: number) {
+  const w = size;
+  const h = size / 2;
+  ctx.rect(x - w / 2, y - h / 2, w, h);
   return false;
 }
 
 // 以中心为锚点，size为circle外接正方形的面积
 export class RectSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'rect';
-  pathStr: string = 'M-0.5,-0.5h1v1h-1Z';
+  pathStr: string = 'M -0.5,0.25 L 0.5,0.25 L 0.5,-0.25,L -0.5,-0.25 Z';
 
   draw(ctx: IContext2d, size: number | [number, number], x: number, y: number) {
-    const rectSize: [number, number] = isNumber(size) ? [size, size] : size;
-    return rect(ctx, rectSize, x, y);
+    if (isNumber(size)) {
+      return rectSize(ctx, size, x, y);
+    }
+    return rectSizeArray(ctx, size, x, y);
+    // const rectSize: [number, number] =  ? [size, size] : size;
+    // return rect(ctx, rectSize, x, y);
   }
 
   drawOffset(ctx: IContext2d, size: number | [number, number], x: number, y: number, offset: number) {
-    const rectSize: [number, number] = isNumber(size)
-      ? [size + 2 * offset, size + 2 * offset]
-      : [size[0] + 2 * offset, size[1] + 2 * offset];
-    return rect(ctx, rectSize, x, y);
+    if (isNumber(size)) {
+      return rectSize(ctx, size + 2 * offset, x, y);
+    }
+    return rectSizeArray(ctx, [size[0] + 2 * offset, size[1] + 2 * offset], x, y);
   }
 }
 

@@ -1,6 +1,52 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Mon, 23 Oct 2023 11:38:47 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+_Version update only_
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+_Version update only_
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+_Version update only_
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+### Updates
+
+- fix: temp fix issue with lynx measuretext
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: fix node-canvas max count issue
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+_Version update only_
+
+## 0.16.10
+Thu, 02 Nov 2023 11:17:24 GMT
+
+### Updates
+
+- fix: fix issue with xul and html attribute, closed #634
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+_Version update only_
 
 ## 0.16.8
 Mon, 23 Oct 2023 11:38:47 GMT

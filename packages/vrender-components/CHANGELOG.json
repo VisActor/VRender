@@ -2,6 +2,111 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.16",
+      "tag": "@visactor/vrender-components_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.15",
+      "tag": "@visactor/vrender-components_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: legendItemHover and legendItemUnHover should trigger once"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.14",
+      "tag": "@visactor/vrender-components_v0.16.14",
+      "date": "Wed, 15 Nov 2023 09:56:28 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: datazoom update callback supports new trigger tag param"
+          },
+          {
+            "comment": "feat(label): support line/area label"
+          },
+          {
+            "comment": "feat: lineHeight support string, which means percent"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-components_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-components_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: padding of title component"
+          },
+          {
+            "comment": "fix: padding offset of AABBbounds"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender-components_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133"
+          },
+          {
+            "comment": "fix: flush should not sue width height"
+          },
+          {
+            "comment": "fix: fix the lastvisible logic of axis's auto-hide"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-components_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add checkbox indeterminate state"
+          },
+          {
+            "comment": "feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.8",
       "tag": "@visactor/vrender-components_v0.16.8",
       "date": "Mon, 23 Oct 2023 11:38:47 GMT",

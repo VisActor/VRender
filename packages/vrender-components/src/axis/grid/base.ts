@@ -196,7 +196,9 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
       const shape = createPath({
         path,
         z: depth,
-        ...(isFunction(style) ? merge({}, BaseGrid.defaultAttributes.style, style(item, index)) : style)
+        ...(isFunction(style)
+          ? merge({}, this.skipDefault ? null : BaseGrid.defaultAttributes.style, style(item, index))
+          : style)
       }) as Path;
       shape.name = `${name}-line`;
       shape.id = this._getNodeId(`${name}-path-${id}`);
@@ -223,7 +225,9 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
           alpha: deltaX > deltaY ? ((points[1].x - points[0].x > 0 ? -1 : 1) * pi) / 2 : 0,
           beta: deltaX < deltaY ? -pi / 2 : 0,
           anchor3d: deltaX > deltaY ? [nextPoints[0].x, 0] : [0, nextPoints[0].y],
-          ...(isFunction(style) ? merge({}, BaseGrid.defaultAttributes.style, style(item, index)) : style)
+          ...(isFunction(style)
+            ? merge({}, this.skipDefault ? null : BaseGrid.defaultAttributes.style, style(item, index))
+            : style)
         }) as Path;
         shape.name = `${name}-line`;
         shape.id = this._getNodeId(`${name}-path-${id}`);

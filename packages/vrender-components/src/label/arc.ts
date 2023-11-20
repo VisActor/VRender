@@ -12,6 +12,7 @@ import {
   checkBoundsOverlap,
   computeQuadrant
 } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class ArcInfo {
   key!: string;
@@ -129,8 +130,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   private _arcLeft: Map<any, ArcInfo> = new Map();
   private _arcRight: Map<any, ArcInfo> = new Map();
 
-  constructor(attributes: ArcLabelAttrs) {
-    super(merge({}, ArcLabel.defaultAttributes, attributes));
+  constructor(attributes: ArcLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, ArcLabel.defaultAttributes, attributes));
   }
 
   protected _overlapping(labels: IText[]) {

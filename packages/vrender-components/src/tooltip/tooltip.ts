@@ -10,6 +10,7 @@ import { isVisible } from '../util';
 import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
+import type { ComponentOptions } from '../interface';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';
@@ -35,8 +36,8 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
 
   static defaultAttributes: Partial<TooltipAttributes> = defaultAttributes;
 
-  constructor(attributes: TooltipAttributes) {
-    super(merge({}, Tooltip.defaultAttributes, attributes));
+  constructor(attributes: TooltipAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Tooltip.defaultAttributes, attributes), options);
   }
 
   protected render() {

@@ -12,6 +12,7 @@ import { LabelBase as PointLabel } from './base';
 import { LineDataLabel } from './line-data';
 import { LineLabel } from './line';
 import { AreaLabel } from './area';
+import type { ComponentOptions } from '../interface';
 
 const labelComponentMap = {
   rect: RectLabel,
@@ -31,8 +32,8 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: DataLabelAttrs) {
-    super(merge({}, DataLabel.defaultAttributes, attributes));
+  constructor(attributes: DataLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DataLabel.defaultAttributes, attributes));
   }
 
   protected render(): void {

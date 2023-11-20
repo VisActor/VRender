@@ -49,6 +49,7 @@ import { OrthoCamera } from './camera';
 import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
+import { isBrowserEnv } from '../env-check';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -166,7 +167,11 @@ export class Stage extends Group implements IStage {
   pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
-  private readonly eventSystem?: EventSystem;
+  private _eventSystem?: EventSystem;
+  private get eventSystem(): EventSystem {
+    this.tryInitEventSystem();
+    return this._eventSystem;
+  }
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
@@ -197,6 +202,10 @@ export class Stage extends Group implements IStage {
       afterRender: new SyncHook(['stage'])
     };
     this.global = application.global;
+    if (!this.global.env && isBrowserEnv()) {
+      // 如果是浏览器环境，默认设置env
+      this.global.setEnv('browser');
+    }
     this.window = container.get<IWindow>(VWindow);
     this.renderService = container.get<IRenderService>(RenderService);
     this.pluginService = container.get<IPluginService>(PluginService);
@@ -236,42 +245,12 @@ export class Stage extends Group implements IStage {
 
     // 创建一个默认layer图层
     // this.appendChild(new Layer(this, this.global, this.window, { main: true }));
-    this.appendChild(
-      this.layerService.createLayer(
-        this,
-        // 如果传入的canvas是string的id，就传入，避免被判定要使用离屏canvas
-        params.canvas && isString(params.canvas) ? { main: true, canvasId: params.canvas } : { main: true }
-      )
-    );
+    this.appendChild(this.layerService.createLayer(this, { main: true }));
 
     this.nextFrameRenderLayerSet = new Set();
     this.willNextFrameRender = false;
     this.stage = this;
     this.renderStyle = params.renderStyle;
-
-    if (this.global.supportEvent) {
-      this.eventSystem = new EventSystem({
-        targetElement: this.window,
-        resolution: this.window.dpr || this.global.devicePixelRatio,
-        rootNode: this as any,
-        global: this.global,
-        viewport: {
-          viewBox: this._viewBox,
-          get x(): number {
-            return this.viewBox.x1;
-          },
-          get y(): number {
-            return this.viewBox.y1;
-          },
-          get width(): number {
-            return this.viewBox.width();
-          },
-          get height(): number {
-            return this.viewBox.height();
-          }
-        }
-      });
-    }
 
     // this.autoRender = params.autoRender;
     if (params.autoRender) {
@@ -303,6 +282,32 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  protected tryInitEventSystem() {
+    if (this.global.supportEvent && !this._eventSystem) {
+      this._eventSystem = new EventSystem({
+        targetElement: this.window,
+        resolution: this.window.dpr || this.global.devicePixelRatio,
+        rootNode: this as any,
+        global: this.global,
+        viewport: {
+          viewBox: this._viewBox,
+          get x(): number {
+            return this.viewBox.x1;
+          },
+          get y(): number {
+            return this.viewBox.y1;
+          },
+          get width(): number {
+            return this.viewBox.width();
+          },
+          get height(): number {
+            return this.viewBox.height();
+          }
+        }
+      });
+    }
+  }
+
   preventRender(prevent: boolean) {
     if (prevent) {
       this._skipRender = -Infinity;
@@ -322,7 +327,7 @@ export class Stage extends Group implements IStage {
   }
 
   // 优化渲染
-  protected optmizeRender(skipRenderWithOutRange: boolean = true) {
+  protected optmizeRender(skipRenderWithOutRange: boolean = false) {
     if (!skipRenderWithOutRange) {
       return;
     }
@@ -503,8 +508,9 @@ export class Stage extends Group implements IStage {
     if (!plugin) {
       plugin = new DirtyBoundsPlugin();
       this.pluginService.register(plugin);
+    } else {
+      plugin.activate(this.pluginService);
     }
-    plugin.activate(this.pluginService);
   }
   disableDirtyBounds() {
     if (!this.dirtyBounds) {
@@ -710,7 +716,7 @@ export class Stage extends Group implements IStage {
         {
           renderService: this.renderService,
           background: layer === this.defaultLayer ? this.background : undefined,
-          updateBounds: !!this.dirtyBounds
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -721,7 +727,7 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.render(
         {
           renderService: this.renderService,
-          updateBounds: !!this.dirtyBounds
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -867,7 +873,7 @@ export class Stage extends Group implements IStage {
         renderService: this.renderService,
         background: layer === this.defaultLayer ? this.background : undefined,
         clear: i === 0, // 第一个layer需要clear
-        updateBounds: !!this.dirtyBounds
+        updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
       });
     });
   }

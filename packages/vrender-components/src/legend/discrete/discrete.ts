@@ -30,6 +30,7 @@ import {
   LEGEND_ELEMENT_NAME
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
+import type { ComponentOptions } from '../../interface';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -139,8 +140,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     allowAllCanceled: true
   };
 
-  constructor(attributes: DiscreteLegendAttrs) {
-    super(merge({}, DiscreteLegend.defaultAttributes, attributes));
+  constructor(attributes: DiscreteLegendAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DiscreteLegend.defaultAttributes, attributes));
   }
 
   /**

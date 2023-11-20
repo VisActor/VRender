@@ -5,7 +5,6 @@ import {
   inject,
   injectable,
   named,
-  postConstruct,
   DefaultPickService,
   DrawContribution,
   PickItemInterceptor,
@@ -69,9 +68,9 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     });
     this.configure(this.global, this.global.env);
     this.pickerMap = new Map();
+    this.init();
   }
 
-  @postConstruct()
   init() {
     this.contributions.getContributions().forEach(item => {
       this.pickerMap.set(item.numberType, item);
@@ -86,7 +85,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // });
 
     // 创建pick canvas
-    this.pickCanvas = canvasAllocate.getCommonCanvas();
+    this.pickCanvas = canvasAllocate.shareCanvas();
     this.pickContext = this.pickCanvas.getContext('2d');
   }
 

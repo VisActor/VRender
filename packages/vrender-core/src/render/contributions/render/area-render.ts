@@ -17,7 +17,8 @@ import type {
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider
+  IContributionProvider,
+  IStrokeType
 } from '../../../interface';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
@@ -42,6 +43,7 @@ import {
   defaultAreaBackgroundRenderContribution,
   defaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
+import { segments } from '../../../common/shape/arc';
 
 function calcLineCache(
   points: IPointLike[],
@@ -85,6 +87,83 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     this.init(areaRenderContribitions);
   }
 
+  drawLinearAreaHighPerformance(
+    area: IArea,
+    context: IContext2d,
+    fill: boolean,
+    stroke: boolean,
+    fillOpacity: number,
+    strokeOpacity: number,
+    offsetX: number,
+    offsetY: number,
+    areaAttribute: Required<IAreaGraphicAttribute>,
+    drawContext: IDrawContext,
+    params?: IGraphicRenderDrawParams,
+    fillCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    context.beginPath();
+
+    const z = this.z ?? 0;
+    const { points } = area.attribute;
+    const startP = points[0];
+
+    context.moveTo(startP.x, startP.y, z);
+    for (let i = 1; i < points.length; i++) {
+      const p = points[i];
+      context.lineTo(p.x, p.y, z);
+    }
+    for (let i = points.length - 1; i >= 0; i--) {
+      const p = points[i];
+      context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+    }
+    context.closePath();
+
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(area, area.attribute, areaAttribute);
+
+    const { x: originX = 0, x: originY = 0 } = area.attribute;
+    if (fill !== false) {
+      if (fillCb) {
+        fillCb(context, area.attribute, areaAttribute);
+      } else if (fillOpacity) {
+        context.setCommonStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+        context.fill();
+      }
+    }
+
+    if (stroke) {
+      const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
+      if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
+        context.beginPath();
+        if (stroke[0]) {
+          context.moveTo(startP.x, startP.y, z);
+          for (let i = 1; i < points.length; i++) {
+            const p = points[i];
+            context.lineTo(p.x, p.y, z);
+          }
+        } else if (stroke[2]) {
+          const endP = points[points.length - 1];
+          context.moveTo(endP.x, endP.y, z);
+          for (let i = points.length - 2; i >= 0; i--) {
+            const p = points[i];
+            context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+          }
+        }
+      }
+      context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+      context.stroke();
+    }
+  }
+
   drawShape(
     area: IArea,
     context: IContext2d,
@@ -105,6 +184,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
   ) {
     const areaAttribute = getTheme(area, params?.theme).area;
     const {
+      fill = areaAttribute.fill,
+      stroke = areaAttribute.stroke,
       fillOpacity = areaAttribute.fillOpacity,
       z = areaAttribute.z,
       strokeOpacity = areaAttribute.strokeOpacity
@@ -116,15 +197,32 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     const { doFill, doStroke } = data;
 
-    const { clipRange = areaAttribute.clipRange } = area.attribute;
+    const { clipRange = areaAttribute.clipRange, closePath, points, segments } = area.attribute;
+    let { curveType = areaAttribute.curveType } = area.attribute;
+    if (closePath && curveType === 'linear') {
+      curveType = 'linearClosed';
+    }
+
+    if (clipRange === 1 && !segments && !points.some(p => p.defined === false) && curveType === 'linear') {
+      return this.drawLinearAreaHighPerformance(
+        area,
+        context,
+        !!fill,
+        doStroke,
+        fillOpacity,
+        strokeOpacity,
+        x,
+        y,
+        areaAttribute,
+        drawContext,
+        params,
+        fillCb,
+        strokeCb
+      );
+    }
 
     // 更新cache
     if (area.shouldUpdateShape()) {
-      const { points, segments, closePath } = area.attribute;
-      let { curveType = areaAttribute.curveType } = area.attribute;
-      if (closePath && curveType === 'linear') {
-        curveType = 'linearClosed';
-      }
       if (segments && segments.length) {
         let startPoint: IPointLike;
         let lastTopSeg: { endX: number; endY: number };

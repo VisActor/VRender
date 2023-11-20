@@ -17,9 +17,11 @@
     "build": "bundle --clean",
     "build-umd": "bundle --clean -f umd",
     "dev": "bundle --clean -f es -w",
-    "start": "vite ./__tests__/browser",
+    "start": "vite ./__tests__/browser --host",
     "test": "jest",
     "test-cov": "jest -w 16 --coverage",
+    "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
+    "test-watch": "DEBUG_MODE=1 jest --watch",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
@@ -31,7 +33,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vutils": "~0.16.10",
+    "@visactor/vutils": "~0.16.12",
     "canvas": "2.11.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

@@ -20,6 +20,7 @@ import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
 import type { SliderAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -113,8 +114,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return this._endHandler;
   }
 
-  constructor(attributes: SliderAttributes) {
-    super(merge({}, Slider.defaultAttributes, attributes));
+  constructor(attributes: SliderAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Slider.defaultAttributes, attributes));
   }
 
   /**

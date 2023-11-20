@@ -91,7 +91,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     area: IArea,
     context: IContext2d,
     fill: boolean,
-    stroke: IStrokeType | IStrokeType[],
+    stroke: boolean,
     fillOpacity: number,
     strokeOpacity: number,
     offsetX: number,
@@ -140,23 +140,25 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     }
 
-    if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
-      context.beginPath();
-      if (stroke[0]) {
-        context.moveTo(startP.x, startP.y, z);
-        for (let i = 1; i < points.length; i++) {
-          const p = points[i];
-          context.lineTo(p.x, p.y, z);
-        }
-      } else if (stroke[2]) {
-        const endP = points[points.length - 1];
-        context.moveTo(endP.x, endP.y, z);
-        for (let i = points.length - 2; i >= 0; i--) {
-          const p = points[i];
-          context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+    if (stroke) {
+      const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
+      if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
+        context.beginPath();
+        if (stroke[0]) {
+          context.moveTo(startP.x, startP.y, z);
+          for (let i = 1; i < points.length; i++) {
+            const p = points[i];
+            context.lineTo(p.x, p.y, z);
+          }
+        } else if (stroke[2]) {
+          const endP = points[points.length - 1];
+          context.moveTo(endP.x, endP.y, z);
+          for (let i = points.length - 2; i >= 0; i--) {
+            const p = points[i];
+            context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+          }
         }
       }
-    } else if (stroke) {
       context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
       context.stroke();
     }
@@ -206,7 +208,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
         area,
         context,
         !!fill,
-        stroke,
+        doStroke,
         fillOpacity,
         strokeOpacity,
         x,

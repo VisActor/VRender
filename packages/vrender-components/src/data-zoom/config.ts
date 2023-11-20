@@ -1,9 +1,3 @@
-export enum DataZoomActiveTag {
-  startHandler = 'startHandler',
-  endHandler = 'endHandler',
-  middleHandler = 'middleHandler',
-  background = 'background'
-}
 export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
   orient: 'bottom',
   showDetail: 'auto',

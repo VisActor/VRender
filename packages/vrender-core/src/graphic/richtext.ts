@@ -205,7 +205,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   doUpdateFrameCache() {
     // 1. 测量，生成paragraph
     const {
-      textConfig,
+      textConfig = [],
       maxWidth,
       maxHeight,
       width,
@@ -219,6 +219,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       singleLine
     } = this.attribute;
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
+
     for (let i = 0; i < textConfig.length; i++) {
       if ('image' in textConfig[i]) {
         const config = textConfig[i] as IRichTextImageCharacter;

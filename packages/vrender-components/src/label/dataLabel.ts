@@ -10,12 +10,16 @@ import type { DataLabelAttrs } from './type';
 import type { LabelBase } from './base';
 import { LabelBase as PointLabel } from './base';
 import { LineDataLabel } from './line-data';
+import { LineLabel } from './line';
+import { AreaLabel } from './area';
 import type { ComponentOptions } from '../interface';
 
 const labelComponentMap = {
   rect: RectLabel,
   symbol: SymbolLabel,
   arc: ArcLabel,
+  line: LineLabel,
+  area: AreaLabel,
   'line-data': LineDataLabel
 };
 
@@ -56,19 +60,21 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
       const dataLabel = dataLabels[i];
       const labelComponent = labelComponentMap[dataLabel.type] || PointLabel;
       if (labelComponent) {
-        const { baseMarkGroupName } = dataLabel;
-        let component = this._componentMap.get(baseMarkGroupName);
+        const { baseMarkGroupName, type } = dataLabel;
+        const id = dataLabel.id ?? `${baseMarkGroupName}-${type}-${i}`;
+
+        let component = this._componentMap.get(id);
         if (component) {
           component.setBitmapTool(tool);
           component.setBitmap(bitmap);
           component.setAttributes(dataLabel);
-          currentComponentMap.set(baseMarkGroupName, component);
+          currentComponentMap.set(id, component);
         } else {
           component = new labelComponent(dataLabel as any);
           component.setBitmap(bitmap);
           component.setBitmapTool(tool);
           this.add(component as unknown as INode);
-          currentComponentMap.set(baseMarkGroupName, component);
+          currentComponentMap.set(id, component);
         }
       }
     }

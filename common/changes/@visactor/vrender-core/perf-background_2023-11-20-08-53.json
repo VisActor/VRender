@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: add round line symbol, closed #1458",
+      "comment": "perf: not setAttribute while background is not url, closed #696",
       "type": "none"
     }
   ],

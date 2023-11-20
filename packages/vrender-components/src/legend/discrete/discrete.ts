@@ -49,6 +49,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
   private _pager!: Pager;
+  private _lastActiveItem: IGroup;
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',
@@ -308,7 +309,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { hover = true, select = true } = this.attribute;
     if (hover) {
       this._itemsContainer.addEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
-      this._itemsContainer.addEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
+      this._itemsContainer.addEventListener('pointerleave', this._onUnHover as EventListenerOrEventListenerObject);
     }
 
     if (select) {
@@ -350,6 +351,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, background?.state);
     }
+    itemGroup.id = `${id ?? label}-${index}`;
 
     itemGroup.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
@@ -361,33 +363,37 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.add(innerGroup);
 
     let focusStartX = 0;
-    const shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
-    const shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
-    const itemShape = createSymbol({
-      x: 0,
-      y: 0,
-      symbolType: 'circle',
-      strokeBoundsBuffer: 0,
-      ...shape,
-      ...shapeAttr.style
-    });
-    // 处理下 shape 的 fill stroke
-    Object.keys(shapeAttr.state || {}).forEach(key => {
-      const color =
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
-      if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
-      }
+    let shapeSize = 0;
+    let shapeSpace = 0;
+    if (shapeAttr?.visible !== false) {
+      shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
+      shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
+      const itemShape = createSymbol({
+        x: 0,
+        y: 0,
+        symbolType: 'circle',
+        strokeBoundsBuffer: 0,
+        ...shape,
+        ...shapeAttr.style
+      });
+      // 处理下 shape 的 fill stroke
+      Object.keys(shapeAttr.state || {}).forEach(key => {
+        const color =
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
+        if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
+        }
 
-      if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
-      }
-    });
-    this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
+        if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
+          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
+        }
+      });
+      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
 
-    itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
-    innerGroup.add(itemShape);
+      itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
+      innerGroup.add(itemShape);
+    }
 
     let focusShape;
     let focusSpace = 0;
@@ -676,69 +682,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
-      const selected = legendItem.hasState(LegendStateValue.selected);
 
-      if (selected) {
-        // use selectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.selectedHover, e);
-      } else {
-        // use unSelectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover, e);
+      // 如果上个激活元素存在，则判断当前元素是否和上个激活元素相同，相同则不做处理，不相同则触发 unhover
+      if (this._lastActiveItem) {
+        if (this._lastActiveItem.id === legendItem.id) {
+          return;
+        }
+        this._unHover(this._lastActiveItem, e);
       }
-
-      const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
-        node => node.name === LEGEND_ELEMENT_NAME.focus,
-        false
-      ) as IGraphic;
-      if (focusButton) {
-        focusButton.setAttribute('visible', true);
-      }
-
-      this._dispatchEvent(LegendEvent.legendItemHover, legendItem, e);
+      this._hover(legendItem, e);
+    } else if (this._lastActiveItem) {
+      this._unHover(this._lastActiveItem, e);
+      this._lastActiveItem = null;
     }
   };
 
   private _onUnHover = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
-      // @ts-ignore
-      const legendItem = target.delegate;
-
-      let attributeUpdate = false;
-      if (
-        legendItem.hasState(LegendStateValue.unSelectedHover) ||
-        legendItem.hasState(LegendStateValue.selectedHover)
-      ) {
-        attributeUpdate = true;
-      }
-      legendItem.removeState(LegendStateValue.unSelectedHover);
-      legendItem.removeState(LegendStateValue.selectedHover);
-      legendItem
-        .getChildren()[0]
-        .getChildren()
-        .forEach((child: any) => {
-          if (
-            !attributeUpdate &&
-            (child.hasState(LegendStateValue.unSelectedHover) || child.hasState(LegendStateValue.selectedHover))
-          ) {
-            attributeUpdate = true;
-          }
-          (child as unknown as IGraphic).removeState(LegendStateValue.unSelectedHover);
-          (child as unknown as IGraphic).removeState(LegendStateValue.selectedHover);
-        });
-
-      const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
-        node => node.name === LEGEND_ELEMENT_NAME.focus,
-        false
-      ) as IGraphic;
-      if (focusButton) {
-        focusButton.setAttribute('visible', false);
-      }
-
-      if (attributeUpdate) {
-        this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
-      }
-      this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem, e);
+    if (this._lastActiveItem) {
+      this._unHover(this._lastActiveItem, e);
+      this._lastActiveItem = null;
     }
   };
 
@@ -822,6 +784,64 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._dispatchEvent(LegendEvent.legendItemClick, legendItem, e);
     }
   };
+
+  private _hover(legendItem: IGroup, e: FederatedPointerEvent) {
+    this._lastActiveItem = legendItem;
+    const selected = legendItem.hasState(LegendStateValue.selected);
+
+    if (selected) {
+      // use selectedHover state
+      this._setLegendItemState(legendItem, LegendStateValue.selectedHover, e);
+    } else {
+      // use unSelectedHover state
+      this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover, e);
+    }
+
+    const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
+      node => node.name === LEGEND_ELEMENT_NAME.focus,
+      false
+    ) as IGraphic;
+    if (focusButton) {
+      focusButton.setAttribute('visible', true);
+    }
+
+    this._dispatchEvent(LegendEvent.legendItemHover, legendItem, e);
+  }
+
+  private _unHover(legendItem: IGroup, e: FederatedPointerEvent) {
+    let attributeUpdate = false;
+    if (legendItem.hasState(LegendStateValue.unSelectedHover) || legendItem.hasState(LegendStateValue.selectedHover)) {
+      attributeUpdate = true;
+    }
+    legendItem.removeState(LegendStateValue.unSelectedHover);
+    legendItem.removeState(LegendStateValue.selectedHover);
+    legendItem
+      .getChildren()[0]
+      .getChildren()
+      .forEach((child: any) => {
+        if (
+          !attributeUpdate &&
+          (child.hasState(LegendStateValue.unSelectedHover) || child.hasState(LegendStateValue.selectedHover))
+        ) {
+          attributeUpdate = true;
+        }
+        (child as unknown as IGraphic).removeState(LegendStateValue.unSelectedHover);
+        (child as unknown as IGraphic).removeState(LegendStateValue.selectedHover);
+      });
+
+    const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
+      node => node.name === LEGEND_ELEMENT_NAME.focus,
+      false
+    ) as IGraphic;
+    if (focusButton) {
+      focusButton.setAttribute('visible', false);
+    }
+
+    if (attributeUpdate) {
+      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+    }
+    this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem, e);
+  }
 
   private _setLegendItemState(legendItem: IGroup, stateName: string, e?: FederatedPointerEvent) {
     const keepCurrentStates = true;

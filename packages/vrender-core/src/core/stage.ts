@@ -1,5 +1,5 @@
 import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { AABBBounds, Bounds, Point } from '@visactor/vutils';
+import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
   IGroup,
@@ -276,6 +276,10 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     this.optmize(params.optimize);
+    // 如果背景是图片，触发加载图片操作
+    if (params.background && isString(this._background) && this._background.includes('/')) {
+      this.setAttributes({ background: this._background });
+    }
   }
 
   protected tryInitEventSystem() {

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.16.13",
+  "version": "0.16.16",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -25,15 +25,15 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.16.13",
-    "@visactor/vrender-kits": "workspace:0.16.13"
+    "@visactor/vrender-core": "workspace:0.16.16",
+    "@visactor/vrender-kits": "workspace:0.16.16"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vutils": "0.16.12",
+    "@visactor/vutils": "~0.16.12",
     "canvas": "2.11.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",

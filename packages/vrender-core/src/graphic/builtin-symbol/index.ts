@@ -57,7 +57,7 @@ builtinSymbols.forEach(symbol => {
 export const builtInSymbolStrMap: Record<string, string> = {
   arrowLeft: 'M 0.25 -0.5 L -0.25 0 l 0.5 0.5',
   arrowRight: 'M -0.25 -0.5 l 0.5 0.5 l -0.5 0.5',
-  rect: 'M -0.5,0.25 L 0.5,0.25 L 0.5,-0.25,L -0.5,-0.25 Z',
+  // rect: 'M -0.5,0.25 L 0.5,0.25 L 0.5,-0.25,L -0.5,-0.25 Z',
   rectRound:
     // eslint-disable-next-line max-len
     'M 0.3 -0.5 C 0.41 -0.5 0.5 -0.41 0.5 -0.3 C 0.5 -0.3 0.5 0.3 0.5 0.3 C 0.5 0.41 0.41 0.5 0.3 0.5 C 0.3 0.5 -0.3 0.5 -0.3 0.5 C -0.41 0.5 -0.5 0.41 -0.5 0.3 C -0.5 0.3 -0.5 -0.3 -0.5 -0.3 C -0.5 -0.41 -0.41 -0.5 -0.3 -0.5 C -0.3 -0.5 0.3 -0.5 0.3 -0.5 Z',

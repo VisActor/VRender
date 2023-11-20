@@ -782,7 +782,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _smartInvert(labels: IText[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors } = option;
+    const { textType, contrastRatiosThreshold, alternativeColors, mode } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
@@ -803,9 +803,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
-       * series（baseMark色），
-       * invertSeries（执行智能反色），
-       * similarSeries（智能反色的补色），
+       * base（baseMark色），
+       * inverBase（执行智能反色），
+       * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
       const backgroundColor = baseMark.attribute.fill as IColor;
@@ -816,7 +816,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         backgroundColor,
         textType,
         contrastRatiosThreshold,
-        alternativeColors
+        alternativeColors,
+        mode
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
@@ -856,7 +857,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
                 label.attribute.stroke as IColor,
                 textType,
                 contrastRatiosThreshold,
-                alternativeColors
+                alternativeColors,
+                mode
               )
             });
             continue;

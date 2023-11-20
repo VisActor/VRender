@@ -325,10 +325,11 @@ export class DefaultDrawContribution implements IDrawContribution {
     if (this.InterceptorContributions.length) {
       for (let i = 0; i < this.InterceptorContributions.length; i++) {
         const drawContribution = this.InterceptorContributions[i];
-        if (drawContribution.beforeDrawItem) {
-          if (drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)) {
-            return;
-          }
+        if (
+          drawContribution.beforeDrawItem &&
+          drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)
+        ) {
+          return;
         }
       }
     }

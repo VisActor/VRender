@@ -101,7 +101,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     const attribute = this.attribute;
     const bounds = application.graphicService.updateImageAABBBounds(
       attribute,
-      getTheme(this).image,
+      imageTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

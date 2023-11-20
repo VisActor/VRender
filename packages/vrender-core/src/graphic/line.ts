@@ -54,7 +54,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     const attribute = this.attribute;
     const bounds = application.graphicService.updateLineAABBBounds(
       attribute,
-      getTheme(this).line,
+      lineTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

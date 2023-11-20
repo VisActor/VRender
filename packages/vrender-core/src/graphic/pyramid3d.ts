@@ -27,7 +27,7 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
     const attribute = this.attribute;
     const bounds = application.graphicService.updatePyramid3dAABBBounds(
       attribute,
-      getTheme(this).polygon as any,
+      polygonTheme as any,
       this._AABBBounds,
       this
     ) as AABBBounds;

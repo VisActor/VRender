@@ -20,6 +20,7 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
 
+const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
 export abstract class BaseRender<T extends IGraphic> {
   camera: ICamera;
   declare z: number;
@@ -203,7 +204,11 @@ export abstract class BaseRender<T extends IGraphic> {
     // 存在3d变换的时候，需要计算3d矩阵
     const lastModelMatrix = context.modelMatrix;
     const camera = context.camera;
-    const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x, y, z, lastModelMatrix };
+
+    result.x = x;
+    result.y = y;
+    result.z = z;
+    result.lastModelMatrix = lastModelMatrix;
     // 是否应该进行3d变换
     const shouldTransform3d = camera && (use3dMatrixIn3dMode || shouldUseMat4(graphic));
     if (shouldTransform3d) {

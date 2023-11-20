@@ -51,7 +51,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     const attribute = this.attribute;
     const bounds = application.graphicService.updateAreaAABBBounds(
       attribute,
-      getTheme(this).area,
+      areaTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

@@ -65,7 +65,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     const attribute = this.attribute;
     const bounds = application.graphicService.updatePathAABBBounds(
       attribute,
-      getTheme(this).path,
+      pathTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

@@ -33,7 +33,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     const attribute = this.attribute;
     const bounds = application.graphicService.updateRectAABBBounds(
       attribute,
-      getTheme(this).rect,
+      rectTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

@@ -127,7 +127,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     const attribute = this.attribute;
     const bounds = application.graphicService.updateSymbolAABBBounds(
       attribute,
-      getTheme(this).symbol,
+      symbolTheme,
       this._AABBBounds,
       full,
       this

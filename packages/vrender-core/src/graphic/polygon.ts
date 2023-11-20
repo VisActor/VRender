@@ -35,7 +35,7 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     const attribute = this.attribute;
     const bounds = application.graphicService.updatePolygonAABBBounds(
       attribute,
-      getTheme(this).polygon,
+      polygonTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

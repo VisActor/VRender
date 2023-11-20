@@ -722,7 +722,6 @@ export class DefaultGraphicService implements IGraphicService {
       const { width = rectTheme.width, height = rectTheme.height } = attribute;
       aabbBounds.set(0, 0, width, height);
     }
-
     const tb1 = this.tempAABBBounds1;
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);

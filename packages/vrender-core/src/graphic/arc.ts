@@ -234,7 +234,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     const attribute = this.attribute;
     const bounds = application.graphicService.updateArcAABBBounds(
       attribute,
-      getTheme(this).arc,
+      arcTheme,
       this._AABBBounds,
       full,
       this

@@ -156,8 +156,9 @@ export interface OverlapAttrs {
 
 export interface SmartInvertAttrs {
   /**
-   * 对比度度量默认
+   * 对比度度量
    * 'WCAG' | 'lightness'
+   * 默认使用'WCAG'
    */
   mode?: string;
   /**

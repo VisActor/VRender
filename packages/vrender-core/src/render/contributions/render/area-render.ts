@@ -156,9 +156,10 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
         }
       }
+    } else if (stroke) {
+      context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+      context.stroke();
     }
-    context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
-    context.stroke();
   }
 
   drawShape(

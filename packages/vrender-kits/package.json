@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@visactor/vrender-core": "workspace:0.16.13",
-    "@visactor/vutils": "0.16.8-alpha.1",
+    "@visactor/vutils": "0.16.12",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.5.2"
   },

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.16.16",
+  "version": "0.17.0-alpha.4",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,7 +21,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.16.16",
+    "@visactor/vrender-core": "workspace:0.17.0-alpha.4",
     "@visactor/vutils": "~0.16.12",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.5.2"

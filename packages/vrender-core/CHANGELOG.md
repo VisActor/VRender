@@ -1,6 +1,35 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 07 Nov 2023 10:52:54 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: assign symbol rect function to old
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+_Version update only_
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+### Updates
+
+- feat: add round line symbol, closed #1458
+- feat: lineHeight support string, which means percent
+- fix: fix issue with render while in scale transform
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+### Updates
+
+- feat: add preventRender function
+- feat: merge wrap text function to text
 
 ## 0.16.12
 Tue, 07 Nov 2023 10:52:54 GMT

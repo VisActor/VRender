@@ -170,6 +170,7 @@ export class Stage extends Group implements IStage {
 
   protected _beforeRender?: (stage: IStage) => void;
   protected _afterRender?: (stage: IStage) => void;
+  // 0: 正常渲染, > 0: 跳过隐藏canvas的渲染, < 0: 禁止渲染
   protected _skipRender?: number;
   protected _afterNextRenderCbs?: ((stage: IStage) => void)[];
   protected lastRenderparams?: Partial<IDrawContext>;
@@ -296,8 +297,22 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     this.optmize(params.optimize);
-    if (this._background && isString(this._background)) {
+    // 如果背景是图片，触发加载图片操作
+    if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
+    }
+  }
+
+  preventRender(prevent: boolean) {
+    if (prevent) {
+      this._skipRender = -Infinity;
+    } else {
+      // 判断是否需要outRange优化
+      if (this.params && this.params.optimize && this.params.optimize.skipRenderWithOutRange !== false) {
+        this._skipRender = this.window.isVisible() ? 0 : 1;
+      } else {
+        this._skipRender = 0;
+      }
     }
   }
 
@@ -312,8 +327,11 @@ export class Stage extends Group implements IStage {
       return;
     }
     // 不在视口内的时候，跳过渲染
-    this._skipRender = this.window.isVisible() ? 0 : 1;
+    this._skipRender = this._skipRender < 0 ? this._skipRender : this.window.isVisible() ? 0 : 1;
     this.window.onVisibleChange(visible => {
+      if (this._skipRender < 0) {
+        return;
+      }
       if (visible) {
         if (this.dirtyBounds) {
           this.dirtyBounds.setValue(0, 0, this._viewBox.width(), this._viewBox.height());

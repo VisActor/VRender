@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke } from '@visactor/vrender-core';
+import { injectable, createColor, getScaledStroke, application } from '@visactor/vrender-core';
 import type { IContext2d, EnvType, ISetStrokeStyleParams, IStrokeStyleParams } from '@visactor/vrender-core';
 import { BrowserContext2d } from '../browser';
 
@@ -66,6 +66,15 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;
     }
+  }
+
+  measureText(
+    text: string,
+    method: 'native' | 'simple' | 'quick' = application.global.measureTextMethod
+  ): { width: number } {
+    this.setTransform(1, 0, 0, 1, 0, 0, true, application.global.devicePixelRatio);
+    const data = super.measureText(text, method);
+    return data;
   }
 
   createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {

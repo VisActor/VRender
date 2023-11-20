@@ -20,7 +20,6 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
 
-@injectable()
 export abstract class BaseRender<T extends IGraphic> {
   camera: ICamera;
   declare z: number;

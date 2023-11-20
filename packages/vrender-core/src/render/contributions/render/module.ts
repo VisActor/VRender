@@ -80,6 +80,7 @@ export default new ContainerModule(bind => {
   // bind(RenderSelector).to(DefaultRenderSelector).inSingletonScope();
 
   // circle 渲染器
+  bind(DefaultCanvasCircleRender).toSelf().inSingletonScope();
   bind(CircleRender).to(DefaultCanvasCircleRender).inSingletonScope();
   bind(GraphicRender).toService(CircleRender);
 
@@ -87,6 +88,7 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, CircleRenderContribution);
 
   // rect 渲染器
+  bind(DefaultCanvasRectRender).toSelf().inSingletonScope();
   bind(RectRender).to(DefaultCanvasRectRender).inSingletonScope();
   bind(GraphicRender).toService(RectRender);
 
@@ -103,6 +105,7 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, TextRenderContribution);
 
   // path 渲染器
+  bind(DefaultCanvasPathRender).toSelf().inSingletonScope();
   bind(PathRender).to(DefaultCanvasPathRender).inSingletonScope();
   bind(GraphicRender).toService(PathRender);
 
@@ -110,6 +113,7 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, PathRenderContribution);
 
   // symbol渲染器
+  bind(DefaultCanvasSymbolRender).toSelf().inSingletonScope();
   bind(SymbolRender).to(DefaultCanvasSymbolRender).inSingletonScope();
   bind(GraphicRender).toService(SymbolRender);
 
@@ -117,6 +121,7 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, SymbolRenderContribution);
 
   // arc 渲染器
+  bind(DefaultCanvasArcRender).toSelf().inSingletonScope();
   bind(ArcRender).to(DefaultCanvasArcRender).inSingletonScope();
   bind(GraphicRender).toService(ArcRender);
 
@@ -128,6 +133,7 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, ArcRenderContribution);
 
   // line渲染器
+  bind(DefaultCanvasLineRender).toSelf().inSingletonScope();
   bind(LineRender).to(DefaultCanvasLineRender).inSingletonScope();
   bind(GraphicRender).toService(LineRender);
 
@@ -136,6 +142,7 @@ export default new ContainerModule(bind => {
   bind(DefaultIncrementalCanvasAreaRender).toSelf().inSingletonScope();
 
   // area渲染器
+  bind(DefaultCanvasAreaRender).toSelf().inSingletonScope();
   bind(AreaRender).to(DefaultCanvasAreaRender).inSingletonScope();
   bind(GraphicRender).toService(AreaRender);
 

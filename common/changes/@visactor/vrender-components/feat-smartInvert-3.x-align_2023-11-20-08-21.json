@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: add mode type of smartInvert",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

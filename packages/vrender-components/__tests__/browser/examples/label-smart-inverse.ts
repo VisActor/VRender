@@ -630,8 +630,8 @@ function createContent(stage: Stage) {
     // smartInvert: false,
     smartInvert: {
       mode: 'lightness',
-      outsideEnable: true,
-      strokeStrategy: 'similarBase'
+      outsideEnable: true
+      // strokeStrategy: 'similarBase'
       // brightColor: '#fff000',
       // darkColor: '#dd0000'
     },

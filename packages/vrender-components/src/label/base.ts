@@ -633,7 +633,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         currentTextMap.set(textKey, prevLabel);
         const prevText = prevLabel.text;
         const { duration, easing } = this._animationConfig.update;
-        updateAnimation(prevText as Text, text, this._animationConfig.update);
+        updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
         if (prevLabel.labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {

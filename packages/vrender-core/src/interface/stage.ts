@@ -61,7 +61,22 @@ export interface IStageParams {
   pluginList?: string[];
   // 优化配置
   optimize?: IOptimizeType;
+  /**
+   * 事件系统相关配置
+   */
+  event?: EventConfig;
 }
+
+export type EventConfig = {
+  /** 是否自动阻止事件 */
+  autoPreventDefault?: boolean;
+  /**
+   * 多次点击之间的最大时间，默认为 200 ms
+   * @default 200
+   */
+  clickInterval?: number;
+  [key: string]: any;
+};
 
 export type IOptimizeType = {
   // 视口不在可视区，跳过渲染，默认为true

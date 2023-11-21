@@ -238,6 +238,11 @@ export type RenderConfig = {
     height: number;
     viewBox?: IBounds;
   };
+  /**
+   * 多次点击之间的最大时间，默认为 200 ms
+   * @default 200
+   */
+  clickInterval?: number;
 };
 
 export type NativeEvent = MouseEvent | PointerEvent | TouchEvent;

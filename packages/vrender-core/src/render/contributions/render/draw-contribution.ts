@@ -84,12 +84,12 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   prepareForDraw(renderService: IRenderService, drawContext: IDrawContext) {
-    const count = renderService.renderTreeRoots.reduce((a, b) => a + b.count, 0);
-    // 小于500个元素就不用计算dirtyBounds了
-    if (count < this.global.optmizeSkipCheckBoundariesThreshold) {
-      this.useDirtyBounds = false;
-    } else {
+    // 有dirtyBounds用dirtyBounds
+    if (drawContext.updateBounds) {
       this.useDirtyBounds = true;
+    } else {
+      // 没有的话，看看是否需要跳过outRange的渲染
+      this.useDirtyBounds = !drawContext.stage.params.optimize.disableCheckGraphicWidthOutRange;
     }
   }
 
@@ -184,7 +184,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
 
-  renderGroup(group: IGroup, drawContext: IDrawContext, parentMatrix: IMatrixLike, skipSort?: boolean) {
+  renderGroup(group: IGroup, drawContext: IDrawContext, parentMatrix: IMatrix, skipSort?: boolean) {
     if (drawContext.break || group.attribute.visibleAll === false) {
       return;
     }
@@ -198,7 +198,7 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    let nextM: IMatrix;
+    let nextM: IMatrix = parentMatrix;
     let tempBounds: IBounds;
 
     if (this.useDirtyBounds) {
@@ -325,10 +325,11 @@ export class DefaultDrawContribution implements IDrawContribution {
     if (this.InterceptorContributions.length) {
       for (let i = 0; i < this.InterceptorContributions.length; i++) {
         const drawContribution = this.InterceptorContributions[i];
-        if (drawContribution.beforeDrawItem) {
-          if (drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)) {
-            return;
-          }
+        if (
+          drawContribution.beforeDrawItem &&
+          drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)
+        ) {
+          return;
         }
       }
     }

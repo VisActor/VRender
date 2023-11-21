@@ -31,7 +31,7 @@ const tempDirtyBounds = new AABBBounds();
 /**
  * 影子节点拦截器，用于渲染影子节点
  */
-@injectable()
+// @injectable()
 export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   afterDrawItem(
@@ -96,9 +96,17 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
   }
 }
 
-@injectable()
-export class CommonDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
+// @injectable()
+export class DebugDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
+  interceptors: IDrawItemInterceptorContribution[];
+  constructor() {
+    this.interceptors = [
+      new ShadowRootDrawItemInterceptorContribution(),
+      new Canvas3DDrawItemInterceptor(),
+      new InteractiveDrawItemInterceptorContribution()
+    ];
+  }
   afterDrawItem(
     graphic: IGraphic,
     renderService: IRenderService,
@@ -106,20 +114,7 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
-      this.drawItem(graphic, renderService, drawContext, drawContribution, params);
-    }
-    return false;
-  }
-
-  beforeDrawItem(
-    graphic: IGraphic,
-    renderService: IRenderService,
-    drawContext: IDrawContext,
-    drawContribution: IDrawContribution,
-    params?: IGraphicRenderDrawParams
-  ): boolean {
-    if (graphic.attribute.shadowRootIdx < 0) {
+    if (graphic.attribute._debug_bounds) {
       this.drawItem(graphic, renderService, drawContext, drawContribution, params);
     }
     return false;
@@ -157,10 +152,68 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
   }
 }
 
+@injectable()
+export class CommonDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
+  order: number = 1;
+  interceptors: IDrawItemInterceptorContribution[];
+  constructor() {
+    this.interceptors = [
+      new ShadowRootDrawItemInterceptorContribution(),
+      new Canvas3DDrawItemInterceptor(),
+      new InteractiveDrawItemInterceptorContribution(),
+      new DebugDrawItemInterceptorContribution()
+    ];
+  }
+  afterDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    for (let i = 0; i < this.interceptors.length; i++) {
+      if (
+        this.interceptors[i].afterDrawItem &&
+        this.interceptors[i].afterDrawItem(graphic, renderService, drawContext, drawContribution, params)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  beforeDrawItem(
+    graphic: IGraphic,
+    renderService: IRenderService,
+    drawContext: IDrawContext,
+    drawContribution: IDrawContribution,
+    params?: IGraphicRenderDrawParams
+  ): boolean {
+    // 【性能方案】判定写在外层,减少遍历判断耗时，10000条数据减少1ms
+    if (
+      (!graphic.in3dMode || drawContext.in3dInterceptor) &&
+      !graphic.shadowRoot &&
+      !(graphic.baseGraphic || graphic.attribute.globalZIndex || graphic.interactiveGraphic)
+    ) {
+      return false;
+    }
+
+    for (let i = 0; i < this.interceptors.length; i++) {
+      if (
+        this.interceptors[i].beforeDrawItem &&
+        this.interceptors[i].beforeDrawItem(graphic, renderService, drawContext, drawContribution, params)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 /**
  * 交互层节点拦截器，用于支持交互层图元
  */
-@injectable()
+// @injectable()
 export class InteractiveDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
   processing: boolean;
@@ -300,7 +353,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
 /**
  * 3d拦截器，用于渲染3d视角
  */
-@injectable()
+// @injectable()
 export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribution {
   // canvas?: ICanvas;
   order: number = 1;

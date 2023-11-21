@@ -263,6 +263,8 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
+  x1: 0,
+  y1: 0,
   strokeBoundsBuffer: 0,
   cornerRadius: 0
 };
@@ -271,6 +273,8 @@ export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
   ...DefaultAttribute,
   width: 0,
   height: 0,
+  x1: 0,
+  y1: 0,
   cornerRadius: 0,
   length: 0
 };

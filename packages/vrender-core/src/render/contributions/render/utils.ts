@@ -53,7 +53,7 @@ export function fillVisible(opacity: number, fillOpacity: number, fill: IFillTyp
 }
 
 export function rectFillVisible(opacity: number, fillOpacity: number, width: number, height: number, fill: IFillType) {
-  return fill && opacity * fillOpacity > 0 && width > 0 && height > 0;
+  return fill && opacity * fillOpacity > 0 && width !== 0 && height !== 0;
 }
 
 /**
@@ -68,7 +68,7 @@ export function strokeVisible(opacity: number, strokeOpacity: number) {
 }
 
 export function rectStrokeVisible(opacity: number, strokeOpacity: number, width: number, height: number) {
-  return opacity * strokeOpacity > 0 && width > 0 && height > 0;
+  return opacity * strokeOpacity > 0 && width !== 0 && height !== 0;
 }
 
 export function drawPathProxy(

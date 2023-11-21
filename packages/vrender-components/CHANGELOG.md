@@ -1,6 +1,29 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 09 Nov 2023 11:49:33 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+### Updates
+
+- fix: legendItemHover and legendItemUnHover should trigger once
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+### Updates
+
+- feat: datazoom update callback supports new trigger tag param
+- feat(label): support line/area label
+- feat: lineHeight support string, which means percent
 
 ## 0.16.13
 Thu, 09 Nov 2023 11:49:33 GMT

@@ -97,6 +97,9 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | false;
+  animationEnter?: ILabelUpdateAnimation;
+  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
+  animationExit?: ILabelExitAnimation;
 
   // 排序 or 删减
   dataFilter?: (data: LabelItem[]) => LabelItem[];
@@ -123,6 +126,8 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /** 唯一标志符 */
+  id?: string;
 }
 
 export interface OverlapAttrs {
@@ -307,6 +312,15 @@ export interface LineLabelAttrs extends BaseLabelAttrs {
   position?: Functional<'start' | 'end'>;
 }
 
+export interface AreaLabelAttrs extends BaseLabelAttrs {
+  type: 'area';
+  /**
+   * 标签位置
+   * @default 'end'
+   */
+  position?: Functional<'start' | 'end'>;
+}
+
 export interface LineDataLabelAttrs extends BaseLabelAttrs {
   type: 'line-data';
 
@@ -459,16 +473,29 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 
 export type Functional<T> = T | ((data: any) => T);
 
-export interface ILabelAnimation {
-  mode?: 'same-time' | 'after' | 'after-all';
+export interface ILabelExitAnimation {
   duration?: number;
   delay?: number;
   easing?: EasingType;
+}
+
+export interface ILabelEnterAnimation extends ILabelExitAnimation {
+  mode?: 'same-time' | 'after' | 'after-all';
+}
+
+export interface ILabelUpdateAnimation extends ILabelExitAnimation {
   /** 是否开启 increaseCount 动画
    * @default true
    */
   increaseEffect?: boolean;
 }
+
+export interface ILabelUpdateChannelAnimation extends ILabelUpdateAnimation {
+  channel?: string[];
+  options?: { excludeChannels?: string[] };
+}
+
+export interface ILabelAnimation extends ILabelEnterAnimation, ILabelExitAnimation, ILabelUpdateAnimation {}
 
 export interface IPoint {
   x: number;

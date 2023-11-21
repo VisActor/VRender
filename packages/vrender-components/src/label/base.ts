@@ -15,25 +15,9 @@ import type {
   IRichTextCharacter,
   ITextAttribute
 } from '@visactor/vrender-core';
-import {
-  createText,
-  IncreaseCount,
-  AttributeUpdateType,
-  IContainPointMode,
-  createRichText
-} from '@visactor/vrender-core';
+import { createText, AttributeUpdateType, IContainPointMode, createRichText } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
-import {
-  isFunction,
-  isValidNumber,
-  isEmpty,
-  isValid,
-  isString,
-  merge,
-  isRectIntersect,
-  isNil,
-  isArray
-} from '@visactor/vutils';
+import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
@@ -41,8 +25,18 @@ import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util'
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
-import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
-import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
+import type {
+  BaseLabelAttrs,
+  OverlapAttrs,
+  ILabelAnimation,
+  ArcLabelAttrs,
+  LabelItem,
+  SmartInvertAttrs,
+  ILabelEnterAnimation,
+  ILabelExitAnimation,
+  ILabelUpdateAnimation
+} from './type';
+import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
 import { getPointsOfLineArea } from './util';
 
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -53,6 +47,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected _isCollectionBase: boolean;
 
   protected _bitmap?: Bitmap;
+
+  protected _animationConfig?: {
+    enter: ILabelEnterAnimation;
+    exit: ILabelExitAnimation;
+    update: ILabelUpdateAnimation;
+  };
 
   static defaultAttributes: Partial<BaseLabelAttrs> = {
     textStyle: {
@@ -308,7 +308,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._idToGraphic?.clear();
     this._idToPoint?.clear();
     this._baseMarks = currentBaseMarks;
-    this._isCollectionBase = currentBaseMarks?.[0]?.type === 'line' || currentBaseMarks?.[0]?.type === 'area';
+    this._isCollectionBase = this.attribute.type === 'line-data';
 
     if (!currentBaseMarks || currentBaseMarks.length === 0) {
       return;
@@ -359,6 +359,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           this._idToGraphic.set(textData.id, baseMark);
         }
       }
+    }
+
+    if (this.attribute.animation !== false) {
+      this._animationConfig = {
+        enter: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationEnter ?? {}),
+        exit: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationExit ?? {}),
+        update: isArray(this.attribute.animationUpdate)
+          ? this.attribute.animationUpdate
+          : merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationUpdate ?? {})
+      };
     }
   }
 
@@ -580,13 +590,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithAnimation(labels: (IText | IRichText)[]) {
-    const animationConfig = (this.attribute.animation ?? {}) as ILabelAnimation;
-
-    const mode = animationConfig.mode ?? DefaultLabelAnimation.mode;
-    const duration = animationConfig.duration ?? DefaultLabelAnimation.duration;
-    const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
-    const delay = animationConfig.delay ?? 0;
-
     const currentTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = new Map();
     const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
@@ -613,13 +616,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           this._syncStateWithRelatedGraphic(relatedGraphic);
           relatedGraphic.once('animate-bind', a => {
             text.setAttributes(from);
-            const listener = this._afterRelatedGraphicAttributeUpdate(text, texts, index, relatedGraphic, {
-              mode,
-              duration,
-              easing,
+            const listener = this._afterRelatedGraphicAttributeUpdate(
+              text,
+              texts,
+              index,
+              relatedGraphic,
               to,
-              delay
-            });
+              this._animationConfig.enter
+            );
             relatedGraphic.on('afterAttributeUpdate', listener);
           });
         }
@@ -628,7 +632,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         prevTextMap.delete(textKey);
         currentTextMap.set(textKey, prevLabel);
         const prevText = prevLabel.text;
-        prevText.animate().to(text.attribute, duration, easing);
+        const { duration, easing } = this._animationConfig.update;
+        updateAnimation(prevText as Text, text, this._animationConfig.update);
         if (prevLabel.labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {
@@ -642,28 +647,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             easing
           );
         }
-        if (
-          animationConfig.increaseEffect !== false &&
-          (prevText as IText).attribute?.text !== (text as IText).attribute?.text &&
-          isValidNumber(Number((prevText as IText).attribute?.text) * Number((text as IText).attribute?.text))
-        ) {
-          prevText
-            .animate()
-            .play(
-              new IncreaseCount(
-                { text: (prevText as IText).attribute?.text as string },
-                { text: (text as IText).attribute?.text as string },
-                duration,
-                easing
-              )
-            );
-        }
       }
     });
     prevTextMap.forEach(label => {
       label.text
         ?.animate()
-        .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
+        .to(
+          getAnimationAttributes(label.text.attribute, 'fadeOut').to,
+          this._animationConfig.exit.duration,
+          this._animationConfig.exit.easing
+        )
         .onEnd(() => {
           this.removeChild(label.text);
           if (label?.labelLine) {
@@ -746,14 +739,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     texts: (IText | IRichText)[],
     index: number,
     relatedGraphic: IGraphic,
-    { mode, duration, easing, to, delay }: ILabelAnimation & { to: any }
+    to: any,
+    { mode, duration, easing, delay }: ILabelAnimation
   ) {
     const listener = (event: any) => {
       const { detail } = event;
       if (!detail) {
         return {};
       }
-
       const isValidAnimateState =
         detail &&
         detail.type === AttributeUpdateType.ANIMATE_UPDATE &&
@@ -769,7 +762,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         return;
       }
 
-      const onEnd = () => {
+      const onStart = () => {
         if (relatedGraphic) {
           relatedGraphic.onAnimateBind = undefined;
           relatedGraphic.removeEventListener('afterAttributeUpdate', listener);
@@ -780,7 +773,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         case 'after':
           // 3. 当前关联图元的动画播放结束后
           if (detail.animationState.end) {
-            text.animate({ onEnd }).wait(delay).to(to, duration, easing);
+            text.animate({ onStart }).wait(delay).to(to, duration, easing);
           }
           break;
         case 'after-all':
@@ -788,7 +781,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           if (index === texts.length - 1) {
             if (detail.animationState.end) {
               texts.forEach(t => {
-                t.animate({ onEnd }).wait(delay).to(to, duration, easing);
+                t.animate({ onStart }).wait(delay).to(to, duration, easing);
               });
             }
           }
@@ -797,16 +790,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         default:
           if (this._isCollectionBase) {
             const point = this._idToPoint.get((text.attribute as LabelItem).id);
-
             if (
               point &&
               (!text.animates || !text.animates.has('label-animate')) &&
-              this._baseMarks[0].containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.pickerService)
+              relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.pickerService)
             ) {
-              text.animate({ onEnd }).wait(delay).to(to, duration, easing);
+              text.animate({ onStart }).wait(delay).to(to, duration, easing);
             }
           } else if (detail.animationState.isFirstFrameOfStep) {
-            text.animate({ onEnd }).wait(delay).to(to, duration, easing);
+            text.animate({ onStart }).wait(delay).to(to, duration, easing);
           }
 
           break;

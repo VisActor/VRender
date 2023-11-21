@@ -5,6 +5,7 @@ import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vre
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
+import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
 
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';
@@ -63,7 +64,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     ) as IGroup;
 
     if (this.attribute?.visible !== false && textStyle?.visible !== false) {
-      if (textType === 'rich') {
+      if (textType === 'rich' || isValid(textStyle.character)) {
         const attr = {
           x: textStyle.x ?? 0,
           y: textStyle.y ?? 0,
@@ -73,7 +74,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           wordBreak: textStyle.wordBreak ?? 'break-word',
           maxHeight: textStyle.maxHeight,
           maxWidth: textStyle.maxWidth,
-          textConfig: text as IRichTextCharacter[],
+          textConfig: textStyle.character ?? (text as IRichTextCharacter[]),
           ...textStyle
         };
         this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
@@ -81,10 +82,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         const attr = {
           html: {
             dom: text as string,
-            container: '',
-            width: 30,
-            height: 30,
-            style: '',
+            ...DEFAULT_HTML_TEXT_SPEC,
             ...textStyle
           },
           x: textStyle.x ?? 0,
@@ -97,20 +95,6 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           maxWidth: textStyle.maxWidth,
           textConfig: [] as any[],
           ...textStyle
-        };
-        this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
-      } else if (textStyle && isValid(textStyle?.character)) {
-        // 富文本的老配置方法
-        const attr = {
-          x: textStyle.x ?? 0,
-          y: textStyle.y ?? 0,
-          width: textStyle.width ?? width ?? 0,
-          height: textStyle.height ?? height ?? 0,
-          ellipsis: textStyle.ellipsis ?? true,
-          wordBreak: textStyle.wordBreak ?? 'break-word',
-          maxHeight: textStyle.maxHeight,
-          maxWidth: textStyle.maxWidth,
-          textConfig: textStyle.character
         };
         this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
       } else if (isValid(text)) {
@@ -135,7 +119,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     const maintextWidth = this._mainTitle ? this._mainTitle?.AABBBounds.width() : 0;
 
     if (this.attribute?.visible !== false && subtextStyle?.visible !== false) {
-      if (subtextType === 'rich') {
+      if (subtextType === 'rich' || isValid(subtextStyle.character)) {
         const attr: any = {
           x: subtextStyle.x ?? 0,
           y: subtextStyle.y ?? 0,
@@ -145,18 +129,15 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           wordBreak: subtextStyle.wordBreak ?? 'break-word',
           maxHeight: subtextStyle.maxHeight,
           maxWidth: subtextStyle.maxWidth,
-          textConfig: subtext,
+          textConfig: subtextStyle.character || (subtext as IRichTextCharacter[]),
           ...subtextStyle
         };
         this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
-      } else if (textType === 'html') {
+      } else if (subtextType === 'html') {
         const attr: any = {
           html: {
             dom: subtext as string,
-            container: '',
-            width: 30,
-            height: 30,
-            style: {},
+            ...DEFAULT_HTML_TEXT_SPEC,
             ...subtextStyle
           },
           x: subtextStyle.x ?? 0,
@@ -169,20 +150,6 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           maxWidth: subtextStyle.maxWidth,
           textConfig: [] as any[],
           ...subtextStyle
-        };
-        this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
-      } else if (subtextStyle && isValid(subtextStyle?.character)) {
-        // 富文本的老配置方法
-        const attr = {
-          x: subtextStyle.x ?? 0,
-          y: subtextStyle.y ?? maintextHeight,
-          width: subtextStyle.width ?? width ?? 0,
-          height: subtextStyle.height ?? height ?? 0,
-          ellipsis: subtextStyle.ellipsis ?? true,
-          wordBreak: subtextStyle.wordBreak ?? 'break-word',
-          maxHeight: subtextStyle.maxHeight,
-          maxWidth: subtextStyle.maxWidth,
-          textConfig: subtextStyle.character
         };
         this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;
       } else if (isValid(subtext)) {

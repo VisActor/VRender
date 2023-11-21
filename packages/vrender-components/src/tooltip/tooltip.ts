@@ -19,6 +19,7 @@ import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipR
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 import type { TextMeasureInput } from '@visactor/vutils';
+import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';
@@ -118,10 +119,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
           {
             html: {
               dom: (titleAttr.value.text as TooltipRichTextAttrs).text as string,
-              container: '',
-              width: 30,
-              height: 30,
-              style: {},
+              ...DEFAULT_HTML_TEXT_SPEC,
               ...titleAttr.value
             },
             visible: isVisible(titleAttr) && isVisible(titleAttr.value),
@@ -260,10 +258,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
                 {
                   html: {
                     dom: (itemAttr.key.text as TooltipRichTextAttrs).text as string,
-                    container: '',
-                    width: 30,
-                    height: 30,
-                    style: {},
+                    ...DEFAULT_HTML_TEXT_SPEC,
                     ...itemAttr.key
                   }
                 },

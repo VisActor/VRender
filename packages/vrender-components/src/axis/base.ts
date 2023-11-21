@@ -35,6 +35,7 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -325,19 +326,16 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
       let text;
-      if (labelStyle?.type === 'rich') {
+      if (labelStyle.type === 'rich') {
         labelStyle.textConfig = labelStyle.text;
         labelStyle.width = labelStyle.width ?? 0;
         labelStyle.height = labelStyle.height ?? 0;
         text = createRichText(labelStyle);
-      } else if (labelStyle?.type === 'html') {
+      } else if (labelStyle.type === 'html') {
         labelStyle.textConfig = [] as any;
         labelStyle.html = {
           dom: labelStyle.text as string,
-          container: '',
-          width: 30,
-          height: 30,
-          style: {},
+          ...DEFAULT_HTML_TEXT_SPEC,
           ...labelStyle
         };
         text = createRichText(labelStyle as any);

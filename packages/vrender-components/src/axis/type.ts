@@ -445,3 +445,20 @@ export interface LabelAttributes extends Omit<AxisLabelOverlap, 'text'> {
    */
   text?: string | string[] | number | number[] | IRichTextCharacter[];
 }
+
+type CommonTextContent = {
+  type?: 'text';
+  text?: string | string[] | number | number[];
+};
+
+type RichTextContent = {
+  type?: 'rich';
+  text?: IRichTextCharacter[];
+};
+
+type HtmlTextContent = {
+  type?: 'html';
+  text?: string;
+};
+
+export type TextContent = CommonTextContent & RichTextContent & HtmlTextContent;

@@ -38,6 +38,7 @@ import type {
 } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
 import { getPointsOfLineArea } from './util';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
@@ -273,10 +274,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.textConfig = [] as IRichTextCharacter[];
       attributes.html = {
         dom: attributes.text as string,
-        container: '',
-        width: 30,
-        height: 30,
-        style: {},
+        ...DEFAULT_HTML_TEXT_SPEC,
         ...attributes
       };
       const text = createRichText(attributes as IRichTextGraphicAttribute);

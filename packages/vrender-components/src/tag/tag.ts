@@ -17,6 +17,7 @@ import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { BackgroundAttributes } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
+import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
 
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
@@ -132,10 +133,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         visible: isValid(text) && visible !== false,
         html: {
           dom: text as string,
-          container: '',
-          width: 30,
-          height: 30,
-          style: {},
+          ...DEFAULT_HTML_TEXT_SPEC,
           ...textStyle
         },
         ...(textStyle as IRichTextGraphicAttribute),

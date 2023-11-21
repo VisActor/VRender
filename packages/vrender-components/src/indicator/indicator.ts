@@ -7,6 +7,7 @@ import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { IndicatorAttributes, IndicatorItemSpec } from './type';
 import { DEFAULT_INDICATOR_THEME } from './config';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> {
   name = 'indicator';
@@ -51,10 +52,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
               textConfig: [],
               html: {
                 dom: titleStyle.text as string,
-                container: '',
-                width: 30,
-                height: 30,
-                style: {},
+                ...DEFAULT_HTML_TEXT_SPEC,
                 ...titleStyle
               },
               ...titleStyle,
@@ -136,10 +134,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
                 textConfig: [],
                 html: {
                   dom: contentStyle.text as string,
-                  container: '',
-                  width: 30,
-                  height: 30,
-                  style: {},
+                  ...DEFAULT_HTML_TEXT_SPEC,
                   ...contentStyle
                 },
                 ...contentStyle,

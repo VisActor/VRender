@@ -298,7 +298,8 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     this.optmize(params.optimize);
-    if (this._background && isString(this._background)) {
+    // 如果背景是图片，触发加载图片操作
+    if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
     }
   }

@@ -182,8 +182,6 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   // 是否在不显示canvas的时候停止绘图操作，默认false
   optimizeVisible: boolean;
-  // 在场景树小于某个数的情况下，不进行图元超出边界判断，默认300
-  optmizeSkipCheckBoundariesThreshold: number;
 
   setEnv: (env: EnvType, params?: IEnvParamsMap[EnvType]) => void;
   setActiveEnvContribution: (contribution: IEnvContribution) => void;

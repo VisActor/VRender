@@ -66,6 +66,10 @@ export interface IStageParams {
 export type IOptimizeType = {
   // 视口不在可视区，跳过渲染，默认为true
   skipRenderWithOutRange?: boolean;
+  // 跳过图元在区间外的判断
+  // 不存在dirtyBounds的时候，根据该配置判断是否关闭图元的超出边界判定
+  // 如果有dirtyBounds那么该配置不生效
+  disableCheckGraphicWidthOutRange?: boolean;
 };
 
 export interface IOption3D {

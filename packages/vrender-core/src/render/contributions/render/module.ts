@@ -198,13 +198,13 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, GraphicRender);
 
   // interceptor
-  bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
+  // bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
   bind(CommonDrawItemInterceptorContribution).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(CommonDrawItemInterceptorContribution);
-  bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
-  bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(InteractiveDrawItemInterceptorContribution);
+  // bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
+  // bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(InteractiveDrawItemInterceptorContribution);
   bindContributionProvider(bind, DrawItemInterceptor);
 });

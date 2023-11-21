@@ -16,7 +16,8 @@ import type {
   IGraphicRenderDrawParams,
   IRenderService,
   IRectRenderContribution,
-  IContributionProvider
+  IContributionProvider,
+  IRectGraphicAttribute
 } from '../../../interface';
 import { RectRenderContribution } from './contributions/constants';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
@@ -33,6 +34,7 @@ import {
 export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraphicRender {
   type = 'rect';
   numberType: number = RECT_NUMBER_TYPE;
+  tempTheme: Required<IRectGraphicAttribute>;
 
   constructor(
     @inject(ContributionProvider)
@@ -68,8 +70,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
-    const rectAttribute = getTheme(rect, params?.theme).rect;
+    const rectAttribute = this.tempTheme ?? getTheme(rect, params?.theme).rect;
     const {
       fill = rectAttribute.fill,
       background,
@@ -177,6 +178,8 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
 
   draw(rect: IRect, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
     const rectAttribute = getTheme(rect, params?.theme).rect;
+    this.tempTheme = rectAttribute;
     this._draw(rect, rectAttribute, false, drawContext, params);
+    this.tempTheme = null;
   }
 }

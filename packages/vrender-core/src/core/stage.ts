@@ -193,7 +193,7 @@ export class Stage extends Group implements IStage {
    * 1. 如果没有传入宽高，那么默认为canvas宽高，如果传入了宽高则stage使用传入宽高作为视口宽高
    * @param params
    */
-  constructor(params: Partial<IStageParams>) {
+  constructor(params: Partial<IStageParams> = {}) {
     super({});
     this.params = params;
     this.theme = new Theme();
@@ -275,6 +275,9 @@ export class Stage extends Group implements IStage {
     this.timeline = new DefaultTimeline();
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
+    if (!params.optimize) {
+      params.optimize = {};
+    }
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作
     if (params.background && isString(this._background) && this._background.includes('/')) {
@@ -313,7 +316,7 @@ export class Stage extends Group implements IStage {
       this._skipRender = -Infinity;
     } else {
       // 判断是否需要outRange优化
-      if (this.params && this.params.optimize && this.params.optimize.skipRenderWithOutRange !== false) {
+      if (this.params.optimize.skipRenderWithOutRange !== false) {
         this._skipRender = this.window.isVisible() ? 0 : 1;
       } else {
         this._skipRender = 0;
@@ -322,8 +325,9 @@ export class Stage extends Group implements IStage {
   }
 
   // 优化策略
-  optmize(params?: IOptimizeType) {
-    this.optmizeRender(params?.skipRenderWithOutRange);
+  optmize(params: IOptimizeType) {
+    this.optmizeRender(params.skipRenderWithOutRange);
+    this.params.optimize = params;
   }
 
   // 优化渲染
@@ -333,23 +337,25 @@ export class Stage extends Group implements IStage {
     }
     // 不在视口内的时候，跳过渲染
     this._skipRender = this._skipRender < 0 ? this._skipRender : this.window.isVisible() ? 0 : 1;
-    this.window.onVisibleChange(visible => {
-      if (this._skipRender < 0) {
-        return;
-      }
-      if (visible) {
-        if (this.dirtyBounds) {
-          this.dirtyBounds.setValue(0, 0, this._viewBox.width(), this._viewBox.height());
-        }
-        if (this._skipRender > 1) {
-          this.renderNextFrame();
-        }
-        this._skipRender = 0;
-      } else {
-        this._skipRender = 1;
-      }
-    });
+    this.window.onVisibleChange(this._onVisibleChange);
   }
+
+  protected _onVisibleChange = (visible: boolean) => {
+    if (this._skipRender < 0) {
+      return;
+    }
+    if (visible) {
+      if (this.dirtyBounds) {
+        this.dirtyBounds.setValue(0, 0, this._viewBox.width(), this._viewBox.height());
+      }
+      if (this._skipRender > 1) {
+        this.renderNextFrame();
+      }
+      this._skipRender = 0;
+    } else {
+      this._skipRender = 1;
+    }
+  };
 
   getTimeline() {
     return this.timeline;

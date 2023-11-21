@@ -1,6 +1,7 @@
 import { array, isNil, merge } from '@visactor/vutils';
 import type { IRichTextGraphicAttribute } from '@visactor/vrender-core';
-import type { TooltipRowAttrs, TooltipRowStyleAttrs, TooltipTextAttrs } from './type';
+import type { TooltipRowAttrs, TooltipRowStyleAttrs, TooltipTextAttrs, TooltipRichTextAttrs } from './type';
+import type { IRichTextCharacter } from '@visactor/vrender-core';
 
 export const mergeRowAttrs = (
   target: TooltipRowAttrs | TooltipRowStyleAttrs,
@@ -19,6 +20,17 @@ export const mergeRowAttrs = (
 
 export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAttribute => {
   const { width, height, wordBreak = 'break-word', textAlign, textBaseline, text } = attr;
+  if (typeof text === 'object') {
+    return {
+      width,
+      height,
+      wordBreak: wordBreak as any,
+      textAlign: textAlign as any,
+      textBaseline: textBaseline as any,
+      singleLine: false,
+      textConfig: (text as TooltipRichTextAttrs).text as IRichTextCharacter[]
+    };
+  }
   return {
     width,
     height,

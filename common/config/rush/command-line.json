@@ -105,6 +105,14 @@
       "description": "Run this command to start VRender components development server",
       "shellCommand": "rush run -p @visactor/vrender-components -s start"
     },
+    {
+      "name": "compile",
+      "summary": "",
+      "enableParallelism": false,
+      "commandKind": "bulk",
+      "ignoreMissingScript": true,
+      "allowWarningsInSuccessfulBuild": true
+    }
   ],
   "parameters": [
     {

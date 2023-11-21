@@ -5,7 +5,7 @@ import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vre
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
-import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';

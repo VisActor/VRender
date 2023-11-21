@@ -19,7 +19,7 @@ import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipR
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 import type { TextMeasureInput } from '@visactor/vutils';
-import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';

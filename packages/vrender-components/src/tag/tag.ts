@@ -17,7 +17,7 @@ import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { BackgroundAttributes } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
-import { DEFAULT_HTML_TEXT_SPEC } from 'src/constant';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';

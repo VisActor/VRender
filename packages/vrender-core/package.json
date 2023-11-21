@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.16.16",
+  "version": "0.16.17-alpha.3",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",

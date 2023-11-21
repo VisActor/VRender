@@ -26,11 +26,11 @@ export class AreaLabel extends LabelBase<AreaLabelAttrs> {
     super(merge({}, AreaLabel.defaultAttributes, attributes));
   }
 
-  protected getGraphicBounds(graphic: IArea, point: Partial<PointLocationCfg> = {}) {
+  protected getGraphicBounds(graphic: IArea, point: Partial<PointLocationCfg> = {}, position = 'end') {
     if (graphic.type !== 'area') {
       return super.getGraphicBounds(graphic, point);
     }
-    const { position = 'end' } = this.attribute;
+
     const points = graphic?.attribute?.points || [point];
     const index = position === 'start' ? 0 : points.length - 1;
     return {

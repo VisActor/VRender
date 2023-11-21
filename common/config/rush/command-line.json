@@ -87,7 +87,7 @@
       "commandKind": "global",
       "summary": "Start the development server",
       "description": "Run this command to start VRender development server",
-      "shellCommand": "rush run -p @internal/dev-demos -s start"
+      "shellCommand": "rush run -p @visactor/vrender -s start"
     },
     {
       "name": "change-all",

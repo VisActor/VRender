@@ -4,7 +4,9 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   server: {
     open: true,
-    port: 3333
+    port: 3000,
+    https: !!process.env.HTTPS,
+    host: true
   },
   define: {
     // eslint-disable-next-line @typescript-eslint/no-var-requires

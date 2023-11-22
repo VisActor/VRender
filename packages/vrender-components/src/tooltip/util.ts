@@ -20,7 +20,7 @@ export const mergeRowAttrs = (
 
 export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAttribute => {
   const { width, height, wordBreak = 'break-word', textAlign, textBaseline, text } = attr;
-  if (typeof text === 'object') {
+  if (Array.isArray(text)) {
     return {
       width,
       height,
@@ -28,7 +28,13 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
       textAlign: textAlign as any,
       textBaseline: textBaseline as any,
       singleLine: false,
-      textConfig: (text as TooltipRichTextAttrs).text as IRichTextCharacter[]
+      textConfig: array(text as string[]).map(
+        text =>
+          ({
+            ...attr,
+            text
+          } as any)
+      )
     };
   }
   return {
@@ -38,12 +44,6 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
     textAlign: textAlign as any,
     textBaseline: textBaseline as any,
     singleLine: false,
-    textConfig: array(text).map(
-      text =>
-        ({
-          ...attr,
-          text
-        } as any)
-    )
+    textConfig: (text as TooltipRichTextAttrs).text as IRichTextCharacter[]
   };
 };

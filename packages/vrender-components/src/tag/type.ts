@@ -6,7 +6,7 @@ import type {
   IRichTextCharacter,
   IRichTextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { Padding, State } from '../core/type';
+import type { Padding, State, TextContent } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
 
 type StateStyle = {
@@ -61,20 +61,3 @@ export type TagShapeAttributes = {
    */
   visible: boolean;
 } & Partial<ISymbolGraphicAttribute>;
-
-type CommonTextContent = {
-  type?: 'text';
-  text?: string | string[] | number | number[];
-};
-
-type RichTextContent = {
-  type?: 'rich';
-  text?: IRichTextCharacter[];
-};
-
-type HtmlTextContent = {
-  type?: 'html';
-  text?: string;
-};
-
-export type TextContent = CommonTextContent & RichTextContent & HtmlTextContent;

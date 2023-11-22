@@ -1,3 +1,5 @@
+import type { IRichTextCharacter } from '@visactor/vrender-core';
+
 export type Point = {
   x: number;
   y: number;
@@ -55,3 +57,20 @@ export type Padding =
       left?: number;
       right?: number;
     };
+
+type CommonTextContent = {
+  type?: 'text';
+  text?: string | string[] | number | number[];
+};
+
+type RichTextContent = {
+  type?: 'rich';
+  text?: IRichTextCharacter[];
+};
+
+type HtmlTextContent = {
+  type?: 'html';
+  text?: string;
+};
+
+export type TextContent = CommonTextContent | RichTextContent | HtmlTextContent;

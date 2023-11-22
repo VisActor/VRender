@@ -10,9 +10,9 @@ import type {
   IGroup
 } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
-import type { Point } from '../core/type';
+import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';
-import type { TagAttributes, TextContent } from '../tag';
+import type { TagAttributes } from '../tag';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;

@@ -75,17 +75,20 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       fill = rectAttribute.fill,
       background,
       stroke = rectAttribute.stroke,
-      width = rectAttribute.width,
-      height = rectAttribute.height,
       cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
       fillOpacity = rectAttribute.fillOpacity,
       lineWidth = rectAttribute.lineWidth,
       strokeOpacity = rectAttribute.strokeOpacity,
       visible = rectAttribute.visible,
+      x1,
+      y1,
       x: originX = rectAttribute.x,
       y: originY = rectAttribute.y
     } = rect.attribute;
+    let { width, height } = rect.attribute;
+    width = (width ?? x1 - originX) || 0;
+    height = (height ?? y1 - originY) || 0;
 
     // 不绘制或者透明
     const fVisible = rectFillVisible(opacity, fillOpacity, width, height, fill);

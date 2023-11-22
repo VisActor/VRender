@@ -25,15 +25,6 @@ type StateStyle = {
 };
 
 export type TagAttributes = {
-  /**
-   * 文本类型：text, rich, html
-   */
-  type?: string;
-  /**
-   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
-   * 支持富文本内容, 如textConfig, html
-   */
-  text?: string | string[] | number | number[] | IRichTextCharacter[];
   /** 文本样式 */
   textStyle?: Partial<ITextGraphicAttribute> | Partial<IRichTextGraphicAttribute>;
   /** 文本前 mark 图元 */

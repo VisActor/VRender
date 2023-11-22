@@ -74,7 +74,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           wordBreak: textStyle.wordBreak ?? 'break-word',
           maxHeight: textStyle.maxHeight,
           maxWidth: textStyle.maxWidth,
-          textConfig: textStyle.character ?? (text as IRichTextCharacter[]),
+          textConfig: (text as IRichTextCharacter[]) ?? textStyle.character,
           ...textStyle
         };
         this._mainTitle = group.createOrUpdateChild('mainTitle', attr, 'richtext') as IRichText;
@@ -129,7 +129,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           wordBreak: subtextStyle.wordBreak ?? 'break-word',
           maxHeight: subtextStyle.maxHeight,
           maxWidth: subtextStyle.maxWidth,
-          textConfig: subtextStyle.character || (subtext as IRichTextCharacter[]),
+          textConfig: (subtext as IRichTextCharacter[]) ?? subtextStyle.character,
           ...subtextStyle
         };
         this._subTitle = group.createOrUpdateChild('subTitle', attr, 'richtext') as IRichText;

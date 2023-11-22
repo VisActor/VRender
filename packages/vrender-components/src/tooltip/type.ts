@@ -6,6 +6,7 @@ import type {
   IRichTextCharacter
 } from '@visactor/vrender-core';
 import type { IBounds, IPadding } from '@visactor/vutils';
+import type { TextContent } from '../tag';
 
 export interface IContainerSize {
   width?: number;

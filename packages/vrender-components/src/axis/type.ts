@@ -7,13 +7,12 @@ import type {
   IRectGraphicAttribute,
   IGroupGraphicAttribute,
   IText,
-  IGroup,
-  IRichTextCharacter
+  IGroup
 } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import type { Point } from '../core/type';
 import type { SegmentAttributes } from '../segment';
-import type { TagAttributes } from '../tag';
+import type { TagAttributes, TextContent } from '../tag';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;
@@ -431,20 +430,3 @@ export interface LabelAttributes extends Omit<AxisLabelOverlap, 'text'>, TextCon
    */
   dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
 }
-
-type CommonTextContent = {
-  type?: 'text';
-  text?: string | string[] | number | number[];
-};
-
-type RichTextContent = {
-  type?: 'rich';
-  text?: IRichTextCharacter[];
-};
-
-type HtmlTextContent = {
-  type?: 'html';
-  text?: string;
-};
-
-export type TextContent = CommonTextContent & RichTextContent & HtmlTextContent;

@@ -1,4 +1,5 @@
 import type { IGroupGraphicAttribute, ITextGraphicAttribute, IRichTextCharacter } from '@visactor/vrender-core';
+import type { TextContent } from '../tag';
 
 export interface IndicatorAttributes extends IGroupGraphicAttribute {
   /**
@@ -65,13 +66,5 @@ export interface IndicatorItemSpec {
   /**
    * 文字样式
    */
-  style?: ITextGraphicAttribute & {
-    /** 文本类型：text, rich, html */
-    type?: string;
-    /**
-     * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
-     * 支持富文本内容, 如textConfig, html
-     */
-    text?: string | string[] | number | number[] | IRichTextCharacter[];
-  };
+  style?: ITextGraphicAttribute & TextContent;
 }

@@ -170,7 +170,9 @@ export class Container {
 
   private _get<T>(getArgs: GetArgs<T>): T | T[] {
     const result: T[] = [];
-    const bindings = this._bindingDictionary.get(getArgs.serviceIdentifier) as Binding<T>[];
+    const bindings = this._bindingDictionary.get(getArgs.serviceIdentifier).filter(b => {
+      return b.constraint(getArgs as any);
+    }) as Binding<T>[];
     bindings.forEach(binding => {
       result.push(this._resolveFromBinding<T>(binding));
     });

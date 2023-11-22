@@ -174,6 +174,12 @@ export interface OverlapAttrs {
 
 export interface SmartInvertAttrs {
   /**
+   * 对比度度量
+   * 'WCAG' | 'lightness'
+   * 默认使用'WCAG'
+   */
+  mode?: string;
+  /**
    * 文本类型
    * 包含普通文本和大文本，对应不同的对比度标准，label默认为普通文本
    * 'normalText' ｜ 'largeText'

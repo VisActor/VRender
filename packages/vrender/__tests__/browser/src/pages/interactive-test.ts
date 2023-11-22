@@ -1,4 +1,4 @@
-import { loadFeishuContributions } from '@visactor/vrender';
+// import { loadFeishuContributions } from '@visactor/vrender';
 import { renderArc } from '../interactive/arc';
 import { renderArea } from '../interactive/area';
 import { renderCircle } from '../interactive/circle';
@@ -9,7 +9,7 @@ import { renderRect } from '../interactive/rect';
 import { renderSymbol } from '../interactive/symbol';
 import { renderText } from '../interactive/text';
 
-loadFeishuContributions();
+// loadFeishuContributions();
 
 export const page = () => {
   renderCircle(20);

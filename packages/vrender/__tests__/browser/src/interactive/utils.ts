@@ -23,7 +23,10 @@ export function renderElement(num: number, type: string, canopusCb: Function) {
       viewHeight: 600,
       x: 90,
       y: 100,
-      background: 'black'
+      background: 'black',
+      event: {
+        clickInterval: 400
+      }
     });
     arr.forEach(g => {
       stage.defaultLayer.add(g as any);
@@ -35,7 +38,10 @@ export function renderElement(num: number, type: string, canopusCb: Function) {
     // });
     arr.forEach((c, i) => {
       c.addEventListener('pointerdown', e => {
-        console.log(`%c yo, ${c.type} capture it!`, 'color: yellow;font-weight: bold', i);
+        console.log(`%c yo, ${c.type} capture it!`, 'color: blue;font-weight: bold;font-size: 20', i);
+      });
+      c.addEventListener('dblclick', e => {
+        console.log(`%c yo, ${c.type} capture dblclick!`, 'color: red;font-weight: bold;font-size: 20', i);
       });
     });
 

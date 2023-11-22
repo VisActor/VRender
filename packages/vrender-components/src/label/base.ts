@@ -393,16 +393,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       };
       const text = this._createLabelText(labelAttribute);
       const textBounds = this.getGraphicBounds(text);
-      const graphicBounds = this._isCollectionBase
-        ? this.getGraphicBounds(null, this._idToPoint.get(textData.id))
-        : this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
+      const actualPosition = isFunction(position) ? position(textData) : (position as string);
 
-      const textLocation = this.labeling(
-        textBounds,
-        graphicBounds,
-        isFunction(position) ? position(textData) : position,
-        offset
-      );
+      const graphicBounds = this._isCollectionBase
+        ? this.getGraphicBounds(null, this._idToPoint.get(textData.id), actualPosition)
+        : this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number }, actualPosition);
+
+      const textLocation = this.labeling(textBounds, graphicBounds, actualPosition, offset);
 
       if (textLocation) {
         labelAttribute.x = textLocation.x;
@@ -517,9 +514,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
+        // 向内挤压不考虑 overlapPadding
         const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
-        if (
-          !(dx === 0 && dy === 0) &&
+        if (dx === 0 && dy === 0) {
+          if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
+            // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
+            bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+            result.push(text);
+            continue;
+          }
+        } else if (
           canPlace(
             bmpTool,
             bitmap,
@@ -557,15 +561,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return (this.getRootNode() as IGroup).find(node => node.name === baseMarkGroupName, true) as IGroup;
   }
 
+  protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
   protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
-    // if (graphic && !isEmpty((graphic as any).finalAttrs)) {
-    //   const g = graphic.clone();
-    //   g.onBeforeAttributeUpdate = graphic.onBeforeAttributeUpdate;
-    //   g.setAttributes((graphic as any).finalAttrs);
-    //   g.update();
-    //   return g.AABBBounds;
-    // }
-
     return (
       graphic?.AABBBounds ||
       ({
@@ -807,7 +804,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
     const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors } = option;
+    const { textType, contrastRatiosThreshold, alternativeColors, mode } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
@@ -828,9 +825,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：
-       * series（baseMark色），
-       * invertSeries（执行智能反色），
-       * similarSeries（智能反色的补色），
+       * base（baseMark色），
+       * inverBase（执行智能反色），
+       * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
       const backgroundColor = baseMark.attribute.fill as IColor;
@@ -841,7 +838,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         backgroundColor,
         textType,
         contrastRatiosThreshold,
-        alternativeColors
+        alternativeColors,
+        mode
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
 
@@ -881,7 +879,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
                 label.attribute.stroke as IColor,
                 textType,
                 contrastRatiosThreshold,
-                alternativeColors
+                alternativeColors,
+                mode
               )
             });
             continue;

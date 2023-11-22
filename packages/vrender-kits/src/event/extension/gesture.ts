@@ -1,17 +1,9 @@
 import { application, clock, WILDCARD } from '@visactor/vrender-core';
-import type {
-  DefaultGestureConfig,
-  EmitEventObject,
-  GestureConfig,
-  GestureDirection,
-  GestureEvent,
-  IEventTarget,
-  IFederatedPointerEvent,
-  FederatedPointerEvent,
-  INode
-} from '@visactor/vrender-core';
+import type { IEventTarget, IFederatedPointerEvent, FederatedPointerEvent, INode } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import { EventEmitter } from '@visactor/vutils';
+
+import type { DefaultGestureConfig, EmitEventObject, GestureConfig, GestureDirection, GestureEvent } from './interface';
 
 /**
  * 代码参考 https://github.com/hammerjs/hammer.js
@@ -42,6 +34,7 @@ const PRESS_TIME = 251;
 const PRESS_THRESHOLD = 9;
 const SWIPE_VELOCITY = 0.3;
 const SWIPE_THRESHOLD = 10;
+const TAP_INTERVAL = 300;
 
 const calcDirection = (start: IPointLike, end: IPointLike) => {
   const xDistance = end.x - start.x;
@@ -111,9 +104,14 @@ export class Gesture extends EventEmitter {
 
   private config: DefaultGestureConfig;
 
+  private tapCount;
+  private lastTapTime;
+
   constructor(element: IEventTarget, config: GestureConfig = {}) {
     super();
     this.element = element;
+    this.tapCount = 0;
+    this.lastTapTime = 0;
     this.config = {
       press: {
         time: config?.press?.time ?? PRESS_TIME,
@@ -122,6 +120,9 @@ export class Gesture extends EventEmitter {
       swipe: {
         threshold: config?.swipe?.threshold ?? SWIPE_THRESHOLD,
         velocity: config?.swipe?.velocity ?? SWIPE_VELOCITY
+      },
+      tap: {
+        interval: config?.tap?.interval ?? TAP_INTERVAL
       }
     };
     this.initEvents();
@@ -277,6 +278,20 @@ export class Gesture extends EventEmitter {
             this.triggerEvent('swipe', endEvent);
           }
         }
+      }
+
+      if (now - this.lastTapTime < this.config.tap.interval) {
+        this.tapCount++;
+      } else {
+        this.tapCount = 1;
+      }
+      this.lastTapTime = now;
+
+      if (this.tapCount === 1) {
+        this.triggerEvent('tap', endEvent);
+      } else if (this.tapCount === 2) {
+        this.triggerEvent('doubletap', endEvent);
+        this.tapCount = 0; // reset tapCount after doubletap
       }
     }
 

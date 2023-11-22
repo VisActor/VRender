@@ -15,20 +15,22 @@ export function labelSmartInvert(
   backgroundColorOrogin: IColor | undefined,
   textType?: string | undefined,
   contrastRatiosThreshold?: number,
-  alternativeColors?: string | string[]
+  alternativeColors?: string | string[],
+  mode?: string
 ): IColor | undefined {
   if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrogin !== 'string') {
     return foregroundColorOrigin;
   }
   const foregroundColor = new Color(foregroundColorOrigin as string).toHex();
   const backgroundColor = new Color(backgroundColorOrogin as string).toHex();
-  if (!contrastAccessibilityChecker(foregroundColor, backgroundColor, textType, contrastRatiosThreshold)) {
+  if (!contrastAccessibilityChecker(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, mode)) {
     return improveContrastReverse(
       foregroundColor,
       backgroundColor,
       textType,
       contrastRatiosThreshold,
-      alternativeColors
+      alternativeColors,
+      mode
     );
   }
   return foregroundColor;
@@ -46,7 +48,8 @@ function improveContrastReverse(
   backgroundColor: IColor | undefined,
   textType?: IColor | undefined,
   contrastRatiosThreshold?: number,
-  alternativeColors?: string | string[]
+  alternativeColors?: string | string[],
+  mode?: string
 ) {
   const alternativeColorPalletes: string[] = [];
   if (alternativeColors) {
@@ -61,7 +64,7 @@ function improveContrastReverse(
     if (foregroundColor === alternativeColor) {
       continue;
     }
-    if (contrastAccessibilityChecker(alternativeColor, backgroundColor, textType, contrastRatiosThreshold)) {
+    if (contrastAccessibilityChecker(alternativeColor, backgroundColor, textType, contrastRatiosThreshold, mode)) {
       return alternativeColor;
     }
   }
@@ -81,8 +84,25 @@ export function contrastAccessibilityChecker(
   foregroundColor: IColor | undefined,
   backgroundColor: IColor | undefined,
   textType?: IColor | undefined,
-  contrastRatiosThreshold?: number
+  contrastRatiosThreshold?: number,
+  mode?: string
 ): boolean {
+  if (mode === 'lightness') {
+    const backgroundColorLightness = Color.getColorBrightness(new Color(backgroundColor as string));
+    const foregroundColorLightness = Color.getColorBrightness(new Color(foregroundColor as string));
+    if (foregroundColorLightness < 0.5) {
+      // 文字颜色为'#ffffff'
+      if (backgroundColorLightness >= 0.5) {
+        return true;
+      }
+      return false;
+    }
+    // 文字颜色为‘#000000'
+    if (backgroundColorLightness < 0.5) {
+      return true;
+    }
+    return false;
+  }
   //Contrast ratios can range from 1 to 21
   if (contrastRatiosThreshold) {
     if (contrastRatios(foregroundColor, backgroundColor) > contrastRatiosThreshold) {

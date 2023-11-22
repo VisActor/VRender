@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: add `event` config for Stage params, which can configure `clickInterval` and some other options in eventSystem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+This log was last generated on Thu, 23 Nov 2023 13:32:49 GMT and should not be manually modified.
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: support rich text for label, axis, marker,tooltip, indicator and title
+- feat: add mode type of smartInvert
+- feat: place more label for overlapPadding case
 
 ## 0.16.16
 Fri, 17 Nov 2023 02:33:59 GMT

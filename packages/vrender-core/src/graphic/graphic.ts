@@ -97,13 +97,14 @@ export const PURE_STYLE_KEY = [
 
 export const GRAPHIC_UPDATE_TAG_KEY = [
   'lineWidth',
-  'lineCap',
-  'lineJoin',
-  'miterLimit',
+  // 'lineCap',
+  // 'lineJoin',
+  // 'miterLimit',
   'scaleX',
   'scaleY',
   'angle',
-  'anchor'
+  'anchor',
+  'visible'
 ];
 
 const tempConstantXYKey = ['x', 'y'];

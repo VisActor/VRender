@@ -270,6 +270,7 @@ export class Canvas3DPickItemInterceptor implements IPickItemInterceptorContribu
       context.camera = null;
 
       pickParams.in3dInterceptor = false;
+      context.restore();
       return result;
     }
     context.restore();

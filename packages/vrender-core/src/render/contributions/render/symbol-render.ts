@@ -91,6 +91,8 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
           if (symbol._parsedPath.svgCache) {
             const obj = Object.assign({}, a);
             obj.fill = a.fill ?? symbol.attribute.fill;
+            obj.opacity = a.fill ?? symbol.attribute.opacity;
+            obj.fillOpacity = symbol.attribute.fillOpacity;
             obj.stroke = a.stroke ?? symbol.attribute.stroke;
             a = obj;
           }
@@ -122,6 +124,8 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
           if (symbol._parsedPath.svgCache) {
             const obj = Object.assign({}, a);
             obj.fill = a.fill ?? symbol.attribute.fill;
+            obj.opacity = a.opacity ?? symbol.attribute.opacity;
+            obj.fillOpacity = symbol.attribute.fillOpacity;
             obj.stroke = a.stroke ?? symbol.attribute.stroke;
             a = obj;
           }

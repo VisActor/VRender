@@ -1,13 +1,18 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import { getDecimalPlaces, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
+import { getDecimalPlaces, isArray, isNumber, pi, pi2, Point, PointService } from '@visactor/vutils';
 import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
-import type { CustomPath2D } from '../common/custom-path2d';
+import { CustomPath2D } from '../common/custom-path2d';
 import type {
   EasingType,
   IArcGraphicAttribute,
+  ICubicBezierCurve,
+  ICurve,
+  ICustomPath2D,
   IGraphic,
   IGroup,
+  ILine,
+  ILineAttribute,
   ILinearGradient,
   IRect,
   IRectAttribute,
@@ -17,6 +22,8 @@ import type {
 import { ACustomAnimate } from './animate';
 import { Easing } from './easing';
 import { pointInterpolation } from '../common/utils';
+import { divideCubic } from '../common/segment/curve/cubic-bezier';
+import { LineCurve } from '../common/segment/curve/line';
 
 export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
   declare valid: boolean;
@@ -286,12 +293,13 @@ export class StreamLight extends ACustomAnimate<any> {
   declare target: IGraphic;
 
   declare rect: IRect;
+  declare line: ILine;
   constructor(
     from: any,
     to: any,
     duration: number,
     easing: EasingType,
-    params?: { attribute?: Partial<IRectAttribute>; streamLength?: number }
+    params?: { attribute?: Partial<IRectAttribute | ILineAttribute>; streamLength?: number }
   ) {
     super(from, to, duration, easing, params);
   }
@@ -301,6 +309,27 @@ export class StreamLight extends ACustomAnimate<any> {
   }
 
   onStart(): void {
+    if (!this.target) {
+      return;
+    }
+    if (this.target.type === 'rect') {
+      this.onStartRect();
+    } else if (this.target.type === 'line') {
+      this.onStartLine();
+    }
+  }
+
+  onStartLine() {
+    const root = this.target.attachShadow();
+    const line = application.graphicService.creator.line({
+      ...this.params?.attribute
+    });
+    this.line = line;
+    line.pathProxy = new CustomPath2D();
+    root.add(line);
+  }
+
+  onStartRect(): void {
     const root = this.target.attachShadow();
 
     const height = this.target.AABBBounds.height();
@@ -328,6 +357,14 @@ export class StreamLight extends ACustomAnimate<any> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    if (this.rect) {
+      return this.onUpdateRect(end, ratio, out);
+    } else if (this.line) {
+      return this.onUpdateLine(end, ratio, out);
+    }
+  }
+
+  protected onUpdateRect(end: boolean, ratio: number, out: Record<string, any>): void {
     const parentWidth = (this.target as any).attribute.width ?? 250;
     const streamLength = this.params?.streamLength ?? parentWidth;
     const maxLength = this.params?.attribute?.width ?? 60;
@@ -350,6 +387,135 @@ export class StreamLight extends ACustomAnimate<any> {
         }
       }
     );
+  }
+
+  protected onUpdateLine(end: boolean, ratio: number, out: Record<string, any>) {
+    if (!this.line) {
+      return;
+    }
+    const customPath = this.line.pathProxy as ICustomPath2D;
+    const targetLine = this.target as ILine;
+    if (targetLine.cache) {
+      this._onUpdateLineWithCache(customPath, targetLine, end, ratio, out);
+    } else {
+      this._onUpdateLineWithoutCache(customPath, targetLine, end, ratio, out);
+    }
+    const targetAttrs = targetLine.attribute;
+    this.line.setAttributes({
+      stroke: targetAttrs.stroke,
+      ...this.line.attribute
+    });
+    this.line.addUpdateBoundTag();
+  }
+
+  // 针对有cache的linear
+  protected _onUpdateLineWithCache(
+    customPath: ICustomPath2D,
+    line: ILine,
+    end: boolean,
+    ratio: number,
+    out: Record<string, any>
+  ) {
+    let cache = line.cache;
+    if (!Array.isArray(cache)) {
+      cache = [cache];
+    }
+
+    const totalLen = cache.reduce((l, c) => l + c.getLength(), 0);
+    // 总需要绘制的长度
+    const startLen = totalLen * ratio;
+    const endLen = Math.min(startLen + this.params?.streamLength ?? 10, totalLen);
+    let lastLen = 0;
+    customPath.clear();
+    const curves: ICurve<IPoint>[] = [];
+    cache.forEach(c => {
+      c.curves.forEach(ci => curves.push(ci));
+    });
+    let start = false;
+    for (let i = 0; i < curves.length; i++) {
+      const curveItem = curves[i];
+      const len = curveItem.getLength();
+      const startPercent = 1 - (lastLen + len - startLen) / len;
+      let endPercent = 1 - (lastLen + len - endLen) / len;
+      let curveForStart: ICubicBezierCurve;
+      if (lastLen < startLen && lastLen + len > startLen) {
+        start = true;
+        if (curveItem.p2 && curveItem.p3) {
+          const [_, curve2] = divideCubic(curveItem as ICubicBezierCurve, startPercent);
+          customPath.moveTo(curve2.p0.x, curve2.p0.y);
+          curveForStart = curve2;
+          // console.log(curve2.p0.x, curve2.p0.y);
+        } else {
+          const p = curveItem.getPointAt(startPercent);
+          customPath.moveTo(p.x, p.y);
+        }
+      }
+      if (lastLen < endLen && lastLen + len > endLen) {
+        if (curveItem.p2 && curveItem.p3) {
+          if (curveForStart) {
+            endPercent = (endLen - startLen) / curveForStart.getLength();
+          }
+          const [curve1] = divideCubic(curveForStart || (curveItem as ICubicBezierCurve), endPercent);
+          customPath.bezierCurveTo(curve1.p1.x, curve1.p1.y, curve1.p2.x, curve1.p2.y, curve1.p3.x, curve1.p3.y);
+        } else {
+          const p = curveItem.getPointAt(endPercent);
+          customPath.lineTo(p.x, p.y);
+        }
+        break;
+      } else if (start) {
+        if (curveItem.p2 && curveItem.p3) {
+          const curve = curveForStart || curveItem;
+          customPath.bezierCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y);
+        } else {
+          customPath.lineTo(curveItem.p1.x, curveItem.p1.y);
+        }
+      }
+      lastLen += len;
+    }
+  }
+
+  // 只针对最简单的linear
+  protected _onUpdateLineWithoutCache(
+    customPath: ICustomPath2D,
+    line: ILine,
+    end: boolean,
+    ratio: number,
+    out: Record<string, any>
+  ) {
+    const { points, curveType } = line.attribute;
+    if (!points || points.length < 2 || curveType !== 'linear') {
+      return;
+    }
+    let totalLen = 0;
+    for (let i = 1; i < points.length; i++) {
+      totalLen += PointService.distancePP(points[i], points[i - 1]);
+    }
+    const startLen = totalLen * ratio;
+    const endLen = Math.min(startLen + this.params?.streamLength ?? 10, totalLen);
+    const nextPoints = [];
+    let lastLen = 0;
+    for (let i = 1; i < points.length; i++) {
+      const len = PointService.distancePP(points[i], points[i - 1]);
+      if (lastLen < startLen && lastLen + len > startLen) {
+        nextPoints.push(PointService.pointAtPP(points[i - 1], points[i], 1 - (lastLen + len - startLen) / len));
+      }
+      if (lastLen < endLen && lastLen + len > endLen) {
+        nextPoints.push(PointService.pointAtPP(points[i - 1], points[i], 1 - (lastLen + len - endLen) / len));
+        break;
+      } else if (nextPoints.length) {
+        nextPoints.push(points[i]);
+      }
+      lastLen += len;
+    }
+
+    if (!nextPoints.length || nextPoints.length < 2) {
+      return;
+    }
+    customPath.clear();
+    customPath.moveTo(nextPoints[0].x, nextPoints[0].y);
+    for (let i = 1; i < nextPoints.length; i++) {
+      customPath.lineTo(nextPoints[i].x, nextPoints[i].y);
+    }
   }
 }
 

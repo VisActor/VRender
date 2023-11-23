@@ -234,6 +234,33 @@ export const page = () => {
       stage.defaultLayer.add(r as any);
     }
   });
+  addCase('stream-light2', container, stage => {
+    const points = [
+      [0, 100],
+      [20, 40],
+      [40, 60],
+      [60, 20],
+      [70, 30],
+      [80, 80],
+      [120, 60],
+      [160, 40],
+      [200, 20],
+      [240, 50]
+    ].map(item => ({ x: item[0], y: item[1] }));
+
+    const line = createLine({
+      points,
+      curveType: 'basis',
+      x: 300,
+      y: 300,
+      stroke: 'red'
+    });
+    line
+      .animate()
+      .play(new StreamLight('', 0, 2000, 'quadIn', { streamLength: 30, attribute: { stroke: 'green', lineWidth: 2 } }))
+      .loop(Infinity);
+    stage.defaultLayer.add(line as any);
+  });
 
   addCase('Meteor', container, stage => {
     const line = createLine({

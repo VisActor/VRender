@@ -87,7 +87,7 @@
       "commandKind": "global",
       "summary": "Start the development server",
       "description": "Run this command to start VRender development server",
-      "shellCommand": "rush run -p @internal/dev-demos -s start"
+      "shellCommand": "rush run -p @visactor/vrender -s start"
     },
     {
       "name": "change-all",
@@ -105,6 +105,14 @@
       "description": "Run this command to start VRender components development server",
       "shellCommand": "rush run -p @visactor/vrender-components -s start"
     },
+    {
+      "name": "compile",
+      "summary": "",
+      "enableParallelism": false,
+      "commandKind": "bulk",
+      "ignoreMissingScript": true,
+      "allowWarningsInSuccessfulBuild": true
+    }
   ],
   "parameters": [
     {

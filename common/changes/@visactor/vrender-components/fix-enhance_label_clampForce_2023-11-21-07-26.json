@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: place more label for overlapPadding case",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -1266,15 +1266,43 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        // text: 'test122344556778891234550987665544'
-        text: latestData[index] ? latestData[index]?.type : undefined
-        // text: originData[index].id
-        // fill: c.attribute.fill,
-        // line: {
-        //   stroke: c.attribute.stroke
-        // },
-        // lineWidth: 0
-        // ...latestData[index]
+        // // text: 'test122344556778891234550987665544'
+        // text: latestData[index] ? latestData[index]?.type : undefined
+        // // text: originData[index].id
+        // // fill: c.attribute.fill,
+        // // line: {
+        // //   stroke: c.attribute.stroke
+        // // },
+        // // lineWidth: 0
+        // // ...latestData[index]
+
+        textType: 'rich',
+        text: [
+          // {
+          //   text: `NO.${index}🐾`,
+          //   fontSize: 15,
+          //   textAlign: 'right',
+          //   textDecoration: 'underline',
+          //   stroke: '#0f51b5'
+          // }
+
+          {
+            text: 'Mapbox',
+            fontWeight: 'bold',
+            fontSize: 25,
+            fill: '#3f51b5'
+          },
+
+          {
+            text: '替代方案',
+            fontStyle: 'italic',
+            textDecoration: 'underline',
+            fill: '#3f51b5'
+          }
+        ]
+
+        // type: 'html',
+        // text: '<p>这是一个html字符串</p>'
       };
     }),
     // dataFilter: data => data.splice(0, 1),
@@ -1287,28 +1315,29 @@ function createContent(stage: Stage) {
     },
     width: 800,
     height: 500,
-    // position: 'outside',
+    position: 'inside',
 
-    position: 'inside-outer',
+    // position: 'inside-outer',
 
-    textStyle: {
-      // angle: 0
-      fontSize: 16
-    },
-    line: {
-      line1MinLength: 30,
-      smooth: true,
-      style: {
-        lineWidth: 2,
-        stroke: 'red'
-      }
-    },
+    // textStyle: {
+    //   // angle: 0
+    //   fontSize: 16
+    // },
+    // line: {
+    //   line1MinLength: 30,
+    //   smooth: true,
+    //   style: {
+    //     lineWidth: 2,
+    //     stroke: 'red'
+    //   }
+    // },
     layout: {
       // align: 'edge'
       tangentConstraint: false
     },
+    rotate: false,
 
-    offsetRadius: -50,
+    // offsetRadius: -50,
 
     // smartInvert: false,
 
@@ -1333,7 +1362,8 @@ const stage = createRenderer('main', {
     y1: 0,
     x2: 800,
     y2: 500
-  }
+  },
+  enableHtmlAttribute: true
 });
 const { pie, label } = createContent(stage);
 stage.render();

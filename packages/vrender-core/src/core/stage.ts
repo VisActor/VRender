@@ -2,7 +2,6 @@ import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutil
 import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
-  IGroup,
   IExportType,
   IStage,
   IStageParams,
@@ -20,8 +19,6 @@ import type {
   ISyncHook,
   IDrawContext,
   IWindow,
-  IPlugin,
-  IContributionProvider,
   ILayerService,
   ITimeline,
   IOptimizeType,
@@ -270,7 +267,8 @@ export class Stage extends Group implements IStage {
           get height(): number {
             return this.viewBox.height();
           }
-        }
+        },
+        ...params.event
       });
     }
 
@@ -298,7 +296,8 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     this.optmize(params.optimize);
-    if (this._background && isString(this._background)) {
+    // 如果背景是图片，触发加载图片操作
+    if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
     }
   }

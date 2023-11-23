@@ -94,8 +94,10 @@ export class EventSystem {
   private eventsAdded: boolean;
 
   constructor(params: RenderConfig) {
-    const { targetElement, resolution, rootNode, global, viewport, autoPreventDefault = false } = params;
-    this.manager = new EventManager(rootNode);
+    const { targetElement, resolution, rootNode, global, viewport, autoPreventDefault = false, clickInterval } = params;
+    this.manager = new EventManager(rootNode, {
+      clickInterval
+    });
 
     this.globalObj = global;
     this.supportsPointerEvents = global.supportsPointerEvents;

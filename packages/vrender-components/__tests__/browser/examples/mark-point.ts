@@ -35,7 +35,24 @@ export function run() {
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
       textStyle: {
-        text: 'mark point label text'
+        // text: 'mark point label text'
+        type: 'rich',
+        text: [
+          {
+            text: 'Mapbox',
+            fontWeight: 'bold',
+            fontSize: 25,
+            fill: '#3f51b5',
+            height: 25
+          },
+          {
+            text: '替代方案',
+            fontStyle: 'italic',
+            textDecoration: 'underline',
+            fill: '#3f51b5',
+            height: 25
+          }
+        ]
       },
       richTextStyle: {
         textConfig: [
@@ -91,13 +108,13 @@ export function run() {
         image: `${window.location.origin}/__tests__/browser/sources/shape_logo.png`
       }
     },
-    clipInRange: true,
-    limitRect: {
-      x: 50,
-      y: 50,
-      width: 200,
-      height: 200
-    }
+    clipInRange: false
+    // limitRect: {
+    //   x: 50,
+    //   y: 50,
+    //   width: 200,
+    //   height: 200
+    // }
   };
 
   const markPoint = new MarkPoint({

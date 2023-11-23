@@ -48,12 +48,22 @@ type TrackingData = {
   overTargets: IEventTarget[];
 };
 
+type EventManagerConfig = {
+  /**
+   * 多次点击之间的最大时间，默认为 200 ms
+   * @default 200
+   */
+  clickInterval?: number;
+};
+
 type EmitterListener = { fn: (...args: any[]) => any; context: any; once: boolean };
 type EmitterListeners = Record<string, EmitterListener | EmitterListener[]>;
 
 function isMouseLike(pointerType: string) {
   return pointerType === 'mouse' || pointerType === 'pen';
 }
+
+const DEFAULT_CLICK_INTERVAL = 200;
 
 export class EventManager {
   rootTarget: IEventTarget;
@@ -79,9 +89,15 @@ export class EventManager {
   // 缓存上一个坐标点的拾取结果，用于优化在同一个点连续触发事件的拾取逻辑
   private _prePointTargetCache: Dict<IEventTarget> & { stageRenderCount: number };
 
-  constructor(root: IEventTarget) {
+  private _config: EventManagerConfig;
+
+  constructor(root: IEventTarget, config: EventManagerConfig) {
     this.rootTarget = root;
     this.mappingTable = {};
+    this._config = {
+      clickInterval: DEFAULT_CLICK_INTERVAL,
+      ...config
+    };
     this.addEventMapping('pointerdown', this.onPointerDown);
     this.addEventMapping('pointermove', this.onPointerMove);
     this.addEventMapping('pointerout', this.onPointerOut);
@@ -494,8 +510,10 @@ export class EventManager {
       }
 
       const clickHistory = trackingData.clicksByButton[from.button];
-
-      if (clickHistory.target === clickEvent.target && now - clickHistory.timeStamp < 200) {
+      if (
+        clickHistory.target === clickEvent.target &&
+        now - clickHistory.timeStamp < (this._config.clickInterval ?? DEFAULT_CLICK_INTERVAL)
+      ) {
         ++clickHistory.clickCount;
       } else {
         clickHistory.clickCount = 1;

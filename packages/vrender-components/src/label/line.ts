@@ -26,11 +26,10 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     super(merge({}, LineLabel.defaultAttributes, attributes));
   }
 
-  protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}) {
-    if (graphic.type !== 'line') {
+  protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}, position = 'end') {
+    if (!graphic || graphic.type !== 'line') {
       return super.getGraphicBounds(graphic, point);
     }
-    const { position = 'end' } = this.attribute;
     const points = graphic?.attribute?.points || [point];
     const index = position === 'start' ? 0 : points.length - 1;
     return {

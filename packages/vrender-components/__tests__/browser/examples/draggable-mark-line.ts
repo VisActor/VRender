@@ -4,6 +4,7 @@ import render from '../../util/render';
 import { MarkLine } from '../../../src';
 import { getInsertPoints, getTextOffset } from '../../util/graphic';
 import { MarkLineInteraction } from './mark-interaction';
+import { Gesture } from '@visactor/vrender-kits';
 
 export function run() {
   const hMarkLine = new MarkLine({
@@ -181,14 +182,27 @@ export function run() {
   const markLines = [hMarkLine, vMarkLine];
 
   const stage = render(markLines, 'main');
+  const gesture = new Gesture(stage);
 
-  new MarkLineInteraction({
-    element: hMarkLine,
-    orient: 'vertical'
+  gesture.on('doubletap', e => {
+    console.log('doubletap', e.target);
   });
 
-  new MarkLineInteraction({
-    element: vMarkLine,
-    orient: 'horizontal'
+  gesture.on('tap', e => {
+    console.log('tap', e.target);
   });
+
+  gesture.on('press', e => {
+    console.log('press', e.target);
+  });
+
+  // new MarkLineInteraction({
+  //   element: hMarkLine,
+  //   orient: 'vertical'
+  // });
+
+  // new MarkLineInteraction({
+  //   element: vMarkLine,
+  //   orient: 'horizontal'
+  // });
 }

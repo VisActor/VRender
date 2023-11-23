@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+This log was last generated on Thu, 23 Nov 2023 13:32:49 GMT and should not be manually modified.
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: add `event` config for Stage params, which can configure `clickInterval` and some other options in eventSystem
+- feat: support fill and stroke while svg don't support, closed #710
+- fix: richtext may throw error when textConfig is null
+
+
+- fix: fix issue with image repeat, closed #712
+- perf: not setAttribute while background is not url, closed #696
+- fix: fix issue with restore and save count not equal
 
 ## 0.16.16
 Fri, 17 Nov 2023 02:33:59 GMT

@@ -70,7 +70,7 @@ type RichTextContent = {
 
 type HtmlTextContent = {
   type?: 'html';
-  text?: string;
+  text?: string | HTMLElement;
 };
 
-export type TextContent = CommonTextContent & RichTextContent & HtmlTextContent;
+export type TextContent = CommonTextContent | RichTextContent | HtmlTextContent;

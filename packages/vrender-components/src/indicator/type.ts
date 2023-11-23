@@ -66,5 +66,5 @@ export interface IndicatorItemSpec {
   /**
    * 文字样式
    */
-  style?: ITextGraphicAttribute & TextContent;
+  style?: Omit<ITextGraphicAttribute, 'text'> & TextContent;
 }

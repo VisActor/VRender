@@ -58,14 +58,14 @@ export type IMarkBackgroundAttributes = {
   autoWidth?: boolean;
 } & Partial<SymbolAttributes>;
 
-export interface IMarkLabel extends Omit<TagAttributes, 'x' | 'y' | 'panel'> {
+export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
   /**
    * 标签的背景面板配置
    */
   panel?: IMarkBackgroundAttributes;
-}
+};
 
-export interface IMarkRef {
+export type IMarkRef = {
   /**
    * 自动旋转，沿着线的方向，默认 true
    */
@@ -82,9 +82,9 @@ export interface IMarkRef {
    * label 相对默认角度的偏移 （label跟随line的角度做自动旋转时，默认按照line的平行向量作为初始角度）
    */
   refAngle?: number;
-}
+};
 
-export interface MarkerAttrs extends IGroupGraphicAttribute {
+export type MarkerAttrs = IGroupGraphicAttribute & {
   type?: 'line' | 'area' | 'point';
   /**
    * 是否支持交互
@@ -110,32 +110,33 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
     width: number;
     height: number;
   };
-}
+};
 
-export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
-  type?: 'line';
-  /**
-   * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
-   */
-  points: Point[] | Point[][];
-
-  /**
-   * 标签
-   */
-  label?: {
+export type MarkLineAttrs = MarkerAttrs &
+  SegmentAttributes & {
+    type?: 'line';
     /**
-     * label 相对line的位置
+     * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
      */
-    position?: keyof typeof IMarkLineLabelPosition;
-    /**
-     * 当 mark 配置了 clip 之后，label 是否自动调整位置
-     */
-    confine?: boolean;
-  } & IMarkRef &
-    IMarkLabel;
-}
+    points: Point[] | Point[][];
 
-export interface MarkAreaAttrs extends MarkerAttrs {
+    /**
+     * 标签
+     */
+    label?: {
+      /**
+       * label 相对line的位置
+       */
+      position?: keyof typeof IMarkLineLabelPosition;
+      /**
+       * 当 mark 配置了 clip 之后，label 是否自动调整位置
+       */
+      confine?: boolean;
+    } & IMarkRef &
+      IMarkLabel;
+  };
+
+export type MarkAreaAttrs = MarkerAttrs & {
   type?: 'area';
   /**
    * 构成area的点
@@ -155,9 +156,9 @@ export interface MarkAreaAttrs extends MarkerAttrs {
    * area的样式
    */
   areaStyle?: IPolygonAttribute;
-}
+};
 
-export interface IItemContent extends IMarkRef {
+export type IItemContent = IMarkRef & {
   /**
    * 标注类型
    * Tips: 保留'richText'与之前的定义做兼容
@@ -197,7 +198,7 @@ export interface IItemContent extends IMarkRef {
   //  * 当 mark 配置了 clip 之后，label 是否自动调整位置
   //  */
   // confine?: boolean;
-}
+};
 
 export type IItemLine = {
   /** TODO：'type-opo' */
@@ -212,7 +213,7 @@ export type IItemLine = {
   };
 } & Omit<SegmentAttributes, 'points'>;
 
-export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
+export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
   /**
    * markPoint的位置（也是path的起点）
    */
@@ -226,4 +227,4 @@ export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
    * 标注内容
    */
   itemContent?: IItemContent;
-}
+};

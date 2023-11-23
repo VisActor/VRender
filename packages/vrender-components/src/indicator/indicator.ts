@@ -1,7 +1,7 @@
 /**
  * @description 指标卡组件
  */
-import type { IGroup, INode, IText } from '@visactor/vrender-core';
+import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
 import { merge, isValid, array, isValidNumber, get } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
@@ -188,7 +188,10 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
   }
 
   private _setAutoFit(limit: number, indicatorItem: IText, indicatorItemSpec: IndicatorItemSpec) {
-    const originWidth = measureTextSize(indicatorItemSpec.style?.text ?? '', indicatorItemSpec.style ?? {}).width;
+    const originWidth = measureTextSize(
+      (indicatorItemSpec.style?.text ?? '') as string | number | number[] | string[],
+      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>
+    ).width;
     if (originWidth > 0) {
       const ratio = (limit * (indicatorItemSpec.fitPercent ?? 0.5)) / originWidth;
       const fontSize = Math.floor((indicatorItemSpec.style?.fontSize ?? 20) * ratio);

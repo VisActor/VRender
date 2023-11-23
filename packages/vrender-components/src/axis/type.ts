@@ -192,7 +192,7 @@ export interface CircleAxisAttributes extends AxisBaseAttributes {
 }
 
 // 坐标轴标题配置
-export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' | 'panel' | 'state'> {
+export type TitleAttributes = Omit<TagAttributes, 'shape' | 'space' | 'panel' | 'state'> & {
   /**
    * 是否展示标题
    */
@@ -251,7 +251,7 @@ export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' |
      */
     background?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
-}
+};
 // 坐标轴线配置
 export interface LineAttributes extends Pick<SegmentAttributes, 'startSymbol' | 'endSymbol'> {
   /**
@@ -395,38 +395,41 @@ export interface AxisLabelOverlap {
   layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
 }
 
-export interface LabelAttributes extends Omit<AxisLabelOverlap, 'text'>, TextContent {
-  /** 是否展示标签 */
-  visible: boolean;
-  /**
-   * 标签朝向，默认朝外(坐标线包围盒外部)
-   * @default false
-   */
-  inside?: boolean;
-  /** 标签同 tick 之间的间距 */
-  space?: number;
-  /**
-   * 格式化文本回调
-   * @param text 文本原始值
-   * @param item 对应的图形元素
-   * @param index 文本索引顺序
-   * @returns 格式化文本
-   */
-  formatMethod?: (value: string, datum: Dict<any>, index: number, data?: Dict<any>[], layer?: number) => string;
-  /**
-   * 文本样式
-   */
-  style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
-  /**
-   * 文本状态样式配置
-   */
-  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>>;
+export type LabelAttributes = Omit<AxisLabelOverlap, 'text'> &
+  TextContent & {
+    /** 是否展示标签 */
+    visible: boolean;
+    /**
+     * 标签朝向，默认朝外(坐标线包围盒外部)
+     * @default false
+     */
+    inside?: boolean;
+    /** 标签同 tick 之间的间距 */
+    space?: number;
+    /**
+     * 格式化文本回调
+     * @param text 文本原始值
+     * @param item 对应的图形元素
+     * @param index 文本索引顺序
+     * @returns 格式化文本
+     */
+    formatMethod?: (value: string, datum: Dict<any>, index: number, data?: Dict<any>[], layer?: number) => string;
+    /**
+     * 文本样式
+     */
+    style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
+    /**
+     * 文本状态样式配置
+     */
+    state?: AxisItemStateStyle<
+      Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>
+    >;
 
-  /**
-   * 用于 label 的数据过滤
-   * @param data
-   * @param layer
-   * @returns
-   */
-  dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
-}
+    /**
+     * 用于 label 的数据过滤
+     * @param data
+     * @param layer
+     * @returns
+     */
+    dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
+  };

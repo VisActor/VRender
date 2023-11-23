@@ -575,7 +575,21 @@ function createContent(stage: Stage) {
     baseMarkGroupName: barSpec.name,
     data: barSpec.children.map(c => {
       return {
-        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+        textType: 'rich',
+        text: [
+          {
+            text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+            fontWeight: 'bold',
+            fontSize: 25,
+            fill: '#3f51b5'
+          },
+          {
+            text: '替代方案',
+            fontStyle: 'italic',
+            textDecoration: 'underline',
+            fill: '#3f51b5'
+          }
+        ],
         fill: 'white',
 
         stroke: c.attribute.fill,

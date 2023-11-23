@@ -2,6 +2,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
+import type { IRichText } from '@visactor/vrender-core';
 import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender-core';
 import {
   circlePoint,
@@ -133,7 +134,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     super(merge({}, ArcLabel.defaultAttributes, attributes));
   }
 
-  protected _overlapping(labels: IText[]) {
+  protected _overlapping(labels: (IText | IRichText)[]) {
     return labels;
   }
 
@@ -151,7 +152,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   protected _layout(data: LabelItem[] = []) {
     const labels = super._layout(data);
-    const textBoundsArray = labels.map(label => this.getGraphicBounds(label));
+    const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,
       text: '...'
@@ -912,7 +913,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
-  protected _labelLine(text: IText) {
+  protected _labelLine(text: LabelItem) {
     const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
       ? createLine({
           visible:

@@ -12,110 +12,155 @@ export function run() {
     verticalAlign: 'top'
   };
 
-  const title = new Title(
-    //   {
-    //   x: 0,
-    //   y: 10,
-    //   padding: 10,
-    //   text: '柱形图',
-    //   subtext: `柱形图，又称长条图、柱状统计图、条图、条状图、棒形图，是一种以长方形的长度为变量的统计图表。长条图用来比较两个或以上的价值（不同时间或者不同条件），只有一个变量，通常利用于较小的数据集分析。长条图亦可横向排列，或用多维方式表达。`,
+  const title = new Title({
+    x: 0,
+    y: 10,
+    padding: 10,
+    // text: '柱形图',
+    // subtext: `柱形图，又称长条图、柱状统计图、条图、条状图、棒形图，是一种以长方形的长度为变量的统计图表。长条图用来比较两个或以上的价值（不同时间或者不同条件），只有一个变量，通常利用于较小的数据集分析。长条图亦可横向排列，或用多维方式表达。`,
 
-    //   // text: 'Bar Chart',
-    //   // subtext: 'A bar chart plots numeric values for levels of a categorical feature as bars.',
-    //   align: 'left',
-    //   verticalAlign: 'top',
-    //   width: 480,
-    //   maxWidth: 480,
-    //   maxHeight: 190
-    //   // subtextStyle: {
-    //   //   lineClamp: 1
-    //   // }
-    //   // textStyle: {
-    //   //   // character: [
-    //   //   //   {
-    //   //   //     text: '汉字测试',
-    //   //   //     fontSize: 30,
-    //   //   //     textAlign: 'center',
-    //   //   //     textDecoration: 'underline',
-    //   //   //
-    //   //   //     stroke: '#0f51b5'
-    //   //   //   }
-    //   //   // ]
-    //   // }
-    //   // subtextStyle: {
-    //   //   ellipsis: true,
-    //   //   character: [
-    //   //     {
-    //   //       text: 'Mapbox',
-    //   //       fontWeight: 'bold',
-    //   //       fontSize: 30,
-    //   //       fill: '#3f51b5',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       text: '公司成立于2010年，创立目标是为Google Map提供一个',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       text: '替代方案',
-    //   //       fontStyle: 'italic',
-    //   //
-    //   //       fill: '#3f51b5'
-    //   //     },
-    //   //     {
-    //   //       text: '。在当时，Google Map',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       text: '地图',
-    //   //       textDecoration: 'line-through',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       text: '[1]',
-    //   //       script: 'super',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       // "lineHeight": 30,
-    //   //       text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       // "lineHeight": 30,
-    //   //       text: '。\n',
-    //   //
-    //   //       fill: '#30ff05'
-    //   //     },
-    //   //     {
-    //   //       lineHeight: 30,
-    //   //       text: 'Mapbox的成立旨在改变这种状况，为制图人员和开发人员提供工具来创建他们想要的地图。值得一提的是，目前Mapbox提供的制图工具几乎都是开源的。\nMapbox目前主要提供地理数据、渲染客户端和其他与地图相关的服务。Mapbox GL JS是他们的一个开源客户端库，用于渲染Web端的可交互地图。作为Mapbox生态系统的一部分，它通常与Mapbox提供的其他服务集成在一起，统一对外使用。',
-    //   //
-    //   //     },
-    //   //     {
-    //   //       text: '\n目前Mapbox公司的主营业务除了地图相关产品，还包括LBS(Location Based Services)服务、自动驾驶、自有数据(Boundaries, Traffic Data, Movement)以及车机服务。',
-    //   //
-    //   //     }
-    //   //   ]
-    //   // }
-    // }
-    {
-      text: 'dsagf',
-      subtext: '这是一个子标题\ndsag反馈第三个国际服大教室',
-      x: 1,
-      y: 1,
-      width: 240,
-      padding: 40,
-      align: 'center',
-      verticalAlign: 'top',
-      textStyle: {
-        width: 240
-      },
-      subtextStyle: {
-        width: 240
+    // text: 'Bar Chart',
+    // subtext: 'A bar chart plots numeric values for levels of a categorical feature as bars.',
+    align: 'left',
+    verticalAlign: 'top',
+    width: 480,
+    maxWidth: 480,
+    maxHeight: 190,
+    textType: 'rich',
+    text: [
+      {
+        text: '汉字测试',
+        fontSize: 30,
+        textAlign: 'center',
+        textDecoration: 'underline',
+
+        stroke: '#0f51b5'
       }
+    ],
+    // textType: 'html',
+    // text: '<p>这是一个html字符串</p>',
+    subtextType: 'rich',
+    subtext: [
+      {
+        text: 'Mapbox',
+        fontWeight: 'bold',
+        fontSize: 30,
+        fill: '#3f51b5'
+      },
+      {
+        text: '公司成立于2010年，创立目标是为Google Map提供一个',
+        fill: '#3f51b5'
+      },
+      {
+        text: '替代方案',
+        fontStyle: 'italic',
+        fill: '#3f51b5'
+      },
+      {
+        text: '。在当时，Google Map',
+        fill: '#3f51b5'
+      },
+      {
+        text: '地图',
+        textDecoration: 'line-through',
+        fill: '#3f51b5'
+      },
+      {
+        text: '[1]',
+        script: 'super',
+        fill: '#3f51b5'
+      },
+      {
+        // "lineHeight": 30,
+        text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
+        fill: '#3f51b5'
+      },
+      {
+        // "lineHeight": 30,
+        text: '。\n',
+
+        fill: '#30ff05'
+      },
+      {
+        lineHeight: 30,
+        text: 'Mapbox的成立旨在改变这种状况，为制图人员和开发人员提供工具来创建他们想要的地图。值得一提的是，目前Mapbox提供的制图工具几乎都是开源的。\nMapbox目前主要提供地理数据、渲染客户端和其他与地图相关的服务。Mapbox GL JS是他们的一个开源客户端库，用于渲染Web端的可交互地图。作为Mapbox生态系统的一部分，它通常与Mapbox提供的其他服务集成在一起，统一对外使用。',
+        fill: '#3f51b5'
+      },
+      {
+        text: '\n目前Mapbox公司的主营业务除了地图相关产品，还包括LBS(Location Based Services)服务、自动驾驶、自有数据(Boundaries, Traffic Data, Movement)以及车机服务。',
+        fill: '#3f51b5'
+      }
+    ],
+    // subtextStyle: {
+    //   lineClamp: 1
+    // }
+    // textStyle: {
+    //   character: [
+    //     {
+    //       text: '汉字测试',
+    //       fontSize: 30,
+    //       textAlign: 'center',
+    //       textDecoration: 'underline',
+
+    //       stroke: '#0f51b5'
+    //     }
+    //   ]
+    // },
+    subtextStyle: {
+      ellipsis: true
+      // character: [
+      //   {
+      //     text: 'Mapbox',
+      //     fontWeight: 'bold',
+      //     fontSize: 30,
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '公司成立于2010年，创立目标是为Google Map提供一个',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '替代方案',
+      //     fontStyle: 'italic',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '。在当时，Google Map',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '地图',
+      //     textDecoration: 'line-through',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '[1]',
+      //     script: 'super',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     // "lineHeight": 30,
+      //     text: '几乎垄断了所有线上地图业务，但是在Google Map中，几乎没有定制化的可能，也没有任何工具可以让制图者按照他们的设想来创建地图',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     // "lineHeight": 30,
+      //     text: '。\n',
+
+      //     fill: '#30ff05'
+      //   },
+      //   {
+      //     lineHeight: 30,
+      //     text: 'Mapbox的成立旨在改变这种状况，为制图人员和开发人员提供工具来创建他们想要的地图。值得一提的是，目前Mapbox提供的制图工具几乎都是开源的。\nMapbox目前主要提供地理数据、渲染客户端和其他与地图相关的服务。Mapbox GL JS是他们的一个开源客户端库，用于渲染Web端的可交互地图。作为Mapbox生态系统的一部分，它通常与Mapbox提供的其他服务集成在一起，统一对外使用。',
+      //     fill: '#3f51b5'
+      //   },
+      //   {
+      //     text: '\n目前Mapbox公司的主营业务除了地图相关产品，还包括LBS(Location Based Services)服务、自动驾驶、自有数据(Boundaries, Traffic Data, Movement)以及车机服务。',
+      //     fill: '#3f51b5'
+      //   }
+      // ]
     }
-  );
+  });
 
   const stage = render(
     [

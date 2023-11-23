@@ -105,7 +105,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
         y: center.y + offset
       };
     }
-    const attrs: TagAttributes = {
+    const attrs: any = {
       ...titlePoint,
       ...restAttrs,
       textStyle: {

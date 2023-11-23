@@ -47,6 +47,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       y2: 550
     },
     pluginList: ['poptipForText', 'scrollbar'],
+    enableHtmlAttribute: true,
     ...option
   });
 }

@@ -1,12 +1,12 @@
 import type { IGroup, INode } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
+import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './config';
 import type { MarkLineAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
-import type { Point } from '../core/type';
 
 export class MarkLine extends Marker<MarkLineAttrs> {
   name = 'markLine';
@@ -31,7 +31,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     const labelAngle = this._line.getEndAngle() ?? 0;
     const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
-    let labelPoint: Point;
+    let labelPoint;
     if (position.includes('start') || position.includes('Start')) {
       labelPoint = {
         x: points[0].x + labelOffsetX,
@@ -84,7 +84,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     container.add(line as unknown as INode);
 
     const markLabel = new Tag({
-      ...label
+      ...(label as TagAttributes)
     });
     markLabel.name = 'mark-line-label';
     this._label = markLabel;
@@ -108,7 +108,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     this._label?.setAttributes({
       dx: 0,
       dy: 0, // 需要进行复位
-      ...label
+      ...(label as TagAttributes)
     });
 
     this.setLabelPos();

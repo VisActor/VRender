@@ -14,7 +14,7 @@ import type {
   IText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createLine, createText, createGroup } from '@visactor/vrender-core';
+import { createLine, createText, createGroup, createRichText } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
@@ -35,6 +35,7 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -323,8 +324,24 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let textAlign = 'center';
     let textBaseline = 'middle';
     data.forEach((item: TransformedAxisItem, index: number) => {
-      const labelStyle = this._getLabelAttribute(item, index, data, layer);
-      const text = createText(labelStyle);
+      const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
+      let text;
+      if (labelStyle.type === 'rich') {
+        labelStyle.textConfig = labelStyle.text;
+        labelStyle.width = labelStyle.width ?? 0;
+        labelStyle.height = labelStyle.height ?? 0;
+        text = createRichText(labelStyle);
+      } else if (labelStyle.type === 'html') {
+        labelStyle.textConfig = [] as any;
+        labelStyle.html = {
+          dom: labelStyle.text as string,
+          ...DEFAULT_HTML_TEXT_SPEC,
+          ...labelStyle
+        };
+        text = createRichText(labelStyle as any);
+      } else {
+        text = createText(labelStyle as any);
+      }
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {
@@ -516,6 +533,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       space = 4,
       inside = false,
       formatMethod,
+      type = 'text',
+      text,
       // layouts = [],
       ...tagAttributes
     } = this.attribute.label as LabelAttributes;
@@ -541,7 +560,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
     const vector = this.getVerticalVector(offset, inside, point);
-    const text = formatMethod ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer) : tickDatum.label;
+    const textContent = formatMethod
+      ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer)
+      : tickDatum.label;
     let { style: textStyle } = tagAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
@@ -561,9 +582,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     return {
-      ...this.getLabelPosition(point, vector, text, textStyle),
-      text,
+      ...this.getLabelPosition(point, vector, textContent, textStyle),
+      text: text ?? textContent,
       lineHeight: textStyle?.fontSize,
+      type,
       ...textStyle
     };
   }

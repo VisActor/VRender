@@ -112,7 +112,9 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
         if (repeat) {
           const pattern = context.createPattern(res.data, repeatStr[repeat]);
           context.fillStyle = pattern;
-          context.fillRect(x, y, width, height);
+          context.translate(x, y, true);
+          context.fillRect(0, 0, width, height);
+          context.translate(-x, -y, true);
         } else {
           context.drawImage(res.data, x, y, width, height);
         }

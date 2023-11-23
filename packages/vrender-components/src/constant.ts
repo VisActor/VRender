@@ -20,3 +20,10 @@ export const DEFAULT_STATES = {
   [StateValue.hover]: {},
   [StateValue.hoverReverse]: {}
 };
+
+export const DEFAULT_HTML_TEXT_SPEC = {
+  container: '',
+  width: 30,
+  height: 30,
+  style: {}
+};

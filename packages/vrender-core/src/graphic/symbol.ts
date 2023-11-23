@@ -82,9 +82,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
       const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
       path.forEach((item: any) => {
         const cache = new CustomPath2D().fromString(item.d);
-        const attribute = {
-          fill: 'black'
-        };
+        const attribute: any = {};
         SVG_PARSE_ATTRIBUTE_MAP_KEYS.forEach(k => {
           if (item[k]) {
             attribute[SVG_PARSE_ATTRIBUTE_MAP[k]] = item[k];

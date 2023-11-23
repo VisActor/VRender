@@ -51,15 +51,20 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       return;
     }
     const {
-      width = rectAttribute.width,
-      height = rectAttribute.height,
       cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
       x: originX = rectAttribute.x,
       y: originY = rectAttribute.y,
       scaleX = rectAttribute.scaleX,
-      scaleY = rectAttribute.scaleY
+      scaleY = rectAttribute.scaleY,
+      x1,
+      y1
     } = rect.attribute;
+
+    let { width, height } = rect.attribute;
+
+    width = (width ?? x1 - x) || 0;
+    height = (height ?? y1 - y) || 0;
 
     const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
     const doStrokeInner = !!(innerBorder && innerBorder.stroke);

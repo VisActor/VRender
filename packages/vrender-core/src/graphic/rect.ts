@@ -1,13 +1,13 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
-import type { GraphicType, IRect, IRectGraphicAttribute } from '../interface';
+import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
 
-const RECT_UPDATE_TAG_KEY = ['width', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
+const RECT_UPDATE_TAG_KEY = ['width', 'x1', 'y1', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   type: GraphicType = 'rect';
@@ -23,8 +23,10 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     return super.isValid() && this._isValid();
   }
   private _isValid(): boolean {
-    const { width, height } = this.attribute;
-    return this._validNumber(width) && this._validNumber(height);
+    return true;
+    // 暂时不判断，理论上认为都是合法的，节省性能耗时
+    // const { width, x1, y1, height } = this.attribute;
+    // return (this._validNumber(width) || this._validNumber(x1)) && (this._validNumber(height) || this._validNumber(y1));
   }
 
   protected doUpdateAABBBounds(): AABBBounds {
@@ -64,18 +66,19 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     return super.needUpdateTag(key, RECT_UPDATE_TAG_KEY);
   }
 
-  toCustomPath() {
-    const attribute = this.attribute;
-    const width = attribute.width;
-    const height = attribute.height;
-    const x = 0;
-    const y = 0;
+  toCustomPath(): ICustomPath2D {
+    throw new Error('暂不支持');
+    // const attribute = this.attribute;
+    // const width = attribute.width;
+    // const height = attribute.height;
+    // const x = 0;
+    // const y = 0;
 
-    const path = new CustomPath2D();
-    path.moveTo(x, y);
-    path.rect(x, y, width, height);
+    // const path = new CustomPath2D();
+    // path.moveTo(x, y);
+    // path.rect(x, y, width, height);
 
-    return path;
+    // return path;
   }
 
   clone() {

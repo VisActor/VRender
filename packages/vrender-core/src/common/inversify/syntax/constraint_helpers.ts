@@ -4,7 +4,13 @@ import { NAMED_TAG } from '../metadata_keys';
 
 const taggedConstraint = (key: string | number | symbol) => (value: unknown) => {
   const constraint: interfaces.ConstraintFunction = (request: any) => {
-    if (request == null || request.constructorArgsMetadata == null) {
+    if (request == null) {
+      return false;
+    }
+    if (request.key === key && request.value === value) {
+      return true;
+    }
+    if (request.constructorArgsMetadata == null) {
       return false;
     }
     const constructorArgsMetadata = request.constructorArgsMetadata;

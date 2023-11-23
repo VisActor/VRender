@@ -2,7 +2,6 @@ import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutil
 import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
-  IGroup,
   IExportType,
   IStage,
   IStageParams,
@@ -20,8 +19,6 @@ import type {
   ISyncHook,
   IDrawContext,
   IWindow,
-  IPlugin,
-  IContributionProvider,
   ILayerService,
   ITimeline,
   IOptimizeType,
@@ -169,7 +166,6 @@ export class Stage extends Group implements IStage {
   readonly layerService: ILayerService;
   private _eventSystem?: EventSystem;
   private get eventSystem(): EventSystem {
-    this.tryInitEventSystem();
     return this._eventSystem;
   }
 
@@ -231,7 +227,7 @@ export class Stage extends Group implements IStage {
 
     this.state = 'normal';
     this.renderCount = 0;
-
+    this.tryInitEventSystem();
     // // 没有传入xy就默认为0
     // this._x = params.x ?? DefaultConfig.X;
     // this._y = params.y ?? DefaultConfig.Y;
@@ -306,7 +302,8 @@ export class Stage extends Group implements IStage {
           get height(): number {
             return this.viewBox.height();
           }
-        }
+        },
+        ...this.params.event
       });
     }
   }

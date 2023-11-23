@@ -15,6 +15,7 @@ import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
+import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
@@ -66,7 +67,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const itemOffsetY = refX * Math.sin(itemAngle) + refY * Math.sin(itemAngle - Math.PI / 2);
     if (itemType === 'text') {
       item.setAttributes({
-        ...textStyle,
+        ...(textStyle as TagAttributes),
         textStyle: {
           ...DEFAULT_MARK_POINT_TEXT_STYLE_MAP[itemContent?.position || 'end'],
           ...textStyle?.textStyle

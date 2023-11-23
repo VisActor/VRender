@@ -19,8 +19,29 @@ export function run() {
     // visible: false,
     x: 100,
     y: 50,
-    text: guiObject.text,
+    // text: guiObject.text,
+    // type: 'rich',
+    // text: [
+    //   {
+    //     text: 'Mapbox',
+    //     fontWeight: 'bold',
+    //     fontSize: 25,
+    //     fill: '#3f51b5',
+    //     height: 25
+    //   },
+    //   {
+    //     text: '替代方案',
+    //     fontStyle: 'italic',
+    //     textDecoration: 'underline',
+    //     fill: '#3f51b5',
+    //     height: 25
+    //   }
+    // ],
+    type: 'html',
+    text: '<p>这是一个html字符串</p>',
     textStyle: {
+      // width: 20,
+      // height: 20,
       fontSize: 12,
       fill: '#08979c'
     },

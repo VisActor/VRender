@@ -718,6 +718,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ) {
+    if (!this._validCheck(attribute, rectTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       let { width, height } = attribute;
       const { x1, y1, x, y } = attribute;
@@ -777,6 +780,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGlyph
   ) {
+    if (!this._validCheck(attribute, theme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     // 添加子节点
     graphic.getSubGraphic().forEach((node: IGraphic) => {
       aabbBounds.union(node.AABBBounds);
@@ -793,6 +799,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IRichText
   ) {
+    if (!this._validCheck(attribute, richtextTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!graphic) {
       return aabbBounds;
     }
@@ -868,6 +877,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IText
   ) {
+    if (!this._validCheck(attribute, textTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!graphic) {
       return aabbBounds;
     }
@@ -907,6 +919,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IPath
   ) {
+    if (!this._validCheck(attribute, pathTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       this.updatePathAABBBoundsImprecise(attribute, pathTheme, aabbBounds, graphic);
     }
@@ -1032,6 +1047,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IPolygon
   ) {
+    if (!this._validCheck(attribute, polygonTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       this.updatePolygonAABBBoundsImprecise(attribute, polygonTheme, aabbBounds, graphic);
     }
@@ -1075,6 +1093,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: ILine
   ) {
+    if (!this._validCheck(attribute, lineTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       attribute.segments
         ? this.updateLineAABBBoundsBySegments(attribute, lineTheme, aabbBounds, graphic)
@@ -1135,6 +1156,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IArea
   ) {
+    if (!this._validCheck(attribute, areaTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       attribute.segments
         ? this.updateAreaAABBBoundsBySegments(attribute, areaTheme, aabbBounds, graphic)
@@ -1198,6 +1222,9 @@ export class DefaultGraphicService implements IGraphicService {
     full?: boolean,
     graphic?: ICircle
   ) {
+    if (!this._validCheck(attribute, circleTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       full
         ? this.updateCircleAABBBoundsImprecise(attribute, circleTheme, aabbBounds, graphic)
@@ -1259,6 +1286,9 @@ export class DefaultGraphicService implements IGraphicService {
     full?: boolean,
     graphic?: IArc
   ) {
+    if (!this._validCheck(attribute, arcTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       full
         ? this.updateArcAABBBoundsImprecise(attribute, arcTheme, aabbBounds, graphic)
@@ -1335,6 +1365,9 @@ export class DefaultGraphicService implements IGraphicService {
     full?: boolean,
     graphic?: ISymbol
   ) {
+    if (!this._validCheck(attribute, symbolTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       full
         ? this.updateSymbolAABBBoundsImprecise(attribute, symbolTheme, aabbBounds, graphic)
@@ -1357,7 +1390,7 @@ export class DefaultGraphicService implements IGraphicService {
     return aabbBounds;
   }
 
-  updateSymbolAABBBoundsImprecise(
+  protected updateSymbolAABBBoundsImprecise(
     attribute: ISymbolGraphicAttribute,
     symbolTheme: Required<ISymbolGraphicAttribute>,
     aabbBounds: IAABBBounds,
@@ -1377,7 +1410,7 @@ export class DefaultGraphicService implements IGraphicService {
     return aabbBounds;
   }
 
-  updateSymbolAABBBoundsAccurate(
+  protected updateSymbolAABBBoundsAccurate(
     attribute: ISymbolGraphicAttribute,
     symbolTheme: Required<ISymbolGraphicAttribute>,
     aabbBounds: IAABBBounds,
@@ -1400,6 +1433,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ) {
+    if (!this._validCheck(attribute, imageTheme, aabbBounds, graphic)) {
+      return aabbBounds;
+    }
     if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       const { width = imageTheme.width, height = imageTheme.height } = attribute;
       aabbBounds.set(0, 0, width, height);
@@ -1470,5 +1506,26 @@ export class DefaultGraphicService implements IGraphicService {
     //   transformBoundsWithMatrix(aabbBounds, graphic.attribute.postMatrix);
     // }
     // aabbBounds.translate(dx, dy);
+  }
+
+  protected _validCheck(
+    attribute: Partial<IGraphicAttribute>,
+    theme: Required<IGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ): boolean {
+    if (!graphic) {
+      return true;
+    }
+    if (!graphic.valid) {
+      aabbBounds.clear();
+      return false;
+    }
+    const { visible = theme.visible } = attribute;
+    if (!visible) {
+      aabbBounds.clear();
+      return false;
+    }
+    return true;
   }
 }

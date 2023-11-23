@@ -21,8 +21,8 @@ export function renderCircle() {
     y: 400,
     fill: 'red'
   });
-  circle.addEventListener('pointertap', () => console.log('circle, pointertap'));
-  circle.addEventListener('tap', () => console.log('circle, tap'));
+  // circle.addEventListener('pointertap', () => console.log('circle, pointertap'));
+  // circle.addEventListener('tap', () => console.log('circle, tap'));
 
   stage.defaultLayer.add(circle);
 
@@ -32,7 +32,15 @@ export function renderCircle() {
     console.log('%c yo, Stage capture it!', 'color: red;font-weight: bold');
   });
 
-  const gesture = new Gesture(stage);
+  const gesture = new Gesture(stage, {
+    tap: {
+      interval: 250
+    }
+  });
+
+  gesture.on('doubletap', e => {
+    console.log('doubletap');
+  });
 
   gesture.on('press', e => {
     console.log('press');
@@ -83,8 +91,8 @@ export function renderCircle() {
     y: 400,
     fill: 'red'
   });
-  circle1.addEventListener('pointertap', () => console.log('circle1, pointertap'));
-  circle1.addEventListener('tap', () => console.log('circle1, tap'));
+  // circle1.addEventListener('pointertap', () => console.log('circle1, pointertap'));
+  // circle1.addEventListener('tap', () => console.log('circle1, tap'));
 
   stage1.defaultLayer.add(circle1);
 

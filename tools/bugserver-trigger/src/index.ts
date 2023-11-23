@@ -1,14 +1,22 @@
 import * as VRender from '@visactor/vrender';
+import * as VRenderKits from '@visactor/vrender-kits';
+import * as VRenderCore from '@visactor/vrender-core';
 import * as VRenderComponents from '@visactor/vrender-components';
 
 // @ts-ignore
 window.VRender = VRender;
 // @ts-ignore
 window.VRenderComponents = VRenderComponents;
+// @ts-ignore
+window.VRenderCore = VRenderCore;
+// @ts-ignore
+window.VRenderKits = VRenderKits;
 
 export default {
   VRender,
-  VRenderComponents
+  VRenderComponents,
+  VRenderKits,
+  VRenderCore
 };
 
 // export const a = 'a';

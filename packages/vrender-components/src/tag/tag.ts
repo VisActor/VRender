@@ -1,12 +1,23 @@
 /**
  * @description 标签组件
  */
-import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  IGroup,
+  IRect,
+  ISymbol,
+  IText,
+  ITextAttribute,
+  ITextGraphicAttribute,
+  IRichTextGraphicAttribute,
+  IRichText,
+  IRichTextCharacter
+} from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
@@ -34,7 +45,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
   protected render() {
     const {
       text = '',
-      textStyle = {} as ITextGraphicAttribute,
+      textStyle = {} as ITextGraphicAttribute | IRichTextGraphicAttribute,
       shape = {} as TagShapeAttributes,
       panel = {} as BackgroundAttributes,
       space = 4,
@@ -42,7 +53,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       maxWidth,
       padding = 4,
       visible,
-      state
+      state,
+      type
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -83,98 +95,166 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     tagWidth += symbolPlaceWidth;
     textX += symbolPlaceWidth;
 
-    const textAttrs = {
-      text,
-      visible: isValid(text) && visible !== false,
-      lineHeight: textStyle?.fontSize,
-      ...textStyle,
-      x: textX,
-      y: 0
-    };
-    if (isNil(textAttrs.lineHeight)) {
-      textAttrs.lineHeight = textAttrs.fontSize;
-    }
-    const textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
-    if (!isEmpty(state?.text)) {
-      textShape.states = state.text;
-    }
+    let textShape;
+    if (type === 'rich') {
+      const richTextAttrs = {
+        textConfig: text as IRichTextCharacter[],
+        visible: isValid(text) && visible !== false,
+        ...(textStyle as IRichTextGraphicAttribute),
+        x: textX,
+        y: 0,
+        width: (textStyle as IRichTextGraphicAttribute).width ?? 0,
+        height: (textStyle as IRichTextGraphicAttribute).height ?? 0
+      };
+      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
 
-    // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
-    const textBounds = measureTextSize(textAttrs.text, textStyle);
-    const textWidth = textBounds.width;
-    const textHeight = textBounds.height;
-    tagWidth += textWidth;
-    const size = shape.size ?? 10;
-    const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
-    tagHeight += Math.max(textHeight, shape?.visible ? maxSize : 0);
-
-    const { textAlign, textBaseline } = textStyle as ITextAttribute;
-
-    if (isValid(minWidth) || isValid(maxWidth)) {
-      if (isValid(minWidth) && tagWidth < minWidth) {
-        tagWidth = minWidth;
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x: textShape.AABBBounds.x1,
+            y: textShape.AABBBounds.y1,
+            width: textShape.AABBBounds.width(),
+            height: textShape.AABBBounds.height()
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
       }
-      if (isValid(maxWidth) && tagWidth > maxWidth) {
-        tagWidth = maxWidth;
-        textShape.setAttribute('maxLineWidth', maxWidth - parsedPadding[1] - parsedPadding[2]);
-      }
-    }
-
-    let x = 0;
-    let y = 0;
-    if (textAlign === 'center') {
-      x -= tagWidth / 2;
-      if (symbol) {
-        symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
-      }
-
-      group.setAttribute('x', -symbolPlaceWidth / 2);
-    } else if (textAlign === 'right' || textAlign === 'end') {
-      x -= tagWidth;
-      if (symbol) {
-        symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
-      }
-
-      group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
-    } else if (textAlign === 'left' || textAlign === 'start') {
-      group.setAttribute('x', parsedPadding[3]);
-    }
-    if (textBaseline === 'middle') {
-      y -= tagHeight / 2;
-      if (symbol) {
-        symbol.setAttribute('y', 0);
-      }
-    } else if (textBaseline === 'bottom') {
-      y -= tagHeight;
-      if (symbol) {
-        symbol.setAttribute('y', -textHeight / 2);
-      }
-
-      group.setAttribute('y', -parsedPadding[2]);
-    } else if (textBaseline === 'top') {
-      group.setAttribute('y', parsedPadding[0]);
-      if (symbol) {
-        symbol.setAttribute('y', textHeight / 2);
-      }
-    }
-
-    // 绘制背景层
-    const { visible: bgVisible, ...backgroundStyle } = panel;
-    if (visible && isBoolean(bgVisible)) {
-      const bgRect = this.createOrUpdateChild(
-        'tag-panel',
-        {
-          ...backgroundStyle,
-          visible: bgVisible && !!text,
-          x,
-          y,
-          width: tagWidth,
-          height: tagHeight
+    } else if (type === 'html') {
+      const richTextAttrs = {
+        textConfig: [] as IRichTextCharacter[],
+        visible: isValid(text) && visible !== false,
+        html: {
+          dom: text as string,
+          ...DEFAULT_HTML_TEXT_SPEC,
+          ...textStyle
         },
-        'rect'
-      ) as IRect;
-      if (!isEmpty(state?.panel)) {
-        bgRect.states = state.panel;
+        ...(textStyle as IRichTextGraphicAttribute),
+        x: textX,
+        y: 0
+      };
+      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
+
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x: textShape.AABBBounds.x1,
+            y: textShape.AABBBounds.y1,
+            width: textShape.AABBBounds.width(),
+            height: textShape.AABBBounds.height()
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
+      }
+    } else {
+      const textAttrs = {
+        text: text as string | number | string[] | number[],
+        visible: isValid(text) && visible !== false,
+        lineHeight: (textStyle as ITextGraphicAttribute)?.fontSize,
+        ...(textStyle as ITextGraphicAttribute),
+        x: textX,
+        y: 0
+      };
+      if (isNil(textAttrs.lineHeight)) {
+        textAttrs.lineHeight = (textStyle as ITextGraphicAttribute).fontSize;
+      }
+      textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
+      if (!isEmpty(state?.text)) {
+        textShape.states = state.text;
+      }
+
+      // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
+      const textBounds = measureTextSize(textAttrs.text as string, textStyle);
+      const textWidth = textBounds.width;
+      const textHeight = textBounds.height;
+      tagWidth += textWidth;
+      const size = shape.size ?? 10;
+      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      tagHeight += Math.max(textHeight, shape?.visible ? maxSize : 0);
+
+      const { textAlign, textBaseline } = textStyle as ITextAttribute;
+
+      if (isValid(minWidth) || isValid(maxWidth)) {
+        if (isValid(minWidth) && tagWidth < minWidth) {
+          tagWidth = minWidth;
+        }
+        if (isValid(maxWidth) && tagWidth > maxWidth) {
+          tagWidth = maxWidth;
+          textShape.setAttribute('maxLineWidth', maxWidth - parsedPadding[1] - parsedPadding[2]);
+        }
+      }
+
+      let x = 0;
+      let y = 0;
+      if (textAlign === 'center') {
+        x -= tagWidth / 2;
+        if (symbol) {
+          symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
+        }
+
+        group.setAttribute('x', -symbolPlaceWidth / 2);
+      } else if (textAlign === 'right' || textAlign === 'end') {
+        x -= tagWidth;
+        if (symbol) {
+          symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
+        }
+
+        group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
+      } else if (textAlign === 'left' || textAlign === 'start') {
+        group.setAttribute('x', parsedPadding[3]);
+      }
+      if (textBaseline === 'middle') {
+        y -= tagHeight / 2;
+        if (symbol) {
+          symbol.setAttribute('y', 0);
+        }
+      } else if (textBaseline === 'bottom') {
+        y -= tagHeight;
+        if (symbol) {
+          symbol.setAttribute('y', -textHeight / 2);
+        }
+
+        group.setAttribute('y', -parsedPadding[2]);
+      } else if (textBaseline === 'top') {
+        group.setAttribute('y', parsedPadding[0]);
+        if (symbol) {
+          symbol.setAttribute('y', textHeight / 2);
+        }
+      }
+
+      // 绘制背景层
+      const { visible: bgVisible, ...backgroundStyle } = panel;
+      if (visible && isBoolean(bgVisible)) {
+        const bgRect = this.createOrUpdateChild(
+          'tag-panel',
+          {
+            ...backgroundStyle,
+            visible: bgVisible && !!text,
+            x,
+            y,
+            width: tagWidth,
+            height: tagHeight
+          },
+          'rect'
+        ) as IRect;
+        if (!isEmpty(state?.panel)) {
+          bgRect.states = state.panel;
+        }
       }
     }
   }

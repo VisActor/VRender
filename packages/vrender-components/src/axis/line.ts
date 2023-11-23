@@ -521,7 +521,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let titleSpacing = 0;
     const axisLineWidth = line?.visible ? line.style.lineWidth ?? 1 : 0;
     const tickLength = tick?.visible ? tick.length ?? 4 : 0;
-    if (title?.visible) {
+    if (title?.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle).height;
       const padding = normalizePadding(title.padding);
       titleSpacing = title.space + padding[0] + padding[2];

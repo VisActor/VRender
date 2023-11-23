@@ -318,14 +318,14 @@ const run = () => {
     true
   );
 
-  document.addEventListener('mousedown', () => {
-    // eslint-disable-next-line no-console
-    console.log('document mousedown');
-    document.addEventListener('mousemove', () => {
-      // eslint-disable-next-line no-console
-      console.log('document mousemove');
-    });
-  });
+  // document.addEventListener('mousedown', () => {
+  //   // eslint-disable-next-line no-console
+  //   console.log('document mousedown');
+  //   document.addEventListener('mousemove', () => {
+  //     // eslint-disable-next-line no-console
+  //     console.log('document mousemove');
+  //   });
+  // });
 };
 
 run();

@@ -2,7 +2,6 @@ import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutil
 import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
-  IGroup,
   IExportType,
   IStage,
   IStageParams,
@@ -20,8 +19,6 @@ import type {
   ISyncHook,
   IDrawContext,
   IWindow,
-  IPlugin,
-  IContributionProvider,
   ILayerService,
   ITimeline,
   IOptimizeType,
@@ -305,7 +302,8 @@ export class Stage extends Group implements IStage {
           get height(): number {
             return this.viewBox.height();
           }
-        }
+        },
+        ...this.params.event
       });
     }
   }

@@ -23,6 +23,10 @@ export class DefaultCanvasPolygonPicker implements IGraphicPicker {
       return false;
     }
 
+    if (polygon.attribute.pickMode === 'imprecise') {
+      return true;
+    }
+
     const { pickContext } = params ?? {};
     if (!pickContext) {
       return false;

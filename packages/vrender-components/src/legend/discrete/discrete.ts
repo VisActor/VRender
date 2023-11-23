@@ -406,7 +406,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         y: -focusSize / 2 - 1,
         strokeBoundsBuffer: 0,
         ...focusIconStyle,
-        visible: false,
+        visible: true,
         pickMode: 'imprecise',
         boundsPadding: parsedPadding
       });
@@ -510,6 +510,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.attribute.width = itemGroupWidth;
     itemGroup.attribute.height = itemGroupHeight;
 
+    focusShape && focusShape.setAttribute('visible', false);
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
     return itemGroup;
   }

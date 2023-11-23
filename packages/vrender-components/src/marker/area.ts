@@ -1,6 +1,7 @@
 import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
 import { createPolygon } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
+import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
@@ -94,7 +95,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     container.add(area);
 
     const markLabel = new Tag({
-      ...label
+      ...(label as TagAttributes)
     });
     markLabel.name = 'mark-area-label';
     this._label = markLabel;
@@ -111,7 +112,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     this._label?.setAttributes({
       dx: 0,
       dy: 0, // 需要进行复位
-      ...label
+      ...(label as TagAttributes)
     });
     this.setLabelPos();
   }

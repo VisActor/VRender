@@ -77,7 +77,14 @@ export class PopTipForClipedTextPlugin implements IPlugin {
     const { stage } = this.pluginService;
 
     stage.addEventListener('pointerover', this.poptip);
+    stage.addEventListener('pointerleave', this.pointerlave);
   }
+  pointerlave = (e: any) => {
+    const { stage } = this.pluginService;
+    if (e.target === stage) {
+      this.unpoptip(e);
+    }
+  };
   poptip = (e: FederatedPointerEvent) => {
     const graphic = e.target as any;
     if (graphic.type !== 'text' || !graphic.cliped || graphic.isContainer || !graphic.attribute) {
@@ -120,5 +127,6 @@ export class PopTipForClipedTextPlugin implements IPlugin {
   deactivate(context: IPluginService): void {
     const { stage } = this.pluginService;
     stage.removeEventListener('pointerover', this.poptip);
+    stage.removeEventListener('pointerleave', this.pointerlave);
   }
 }

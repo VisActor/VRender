@@ -1,12 +1,11 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { injectable } from '../../common/inversify-lite';
 import { boundStroke } from '../tools';
 import type { IGraphic, ISymbolBoundsContribution, ISymbolGraphicAttribute } from '../../interface';
 import { DefaultOuterBorderBoundsContribution } from './common-contribution';
 
-export const SymbolBoundsContribution = Symbol.for('SymbolBoundsContribution');
+// export const SymbolBoundsContribution = Symbol.for('SymbolBoundsContribution');
 
-@injectable()
+// @injectable()
 export class DefaultSymbolOuterBorderBoundsContribution
   extends DefaultOuterBorderBoundsContribution
   implements ISymbolBoundsContribution

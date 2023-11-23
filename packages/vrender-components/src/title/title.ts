@@ -5,6 +5,7 @@ import type { IGroup, IText, IRichText } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';
@@ -31,8 +32,8 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     }
   };
 
-  constructor(attributes: TitleAttrs) {
-    super(merge({}, Title.defaultAttributes, attributes));
+  constructor(attributes: TitleAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Title.defaultAttributes, attributes));
   }
 
   protected render() {
@@ -168,8 +169,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    group.attribute.width = titleWidth + parsedPadding[1] + parsedPadding[3];
-    group.attribute.height = titleHeight + parsedPadding[0] + parsedPadding[2];
+    group.attribute.width = titleWidth;
+    group.attribute.height = titleHeight;
+    group.attribute.boundsPadding = parsedPadding;
 
     // 设置对齐
     if (isValid(align) || isValid(textStyle?.align)) {
@@ -189,7 +191,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     if (isValid(verticalAlign) || isValid(textStyle?.verticalAlign)) {
       const mainTitleVerticalAlign = textStyle?.verticalAlign ? textStyle?.verticalAlign : verticalAlign;
-      const mainTitleHeight = textStyle?.height ? textStyle?.height : titleWidth;
+      const mainTitleHeight = textStyle?.height ? textStyle?.height : titleHeight;
       if (mainTitleVerticalAlign === 'top') {
         this._mainTitle?.setAttribute('y', 0);
         this._mainTitle?.setAttribute('textBaseline', 'top');

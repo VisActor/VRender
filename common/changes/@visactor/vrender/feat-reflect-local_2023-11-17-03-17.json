@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender",
-      "comment": "",
+      "comment": "feat: don't rewrite global reflect",
       "type": "none"
     }
   ],

@@ -1,13 +1,13 @@
-export enum DataZoomActiveTag {
-  startHandler = 'startHandler',
-  endHandler = 'endHandler',
-  middleHandler = 'middleHandler',
-  background = 'background'
-}
 export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
   orient: 'bottom',
   showDetail: 'auto',
   brushSelect: true,
+  zoomLock: false,
+  minSpan: 0,
+  maxSpan: 1,
+  delayType: 'throttle',
+  delayTime: 0,
+  realTime: true,
   backgroundStyle: {
     fill: 'white',
     stroke: '#D1DBEE',

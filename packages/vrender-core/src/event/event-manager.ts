@@ -122,6 +122,7 @@ export class EventManager {
     const cacheKey = `${e.canvasX}-${e.canvasY}`;
     if (
       this._prePointTargetCache?.[cacheKey] &&
+      (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage &&
       (this._prePointTargetCache?.[cacheKey] as unknown as IGraphic)?.stage.renderCount ===
         (this._prePointTargetCache?.stageRenderCount as number)
     ) {
@@ -514,6 +515,10 @@ export class EventManager {
         }
       } else if (clickEvent.pointerType === 'touch') {
         this.dispatchEvent(clickEvent, 'tap');
+        if (clickHistory.clickCount === 2) {
+          // 双击
+          this.dispatchEvent(clickEvent, 'dbltap');
+        }
       }
 
       this.dispatchEvent(clickEvent, 'pointertap');

@@ -169,7 +169,7 @@ function parseRTTextXML(str: string): IRichTextCharacter {
 }
 
 function parseCommonXML(str: string, output: IRichTextCharacter) {
-  const attr = str['@_attribute'];
+  const attr = (str as any).attribute;
   if (attr) {
     const attrList = attr.split(';');
     attrList.forEach((attrItem: string) => {

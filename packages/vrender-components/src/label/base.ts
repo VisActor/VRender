@@ -1,10 +1,19 @@
 /**
  * @description Label 基类
  */
-import type { IGroup, Text, IGraphic, IText, FederatedPointerEvent, IColor, ILine } from '@visactor/vrender-core';
-import { createText, IncreaseCount, AttributeUpdateType } from '@visactor/vrender-core';
-import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
-import { isFunction, isValidNumber, isEmpty, isValid, isString, merge, isRectIntersect, isNil } from '@visactor/vutils';
+import type {
+  IGroup,
+  Text,
+  IGraphic,
+  IText,
+  FederatedPointerEvent,
+  IColor,
+  ILine,
+  IArea
+} from '@visactor/vrender-core';
+import { createText, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
+import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
+import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
@@ -12,15 +21,35 @@ import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util'
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
-import type { BaseLabelAttrs, OverlapAttrs, ILabelAnimation, ArcLabelAttrs, LabelItem, SmartInvertAttrs } from './type';
-import { DefaultLabelAnimation, getAnimationAttributes } from './animate/animate';
+import type {
+  BaseLabelAttrs,
+  OverlapAttrs,
+  ILabelAnimation,
+  ArcLabelAttrs,
+  LabelItem,
+  SmartInvertAttrs,
+  ILabelEnterAnimation,
+  ILabelExitAnimation,
+  ILabelUpdateAnimation
+} from './type';
+import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
+import { getPointsOfLineArea } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
 
   protected _baseMarks?: IGraphic[];
 
+  protected _isCollectionBase: boolean;
+
   protected _bitmap?: Bitmap;
+
+  protected _animationConfig?: {
+    enter: ILabelEnterAnimation;
+    exit: ILabelExitAnimation;
+    update: ILabelUpdateAnimation;
+  };
 
   static defaultAttributes: Partial<BaseLabelAttrs> = {
     textStyle: {
@@ -49,6 +78,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _idToGraphic: Map<string, IGraphic>;
 
+  protected _idToPoint: Map<string, IPointLike>;
+
   onAfterLabelOverlap?: (bitmap: Bitmap) => void;
 
   private _lastHover: IGraphic;
@@ -56,8 +87,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   private _enableAnimation: boolean;
 
-  constructor(attributes: BaseLabelAttrs) {
-    super(merge({}, LabelBase.defaultAttributes, attributes));
+  constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LabelBase.defaultAttributes, attributes));
   }
 
   /**
@@ -86,7 +117,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected render() {
     this._prepare();
 
-    if (isNil(this._idToGraphic)) {
+    if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
 
@@ -100,14 +131,22 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     let labels: IText[];
 
     if (isFunction(customLayoutFunc)) {
-      labels = customLayoutFunc(data, (d: LabelItem) => this._idToGraphic.get(d.id));
+      labels = customLayoutFunc(
+        data,
+        this.getRelatedGrphic,
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+      );
     } else {
       // 根据关联图元和配置的position计算标签坐标
       labels = this._layout(data);
     }
 
     if (isFunction(customOverlapFunc)) {
-      labels = customOverlapFunc(labels as Text[], (d: LabelItem) => this._idToGraphic.get(d.id));
+      labels = customOverlapFunc(
+        labels as Text[],
+        this.getRelatedGrphic,
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+      );
     } else {
       // 防重叠逻辑
       if (overlap !== false) {
@@ -241,7 +280,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     });
 
     this._idToGraphic?.clear();
+    this._idToPoint?.clear();
     this._baseMarks = currentBaseMarks;
+    this._isCollectionBase = this.attribute.type === 'line-data';
 
     if (!currentBaseMarks || currentBaseMarks.length === 0) {
       return;
@@ -252,21 +293,61 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (!data || data.length === 0) {
       return;
     }
-
     if (!this._idToGraphic) {
       this._idToGraphic = new Map();
     }
+
     // generate id mapping before data filter
-    for (let i = 0; i < currentBaseMarks.length; i++) {
-      const textData = data[i];
-      const baseMark = currentBaseMarks[i] as IGraphic;
-      if (textData && baseMark) {
-        if (!isValid(textData.id)) {
-          textData.id = `vrender-component-${this.name}-${i}`;
+    if (this._isCollectionBase) {
+      if (!this._idToPoint) {
+        this._idToPoint = new Map();
+      }
+      let cur = 0;
+      for (let i = 0; i < currentBaseMarks.length; i++) {
+        const baseMark = currentBaseMarks[i];
+        const points = getPointsOfLineArea(baseMark as ILine | IArea);
+
+        if (points?.length) {
+          for (let j = 0; j < points.length; j++) {
+            const textData = data[cur];
+            if (textData && points[j]) {
+              if (!isValid(textData.id)) {
+                textData.id = `vrender-component-${this.name}-${cur}`;
+              }
+              this._idToPoint.set(textData.id, points[j]);
+              this._idToGraphic.set(textData.id, baseMark);
+            }
+
+            cur++;
+          }
         }
-        this._idToGraphic.set(textData.id, baseMark);
+      }
+    } else {
+      for (let i = 0; i < currentBaseMarks.length; i++) {
+        const textData = data[i];
+        const baseMark = currentBaseMarks[i] as IGraphic;
+        if (textData && baseMark) {
+          if (!isValid(textData.id)) {
+            textData.id = `vrender-component-${this.name}-${i}`;
+          }
+          this._idToGraphic.set(textData.id, baseMark);
+        }
       }
     }
+
+    if (this.attribute.animation !== false) {
+      this._animationConfig = {
+        enter: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationEnter ?? {}),
+        exit: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationExit ?? {}),
+        update: isArray(this.attribute.animationUpdate)
+          ? this.attribute.animationUpdate
+          : merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationUpdate ?? {})
+      };
+    }
+  }
+
+  protected getRelatedGrphic(item: LabelItem) {
+    return this._idToGraphic.get(item.id);
   }
 
   protected _layout(data: LabelItem[] = []): IText[] {
@@ -275,16 +356,22 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
-      const baseMark = this._idToGraphic.get(textData.id);
+      const baseMark = this.getRelatedGrphic(textData);
 
       const labelAttribute = {
-        fill: baseMark.attribute.fill,
+        fill: this._isCollectionBase
+          ? isArray(baseMark.attribute.stroke)
+            ? baseMark.attribute.stroke.find(entry => !!entry && entry !== true)
+            : baseMark.attribute.stroke
+          : baseMark.attribute.fill,
         ...textStyle,
         ...textData
       };
       const text = this._createLabelText(labelAttribute);
       const textBounds = this.getGraphicBounds(text);
-      const graphicBounds = this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
+      const graphicBounds = this._isCollectionBase
+        ? this.getGraphicBounds(null, this._idToPoint.get(textData.id))
+        : this.getGraphicBounds(baseMark, { x: textData.x as number, y: textData.y as number });
 
       const textLocation = this.labeling(
         textBounds,
@@ -361,7 +448,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
 
       const text = labels[i] as IText;
-      const baseMark = this._idToGraphic.get((text.attribute as LabelItem).id);
+      const baseMark = this.getRelatedGrphic(text.attribute);
       text.update();
       if (!isRectIntersect(baseMark.AABBBounds, { x1: 0, x2: bmpTool.width, y1: 0, y2: bmpTool.height }, true)) {
         continue;
@@ -392,7 +479,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           strategy[j],
           <BaseLabelAttrs>this.attribute,
           text as Text,
-          this.getGraphicBounds(baseMark, labels[i]),
+          this._isCollectionBase
+            ? this.getGraphicBounds(null, this._idToPoint.get((labels[i].attribute as any).id))
+            : this.getGraphicBounds(baseMark, labels[i].attribute),
           this.labeling
         );
         if (hasPlace !== false) {
@@ -415,9 +504,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               x2: text.AABBBounds.x2 + dx,
               y1: text.AABBBounds.y1 + dy,
               y2: text.AABBBounds.y2 + dy
-            },
-            undefined,
-            overlapPadding
+            }
+            // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
           )
         ) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
@@ -453,6 +541,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     //   g.update();
     //   return g.AABBBounds;
     // }
+
     return (
       graphic?.AABBBounds ||
       ({
@@ -475,25 +564,20 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithAnimation(labels: IText[]) {
-    const animationConfig = (this.attribute.animation ?? {}) as ILabelAnimation;
-
-    const mode = animationConfig.mode ?? DefaultLabelAnimation.mode;
-    const duration = animationConfig.duration ?? DefaultLabelAnimation.duration;
-    const easing = animationConfig.easing ?? DefaultLabelAnimation.easing;
-    const delay = animationConfig.delay ?? 0;
-
     const currentTextMap: Map<any, { text: IText; labelLine?: ILine }> = new Map();
     const prevTextMap: Map<any, { text: IText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as IText[];
 
     labels.forEach((text, index) => {
       const labelLine: ILine = this._labelLine(text);
-      const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
-      const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+      const relatedGraphic = this.getRelatedGrphic(text.attribute);
+      const textId = (text.attribute as LabelItem).id;
+      const textKey = this._isCollectionBase ? textId : relatedGraphic;
+      const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
 
       if (state === 'enter') {
         texts.push(text);
-        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
+        currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
         if (relatedGraphic) {
           const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
           this.add(text);
@@ -504,24 +588,26 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           }
 
           this._syncStateWithRelatedGraphic(relatedGraphic);
-          relatedGraphic.once('animate-bind', () => {
+          relatedGraphic.once('animate-bind', a => {
             text.setAttributes(from);
-            const listener = this._afterRelatedGraphicAttributeUpdate(text, texts, index, relatedGraphic, {
-              mode,
-              duration,
-              easing,
+            const listener = this._afterRelatedGraphicAttributeUpdate(
+              text,
+              texts,
+              index,
+              relatedGraphic,
               to,
-              delay
-            });
+              this._animationConfig.enter
+            );
             relatedGraphic.on('afterAttributeUpdate', listener);
           });
         }
       } else if (state === 'update') {
-        const prevLabel = prevTextMap.get(relatedGraphic);
-        prevTextMap.delete(relatedGraphic);
-        currentTextMap.set(relatedGraphic, prevLabel);
+        const prevLabel = prevTextMap.get(textKey);
+        prevTextMap.delete(textKey);
+        currentTextMap.set(textKey, prevLabel);
         const prevText = prevLabel.text;
-        prevText.animate().to(text.attribute, duration, easing);
+        const { duration, easing } = this._animationConfig.update;
+        updateAnimation(prevText as Text, text, this._animationConfig.update);
         if (prevLabel.labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {
@@ -535,28 +621,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             easing
           );
         }
-        if (
-          animationConfig.increaseEffect !== false &&
-          prevText.attribute.text !== text.attribute.text &&
-          isValidNumber(Number(prevText.attribute.text) * Number(text.attribute.text))
-        ) {
-          prevText
-            .animate()
-            .play(
-              new IncreaseCount(
-                { text: prevText.attribute.text as string },
-                { text: text.attribute.text as string },
-                duration,
-                easing
-              )
-            );
-        }
       }
     });
     prevTextMap.forEach(label => {
       label.text
         ?.animate()
-        .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
+        .to(
+          getAnimationAttributes(label.text.attribute, 'fadeOut').to,
+          this._animationConfig.exit.duration,
+          this._animationConfig.exit.easing
+        )
         .onEnd(() => {
           this.removeChild(label.text);
           if (label?.labelLine) {
@@ -575,12 +649,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     labels.forEach(text => {
       const labelLine = this._labelLine(text);
-      const relatedGraphic = this._idToGraphic.get((text.attribute as LabelItem).id);
+      const relatedGraphic = this.getRelatedGrphic(text.attribute);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+      const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
 
       if (state === 'enter') {
         texts.push(text);
-        currentTextMap.set(relatedGraphic, labelLine ? { text, labelLine } : { text });
+        currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
         this.add(text);
         if (labelLine) {
           this.add(labelLine);
@@ -588,9 +663,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
         this._syncStateWithRelatedGraphic(relatedGraphic);
       } else if (state === 'update') {
-        const prevLabel = prevTextMap.get(relatedGraphic);
-        prevTextMap.delete(relatedGraphic);
-        currentTextMap.set(relatedGraphic, prevLabel);
+        const prevLabel = prevTextMap.get(textKey);
+        prevTextMap.delete(textKey);
+        currentTextMap.set(textKey, prevLabel);
         prevLabel.text.setAttributes(text.attribute);
         if (prevLabel?.labelLine) {
           prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
@@ -611,17 +686,19 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected _handleRelatedGraphicSetState = (e: any) => {
     if (e.detail?.type === AttributeUpdateType.STATE) {
       const currentStates = e.target?.currentStates ?? [];
-      const label = this._graphicToText.get(e.target);
+      const labels = this._isCollectionBase ? [...this._graphicToText.values()] : [this._graphicToText.get(e.target)];
 
-      if (label) {
-        if (label.text) {
-          label.text.useStates(currentStates);
-        }
+      labels.forEach(label => {
+        if (label) {
+          if (label.text) {
+            label.text.useStates(currentStates);
+          }
 
-        if (label.labelLine) {
-          label.labelLine.useStates(currentStates);
+          if (label.labelLine) {
+            label.labelLine.useStates(currentStates);
+          }
         }
-      }
+      });
     }
   };
 
@@ -636,14 +713,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     texts: IText[],
     index: number,
     relatedGraphic: IGraphic,
-    { mode, duration, easing, to, delay }: ILabelAnimation & { to: any }
+    to: any,
+    { mode, duration, easing, delay }: ILabelAnimation
   ) {
     const listener = (event: any) => {
       const { detail } = event;
       if (!detail) {
         return {};
       }
-
       const isValidAnimateState =
         detail &&
         detail.type === AttributeUpdateType.ANIMATE_UPDATE &&
@@ -659,7 +736,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         return;
       }
 
-      const onEnd = () => {
+      const onStart = () => {
         if (relatedGraphic) {
           relatedGraphic.onAnimateBind = undefined;
           relatedGraphic.removeEventListener('afterAttributeUpdate', listener);
@@ -670,7 +747,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         case 'after':
           // 3. 当前关联图元的动画播放结束后
           if (detail.animationState.end) {
-            text.animate({ onEnd }).wait(delay).to(to, duration, easing);
+            text.animate({ onStart }).wait(delay).to(to, duration, easing);
           }
           break;
         case 'after-all':
@@ -678,17 +755,26 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           if (index === texts.length - 1) {
             if (detail.animationState.end) {
               texts.forEach(t => {
-                t.animate({ onEnd }).wait(delay).to(to, duration, easing);
+                t.animate({ onStart }).wait(delay).to(to, duration, easing);
               });
             }
           }
           break;
         case 'same-time':
         default:
-          // 1. 与当前关联图元的动画播放同时进行
-          if (detail.animationState.isFirstFrameOfStep) {
-            text.animate({ onEnd }).wait(delay).to(to, duration, easing);
+          if (this._isCollectionBase) {
+            const point = this._idToPoint.get((text.attribute as LabelItem).id);
+            if (
+              point &&
+              (!text.animates || !text.animates.has('label-animate')) &&
+              relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.pickerService)
+            ) {
+              text.animate({ onStart }).wait(delay).to(to, duration, easing);
+            }
+          } else if (detail.animationState.isFirstFrameOfStep) {
+            text.animate({ onStart }).wait(delay).to(to, duration, easing);
           }
+
           break;
       }
     };
@@ -714,7 +800,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         continue;
       }
 
-      const baseMark = this._idToGraphic.get((label.attribute as LabelItem).id);
+      const baseMark = this.getRelatedGrphic(label.attribute as LabelItem);
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：

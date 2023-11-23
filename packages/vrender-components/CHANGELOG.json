@@ -2,6 +2,225 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.16.16",
+      "tag": "@visactor/vrender-components_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.15",
+      "tag": "@visactor/vrender-components_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: legendItemHover and legendItemUnHover should trigger once"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.14",
+      "tag": "@visactor/vrender-components_v0.16.14",
+      "date": "Wed, 15 Nov 2023 09:56:28 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: datazoom update callback supports new trigger tag param"
+          },
+          {
+            "comment": "feat(label): support line/area label"
+          },
+          {
+            "comment": "feat: lineHeight support string, which means percent"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-components_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-components_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: padding of title component"
+          },
+          {
+            "comment": "fix: padding offset of AABBbounds"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender-components_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133"
+          },
+          {
+            "comment": "fix: flush should not sue width height"
+          },
+          {
+            "comment": "fix: fix the lastvisible logic of axis's auto-hide"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-components_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add checkbox indeterminate state"
+          },
+          {
+            "comment": "feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix: all the group container of marker do not trigger event"
+          },
+          {
+            "comment": "fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.8",
+      "tag": "@visactor/vrender-components_v0.16.8",
+      "date": "Mon, 23 Oct 2023 11:38:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue of error position of focus when legend item just has label"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.7",
+      "tag": "@visactor/vrender-components_v0.16.7",
+      "date": "Mon, 23 Oct 2023 08:53:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.6",
+      "tag": "@visactor/vrender-components_v0.16.6",
+      "date": "Mon, 23 Oct 2023 06:30:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optimize the layout method of circle axis label"
+          },
+          {
+            "comment": "fix: fix the layout issue of legend item because of the error logic of `focusStartX`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.5",
+      "tag": "@visactor/vrender-components_v0.16.5",
+      "date": "Fri, 20 Oct 2023 04:22:42 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the data-label of line/area, when the group has multiple lines/areas\n\n"
+          },
+          {
+            "comment": "fix: if in non browser, use this.stage"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.4",
+      "tag": "@visactor/vrender-components_v0.16.4",
+      "date": "Thu, 19 Oct 2023 10:30:12 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(datazoom): support zoomlock & span & throttle setting and rename callback"
+          },
+          {
+            "comment": "feat: datazoom and scrollbar support realtime"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.3",
+      "tag": "@visactor/vrender-components_v0.16.3",
+      "date": "Wed, 18 Oct 2023 07:43:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue with poptip does not disappear when scrolling, closed #580"
+          },
+          {
+            "comment": "fix: brush and data-zoom should stop event propagation"
+          },
+          {
+            "comment": "fix: fix title component layout height"
+          },
+          {
+            "comment": "feat(vrender-components): add LineDataLabel support DataLabel of line\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.2",
+      "tag": "@visactor/vrender-components_v0.16.2",
+      "date": "Tue, 10 Oct 2023 11:48:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add checkbox component"
+          },
+          {
+            "comment": "feat: provide disableActiveEffect api to support users to close the interactive effect of components\n\n"
+          },
+          {
+            "comment": "fix: fix event not remove as expected due to capture, closed #570"
+          },
+          {
+            "comment": "refactor: use polygon to replace line to support cornerRadius"
+          },
+          {
+            "comment": "feat: add `getArea()` `getLine()` and `getLabel()` method for markLine markArea component"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.1",
       "tag": "@visactor/vrender-components_v0.16.1",
       "date": "Mon, 09 Oct 2023 09:51:01 GMT",

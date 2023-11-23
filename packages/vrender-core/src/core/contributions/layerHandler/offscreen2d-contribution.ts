@@ -14,20 +14,23 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { VGlobal } from '../../../constants';
+import { application } from '../../../application';
 
 @injectable()
 export class OffscreenLayerHandlerContribution implements ILayerHandlerContribution {
-  layer: ILayer;
-  canvas: ICanvas;
-  context: IContext2d;
-  offscreen: boolean;
-  type: LayerMode = 'dynamic';
+  declare layer: ILayer;
+  declare canvas: ICanvas;
+  declare context: IContext2d;
+  declare offscreen: boolean;
+  declare type: LayerMode;
   // 所绑定的副layer handler
-  secondaryHandlers: ILayerHandlerContribution[];
+  declare secondaryHandlers: ILayerHandlerContribution[];
+  declare global: IGlobal;
 
-  constructor(@inject(VGlobal) public readonly global: IGlobal) {
+  constructor() {
     this.offscreen = true;
+    this.type = 'dynamic';
+    this.global = application.global;
   }
 
   setDpr(dpr: number) {

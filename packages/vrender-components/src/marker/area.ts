@@ -6,8 +6,10 @@ import { Marker } from './base';
 import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
 import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
+import type { ComponentOptions } from '../interface';
 
 export class MarkArea extends Marker<MarkAreaAttrs> {
+  name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
   private _area!: IPolygon;
   getArea() {
@@ -18,8 +20,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     return this._label;
   }
 
-  constructor(attributes: MarkAreaAttrs) {
-    super(merge({}, MarkArea.defaultAttributes, attributes));
+  constructor(attributes: MarkAreaAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkArea.defaultAttributes, attributes));
   }
 
   private _getPositionByDirection(area: IPolygon, direction: string) {
@@ -112,5 +114,13 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
       ...label
     });
     this.setLabelPos();
+  }
+
+  protected isValidPoints() {
+    const { points } = this.attribute as MarkAreaAttrs;
+    if (!points || points.length < 3) {
+      return false;
+    }
+    return true;
   }
 }

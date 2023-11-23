@@ -5,7 +5,7 @@ import type { IGroup, IRect, ISymbol, IText, ITextAttribute, ITextGraphicAttribu
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
-import type { BackgroundAttributes } from '../interface';
+import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
 
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
@@ -27,8 +27,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     }
   };
 
-  constructor(attributes: TagAttributes) {
-    super(merge({}, Tag.defaultAttributes, attributes));
+  constructor(attributes: TagAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Tag.defaultAttributes, attributes));
   }
 
   protected render() {

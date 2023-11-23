@@ -1,5 +1,5 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import { isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
+import { getDecimalPlaces, isArray, isNumber, pi, pi2, Point } from '@visactor/vutils';
 import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
 import type { CustomPath2D } from '../common/custom-path2d';
@@ -23,6 +23,7 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
 
   private fromNumber: number;
   private toNumber: number;
+  private decimalLength: number;
 
   constructor(
     from: { text: string | number },
@@ -52,6 +53,10 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
     if (!Number.isFinite(this.toNumber)) {
       this.valid = false;
     }
+    if (this.valid !== false) {
+      this.decimalLength =
+        this.params?.fixed ?? Math.max(getDecimalPlaces(this.fromNumber), getDecimalPlaces(this.toNumber));
+    }
   }
 
   onEnd(): void {
@@ -63,9 +68,9 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
       return;
     }
     if (end) {
-      out.text = this.toNumber.toFixed();
+      out.text = this.toNumber;
     } else {
-      out.text = (this.fromNumber + (this.toNumber - this.fromNumber) * ratio).toFixed(this.params?.fixed ?? 0);
+      out.text = (this.fromNumber + (this.toNumber - this.fromNumber) * ratio).toFixed(this.decimalLength);
     }
   }
 }
@@ -997,6 +1002,12 @@ export class AnimateGroup extends ACustomAnimate<any> {
       a.onEnd();
     });
     return;
+  }
+
+  onStart(): void {
+    this.customAnimates.forEach(a => {
+      a.onStart();
+    });
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {

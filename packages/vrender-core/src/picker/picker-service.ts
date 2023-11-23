@@ -1,5 +1,5 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
-import { Matrix, Point, IBounds } from '@visactor/vutils';
+import { Matrix, Point } from '@visactor/vutils';
 import { inject, injectable, named } from '../common/inversify-lite';
 import { foreach } from '../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -20,7 +20,7 @@ import type {
 import { DefaultAttribute, getTheme, mat3Tomat4, multiplyMat4Mat4 } from '../graphic';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
 import { PickItemInterceptor } from './pick-interceptor';
-import { VGlobal } from '../constants';
+import { application } from '../application';
 
 @injectable()
 export abstract class DefaultPickService implements IPickerService {
@@ -28,14 +28,16 @@ export abstract class DefaultPickService implements IPickerService {
   declare pickerMap: Map<number, IGraphicPicker>;
   declare pickContext?: IContext2d;
   declare InterceptorContributions: IPickItemInterceptorContribution[];
+  declare global: IGlobal;
 
   constructor(
-    @inject(VGlobal) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
     protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
-  ) {}
+  ) {
+    this.global = application.global;
+  }
 
   protected _init() {
     this.InterceptorContributions = this.pickItemInterceptorContributions
@@ -107,7 +109,8 @@ export abstract class DefaultPickService implements IPickerService {
   }
 
   containsPoint(graphic: IGraphic, point: IPointLike, params: IPickParams): boolean {
-    return !!this.pickItem(graphic, point, null, params);
+    return !!this.pickItem(graphic, point, null, params ?? { pickContext: this.pickContext, pickerService: this })
+      ?.graphic;
   }
 
   // TODO: 支持3d模式的拾取和自定义path的拾取

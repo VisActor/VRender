@@ -2,15 +2,20 @@ import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { CheckboxAttributes } from './type';
 import { CustomEvent, Image, Rect, WrapText } from '@visactor/vrender-core';
+import type { ComponentOptions } from '../interface';
 
-const svg =
+const checkSvg =
   '<svg width="200" height="200" viewBox="0 0 1024 1024" fill="#fff" xmlns="http://www.w3.org/2000/svg"><path d="M877.44815445 206.10060629a64.72691371 64.72691371 0 0 0-95.14856334 4.01306852L380.73381888 685.46812814 235.22771741 533.48933518a64.72691371 64.72691371 0 0 0-92.43003222-1.03563036l-45.82665557 45.82665443a64.72691371 64.72691371 0 0 0-0.90617629 90.61767965l239.61903446 250.10479331a64.72691371 64.72691371 0 0 0 71.19960405 15.14609778 64.33855261 64.33855261 0 0 0 35.08198741-21.23042702l36.24707186-42.71976334 40.5190474-40.77795556-3.36579926-3.49525333 411.40426297-486.74638962a64.72691371 64.72691371 0 0 0-3.88361443-87.64024149l-45.3088404-45.43829334z"></path></svg>';
+
+const indeterminateSvg =
+  '<svg width="200" height="200" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="5" d="M5 12h14"/></svg>';
 
 export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   static defaultAttributes: Partial<CheckboxAttributes> = {
     interactive: true,
     disabled: false,
     checked: false,
+    indeterminate: false,
     cursor: 'pointer',
     disableCursor: 'not-allowed',
     spaceBetweenTextAndIcon: 8,
@@ -23,7 +28,8 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       pickable: false
     },
     icon: {
-      image: svg,
+      checkIconImage: checkSvg,
+      indeterminateIconImage: indeterminateSvg,
       width: 10,
       height: 10,
       pickable: false
@@ -43,11 +49,12 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
     }
   };
   _box: Rect;
-  _icon: Image;
+  _checkIcon: Image;
+  _indeterminateIcon: Image;
   _text: WrapText;
 
-  constructor(attributes: CheckboxAttributes) {
-    super(merge({}, CheckBox.defaultAttributes, attributes));
+  constructor(attributes: CheckboxAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, CheckBox.defaultAttributes, attributes));
     this.renderGroup();
 
     this.onBeforeAttributeUpdate = (val: any, attributes: any, key: null | string | string[]) => {
@@ -74,12 +81,13 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
 
   renderBox() {
     this._box = new Rect(merge({}, this.attribute.box));
-    if (this.attribute.checked && this.attribute.disabled) {
+    const isCheckedOrIndeterminate = this.attribute.checked || this.attribute.indeterminate;
+    if (isCheckedOrIndeterminate && this.attribute.disabled) {
       this._box.setAttributes({
         fill: this.attribute.box.disableCheckedFill,
         stroke: this.attribute.box.disableCheckedStroke
       });
-    } else if (this.attribute.checked) {
+    } else if (isCheckedOrIndeterminate) {
       this._box.setAttributes({
         fill: this.attribute.box.checkedFill,
         stroke: this.attribute.box.checkedStroke
@@ -89,11 +97,28 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   }
 
   renderIcon() {
-    this._icon = new Image(merge({}, this.attribute.icon));
-    if (!this.attribute.checked) {
-      this._icon.setAttribute('visible', false);
+    this._checkIcon = new Image(merge({ image: this.attribute.icon.checkIconImage }, this.attribute.icon));
+    this.appendChild(this._checkIcon);
+    this._indeterminateIcon = new Image(
+      merge(
+        {
+          image: this.attribute.icon.indeterminateIconImage
+        },
+        this.attribute.icon
+      )
+    );
+    this.appendChild(this._indeterminateIcon);
+
+    if (this.attribute.checked) {
+      this._checkIcon.setAttribute('visible', true);
+      this._indeterminateIcon.setAttribute('visible', false);
+    } else if (this.attribute.indeterminate) {
+      this._checkIcon.setAttribute('visible', false);
+      this._indeterminateIcon.setAttribute('visible', true);
+    } else {
+      this._checkIcon.setAttribute('visible', false);
+      this._indeterminateIcon.setAttribute('visible', false);
     }
-    this.appendChild(this._icon);
   }
 
   renderText() {
@@ -133,7 +158,11 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       x: boxX,
       y: boxY
     });
-    this._icon.setAttributes({
+    this._checkIcon.setAttributes({
+      x: iconX,
+      y: iconY
+    });
+    this._indeterminateIcon.setAttributes({
       x: iconX,
       y: iconY
     });
@@ -148,8 +177,10 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       return;
     } else if (this.attribute.checked) {
       this.setAttribute('checked', false);
+      this.setAttribute('indeterminate', false);
     } else {
       this.setAttribute('checked', true);
+      this.setAttribute('indeterminate', false);
     }
     const changeEvent = new CustomEvent('checkbox_state_change', {
       eventType: 'checkbox_state_change',

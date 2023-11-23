@@ -105,9 +105,10 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   wordBreak: 'break-all',
   ignoreBuf: false,
   verticalMode: 0,
+  wrap: false,
+  whiteSpace: 'no-wrap',
   heightLimit: 0,
-  lineClamp: Infinity,
-  wrap: false
+  lineClamp: Infinity
 };
 
 export const DefaultStyle: IGraphicStyle = {

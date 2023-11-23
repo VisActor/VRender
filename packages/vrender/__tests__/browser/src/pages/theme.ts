@@ -31,7 +31,7 @@ export const page = () => {
     y: 200,
     width: 100,
     height: 100,
-    fill: colorPools[3]
+    fill: 'green'
   });
   l11.name = 'l11';
   const l12 = createGroup({

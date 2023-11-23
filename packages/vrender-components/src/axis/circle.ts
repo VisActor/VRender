@@ -1,9 +1,11 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
+import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { createCircle } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
+import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
@@ -12,6 +14,8 @@ import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
+import { getLabelPosition } from './util';
+import type { ComponentOptions } from '../interface';
 
 export interface CircleAxis
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
@@ -20,8 +24,8 @@ export interface CircleAxis
 export class CircleAxis extends AxisBase<CircleAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
 
-  constructor(attributes: CircleAxisAttributes) {
-    super(merge({}, CircleAxis.defaultAttributes, attributes));
+  constructor(attributes: CircleAxisAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, CircleAxis.defaultAttributes, attributes));
   }
 
   protected renderLine(container: IGroup): void {
@@ -218,9 +222,18 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     return {
-      textAlign: this.getTextAlign(vector),
-      textBaseline: this.getTextBaseline(vector)
+      textAlign: 'center', //'left',
+      textBaseline: 'middle' //'top'
     };
+  }
+
+  protected getLabelPosition(
+    point: Point,
+    vector: [number, number],
+    text: string | number,
+    style: Partial<ITextGraphicAttribute>
+  ) {
+    return getLabelPosition(point, vector, text, style);
   }
 }
 

@@ -33,6 +33,7 @@ import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } 
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
+import type { ComponentOptions } from '../interface';
 
 export interface LineAxis
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
@@ -41,11 +42,8 @@ export interface LineAxis
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
 
-  constructor(attributes: LineAxisAttributes, mode?: '2d' | '3d') {
-    super(merge({}, LineAxis.defaultAttributes, attributes), mode);
-    if (mode === '3d') {
-      this.setMode(mode);
-    }
+  constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
 
   protected _renderInner(container: IGroup) {
@@ -309,17 +307,15 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const { flush = false } = this.attribute.label || {};
     if (flush && labelShapes.length) {
       // 首尾标签向内偏移
-      const { orient, start, end } = this.attribute;
+      const { orient, start: axisStart, end: axisEnd } = this.attribute;
       const isX = orient === 'bottom' || orient === 'top';
       const first = labelShapes[0];
       const last = peek(labelShapes);
       const isInverse = isX ? first.attribute.x > last.attribute.x : first.attribute.y < last.attribute.y;
-
       if (isX) {
-        const width = Math.abs(start.x - end.x);
         if (isInverse) {
-          const start = width;
-          const end = 0;
+          const start = axisEnd.x;
+          const end = axisStart.x;
           const startBound = first.AABBBounds.x2;
           const endBound = last.AABBBounds.x1;
 
@@ -337,8 +333,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           }
         } else {
-          const start = 0;
-          const end = width;
+          const start = axisStart.x;
+          const end = axisEnd.x;
           const startBound = first.AABBBounds.x1;
           const endBound = last.AABBBounds.x2;
           if (startBound < start) {
@@ -356,12 +352,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           }
         }
       } else {
-        const height = Math.abs(start.y - end.y);
         if (isInverse) {
           const startBound = first.AABBBounds.y1;
           const endBound = last.AABBBounds.y2;
-          const start = 0;
-          const end = height;
+          const start = axisStart.y;
+          const end = axisEnd.y;
 
           if (startBound < start) {
             first.setAttributes({
@@ -377,8 +372,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           }
         } else {
-          const start = height;
-          const end = 0;
+          const start = axisEnd.y;
+          const end = axisStart.y;
           const startBound = first.AABBBounds.y2;
           const endBound = last.AABBBounds.y1;
 

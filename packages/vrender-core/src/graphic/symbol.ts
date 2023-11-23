@@ -2,7 +2,7 @@ import type { OBBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
-import { builtinSymbolsMap, CustomSymbolClass } from './builtin-symbol';
+import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
@@ -11,6 +11,8 @@ import { CustomPath2D } from '../common/custom-path2d';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TYPE } from './constants';
 import { XMLParser } from '../common/xml';
 import { isSvg } from '../common/xml/parser';
+
+const _tempBounds = new AABBBounds();
 
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -53,7 +55,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
   protected doUpdateParsedPath(): ISymbolClass {
     const symbolTheme = getTheme(this).symbol;
     // 查找内置symbol
-    const { symbolType = symbolTheme.symbolType } = this.attribute;
+    let { symbolType = symbolTheme.symbolType } = this.attribute;
     let path = builtinSymbolsMap[symbolType];
     if (path) {
       this._parsedPath = path;
@@ -65,6 +67,8 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
       return path;
     }
 
+    const _symbolType = builtInSymbolStrMap[symbolType];
+    symbolType = _symbolType || symbolType;
     // 判断是否是svg
     const valid = isSvg(symbolType);
     if (valid === true) {
@@ -74,7 +78,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
         return null;
       }
       const path = isArray(svg.path) ? svg.path : [svg.path];
-      const b = new AABBBounds();
+      _tempBounds.clear();
       const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
       path.forEach((item: any) => {
         const cache = new CustomPath2D().fromString(item.d);
@@ -91,10 +95,10 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
           path: cache,
           attribute
         });
-        b.union(cache.bounds);
+        _tempBounds.union(cache.bounds);
       });
-      const width = b.width();
-      const height = b.height();
+      const width = _tempBounds.width();
+      const height = _tempBounds.height();
       // 规范化到1
       const maxWH = max(width, height);
       const scale = 1 / maxWH;

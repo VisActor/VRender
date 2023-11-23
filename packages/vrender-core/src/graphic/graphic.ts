@@ -286,10 +286,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   getOffsetXY(attr?: ITransform, includeScroll: boolean = false) {
     const { dx = attr.dx, dy = attr.dy } = this.attribute;
     if (includeScroll && this.parent) {
-      const groupTheme = getTheme(this.parent).group;
-      const { scrollX = groupTheme.scrollX, scrollY = groupTheme.scrollY } = this.parent.attribute;
-      point.x = dx + scrollX;
-      point.y = dy + scrollY;
+      // const groupTheme = getTheme(this.parent).group;
+      const attribute = this.parent.attribute;
+      point.x = dx + (attribute.scrollX ?? 0);
+      point.y = dy + (attribute.scrollY ?? 0);
     } else {
       point.x = dx;
       point.y = dy;
@@ -1358,12 +1358,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.resources.set(url, cache);
     if (typeof image === 'string') {
       cache.state = 'loading';
-      if (isValidUrl(image) || isBase64(image)) {
-        ResourceLoader.GetImage(image, this);
-        this.backgroundImg = this.backgroundImg || background;
-      } else if (image.startsWith('<svg')) {
+      if (image.startsWith('<svg')) {
         // TODO 封装isSvg到@visactor/vutils
         ResourceLoader.GetSvg(image, this);
+        this.backgroundImg = this.backgroundImg || background;
+      } else if (isValidUrl(image) || image.includes('/') || isBase64(image)) {
+        ResourceLoader.GetImage(image, this);
         this.backgroundImg = this.backgroundImg || background;
       }
     } else {

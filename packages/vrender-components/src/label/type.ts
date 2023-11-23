@@ -8,6 +8,7 @@ import type {
   TextBaselineType,
   ILineGraphicAttribute
 } from '@visactor/vrender-core';
+import type { IPointLike } from '@visactor/vutils';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -78,6 +79,9 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | false;
+  animationEnter?: ILabelUpdateAnimation;
+  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
+  animationExit?: ILabelExitAnimation;
 
   // 排序 or 删减
   dataFilter?: (data: LabelItem[]) => LabelItem[];
@@ -85,17 +89,27 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 自定义布局函数
    * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
-  customLayoutFunc?: (data: LabelItem[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  customLayoutFunc?: (
+    data: LabelItem[],
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    getRelatedPoint?: (data: LabelItem) => IPointLike
+  ) => Text[];
 
   /** 自定义标签躲避函数
    * @description 当配置了 customOverlapFunc 后，会根据 position 和 offset 进行初始布局。配置的防重叠逻辑(overlap)不生效。
    */
-  customOverlapFunc?: (label: Text[], getRelatedGraphic: (data: LabelItem) => IGraphic) => Text[];
+  customOverlapFunc?: (
+    label: Text[],
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    getRelatedPoint?: (data: LabelItem) => IPointLike
+  ) => Text[];
   /**
    * 关闭交互效果
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /** 唯一标志符 */
+  id?: string;
 }
 
 export interface OverlapAttrs {
@@ -255,7 +269,19 @@ export interface RectLabelAttrs extends BaseLabelAttrs {
    * @default 'top'
    */
   position?: Functional<
-    'top' | 'bottom' | 'left' | 'right' | 'inside' | 'inside-top' | 'inside-bottom' | 'inside-right' | 'inside-left'
+    | 'top'
+    | 'bottom'
+    | 'left'
+    | 'right'
+    | 'inside'
+    | 'inside-top'
+    | 'inside-bottom'
+    | 'inside-right'
+    | 'inside-left'
+    | 'top-right'
+    | 'top-left'
+    | 'bottom-right'
+    | 'bottom-left'
   >;
 }
 
@@ -266,6 +292,27 @@ export interface LineLabelAttrs extends BaseLabelAttrs {
    * @default 'end'
    */
   position?: Functional<'start' | 'end'>;
+}
+
+export interface AreaLabelAttrs extends BaseLabelAttrs {
+  type: 'area';
+  /**
+   * 标签位置
+   * @default 'end'
+   */
+  position?: Functional<'start' | 'end'>;
+}
+
+export interface LineDataLabelAttrs extends BaseLabelAttrs {
+  type: 'line-data';
+
+  /**
+   * 标签位置
+   * @default 'top'
+   */
+  position?: Functional<
+    'top' | 'bottom' | 'left' | 'right' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center'
+  >;
 }
 
 export interface PolygonLabelAttrs extends BaseLabelAttrs {
@@ -399,7 +446,7 @@ export interface IArcLabelLayoutSpec {
 }
 
 export interface DataLabelAttrs extends IGroupGraphicAttribute {
-  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs)[];
+  dataLabels: (RectLabelAttrs | SymbolLabelAttrs | ArcLabelAttrs | LineDataLabelAttrs)[];
   /**
    * 防重叠的区域大小
    */
@@ -408,16 +455,29 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 
 export type Functional<T> = T | ((data: any) => T);
 
-export interface ILabelAnimation {
-  mode?: 'same-time' | 'after' | 'after-all';
+export interface ILabelExitAnimation {
   duration?: number;
   delay?: number;
   easing?: EasingType;
+}
+
+export interface ILabelEnterAnimation extends ILabelExitAnimation {
+  mode?: 'same-time' | 'after' | 'after-all';
+}
+
+export interface ILabelUpdateAnimation extends ILabelExitAnimation {
   /** 是否开启 increaseCount 动画
    * @default true
    */
   increaseEffect?: boolean;
 }
+
+export interface ILabelUpdateChannelAnimation extends ILabelUpdateAnimation {
+  channel?: string[];
+  options?: { excludeChannels?: string[] };
+}
+
+export interface ILabelAnimation extends ILabelEnterAnimation, ILabelExitAnimation, ILabelUpdateAnimation {}
 
 export interface IPoint {
   x: number;

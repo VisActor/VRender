@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "fix: fix event not remove as expected due to capture, closed #570",
+      "comment": "feat: optmize bounds performance",
       "type": "none"
     }
   ],

@@ -17,9 +17,12 @@ import { CIRCLE_NUMBER_TYPE } from '../../../graphic/constants';
 import { CircleRenderContribution } from './contributions/constants';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
+import {
+  defaultCircleBackgroundRenderContribution,
+  defaultCircleRenderContribution,
+  defaultCircleTextureRenderContribution
+} from './contributions';
 
 @injectable()
 export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IGraphicRender {
@@ -32,6 +35,11 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
     protected readonly circleRenderContribitions: IContributionProvider<ICircleRenderContribution>
   ) {
     super();
+    this.builtinContributions = [
+      defaultCircleRenderContribution,
+      defaultCircleBackgroundRenderContribution,
+      defaultCircleTextureRenderContribution
+    ];
     this.init(circleRenderContribitions);
   }
 

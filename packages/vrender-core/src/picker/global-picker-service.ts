@@ -11,7 +11,7 @@ import type {
   IPickParams,
   PickResult
 } from '../interface';
-import { VGlobal } from '../constants';
+import { application } from '../application';
 
 // 默认的pick-service，提供基本的最优选中策略，尽量不需要用户自己实现contribution
 // 用户可以写plugin
@@ -20,13 +20,10 @@ export class DefaultGlobalPickerService implements IPickerService {
   type: 'global';
 
   declare pickerMap: Map<number, IGraphicPicker>;
+  declare global: IGlobal;
 
-  constructor(
-    // @inject(ContributionProvider)
-    // @named(PickerContribution)
-    // protected readonly contributions: ContributionProvider<IPickerContribution>,
-    @inject(VGlobal) public readonly global: IGlobal
-  ) {
+  constructor() {
+    this.global = application.global;
     this.global.hooks.onSetEnv.tap('global-picker-service', (lastEnv, env, global) => {
       this.configure(global, env);
     });

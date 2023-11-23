@@ -7,8 +7,10 @@ import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './con
 import type { MarkLineAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
 
 export class MarkLine extends Marker<MarkLineAttrs> {
+  name = 'markLine';
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;
 
   private _line!: Segment;
@@ -19,8 +21,8 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     return this._label;
   }
 
-  constructor(attributes: MarkLineAttrs) {
-    super(merge({}, MarkLine.defaultAttributes, attributes));
+  constructor(attributes: MarkLineAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));
   }
 
   protected setLabelPos() {
@@ -75,7 +77,8 @@ export class MarkLine extends Marker<MarkLineAttrs> {
       endSymbol,
       lineStyle,
       mainSegmentIndex,
-      multiSegment
+      multiSegment,
+      pickable: false // 组件容器本身不参与拾取
     });
     line.name = 'mark-line-line';
     this._line = line;
@@ -93,6 +96,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   protected updateMarker() {
     const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as MarkLineAttrs;
+
     this._line?.setAttributes({
       points,
       startSymbol,
@@ -109,5 +113,13 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     });
 
     this.setLabelPos();
+  }
+
+  protected isValidPoints() {
+    const { points } = this.attribute as MarkLineAttrs;
+    if (!points || points.length < 2) {
+      return false;
+    }
+    return true;
   }
 }

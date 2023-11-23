@@ -41,7 +41,7 @@ export type ITextAttribute = {
   ellipsis: boolean | string;
   fontVariant: string;
   fontStyle: string;
-  lineHeight: number;
+  lineHeight: number | string;
   underline: number;
   lineThrough: number;
   scaleIn3d: boolean;
@@ -52,6 +52,7 @@ export type ITextAttribute = {
   heightLimit: number;
   lineClamp: number;
   wrap: boolean;
+  whiteSpace: 'normal' | 'no-wrap';
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

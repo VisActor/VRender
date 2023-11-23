@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "refactor: use polygon to replace line to support cornerRadius",
+      "comment": "perf: add option `skipDefault` to vrender-components",
       "type": "none"
     }
   ],

@@ -22,8 +22,10 @@ import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
 
 export class MarkPoint extends Marker<MarkPointAttrs> {
+  name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
 
   private _item!: ISymbol | Tag | IImage | IRichText;
@@ -32,8 +34,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   private _decorativeLine!: ILine;
 
-  constructor(attributes: MarkPointAttrs) {
-    super(merge({}, MarkPoint.defaultAttributes, attributes));
+  constructor(attributes: MarkPointAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkPoint.defaultAttributes, attributes));
   }
 
   protected setLabelPos() {
@@ -250,7 +252,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     };
 
     const line = new Segment({
-      points: []
+      points: [],
+      pickable: false // 组件容器本身不参与拾取
     });
     line.name = 'mark-point-line';
     this._line = line;
@@ -281,5 +284,9 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     this.setItemLineAttr(itemLine, position, itemPosition, itemLine?.visible);
     this.setDecorativeLineAttr(itemLine, itemPosition, itemLine?.decorativeLine?.visible);
     this.setItemAttributes(this._item, itemContent, itemPosition, type);
+  }
+
+  protected isValidPoints() {
+    return true;
   }
 }

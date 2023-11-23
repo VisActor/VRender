@@ -5,12 +5,11 @@ import {
   inject,
   injectable,
   named,
-  postConstruct,
   DefaultPickService,
   DrawContribution,
   PickItemInterceptor,
-  VGlobal,
-  wrapCanvas
+  canvasAllocate,
+  application
 } from '@visactor/vrender-core';
 import type {
   ICanvas,
@@ -55,35 +54,23 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     @inject(ContributionProvider)
     @named(CanvasPickerContribution)
     protected readonly contributions: IContributionProvider<IGraphicPicker>,
-    @inject(CanvasCirclePicker) private readonly circlePicker: IGraphicPicker, // 默认的circlePicker
-    @inject(CanvasRectPicker) private readonly rectPicker: IGraphicPicker, // 默认的rectPicker
-    @inject(CanvasArcPicker) private readonly arcPicker: IGraphicPicker, // 默认的arcPicker
-    @inject(CanvasAreaPicker) private readonly areaPicker: IGraphicPicker, // 默认的areaPicker
-    @inject(CanvasImagePicker) private readonly imagePicker: IGraphicPicker, // 默认的imagePicker
-    @inject(CanvasLinePicker) private readonly linePicker: IGraphicPicker, // 默认的linePicker
-    @inject(CanvasPathPicker) private readonly pathPicker: IGraphicPicker, // 默认的pathPicker
-    @inject(CanvasSymbolPicker) private readonly symbolPicker: IGraphicPicker, // 默认的symbolPicker
-    @inject(CanvasTextPicker) private readonly textPicker: IGraphicPicker, // 默认的textPicker
-    @inject(CanvasPolygonPicker) private readonly polygonPicker: IGraphicPicker, // 默认的polygonPicker
-    @inject(CanvasRichTextPicker) private readonly richtextPicker: IGraphicPicker, // 默认的richtextPicker
 
     @inject(DrawContribution)
     public readonly drawContribution: IDrawContribution,
-    @inject(VGlobal) public readonly global: IGlobal,
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
     protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
   ) {
-    super(global, pickItemInterceptorContributions);
+    super(pickItemInterceptorContributions);
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {
       this.configure(global, env);
     });
     this.configure(this.global, this.global.env);
     this.pickerMap = new Map();
+    this.init();
   }
 
-  @postConstruct()
   init() {
     this.contributions.getContributions().forEach(item => {
       this.pickerMap.set(item.numberType, item);
@@ -98,14 +85,7 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // });
 
     // 创建pick canvas
-    const options = {
-      width: 100,
-      height: 100,
-      nativeCanvas: global.createCanvas({ width: 100, height: 100 }),
-      id: 'for-pick'
-    };
-
-    this.pickCanvas = wrapCanvas(options);
+    this.pickCanvas = canvasAllocate.shareCanvas();
     this.pickContext = this.pickCanvas.getContext('2d');
   }
 

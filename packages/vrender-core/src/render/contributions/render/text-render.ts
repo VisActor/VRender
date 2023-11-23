@@ -15,13 +15,12 @@ import type {
 } from '../../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
-import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { TextRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { max } from '@visactor/vutils';
+import { calculateLineHeight } from '../../../common/utils';
 
 @injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
@@ -58,13 +57,6 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const textAttribute = getTheme(text, params?.theme).text;
     const {
       text: str,
-      fill = textAttribute.fill,
-      stroke = textAttribute.stroke,
-      fillOpacity = textAttribute.fillOpacity,
-      strokeOpacity = textAttribute.strokeOpacity,
-      opacity = textAttribute.opacity,
-      lineWidth = textAttribute.lineWidth,
-      visible = textAttribute.visible,
       underline = textAttribute.underline,
       lineThrough = textAttribute.lineThrough,
       keepDirIn3d = textAttribute.keepDirIn3d,
@@ -82,7 +74,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
       textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);
     }
-    const lineHeight = text.attribute.lineHeight ?? fontSize;
+    const lineHeight = calculateLineHeight(text.attribute.lineHeight, fontSize) ?? fontSize;
 
     const data = this.valid(text, textAttribute, fillCb, strokeCb);
     if (!data) {
@@ -199,6 +191,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
           }
         }
       } else {
+        text.tryUpdateAABBBounds(); // 更新cache
         const cache = text.cache;
         const { verticalList } = cache;
         context.textAlign = 'left';
@@ -238,7 +231,6 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         });
       }
     } else {
-      const cache = text.cache;
       if (direction === 'horizontal') {
         context.setTextStyle(text.attribute, textAttribute, z);
         const t = text.clipedText as string;
@@ -256,29 +248,33 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
           }
         }
         drawText(t, 0, dy, 0);
-      } else if (cache) {
-        context.setTextStyleWithoutAlignBaseline(text.attribute, textAttribute, z);
-        const { verticalList } = cache;
-        let offsetY = 0;
-        const totalW = verticalList[0].reduce((a, b) => a + (b.width || 0), 0);
-        let offsetX = 0;
-        if (textBaseline === 'bottom') {
-          offsetX = -lineHeight;
-        } else if (textBaseline === 'middle') {
-          offsetX = -lineHeight / 2;
+      } else {
+        text.tryUpdateAABBBounds(); // 更新cache
+        const cache = text.cache;
+        if (cache) {
+          context.setTextStyleWithoutAlignBaseline(text.attribute, textAttribute, z);
+          const { verticalList } = cache;
+          let offsetY = 0;
+          const totalW = verticalList[0].reduce((a, b) => a + (b.width || 0), 0);
+          let offsetX = 0;
+          if (textBaseline === 'bottom') {
+            offsetX = -lineHeight;
+          } else if (textBaseline === 'middle') {
+            offsetX = -lineHeight / 2;
+          }
+          if (textAlign === 'center') {
+            offsetY -= totalW / 2;
+          } else if (textAlign === 'right') {
+            offsetY -= totalW;
+          }
+          context.textAlign = 'left';
+          context.textBaseline = 'top';
+          verticalList[0].forEach(item => {
+            const { text, width, direction } = item;
+            drawText(text, offsetX, offsetY, direction);
+            offsetY += width;
+          });
         }
-        if (textAlign === 'center') {
-          offsetY -= totalW / 2;
-        } else if (textAlign === 'right') {
-          offsetY -= totalW;
-        }
-        context.textAlign = 'left';
-        context.textBaseline = 'top';
-        verticalList[0].forEach(item => {
-          const { text, width, direction } = item;
-          drawText(text, offsetX, offsetY, direction);
-          offsetY += width;
-        });
       }
     }
     transform3dMatrixToContextMatrix && this.restoreTransformUseContext2d(text, textAttribute, z, context);

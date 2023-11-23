@@ -14,11 +14,16 @@ import type {
 import { SyncHook } from '../tapable';
 import { EnvContribution } from '../constants';
 import type { IAABBBoundsLike } from '@visactor/vutils';
+import { container } from '../container';
+import { Generator } from '../common/generator';
 
 const defaultEnv: EnvType = 'browser';
 @injectable()
 export class DefaultGlobal implements IGlobal {
+  readonly id: number;
   private _env: EnvType;
+  private _isSafari?: boolean;
+  private _isChrome?: boolean;
   get env(): EnvType {
     return this._env;
   }
@@ -38,11 +43,25 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.supportEvent;
   }
 
+  set supportEvent(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportEvent = support;
+  }
+
   get supportsTouchEvents(): boolean {
     if (!this._env) {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.supportsTouchEvents;
+  }
+
+  set supportsTouchEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsTouchEvents = support;
   }
 
   get supportsPointerEvents(): boolean {
@@ -52,11 +71,25 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.supportsPointerEvents;
   }
 
+  set supportsPointerEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsPointerEvents = support;
+  }
+
   get supportsMouseEvents(): boolean {
     if (!this._env) {
       this.setEnv(defaultEnv);
     }
     return this.envContribution.supportsMouseEvents;
+  }
+
+  set supportsMouseEvents(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.supportsMouseEvents = support;
   }
 
   get applyStyles(): boolean {
@@ -65,6 +98,16 @@ export class DefaultGlobal implements IGlobal {
     }
     return this.envContribution.applyStyles;
   }
+
+  set applyStyles(support: boolean) {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.applyStyles = support;
+  }
+
+  // 是否在不显示canvas的时候停止绘图操作，默认false
+  optimizeVisible: boolean;
 
   envParams?: any;
   declare measureTextMethod: 'native' | 'simple' | 'quick';
@@ -78,10 +121,12 @@ export class DefaultGlobal implements IGlobal {
     @named(EnvContribution)
     protected readonly contributions: IContributionProvider<IEnvContribution>
   ) {
+    this.id = Generator.GenAutoIncrementId();
     this.hooks = {
       onSetEnv: new SyncHook<[EnvType | undefined, EnvType, IGlobal]>(['lastEnv', 'env', 'global'])
     };
     this.measureTextMethod = 'native';
+    this.optimizeVisible = false;
   }
 
   protected bindContribution(params?: any): void | Promise<any> {
@@ -303,17 +348,26 @@ export class DefaultGlobal implements IGlobal {
   }
 
   isChrome(): boolean {
+    if (this._isChrome != null) {
+      return this._isChrome;
+    }
     if (!this._env) {
       this.setEnv('browser');
     }
-    return this._env === 'browser' && navigator.userAgent.indexOf('Chrome') > -1;
+    this._isChrome = this._env === 'browser' && navigator.userAgent.indexOf('Chrome') > -1;
+    return this._isChrome;
   }
 
   isSafari(): boolean {
+    if (this._isSafari != null) {
+      return this._isSafari;
+    }
     if (!this._env) {
       this.setEnv('browser');
     }
-    return this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    this._isSafari =
+      this._env === 'browser' && /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    return this._isSafari;
   }
 
   getNativeAABBBounds(dom: string | HTMLElement | any): IAABBBoundsLike {

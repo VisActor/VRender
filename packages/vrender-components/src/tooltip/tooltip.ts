@@ -2,7 +2,7 @@
  * @description 标题组件
  */
 import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender-core';
-import { builtinSymbolsMap } from '@visactor/vrender-core';
+import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
@@ -10,6 +10,7 @@ import { isVisible } from '../util';
 import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
+import type { ComponentOptions } from '../interface';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';
@@ -35,8 +36,8 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
 
   static defaultAttributes: Partial<TooltipAttributes> = defaultAttributes;
 
-  constructor(attributes: TooltipAttributes) {
-    super(merge({}, Tooltip.defaultAttributes, attributes));
+  constructor(attributes: TooltipAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Tooltip.defaultAttributes, attributes), options);
   }
 
   protected render() {
@@ -165,7 +166,9 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               x: itemAttr.shape.size / 2,
               y:
                 itemAttr.shape.size / 2 +
-                ((itemAttr.key.lineHeight ?? itemAttr.key.fontSize) - itemAttr.shape.size) / 2,
+                ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -
+                  itemAttr.shape.size) /
+                  2,
               ...itemAttr.shape
             },
             'symbol'

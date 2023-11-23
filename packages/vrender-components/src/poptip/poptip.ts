@@ -26,7 +26,7 @@ import {
   rectInsideAnotherRect
 } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { BackgroundAttributes } from '../interface';
+import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
 
 const _tBounds = new AABBBounds();
@@ -56,8 +56,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     padding: 10
   };
 
-  constructor(attributes: PopTipAttributes) {
-    super(merge({}, PopTip.defaultAttributes, attributes));
+  constructor(attributes: PopTipAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, PopTip.defaultAttributes, attributes));
   }
 
   protected render() {

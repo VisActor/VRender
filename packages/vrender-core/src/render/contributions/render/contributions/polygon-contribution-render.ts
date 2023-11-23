@@ -1,23 +1,7 @@
-import { injectable } from '../../../../common/inversify-lite';
-import type { IPolygonRenderContribution } from '../../../../interface';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
-import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
-export class DefaultPolygonBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements IPolygonRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
-export class DefaultPolygonTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements IPolygonRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
+export const defaultPolygonTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultPolygonBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

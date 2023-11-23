@@ -2,7 +2,8 @@
  * @description 坐标轴标签自动旋转
  */
 import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import { degreeToRadian, isEmpty, isRotateAABBIntersect } from '@visactor/vutils';
+import { degreeToRadian, isEmpty } from '@visactor/vutils';
+import { genRotateBounds, itemIntersect } from './util';
 
 type RotateConfig = {
   /**
@@ -53,10 +54,6 @@ function hasIntersect(items: IText[]): boolean {
   return false;
 }
 
-function itemIntersect(item1: IText, item2: IText) {
-  return isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true);
-}
-
 function tryRotate(orient: string, items: IText[]) {
   // 针对 top bottom轴的自动旋转逻辑
   if (orient === 'bottom' || orient === 'top') {
@@ -67,46 +64,6 @@ function tryRotate(orient: string, items: IText[]) {
   }
   // 先旋转，再计算这个limit，避免算limit后发现不需要旋转，导致莫名的水平limit
   genRotateBounds(items);
-}
-
-function rotate(x: number, y: number, deg: number, originX: number, originY: number) {
-  return {
-    x: (x - originX) * Math.cos(deg) + (y - originY) * Math.sin(deg) + originX,
-    y: (x - originX) * Math.sin(deg) + (originY - y) * Math.cos(deg) + originY
-  };
-}
-
-// 计算水平情况下的包围盒
-function genNormalBounds(item: IText) {
-  const bounds = item.AABBBounds;
-
-  return {
-    x1: bounds.x1,
-    x2: bounds.x2,
-    y1: bounds.y1,
-    y2: bounds.y2,
-    centerX: item.attribute.x,
-    centerY: item.attribute.y,
-    angle: item.attribute.angle
-  };
-}
-
-function genRotateBounds(items: IText[]) {
-  items.forEach(item => {
-    // 计算水平情况下的包围盒
-    const bounds = genNormalBounds(item);
-    // 旋转
-    const rotatedCenter = rotate(bounds.centerX, bounds.centerY, bounds.angle, item.attribute.x, item.attribute.y);
-    const deltaX = rotatedCenter.x - bounds.centerX;
-    const deltaY = rotatedCenter.y - bounds.centerY;
-    bounds.x1 += deltaX;
-    bounds.x2 += deltaX;
-    bounds.y1 += deltaY;
-    bounds.y2 += deltaY;
-    bounds.centerX += deltaX;
-    bounds.centerY += deltaY;
-    item.rotatedBounds = bounds;
-  });
 }
 
 function clampAngle(angle = 0) {

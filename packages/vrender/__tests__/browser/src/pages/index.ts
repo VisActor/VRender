@@ -197,5 +197,14 @@ export const pages = [
         path: 'points3d'
       }
     ]
+  },
+  {
+    menu: '上层',
+    children: [
+      {
+        name: 'vchart',
+        path: 'vchart'
+      }
+    ]
   }
 ];

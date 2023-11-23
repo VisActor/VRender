@@ -20,6 +20,7 @@ import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
 import type { SliderAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -113,8 +114,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return this._endHandler;
   }
 
-  constructor(attributes: SliderAttributes) {
-    super(merge({}, Slider.defaultAttributes, attributes));
+  constructor(attributes: SliderAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Slider.defaultAttributes, attributes));
   }
 
   /**
@@ -525,19 +526,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       });
       vglobal.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._currentHandler.addEventListener(
-        'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject,
-        { capture: true }
-      );
-      this._currentHandler.addEventListener(
-        'pointerup',
-        this._onHandlerPointerUp as EventListenerOrEventListenerObject
-      );
-      this._currentHandler.addEventListener(
-        'pointerupoutside',
-        this._onHandlerPointerUp as EventListenerOrEventListenerObject
-      );
+      this.stage.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     }
   };
 
@@ -588,14 +581,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       });
       vglobal.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
-      const currentTarget = e.target;
-      currentTarget.removeEventListener(
-        'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject,
-        { capture: true }
-      );
-      currentTarget.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-      currentTarget.removeEventListener(
+      this.stage.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener(
         'pointerupoutside',
         this._onHandlerPointerUp as EventListenerOrEventListenerObject
       );
@@ -611,11 +601,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       });
       vglobal.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+      this.stage.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
         capture: true
       });
-      this._track.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this._track.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }
   };
 
@@ -682,11 +672,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       });
       vglobal.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+      this.stage.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
         capture: true
       });
-      this._track.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this._track.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }
   };
 

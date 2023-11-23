@@ -1,6 +1,127 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 09 Oct 2023 09:51:01 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+### Updates
+
+- fix: legendItemHover and legendItemUnHover should trigger once
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+### Updates
+
+- feat: datazoom update callback supports new trigger tag param
+- feat(label): support line/area label
+- feat: lineHeight support string, which means percent
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+_Version update only_
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: padding of title component
+- fix: padding offset of AABBbounds
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133
+- fix: flush should not sue width height
+- fix: fix the lastvisible logic of axis's auto-hide
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: add checkbox indeterminate state
+- feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`
+- fix: all the group container of marker do not trigger event
+- fix: all the group container of marker do not trigger event
+- fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+### Updates
+
+- fix: fix the issue of error position of focus when legend item just has label
+
+## 0.16.7
+Mon, 23 Oct 2023 08:53:33 GMT
+
+### Updates
+
+- fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured
+
+## 0.16.6
+Mon, 23 Oct 2023 06:30:33 GMT
+
+### Updates
+
+- feat: optimize the layout method of circle axis label
+- fix: fix the layout issue of legend item because of the error logic of `focusStartX`
+
+## 0.16.5
+Fri, 20 Oct 2023 04:22:42 GMT
+
+### Updates
+
+- fix: fix the data-label of line/area, when the group has multiple lines/areas
+
+
+- fix: if in non browser, use this.stage
+
+## 0.16.4
+Thu, 19 Oct 2023 10:30:12 GMT
+
+### Updates
+
+- feat(datazoom): support zoomlock & span & throttle setting and rename callback
+- feat: datazoom and scrollbar support realtime
+
+## 0.16.3
+Wed, 18 Oct 2023 07:43:09 GMT
+
+### Updates
+
+- fix: fix the issue with poptip does not disappear when scrolling, closed #580
+- fix: brush and data-zoom should stop event propagation
+- fix: fix title component layout height
+- feat(vrender-components): add LineDataLabel support DataLabel of line
+
+
+
+## 0.16.2
+Tue, 10 Oct 2023 11:48:48 GMT
+
+### Updates
+
+- feat: add checkbox component
+- feat: provide disableActiveEffect api to support users to close the interactive effect of components
+
+
+- fix: fix event not remove as expected due to capture, closed #570
+- refactor: use polygon to replace line to support cornerRadius
+- feat: add `getArea()` `getLine()` and `getLabel()` method for markLine markArea component
 
 ## 0.16.1
 Mon, 09 Oct 2023 09:51:01 GMT

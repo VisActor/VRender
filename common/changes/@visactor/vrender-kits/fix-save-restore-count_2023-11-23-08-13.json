@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with restore and save count not equal",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

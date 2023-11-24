@@ -8,6 +8,7 @@ import type {
   IContributionProvider,
   IDrawContext
 } from '../../../../interface';
+import type { IBounds } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../../common/inversify-lite';
 import { getTheme } from '../../../../graphic';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
@@ -35,7 +36,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     options?: any
   ) {
-    const { background } = graphic.attribute;
+    const { background, backgroundMode = graphicAttribute.backgroundMode } = graphic.attribute;
     if (!background) {
       return;
     }
@@ -57,7 +58,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       context.clip();
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
+      this.doDrawImage(context, res.data, b, backgroundMode);
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
         context.setTransformForCurrent();
@@ -68,6 +69,23 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       context.fillStyle = background as string;
       context.fill();
       context.highPerformanceRestore();
+    }
+  }
+
+  protected doDrawImage(
+    context: IContext2d,
+    data: any,
+    b: IBounds,
+    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
+  ) {
+    if (backgroundMode === 'no-repeat') {
+      context.drawImage(data, b.x1, b.y1, b.width(), b.height());
+    } else {
+      const pattern = context.createPattern(data, backgroundMode);
+      context.fillStyle = pattern;
+      context.translate(b.x1, b.y1);
+      context.fillRect(0, 0, b.width(), b.height());
+      context.translate(-b.x1, -b.y1);
     }
   }
 }

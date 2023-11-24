@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.16.17",
+      "tag": "@visactor/vrender-core_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add `event` config for Stage params, which can configure `clickInterval` and some other options in eventSystem"
+          },
+          {
+            "comment": "feat: support fill and stroke while svg don't support, closed #710"
+          },
+          {
+            "comment": "fix: richtext may throw error when textConfig is null\n\n"
+          },
+          {
+            "comment": "fix: fix issue with image repeat, closed #712"
+          },
+          {
+            "comment": "perf: not setAttribute while background is not url, closed #696"
+          },
+          {
+            "comment": "fix: fix issue with restore and save count not equal"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.16",
       "tag": "@visactor/vrender-core_v0.16.16",
       "date": "Fri, 17 Nov 2023 02:33:59 GMT",

@@ -117,7 +117,7 @@ export const DefaultStyle: IGraphicStyle = {
   textureColor: 'black',
   textureSize: 10,
   texturePadding: 2,
-  backgroundMode: 0,
+  backgroundMode: 'no-repeat',
   blur: 0,
   cursor: null,
   html: null,

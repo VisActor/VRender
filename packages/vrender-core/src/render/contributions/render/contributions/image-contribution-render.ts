@@ -36,7 +36,7 @@ export class DefaultImageBackgroundRenderContribution
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
-    const { background, width, height } = graphic.attribute;
+    const { background, backgroundMode = graphicAttribute.backgroundMode } = graphic.attribute;
     if (!background) {
       return;
     }
@@ -97,7 +97,7 @@ export class DefaultImageBackgroundRenderContribution
       }
       // context.clip();
       const b = graphic.AABBBounds;
-      context.drawImage(res.data, b.x1, b.y1, b.width(), b.height());
+      this.doDrawImage(context, res.data, b, backgroundMode);
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
         context.setTransformForCurrent();

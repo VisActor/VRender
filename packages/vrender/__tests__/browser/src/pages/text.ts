@@ -53,7 +53,8 @@ export const page = () => {
     y: 100,
     fontFamily: 'Arial',
     text: 'aaa这是aaa',
-    fill: 'red'
+    fill: 'red',
+    background: 'green'
   });
   console.log(t.AABBBounds);
   graphics.push(t);

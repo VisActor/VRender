@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: text support background, closed #711",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

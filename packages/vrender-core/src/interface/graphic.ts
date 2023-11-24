@@ -185,7 +185,7 @@ export type IBackgroundConfig = {
 export type IGraphicStyle = IFillStyle &
   IStrokeStyle & {
     opacity: number;
-    backgroundMode: number; // 填充模式（与具体图元有关）
+    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     background: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig | null; // 背景，可以与fill同时存在
     texture: TextureType | string; // 纹理
     textureColor: string; // 纹理颜色

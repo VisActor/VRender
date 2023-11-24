@@ -100,6 +100,14 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.x2 = Math.ceil(b.x2);
       dirtyBounds.y2 = Math.ceil(b.y2);
     }
+    // 如果dpr不是整数或者.5的小数，需要格式化dirtyBounds
+    const d = context.dpr % 1;
+    if (d || d !== 0.5) {
+      dirtyBounds.x1 = Math.floor(dirtyBounds.x1 * context.dpr) / context.dpr;
+      dirtyBounds.y1 = Math.floor(dirtyBounds.y1 * context.dpr) / context.dpr;
+      dirtyBounds.x2 = Math.ceil(dirtyBounds.x2 * context.dpr) / context.dpr;
+      dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
+    }
     this.backupDirtyBounds.copy(dirtyBounds);
     context.inuse = true;
     // 初始化context

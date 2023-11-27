@@ -107,7 +107,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   verticalMode: 0,
   whiteSpace: 'no-wrap',
   heightLimit: Infinity,
-  lineClamp: Infinity
+  lineClamp: Infinity,
+  suffixPosition: 'end'
 };
 
 export const DefaultStyle: IGraphicStyle = {

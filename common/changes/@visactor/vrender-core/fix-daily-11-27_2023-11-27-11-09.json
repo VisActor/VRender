@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "refactor: event-related coordinate points do not require complex Point classes",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

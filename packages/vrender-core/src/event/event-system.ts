@@ -1,10 +1,9 @@
-import type { IPointLike } from '@visactor/vutils';
 import { isUndefined, has, isString } from '@visactor/vutils';
 import type { IGlobal } from '../interface';
 import { EventManager } from './event-manager';
 import { FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { FederatedMouseEvent } from './federated-event/mouse-event';
-import type { IElementLike, IEventTarget, NativeEvent, RenderConfig } from '../interface/event';
+import type { EventPoint, IElementLike, IEventTarget, NativeEvent, RenderConfig } from '../interface/event';
 import { clock } from './util';
 
 const MOUSE_POINTER_ID = 1;
@@ -322,7 +321,7 @@ export class EventSystem {
     this.eventsAdded = false;
   }
 
-  private mapToViewportPoint(event: FederatedMouseEvent): IPointLike {
+  private mapToViewportPoint(event: FederatedMouseEvent): EventPoint {
     const viewport = this.viewport;
     const { x, y } = event;
     return {
@@ -331,7 +330,7 @@ export class EventSystem {
     };
   }
 
-  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent): IPointLike {
+  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent): EventPoint {
     const point = this.globalObj?.mapToCanvasPoint(nativeEvent, this.domElement);
 
     if (point) {
@@ -466,8 +465,14 @@ export class EventSystem {
     const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
-    event.global.copyFrom(event.canvas);
-    event.offset.copyFrom(event.canvas);
+    event.global = {
+      x: canvasX,
+      y: canvasY
+    };
+    event.offset = {
+      x: canvasX,
+      y: canvasY
+    };
 
     // 获取相对绘图区域(viewport)坐标
     const { x: viewX, y: viewY } = this.mapToViewportPoint(event);
@@ -504,8 +509,14 @@ export class EventSystem {
     const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
-    event.global.copyFrom(event.canvas);
-    event.offset.copyFrom(event.canvas);
+    event.global = {
+      x: canvasX,
+      y: canvasY
+    };
+    event.offset = {
+      x: canvasX,
+      y: canvasY
+    };
 
     // 获取相对绘图区域(viewport)坐标
     const { x: viewX, y: viewY } = this.mapToViewportPoint(event);

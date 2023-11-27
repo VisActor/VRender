@@ -698,38 +698,14 @@ export class EventManager {
     to.altKey = from.altKey;
     to.button = from.button;
     to.buttons = from.buttons;
-    to.client = {
-      x: from.client.x,
-      y: from.client.y
-    };
     to.ctrlKey = from.ctrlKey;
     to.shiftKey = from.shiftKey;
     to.metaKey = from.metaKey;
-    to.movement = {
-      x: from.movement.x,
-      y: from.movement.y
-    };
 
-    to.canvas = {
-      x: from.canvas.x,
-      y: from.canvas.y
-    };
-    to.screen = {
-      x: from.screen.x,
-      y: from.screen.y
-    };
-    to.global = {
-      x: from.global.x,
-      y: from.global.y
-    };
-    to.offset = {
-      x: from.offset.x,
-      y: from.offset.y
-    };
-    to.viewport = {
-      x: from.viewport.x,
-      y: from.viewport.y
-    };
+    ['client', 'movement', 'canvas', 'screen', 'global', 'offset', 'viewport'].forEach(key => {
+      to[key].x = from[key].x;
+      to[key].y = from[key].y;
+    });
   }
 
   copyData(from: FederatedEvent, to: FederatedEvent): void {
@@ -740,14 +716,13 @@ export class EventManager {
     to.detail = from.detail;
     to.view = from.view;
     to.which = from.which;
-    to.layer = {
-      x: from.layer.x,
-      y: from.layer.y
-    };
-    to.page = {
-      x: from.page.x,
-      y: from.page.y
-    };
+
+    to.layer.x = from.layer.x;
+    to.layer.y = from.layer.y;
+
+    to.page.x = from.page.x;
+    to.page.y = from.page.y;
+
     (to as any).pickParams = (from as any).pickParams;
   }
 

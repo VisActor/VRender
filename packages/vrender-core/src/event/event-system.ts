@@ -465,14 +465,12 @@ export class EventSystem {
     const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
-    event.global = {
-      x: canvasX,
-      y: canvasY
-    };
-    event.offset = {
-      x: canvasX,
-      y: canvasY
-    };
+
+    event.global.x = canvasX;
+    event.global.y = canvasY;
+
+    event.offset.x = canvasX;
+    event.offset.y = canvasY;
 
     // 获取相对绘图区域(viewport)坐标
     const { x: viewX, y: viewY } = this.mapToViewportPoint(event);
@@ -509,14 +507,12 @@ export class EventSystem {
     const { x: canvasX, y: canvasY } = this.mapToCanvasPoint(nativeEvent);
     event.canvas.x = canvasX;
     event.canvas.y = canvasY;
-    event.global = {
-      x: canvasX,
-      y: canvasY
-    };
-    event.offset = {
-      x: canvasX,
-      y: canvasY
-    };
+
+    event.global.x = canvasX;
+    event.global.y = canvasY;
+
+    event.offset.x = canvasX;
+    event.offset.y = canvasY;
 
     // 获取相对绘图区域(viewport)坐标
     const { x: viewX, y: viewY } = this.mapToViewportPoint(event);

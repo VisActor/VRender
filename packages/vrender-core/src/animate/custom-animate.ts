@@ -6,6 +6,8 @@ import { CustomPath2D } from '../common/custom-path2d';
 import type {
   EasingType,
   IArcGraphicAttribute,
+  IArea,
+  IAreaCacheItem,
   ICubicBezierCurve,
   ICurve,
   ICustomPath2D,
@@ -294,6 +296,7 @@ export class StreamLight extends ACustomAnimate<any> {
 
   declare rect: IRect;
   declare line: ILine;
+  declare area: IArea;
   constructor(
     from: any,
     to: any,
@@ -315,16 +318,18 @@ export class StreamLight extends ACustomAnimate<any> {
     if (this.target.type === 'rect') {
       this.onStartRect();
     } else if (this.target.type === 'line') {
-      this.onStartLine();
+      this.onStartLineOrArea('line');
+    } else if (this.target.type === 'area') {
+      this.onStartLineOrArea('area');
     }
   }
 
-  onStartLine() {
+  onStartLineOrArea(type: 'line' | 'area') {
     const root = this.target.attachShadow();
-    const line = application.graphicService.creator.line({
+    const line = application.graphicService.creator[type]({
       ...this.params?.attribute
     });
-    this.line = line;
+    this[type] = line;
     line.pathProxy = new CustomPath2D();
     root.add(line);
   }
@@ -359,8 +364,8 @@ export class StreamLight extends ACustomAnimate<any> {
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (this.rect) {
       return this.onUpdateRect(end, ratio, out);
-    } else if (this.line) {
-      return this.onUpdateLine(end, ratio, out);
+    } else if (this.line || this.area) {
+      return this.onUpdateLineOrArea(end, ratio, out);
     }
   }
 
@@ -389,48 +394,57 @@ export class StreamLight extends ACustomAnimate<any> {
     );
   }
 
-  protected onUpdateLine(end: boolean, ratio: number, out: Record<string, any>) {
-    if (!this.line) {
+  protected onUpdateLineOrArea(end: boolean, ratio: number, out: Record<string, any>) {
+    const target = this.line || this.area;
+    if (!target) {
       return;
     }
-    const customPath = this.line.pathProxy as ICustomPath2D;
-    const targetLine = this.target as ILine;
-    if (targetLine.cache) {
-      this._onUpdateLineWithCache(customPath, targetLine, end, ratio, out);
+    const customPath = target.pathProxy as ICustomPath2D;
+    const targetLine = this.target as ILine | IArea;
+    if (targetLine.cache || targetLine.cacheArea) {
+      this._onUpdateLineOrAreaWithCache(customPath, targetLine, end, ratio, out);
     } else {
       this._onUpdateLineWithoutCache(customPath, targetLine, end, ratio, out);
     }
     const targetAttrs = targetLine.attribute;
-    this.line.setAttributes({
+    target.setAttributes({
       stroke: targetAttrs.stroke,
-      ...this.line.attribute
+      ...target.attribute
     });
-    this.line.addUpdateBoundTag();
+    target.addUpdateBoundTag();
   }
 
   // 针对有cache的linear
-  protected _onUpdateLineWithCache(
+  protected _onUpdateLineOrAreaWithCache(
     customPath: ICustomPath2D,
-    line: ILine,
+    g: ILine | IArea,
     end: boolean,
     ratio: number,
     out: Record<string, any>
   ) {
-    let cache = line.cache;
-    if (!Array.isArray(cache)) {
-      cache = [cache];
+    customPath.clear();
+    if (g.type === 'line') {
+      let cache = g.cache;
+      if (!Array.isArray(cache)) {
+        cache = [cache];
+      }
+      const totalLen = cache.reduce((l: any, c: any) => l + c.getLength(), 0);
+      const curves: ICurve<IPoint>[] = [];
+      cache.forEach((c: any) => {
+        c.curves.forEach((ci: any) => curves.push(ci));
+      });
+      return this._updateCurves(customPath, curves, totalLen, ratio);
+    } else if (g.type === 'area') {
+      const cache = g.cacheArea as IAreaCacheItem;
+      const totalLen = cache.top.curves.reduce((a, b) => a + b.getLength(), 0);
+      return this._updateCurves(customPath, cache.top.curves, totalLen, ratio);
     }
+  }
 
-    const totalLen = cache.reduce((l, c) => l + c.getLength(), 0);
-    // 总需要绘制的长度
+  protected _updateCurves(customPath: ICustomPath2D, curves: ICurve<IPoint>[], totalLen: number, ratio: number) {
     const startLen = totalLen * ratio;
     const endLen = Math.min(startLen + this.params?.streamLength ?? 10, totalLen);
     let lastLen = 0;
-    customPath.clear();
-    const curves: ICurve<IPoint>[] = [];
-    cache.forEach(c => {
-      c.curves.forEach(ci => curves.push(ci));
-    });
     let start = false;
     for (let i = 0; i < curves.length; i++) {
       const curveItem = curves[i];

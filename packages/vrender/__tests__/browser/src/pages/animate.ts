@@ -246,7 +246,7 @@ export const page = () => {
       [160, 40],
       [200, 20],
       [240, 50]
-    ].map(item => ({ x: item[0], y: item[1] }));
+    ].map(item => ({ x: item[0], y: item[1], x1: null, y1: 300 }));
 
     const line = createLine({
       points,
@@ -255,11 +255,30 @@ export const page = () => {
       y: 300,
       stroke: 'red'
     });
-    line
+    // line
+    //   .animate()
+    //   .play(new StreamLight('', 0, 2000, 'quadIn', { streamLength: 30, attribute: { stroke: 'green', lineWidth: 2 } }))
+    //   .loop(Infinity);
+
+    const area = createArea({
+      points,
+      curveType: 'linear',
+      x: 300,
+      y: 300,
+      stroke: ['green', false, false, false],
+      lineWidth: 2,
+      fill: 'red'
+    });
+    area
       .animate()
-      .play(new StreamLight('', 0, 2000, 'quadIn', { streamLength: 30, attribute: { stroke: 'green', lineWidth: 2 } }))
+      .play(
+        new StreamLight('', 0, 2000, 'quadIn', {
+          streamLength: 30,
+          attribute: { stroke: 'pink', lineWidth: 2 }
+        })
+      )
       .loop(Infinity);
-    stage.defaultLayer.add(line as any);
+    stage.defaultLayer.add(area as any);
   });
 
   addCase('Meteor', container, stage => {

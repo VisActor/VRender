@@ -9,6 +9,6 @@ if (isBrowserEnv()) {
 } else if (isNodeEnv()) {
   loadNodeEnv(container);
 }
-
+export * from './register';
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';

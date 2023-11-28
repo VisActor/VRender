@@ -36,64 +36,6 @@ import { DefaultCanvasArc3dPicker } from './arc3d-picker';
 import { DefaultCanvasGroupPicker } from './group-picker';
 
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
-  // circle picker
-  bind(CanvasCirclePicker).to(DefaultCanvasCirclePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasCirclePicker);
-
-  // reat picker
-  bind(CanvasRectPicker).to(DefaultCanvasRectPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRectPicker);
-
-  // reat3d picker
-  bind(CanvasRect3dPicker).to(DefaultCanvasRect3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRect3dPicker);
-
-  // arc picker
-  bind(CanvasArcPicker).to(DefaultCanvasArcPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasArcPicker);
-
-  // area picker
-  bind(CanvasAreaPicker).to(DefaultCanvasAreaPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasAreaPicker);
-
-  // image picker
-  bind(CanvasImagePicker).to(DefaultCanvasImagePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasImagePicker);
-
-  // line picker
-  bind(CanvasLinePicker).to(DefaultCanvasLinePicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasLinePicker);
-
-  // path picker
-  bind(CanvasPathPicker).to(DefaultCanvasPathPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPathPicker);
-
-  // symbol picker
-  bind(CanvasSymbolPicker).to(DefaultCanvasSymbolPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasSymbolPicker);
-
-  // text picker
-  bind(CanvasTextPicker).to(DefaultCanvasTextPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasTextPicker);
-
-  // polygon picker
-  bind(CanvasPolygonPicker).to(DefaultCanvasPolygonPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPolygonPicker);
-
-  // pyramid3d picker
-  bind(CanvasPyramid3dPicker).to(DefaultCanvasPyramid3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasPyramid3dPicker);
-
-  // arc3d picker
-  bind(CanvasArc3dPicker).to(DefaultCanvasArc3dPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasArc3dPicker);
-
-  // richtext picker
-  bind(CanvasRichTextPicker).to(DefaultCanvasRichTextPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasRichTextPicker);
-  // glyph picker
-  bind(CanvasGlyphPicker).to(DefaultCanvasGlyphPicker).inSingletonScope();
-  bind(CanvasPickerContribution).toService(CanvasGlyphPicker);
   // group picker
   bind(CanvasGroupPicker).to(DefaultCanvasGroupPicker).inSingletonScope();
   bind(CanvasPickerContribution).toService(CanvasGroupPicker);

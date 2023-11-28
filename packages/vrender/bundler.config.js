@@ -2,7 +2,7 @@
  * @type {Partial<import('@visactor/bundler').Config>}
  */
 module.exports = {
-  formats: ['cjs', 'es', 'umd'],
+  formats: ['umd'],
   name: 'VRender',
   umdOutputFilename: 'index',
   external: [],

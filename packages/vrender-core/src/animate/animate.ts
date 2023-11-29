@@ -13,7 +13,7 @@ import type {
 } from '../interface';
 import { AnimateMode, AnimateStatus, AnimateStepType, AttributeUpdateType } from '../common/enums';
 import { Easing } from './easing';
-import { max } from '@visactor/vutils';
+import { Logger, max } from '@visactor/vutils';
 import { defaultTimeline } from './timeline';
 import { Generator } from '../common/generator';
 
@@ -920,7 +920,7 @@ export class SubAnimate implements ISubAnimate {
       lastStep = lastStep.prev;
     }
 
-    console.warn('未知错误，step中找不到属性');
+    Logger.getInstance().warn('未知错误，step中找不到属性');
     return step.props[name];
   }
 

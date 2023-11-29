@@ -1,5 +1,5 @@
 import type { Dict } from '@visactor/vutils';
-import { EventEmitter, get } from '@visactor/vutils';
+import { EventEmitter, Logger, get } from '@visactor/vutils';
 import { FederatedMouseEvent, FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { IEventTarget } from '../interface/event';
 import { WILDCARD } from './constant';
@@ -160,7 +160,7 @@ export class EventManager {
         mappers[i].fn(e, target);
       }
     } else {
-      console.warn(`[EventManager]: Event mapping not defined for ${e.type}`);
+      Logger.getInstance().warn(`[EventManager]: Event mapping not defined for ${e.type}`);
     }
   }
 
@@ -235,7 +235,7 @@ export class EventManager {
 
   protected onPointerDown = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -261,7 +261,7 @@ export class EventManager {
 
   protected onPointerMove = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -364,7 +364,7 @@ export class EventManager {
 
   protected onPointerOver = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -404,7 +404,7 @@ export class EventManager {
 
   protected onPointerOut = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -448,7 +448,7 @@ export class EventManager {
 
   protected onPointerUp = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -545,7 +545,7 @@ export class EventManager {
 
   protected onPointerUpOutside = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -579,7 +579,7 @@ export class EventManager {
 
   protected onWheel = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedWheelEvent)) {
-      console.warn('EventManager cannot map a non-wheel event as a wheel event');
+      Logger.getInstance().warn('EventManager cannot map a non-wheel event as a wheel event');
 
       return;
     }

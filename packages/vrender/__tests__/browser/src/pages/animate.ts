@@ -118,6 +118,7 @@ export const page = () => {
       line
         .animate()
         .wait(1000)
+        .from({ defined: true }, 1000, 'linear')
         .to({ opacity: 1 }, 1, 'linear')
         .to({ x: (line.attribute?.x ?? 0) > x ? -2000 : 2000 }, 500, 'linear')
         .runCb(() => {

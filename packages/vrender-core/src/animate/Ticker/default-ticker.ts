@@ -1,3 +1,4 @@
+import { Logger } from '@visactor/vutils';
 import type { ITickHandler, ITickerHandlerStatic, ITimeline, ITicker } from '../../interface';
 import { application } from '../../application';
 export class ManualTickHandler implements ITickHandler {
@@ -181,7 +182,7 @@ export class DefaultTicker implements ITicker {
         handler = new ManualTickHandler();
         break;
       default:
-        console.warn('非法的计时器模式');
+        Logger.getInstance().warn('非法的计时器模式');
         handler = new RAFTickHandler();
         break;
     }

@@ -106,6 +106,7 @@ export class Gesture extends EventEmitter {
 
   private tapCount;
   private lastTapTime;
+  private lastTapTarget: IEventTarget | null = null;
 
   constructor(element: IEventTarget, config: GestureConfig = {}) {
     super();
@@ -280,12 +281,13 @@ export class Gesture extends EventEmitter {
         }
       }
 
-      if (now - this.lastTapTime < this.config.tap.interval) {
+      if (now - this.lastTapTime < this.config.tap.interval && ev.target === this.lastTapTarget) {
         this.tapCount++;
       } else {
         this.tapCount = 1;
       }
       this.lastTapTime = now;
+      this.lastTapTarget = ev.target;
 
       if (this.tapCount === 1) {
         this.triggerEvent('tap', endEvent);

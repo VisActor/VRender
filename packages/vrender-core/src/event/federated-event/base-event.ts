@@ -1,5 +1,4 @@
-import { Point } from '@visactor/vutils';
-import type { IEventTarget } from '../../interface/event';
+import type { EventPoint, IEventTarget } from '../../interface/event';
 import type { EventManager } from '../event-manager';
 
 /**
@@ -101,7 +100,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   view: any;
 
   /** The coordinates of the event relative to the nearest DOM layer. This is a non-standard property. */
-  layer: Point = new Point();
+  layer: EventPoint = {
+    x: 0,
+    y: 0
+  };
   get layerX(): number {
     return this.layer.x;
   }
@@ -110,7 +112,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   /** The coordinates of the event relative to the DOM document. This is a non-standard property. */
-  page: Point = new Point();
+  page: EventPoint = {
+    x: 0,
+    y: 0
+  };
   get pageX(): number {
     return this.page.x;
   }
@@ -119,7 +124,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   /** The coordinates of the event relative to the canvas(origin is left-top). This is a non-standard property. */
-  canvas: Point = new Point();
+  canvas: EventPoint = {
+    x: 0,
+    y: 0
+  };
   get x(): number {
     return this.canvas.x;
   }
@@ -136,7 +144,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   /**
    * The coordinates of the event relative to the Viewport
    */
-  viewport: Point = new Point();
+  viewport: EventPoint = {
+    x: 0,
+    y: 0
+  };
   get viewX(): number {
     return this.viewport.x;
   }

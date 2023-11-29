@@ -1,9 +1,14 @@
 import type { INode } from './node-tree';
-import type { Dict, IBounds, IPointLike } from '@visactor/vutils';
+import type { Dict, IBounds } from '@visactor/vutils';
 import type { Cursor, IGraphicAttribute } from './graphic';
 import type { IDomRectLike, IEventElement } from './common';
 import type { ICanvas } from './canvas';
 import type { IGlobal } from './global';
+
+export type EventPoint = {
+  x: number;
+  y: number;
+};
 
 export interface IEventManager {
   rootTarget: IEventTarget;
@@ -42,18 +47,18 @@ export interface IFederatedEvent<N = Event> {
   manager?: IEventManager;
   detail: any;
   view: any;
-  layer: IPointLike;
+  layer: EventPoint;
   get layerX(): number;
   get layerY(): number;
-  page: IPointLike;
+  page: EventPoint;
   get pageX(): number;
   get pageY(): number;
-  canvas: IPointLike;
+  canvas: EventPoint;
   get x(): number;
   get y(): number;
   get canvasX(): number;
   get canvasY(): number;
-  viewport: IPointLike;
+  viewport: EventPoint;
   get viewX(): number;
   get viewY(): number;
   composedPath: () => IEventTarget[];
@@ -74,20 +79,20 @@ export interface IFederatedMouseEvent extends IFederatedEvent {
   metaKey: boolean;
   relatedTarget: EventTarget | null;
   shiftKey: boolean;
-  client: IPointLike;
+  client: EventPoint;
   get clientX(): number;
   get clientY(): number;
   detail: number;
-  movement: IPointLike;
+  movement: EventPoint;
   get movementX(): number;
   get movementY(): number;
-  offset: IPointLike;
+  offset: EventPoint;
   get offsetX(): number;
   get offsetY(): number;
-  global: IPointLike;
+  global: EventPoint;
   get globalX(): number;
   get globalY(): number;
-  screen: IPointLike;
+  screen: EventPoint;
   get screenX(): number;
   get screenY(): number;
   getModifierState: (key: string) => boolean;

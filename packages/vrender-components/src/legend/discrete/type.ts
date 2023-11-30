@@ -193,5 +193,10 @@ export type DiscreteLegendAttrs = {
      * 动画执行效果
      */
     animationEasing?: EasingType;
+    /**
+     * 分页器的显示位置，默认 'middle'
+     * @default 'middle'
+     */
+    position?: 'start' | 'middle' | 'end';
   };
 } & LegendBaseAttributes;

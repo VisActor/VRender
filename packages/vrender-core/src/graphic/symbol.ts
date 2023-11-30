@@ -12,6 +12,8 @@ import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TY
 import { XMLParser } from '../common/xml';
 import { isSvg } from '../common/xml/parser';
 
+const _tempBounds = new AABBBounds();
+
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
 /**
@@ -76,7 +78,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
         return null;
       }
       const path = isArray(svg.path) ? svg.path : [svg.path];
-      const b = new AABBBounds();
+      _tempBounds.clear();
       const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
       path.forEach((item: any) => {
         const cache = new CustomPath2D().fromString(item.d);
@@ -91,10 +93,10 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
           path: cache,
           attribute
         });
-        b.union(cache.bounds);
+        _tempBounds.union(cache.bounds);
       });
-      const width = b.width();
-      const height = b.height();
+      const width = _tempBounds.width();
+      const height = _tempBounds.height();
       // 规范化到1
       const maxWH = max(width, height);
       const scale = 1 / maxWH;

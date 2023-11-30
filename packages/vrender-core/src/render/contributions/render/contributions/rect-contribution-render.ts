@@ -12,13 +12,12 @@ import type {
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { createRectPath } from '../../../../common/shape/rect';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultRectRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -52,15 +51,20 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       return;
     }
     const {
-      width = rectAttribute.width,
-      height = rectAttribute.height,
       cornerRadius = rectAttribute.cornerRadius,
       opacity = rectAttribute.opacity,
       x: originX = rectAttribute.x,
       y: originY = rectAttribute.y,
       scaleX = rectAttribute.scaleX,
-      scaleY = rectAttribute.scaleY
+      scaleY = rectAttribute.scaleY,
+      x1,
+      y1
     } = rect.attribute;
+
+    let { width, height } = rect.attribute;
+
+    width = (width ?? x1 - x) || 0;
+    height = (height ?? y1 - y) || 0;
 
     const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
     const doStrokeInner = !!(innerBorder && innerBorder.stroke);
@@ -143,23 +147,6 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
   }
 }
 
-@injectable()
-export class DefaultRectBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements IRectRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
-export class DefaultRectTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements IRectRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
-
-@injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -196,7 +183,6 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   }
 }
 
-@injectable()
 export class SplitRectAfterRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -268,3 +254,9 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     context.stroke();
   }
 }
+
+export const defaultRectRenderContribution = new DefaultRectRenderContribution();
+export const splitRectBeforeRenderContribution = new SplitRectBeforeRenderContribution();
+export const splitRectAfterRenderContribution = new SplitRectAfterRenderContribution();
+export const defaultRectTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultRectBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

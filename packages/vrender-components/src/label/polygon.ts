@@ -2,6 +2,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
 import type { PolygonLabelAttrs } from './type';
 import { LabelBase } from './base';
+import type { ComponentOptions } from '../interface';
 
 export class PolygonLabel extends LabelBase<PolygonLabelAttrs> {
   name = 'polygon-label';
@@ -19,8 +20,8 @@ export class PolygonLabel extends LabelBase<PolygonLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: PolygonLabelAttrs) {
-    super(merge({}, PolygonLabel.defaultAttributes, attributes));
+  constructor(attributes: PolygonLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, PolygonLabel.defaultAttributes, attributes));
   }
 
   protected labeling(

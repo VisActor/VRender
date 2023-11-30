@@ -23,6 +23,7 @@ import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
 
 export class MarkPoint extends Marker<MarkPointAttrs> {
   name = 'markPoint';
@@ -34,8 +35,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   private _decorativeLine!: ILine;
 
-  constructor(attributes: MarkPointAttrs) {
-    super(merge({}, MarkPoint.defaultAttributes, attributes));
+  constructor(attributes: MarkPointAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkPoint.defaultAttributes, attributes));
   }
 
   protected setLabelPos() {

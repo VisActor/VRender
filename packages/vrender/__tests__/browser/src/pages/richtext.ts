@@ -13,6 +13,7 @@ export const page = () => {
       visible: true,
       fontSize: 26,
       width: 0,
+      background: 'green',
       // "textAlign": "center",
       textConfig: [
         {

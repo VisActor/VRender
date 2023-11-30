@@ -5,18 +5,31 @@ import { addShapesToStage, colorPools } from '../utils';
 // container.load(roughModule);
 export const page = () => {
   const graphics: IGraphic[] = [];
-  graphics.push(
-    createRect({
-      x: 100,
-      y: 100,
-      width: 20,
-      height: 100,
-      fill: colorPools[10],
-      stroke: [colorPools[0], colorPools[0], colorPools[0], colorPools[0]],
-      cornerRadius: 10,
-      lineWidth: 5
-    })
-  );
+  // graphics.push(
+  //   createRect({
+  //     x: 100,
+  //     y: 100,
+  //     width: 20,
+  //     height: 100,
+  //     fill: colorPools[10],
+  //     stroke: [colorPools[0], colorPools[0], colorPools[0], colorPools[0]],
+  //     cornerRadius: 10,
+  //     lineWidth: 5
+  //   })
+  // );
+
+  const rect = createRect({
+    x: 120,
+    y: 200,
+    x1: 100,
+    y1: 100,
+    fill: 'red',
+    // stroke: [colorPools[0], colorPools[0], colorPools[0], colorPools[0]],
+    _debug_bounds: true,
+    cornerRadius: 10,
+    lineWidth: 5
+  });
+  graphics.push(rect);
 
   const r = createRect({
     x: 300,
@@ -40,6 +53,7 @@ export const page = () => {
     cornerRadius: [5, 10, 15, 20],
     lineWidth: 5
   });
+
   graphics.push(r);
   r.animate().to({ scaleX: 2, scaleY: 2 }, 1000, 'linear');
 
@@ -60,7 +74,7 @@ export const page = () => {
     canvas: 'main',
     autoRender: true
   });
-
+  rect.addEventListener('pointerenter', () => console.log('abc'));
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });

@@ -8,6 +8,7 @@ import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '
 import { AbstractComponent } from '../core/base';
 
 import type { ScrollBarAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 type ComponentBounds = {
   x1: number;
@@ -58,8 +59,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   private _viewPosition!: { x: number; y: number };
   private _sliderSize!: number;
 
-  constructor(attributes: ScrollBarAttributes) {
-    super(merge({}, ScrollBar.defaultAttributes, attributes));
+  constructor(attributes: ScrollBarAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, ScrollBar.defaultAttributes, attributes));
   }
 
   setScrollRange(range: [number, number], render = true) {

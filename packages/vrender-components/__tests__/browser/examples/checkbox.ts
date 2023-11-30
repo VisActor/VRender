@@ -2,6 +2,7 @@ import '@visactor/vrender';
 import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
 import { CheckBox } from '../../../src';
+import { createLine } from '@visactor/vrender-core';
 
 export function run() {
   const checkboxs: CheckBox[] = [];

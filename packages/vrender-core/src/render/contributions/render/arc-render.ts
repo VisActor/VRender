@@ -35,6 +35,11 @@ import { ArcRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRender } from './base-render';
+import {
+  defaultArcBackgroundRenderContribution,
+  defaultArcRenderContribution,
+  defaultArcTextureRenderContribution
+} from './contributions';
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
  * Copyright 2010-2022 Mike Bostock
@@ -63,6 +68,11 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     protected readonly arcRenderContribitions: IContributionProvider<IArcRenderContribution>
   ) {
     super();
+    this.builtinContributions = [
+      defaultArcRenderContribution,
+      defaultArcBackgroundRenderContribution,
+      defaultArcTextureRenderContribution
+    ];
     this.init(arcRenderContribitions);
   }
 

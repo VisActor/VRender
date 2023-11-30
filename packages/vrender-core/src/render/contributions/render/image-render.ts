@@ -22,6 +22,7 @@ import { BaseRenderContributionTime } from '../../../common/enums';
 import { isArray } from '@visactor/vutils';
 import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
+import { defaultImageBackgroundRenderContribution } from './contributions';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
@@ -36,6 +37,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultImageBackgroundRenderContribution];
     this.init(imageRenderContribitions);
   }
 

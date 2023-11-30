@@ -103,6 +103,7 @@ export abstract class BaseCanvas implements ICanvas {
       dpr = DefaultConfig.DPR,
       x,
       y,
+      id,
       canvasControled = true
     } = params;
     const offsetX = 0;
@@ -119,7 +120,10 @@ export abstract class BaseCanvas implements ICanvas {
     this._displayHeight = height;
     this._dpr = dpr;
     this._nativeCanvas = nativeCanvas;
-    this._id = nativeCanvas.id;
+    this._id = nativeCanvas.id ?? id;
+    if (id) {
+      nativeCanvas.id = id;
+    }
 
     this.init(params);
   }

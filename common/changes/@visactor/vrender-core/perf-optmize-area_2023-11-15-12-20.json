@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "perf: area support drawLinearAreaHighPerformance, closed #672",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

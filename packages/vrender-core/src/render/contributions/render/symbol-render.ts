@@ -22,6 +22,11 @@ import { BaseRender } from './base-render';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { SymbolRenderContribution } from './contributions/constants';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
+import {
+  defaultSymbolBackgroundRenderContribution,
+  defaultSymbolRenderContribution,
+  defaultSymbolTextureRenderContribution
+} from './contributions';
 
 @injectable()
 export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IGraphicRender {
@@ -34,6 +39,11 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     protected readonly symbolRenderContribitions: IContributionProvider<ISymbolRenderContribution>
   ) {
     super();
+    this.builtinContributions = [
+      defaultSymbolRenderContribution,
+      defaultSymbolBackgroundRenderContribution,
+      defaultSymbolTextureRenderContribution
+    ];
     this.init(symbolRenderContribitions);
   }
 

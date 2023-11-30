@@ -1,4 +1,4 @@
-import { injectable, inject, postConstruct, named, multiInject } from '../../../common/inversify-lite';
+import { injectable, inject, named, multiInject } from '../../../common/inversify-lite';
 import type {
   IContext2d,
   MaybePromise,
@@ -18,7 +18,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
-import type { IAABBBounds, IBounds } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IMatrixLike } from '@visactor/vutils';
 import { Bounds, Logger, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
@@ -26,7 +26,9 @@ import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './sy
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
-import { VGlobal } from '../../../constants';
+import { boundsAllocate } from '../../../allocator/bounds-allocate';
+import { matrixAllocate } from '../../../allocator/matrix-allocate';
+import { application } from '../../../application';
 
 /**
  * 默认的渲染contribution，基于树状结构针对图元的渲染
@@ -38,18 +40,20 @@ export class DefaultDrawContribution implements IDrawContribution {
   declare styleRenderMap: Map<string, Map<number, IGraphicRender>>;
   declare dirtyBounds: IBounds;
   declare backupDirtyBounds: IBounds;
+  // 是否使用dirtyBounds
+  declare useDirtyBounds: boolean;
   declare currentRenderService: IRenderService;
   declare InterceptorContributions: IDrawItemInterceptorContribution[];
 
-  @inject(VGlobal) global: IGlobal;
+  declare global: IGlobal;
+  declare layerService: ILayerService;
 
   constructor(
     // @inject(ContributionProvider)
     // @named(GraphicRender)
     // protected readonly contributions: ContributionProvider<IGraphicRender>,
     @multiInject(GraphicRender) protected readonly contributions: IGraphicRender[],
-    @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
-    @inject(LayerService) protected readonly layerService: ILayerService, // 默认的polygonRender
+    // @inject(RenderSelector) protected readonly renderSelector: IRenderSelector, // 根据图元类型选择对应的renderItem进行渲染
     // 拦截器
     @inject(ContributionProvider)
     @named(DrawItemInterceptor)
@@ -60,9 +64,11 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.styleRenderMap = new Map();
     this.dirtyBounds = new Bounds();
     this.backupDirtyBounds = new Bounds();
+    this.global = application.global;
+    this.layerService = application.layerService;
+    this.init();
   }
 
-  @postConstruct()
   init() {
     this.contributions.forEach(item => {
       if (item.style) {
@@ -78,7 +84,18 @@ export class DefaultDrawContribution implements IDrawContribution {
       .sort((a, b) => a.order - b.order);
   }
 
+  prepareForDraw(renderService: IRenderService, drawContext: IDrawContext) {
+    // 有dirtyBounds用dirtyBounds
+    if (drawContext.updateBounds) {
+      this.useDirtyBounds = true;
+    } else {
+      // 没有的话，看看是否需要跳过outRange的渲染
+      this.useDirtyBounds = !drawContext.stage.params.optimize.disableCheckGraphicWidthOutRange;
+    }
+  }
+
   draw(renderService: IRenderService, drawContext: IDrawContext): MaybePromise<void> {
+    this.prepareForDraw(renderService, drawContext);
     drawContext.drawContribution = this;
     this.currentRenderMap = this.styleRenderMap.get(drawContext.renderStyle) || this.defaultRenderMap;
     // this.startAtId = drawParams.startAtId;
@@ -147,7 +164,7 @@ export class DefaultDrawContribution implements IDrawContribution {
         return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
       })
       .forEach(group => {
-        this.renderGroup(group as IGroup, drawContext);
+        this.renderGroup(group as IGroup, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0));
       });
 
     context.restore();
@@ -176,7 +193,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
 
-  renderGroup(group: IGroup, drawContext: IDrawContext, skipSort?: boolean) {
+  renderGroup(group: IGroup, drawContext: IDrawContext, parentMatrix: IMatrix, skipSort?: boolean) {
     if (drawContext.break || group.attribute.visibleAll === false) {
       return;
     }
@@ -186,15 +203,21 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    if (!isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
+    if (this.useDirtyBounds && !isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
       return;
     }
 
-    const tempBounds = this.dirtyBounds.clone();
+    let nextM: IMatrix = parentMatrix;
+    let tempBounds: IBounds;
 
-    // 变换dirtyBounds
-    const m = group.globalTransMatrix.getInverse();
-    this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(m);
+    if (this.useDirtyBounds) {
+      tempBounds = boundsAllocate.allocateByObj(this.dirtyBounds);
+      // 变换dirtyBounds
+      const gm = group.transMatrix;
+      nextM = matrixAllocate.allocateByObj(parentMatrix).multiply(gm.a, gm.b, gm.c, gm.d, gm.e, gm.f);
+      // const m = group.globalTransMatrix.getInverse();
+      this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
+    }
 
     this.renderItem(group, drawContext, {
       drawingCb: () => {
@@ -204,7 +227,7 @@ export class DefaultDrawContribution implements IDrawContribution {
                 return;
               }
               if (item.isContainer) {
-                this.renderGroup(item as IGroup, drawContext);
+                this.renderGroup(item as IGroup, drawContext, nextM);
               } else {
                 this.renderItem(item, drawContext);
               }
@@ -217,7 +240,7 @@ export class DefaultDrawContribution implements IDrawContribution {
                   return;
                 }
                 if (item.isContainer) {
-                  this.renderGroup(item as IGroup, drawContext);
+                  this.renderGroup(item as IGroup, drawContext, nextM);
                 } else {
                   this.renderItem(item, drawContext);
                 }
@@ -228,7 +251,11 @@ export class DefaultDrawContribution implements IDrawContribution {
       }
     });
 
-    this.dirtyBounds.copy(tempBounds);
+    if (this.useDirtyBounds) {
+      this.dirtyBounds.copy(tempBounds);
+      boundsAllocate.free(tempBounds);
+      matrixAllocate.free(nextM);
+    }
   }
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {
@@ -291,7 +318,8 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   getRenderContribution(graphic: IGraphic): IGraphicRender | null {
-    let renderer = this.renderSelector.selector(graphic);
+    // let renderer = this.renderSelector.selector(graphic);
+    let renderer;
     if (!renderer) {
       renderer = this.selectRenderByNumberType(graphic.numberType);
     }
@@ -306,10 +334,11 @@ export class DefaultDrawContribution implements IDrawContribution {
     if (this.InterceptorContributions.length) {
       for (let i = 0; i < this.InterceptorContributions.length; i++) {
         const drawContribution = this.InterceptorContributions[i];
-        if (drawContribution.beforeDrawItem) {
-          if (drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)) {
-            return;
-          }
+        if (
+          drawContribution.beforeDrawItem &&
+          drawContribution.beforeDrawItem(graphic, this.currentRenderService, drawContext, this, params)
+        ) {
+          return;
         }
       }
     }
@@ -334,7 +363,7 @@ export class DefaultDrawContribution implements IDrawContribution {
       }
     }
 
-    if (!(graphic.isContainer || isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false))) {
+    if (this.useDirtyBounds && !(graphic.isContainer || isRectIntersect(graphic.AABBBounds, this.dirtyBounds, false))) {
       retrans && this.dirtyBounds.copy(tempBounds);
       return;
     }

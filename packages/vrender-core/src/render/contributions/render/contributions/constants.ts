@@ -8,4 +8,5 @@ export const PolygonRenderContribution = Symbol.for('PolygonRenderContribution')
 export const RectRenderContribution = Symbol.for('RectRenderContribution');
 export const SymbolRenderContribution = Symbol.for('SymbolRenderContribution');
 export const TextRenderContribution = Symbol.for('TextRenderContribution');
+export const CommonRenderContribution = Symbol.for('CommonRenderContribution');
 export const InteractiveSubRenderContribution = Symbol.for('InteractiveSubRenderContribution');

@@ -5,8 +5,7 @@ import { bindContributionProviderNoSingletonScope } from '../common/contribution
 import { AutoEnablePlugins } from './constants';
 
 export default new ContainerModule(bind => {
-  bind(DefaultPluginService).toSelf();
-  bind(PluginService).toService(DefaultPluginService);
+  bind(PluginService).to(DefaultPluginService);
 
   // image 渲染器注入contributions
   bindContributionProviderNoSingletonScope(bind, AutoEnablePlugins);

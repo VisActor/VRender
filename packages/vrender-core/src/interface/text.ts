@@ -30,14 +30,16 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
     options: TextOptionsType,
     width: number,
     suffix: string,
-    wordBreak: boolean
+    wordBreak: boolean,
+    position: 'start' | 'end' | 'middle'
   ) => { str: string; width: number };
   clipTextWithSuffixVertical: (
     verticalList: { text: string; width?: number; direction: number }[],
     options: TextOptionsType,
     width: number,
     suffix: string,
-    wordBreak: boolean
+    wordBreak: boolean,
+    suffixPosition: 'start' | 'end' | 'middle'
   ) => { verticalList: { text: string; width?: number; direction: number }[]; width: number };
   measureText: (text: string, options: TextOptionsType) => { width: number };
 }

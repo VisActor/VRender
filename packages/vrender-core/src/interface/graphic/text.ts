@@ -52,6 +52,7 @@ export type ITextAttribute = {
   whiteSpace: 'normal' | 'no-wrap';
   heightLimit?: number;
   lineClamp?: number;
+  suffixPosition: 'start' | 'end' | 'middle';
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

@@ -52,11 +52,29 @@ export const page = () => {
     x: 100,
     y: 100,
     fontFamily: 'Arial',
-    text: 'aaa这是aaa',
-    fill: 'red'
+    fontSize: 14,
+    fontWeight: null,
+    fill: '#000',
+    textAlign: 'left',
+    textBaseline: 'top',
+    lineHeight: 14,
+    ellipsis: '...',
+    _debug_bounds: true,
+    text: '你就是我的MR. Right',
+    maxLineWidth: 100,
+    direction: 'vertical',
+    suffixPosition: 'middle',
+    autoWrapText: true,
+    wordBreak: 'break-word',
+    heightLimit: 20,
+    pickable: false,
+    dx: 0,
+    x: 16,
+    y: 12
   });
   console.log(t.AABBBounds);
   graphics.push(t);
+  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
   graphics.push(
     createText({

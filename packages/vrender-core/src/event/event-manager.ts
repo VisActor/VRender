@@ -1,5 +1,5 @@
 import type { Dict } from '@visactor/vutils';
-import { EventEmitter, get } from '@visactor/vutils';
+import { EventEmitter, Logger, get } from '@visactor/vutils';
 import { FederatedMouseEvent, FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { IEventTarget } from '../interface/event';
 import { WILDCARD } from './constant';
@@ -160,7 +160,7 @@ export class EventManager {
         mappers[i].fn(e, target);
       }
     } else {
-      console.warn(`[EventManager]: Event mapping not defined for ${e.type}`);
+      Logger.getInstance().warn(`[EventManager]: Event mapping not defined for ${e.type}`);
     }
   }
 
@@ -235,7 +235,7 @@ export class EventManager {
 
   protected onPointerDown = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -261,7 +261,7 @@ export class EventManager {
 
   protected onPointerMove = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -364,7 +364,7 @@ export class EventManager {
 
   protected onPointerOver = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -404,7 +404,7 @@ export class EventManager {
 
   protected onPointerOut = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -448,7 +448,7 @@ export class EventManager {
 
   protected onPointerUp = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -549,7 +549,7 @@ export class EventManager {
 
   protected onPointerUpOutside = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedPointerEvent)) {
-      console.warn('EventManager cannot map a non-pointer event as a pointer event');
+      Logger.getInstance().warn('EventManager cannot map a non-pointer event as a pointer event');
 
       return;
     }
@@ -583,7 +583,7 @@ export class EventManager {
 
   protected onWheel = (from: FederatedEvent, target: IEventTarget) => {
     if (!(from instanceof FederatedWheelEvent)) {
-      console.warn('EventManager cannot map a non-wheel event as a wheel event');
+      Logger.getInstance().warn('EventManager cannot map a non-wheel event as a wheel event');
 
       return;
     }
@@ -702,17 +702,14 @@ export class EventManager {
     to.altKey = from.altKey;
     to.button = from.button;
     to.buttons = from.buttons;
-    to.client.copyFrom(from.client);
     to.ctrlKey = from.ctrlKey;
     to.shiftKey = from.shiftKey;
     to.metaKey = from.metaKey;
-    to.movement.copyFrom(from.movement);
 
-    to.canvas.copyFrom(from.canvas);
-    to.screen.copyFrom(from.screen);
-    to.global.copyFrom(from.global);
-    to.offset.copyFrom(from.offset);
-    to.viewport.copyFrom(from.viewport);
+    ['client', 'movement', 'canvas', 'screen', 'global', 'offset', 'viewport'].forEach(key => {
+      to[key].x = from[key].x;
+      to[key].y = from[key].y;
+    });
   }
 
   copyData(from: FederatedEvent, to: FederatedEvent): void {
@@ -723,8 +720,13 @@ export class EventManager {
     to.detail = from.detail;
     to.view = from.view;
     to.which = from.which;
-    to.layer.copyFrom(from.layer);
-    to.page.copyFrom(from.page);
+
+    to.layer.x = from.layer.x;
+    to.layer.y = from.layer.y;
+
+    to.page.x = from.page.x;
+    to.page.y = from.page.y;
+
     (to as any).pickParams = (from as any).pickParams;
   }
 

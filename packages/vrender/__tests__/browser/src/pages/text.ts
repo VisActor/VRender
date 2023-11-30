@@ -127,7 +127,7 @@ export const page = () => {
   graphics.push(rect);
 
   const stage = createStage({
-    canvas: 'main',
+    container: 'container',
     autoRender: true
   });
 

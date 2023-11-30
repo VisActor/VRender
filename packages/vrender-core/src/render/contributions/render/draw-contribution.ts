@@ -19,7 +19,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
 import type { IAABBBounds, IBounds } from '@visactor/vutils';
-import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
+import { Bounds, Logger, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
@@ -366,7 +366,7 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
   // 根据type选择对应的render
   protected selectRenderByType(type?: string): IGraphicRender | null {
-    console.warn('未知错误，不应该走到这里');
+    Logger.getInstance().warn('未知错误，不应该走到这里');
     return null;
   }
   // 根据type选择对应的render

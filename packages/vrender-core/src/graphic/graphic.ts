@@ -1203,6 +1203,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
         const nextStepVal = nextProps[key];
         const lastStepVal = (lastProps && lastProps[key]) ?? subAnimate.getLastPropByName(key, step);
+        if (nextStepVal == null || lastStepVal == null) {
+          // 用户直接调用stepInterpolate可能会走进来，如果传入的参数出现null或者undefined，直接赋值最终的值
+          nextAttributes[key] = nextStepVal;
+          return;
+        }
         let match: boolean;
         match =
           animate.interpolateFunc && animate.interpolateFunc(key, ratio, lastStepVal, nextStepVal, nextAttributes);

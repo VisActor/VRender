@@ -16,7 +16,6 @@ import { isNumber, isObject } from '@visactor/vutils';
 import { parsePadding } from '../../../../common/utils';
 import { createRectPath } from '../../../../common/shape/rect';
 
-@injectable()
 export class DefaultImageBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution
   implements IImageRenderContribution
@@ -134,3 +133,5 @@ function getActualPosition(graphic: IGraphic) {
     height
   };
 }
+
+export const defaultImageBackgroundRenderContribution = new DefaultImageBackgroundRenderContribution();

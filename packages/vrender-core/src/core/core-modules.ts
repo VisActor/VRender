@@ -8,17 +8,12 @@ import { VGlobal } from '../constants';
 
 export default new ContainerModule(bind => {
   // global对象，全局单例模式
-  bind(DefaultGlobal).toSelf().inSingletonScope();
-  bind(VGlobal).toService(DefaultGlobal);
+  bind(VGlobal).to(DefaultGlobal).inSingletonScope();
 
-  bind(DefaultWindow).to(DefaultWindow);
-  bind(VWindow).toService(DefaultWindow);
-  bind(DefaultGraphicUtil).toSelf().inSingletonScope();
-  bind(GraphicUtil).toService(DefaultGraphicUtil);
-  bind(DefaultTransformUtil).toSelf().inSingletonScope();
-  bind(TransformUtil).toService(DefaultTransformUtil);
-  bind(DefaultLayerService).toSelf().inSingletonScope();
-  bind(LayerService).toService(DefaultLayerService);
+  bind(VWindow).to(DefaultWindow);
+  bind(GraphicUtil).to(DefaultGraphicUtil).inSingletonScope();
+  bind(TransformUtil).to(DefaultTransformUtil).inSingletonScope();
+  bind(LayerService).to(DefaultLayerService).inSingletonScope();
 
   // bind(Stage).to(DefaultStage);
   // bind<(params: Partial<IStageParams>) => IStage>(StageFactory).toFactory<IStage>((context: interface.Context) => {

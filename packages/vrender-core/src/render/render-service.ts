@@ -25,6 +25,11 @@ export class DefaultRenderService implements IRenderService {
 
   // 渲染前准备工作，计算bounds等逻辑
   prepare(updateBounds: boolean): void {
+    // 如果不需要计算Bounds，那么transMatrix也不需要计算
+    // TODO 后期可能存在依赖transMatrix的插件，但目前不存在
+    if (!updateBounds) {
+      return;
+    }
     this.renderTreeRoots.forEach(g => {
       this._prepare(g, updateBounds);
     });

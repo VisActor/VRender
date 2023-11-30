@@ -1,4 +1,4 @@
-import { inject, injectable, postConstruct } from '../common/inversify-lite';
+import { inject, injectable } from '../common/inversify-lite';
 import type { IBoundsLike } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type {
@@ -12,7 +12,7 @@ import type {
 } from '../interface';
 import { container } from '../container';
 import { SyncHook } from '../tapable';
-import { VGlobal } from '../constants';
+import { application } from '../application';
 
 export const VWindow = Symbol.for('VWindow');
 
@@ -69,17 +69,17 @@ export class DefaultWindow implements IWindow {
   declare mainCanvas: ICanvas;
   declare layerCanvas: ICanvas[];
   declare actived: boolean;
+  declare global: IGlobal;
   get dpr(): number {
     return this._handler.getDpr();
   }
 
-  constructor(
-    @inject(VGlobal) public readonly global: IGlobal // @inject(ContributionProvider) // @named(WindowHandlerContribution) // protected readonly contributions: ContributionProvider<IWindowHandlerContribution>
-  ) {
+  constructor() {
     this._uid = Generator.GenAutoIncrementId();
+    this.global = application.global;
+    this.postInit();
   }
 
-  @postConstruct()
   protected postInit() {
     this.global.hooks.onSetEnv.tap('window', () => {
       this.active();
@@ -98,7 +98,6 @@ export class DefaultWindow implements IWindow {
     //   handlerContribution.configure(this, this.global);
     // });
     this.actived = true;
-    this._handler;
   }
 
   get style(): CSSStyleDeclaration | Record<string, any> {

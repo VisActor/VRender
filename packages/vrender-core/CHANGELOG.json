@@ -2,6 +2,38 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-core_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support disableCheckGraphicWidthOutRange to skip check if graphic out of range"
+          },
+          {
+            "comment": "feat: rect support x1 and y1"
+          },
+          {
+            "comment": "feat: don't rewrite global reflect"
+          },
+          {
+            "comment": "feat: text support background, closed #711"
+          },
+          {
+            "comment": "perf: area support drawLinearAreaHighPerformance, closed #672"
+          },
+          {
+            "comment": "refactor: refact inversify completely, closed #657"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: optmize bounds performance"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.18",
       "tag": "@visactor/vrender-core_v0.16.18",
       "date": "Thu, 30 Nov 2023 09:40:58 GMT",

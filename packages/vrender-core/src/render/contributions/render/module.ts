@@ -4,7 +4,7 @@ import { DefaultCanvasCircleRender } from './circle-render';
 import { DefaultCanvasRectRender } from './rect-render';
 import { DefaultCanvasArcRender } from './arc-render';
 import { DefaultDrawContribution } from './draw-contribution';
-import { DefaultRenderSelector } from './render-slector';
+// import { DefaultRenderSelector } from './render-slector';
 import { DefaultCanvasSymbolRender } from './symbol-render';
 import { DefaultCanvasTextRender } from './text-render';
 import { DefaultCanvasPathRender } from './path-render';
@@ -47,45 +47,10 @@ import { DefaultCanvasRect3dRender } from './rect3d-render';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { DefaultCanvasRichTextRender } from './richtext-render';
-import {
-  DefaultRectBackgroundRenderContribution,
-  DefaultRectRenderContribution,
-  DefaultRectTextureRenderContribution,
-  SplitRectAfterRenderContribution,
-  SplitRectBeforeRenderContribution
-} from './contributions/rect-contribution-render';
-import {
-  DefaultSymbolBackgroundRenderContribution,
-  DefaultSymbolRenderContribution,
-  DefaultSymbolTextureRenderContribution
-} from './contributions/symbol-contribution-render';
-import {
-  DefaultCircleBackgroundRenderContribution,
-  DefaultCircleRenderContribution,
-  DefaultCircleTextureRenderContribution
-} from './contributions/circle-contribution-render';
-import {
-  DefaultArcBackgroundRenderContribution,
-  DefaultArcRenderContribution,
-  DefaultArcTextureRenderContribution
-} from './contributions/arc-contribution-render';
+import { DefaultSymbolRenderContribution } from './contributions/symbol-contribution-render';
 import { DefaultCanvasGlyphRender } from './glyph-render';
-import { DefaultImageBackgroundRenderContribution } from './contributions/image-contribution-render';
-import { DefaultGroupBackgroundRenderContribution } from './contributions/group-contribution-render';
 import { DefaultCanvasArc3DRender } from './arc3d-render';
 import { DefaultCanvasPyramid3dRender } from './pyramid3d-render';
-import {
-  DefaultPolygonBackgroundRenderContribution,
-  DefaultPolygonTextureRenderContribution
-} from './contributions/polygon-contribution-render';
-import {
-  DefaultPathBackgroundRenderContribution,
-  DefaultPathTextureRenderContribution
-} from './contributions/path-contribution-render';
-import {
-  DefaultAreaBackgroundRenderContribution,
-  DefaultAreaTextureRenderContribution
-} from './contributions/area-contribution-render';
 import {
   RectRenderContribution,
   CircleRenderContribution,
@@ -99,108 +64,78 @@ import {
   SymbolRenderContribution,
   InteractiveSubRenderContribution
 } from './contributions/constants';
-import { DefaultBaseInteractiveRenderContribution } from './contributions';
+import {
+  DefaultBaseBackgroundRenderContribution,
+  DefaultBaseInteractiveRenderContribution,
+  DefaultBaseTextureRenderContribution
+} from './contributions';
 
 export default new ContainerModule(bind => {
-  bind(DefaultDrawContribution).toSelf();
-  bind(DrawContribution).toService(DefaultDrawContribution);
-  bind(DefaultIncrementalDrawContribution).toSelf();
-  bind(IncrementalDrawContribution).toService(DefaultIncrementalDrawContribution);
+  bind(DefaultBaseBackgroundRenderContribution).toSelf().inSingletonScope();
+  bind(DefaultBaseTextureRenderContribution).toSelf().inSingletonScope();
 
-  bind(DefaultRenderSelector).toSelf();
-  bind(RenderSelector).toService(DefaultRenderSelector);
+  bind(DrawContribution).to(DefaultDrawContribution);
+  bind(IncrementalDrawContribution).to(DefaultIncrementalDrawContribution);
+
+  // bind(RenderSelector).to(DefaultRenderSelector).inSingletonScope();
 
   // circle 渲染器
   bind(DefaultCanvasCircleRender).toSelf().inSingletonScope();
-  bind(CircleRender).to(DefaultCanvasCircleRender);
-  bind(GraphicRender).to(DefaultCanvasCircleRender);
+  bind(CircleRender).to(DefaultCanvasCircleRender).inSingletonScope();
+  bind(GraphicRender).toService(CircleRender);
 
   // circle 渲染器注入contributions
-  bind(DefaultCircleRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultCircleBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultCircleTextureRenderContribution).toSelf().inSingletonScope();
-  bind(CircleRenderContribution).toService(DefaultCircleRenderContribution);
-  bind(CircleRenderContribution).toService(DefaultCircleBackgroundRenderContribution);
-  bind(CircleRenderContribution).toService(DefaultCircleTextureRenderContribution);
   bindContributionProvider(bind, CircleRenderContribution);
 
   // rect 渲染器
   bind(DefaultCanvasRectRender).toSelf().inSingletonScope();
-  bind(RectRender).to(DefaultCanvasRectRender);
-  bind(GraphicRender).to(DefaultCanvasRectRender);
+  bind(RectRender).to(DefaultCanvasRectRender).inSingletonScope();
+  bind(GraphicRender).toService(RectRender);
 
   // rect3d 渲染器
-  bind(DefaultCanvasRect3dRender).toSelf().inSingletonScope();
-  bind(Rect3DRender).toService(DefaultCanvasRect3dRender);
+  bind(Rect3DRender).to(DefaultCanvasRect3dRender).inSingletonScope();
   bind(GraphicRender).toService(Rect3DRender);
+
   // rect 渲染器注入contributions
-  bind(DefaultRectRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultRectBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultRectTextureRenderContribution).toSelf().inSingletonScope();
-  bind(SplitRectBeforeRenderContribution).toSelf().inSingletonScope();
-  bind(SplitRectAfterRenderContribution).toSelf().inSingletonScope();
-  bind(RectRenderContribution).toService(DefaultRectRenderContribution);
-  bind(RectRenderContribution).toService(DefaultRectBackgroundRenderContribution);
-  bind(RectRenderContribution).toService(DefaultRectTextureRenderContribution);
-  bind(RectRenderContribution).toService(SplitRectBeforeRenderContribution);
-  bind(RectRenderContribution).toService(SplitRectAfterRenderContribution);
   bindContributionProvider(bind, RectRenderContribution);
 
   // text 渲染器
-  bind(DefaultCanvasTextRender).toSelf().inSingletonScope();
-  bind(TextRender).to(DefaultCanvasTextRender);
-  bind(GraphicRender).to(DefaultCanvasTextRender);
+  bind(TextRender).to(DefaultCanvasTextRender).inSingletonScope();
+  bind(GraphicRender).toService(TextRender);
   bindContributionProvider(bind, TextRenderContribution);
 
   // path 渲染器
   bind(DefaultCanvasPathRender).toSelf().inSingletonScope();
-  bind(PathRender).to(DefaultCanvasPathRender);
-  bind(GraphicRender).to(DefaultCanvasPathRender);
+  bind(PathRender).to(DefaultCanvasPathRender).inSingletonScope();
+  bind(GraphicRender).toService(PathRender);
 
   // path 渲染器注入contributions
-  bind(DefaultPathBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultPathTextureRenderContribution).toSelf().inSingletonScope();
-  bind(PathRenderContribution).toService(DefaultPathBackgroundRenderContribution);
-  bind(PathRenderContribution).toService(DefaultPathTextureRenderContribution);
   bindContributionProvider(bind, PathRenderContribution);
 
   // symbol渲染器
   bind(DefaultCanvasSymbolRender).toSelf().inSingletonScope();
-  bind(SymbolRender).to(DefaultCanvasSymbolRender);
-  bind(GraphicRender).to(DefaultCanvasSymbolRender);
+  bind(SymbolRender).to(DefaultCanvasSymbolRender).inSingletonScope();
+  bind(GraphicRender).toService(SymbolRender);
 
   // symbol 渲染器注入contributions
-  bind(DefaultSymbolRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultSymbolBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultSymbolTextureRenderContribution).toSelf().inSingletonScope();
-  bind(SymbolRenderContribution).toService(DefaultSymbolRenderContribution);
-  bind(SymbolRenderContribution).toService(DefaultSymbolBackgroundRenderContribution);
-  bind(SymbolRenderContribution).toService(DefaultSymbolTextureRenderContribution);
   bindContributionProvider(bind, SymbolRenderContribution);
 
   // arc 渲染器
   bind(DefaultCanvasArcRender).toSelf().inSingletonScope();
-  bind(ArcRender).to(DefaultCanvasArcRender);
-  bind(GraphicRender).to(DefaultCanvasArcRender);
+  bind(ArcRender).to(DefaultCanvasArcRender).inSingletonScope();
+  bind(GraphicRender).toService(ArcRender);
 
   // arc3d 渲染器
-  bind(DefaultCanvasArc3DRender).toSelf().inSingletonScope();
-  bind(Arc3dRender).toService(DefaultCanvasArc3DRender);
+  bind(Arc3dRender).to(DefaultCanvasArc3DRender).inSingletonScope();
   bind(GraphicRender).toService(Arc3dRender);
 
   // arc 渲染器注入contributions
-  bind(DefaultArcRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultArcBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultArcTextureRenderContribution).toSelf().inSingletonScope();
-  bind(ArcRenderContribution).toService(DefaultArcRenderContribution);
-  bind(ArcRenderContribution).toService(DefaultArcBackgroundRenderContribution);
-  bind(ArcRenderContribution).toService(DefaultArcTextureRenderContribution);
   bindContributionProvider(bind, ArcRenderContribution);
 
   // line渲染器
   bind(DefaultCanvasLineRender).toSelf().inSingletonScope();
-  bind(LineRender).to(DefaultCanvasLineRender);
-  bind(GraphicRender).to(DefaultCanvasLineRender);
+  bind(LineRender).to(DefaultCanvasLineRender).inSingletonScope();
+  bind(GraphicRender).toService(LineRender);
 
   // incremental-line渲染器
   bind(DefaultIncrementalCanvasLineRender).toSelf().inSingletonScope();
@@ -208,62 +143,43 @@ export default new ContainerModule(bind => {
 
   // area渲染器
   bind(DefaultCanvasAreaRender).toSelf().inSingletonScope();
-  bind(AreaRender).to(DefaultCanvasAreaRender);
-  bind(GraphicRender).to(DefaultCanvasAreaRender);
+  bind(AreaRender).to(DefaultCanvasAreaRender).inSingletonScope();
+  bind(GraphicRender).toService(AreaRender);
 
   // area 渲染器注入contributions
-  bind(DefaultAreaBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultAreaTextureRenderContribution).toSelf().inSingletonScope();
-
-  bind(AreaRenderContribution).toService(DefaultAreaBackgroundRenderContribution);
-  bind(AreaRenderContribution).toService(DefaultAreaTextureRenderContribution);
   bindContributionProvider(bind, AreaRenderContribution);
 
   // group渲染器
-  bind(DefaultCanvasGroupRender).toSelf().inSingletonScope();
-  bind(GroupRender).to(DefaultCanvasGroupRender);
-  bind(GraphicRender).to(DefaultCanvasGroupRender);
+  bind(GroupRender).to(DefaultCanvasGroupRender).inSingletonScope();
+  bind(GraphicRender).toService(GroupRender);
 
-  // group 渲染器注入contributions\
-  bind(DefaultGroupBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(GroupRenderContribution).toService(DefaultGroupBackgroundRenderContribution);
+  // group 渲染器注入contributions
   bindContributionProvider(bind, GroupRenderContribution);
 
   // polygon渲染器
-  bind(DefaultCanvasPolygonRender).toSelf().inSingletonScope();
-  bind(PolygonRender).to(DefaultCanvasPolygonRender);
-  bind(GraphicRender).to(DefaultCanvasPolygonRender);
+  bind(PolygonRender).to(DefaultCanvasPolygonRender).inSingletonScope();
+  bind(GraphicRender).toService(PolygonRender);
 
   // polygon 渲染器注入contributions
-  bind(DefaultPolygonBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(DefaultPolygonTextureRenderContribution).toSelf().inSingletonScope();
-  bind(PolygonRenderContribution).toService(DefaultPolygonBackgroundRenderContribution);
-  bind(PolygonRenderContribution).toService(DefaultPolygonTextureRenderContribution);
   bindContributionProvider(bind, PolygonRenderContribution);
 
   // glyph渲染器
-  bind(DefaultCanvasGlyphRender).toSelf().inSingletonScope();
-  bind(GlyphRender).toService(DefaultCanvasGlyphRender);
+  bind(GlyphRender).to(DefaultCanvasGlyphRender).inSingletonScope();
   bind(GraphicRender).toService(GlyphRender);
 
   // image渲染器
-  bind(DefaultCanvasImageRender).toSelf().inSingletonScope();
-  bind(ImageRender).toService(DefaultCanvasImageRender);
+  bind(ImageRender).to(DefaultCanvasImageRender).inSingletonScope();
   bind(GraphicRender).toService(ImageRender);
 
   // image 渲染器注入contributions
-  bind(DefaultImageBackgroundRenderContribution).toSelf().inSingletonScope();
-  bind(ImageRenderContribution).toService(DefaultImageBackgroundRenderContribution);
   bindContributionProvider(bind, ImageRenderContribution);
 
   // richtext渲染器
-  bind(DefaultCanvasRichTextRender).toSelf().inSingletonScope();
-  bind(RichTextRender).toService(DefaultCanvasRichTextRender);
+  bind(RichTextRender).to(DefaultCanvasRichTextRender).inSingletonScope();
   bind(GraphicRender).toService(RichTextRender);
 
   // pyramid3d 渲染器
-  bind(DefaultCanvasPyramid3dRender).toSelf().inSingletonScope();
-  bind(Pyramid3dRender).toService(DefaultCanvasPyramid3dRender);
+  bind(Pyramid3dRender).to(DefaultCanvasPyramid3dRender).inSingletonScope();
   bind(GraphicRender).toService(Pyramid3dRender);
 
   // 绑定通用interactive contribution
@@ -282,13 +198,13 @@ export default new ContainerModule(bind => {
   bindContributionProvider(bind, GraphicRender);
 
   // interceptor
-  bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
+  // bind(ShadowRootDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
   bind(CommonDrawItemInterceptorContribution).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(CommonDrawItemInterceptorContribution);
-  bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
-  bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();
-  bind(DrawItemInterceptor).toService(InteractiveDrawItemInterceptorContribution);
+  // bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
+  // bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();
+  // bind(DrawItemInterceptor).toService(InteractiveDrawItemInterceptorContribution);
   bindContributionProvider(bind, DrawItemInterceptor);
 });

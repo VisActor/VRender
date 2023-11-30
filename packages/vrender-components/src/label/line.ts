@@ -5,6 +5,7 @@ import type { PointLocationCfg } from '../core/type';
 import type { LineLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingLineOrArea } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class LineLabel extends LabelBase<LineLabelAttrs> {
   name = 'line-label';
@@ -22,8 +23,8 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: LineLabelAttrs) {
-    super(merge({}, LineLabel.defaultAttributes, attributes));
+  constructor(attributes: LineLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineLabel.defaultAttributes, attributes));
   }
 
   protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}, position = 'end') {

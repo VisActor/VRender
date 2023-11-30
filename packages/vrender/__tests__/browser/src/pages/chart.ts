@@ -1381,10 +1381,10 @@ function _add(group, json) {
   } else if (json.type === 'symbol') {
     const s = createSymbol({ ...json.attribute, keepDirIn3d: true });
     // s.animate().to({ scaleX: 0.5, scaleY: 0.5 }, 1000, 'linear');
-    s.addEventListener('mouseenter', () => {
-      s.setAttribute('fill', 'red');
-    });
-    console.log(s);
+    // s.addEventListener('mouseenter', () => {
+    //   s.setAttribute('fill', 'red');
+    // });
+    // console.log(s);
     group.add(s);
   } else if (json.type === 'rect') {
     group.add(createRect(json.attribute));
@@ -1413,9 +1413,9 @@ export const page = () => {
     canvas: c as HTMLCanvasElement,
     width: 802,
     height: 500,
-    disableDirtyBounds: true,
-    canvasControled: true,
-    autoRender: true
+    // disableDirtyBounds: true,
+    // canvasControled: true,
+    autoRender: false
   });
 
   const layer = stage.at(0);
@@ -1423,15 +1423,32 @@ export const page = () => {
   json.children[0].children.forEach(item => {
     _add(layer, item);
   });
-  stage.set3dOptions({
-    alpha: 0,
-    // beta: 0,
-    enable: true
-  });
+  stage.render();
 
-  stage.children[0].children[0].setMode('3d');
+  setTimeout(() => {
+    stage.render();
+  }, 2000);
 
-  const group = stage.defaultLayer.getChildren()[0] as IGroup;
+  // const t = performance.now();
+  // const b = layer.AABBBounds;
+  // console.log(performance.now() - t);
+  // console.log(b);
+
+  // const btn = document.createElement('button');
+  // btn.innerHTML = 'render';
+  // document.body.appendChild(btn);
+  // btn.addEventListener('click', () => {
+  //   stage.render();
+  // });
+  // stage.set3dOptions({
+  //   alpha: 0,
+  //   // beta: 0,
+  //   enable: true
+  // });
+
+  // stage.children[0].children[0].setMode('3d');
+
+  // const group = stage.defaultLayer.getChildren()[0] as IGroup;
   // group.setAttribute('fill', 'green');
 
   // group
@@ -1447,17 +1464,17 @@ export const page = () => {
   //   .wait(3000)
   //   .play(new GroupFadeOut(1000, 'quadIn'));
 
-  stage.render(undefined, {});
+  // stage.render(undefined, {});
 
-  const button = document.createElement('button');
-  button.innerHTML = 'click';
-  document.body.appendChild(button);
-  button.addEventListener('click', () => {
-    stage.getElementsByType('rect').forEach(r => {
-      r.setAttribute('fill', 'red');
-    });
-    stage.render(undefined, {});
-  });
+  // const button = document.createElement('button');
+  // button.innerHTML = 'click';
+  // document.body.appendChild(button);
+  // button.addEventListener('click', () => {
+  //   stage.getElementsByType('rect').forEach(r => {
+  //     r.setAttribute('fill', 'red');
+  //   });
+  //   stage.render(undefined, {});
+  // });
 
-  stage.enableView3dTransform();
+  // stage.enableView3dTransform();
 };

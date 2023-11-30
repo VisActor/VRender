@@ -7,16 +7,16 @@ class QueryableString implements interfaces.QueryableString {
     this.str = str;
   }
 
-  startsWith(searchString: string): boolean {
-    return this.str.indexOf(searchString) === 0;
-  }
+  // startsWith(searchString: string): boolean {
+  //   return this.str.indexOf(searchString) === 0;
+  // }
 
-  endsWith(searchString: string): boolean {
-    let reverseString = '';
-    const reverseSearchString = searchString.split('').reverse().join('');
-    reverseString = this.str.split('').reverse().join('');
-    return this.startsWith.call({ str: reverseString }, reverseSearchString);
-  }
+  // endsWith(searchString: string): boolean {
+  //   let reverseString = '';
+  //   const reverseSearchString = searchString.split('').reverse().join('');
+  //   reverseString = this.str.split('').reverse().join('');
+  //   return this.startsWith.call({ str: reverseString }, reverseSearchString);
+  // }
 
   contains(searchString: string): boolean {
     return this.str.indexOf(searchString) !== -1;

@@ -58,39 +58,50 @@ export function newThemeObj(): IFullThemeSpec {
   };
 }
 
-// 将t合并到out中
-function combineTheme(out: IThemeSpec, t: IThemeSpec, rewrite: boolean = true) {
-  if (!t) {
-    return;
-  }
-  if (rewrite) {
-    Object.keys(t).forEach(k => {
-      if (out[k]) {
-        Object.assign(out[k], t[k]);
-      } else {
-        out[k] = t[k];
-      }
-    });
-  } else {
-    Object.keys(t).forEach(k => {
-      if (out[k]) {
-        // Object.assign(out[k], t[k]);
-        const outItem = out[k];
-        const tItem = t[k];
-        Object.keys(t[k]).forEach(kItem => {
-          if (outItem[kItem] === undefined) {
-            outItem[kItem] = tItem[kItem];
-          }
-        });
-      } else {
-        out[k] = t[k];
-      }
-    });
-  }
+// /**
+//  * 将t合并到out中
+//  * @param out
+//  * @param t
+//  * @param rewrite 是否重写out的属性
+//  * @returns
+//  */
+// function combineTheme(out: IThemeSpec, t: IThemeSpec, rewrite: boolean = true) {
+//   if (!t) {
+//     return;
+//   }
+//   if (rewrite) {
+//     Object.keys(t).forEach(k => {
+//       if (out[k]) {
+//         Object.assign(out[k], t[k]);
+//       } else {
+//         out[k] = t[k];
+//       }
+//     });
+//   } else {
+//     Object.keys(t).forEach(k => {
+//       if (out[k]) {
+//         // Object.assign(out[k], t[k]);
+//         const outItem = out[k];
+//         const tItem = t[k];
+//         Object.keys(t[k]).forEach(kItem => {
+//           if (outItem[kItem] === undefined) {
+//             outItem[kItem] = tItem[kItem];
+//           }
+//         });
+//       } else {
+//         out[k] = t[k];
+//       }
+//     });
+//   }
+// }
+
+function combine(out: Record<string, any>, t: Record<string, any>) {
+  Object.keys(t).forEach(k => {
+    out[k] = t[k];
+  });
 }
 
-// 全局创建60个theme，节省打点耗时时间
-const staticThemePools = new Array(60).fill(0).map(() => newThemeObj());
+const globalThemeObj = newThemeObj();
 
 // // 性能优化，没有修改的theme都使用这个
 // const defaultCommontTheme = newThemeObj();
@@ -105,29 +116,35 @@ const staticThemePools = new Array(60).fill(0).map(() => newThemeObj());
 // 3. parentTheme
 // 4. defaultTheme
 
+// 使用原型链来保存主题，避免大量的merge操作
 export class Theme implements ITheme {
   // 当前的总theme，最终合并后的theme
   combinedTheme: IFullThemeSpec;
-
   // 记录累计应用的所有用户设置上的theme
   userTheme?: IThemeSpec;
-  // 公共属性，有些属性所有图元都生效，那就放在common位置
-  commonTheme?: Partial<IGraphicAttribute>;
-
-  // // 记录下一次设置的theme，同时也作为一个dirty位，记录是否存在没有合并的theme
-  // nextTheme?: IThemeSpec;
 
   protected _defaultTheme: IFullThemeSpec;
 
   dirty: boolean;
 
   constructor() {
-    // group数量不多，问题不大
-    this._defaultTheme = staticThemePools.pop() || newThemeObj();
-    this.combinedTheme = this._defaultTheme;
+    this.initTheme();
     this.dirty = false;
   }
 
+  initTheme() {
+    this._defaultTheme = {} as any;
+    themeKeys.forEach(key => {
+      this._defaultTheme[key] = Object.create(globalThemeObj[key]);
+    });
+    this.combinedTheme = this._defaultTheme;
+  }
+
+  /**
+   * 获取group上应该有的主题配置
+   * @param group
+   * @returns
+   */
   getTheme(group?: IGroup) {
     if (!group) {
       return this.combinedTheme;
@@ -165,15 +182,9 @@ export class Theme implements ITheme {
           // 强制apply所有的上层
           parentTheme.applyTheme(parentGroup, pt, true);
         }
-        // 将parentTheme.userTheme设置给自己的userTheme
-        if (!this.userTheme) {
-          this.userTheme = clone(parentTheme.userTheme);
-        } else {
-          combineTheme(this.userTheme, parentTheme.userTheme, false);
-        }
-        combineTheme(pt, parentTheme.userTheme);
       }
-      // 如果当前节点没有userTheme的话，直接复用上层
+      // 如果当前节点没有userTheme的话，直接复用上层的combinedTheme
+      // 或者直接用默认的theme
       if (!this.userTheme) {
         if (parentGroup) {
           this.combinedTheme = parentGroup.theme.combinedTheme;
@@ -183,7 +194,7 @@ export class Theme implements ITheme {
         }
         this.dirty = false;
       } else {
-        this.doCombine(pt);
+        this.doCombine(parentGroup && parentGroup.theme.combinedTheme);
       }
     }
 
@@ -191,34 +202,37 @@ export class Theme implements ITheme {
   }
 
   // 合并userTheme到combinedTheme
-  protected doCombine(parentTheme: IThemeSpec) {
+  protected doCombine(parentCombinedTheme?: IThemeSpec) {
     const userTheme = this.userTheme;
-    const defaultTheme = this._defaultTheme;
     const combinedTheme = this.combinedTheme;
-    const parentCommonTheme = parentTheme.common || {};
-    const commonTheme = Object.assign(parentCommonTheme, this.commonTheme);
-    // combineTheme({}, this.userTheme, this._defaultTheme);
-    themeKeys.forEach(k => {
-      if (userTheme[k] || commonTheme || parentTheme[k]) {
-        combinedTheme[k] = Object.assign(
-          {},
-          defaultTheme[k],
-          commonTheme ?? {},
-          parentTheme[k] ?? {},
-          userTheme[k] ?? {}
-        );
-      } else {
-        combinedTheme[k] = defaultTheme[k];
-      }
-    });
-    this.dirty = false;
-  }
 
-  resetTheme(t: IThemeSpec, g: IGroup) {
-    this.userTheme = t;
-    // 设置自己和子节点的theme都为dirty
-    this.dirty = true;
-    this.dirtyChildren(g);
+    // 1. userTheme
+    // 2. combinedTheme
+    // 3. parentCombinedTheme
+    // 4. defaultTheme
+    themeKeys.forEach(k => {
+      // init defaultTheme
+      const obj = Object.create(globalThemeObj[k]);
+      // merge parentCombinedTheme
+      if (parentCombinedTheme && parentCombinedTheme[k]) {
+        combine(obj, parentCombinedTheme[k]);
+      }
+      // merge combinedTheme
+      if (combinedTheme[k]) {
+        combine(obj, combinedTheme[k]);
+      }
+      // merge userTheme
+      if (userTheme[k]) {
+        combine(obj, userTheme[k]);
+      }
+      this.combinedTheme[k] = obj;
+    });
+    if (userTheme.common) {
+      themeKeys.forEach(k => {
+        combine(this.combinedTheme[k], userTheme.common);
+      });
+    }
+    this.dirty = false;
   }
 
   setTheme(t: IThemeSpec, g: IGroup) {
@@ -236,14 +250,14 @@ export class Theme implements ITheme {
     } else {
       userTheme = t;
     }
-    if (t.common) {
-      if (!this.commonTheme) {
-        this.commonTheme = t.common;
-      } else {
-        Object.assign(this.commonTheme, t.common);
-      }
-    }
     this.userTheme = userTheme;
+    // 设置自己和子节点的theme都为dirty
+    this.dirty = true;
+    this.dirtyChildren(g);
+  }
+
+  resetTheme(t: IThemeSpec, g: IGroup) {
+    this.userTheme = t;
     // 设置自己和子节点的theme都为dirty
     this.dirty = true;
     this.dirtyChildren(g);
@@ -259,19 +273,6 @@ export class Theme implements ITheme {
       }
     });
   }
-
-  // // 设置theme到子元素，直接设置到currentTheme中去
-  // setThemeToChildrenCurrentTheme(t :IThemeSpec, g: IGroup) {
-  //   g.forEachChildren((item) => {
-  //     if ((item as IGroup).isContainer) {
-  //       const currentTheme = (item as IGroup).theme.currentTheme;
-  //       Object.keys(t).forEach(k => {
-  //         Object.assign(currentTheme[k], t[k]);
-  //       });
-  //       this.setThemeToChildrenCurrentTheme(t, item as IGroup);
-  //     }
-  //   })
-  // }
 }
 
 export const globalTheme = new Theme();

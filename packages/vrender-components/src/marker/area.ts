@@ -7,6 +7,7 @@ import { Marker } from './base';
 import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
 import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
+import type { ComponentOptions } from '../interface';
 
 export class MarkArea extends Marker<MarkAreaAttrs> {
   name = 'markArea';
@@ -20,8 +21,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     return this._label;
   }
 
-  constructor(attributes: MarkAreaAttrs) {
-    super(merge({}, MarkArea.defaultAttributes, attributes));
+  constructor(attributes: MarkAreaAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkArea.defaultAttributes, attributes));
   }
 
   private _getPositionByDirection(area: IPolygon, direction: string) {

@@ -81,6 +81,10 @@ export type EventConfig = {
 export type IOptimizeType = {
   // 视口不在可视区，跳过渲染，默认为true
   skipRenderWithOutRange?: boolean;
+  // 跳过图元在区间外的判断
+  // 不存在dirtyBounds的时候，根据该配置判断是否关闭图元的超出边界判定
+  // 如果有dirtyBounds那么该配置不生效
+  disableCheckGraphicWidthOutRange?: boolean;
 };
 
 export interface IOption3D {
@@ -140,7 +144,7 @@ export interface IStage extends INode {
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;
-  readonly pickerService: IPickerService;
+  pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制

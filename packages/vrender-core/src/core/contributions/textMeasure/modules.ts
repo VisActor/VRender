@@ -3,7 +3,6 @@ import { bindContributionProvider } from '../../../common/contribution-provider'
 import { DefaultTextMeasureContribution, TextMeasureContribution } from './textMeasure-contribution';
 
 export default new ContainerModule(bind => {
-  bind(DefaultTextMeasureContribution).toSelf().inSingletonScope();
-  bind(TextMeasureContribution).toService(DefaultTextMeasureContribution);
+  bind(TextMeasureContribution).to(DefaultTextMeasureContribution).inSingletonScope();
   bindContributionProvider(bind, TextMeasureContribution);
 });

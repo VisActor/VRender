@@ -38,6 +38,7 @@ import type {
 } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
 import { getPointsOfLineArea } from './util';
+import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -91,8 +92,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   private _enableAnimation: boolean;
 
-  constructor(attributes: BaseLabelAttrs) {
-    super(merge({}, LabelBase.defaultAttributes, attributes));
+  constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LabelBase.defaultAttributes, attributes));
   }
 
   /**

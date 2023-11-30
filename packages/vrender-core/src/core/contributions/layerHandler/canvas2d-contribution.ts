@@ -15,7 +15,7 @@ import type {
   LayerMode
 } from '../../../interface';
 import type { IBounds } from '@visactor/vutils';
-import { VGlobal } from '../../../constants';
+import { application } from '../../../application';
 
 @injectable()
 export class CanvasLayerHandlerContribution implements ILayerHandlerContribution {
@@ -26,11 +26,13 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
   main: boolean;
   window: IWindow;
   type: LayerMode = 'static';
+  global: IGlobal;
   // 所绑定的副layer handler
   secondaryHandlers: ILayerHandlerContribution[];
 
-  constructor(@inject(VGlobal) public readonly global: IGlobal) {
+  constructor() {
     this.offscreen = false;
+    this.global = application.global;
   }
 
   setDpr(dpr: number) {

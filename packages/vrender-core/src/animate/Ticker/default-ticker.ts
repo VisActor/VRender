@@ -131,7 +131,7 @@ export class DefaultTicker implements ITicker {
   init() {
     this.interval = NaN;
     this.status = STATUS.INITIAL;
-    application.global.hooks.onSetEnv.tap('window', () => {
+    application.global.hooks.onSetEnv.tap('default-ticker', () => {
       this.initHandler();
     });
     if (application.global.env) {

@@ -1,5 +1,9 @@
-import { createStage, createArea, container, IGraphic, global, createLine } from '@visactor/vrender';
+import { createStage, createArea, container, IGraphic, createLine } from '@visactor/vrender-core';
 import { addShapesToStage, colorPools } from '../utils';
+import { loadBrowserEnv, loadCanvasPicker } from '@visactor/vrender-kits';
+
+loadCanvasPicker(container);
+loadBrowserEnv(container);
 
 const subP1 = [
   [0, 100],

@@ -254,9 +254,22 @@ class Container implements interfaces.Container {
   // The runtime identifier must be associated with only one binding
   // use getAll when the runtime identifier is associated with multiple bindings
   get<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): T {
+    // if (!window.aaa) {
+    //   window.aaa = 0;
+    // }
+    // const t = performance.now();
     const getArgs = this._getNotAllArgs(serviceIdentifier, false);
+    // const getArgs = {
+    //   avoidConstraints: false,
+    //   isMultiInject: false,
+    //   serviceIdentifier
+    // };
 
-    return this._getButThrowIfAsync<T>(getArgs) as T;
+    const data = this._getButThrowIfAsync<T>(getArgs) as T;
+    // const delta = performance.now() - t;
+    // window.aaa += delta;
+
+    return data;
   }
 
   async getAsync<T>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T> {
@@ -527,11 +540,12 @@ class Container implements interfaces.Container {
   }
 
   private _getButThrowIfAsync<T>(getArgs: GetArgs<T>): T | T[] {
+    // console.count('_getButThrowIfAsync');
     const result = this._get<T>(getArgs);
 
-    if (isPromiseOrContainsPromise<T>(result)) {
-      throw new Error(ERROR_MSGS.LAZY_IN_SYNC(getArgs.serviceIdentifier));
-    }
+    // if (isPromiseOrContainsPromise<T>(result)) {
+    //   throw new Error(ERROR_MSGS.LAZY_IN_SYNC(getArgs.serviceIdentifier));
+    // }
 
     return result as T | T[];
   }
@@ -569,6 +583,11 @@ class Container implements interfaces.Container {
   private _planAndResolve<T = unknown>(): (args: interfaces.NextArgs<T>) => interfaces.ContainerResolution<T> {
     return (args: interfaces.NextArgs<T>) => {
       // create a plan
+      // if (!window.aaa) {
+      //   window.aaa = 0;
+      // }
+      // const t = performance.now();
+      // debugger;
       let context = plan(
         this._metadataReader,
         this,
@@ -582,7 +601,7 @@ class Container implements interfaces.Container {
 
       // apply context interceptor
       context = args.contextInterceptor(context);
-
+      // window.aaa += performance.now() - t;
       // resolve plan
       const result = resolve<T>(context);
 

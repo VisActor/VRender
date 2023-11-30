@@ -18,6 +18,7 @@ import { getTheme, Theme } from './theme';
 import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
 import { GROUP_NUMBER_TYPE } from './constants';
+import { DefaultTransform } from './config';
 
 // Group更新AABBBounds的策略
 export enum GroupUpdateAABBBoundsMode {
@@ -153,6 +154,28 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return bounds;
   }
 
+  /**
+   * 大部分group不需要更新matrix，这里特殊优化一下
+   * 更新局部matrix的具体函数
+   */
+  protected doUpdateLocalMatrix() {
+    const {
+      x = DefaultTransform.x,
+      y = DefaultTransform.y,
+      dx = DefaultTransform.dx,
+      dy = DefaultTransform.dy,
+      scaleX = DefaultTransform.scaleX,
+      scaleY = DefaultTransform.scaleY,
+      angle = DefaultTransform.angle,
+      postMatrix
+    } = this.attribute;
+    if (x === 0 && y === 0 && dx === 0 && dy === 0 && scaleX === 1 && scaleY === 1 && angle === 0 && !postMatrix) {
+      this._transMatrix.reset();
+      return;
+    }
+    return super.doUpdateLocalMatrix();
+  }
+
   protected doUpdateAABBBounds(): AABBBounds {
     const attribute = this.attribute;
     const groupTheme = getTheme(this).group;
@@ -160,7 +183,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
     const bounds = application.graphicService.updateGroupAABBBounds(
       attribute,
-      getTheme(this).group,
+      groupTheme,
       this._AABBBounds,
       this
     ) as AABBBounds;

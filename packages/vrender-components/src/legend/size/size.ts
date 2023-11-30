@@ -7,6 +7,7 @@ import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
+import type { ComponentOptions } from '../../interface';
 import type { SizeLegendAttributes } from './type';
 import { getSizeHandlerPath } from '../util';
 
@@ -37,8 +38,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
 
   private _slider!: Slider;
 
-  constructor(attributes: SizeLegendAttributes) {
-    super(merge({}, SizeContinuousLegend.defaultAttributes, attributes));
+  constructor(attributes: SizeLegendAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, SizeContinuousLegend.defaultAttributes, attributes));
   }
 
   setSelected(value: number[]) {

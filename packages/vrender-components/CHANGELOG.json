@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-components_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optmize bounds performance"
+          },
+          {
+            "comment": "perf: add option `skipDefault` to vrender-components"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.18",
       "tag": "@visactor/vrender-components_v0.16.18",
       "date": "Thu, 30 Nov 2023 09:40:58 GMT",

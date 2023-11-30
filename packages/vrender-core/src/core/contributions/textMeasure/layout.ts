@@ -46,7 +46,7 @@ export class CanvasTextLayout {
     lineHeight: number,
     suffix: string,
     wordBreak: boolean,
-    miniApp: boolean
+    suffixPosition: 'start' | 'end' | 'middle'
   ): LayoutType {
     // 拆分str
     const linesLayout: LayoutItemType[] = [];
@@ -55,7 +55,14 @@ export class CanvasTextLayout {
     const bboxOffset: vec2 = [0, 0];
 
     while (str.length > 0) {
-      const { str: clipText } = this.textMeasure.clipTextWithSuffix(str, this.textOptions, width, suffix, wordBreak);
+      const { str: clipText } = this.textMeasure.clipTextWithSuffix(
+        str,
+        this.textOptions,
+        width,
+        suffix,
+        wordBreak,
+        suffixPosition
+      );
       linesLayout.push({
         str: clipText,
         width: this.textMeasure.measureTextWidth(clipText, this.textOptions)
@@ -101,7 +108,8 @@ export class CanvasTextLayout {
     lineHeight: number,
     suffix: string = '',
     wordBreak: boolean,
-    lineWidth?: number
+    lineWidth?: number,
+    suffixPosition: 'start' | 'end' | 'middle' = 'end'
   ): LayoutType {
     lines = lines.map(l => l.toString()) as string[];
     const linesLayout: LayoutItemType[] = [];
@@ -113,7 +121,14 @@ export class CanvasTextLayout {
       for (let i = 0, len = lines.length; i < len; i++) {
         width = Math.min(this.textMeasure.measureTextWidth(lines[i] as string, this.textOptions), lineWidth);
         linesLayout.push({
-          str: this.textMeasure.clipTextWithSuffix(lines[i] as string, this.textOptions, width, suffix, wordBreak).str,
+          str: this.textMeasure.clipTextWithSuffix(
+            lines[i] as string,
+            this.textOptions,
+            width,
+            suffix,
+            wordBreak,
+            suffixPosition
+          ).str,
           width
         });
       }

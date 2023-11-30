@@ -24,8 +24,11 @@ export const page = () => {
     textBaseline: 'top',
     lineHeight: 14,
     ellipsis: '...',
-    text: 'US-2019-1357144',
-    maxLineWidth: 119,
+    _debug_bounds: true,
+    text: '你就是我的MR. Right',
+    maxLineWidth: 100,
+    direction: 'vertical',
+    suffixPosition: 'middle',
     autoWrapText: true,
     wordBreak: 'break-word',
     heightLimit: 20,
@@ -36,6 +39,7 @@ export const page = () => {
   });
   console.log(t.AABBBounds);
   graphics.push(t);
+  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
   graphics.push(
     createText({

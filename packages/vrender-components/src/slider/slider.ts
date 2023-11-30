@@ -435,8 +435,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const textStyle: ITextGraphicAttribute = {
       text: handlerText?.formatter ? handlerText.formatter(value) : value.toFixed(handlerText?.precision ?? 0),
       lineHeight: handlerText.style?.lineHeight,
-      cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal),
-      ...handlerText.style
+      cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal)
     };
     if (isHorizontal) {
       if (align === 'top') {
@@ -469,7 +468,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
 
     // 展示 handler 当前所在的数值
-    const textShape = createText(textStyle);
+    const textShape = createText({
+      ...textStyle,
+      ...handlerText.style
+    });
     return textShape;
   }
 

@@ -19,7 +19,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic';
 import type { IAABBBounds, IBounds } from '@visactor/vutils';
-import { Bounds, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
+import { Bounds, Logger, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
 import { LayerService } from '../../../core/constants';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
@@ -99,6 +99,14 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.y1 = Math.floor(b.y1);
       dirtyBounds.x2 = Math.ceil(b.x2);
       dirtyBounds.y2 = Math.ceil(b.y2);
+    }
+    // 如果dpr不是整数或者.5的小数，需要格式化dirtyBounds
+    const d = context.dpr % 1;
+    if (d || d !== 0.5) {
+      dirtyBounds.x1 = Math.floor(dirtyBounds.x1 * context.dpr) / context.dpr;
+      dirtyBounds.y1 = Math.floor(dirtyBounds.y1 * context.dpr) / context.dpr;
+      dirtyBounds.x2 = Math.ceil(dirtyBounds.x2 * context.dpr) / context.dpr;
+      dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
     }
     this.backupDirtyBounds.copy(dirtyBounds);
     context.inuse = true;
@@ -358,7 +366,7 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
   // 根据type选择对应的render
   protected selectRenderByType(type?: string): IGraphicRender | null {
-    console.warn('未知错误，不应该走到这里');
+    Logger.getInstance().warn('未知错误，不应该走到这里');
     return null;
   }
   // 根据type选择对应的render

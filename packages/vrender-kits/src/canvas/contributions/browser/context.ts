@@ -24,7 +24,7 @@
   SOFTWARE.
  */
 import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
-import { Matrix, pi, pi2 } from '@visactor/vutils';
+import { Matrix, pi, pi2, Logger } from '@visactor/vutils';
 import {
   injectable,
   DefaultFillStyle,
@@ -251,7 +251,7 @@ export class BrowserContext2d implements IContext2d {
 
   reset() {
     if (this.stack.length) {
-      console.warn('可能存在bug，matrix没有清空');
+      Logger.getInstance().warn('可能存在bug，matrix没有清空');
     }
     this.matrix.setValue(1, 0, 0, 1, 0, 0);
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);

@@ -1,4 +1,4 @@
-import { createPyramid3d } from '@visactor/vrender';
+import { createImage, createPyramid3d } from '@visactor/vrender';
 import {
   createStage,
   createGroup,
@@ -24,467 +24,804 @@ import {
 import { roughModule } from '@visactor/vrender-kits';
 
 const json = {
-  attribute: {},
-  _uid: 267,
+  attribute: {
+    background: 'white'
+  },
+  _uid: 3,
   type: 'group',
   children: [
     {
       attribute: {},
-      _uid: 271,
+      _uid: 9,
       type: 'group',
       children: [
         {
           attribute: {
             x: 0,
             y: 0,
-            width: 500,
+            width: 1904,
             height: 500,
             sizeAttrs: {
               x: 0,
               y: 0,
-              width: 500,
+              width: 1904,
               height: 500
             }
           },
-          _uid: 276,
+          _uid: 13,
           type: 'group',
           name: 'root',
           children: [
             {
               attribute: {
+                visible: true,
+                clip: false,
+                x: 84,
+                y: 20,
+                width: 1800,
+                height: 460,
+                sizeAttrs: {
+                  x: 84,
+                  y: 20,
+                  width: 1800,
+                  height: 460
+                },
                 pickable: false,
-                zIndex: 0
+                zIndex: 450
               },
-              _uid: 277,
+              _uid: 14,
               type: 'group',
-              name: 'VGRAMMAR_MARK_8',
+              name: 'regionGroup_4',
               children: [
                 {
                   attribute: {
-                    title: {
-                      space: 4,
-                      padding: [0, 0, 0, 0],
-                      textStyle: {
-                        fontSize: 12,
-                        fill: '#333333',
-                        fontWeight: 'normal',
-                        fillOpacity: 1
-                      },
-                      text: 'theta'
-                    },
-                    label: {
-                      visible: true,
-                      inside: false,
-                      space: 4,
-                      padding: 0,
-                      style: {
-                        fontSize: 12,
-                        fill: '#6F6F6F',
-                        fontWeight: 'normal',
-                        fillOpacity: 1
-                      }
-                    },
-                    tick: {
-                      visible: true,
-                      inside: false,
-                      alignWithLabel: true,
-                      length: 4,
-                      style: {
-                        lineWidth: 1,
-                        stroke: '#D9DDE4',
-                        strokeOpacity: 1
-                      }
-                    },
-                    subTick: {
-                      visible: false,
-                      inside: false,
-                      count: 4,
-                      length: 2,
-                      style: {
-                        lineWidth: 1,
-                        stroke: '#D9DDE4',
-                        strokeOpacity: 1
-                      }
-                    },
-                    line: {
-                      visible: true,
-                      style: {
-                        lineWidth: 1,
-                        stroke: '#D9DDE4',
-                        strokeOpacity: 1
-                      }
-                    },
+                    visible: true,
                     x: 0,
                     y: 0,
-                    start: {
+                    clip: false,
+                    sizeAttrs: {
                       x: 0,
                       y: 0
                     },
-                    end: {
-                      x: 0,
-                      y: 0
-                    },
-                    items: [
-                      [
-                        {
-                          id: 0,
-                          label: 'test0',
-                          value: 0.08333333333333338,
-                          rawValue: 'test0'
-                        },
-                        {
-                          id: 1,
-                          label: 'test1',
-                          value: 0.25000000000000006,
-                          rawValue: 'test1'
-                        },
-                        {
-                          id: 2,
-                          label: 'test2',
-                          value: 0.4166666666666667,
-                          rawValue: 'test2'
-                        },
-                        {
-                          id: 3,
-                          label: 'test3',
-                          value: 0.5833333333333334,
-                          rawValue: 'test3'
-                        },
-                        {
-                          id: 4,
-                          label: 'test4',
-                          value: 0.75,
-                          rawValue: 'test4'
-                        },
-                        {
-                          id: 5,
-                          label: 'test5',
-                          value: 0.9166666666666666,
-                          rawValue: 'test5'
-                        }
-                      ]
-                    ],
-                    startAngle: 0,
-                    endAngle: 6.283185307179586,
-                    radius: 210,
-                    innerRadius: 0,
-                    center: {
-                      x: 250,
-                      y: 250
-                    },
-                    grid: {
-                      visible: true
-                    }
+                    pickable: false,
+                    zIndex: 0
                   },
-                  _uid: 278,
+                  _uid: 15,
                   type: 'group',
-                  name: 'axis',
+                  name: 'seriesGroup_bar_5_7',
                   children: [
                     {
                       attribute: {
-                        x: 0,
-                        y: 0,
-                        pickable: false
+                        pickable: false,
+                        zIndex: 300
                       },
-                      _uid: 297,
+                      _uid: 60,
                       type: 'group',
+                      name: 'bar_8',
                       children: [
                         {
                           attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            fill: false,
                             x: 0,
-                            y: 0,
-                            zIndex: 1
+                            y: 25.090909090909065,
+                            stroke: '#1664FF',
+                            x1: 0,
+                            height: 75.27272727272728,
+                            sizeAttrs: {
+                              x: 1620,
+                              y: 25.090909090909065,
+                              x1: 0,
+                              height: 75.27272727272728
+                            },
+                            width: 1620,
+                            pickable: true
                           },
-                          _uid: 298,
+                          _uid: 61,
+                          type: 'rect',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            fill: false,
+                            x: 0,
+                            y: 108.7272727272727,
+                            stroke: '#1664FF',
+                            x1: 0,
+                            height: 75.27272727272728,
+                            sizeAttrs: {
+                              x: 1080,
+                              y: 108.7272727272727,
+                              x1: 0,
+                              height: 75.27272727272728
+                            },
+                            width: 1080,
+                            pickable: true
+                          },
+                          _uid: 62,
+                          type: 'rect',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            fill: false,
+                            x: 0,
+                            y: 192.36363636363635,
+                            stroke: '#1664FF',
+                            x1: 0,
+                            height: 75.27272727272728,
+                            sizeAttrs: {
+                              x: 540,
+                              y: 192.36363636363635,
+                              x1: 0,
+                              height: 75.27272727272728
+                            },
+                            width: 540,
+                            pickable: true
+                          },
+                          _uid: 63,
+                          type: 'rect',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            fill: false,
+                            x: 0,
+                            y: 276,
+                            stroke: '#1664FF',
+                            x1: 0,
+                            height: 75.27272727272728,
+                            sizeAttrs: {
+                              x: 900,
+                              y: 276,
+                              x1: 0,
+                              height: 75.27272727272728
+                            },
+                            width: 900,
+                            pickable: true
+                          },
+                          _uid: 64,
+                          type: 'rect',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            fill: false,
+                            x: 0,
+                            y: 359.6363636363636,
+                            stroke: '#1664FF',
+                            x1: 0,
+                            height: 75.27272727272728,
+                            sizeAttrs: {
+                              x: 720,
+                              y: 359.6363636363636,
+                              x1: 0,
+                              height: 75.27272727272728
+                            },
+                            width: 720,
+                            pickable: true
+                          },
+                          _uid: 65,
+                          type: 'rect',
+                          children: []
+                        }
+                      ]
+                    },
+                    {
+                      attribute: {
+                        pickable: false,
+                        zIndex: 10000
+                      },
+                      _uid: 16,
+                      type: 'group',
+                      name: '__VCHART_series_5_extensionMark_0_10',
+                      children: [
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            repeatX: 'repeat',
+                            x: 0,
+                            y: 10,
+                            width: 1620,
+                            height: 75.27272727272728,
+                            image:
+                              'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/demo/008_%E5%92%96%E5%95%A1%20(1).png',
+                            stroke: '#1664FF',
+                            pickable: true
+                          },
+                          _uid: 17,
+                          type: 'image',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            repeatX: 'repeat',
+                            x: 0,
+                            y: 10,
+                            width: 1080,
+                            height: 75.27272727272728,
+                            image:
+                              'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/demo/008_%E7%81%AB%E9%94%85%20(1).png',
+                            stroke: '#1664FF',
+                            pickable: true
+                          },
+                          _uid: 18,
+                          type: 'image',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            repeatX: 'repeat',
+                            x: 0,
+                            y: 10,
+                            width: 540,
+                            height: 75.27272727272728,
+                            image:
+                              'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/demo/008_%E7%B1%B3%E7%B2%89%E9%9D%A2%E6%9D%A1%20(1).png',
+                            stroke: '#1664FF',
+                            pickable: true
+                          },
+                          _uid: 19,
+                          type: 'image',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            repeatX: 'repeat',
+                            x: 0,
+                            y: 10,
+                            width: 900,
+                            height: 75.27272727272728,
+                            image:
+                              'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/demo/008_%E9%9B%AA%E7%B3%95%E5%86%B0%E6%A3%92%20(1).png',
+                            stroke: '#1664FF',
+                            pickable: true
+                          },
+                          _uid: 20,
+                          type: 'image',
+                          children: []
+                        },
+                        {
+                          attribute: {
+                            visible: true,
+                            lineWidth: 0,
+                            repeatX: 'repeat',
+                            x: 0,
+                            y: 10,
+                            width: 720,
+                            height: 75.27272727272728,
+                            image:
+                              'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/demo/008_%E9%B2%9C%E8%8A%B1%E7%BB%BF%E6%A4%8D%20(1).png',
+                            stroke: '#1664FF',
+                            pickable: true
+                          },
+                          _uid: 21,
+                          type: 'image',
+                          children: []
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  attribute: {
+                    pickable: false,
+                    zIndex: 300
+                  },
+                  _uid: 66,
+                  type: 'group',
+                  name: 'bar-label-0-component_32',
+                  children: [
+                    {
+                      attribute: {
+                        pickable: false,
+                        size: {
+                          width: 1800,
+                          height: 460
+                        },
+                        dataLabels: [
+                          {
+                            type: 'rect',
+                            data: [
+                              {
+                                text: 900,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '咖啡',
+                                  value: 900,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 0,
+                                  __VCHART_DEFAULT_DATA_KEY: '咖啡_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 0
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff'
+                              },
+                              {
+                                text: 600,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '火锅',
+                                  value: 600,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 1,
+                                  __VCHART_DEFAULT_DATA_KEY: '火锅_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 1
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff'
+                              },
+                              {
+                                text: 300,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '米粉面条',
+                                  value: 300,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 2,
+                                  __VCHART_DEFAULT_DATA_KEY: '米粉面条_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 2
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff'
+                              },
+                              {
+                                text: 500,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '雪糕冰棒',
+                                  value: 500,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 3,
+                                  __VCHART_DEFAULT_DATA_KEY: '雪糕冰棒_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 3
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff'
+                              },
+                              {
+                                text: 400,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '鲜花绿植',
+                                  value: 400,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 4,
+                                  __VCHART_DEFAULT_DATA_KEY: '鲜花绿植_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 4
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff'
+                              }
+                            ],
+                            overlap: {
+                              size: {
+                                width: 1000,
+                                height: 1000
+                              },
+                              strategy: [
+                                {
+                                  type: 'position'
+                                }
+                              ],
+                              avoidMarks: []
+                            },
+                            smartInvert: false,
+                            baseMarkGroupName: 'bar_8',
+                            textStyle: {
+                              pickable: false,
+                              fontSize: 14,
+                              lineHeight: '150%',
+                              fontWeight: 'normal',
+                              fillOpacity: 1,
+                              lineWidth: 2,
+                              stroke: '#ffffff'
+                            },
+                            visible: true,
+                            offset: 5,
+                            hover: false,
+                            select: false,
+                            centerOffset: 0
+                          }
+                        ]
+                      },
+                      _uid: 67,
+                      type: 'group',
+                      name: 'data-label',
+                      children: [
+                        {
+                          attribute: {
+                            textStyle: {
+                              fontSize: 14,
+                              textAlign: 'center',
+                              textBaseline: 'middle',
+                              boundsPadding: [-1, 0, -1, 0],
+                              fill: '#000',
+                              pickable: false,
+                              lineHeight: '150%',
+                              fontWeight: 'normal',
+                              fillOpacity: 1,
+                              lineWidth: 2,
+                              stroke: '#ffffff'
+                            },
+                            offset: 5,
+                            pickable: false,
+                            type: 'rect',
+                            data: [
+                              {
+                                text: 900,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '咖啡',
+                                  value: 900,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 0,
+                                  __VCHART_DEFAULT_DATA_KEY: '咖啡_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 0
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff',
+                                id: 'vrender-component-label-0'
+                              },
+                              {
+                                text: 600,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '火锅',
+                                  value: 600,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 1,
+                                  __VCHART_DEFAULT_DATA_KEY: '火锅_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 1
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff',
+                                id: 'vrender-component-label-1'
+                              },
+                              {
+                                text: 300,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '米粉面条',
+                                  value: 300,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 2,
+                                  __VCHART_DEFAULT_DATA_KEY: '米粉面条_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 2
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff',
+                                id: 'vrender-component-label-2'
+                              },
+                              {
+                                text: 500,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '雪糕冰棒',
+                                  value: 500,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 3,
+                                  __VCHART_DEFAULT_DATA_KEY: '雪糕冰棒_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 3
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff',
+                                id: 'vrender-component-label-3'
+                              },
+                              {
+                                text: 400,
+                                fill: '#1664FF',
+                                data: {
+                                  type: '鲜花绿植',
+                                  value: 400,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 4,
+                                  __VCHART_DEFAULT_DATA_KEY: '鲜花绿植_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 4
+                                },
+                                visible: true,
+                                x: 0,
+                                y: 0,
+                                angle: 0,
+                                textAlign: 'center',
+                                lineWidth: 2,
+                                fontSize: 14,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                stroke: '#ffffff',
+                                id: 'vrender-component-label-4'
+                              }
+                            ],
+                            overlap: {
+                              size: {
+                                width: 1000,
+                                height: 1000
+                              },
+                              strategy: [
+                                {
+                                  type: 'position'
+                                }
+                              ],
+                              avoidMarks: []
+                            },
+                            smartInvert: false,
+                            baseMarkGroupName: 'bar_8',
+                            visible: true,
+                            hover: false,
+                            select: false,
+                            centerOffset: 0
+                          },
+                          _uid: 68,
                           type: 'group',
-                          name: 'axis-container',
+                          name: 'label',
                           children: [
                             {
                               attribute: {
-                                x: 250,
-                                y: 250,
-                                startAngle: 0,
-                                endAngle: 6.283185307179586,
-                                radius: 210,
-                                innerRadius: 0,
-                                lineWidth: 1,
-                                stroke: '#D9DDE4',
+                                fill: '#1664FF',
+                                fontSize: 14,
+                                textAlign: 'center',
+                                textBaseline: 'middle',
+                                boundsPadding: [-1, 0, -1, 0],
+                                pickable: false,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                lineWidth: 2,
+                                stroke: '#ffffff',
+                                text: 900,
+                                data: {
+                                  type: '咖啡',
+                                  value: 900,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 0,
+                                  __VCHART_DEFAULT_DATA_KEY: '咖啡_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 0
+                                },
+                                visible: true,
+                                x: 1638.5999908447266,
+                                y: 62.727272727272705,
+                                angle: 0,
+                                id: 'vrender-component-label-0',
+                                opacity: 1,
                                 strokeOpacity: 1
                               },
-                              _uid: 299,
-                              type: 'circle',
-                              name: 'axis-line',
+                              _uid: 69,
+                              type: 'text',
                               children: []
                             },
                             {
                               attribute: {
-                                x: 0,
-                                y: 0,
-                                pickable: false
+                                fill: '#1664FF',
+                                fontSize: 14,
+                                textAlign: 'center',
+                                textBaseline: 'middle',
+                                boundsPadding: [-1, 0, -1, 0],
+                                pickable: false,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                lineWidth: 2,
+                                stroke: '#ffffff',
+                                text: 600,
+                                data: {
+                                  type: '火锅',
+                                  value: 600,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 1,
+                                  __VCHART_DEFAULT_DATA_KEY: '火锅_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 1
+                                },
+                                visible: true,
+                                x: 1098.5999908447266,
+                                y: 146.36363636363635,
+                                angle: 0,
+                                id: 'vrender-component-label-1',
+                                opacity: 1,
+                                strokeOpacity: 1
                               },
-                              _uid: 300,
-                              type: 'group',
-                              name: 'axis-tick-container',
-                              children: [
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 431.8653347947321,
-                                        y: 355.00000000000006
-                                      },
-                                      {
-                                        x: 435.32943640986986,
-                                        y: 357.00000000000006
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 301,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 249.99999999999991,
-                                        y: 460
-                                      },
-                                      {
-                                        x: 249.99999999999991,
-                                        y: 464
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 302,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 68.13466520526788,
-                                        y: 355
-                                      },
-                                      {
-                                        x: 64.67056359013013,
-                                        y: 357
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 303,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 68.13466520526791,
-                                        y: 144.99999999999997
-                                      },
-                                      {
-                                        x: 64.67056359013016,
-                                        y: 142.99999999999997
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 304,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 249.99999999999997,
-                                        y: 40
-                                      },
-                                      {
-                                        x: 249.99999999999997,
-                                        y: 36
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 305,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 431.86533479473206,
-                                        y: 144.9999999999999
-                                      },
-                                      {
-                                        x: 435.3294364098698,
-                                        y: 142.9999999999999
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 306,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                }
-                              ]
+                              _uid: 70,
+                              type: 'text',
+                              children: []
                             },
                             {
                               attribute: {
-                                x: 0,
-                                y: 0,
-                                pickable: false
+                                fill: '#1664FF',
+                                fontSize: 14,
+                                textAlign: 'center',
+                                textBaseline: 'middle',
+                                boundsPadding: [-1, 0, -1, 0],
+                                pickable: false,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                lineWidth: 2,
+                                stroke: '#ffffff',
+                                text: 300,
+                                data: {
+                                  type: '米粉面条',
+                                  value: 300,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 2,
+                                  __VCHART_DEFAULT_DATA_KEY: '米粉面条_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 2
+                                },
+                                visible: true,
+                                x: 558.5999908447266,
+                                y: 230,
+                                angle: 0,
+                                id: 'vrender-component-label-2',
+                                opacity: 1,
+                                strokeOpacity: 1
                               },
-                              _uid: 307,
-                              type: 'group',
-                              name: 'axis-label-container',
-                              children: [
-                                {
-                                  attribute: {
-                                    x: 0,
-                                    y: 0,
-                                    pickable: false
-                                  },
-                                  _uid: 308,
-                                  type: 'group',
-                                  name: 'axis-label-container-layer-0',
-                                  children: [
-                                    {
-                                      attribute: {
-                                        x: 438.79353802500765,
-                                        y: 359.00000000000006,
-                                        text: 'test0',
-                                        lineHeight: 12,
-                                        textAlign: 'start',
-                                        textBaseline: 'middle',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 309,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 249.99999999999991,
-                                        y: 468,
-                                        text: 'test1',
-                                        lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 310,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 61.20646197499237,
-                                        y: 359,
-                                        text: 'test2',
-                                        lineHeight: 12,
-                                        textAlign: 'end',
-                                        textBaseline: 'middle',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 311,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 61.2064619749924,
-                                        y: 140.99999999999997,
-                                        text: 'test3',
-                                        lineHeight: 12,
-                                        textAlign: 'end',
-                                        textBaseline: 'middle',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 312,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 249.99999999999997,
-                                        y: 32,
-                                        text: 'test4',
-                                        lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'bottom',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 313,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 438.7935380250076,
-                                        y: 140.9999999999999,
-                                        text: 'test5',
-                                        lineHeight: 12,
-                                        textAlign: 'start',
-                                        textBaseline: 'middle',
-                                        fontSize: 12,
-                                        fill: '#6F6F6F',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 314,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    }
-                                  ]
-                                }
-                              ]
+                              _uid: 71,
+                              type: 'text',
+                              children: []
+                            },
+                            {
+                              attribute: {
+                                fill: '#1664FF',
+                                fontSize: 14,
+                                textAlign: 'center',
+                                textBaseline: 'middle',
+                                boundsPadding: [-1, 0, -1, 0],
+                                pickable: false,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                lineWidth: 2,
+                                stroke: '#ffffff',
+                                text: 500,
+                                data: {
+                                  type: '雪糕冰棒',
+                                  value: 500,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 3,
+                                  __VCHART_DEFAULT_DATA_KEY: '雪糕冰棒_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 3
+                                },
+                                visible: true,
+                                x: 918.5999908447266,
+                                y: 313.6363636363636,
+                                angle: 0,
+                                id: 'vrender-component-label-3',
+                                opacity: 1,
+                                strokeOpacity: 1
+                              },
+                              _uid: 72,
+                              type: 'text',
+                              children: []
+                            },
+                            {
+                              attribute: {
+                                fill: '#1664FF',
+                                fontSize: 14,
+                                textAlign: 'center',
+                                textBaseline: 'middle',
+                                boundsPadding: [-1, 0, -1, 0],
+                                pickable: false,
+                                lineHeight: '150%',
+                                fontWeight: 'normal',
+                                fillOpacity: 1,
+                                lineWidth: 2,
+                                stroke: '#ffffff',
+                                text: 400,
+                                data: {
+                                  type: '鲜花绿植',
+                                  value: 400,
+                                  __VCHART_DEFAULT_DATA_SERIES_FIELD: 'bar_5',
+                                  __VCHART_DEFAULT_DATA_INDEX: 4,
+                                  __VCHART_DEFAULT_DATA_KEY: '鲜花绿植_0',
+                                  VGRAMMAR_DATA_ID_KEY_15: 4
+                                },
+                                visible: true,
+                                x: 738.5999908447266,
+                                y: 397.27272727272725,
+                                angle: 0,
+                                id: 'vrender-component-label-4',
+                                opacity: 1,
+                                strokeOpacity: 1
+                              },
+                              _uid: 73,
+                              type: 'text',
+                              children: []
                             }
                           ]
                         }
@@ -497,35 +834,54 @@ const json = {
             {
               attribute: {
                 pickable: false,
-                zIndex: 0
+                zIndex: 100
               },
-              _uid: 315,
+              _uid: 22,
               type: 'group',
-              name: 'VGRAMMAR_MARK_9',
+              name: 'axis-left_19',
               children: [
                 {
                   attribute: {
                     title: {
-                      space: 4,
+                      space: 12,
                       padding: 0,
                       textStyle: {
                         fontSize: 12,
-                        fill: '#333333',
+                        fill: '#606773',
                         fontWeight: 'normal',
-                        fillOpacity: 1
-                      }
+                        fillOpacity: 1,
+                        textAlign: 'center',
+                        textBaseline: 'bottom',
+                        lineHeight: '130%'
+                      },
+                      autoRotate: false,
+                      angle: -1.5707963267948966,
+                      shape: {},
+                      background: {},
+                      state: {
+                        text: null,
+                        shape: null,
+                        background: null
+                      },
+                      pickable: true,
+                      childrenPickable: true,
+                      text: 'type',
+                      maxWidth: null
                     },
                     label: {
                       visible: true,
                       inside: false,
-                      space: 4,
+                      space: 12,
                       padding: 0,
                       style: {
                         fontSize: 12,
                         fill: '#89909d',
                         fontWeight: 'normal',
                         fillOpacity: 1
-                      }
+                      },
+                      formatMethod: null,
+                      state: null,
+                      autoLimit: true
                     },
                     tick: {
                       visible: true,
@@ -534,9 +890,10 @@ const json = {
                       length: 4,
                       style: {
                         lineWidth: 1,
-                        stroke: '#D9DDE4',
+                        stroke: '#d9dde4',
                         strokeOpacity: 1
-                      }
+                      },
+                      state: null
                     },
                     subTick: {
                       visible: false,
@@ -545,86 +902,76 @@ const json = {
                       length: 2,
                       style: {
                         lineWidth: 1,
-                        stroke: '#D9DDE4',
+                        stroke: '#d9dde4',
                         strokeOpacity: 1
-                      }
+                      },
+                      state: null
                     },
                     line: {
                       visible: true,
                       style: {
                         lineWidth: 1,
-                        stroke: '#D9DDE4',
+                        stroke: '#d9dde4',
                         strokeOpacity: 1
-                      }
+                      },
+                      startSymbol: {},
+                      endSymbol: {}
                     },
-                    x: 250,
-                    y: 250,
+                    x: 84,
+                    y: 20,
                     start: {
                       x: 0,
                       y: 0
                     },
                     end: {
-                      x: 210,
-                      y: 0
+                      x: 0,
+                      y: 460
                     },
+                    visible: true,
+                    pickable: true,
+                    orient: 'left',
+                    panel: {
+                      state: null
+                    },
+                    verticalFactor: 1,
                     items: [
                       [
                         {
-                          id: 0,
-                          label: -1000,
-                          value: 0,
-                          rawValue: -1000
+                          id: '咖啡',
+                          label: '咖啡',
+                          value: 0.13636363636363633,
+                          rawValue: '咖啡'
                         },
                         {
-                          id: 1,
-                          label: -500,
-                          value: 0.16666666666666666,
-                          rawValue: -500
+                          id: '火锅',
+                          label: '火锅',
+                          value: 0.3181818181818181,
+                          rawValue: '火锅'
                         },
                         {
-                          id: 2,
-                          label: 0,
-                          value: 0.3333333333333333,
-                          rawValue: 0
-                        },
-                        {
-                          id: 3,
-                          label: 500,
+                          id: '米粉面条',
+                          label: '米粉面条',
                           value: 0.5,
-                          rawValue: 500
+                          rawValue: '米粉面条'
                         },
                         {
-                          id: 4,
-                          label: 1000,
-                          value: 0.6666666666666666,
-                          rawValue: 1000
+                          id: '雪糕冰棒',
+                          label: '雪糕冰棒',
+                          value: 0.6818181818181818,
+                          rawValue: '雪糕冰棒'
                         },
                         {
-                          id: 5,
-                          label: 1500,
-                          value: 0.8333333333333334,
-                          rawValue: 1500
-                        },
-                        {
-                          id: 6,
-                          label: 2000,
-                          value: 1,
-                          rawValue: 2000
+                          id: '鲜花绿植',
+                          label: '鲜花绿植',
+                          value: 0.8636363636363636,
+                          rawValue: '鲜花绿植'
                         }
                       ]
                     ],
-                    grid: {
-                      visible: true,
-                      center: {
-                        x: 0,
-                        y: 0
-                      },
-                      type: 'circle',
-                      closed: true,
-                      sides: 10
-                    }
+                    verticalLimitSize: 571.2,
+                    verticalMinSize: null
                   },
-                  _uid: 316,
+                  _uid: 23,
                   type: 'group',
                   name: 'axis',
                   children: [
@@ -634,7 +981,7 @@ const json = {
                         y: 0,
                         pickable: false
                       },
-                      _uid: 338,
+                      _uid: 43,
                       type: 'group',
                       children: [
                         {
@@ -643,7 +990,7 @@ const json = {
                             y: 0,
                             zIndex: 1
                           },
-                          _uid: 339,
+                          _uid: 44,
                           type: 'group',
                           name: 'axis-container',
                           children: [
@@ -652,7 +999,7 @@ const json = {
                                 visible: true,
                                 lineStyle: {
                                   lineWidth: 1,
-                                  stroke: '#D9DDE4',
+                                  stroke: '#d9dde4',
                                   strokeOpacity: 1
                                 },
                                 startSymbol: {
@@ -687,12 +1034,12 @@ const json = {
                                     y: 0
                                   },
                                   {
-                                    x: 210,
-                                    y: 0
+                                    x: 0,
+                                    y: 460
                                   }
                                 ]
                               },
-                              _uid: 340,
+                              _uid: 45,
                               type: 'group',
                               name: 'axis-line',
                               children: [
@@ -704,17 +1051,18 @@ const json = {
                                         y: 0
                                       },
                                       {
-                                        x: 210,
-                                        y: 0
+                                        x: 0,
+                                        y: 460
                                       }
                                     ],
                                     lineWidth: 1,
-                                    stroke: '#D9DDE4',
+                                    stroke: '#d9dde4',
                                     strokeOpacity: 1,
-                                    fill: false
+                                    fill: false,
+                                    closePath: false
                                   },
-                                  _uid: 341,
-                                  type: 'line',
+                                  _uid: 46,
+                                  type: 'polygon',
                                   name: 'axis-line-line',
                                   children: []
                                 }
@@ -726,7 +1074,7 @@ const json = {
                                 y: 0,
                                 pickable: false
                               },
-                              _uid: 342,
+                              _uid: 47,
                               type: 'group',
                               name: 'axis-tick-container',
                               children: [
@@ -735,18 +1083,39 @@ const json = {
                                     points: [
                                       {
                                         x: 0,
-                                        y: 0
+                                        y: 62.72727272727271
                                       },
+                                      {
+                                        x: -4,
+                                        y: 62.72727272727271
+                                      }
+                                    ],
+                                    lineWidth: 1,
+                                    stroke: '#d9dde4',
+                                    strokeOpacity: 1
+                                  },
+                                  _uid: 48,
+                                  type: 'line',
+                                  name: 'axis-tick',
+                                  children: []
+                                },
+                                {
+                                  attribute: {
+                                    points: [
                                       {
                                         x: 0,
-                                        y: 4
+                                        y: 146.36363636363635
+                                      },
+                                      {
+                                        x: -4,
+                                        y: 146.36363636363635
                                       }
                                     ],
                                     lineWidth: 1,
-                                    stroke: '#D9DDE4',
+                                    stroke: '#d9dde4',
                                     strokeOpacity: 1
                                   },
-                                  _uid: 343,
+                                  _uid: 49,
                                   type: 'line',
                                   name: 'axis-tick',
                                   children: []
@@ -755,19 +1124,19 @@ const json = {
                                   attribute: {
                                     points: [
                                       {
-                                        x: 35,
-                                        y: 0
+                                        x: 0,
+                                        y: 230
                                       },
                                       {
-                                        x: 35,
-                                        y: 4
+                                        x: -4,
+                                        y: 230
                                       }
                                     ],
                                     lineWidth: 1,
-                                    stroke: '#D9DDE4',
+                                    stroke: '#d9dde4',
                                     strokeOpacity: 1
                                   },
-                                  _uid: 344,
+                                  _uid: 50,
                                   type: 'line',
                                   name: 'axis-tick',
                                   children: []
@@ -776,19 +1145,19 @@ const json = {
                                   attribute: {
                                     points: [
                                       {
-                                        x: 70,
-                                        y: 0
+                                        x: 0,
+                                        y: 313.6363636363636
                                       },
                                       {
-                                        x: 70,
-                                        y: 4
+                                        x: -4,
+                                        y: 313.6363636363636
                                       }
                                     ],
                                     lineWidth: 1,
-                                    stroke: '#D9DDE4',
+                                    stroke: '#d9dde4',
                                     strokeOpacity: 1
                                   },
-                                  _uid: 345,
+                                  _uid: 51,
                                   type: 'line',
                                   name: 'axis-tick',
                                   children: []
@@ -797,82 +1166,19 @@ const json = {
                                   attribute: {
                                     points: [
                                       {
-                                        x: 105,
-                                        y: 0
+                                        x: 0,
+                                        y: 397.27272727272725
                                       },
                                       {
-                                        x: 105,
-                                        y: 4
+                                        x: -4,
+                                        y: 397.27272727272725
                                       }
                                     ],
                                     lineWidth: 1,
-                                    stroke: '#D9DDE4',
+                                    stroke: '#d9dde4',
                                     strokeOpacity: 1
                                   },
-                                  _uid: 346,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 140,
-                                        y: 0
-                                      },
-                                      {
-                                        x: 140,
-                                        y: 4
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 347,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 175,
-                                        y: 0
-                                      },
-                                      {
-                                        x: 175,
-                                        y: 4
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 348,
-                                  type: 'line',
-                                  name: 'axis-tick',
-                                  children: []
-                                },
-                                {
-                                  attribute: {
-                                    points: [
-                                      {
-                                        x: 210,
-                                        y: 0
-                                      },
-                                      {
-                                        x: 210,
-                                        y: 4
-                                      }
-                                    ],
-                                    lineWidth: 1,
-                                    stroke: '#D9DDE4',
-                                    strokeOpacity: 1
-                                  },
-                                  _uid: 349,
+                                  _uid: 52,
                                   type: 'line',
                                   name: 'axis-tick',
                                   children: []
@@ -885,7 +1191,7 @@ const json = {
                                 y: 0,
                                 pickable: false
                               },
-                              _uid: 350,
+                              _uid: 53,
                               type: 'group',
                               name: 'axis-label-container',
                               children: [
@@ -895,132 +1201,96 @@ const json = {
                                     y: 0,
                                     pickable: false
                                   },
-                                  _uid: 351,
+                                  _uid: 54,
                                   type: 'group',
                                   name: 'axis-label-container-layer-0',
                                   children: [
                                     {
                                       attribute: {
-                                        x: 0,
-                                        y: 8,
-                                        text: -1000,
+                                        x: -16,
+                                        y: 62.72727272727271,
+                                        text: '咖啡',
                                         lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
                                         fontSize: 12,
                                         fill: '#89909d',
                                         fontWeight: 'normal',
                                         fillOpacity: 1
                                       },
-                                      _uid: 352,
+                                      _uid: 55,
                                       type: 'text',
                                       name: 'axis-label',
                                       children: []
                                     },
                                     {
                                       attribute: {
-                                        x: 35,
-                                        y: 8,
-                                        text: -500,
+                                        x: -16,
+                                        y: 146.36363636363635,
+                                        text: '火锅',
                                         lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
                                         fontSize: 12,
                                         fill: '#89909d',
                                         fontWeight: 'normal',
                                         fillOpacity: 1
                                       },
-                                      _uid: 353,
+                                      _uid: 56,
                                       type: 'text',
                                       name: 'axis-label',
                                       children: []
                                     },
                                     {
                                       attribute: {
-                                        x: 70,
-                                        y: 8,
-                                        text: 0,
+                                        x: -16,
+                                        y: 230,
+                                        text: '米粉面条',
                                         lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
                                         fontSize: 12,
                                         fill: '#89909d',
                                         fontWeight: 'normal',
                                         fillOpacity: 1
                                       },
-                                      _uid: 354,
+                                      _uid: 57,
                                       type: 'text',
                                       name: 'axis-label',
                                       children: []
                                     },
                                     {
                                       attribute: {
-                                        x: 105,
-                                        y: 8,
-                                        text: 500,
+                                        x: -16,
+                                        y: 313.6363636363636,
+                                        text: '雪糕冰棒',
                                         lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
                                         fontSize: 12,
                                         fill: '#89909d',
                                         fontWeight: 'normal',
                                         fillOpacity: 1
                                       },
-                                      _uid: 355,
+                                      _uid: 58,
                                       type: 'text',
                                       name: 'axis-label',
                                       children: []
                                     },
                                     {
                                       attribute: {
-                                        x: 140,
-                                        y: 8,
-                                        text: 1000,
+                                        x: -16,
+                                        y: 397.27272727272725,
+                                        text: '鲜花绿植',
                                         lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
+                                        textAlign: 'end',
+                                        textBaseline: 'middle',
                                         fontSize: 12,
                                         fill: '#89909d',
                                         fontWeight: 'normal',
                                         fillOpacity: 1
                                       },
-                                      _uid: 356,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 175,
-                                        y: 8,
-                                        text: 1500,
-                                        lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
-                                        fontSize: 12,
-                                        fill: '#89909d',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 357,
-                                      type: 'text',
-                                      name: 'axis-label',
-                                      children: []
-                                    },
-                                    {
-                                      attribute: {
-                                        x: 210,
-                                        y: 8,
-                                        text: 2000,
-                                        lineHeight: 12,
-                                        textAlign: 'center',
-                                        textBaseline: 'top',
-                                        fontSize: 12,
-                                        fill: '#89909d',
-                                        fontWeight: 'normal',
-                                        fillOpacity: 1
-                                      },
-                                      _uid: 358,
+                                      _uid: 59,
                                       type: 'text',
                                       name: 'axis-label',
                                       children: []
@@ -1039,174 +1309,42 @@ const json = {
             },
             {
               attribute: {
-                pickable: false,
-                zIndex: 0
+                rectStyle: {
+                  fill: '#f1f2f5',
+                  opacity: 0.7,
+                  pickable: false,
+                  visible: true,
+                  lineDash: []
+                },
+                start: {
+                  x: 84,
+                  y: 45.090909090909065
+                },
+                end: {
+                  x: 1884,
+                  y: 120.36363636363635
+                },
+                zIndex: 100
               },
-              _uid: 359,
+              _uid: 92,
               type: 'group',
-              name: 'VGRAMMAR_MARK_10',
+              name: 'crosshair',
               children: [
                 {
                   attribute: {
-                    sectorStyle: {
-                      fill: '#b2bacf',
-                      opacity: 0.2
-                    },
-                    start: {
-                      x: 0,
-                      y: 0
-                    },
-                    end: {
-                      x: 0,
-                      y: 0
-                    }
+                    x: 84,
+                    y: 45.090909090909065,
+                    width: 1800,
+                    height: 75.27272727272728,
+                    fill: '#f1f2f5',
+                    opacity: 0.7,
+                    pickable: false,
+                    visible: true,
+                    lineDash: []
                   },
-                  _uid: 360,
-                  type: 'group',
-                  name: 'crosshair',
-                  children: [
-                    {
-                      attribute: {
-                        innerRadius: 0,
-                        fill: '#b2bacf',
-                        opacity: 0.2
-                      },
-                      _uid: 361,
-                      type: 'arc',
-                      name: 'crosshair-sector',
-                      children: []
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              attribute: {
-                pickable: false,
-                zIndex: 0
-              },
-              _uid: 362,
-              type: 'group',
-              name: 'VGRAMMAR_MARK_11',
-              children: [
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 0.5235987755982991,
-                    anchor: [250, 250],
-                    max: 432,
-                    q3: 404,
-                    median: 376,
-                    q1: 369,
-                    min: 355,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#6690F2',
-                    opacity: 1
-                  },
-                  _uid: 363,
-                  type: 'glyph',
-                  children: []
-                },
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 1.5707963267948968,
-                    anchor: [250, 250],
-                    max: 453,
-                    q3: 390,
-                    median: 348,
-                    q1: 341,
-                    min: 327,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#70D6A3',
-                    opacity: 1
-                  },
-                  _uid: 369,
-                  type: 'glyph',
-                  children: []
-                },
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 2.6179938779914944,
-                    anchor: [250, 250],
-                    max: 411,
-                    q3: 404,
-                    median: 334,
-                    q1: 313,
-                    min: 285,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#B4E6E2',
-                    opacity: 1
-                  },
-                  _uid: 375,
-                  type: 'glyph',
-                  children: []
-                },
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 3.6651914291880923,
-                    anchor: [250, 250],
-                    max: 418,
-                    q3: 390,
-                    median: 383,
-                    q1: 376,
-                    min: 355,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#63B5FC',
-                    opacity: 1
-                  },
-                  _uid: 381,
-                  type: 'glyph',
-                  children: []
-                },
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 4.71238898038469,
-                    anchor: [250, 250],
-                    max: 404,
-                    q3: 355,
-                    median: 348,
-                    q1: 313,
-                    min: 292,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#FF8F62',
-                    opacity: 1
-                  },
-                  _uid: 387,
-                  type: 'glyph',
-                  children: []
-                },
-                {
-                  attribute: {
-                    y: 250,
-                    angle: 5.759586531581287,
-                    anchor: [250, 250],
-                    max: 418,
-                    q3: 390,
-                    median: 383,
-                    q1: 369,
-                    min: 341,
-                    boxHeight: 30,
-                    ruleHeight: 20,
-                    stroke: 'black',
-                    fill: '#FFDC83',
-                    opacity: 1
-                  },
-                  _uid: 393,
-                  type: 'glyph',
+                  _uid: 93,
+                  type: 'rect',
+                  name: 'crosshair-rect',
                   children: []
                 }
               ]
@@ -1217,7 +1355,6 @@ const json = {
     }
   ]
 };
-
 container.load(roughModule);
 
 let arcList = [];
@@ -1264,6 +1401,8 @@ function _add(group, json) {
     group.add(createArea(json.attribute));
   } else if (json.type === 'circle') {
     group.add(createCircle(json.attribute));
+  } else if (json.type === 'image') {
+    group.add(createImage(json.attribute));
   }
 }
 

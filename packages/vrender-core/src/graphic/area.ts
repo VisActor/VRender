@@ -29,6 +29,9 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     return super.isValid() && this._isValid();
   }
   private _isValid(): boolean {
+    if (this.pathProxy) {
+      return true;
+    }
     const { points, segments } = this.attribute;
     if (segments) {
       if (segments.length === 0) {

@@ -41,6 +41,13 @@ export class BrowserWindowHandlerContribution
     return this.canvas.nativeCanvas.parentElement;
   }
 
+  static idprefix: string = 'visactor_window';
+  static prefix_count: number = 0;
+
+  static GenerateCanvasId() {
+    return `${BrowserWindowHandlerContribution.idprefix}_${BrowserWindowHandlerContribution.prefix_count++}`;
+  }
+
   constructor() {
     super();
     this._canvasIsIntersecting = true;
@@ -158,7 +165,7 @@ export class BrowserWindowHandlerContribution
       dpr: params.dpr,
       nativeCanvas,
       container,
-      id: Generator.GenAutoIncrementId().toString(),
+      id: BrowserWindowHandlerContribution.GenerateCanvasId(),
       canvasControled: true
     };
     this.canvas = new BrowserCanvas(options);

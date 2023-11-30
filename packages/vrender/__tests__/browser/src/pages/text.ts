@@ -52,25 +52,9 @@ export const page = () => {
     x: 100,
     y: 100,
     fontFamily: 'Arial',
-    fontSize: 14,
-    fontWeight: null,
-    fill: '#000',
-    textAlign: 'left',
-    textBaseline: 'top',
-    lineHeight: 14,
-    ellipsis: '...',
-    _debug_bounds: true,
-    text: '你就是我的MR. Right',
-    maxLineWidth: 100,
-    direction: 'vertical',
-    suffixPosition: 'middle',
-    autoWrapText: true,
-    wordBreak: 'break-word',
-    heightLimit: 20,
-    pickable: false,
-    dx: 0,
-    x: 16,
-    y: 12
+    text: 'aaa这是aaa',
+    fill: 'red',
+    background: 'green'
   });
   console.log(t.AABBBounds);
   graphics.push(t);
@@ -145,7 +129,7 @@ export const page = () => {
   graphics.push(rect);
 
   const stage = createStage({
-    canvas: 'main',
+    container: 'container',
     autoRender: true
   });
 

@@ -17,6 +17,13 @@ export class DefaultLayerService implements ILayerService {
   declare dynamicLayerCountInEnv: number;
   declare inited: boolean;
   declare global: IGlobal;
+  static idprefix: string = 'visactor_layer';
+  static prefix_count: number = 0;
+
+  static GenerateLayerId() {
+    return `${DefaultLayerService.idprefix}_${DefaultLayerService.prefix_count++}`;
+  }
+
   constructor() {
     this.layerMap = new Map();
     this.global = application.global;
@@ -68,7 +75,7 @@ export class DefaultLayerService implements ILayerService {
       main: false,
       ...options,
       layerMode,
-      canvasId: options.canvasId,
+      canvasId: options.canvasId ?? DefaultLayerService.GenerateLayerId(),
       layerHandler
     });
     const stageLayers = this.layerMap.get(stage) || [];

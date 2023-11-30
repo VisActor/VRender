@@ -21,6 +21,7 @@ import { TextRenderContribution } from './contributions/constants';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
 import { max } from '@visactor/vutils';
 import { calculateLineHeight } from '../../../common/utils';
+import { defaultTextBackgroundRenderContribution } from './contributions/text-contribution-render';
 
 @injectable()
 export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraphicRender {
@@ -33,6 +34,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     protected readonly textRenderContribitions: IContributionProvider<ITextRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultTextBackgroundRenderContribution as any];
     this.init(textRenderContribitions);
   }
 

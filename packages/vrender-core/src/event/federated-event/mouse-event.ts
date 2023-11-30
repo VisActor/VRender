@@ -1,5 +1,5 @@
-import { Point } from '@visactor/vutils';
 import { FederatedEvent } from './base-event';
+import type { EventPoint } from '../../interface';
 /**
  * 代码参考自 https://github.com/pixijs/pixijs
  * The MIT License
@@ -51,7 +51,10 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   shiftKey: boolean;
 
   /** The coordinates of the mouse event relative to the canvas. */
-  client: Point = new Point();
+  client: EventPoint = {
+    x: 0,
+    y: 0
+  };
 
   public get clientX(): number {
     return this.client.x;
@@ -65,7 +68,10 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   declare detail: number;
 
   /** The movement in this pointer relative to the last `mousemove` event. */
-  movement: Point = new Point();
+  movement: EventPoint = {
+    x: 0,
+    y: 0
+  };
 
   /** @readonly */
   get movementX(): number {
@@ -81,7 +87,10 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
    * The offset of the pointer coordinates w.r.t. target DisplayObject in world space. This is
    * not supported at the moment.
    */
-  offset: Point = new Point();
+  offset: EventPoint = {
+    x: 0,
+    y: 0
+  };
 
   /** @readonly */
   get offsetX(): number {
@@ -94,7 +103,10 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
   }
 
   /** The pointer coordinates in world space. */
-  global: Point = new Point();
+  global: EventPoint = {
+    x: 0,
+    y: 0
+  };
 
   /** @readonly */
   get globalX(): number {
@@ -106,7 +118,10 @@ export class FederatedMouseEvent extends FederatedEvent<MouseEvent | PointerEven
     return this.global.y;
   }
 
-  screen: Point = new Point();
+  screen: EventPoint = {
+    x: 0,
+    y: 0
+  };
   /** @readonly */
   get screenX(): number {
     return this.screen.x;

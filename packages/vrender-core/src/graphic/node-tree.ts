@@ -1,5 +1,5 @@
 import type { Dict, LooseFunction } from '@visactor/vutils';
-import { EventEmitter, isBoolean, isFunction, isObject } from '@visactor/vutils';
+import { EventEmitter, Logger, isBoolean, isFunction, isObject } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type { INode, IGroup } from '../interface';
 
@@ -267,7 +267,7 @@ export class Node extends EventEmitter<any, any> implements INode {
    */
   insertInto(newNode: INode, idx: number): INode | null {
     if (!this._ignoreWarn && this._nodeList) {
-      console.warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
+      Logger.getInstance().warn('insertIntoKeepIdx和insertInto混用可能会存在错误');
     }
     if (idx >= this.childrenCount) {
       return this.appendChild(newNode);

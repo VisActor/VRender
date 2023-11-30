@@ -58,6 +58,7 @@ export const page = () => {
   });
   console.log(t.AABBBounds);
   graphics.push(t);
+  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
   graphics.push(
     createText({

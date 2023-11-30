@@ -363,9 +363,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
-      wordBreak = textTheme.wordBreak,
+      // wordBreak = textTheme.wordBreak,
       ignoreBuf = textTheme.ignoreBuf,
-      whiteSpace = textTheme.whiteSpace
+      whiteSpace = textTheme.whiteSpace,
+      suffixPosition = textTheme.suffixPosition
     } = attribute;
     if (whiteSpace === 'normal') {
       return this.updateWrapAABBBounds(text);
@@ -392,7 +393,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          false
+          false,
+          suffixPosition
         );
         str = data.str;
         width = data.width;
@@ -467,7 +469,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontFamily = textTheme.fontFamily,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
-      verticalMode = textTheme.verticalMode
+      verticalMode = textTheme.verticalMode,
+      suffixPosition = textTheme.suffixPosition
     } = attribute;
 
     const lineHeight =
@@ -502,7 +505,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           { fontSize, fontWeight, fontFamily },
           maxLineWidth,
           strEllipsis,
-          false
+          false,
+          suffixPosition
         );
         verticalList = [data.verticalList];
         width = data.width;
@@ -563,7 +567,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       maxLineWidth,
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
-      whiteSpace = textTheme.whiteSpace
+      whiteSpace = textTheme.whiteSpace,
+      suffixPosition = textTheme.suffixPosition
     } = attribute;
     const lineHeight =
       calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
@@ -588,7 +593,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineHeight,
       ellipsis === true ? (textTheme.ellipsis as string) : ellipsis || undefined,
       false,
-      maxLineWidth
+      maxLineWidth,
+      suffixPosition
     );
     const { bbox } = layoutData;
     this.cache.layoutData = layoutData;
@@ -623,7 +629,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       stroke = textTheme.stroke,
       lineWidth = textTheme.lineWidth,
       // wordBreak = textTheme.wordBreak,
-      verticalMode = textTheme.verticalMode
+      verticalMode = textTheme.verticalMode,
+      suffixPosition = textTheme.suffixPosition
     } = attribute;
     const lineHeight =
       calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
@@ -662,7 +669,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             { fontSize, fontWeight, fontFamily },
             maxLineWidth,
             strEllipsis,
-            false
+            false,
+            suffixPosition
           );
           verticalLists[i] = data.verticalList;
           width = data.width;

@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 23 Nov 2023 13:32:49 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Nov 2023 09:40:58 GMT and should not be manually modified.
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- feat: support suffixPosition, closed #625
+- fix: fix issue with attribute interpolate, closed #741
+- refactor: event-related coordinate points do not require complex Point classes
+- fix: fix issue about calcuate bounds with shadow, closed #474
+- fix: fix issue with white line in some dpr device, closed #666
 
 ## 0.16.17
 Thu, 23 Nov 2023 13:32:49 GMT

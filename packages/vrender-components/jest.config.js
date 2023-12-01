@@ -15,7 +15,6 @@ module.exports = {
       tsconfig: './tsconfig.test.json'
     }
   },
-  setupFiles: ['./setup-mock.js'],
   verbose: true,
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.ts', '!**/type/**'],

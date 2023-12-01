@@ -12,17 +12,23 @@ import type {
 } from '../../../interface';
 import { fillVisible } from './utils';
 import { BaseRender } from './base-render';
+import { defaultTextBackgroundRenderContribution } from './contributions/text-contribution-render';
 
 @injectable()
 export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implements IGraphicRender {
   type: 'richtext';
   numberType: number = RICHTEXT_NUMBER_TYPE;
 
+  constructor() {
+    super();
+    this.builtinContributions = [defaultTextBackgroundRenderContribution as any];
+    this.init();
+  }
+
   drawShape(richtext: IRichText, context: IContext2d, x: number, y: number, drawContext: IDrawContext) {
     const richtextAttribute = getTheme(richtext).richtext;
     const {
-      width = richtextAttribute.width,
-      height = richtextAttribute.height,
+      strokeOpacity = richtextAttribute.strokeOpacity,
       opacity = richtextAttribute.opacity,
       fillOpacity = richtextAttribute.fillOpacity,
       visible = richtextAttribute.visible
@@ -33,13 +39,39 @@ export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implement
     }
 
     const fVisible = fillVisible(opacity, fillOpacity, true);
+    const sVisible = fillVisible(opacity, strokeOpacity, true);
     if (!fVisible) {
       return;
     }
 
     context.translate(x, y);
+    this.beforeRenderStep(
+      richtext,
+      context,
+      x,
+      y,
+      fVisible,
+      sVisible,
+      fVisible,
+      sVisible,
+      richtextAttribute,
+      drawContext
+    );
     const frame = richtext.getFrameCache();
     frame.draw(context, this.drawIcon);
+
+    this.afterRenderStep(
+      richtext,
+      context,
+      x,
+      y,
+      fVisible,
+      sVisible,
+      fVisible,
+      sVisible,
+      richtextAttribute,
+      drawContext
+    );
   }
 
   drawIcon(icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) {

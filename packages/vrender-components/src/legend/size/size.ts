@@ -7,57 +7,9 @@ import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
-import type { ComponentOptions, OrientType } from '../../interface';
+import type { ComponentOptions } from '../../interface';
 import type { SizeLegendAttributes } from './type';
-
-export function getSizeHandlerPath(align: OrientType = 'bottom') {
-  let centerX = 0;
-  const centerY = 0;
-  const upperHalf = 3.5;
-  const leftHalf = 2.5;
-  const arrowY = 6;
-
-  if (align === 'top') {
-    return `
-    M${centerX},${centerY - arrowY}L${centerX - upperHalf},${centerY - leftHalf}
-    v${2 * leftHalf}
-    h${2 * upperHalf}
-    v${-2 * leftHalf}
-    Z
-`;
-  }
-
-  if (align === 'left') {
-    centerX = 1;
-    return `
-    M${centerX - arrowY},${centerY}L${centerX - arrowY + leftHalf},${centerY - upperHalf}
-    h${2 * leftHalf}
-    v${2 * upperHalf}
-    h${-2 * leftHalf}
-    Z
-`;
-  }
-
-  if (align === 'right') {
-    centerX = -1;
-
-    return `
-    M${centerX + arrowY},${centerY}L${centerX + arrowY - leftHalf},${centerY - upperHalf}
-    h${-2 * leftHalf}
-    v${2 * upperHalf}
-    h${2 * leftHalf}
-    Z
-  `;
-  }
-
-  return `
-    M${centerX},${centerY + arrowY}L${centerX - upperHalf},${centerY + leftHalf}
-    v${-2 * leftHalf}
-    h${2 * upperHalf}
-    v${2 * leftHalf}
-    Z
-`;
-}
+import { getSizeHandlerPath } from '../util';
 
 export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   name = 'sizeLegend';

@@ -525,6 +525,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       animationDuration = 450,
       animationEasing = 'quadIn',
       space: pagerSpace = DEFAULT_PAGER_SPACE,
+      position = 'middle',
       ...pageStyle
     } = pager;
 
@@ -581,10 +582,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startX += spaceCol + (width as number);
       });
 
+      pagerComp.setAttribute('total', Math.ceil(pages / maxRow));
+      let y;
+      if (position === 'start') {
+        y = renderStartY;
+      } else if (position === 'end') {
+        y = renderStartY + pageHeight - pagerComp.AABBBounds.height() / 2;
+      } else {
+        y = renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2;
+      }
       pagerComp.setAttributes({
-        total: Math.ceil(pages / maxRow),
         x: pageWidth,
-        y: renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2
+        y
       });
     } else {
       // 垂直布局，支持左右翻页
@@ -623,9 +632,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startY += spaceRow + (height as number);
       });
 
+      pagerComp.setAttribute('total', Math.ceil(pages / maxCol));
+
+      let x;
+      if (position === 'start') {
+        x = 0;
+      } else if (position === 'end') {
+        x = pageWidth - pagerComp.AABBBounds.width();
+      } else {
+        x = (pageWidth - pagerComp.AABBBounds.width()) / 2;
+      }
       pagerComp.setAttributes({
-        total: Math.ceil(pages / maxCol),
-        x: (pageWidth - pagerComp.AABBBounds.width()) / 2,
+        x,
         y: (maxHeight as number) - pagerComp.AABBBounds.height()
       });
     }

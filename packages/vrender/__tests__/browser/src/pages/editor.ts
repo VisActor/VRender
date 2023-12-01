@@ -25,7 +25,9 @@ export const page = () => {
       dragable: true,
       fill: 'pink',
       boundsPadding: [0, 6, 6, 0],
-      pickable: true
+      pickable: true,
+      shadowBlur: 10,
+      shadowColor: 'green'
     });
     group.add(r);
   });
@@ -72,6 +74,8 @@ export const page = () => {
     width: 100,
     height: 100,
     fill: 'orange',
+    shadowBlur: 30,
+    shadowColor: 'green',
     _debug_bounds: c => (c.strokeStyle = 'red')
   });
 

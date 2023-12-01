@@ -3,7 +3,7 @@
  */
 import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator, CustomEvent } from '@visactor/vrender-core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
@@ -66,7 +66,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const parsedPadding = normalizePadding(padding);
     const isHorizontal = layout === 'horizontal';
 
-    const container = createGroup({
+    const container = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -84,7 +84,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       nextShape = isHorizontal ? 'triangleRight' : 'triangleDown';
     }
 
-    const preHandler = createSymbol({
+    const preHandler = graphicCreator.symbol({
       strokeBoundsBuffer: 0,
       pickMode: 'imprecise',
       ...handlerStyle,
@@ -108,7 +108,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const handlerSizeX = isNumber(handlerSize) ? handlerSize : handlerSize[0];
     const handlerSizeY = isNumber(handlerSize) ? handlerSize : handlerSize[1];
 
-    const text = createText({
+    const text = graphicCreator.text({
       x: isHorizontal ? handlerSizeX / 2 + handlerSpace + maxTextWidth / 2 : 0,
       y: isHorizontal ? 0 : handlerSizeY / 2 + handlerSpace + maxTextHeight / 2,
       text: `${defaultCurrent}/${total}`,
@@ -120,7 +120,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     this.text = text;
     container.add(text);
 
-    const nextHandler = createSymbol({
+    const nextHandler = graphicCreator.symbol({
       strokeBoundsBuffer: 0,
       pickMode: 'imprecise',
       ...handlerStyle,

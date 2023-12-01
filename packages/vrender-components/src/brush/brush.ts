@@ -2,7 +2,7 @@
  * @description 框选组件
  */
 import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
-import { createPolygon } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import type { IBounds, IPointLike } from '@visactor/vutils';
 import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -356,7 +356,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   protected _addBrushMask() {
     const { brushStyle, hasMask } = this.attribute as BrushAttributes;
-    const brushMask = createPolygon({
+    const brushMask = graphicCreator.polygon({
       points: cloneDeep(this._cacheDrawPoints), // _cacheDrawPoints在不断更新，所以这里需要cloneDeep
       cursor: 'move',
       pickable: false,

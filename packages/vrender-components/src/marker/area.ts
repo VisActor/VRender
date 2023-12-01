@@ -1,5 +1,5 @@
 import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
-import { createPolygon } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
@@ -86,7 +86,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected initMarker(container: IGroup) {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
-    const area = createPolygon({
+    const area = graphicCreator.polygon({
       points: points,
       ...areaStyle
     });

@@ -3,7 +3,7 @@
  */
 import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
 import type { IGroup, Path } from '@visactor/vrender-core';
-import { createGroup, createPath } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
 import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
@@ -137,7 +137,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   protected render(): void {
     this.removeAllChild();
     this._prevInnerView = this._innerView;
-    this._innerView = createGroup({ x: 0, y: 0, pickable: false });
+    this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
     const { items, visible } = this.attribute;
@@ -193,7 +193,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         const { center } = this.attribute as unknown as CircleGridAttributes;
         path = getArcPath(center, points, false, !!closed);
       }
-      const shape = createPath({
+      const shape = graphicCreator.path({
         path,
         z: depth,
         ...(isFunction(style)
@@ -219,7 +219,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         const path = getLinePath(nextPoints, !!closed);
         const deltaX = abs(nextPoints[0].x - nextPoints[1].x);
         const deltaY = abs(nextPoints[0].y - nextPoints[1].y);
-        const shape = createPath({
+        const shape = graphicCreator.path({
           path,
           z: 0,
           alpha: deltaX > deltaY ? ((points[1].x - points[0].x > 0 ? -1 : 1) * pi) / 2 : 0,
@@ -246,7 +246,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
       for (let index = 0; index < items.length - 1; index++) {
         const [prev, curr] = [items[index].points, items[index + 1].points];
         const path = getRegionPath(prev, curr, gridAttrs);
-        const shape = createPath({
+        const shape = graphicCreator.path({
           path,
           fill: getColor(index)
         }) as Path;

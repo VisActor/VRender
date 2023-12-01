@@ -4,7 +4,7 @@
  */
 import { isValid, normalizePadding } from '@visactor/vutils';
 import type { IGroup, INode } from '@visactor/vrender-core';
-import { createGroup } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
@@ -23,7 +23,7 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
     const parsedPadding = normalizePadding(padding);
 
     // 创建一个内部的 container 用于存储所有的元素
-    const innerView = createGroup({
+    const innerView = graphicCreator.group({
       x: parsedPadding[3],
       y: parsedPadding[0],
       pickable: interactive,

@@ -159,6 +159,7 @@ export function createRichText(attributes: IRichTextGraphicAttribute): IRichText
 
 const obj = {
   arc: createArc,
+  arc3d: createArc3d,
   area: createArea,
   circle: createCircle,
   group: createGroup,

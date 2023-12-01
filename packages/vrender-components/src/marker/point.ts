@@ -10,7 +10,7 @@ import type {
   ILineGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';
@@ -135,7 +135,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
     if (type === 'symbol') {
-      item = createSymbol({
+      item = graphicCreator.symbol({
         ...itemPosition,
         ...symbolStyle
       });
@@ -144,12 +144,12 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         ...itemPosition
       });
     } else if (type === 'richText') {
-      item = createRichText({
+      item = graphicCreator.richtext({
         ...itemPosition,
         ...richTextStyle
       });
     } else if (type === 'image') {
-      item = createImage({
+      item = graphicCreator.image({
         ...itemPosition,
         ...imageStyle
       });
@@ -260,7 +260,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     this._line = line;
     container.add(line as unknown as INode);
 
-    const decorativeLine = createLine({
+    const decorativeLine = graphicCreator.line({
       points: []
     });
     decorativeLine.name = 'mark-point-decorativeLine';

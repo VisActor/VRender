@@ -3,7 +3,7 @@
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
 import type { ISymbol } from '@visactor/vrender-core';
-import { createSymbol, createLine, createPolygon } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
@@ -116,7 +116,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
           clipPoints[clipPoints.length - 1];
       }
       points.forEach((point: Point[], index) => {
-        const line = createLine({
+        const line = graphicCreator.line({
           points: point,
           ...(isArray(lineStyle) ? lineStyle[index] ?? lineStyle[lineStyle.length - 1] : lineStyle),
           fill: false
@@ -130,7 +130,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         this.add(line);
       });
     } else {
-      const line = createPolygon({
+      const line = graphicCreator.polygon({
         points: this._clipPoints(this.attribute.points as Point[]),
         ...array(lineStyle)[0],
         fill: false,
@@ -182,7 +182,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         rotate = endAngle + Math.PI / 2;
       }
 
-      symbol = createSymbol({
+      symbol = graphicCreator.symbol({
         ...position,
         symbolType: symbolType as string,
         size,

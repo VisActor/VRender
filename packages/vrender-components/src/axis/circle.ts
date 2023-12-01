@@ -3,7 +3,7 @@
  */
 import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createCircle } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';
@@ -54,7 +54,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       innerRadius: arcInnerRadius,
       ...line?.style
     };
-    const axisLine = createCircle(arcAttrs);
+    const axisLine = graphicCreator.circle(arcAttrs);
     axisLine.name = AXIS_ELEMENT_NAME.line;
     axisLine.id = this._getNodeId('line');
 

@@ -15,7 +15,7 @@ import type {
   Cursor
 } from '@visactor/vrender-core';
 import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
-import { createGroup, createText, vglobal, createRect, createSymbol, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
@@ -168,7 +168,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const isHorizontal = layout === 'horizontal';
     this._isHorizontal = isHorizontal;
 
-    const innerView = createGroup({
+    const innerView = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -180,7 +180,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     let startTextShape;
     if (startText && startText.visible) {
       // 渲染首部文本
-      startTextShape = createText({
+      startTextShape = graphicCreator.text({
         x: isHorizontal ? 0 : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : 0,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -194,13 +194,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const space = isValid(startText.space) ? startText.space : 0;
       startLen += (isHorizontal ? startTextShape.AABBBounds.width() : startTextShape.AABBBounds.height()) + space;
     }
-    const mainContainer = createGroup({
+    const mainContainer = graphicCreator.group({
       x: isHorizontal ? startLen : 0,
       y: isHorizontal ? 0 : startLen
     });
     innerView.add(mainContainer);
 
-    const railContainer = createGroup({
+    const railContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -217,7 +217,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const space = isValid(endText.space) ? endText.space : 0;
 
       // 渲染首部文本
-      endTextShape = createText({
+      endTextShape = graphicCreator.text({
         x: isHorizontal ? startLen + space : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : startLen + space,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -247,7 +247,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       cursor = 'pointer';
     }
 
-    const railShape = createRect({
+    const railShape = graphicCreator.rect({
       x: 0,
       y: 0,
       width: railWidth,
@@ -370,7 +370,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       startValue = min;
     }
 
-    const trackContainer = createGroup({
+    const trackContainer = graphicCreator.group({
       x: 0,
       y: 0,
       width: railWidth,
@@ -395,7 +395,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const trackWidth = max === min ? railLen : ((endValue - startValue) / (max - min)) * railLen;
     const startPos = max === min ? 0 : ((startValue - min) / (max - min)) * railLen;
-    const track = createRect({
+    const track = graphicCreator.rect({
       x: isHorizontal ? startPos : 0,
       y: isHorizontal ? 0 : startPos,
       width: isHorizontal ? trackWidth : railWidth,
@@ -411,7 +411,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   protected _renderHandler(style: Partial<ISymbolGraphicAttribute>) {
     // 渲染单个滑块
-    const handler = createSymbol(style);
+    const handler = graphicCreator.symbol(style);
 
     return handler;
   }
@@ -469,7 +469,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
 
     // 展示 handler 当前所在的数值
-    const textShape = createText({
+    const textShape = graphicCreator.text({
       ...textStyle,
       ...handlerText.style
     });

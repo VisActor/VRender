@@ -35,7 +35,12 @@ import { DefaultCanvasPyramid3dPicker } from './pyramid3d-picker';
 import { DefaultCanvasArc3dPicker } from './arc3d-picker';
 import { DefaultCanvasGroupPicker } from './group-picker';
 
+let loaded = false;
 export default new ContainerModule((bind, unbind, isBound, rebind) => {
+  if (loaded) {
+    return;
+  }
+  loaded = true;
   // circle picker
   bind(CanvasCirclePicker).to(DefaultCanvasCirclePicker).inSingletonScope();
   bind(CanvasPickerContribution).toService(CanvasCirclePicker);

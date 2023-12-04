@@ -13,14 +13,15 @@ import type {
   ITextGraphicAttribute,
   FederatedPointerEvent,
   Cursor
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
-import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender/es/core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
 import type { SliderAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadSlider } from './register';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -32,6 +33,8 @@ function convertValueToRange(value: number | [number, number]) {
 function getDefaultCursor(isHorizontal: boolean) {
   return isHorizontal ? 'ew-resize' : 'ns-resize';
 }
+
+loadSlider();
 
 export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   name = 'slider';

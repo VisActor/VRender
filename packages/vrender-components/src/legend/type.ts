@@ -3,7 +3,7 @@ import type {
   IRectGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import type { Padding } from '../core/type';
 
 export type LegendTitle = {

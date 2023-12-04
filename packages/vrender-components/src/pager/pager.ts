@@ -1,14 +1,15 @@
 /**
  * @description 翻页器
  */
-import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
+import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender/es/core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator, CustomEvent } from '@visactor/vrender/es/core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { PagerAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadPager } from './register';
 
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
@@ -25,6 +26,8 @@ const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
     hover: {}
   }
 };
+
+loadPager();
 
 export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   name = 'pager';

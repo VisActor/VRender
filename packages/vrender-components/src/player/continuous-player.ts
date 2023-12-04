@@ -1,9 +1,10 @@
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
-import { vglobal } from '@visactor/vrender-core';
+import type { FederatedPointerEvent } from '@visactor/vrender/es/core';
+import { vglobal } from '@visactor/vrender/es/core';
 import { BasePlayer } from './base-player';
 import type { ContinuousPlayerAttributes } from './type';
 import { PlayerEventEnum } from './type';
 import { ControllerEventEnum } from './controller/constant';
+import { loadContinuousPlayer } from './register';
 
 export interface IContinuousPlayer {
   play: () => Promise<void>;
@@ -12,6 +13,7 @@ export interface IContinuousPlayer {
   backward: () => void;
 }
 
+loadContinuousPlayer();
 export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
   declare attribute: ContinuousPlayerAttributes;
 

@@ -1,4 +1,4 @@
-import type { ISymbolGraphicAttribute } from '@visactor/vrender-core';
+import type { ISymbolGraphicAttribute } from '@visactor/vrender/es/core';
 import type { BaseGraphicAttributes } from '../../core/type';
 
 /**

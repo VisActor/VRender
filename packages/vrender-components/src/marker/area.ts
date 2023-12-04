@@ -1,5 +1,5 @@
-import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import type { IGroup, INode, IPolygon } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender/es/core';
 import { merge } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
@@ -8,7 +8,9 @@ import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './con
 import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
+import { loadMarkArea } from './register';
 
+loadMarkArea();
 export class MarkArea extends Marker<MarkAreaAttrs> {
   name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;

@@ -11,4 +11,5 @@ export * from './rect';
 export * from './circle';
 export * from './sector';
 export * from './polygon';
+export * from './register';
 export * from './type';

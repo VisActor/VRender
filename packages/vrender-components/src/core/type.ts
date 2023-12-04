@@ -1,4 +1,4 @@
-import type { IRichTextCharacter } from '@visactor/vrender-core';
+import type { IRichTextCharacter } from '@visactor/vrender/es/core';
 
 export type Point = {
   x: number;

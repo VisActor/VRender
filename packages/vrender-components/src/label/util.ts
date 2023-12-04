@@ -1,4 +1,4 @@
-import type { IArea, ILine } from '@visactor/vrender-core';
+import type { IArea, ILine } from '@visactor/vrender/es/core';
 import type { IPolarPoint, IPoint, Quadrant } from './type';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 import { radianToDegree, isValidNumber } from '@visactor/vutils';

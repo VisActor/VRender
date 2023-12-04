@@ -17,6 +17,7 @@ import { POLAR_START_ANGLE, POLAR_END_ANGLE } from '../../constant';
 import type { TransformedAxisItem } from '../type';
 import { LineAxisMixin } from '../mixin/line';
 import type { ComponentOptions } from '../../interface';
+import { loadLineAxisGrid } from '../register';
 
 function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
   const points: Point[] = [];
@@ -32,6 +33,7 @@ export interface LineAxisGrid
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector'>,
     BaseGrid<LineAxisGridAttributes> {}
 
+loadLineAxisGrid();
 export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
   constructor(attributes: LineAxisGridAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, BaseGrid.defaultAttributes, attributes), options);

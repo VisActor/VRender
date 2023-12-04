@@ -1,5 +1,5 @@
-import type { IText, ITextGraphicAttribute, EasingType } from '@visactor/vrender-core';
-import { IncreaseCount } from '@visactor/vrender-core';
+import type { IText, ITextGraphicAttribute, EasingType } from '@visactor/vrender/es/core';
+import { IncreaseCount } from '@visactor/vrender/es/core';
 import type { BaseLabelAttrs, ILabelAnimation, ILabelUpdateChannelAnimation } from '../type';
 import { array, isArray, isEmpty, isValidNumber } from '@visactor/vutils';
 

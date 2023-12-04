@@ -1,8 +1,8 @@
 /**
  * @description 连续尺寸图例
  */
-import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, INode } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender/es/core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
@@ -10,7 +10,9 @@ import { DEFAULT_TITLE_SPACE } from '../constant';
 import type { ComponentOptions } from '../../interface';
 import type { SizeLegendAttributes } from './type';
 import { getSizeHandlerPath } from '../util';
+import { loadSizeContinuousLegend } from '../register';
 
+loadSizeContinuousLegend();
 export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   name = 'sizeLegend';
 

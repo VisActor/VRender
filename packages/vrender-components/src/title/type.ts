@@ -4,7 +4,7 @@ import type {
   IRichTextGraphicAttribute,
   IRichTextCharacter,
   RichTextWordBreak
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import type { Padding } from '../core/type';
 
 export interface TitleAttrs extends IGroupGraphicAttribute {

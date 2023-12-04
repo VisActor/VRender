@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent, IGraphic, IGroup, IPlugin, IPluginService } from '@visactor/vrender-core';
-import { Generator, injectable } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGraphic, IGroup, IPlugin, IPluginService } from '@visactor/vrender/es/core';
+import { Generator, injectable } from '@visactor/vrender/es/core';
 import { ScrollBar } from './scrollbar';
 import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds, abs, isRectIntersect, max, min, rectInsideAnotherRect } from '@visactor/vutils';

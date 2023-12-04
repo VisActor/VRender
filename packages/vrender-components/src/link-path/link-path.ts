@@ -2,11 +2,12 @@
  * @description 桑基图Link组件，也适用于其他有宽度的连边展示
  * @author 康晓婷
  */
-import type { IGroup, IPath } from '@visactor/vrender-core';
+import type { IGroup, IPath } from '@visactor/vrender/es/core';
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { LinkPathAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadLinkPath } from './register';
 
 export const getHorizontalPath = (options: LinkPathAttributes, ratio?: number) => {
   let x0 = options.x0;
@@ -110,6 +111,8 @@ export const getVerticalPath = (options: LinkPathAttributes, ratio?: number) => 
   ${startArrowPath}
   Z`;
 };
+
+loadLinkPath();
 
 export class LinkPath extends AbstractComponent<Required<LinkPathAttributes>> {
   static defaultAttributes = {

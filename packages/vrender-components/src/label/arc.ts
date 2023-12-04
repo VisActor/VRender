@@ -9,7 +9,7 @@ import {
   type IGraphic,
   type ILine,
   graphicCreator
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import {
   circlePoint,
   isQuadrantRight,

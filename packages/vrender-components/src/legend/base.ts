@@ -3,8 +3,8 @@
  * align 为 'top' 时，操作区域同标题的间距有问题
  */
 import { isValid, normalizePadding } from '@visactor/vutils';
-import type { IGroup, INode } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import type { IGroup, INode } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender/es/core';
 import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';

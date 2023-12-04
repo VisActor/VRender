@@ -7,4 +7,3 @@ export * from './size/type';
 export * from './type';
 export * from './constant';
 export * from './util';
-export * from './register';

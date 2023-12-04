@@ -7,7 +7,7 @@ import { DirectionEnum, PlayerEventEnum } from './type';
 import { forwardStep, isReachEnd, isReachStart } from './utils';
 import { ControllerEventEnum } from './controller/constant';
 import type { ComponentOptions } from '../interface';
-import { loadDiscretePlayer } from './register';
+import { loadDiscretePlayerComponent } from './register';
 
 export interface IDiscretePlayer {
   play: () => void;
@@ -16,7 +16,7 @@ export interface IDiscretePlayer {
   forward: () => void;
 }
 
-loadDiscretePlayer();
+loadDiscretePlayerComponent();
 export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> implements IDiscretePlayer {
   declare attribute: DiscretePlayerAttributes;
 

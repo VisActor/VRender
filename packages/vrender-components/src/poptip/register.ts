@@ -2,8 +2,7 @@ import {
   container,
   InteractiveSubRenderContribution,
   AutoEnablePlugins,
-  ContainerModule,
-  graphicCreator
+  ContainerModule
 } from '@visactor/vrender/es/core';
 import { merge } from '@visactor/vutils';
 import { PopTipRenderContribution } from './contribution';
@@ -29,6 +28,9 @@ export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) 
 
 export function loadPoptip() {
   container.load(popTipModule);
+}
+
+export function loadPoptipComponent() {
   registerGroup();
   registerWrapText();
   registerSymbol();

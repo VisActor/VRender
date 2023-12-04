@@ -15,9 +15,9 @@ import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
 import { getLabelPosition } from './util';
 import type { ComponentOptions } from '../interface';
-import { loadCircleAxis } from './register';
+import { loadCircleAxisComponent } from './register';
 
-loadCircleAxis();
+loadCircleAxisComponent();
 export interface CircleAxis
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
     AxisBase<CircleAxisAttributes> {}

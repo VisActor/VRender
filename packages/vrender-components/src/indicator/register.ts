@@ -1,6 +1,6 @@
 import { registerGroup, registerRichtext, registerText } from '@visactor/vrender/es/register';
 
-export function loadIndicator() {
+export function loadIndicatorComponent() {
   registerGroup();
   registerText();
   registerRichtext();

@@ -1,26 +1,27 @@
+// import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender/es/register';
 import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender/es/register';
 
-export function loadLineCrosshair() {
+export function loadLineCrosshairComponent() {
   registerGroup();
   registerLine();
 }
 
-export function loadCircleCrosshair() {
+export function loadCircleCrosshairComponent() {
   registerGroup();
   registerArc();
 }
 
-export function loadPolygonCrosshair() {
+export function loadPolygonCrosshairComponent() {
   registerGroup();
   registerPath();
 }
 
-export function loadRectCrosshair() {
+export function loadRectCrosshairComponent() {
   registerGroup();
   registerRect();
 }
 
-export function loadSectorCrosshair() {
+export function loadSectorCrosshairComponent() {
   registerGroup();
   registerArc();
 }

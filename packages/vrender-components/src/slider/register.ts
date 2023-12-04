@@ -1,6 +1,6 @@
 import { registerGroup, registerRect, registerSymbol, registerText } from '@visactor/vrender/es/register';
 
-export function loadSlider() {
+export function loadSliderComponent() {
   registerGroup();
   registerText();
   registerRect();

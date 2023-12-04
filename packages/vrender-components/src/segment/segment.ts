@@ -8,9 +8,9 @@ import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
-import { loadSegment } from './register';
+import { loadSegmentComponent } from './register';
 
-loadSegment();
+loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
 

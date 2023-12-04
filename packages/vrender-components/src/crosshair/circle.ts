@@ -7,9 +7,9 @@ import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { CircleCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadCircleCrosshair } from './register';
+import { loadCircleCrosshairComponent } from './register';
 
-loadCircleCrosshair();
+loadCircleCrosshairComponent();
 export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {

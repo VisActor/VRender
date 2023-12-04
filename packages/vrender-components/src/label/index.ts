@@ -8,5 +8,3 @@ export * from './area';
 export * from './line-data';
 
 export * from './dataLabel';
-
-export * from './register';

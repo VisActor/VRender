@@ -4,7 +4,7 @@ import { BasePlayer } from './base-player';
 import type { ContinuousPlayerAttributes } from './type';
 import { PlayerEventEnum } from './type';
 import { ControllerEventEnum } from './controller/constant';
-import { loadContinuousPlayer } from './register';
+import { loadContinuousPlayerComponent } from './register';
 
 export interface IContinuousPlayer {
   play: () => Promise<void>;
@@ -13,7 +13,7 @@ export interface IContinuousPlayer {
   backward: () => void;
 }
 
-loadContinuousPlayer();
+loadContinuousPlayerComponent();
 export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
   declare attribute: ContinuousPlayerAttributes;
 

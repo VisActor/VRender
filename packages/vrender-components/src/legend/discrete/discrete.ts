@@ -31,7 +31,7 @@ import {
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 import type { ComponentOptions } from '../../interface';
-import { loadDiscreteLegend } from '../register';
+import { loadDiscreteLegendComponent } from '../register';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -41,7 +41,7 @@ const DEFAULT_STATES = {
   [LegendStateValue.unSelectedHover]: {}
 };
 
-loadDiscreteLegend();
+loadDiscreteLegendComponent();
 export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   name = 'discreteLegend';
 

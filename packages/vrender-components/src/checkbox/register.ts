@@ -1,6 +1,6 @@
 import { registerGroup, registerImage, registerRect, registerWrapText } from '@visactor/vrender/es/register';
 
-export function loadCheckBox() {
+export function loadCheckBoxComponent() {
   registerGroup();
   registerRect();
   registerWrapText();

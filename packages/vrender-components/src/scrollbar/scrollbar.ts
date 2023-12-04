@@ -9,7 +9,7 @@ import { AbstractComponent } from '../core/base';
 
 import type { ScrollBarAttributes } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadScrollbar } from './register';
+import { loadScrollbar, loadScrollbarComponent } from './register';
 
 type ComponentBounds = {
   x1: number;
@@ -25,7 +25,7 @@ const delayMap = {
   throttle: throttle
 };
 
-loadScrollbar();
+loadScrollbarComponent();
 
 export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> {
   name = 'scrollbar';

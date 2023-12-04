@@ -5,26 +5,26 @@ import {
   registerPolygon,
   registerSymbol
 } from '@visactor/vrender/es/register';
-import { loadTag } from '../tag/register';
-import { loadSegment } from '../segment';
+import { loadTagComponent } from '../tag/register';
+import { loadSegmentComponent } from '../segment/register';
 function loadBaseMarker() {
   registerGroup();
-  loadTag();
+  loadTagComponent();
 }
 
-export function loadMarkLine() {
+export function loadMarkLineComponent() {
   loadBaseMarker();
-  loadSegment();
+  loadSegmentComponent();
 }
 
-export function loadMarkArea() {
+export function loadMarkAreaComponent() {
   loadBaseMarker();
   registerPolygon();
 }
 
-export function loadMarkPoint() {
+export function loadMarkPointComponent() {
   loadBaseMarker();
-  loadSegment();
+  loadSegmentComponent();
   registerSymbol();
   registerImage();
   registerLine();

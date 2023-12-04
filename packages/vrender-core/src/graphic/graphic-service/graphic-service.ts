@@ -1513,8 +1513,9 @@ export class DefaultGraphicService implements IGraphicService {
     }
     if (shadowBlur) {
       const { shadowOffsetX = theme.shadowOffsetX, shadowOffsetY = theme.shadowOffsetY } = attribute;
-      const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2 + Math.max(shadowOffsetX, shadowOffsetY);
-      boundStroke(tb1, shadowBlurWidth, miter, strokeBoundsBuffer + 1);
+      const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2;
+      boundStroke(tb1, shadowBlurWidth, false, strokeBoundsBuffer + 1);
+      tb1.translate(shadowOffsetX, shadowOffsetY);
       aabbBounds.union(tb1);
       // tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     }

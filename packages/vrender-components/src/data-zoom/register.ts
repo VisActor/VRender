@@ -1,7 +1,7 @@
 import { registerArea, registerLine, registerRect, registerSymbol } from '@visactor/vrender/es/register';
-import { loadTag } from '../tag/register';
-export function loadDataZoom() {
-  loadTag();
+import { loadTagComponent } from '../tag/register';
+export function loadDataZoomComponent() {
+  loadTagComponent();
   registerRect();
   registerSymbol();
   registerArea();

@@ -1,6 +1,6 @@
 import { registerGroup, registerPath } from '@visactor/vrender/es/register';
 
-export function loadLinkPath() {
+export function loadLinkPathComponent() {
   registerGroup();
   registerPath();
 }

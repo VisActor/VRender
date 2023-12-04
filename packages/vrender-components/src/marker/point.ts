@@ -24,9 +24,9 @@ import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
-import { loadMarkPoint } from './register';
+import { loadMarkPointComponent } from './register';
 
-loadMarkPoint();
+loadMarkPointComponent();
 export class MarkPoint extends Marker<MarkPointAttrs> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;

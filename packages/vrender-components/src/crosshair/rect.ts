@@ -8,9 +8,9 @@ import type { Tag } from '../tag';
 import { CrosshairBase } from './base';
 import type { RectCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadRectCrosshair } from './register';
+import { loadRectCrosshairComponent } from './register';
 
-loadRectCrosshair();
+loadRectCrosshairComponent();
 export class RectCrosshair extends CrosshairBase<RectCrosshairAttrs> {
   static defaultAttributes = {
     rectStyle: {

@@ -11,6 +11,9 @@ export const scrollbarModule = new ContainerModule((bind, unbind, isBound, rebin
 
 export function loadScrollbar() {
   container.load(scrollbarModule);
+}
+
+export function loadScrollbarComponent() {
   registerGroup();
   registerRect();
 }

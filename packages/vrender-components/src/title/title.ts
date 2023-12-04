@@ -7,9 +7,9 @@ import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
-import { loadTitle } from './register';
+import { loadTitleComponent } from './register';
 
-loadTitle();
+loadTitleComponent();
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
   name = 'title';
 

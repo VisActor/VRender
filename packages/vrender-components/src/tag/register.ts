@@ -6,7 +6,7 @@ import {
   registerText
 } from '@visactor/vrender/es/register';
 
-export function loadTag() {
+export function loadTagComponent() {
   registerGroup();
   registerRect();
   registerSymbol();

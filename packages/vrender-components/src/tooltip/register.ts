@@ -6,7 +6,7 @@ import {
   registerText
 } from '@visactor/vrender/es/register';
 
-export function loadTooltip() {
+export function loadTooltipComponent() {
   registerGroup();
   registerRect();
   registerSymbol();

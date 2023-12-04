@@ -8,9 +8,9 @@ import { measureTextSize } from '../util';
 import type { IndicatorAttributes, IndicatorItemSpec } from './type';
 import { DEFAULT_INDICATOR_THEME } from './config';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
-import { loadIndicator } from './register';
+import { loadIndicatorComponent } from './register';
 
-loadIndicator();
+loadIndicatorComponent();
 export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> {
   name = 'indicator';
 

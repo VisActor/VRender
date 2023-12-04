@@ -3,4 +3,3 @@
  */
 export * from './segment';
 export * from './type';
-export * from './register';

@@ -1,25 +1,25 @@
 import { registerGroup, registerPath } from '@visactor/vrender/es/register';
-import { loadTag } from '../tag/register';
-import { loadPager } from '../pager/register';
-import { loadSlider } from '../slider/register';
+import { loadTagComponent } from '../tag/register';
+import { loadPagerComponent } from '../pager/register';
+import { loadSliderComponent } from '../slider/register';
 
 function loadBaseLegend() {
   registerGroup();
-  loadTag();
+  loadTagComponent();
 }
 
-export function loadDiscreteLegend() {
+export function loadDiscreteLegendComponent() {
   loadBaseLegend();
-  loadPager();
+  loadPagerComponent();
 }
 
-export function loadColorContinuousLegend() {
+export function loadColorContinuousLegendComponent() {
   loadBaseLegend();
-  loadSlider();
+  loadSliderComponent();
 }
 
-export function loadSizeContinuousLegend() {
+export function loadSizeContinuousLegendComponent() {
   loadBaseLegend();
-  loadSlider();
+  loadSliderComponent();
   registerPath();
 }

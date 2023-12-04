@@ -13,13 +13,13 @@ import { DataZoomActiveTag } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { DataZoomAttributes } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadDataZoom } from './register';
+import { loadDataZoomComponent } from './register';
 
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
-loadDataZoom();
+loadDataZoomComponent();
 export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   name = 'dataZoom';
   static defaultAttributes = DEFAULT_DATA_ZOOM_ATTRIBUTES;

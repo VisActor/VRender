@@ -12,9 +12,9 @@ import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
 import type { ColorLegendAttributes } from './type';
 import type { ComponentOptions } from '../../interface';
-import { loadColorContinuousLegend } from '../register';
+import { loadColorContinuousLegendComponent } from '../register';
 
-loadColorContinuousLegend();
+loadColorContinuousLegendComponent();
 export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   name = 'colorLegend';
 

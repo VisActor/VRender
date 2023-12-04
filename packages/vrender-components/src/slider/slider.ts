@@ -21,7 +21,7 @@ import { SLIDER_ELEMENT_NAME } from './constant';
 
 import type { SliderAttributes } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadSlider } from './register';
+import { loadSliderComponent } from './register';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -34,7 +34,7 @@ function getDefaultCursor(isHorizontal: boolean) {
   return isHorizontal ? 'ew-resize' : 'ns-resize';
 }
 
-loadSlider();
+loadSliderComponent();
 
 export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   name = 'slider';

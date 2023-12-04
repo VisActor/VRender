@@ -15,22 +15,22 @@ function loadBasicAxis() {
   registerText();
 }
 
-export function loadLineAxis() {
+export function loadLineAxisComponent() {
   loadBasicAxis();
   registerRect();
 }
 
-export function loadCircleAxis() {
+export function loadCircleAxisComponent() {
   loadBasicAxis();
   registerCircle();
 }
 
-export function loadLineAxisGrid() {
+export function loadLineAxisGridComponent() {
   registerGroup();
   registerPath();
 }
 
-export function loadCircleAxisGrid() {
+export function loadCircleAxisGridComponent() {
   registerGroup();
   registerPath();
 }

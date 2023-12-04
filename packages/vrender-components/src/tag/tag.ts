@@ -18,9 +18,9 @@ import { measureTextSize } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
-import { loadTag } from './register';
+import { loadTagComponent } from './register';
 
-loadTag();
+loadTagComponent();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
 

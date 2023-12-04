@@ -1,6 +1,6 @@
 import { registerGroup, registerLine, registerPolygon, registerSymbol } from '@visactor/vrender/es/register';
 
-export function loadSegment() {
+export function loadSegmentComponent() {
   registerGroup();
   registerLine();
   registerPolygon();

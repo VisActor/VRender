@@ -71,7 +71,9 @@
     ".": {
       "import": "./es/index.js",
       "require": "./cjs/index.js"
-    }
+    },
+    "./es/*": "./es/*.js",
+    "./cjs/*": "./cjs/*.js"
   },
   "publishConfig": {
     "access": "public"

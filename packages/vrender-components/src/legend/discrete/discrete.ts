@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, Dict, isBoolean, isNil, isFunction } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -11,9 +11,9 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator, CustomEvent } from '@visactor/vrender/es/core';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -31,6 +31,7 @@ import {
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 import type { ComponentOptions } from '../../interface';
+import { loadDiscreteLegend } from '../register';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -40,6 +41,7 @@ const DEFAULT_STATES = {
   [LegendStateValue.unSelectedHover]: {}
 };
 
+loadDiscreteLegend();
 export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   name = 'discreteLegend';
 

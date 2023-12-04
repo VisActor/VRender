@@ -11,14 +11,16 @@ import type {
   IRichTextGraphicAttribute,
   IRichText,
   IRichTextCharacter
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadTag } from './register';
 
+loadTag();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
 

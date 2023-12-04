@@ -4,7 +4,7 @@ import type {
   IRectGraphicAttribute,
   ITextAttribute,
   IRichTextCharacter
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import type { IBounds, IPadding } from '@visactor/vutils';
 
 export interface IContainerSize {

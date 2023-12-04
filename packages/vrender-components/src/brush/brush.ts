@@ -1,8 +1,8 @@
 /**
  * @description 框选组件
  */
-import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
-import { graphicCreator } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender/es/core';
 import type { IBounds, IPointLike } from '@visactor/vutils';
 import { cloneDeep, debounce, isFunction, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -10,12 +10,14 @@ import type { BrushAttributes } from './type';
 import { IOperateType } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
 import type { ComponentOptions } from '../interface';
+import { loadBrush } from './register';
 
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
 
+loadBrush();
 export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   name = 'brush';
   static defaultAttributes = DEFAULT_BRUSH_ATTRIBUTES;

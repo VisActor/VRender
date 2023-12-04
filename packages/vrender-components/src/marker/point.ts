@@ -8,9 +8,9 @@ import type {
   IRichTextGraphicAttribute,
   ILine,
   ILineGraphicAttribute
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender/es/core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';
@@ -24,7 +24,9 @@ import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
+import { loadMarkPoint } from './register';
 
+loadMarkPoint();
 export class MarkPoint extends Marker<MarkPointAttrs> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;

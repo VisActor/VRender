@@ -1,12 +1,13 @@
 import { isNil, merge } from '@visactor/vutils';
-import type { FederatedPointerEvent } from '@visactor/vrender-core';
-import { vglobal } from '@visactor/vrender-core';
+import type { FederatedPointerEvent } from '@visactor/vrender/es/core';
+import { vglobal } from '@visactor/vrender/es/core';
 import { BasePlayer } from './base-player';
 import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from './type';
 import { DirectionEnum, PlayerEventEnum } from './type';
 import { forwardStep, isReachEnd, isReachStart } from './utils';
 import { ControllerEventEnum } from './controller/constant';
 import type { ComponentOptions } from '../interface';
+import { loadDiscretePlayer } from './register';
 
 export interface IDiscretePlayer {
   play: () => void;
@@ -14,6 +15,8 @@ export interface IDiscretePlayer {
   backward: () => void;
   forward: () => void;
 }
+
+loadDiscretePlayer();
 export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> implements IDiscretePlayer {
   declare attribute: DiscretePlayerAttributes;
 

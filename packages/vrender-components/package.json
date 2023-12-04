@@ -21,11 +21,11 @@
     "test-cov": "jest --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "analysis-core": "bundle -f umd -a -i core.ts"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.17.0",
-    "@visactor/vrender-kits": "workspace:0.17.0",
+    "@visactor/vrender": "workspace:0.17.0",
     "@visactor/vutils": "~0.16.18",
     "@visactor/vscale": "~0.16.18"
   },

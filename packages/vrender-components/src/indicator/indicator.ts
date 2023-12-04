@@ -1,14 +1,16 @@
 /**
  * @description 指标卡组件
  */
-import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender/es/core';
 import { merge, isValid, array, isValidNumber, get } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { IndicatorAttributes, IndicatorItemSpec } from './type';
 import { DEFAULT_INDICATOR_THEME } from './config';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadIndicator } from './register';
 
+loadIndicator();
 export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> {
   name = 'indicator';
 

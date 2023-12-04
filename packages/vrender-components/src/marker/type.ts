@@ -5,7 +5,7 @@ import type {
   IPolygonAttribute,
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
 import type { Point } from '../core/type';

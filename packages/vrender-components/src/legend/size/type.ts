@@ -1,4 +1,4 @@
-import type { IPathGraphicAttribute } from '@visactor/vrender-core';
+import type { IPathGraphicAttribute } from '@visactor/vrender/es/core';
 import type { SliderAttributes } from '../../slider/type';
 import type { LegendBaseAttributes } from '../type';
 

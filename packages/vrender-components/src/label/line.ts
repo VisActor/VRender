@@ -1,6 +1,6 @@
 import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
-import type { ILine } from '@visactor/vrender-core';
+import type { ILine } from '@visactor/vrender/es/core';
 import type { PointLocationCfg } from '../core/type';
 import type { LineLabelAttrs } from './type';
 import { LabelBase } from './base';

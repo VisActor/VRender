@@ -14,6 +14,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@visactor/vrender/es/core': path.resolve(__dirname, '../../../vrender/src/index.ts'),
+      '@visactor/vrender/es/register': path.resolve(__dirname, '../../../vrender/src/register.ts'),
+      '@visactor/vrender/es/kits': path.resolve(__dirname, '../../../vrender/src/kits.ts'),
       '@visactor/vrender-core': path.resolve(__dirname, '../../../vrender-core/src/index.ts'),
       '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts'),
       '@visactor/vrender-kits': path.resolve(__dirname, '../../../vrender-kits/src/index.ts')

@@ -2,7 +2,7 @@
  * @description 自动隐藏
  */
 
-import type { IText } from '@visactor/vrender-core';
+import type { IText } from '@visactor/vrender/es/core';
 import type { IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { isEmpty, isFunction, isRectIntersect, isRotateAABBIntersect, last } from '@visactor/vutils';

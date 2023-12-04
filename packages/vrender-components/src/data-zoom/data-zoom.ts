@@ -1,6 +1,6 @@
-import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender/es/core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal, CustomEvent } from '@visactor/vrender-core';
+import { vglobal, CustomEvent } from '@visactor/vrender/es/core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -13,12 +13,13 @@ import { DataZoomActiveTag } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { DataZoomAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadDataZoom } from './register';
 
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
-
+loadDataZoom();
 export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   name = 'dataZoom';
   static defaultAttributes = DEFAULT_DATA_ZOOM_ATTRIBUTES;

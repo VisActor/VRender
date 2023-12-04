@@ -12,10 +12,9 @@ import type {
   IArea,
   IRichTextGraphicAttribute,
   IRichText,
-  IRichTextCharacter,
-  ITextAttribute
-} from '@visactor/vrender-core';
-import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
+  IRichTextCharacter
+} from '@visactor/vrender/es/core';
+import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender/es/core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -40,7 +39,9 @@ import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from '
 import { getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadLabel } from './register';
 
+loadLabel();
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
 

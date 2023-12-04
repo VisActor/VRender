@@ -1,4 +1,4 @@
-import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
+import type { TextAlignType, TextBaselineType } from '@visactor/vrender/es/core';
 import { IMarkAreaLabelPosition, IMarkLineLabelPosition } from './type';
 
 export const DEFAULT_MARK_LINE_THEME = {

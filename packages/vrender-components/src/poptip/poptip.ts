@@ -10,7 +10,7 @@ import type {
   ITextGraphicAttribute,
   TextAlignType,
   TextBaselineType
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 import {
   AABBBounds,
   Bounds,
@@ -28,9 +28,11 @@ import {
 import { AbstractComponent } from '../core/base';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
+import { loadPoptip } from './register';
 
 const _tBounds = new AABBBounds();
 
+loadPoptip();
 export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   name = 'poptip';
 

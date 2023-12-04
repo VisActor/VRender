@@ -1,5 +1,5 @@
-import type { EasingType, IGraphic, IGroup } from '@visactor/vrender-core';
-import { ACustomAnimate, AnimateMode } from '@visactor/vrender-core';
+import type { EasingType, IGraphic, IGroup } from '@visactor/vrender/es/core';
+import { ACustomAnimate, AnimateMode } from '@visactor/vrender/es/core';
 import type { Dict } from '@visactor/vutils';
 import { cloneDeep, interpolateString, isEqual, isValidNumber } from '@visactor/vutils';
 import { traverseGroup } from '../../util';

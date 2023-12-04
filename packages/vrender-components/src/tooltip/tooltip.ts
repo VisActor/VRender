@@ -1,16 +1,8 @@
 /**
  * @description 标题组件
  */
-import type {
-  IGroup,
-  IText,
-  IRichText,
-  IRect,
-  ISymbol,
-  IRichTextCharacter,
-  ITextGraphicAttribute
-} from '@visactor/vrender-core';
-import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
+import type { IGroup, IText, IRichText, IRect, ISymbol, ITextGraphicAttribute } from '@visactor/vrender/es/core';
+import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender/es/core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
@@ -21,6 +13,7 @@ import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
 import type { ComponentOptions } from '../interface';
 import type { TextMeasureInput } from '@visactor/vutils';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadTooltip } from './register';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';
@@ -30,6 +23,7 @@ const TOOLTIP_SHAPE_NAME_SUFFIX = 'shape';
 const TOOLTIP_KEY_NAME_SUFFIX = 'key';
 const TOOLTIP_VALUE_NAME_SUFFIX = 'value';
 
+loadTooltip();
 export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
   name = 'tooltip';
 

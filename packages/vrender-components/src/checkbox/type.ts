@@ -5,7 +5,7 @@ import type {
   IImageGraphicAttribute,
   IRectGraphicAttribute,
   IWrapTextGraphicAttribute
-} from '@visactor/vrender-core';
+} from '@visactor/vrender/es/core';
 
 export type CheckboxText = {
   disableFill?: IColor;

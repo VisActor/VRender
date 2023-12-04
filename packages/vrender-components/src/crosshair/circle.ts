@@ -1,13 +1,15 @@
 /**
  * @description circle 类型 crosshair，用于极坐标系下
  */
-import type { IGroup } from '@visactor/vrender-core';
+import type { IGroup } from '@visactor/vrender/es/core';
 import { merge, PointService } from '@visactor/vutils';
 import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { CircleCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadCircleCrosshair } from './register';
 
+loadCircleCrosshair();
 export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {

@@ -33,6 +33,7 @@ import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } 
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
+import type { ComponentOptions } from '../interface';
 
 export interface LineAxis
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
@@ -41,11 +42,8 @@ export interface LineAxis
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
 
-  constructor(attributes: LineAxisAttributes, mode?: '2d' | '3d') {
-    super(merge({}, LineAxis.defaultAttributes, attributes), mode);
-    if (mode === '3d') {
-      this.setMode(mode);
-    }
+  constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
 
   protected _renderInner(container: IGroup) {

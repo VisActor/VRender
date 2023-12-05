@@ -6,6 +6,7 @@ import { merge, PointService } from '@visactor/vutils';
 import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { CircleCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
   static defaultAttributes = {
@@ -16,8 +17,8 @@ export class CircleCrosshair extends CrosshairBase<CircleCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: CircleCrosshairAttrs) {
-    super(merge({}, CircleCrosshair.defaultAttributes, attributes));
+  constructor(attributes: CircleCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, CircleCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

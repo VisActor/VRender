@@ -3,9 +3,9 @@ import {
   injectable,
   Generator,
   BaseWindowHandlerContribution,
-  VGlobal,
   ContainerModule,
-  WindowHandlerContribution
+  WindowHandlerContribution,
+  application
 } from '@visactor/vrender-core';
 import type {
   IContext2d,
@@ -35,13 +35,23 @@ export class BrowserWindowHandlerContribution
   protected _canvasIsIntersecting: boolean;
   protected _onVisibleChangeCb: (currentVisible: boolean) => void;
 
+  private readonly global: IGlobal;
+
   get container(): HTMLElement | null {
     return this.canvas.nativeCanvas.parentElement;
   }
 
-  constructor(@inject(VGlobal) private readonly global: IGlobal) {
+  static idprefix: string = 'visactor_window';
+  static prefix_count: number = 0;
+
+  static GenerateCanvasId() {
+    return `${BrowserWindowHandlerContribution.idprefix}_${BrowserWindowHandlerContribution.prefix_count++}`;
+  }
+
+  constructor() {
     super();
     this._canvasIsIntersecting = true;
+    this.global = application.global;
   }
 
   getTitle(): string {
@@ -73,6 +83,9 @@ export class BrowserWindowHandlerContribution
   }
 
   protected postInit() {
+    if (!this.global.optimizeVisible) {
+      return;
+    }
     try {
       this.observerCanvas();
     } catch (err) {
@@ -152,7 +165,7 @@ export class BrowserWindowHandlerContribution
       dpr: params.dpr,
       nativeCanvas,
       container,
-      id: Generator.GenAutoIncrementId().toString(),
+      id: BrowserWindowHandlerContribution.GenerateCanvasId(),
       canvasControled: true
     };
     this.canvas = new BrowserCanvas(options);

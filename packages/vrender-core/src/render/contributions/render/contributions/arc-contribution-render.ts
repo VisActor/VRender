@@ -11,13 +11,12 @@ import type {
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import {
-  DefaultBaseBackgroundRenderContribution,
-  DefaultBaseTextureRenderContribution
+  defaultBaseBackgroundRenderContribution,
+  defaultBaseTextureRenderContribution
 } from './base-contribution-render';
 import { drawArcPath } from '../utils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 
-@injectable()
 export class DefaultArcRenderContribution implements IArcRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -136,18 +135,6 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
   }
 }
 
-@injectable()
-export class DefaultArcBackgroundRenderContribution
-  extends DefaultBaseBackgroundRenderContribution
-  implements IArcRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
-}
-
-@injectable()
-export class DefaultArcTextureRenderContribution
-  extends DefaultBaseTextureRenderContribution
-  implements IArcRenderContribution
-{
-  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
-}
+export const defaultArcRenderContribution = new DefaultArcRenderContribution();
+export const defaultArcTextureRenderContribution = defaultBaseTextureRenderContribution;
+export const defaultArcBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

@@ -43,6 +43,8 @@ export * from './common/enums';
 export * from './common/generator';
 export * from './plugins/constants';
 export * from './allocator/matrix-allocate';
+export * from './allocator/canvas-allocate';
+export * from './allocator/graphic-allocate';
 
 export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';

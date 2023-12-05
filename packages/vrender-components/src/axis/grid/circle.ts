@@ -8,14 +8,15 @@ import type { CircleAxisGridAttributes, GridItem } from './type';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../../constant';
 import type { TransformedAxisItem } from '../type';
 import { CircleAxisMixin } from '../mixin/circle';
+import type { ComponentOptions } from '../../interface';
 
 export interface CircleAxisGrid
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector'>,
     BaseGrid<CircleAxisGridAttributes> {}
 
 export class CircleAxisGrid extends BaseGrid<CircleAxisGridAttributes> {
-  constructor(attributes: CircleAxisGridAttributes) {
-    super(merge({}, BaseGrid.defaultAttributes, attributes));
+  constructor(attributes: CircleAxisGridAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, BaseGrid.defaultAttributes, attributes), options);
   }
 
   protected getGridAttribute(isSubGrid: boolean) {

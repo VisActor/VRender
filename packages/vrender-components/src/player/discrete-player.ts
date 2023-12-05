@@ -6,6 +6,7 @@ import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from '
 import { DirectionEnum, PlayerEventEnum } from './type';
 import { forwardStep, isReachEnd, isReachStart } from './utils';
 import { ControllerEventEnum } from './controller/constant';
+import type { ComponentOptions } from '../interface';
 
 export interface IDiscretePlayer {
   play: () => void;
@@ -28,8 +29,8 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
   private _rafId: number;
   private _isReachEnd = false;
 
-  constructor(attributes: DiscretePlayerAttributes) {
-    super(merge({}, attributes));
+  constructor(attributes: DiscretePlayerAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, attributes));
 
     this._initAttributes();
     this._initEvents();

@@ -6,6 +6,7 @@ import { merge, polarToCartesian, PointService } from '@visactor/vutils';
 import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { PolygonCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
 
 export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
   static defaultAttributes = {
@@ -16,8 +17,8 @@ export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: PolygonCrosshairAttrs) {
-    super(merge({}, PolygonCrosshair.defaultAttributes, attributes));
+  constructor(attributes: PolygonCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, PolygonCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

@@ -7,6 +7,7 @@ import { createSymbol, createLine, createPolygon } from '@visactor/vrender-core'
 import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
 
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
@@ -69,8 +70,8 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     }
   };
 
-  constructor(attributes: SegmentAttributes) {
-    super(merge({}, Segment.defaultAttributes, attributes));
+  constructor(attributes: SegmentAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Segment.defaultAttributes, attributes));
   }
 
   protected render() {

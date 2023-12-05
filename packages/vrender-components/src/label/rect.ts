@@ -2,6 +2,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
 import type { RectLabelAttrs } from './type';
 import { LabelBase } from './base';
+import type { ComponentOptions } from '../interface';
 
 export class RectLabel extends LabelBase<RectLabelAttrs> {
   static tag = 'rect-label';
@@ -19,8 +20,8 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: RectLabelAttrs) {
-    super(merge({}, RectLabel.defaultAttributes, attributes));
+  constructor(attributes: RectLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, RectLabel.defaultAttributes, attributes));
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {

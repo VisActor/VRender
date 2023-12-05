@@ -12,6 +12,7 @@ import { DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
 import { DataZoomActiveTag } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { DataZoomAttributes } from './type';
+import type { ComponentOptions } from '../interface';
 
 const delayMap = {
   debounce: debounce,
@@ -87,8 +88,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
-  constructor(attributes: DataZoomAttributes) {
-    super(merge({}, DataZoom.defaultAttributes, attributes));
+  constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
     const {
       start,
       end,

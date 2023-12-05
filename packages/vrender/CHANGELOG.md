@@ -1,6 +1,26 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 23 Nov 2023 13:32:49 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Nov 2023 12:58:15 GMT and should not be manually modified.
+
+## 0.17.0
+Thu, 30 Nov 2023 12:58:15 GMT
+
+### Minor changes
+
+- feat: optmize bounds performance
+
+### Updates
+
+- feat: don't rewrite global reflect
+- feat: skip update bounds while render small node-tree, closed #660
+- refactor: refact inversify completely, closed #657
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- feat: support suffixPosition, closed #625
 
 ## 0.16.17
 Thu, 23 Nov 2023 13:32:49 GMT

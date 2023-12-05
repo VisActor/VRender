@@ -20,12 +20,15 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
 
-@injectable()
+const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
+
 export abstract class BaseRender<T extends IGraphic> {
   camera: ICamera;
   declare z: number;
 
-  declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
+  builtinContributions: IBaseRenderContribution<T, T['attribute']>[];
+
+  // declare renderContribitions: IContributionProvider<IBaseRenderContribution<T, T['attribute']>> | null;
 
   protected _beforeRenderContribitions: IBaseRenderContribution<T, T['attribute']>[];
   protected _afterRenderContribitions: IBaseRenderContribution<T, T['attribute']>[];
@@ -33,17 +36,21 @@ export abstract class BaseRender<T extends IGraphic> {
 
   init(contributions?: IContributionProvider<IBaseRenderContribution<T, T['attribute']>>) {
     if (contributions) {
-      this.renderContribitions = contributions;
+      // this.renderContribitions = contributions;
       this._renderContribitions = contributions.getContributions();
-      if (this._renderContribitions.length) {
-        this._renderContribitions.sort((a, b) => b.order - a.order);
-        this._beforeRenderContribitions = this._renderContribitions.filter(
-          c => c.time === BaseRenderContributionTime.beforeFillStroke
-        );
-        this._afterRenderContribitions = this._renderContribitions.filter(
-          c => c.time === BaseRenderContributionTime.afterFillStroke
-        );
-      }
+    }
+    if (!this._renderContribitions) {
+      this._renderContribitions = [];
+    }
+    this.builtinContributions && this.builtinContributions.forEach(item => this._renderContribitions.push(item));
+    if (this._renderContribitions.length) {
+      this._renderContribitions.sort((a, b) => b.order - a.order);
+      this._beforeRenderContribitions = this._renderContribitions.filter(
+        c => c.time === BaseRenderContributionTime.beforeFillStroke
+      );
+      this._afterRenderContribitions = this._renderContribitions.filter(
+        c => c.time === BaseRenderContributionTime.afterFillStroke
+      );
     }
   }
 
@@ -183,7 +190,7 @@ export abstract class BaseRender<T extends IGraphic> {
     context: IContext2d,
     use3dMatrixIn3dMode: boolean = false
   ): IPointLike & { z: number; lastModelMatrix: mat4 } {
-    const transMatrix = graphic.transMatrix;
+    // const transMatrix = graphic.transMatrix;
     const {
       x = graphicAttribute.x,
       y = graphicAttribute.y,
@@ -193,14 +200,25 @@ export abstract class BaseRender<T extends IGraphic> {
       angle = graphicAttribute.angle,
       postMatrix
     } = graphic.attribute;
-    const onlyTranslate = transMatrix.onlyTranslate() && !postMatrix;
+    // const onlyTranslate = transMatrix.onlyTranslate() && !postMatrix;
 
     // 存在3d变换的时候，需要计算3d矩阵
     const lastModelMatrix = context.modelMatrix;
     const camera = context.camera;
-    const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x, y, z, lastModelMatrix };
+    // const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x, y, z, lastModelMatrix };
+    result.x = x;
+    result.y = y;
+    result.z = z;
+    result.lastModelMatrix = lastModelMatrix;
+
     // 是否应该进行3d变换
     const shouldTransform3d = camera && (use3dMatrixIn3dMode || shouldUseMat4(graphic));
+
+    // 是否仅有translate
+    const onlyTranslate = shouldTransform3d
+      ? graphic.transMatrix.onlyTranslate() && !postMatrix
+      : scaleX === 1 && scaleY === 1 && angle === 0 && !postMatrix;
+
     if (shouldTransform3d) {
       const nextModelMatrix = mat4Allocate.allocate();
       // 计算模型矩阵

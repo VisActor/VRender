@@ -7,6 +7,7 @@ import type { ControllerAttributes, LayoutType } from './type';
 import { iconRight, iconPause, iconPlay, iconLeft, iconUp, iconDown } from './assets';
 import { PlayerIcon } from './icon';
 import { ControllerEventEnum, ControllerTypeEnum } from './constant';
+import type { ComponentOptions } from '../../interface';
 
 export class Controller extends AbstractComponent<Required<ControllerAttributes>> {
   static defaultControllerAttr: ISymbolGraphicAttribute = {
@@ -36,8 +37,8 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
   private _forwardAttr: BaseGraphicAttributes<ISymbolGraphicAttribute>;
   private _backwardAttr: BaseGraphicAttributes<ISymbolGraphicAttribute>;
 
-  constructor(attributes: ControllerAttributes) {
-    super(merge({}, Controller.defaultAttributes, attributes));
+  constructor(attributes: ControllerAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Controller.defaultAttributes, attributes));
     this.updateAttributes();
     this._initPlay();
     this._initBackward();

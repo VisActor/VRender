@@ -181,6 +181,64 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     return !!ret;
   }
 
+  // 高性能绘制linear line，不用拆分
+  drawLinearLineHighPerformance(
+    line: ILine,
+    context: IContext2d,
+    fill: boolean,
+    stroke: boolean,
+    fillOpacity: number,
+    strokeOpacity: number,
+    offsetX: number,
+    offsetY: number,
+    lineAttribute: Required<ILineGraphicAttribute>,
+    drawContext: IDrawContext,
+    params?: IGraphicRenderDrawParams,
+    fillCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    context.beginPath();
+
+    const z = this.z ?? 0;
+    const { points } = line.attribute;
+    const startP = points[0];
+
+    context.moveTo(startP.x, startP.y, z);
+    for (let i = 1; i < points.length; i++) {
+      const p = points[i];
+      context.lineTo(p.x, p.y, z);
+    }
+
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(line, line.attribute, lineAttribute);
+
+    const { x: originX = 0, x: originY = 0 } = line.attribute;
+    if (fill !== false) {
+      if (fillCb) {
+        fillCb(context, line.attribute, lineAttribute);
+      } else if (fillOpacity) {
+        context.setCommonStyle(line, line.attribute, originX - offsetX, originY - offsetY, lineAttribute);
+        context.fill();
+      }
+    }
+    if (stroke !== false) {
+      if (strokeCb) {
+        strokeCb(context, line.attribute, lineAttribute);
+      } else if (strokeOpacity) {
+        context.setStrokeStyle(line, line.attribute, originX - offsetX, originY - offsetY, lineAttribute);
+        context.stroke();
+      }
+    }
+  }
+
   drawShape(
     line: ILine,
     context: IContext2d,
@@ -206,22 +264,48 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       fill = lineAttribute.fill,
       stroke = lineAttribute.stroke,
       fillOpacity = lineAttribute.fillOpacity,
-      strokeOpacity = lineAttribute.strokeOpacity
+      strokeOpacity = lineAttribute.strokeOpacity,
+      segments,
+      points,
+      closePath
     } = line.attribute;
 
     const data = this.valid(line, lineAttribute, fillCb, strokeCb);
     if (!data) {
       return;
     }
+
+    let { curveType = lineAttribute.curveType } = line.attribute;
+    if (closePath && curveType === 'linear') {
+      curveType = 'linearClosed';
+    }
+
+    const { clipRange = lineAttribute.clipRange, clipRangeByDimension = lineAttribute.clipRangeByDimension } =
+      line.attribute;
+
+    if (clipRange === 1 && !segments && !points.some(p => p.defined === false) && curveType === 'linear') {
+      return this.drawLinearLineHighPerformance(
+        line,
+        context,
+        !!fill,
+        !!stroke,
+        fillOpacity,
+        strokeOpacity,
+        x,
+        y,
+        lineAttribute,
+        drawContext,
+        params,
+        fillCb,
+        strokeCb
+      );
+    }
     // const { fVisible, sVisible, doFill, doStroke } = data;
 
     // 更新cache
     if (line.shouldUpdateShape()) {
-      const { points, segments, closePath } = line.attribute;
-      let { curveType = lineAttribute.curveType } = line.attribute;
-      if (closePath && curveType === 'linear') {
-        curveType = 'linearClosed';
-      }
+      const { points, segments } = line.attribute;
+
       const _points = points;
       if (segments && segments.length) {
         let startPoint: IPointLike;
@@ -286,9 +370,6 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       }
       line.clearUpdateShapeTag();
     }
-
-    const { clipRange = lineAttribute.clipRange, clipRangeByDimension = lineAttribute.clipRangeByDimension } =
-      line.attribute;
 
     if (Array.isArray(line.cache)) {
       const segments = line.attribute.segments.filter(item => item.points.length);

@@ -14,7 +14,8 @@ import type {
   IContributionProvider,
   IDrawContext,
   IGraphicRenderDrawParams,
-  IRenderService
+  IRenderService,
+  IPathGraphicAttribute
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
@@ -23,11 +24,16 @@ import { PathRenderContribution } from './contributions/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import {
+  defaultPathBackgroundRenderContribution,
+  defaultPathTextureRenderContribution
+} from './contributions/path-contribution-render';
 
 @injectable()
 export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraphicRender {
   type: 'path';
   numberType: number = PATH_NUMBER_TYPE;
+  tempTheme: Required<IPathGraphicAttribute>;
 
   constructor(
     @inject(ContributionProvider)
@@ -35,6 +41,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     protected readonly pathRenderContribitions: IContributionProvider<IPathRenderContribution>
   ) {
     super();
+    this.builtinContributions = [defaultPathBackgroundRenderContribution, defaultPathTextureRenderContribution];
     this.init(pathRenderContribitions);
   }
 
@@ -57,7 +64,7 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
     ) => boolean
   ) {
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
-    const pathAttribute = getTheme(path, params?.theme).path;
+    const pathAttribute = this.tempTheme ?? getTheme(path, params?.theme).path;
     const { x: originX = pathAttribute.x, y: originY = pathAttribute.y } = path.attribute;
 
     const z = this.z ?? 0;
@@ -129,6 +136,8 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
 
   draw(path: IPath, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
     const pathAttribute = getTheme(path, params?.theme).path;
+    this.tempTheme = pathAttribute;
     this._draw(path, pathAttribute, false, drawContext, params);
+    this.tempTheme = null;
   }
 }

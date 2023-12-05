@@ -12,6 +12,14 @@ export function createRectPath(
   height: number,
   rectCornerRadius: number | number[]
 ) {
+  if (width < 0) {
+    x += width;
+    width = -width;
+  }
+  if (height < 0) {
+    y += height;
+    height = -height;
+  }
   // 匹配cornerRadius
   let cornerRadius: vec4;
   if (isNumber(rectCornerRadius, true)) {

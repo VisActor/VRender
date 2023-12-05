@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.16.17",
+  "version": "0.17.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -19,6 +19,8 @@
     "dev": "bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
     "test": "jest",
+    "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
+    "test-watch": "DEBUG_MODE=1 jest --watch",
     "test-cov": "jest -w 16 --coverage",
     "prepublishOnly": "npm run build"
   },

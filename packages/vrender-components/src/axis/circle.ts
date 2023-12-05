@@ -15,6 +15,7 @@ import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
 import { getLabelPosition } from './util';
+import type { ComponentOptions } from '../interface';
 
 export interface CircleAxis
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
@@ -23,8 +24,8 @@ export interface CircleAxis
 export class CircleAxis extends AxisBase<CircleAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
 
-  constructor(attributes: CircleAxisAttributes) {
-    super(merge({}, CircleAxis.defaultAttributes, attributes));
+  constructor(attributes: CircleAxisAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, CircleAxis.defaultAttributes, attributes));
   }
 
   protected renderLine(container: IGroup): void {

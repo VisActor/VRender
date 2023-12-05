@@ -207,6 +207,7 @@ export type IGraphicStyle = IFillStyle &
   };
 
 export type IPickStyle = {
+  // 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
   pickStrokeBuffer: number;
 };
 

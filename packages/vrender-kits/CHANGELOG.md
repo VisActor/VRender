@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 30 Nov 2023 09:40:58 GMT and should not be manually modified.
+This log was last generated on Tue, 05 Dec 2023 10:31:21 GMT and should not be manually modified.
+
+## 0.16.19
+Tue, 05 Dec 2023 10:31:21 GMT
+
+### Updates
+
+- feat: support pickStrokeBuffer, closed #758
 
 ## 0.16.18
 Thu, 30 Nov 2023 09:40:58 GMT

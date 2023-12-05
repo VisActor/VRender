@@ -87,7 +87,8 @@ export class DefaultCanvasCirclePicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = circleAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+        const pickStrokeBuffer = circleAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

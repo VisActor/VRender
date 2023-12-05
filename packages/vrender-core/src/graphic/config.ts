@@ -29,7 +29,8 @@ import type {
   IRichTextIconGraphicAttribute,
   IConnectedStyle,
   ILayout,
-  IDebugType
+  IDebugType,
+  IPickStyle
 } from '../interface';
 
 export const DefaultLayout: ILayout = {
@@ -111,6 +112,10 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   suffixPosition: 'end'
 };
 
+export const DefaultPickStyle: IPickStyle = {
+  pickStrokeBuffer: 0
+};
+
 export const DefaultStyle: IGraphicStyle = {
   opacity: 1,
   background: null,
@@ -124,7 +129,8 @@ export const DefaultStyle: IGraphicStyle = {
   html: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
-  ...DefaultLayout
+  ...DefaultLayout,
+  ...DefaultPickStyle
 };
 
 export const DefaultConnectAttribute: Required<IConnectedStyle> = {

@@ -1050,10 +1050,11 @@ export class BrowserContext2d implements IContext2d {
       return;
     }
     if (shadowBlur || shadowOffsetX || shadowOffsetY) {
-      _context.shadowBlur = shadowBlur;
+      // canvas的shadow不支持dpr，这里手动设置
+      _context.shadowBlur = shadowBlur * this.dpr;
       _context.shadowColor = shadowColor;
-      _context.shadowOffsetX = shadowOffsetX;
-      _context.shadowOffsetY = shadowOffsetY;
+      _context.shadowOffsetX = shadowOffsetX * this.dpr;
+      _context.shadowOffsetY = shadowOffsetY * this.dpr;
       this._clearShadowStyle = true;
       // todo 小程序
     } else if (this._clearShadowStyle) {

@@ -93,7 +93,8 @@ export class DefaultMathRectPicker implements IGraphicPicker {
             return true;
           }
           const lineWidth = rectAttribute.lineWidth || themeAttribute.lineWidth;
-          pickContext.lineWidth = lineWidth;
+          const pickStrokeBuffer = rectAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+          pickContext.lineWidth = lineWidth + pickStrokeBuffer;
           picked = context.isPointInStroke(point.x, point.y);
           return picked;
         }

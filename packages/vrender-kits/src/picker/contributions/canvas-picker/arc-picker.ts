@@ -81,7 +81,8 @@ export class DefaultCanvasArcPicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = arcAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+        const pickStrokeBuffer = arcAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

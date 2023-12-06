@@ -10,10 +10,11 @@ import type {
   INode,
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
-  ITextGraphicAttribute
+  ITextGraphicAttribute,
+  CustomEvent
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createText, createSymbol, CustomEvent } from '@visactor/vrender-core';
+import { createGroup, createText, createSymbol } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -769,7 +770,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         const currentSelectedItems = this._getSelectedLegends();
         if (selectMode === 'multiple') {
           if (allowAllCanceled === false && isSelected && currentSelectedItems.length === 1) {
-            this._dispatchEvent(LegendEvent.legendItemClick, legendItem, e);
+            this._dispatchLegendEvent(LegendEvent.legendItemClick, legendItem, e);
             return;
           }
           // 多选逻辑
@@ -800,7 +801,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
       }
 
-      this._dispatchEvent(LegendEvent.legendItemClick, legendItem, e);
+      this._dispatchLegendEvent(LegendEvent.legendItemClick, legendItem, e);
     }
   };
 
@@ -824,7 +825,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       focusButton.setAttribute('visible', true);
     }
 
-    this._dispatchEvent(LegendEvent.legendItemHover, legendItem, e);
+    this._dispatchLegendEvent(LegendEvent.legendItemHover, legendItem, e);
   }
 
   private _unHover(legendItem: IGroup, e: FederatedPointerEvent) {
@@ -857,9 +858,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
 
     if (attributeUpdate) {
-      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
     }
-    this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem, e);
+    this._dispatchLegendEvent(LegendEvent.legendItemUnHover, legendItem, e);
   }
 
   private _setLegendItemState(legendItem: IGroup, stateName: string, e?: FederatedPointerEvent) {
@@ -882,7 +883,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
       });
     if (attributeUpdate) {
-      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
     }
   }
 
@@ -909,7 +910,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
       });
     if (attributeUpdate) {
-      this._dispatchEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
     }
   }
 
@@ -933,15 +934,29 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     shape.states = merge({}, DEFAULT_STATES, states);
   }
 
-  private _dispatchEvent(eventName: string, legendItem: any, event: FederatedPointerEvent) {
+  private _dispatchLegendEvent(eventName: string, legendItem: any, event: FederatedPointerEvent) {
     const currentSelectedItems = this._getSelectedLegends();
     // 需要保持显示顺序
     currentSelectedItems.sort((pre: LegendItemDatum, next: LegendItemDatum) => pre.index - next.index);
 
     const currentSelected = currentSelectedItems.map((obj: LegendItemDatum) => obj.label);
 
-    // 封装事件
-    const changeEvent = new CustomEvent(eventName, {
+    // // 封装事件
+    // const changeEvent = new CustomEvent(eventName, {
+    //   item: legendItem, // 当前被选中的图例项整体
+    //   data: legendItem.data, // 当前图例项的数据
+    //   selected: legendItem.hasState(LegendStateValue.selected), // 当前图例项是否被选中
+    //   currentSelectedItems,
+    //   currentSelected,
+    //   event
+    // });
+    // // FIXME: 需要在 vrender 的事件系统支持
+    // // @ts-ignore
+    // changeEvent.manager = this.stage?.eventSystem.manager;
+
+    // this.dispatchEvent(changeEvent);
+
+    this._dispatchEvent(eventName, {
       item: legendItem, // 当前被选中的图例项整体
       data: legendItem.data, // 当前图例项的数据
       selected: legendItem.hasState(LegendStateValue.selected), // 当前图例项是否被选中
@@ -949,11 +964,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       currentSelected,
       event
     });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-
-    this.dispatchEvent(changeEvent);
   }
 
   // 处理回调函数

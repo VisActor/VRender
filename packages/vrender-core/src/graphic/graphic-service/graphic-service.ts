@@ -1471,20 +1471,22 @@ export class DefaultGraphicService implements IGraphicService {
       stroke = theme.stroke,
       shadowBlur = theme.shadowBlur,
       lineWidth = theme.lineWidth,
+      pickStrokeBuffer = theme.pickStrokeBuffer,
       strokeBoundsBuffer = theme.strokeBoundsBuffer
     } = attribute;
     const tb1 = this.tempAABBBounds1;
     const tb2 = this.tempAABBBounds2;
     if (stroke && lineWidth) {
-      const scaledHalfLineWidth = lineWidth / Math.abs(scaleX + scaleY);
+      const scaledHalfLineWidth = (lineWidth + pickStrokeBuffer) / Math.abs(scaleX + scaleY);
       boundStroke(tb1, scaledHalfLineWidth, miter, strokeBoundsBuffer);
       aabbBounds.union(tb1);
       tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     }
     if (shadowBlur) {
       const { shadowOffsetX = theme.shadowOffsetX, shadowOffsetY = theme.shadowOffsetY } = attribute;
-      const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2 + Math.max(shadowOffsetX, shadowOffsetY);
-      boundStroke(tb1, shadowBlurWidth, miter, strokeBoundsBuffer + 1);
+      const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2;
+      boundStroke(tb1, shadowBlurWidth, false, strokeBoundsBuffer + 1);
+      tb1.translate(shadowOffsetX, shadowOffsetY);
       aabbBounds.union(tb1);
       // tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     }

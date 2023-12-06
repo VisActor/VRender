@@ -183,7 +183,8 @@ export type IBackgroundConfig = {
 };
 
 export type IGraphicStyle = IFillStyle &
-  IStrokeStyle & {
+  IStrokeStyle &
+  IPickStyle & {
     opacity: number;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     background: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig | null; // 背景，可以与fill同时存在
@@ -204,6 +205,11 @@ export type IGraphicStyle = IFillStyle &
       anchorType?: 'position' | 'boundsLeftTop';
     } | null;
   };
+
+export type IPickStyle = {
+  // 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
+  pickStrokeBuffer: number;
+};
 
 export type IDebugType = {
   _debug_bounds: boolean | ((c: any, g: any) => void);

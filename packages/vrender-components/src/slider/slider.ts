@@ -819,24 +819,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _dispatchChangeEvent() {
     const isRange = !!this.attribute.range;
     const currentValue = this._currentValue;
-    // const changeEvent = new CustomEvent('change', {
-    //   value: isRange
-    //     ? [
-    //         Math.min(currentValue.endValue as number, currentValue.startValue as number),
-    //         Math.max(currentValue.endValue as number, currentValue.startValue as number)
-    //       ]
-    //     : currentValue.startValue,
-    //   position: isRange
-    //     ? [
-    //         Math.min(currentValue.endPos as number, currentValue.startPos as number),
-    //         Math.max(currentValue.endPos as number, currentValue.startPos as number)
-    //       ]
-    //     : currentValue.startPos
-    // });
-    // // FIXME: 需要在 vrender 的事件系统支持
-    // // @ts-ignore
-    // changeEvent.manager = this.stage?.eventSystem.manager;
-    // this.dispatchEvent(changeEvent);
 
     this._dispatchEvent('change', {
       value: isRange

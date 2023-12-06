@@ -1,7 +1,7 @@
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { CheckboxAttributes } from './type';
-import { CustomEvent, Image, Rect, WrapText } from '@visactor/vrender-core';
+import { Image, Rect, WrapText } from '@visactor/vrender-core';
 import type { ComponentOptions } from '../interface';
 
 const checkSvg =

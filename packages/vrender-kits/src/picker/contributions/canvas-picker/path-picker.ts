@@ -89,7 +89,8 @@ export class DefaultCanvasPathPicker extends BasePicker<IPath> implements IGraph
           return true;
         }
         const lineWidth = pathAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+        const pickStrokeBuffer = pathAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }

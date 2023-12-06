@@ -76,7 +76,8 @@ export class DefaultMathPolygonPicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = pathAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = lineWidth;
+        const pickStrokeBuffer = pathAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = lineWidth + pickStrokeBuffer;
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

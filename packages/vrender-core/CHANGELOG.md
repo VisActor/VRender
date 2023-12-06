@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 30 Nov 2023 12:58:15 GMT and should not be manually modified.
+This log was last generated on Wed, 06 Dec 2023 11:19:22 GMT and should not be manually modified.
+
+## 0.17.1
+Wed, 06 Dec 2023 11:19:22 GMT
+
+### Updates
+
+- feat: support pickStrokeBuffer, closed #758
+- fix: fix issue in area chart with special points
+- fix: fix issue with rebind pick-contribution
+- fix: fix error with wrap text and normal whiteSpace text
 
 ## 0.17.0
 Thu, 30 Nov 2023 12:58:15 GMT

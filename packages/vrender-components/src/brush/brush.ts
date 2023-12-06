@@ -43,7 +43,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     super(options?.skipDefault ? attributes : merge({}, Brush.defaultAttributes, attributes));
   }
 
-  private _bindIOperateTypes(): void {
+  private _bindBrushEvents(): void {
     if (this.attribute.disableTriggerEvent) {
       return;
     }
@@ -389,7 +389,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected render() {
-    this._bindIOperateTypes();
+    this._bindBrushEvents();
     const group = this.createOrUpdateChild('brush-container', {}, 'group') as unknown as IGroup;
     this._container = group;
   }

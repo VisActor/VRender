@@ -941,21 +941,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const currentSelected = currentSelectedItems.map((obj: LegendItemDatum) => obj.label);
 
-    // // 封装事件
-    // const changeEvent = new CustomEvent(eventName, {
-    //   item: legendItem, // 当前被选中的图例项整体
-    //   data: legendItem.data, // 当前图例项的数据
-    //   selected: legendItem.hasState(LegendStateValue.selected), // 当前图例项是否被选中
-    //   currentSelectedItems,
-    //   currentSelected,
-    //   event
-    // });
-    // // FIXME: 需要在 vrender 的事件系统支持
-    // // @ts-ignore
-    // changeEvent.manager = this.stage?.eventSystem.manager;
-
-    // this.dispatchEvent(changeEvent);
-
     this._dispatchEvent(eventName, {
       item: legendItem, // 当前被选中的图例项整体
       data: legendItem.data, // 当前图例项的数据

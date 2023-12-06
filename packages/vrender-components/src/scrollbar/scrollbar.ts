@@ -3,7 +3,7 @@
  */
 import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { CustomEvent, vglobal } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 
@@ -349,14 +349,6 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       this.stage.removeEventListener('pointerupoutside', this._onSliderPointerUp);
     }
   };
-
-  // private _onChange(detail: any) {
-  //   const changeEvent = new CustomEvent('scroll', detail);
-  //   // FIXME: 需要在 vrender 的事件系统支持
-  //   // @ts-ignore
-  //   changeEvent.manager = this.stage?.eventSystem.manager;
-  //   this.dispatchEvent(changeEvent);
-  // }
 
   private _reset() {
     this._sliderRenderBounds = null;

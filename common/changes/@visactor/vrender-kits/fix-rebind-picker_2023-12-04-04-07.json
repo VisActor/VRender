@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "fix: fix issue with rebind pick-contribution",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

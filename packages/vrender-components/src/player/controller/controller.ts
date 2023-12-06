@@ -153,13 +153,13 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
     });
   };
 
-  private _createCustomEvent = (eventType: ControllerEventEnum) => {
-    const customEvent = new CustomEvent(eventType, { eventType });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    customEvent.manager = this.stage?.eventSystem.manager;
-    return customEvent;
-  };
+  // private _createCustomEvent = (eventType: ControllerEventEnum) => {
+  //   const customEvent = new CustomEvent(eventType, { eventType });
+  //   // FIXME: 需要在 vrender 的事件系统支持
+  //   // @ts-ignore
+  //   customEvent.manager = this.stage?.eventSystem.manager;
+  //   return customEvent;
+  // };
 
   render(): void {
     this.updateAttributes();
@@ -191,23 +191,28 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
   };
 
   play = () => {
-    const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnPlay);
-    this.dispatchEvent(onPlayEvent);
+    // const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnPlay);
+    // this.dispatchEvent(onPlayEvent);
+
+    this._dispatchEvent('ControllerEventEnum.OnPlay');
   };
 
   pause = () => {
-    const onPauseEvent = this._createCustomEvent(ControllerEventEnum.OnPause);
-    this.dispatchEvent(onPauseEvent);
+    // const onPauseEvent = this._createCustomEvent(ControllerEventEnum.OnPause);
+    // this.dispatchEvent(onPauseEvent);
+    this._dispatchEvent('ControllerEventEnum.OnPause');
   };
 
   forward = () => {
-    const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnForward);
-    this.dispatchEvent(onPlayEvent);
+    // const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnForward);
+    // this.dispatchEvent(onPlayEvent);
+    this._dispatchEvent('ControllerEventEnum.OnForward');
   };
 
   backward = () => {
-    const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnBackward);
-    this.dispatchEvent(onPlayEvent);
+    // const onPlayEvent = this._createCustomEvent(ControllerEventEnum.OnBackward);
+    // this.dispatchEvent(onPlayEvent);
+    this._dispatchEvent('ControllerEventEnum.OnBackward');
   };
 
   togglePlay = () => {

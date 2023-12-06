@@ -398,13 +398,19 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
    * @param dataIndex 数据下标
    */
   dispatchCustomEvent(eventType: PlayerEventEnum, dataIndex: number) {
-    const changeEvent = new CustomEvent(eventType, {
+    // const changeEvent = new CustomEvent(eventType, {
+    //   eventType,
+    //   index: dataIndex,
+    //   value: this._data[dataIndex]
+    // } as unknown);
+    // // @ts-ignore; 需要在 vrender 的事件系统支持
+    // changeEvent.manager = this.stage?.eventSystem.manager;
+    // this.dispatchEvent(changeEvent);
+
+    this._dispatchEvent(eventType, {
       eventType,
       index: dataIndex,
       value: this._data[dataIndex]
-    } as unknown);
-    // @ts-ignore; 需要在 vrender 的事件系统支持
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
+    });
   }
 }

@@ -84,7 +84,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _previewPointsY!: (datum: any) => number;
   private _previewPointsX1!: (datum: any) => number;
   private _previewPointsY1!: (datum: any) => number;
-  private _updateStateCallback!: (start: number, end: number, trigger?: DataZoomActiveTag) => void;
+  // private _updateStateCallback!: (start: number, end: number, trigger?: DataZoomActiveTag) => void;
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
@@ -124,7 +124,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
     isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
     isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
-    isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
+    // isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
   }
 
   protected bindEvents(): void {
@@ -240,10 +240,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const stagePosition = (this as unknown as IGroup).stage?.window.getBoundingClientRect();
+    const { x, y } = vglobal.mapToCanvasPoint(e);
     return {
-      x: e.clientX - (stagePosition?.left || 0) - ((this as unknown as IGroup).stage?.x || 0),
-      y: e.clientY - (stagePosition?.top || 0) - ((this as unknown as IGroup).stage?.y || 0)
+      x: x - (this.stage?.x || 0),
+      y: y - (this.stage?.y || 0)
     };
   }
 
@@ -322,8 +322,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-      realTime && this._updateStateCallback?.(start, end, this._activeTag);
-      this._dispatchChangeEvent(start, end);
+      // realTime && this._updateStateCallback?.(start, end, this._activeTag);
+      this._dispatchEvent('change', {
+        start,
+        end,
+        tag: this._activeTag
+      });
     }
   };
 
@@ -348,8 +352,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (!realTime || start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
-      this._updateStateCallback?.(this.state.start, this.state.end, this._activeTag);
-      this._dispatchChangeEvent(this.state.start, this.state.end);
+      // this._updateStateCallback?.(this.state.start, this.state.end, this._activeTag);
+      this._dispatchEvent('change', {
+        start: this.state.start,
+        end: this.state.end,
+        tag: this._activeTag
+      });
     }
   }
 
@@ -998,16 +1006,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return labelShape;
   }
 
-  private _dispatchChangeEvent(start: number, end: number) {
-    const changeEvent = new CustomEvent('change', {
-      start,
-      end
-    });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
-  }
+  // private _dispatchChangeEvent(start: number, end: number) {
+  //   const changeEvent = new CustomEvent('change', {
+  //     start,
+  //     end,
+  //     tag: this._activeTag
+  //   });
+  //   // FIXME: 需要在 vrender 的事件系统支持
+  //   // @ts-ignore
+  //   changeEvent.manager = this.stage?.eventSystem.manager;
+  //   this.dispatchEvent(changeEvent);
+  // }
 
   /** 外部重置组件的起始状态 */
   setStartAndEnd(start?: number, end?: number) {
@@ -1017,8 +1026,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setStateAttr(start, end, true);
-        this._updateStateCallback?.(start, end, this._activeTag);
-        this._dispatchChangeEvent(start, end);
+        // this._updateStateCallback?.(start, end, this._activeTag);
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
       }
     }
   }
@@ -1054,9 +1067,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   /** 外部传入start和end状态更新后的逻辑 */
-  setUpdateStateCallback(callback: (start: number, end: number, trigger?: DataZoomActiveTag) => void) {
-    isFunction(callback) && (this._updateStateCallback = callback);
-  }
+  // setUpdateStateCallback(callback: (start: number, end: number, trigger?: DataZoomActiveTag) => void) {
+  //   isFunction(callback) && (this._updateStateCallback = callback);
+  // }
 
   /** 外部传入数据映射 */
   setPreviewPointsX(callback: (d: any) => number) {

@@ -2,7 +2,7 @@
  * @description 组件基类
  */
 import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
-import { Group } from '@visactor/vrender-core';
+import { Group, CustomEvent } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 import type { ComponentOptions } from '../interface';

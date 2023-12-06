@@ -205,15 +205,15 @@ export class ATextMeasure implements ITextMeasure {
     suffix: string | false
   ): { str: string; width: number; result?: string } {
     let data: { str: string; width: number; result?: string };
-    if (position === 'end') {
-      data = this._clipTextEnd(text, options, width, leftIdx, rightIdx);
-      suffix && (data.result = data.str + suffix);
-    } else if (position === 'start') {
+    if (position === 'start') {
       data = this._clipTextStart(text, options, width, leftIdx, rightIdx);
       suffix && (data.result = suffix + data.str);
     } else if (position === 'middle') {
       const d = this._clipTextMiddle(text, options, width, '', '', 0, 0, 1);
       data = { str: 'none', width: d.width, result: d.left + suffix + d.right };
+    } else {
+      data = this._clipTextEnd(text, options, width, leftIdx, rightIdx);
+      suffix && (data.result = data.str + suffix);
     }
     return data;
   }

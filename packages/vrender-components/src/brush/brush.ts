@@ -138,11 +138,21 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
         event: e
       });
     } else if (!this._outOfInteractiveRange(e)) {
-      this._dispatchEvent(this._activeDrawState ? IOperateType.drawEnd : IOperateType.moveEnd, {
-        operateMask: this._operatingMask as any,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
-        event: e
-      });
+      if (this._activeDrawState) {
+        this._dispatchEvent(IOperateType.drawEnd, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
+
+      if (this._activeMoveState) {
+        this._dispatchEvent(IOperateType.moveEnd, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
     }
 
     this._activeDrawState = false;

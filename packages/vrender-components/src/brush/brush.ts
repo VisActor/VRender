@@ -7,7 +7,7 @@ import type { IBounds, IPointLike } from '@visactor/vutils';
 import { cloneDeep, debounce, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { BrushAttributes } from './type';
-import { BrushEvent } from './type';
+import { IOperateType } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
 import type { ComponentOptions } from '../interface';
 
@@ -43,7 +43,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     super(options?.skipDefault ? attributes : merge({}, Brush.defaultAttributes, attributes));
   }
 
-  private _bindBrushEvents(): void {
+  private _bindIOperateTypes(): void {
     if (this.attribute.disableTriggerEvent) {
       return;
     }
@@ -132,13 +132,13 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
       this._container.incrementalClearChild();
       this._brushMaskAABBBoundsDict = {};
-      this._dispatchEvent(BrushEvent.brushClear, {
+      this._dispatchEvent(IOperateType.brushClear, {
         operateMask: this._operatingMask as any,
         operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
         event: e
       });
     } else if (!this._outOfInteractiveRange(e)) {
-      this._dispatchEvent(this._activeDrawState ? BrushEvent.drawEnd : BrushEvent.moveEnd, {
+      this._dispatchEvent(this._activeDrawState ? IOperateType.drawEnd : IOperateType.moveEnd, {
         operateMask: this._operatingMask as any,
         operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
         event: e
@@ -165,7 +165,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       this._container.incrementalClearChild();
     }
     this._addBrushMask();
-    this._dispatchEvent(BrushEvent.drawStart, {
+    this._dispatchEvent(IOperateType.drawStart, {
       operateMask: this._operatingMask as any,
       operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
       event: e
@@ -196,7 +196,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._operatingMaskMoveRangeY = [minMoveStepY, maxMoveStepY];
 
     this._operatingMask.setAttribute('pickable', true);
-    this._dispatchEvent(BrushEvent.moveStart, {
+    this._dispatchEvent(IOperateType.moveStart, {
       operateMask: this._operatingMask as any,
       operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
       event: e
@@ -232,7 +232,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     const maskPoints = this._computeMaskPoints();
     this._operatingMask.setAttribute('points', maskPoints);
     this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._dispatchEvent(BrushEvent.drawing, {
+    this._dispatchEvent(IOperateType.drawing, {
       operateMask: this._operatingMask as any,
       operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
       event: e
@@ -265,7 +265,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       dy: moveY
     });
     this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._dispatchEvent(BrushEvent.moving, {
+    this._dispatchEvent(IOperateType.moving, {
       operateMask: this._operatingMask as any,
       operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
       event: e
@@ -379,12 +379,12 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected render() {
-    this._bindBrushEvents();
+    this._bindIOperateTypes();
     const group = this.createOrUpdateChild('brush-container', {}, 'group') as unknown as IGroup;
     this._container = group;
   }
 
-  releaseBrushEvents(): void {
+  releaseIOperateTypes(): void {
     const {
       delayType = 'throttle',
       delayTime = 0,

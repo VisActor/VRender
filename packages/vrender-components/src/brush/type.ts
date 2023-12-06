@@ -87,7 +87,7 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';
 export type IBrushMode = 'single' | 'multiple';
 
-export enum BrushEvent {
+export enum IOperateType {
   drawStart = 'drawStart',
   drawEnd = 'drawEnd',
   drawing = 'drawing',

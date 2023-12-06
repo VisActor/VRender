@@ -394,7 +394,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._container = group;
   }
 
-  releaseIOperateTypes(): void {
+  releaseBrushEvents(): void {
     const {
       delayType = 'throttle',
       delayTime = 0,

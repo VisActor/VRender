@@ -265,7 +265,11 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       dy: moveY
     });
     this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._dispatchEvent(BrushEvent.moving, e);
+    this._dispatchEvent(BrushEvent.moving, {
+      operateMask: this._operatingMask as any,
+      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+      event: e
+    });
   }
 
   /**

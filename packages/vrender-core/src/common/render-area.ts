@@ -35,6 +35,10 @@ export function drawAreaSegments(
   }
   // let needMoveTo: boolean = true;
   const { top, bottom } = segPath;
+  // 如果top和bottom的curves数量不同，那么就跳过
+  if (top.curves.length !== bottom.curves.length) {
+    return;
+  }
   if (percent >= 1) {
     const topList: ICurve<IPoint>[] = [];
     const bottomList: ICurve<IPoint>[] = [];

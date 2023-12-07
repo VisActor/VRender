@@ -403,3 +403,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return Group.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createGroup(attributes: IGroupGraphicAttribute): IGroup {
+  return new Group(attributes);
+}

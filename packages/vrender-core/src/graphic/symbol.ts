@@ -178,4 +178,8 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
   }
 }
 
+export function createSymbol(attributes: ISymbolGraphicAttribute): ISymbol {
+  return new Symbol(attributes);
+}
+
 // addAttributeToPrototype(DefaultSymbolStyle, Symbol, PURE_STYLE_KEY);

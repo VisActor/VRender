@@ -139,3 +139,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     return Image.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createImage(attributes: IImageGraphicAttribute): IImage {
+  return new Image(attributes);
+}

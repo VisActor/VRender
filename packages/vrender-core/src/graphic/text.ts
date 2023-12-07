@@ -147,6 +147,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
+      suffixPosition = textTheme.suffixPosition,
       heightLimit = 0,
       lineClamp
     } = this.attribute;
@@ -200,7 +201,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
               layoutObj.textOptions,
               maxLineWidth,
               ellipsis,
-              false
+              false,
+              suffixPosition
             );
             linesLayout.push({
               str: clip.str,
@@ -223,7 +225,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
                 layoutObj.textOptions,
                 maxLineWidth,
                 ellipsis,
-                false
+                false,
+                suffixPosition
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -267,7 +270,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             layoutObj.textOptions,
             maxLineWidth,
             ellipsis,
-            false
+            false,
+            suffixPosition
           );
           linesLayout.push({
             str: clip.str,

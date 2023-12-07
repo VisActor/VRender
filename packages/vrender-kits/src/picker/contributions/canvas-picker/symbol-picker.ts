@@ -107,7 +107,8 @@ export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IG
           return true;
         }
         const lineWidth = symbolAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+        const pickStrokeBuffer = symbolAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }

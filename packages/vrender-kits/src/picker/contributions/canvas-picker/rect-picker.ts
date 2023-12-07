@@ -94,7 +94,8 @@ export class DefaultCanvasRectPicker implements IGraphicPicker {
             return true;
           }
           const lineWidth = rectAttribute.lineWidth || themeAttribute.lineWidth;
-          pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+          const pickStrokeBuffer = rectAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+          pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
           picked = context.isPointInStroke(point.x, point.y);
           return picked;
         }

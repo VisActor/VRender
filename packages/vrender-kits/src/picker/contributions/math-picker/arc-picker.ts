@@ -79,7 +79,8 @@ export class DefaultMathArcPicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = arcAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = lineWidth;
+        const pickStrokeBuffer = arcAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = lineWidth + pickStrokeBuffer;
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

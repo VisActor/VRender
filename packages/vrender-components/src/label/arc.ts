@@ -107,12 +107,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       visible: true,
       fontSize: 14,
       fontWeight: 'normal',
-      fillOpacity: 1,
-      textAlign: 'center',
-      textBaseline: 'middle'
+      fillOpacity: 1
     },
     position: 'outside',
-    offset: 0,
     line: {
       visible: true,
       line1MinLength: 20,
@@ -122,8 +119,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       align: 'arc',
       strategy: 'priority',
       tangentConstraint: true
-    },
-    pickable: false
+    }
   };
 
   private _ellipsisWidth: number = 0;

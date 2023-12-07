@@ -64,7 +64,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       // fill: '#000',
       textAlign: 'center',
       textBaseline: 'middle',
-      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+      boundsPadding: [-2, -2, -2, -2] // to ignore the textBound buf
     },
     offset: 0,
     pickable: false

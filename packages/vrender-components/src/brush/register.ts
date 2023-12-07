@@ -1,4 +1,4 @@
-import { registerGroup, registerPolygon } from '@visactor/vrender/es/register';
+import { registerGroup, registerPolygon } from '@visactor/vrender-kits';
 
 export function loadBrushComponent() {
   registerGroup();

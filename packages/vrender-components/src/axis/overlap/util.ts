@@ -1,4 +1,4 @@
-import type { IText } from '@visactor/vrender/es/core';
+import type { IText } from '@visactor/vrender-core';
 import { isRectIntersect, isRotateAABBIntersect } from '@visactor/vutils';
 
 function rotate(x: number, y: number, deg: number, originX: number, originY: number) {

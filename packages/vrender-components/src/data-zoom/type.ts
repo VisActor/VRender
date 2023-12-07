@@ -5,7 +5,7 @@ import type {
   ILineGraphicAttribute,
   IRectGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import type { IDelayType, OrientType } from '../interface';
 import type { TagAttributes } from '../tag';

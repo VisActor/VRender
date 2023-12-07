@@ -1,7 +1,7 @@
 /**
  * @description Crosshair 基类
  */
-import type { IGroup } from '@visactor/vrender/es/core';
+import type { IGroup } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { LocationCfg } from '../core/type';
 import type { BaseCrosshairAttrs } from './type';

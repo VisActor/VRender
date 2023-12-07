@@ -8,7 +8,7 @@ import type {
   IGroupGraphicAttribute,
   IText,
   IGroup
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';

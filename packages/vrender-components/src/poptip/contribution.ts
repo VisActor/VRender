@@ -5,8 +5,8 @@ import type {
   IInteractiveSubRenderContribution,
   IThemeAttribute,
   IDrawContext
-} from '@visactor/vrender/es/core';
-import { injectable } from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
+import { injectable } from '@visactor/vrender-core';
 import { PopTip } from './poptip';
 import { merge } from '@visactor/vutils';
 import { theme } from './theme';

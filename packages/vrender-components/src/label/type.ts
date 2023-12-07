@@ -10,7 +10,7 @@ import type {
   ILineGraphicAttribute,
   IRichTextCharacter,
   RichText
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 
 export type LabelItemStateStyle<T> = {

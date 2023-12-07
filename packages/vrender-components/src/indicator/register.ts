@@ -1,4 +1,4 @@
-import { registerGroup, registerRichtext, registerText } from '@visactor/vrender/es/register';
+import { registerGroup, registerRichtext, registerText } from '@visactor/vrender-kits';
 
 export function loadIndicatorComponent() {
   registerGroup();

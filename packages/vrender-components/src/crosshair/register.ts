@@ -1,5 +1,5 @@
-// import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender/es/register';
-import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender/es/register';
+// import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender-kits';
+import { registerArc, registerGroup, registerLine, registerPath, registerRect } from '@visactor/vrender-kits';
 
 export function loadLineCrosshairComponent() {
   registerGroup();

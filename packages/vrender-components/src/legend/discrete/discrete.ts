@@ -11,9 +11,9 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator, CustomEvent } from '@visactor/vrender/es/core';
+import { graphicCreator, CustomEvent } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {

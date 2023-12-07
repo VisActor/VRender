@@ -1,5 +1,5 @@
-import type { IGroup, INode, IPolygon } from '@visactor/vrender/es/core';
-import { graphicCreator } from '@visactor/vrender/es/core';
+import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';

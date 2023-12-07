@@ -6,7 +6,7 @@ import {
   registerRect,
   registerRichtext,
   registerText
-} from '@visactor/vrender/es/register';
+} from '@visactor/vrender-kits';
 
 function loadBasicAxis() {
   registerGroup();

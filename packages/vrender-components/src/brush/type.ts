@@ -1,4 +1,4 @@
-import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender/es/core';
+import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
 import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {

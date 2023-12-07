@@ -1,7 +1,7 @@
 /**
  * @description 矩形类型 crosshair
  */
-import type { IGroup } from '@visactor/vrender/es/core';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import type { RegionLocationCfg } from '../core/type';
 import type { Tag } from '../tag';

@@ -13,9 +13,9 @@ import type {
   ITextGraphicAttribute,
   FederatedPointerEvent,
   Cursor
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
-import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender/es/core';
+import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 

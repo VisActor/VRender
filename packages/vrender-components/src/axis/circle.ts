@@ -1,9 +1,9 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender/es/core';
+import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';

@@ -2,7 +2,7 @@
  * @description 桑基图Link组件，也适用于其他有宽度的连边展示
  * @author 康晓婷
  */
-import type { IGroup, IPath } from '@visactor/vrender/es/core';
+import type { IGroup, IPath } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { LinkPathAttributes } from './type';

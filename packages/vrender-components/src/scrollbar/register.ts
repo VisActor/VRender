@@ -1,6 +1,6 @@
-import { container, AutoEnablePlugins, ContainerModule } from '@visactor/vrender/es/core';
+import { container, AutoEnablePlugins, ContainerModule } from '@visactor/vrender-core';
 import { ScrollBarPlugin } from './scrollbar-plugin';
-import { registerGroup, registerRect } from '@visactor/vrender/es/register';
+import { registerGroup, registerRect } from '@visactor/vrender-kits';
 
 export const scrollbarModule = new ContainerModule((bind, unbind, isBound, rebind) => {
   if (!isBound(ScrollBarPlugin)) {

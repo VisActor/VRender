@@ -1,7 +1,7 @@
 /**
  * @description circle 类型 crosshair，用于极坐标系下
  */
-import type { IGroup } from '@visactor/vrender/es/core';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge, PointService } from '@visactor/vutils';
 import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';

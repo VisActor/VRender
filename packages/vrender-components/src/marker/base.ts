@@ -1,5 +1,5 @@
-import type { IGroup } from '@visactor/vrender/es/core';
-import { graphicCreator } from '@visactor/vrender/es/core';
+import type { IGroup } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';

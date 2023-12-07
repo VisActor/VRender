@@ -1,7 +1,7 @@
 /**
  * @description 指标卡组件
  */
-import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender/es/core';
+import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
 import { merge, isValid, array, isValidNumber, get } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';

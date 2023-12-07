@@ -14,8 +14,8 @@ import type {
   IRichText,
   IRichTextCharacter,
   ITextAttribute
-} from '@visactor/vrender/es/core';
-import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
+import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';

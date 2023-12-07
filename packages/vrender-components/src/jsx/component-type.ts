@@ -1,4 +1,4 @@
-import type { IDefaultGraphicParamsType } from '@visactor/vrender/es/kits';
+import type { IDefaultGraphicParamsType } from '@visactor/vrender-kits';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 

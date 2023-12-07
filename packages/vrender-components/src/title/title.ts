@@ -1,7 +1,7 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vrender/es/core';
+import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';

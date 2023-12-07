@@ -1,5 +1,5 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import type { IGraphic, INode } from '@visactor/vrender/es/core';
+import type { IGraphic, INode } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { bitmapTool } from './overlap';

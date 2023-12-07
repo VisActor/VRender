@@ -3,13 +3,13 @@ import {
   InteractiveSubRenderContribution,
   AutoEnablePlugins,
   ContainerModule
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
 import type { PopTipAttributes } from './type';
 import { DEFAULT_THEME, theme } from './theme';
-import { registerGroup, registerRect, registerSymbol, registerWrapText } from '@visactor/vrender/es/register';
+import { registerGroup, registerRect, registerSymbol, registerWrapText } from '@visactor/vrender-kits';
 
 export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) => {
   if (!isBound(PopTipRenderContribution)) {

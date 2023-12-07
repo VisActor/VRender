@@ -1,6 +1,6 @@
-import { getTextBounds } from '@visactor/vrender/es/core';
+import { getTextBounds } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { ITextGraphicAttribute } from '@visactor/vrender/es/core';
+import type { ITextGraphicAttribute } from '@visactor/vrender-core';
 import { isGreater, isLess, tau, type Point } from '@visactor/vutils';
 
 // 和 vutils 版本不同

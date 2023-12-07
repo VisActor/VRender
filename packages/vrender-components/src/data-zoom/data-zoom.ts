@@ -1,6 +1,6 @@
-import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender/es/core';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal, CustomEvent } from '@visactor/vrender/es/core';
+import { vglobal, CustomEvent } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';

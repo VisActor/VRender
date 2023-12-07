@@ -3,7 +3,7 @@ import type {
   IRectGraphicAttribute,
   ITextGraphicAttribute,
   IGroupGraphicAttribute
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 
 type Text = string | number;
 

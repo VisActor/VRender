@@ -1,4 +1,4 @@
-import type { ILineGraphicAttribute, IGroupGraphicAttribute } from '@visactor/vrender/es/core';
+import type { ILineGraphicAttribute, IGroupGraphicAttribute } from '@visactor/vrender-core';
 import type { Point } from '../../core/type';
 import type { AxisItem, callbackFunc } from '../type';
 

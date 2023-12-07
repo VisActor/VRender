@@ -1,9 +1,9 @@
 /**
  * @description 滚动条组件
  */
-import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender/es/core';
+import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { CustomEvent, vglobal } from '@visactor/vrender/es/core';
+import { CustomEvent, vglobal } from '@visactor/vrender-core';
 import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 

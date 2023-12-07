@@ -4,7 +4,7 @@ import type {
   ILineGraphicAttribute,
   ISymbolGraphicAttribute,
   SymbolType
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { Point, State } from '../core/type';
 
 export type SymbolAttributes = {

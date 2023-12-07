@@ -1,4 +1,4 @@
-import type { IGroup, INode } from '@visactor/vrender/es/core';
+import type { IGroup, INode } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import type { TagAttributes } from '../tag';

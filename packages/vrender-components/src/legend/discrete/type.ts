@@ -3,7 +3,7 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { BaseGraphicAttributes, Padding } from '../../core/type';
 import type { PagerAttributes } from '../../pager';
 import type { LegendBaseAttributes } from '../type';

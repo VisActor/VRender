@@ -5,7 +5,7 @@ import type {
   IRectGraphicAttribute,
   IRichTextCharacter,
   IRichTextGraphicAttribute
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import type { Padding, State, TextContent } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
 

@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent } from '@visactor/vrender/es/core';
-import { vglobal } from '@visactor/vrender/es/core';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { BasePlayer } from './base-player';
 import type { ContinuousPlayerAttributes } from './type';
 import { PlayerEventEnum } from './type';

@@ -4,7 +4,7 @@
  * showHandlers 测试
  */
 import { merge, isEmpty, get } from '@visactor/vutils';
-import type { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender/es/core';
+import type { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender-core';
 import type { ILinearScale } from '@visactor/vscale';
 import { LinearScale } from '@visactor/vscale';
 import { LegendBase } from '../base';

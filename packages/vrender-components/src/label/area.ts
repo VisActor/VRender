@@ -1,6 +1,6 @@
 import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
-import type { IArea } from '@visactor/vrender/es/core';
+import type { IArea } from '@visactor/vrender-core';
 import type { PointLocationCfg } from '../core/type';
 import type { AreaLabelAttrs } from './type';
 import { LabelBase } from './base';

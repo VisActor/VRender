@@ -1,8 +1,8 @@
 /**
  * @description 组件基类
  */
-import type { IGroupGraphicAttribute } from '@visactor/vrender/es/core';
-import { Group } from '@visactor/vrender/es/core';
+import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
+import { Group } from '@visactor/vrender-core';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 import type { ComponentOptions } from '../interface';
 

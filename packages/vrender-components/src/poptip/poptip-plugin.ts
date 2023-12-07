@@ -1,5 +1,5 @@
-import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender/es/core';
-import { Generator, injectable } from '@visactor/vrender/es/core';
+import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender-core';
+import { Generator, injectable } from '@visactor/vrender-core';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 

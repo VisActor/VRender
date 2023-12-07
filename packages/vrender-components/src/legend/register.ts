@@ -1,4 +1,4 @@
-import { registerGroup, registerPath } from '@visactor/vrender/es/register';
+import { registerGroup, registerPath } from '@visactor/vrender-kits';
 import { loadTagComponent } from '../tag/register';
 import { loadPagerComponent } from '../pager/register';
 import { loadSliderComponent } from '../slider/register';

@@ -1,4 +1,4 @@
-import { registerGroup, registerSymbol } from '@visactor/vrender/es/register';
+import { registerGroup, registerSymbol } from '@visactor/vrender-kits';
 import { loadSliderComponent } from '../slider/register';
 
 function loadBasePlayer() {

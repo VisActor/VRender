@@ -12,9 +12,9 @@ import type {
   FederatedPointerEvent,
   IGraphic,
   IText
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender/es/core';
+import { graphicCreator } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';

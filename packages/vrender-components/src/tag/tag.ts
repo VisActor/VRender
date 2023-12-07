@@ -11,7 +11,7 @@ import type {
   IRichTextGraphicAttribute,
   IRichText,
   IRichTextCharacter
-} from '@visactor/vrender/es/core';
+} from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';

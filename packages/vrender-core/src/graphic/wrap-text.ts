@@ -1,6 +1,6 @@
 import { isArray } from '@visactor/vutils';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
-import type { IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
+import type { IText, ITextGraphicAttribute, IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
 import { application } from '../application';
 import { Text } from './text';
 import { getTheme } from './theme';
@@ -241,4 +241,8 @@ export class WrapText extends Text {
   getNoWorkAnimateAttr(): Record<string, number> {
     return WrapText.NOWORK_ANIMATE_ATTR;
   }
+}
+
+export function createWrapText(attributes: ITextGraphicAttribute): IText {
+  return new WrapText(attributes);
 }

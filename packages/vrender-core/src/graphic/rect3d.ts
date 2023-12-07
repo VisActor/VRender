@@ -75,3 +75,7 @@ export class Rect3d extends Rect implements IRect3d {
     return Rect3d.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createRect3d(attributes: IRect3dGraphicAttribute): IRect3d {
+  return new Rect3d(attributes);
+}

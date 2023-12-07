@@ -139,3 +139,7 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
     return Pyramid3d.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createPyramid3d(attributes: IPyramid3dGraphicAttribute): IPyramid3d {
+  return new Pyramid3d(attributes);
+}

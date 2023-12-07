@@ -131,4 +131,8 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
   }
 }
 
+export function createLine(attributes: ILineGraphicAttribute): ILine {
+  return new Line(attributes);
+}
+
 // addAttributeToPrototype(DefaultLineStyle, Line, PURE_STYLE_KEY);

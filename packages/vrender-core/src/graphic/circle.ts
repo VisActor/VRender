@@ -95,4 +95,8 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
   }
 }
 
+export function createCircle(attributes: ICircleGraphicAttribute): ICircle {
+  return new Circle(attributes);
+}
+
 // addAttributeToPrototype(DefaultCircleStyle, Circle, PURE_STYLE_KEY);

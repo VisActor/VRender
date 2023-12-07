@@ -48,3 +48,7 @@ export class Arc3d extends Arc implements IArc3d {
     return Arc3d.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createArc3d(attributes: IArc3dGraphicAttribute): IArc3d {
+  return new Arc3d(attributes);
+}

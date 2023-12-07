@@ -121,3 +121,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     return Path.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createPath(attributes: IPathGraphicAttribute): IPath {
+  return new Path(attributes);
+}

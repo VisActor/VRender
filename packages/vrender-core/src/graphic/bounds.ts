@@ -16,7 +16,7 @@ type IRichTextBoundsParams = Partial<IRichTextAttribute>;
 let richText: any;
 export function getRichTextBounds(params: IRichTextBoundsParams) {
   if (!richText) {
-    richText = graphicCreator.CreateGraphic('text', {});
+    richText = graphicCreator.CreateGraphic('richtext', {});
   }
   richText.setAttributes(params);
   return richText.AABBBounds;

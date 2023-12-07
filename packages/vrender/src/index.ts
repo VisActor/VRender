@@ -19,7 +19,7 @@ import {
   registerSymbol,
   registerText,
   registerWrapText
-} from './register';
+} from '@visactor/vrender-kits';
 // 导出版本号
 export const version = __VERSION__;
 
@@ -48,4 +48,3 @@ registerText();
 registerWrapText();
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';
-export * from './register';

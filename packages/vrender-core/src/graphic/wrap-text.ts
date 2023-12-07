@@ -45,6 +45,7 @@ export class WrapText extends Text {
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
       heightLimit = 0,
+      suffixPosition = textTheme.suffixPosition,
       lineClamp
     } = this.attribute;
     const lineHeight =
@@ -97,7 +98,8 @@ export class WrapText extends Text {
               layoutObj.textOptions,
               maxLineWidth,
               ellipsis,
-              false
+              false,
+              suffixPosition
             );
             linesLayout.push({
               str: clip.str,
@@ -120,7 +122,8 @@ export class WrapText extends Text {
                 layoutObj.textOptions,
                 maxLineWidth,
                 ellipsis,
-                false
+                false,
+                suffixPosition
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -164,7 +167,8 @@ export class WrapText extends Text {
             layoutObj.textOptions,
             maxLineWidth,
             ellipsis,
-            false
+            false,
+            suffixPosition
           );
           linesLayout.push({
             str: clip.str,

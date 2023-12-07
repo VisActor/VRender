@@ -12,7 +12,8 @@ import type {
   IArea,
   IRichTextGraphicAttribute,
   IRichText,
-  IRichTextCharacter
+  IRichTextCharacter,
+  ITextAttribute
 } from '@visactor/vrender/es/core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender/es/core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';

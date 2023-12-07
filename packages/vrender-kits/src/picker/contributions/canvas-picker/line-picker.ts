@@ -78,15 +78,16 @@ export class DefaultCanvasLinePicker extends BasePicker<ILine> implements IGraph
       },
       (
         context: IContext2d,
-        circleAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+        lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
         themeAttribute: IThemeAttribute
       ) => {
         // 选中后面就不需要再走逻辑了
         if (picked) {
           return true;
         }
-        const lineWidth = circleAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
+        const lineWidth = lineAttribute.lineWidth || themeAttribute.lineWidth;
+        const pickStrokeBuffer = lineAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }

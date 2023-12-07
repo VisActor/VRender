@@ -52,6 +52,8 @@ export const page = () => {
       closePath: false,
       lineJoin: 'round',
       lineWidth: 1,
+      cursor: 'pointer',
+      pickStrokeBuffer: 10,
       cornerRadius: 3
       // lineDash: [10, 10],
       // cornerRadius: 10

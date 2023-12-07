@@ -132,9 +132,9 @@ export class MonotoneX implements ICurvedSegment {
     let t1 = NaN;
     const x = p.x;
     const y = p.y;
-    if (x === this._x1 && y === this._y1) {
-      return;
-    } // Ignore coincident points.
+    // if (x === this._x1 && y === this._y1) {
+    //   return;
+    // } // Ignore coincident points.
     switch (this._point) {
       case 0:
         this._point = 1;

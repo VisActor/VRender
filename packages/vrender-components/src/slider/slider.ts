@@ -819,7 +819,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _dispatchChangeEvent() {
     const isRange = !!this.attribute.range;
     const currentValue = this._currentValue;
-    const changeEvent = new CustomEvent('change', {
+
+    this._dispatchEvent('change', {
       value: isRange
         ? [
             Math.min(currentValue.endValue as number, currentValue.startValue as number),
@@ -833,10 +834,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
           ]
         : currentValue.startPos
     });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
   }
 
   private _getHandlers() {

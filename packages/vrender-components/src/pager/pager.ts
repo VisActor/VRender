@@ -3,7 +3,7 @@
  */
 import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender-core';
+import { createGroup, createSymbol, createText } from '@visactor/vrender-core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
@@ -198,16 +198,13 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       } else {
         target.removeState('disable');
       }
-      const changeEvent = new CustomEvent('toPrev', {
+
+      this._dispatchEvent('toPrev', {
         current: this._current,
         total: this._total,
         direction: 'pre',
         event: e
       });
-      // FIXME: 需要在 vrender 的事件系统支持
-      // @ts-ignore
-      changeEvent.manager = this.stage?.eventSystem.manager;
-      this.dispatchEvent(changeEvent);
     }
 
     if (target.name === 'nextHandler') {
@@ -222,16 +219,12 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
         target.removeState('disable');
       }
 
-      const changeEvent = new CustomEvent('toNext', {
+      this._dispatchEvent('toNext', {
         current: this._current,
         total: this._total,
         direction: 'next',
         event: e
       });
-      // FIXME: 需要在 vrender 的事件系统支持
-      // @ts-ignore
-      changeEvent.manager = this.stage?.eventSystem.manager;
-      this.dispatchEvent(changeEvent);
     }
 
     if (this._current > 1) {

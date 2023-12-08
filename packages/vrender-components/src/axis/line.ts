@@ -15,9 +15,9 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import type { TextAlignType } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createRect, type IGroup, type INode, type IText, type TextBaselineType } from '@visactor/vrender-core';
+import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -34,7 +34,9 @@ import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
+import { loadLineAxisComponent } from './register';
 
+loadLineAxisComponent();
 export interface LineAxis
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
     AxisBase<LineAxisAttributes> {}
@@ -55,7 +57,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (panel && panel.visible) {
       const axisContainer = this.axisContainer;
       const axisContainerBounds = axisContainer.AABBBounds;
-      const bgRect = createRect({
+      const bgRect = graphicCreator.rect({
         x: axisContainerBounds.x1,
         y: axisContainerBounds.y1,
         width: axisContainerBounds.width(),
@@ -484,7 +486,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         y = axisLabelContainerBounds.y1;
       }
 
-      const bgRect = createRect({
+      const bgRect = graphicCreator.rect({
         x,
         y,
         width: isHorizontal ? axisLabelContainerBounds.width() : axisLabelContainerSize,

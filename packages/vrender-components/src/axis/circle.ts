@@ -3,11 +3,10 @@
  */
 import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createCircle } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';
-import type { TagAttributes } from '../tag';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import type { CircleAxisAttributes, TitleAttributes, SubTickAttributes, TickLineItem, AxisItem } from './type';
 import { AxisBase } from './base';
@@ -16,7 +15,9 @@ import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
 import { getLabelPosition } from './util';
 import type { ComponentOptions } from '../interface';
+import { loadCircleAxisComponent } from './register';
 
+loadCircleAxisComponent();
 export interface CircleAxis
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
     AxisBase<CircleAxisAttributes> {}
@@ -54,7 +55,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       innerRadius: arcInnerRadius,
       ...line?.style
     };
-    const axisLine = createCircle(arcAttrs);
+    const axisLine = graphicCreator.circle(arcAttrs);
     axisLine.name = AXIS_ELEMENT_NAME.line;
     axisLine.id = this._getNodeId('line');
 

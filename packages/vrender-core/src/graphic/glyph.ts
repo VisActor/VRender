@@ -244,3 +244,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     return Glyph.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createGlyph(attributes: IGlyphGraphicAttribute): IGlyph {
+  return new Glyph(attributes);
+}

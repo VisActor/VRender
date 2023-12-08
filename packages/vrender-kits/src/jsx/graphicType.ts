@@ -1,40 +1,23 @@
 import {
-  createArc,
-  createArc3d,
-  createArea,
-  createCircle,
-  createGlyph,
-  createGroup,
-  createImage,
-  createLine,
-  createPath,
-  createPolygon,
-  createPyramid3d,
-  createRect,
-  createRect3d,
-  createRichText,
-  createSymbol,
-  createText
-} from '@visactor/vrender-core';
-import type {
-  IArc3dGraphicAttribute,
-  IArcGraphicAttribute,
-  IAreaGraphicAttribute,
-  ICircleGraphicAttribute,
-  IGlyphGraphicAttribute,
-  IGroupGraphicAttribute,
-  IImageGraphicAttribute,
-  ILineGraphicAttribute,
-  IPathGraphicAttribute,
-  IPolygonGraphicAttribute,
-  IPyramid3dGraphicAttribute,
-  IRect3dGraphicAttribute,
-  IRectGraphicAttribute,
-  IRichTextCharacter,
-  IRichTextGraphicAttribute,
-  IRichTextImageCharacter,
-  ISymbolGraphicAttribute,
-  ITextGraphicAttribute
+  graphicCreator,
+  type IArc3dGraphicAttribute,
+  type IArcGraphicAttribute,
+  type IAreaGraphicAttribute,
+  type ICircleGraphicAttribute,
+  type IGlyphGraphicAttribute,
+  type IGroupGraphicAttribute,
+  type IImageGraphicAttribute,
+  type ILineGraphicAttribute,
+  type IPathGraphicAttribute,
+  type IPolygonGraphicAttribute,
+  type IPyramid3dGraphicAttribute,
+  type IRect3dGraphicAttribute,
+  type IRectGraphicAttribute,
+  type IRichTextCharacter,
+  type IRichTextGraphicAttribute,
+  type IRichTextImageCharacter,
+  type ISymbolGraphicAttribute,
+  type ITextGraphicAttribute
 } from '@visactor/vrender-core';
 
 export const REACT_TO_CANOPUS_EVENTS = {
@@ -96,52 +79,52 @@ export type IDefaultGraphicParamsType<T> = {
 } & IEventParamsType;
 
 export function VArc(params: IDefaultGraphicParamsType<IArcGraphicAttribute>) {
-  return createArc(params ? params.attribute : {});
+  return (graphicCreator as any).arc(params ? params.attribute : {});
 }
 export function VArc3d(params: IDefaultGraphicParamsType<IArc3dGraphicAttribute>) {
-  return createArc3d(params ? params.attribute : {});
+  return (graphicCreator as any).arc3d(params ? params.attribute : {});
 }
 export function VArea(params: IDefaultGraphicParamsType<IAreaGraphicAttribute>) {
-  return createArea(params ? params.attribute : {});
+  return (graphicCreator as any).area(params ? params.attribute : {});
 }
 export function VCircle(params: IDefaultGraphicParamsType<ICircleGraphicAttribute>) {
-  return createCircle(params ? params.attribute : {});
+  return (graphicCreator as any).circle(params ? params.attribute : {});
 }
 export function VGroup(params: IDefaultGraphicParamsType<IGroupGraphicAttribute>) {
-  return createGroup(params ? params.attribute : {});
+  return (graphicCreator as any).group(params ? params.attribute : {});
 }
 export function VGlyph(params: IDefaultGraphicParamsType<IGlyphGraphicAttribute>) {
-  return createGlyph(params ? params.attribute : {});
+  return (graphicCreator as any).glyph(params ? params.attribute : {});
 }
 export function VImage(params: IDefaultGraphicParamsType<IImageGraphicAttribute>) {
-  return createImage(params ? params.attribute : {});
+  return (graphicCreator as any).image(params ? params.attribute : {});
 }
 export function VLine(params: IDefaultGraphicParamsType<ILineGraphicAttribute>) {
-  return createLine(params ? params.attribute : {});
+  return (graphicCreator as any).line(params ? params.attribute : {});
 }
 export function VPath(params: IDefaultGraphicParamsType<IPathGraphicAttribute>) {
-  return createPath(params ? params.attribute : {});
+  return (graphicCreator as any).path(params ? params.attribute : {});
 }
 export function VPolygon(params: IDefaultGraphicParamsType<IPolygonGraphicAttribute>) {
-  return createPolygon(params ? params.attribute : {});
+  return (graphicCreator as any).polygon(params ? params.attribute : {});
 }
 export function VPyramid3d(params: IDefaultGraphicParamsType<IPyramid3dGraphicAttribute>) {
-  return createPyramid3d(params ? params.attribute : {});
+  return (graphicCreator as any).pyramid3d(params ? params.attribute : {});
 }
 export function VRect(params: IDefaultGraphicParamsType<IRectGraphicAttribute>) {
-  return createRect(params ? params.attribute : {});
+  return (graphicCreator as any).rect(params ? params.attribute : {});
 }
 export function VRect3d(params: IDefaultGraphicParamsType<IRect3dGraphicAttribute>) {
-  return createRect3d(params ? params.attribute : {});
+  return (graphicCreator as any).rect3d(params ? params.attribute : {});
 }
 export function VSymbol(params: IDefaultGraphicParamsType<ISymbolGraphicAttribute>) {
-  return createSymbol(params ? params.attribute : {});
+  return (graphicCreator as any).symbol(params ? params.attribute : {});
 }
 export function VText(params: IDefaultGraphicParamsType<ITextGraphicAttribute>) {
-  return createText(params ? params.attribute : {});
+  return (graphicCreator as any).text(params ? params.attribute : {});
 }
 export function VRichText(params: IDefaultGraphicParamsType<IRichTextGraphicAttribute>) {
-  return createRichText(params ? params.attribute : {});
+  return (graphicCreator as any).richtext(params ? params.attribute : {});
 }
 
 VRichText.Text = function (params: IDefaultGraphicParamsType<IRichTextCharacter>) {

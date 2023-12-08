@@ -320,4 +320,8 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   }
 }
 
+export function createArc(attributes: IArcGraphicAttribute): IArc {
+  return new Arc(attributes);
+}
+
 // addAttributeToPrototype(DefaultCircleStyle, Circle, PURE_STYLE_KEY);

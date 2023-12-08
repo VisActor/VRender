@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, Dict, isBoolean, isNil, isFunction } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -14,7 +14,7 @@ import type {
   CustomEvent
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createText, createSymbol } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -32,6 +32,7 @@ import {
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 import type { ComponentOptions } from '../../interface';
+import { loadDiscreteLegendComponent } from '../register';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -41,6 +42,7 @@ const DEFAULT_STATES = {
   [LegendStateValue.unSelectedHover]: {}
 };
 
+loadDiscreteLegendComponent();
 export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   name = 'discreteLegend';
 
@@ -176,7 +178,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       legendItems = items?.reverse();
     }
 
-    const itemsContainer = createGroup({
+    const itemsContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -333,14 +335,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     let itemGroup;
     if (background.visible === false) {
-      itemGroup = createGroup({
+      itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
         cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup);
     } else {
-      itemGroup = createGroup({
+      itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
         ...backgroundStyle.style
@@ -351,7 +353,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     itemGroup.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
-    const innerGroup = createGroup({
+    const innerGroup = graphicCreator.group({
       x: 0,
       y: 0,
       pickable: false
@@ -364,7 +366,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (shapeAttr?.visible !== false) {
       shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
       shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
-      const itemShape = createSymbol({
+      const itemShape = graphicCreator.symbol({
         x: 0,
         y: 0,
         symbolType: 'circle',
@@ -397,7 +399,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (focus) {
       const focusSize = get(focusIconStyle, 'size', DEFAULT_SHAPE_SIZE);
       // 绘制聚焦按钮
-      focusShape = createSymbol({
+      focusShape = graphicCreator.symbol({
         x: 0,
         y: -focusSize / 2 - 1,
         strokeBoundsBuffer: 0,
@@ -411,7 +413,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       focusSpace = focusSize;
     }
 
-    const labelShape = createText({
+    const labelShape = graphicCreator.text({
       x: shapeSize / 2 + shapeSpace,
       y: 0,
       textAlign: 'start',
@@ -426,7 +428,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
     if (isValid(value)) {
       const valueSpace = get(valueAttr, 'space', focus ? DEFAULT_VALUE_SPACE : 0);
-      const valueShape = createText({
+      const valueShape = graphicCreator.text({
         x: 0,
         y: 0,
         textAlign: 'start',
@@ -653,7 +655,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
     }
 
-    const clipGroup = createGroup({
+    const clipGroup = graphicCreator.group({
       x: 0,
       y: renderStartY,
       width: pageWidth,

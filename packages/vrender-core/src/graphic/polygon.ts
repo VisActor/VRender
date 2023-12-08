@@ -97,3 +97,7 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     return Polygon.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createPolygon(attributes: IPolygonGraphicAttribute): IPolygon {
+  return new Polygon(attributes);
+}

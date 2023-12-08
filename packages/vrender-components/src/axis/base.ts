@@ -14,7 +14,7 @@ import type {
   IText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createLine, createText, createGroup, createRichText } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
@@ -108,7 +108,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const currentAttribute = cloneDeep(this.attribute);
     merge(this.attribute, attributes);
 
-    const offscreenGroup = createGroup({
+    const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,
       y: this.attribute.y
     });
@@ -124,7 +124,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected render(): void {
     this.removeAllChild();
     this._prevInnerView = this._innerView;
-    this._innerView = createGroup({ x: 0, y: 0, pickable: false });
+    this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
     this._renderInner(this._innerView);
@@ -201,7 +201,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected _renderInner(container: IGroup) {
     const { title, label, tick, line, items } = this.attribute;
 
-    const axisContainer = createGroup({ x: 0, y: 0, zIndex: 1 });
+    const axisContainer = graphicCreator.group({ x: 0, y: 0, zIndex: 1 });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
     axisContainer.id = this._getNodeId('container');
     axisContainer.setMode(this.mode);
@@ -222,7 +222,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       }
       // 渲染标签
       if (label?.visible) {
-        const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
+        const labelGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
         labelGroup.name = AXIS_ELEMENT_NAME.labelContainer;
         labelGroup.id = this._getNodeId('label-container');
         this.axisLabelsContainer = labelGroup;
@@ -247,13 +247,13 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected renderTicks(container: IGroup) {
     const tickLineItems = this.getTickLineItems();
 
-    const tickLineGroup = createGroup({ x: 0, y: 0, pickable: false });
+    const tickLineGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
     tickLineGroup.name = AXIS_ELEMENT_NAME.tickContainer;
     tickLineGroup.id = this._getNodeId('tick-container');
     container.add(tickLineGroup);
 
     tickLineItems.forEach((item: TickLineItem, index) => {
-      const line = createLine({
+      const line = graphicCreator.line({
         ...this._getTickLineAttribute('tick', item, index, tickLineItems)
       });
       line.name = AXIS_ELEMENT_NAME.tick;
@@ -282,7 +282,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       const subTickLineItems: TickLineItem[] = this.getSubTickLineItems();
       if (subTickLineItems.length) {
         subTickLineItems.forEach((item: TickLineItem, index) => {
-          const line = createLine({
+          const line = graphicCreator.line({
             ...this._getTickLineAttribute('subTick', item, index, tickLineItems)
           });
           line.name = AXIS_ELEMENT_NAME.subTick;
@@ -315,7 +315,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
     const data = this._transformItems(items);
 
-    const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
+    const labelGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
     container.add(labelGroup);
@@ -330,7 +330,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         labelStyle.textConfig = labelStyle.text;
         labelStyle.width = labelStyle.width ?? 0;
         labelStyle.height = labelStyle.height ?? 0;
-        text = createRichText(labelStyle);
+        text = graphicCreator.richtext(labelStyle);
       } else if (labelStyle.type === 'html') {
         labelStyle.textConfig = [] as any;
         labelStyle.html = {
@@ -338,9 +338,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           ...DEFAULT_HTML_TEXT_SPEC,
           ...labelStyle
         };
-        text = createRichText(labelStyle as any);
+        text = graphicCreator.richtext(labelStyle as any);
       } else {
-        text = createText(labelStyle as any);
+        text = graphicCreator.text(labelStyle as any);
       }
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);

@@ -412,3 +412,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return RichText.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createRichText(attributes: IRichTextGraphicAttribute): IRichText {
+  return new RichText(attributes);
+}

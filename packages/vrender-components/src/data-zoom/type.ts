@@ -55,7 +55,13 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
    * 起点手柄样式
    */
-  startHandlerStyle?: ISymbolGraphicAttribute;
+  startHandlerStyle?: {
+    /**
+     * 热区最小size
+     * 取handler size 和 min size 的最大值
+     */
+    triggerMinSize?: number;
+  } & ISymbolGraphicAttribute;
 
   /**
    * 中间手柄样式
@@ -82,7 +88,13 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
    * 终点手柄样式
    */
-  endHandlerStyle?: ISymbolGraphicAttribute;
+  endHandlerStyle?: {
+    /**
+     * 热区最小size
+     * 取handler size 和 min size 的最大值
+     */
+    triggerMinSize?: number;
+  } & ISymbolGraphicAttribute;
 
   /**
    * 起点文字样式

@@ -1,6 +1,6 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal, CustomEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -85,7 +85,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _previewPointsY!: (datum: any) => number;
   private _previewPointsX1!: (datum: any) => number;
   private _previewPointsY1!: (datum: any) => number;
-  private _updateStateCallback!: (start: number, end: number, trigger?: DataZoomActiveTag) => void;
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
@@ -125,14 +124,13 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
     isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
     isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
-    isFunction(updateStateCallback) && (this._updateStateCallback = updateStateCallback);
   }
 
   protected bindEvents(): void {
     if (this.attribute.disableTriggerEvent) {
       return;
     }
-    const { showDetail, brushSelect, delayType = 'throttle', delayTime = 0 } = this.attribute as DataZoomAttributes;
+    const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
     // 拖拽开始
     if (this._startHandler) {
       this._startHandler.addEventListener(
@@ -184,26 +182,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
-    if (vglobal.env === 'browser') {
-      // 拖拽时
-      vglobal.addEventListener(
-        'pointermove',
-        delayMap[delayType](this._onHandlerPointerMove.bind(this), delayTime) as EventListener,
-        {
-          capture: true
-        }
-      );
-      // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
-    }
-    // 拖拽时
-    (this as unknown as IGroup).addEventListener(
-      'pointermove',
-      delayMap[delayType](this._onHandlerPointerMove, delayTime) as EventListener,
-      {
-        capture: true
-      }
-    );
     // 拖拽结束
     (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
     (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
@@ -241,10 +219,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const stagePosition = (this as unknown as IGroup).stage?.window.getBoundingClientRect();
+    const { x, y } = vglobal.mapToCanvasPoint(e);
     return {
-      x: e.clientX - (stagePosition?.left || 0) - ((this as unknown as IGroup).stage?.x || 0),
-      y: e.clientY - (stagePosition?.top || 0) - ((this as unknown as IGroup).stage?.y || 0)
+      x: x - (this.stage?.x || 0),
+      y: y - (this.stage?.y || 0)
     };
   }
 
@@ -273,6 +251,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     this._activeState = true;
     this._activeCache.startPos = this.eventPosToStagePos(e);
     this._activeCache.lastPos = this.eventPosToStagePos(e);
+
+    // 拖拽开始时监听事件
+    if (vglobal.env === 'browser') {
+      // 拖拽时
+      vglobal.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+      // 拖拽结束
+      vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+    }
+    // 拖拽时
+    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
   };
 
   /**
@@ -283,7 +271,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 3. 在startHandler上拖拽 (activeTag === 'startHandler'): 改变lastPos、start & end + 边界处理: startHandler和endHandler交换 => 所有handler的位置被改变
    * 4. 在endHandler上拖拽，同上
    */
-  private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
+  private _onHandlerPointerMove = delayMap[this.attribute.delayType]((e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
@@ -323,10 +311,13 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-      realTime && this._updateStateCallback?.(start, end, this._activeTag);
-      this._dispatchChangeEvent(start, end);
+      this._dispatchEvent('change', {
+        start,
+        end,
+        tag: this._activeTag
+      });
     }
-  };
+  }, this.attribute.delayTime);
 
   /**
    * 拖拽结束事件
@@ -349,9 +340,22 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (!realTime || start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
-      this._updateStateCallback?.(this.state.start, this.state.end, this._activeTag);
-      this._dispatchChangeEvent(this.state.start, this.state.end);
+      this._dispatchEvent('change', {
+        start: this.state.start,
+        end: this.state.end,
+        tag: this._activeTag
+      });
     }
+
+    // 拖拽结束后卸载事件
+    if (vglobal.env === 'browser') {
+      // 拖拽时
+      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+      // 拖拽结束
+      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+    }
+    // 拖拽时
+    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
   }
 
   /**
@@ -999,17 +1003,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return labelShape;
   }
 
-  private _dispatchChangeEvent(start: number, end: number) {
-    const changeEvent = new CustomEvent('change', {
-      start,
-      end
-    });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
-  }
-
   /** 外部重置组件的起始状态 */
   setStartAndEnd(start?: number, end?: number) {
     const { start: startAttr, end: endAttr } = this.attribute as DataZoomAttributes;
@@ -1018,8 +1011,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this.state.end = end;
       if (startAttr !== this.state.start || endAttr !== this.state.end) {
         this.setStateAttr(start, end, true);
-        this._updateStateCallback?.(start, end, this._activeTag);
-        this._dispatchChangeEvent(start, end);
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
       }
     }
   }
@@ -1052,11 +1048,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     const middleHandlerRectSize = middleHandlerStyle?.background?.size ?? 10;
     const middleHandlerSymbolSize = middleHandlerStyle?.icon?.size ?? 10;
     return Math.max(middleHandlerRectSize, ...array(middleHandlerSymbolSize));
-  }
-
-  /** 外部传入start和end状态更新后的逻辑 */
-  setUpdateStateCallback(callback: (start: number, end: number, trigger?: DataZoomActiveTag) => void) {
-    isFunction(callback) && (this._updateStateCallback = callback);
   }
 
   /** 外部传入数据映射 */

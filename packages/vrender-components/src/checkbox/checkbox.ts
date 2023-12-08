@@ -1,7 +1,7 @@
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { CheckboxAttributes } from './type';
-import { CustomEvent, Image, Rect, WrapText } from '@visactor/vrender-core';
+import { Image, Rect, WrapText } from '@visactor/vrender-core';
 import type { ComponentOptions } from '../interface';
 import { loadCheckBoxComponent } from './register';
 
@@ -184,11 +184,10 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       this.setAttribute('checked', true);
       this.setAttribute('indeterminate', false);
     }
-    const changeEvent = new CustomEvent('checkbox_state_change', {
+
+    this._dispatchEvent('checkbox_state_change', {
       eventType: 'checkbox_state_change',
       checked: this.attribute.checked
-    } as unknown) as any;
-    changeEvent.manager = (this.stage as any)?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
+    });
   }
 }

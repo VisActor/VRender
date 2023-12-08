@@ -529,15 +529,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     tickData: TransformedAxisItem[],
     layer: number
   ) {
-    const {
-      space = 4,
-      inside = false,
-      formatMethod,
-      type = 'text',
-      text,
-      // layouts = [],
-      ...tagAttributes
-    } = this.attribute.label as LabelAttributes;
+    const { space = 4, inside = false, formatMethod, type = 'text', text } = this.attribute.label as LabelAttributes;
     let offset = space;
     let tickLength = 0;
     if (this.attribute.tick?.visible && this.attribute.tick?.inside === inside) {
@@ -563,7 +555,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const textContent = formatMethod
       ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer)
       : tickDatum.label;
-    let { style: textStyle } = tagAttributes;
+    let { style: textStyle } = this.attribute.label as LabelAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
       : textStyle;

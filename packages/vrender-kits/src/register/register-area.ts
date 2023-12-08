@@ -9,7 +9,7 @@ export function registerArea() {
     return;
   }
   loaded = true;
-  registerAreaGraphic;
+  registerAreaGraphic();
   container.load(areaModule);
   container.load(browser ? areaCanvasPickModule : areaMathPickModule);
 }

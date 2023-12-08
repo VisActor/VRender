@@ -10,7 +10,9 @@ import { DEFAULT_TITLE_SPACE } from '../constant';
 import type { ComponentOptions } from '../../interface';
 import type { SizeLegendAttributes } from './type';
 import { getSizeHandlerPath } from '../util';
+import { loadSizeContinuousLegendComponent } from '../register';
 
+loadSizeContinuousLegendComponent();
 export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   name = 'sizeLegend';
 

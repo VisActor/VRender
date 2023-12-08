@@ -9,6 +9,7 @@ import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { PagerAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadPagerComponent } from './register';
 
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
@@ -25,6 +26,8 @@ const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
     hover: {}
   }
 };
+
+loadPagerComponent();
 
 export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   name = 'pager';

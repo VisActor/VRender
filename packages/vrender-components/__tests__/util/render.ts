@@ -1,17 +1,6 @@
 import type { IGraphic, IStageParams } from '@visactor/vrender-core';
-import {
-  createStage,
-  createGroup,
-  createLine,
-  createText,
-  createSymbol,
-  createRect,
-  createPath,
-  createArc,
-  createArea,
-  createCircle,
-  createPolygon
-} from '@visactor/vrender-core';
+
+import { Group, Line, Text, createStage, Symbol, Rect, Path, Arc, Area, Circle, Polygon } from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
 import { initBrowserEnv } from '@visactor/vrender-kits';
@@ -54,7 +43,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
 
 export function _add(group, json) {
   if (json.type === 'group') {
-    const g = createGroup(json.attribute);
+    const g = new Group(json.attribute);
     group.add(g);
     g.name = json.name;
     json.children &&
@@ -62,22 +51,22 @@ export function _add(group, json) {
         _add(g, item);
       });
   } else if (json.type === 'line') {
-    group.add(createLine(json.attribute));
+    group.add(new Line(json.attribute));
   } else if (json.type === 'text') {
-    group.add(createText(json.attribute));
+    group.add(new Text(json.attribute));
   } else if (json.type === 'symbol') {
-    group.add(createSymbol(json.attribute));
+    group.add(new Symbol(json.attribute));
   } else if (json.type === 'rect') {
-    group.add(createRect(json.attribute));
+    group.add(new Rect(json.attribute));
   } else if (json.type === 'path') {
-    group.add(createPath(json.attribute));
+    group.add(new Path(json.attribute));
   } else if (json.type === 'arc') {
-    group.add(createArc(json.attribute));
+    group.add(new Arc(json.attribute));
   } else if (json.type === 'area') {
-    group.add(createArea(json.attribute));
+    group.add(new Area(json.attribute));
   } else if (json.type === 'circle') {
-    group.add(createCircle(json.attribute));
+    group.add(new Circle(json.attribute));
   } else if (json.type === 'polygon') {
-    group.add(createPolygon(json.attribute));
+    group.add(new Polygon(json.attribute));
   }
 }

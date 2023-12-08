@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, Dict, isBoolean, isNil, isFunction } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -31,6 +31,7 @@ import {
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 import type { ComponentOptions } from '../../interface';
+import { loadDiscreteLegendComponent } from '../register';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -40,6 +41,7 @@ const DEFAULT_STATES = {
   [LegendStateValue.unSelectedHover]: {}
 };
 
+loadDiscreteLegendComponent();
 export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   name = 'discreteLegend';
 

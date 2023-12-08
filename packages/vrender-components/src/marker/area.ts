@@ -8,7 +8,9 @@ import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './con
 import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
+import { loadMarkAreaComponent } from './register';
 
+loadMarkAreaComponent();
 export class MarkArea extends Marker<MarkAreaAttrs> {
   name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;

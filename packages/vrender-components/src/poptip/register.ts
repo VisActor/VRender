@@ -9,6 +9,7 @@ import { PopTipRenderContribution } from './contribution';
 import { PopTipPlugin, PopTipForClipedTextPlugin } from './poptip-plugin';
 import type { PopTipAttributes } from './type';
 import { DEFAULT_THEME, theme } from './theme';
+import { registerGroup, registerRect, registerSymbol, registerWrapText } from '@visactor/vrender-kits';
 
 export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) => {
   if (!isBound(PopTipRenderContribution)) {
@@ -27,6 +28,13 @@ export const popTipModule = new ContainerModule((bind, unbind, isBound, rebind) 
 
 export function loadPoptip() {
   container.load(popTipModule);
+}
+
+export function loadPoptipComponent() {
+  registerGroup();
+  registerWrapText();
+  registerSymbol();
+  registerRect();
 }
 
 export function setPoptipTheme(defaultPoptipTheme: PopTipAttributes) {

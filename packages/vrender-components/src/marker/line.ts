@@ -7,9 +7,10 @@ import { Marker } from './base';
 import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './config';
 import type { MarkLineAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
-import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
+import { loadMarkLineComponent } from './register';
 
+loadMarkLineComponent();
 export class MarkLine extends Marker<MarkLineAttrs> {
   name = 'markLine';
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME;

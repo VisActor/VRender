@@ -8,7 +8,9 @@ import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import { CrosshairBase } from './base';
 import type { SectorCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadSectorCrosshairComponent } from './register';
 
+loadSectorCrosshairComponent();
 export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
   static defaultAttributes = {
     sectorStyle: {

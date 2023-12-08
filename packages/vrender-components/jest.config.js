@@ -23,6 +23,9 @@ module.exports = {
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings', 'type.ts'],
   moduleNameMapper: {
     '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
-    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts')
+    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts'),
+    '@visactor/vrender/es/core': path.resolve(__dirname, '../vrender/src/index.ts'),
+    '@visactor/vrender/es/register': path.resolve(__dirname, '../vrender/src/register.ts'),
+    '@visactor/vrender/es/kits': path.resolve(__dirname, '../vrender/src/kits.ts')
   }
 };

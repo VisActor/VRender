@@ -10,12 +10,14 @@ import type { BrushAttributes } from './type';
 import { IOperateType } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
 import type { ComponentOptions } from '../interface';
+import { loadBrushComponent } from './register';
 
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
 
+loadBrushComponent();
 export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   name = 'brush';
   static defaultAttributes = DEFAULT_BRUSH_ATTRIBUTES;

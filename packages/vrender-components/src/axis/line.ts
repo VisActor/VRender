@@ -34,7 +34,9 @@ import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
+import { loadLineAxisComponent } from './register';
 
+loadLineAxisComponent();
 export interface LineAxis
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector' | 'getRelativeVector'>,
     AxisBase<LineAxisAttributes> {}

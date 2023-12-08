@@ -40,7 +40,9 @@ import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from '
 import { getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadLabelComponent } from './register';
 
+loadLabelComponent();
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
 

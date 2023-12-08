@@ -319,19 +319,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderEachItem(item: LegendItemDatum, isSelected: boolean, index: number, items: LegendItemDatum[]) {
     const { id, label, value, shape } = item;
-    const { padding = 0, focus, focusIconStyle = {} } = this.attribute.item as LegendItem;
+    const { padding = 0, focus, focusIconStyle } = this.attribute.item as LegendItem;
 
-    let {
-      shape: shapeAttr = {},
-      label: labelAttr = {},
-      value: valueAttr = {},
-      background = {}
-    } = this.attribute.item as LegendItem;
+    const { shape: shapeAttr, label: labelAttr, value: valueAttr, background } = this.attribute.item as LegendItem;
 
-    shapeAttr = this._handleStyle(shapeAttr, item, isSelected, index, items);
-    labelAttr = this._handleStyle(labelAttr, item, isSelected, index, items);
-    valueAttr = this._handleStyle(valueAttr, item, isSelected, index, items);
-    background = this._handleStyle(background, item, isSelected, index, items);
+    const shapeStyle = this._handleStyle(shapeAttr, item, isSelected, index, items);
+    const labelStyle = this._handleStyle(labelAttr, item, isSelected, index, items);
+    const valueStyle = this._handleStyle(valueAttr, item, isSelected, index, items);
+    const backgroundStyle = this._handleStyle(background, item, isSelected, index, items);
 
     const parsedPadding = normalizePadding(padding);
 
@@ -340,16 +335,16 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       itemGroup = createGroup({
         x: 0,
         y: 0,
-        cursor: (background?.style as IGroupGraphicAttribute).cursor
+        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup);
     } else {
       itemGroup = createGroup({
         x: 0,
         y: 0,
-        ...background?.style
+        ...backgroundStyle.style
       });
-      this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, background?.state);
+      this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, backgroundStyle.state);
     }
     itemGroup.id = `${id ?? label}-${index}`;
 
@@ -366,7 +361,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let shapeSize = 0;
     let shapeSpace = 0;
     if (shapeAttr?.visible !== false) {
-      shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
+      shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
       shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
       const itemShape = createSymbol({
         x: 0,
@@ -374,22 +369,22 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         symbolType: 'circle',
         strokeBoundsBuffer: 0,
         ...shape,
-        ...shapeAttr.style
+        ...shapeStyle.style
       });
       // 处理下 shape 的 fill stroke
-      Object.keys(shapeAttr.state || {}).forEach(key => {
+      Object.keys(shapeStyle.state || {}).forEach(key => {
         const color =
-          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
-          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
-        if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
-          (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill ||
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke;
+        if (shape.fill && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).fill) && color) {
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill = color as string;
         }
 
-        if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
-          (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
+        if (shape.stroke && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).stroke) && color) {
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke = color as string;
         }
       });
-      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
+      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeStyle.state);
 
       itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
       innerGroup.add(itemShape);
@@ -420,11 +415,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       y: 0,
       textAlign: 'start',
       textBaseline: 'middle',
-      lineHeight: (labelAttr?.style as ITextGraphicAttribute).fontSize,
-      ...labelAttr?.style,
+      lineHeight: (labelStyle.style as ITextGraphicAttribute)?.fontSize,
+      ...labelStyle.style,
       text: labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label
     });
-    this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelAttr?.state);
+    this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelStyle.state);
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(labelShape);
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
@@ -435,11 +430,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         y: 0,
         textAlign: 'start',
         textBaseline: 'middle',
-        lineHeight: (valueAttr?.style as ITextGraphicAttribute).fontSize,
-        ...valueAttr?.style,
+        lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
+        ...valueStyle.style,
         text: valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value
       });
-      this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueAttr?.state);
+      this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueStyle.state);
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
       if (this._itemWidthByUser) {
@@ -964,15 +959,26 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     index: number,
     items: LegendItemDatum[]
   ) {
-    const newConfig = merge({}, config);
+    const newConfig: any = {};
     // 处理下样式
-    if (config.style && isFunction(config.style)) {
-      newConfig.style = config.style(item, isSelected, index, items);
+    if (config.style) {
+      if (isFunction(config.style)) {
+        newConfig.style = config.style(item, isSelected, index, items);
+      } else {
+        newConfig.style = config.style;
+      }
     }
+
     if (config.state) {
+      newConfig.state = {};
+
       Object.keys(config.state).forEach(key => {
-        if (config.state[key] && isFunction(config.state[key])) {
-          newConfig.state[key] = config.state[key](item, isSelected, index, items);
+        if (config.state[key]) {
+          if (isFunction(config.state[key])) {
+            newConfig.state[key] = config.state[key](item, isSelected, index, items);
+          } else {
+            newConfig.state[key] = config.state[key];
+          }
         }
       });
     }

@@ -113,7 +113,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       visible: true,
       fontSize: 14,
       fontWeight: 'normal',
-      fillOpacity: 1
+      fillOpacity: 1,
+      // arc boundsPadding 宽度设大会家加剧旋转时，AABBbounds.width 大于无旋转角度的情况，导致 arc 内部标签被缩略的问题
+      boundsPadding: [-1, 0, -1, 0]
     },
     position: 'outside',
     line: {

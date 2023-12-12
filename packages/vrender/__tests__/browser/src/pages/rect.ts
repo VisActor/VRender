@@ -19,22 +19,21 @@ export const page = () => {
   // );
 
   const rect = createRect({
-    x: 120,
-    y: 200,
-    x1: 100,
-    y1: 100,
-    fill: 'red',
-    // stroke: [colorPools[0], colorPools[0], colorPools[0], colorPools[0]],
-    _debug_bounds: true,
-    cornerRadius: 10,
-    lineWidth: 5
+    x: 2,
+    y: 2,
+    width: 101.55555555555556,
+    height: -4,
+    cornerRadius: -4,
+    fill: 'rgba(0,0,0,0.3)',
+    boundsPadding: [2, 2, 2, 2],
+    pickMode: 'imprecise'
   });
   graphics.push(rect);
 
   const r = createRect({
     x: 300,
     y: 100,
-    width: 100,
+    width: -100,
     height: 100,
     scaleCenter: ['50%', '50%'],
     _debug_bounds: true,

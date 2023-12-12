@@ -30,11 +30,10 @@ export class Rect3d extends Rect implements IRect3d {
   findFace(): IFace3d {
     const faces: IFace3d = { polygons: [], vertices: [], edges: [] };
     const rectTheme = getTheme(this).rect3d;
-    const {
-      width = rectTheme.width,
-      height = rectTheme.width,
-      length = min(rectTheme.width, rectTheme.height)
-    } = this.attribute;
+    const { x1, y1, x, y, length = min(rectTheme.width, rectTheme.height) } = this.attribute;
+    let { width, height } = this.attribute;
+    width = width ?? x1 - x;
+    height = height ?? y1 - y;
     for (let i = 0; i < CUBE_VERTICES.length; i++) {
       const v = CUBE_VERTICES[i];
       faces.vertices.push([v[0] * width, v[1] * height, v[2] * length]);

@@ -215,8 +215,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       y1: top,
       x2: width - right,
       y2: height - bottom,
-      width: width - (left + right),
-      height: height - (top + bottom)
+      width: Math.max(0, width - (left + right)),
+      height: Math.max(0, height - (top + bottom))
     };
     this._sliderRenderBounds = renderBounds;
     return renderBounds;

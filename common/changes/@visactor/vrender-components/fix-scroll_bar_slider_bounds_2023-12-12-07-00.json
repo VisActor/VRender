@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: scrollbar slider width/height should not be negative",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.2",
+      "tag": "@visactor/vrender-core_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          },
+          {
+            "comment": "feat: rect3d support x1y1, fix -radius issue with rect"
+          },
+          {
+            "comment": "fix: fix shadow pick issue"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.1",
       "tag": "@visactor/vrender-core_v0.17.1",
       "date": "Wed, 06 Dec 2023 11:19:22 GMT",

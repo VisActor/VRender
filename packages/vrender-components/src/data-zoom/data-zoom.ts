@@ -8,7 +8,7 @@ import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
-import { DEFAULT_DATA_ZOOM_ATTRIBUTES } from './config';
+import { DEFAULT_DATA_ZOOM_ATTRIBUTES, DEFAULT_HANDLER_ATTR_MAP } from './config';
 import { DataZoomActiveTag } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { DataZoomAttributes } from './type';
@@ -31,9 +31,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _container!: IGroup;
 
   /** 手柄 */
+  private _startHandlerMask!: IRect;
   private _startHandler!: ISymbol;
   private _middleHandlerSymbol!: ISymbol;
   private _middleHandlerRect!: IRect;
+  private _endHandlerMask!: IRect;
   private _endHandler!: ISymbol;
   private _selectedBackground!: IRect;
   private _dragMask!: IRect;
@@ -132,14 +134,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
     const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
     // 拖拽开始
-    if (this._startHandler) {
-      this._startHandler.addEventListener(
+    if (this._startHandlerMask) {
+      this._startHandlerMask.addEventListener(
         'pointerdown',
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'start') as unknown as EventListener
       );
     }
-    if (this._endHandler) {
-      this._endHandler.addEventListener(
+    if (this._endHandlerMask) {
+      this._endHandlerMask.addEventListener(
         'pointerdown',
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, 'end') as unknown as EventListener
       );
@@ -234,10 +236,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     e.stopPropagation();
     if (tag === 'start') {
       this._activeTag = DataZoomActiveTag.startHandler;
-      this._activeItem = this._startHandler;
+      this._activeItem = this._startHandlerMask;
     } else if (tag === 'end') {
       this._activeTag = DataZoomActiveTag.endHandler;
-      this._activeItem = this._endHandler;
+      this._activeItem = this._endHandlerMask;
     } else if (tag === 'middleRect') {
       this._activeTag = DataZoomActiveTag.middleHandler;
       this._activeItem = this._middleHandlerRect;
@@ -622,6 +624,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
     const { position, width, height } = this.getLayoutAttrFromConfig();
+    const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
+    const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;
     const group = (this as unknown as IGroup).createOrUpdateChild('dataZoom-container', {}, 'group') as IGroup;
     this._container = group;
     this._background = group.createOrUpdateChild(
@@ -679,8 +683,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     selectedBackgroundChartStyle?.line?.visible && this.setSelectedPreviewAttributes('line', group);
     selectedBackgroundChartStyle?.area?.visible && this.setSelectedPreviewAttributes('area', group);
 
-    /** 中间手柄 */
-
     /** 左右文字 */
     if (this._showText) {
       this.renderText();
@@ -694,12 +696,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + start * width,
           y: position.y + height / 2,
           size: height,
-          angle: 0,
           symbolType: startHandlerStyle?.symbolType ?? 'square',
-          cursor: 'ew-resize',
-          strokeBoundsBuffer: 0,
-          boundsPadding: 2,
-          pickMode: 'imprecise',
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...startHandlerStyle
         },
         'symbol'
@@ -710,16 +708,46 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + end * width,
           y: position.y + height / 2,
           size: height,
-          angle: 0,
           symbolType: endHandlerStyle?.symbolType ?? 'square',
-          cursor: 'ew-resize',
-          strokeBoundsBuffer: 0,
-          boundsPadding: 2,
-          pickMode: 'imprecise',
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...endHandlerStyle
         },
         'symbol'
       ) as ISymbol;
+
+      // 透明mask构造热区, 热区大小配置来自handler bounds
+      const startHandlerWidth = Math.max(this._startHandler.AABBBounds.width(), startHandlerMinSize);
+      const startHandlerHeight = Math.max(this._startHandler.AABBBounds.height(), startHandlerMinSize);
+      const endHandlerWidth = Math.max(this._endHandler.AABBBounds.width(), endHandlerMinSize);
+      const endHandlerHeight = Math.max(this._endHandler.AABBBounds.height(), endHandlerMinSize);
+
+      this._startHandlerMask = group.createOrUpdateChild(
+        'startHandlerMask',
+        {
+          x: position.x + start * width - startHandlerWidth / 2,
+          y: position.y + height / 2 - startHandlerHeight / 2,
+          width: startHandlerWidth,
+          height: startHandlerHeight,
+          fill: 'white',
+          fillOpacity: 0,
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
+        },
+        'rect'
+      ) as IRect;
+      this._endHandlerMask = group.createOrUpdateChild(
+        'endHandlerMask',
+        {
+          x: position.x + end * width - endHandlerWidth / 2,
+          y: position.y + height / 2 - endHandlerHeight / 2,
+          width: endHandlerWidth,
+          height: endHandlerHeight,
+          fill: 'white',
+          fillOpacity: 0,
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
+        },
+        'rect'
+      ) as IRect;
+
       if (middleHandlerStyle?.visible) {
         this._middleHandlerRect = group.createOrUpdateChild(
           'middleHandlerRect',
@@ -752,16 +780,61 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + width / 2,
           y: position.y + start * height,
           size: width,
-          angle: 90 * (Math.PI / 180),
           symbolType: startHandlerStyle?.symbolType ?? 'square',
-          cursor: 'ns-resize',
-          boundsPadding: 2,
-          pickMode: 'imprecise',
-          strokeBoundsBuffer: 0,
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...startHandlerStyle
         },
         'symbol'
       ) as ISymbol;
+
+      this._endHandler = group.createOrUpdateChild(
+        'endHandler',
+        {
+          x: position.x + width / 2,
+          y: position.y + end * height,
+          size: width,
+          symbolType: endHandlerStyle?.symbolType ?? 'square',
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
+          ...endHandlerStyle
+        },
+        'symbol'
+      ) as ISymbol;
+
+      // 透明mask构造热区, 热区大小配置来自handler bounds
+      const startHandlerWidth = Math.max(this._startHandler.AABBBounds.width(), startHandlerMinSize);
+      const startHandlerHeight = Math.max(this._startHandler.AABBBounds.height(), startHandlerMinSize);
+      const endHandlerWidth = Math.max(this._endHandler.AABBBounds.width(), endHandlerMinSize);
+      const endHandlerHeight = Math.max(this._endHandler.AABBBounds.height(), endHandlerMinSize);
+
+      this._startHandlerMask = group.createOrUpdateChild(
+        'startHandlerMask',
+        {
+          x: position.x + width / 2 - startHandlerWidth / 2,
+          y: position.y + start * height - startHandlerHeight / 2,
+          width: startHandlerWidth,
+          height: startHandlerHeight,
+          symbolType: 'rect',
+          fill: 'white',
+          fillOpacity: 0,
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
+        },
+        'symbol'
+      ) as ISymbol;
+      this._endHandlerMask = group.createOrUpdateChild(
+        'endHandlerMask',
+        {
+          x: position.x + width / 2 - endHandlerWidth / 2,
+          y: position.y + end * height - endHandlerHeight / 2,
+          width: endHandlerWidth,
+          height: endHandlerHeight,
+          symbolType: 'rect',
+          fill: 'white',
+          fillOpacity: 0,
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
+        },
+        'symbol'
+      ) as ISymbol;
+
       if (middleHandlerStyle?.visible) {
         this._middleHandlerRect = group.createOrUpdateChild(
           'middleHandlerRect',
@@ -791,22 +864,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           'symbol'
         ) as ISymbol;
       }
-      this._endHandler = group.createOrUpdateChild(
-        'endHandler',
-        {
-          x: position.x + width / 2,
-          y: position.y + end * height,
-          size: width,
-          angle: 90 * (Math.PI / 180),
-          symbolType: endHandlerStyle?.symbolType ?? 'square',
-          cursor: 'ns-resize',
-          boundsPadding: 2,
-          pickMode: 'imprecise',
-          strokeBoundsBuffer: 0,
-          ...endHandlerStyle
-        },
-        'symbol'
-      ) as ISymbol;
     }
   }
 

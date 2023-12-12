@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

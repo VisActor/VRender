@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 06 Dec 2023 11:19:22 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Dec 2023 13:05:58 GMT and should not be manually modified.
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
+- fix: scrollbar slider width/height should not be negative
+- fix: datazoom event block window event. fix @visactor/vchart#1686
+- perf: optimize the `_handleStyle()` in legend
+
+
+- fix: fix the issue of brushEnd trigger multiple times, related https://github.com/VisActor/VChart/issues/1694
 
 ## 0.17.1
 Wed, 06 Dec 2023 11:19:22 GMT

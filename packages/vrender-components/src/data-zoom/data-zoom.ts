@@ -690,6 +690,31 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     /** 左右 和 中间手柄 */
     if (this._isHorizontal) {
+      if (middleHandlerStyle?.visible) {
+        this._middleHandlerRect = group.createOrUpdateChild(
+          'middleHandlerRect',
+          {
+            x: position.x + start * width,
+            y: position.y - (middleHandlerStyle?.background?.size || 10),
+            width: (end - start) * width,
+            height: middleHandlerStyle?.background?.size || 10,
+            ...middleHandlerStyle?.background?.style
+          },
+          'rect'
+        ) as IRect;
+        this._middleHandlerSymbol = group.createOrUpdateChild(
+          'middleHandlerSymbol',
+          {
+            x: position.x + ((start + end) / 2) * width,
+            y: position.y - (middleHandlerStyle?.background?.size || 10) / 2,
+            strokeBoundsBuffer: 0,
+            angle: 0,
+            symbolType: middleHandlerStyle?.icon?.symbolType ?? 'square',
+            ...middleHandlerStyle?.icon
+          },
+          'symbol'
+        ) as ISymbol;
+      }
       this._startHandler = group.createOrUpdateChild(
         'startHandler',
         {
@@ -730,6 +755,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: startHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
+          zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
         'rect'
@@ -743,19 +769,20 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: endHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
+          zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
         'rect'
       ) as IRect;
-
+    } else {
       if (middleHandlerStyle?.visible) {
         this._middleHandlerRect = group.createOrUpdateChild(
           'middleHandlerRect',
           {
-            x: position.x + start * width,
-            y: position.y - (middleHandlerStyle?.background?.size || 10),
-            width: (end - start) * width,
-            height: middleHandlerStyle?.background?.size || 10,
+            x: orient === 'left' ? position.x - (middleHandlerStyle?.background?.size || 10) : position.x + width,
+            y: position.y + start * height,
+            width: middleHandlerStyle?.background?.size || 10,
+            height: (end - start) * height,
             ...middleHandlerStyle?.background?.style
           },
           'rect'
@@ -763,17 +790,20 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         this._middleHandlerSymbol = group.createOrUpdateChild(
           'middleHandlerSymbol',
           {
-            x: position.x + ((start + end) / 2) * width,
-            y: position.y - (middleHandlerStyle?.background?.size || 10) / 2,
-            strokeBoundsBuffer: 0,
-            angle: 0,
+            x:
+              orient === 'left'
+                ? position.x - (middleHandlerStyle?.background?.size || 10) / 2
+                : position.x + width + (middleHandlerStyle?.background?.size || 10) / 2,
+            y: position.y + ((start + end) / 2) * height,
+            // size: height,
+            angle: 90 * (Math.PI / 180),
             symbolType: middleHandlerStyle?.icon?.symbolType ?? 'square',
+            strokeBoundsBuffer: 0,
             ...middleHandlerStyle?.icon
           },
           'symbol'
         ) as ISymbol;
       }
-    } else {
       this._startHandler = group.createOrUpdateChild(
         'startHandler',
         {
@@ -816,6 +846,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
+          zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
         'symbol'
@@ -830,40 +861,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
+          zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
         'symbol'
       ) as ISymbol;
-
-      if (middleHandlerStyle?.visible) {
-        this._middleHandlerRect = group.createOrUpdateChild(
-          'middleHandlerRect',
-          {
-            x: orient === 'left' ? position.x - (middleHandlerStyle?.background?.size || 10) : position.x + width,
-            y: position.y + start * height,
-            width: middleHandlerStyle?.background?.size || 10,
-            height: (end - start) * height,
-            ...middleHandlerStyle?.background?.style
-          },
-          'rect'
-        ) as IRect;
-        this._middleHandlerSymbol = group.createOrUpdateChild(
-          'middleHandlerSymbol',
-          {
-            x:
-              orient === 'left'
-                ? position.x - (middleHandlerStyle?.background?.size || 10) / 2
-                : position.x + width + (middleHandlerStyle?.background?.size || 10) / 2,
-            y: position.y + ((start + end) / 2) * height,
-            // size: height,
-            angle: 90 * (Math.PI / 180),
-            symbolType: middleHandlerStyle?.icon?.symbolType ?? 'square',
-            strokeBoundsBuffer: 0,
-            ...middleHandlerStyle?.icon
-          },
-          'symbol'
-        ) as ISymbol;
-      }
     }
   }
 

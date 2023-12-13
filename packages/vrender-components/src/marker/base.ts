@@ -1,5 +1,5 @@
 import type { IGroup } from '@visactor/vrender-core';
-import { createGroup } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
 import type { MarkerAttrs } from './type';
@@ -21,12 +21,12 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     let group;
     if (clipInRange) {
       // 如果用户配置了剪切
-      const groupClip = createGroup({
+      const groupClip = graphicCreator.group({
         ...limitRect,
         clip: true,
         pickable: false
       });
-      group = createGroup({
+      group = graphicCreator.group({
         x: -(limitRect?.x ?? 0),
         y: -(limitRect?.y ?? 0),
         pickable: false
@@ -35,7 +35,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       this._containerClip = groupClip;
       this.add(groupClip);
     } else {
-      group = createGroup({
+      group = graphicCreator.group({
         x: 0,
         y: 0,
         pickable: false

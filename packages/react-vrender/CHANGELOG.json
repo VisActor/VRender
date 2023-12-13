@@ -2,6 +2,42 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.17.2",
+      "tag": "@visactor/react-vrender_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.1",
+      "tag": "@visactor/react-vrender_v0.17.1",
+      "date": "Wed, 06 Dec 2023 11:19:22 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.0",
+      "tag": "@visactor/react-vrender_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.18",
+      "tag": "@visactor/react-vrender_v0.16.18",
+      "date": "Thu, 30 Nov 2023 09:40:58 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.17",
+      "tag": "@visactor/react-vrender_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.16.16",
       "tag": "@visactor/react-vrender_v0.16.16",
       "date": "Fri, 17 Nov 2023 02:33:59 GMT",

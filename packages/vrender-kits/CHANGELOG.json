@@ -2,6 +2,80 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.17.2",
+      "tag": "@visactor/vrender-kits_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.1",
+      "tag": "@visactor/vrender-kits_v0.17.1",
+      "date": "Wed, 06 Dec 2023 11:19:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support pickStrokeBuffer, closed #758"
+          },
+          {
+            "comment": "fix: fix issue with rebind pick-contribution"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-kits_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rect support x1 and y1"
+          },
+          {
+            "comment": "refactor: refact inversify completely, closed #657"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: optmize bounds performance"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.18",
+      "tag": "@visactor/vrender-kits_v0.16.18",
+      "date": "Thu, 30 Nov 2023 09:40:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: doubletap should not be triggered when the target is different twice before and after"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.17",
+      "tag": "@visactor/vrender-kits_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support 'tap' gesture for Gesture plugin"
+          },
+          {
+            "comment": "fix: \\`pickMode: 'imprecise'\\` not work in polygon"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.16",
       "tag": "@visactor/vrender-kits_v0.16.16",
       "date": "Fri, 17 Nov 2023 02:33:59 GMT",

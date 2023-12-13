@@ -1,4 +1,4 @@
-import { clone } from '@visactor/vutils';
+import { Logger, clone } from '@visactor/vutils';
 import type { IGraphicAttribute, IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
 import {
   DefaultArcAttribute,
@@ -189,7 +189,8 @@ export class Theme implements ITheme {
         if (parentGroup) {
           this.combinedTheme = parentGroup.theme.combinedTheme;
         } else {
-          console.warn('未知错误，走到不应该走的区域里');
+          this.combinedTheme = this._defaultTheme;
+          Logger.getInstance().warn('未知错误，走到不应该走的区域里');
         }
         this.dirty = false;
       } else {

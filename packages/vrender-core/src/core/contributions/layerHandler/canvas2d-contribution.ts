@@ -53,7 +53,8 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
       let nativeCanvas: HTMLElement;
       if (params.canvasId) {
         nativeCanvas = this.global.getElementById(params.canvasId);
-      } else {
+      }
+      if (!nativeCanvas) {
         nativeCanvas = this.global.createCanvas({
           width: window.width,
           height: window.height
@@ -70,6 +71,7 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
         width: window.width,
         height: window.height,
         dpr: window.dpr,
+        id: params.canvasId,
         canvasControled: true,
         container: window.getContainer(),
         x: windowCanvas.offsetLeft,

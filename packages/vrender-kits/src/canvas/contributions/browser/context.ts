@@ -24,7 +24,7 @@
   SOFTWARE.
  */
 import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
-import { Matrix, pi, pi2 } from '@visactor/vutils';
+import { Matrix, pi, pi2, Logger } from '@visactor/vutils';
 import {
   injectable,
   DefaultFillStyle,
@@ -251,7 +251,7 @@ export class BrowserContext2d implements IContext2d {
 
   reset() {
     if (this.stack.length) {
-      console.warn('可能存在bug，matrix没有清空');
+      Logger.getInstance().warn('可能存在bug，matrix没有清空');
     }
     this.matrix.setValue(1, 0, 0, 1, 0, 0);
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
@@ -1050,10 +1050,11 @@ export class BrowserContext2d implements IContext2d {
       return;
     }
     if (shadowBlur || shadowOffsetX || shadowOffsetY) {
-      _context.shadowBlur = shadowBlur;
+      // canvas的shadow不支持dpr，这里手动设置
+      _context.shadowBlur = shadowBlur * this.dpr;
       _context.shadowColor = shadowColor;
-      _context.shadowOffsetX = shadowOffsetX;
-      _context.shadowOffsetY = shadowOffsetY;
+      _context.shadowOffsetX = shadowOffsetX * this.dpr;
+      _context.shadowOffsetY = shadowOffsetY * this.dpr;
       this._clearShadowStyle = true;
       // todo 小程序
     } else if (this._clearShadowStyle) {

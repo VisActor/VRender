@@ -2,6 +2,84 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.2",
+      "tag": "@visactor/vrender-components_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          },
+          {
+            "comment": "fix: scrollbar slider width/height should not be negative"
+          },
+          {
+            "comment": "fix: datazoom event block window event. fix @visactor/vchart#1686"
+          },
+          {
+            "comment": "perf: optimize the `_handleStyle()` in legend\n\n"
+          },
+          {
+            "comment": "fix: fix the issue of brushEnd trigger multiple times, related https://github.com/VisActor/VChart/issues/1694"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.1",
+      "tag": "@visactor/vrender-components_v0.17.1",
+      "date": "Wed, 06 Dec 2023 11:19:22 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-components_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optmize bounds performance"
+          },
+          {
+            "comment": "perf: add option `skipDefault` to vrender-components"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.18",
+      "tag": "@visactor/vrender-components_v0.16.18",
+      "date": "Thu, 30 Nov 2023 09:40:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: discrete legend's pager support position property"
+          },
+          {
+            "comment": "refactor: move getSizeHandlerPath out of sizlegend"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.17",
+      "tag": "@visactor/vrender-components_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support rich text for label, axis, marker,tooltip, indicator and title"
+          },
+          {
+            "comment": "feat: add mode type of smartInvert"
+          },
+          {
+            "comment": "feat: place more label for overlapPadding case"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.16.16",
       "tag": "@visactor/vrender-components_v0.16.16",
       "date": "Fri, 17 Nov 2023 02:33:59 GMT",

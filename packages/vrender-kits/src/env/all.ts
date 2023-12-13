@@ -6,7 +6,8 @@ import { loadNodeEnv } from './node';
 import { loadTaroEnv } from './taro';
 import { loadWxEnv } from './wx';
 import { loadCanvasPicker } from '../picker/canvas-module';
-import { loadMathPicker } from '../picker';
+import { loadMathPicker } from '../picker/math-module';
+// import { loadMathPicker } from '../picker';
 
 export function loadAllEnv(container: Container) {
   loadAllModule(container);

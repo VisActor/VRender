@@ -1,6 +1,6 @@
 import { isArray } from '@visactor/vutils';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
-import type { ITextGraphicAttribute, IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
+import type { IText, ITextGraphicAttribute, IWrapTextGraphicAttribute, LayoutItemType } from '../interface';
 import { application } from '../application';
 import { Text } from './text';
 import { getTheme } from './theme';
@@ -49,6 +49,7 @@ export class WrapText extends Text {
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
       heightLimit = 0,
+      suffixPosition = textTheme.suffixPosition,
       lineClamp
     } = this.attribute;
     const lineHeight =
@@ -101,7 +102,8 @@ export class WrapText extends Text {
               layoutObj.textOptions,
               maxLineWidth,
               ellipsis,
-              false
+              false,
+              suffixPosition
             );
             linesLayout.push({
               str: clip.str,
@@ -124,7 +126,8 @@ export class WrapText extends Text {
                 layoutObj.textOptions,
                 maxLineWidth,
                 ellipsis,
-                false
+                false,
+                suffixPosition
               );
               clip.str = clipEllipsis.str ?? '';
               clip.width = clipEllipsis.width ?? 0;
@@ -168,7 +171,8 @@ export class WrapText extends Text {
             layoutObj.textOptions,
             maxLineWidth,
             ellipsis,
-            false
+            false,
+            suffixPosition
           );
           linesLayout.push({
             str: clip.str,
@@ -241,4 +245,8 @@ export class WrapText extends Text {
   getNoWorkAnimateAttr(): Record<string, number> {
     return WrapText.NOWORK_ANIMATE_ATTR;
   }
+}
+
+export function createWrapText(attributes: ITextGraphicAttribute): IText {
+  return new WrapText(attributes);
 }

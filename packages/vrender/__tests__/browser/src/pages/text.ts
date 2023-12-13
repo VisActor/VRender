@@ -53,10 +53,12 @@ export const page = () => {
     y: 100,
     fontFamily: 'Arial',
     text: 'aaa这是aaa',
-    fill: 'red'
+    fill: 'red',
+    background: 'green'
   });
   console.log(t.AABBBounds);
   graphics.push(t);
+  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
   graphics.push(
     createText({
@@ -127,7 +129,7 @@ export const page = () => {
   graphics.push(rect);
 
   const stage = createStage({
-    canvas: 'main',
+    container: 'container',
     autoRender: true
   });
 

@@ -33,6 +33,7 @@ export * from './arc3d';
 export * from './group';
 export * from './polygon';
 export * from './pyramid3d';
+export * from './shadow-root';
 export * from './config';
 export * from './graphic-service/graphic-service';
 export * from './graphic-creator';

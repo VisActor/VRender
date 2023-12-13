@@ -27,6 +27,9 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     return super.isValid() && this._isValid();
   }
   private _isValid(): boolean {
+    if (this.pathProxy) {
+      return true;
+    }
     const { points, segments } = this.attribute;
     if (segments) {
       if (segments.length === 0) {
@@ -126,6 +129,10 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
   getNoWorkAnimateAttr(): Record<string, number> {
     return Line.NOWORK_ANIMATE_ATTR;
   }
+}
+
+export function createLine(attributes: ILineGraphicAttribute): ILine {
+  return new Line(attributes);
 }
 
 // addAttributeToPrototype(DefaultLineStyle, Line, PURE_STYLE_KEY);

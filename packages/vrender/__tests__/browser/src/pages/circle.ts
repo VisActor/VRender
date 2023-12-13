@@ -63,6 +63,8 @@ export const page = () => {
     stroke: 'red'
   });
 
+  circle.animate().from({ abc: true, lineWidth: 100 }, 10000, 'linear');
+
   const group = createGroup({});
   group.add(circle);
 

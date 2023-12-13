@@ -1,5 +1,5 @@
 import type { vec2, vec4 } from '@visactor/vutils';
-import { isNumber, arrayEqual, pi } from '@visactor/vutils';
+import { isNumber, arrayEqual, pi, abs } from '@visactor/vutils';
 import type { IContext2d, ICustomPath2D } from '../../interface';
 
 const halfPi = pi / 2;
@@ -23,6 +23,7 @@ export function createRectPath(
   // 匹配cornerRadius
   let cornerRadius: vec4;
   if (isNumber(rectCornerRadius, true)) {
+    rectCornerRadius = abs(rectCornerRadius);
     cornerRadius = [
       <number>rectCornerRadius,
       <number>rectCornerRadius,
@@ -31,19 +32,30 @@ export function createRectPath(
     ];
   } else if (Array.isArray(rectCornerRadius)) {
     const cornerRadiusArr: number[] = rectCornerRadius as number[];
+    let cr0;
+    let cr1;
+    let cr2;
+    let cr3;
     switch (cornerRadiusArr.length) {
       case 0:
         cornerRadius = [0, 0, 0, 0];
         break;
       case 1:
-        cornerRadius = [cornerRadiusArr[0], cornerRadiusArr[0], cornerRadiusArr[0], cornerRadiusArr[0]];
+        cr0 = abs(cornerRadiusArr[0]);
+        cornerRadius = [cr0, cr0, cr0, cr0];
         break;
       case 2:
       case 3:
-        cornerRadius = [cornerRadiusArr[0], cornerRadiusArr[1], cornerRadiusArr[0], cornerRadiusArr[1]];
+        cr0 = abs(cornerRadiusArr[0]);
+        cr1 = abs(cornerRadiusArr[1]);
+        cornerRadius = [cr0, cr1, cr0, cr1];
         break;
       default:
-        cornerRadius = cornerRadiusArr.slice(0, 5) as [number, number, number, number];
+        cornerRadius = cornerRadiusArr as [number, number, number, number];
+        cornerRadius[0] = abs(cornerRadius[0]);
+        cornerRadius[1] = abs(cornerRadius[1]);
+        cornerRadius[2] = abs(cornerRadius[2]);
+        cornerRadius[3] = abs(cornerRadius[3]);
         break;
     }
   } else {
@@ -51,11 +63,7 @@ export function createRectPath(
   }
 
   // 当宽度小于0 或者 cornerRadius 极小时，不绘制 cornerRadius
-  if (
-    width < 0 ||
-    Math.abs(cornerRadius[0]) + Math.abs(cornerRadius[1]) + Math.abs(cornerRadius[2]) + Math.abs(cornerRadius[3]) <
-      1e-12
-  ) {
+  if (width < 0 || cornerRadius[0] + cornerRadius[1] + cornerRadius[2] + cornerRadius[3] < 1e-12) {
     return path.rect(x, y, width, height);
   }
 

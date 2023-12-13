@@ -1,6 +1,66 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Dec 2023 13:05:58 GMT and should not be manually modified.
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
+- feat: rect3d support x1y1, fix -radius issue with rect
+- fix: fix shadow pick issue
+
+## 0.17.1
+Wed, 06 Dec 2023 11:19:22 GMT
+
+### Updates
+
+- feat: support pickStrokeBuffer, closed #758
+- fix: fix issue in area chart with special points
+- fix: fix issue with rebind pick-contribution
+- fix: fix error with wrap text and normal whiteSpace text
+
+## 0.17.0
+Thu, 30 Nov 2023 12:58:15 GMT
+
+### Minor changes
+
+- feat: optmize bounds performance
+
+### Updates
+
+- feat: support disableCheckGraphicWidthOutRange to skip check if graphic out of range
+- feat: rect support x1 and y1
+- feat: don't rewrite global reflect
+- feat: text support background, closed #711
+- perf: area support drawLinearAreaHighPerformance, closed #672
+- refactor: refact inversify completely, closed #657
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- feat: support suffixPosition, closed #625
+- fix: fix issue with attribute interpolate, closed #741
+- refactor: event-related coordinate points do not require complex Point classes
+- fix: fix issue about calcuate bounds with shadow, closed #474
+- fix: fix issue with white line in some dpr device, closed #666
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: add `event` config for Stage params, which can configure `clickInterval` and some other options in eventSystem
+- feat: support fill and stroke while svg don't support, closed #710
+- fix: richtext may throw error when textConfig is null
+
+
+- fix: fix issue with image repeat, closed #712
+- perf: not setAttribute while background is not url, closed #696
+- fix: fix issue with restore and save count not equal
 
 ## 0.16.16
 Fri, 17 Nov 2023 02:33:59 GMT

@@ -1,5 +1,5 @@
 // 存放公共属性
-import { Matrix, pi2 } from '@visactor/vutils';
+import { Logger, Matrix, pi2 } from '@visactor/vutils';
 import { CustomPath2D } from '../common/custom-path2d';
 import type {
   IArcGraphicAttribute,
@@ -29,7 +29,8 @@ import type {
   IRichTextIconGraphicAttribute,
   IConnectedStyle,
   ILayout,
-  IDebugType
+  IDebugType,
+  IPickStyle
 } from '../interface';
 
 export const DefaultLayout: ILayout = {
@@ -107,8 +108,13 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   verticalMode: 0,
   wrap: false,
   whiteSpace: 'no-wrap',
-  heightLimit: 0,
-  lineClamp: Infinity
+  heightLimit: Infinity,
+  lineClamp: Infinity,
+  suffixPosition: 'end'
+};
+
+export const DefaultPickStyle: IPickStyle = {
+  pickStrokeBuffer: 0
 };
 
 export const DefaultStyle: IGraphicStyle = {
@@ -118,13 +124,14 @@ export const DefaultStyle: IGraphicStyle = {
   textureColor: 'black',
   textureSize: 10,
   texturePadding: 2,
-  backgroundMode: 0,
+  backgroundMode: 'no-repeat',
   blur: 0,
   cursor: null,
   html: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
-  ...DefaultLayout
+  ...DefaultLayout,
+  ...DefaultPickStyle
 };
 
 export const DefaultConnectAttribute: Required<IConnectedStyle> = {
@@ -249,7 +256,7 @@ export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
   ...DefaultAttribute,
   path: new CustomPath2D(),
   customPath: () => {
-    console.warn('空函数');
+    Logger.getInstance().warn('空函数');
   }
 };
 

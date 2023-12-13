@@ -7,7 +7,9 @@ import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { PolygonCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadPolygonCrosshairComponent } from './register';
 
+loadPolygonCrosshairComponent();
 export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {

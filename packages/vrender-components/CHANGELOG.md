@@ -1,6 +1,49 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 17 Nov 2023 02:33:59 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Dec 2023 13:05:58 GMT and should not be manually modified.
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
+- fix: scrollbar slider width/height should not be negative
+- fix: datazoom event block window event. fix @visactor/vchart#1686
+- perf: optimize the `_handleStyle()` in legend
+
+
+- fix: fix the issue of brushEnd trigger multiple times, related https://github.com/VisActor/VChart/issues/1694
+
+## 0.17.1
+Wed, 06 Dec 2023 11:19:22 GMT
+
+_Version update only_
+
+## 0.17.0
+Thu, 30 Nov 2023 12:58:15 GMT
+
+### Updates
+
+- feat: optmize bounds performance
+- perf: add option `skipDefault` to vrender-components
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- feat: discrete legend's pager support position property
+- refactor: move getSizeHandlerPath out of sizlegend
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: support rich text for label, axis, marker,tooltip, indicator and title
+- feat: add mode type of smartInvert
+- feat: place more label for overlapPadding case
 
 ## 0.16.16
 Fri, 17 Nov 2023 02:33:59 GMT

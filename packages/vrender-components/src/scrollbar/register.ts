@@ -1,11 +1,6 @@
-import {
-  container,
-  InteractiveSubRenderContribution,
-  AutoEnablePlugins,
-  ContainerModule
-} from '@visactor/vrender-core';
-import { merge } from '@visactor/vutils';
+import { container, AutoEnablePlugins, ContainerModule } from '@visactor/vrender-core';
 import { ScrollBarPlugin } from './scrollbar-plugin';
+import { registerGroup, registerRect } from '@visactor/vrender-kits';
 
 export const scrollbarModule = new ContainerModule((bind, unbind, isBound, rebind) => {
   if (!isBound(ScrollBarPlugin)) {
@@ -16,4 +11,9 @@ export const scrollbarModule = new ContainerModule((bind, unbind, isBound, rebin
 
 export function loadScrollbar() {
   container.load(scrollbarModule);
+}
+
+export function loadScrollbarComponent() {
+  registerGroup();
+  registerRect();
 }

@@ -28,9 +28,11 @@ import {
 import { AbstractComponent } from '../core/base';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
+import { loadPoptip, loadPoptipComponent } from './register';
 
 const _tBounds = new AABBBounds();
 
+loadPoptipComponent();
 export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   name = 'poptip';
 

@@ -89,3 +89,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     return Rect.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createRect(attributes: IRectGraphicAttribute): IRect {
+  return new Rect(attributes);
+}

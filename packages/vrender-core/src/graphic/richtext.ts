@@ -1,4 +1,4 @@
-import type { AABBBounds, IPoint, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, OBBBounds } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -11,7 +11,8 @@ import type {
   IRichTextParagraphCharacter,
   IStage,
   ILayer,
-  IRichTextIcon
+  IRichTextIcon,
+  EventPoint
 } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultRichTextAttribute } from './config';
@@ -385,7 +386,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     });
   }
 
-  pickIcon(point: IPoint): IRichTextIcon | undefined {
+  pickIcon(point: EventPoint): IRichTextIcon | undefined {
     const frameCache = this.getFrameCache();
     const { e: x, f: y } = this.globalTransMatrix;
     // for (let i = 0; i < frameCache.icons.length; i++) {
@@ -410,4 +411,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   getNoWorkAnimateAttr(): Record<string, number> {
     return RichText.NOWORK_ANIMATE_ATTR;
   }
+}
+
+export function createRichText(attributes: IRichTextGraphicAttribute): IRichText {
+  return new RichText(attributes);
 }

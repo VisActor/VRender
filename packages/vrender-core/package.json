@@ -1,8 +1,10 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.16.16",
+  "version": "0.17.2",
   "description": "",
-  "sideEffects": true,
+  "sideEffects": [
+    "./src/modules.ts"
+  ],
   "main": "cjs/index.js",
   "module": "es/index.js",
   "types": "es/index.d.ts",
@@ -26,7 +28,7 @@
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~0.16.16"
+    "@visactor/vutils": "~0.17.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

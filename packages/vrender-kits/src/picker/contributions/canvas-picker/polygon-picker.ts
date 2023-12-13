@@ -1,4 +1,11 @@
-import { inject, injectable, getTheme, PolygonRender, POLYGON_NUMBER_TYPE } from '@visactor/vrender-core';
+import {
+  inject,
+  injectable,
+  getTheme,
+  PolygonRender,
+  POLYGON_NUMBER_TYPE,
+  getScaledStroke
+} from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
   IContext2d,
@@ -81,7 +88,8 @@ export class DefaultCanvasPolygonPicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = pathAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = lineWidth;
+        const pickStrokeBuffer = pathAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

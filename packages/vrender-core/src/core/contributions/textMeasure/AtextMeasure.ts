@@ -124,7 +124,9 @@ export class ATextMeasure implements ITextMeasure {
         options,
         width - length,
         0,
-        verticalList[i].text.length - 1
+        verticalList[i].text.length - 1,
+        'end',
+        false
       );
       if (wordBreak && clipedData.str !== verticalList[i].text) {
         let text = '';
@@ -179,7 +181,7 @@ export class ATextMeasure implements ITextMeasure {
     if (length > width) {
       return { str: '', width: 0 };
     }
-    const data = this._clipText(text, options, width, 0, text.length - 1);
+    const data = this._clipText(text, options, width, 0, text.length - 1, 'end', false);
     // 如果需要文字截断
     if (wordBreak && data.str !== text) {
       const index = testLetter(text, data.str.length);
@@ -192,7 +194,31 @@ export class ATextMeasure implements ITextMeasure {
   }
 
   // 二分法找到最佳宽
+  // TODO: 后续考虑代码合并
   private _clipText(
+    text: string,
+    options: TextOptionsType,
+    width: number,
+    leftIdx: number,
+    rightIdx: number,
+    position: 'start' | 'end' | 'middle',
+    suffix: string | false
+  ): { str: string; width: number; result?: string } {
+    let data: { str: string; width: number; result?: string };
+    if (position === 'start') {
+      data = this._clipTextStart(text, options, width, leftIdx, rightIdx);
+      suffix && (data.result = suffix + data.str);
+    } else if (position === 'middle') {
+      const d = this._clipTextMiddle(text, options, width, '', '', 0, 0, 1);
+      data = { str: 'none', width: d.width, result: d.left + suffix + d.right };
+    } else {
+      data = this._clipTextEnd(text, options, width, leftIdx, rightIdx);
+      suffix && (data.result = data.str + suffix);
+    }
+    return data;
+  }
+
+  private _clipTextEnd(
     text: string,
     options: TextOptionsType,
     width: number,
@@ -216,7 +242,7 @@ export class ATextMeasure implements ITextMeasure {
         return { str, width: length };
       }
       // 返回leftIdx到middleIdx
-      return this._clipText(text, options, width, leftIdx, middleIdx);
+      return this._clipTextEnd(text, options, width, leftIdx, middleIdx);
     } else if (strWidth < width) {
       // 如果字符串的宽度小于限制宽度
       if (middleIdx >= text.length - 1) {
@@ -230,10 +256,86 @@ export class ATextMeasure implements ITextMeasure {
         return { str: subText, width: strWidth };
       }
       // 返回middleIdx到rightIdx
-      return this._clipText(text, options, width, middleIdx, rightIdx);
+      return this._clipTextEnd(text, options, width, middleIdx, rightIdx);
     }
     // 如果相同，那么就找到text
     return { str: subText, width: strWidth };
+  }
+
+  private _clipTextStart(
+    text: string,
+    options: TextOptionsType,
+    width: number,
+    leftIdx: number,
+    rightIdx: number
+  ): { str: string; width: number } {
+    const middleIdx = Math.ceil((leftIdx + rightIdx) / 2);
+    const subText = text.substring(middleIdx - 1, text.length - 1);
+    const strWidth = this.measureTextWidth(subText, options);
+    let length: number;
+    if (strWidth > width) {
+      // 如果字符串的宽度大于限制宽度
+      if (subText.length <= 1) {
+        return { str: '', width: 0 };
+      } // 如果子字符串长度小于1，而且大于给定宽的话，返回空字符串
+      // 先判断是不是左侧的那个字符
+      const str = text.substring(middleIdx, text.length - 1);
+      // 如果到左侧的字符小于或等于width，那么说明就是左侧的字符
+      length = this.measureTextWidth(str, options);
+      if (length <= width) {
+        return { str, width: length };
+      }
+      // 返回leftIdx到middleIdx
+      return this._clipTextStart(text, options, width, middleIdx, text.length - 1);
+    } else if (strWidth < width) {
+      // 如果字符串的宽度小于限制宽度
+      if (middleIdx <= 0) {
+        return { str: text, width: this.measureTextWidth(text, options) };
+      } // 如果已经到结尾了，返回text
+      // 先判断是不是右侧的那个字符
+      const str = text.substring(middleIdx - 2, text.length - 1);
+      // 如果到右侧的字符大于或等于width，那么说明就是这个字符串
+      length = this.measureTextWidth(str, options);
+      if (length >= width) {
+        return { str: subText, width: strWidth };
+      }
+      // 返回middleIdx到rightIdx
+      return this._clipTextStart(text, options, width, leftIdx, middleIdx);
+    }
+    // 如果相同，那么就找到text
+    return { str: subText, width: strWidth };
+  }
+
+  private _clipTextMiddle(
+    text: string,
+    options: TextOptionsType,
+    width: number,
+    left: string,
+    right: string,
+    leftW: number,
+    rightW: number,
+    buffer: number
+  ): { left: string; right: string; width: number } {
+    const subLeftText = text.substring(0, buffer);
+    const strLeftWidth = this.measureTextWidth(subLeftText, options);
+    if (strLeftWidth + rightW > width) {
+      return { left, right, width: leftW + rightW };
+    }
+    const subRightText = text.substring(text.length - buffer, text.length);
+    const strRightWidth = this.measureTextWidth(subRightText, options);
+    if (strLeftWidth + strRightWidth > width) {
+      return { left: subLeftText, right, width: strLeftWidth + rightW };
+    }
+    return this._clipTextMiddle(
+      text,
+      options,
+      width,
+      subLeftText,
+      subRightText,
+      strLeftWidth,
+      strRightWidth,
+      buffer + 1
+    );
   }
 
   clipTextWithSuffixVertical(
@@ -241,7 +343,8 @@ export class ATextMeasure implements ITextMeasure {
     options: TextOptionsType,
     width: number,
     suffix: string,
-    wordBreak: boolean
+    wordBreak: boolean,
+    suffixPosition: 'start' | 'end' | 'middle'
   ): {
     verticalList: { text: string; width?: number; direction: number }[];
     width: number;
@@ -268,21 +371,67 @@ export class ATextMeasure implements ITextMeasure {
 
     width -= suffixWidth;
 
-    const out = this.clipTextVertical(verticalList, options, width, wordBreak);
+    let out;
+    if (suffixPosition === 'start') {
+      const nextVerticalList = this.revertVerticalList(verticalList);
+      out = this.clipTextVertical(nextVerticalList, options, width, wordBreak);
+      const v = this.revertVerticalList(out.verticalList);
+      v.unshift({
+        text: suffix,
+        direction: 1,
+        width: suffixWidth
+      });
+      out.verticalList = v;
+    } else if (suffixPosition === 'middle') {
+      const leftOut = this.clipTextVertical(verticalList, options, width / 2, wordBreak);
+      const nextVerticalList = this.revertVerticalList(verticalList);
+      const rightOut = this.clipTextVertical(nextVerticalList, options, width / 2, wordBreak);
+      // 添加suffix
+      leftOut.verticalList.push({
+        text: suffix,
+        direction: 1,
+        width: suffixWidth
+      });
+      this.revertVerticalList(rightOut.verticalList).forEach(v => leftOut.verticalList.push(v));
+      out = {
+        verticalList: leftOut.verticalList,
+        width: leftOut.width + rightOut.width
+      };
+    } else {
+      out = this.clipTextVertical(verticalList, options, width, wordBreak);
+      out.verticalList.push({
+        text: suffix,
+        direction: 1,
+        width: suffixWidth
+      });
+    }
     out.width += suffixWidth;
-    out.verticalList.push({
-      text: suffix,
-      direction: 1,
-      width: suffixWidth
-    });
     return out;
   }
+
+  revertVerticalList(
+    verticalList: {
+      text: string;
+      width?: number;
+      direction: number;
+    }[]
+  ) {
+    return verticalList.reverse().map(l => {
+      const t = l.text.split('').reverse().join('');
+      return {
+        ...l,
+        text: t
+      };
+    });
+  }
+
   clipTextWithSuffix(
     text: string,
     options: TextOptionsType,
     width: number,
     suffix: string,
-    wordBreak: boolean
+    wordBreak: boolean,
+    position: 'start' | 'end' | 'middle'
   ): {
     str: string;
     width: number;
@@ -302,7 +451,7 @@ export class ATextMeasure implements ITextMeasure {
       return { str: '', width: 0 };
     }
     width -= suffixWidth;
-    const data = this._clipText(text, options, width, 0, text.length - 1);
+    const data = this._clipText(text, options, width, 0, text.length - 1, position, suffix);
 
     // 如果需要文字截断
     if (wordBreak && data.str !== text) {
@@ -312,7 +461,7 @@ export class ATextMeasure implements ITextMeasure {
         data.width = this.measureTextWidth(data.str, options);
       }
     }
-    data.str += suffix;
+    data.str = data.result!;
     data.width += suffixWidth;
     return data;
   }

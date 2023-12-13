@@ -2,8 +2,14 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
-import type { IRichText } from '@visactor/vrender-core';
-import { type IText, type IArcGraphicAttribute, type IGraphic, type ILine, createLine } from '@visactor/vrender-core';
+import {
+  type IRichText,
+  type IText,
+  type IArcGraphicAttribute,
+  type IGraphic,
+  type ILine,
+  graphicCreator
+} from '@visactor/vrender-core';
 import {
   circlePoint,
   isQuadrantRight,
@@ -916,7 +922,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   protected _labelLine(text: LabelItem) {
     const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
-      ? createLine({
+      ? graphicCreator.line({
           visible:
             ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
             text.attribute?.visible ??

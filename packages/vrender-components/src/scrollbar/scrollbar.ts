@@ -3,12 +3,13 @@
  */
 import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { CustomEvent, vglobal } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 
 import type { ScrollBarAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadScrollbarComponent } from './register';
 
 type ComponentBounds = {
   x1: number;
@@ -23,6 +24,8 @@ const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
+
+loadScrollbarComponent();
 
 export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> {
   name = 'scrollbar';
@@ -90,7 +93,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     (this.attribute as ScrollBarAttributes).range = currScrollRange;
     // 发射 change 事件
     if (realTime) {
-      this._onChange({
+      this._dispatchEvent('scroll', {
         pre: preRange,
         value: currScrollRange
       });
@@ -212,8 +215,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       y1: top,
       x2: width - right,
       y2: height - bottom,
-      width: width - (left + right),
-      height: height - (top + bottom)
+      width: Math.max(0, width - (left + right)),
+      height: Math.max(0, height - (top + bottom))
     };
     this._sliderRenderBounds = renderBounds;
     return renderBounds;
@@ -335,7 +338,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
     if (!realTime) {
-      this._onChange({
+      this._dispatchEvent('scroll', {
         pre: preRange,
         value: clampRange(range, limitRange[0], limitRange[1])
       });
@@ -349,14 +352,6 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       this.stage.removeEventListener('pointerupoutside', this._onSliderPointerUp);
     }
   };
-
-  private _onChange(detail: any) {
-    const changeEvent = new CustomEvent('scroll', detail);
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
-  }
 
   private _reset() {
     this._sliderRenderBounds = null;

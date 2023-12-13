@@ -48,14 +48,20 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
     const {
       fill = rectAttribute.fill,
       stroke = rectAttribute.stroke,
-      width = rectAttribute.width,
-      height = rectAttribute.height,
+      x1,
+      y1,
+      x: originX,
+      y: originY,
       opacity = rectAttribute.opacity,
       fillOpacity = rectAttribute.fillOpacity,
       lineWidth = rectAttribute.lineWidth,
       strokeOpacity = rectAttribute.strokeOpacity,
       visible = rectAttribute.visible
     } = rect.attribute;
+    let { width, height } = rect.attribute;
+
+    width = (width ?? x1 - originX) || 0;
+    height = (height ?? y1 - originY) || 0;
 
     const z = this.z ?? 0;
 

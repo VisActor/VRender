@@ -76,7 +76,8 @@ export class DefaultMathLinePicker implements IGraphicPicker {
           return true;
         }
         const lineWidth = circleAttribute.lineWidth || themeAttribute.lineWidth;
-        pickContext.lineWidth = lineWidth;
+        const pickStrokeBuffer = circleAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = lineWidth + pickStrokeBuffer;
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

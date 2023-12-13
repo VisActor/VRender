@@ -1,6 +1,6 @@
 import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds, pi2 } from '@visactor/vutils';
-import { createGroup, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
+import { graphicCreator, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
 import type {
   IArc,
   IContext2d,
@@ -99,14 +99,7 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
 // @injectable()
 export class DebugDrawItemInterceptorContribution implements IDrawItemInterceptorContribution {
   order: number = 1;
-  interceptors: IDrawItemInterceptorContribution[];
-  constructor() {
-    this.interceptors = [
-      new ShadowRootDrawItemInterceptorContribution(),
-      new Canvas3DDrawItemInterceptor(),
-      new InteractiveDrawItemInterceptorContribution()
-    ];
-  }
+
   afterDrawItem(
     graphic: IGraphic,
     renderService: IRenderService,
@@ -342,7 +335,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
     // 获取绑定影子节点的group
     let group = interactiveLayer.getElementById('_interactive_group') as IGroup;
     if (!group) {
-      group = createGroup({});
+      group = graphicCreator.CreateGraphic('group', {});
       group.id = '_interactive_group';
       interactiveLayer.add(group);
     }

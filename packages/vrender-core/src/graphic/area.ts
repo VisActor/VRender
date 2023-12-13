@@ -193,3 +193,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     return Area.NOWORK_ANIMATE_ATTR;
   }
 }
+
+export function createArea(attributes: IAreaGraphicAttribute): IArea {
+  return new Area(attributes);
+}

@@ -2,7 +2,8 @@
  * @description 组件基类
  */
 import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
-import { Group } from '@visactor/vrender-core';
+import { Group, CustomEvent } from '@visactor/vrender-core';
+import type { Dict } from '@visactor/vutils';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
 import type { ComponentOptions } from '../interface';
 
@@ -138,5 +139,16 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
   // 图形元素 id
   protected _getNodeId(id: string) {
     return `${this.id}-${this.name}-${id}`;
+  }
+
+  // 用于 emit 组件自己的事件
+  protected _dispatchEvent(eventName: string, details?: Dict<any>) {
+    // 封装事件
+    const changeEvent = new CustomEvent(eventName, details);
+    // FIXME: 需要在 vrender 的事件系统支持
+    // @ts-ignore
+    changeEvent.manager = this.stage?.eventSystem.manager;
+
+    this.dispatchEvent(changeEvent);
   }
 }

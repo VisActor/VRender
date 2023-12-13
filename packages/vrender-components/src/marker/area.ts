@@ -1,5 +1,5 @@
 import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
-import { createPolygon } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
@@ -8,7 +8,9 @@ import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './con
 import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
+import { loadMarkAreaComponent } from './register';
 
+loadMarkAreaComponent();
 export class MarkArea extends Marker<MarkAreaAttrs> {
   name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
@@ -86,7 +88,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected initMarker(container: IGroup) {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
-    const area = createPolygon({
+    const area = graphicCreator.polygon({
       points: points,
       ...areaStyle
     });

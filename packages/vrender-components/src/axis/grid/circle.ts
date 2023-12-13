@@ -9,11 +9,13 @@ import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../../constant';
 import type { TransformedAxisItem } from '../type';
 import { CircleAxisMixin } from '../mixin/circle';
 import type { ComponentOptions } from '../../interface';
+import { loadCircleAxisGridComponent } from '../register';
 
 export interface CircleAxisGrid
   extends Pick<CircleAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector'>,
     BaseGrid<CircleAxisGridAttributes> {}
 
+loadCircleAxisGridComponent();
 export class CircleAxisGrid extends BaseGrid<CircleAxisGridAttributes> {
   constructor(attributes: CircleAxisGridAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, BaseGrid.defaultAttributes, attributes), options);

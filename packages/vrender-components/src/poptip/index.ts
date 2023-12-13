@@ -1,3 +1,3 @@
 export * from './poptip';
 export * from './type';
-export * from './register';
+export { loadPoptip, setPoptipTheme } from './register';

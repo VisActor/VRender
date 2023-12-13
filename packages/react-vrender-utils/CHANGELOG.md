@@ -1,6 +1,13 @@
 # Change Log - @visactor/react-vrender-utils
 
-This log was last generated on Wed, 06 Dec 2023 11:19:22 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Dec 2023 13:05:58 GMT and should not be manually modified.
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
 
 ## 0.17.1
 Wed, 06 Dec 2023 11:19:22 GMT

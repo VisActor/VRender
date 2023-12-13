@@ -7,6 +7,7 @@ import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { LinkPathAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadLinkPathComponent } from './register';
 
 export const getHorizontalPath = (options: LinkPathAttributes, ratio?: number) => {
   let x0 = options.x0;
@@ -110,6 +111,8 @@ export const getVerticalPath = (options: LinkPathAttributes, ratio?: number) => 
   ${startArrowPath}
   Z`;
 };
+
+loadLinkPathComponent();
 
 export class LinkPath extends AbstractComponent<Required<LinkPathAttributes>> {
   static defaultAttributes = {

@@ -203,7 +203,7 @@ function drawChartCanopus() {
       x: (i + 1) * 100 - 20,
       y: ((10000 - point.y) / 10000) * 550,
       z: 0,
-      width: 20,
+      x1: (i + 1) * 100 - 20 - 20,
       length: 20,
       cornerRadius: 10,
       // length: 20,
@@ -216,14 +216,14 @@ function drawChartCanopus() {
       alpha: 0
     });
 
-    bar.animate().from({ height: 0, y: 550 }, 2000, 'backIn');
-    bar
-      .animate()
-      .to({ alpha: pi * 2 }, 2000, 'linear')
-      .loop(Infinity);
-    bar.addEventListener('click', () => {
-      bar.setAttribute('fill', colorPools[Math.floor(Math.random() * colorPools.length)]);
-    });
+    // bar.animate().from({ height: 0, y: 550 }, 2000, 'backIn');
+    // bar
+    //   .animate()
+    //   .to({ alpha: pi * 2 }, 2000, 'linear')
+    //   .loop(Infinity);
+    // bar.addEventListener('click', () => {
+    //   bar.setAttribute('fill', colorPools[Math.floor(Math.random() * colorPools.length)]);
+    // });
     barGroup.add(bar);
   }
 

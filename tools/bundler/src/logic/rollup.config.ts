@@ -34,6 +34,17 @@ export function getRollupOptions(
   babelPlugins: BabelPlugins,
   config: Config
 ): RollupOptions {
+  const analysisPlugins = config.analysis
+    ? [
+        visualizer({
+          open: true,
+          gzipSize: true,
+          emitFile: true,
+          template: 'treemap'
+        })
+      ]
+    : [];
+
   return {
     input: entry,
     external: getExternal(rawPackageJson, config.external),
@@ -58,7 +69,7 @@ export function getRollupOptions(
         destDir: path.resolve(projectRoot, config.outputDir.umd!)
       }),
       Alias({ entries: config.alias }),
-      visualizer(),
+      ...analysisPlugins,
       ...(config.minify ? [terser()] : []),
       ...((config.rollupOptions.plugins as Plugin[]) || [])
     ]

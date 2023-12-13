@@ -75,19 +75,22 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
 
     const g = graphic.shadowRoot;
     const currentGroupMatrix = matrixAllocate.allocateByObj(parentMatrix);
-    const newPoint = new Point(point.x, point.y);
-    parentMatrix.transformPoint(newPoint, newPoint);
-    const transMatrix = graphic.transMatrix;
-    currentGroupMatrix.multiply(
-      transMatrix.a,
-      transMatrix.b,
-      transMatrix.c,
-      transMatrix.d,
-      transMatrix.e,
-      transMatrix.f
+    const newPoint = new Point(
+      currentGroupMatrix.a * point.x + currentGroupMatrix.c * point.y + currentGroupMatrix.e,
+      currentGroupMatrix.b * point.x + currentGroupMatrix.d * point.y + currentGroupMatrix.f
     );
+    // const transMatrix = graphic.transMatrix;
+    // currentGroupMatrix.multiply(
+    //   transMatrix.a,
+    //   transMatrix.b,
+    //   transMatrix.c,
+    //   transMatrix.d,
+    //   transMatrix.e,
+    //   transMatrix.f
+    // );
 
-    const result = pickerService.pickGroup(g, newPoint.clone(), currentGroupMatrix, pickParams);
+    // currentGroupMatrix.transformPoint(newPoint, newPoint);
+    const result = pickerService.pickGroup(g, newPoint, currentGroupMatrix, pickParams);
 
     context.highPerformanceRestore();
 

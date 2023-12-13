@@ -43,7 +43,7 @@ describe('DataZoom component test', () => {
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.width).toBe(378);
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.height).toBe(22);
     expect(dataZoom.AABBBounds.width()).toBe(379);
-    expect(dataZoom.AABBBounds.height()).toBe(33);
+    expect(dataZoom.AABBBounds.height()).toBe(44);
   });
 
   test('Vertical Direction without Preview Data', () => {
@@ -81,7 +81,7 @@ describe('DataZoom component test', () => {
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
     const position = dataZoom.attribute.position;
-    expect(dataZoom.getChildren()[0].getChildren().length).toBe(7);
+    expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
 
     const background = dataZoom.getElementsByName('background')[0] as IRect;
     expect(background.attribute.x).toBe(61);
@@ -191,7 +191,7 @@ describe('DataZoom component test', () => {
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
     const position = dataZoom.attribute.position;
-    expect(dataZoom.getChildren()[0].getChildren().length).toBe(7);
+    expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
     const background = dataZoom.getElementsByName('background')[0] as IRect;
     expect(background.attribute.x).toBe(243);
     expect(background.attribute.y).toBe(72);
@@ -274,7 +274,7 @@ describe('DataZoom component test', () => {
     });
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
-    expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
+    expect(dataZoom.getChildren()[0].getChildren().length).toBe(11);
     const middleHandlerRect = dataZoom.getElementsByName('middleHandlerRect')[0] as IRect;
     expect(middleHandlerRect.attribute.x).toBe(257);
     expect(middleHandlerRect.attribute.y).toBeCloseTo(147.60000000000002);
@@ -328,7 +328,7 @@ describe('DataZoom component test', () => {
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 
-    expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
+    expect(dataZoom.getChildren()[0].getChildren().length).toBe(11);
 
     const previewGroup = dataZoom.getElementsByName('previewGroup')[0] as IGroup;
     expect(previewGroup.childrenCount).toBe(2);
@@ -420,7 +420,7 @@ describe('DataZoom component test', () => {
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 
-    expect(dataZoom.getChildren()[0].getChildren().length).toBe(9);
+    expect(dataZoom.getChildren()[0].getChildren().length).toBe(11);
 
     const previewGroup = dataZoom.getElementsByName('previewGroup')[0] as IGroup;
     expect(previewGroup.childrenCount).toBe(2);

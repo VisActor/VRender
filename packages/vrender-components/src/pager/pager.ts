@@ -3,12 +3,13 @@
  */
 import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createSymbol, createText, CustomEvent } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge, normalizePadding, isNumber } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { PagerAttributes } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadPagerComponent } from './register';
 
 const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
   space: 8,
@@ -25,6 +26,8 @@ const DEFAULT_HANDLER_STYLE: PagerAttributes['handler'] = {
     hover: {}
   }
 };
+
+loadPagerComponent();
 
 export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   name = 'pager';
@@ -66,7 +69,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const parsedPadding = normalizePadding(padding);
     const isHorizontal = layout === 'horizontal';
 
-    const container = createGroup({
+    const container = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -84,7 +87,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       nextShape = isHorizontal ? 'triangleRight' : 'triangleDown';
     }
 
-    const preHandler = createSymbol({
+    const preHandler = graphicCreator.symbol({
       strokeBoundsBuffer: 0,
       pickMode: 'imprecise',
       ...handlerStyle,
@@ -108,7 +111,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const handlerSizeX = isNumber(handlerSize) ? handlerSize : handlerSize[0];
     const handlerSizeY = isNumber(handlerSize) ? handlerSize : handlerSize[1];
 
-    const text = createText({
+    const text = graphicCreator.text({
       x: isHorizontal ? handlerSizeX / 2 + handlerSpace + maxTextWidth / 2 : 0,
       y: isHorizontal ? 0 : handlerSizeY / 2 + handlerSpace + maxTextHeight / 2,
       text: `${defaultCurrent}/${total}`,
@@ -120,7 +123,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     this.text = text;
     container.add(text);
 
-    const nextHandler = createSymbol({
+    const nextHandler = graphicCreator.symbol({
       strokeBoundsBuffer: 0,
       pickMode: 'imprecise',
       ...handlerStyle,
@@ -198,16 +201,13 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       } else {
         target.removeState('disable');
       }
-      const changeEvent = new CustomEvent('toPrev', {
+
+      this._dispatchEvent('toPrev', {
         current: this._current,
         total: this._total,
         direction: 'pre',
         event: e
       });
-      // FIXME: 需要在 vrender 的事件系统支持
-      // @ts-ignore
-      changeEvent.manager = this.stage?.eventSystem.manager;
-      this.dispatchEvent(changeEvent);
     }
 
     if (target.name === 'nextHandler') {
@@ -222,16 +222,12 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
         target.removeState('disable');
       }
 
-      const changeEvent = new CustomEvent('toNext', {
+      this._dispatchEvent('toNext', {
         current: this._current,
         total: this._total,
         direction: 'next',
         event: e
       });
-      // FIXME: 需要在 vrender 的事件系统支持
-      // @ts-ignore
-      changeEvent.manager = this.stage?.eventSystem.manager;
-      this.dispatchEvent(changeEvent);
     }
 
     if (this._current > 1) {

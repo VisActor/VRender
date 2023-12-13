@@ -7,7 +7,9 @@ import type { RegionLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
 import type { LineCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
+import { loadLineCrosshairComponent } from './register';
 
+loadLineCrosshairComponent();
 export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {

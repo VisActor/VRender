@@ -15,7 +15,7 @@ import type {
   IRichTextCharacter,
   ITextAttribute
 } from '@visactor/vrender-core';
-import { createText, AttributeUpdateType, IContainPointMode, createRichText } from '@visactor/vrender-core';
+import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
 import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -40,7 +40,9 @@ import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from '
 import { getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadLabelComponent } from './register';
 
+loadLabelComponent();
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   name = 'label';
 
@@ -267,7 +269,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.textConfig = attributes.text as IRichTextCharacter[];
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
-      const text = createRichText(attributes as any);
+      const text = graphicCreator.richtext(attributes as any);
       this._bindEvent(text);
       this._setStatesOfText(text);
       return text;
@@ -278,12 +280,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         ...DEFAULT_HTML_TEXT_SPEC,
         ...attributes
       };
-      const text = createRichText(attributes as IRichTextGraphicAttribute);
+      const text = graphicCreator.richtext(attributes as IRichTextGraphicAttribute);
       this._bindEvent(text);
       this._setStatesOfText(text);
       return text;
     }
-    const text = createText(attributes);
+    const text = graphicCreator.text(attributes);
     this._bindEvent(text);
     this._setStatesOfText(text);
     return text;

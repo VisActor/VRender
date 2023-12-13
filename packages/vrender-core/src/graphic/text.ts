@@ -748,4 +748,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   }
 }
 
+export function createText(attributes: ITextGraphicAttribute): IText {
+  return new Text(attributes);
+}
+
 // addAttributeToPrototype(DefaultLineStyle, Text, PURE_STYLE_KEY);

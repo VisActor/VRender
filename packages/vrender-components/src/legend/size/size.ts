@@ -2,7 +2,7 @@
  * @description 连续尺寸图例
  */
 import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
-import { createGroup, createPath } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
@@ -10,7 +10,9 @@ import { DEFAULT_TITLE_SPACE } from '../constant';
 import type { ComponentOptions } from '../../interface';
 import type { SizeLegendAttributes } from './type';
 import { getSizeHandlerPath } from '../util';
+import { loadSizeContinuousLegendComponent } from '../register';
 
+loadSizeContinuousLegendComponent();
 export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   name = 'sizeLegend';
 
@@ -74,7 +76,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     } = this.attribute as SizeLegendAttributes;
     const isHorizontal = layout === 'horizontal';
 
-    const mainContainer = createGroup({
+    const mainContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -134,7 +136,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
         slider.setAttribute('x', backgroundHeight);
       }
     }
-    const background = createPath({
+    const background = graphicCreator.path({
       x: 0,
       y: start,
       path,

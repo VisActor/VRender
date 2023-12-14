@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix(datazoom): symbol size problem",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

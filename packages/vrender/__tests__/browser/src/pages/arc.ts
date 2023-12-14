@@ -145,37 +145,26 @@ export const page = () => {
   graphics.length = 0;
   graphics.push(
     createArc({
-      innerRadius: 60,
-      outerRadius: 137.8,
-      startAngle: 0,
-      endAngle: Math.PI,
-      x: 200,
-      y: 500,
-      stroke: [false, 'green', false, 'green'],
-      outerBorder: {
-        stroke: ['red', false, false, false],
-        distance: 30,
-        lineWidth: 10
-      },
-      lineWidth: 5,
-      fill: {
-        x: 0.5,
-        y: 0.5,
-        startAngle: 0,
-        endAngle: 6.283185307179586,
-        stops: [
-          { offset: 0, color: 'red' },
-          { offset: 0.2, color: 'blue' },
-          { offset: 0.4, color: 'orange' },
-          { offset: 0.6, color: 'pink' },
-          { offset: 0.8, color: 'green' },
-          { offset: 1, color: 'purple' }
-        ],
-        gradient: 'conical'
-      },
-      // cap: [true, true],
-      // cornerRadius: 26,
-      forceShowCap: true
+      visible: true,
+      // cornerRadius: 20,
+      lineWidth: 0,
+      // innerPadding: 10,
+      // outerPadding: 10,
+      fillOpacity: 1,
+      cap: false,
+      boundsMode: 'imprecise',
+      zIndex: 200,
+      forceShowCap: true,
+      x: 105,
+      y: 92.5,
+      startAngle: -1.5707963267948966,
+      endAngle: -0.3141592653589793,
+      outerRadius: 54.75,
+      innerRadius: 61.8,
+      fill: '#1664FF',
+      stroke: '#1664FF',
+      pickable: true,
+      _debug_bounds: true
     })
   );
 

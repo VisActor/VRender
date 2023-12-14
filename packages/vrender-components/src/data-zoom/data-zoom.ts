@@ -755,7 +755,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: startHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
-          symbolType: 'rect',
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
@@ -770,7 +769,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: endHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
-          symbolType: 'rect',
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
@@ -845,7 +843,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           y: position.y + start * height - startHandlerHeight / 2,
           width: endHandlerHeight,
           height: endHandlerWidth,
-          symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
@@ -860,7 +857,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           y: position.y + end * height - endHandlerHeight / 2,
           width: endHandlerHeight,
           height: endHandlerWidth,
-          symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,

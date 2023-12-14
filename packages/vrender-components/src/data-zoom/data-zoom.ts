@@ -755,6 +755,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: startHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
+          symbolType: 'rect',
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
@@ -769,6 +770,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: endHandlerHeight,
           fill: 'white',
           fillOpacity: 0,
+          symbolType: 'rect',
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
@@ -839,33 +841,33 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       this._startHandlerMask = group.createOrUpdateChild(
         'startHandlerMask',
         {
-          x: position.x + width / 2 - startHandlerWidth / 2,
+          x: position.x + width / 2 + startHandlerWidth / 2,
           y: position.y + start * height - startHandlerHeight / 2,
-          width: startHandlerWidth,
-          height: startHandlerHeight,
+          width: endHandlerHeight,
+          height: endHandlerWidth,
           symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
-        'symbol'
-      ) as ISymbol;
+        'rect'
+      ) as IRect;
       this._endHandlerMask = group.createOrUpdateChild(
         'endHandlerMask',
         {
-          x: position.x + width / 2 - endHandlerWidth / 2,
+          x: position.x + width / 2 + endHandlerWidth / 2,
           y: position.y + end * height - endHandlerHeight / 2,
-          width: endHandlerWidth,
-          height: endHandlerHeight,
+          width: endHandlerHeight,
+          height: endHandlerWidth,
           symbolType: 'rect',
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
-        'symbol'
-      ) as ISymbol;
+        'rect'
+      ) as IRect;
     }
   }
 

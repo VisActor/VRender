@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.4",
+      "tag": "@visactor/vrender-core_v0.17.4",
+      "date": "Thu, 14 Dec 2023 11:00:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with arc imprecise bounds, closed #728"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.3",
       "tag": "@visactor/vrender-core_v0.17.3",
       "date": "Wed, 13 Dec 2023 12:04:17 GMT",

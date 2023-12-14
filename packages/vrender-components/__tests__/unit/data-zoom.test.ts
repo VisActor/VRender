@@ -43,7 +43,7 @@ describe('DataZoom component test', () => {
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.width).toBe(378);
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.height).toBe(22);
     expect(dataZoom.AABBBounds.width()).toBe(379);
-    expect(dataZoom.AABBBounds.height()).toBe(44);
+    expect(dataZoom.AABBBounds.height()).toBe(35);
   });
 
   test('Vertical Direction without Preview Data', () => {

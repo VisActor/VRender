@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 13 Dec 2023 12:04:17 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Dec 2023 11:00:38 GMT and should not be manually modified.
+
+## 0.17.4
+Thu, 14 Dec 2023 11:00:38 GMT
+
+### Updates
+
+- fix: fix issue with arc imprecise bounds, closed #728
 
 ## 0.17.3
 Wed, 13 Dec 2023 12:04:17 GMT

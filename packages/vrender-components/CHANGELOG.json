@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.4",
+      "tag": "@visactor/vrender-components_v0.17.4",
+      "date": "Thu, 14 Dec 2023 11:00:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(datazoom): symbol size problem"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.3",
       "tag": "@visactor/vrender-components_v0.17.3",
       "date": "Wed, 13 Dec 2023 12:04:17 GMT",

@@ -187,6 +187,14 @@ export const pages = [
       {
         name: '文字飞入',
         path: 'text-fly-in'
+      },
+      {
+        name: '模态框',
+        path: 'modal'
+      },
+      {
+        name: '3d点图',
+        path: 'points3d'
       }
     ]
   },

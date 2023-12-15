@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix issue with arc animate with delayafter",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

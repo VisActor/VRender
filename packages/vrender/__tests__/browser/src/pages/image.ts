@@ -19,7 +19,7 @@ export const page = () => {
       y: 100,
       width: 200,
       height: 200,
-      image: urlPng,
+      image: 798,
       repeatX: 'repeat',
       repeatY: 'repeat',
       cornerRadius: 100

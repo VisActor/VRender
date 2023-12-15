@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: labelLine support animate",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

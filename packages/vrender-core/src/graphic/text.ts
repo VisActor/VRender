@@ -23,6 +23,8 @@ const TEXT_UPDATE_TAG_KEY = [
   'lineHeight',
   'direction',
   'wordBreak',
+  'heightLimit',
+  'lineClamp',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -103,6 +105,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   }
   protected _isValid(): boolean {
     const { text } = this.attribute;
+    if (isArray(text)) {
+      return !(text as any[]).every((t: any) => t == null || t === '');
+    }
     return text != null && text !== '';
   }
 
@@ -353,6 +358,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalSinglelineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds([text]);
+    }
+
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
@@ -560,6 +570,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalMultilineAABBBounds(text: (number | string)[]): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds(text);
+    }
+
     const attribute = this.attribute;
     const {
       fontFamily = textTheme.fontFamily,

@@ -106,6 +106,7 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   wordBreak: 'break-all',
   ignoreBuf: false,
   verticalMode: 0,
+  wrap: false,
   whiteSpace: 'no-wrap',
   heightLimit: Infinity,
   lineClamp: Infinity,

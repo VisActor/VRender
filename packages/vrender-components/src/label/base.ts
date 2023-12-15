@@ -766,10 +766,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (!isValidAnimateState) {
         return {};
       }
-      const prevStep = step.prev;
-      if (prevStep && prevStep.type === 'wait' && prevStep.prev?.type == null) {
-        delay = delay ?? step.position;
-      }
+      // const prevStep = step.prev;
+      // if (prevStep && prevStep.type === 'wait' && prevStep.prev?.type == null) {
+      //   delay = delay ?? step.position;
+      // }
       if (detail.type === AttributeUpdateType.ANIMATE_END) {
         text.setAttributes(to);
         labelLine && labelLine.setAttributes(to);

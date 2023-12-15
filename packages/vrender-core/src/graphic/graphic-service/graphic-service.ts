@@ -1318,7 +1318,11 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ): IAABBBounds {
-    const { outerRadius = arcTheme.outerRadius } = attribute;
+    const { innerRadius = arcTheme.innerRadius } = attribute;
+    let { outerRadius = arcTheme.outerRadius } = attribute;
+    if (outerRadius < innerRadius) {
+      outerRadius = innerRadius;
+    }
 
     aabbBounds.set(-outerRadius, -outerRadius, outerRadius, outerRadius);
 

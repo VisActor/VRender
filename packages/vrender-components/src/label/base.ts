@@ -756,16 +756,20 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (!detail) {
         return {};
       }
+      const step = detail.animationState?.step;
       const isValidAnimateState =
-        detail &&
         detail.type === AttributeUpdateType.ANIMATE_UPDATE &&
-        detail.animationState &&
-        detail.animationState.step?.type !== 'wait';
+        step &&
+        // 不是第一个wait
+        !(step.type === 'wait' && step.prev?.type == null);
 
       if (!isValidAnimateState) {
         return {};
       }
-
+      const prevStep = step.prev;
+      if (prevStep && prevStep.type === 'wait' && prevStep.prev?.type == null) {
+        delay = delay ?? step.position;
+      }
       if (detail.type === AttributeUpdateType.ANIMATE_END) {
         text.setAttributes(to);
         labelLine && labelLine.setAttributes(to);

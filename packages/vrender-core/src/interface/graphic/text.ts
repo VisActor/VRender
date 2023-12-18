@@ -57,6 +57,7 @@ export type ITextAttribute = {
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];
+  disableAutoClipedPoptip?: boolean;
 };
 export type ITextCache = {
   // 单行文本的时候缓存用

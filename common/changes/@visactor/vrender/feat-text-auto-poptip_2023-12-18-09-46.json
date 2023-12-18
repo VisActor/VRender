@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: add disableAutoClipedPoptip attribute in text graphic",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

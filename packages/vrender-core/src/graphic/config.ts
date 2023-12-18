@@ -110,7 +110,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   whiteSpace: 'no-wrap',
   heightLimit: Infinity,
   lineClamp: Infinity,
-  suffixPosition: 'end'
+  suffixPosition: 'end',
+  disableAutoClipedPoptip: undefined
 };
 
 export const DefaultPickStyle: IPickStyle = {

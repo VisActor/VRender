@@ -1,7 +1,7 @@
 import type { IArea, ILine } from '@visactor/vrender-core';
 import type { IPolarPoint, IPoint, Quadrant } from './type';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
-import { radianToDegree, isValidNumber } from '@visactor/vutils';
+import { radianToDegree, isValidNumber, isRectIntersect } from '@visactor/vutils';
 
 /**
  * 极坐标系 -> 直角坐标系
@@ -276,4 +276,49 @@ export function labelingLineOrArea(
   }
 
   return { x, y };
+}
+
+export function connectLineBetweenBounds(boundA: IBoundsLike, boundB: IBoundsLike) {
+  if (!boundA || !boundB) {
+    return;
+  }
+
+  if (isRectIntersect(boundA, boundB, true)) {
+    return;
+  }
+  // Top left coordinates
+  const x1 = Math.min(boundA.x1, boundA.x2);
+  const y1 = Math.min(boundA.y1, boundA.y2);
+  const x2 = Math.min(boundB.x1, boundB.x2);
+  const y2 = Math.min(boundB.y1, boundB.y2);
+
+  // Half widths and half heights
+  const w1 = Math.abs(boundA.x2 - x1) / 2;
+  const h1 = Math.abs(boundA.y2 - y1) / 2;
+  const w2 = Math.abs(boundB.x2 - x2) / 2;
+  const h2 = Math.abs(boundB.y2 - y2) / 2;
+
+  // Center coordinates
+  const cx1 = x1 + w1;
+  const cy1 = y1 + h1;
+  const cx2 = x2 + w2;
+  const cy2 = y2 + h2;
+
+  // Distance between centers
+  const dx = cx2 - cx1;
+  const dy = cy2 - cy1;
+
+  const p1 = getIntersection(dx, dy, cx1, cy1, w1, h1);
+  const p2 = getIntersection(-dx, -dy, cx2, cy2, w2, h2);
+
+  return [p1, p2];
+}
+
+function getIntersection(dx: number, dy: number, cx: number, cy: number, w: number, h: number) {
+  if (Math.abs(dy / dx) < h / w) {
+    // Hit vertical edge of box1
+    return { x: cx + (dx > 0 ? w : -w), y: cy + (dy * w) / Math.abs(dx) };
+  }
+  // Hit horizontal edge of box1
+  return { x: cx + (dx * h) / Math.abs(dy), y: cy + (dy > 0 ? h : -h) };
 }

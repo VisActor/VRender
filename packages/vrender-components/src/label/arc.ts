@@ -923,7 +923,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
-  protected _labelLine(text: LabelItem) {
+  protected _labelLine(text: IText, baseMark?: IGraphic) {
     const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
       ? graphicCreator.line({
           visible:

@@ -12,8 +12,7 @@ import type {
   IArea,
   IRichTextGraphicAttribute,
   IRichText,
-  IRichTextCharacter,
-  ITextAttribute
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
@@ -34,10 +33,11 @@ import type {
   SmartInvertAttrs,
   ILabelEnterAnimation,
   ILabelExitAnimation,
-  ILabelUpdateAnimation
+  ILabelUpdateAnimation,
+  LabelContent
 } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
-import { getPointsOfLineArea } from './util';
+import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadLabelComponent } from './register';
@@ -68,6 +68,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       textBaseline: 'middle',
       boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
+    line: {
+      style: {
+        stroke: '#000'
+      }
+    },
     offset: 0,
     pickable: false
   };
@@ -81,7 +86,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, { text: IText | IRichText; labelLine?: ILine }>;
+  protected _graphicToText: Map<IGraphic, LabelContent>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -116,9 +121,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
-  protected _labelLine(text: LabelItem): ILine | undefined {
+  protected _labelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
     // 基类没有指定的图元类型，需要在 data 中指定位置，故无需进行 labeling
-    return;
+    const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    if (points) {
+      return graphicCreator.line({
+        points,
+        ...this.attribute.line?.style
+      });
+    }
   }
 
   protected render() {
@@ -593,13 +604,17 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
     const labelLines = [] as ILine[];
+    const { visible: showLabelLine } = this.attribute.line ?? {};
 
     labels.forEach((text, index) => {
-      const labelLine: ILine = this._labelLine(text as any);
       const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const textId = (text.attribute as LabelItem).id;
       const textKey = this._isCollectionBase ? textId : relatedGraphic;
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
+      let labelLine: ILine;
+      if (showLabelLine) {
+        labelLine = this._labelLine(text as IText);
+      }
 
       // TODO: add animate
       if (state === 'enter') {
@@ -677,15 +692,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithOutAnimation(labels: (IText | IRichText)[]) {
-    const currentTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = new Map();
-    const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
+    const currentTextMap: Map<any, LabelContent> = new Map();
+    const prevTextMap: Map<any, LabelContent> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
 
     labels.forEach(text => {
-      const labelLine = this._labelLine(text as any);
       const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
       const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
+      const labelLine = this._labelLine(text, relatedGraphic);
 
       if (state === 'enter') {
         texts.push(text);

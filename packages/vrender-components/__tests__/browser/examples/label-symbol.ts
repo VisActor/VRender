@@ -125,6 +125,9 @@ function createContent(stage: Stage) {
       };
     }),
     type: 'symbol',
+    line: {
+      visible: true
+    },
     animation: false,
     overlap: {
       avoidBaseMark,

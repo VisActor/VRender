@@ -466,7 +466,7 @@ export class Stage extends Group implements IStage {
     }
     this.view3dTranform = false;
     this.pluginService.findPluginsByName('ViewTransform3dPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
 
@@ -483,7 +483,7 @@ export class Stage extends Group implements IStage {
     }
     this.autoRender = false;
     this.pluginService.findPluginsByName('AutoRenderPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
   enableIncrementalAutoRender() {
@@ -499,7 +499,7 @@ export class Stage extends Group implements IStage {
     }
     this.increaseAutoRender = false;
     this.pluginService.findPluginsByName('IncrementalAutoRenderPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
   enableDirtyBounds() {
@@ -521,7 +521,7 @@ export class Stage extends Group implements IStage {
     }
     this.dirtyBounds = null;
     this.pluginService.findPluginsByName('DirtyBoundsPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
   enableLayout() {
@@ -537,7 +537,7 @@ export class Stage extends Group implements IStage {
     }
     this._enableLayout = false;
     this.pluginService.findPluginsByName('FlexLayoutPlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
   enableHtmlAttribute(container?: any) {
@@ -553,7 +553,7 @@ export class Stage extends Group implements IStage {
     }
     this.htmlAttribute = false;
     this.pluginService.findPluginsByName('HtmlAttributePlugin').forEach(plugin => {
-      plugin.deactivate(this.pluginService);
+      this.pluginService.unRegister(plugin);
     });
   }
 

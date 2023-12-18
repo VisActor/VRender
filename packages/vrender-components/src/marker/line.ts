@@ -53,7 +53,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     }
     this._label.setAttributes({
       ...labelPoint,
-      angle: label.autoRotate ? labelAngle + (label?.refAngle ?? 0) : 0,
+      angle: label.autoRotate ? labelAngle + (label.refAngle ?? 0) : 0,
       textStyle: {
         ...DEFAULT_MARK_LINE_TEXT_STYLE_MAP[position],
         ...label.textStyle
@@ -98,21 +98,24 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   protected updateMarker() {
     const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as MarkLineAttrs;
+    if (this._line) {
+      this._line.setAttributes({
+        points,
+        startSymbol,
+        endSymbol,
+        lineStyle,
+        mainSegmentIndex,
+        multiSegment
+      });
+    }
 
-    this._line?.setAttributes({
-      points,
-      startSymbol,
-      endSymbol,
-      lineStyle,
-      mainSegmentIndex,
-      multiSegment
-    });
-
-    this._label?.setAttributes({
-      dx: 0,
-      dy: 0, // 需要进行复位
-      ...(label as TagAttributes)
-    });
+    if (this._label) {
+      this._label.setAttributes({
+        dx: 0,
+        dy: 0, // 需要进行复位
+        ...(label as TagAttributes)
+      });
+    }
 
     this.setLabelPos();
   }

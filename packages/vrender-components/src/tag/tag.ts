@@ -187,7 +187,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       tagWidth += textWidth;
       const size = shape.size ?? 10;
       const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
-      tagHeight += Math.max(textHeight, shape?.visible ? maxSize : 0);
+      tagHeight += Math.max(textHeight, shape.visible ? maxSize : 0);
 
       const { textAlign, textBaseline } = textStyle as ITextAttribute;
 

@@ -437,7 +437,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       max === min ? (position === 'start' ? 0 : railLen) : (((value as number) - min) / (max - min)) * railLen;
     const textSpace = handlerText.space ?? 4;
     const textStyle: ITextGraphicAttribute = {
-      text: handlerText?.formatter ? handlerText.formatter(value) : value.toFixed(handlerText?.precision ?? 0),
+      text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
       lineHeight: handlerText.style?.lineHeight,
       cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal)
     };
@@ -649,18 +649,19 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const originPos = (this._isHorizontal ? endHandler.attribute.x : endHandler.attribute.y) as number;
       const newPos = clamp(originPos + delta, trackLen, railLen);
       const currentValue = (newPos / railLen) * (max - min) + min;
+      const startHandlerAttribute = startHandler?.attribute;
       this._updateHandler(endHandler, newPos, currentValue);
       this._track.setAttributes(
         this._isHorizontal
           ? {
-              x: Math.min(startHandler?.attribute.x as number, endHandler?.attribute.x as number),
+              x: Math.min(startHandlerAttribute.x as number, endHandler.attribute.x as number),
               // @ts-ignore
-              width: Math.abs((startHandler?.attribute.x as number) - (endHandler?.attribute.x as number))
+              width: Math.abs((startHandlerAttribute.x as number) - (endHandler.attribute.x as number))
             }
           : {
-              y: Math.min(startHandler?.attribute.y as number, endHandler?.attribute.y as number),
+              y: Math.min(startHandlerAttribute.y as number, endHandler.attribute.y as number),
               // @ts-ignore
-              height: Math.abs((startHandler?.attribute.y as number) - (endHandler?.attribute.y as number))
+              height: Math.abs((startHandlerAttribute.y as number) - (endHandler.attribute.y as number))
             }
       );
     }
@@ -776,9 +777,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const updateHandlerText =
       handler.name === SLIDER_ELEMENT_NAME.startHandler ? this._startHandlerText : this._endHandlerText;
     if (updateHandlerText) {
-      const { handlerText } = this.attribute as SliderAttributes;
-      updateHandlerText?.setAttributes({
-        text: handlerText?.formatter ? handlerText.formatter(value) : value.toFixed(handlerText?.precision ?? 0),
+      const { handlerText = {} } = this.attribute as SliderAttributes;
+      updateHandlerText.setAttributes({
+        text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
         [isHorizontal ? 'x' : 'y']: position
       });
     }
@@ -795,17 +796,15 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 更新 handler 以及对应 text
   private _updateHandlerText(handlerText: IText, position: number, value: number) {
     const isHorizontal = this._isHorizontal;
-    const { handlerText: handlerTextAttr } = this.attribute as SliderAttributes;
+    const { handlerText: handlerTextAttr = {} } = this.attribute as SliderAttributes;
     handlerText.setAttributes({
       [isHorizontal ? 'x' : 'y']: position,
-      text: handlerTextAttr?.formatter
-        ? handlerTextAttr.formatter(value)
-        : value.toFixed(handlerTextAttr?.precision ?? 0)
+      text: handlerTextAttr.formatter ? handlerTextAttr.formatter(value) : value.toFixed(handlerTextAttr.precision ?? 0)
     });
     const updateHandler =
       handlerText.name === SLIDER_ELEMENT_NAME.startHandlerText ? this._startHandler : this._endHandler;
     if (updateHandler) {
-      updateHandler?.setAttributes({
+      updateHandler.setAttributes({
         [isHorizontal ? 'x' : 'y']: position
       });
     }

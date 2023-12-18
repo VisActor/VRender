@@ -85,8 +85,9 @@ export class GroupTransition extends ACustomAnimate<any> {
     Object.keys(this._newElementAttrMap).forEach(id => {
       const { node, attrs, state } = this._newElementAttrMap[id];
       if (state === 'enter') {
-        duration = isValidNumber(this.params?.enter?.duration) ? this.params?.enter.duration : duration;
-        easing = this.params?.enter?.easing ? this.params?.enter?.easing : easing;
+        const { enter = {} } = this.params ?? {};
+        duration = isValidNumber(enter.duration) ? enter.duration : duration;
+        easing = enter.easing ? enter.easing : easing;
       }
       if ((node as IGraphic).type === 'path') {
         (node as IGraphic)

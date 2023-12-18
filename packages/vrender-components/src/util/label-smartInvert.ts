@@ -1,8 +1,7 @@
 import type { IColor } from '@visactor/vrender-core';
-import { ColorUtil } from '@visactor/vutils';
+import { Color, hexToRgb } from '@visactor/vutils';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];
-const { Color } = ColorUtil;
 
 /**
  * 标签智能反色
@@ -156,7 +155,7 @@ function contrastRatios(foregroundColor: IColor | undefined, backgroundColor: IC
  * @returns
  */
 function getColorLuminance(color: string): number {
-  const rgb8bit = ColorUtil.hexToRgb(color);
+  const rgb8bit = hexToRgb(color);
   const RsRGB = rgb8bit[0] / 255;
   const GsRGB = rgb8bit[1] / 255;
   const BsRGB = rgb8bit[2] / 255;
@@ -180,21 +179,6 @@ function getColorLuminance(color: string): number {
   }
   const L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
   return L;
-}
-
-/**
- * 规范化color格式为hex
- * 当color为颜色名称或rgb时，对其进行规范化处理
- * @param originColor
- * @returns
- */
-function formatColorToHex(originColor: IColor | undefined) {
-  if ((originColor as string)?.includes('#')) {
-    return originColor;
-  }
-  const c = new ColorUtil.Color(originColor as string);
-  const { r, g, b } = c.color;
-  return '#' + ColorUtil.rgbToHex(r, g, b);
 }
 
 export function smartInvertStrategy(

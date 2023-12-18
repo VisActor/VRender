@@ -573,25 +573,26 @@ function createContent(stage: Stage) {
 
   const barLabel = new RectLabel({
     baseMarkGroupName: barSpec.name,
+    line: { visible: true, style: {} },
     data: barSpec.children.map(c => {
       return {
-        textType: 'rich',
-        text: [
-          {
-            text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
-            fontWeight: 'bold',
-            fontSize: 25,
-            fill: '#3f51b5'
-          },
-          {
-            text: '替代方案',
-            fontStyle: 'italic',
-            textDecoration: 'underline',
-            fill: '#3f51b5'
-          }
-        ],
-        fill: 'white',
-
+        // textType: 'rich',
+        // text: [
+        //   {
+        //     text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+        //     fontWeight: 'bold',
+        //     fontSize: 25,
+        //     fill: '#3f51b5'
+        //   },
+        //   {
+        //     text: '替代方案',
+        //     fontStyle: 'italic',
+        //     textDecoration: 'underline',
+        //     fill: '#3f51b5'
+        //   }
+        // ],
+        // fill: 'white',
+        text: c.id,
         stroke: c.attribute.fill,
         lineWidth: 2
       };
@@ -605,9 +606,12 @@ function createContent(stage: Stage) {
       highlight: { opacity: 1 },
       blur: { opacity: 0.2 }
     },
+    labelLineState: {
+      highlight: { opacity: 1 },
+      blur: { opacity: 0.2 }
+    },
     animation: false,
     overlap: {
-      enable: true,
       size: {
         width: 600,
         height: 600
@@ -621,7 +625,6 @@ function createContent(stage: Stage) {
         }
       ]
     },
-
     zIndex: 302
   });
   stage.defaultLayer.add(barLabel);
@@ -669,7 +672,7 @@ const guiObject = {
   }
 };
 gui.add(guiObject, 'name');
-gui.add(guiObject, 'position', ['top', 'inside', 'inside-top', 'inside-bottom']).onChange(value => {
+gui.add(guiObject, 'position', ['top', 'inside', 'inside-top', 'inside-bottom', 'right']).onChange(value => {
   if (value === 'top') {
     label.setAttribute('position', data => {
       return Number(data.text) < 0 ? 'bottom' : 'top';

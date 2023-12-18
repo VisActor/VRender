@@ -122,13 +122,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _labelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
-    // 基类没有指定的图元类型，需要在 data 中指定位置，故无需进行 labeling
     const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
     if (points) {
-      return graphicCreator.line({
-        points,
-        ...this.attribute.line?.style
+      const line = graphicCreator.line({
+        points
       });
+      if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
+        line.setAttributes(this.attribute.line.style);
+      }
+      this._setStatesOfLabelLine(line);
+      return line;
     }
   }
 
@@ -219,7 +222,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     target.states = state;
   }
 
-  private _setStatesOfLabelLine(target: IGraphic) {
+  protected _setStatesOfLabelLine(target: IGraphic) {
     if (!target) {
       return;
     }
@@ -346,7 +349,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const baseMark = currentBaseMarks[i];
         const points = getPointsOfLineArea(baseMark as ILine | IArea);
 
-        if (points?.length) {
+        if (points && points.length) {
           for (let j = 0; j < points.length; j++) {
             const textData = data[cur];
             if (textData && points[j]) {
@@ -499,7 +502,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           continue;
         }
 
-        if (checkBounds && baseMark?.AABBBounds && this._canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
+        if (
+          checkBounds &&
+          baseMark &&
+          baseMark.AABBBounds &&
+          this._canPlaceInside(text.AABBBounds, baseMark.AABBBounds)
+        ) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push(text);
           continue;
@@ -613,9 +621,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
       let labelLine: ILine;
       if (showLabelLine) {
-        labelLine = this._labelLine(text as IText);
+        labelLine = this._labelLine(text as IText, relatedGraphic);
       }
-
       // TODO: add animate
       if (state === 'enter') {
         texts.push(text);
@@ -625,7 +632,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           this.add(text);
 
           if (labelLine) {
-            this._setStatesOfLabelLine(labelLine);
             labelLines.push(labelLine);
             this.add(labelLine);
           }
@@ -657,14 +663,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const prevText = prevLabel.text;
         const { duration, easing } = this._animationConfig.update;
         updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
-        if (prevLabel.labelLine) {
+        if (prevLabel.labelLine && labelLine) {
           prevLabel.labelLine.animate().to(
             merge({}, prevLabel.labelLine.attribute, {
-              visible:
-                ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
-                text.attribute?.visible ??
-                true,
-              points: (text.attribute as ArcLabelAttrs)?.points
+              points: labelLine.attribute.points
             }),
             duration,
             easing
@@ -682,7 +684,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         )
         .onEnd(() => {
           this.removeChild(label.text);
-          if (label?.labelLine) {
+          if (label.labelLine) {
             this.removeChild(label.labelLine);
           }
         });
@@ -695,12 +697,16 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const currentTextMap: Map<any, LabelContent> = new Map();
     const prevTextMap: Map<any, LabelContent> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
+    const { visible: showLabelLine } = this.attribute.line ?? {};
 
     labels.forEach(text => {
       const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
       const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
-      const labelLine = this._labelLine(text, relatedGraphic);
+      let labelLine;
+      if (showLabelLine) {
+        labelLine = this._labelLine(text as IText, relatedGraphic);
+      }
 
       if (state === 'enter') {
         texts.push(text);
@@ -709,22 +715,21 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (labelLine) {
           this.add(labelLine);
         }
-
         this._syncStateWithRelatedGraphic(relatedGraphic);
       } else if (state === 'update') {
         const prevLabel = prevTextMap.get(textKey);
         prevTextMap.delete(textKey);
         currentTextMap.set(textKey, prevLabel);
         prevLabel.text.setAttributes(text.attribute as any);
-        if (prevLabel?.labelLine) {
-          prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
+        if (prevLabel.labelLine && labelLine) {
+          prevLabel.labelLine.setAttributes({ points: labelLine.attribute.points });
         }
       }
     });
 
     prevTextMap.forEach(label => {
       this.removeChild(label.text);
-      if (label?.labelLine) {
+      if (label.labelLine) {
         this.removeChild(label.labelLine);
       }
     });
@@ -897,7 +902,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
         stroke && label.setAttributes({ stroke });
       } else {
-        const isInside = this._canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+        const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
         if (isInside) {
           const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });

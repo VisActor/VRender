@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: label don't create enter animate animationEnter while duration less than 0",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

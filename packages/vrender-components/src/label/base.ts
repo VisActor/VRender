@@ -615,22 +615,24 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           }
 
           this._syncStateWithRelatedGraphic(relatedGraphic);
-          relatedGraphic.once('animate-bind', a => {
-            // text和labelLine共用一个from
-            text.setAttributes(from);
-            labelLine && labelLine.setAttributes(from);
-            const listener = this._afterRelatedGraphicAttributeUpdate(
-              text,
-              texts,
-              labelLine,
-              labelLines,
-              index,
-              relatedGraphic,
-              to,
-              this._animationConfig.enter
-            );
-            relatedGraphic.on('afterAttributeUpdate', listener);
-          });
+          // enter的时长如果不是大于0，那么直接跳过动画
+          this._animationConfig.enter.duration > 0 &&
+            relatedGraphic.once('animate-bind', a => {
+              // text和labelLine共用一个from
+              text.setAttributes(from);
+              labelLine && labelLine.setAttributes(from);
+              const listener = this._afterRelatedGraphicAttributeUpdate(
+                text,
+                texts,
+                labelLine,
+                labelLines,
+                index,
+                relatedGraphic,
+                to,
+                this._animationConfig.enter
+              );
+              relatedGraphic.on('afterAttributeUpdate', listener);
+            });
         }
       } else if (state === 'update') {
         const prevLabel = prevTextMap.get(textKey);

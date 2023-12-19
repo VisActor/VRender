@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: optimize outer label layout in tangential direction",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

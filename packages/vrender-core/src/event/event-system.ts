@@ -124,7 +124,14 @@ export class EventSystem {
     this.setTargetElement(null);
   }
 
-  setCursor(mode: string = 'default'): void {
+  setCursor(mode: string, target: IEventTarget | null): void {
+    if (!target && !(this.manager.rootTarget as any).window._handler.canvas.controled) {
+      return;
+    }
+
+    if (!mode) {
+      mode = 'default';
+    }
     const { applyStyles, domElement } = this;
 
     if (this.currentCursor === mode) {
@@ -167,7 +174,7 @@ export class EventSystem {
       this.manager.mapEvent(federatedEvent);
     }
 
-    this.setCursor(this.manager.cursor);
+    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
   };
 
   private onPointerMove = (nativeEvent: NativeEvent): void => {
@@ -186,7 +193,7 @@ export class EventSystem {
       this.manager.mapEvent(event);
     }
 
-    this.setCursor(this.manager.cursor);
+    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
   };
 
   private onPointerUp = (nativeEvent: NativeEvent): void => {
@@ -205,7 +212,7 @@ export class EventSystem {
       this.manager.mapEvent(event);
     }
 
-    this.setCursor(this.manager.cursor);
+    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
   };
 
   private onPointerOverOut = (nativeEvent: NativeEvent): void => {
@@ -221,7 +228,7 @@ export class EventSystem {
       this.manager.mapEvent(event);
     }
 
-    this.setCursor(this.manager.cursor);
+    this.setCursor(this.manager.cursor, this.manager.cursorTarget);
   };
 
   protected onWheel = (nativeEvent: WheelEvent): void => {

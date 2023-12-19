@@ -59,6 +59,14 @@ export class DefaultPluginService implements IPluginService {
       plugin.activate(this);
     }
   }
+  unRegister(plugin: IPlugin) {
+    if (plugin.activeEvent === 'onStartupFinished') {
+      this.onStartupFinishedPlugin.splice(this.onStartupFinishedPlugin.indexOf(plugin), 1);
+    } else if (plugin.activeEvent === 'onRegister') {
+      this.onRegisterPlugin.splice(this.onStartupFinishedPlugin.indexOf(plugin), 1);
+    }
+    plugin.deactivate(this);
+  }
 
   release(...params: any): void {
     this.onStartupFinishedPlugin.forEach(plugin => {

@@ -1,3 +1,4 @@
 export * from './poptip';
 export * from './type';
-export { loadPoptip, setPoptipTheme } from './register';
+export { setPoptipTheme } from './register';
+export { loadPoptip } from './module';

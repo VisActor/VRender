@@ -64,6 +64,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       keepDirIn3d = textAttribute.keepDirIn3d,
       direction = textAttribute.direction,
       // lineHeight = textAttribute.lineHeight,
+      whiteSpace = textAttribute.whiteSpace,
       fontSize = textAttribute.fontSize,
       verticalMode = textAttribute.verticalMode,
       x: originX = textAttribute.x,
@@ -147,7 +148,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         context.setTransformForCurrent();
       }
     };
-    if (Array.isArray(str)) {
+    if (text.isMultiLine) {
       context.setTextStyleWithoutAlignBaseline(text.attribute, textAttribute, z);
       if (direction === 'horizontal') {
         const { multilineLayout } = text;

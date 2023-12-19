@@ -81,6 +81,7 @@ export interface IText extends IGraphic<ITextGraphicAttribute> {
   cliped?: boolean;
   multilineLayout?: LayoutType;
   font?: string;
+  isMultiLine: boolean;
   cache?: ITextCache;
 
   getBaselineMapAlign: () => Record<string, string>;

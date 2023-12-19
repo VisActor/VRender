@@ -49,12 +49,26 @@ function performance(stage: any) {
 export const page = () => {
   const graphics: IGraphic[] = [];
   const t = createText({
-    x: 100,
-    y: 100,
-    fontFamily: 'Arial',
-    text: 'aaa这是aaa',
-    fill: 'red',
-    background: 'green'
+    autoWrapText: false,
+    dx: 0,
+    ellipsis: '...',
+    fill: '#000',
+    fontFamily: 'Arial,sans-serif',
+    fontSize: 16,
+    fontWeight: null,
+    heightLimit: 52,
+    lineClamp: undefined,
+    lineHeight: 16,
+    lineThrough: undefined,
+    maxLineWidth: 20,
+    text: '129.696',
+    textAlign: 'left',
+    textBaseline: 'top',
+    underline: undefined,
+    whiteSpace: 'normal',
+    wordBreak: 'break-word',
+    x: 16,
+    y: 28
   });
   console.log(t.AABBBounds);
   graphics.push(t);

@@ -124,7 +124,7 @@ export class EventSystem {
     this.setTargetElement(null);
   }
 
-  setCursor(mode: string, target: IEventTarget | null): void {
+  setCursor(mode: string, target: IEventTarget | null | 'ignore'): void {
     if (!target && !(this.manager.rootTarget as any).window._handler.canvas.controled) {
       return;
     }

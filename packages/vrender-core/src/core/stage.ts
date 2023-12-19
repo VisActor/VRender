@@ -932,7 +932,7 @@ export class Stage extends Group implements IStage {
 
   setCursor(mode?: string): void {
     this._cursor = mode;
-    this.eventSystem.setCursor(mode);
+    this.eventSystem.setCursor(mode, 'ignore');
   }
 
   getCursor() {

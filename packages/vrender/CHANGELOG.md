@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 14 Dec 2023 11:00:38 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Dec 2023 09:13:27 GMT and should not be manually modified.
+
+## 0.17.5
+Tue, 19 Dec 2023 09:13:27 GMT
+
+### Updates
+
+- feat: add disableAutoClipedPoptip attribute in text graphic
+- fix: fix cursor update error in multi-stage
 
 ## 0.17.4
 Thu, 14 Dec 2023 11:00:38 GMT

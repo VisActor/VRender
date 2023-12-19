@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix issue with poptip circular dependencies",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -591,6 +591,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const currentTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = new Map();
     const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
+    const labelLines = [] as ILine[];
 
     labels.forEach((text, index) => {
       const labelLine: ILine = this._labelLine(text as any);
@@ -599,6 +600,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const textKey = this._isCollectionBase ? textId : relatedGraphic;
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
 
+      // TODO: add animate
       if (state === 'enter') {
         texts.push(text);
         currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
@@ -608,22 +610,29 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
           if (labelLine) {
             this._setStatesOfLabelLine(labelLine);
+            labelLines.push(labelLine);
             this.add(labelLine);
           }
 
           this._syncStateWithRelatedGraphic(relatedGraphic);
-          relatedGraphic.once('animate-bind', a => {
-            text.setAttributes(from);
-            const listener = this._afterRelatedGraphicAttributeUpdate(
-              text,
-              texts,
-              index,
-              relatedGraphic,
-              to,
-              this._animationConfig.enter
-            );
-            relatedGraphic.on('afterAttributeUpdate', listener);
-          });
+          // enter的时长如果不是大于0，那么直接跳过动画
+          this._animationConfig.enter.duration > 0 &&
+            relatedGraphic.once('animate-bind', a => {
+              // text和labelLine共用一个from
+              text.setAttributes(from);
+              labelLine && labelLine.setAttributes(from);
+              const listener = this._afterRelatedGraphicAttributeUpdate(
+                text,
+                texts,
+                labelLine,
+                labelLines,
+                index,
+                relatedGraphic,
+                to,
+                this._animationConfig.enter
+              );
+              relatedGraphic.on('afterAttributeUpdate', listener);
+            });
         }
       } else if (state === 'update') {
         const prevLabel = prevTextMap.get(textKey);
@@ -732,31 +741,40 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
   }
 
+  // 默认labelLine和text共用相同动画属性
   protected _afterRelatedGraphicAttributeUpdate(
     text: IText | IRichText,
     texts: (IText | IRichText)[],
+    labelLine: ILine,
+    labelLines: ILine[],
     index: number,
     relatedGraphic: IGraphic,
     to: any,
     { mode, duration, easing, delay }: ILabelAnimation
   ) {
+    // TODO: 跟随动画
     const listener = (event: any) => {
       const { detail } = event;
       if (!detail) {
         return {};
       }
+      const step = detail.animationState?.step;
       const isValidAnimateState =
-        detail &&
         detail.type === AttributeUpdateType.ANIMATE_UPDATE &&
-        detail.animationState &&
-        detail.animationState.step?.type !== 'wait';
+        step &&
+        // 不是第一个wait
+        !(step.type === 'wait' && step.prev?.type == null);
 
       if (!isValidAnimateState) {
         return {};
       }
-
+      // const prevStep = step.prev;
+      // if (prevStep && prevStep.type === 'wait' && prevStep.prev?.type == null) {
+      //   delay = delay ?? step.position;
+      // }
       if (detail.type === AttributeUpdateType.ANIMATE_END) {
         text.setAttributes(to);
+        labelLine && labelLine.setAttributes(to);
         return;
       }
 
@@ -772,6 +790,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           // 3. 当前关联图元的动画播放结束后
           if (detail.animationState.end) {
             text.animate({ onStart }).wait(delay).to(to, duration, easing);
+            labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
           }
           break;
         case 'after-all':
@@ -780,6 +799,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             if (detail.animationState.end) {
               texts.forEach(t => {
                 t.animate({ onStart }).wait(delay).to(to, duration, easing);
+              });
+              labelLines.forEach(t => {
+                t.animate().wait(delay).to(to, duration, easing);
               });
             }
           }
@@ -794,9 +816,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.pickerService)
             ) {
               text.animate({ onStart }).wait(delay).to(to, duration, easing);
+              labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
             }
           } else if (detail.animationState.isFirstFrameOfStep) {
             text.animate({ onStart }).wait(delay).to(to, duration, easing);
+            labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
           }
 
           break;

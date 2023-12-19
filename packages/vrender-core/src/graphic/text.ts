@@ -23,6 +23,8 @@ const TEXT_UPDATE_TAG_KEY = [
   'lineHeight',
   'direction',
   'wordBreak',
+  'heightLimit',
+  'lineClamp',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -54,7 +56,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get clipedText(): string | undefined {
     const attribute = this.attribute;
     const textTheme = getTheme(this).text;
-    if (Array.isArray(attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -65,7 +67,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.clipedText;
   }
   get clipedWidth(): number | undefined {
-    if (Array.isArray(this.attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     this.tryUpdateAABBBounds();
@@ -74,7 +76,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    if (Array.isArray(attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -85,11 +87,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.clipedText !== attribute.text.toString();
   }
   get multilineLayout(): LayoutType | undefined {
-    if (!Array.isArray(this.attribute.text)) {
+    if (!this.isMultiLine) {
       return undefined;
     }
     this.tryUpdateAABBBounds();
     return this.cache.layoutData;
+  }
+
+  get isMultiLine(): boolean {
+    return Array.isArray(this.attribute.text) || this.attribute.whiteSpace === 'normal';
   }
 
   constructor(params: ITextGraphicAttribute = { text: '', fontSize: 16 }) {
@@ -103,6 +109,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   }
   protected _isValid(): boolean {
     const { text } = this.attribute;
+    if (isArray(text)) {
+      return !(text as any[]).every((t: any) => t == null || t === '');
+    }
     return text != null && text !== '';
   }
 
@@ -353,6 +362,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalSinglelineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds([text]);
+    }
+
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
@@ -560,6 +574,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateHorizontalMultilineAABBBounds(text: (number | string)[]): AABBBounds {
     const textTheme = getTheme(this).text;
+    const { wrap = textTheme.wrap } = this.attribute;
+    if (wrap) {
+      return this.updateWrapAABBBounds(text);
+    }
+
     const attribute = this.attribute;
     const {
       fontFamily = textTheme.fontFamily,

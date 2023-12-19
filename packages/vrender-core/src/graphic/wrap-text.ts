@@ -16,6 +16,10 @@ const WRAP_TEXT_UPDATE_TAG_KEY = ['heightLimit', 'lineClamp'];
 export class WrapText extends Text {
   declare attribute: IWrapTextGraphicAttribute;
 
+  constructor(params: ITextGraphicAttribute) {
+    super({ ...params, wrap: true });
+  }
+
   protected _isValid(): boolean {
     const { text } = this.attribute;
     if (isArray(text)) {

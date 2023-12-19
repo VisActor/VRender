@@ -17,8 +17,13 @@ export class FlexLayoutPlugin implements IPlugin {
   id: number = Generator.GenAutoIncrementId();
   key: string = this.name + this.id;
   tempBounds: AABBBounds = new AABBBounds();
+  layouting: boolean;
 
   tryLayout(graphic: IGraphic) {
+    if (this.layouting) {
+      return;
+    }
+    this.layouting = true;
     const p = graphic.parent;
     if (!p || !graphic.needUpdateLayout()) {
       return;
@@ -210,6 +215,7 @@ export class FlexLayoutPlugin implements IPlugin {
     if (!clip && !this.tempBounds.equals(p.AABBBounds)) {
       // 判断父元素包围盒是否发生变化
       this.tryLayout(p);
+      this.layouting = false;
     }
   }
 
@@ -266,6 +272,12 @@ export class FlexLayoutPlugin implements IPlugin {
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
+    } else if (justifyContent === 'center') {
+      let pos = (main.len - currSeg.mainLen) / 2;
+      for (let i = lastIdx; i <= currSeg.idx; i++) {
+        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+        pos += mianLenArray[i].mainLen;
+      }
     }
   }
 
@@ -301,6 +313,7 @@ export class FlexLayoutPlugin implements IPlugin {
         graphic = graphic.glyphHost;
       }
       this.tryLayout(graphic);
+      this.layouting = false;
     });
     application.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
@@ -308,7 +321,10 @@ export class FlexLayoutPlugin implements IPlugin {
         if (graphic.glyphHost) {
           graphic = graphic.glyphHost;
         }
-        if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
+        if (!(stage && stage === this.pluginService.stage)) {
+          return;
+        }
+        if (!graphic.isContainer) {
           return;
         }
         _tempBounds.copy(bounds);
@@ -323,11 +339,15 @@ export class FlexLayoutPlugin implements IPlugin {
         params: { globalAABBBounds: IAABBBounds },
         selfChange: boolean
       ) => {
-        if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
+        if (!(stage && stage === this.pluginService.stage)) {
+          return;
+        }
+        if (!graphic.isContainer) {
           return;
         }
         if (!_tempBounds.equals(bounds)) {
           this.tryLayout(graphic);
+          this.layouting = false;
         }
       }
     );
@@ -336,6 +356,7 @@ export class FlexLayoutPlugin implements IPlugin {
         graphic = graphic.glyphHost;
       }
       this.tryLayout(graphic);
+      this.layouting = false;
     });
   }
   deactivate(context: IPluginService): void {

@@ -49,13 +49,15 @@ export type ITextAttribute = {
   verticalMode: number; // 垂直布局的模式，0代表默认（横向textAlign，纵向textBaseline），1代表特殊（横向textBaseline，纵向textAlign）
   wordBreak: 'break-word' | 'break-all';
   ignoreBuf: boolean;
+  heightLimit: number;
+  lineClamp: number;
+  wrap: boolean;
   whiteSpace: 'normal' | 'no-wrap';
-  heightLimit?: number;
-  lineClamp?: number;
   suffixPosition: 'start' | 'end' | 'middle';
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];
+  disableAutoClipedPoptip?: boolean;
 };
 export type ITextCache = {
   // 单行文本的时候缓存用
@@ -80,6 +82,7 @@ export interface IText extends IGraphic<ITextGraphicAttribute> {
   cliped?: boolean;
   multilineLayout?: LayoutType;
   font?: string;
+  isMultiLine: boolean;
   cache?: ITextCache;
 
   getBaselineMapAlign: () => Record<string, string>;

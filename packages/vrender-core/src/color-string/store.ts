@@ -1,5 +1,4 @@
-import { ColorUtil } from '@visactor/vutils';
-const { Color } = ColorUtil;
+import { Color } from '@visactor/vutils';
 
 export function colorEqual(color1: string, color2: string): boolean {
   const c1 = Color.parseColorString(color1);

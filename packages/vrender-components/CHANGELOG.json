@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.5",
+      "tag": "@visactor/vrender-components_v0.17.5",
+      "date": "Tue, 19 Dec 2023 09:13:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(scrollbar): dispatch scrollDown event"
+          },
+          {
+            "comment": "feat: labelLine support animate"
+          },
+          {
+            "comment": "fix: fix issue with arc animate with delayafter"
+          },
+          {
+            "comment": "feat: label don't create enter animate animationEnter while duration less than 0"
+          },
+          {
+            "comment": "fix: fix issue with poptip circular dependencies"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.4",
       "tag": "@visactor/vrender-components_v0.17.4",
       "date": "Thu, 14 Dec 2023 11:00:38 GMT",

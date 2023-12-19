@@ -293,6 +293,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     e.stopPropagation();
     const { direction } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
+    this._dispatchEvent('scrollDown', {
+      pos: this._prePos,
+      event: e
+    });
     if (vglobal.env === 'browser') {
       vglobal.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);

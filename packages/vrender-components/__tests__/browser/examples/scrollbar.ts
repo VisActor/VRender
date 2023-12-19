@@ -86,6 +86,14 @@ export function run() {
     hScrollBar.hideAll();
   });
 
+  hScrollBar.addEventListener('scrollDown', e => {
+    console.log('hScrollBar', e.detail);
+  });
+
+  vScrollBar.addEventListener('scrollDown', e => {
+    console.log('vScrollBar', e.detail);
+  });
+
   hScrollBar.addEventListener('scroll', e => {
     console.log('hScrollBar', e.detail.value);
   });

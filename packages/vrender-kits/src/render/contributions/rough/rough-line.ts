@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IContext2d,
@@ -9,15 +8,16 @@ import type {
   ILine,
   ILineGraphicAttribute,
   IClipRangeByDimensionType
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
   IRenderService,
   IGraphic,
   DefaultCanvasLineRender,
   getTheme,
   CustomPath2D,
-  drawSegments
-} from '@visactor/vrender';
+  drawSegments,
+  injectable
+} from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

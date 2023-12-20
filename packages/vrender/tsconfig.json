@@ -2,11 +2,18 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "baseUrl": "./",
-    "rootDir": "./",
+    "rootDir": "./src",
     "outDir": "./es",
-    "composite": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "composite": true
   },
-  "include": [
-    "src"
+  "include": ["src"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    },
+    {
+      "path": "../vrender-kits"
+    }
   ]
 }

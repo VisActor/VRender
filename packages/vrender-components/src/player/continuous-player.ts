@@ -1,7 +1,10 @@
-import { FederatedPointerEvent, global } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { BasePlayer } from './base-player';
-import { ContinuousPlayerAttributes, PlayerEventEnum } from './type';
+import type { ContinuousPlayerAttributes } from './type';
+import { PlayerEventEnum } from './type';
 import { ControllerEventEnum } from './controller/constant';
+import { loadContinuousPlayerComponent } from './register';
 
 export interface IContinuousPlayer {
   play: () => Promise<void>;
@@ -10,6 +13,7 @@ export interface IContinuousPlayer {
   backward: () => void;
 }
 
+loadContinuousPlayerComponent();
 export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
   declare attribute: ContinuousPlayerAttributes;
 
@@ -66,6 +70,9 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
    * 初始化事件
    */
   private _initEvents = () => {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     this._controller.addEventListener(ControllerEventEnum.OnPlay, (e: FederatedPointerEvent) => {
       e.stopPropagation();
       this.play();
@@ -128,7 +135,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
       this._activeIndex = index;
 
       if (index !== this._maxIndex) {
-        this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+        this.dispatchCustomEvent(PlayerEventEnum.change);
       }
     }
   };
@@ -159,9 +166,9 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 此时此刻减去已流逝的时间, 则为起点对应的时间戳.
     this._startTime = Date.now() - this._elapsed;
     // 事件
-    this.dispatchCustomEvent(PlayerEventEnum.OnPlay);
+    this.dispatchCustomEvent(PlayerEventEnum.play);
     // 开始播放动画
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this));
   };
 
   /**
@@ -182,7 +189,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     }
 
     // 持续播放
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this));
   };
 
   /**
@@ -192,11 +199,11 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 播放状态更新
     this._isPlaying = false;
     // 取消播放动画
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     // 切换按钮
     this._controller.togglePlay();
     // 事件
-    this.dispatchCustomEvent(PlayerEventEnum.OnEnd);
+    this.dispatchCustomEvent(PlayerEventEnum.end);
   };
 
   /**
@@ -209,10 +216,10 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     this._isPlaying = false;
     // 计算已流逝的时间, 需要记录下来
     this._elapsed = Date.now() - this._startTime;
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnPause);
+    this.dispatchCustomEvent(PlayerEventEnum.pause);
   };
 
   /**
@@ -239,7 +246,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 更新slider
     this._updateSlider();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnBackward);
+    this.dispatchCustomEvent(PlayerEventEnum.backward);
   };
 
   /**
@@ -265,7 +272,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     // 更新slider
     this._updateSlider();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnForward);
+    this.dispatchCustomEvent(PlayerEventEnum.forward);
   };
 
   render() {

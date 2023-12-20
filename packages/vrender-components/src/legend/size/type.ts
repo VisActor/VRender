@@ -1,6 +1,6 @@
-import { IPathGraphicAttribute } from '@visactor/vrender';
-import { SliderAttributes } from '../../slider/type';
-import { LegendBaseAttributes } from '../type';
+import type { IPathGraphicAttribute } from '@visactor/vrender-core';
+import type { SliderAttributes } from '../../slider/type';
+import type { LegendBaseAttributes } from '../type';
 
 export type SizeLegendAttributes = {
   // /**

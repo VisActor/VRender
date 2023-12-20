@@ -1,9 +1,9 @@
-import {
+import type {
   ISymbolGraphicAttribute,
   IRectGraphicAttribute,
   ITextGraphicAttribute,
   IGroupGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 
 type Text = string | number;
 
@@ -160,4 +160,9 @@ export type SliderAttributes = {
    * handler tooltip 配置
    */
   tooltip?: TooltipConfig;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 } & IGroupGraphicAttribute;

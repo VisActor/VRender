@@ -1,15 +1,33 @@
-import type { IGroupGraphicAttribute, ITextGraphicAttribute, IRichTextCharacter, RichTextWordBreak } from '@visactor/vrender';
-import { Padding } from '../core/type';
+import type {
+  IGroupGraphicAttribute,
+  ITextGraphicAttribute,
+  IRichTextGraphicAttribute,
+  IRichTextCharacter,
+  RichTextWordBreak
+} from '@visactor/vrender-core';
+import type { Padding } from '../core/type';
 
 export interface TitleAttrs extends IGroupGraphicAttribute {
   /**
    * 主标题文本内容
+   * - 支持富文本配置
    */
-  text?: string | number | string[] | number[];
+  text?: string | number | string[] | number[] | IRichTextCharacter[];
+  /**
+   * 主标题文本类型（默认类型为text）
+   * text, rich, html
+   */
+  textType?: string;
   /**
    * 副标题文本内容
+   * - 支持富文本配置
    */
-  subtext?: string | number | string[] | number[];
+  subtext?: string | number | string[] | number[] | IRichTextCharacter[];
+  /**
+   * 副标题文本类型（默认类型为text）
+   * text, rich, html
+   */
+  subtextType?: string;
   /**
    * 指定宽度，像素值
    */
@@ -38,6 +56,14 @@ export interface TitleAttrs extends IGroupGraphicAttribute {
    * 内部边距
    */
   padding?: Padding;
+  /**
+   * x方向偏移量
+   */
+  x?: number;
+  /**
+   * y方向偏移量
+   */
+  y?: number;
   /**
    * 整体（包括 text 和 subtext）的水平对齐
    * 'left' | 'center' | 'right'
@@ -89,10 +115,15 @@ export interface TitleAttrs extends IGroupGraphicAttribute {
      */
     lineClamp?: number;
     /**
-     * 富文本配置
+     * 富文本配置（暂时保留旧设置）
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+    /**
+     * text兼容IText和IRichtext
+     */
+    text?: string | number | string[] | number[] | IRichTextCharacter[];
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
   /**
    * 副标题样式
    */
@@ -134,8 +165,9 @@ export interface TitleAttrs extends IGroupGraphicAttribute {
      */
     lineClamp?: number;
     /**
-     * 富文本配置
+     * 富文本配置（暂时保留旧设置）
      */
     character?: IRichTextCharacter[];
-  } & Partial<ITextGraphicAttribute>;
+  } & Partial<ITextGraphicAttribute> &
+    Partial<IRichTextGraphicAttribute>;
 }

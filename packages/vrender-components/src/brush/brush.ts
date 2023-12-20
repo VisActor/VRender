@@ -1,26 +1,23 @@
 /**
  * @description 框选组件
  */
-import { FederatedPointerEvent, IGroup, IPolygon, global, createPolygon, Polygon, point } from '@visactor/vrender';
-import {
-  cloneDeep,
-  debounce,
-  IBounds,
-  IPointLike,
-  isFunction,
-  merge,
-  polygonContainPoint,
-  throttle
-} from '@visactor/vutils';
+import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
+import { graphicCreator, vglobal } from '@visactor/vrender-core';
+import type { IBounds, IPointLike } from '@visactor/vutils';
+import { cloneDeep, debounce, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { BrushAttributes } from './type';
-import { DEFAULT_BRUSH_ATTRIBUTES } from './config';
+import type { BrushAttributes } from './type';
+import { IOperateType } from './type';
+import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
+import type { ComponentOptions } from '../interface';
+import { loadBrushComponent } from './register';
 
 const delayMap = {
   debounce: debounce,
   throttle: throttle
 };
 
+loadBrushComponent();
 export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   name = 'brush';
   static defaultAttributes = DEFAULT_BRUSH_ATTRIBUTES;
@@ -30,7 +27,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   // 绘制mask时的相关属性
   private _activeDrawState = false; // 用于标记绘制状态
   private _cacheDrawPoints: IPointLike[] = []; // 用于维护鼠标走过的路径，主要用于绘制mask的点
-
+  private _isDrawedBeforeEnd = false;
   // 移动mask时的相关属性
   private _activeMoveState = false; // 用于标记移动状态
   private _operatingMaskMoveDx = 0; // 用于标记移动的位移量
@@ -43,25 +40,30 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   // 透出给上层的属性（主要是所有mask的AABBBounds，这里用的是dict存储方便添加和修改）
   private _brushMaskAABBBoundsDict: { [name: string]: IBounds } = {};
-  private _updateDragMaskCallback!: (operateParams: {
-    operateType: string;
-    operateMask: IPolygon;
-    operatedMaskAABBBounds: { [name: string]: IBounds };
-  }) => void;
 
-  constructor(attributes: BrushAttributes) {
-    super(merge({}, Brush.defaultAttributes, attributes));
+  constructor(attributes: BrushAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Brush.defaultAttributes, attributes));
   }
 
-  protected bindBrushEvents(): void {
-    const { delayType = 'throttle', delayTime = 0 } = this.attribute as BrushAttributes;
+  private _bindBrushEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
+    const {
+      delayType = 'throttle',
+      delayTime = 0,
+      trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger,
+      updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
+      endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
+      resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
+    } = this.attribute as BrushAttributes;
     // 拖拽绘制开始
-    this.stage.addEventListener('pointerdown', this._onBrushStart as EventListener);
+    this.stage.addEventListener(trigger, this._onBrushStart as EventListener);
     // 拖拽绘制时
-    this.stage.addEventListener('pointermove', delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.addEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
     // 拖拽绘制结束
-    this.stage.addEventListener('pointerup', this._onBrushEnd as EventListener);
-    this.stage.addEventListener('pointerupoutside', this._onBrushEnd as EventListener);
+    this.stage.addEventListener(endTrigger, this._onBrushEnd as EventListener);
+    this.stage.addEventListener(resetTrigger, this._onBrushEnd as EventListener);
   }
 
   private _isPosInBrushMask(e: FederatedPointerEvent) {
@@ -96,6 +98,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._outOfInteractiveRange(e)) {
       return;
     }
+    e.stopPropagation();
+
     const brushMoved = this.attribute?.brushMoved ?? true;
     this._activeMoveState = brushMoved && this._isPosInBrushMask(e); // 如果是移动状态，在这里会标记operatingMask为正在移动的mask
     this._activeDrawState = !this._activeMoveState;
@@ -114,6 +118,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._outOfInteractiveRange(e)) {
       return;
     }
+    e.stopPropagation();
 
     this._activeDrawState && this._drawing(e); // 如果是绘制状态，在这里会标记operatingMask为正在绘制的mask
     this._activeMoveState && this._moving(e);
@@ -124,19 +129,38 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
-    if (this._outOfInteractiveRange(e)) {
-      return;
-    }
-    this._updateDragMaskCallback &&
-      this._updateDragMaskCallback({
-        operateType: this._activeDrawState ? 'brushEnd' : 'brushMaskUp',
-        operateMask: this._operatingMask,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
+    e.preventDefault();
+    const { removeOnClick = true } = this.attribute as BrushAttributes;
+    if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
+      this._container.incrementalClearChild();
+      this._brushMaskAABBBoundsDict = {};
+      this._dispatchEvent(IOperateType.brushClear, {
+        operateMask: this._operatingMask as any,
+        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+        event: e
       });
+    } else if (!this._outOfInteractiveRange(e)) {
+      if (this._activeDrawState) {
+        this._dispatchEvent(IOperateType.drawEnd, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
+
+      if (this._activeMoveState) {
+        this._dispatchEvent(IOperateType.moveEnd, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
+    }
 
     this._activeDrawState = false;
     this._activeMoveState = false;
-    this._operatingMask.setAttribute('pickable', false);
+    this._isDrawedBeforeEnd = false;
+    this._operatingMask?.setAttribute('pickable', false);
   };
 
   /**
@@ -144,26 +168,20 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 清除之前的mask & 添加新的mask
    */
   private _initDraw(e: FederatedPointerEvent) {
-    const { brushMode, removeOnClick } = this.attribute as BrushAttributes;
+    const { brushMode } = this.attribute as BrushAttributes;
     const pos = this.eventPosToStagePos(e);
     this._cacheDrawPoints = [pos];
-
-    if (!this._operatingMask) {
-      this._addBrushMask();
-    }
-    if (brushMode === 'single' && removeOnClick) {
+    this._isDrawedBeforeEnd = false;
+    if (brushMode === 'single') {
+      this._brushMaskAABBBoundsDict = {};
       this._container.incrementalClearChild();
-      this._addBrushMask();
-    } else if (brushMode === 'multiple') {
-      this._addBrushMask();
     }
-
-    this._updateDragMaskCallback &&
-      this._updateDragMaskCallback({
-        operateType: 'brushStart',
-        operateMask: this._operatingMask,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
-      });
+    this._addBrushMask();
+    this._dispatchEvent(IOperateType.drawStart, {
+      operateMask: this._operatingMask as any,
+      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+      event: e
+    });
   }
 
   /**
@@ -190,12 +208,11 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._operatingMaskMoveRangeY = [minMoveStepY, maxMoveStepY];
 
     this._operatingMask.setAttribute('pickable', true);
-    this._updateDragMaskCallback &&
-      this._updateDragMaskCallback({
-        operateType: 'brushMaskDown',
-        operateMask: this._operatingMask,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
-      });
+    this._dispatchEvent(IOperateType.moveStart, {
+      operateMask: this._operatingMask as any,
+      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+      event: e
+    });
   }
 
   /**
@@ -204,26 +221,34 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
+    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
+    const { sizeThreshold = DEFAULT_SIZE_THRESHOLD, brushType } = this.attribute as BrushAttributes;
+
+    const cacheLength = this._cacheDrawPoints.length;
+    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
-    if (this._cacheDrawPoints.length > 0) {
+    if (cacheLength > 0) {
       const lastPos = this._cacheDrawPoints[this._cacheDrawPoints.length - 1];
       if (pos.x === lastPos?.x && pos.y === lastPos?.y) {
         return;
       }
     }
     // 更新交互位置
-    this._cacheDrawPoints.push(pos);
+    if (brushType === 'polygon' || cacheLength <= 1) {
+      this._cacheDrawPoints.push(pos);
+    } else {
+      this._cacheDrawPoints[cacheLength - 1] = pos;
+    }
     // 更新mask形状
     const maskPoints = this._computeMaskPoints();
     this._operatingMask.setAttribute('points', maskPoints);
     this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._updateDragMaskCallback &&
-      this._updateDragMaskCallback({
-        operateType: 'brushing',
-        operateMask: this._operatingMask,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
-      });
+    this._dispatchEvent(IOperateType.drawing, {
+      operateMask: this._operatingMask as any,
+      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+      event: e
+    });
   }
 
   /**
@@ -252,12 +277,11 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       dy: moveY
     });
     this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._updateDragMaskCallback &&
-      this._updateDragMaskCallback({
-        operateType: 'brushMaskMove',
-        operateMask: this._operatingMask,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict
-      });
+    this._dispatchEvent(IOperateType.moving, {
+      operateMask: this._operatingMask as any,
+      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+      event: e
+    });
   }
 
   /**
@@ -331,15 +355,16 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     return maskPoints;
   }
 
-  protected _addBrushMask() {
-    const { brushStyle } = this.attribute as BrushAttributes;
-    const brushMask = createPolygon({
+  private _addBrushMask() {
+    const { brushStyle, hasMask } = this.attribute as BrushAttributes;
+    const brushMask = graphicCreator.polygon({
       points: cloneDeep(this._cacheDrawPoints), // _cacheDrawPoints在不断更新，所以这里需要cloneDeep
       cursor: 'move',
       pickable: false,
-      ...brushStyle
+      ...brushStyle,
+      opacity: hasMask ? brushStyle.opacity ?? 1 : 0
     });
-    brushMask.name = `brush-${Date.now()}`; // 用Data给mask唯一标记
+    brushMask.name = `brush-${Date.now()}`; // 用Date给mask唯一标记
     this._operatingMask = brushMask;
     this._container.add(brushMask);
     this._brushMaskAABBBoundsDict[brushMask.name] = brushMask.AABBBounds;
@@ -358,26 +383,31 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const stagePosition = this.stage?.window.getBoundingClientRect();
+    const { x, y } = vglobal.mapToCanvasPoint(e);
     return {
-      x: e.clientX - (stagePosition?.left || 0) - (this.stage?.x || 0),
-      y: e.clientY - (stagePosition?.top || 0) - (this.stage?.y || 0)
+      x: x - (this.stage?.x || 0),
+      y: y - (this.stage?.y || 0)
     };
   }
 
   protected render() {
-    this.bindBrushEvents();
+    this._bindBrushEvents();
     const group = this.createOrUpdateChild('brush-container', {}, 'group') as unknown as IGroup;
     this._container = group;
   }
 
-  setUpdateDragMaskCallback(
-    callback: (operateParams: {
-      operateType: string;
-      operateMask: IPolygon;
-      operatedMaskAABBBounds: { [name: string]: IBounds };
-    }) => void
-  ) {
-    isFunction(callback) && (this._updateDragMaskCallback = callback);
+  releaseBrushEvents(): void {
+    const {
+      delayType = 'throttle',
+      delayTime = 0,
+      trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger,
+      updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
+      endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
+      resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
+    } = this.attribute as BrushAttributes;
+    this.stage.removeEventListener(trigger, this._onBrushStart as EventListener);
+    this.stage.removeEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.removeEventListener(endTrigger, this._onBrushEnd as EventListener);
+    this.stage.removeEventListener(resetTrigger, this._onBrushEnd as EventListener);
   }
 }

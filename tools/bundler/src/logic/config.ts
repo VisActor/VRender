@@ -44,11 +44,12 @@ export function parserCLIArgs(argv: string | string[]): Partial<CLIArgs> {
       s: 'sourcemap',
       w: 'watch',
       e: 'envs',
-      m: 'minify'
+      m: 'minify',
+      a: 'analysis'
     },
     array: ['formats', 'envs', 'copy'],
     string: ['config'],
-    boolean: ['watch', 'less', 'clean', 'minify', 'sourcemap'],
+    boolean: ['watch', 'less', 'clean', 'minify', 'sourcemap', 'analysis'],
     coerce: getCoerce(stringKeys)
   });
 }
@@ -106,6 +107,7 @@ export interface Config {
   // 构建后执行的任务列表
   postTasks: Record<string, (config: Config, projectRoot: string, rawPackageJson: RawPackageJson) => Promise<unknown>>;
   globals: Record<string, string>;
+  analysis?: boolean;
 }
 
 export const DEFAULT_CONFIG_FILE = 'bundler.config.js';

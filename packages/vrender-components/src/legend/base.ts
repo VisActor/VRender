@@ -3,10 +3,12 @@
  * align 为 'top' 时，操作区域同标题的间距有问题
  */
 import { isValid, normalizePadding } from '@visactor/vutils';
-import { createGroup, IGroup, INode } from '@visactor/vrender';
+import type { IGroup, INode } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
-import { Tag, TagAttributes } from '../tag';
-import { LegendBaseAttributes, LegendTitle } from './type';
+import type { TagAttributes } from '../tag';
+import { Tag } from '../tag';
+import type { LegendBaseAttributes, LegendTitle } from './type';
 import { LEGEND_ELEMENT_NAME } from './constant';
 
 export abstract class LegendBase<T extends LegendBaseAttributes> extends AbstractComponent<Required<T>> {
@@ -21,7 +23,7 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
     const parsedPadding = normalizePadding(padding);
 
     // 创建一个内部的 container 用于存储所有的元素
-    const innerView = createGroup({
+    const innerView = graphicCreator.group({
       x: parsedPadding[3],
       y: parsedPadding[0],
       pickable: interactive,

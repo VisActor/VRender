@@ -1,4 +1,3 @@
-import { injectable } from 'inversify';
 import type {
   IContext2d,
   IGraphic,
@@ -6,7 +5,8 @@ import type {
   IInteractiveSubRenderContribution,
   IThemeAttribute,
   IDrawContext
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { injectable } from '@visactor/vrender-core';
 import { PopTip } from './poptip';
 import { merge } from '@visactor/vutils';
 import { theme } from './theme';
@@ -39,8 +39,16 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
       if (visible === false || (visibleCb && visibleCb(graphic) === false)) {
         return;
       }
+      const attribute = {};
+      merge(
+        attribute,
+        PopTip.defaultAttributes,
+        (graphic.attribute as any).poptip ? (graphic.attribute as any).poptip : {}
+      );
       if (!this.poptipComponent) {
-        this.poptipComponent = new PopTip((graphic.attribute as any).poptip);
+        this.poptipComponent = new PopTip(attribute);
+      } else {
+        this.poptipComponent.initAttributes(attribute);
       }
       // 如果text图元没有配置title和content的话
       let poptip = (graphic.attribute as any).poptip || {};

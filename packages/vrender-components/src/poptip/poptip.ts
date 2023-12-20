@@ -10,8 +10,9 @@ import type {
   ITextGraphicAttribute,
   TextAlignType,
   TextBaselineType
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import {
+  AABBBounds,
   Bounds,
   getRectIntersect,
   isArray,
@@ -25,9 +26,13 @@ import {
   rectInsideAnotherRect
 } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { BackgroundAttributes } from '../interface';
+import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
+import { loadPoptipComponent } from './register';
 
+const _tBounds = new AABBBounds();
+
+loadPoptipComponent();
 export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   name = 'poptip';
 
@@ -48,31 +53,36 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textAlign: 'left',
       textBaseline: 'top'
     },
+    maxWidthPercent: 0.8,
     space: 8,
     padding: 10
   };
 
-  constructor(attributes: PopTipAttributes) {
-    super(merge({}, PopTip.defaultAttributes, attributes));
+  constructor(attributes: PopTipAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, PopTip.defaultAttributes, attributes));
   }
 
   protected render() {
     const {
-      title = '',
       titleStyle = {} as ITextGraphicAttribute,
       position,
-      content = '',
       contentStyle = {} as ITextGraphicAttribute,
       panel = {} as BackgroundAttributes & ISymbolGraphicAttribute & { space?: number },
       space = 4,
       minWidth = 0,
       maxWidth = Infinity,
       padding = 4,
+      maxWidthPercent,
       visible,
       state,
       dx = 0,
       dy = 0
     } = this.attribute as PopTipAttributes;
+
+    let { title = '', content = '' } = this.attribute as PopTipAttributes;
+
+    title = this.attribute.titleFormatMethod ? this.attribute.titleFormatMethod(title) : title;
+    content = this.attribute.contentFormatMethod ? this.attribute.contentFormatMethod(content) : content;
 
     const parsedPadding = normalizePadding(padding);
 
@@ -82,7 +92,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
     const titleVisible = isValid(title) && visible !== false;
     const titleAttrs = {
-      text: title,
+      text: isArray(title) ? title : ([title] as any),
       visible: titleVisible,
       ...titleStyle,
       x: parsedPadding[3],
@@ -92,7 +102,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textBaseline: 'top' as TextBaselineType
     };
 
-    const titleShape = group.createOrUpdateChild('poptip-title', titleAttrs, 'text') as IText;
+    const titleShape = group.createOrUpdateChild('poptip-title', titleAttrs, 'wrapText') as IText;
     if (!isEmpty(state?.title)) {
       titleShape.states = state.title;
     }
@@ -107,7 +117,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
     const contentVisible = isValid(content) && visible !== false;
     const contentAttrs = {
-      text: content,
+      text: isArray(content) ? content : ([content] as any),
       visible: contentVisible,
       ...contentStyle,
       x: parsedPadding[3],
@@ -117,7 +127,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textBaseline: 'top' as TextBaselineType
     };
 
-    const contentShape = group.createOrUpdateChild('poptip-content', contentAttrs, 'text') as IText;
+    const contentShape = group.createOrUpdateChild('poptip-content', contentAttrs, 'wrapText') as IText;
     if (!isEmpty(state?.content)) {
       contentShape.states = state.content;
     }
@@ -140,7 +150,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     } else if (popTipWidth < minWidth) {
       popTipWidth = minWidth;
     }
-    const poptipHeight = parsedPadding[0] + parsedPadding[2] + height;
+    let poptipHeight = parsedPadding[0] + parsedPadding[2] + height;
 
     // 绘制背景层
     const { visible: bgVisible, ...backgroundStyle } = panel;
@@ -150,15 +160,41 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       : (symbolSize as number) + (backgroundStyle.space ?? 0);
     const lineWidth = backgroundStyle.lineWidth ?? 1;
     const range: [number, number] | undefined = (this as any).stage
-      ? [(this as any).stage.width, (this as any).stage.height]
+      ? [
+          (this as any).stage.viewWidth ?? (this as any).stage.width,
+          (this as any).stage.viewHeight ?? (this as any).stage.height
+        ]
       : undefined;
+
+    if (range) {
+      // 尝试进行换行
+      const b = (this as any).AABBBounds;
+      const leftWidth = this.attribute.x ?? b.x1;
+      const rightWidth = range[0] - b.x1;
+      let maxSpace = Math.max(leftWidth, rightWidth);
+      // 减一些buffer，buffer不能超过maxSpace的20%
+      const buf = (isArray(symbolSize) ? symbolSize[0] : 12) + 3;
+      maxSpace = Math.min(maxSpace - buf, maxSpace * maxWidthPercent);
+      // 需要进行换行
+      if (maxSpace < popTipWidth) {
+        popTipWidth = maxSpace;
+        const buf = parsedPadding[1] + parsedPadding[3];
+        titleShape.setAttribute('maxLineWidth', maxSpace - buf);
+        contentShape.setAttribute('maxLineWidth', maxSpace - buf);
+        poptipHeight = parsedPadding[0] + parsedPadding[2];
+        if (titleVisible) {
+          poptipHeight += titleShape.AABBBounds.height() + space;
+        }
+        poptipHeight += contentShape.AABBBounds.height();
+      }
+    }
 
     const layout = position === 'auto';
     // 最多循环this.positionList次
-    let minifyBBoxI: number;
-    let minifyBBoxSize: number = Infinity;
+    let maxBBoxI: number;
+    let maxBBoxSize: number = -Infinity;
     for (let i = 0; i < this.positionList.length + 1; i++) {
-      const p = layout ? this.positionList[i === this.positionList.length ? minifyBBoxI : i] : position;
+      const p = layout ? this.positionList[i === this.positionList.length ? maxBBoxI : i] : position;
       const { angle, offset, rectOffset } = this.getAngleAndOffset(
         p,
         popTipWidth,
@@ -214,16 +250,17 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       });
 
       if (layout && range) {
-        const b = (this as any).AABBBounds;
+        _tBounds.setValue(0, 0, popTipWidth, poptipHeight).transformWithMatrix(group.globalTransMatrix);
+        const b = _tBounds;
         const stageBounds = new Bounds().setValue(0, 0, range[0], range[1]);
         if (rectInsideAnotherRect(b, stageBounds, false)) {
           break;
         } else {
           const bbox = getRectIntersect(b, stageBounds, false);
           const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
-          if (size < minifyBBoxSize) {
-            minifyBBoxSize = size;
-            minifyBBoxI = i;
+          if (size > maxBBoxSize) {
+            maxBBoxSize = size;
+            maxBBoxI = i;
           }
         }
       } else {

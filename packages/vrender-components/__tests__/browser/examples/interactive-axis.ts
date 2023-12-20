@@ -1,4 +1,5 @@
 import { pi } from '@visactor/vutils';
+import '@visactor/vrender';
 import { BandScale, LinearScale, PointScale } from '@visactor/vscale';
 import { CircleAxis, LineAxis } from '../../../src';
 import render from '../../util/render';
@@ -78,27 +79,6 @@ const axis = new LineAxis({
       lineWidth: 1,
       stroke: '#D9DDE4',
       strokeOpacity: 1
-    }
-  },
-  grid: {
-    style: {
-      lineWidth: 1,
-      stroke: '#EBEDF2',
-      strokeOpacity: 1,
-      lineDash: []
-    },
-    visible: false,
-    length: 448,
-    type: 'line',
-    depth: 0
-  },
-  subGrid: {
-    visible: false,
-    style: {
-      lineWidth: 1,
-      stroke: '#EBEDF2',
-      strokeOpacity: 1,
-      lineDash: [4, 4]
     }
   },
   x: 58,

@@ -3,6 +3,8 @@
   "compilerOptions": {
     "paths": {
       "@visactor/vrender": ["../vrender/src"],
+      "@visactor/vrender-core": ["../vrender-core/src"],
+      "@visactor/vrender-kits": ["../vrender-kits/src"]
     }
   },
   "references": []

@@ -1,5 +1,5 @@
 import { GUI } from 'lil-gui';
-import { createSymbol, createGroup, Stage } from '@visactor/vrender';
+import { createSymbol, createGroup } from '@visactor/vrender';
 import { createRenderer } from '../../util/render';
 import { SymbolLabel } from '../../../src';
 
@@ -127,8 +127,8 @@ function createContent(stage: Stage) {
     type: 'symbol',
     animation: false,
     overlap: {
-      enable: overlap,
       avoidBaseMark,
+      overlapPadding: 10,
       size: { width: 500, height: 500 },
       strategy: [
         {

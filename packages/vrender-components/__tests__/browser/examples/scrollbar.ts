@@ -1,5 +1,8 @@
+import '@visactor/vrender';
 import render from '../../util/render';
-import { ScrollBar } from '../../../src';
+import { ScrollBar, loadScrollbar } from '../../../src';
+import { createGroup, createRect } from '@visactor/vrender';
+loadScrollbar();
 
 export function run() {
   console.log('SCROLLBAR');
@@ -10,20 +13,24 @@ export function run() {
     width: 500,
     height: 12,
     padding: [2, 0],
+    realTime: false,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
     },
-    range: [0, 0.05]
+    range: [0, 0.05],
+    delayTime: 10
     // scrollRange: [0.4, 0.8]
   });
 
   const vScrollBar = new ScrollBar({
     direction: 'vertical',
+    realTime: false,
     x: 0,
     y: 0,
     width: 12,
     height: 500,
     padding: [0, 2],
+    delayTime: 110,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
       //
@@ -32,7 +39,60 @@ export function run() {
     range: [0.1, 0.3]
   });
 
-  const stage = render([hScrollBar, vScrollBar], 'main');
+  const group = createGroup({
+    width: 200,
+    height: 200,
+    x: 100,
+    y: 100,
+    fill: 'red',
+    clip: true,
+    overflow: 'scroll'
+  });
+
+  for (let j = 0; j < 10; j++) {
+    for (let i = 0; i < 10; i++) {
+      let fill = 'green';
+      if (i > 6) {
+        fill = 'orange';
+      }
+      if (j > 6) {
+        fill = 'orange';
+      }
+      if (i > 6 && j > 6) {
+        fill = 'pink';
+      }
+      group.add(
+        createRect({
+          x: j * 40,
+          y: i * 60,
+          width: 30,
+          height: 30,
+          fill,
+          text: `abc${i}`
+        })
+      );
+    }
+  }
+
+  const stage = render([hScrollBar, vScrollBar, group], 'main');
+  hScrollBar.addEventListener('mouseenter', e => {
+    console.log('abc');
+    hScrollBar.setAttributes({ visible: true });
+    hScrollBar.showAll();
+  });
+  hScrollBar.addEventListener('mouseleave', e => {
+    console.log('def');
+    hScrollBar.setAttributes({ visibleAll: false });
+    hScrollBar.hideAll();
+  });
+
+  hScrollBar.addEventListener('scrollDown', e => {
+    console.log('hScrollBar', e.detail);
+  });
+
+  vScrollBar.addEventListener('scrollDown', e => {
+    console.log('vScrollBar', e.detail);
+  });
 
   hScrollBar.addEventListener('scroll', e => {
     console.log('hScrollBar', e.detail.value);

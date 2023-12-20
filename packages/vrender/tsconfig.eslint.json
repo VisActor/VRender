@@ -2,10 +2,21 @@
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
     "types": ["jest", "node"],
-    "lib": ["DOM", "ESNext"],
+    "lib": ["DOM", "ESNext", "ES2021.String"],
+    "typeRoots": ["./node_modules/@types", "./src/types"],
     "baseUrl": "./",
-    "rootDir": "./"
+    "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true
   },
   "include": ["src", "__tests__", "examples"],
-  "exclude": ["bugserver-config"]
+  "exclude": ["bugserver-config", "src/common/inversify-lite"],
+  "references": [
+    {
+      "path": "../vrender-core"
+    },
+    {
+      "path": "../vrender-kits"
+    }
+  ]
 }

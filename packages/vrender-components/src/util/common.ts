@@ -1,7 +1,7 @@
 /**
  * @description 存放工具函数
  */
-import type { IGraphicAttribute, IGraphic, IGroup } from '@visactor/vrender';
+import type { IGraphicAttribute, IGraphic, IGroup } from '@visactor/vrender-core';
 import { isNil } from '@visactor/vutils';
 
 export function traverseGroup(group: IGraphic, cb: (node: IGraphic) => boolean | void) {

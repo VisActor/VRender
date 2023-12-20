@@ -1,9 +1,13 @@
 import { isNil, merge } from '@visactor/vutils';
-import { FederatedPointerEvent, global } from '@visactor/vrender';
+import type { FederatedPointerEvent } from '@visactor/vrender-core';
+import { vglobal } from '@visactor/vrender-core';
 import { BasePlayer } from './base-player';
-import { DirectionEnum, DirectionType, DiscretePlayerAttributes, PlayerAttributes, PlayerEventEnum } from './type';
+import type { DirectionType, DiscretePlayerAttributes, PlayerAttributes } from './type';
+import { DirectionEnum, PlayerEventEnum } from './type';
 import { forwardStep, isReachEnd, isReachStart } from './utils';
 import { ControllerEventEnum } from './controller/constant';
+import type { ComponentOptions } from '../interface';
+import { loadDiscretePlayerComponent } from './register';
 
 export interface IDiscretePlayer {
   play: () => void;
@@ -11,6 +15,8 @@ export interface IDiscretePlayer {
   backward: () => void;
   forward: () => void;
 }
+
+loadDiscretePlayerComponent();
 export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> implements IDiscretePlayer {
   declare attribute: DiscretePlayerAttributes;
 
@@ -26,8 +32,8 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
   private _rafId: number;
   private _isReachEnd = false;
 
-  constructor(attributes: DiscretePlayerAttributes) {
-    super(merge({}, attributes));
+  constructor(attributes: DiscretePlayerAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, attributes));
 
     this._initAttributes();
     this._initEvents();
@@ -61,6 +67,9 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    * 初始化事件
    */
   private _initEvents = () => {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     this._controller.addEventListener(ControllerEventEnum.OnPlay, (e: FederatedPointerEvent) => {
       e.stopPropagation();
       this.play();
@@ -82,7 +91,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       const middle = Math.floor(e.detail.value) + 0.5;
       this._dataIndex = e.detail.value >= middle ? Math.ceil(e.detail.value) : Math.floor(e.detail.value);
       this._slider.setValue(this._dataIndex);
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
     });
   };
 
@@ -132,13 +141,13 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     }
 
     // 事件触发
-    this.dispatchCustomEvent(PlayerEventEnum.OnPlay);
+    this.dispatchCustomEvent(PlayerEventEnum.play);
     // 重置结束状态
     this._isReachEnd = false;
     // 重置tick时间, 暂停后重新播放也会重新计时
     this._tickTime = Date.now();
     // 开启动画
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, true));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, true));
   };
 
   /**
@@ -157,7 +166,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
 
     // 第一个播放帧, 立即执行
     if (isFirstPlay && this._activeIndex !== this._dataIndex) {
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
       this._activeIndex = this._dataIndex;
     }
     // 中间播放帧, 每一个interval执行一次
@@ -165,7 +174,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this._tickTime = now;
       this._updateDataIndex(forwardStep(this._direction, this._dataIndex, this._minIndex, this._maxIndex));
       this._activeIndex = this._dataIndex;
-      this.dispatchCustomEvent(PlayerEventEnum.OnChange);
+      this.dispatchCustomEvent(PlayerEventEnum.change);
     }
 
     // 终止条件
@@ -176,7 +185,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       this._isReachEnd = true;
     }
 
-    this._rafId = global.getRequestAnimationFrame()(this._play.bind(this, false));
+    this._rafId = vglobal.getRequestAnimationFrame()(this._play.bind(this, false));
   };
 
   /**
@@ -196,11 +205,11 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     // 图标切换
     this._controller.togglePlay();
     // 取消播放动画
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     // 重置ActiveIndex
     this._activeIndex = -1;
     // 播放结束时并且到达终点
-    this.dispatchCustomEvent(PlayerEventEnum.OnEnd);
+    this.dispatchCustomEvent(PlayerEventEnum.end);
   };
 
   /**
@@ -211,10 +220,10 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
       return;
     }
     this._isPlaying = false;
-    global.getCancelAnimationFrame()(this._rafId);
+    vglobal.getCancelAnimationFrame()(this._rafId);
     this._controller.togglePlay();
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnPause);
+    this.dispatchCustomEvent(PlayerEventEnum.pause);
   };
 
   /**
@@ -224,8 +233,8 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     const index = Math.max(this._dataIndex - 1, this._minIndex);
     this._updateDataIndex(index);
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnChange);
-    this.dispatchCustomEvent(PlayerEventEnum.OnBackward);
+    this.dispatchCustomEvent(PlayerEventEnum.change);
+    this.dispatchCustomEvent(PlayerEventEnum.backward);
   };
 
   /**
@@ -235,7 +244,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     const index = Math.min(this._dataIndex + 1, this._maxIndex);
     this._updateDataIndex(index);
 
-    this.dispatchCustomEvent(PlayerEventEnum.OnChange);
-    this.dispatchCustomEvent(PlayerEventEnum.OnForward);
+    this.dispatchCustomEvent(PlayerEventEnum.change);
+    this.dispatchCustomEvent(PlayerEventEnum.forward);
   };
 }

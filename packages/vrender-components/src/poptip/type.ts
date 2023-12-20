@@ -4,7 +4,7 @@ import type {
   IRectGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { Padding, State } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
 
@@ -32,12 +32,14 @@ export type PopTipAttributes = {
   title?: string | string[] | number | number[];
   /** 标题样式 */
   titleStyle?: Partial<ITextGraphicAttribute>;
+  titleFormatMethod?: (t: string | string[] | number | number[]) => string | string[] | number | number[];
   /**
    * 内容文本，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    */
   content?: string | string[] | number | number[];
   /** 内容文本样式 */
   contentStyle?: Partial<ITextGraphicAttribute>;
+  contentFormatMethod?: (t: string | string[] | number | number[]) => string | string[] | number | number[];
   /**
    * 标题与内容的间距
    */
@@ -60,6 +62,9 @@ export type PopTipAttributes = {
    * 最大宽度，像素值。当文字超过最大宽度时，会自动省略。
    */
   maxWidth?: number;
+
+  // 最大宽度比例
+  maxWidthPercent?: number;
 
   visible?: boolean;
   visibleFunc?: (graphic: IGraphic) => boolean;

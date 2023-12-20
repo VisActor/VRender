@@ -1,4 +1,5 @@
-import type { IGroupGraphicAttribute, ITextGraphicAttribute } from '@visactor/vrender';
+import type { IGroupGraphicAttribute, ITextGraphicAttribute, IRichTextCharacter } from '@visactor/vrender-core';
+import type { TextContent } from '../core/type';
 
 export interface IndicatorAttributes extends IGroupGraphicAttribute {
   /**
@@ -65,5 +66,5 @@ export interface IndicatorItemSpec {
   /**
    * 文字样式
    */
-  style?: ITextGraphicAttribute;
+  style?: Omit<ITextGraphicAttribute, 'text'> & TextContent;
 }

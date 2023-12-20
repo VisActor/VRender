@@ -1,6 +1,377 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Dec 2023 07:39:54 GMT and should not be manually modified.
+
+## 0.17.6
+Wed, 20 Dec 2023 07:39:54 GMT
+
+_Version update only_
+
+## 0.17.5
+Tue, 19 Dec 2023 09:13:27 GMT
+
+### Updates
+
+- feat(scrollbar): dispatch scrollDown event
+- feat: labelLine support animate
+- fix: fix issue with arc animate with delayafter
+- feat: label don't create enter animate animationEnter while duration less than 0
+- fix: fix issue with poptip circular dependencies
+
+## 0.17.4
+Thu, 14 Dec 2023 11:00:38 GMT
+
+### Updates
+
+- fix(datazoom): symbol size problem
+
+## 0.17.3
+Wed, 13 Dec 2023 12:04:17 GMT
+
+### Updates
+
+- fix(datazoom): handler zindex to interaction error
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
+- fix: scrollbar slider width/height should not be negative
+- fix: datazoom event block window event. fix @visactor/vchart#1686
+- perf: optimize the `_handleStyle()` in legend
+
+
+- fix: fix the issue of brushEnd trigger multiple times, related https://github.com/VisActor/VChart/issues/1694
+
+## 0.17.1
+Wed, 06 Dec 2023 11:19:22 GMT
+
+_Version update only_
+
+## 0.17.0
+Thu, 30 Nov 2023 12:58:15 GMT
+
+### Updates
+
+- feat: optmize bounds performance
+- perf: add option `skipDefault` to vrender-components
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- feat: discrete legend's pager support position property
+- refactor: move getSizeHandlerPath out of sizlegend
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: support rich text for label, axis, marker,tooltip, indicator and title
+- feat: add mode type of smartInvert
+- feat: place more label for overlapPadding case
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+### Updates
+
+- fix: fix the issue of legend item.shape can not set visible, related https://github.com/VisActor/VChart/issues/1508
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+### Updates
+
+- fix: legendItemHover and legendItemUnHover should trigger once
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+### Updates
+
+- feat: datazoom update callback supports new trigger tag param
+- feat(label): support line/area label
+- feat: lineHeight support string, which means percent
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+_Version update only_
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: padding of title component
+- fix: padding offset of AABBbounds
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+### Updates
+
+- fix: optimize the auto-overlap of axis label, which use rotateBounds when text rotated, relate https://github.com/VisActor/VChart/issues/133
+- fix: flush should not sue width height
+- fix: fix the lastvisible logic of axis's auto-hide
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+### Updates
+
+- feat: add checkbox indeterminate state
+- feat(label): rect label support position `top-right`|`top-left`|`bottom-righ`|`bottom-left`
+- fix: all the group container of marker do not trigger event
+- fix: all the group container of marker do not trigger event
+- fix(datazoom): text bounds when visible is false. fix VisActor/VChart#1281
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+### Updates
+
+- fix: fix the issue of error position of focus when legend item just has label
+
+## 0.16.7
+Mon, 23 Oct 2023 08:53:33 GMT
+
+### Updates
+
+- fix(label): fix the issue that `clampForce` does not work when`overlapPadding` is configured
+
+## 0.16.6
+Mon, 23 Oct 2023 06:30:33 GMT
+
+### Updates
+
+- feat: optimize the layout method of circle axis label
+- fix: fix the layout issue of legend item because of the error logic of `focusStartX`
+
+## 0.16.5
+Fri, 20 Oct 2023 04:22:42 GMT
+
+### Updates
+
+- fix: fix the data-label of line/area, when the group has multiple lines/areas
+
+
+- fix: if in non browser, use this.stage
+
+## 0.16.4
+Thu, 19 Oct 2023 10:30:12 GMT
+
+### Updates
+
+- feat(datazoom): support zoomlock & span & throttle setting and rename callback
+- feat: datazoom and scrollbar support realtime
+
+## 0.16.3
+Wed, 18 Oct 2023 07:43:09 GMT
+
+### Updates
+
+- fix: fix the issue with poptip does not disappear when scrolling, closed #580
+- fix: brush and data-zoom should stop event propagation
+- fix: fix title component layout height
+- feat(vrender-components): add LineDataLabel support DataLabel of line
+
+
+
+## 0.16.2
+Tue, 10 Oct 2023 11:48:48 GMT
+
+### Updates
+
+- feat: add checkbox component
+- feat: provide disableActiveEffect api to support users to close the interactive effect of components
+
+
+- fix: fix event not remove as expected due to capture, closed #570
+- refactor: use polygon to replace line to support cornerRadius
+- feat: add `getArea()` `getLine()` and `getLabel()` method for markLine markArea component
+
+## 0.16.1
+Mon, 09 Oct 2023 09:51:01 GMT
+
+### Updates
+
+-     feat: support `syncState` in label component
+- fix: fix the issue of dataFilter result in incorrect arc label layout
+- fix: fix the problem of drag events not being consumed in the component
+
+## 0.16.0
+Thu, 28 Sep 2023 07:23:52 GMT
+
+### Updates
+
+- feat: support scrollbar, closed #529
+
+## 0.15.5
+Wed, 27 Sep 2023 09:33:50 GMT
+
+_Version update only_
+
+## 0.15.4
+Mon, 25 Sep 2023 03:05:18 GMT
+
+### Updates
+
+- feat: add outsideEnable config of smartInvert
+
+## 0.15.3
+Wed, 20 Sep 2023 13:12:13 GMT
+
+### Updates
+
+- fix: label not show when dataFilter
+- feat: emit change events of data-zoom
+
+
+- feat: brush support attributes: trigger, udpateTrigger, endTrigger, resetTrigger, hasMask
+
+
+- fix(label): fix the issue of invalid position in overlap strategy might throw error
+
+## 0.15.2
+Thu, 14 Sep 2023 09:55:56 GMT
+
+_Version update only_
+
+## 0.15.1
+Wed, 13 Sep 2023 02:21:58 GMT
+
+### Updates
+
+- feat: support `label.autoRange` for markLine and markPoint components
+- feat: segment and markLine component supports multiple segment draw
+- feat: add `clipInRange` property to control whether do the clip for mark component, and rename clipRange to limitRect
+- fix: roseChart inner labels are unclear, #884
+- fix: the layout of the inner label when the pie chart has a center offset
+
+## 0.15.0
+Tue, 12 Sep 2023 12:20:48 GMT
+
+### Minor changes
+
+- refactor: seperate grid from axis, relate #327
+
+### Patches
+
+- feat: pie label line support smooth line
+- fix: legend custom event should contain the nativeEvent object
+- fix: overwrite function attribute for components
+
+### Updates
+
+- fix: fix empty items error in axis component when label flush is true
+- fix: pie chart labels are not drawn as expected when animation is turned on, #750
+
+## 0.14.8
+Thu, 07 Sep 2023 11:56:00 GMT
+
+### Patches
+
+- fix: fix the bug of rose chart label conflict with legend, fixed the issue #453
+
+## 0.14.7
+Thu, 31 Aug 2023 10:03:38 GMT
+
+### Patches
+
+- fix: rose chart label layout 
+- fix player visible error and rename event name
+- fix: fix the issue with poptip, closed #322
+- feat: poptip support wrap
+
+## 0.14.6
+Tue, 29 Aug 2023 11:30:33 GMT
+
+### Patches
+
+- feat: support simple polygon and point label
+- feat(component): support label overlapPadding for sparse display
+- fix: axis label's flush should handle before overlap
+- feat(brush): add event release function
+
+## 0.14.5
+Wed, 23 Aug 2023 11:53:28 GMT
+
+### Patches
+
+- feat: config 'pickable: flase' as default
+- fix: fix the issue with poptip, closed #322
+- fix: slider should handle the scenarios where max and min values are the same
+
+## 0.14.4
+Fri, 18 Aug 2023 10:16:08 GMT
+
+### Patches
+
+- feat: change labelLine of arc label from path mark to line mark to adapt to animation'
+- feat: smartInvert support fillStrategy strokeStrategy
+- fix: user's align config should be first
+- fix: label shoud omit automaticly when label's width exceeds item's width, relate https://github.com/VisActor/VChart/issues/505
+
+## 0.14.3
+Wed, 16 Aug 2023 06:46:13 GMT
+
+_Version update only_
+
+## 0.14.2
+Fri, 11 Aug 2023 10:05:27 GMT
+
+_Version update only_
+
+## 0.14.1
+Thu, 10 Aug 2023 12:14:14 GMT
+
+_Version update only_
+
+## 0.14.0
+Thu, 10 Aug 2023 07:22:55 GMT
+
+### Minor changes
+
+- feat: add `verticalMinSize` and `containerAlign` for line type axis, `verticalMinSize` is used to set the minumum vertical size of axis, and `containerAlign` is to set the all labels's alignment in axis container, support https://github.com/VisActor/VChart/issues/380
+- refactor: rename global and window to vglobal and vwindow
+
+### Patches
+
+- feat: arc label sink
+- feat: modify arcLabel position
+- fix: the axis label's textAlign and textBaseline should auto adjust when angle is set, releate https://github.com/VisActor/VChart/issues/439
+- fix: panel only works for line axis
+- fix: line axis states should set default value
+- feat(component): label component support avoidMarks
+- feat(component): label component support custom layout and dataFilter
+- fix: fix the issue of using interactive layer in only on canvas env
+
+### Updates
+
+- feat(brush): add sizeThreshold setting
+
+## 0.13.10
+Wed, 09 Aug 2023 07:34:23 GMT
+
+### Patches
+
+- fix(brush): fix brushEnd interactive judge and reconfig operateType
+- fix(brush): reconfig operateType and add operateType about click space
+- fix: it should consider the `maxLineWidth` and \ set in `label.style` when do auto limit, relate https://github.com/VisActor/VChart/issues/456
+- math.floor axis label size to determine whether it exceeds, fixed https://github.com/VisActor/VChart/issues/477
+
+## 0.13.9
+Tue, 08 Aug 2023 09:27:52 GMT
+
+### Patches
+
+- fix(components): overlap bitmap test will intercept invalid range, fix #265
 
 ## 0.13.8
 Thu, 03 Aug 2023 10:04:34 GMT
@@ -21,6 +392,11 @@ Wed, 02 Aug 2023 03:13:00 GMT
 
 - feat(chore): trigger publish
 - fix(legend): when discrete legend's item's width does not exceed maxWidth, it should use its own width, fix:https://github.com/VisActor/VChart/issues/300
+
+### Updates
+
+- feat(marker): add formatMethod of label
+- fix(dataZoom): updateStateCallback don not effect when setStartAndEnd
 
 ## 0.13.6
 Fri, 28 Jul 2023 07:17:04 GMT
@@ -62,6 +438,10 @@ Fri, 21 Jul 2023 10:50:41 GMT
 - fix(vrender-components): fix the calculation of axis title offset
 - fix(vrender-components): fix the issue of bounds when labelContainer is empty
 
+### Updates
+
+- fix: fix the poptip not work due to mount and unmount issue
+
 ## 0.13.1
 Thu, 20 Jul 2023 10:41:23 GMT
 
@@ -83,6 +463,10 @@ Wed, 19 Jul 2023 08:29:52 GMT
 - feat(axis): support custom method for autohide
 - feat: tooltip supports rich text which can wrap
 - fix(legend): compact the undefiend scene when use Object.keys
+
+### Updates
+
+- perf(marker): performance enhance
 
 ## 0.12.3
 Wed, 12 Jul 2023 12:30:46 GMT
@@ -118,6 +502,11 @@ Thu, 06 Jul 2023 09:09:12 GMT
 - fix: tooltip should not throw error when title not exist
 
 
+
+### Updates
+
+- fix(marker): pickable problem
+- fix(marker): add interactive config
 
 ## 0.11.1
 Tue, 27 Jun 2023 13:38:36 GMT
@@ -167,6 +556,10 @@ Fri, 16 Jun 2023 03:13:09 GMT
 - fix enableView3dTranform
 - fix legend shape's color does not change in unselected state
 - upgrade vrender
+
+### Updates
+
+- release
 
 ## 0.9.1
 Thu, 08 Jun 2023 11:34:32 GMT

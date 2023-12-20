@@ -11,6 +11,7 @@ import replace from '@rollup/plugin-replace';
 import terser from '@rollup/plugin-terser';
 import url from '@rollup/plugin-url';
 import Alias from '@rollup/plugin-alias';
+import { visualizer } from 'rollup-plugin-visualizer';
 import type { Config } from './config';
 
 function getExternal(
@@ -33,6 +34,17 @@ export function getRollupOptions(
   babelPlugins: BabelPlugins,
   config: Config
 ): RollupOptions {
+  const analysisPlugins = config.analysis
+    ? [
+        visualizer({
+          open: true,
+          gzipSize: true,
+          emitFile: true,
+          template: 'treemap'
+        })
+      ]
+    : [];
+
   return {
     input: entry,
     external: getExternal(rawPackageJson, config.external),
@@ -57,6 +69,7 @@ export function getRollupOptions(
         destDir: path.resolve(projectRoot, config.outputDir.umd!)
       }),
       Alias({ entries: config.alias }),
+      ...analysisPlugins,
       ...(config.minify ? [terser()] : []),
       ...((config.rollupOptions.plugins as Plugin[]) || [])
     ]

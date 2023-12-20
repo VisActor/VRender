@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IRenderService,
@@ -10,8 +9,8 @@ import type {
   IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
-} from '@visactor/vrender';
-import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme } from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 
@@ -61,8 +60,8 @@ export class RoughCanvasRectRender implements IGraphicRender {
       stroke = rectAttribute.stroke,
       fillColor = rectAttribute.fill,
       strokeColor = rectAttribute.stroke,
-      width = rectAttribute.width,
-      height = rectAttribute.height,
+      x1,
+      y1,
       lineWidth = rectAttribute.lineWidth,
       maxRandomnessOffset = defaultRouthThemeSpec.maxRandomnessOffset,
       roughness = defaultRouthThemeSpec.roughness,
@@ -86,6 +85,12 @@ export class RoughCanvasRectRender implements IGraphicRender {
       preserveVertices = defaultRouthThemeSpec.preserveVertices,
       fixedDecimalPlaceDigits = defaultRouthThemeSpec.fixedDecimalPlaceDigits
     } = rect.attribute as any;
+
+    let { width = rectAttribute.width, height = rectAttribute.height } = rect.attribute;
+
+    width = (width ?? x1 - x) || 0;
+    height = (height ?? y1 - y) || 0;
+
     rc.rectangle(x, y, width, height, {
       fill: fill ? (fillColor as string) : undefined,
       stroke: stroke ? (strokeColor as string) : undefined,

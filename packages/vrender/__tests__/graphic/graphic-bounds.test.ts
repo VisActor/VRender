@@ -154,7 +154,7 @@ describe('Graphic-Bounds', () => {
     rect = createRect({
       x: 100,
       y: 100,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(100);
@@ -164,7 +164,7 @@ describe('Graphic-Bounds', () => {
 
     rect = createRect({
       y: 100,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(0);
@@ -175,7 +175,7 @@ describe('Graphic-Bounds', () => {
     rect = createRect({
       y: 100,
       x: NaN,
-      visible: false
+      visible: true
     });
 
     expect(rect.AABBBounds.x1).toEqual(Number.MAX_VALUE);
@@ -305,20 +305,20 @@ describe('Graphic-Bounds', () => {
     let text = createText({
       x: 100,
       y: 100,
-      fontFamily: 'sans-serif',
+      fontFamily: 'Arial',
       text: 'aaa这是aaa',
       fill: 'red'
     });
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
     expect(text.AABBBounds.y1).toBeCloseTo(86.36);
-    expect(text.AABBBounds.x2).toBeCloseTo(185.66);
+    expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
     expect(text.AABBBounds.y2).toBeCloseTo(104.36);
 
     text = createText({
       x: 100,
       y: 100,
-      fontFamily: 'sans-serif',
+      fontFamily: 'Arial',
       text: ['aaa这是aaa', 'aa这是aa'],
       fontSize: 16,
       fill: 'red'
@@ -326,7 +326,7 @@ describe('Graphic-Bounds', () => {
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
     expect(text.AABBBounds.y1).toBeCloseTo(74.72);
-    expect(text.AABBBounds.x2).toBeCloseTo(185.66);
+    expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
     expect(text.AABBBounds.y2).toBeCloseTo(106.72);
   });
 

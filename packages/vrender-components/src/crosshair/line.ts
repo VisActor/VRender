@@ -1,12 +1,15 @@
 /**
  * @description 直线类型 crosshair
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
-import { RegionLocationCfg } from '../core/type';
+import type { RegionLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
-import { LineCrosshairAttrs } from './type';
+import type { LineCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
+import { loadLineCrosshairComponent } from './register';
 
+loadLineCrosshairComponent();
 export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {
@@ -16,8 +19,8 @@ export class LineCrosshair extends CrosshairBase<LineCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: LineCrosshairAttrs) {
-    super(merge({}, LineCrosshair.defaultAttributes, attributes));
+  constructor(attributes: LineCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

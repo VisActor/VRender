@@ -1,4 +1,5 @@
 import GUI from 'lil-gui';
+import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { Segment } from '../../../src';

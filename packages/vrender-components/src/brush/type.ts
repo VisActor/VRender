@@ -1,6 +1,23 @@
-import { IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender';
+import type { GraphicEventType, IGroupGraphicAttribute, IPolygonGraphicAttribute } from '@visactor/vrender-core';
+import type { IDelayType } from '../interface';
 
 export interface BrushAttributes extends IGroupGraphicAttribute {
+  /**
+   * 触发框选的事件名称
+   */
+  trigger?: GraphicEventType;
+  /**
+   * 更新框选的事件名称
+   */
+  updateTrigger?: GraphicEventType;
+  /**
+   * 结束框选的事件名称
+   */
+  endTrigger?: GraphicEventType;
+  /**
+   * 清空框选的事件名称
+   */
+  resetTrigger?: GraphicEventType;
   /**
    * 可交互范围
    */
@@ -30,6 +47,8 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default [0,0]
    */
   yRange?: [number, number];
+  /** 是否展示brush mask */
+  hasMask?: boolean;
   /**
    * 框选区域的样式
    */
@@ -45,6 +64,10 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    */
   removeOnClick?: boolean;
   /**
+   * brush选框的大小阈值
+   */
+  sizeThreshold?: number;
+  /**
    * 事件触发延迟类型
    * @default 'throttle'
    */
@@ -54,9 +77,22 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    * @default 0
    */
   delayTime?: number;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export type IBrushType = 'x' | 'y' | 'rect' | 'polygon';
 export type IBrushMode = 'single' | 'multiple';
 
-export type IDelayType = 'debounce' | 'throttle';
+export enum IOperateType {
+  drawStart = 'drawStart',
+  drawEnd = 'drawEnd',
+  drawing = 'drawing',
+  moving = 'moving',
+  moveStart = 'moveStart',
+  moveEnd = 'moveEnd',
+  brushClear = 'brushClear'
+}

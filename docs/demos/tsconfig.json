@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "preserve",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -18,5 +19,16 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true
   },
+  "references": [
+    {
+      "path": "../../packages/vrender/"
+    },
+    {
+      "path": "../../packages/vrender-core/"
+    },
+    {
+      "path": "../../packages/vrender-kits/"
+    }
+  ],
   "include": ["src"]
 }

@@ -1,21 +1,42 @@
 /**
  * @description 标签组件
  */
-import { isEmpty, merge } from '@visactor/vutils';
-import type { ILine, ISymbol } from '@visactor/vrender';
-import { createSymbol, createLine } from '@visactor/vrender';
+import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
+import type { ISymbol } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { SegmentAttributes, SymbolAttributes } from './type';
+import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
+import { loadSegmentComponent } from './register';
 
+loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
 
-  line!: ILine;
   startSymbol?: ISymbol;
   endSymbol?: ISymbol;
 
   private _startAngle!: number;
+  /**
+   * 外部获取segment起点正方向
+   */
+  getStartAngle() {
+    return this._startAngle;
+  }
+
   private _endAngle!: number;
+  /**
+   * 外部获取segment终点正方向
+   */
+  getEndAngle() {
+    return this._endAngle;
+  }
+
+  private _mainSegmentPoints: Point[]; // 组成主线段的点
+  getMainSegmentPoints() {
+    return this._mainSegmentPoints;
+  }
 
   static defaultAttributes: Partial<SegmentAttributes> = {
     visible: true,
@@ -51,27 +72,23 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     }
   };
 
-  constructor(attributes: SegmentAttributes) {
-    super(merge({}, Segment.defaultAttributes, attributes));
+  constructor(attributes: SegmentAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Segment.defaultAttributes, attributes));
   }
 
-  protected computeLineAngle() {
-    const { points } = this.attribute as SegmentAttributes;
-    const start = points[0];
-    const startInside = points[1];
-    const endInside = points[points.length - 2];
-    const end = points[points.length - 1];
-    const startVector = [start.x - startInside.x, start.y - startInside.y]; // 起点正方向向量
-    const startAngle = Math.atan2(startVector[1], startVector[0]); // 起点正方向角度
-    const endVector = [end.x - endInside.x, end.y - endInside.y]; // 终点正方向向量
-    const endAngle = Math.atan2(endVector[1], endVector[0]); // 终点正方向角度
-
-    this._startAngle = startAngle;
-    this._endAngle = endAngle;
-  }
   protected render() {
     this.removeAllChild();
-    const { points, startSymbol, endSymbol, lineStyle, state, visible = true } = this.attribute as SegmentAttributes;
+    this._reset();
+    const {
+      // points,
+      startSymbol,
+      endSymbol,
+      lineStyle,
+      state,
+      visible = true,
+      multiSegment,
+      mainSegmentIndex
+    } = this.attribute as SegmentAttributes;
 
     if (!visible) {
       return;
@@ -81,17 +98,136 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     // 计算角度的原因：
     // 1. segment symbol的自动旋转提供参数
     // 2. 使用segment时，需要根据line的角度对附加元素进行自动旋转（比如：markLine的标签, markPoint的装饰线）
-    if (points.length > 1) {
-      this.computeLineAngle();
-    }
+    this._computeLineAngle();
 
     // 绘制start和end symbol
-    const startSymbolShape = this.renderSymbol(startSymbol as SymbolAttributes, 'start');
-    const endSymbolShape = this.renderSymbol(endSymbol as SymbolAttributes, 'end');
+    const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, 'start');
+    const endSymbolShape = this._renderSymbol(endSymbol as SymbolAttributes, 'end');
 
     this.startSymbol = startSymbolShape;
     this.endSymbol = endSymbolShape;
 
+    if (multiSegment) {
+      const points = [...this.attribute.points];
+      if (isValidNumber(mainSegmentIndex)) {
+        points[mainSegmentIndex] = this._clipPoints(points[mainSegmentIndex] as Point[]);
+      } else {
+        const clipPoints = this._clipPoints(flattenArray(points) as Point[]);
+        points[0][0] = clipPoints[0];
+        (points[points.length - 1] as Point[])[(points[points.length - 1] as Point[]).length - 1] =
+          clipPoints[clipPoints.length - 1];
+      }
+      points.forEach((point: Point[], index) => {
+        const line = graphicCreator.line({
+          points: point,
+          ...(isArray(lineStyle) ? lineStyle[index] ?? lineStyle[lineStyle.length - 1] : lineStyle),
+          fill: false
+        });
+
+        line.name = `${this.name}-line`;
+        line.id = this._getNodeId('line' + index);
+        if (!isEmpty(state?.line)) {
+          line.states = isArray(state.line) ? state.line[index] ?? state.line[state.line.length - 1] : state.line;
+        }
+        this.add(line);
+      });
+    } else {
+      const line = graphicCreator.polygon({
+        points: this._clipPoints(this.attribute.points as Point[]),
+        ...array(lineStyle)[0],
+        fill: false,
+        closePath: false
+      });
+
+      line.name = `${this.name}-line`;
+      line.id = this._getNodeId('line');
+      if (!isEmpty(state?.line)) {
+        line.states = [].concat(state.line)[0];
+      }
+      this.add(line);
+    }
+  }
+
+  private _renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
+    const points = this._getMainSegmentPoints();
+    if (!points.length) {
+      return;
+    }
+
+    const { autoRotate = true } = attribute;
+    let symbol;
+    if (attribute?.visible) {
+      const startAngle = this._startAngle;
+      const endAngle = this._endAngle;
+      const { state } = this.attribute as SegmentAttributes;
+      const start = points[0];
+      const end = points[points.length - 1];
+      const { refX = 0, refY = 0, refAngle = 0, style, symbolType, size = 12 } = attribute;
+      let position;
+      let rotate;
+      if (dim === 'start') {
+        position = {
+          x:
+            start.x +
+            (isValidNumber(startAngle) ? refX * Math.cos(startAngle) + refY * Math.cos(startAngle - Math.PI / 2) : 0),
+          y:
+            start.y +
+            (isValidNumber(startAngle) ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
+        };
+        rotate = startAngle + Math.PI / 2; // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
+      } else {
+        position = {
+          x:
+            end.x + (isValidNumber(endAngle) ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
+          y: end.y + (isValidNumber(endAngle) ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
+        };
+        rotate = endAngle + Math.PI / 2;
+      }
+
+      symbol = graphicCreator.symbol({
+        ...position,
+        symbolType: symbolType as string,
+        size,
+        angle: autoRotate ? rotate + refAngle : 0,
+        strokeBoundsBuffer: 0,
+        ...style
+      });
+      symbol.name = `${this.name}-${dim}-symbol`;
+      symbol.id = this._getNodeId(`${dim}-symbol`);
+
+      if (!isEmpty(state?.symbol)) {
+        symbol.states = state.symbol;
+      }
+
+      this.add(symbol);
+    }
+    return symbol;
+  }
+
+  private _getMainSegmentPoints(): Point[] {
+    if (this._mainSegmentPoints) {
+      return this._mainSegmentPoints;
+    }
+    const { points: originPoints, multiSegment, mainSegmentIndex } = this.attribute as SegmentAttributes;
+
+    let points: Point[];
+    // 需要做下约束判断
+    if (multiSegment) {
+      if (isValidNumber(mainSegmentIndex)) {
+        points = originPoints[mainSegmentIndex] as Point[];
+      } else {
+        points = flattenArray(originPoints);
+      }
+    } else {
+      points = originPoints as Point[];
+    }
+    this._mainSegmentPoints = points;
+
+    return points;
+  }
+
+  private _clipPoints(points: Point[]) {
+    const { startSymbol, endSymbol } = this.attribute as SegmentAttributes;
     // 通过改变line起点和终点的方式达到symbol在fill为false的情况下，也可以遮盖line的效果
     let pointsAfterClip = points;
     if (startSymbol?.visible) {
@@ -111,78 +247,32 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       pointsAfterClip = [...pointsAfterClip.slice(0, pointsAfterClip.length - 1), pointsEnd];
     }
 
-    const line = createLine({
-      points: pointsAfterClip,
-      fill: false,
-      ...lineStyle
-    });
+    return pointsAfterClip;
+  }
 
-    line.name = 'line';
-    line.id = this._getNodeId('line');
-    if (!isEmpty(state?.line)) {
-      line.states = state.line;
+  private _computeLineAngle() {
+    const points = this._getMainSegmentPoints();
+    if (points.length <= 1) {
+      return;
     }
-    this.line = line;
-    this.add(line);
+    const start = points[0];
+    const startInside = points[1];
+    const endInside = points[points.length - 2];
+    const end = points[points.length - 1];
+    const startVector = [start.x - startInside.x, start.y - startInside.y]; // 起点正方向向量
+    const startAngle = Math.atan2(startVector[1], startVector[0]); // 起点正方向角度
+    const endVector = [end.x - endInside.x, end.y - endInside.y]; // 终点正方向向量
+    const endAngle = Math.atan2(endVector[1], endVector[0]); // 终点正方向角度
+
+    this._startAngle = startAngle;
+    this._endAngle = endAngle;
   }
 
-  private renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
-    const { autoRotate = true } = attribute;
-    let symbol;
-    if (attribute?.visible) {
-      const startAngle = this._startAngle;
-      const endAngle = this._endAngle;
-      const { points, state } = this.attribute as SegmentAttributes;
-      const start = points[0];
-      const end = points[points.length - 1];
-      const { refX = 0, refY = 0, refAngle = 0, style, symbolType, size = 12 } = attribute;
-      let position;
-      let rotate;
-      if (dim === 'start') {
-        position = {
-          x: start.x + (startAngle ? refX * Math.cos(startAngle) + refY * Math.cos(startAngle - Math.PI / 2) : 0),
-          y: start.y + (startAngle ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
-        };
-        rotate = startAngle + Math.PI / 2; // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
-      } else {
-        position = {
-          x: end.x + (endAngle ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
-          y: end.y + (endAngle ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
-        };
-        rotate = endAngle + Math.PI / 2;
-      }
-
-      symbol = createSymbol({
-        ...position,
-        symbolType: symbolType as string,
-        size,
-        angle: autoRotate ? rotate + refAngle : 0,
-        strokeBoundsBuffer: 0,
-        ...style
-      });
-      symbol.name = `${dim}-symbol`;
-      symbol.id = this._getNodeId(`${dim}-symbol`);
-
-      if (!isEmpty(state?.symbol)) {
-        symbol.states = state.symbol;
-      }
-
-      this.add(symbol);
-    }
-    return symbol;
-  }
-
-  /**
-   * 外部获取segement起点正方向
-   */
-  getStartAngle() {
-    return this._startAngle;
-  }
-
-  /**
-   * 外部获取segement终点正方向
-   */
-  getEndAngle() {
-    return this._endAngle;
+  private _reset() {
+    this.startSymbol = null;
+    this.endSymbol = null;
+    this._startAngle = null;
+    this._endAngle = null;
+    this._mainSegmentPoints = null;
   }
 }

@@ -1,13 +1,16 @@
 /**
  * @description sector 类型 crosshair，用于极坐标系下
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge, getAngleByPoint, radianToDegree } from '@visactor/vutils';
-import { PointLocationCfg } from '../core/type';
+import type { PointLocationCfg } from '../core/type';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import { CrosshairBase } from './base';
-import { SectorCrosshairAttrs } from './type';
+import type { SectorCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
+import { loadSectorCrosshairComponent } from './register';
 
+loadSectorCrosshairComponent();
 export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
   static defaultAttributes = {
     sectorStyle: {
@@ -16,8 +19,8 @@ export class SectorCrosshair extends CrosshairBase<SectorCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: SectorCrosshairAttrs) {
-    super(merge({}, SectorCrosshair.defaultAttributes, attributes));
+  constructor(attributes: SectorCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, SectorCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

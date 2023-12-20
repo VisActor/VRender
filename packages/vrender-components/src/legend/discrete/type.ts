@@ -3,7 +3,7 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { BaseGraphicAttributes, Padding } from '../../core/type';
 import type { PagerAttributes } from '../../pager';
 import type { LegendBaseAttributes } from '../type';
@@ -75,6 +75,7 @@ export type LegendItem = {
    * 图例项的 shape 图标的配置
    */
   shape?: {
+    visible?: boolean;
     /** shape 同后面 label 的间距 */
     space?: number;
   } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute> | StyleCallback<Partial<ISymbolGraphicAttribute>>>;
@@ -192,5 +193,10 @@ export type DiscreteLegendAttrs = {
      * 动画执行效果
      */
     animationEasing?: EasingType;
+    /**
+     * 分页器的显示位置，默认 'middle'
+     * @default 'middle'
+     */
+    position?: 'start' | 'middle' | 'end';
   };
 } & LegendBaseAttributes;

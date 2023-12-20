@@ -1,5 +1,7 @@
-import { ACustomAnimate, AnimateMode, EasingType, IGraphic, IGroup } from '@visactor/vrender';
-import { Dict, cloneDeep, interpolateString, isEqual, isValidNumber } from '@visactor/vutils';
+import type { EasingType, IGraphic, IGroup } from '@visactor/vrender-core';
+import { ACustomAnimate, AnimateMode } from '@visactor/vrender-core';
+import type { Dict } from '@visactor/vutils';
+import { cloneDeep, interpolateString, isEqual, isValidNumber } from '@visactor/vutils';
 import { traverseGroup } from '../../util';
 
 function getElMap(g: IGroup) {
@@ -83,8 +85,8 @@ export class GroupTransition extends ACustomAnimate<any> {
     Object.keys(this._newElementAttrMap).forEach(id => {
       const { node, attrs, state } = this._newElementAttrMap[id];
       if (state === 'enter') {
-        duration = isValidNumber(this.params.enter?.duration) ? this.params.enter.duration : duration;
-        easing = this.params.enter?.easing ? this.params.enter?.easing : easing;
+        duration = isValidNumber(this.params?.enter?.duration) ? this.params?.enter.duration : duration;
+        easing = this.params?.enter?.easing ? this.params?.enter?.easing : easing;
       }
       if ((node as IGraphic).type === 'path') {
         (node as IGraphic)

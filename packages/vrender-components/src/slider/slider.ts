@@ -1,30 +1,27 @@
-import { isNil, merge, clamp, isValid, array, isObject, isArray } from '@visactor/vutils';
 /**
  * @description slider 滑块组件
  * TODO:
  * 3. step 功能开发
  * 4. tooltip 功能开发
  */
-import {
-  createGroup,
-  createText,
+import type {
   IGroup,
   ISymbol,
   IGraphic,
-  global,
-  createRect,
-  createSymbol,
   ISymbolGraphicAttribute,
   IText,
   ITextGraphicAttribute,
   FederatedPointerEvent,
-  CustomEvent,
   Cursor
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
+import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
 
 import type { SliderAttributes } from './type';
+import type { ComponentOptions } from '../interface';
+import { loadSliderComponent } from './register';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -36,6 +33,8 @@ function convertValueToRange(value: number | [number, number]) {
 function getDefaultCursor(isHorizontal: boolean) {
   return isHorizontal ? 'ew-resize' : 'ns-resize';
 }
+
+loadSliderComponent();
 
 export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   name = 'slider';
@@ -118,16 +117,21 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return this._endHandler;
   }
 
-  constructor(attributes: SliderAttributes) {
-    super(merge({}, Slider.defaultAttributes, attributes));
+  constructor(attributes: SliderAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Slider.defaultAttributes, attributes));
   }
 
   /**
    * 更新值域
    */
   setValue(value: number | number[]) {
-    const [startValue, endValue] = array(value);
     const { layout, railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    if (max === min) {
+      return;
+    }
+
+    const [startValue, endValue] = array(value);
+
     const { startHandler, endHandler } = this._getHandlers();
     const railLen = layout === 'vertical' ? railHeight : railWidth;
     const startPos = ((startValue - min) / (max - min)) * railLen;
@@ -167,7 +171,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const isHorizontal = layout === 'horizontal';
     this._isHorizontal = isHorizontal;
 
-    const innerView = createGroup({
+    const innerView = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -179,7 +183,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     let startTextShape;
     if (startText && startText.visible) {
       // 渲染首部文本
-      startTextShape = createText({
+      startTextShape = graphicCreator.text({
         x: isHorizontal ? 0 : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : 0,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -193,13 +197,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const space = isValid(startText.space) ? startText.space : 0;
       startLen += (isHorizontal ? startTextShape.AABBBounds.width() : startTextShape.AABBBounds.height()) + space;
     }
-    const mainContainer = createGroup({
+    const mainContainer = graphicCreator.group({
       x: isHorizontal ? startLen : 0,
       y: isHorizontal ? 0 : startLen
     });
     innerView.add(mainContainer);
 
-    const railContainer = createGroup({
+    const railContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -216,7 +220,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       const space = isValid(endText.space) ? endText.space : 0;
 
       // 渲染首部文本
-      endTextShape = createText({
+      endTextShape = graphicCreator.text({
         x: isHorizontal ? startLen + space : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : startLen + space,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -246,7 +250,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       cursor = 'pointer';
     }
 
-    const railShape = createRect({
+    const railShape = graphicCreator.rect({
       x: 0,
       y: 0,
       width: railWidth,
@@ -284,9 +288,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const railLen = isHorizontal ? railWidth : railHeight;
 
     const [startValue, endValue] = convertValueToRange(value);
-
     // 单滑块
-    const handlerStart = (((startValue as number) - min) / (max - min)) * railLen;
+    const handlerStart = max === min ? (range ? 0 : railLen) : (((startValue as number) - min) / (max - min)) * railLen;
     const startHandler = this._renderHandler({
       x: isHorizontal ? handlerStart : railWidth / 2,
       y: isHorizontal ? railHeight / 2 : handlerStart,
@@ -301,7 +304,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._currentValue.startPos = handlerStart;
 
     if (handlerTextVisible) {
-      const startHandlerText = this._renderHandlerText(startValue);
+      const startHandlerText = this._renderHandlerText(startValue, range ? 'start' : 'end');
       startHandlerText.name = SLIDER_ELEMENT_NAME.startHandlerText;
       container.add(startHandlerText);
 
@@ -311,7 +314,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (range) {
       // 绘制第二个滑块
       // 单滑块
-      const handlerEnd = (((endValue as number) - min) / (max - min)) * railLen;
+      const handlerEnd = max === min ? railLen : (((endValue as number) - min) / (max - min)) * railLen;
       const endHandler = this._renderHandler({
         x: isHorizontal ? handlerEnd : railWidth / 2,
         y: isHorizontal ? railHeight / 2 : handlerEnd,
@@ -326,7 +329,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       this._currentValue.endPos = handlerEnd;
 
       if (handlerTextVisible) {
-        const endHandlerText = this._renderHandlerText(endValue);
+        const endHandlerText = this._renderHandlerText(endValue, 'end');
         endHandlerText.name = SLIDER_ELEMENT_NAME.endHandlerText;
         container.add(endHandlerText);
 
@@ -337,23 +340,40 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   // 渲染选中区域
   protected _renderTrack(container: IGroup) {
-    const { range, min, max, railHeight, railWidth, trackStyle, railStyle, slidable } = this
+    const { range, min, max, railHeight, railWidth, trackStyle, railStyle, slidable, value } = this
       .attribute as SliderAttributes;
-    let { value } = this.attribute as SliderAttributes;
+
+    let startValue;
+    let endValue;
+
     if (isNil(value)) {
-      value = [min, max];
+      if (range) {
+        startValue = min;
+        endValue = max;
+      } else {
+        startValue = endValue = min;
+      }
+    } else {
+      if (range) {
+        const clampValue = clampRange(value as [number, number], min, max);
+        startValue = clampValue[0];
+        endValue = clampValue[1];
+      } else {
+        startValue = min;
+        endValue = clamp(value as number, min, max);
+      }
     }
 
     const isHorizontal = this._isHorizontal;
     const railLen = isHorizontal ? railWidth : railHeight;
     // eslint-disable-next-line prefer-const
-    let [startValue, endValue] = convertValueToRange(value);
+    // let [startValue, endValue] = convertValueToRange(value);
 
     if (!range) {
       startValue = min;
     }
 
-    const trackContainer = createGroup({
+    const trackContainer = graphicCreator.group({
       x: 0,
       y: 0,
       width: railWidth,
@@ -376,10 +396,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       cursor = getDefaultCursor(isHorizontal);
     }
 
-    const trackWidth = ((endValue - startValue) / (max - min)) * railLen;
-    const track = createRect({
-      x: isHorizontal ? ((startValue - min) / (max - min)) * railLen : 0,
-      y: isHorizontal ? 0 : ((startValue - min) / (max - min)) * railLen,
+    const trackWidth = max === min ? railLen : ((endValue - startValue) / (max - min)) * railLen;
+    const startPos = max === min ? 0 : ((startValue - min) / (max - min)) * railLen;
+    const track = graphicCreator.rect({
+      x: isHorizontal ? startPos : 0,
+      y: isHorizontal ? 0 : startPos,
       width: isHorizontal ? trackWidth : railWidth,
       height: isHorizontal ? railHeight : trackWidth,
       cursor,
@@ -393,12 +414,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   protected _renderHandler(style: Partial<ISymbolGraphicAttribute>) {
     // 渲染单个滑块
-    const handler = createSymbol(style);
+    const handler = graphicCreator.symbol(style);
 
     return handler;
   }
 
-  private _renderHandlerText(value: number) {
+  private _renderHandlerText(value: number, position: string) {
     const {
       align,
       min,
@@ -412,13 +433,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const isHorizontal = this._isHorizontal;
     const railLen = isHorizontal ? railWidth : railHeight;
-    const handlerStart = (((value as number) - min) / (max - min)) * railLen;
+    const handlerStart =
+      max === min ? (position === 'start' ? 0 : railLen) : (((value as number) - min) / (max - min)) * railLen;
     const textSpace = handlerText.space ?? 4;
     const textStyle: ITextGraphicAttribute = {
       text: handlerText?.formatter ? handlerText.formatter(value) : value.toFixed(handlerText?.precision ?? 0),
       lineHeight: handlerText.style?.lineHeight,
-      cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal),
-      ...handlerText.style
+      cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal)
     };
     if (isHorizontal) {
       if (align === 'top') {
@@ -451,11 +472,17 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
 
     // 展示 handler 当前所在的数值
-    const textShape = createText(textStyle);
+    const textShape = graphicCreator.text({
+      ...textStyle,
+      ...handlerText.style
+    });
     return textShape;
   }
 
   private _bindEvents() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const { slidable, range } = this.attribute as SliderAttributes;
     if (slidable) {
       if (this._startHandler) {
@@ -498,28 +525,26 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     e.stopPropagation();
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
-    if (global.env === 'browser') {
-      global.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
-      global.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      vglobal.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._currentHandler.addEventListener(
-        'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject
-      );
-      this._currentHandler.addEventListener(
-        'pointerup',
-        this._onHandlerPointerUp as EventListenerOrEventListenerObject
-      );
-      this._currentHandler.addEventListener(
-        'pointerupoutside',
-        this._onHandlerPointerUp as EventListenerOrEventListenerObject
-      );
+      this.stage.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     }
   };
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    if (max === min) {
+      return;
+    }
 
     let currentPos;
     let delta = 0;
@@ -555,17 +580,17 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     this._currentHandler = null;
-    if (global.env === 'browser') {
-      global.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject);
-      global.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
     } else {
-      const currentTarget = e.target;
-      currentTarget.removeEventListener(
-        'pointermove',
-        this._onHandlerPointerMove as EventListenerOrEventListenerObject
-      );
-      currentTarget.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-      currentTarget.removeEventListener(
+      this.stage.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener(
         'pointerupoutside',
         this._onHandlerPointerUp as EventListenerOrEventListenerObject
       );
@@ -575,19 +600,27 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
-    if (global.env === 'browser') {
-      global.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      global.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      vglobal.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      this._track.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this._track.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }
   };
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+
+    if (max === min) {
+      return;
+    }
     const { startHandler, endHandler } = this._getHandlers();
 
     let currentPos;
@@ -638,19 +671,28 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
-    if (global.env === 'browser') {
-      global.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      global.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+    if (vglobal.env === 'browser') {
+      vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      vglobal.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     } else {
-      this._track.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject);
-      this._track.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this._track.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
+        capture: true
+      });
+      this.stage.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
+      this.stage.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
     }
   };
 
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+
+    if (max === min) {
+      return;
+    }
+
     const startHandler = this._startHandler as ISymbol;
     const endHandler = this._endHandler;
 
@@ -780,7 +822,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _dispatchChangeEvent() {
     const isRange = !!this.attribute.range;
     const currentValue = this._currentValue;
-    const changeEvent = new CustomEvent('change', {
+
+    this._dispatchEvent('change', {
       value: isRange
         ? [
             Math.min(currentValue.endValue as number, currentValue.startValue as number),
@@ -794,10 +837,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
           ]
         : currentValue.startPos
     });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-    this.dispatchEvent(changeEvent);
   }
 
   private _getHandlers() {

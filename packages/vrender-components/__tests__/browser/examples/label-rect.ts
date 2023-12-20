@@ -1,4 +1,6 @@
+import { mat4 } from './../../../../vrender-core/src/common/matrix';
 import { GUI } from 'lil-gui';
+import '@visactor/vrender';
 import { createGroup, Stage, createRect } from '@visactor/vrender';
 import { createRenderer } from '../../util/render';
 import { RectLabel } from '../../../src';
@@ -573,7 +575,21 @@ function createContent(stage: Stage) {
     baseMarkGroupName: barSpec.name,
     data: barSpec.children.map(c => {
       return {
-        text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+        textType: 'rich',
+        text: [
+          {
+            text: `${[212, 218, 230, 224].includes(c.id) ? '-' : ''}${c.id}`,
+            fontWeight: 'bold',
+            fontSize: 25,
+            fill: '#3f51b5'
+          },
+          {
+            text: '替代方案',
+            fontStyle: 'italic',
+            textDecoration: 'underline',
+            fill: '#3f51b5'
+          }
+        ],
         fill: 'white',
 
         stroke: c.attribute.fill,
@@ -583,6 +599,11 @@ function createContent(stage: Stage) {
     type: 'rect',
     position: data => {
       return Number(data.text) < 0 ? 'bottom' : 'top';
+    },
+    syncState: true,
+    state: {
+      highlight: { opacity: 1 },
+      blur: { opacity: 0.2 }
     },
     animation: false,
     overlap: {
@@ -604,6 +625,31 @@ function createContent(stage: Stage) {
     zIndex: 302
   });
   stage.defaultLayer.add(barLabel);
+
+  stage.on('click', (e: any) => {
+    if (e.target.type === 'rect') {
+      const fillColor = e.target.attribute.fill;
+
+      const allRects = stage.findAll(child => {
+        return child.type === 'rect';
+      }, true);
+
+      allRects.forEach(rect => {
+        if (!rect.states) {
+          rect.states = {
+            highlight: { stroke: 'black' },
+            blur: { fillOpacity: 0.2 }
+          };
+        }
+
+        if (rect.attribute.fill === fillColor) {
+          rect.useStates(['highlight']);
+        } else {
+          rect.useStates(['blur']);
+        }
+      });
+    }
+  });
   return { bar: barGroup, label: barLabel };
 }
 

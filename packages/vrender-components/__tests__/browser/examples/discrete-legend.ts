@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { DiscreteLegend, Pager } from '../../../src';
 import render from '../../util/render';
 
@@ -126,25 +127,25 @@ const vLegend = new DiscreteLegend({
         }
       }
     },
-    background: {
-      style: {
-        stroke: '#000',
-        lineWidth: 1
-        // cornerRadius: 5
-      },
-      state: {
-        selectedHover: {
-          fill: 'rgba(0,0,0,.3)'
-        },
-        selected: {
-          fill: 'pink',
-          fillOpacity: 0.5
-        },
-        unSelected: {
-          fill: 'blue'
-        }
-      }
-    },
+    // background: {
+    //   style: {
+    //     stroke: '#000',
+    //     lineWidth: 1
+    //     // cornerRadius: 5
+    //   },
+    //   state: {
+    //     selectedHover: {
+    //       fill: 'rgba(0,0,0,.3)'
+    //     },
+    //     selected: {
+    //       fill: 'pink',
+    //       fillOpacity: 0.5
+    //     },
+    //     unSelected: {
+    //       fill: 'blue'
+    //     }
+    //   }
+    // },
     focus: true
   },
   items: [
@@ -323,12 +324,86 @@ const legend = new DiscreteLegend({
   y: 422
 });
 
-const stage = render([hLegend, vLegend, legend], 'main');
+const disableTriggerEventLegend = new DiscreteLegend({
+  x: 20,
+  y: 110,
+  disableTriggerEvent: true,
+  // ==== 测试使用 ====
+  stroke: 'red',
+  // ==== 测试使用 end ====
+
+  maxWidth: 400,
+  maxRow: 2,
+  title: {
+    visible: true,
+    text: '水平布局 关闭交互',
+    padding: 4,
+    background: {
+      visible: true,
+      style: {
+        fill: 'red'
+      }
+    }
+  },
+  item: {
+    focus: true,
+    // padding: [0, 20, 0, 0],
+    // width: 120,
+    shape: {
+      style: {
+        size: 8
+      }
+    },
+    value: {
+      alignRight: true,
+      style: {
+        fill: '#666',
+        fontWeight: 'bold'
+      }
+    },
+    background: {
+      style: {
+        stroke: '#000',
+        lineWidth: 1
+      }
+    }
+  },
+  items: [
+    { label: '苹果', shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
+  ],
+  allowAllCanceled: false,
+  pager: {
+    fill: 'red',
+    padding: 10
+  }
+});
+
+const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend], 'main');
 
 vLegend.addEventListener('legendItemClick', e => {
-  console.log(e.detail.currentSelected);
+  console.log(e, e.detail.currentSelected);
 });
 
-hLegend.addEventListener('legendItemClick', e => {
-  console.log(e.detail.currentSelected);
+vLegend.addEventListener('legendItemHover', e => {
+  console.log('legendItemHover');
 });
+
+vLegend.addEventListener('legendItemUnHover', e => {
+  console.log('legendItemUnHover');
+});
+
+window.vLegend = vLegend;

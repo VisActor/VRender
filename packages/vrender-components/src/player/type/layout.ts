@@ -1,7 +1,7 @@
-import type { IRectGraphicAttribute, ISymbolGraphicAttribute } from '@visactor/vrender';
+import type { IRectGraphicAttribute, ISymbolGraphicAttribute } from '@visactor/vrender-core';
 import type { OrientType } from '../../interface';
-import { BaseGraphicAttributes } from '../../core/type';
-import { ControllerTypeEnum } from '../controller/constant';
+import type { BaseGraphicAttributes } from '../../core/type';
+import type { ControllerTypeEnum } from '../controller/constant';
 
 export type BasePlayerLayoutAttributes = {
   /**
@@ -29,6 +29,7 @@ export type BasePlayerLayoutAttributes = {
    * 滑轨样式
    */
   slider?: {
+    visible?: boolean;
     space?: number;
     dx?: number;
     dy?: number;
@@ -41,6 +42,7 @@ export type BasePlayerLayoutAttributes = {
    * 控制器
    */
   controller?: {
+    visible: boolean;
     start?: ControllerType;
     pause?: ControllerType;
     forward?: ControllerType;
@@ -54,6 +56,10 @@ export type HandlerStyleType = Partial<ISymbolGraphicAttribute>;
 
 export type ControllerLayout = {
   key?: ControllerTypeEnum;
+  /**
+   * 是否可见
+   */
+  visible?: boolean;
   /**
    * 当前元素与前一个元素的间隔
    */

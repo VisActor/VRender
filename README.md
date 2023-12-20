@@ -1,6 +1,9 @@
 <div align="center">
-  <a href="" target="_blank">
-    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/500_200.svg"/>
+  <a href="https://github.com/VisActor#gh-light-mode-only" target="_blank">
+    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/logo_500_200_light.svg"/>
+  </a>
+  <a href="https://github.com/VisActor#gh-dark-mode-only" target="_blank">
+    <img alt="VisActor Logo" width="200" src="https://github.com/VisActor/.github/blob/main/profile/logo_500_200_dark.svg"/>
   </a>
 </div>
 
@@ -13,15 +16,13 @@
 VRender, not just a feature-rich visual rendering engine, but also a skillful and ingenious tool for creating beautiful artwork.
 
 <p align="center">
-  <a href="">Introduction</a> •
-  <a href="">Demo</a> •
-  <a href="">Tutorial</a> •
-  <a href="">API</a>•
-  <a href="">Cross-Platform</a>
+  <a href="https://www.visactor.io/vrender">Introduction</a> •
+  <a href="https://www.visactor.io/vrender/example">Demo</a> •
+  <a href="https://www.visactor.io/vrender/guide/">Tutorial</a> •
 </p>
 
-![image test](https://github.com/visactor/vchart/actions/workflows/bug-server.yml/badge.svg)
-![unit test](https://github.com/visactor/vchart/actions/workflows/unit-test.yml/badge.svg)
+![image test](https://github.com/visactor/vrender/actions/workflows/bug-server.yml/badge.svg?event=push)
+![unit test](https://github.com/visactor/vrender/actions/workflows/unit-test.yml/badge.svg?event=push)
 [![npm Version](https://img.shields.io/npm/v/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![npm Download](https://img.shields.io/npm/dm/@visactor/vrender.svg)](https://www.npmjs.com/package/@visactor/vrender)
 [![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/visactor/vrender/blob/main/LICENSE)

@@ -1,8 +1,11 @@
-import { merge, IBoundsLike } from '@visactor/vutils';
-import type { ILine } from '@visactor/vrender';
-import { PointLocationCfg } from '../core/type';
+import type { IBoundsLike } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
+import type { ILine } from '@visactor/vrender-core';
+import type { PointLocationCfg } from '../core/type';
 import type { LineLabelAttrs } from './type';
 import { LabelBase } from './base';
+import { labelingLineOrArea } from './util';
+import type { ComponentOptions } from '../interface';
 
 export class LineLabel extends LabelBase<LineLabelAttrs> {
   name = 'line-label';
@@ -20,15 +23,14 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: LineLabelAttrs) {
-    super(merge({}, LineLabel.defaultAttributes, attributes));
+  constructor(attributes: LineLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, LineLabel.defaultAttributes, attributes));
   }
 
-  protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}) {
-    if (graphic.type !== 'line') {
+  protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}, position = 'end') {
+    if (!graphic || graphic.type !== 'line') {
       return super.getGraphicBounds(graphic, point);
     }
-    const { position = 'end' } = this.attribute;
     const points = graphic?.attribute?.points || [point];
     const index = position === 'start' ? 0 : points.length - 1;
     return {
@@ -39,31 +41,7 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     };
   }
 
-  protected labeling(
-    textBounds: IBoundsLike,
-    graphicBounds: IBoundsLike,
-    position: LineLabelAttrs['position'] = 'end',
-    offset = 0
-  ) {
-    if (!textBounds || !graphicBounds) {
-      return;
-    }
-
-    const { x1, x2 } = textBounds;
-    const width = Math.abs(x2 - x1);
-
-    const anchorX = graphicBounds.x1;
-    const anchorY = graphicBounds.y1;
-
-    let x = anchorX;
-    const y = anchorY;
-
-    if (position === 'end') {
-      x = anchorX + width / 2 + offset;
-    } else if (position === 'start') {
-      x = anchorX - width / 2 - offset;
-    }
-
-    return { x, y };
+  protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position: string = 'end', offset = 0) {
+    return labelingLineOrArea(textBounds, graphicBounds, position, offset);
   }
 }

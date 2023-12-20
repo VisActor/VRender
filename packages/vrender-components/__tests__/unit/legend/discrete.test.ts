@@ -1,7 +1,9 @@
-import type { IGraphic, Stage } from '@visactor/vrender';
+import type { IGraphic, IGroup, IText, Stage } from '@visactor/vrender-core';
 import { DiscreteLegend } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('DiscreteLegend', () => {
   let stage: Stage;
@@ -226,5 +228,203 @@ describe('DiscreteLegend', () => {
     stage.render();
 
     expect(legend.AABBBounds.width()).toBe(76);
+  });
+
+  it("should omit when label's width exceeds item's width", () => {
+    const legend = new DiscreteLegend({
+      layout: 'vertical',
+      title: {
+        align: 'start',
+        space: 12,
+        textStyle: {
+          fontSize: 12,
+          fontWeight: 'bold',
+          fill: '#2C3542'
+        }
+      },
+      item: {
+        spaceCol: 10,
+        spaceRow: 10,
+        shape: {
+          space: 4,
+          style: {
+            size: 10,
+            cursor: 'pointer'
+          },
+          state: {
+            selectedHover: {
+              opacity: 0.85
+            },
+            unSelected: {
+              fill: '#D8D8D8',
+              fillOpacity: 0.5
+            }
+          }
+        },
+        label: {
+          space: 4,
+          style: {
+            fontSize: 12,
+            fill: '#89909D',
+            cursor: 'pointer'
+          },
+          state: {
+            selectedHover: {
+              opacity: 0.85
+            },
+            unSelected: {
+              fill: '#D8D8D8',
+              fillOpacity: 0.5
+            }
+          }
+        },
+        value: {
+          alignRight: true,
+          style: {
+            fontSize: 10,
+            fill: '#333',
+            cursor: 'pointer',
+            fillOpacity: 0.8
+          },
+          state: {
+            selectedHover: {
+              opacity: 0.85
+            },
+            unSelected: {
+              fill: '#D8D8D8'
+            },
+            unselected: {
+              fill: '#d8d8d8'
+            }
+          }
+        },
+        background: {
+          style: {
+            cursor: 'pointer'
+          },
+          state: {
+            selectedHover: {
+              fill: 'gray',
+              fillOpacity: 0.7
+            },
+            unSelectedHover: {
+              fill: 'gray',
+              fillOpacity: 0.2
+            }
+          }
+        },
+        visible: true,
+        padding: 2,
+        width: 121.95
+      },
+      autoPage: true,
+      pager: {
+        space: 12,
+        handler: {
+          style: {
+            size: 10
+          },
+          space: 4
+        }
+      },
+      hover: true,
+      select: true,
+      selectMode: 'multiple',
+      allowAllCanceled: false,
+      items: [
+        {
+          label: 'OneOneOneOneOne',
+          shape: {
+            fill: '#1664FF',
+            symbolType: 'square'
+          },
+          value: '26.32%',
+          id: 'OneOneOneOneOne',
+          index: 0
+        },
+        {
+          label: 'Two',
+          shape: {
+            fill: '#1AC6FF',
+            symbolType: 'square'
+          },
+          value: '23.68%',
+          id: 'Two',
+          index: 1
+        },
+        {
+          label: 'Three',
+          shape: {
+            fill: '#FF8A00',
+            symbolType: 'square'
+          },
+          value: '15.79%',
+          id: 'Three',
+          index: 2
+        },
+        {
+          label: 'Four',
+          shape: {
+            fill: '#3CC780',
+            symbolType: 'square'
+          },
+          value: '13.16%',
+          id: 'Four',
+          index: 3
+        },
+        {
+          label: 'Five',
+          shape: {
+            fill: '#7442D4',
+            symbolType: 'square'
+          },
+          value: '10.53%',
+          id: 'Five',
+          index: 4
+        },
+        {
+          label: 'Six',
+          shape: {
+            fill: '#FFC400',
+            symbolType: 'square'
+          },
+          value: '7.89%',
+          id: 'Six',
+          index: 5
+        },
+        {
+          label: 'Seven',
+          shape: {
+            fill: '#304D77',
+            symbolType: 'square'
+          },
+          value: '2.63%',
+          id: 'Seven',
+          index: 6
+        }
+      ],
+      zIndex: 500,
+      maxWidth: 813,
+      maxHeight: 416,
+      defaultSelected: ['OneOneOneOneOne', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven'],
+      width: 147.6698455810547,
+      height: 186,
+      dx: 0,
+      dy: 0,
+      x: 100,
+      y: 42
+    });
+
+    stage.defaultLayer.add(legend as unknown as IGraphic);
+    stage.render();
+
+    expect((legend.getElementsByName('legendItem')[0] as IGroup).AABBBounds.width()).toBe(121.95);
+    expect(
+      (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemLabel')[0] as IText)._AABBBounds.width()
+    ).toBeCloseTo(57.143951416015625);
+    expect(
+      (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemValue')[0] as IText).attribute
+        .maxLineWidth
+    ).toBeUndefined();
   });
 });

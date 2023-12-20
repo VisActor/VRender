@@ -1,12 +1,15 @@
 /**
  * @description polygon 类型 crosshair，用于极坐标系下
  */
-import { IGroup } from '@visactor/vrender';
+import type { IGroup } from '@visactor/vrender-core';
 import { merge, polarToCartesian, PointService } from '@visactor/vutils';
-import { PointLocationCfg } from '../core/type';
+import type { PointLocationCfg } from '../core/type';
 import { CrosshairBase } from './base';
-import { PolygonCrosshairAttrs } from './type';
+import type { PolygonCrosshairAttrs } from './type';
+import type { ComponentOptions } from '../interface';
+import { loadPolygonCrosshairComponent } from './register';
 
+loadPolygonCrosshairComponent();
 export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
   static defaultAttributes = {
     lineStyle: {
@@ -16,8 +19,8 @@ export class PolygonCrosshair extends CrosshairBase<PolygonCrosshairAttrs> {
     }
   };
 
-  constructor(attributes: PolygonCrosshairAttrs) {
-    super(merge({}, PolygonCrosshair.defaultAttributes, attributes));
+  constructor(attributes: PolygonCrosshairAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, PolygonCrosshair.defaultAttributes, attributes));
   }
 
   protected renderCrosshair(container: IGroup) {

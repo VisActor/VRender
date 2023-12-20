@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, Dict, isBoolean, isNil, isFunction } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -10,10 +10,11 @@ import type {
   INode,
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
-  ITextGraphicAttribute
-} from '@visactor/vrender';
+  ITextGraphicAttribute,
+  CustomEvent
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createGroup, createText, createSymbol, CustomEvent } from '@visactor/vrender';
+import { graphicCreator } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
 import { Pager } from '../../pager';
 import {
@@ -30,6 +31,8 @@ import {
   LEGEND_ELEMENT_NAME
 } from '../constant';
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
+import type { ComponentOptions } from '../../interface';
+import { loadDiscreteLegendComponent } from '../register';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -39,6 +42,7 @@ const DEFAULT_STATES = {
   [LegendStateValue.unSelectedHover]: {}
 };
 
+loadDiscreteLegendComponent();
 export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   name = 'discreteLegend';
 
@@ -48,6 +52,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
   private _pager!: Pager;
+  private _lastActiveItem: IGroup;
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',
@@ -74,8 +79,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             opacity: 0.85
           },
           unSelected: {
-            fill: '#D8D8D8'
-            // stroke: '#D8D8D8'
+            opacity: 0.5
           }
         }
       },
@@ -139,8 +143,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     allowAllCanceled: true
   };
 
-  constructor(attributes: DiscreteLegendAttrs) {
-    super(merge({}, DiscreteLegend.defaultAttributes, attributes));
+  constructor(attributes: DiscreteLegendAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DiscreteLegend.defaultAttributes, attributes));
   }
 
   /**
@@ -174,7 +178,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       legendItems = items?.reverse();
     }
 
-    const itemsContainer = createGroup({
+    const itemsContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -228,6 +232,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const itemHeight = itemGroup.attribute.height;
       this._itemHeight = Math.max(this._itemHeight, itemHeight);
       maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
+
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
       if (isHorizontal) {
@@ -297,6 +302,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   protected _bindEvents() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (!this._itemsContainer) {
       return;
     }
@@ -304,7 +312,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { hover = true, select = true } = this.attribute;
     if (hover) {
       this._itemsContainer.addEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
-      this._itemsContainer.addEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
+      this._itemsContainer.addEventListener('pointerleave', this._onUnHover as EventListenerOrEventListenerObject);
     }
 
     if (select) {
@@ -314,42 +322,38 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderEachItem(item: LegendItemDatum, isSelected: boolean, index: number, items: LegendItemDatum[]) {
     const { id, label, value, shape } = item;
-    const { padding = 0, focus, focusIconStyle = {} } = this.attribute.item as LegendItem;
+    const { padding = 0, focus, focusIconStyle } = this.attribute.item as LegendItem;
 
-    let {
-      shape: shapeAttr = {},
-      label: labelAttr = {},
-      value: valueAttr = {},
-      background = {}
-    } = this.attribute.item as LegendItem;
+    const { shape: shapeAttr, label: labelAttr, value: valueAttr, background } = this.attribute.item as LegendItem;
 
-    shapeAttr = this._handleStyle(shapeAttr, item, isSelected, index, items);
-    labelAttr = this._handleStyle(labelAttr, item, isSelected, index, items);
-    valueAttr = this._handleStyle(valueAttr, item, isSelected, index, items);
-    background = this._handleStyle(background, item, isSelected, index, items);
+    const shapeStyle = this._handleStyle(shapeAttr, item, isSelected, index, items);
+    const labelStyle = this._handleStyle(labelAttr, item, isSelected, index, items);
+    const valueStyle = this._handleStyle(valueAttr, item, isSelected, index, items);
+    const backgroundStyle = this._handleStyle(background, item, isSelected, index, items);
 
     const parsedPadding = normalizePadding(padding);
 
     let itemGroup;
     if (background.visible === false) {
-      itemGroup = createGroup({
+      itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        cursor: (background?.style as IGroupGraphicAttribute).cursor
+        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup);
     } else {
-      itemGroup = createGroup({
+      itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        ...background?.style
+        ...backgroundStyle.style
       });
-      this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, background?.state);
+      this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, backgroundStyle.state);
     }
+    itemGroup.id = `${id ?? label}-${index}`;
 
     itemGroup.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
-    const innerGroup = createGroup({
+    const innerGroup = graphicCreator.group({
       x: 0,
       y: 0,
       pickable: false
@@ -357,33 +361,37 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.add(innerGroup);
 
     let focusStartX = 0;
-    const shapeSize = get(shapeAttr, 'style.size', DEFAULT_SHAPE_SIZE);
-    const shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
-    const itemShape = createSymbol({
-      x: 0,
-      y: 0,
-      symbolType: 'circle',
-      strokeBoundsBuffer: 0,
-      ...shape,
-      ...shapeAttr.style
-    });
-    // 处理下 shape 的 fill stroke
-    Object.keys(shapeAttr.state || {}).forEach(key => {
-      const color =
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill ||
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke;
-      if (shape.fill && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).fill) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).fill = color as string;
-      }
+    let shapeSize = 0;
+    let shapeSpace = 0;
+    if (shapeAttr?.visible !== false) {
+      shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
+      shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
+      const itemShape = graphicCreator.symbol({
+        x: 0,
+        y: 0,
+        symbolType: 'circle',
+        strokeBoundsBuffer: 0,
+        ...shape,
+        ...shapeStyle.style
+      });
+      // 处理下 shape 的 fill stroke
+      Object.keys(shapeStyle.state || {}).forEach(key => {
+        const color =
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill ||
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke;
+        if (shape.fill && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).fill) && color) {
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).fill = color as string;
+        }
 
-      if (shape.stroke && isNil((shapeAttr.state[key] as ISymbolGraphicAttribute).stroke) && color) {
-        (shapeAttr.state[key] as ISymbolGraphicAttribute).stroke = color as string;
-      }
-    });
-    this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeAttr?.state);
+        if (shape.stroke && isNil((shapeStyle.state[key] as ISymbolGraphicAttribute).stroke) && color) {
+          (shapeStyle.state[key] as ISymbolGraphicAttribute).stroke = color as string;
+        }
+      });
+      this._appendDataToShape(itemShape, LEGEND_ELEMENT_NAME.itemShape, item, itemGroup, shapeStyle.state);
 
-    itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
-    innerGroup.add(itemShape);
+      itemShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
+      innerGroup.add(itemShape);
+    }
 
     let focusShape;
     let focusSpace = 0;
@@ -391,12 +399,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (focus) {
       const focusSize = get(focusIconStyle, 'size', DEFAULT_SHAPE_SIZE);
       // 绘制聚焦按钮
-      focusShape = createSymbol({
+      focusShape = graphicCreator.symbol({
         x: 0,
         y: -focusSize / 2 - 1,
         strokeBoundsBuffer: 0,
         ...focusIconStyle,
-        visible: false,
+        visible: true,
         pickMode: 'imprecise',
         boundsPadding: parsedPadding
       });
@@ -405,55 +413,71 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       focusSpace = focusSize;
     }
 
-    const labelShape = createText({
+    const labelShape = graphicCreator.text({
       x: shapeSize / 2 + shapeSpace,
       y: 0,
       textAlign: 'start',
       textBaseline: 'middle',
-      lineHeight: (labelAttr?.style as ITextGraphicAttribute).fontSize,
-      ...labelAttr?.style,
+      lineHeight: (labelStyle.style as ITextGraphicAttribute)?.fontSize,
+      ...labelStyle.style,
       text: labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label
     });
-    this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelAttr?.state);
+    this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelStyle.state);
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(labelShape);
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
-
-    focusStartX += shapeSize / 2 + shapeSpace + labelShape.AABBBounds.width() + labelSpace;
     if (isValid(value)) {
       const valueSpace = get(valueAttr, 'space', focus ? DEFAULT_VALUE_SPACE : 0);
-      const valueShape = createText({
-        x: focusStartX + labelSpace,
+      const valueShape = graphicCreator.text({
+        x: 0,
         y: 0,
         textAlign: 'start',
         textBaseline: 'middle',
-        lineHeight: (valueAttr?.style as ITextGraphicAttribute).fontSize,
-        ...valueAttr?.style,
+        lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
+        ...valueStyle.style,
         text: valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value
       });
-      this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueAttr?.state);
+      this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueStyle.state);
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 
       if (this._itemWidthByUser) {
-        valueShape.setAttribute(
-          'maxLineWidth',
+        // 计算用来防止文本的宽度
+        const layoutWidth =
           this._itemWidthByUser -
-            parsedPadding[1] -
-            parsedPadding[3] -
-            shapeSize -
-            shapeSpace -
-            labelShape.AABBBounds.width() -
-            labelSpace -
-            focusSpace -
-            valueSpace
-        );
+          parsedPadding[1] -
+          parsedPadding[3] -
+          shapeSize -
+          shapeSpace -
+          labelSpace -
+          focusSpace -
+          valueSpace;
+        const valueBounds = valueShape.AABBBounds;
+        const labelBounds = labelShape.AABBBounds;
+        const valueWidth = valueBounds.width();
+        const labelWidth = labelBounds.width();
+        if (labelWidth > layoutWidth) {
+          if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
+            // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
+            labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
+          } else {
+            valueShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+            labelShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
+          }
+        } else {
+          valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
+        }
+
         if (valueAttr.alignRight) {
           valueShape.setAttributes({
             // @ts-ignore
             textAlign: 'right',
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
+        } else {
+          valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
         }
+      } else {
+        valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
       }
       focusStartX = valueShape.AABBBounds.x2 + valueSpace;
 
@@ -463,6 +487,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         'maxLineWidth',
         this._itemWidthByUser - parsedPadding[1] - parsedPadding[3] - shapeSize - shapeSpace - focusSpace
       );
+
+      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+    } else {
+      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
     }
 
     if (focusShape) {
@@ -480,13 +508,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.attribute.width = itemGroupWidth;
     itemGroup.attribute.height = itemGroupHeight;
 
+    focusShape && focusShape.setAttribute('visible', false);
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
     return itemGroup;
   }
 
   private _renderPager(isHorizontal: boolean) {
     const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
+    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {}, disableTriggerEvent } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
     const {
@@ -494,6 +523,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       animationDuration = 450,
       animationEasing = 'quadIn',
       space: pagerSpace = DEFAULT_PAGER_SPACE,
+      position = 'middle',
       ...pageStyle
     } = pager;
 
@@ -517,7 +547,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             }
           },
           pageStyle
-        )
+        ),
+        disableTriggerEvent
       });
       this._pager = pagerComp;
       this._innerView.add(pagerComp as unknown as INode);
@@ -549,16 +580,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startX += spaceCol + (width as number);
       });
 
+      pagerComp.setAttribute('total', Math.ceil(pages / maxRow));
+      let y;
+      if (position === 'start') {
+        y = renderStartY;
+      } else if (position === 'end') {
+        y = renderStartY + pageHeight - pagerComp.AABBBounds.height() / 2;
+      } else {
+        y = renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2;
+      }
       pagerComp.setAttributes({
-        total: Math.ceil(pages / maxRow),
         x: pageWidth,
-        y: renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2
+        y
       });
     } else {
       // 垂直布局，支持左右翻页
       pagerComp = new Pager({
         layout: 'horizontal',
-        total: 99, // 用于估算
+        total: 99, // 用于估算,
+        disableTriggerEvent,
         ...pageStyle
       });
       this._pager = pagerComp;
@@ -590,9 +630,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startY += spaceRow + (height as number);
       });
 
+      pagerComp.setAttribute('total', Math.ceil(pages / maxCol));
+
+      let x;
+      if (position === 'start') {
+        x = 0;
+      } else if (position === 'end') {
+        x = pageWidth - pagerComp.AABBBounds.width();
+      } else {
+        x = (pageWidth - pagerComp.AABBBounds.width()) / 2;
+      }
       pagerComp.setAttributes({
-        total: Math.ceil(pages / maxCol),
-        x: (pageWidth - pagerComp.AABBBounds.width()) / 2,
+        x,
         y: (maxHeight as number) - pagerComp.AABBBounds.height()
       });
     }
@@ -606,7 +655,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
     }
 
-    const clipGroup = createGroup({
+    const clipGroup = graphicCreator.group({
       x: 0,
       y: renderStartY,
       width: pageWidth,
@@ -650,53 +699,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
-      const selected = legendItem.hasState(LegendStateValue.selected);
 
-      if (selected) {
-        // use selectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.selectedHover);
-      } else {
-        // use unSelectedHover state
-        this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover);
+      // 如果上个激活元素存在，则判断当前元素是否和上个激活元素相同，相同则不做处理，不相同则触发 unhover
+      if (this._lastActiveItem) {
+        if (this._lastActiveItem.id === legendItem.id) {
+          return;
+        }
+        this._unHover(this._lastActiveItem, e);
       }
-
-      const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
-        node => node.name === LEGEND_ELEMENT_NAME.focus,
-        false
-      ) as IGraphic;
-      if (focusButton) {
-        focusButton.setAttribute('visible', true);
-      }
-
-      this._dispatchEvent(LegendEvent.legendItemHover, legendItem);
+      this._hover(legendItem, e);
+    } else if (this._lastActiveItem) {
+      this._unHover(this._lastActiveItem, e);
+      this._lastActiveItem = null;
     }
   };
 
   private _onUnHover = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
-      // @ts-ignore
-      const legendItem = target.delegate;
-
-      legendItem.removeState(LegendStateValue.unSelectedHover);
-      legendItem.removeState(LegendStateValue.selectedHover);
-      legendItem
-        .getChildren()[0]
-        .getChildren()
-        .forEach((child: any) => {
-          (child as unknown as IGraphic).removeState(LegendStateValue.unSelectedHover);
-          (child as unknown as IGraphic).removeState(LegendStateValue.selectedHover);
-        });
-
-      const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
-        node => node.name === LEGEND_ELEMENT_NAME.focus,
-        false
-      ) as IGraphic;
-      if (focusButton) {
-        focusButton.setAttribute('visible', false);
-      }
-
-      this._dispatchEvent(LegendEvent.legendItemUnHover, legendItem);
+    if (this._lastActiveItem) {
+      this._unHover(this._lastActiveItem, e);
+      this._lastActiveItem = null;
     }
   };
 
@@ -714,25 +735,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         if (isFocusSelected) {
           // 当前为选中态，则再次点击变成全选
           this._itemsContainer?.getChildren().forEach(item => {
-            this._removeLegendItemState(item as unknown as IGroup, [
-              LegendStateValue.unSelected,
-              LegendStateValue.unSelectedHover,
-              LegendStateValue.focus
-            ]);
-            this._setLegendItemState(item as unknown as IGroup, LegendStateValue.selected);
+            this._removeLegendItemState(
+              item as unknown as IGroup,
+              [LegendStateValue.unSelected, LegendStateValue.unSelectedHover, LegendStateValue.focus],
+              e
+            );
+            this._setLegendItemState(item as unknown as IGroup, LegendStateValue.selected, e);
           });
         } else {
-          this._setLegendItemState(legendItem, LegendStateValue.selected);
-          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+          this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
           // 单选逻辑，当前被点击的图例项设置为选中态，其他全部设置为非选中态
           this._itemsContainer?.getChildren().forEach(item => {
             if (legendItem !== item) {
-              this._removeLegendItemState(item as unknown as IGroup, [
-                LegendStateValue.selected,
-                LegendStateValue.selectedHover,
-                LegendStateValue.focus
-              ]);
-              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected);
+              this._removeLegendItemState(
+                item as unknown as IGroup,
+                [LegendStateValue.selected, LegendStateValue.selectedHover, LegendStateValue.focus],
+                e
+              );
+              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected, e);
             }
           });
         }
@@ -746,55 +767,129 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         const currentSelectedItems = this._getSelectedLegends();
         if (selectMode === 'multiple') {
           if (allowAllCanceled === false && isSelected && currentSelectedItems.length === 1) {
-            this._dispatchEvent(LegendEvent.legendItemClick, legendItem);
+            this._dispatchLegendEvent(LegendEvent.legendItemClick, legendItem, e);
             return;
           }
           // 多选逻辑
           if (isSelected) {
             // 如果当前为选中状态，则取消选中
-            this._removeLegendItemState(legendItem, [LegendStateValue.selected, LegendStateValue.selectedHover]);
-            this._setLegendItemState(legendItem, LegendStateValue.unSelected);
+            this._removeLegendItemState(legendItem, [LegendStateValue.selected, LegendStateValue.selectedHover], e);
+            this._setLegendItemState(legendItem, LegendStateValue.unSelected, e);
           } else {
             // 如果当前为非选中态，则设置为选中状态
-            this._setLegendItemState(legendItem, LegendStateValue.selected);
-            this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+            this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+            this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
           }
         } else {
-          this._setLegendItemState(legendItem, LegendStateValue.selected);
-          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover]);
+          this._setLegendItemState(legendItem, LegendStateValue.selected, e);
+          this._removeLegendItemState(legendItem, [LegendStateValue.unSelected, LegendStateValue.unSelectedHover], e);
 
           // 单选逻辑，当前被点击的图例项设置为选中态，其他全部设置为非选中态
           this._itemsContainer?.getChildren().forEach(item => {
             if (legendItem !== item) {
-              this._removeLegendItemState(item as unknown as IGroup, [
-                LegendStateValue.selected,
-                LegendStateValue.selectedHover
-              ]);
-              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected);
+              this._removeLegendItemState(
+                item as unknown as IGroup,
+                [LegendStateValue.selected, LegendStateValue.selectedHover],
+                e
+              );
+              this._setLegendItemState(item as unknown as IGroup, LegendStateValue.unSelected, e);
             }
           });
         }
       }
 
-      this._dispatchEvent(LegendEvent.legendItemClick, legendItem);
+      this._dispatchLegendEvent(LegendEvent.legendItemClick, legendItem, e);
     }
   };
 
-  private _setLegendItemState(legendItem: IGroup, stateName: string, keepCurrentStates = true) {
+  private _hover(legendItem: IGroup, e: FederatedPointerEvent) {
+    this._lastActiveItem = legendItem;
+    const selected = legendItem.hasState(LegendStateValue.selected);
+
+    if (selected) {
+      // use selectedHover state
+      this._setLegendItemState(legendItem, LegendStateValue.selectedHover, e);
+    } else {
+      // use unSelectedHover state
+      this._setLegendItemState(legendItem, LegendStateValue.unSelectedHover, e);
+    }
+
+    const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
+      node => node.name === LEGEND_ELEMENT_NAME.focus,
+      false
+    ) as IGraphic;
+    if (focusButton) {
+      focusButton.setAttribute('visible', true);
+    }
+
+    this._dispatchLegendEvent(LegendEvent.legendItemHover, legendItem, e);
+  }
+
+  private _unHover(legendItem: IGroup, e: FederatedPointerEvent) {
+    let attributeUpdate = false;
+    if (legendItem.hasState(LegendStateValue.unSelectedHover) || legendItem.hasState(LegendStateValue.selectedHover)) {
+      attributeUpdate = true;
+    }
+    legendItem.removeState(LegendStateValue.unSelectedHover);
+    legendItem.removeState(LegendStateValue.selectedHover);
+    legendItem
+      .getChildren()[0]
+      .getChildren()
+      .forEach((child: any) => {
+        if (
+          !attributeUpdate &&
+          (child.hasState(LegendStateValue.unSelectedHover) || child.hasState(LegendStateValue.selectedHover))
+        ) {
+          attributeUpdate = true;
+        }
+        (child as unknown as IGraphic).removeState(LegendStateValue.unSelectedHover);
+        (child as unknown as IGraphic).removeState(LegendStateValue.selectedHover);
+      });
+
+    const focusButton = (legendItem.getChildren()[0] as unknown as IGroup).find(
+      node => node.name === LEGEND_ELEMENT_NAME.focus,
+      false
+    ) as IGraphic;
+    if (focusButton) {
+      focusButton.setAttribute('visible', false);
+    }
+
+    if (attributeUpdate) {
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+    }
+    this._dispatchLegendEvent(LegendEvent.legendItemUnHover, legendItem, e);
+  }
+
+  private _setLegendItemState(legendItem: IGroup, stateName: string, e?: FederatedPointerEvent) {
+    const keepCurrentStates = true;
+    let attributeUpdate = false;
+    if (!legendItem.hasState(stateName)) {
+      attributeUpdate = true;
+    }
     legendItem.addState(stateName, keepCurrentStates);
     // TODO: 这个比较 hack
     legendItem
       .getChildren()[0]
       .getChildren()
-      .forEach(child => {
+      .forEach((child: IGraphic) => {
         if (child.name !== LEGEND_ELEMENT_NAME.focus) {
+          if (!attributeUpdate && !child.hasState(stateName)) {
+            attributeUpdate = true;
+          }
           (child as unknown as IGraphic).addState(stateName, keepCurrentStates);
         }
       });
+    if (attributeUpdate) {
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+    }
   }
 
-  private _removeLegendItemState(legendItem: IGroup, stateNames: string[]) {
+  private _removeLegendItemState(legendItem: IGroup, stateNames: string[], e?: FederatedPointerEvent) {
+    let attributeUpdate = false;
     stateNames.forEach(name => {
+      if (!attributeUpdate && legendItem.hasState(name)) {
+        attributeUpdate = true;
+      }
       legendItem.removeState(name);
     });
     // TODO: 这个比较 hack
@@ -804,10 +899,16 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       .forEach(child => {
         if (child.name !== LEGEND_ELEMENT_NAME.focus) {
           stateNames.forEach(name => {
+            if (!attributeUpdate && (child as unknown as IGraphic).hasState(name)) {
+              attributeUpdate = true;
+            }
             (child as unknown as IGraphic).removeState(name);
           });
         }
       });
+    if (attributeUpdate) {
+      this._dispatchLegendEvent(LegendEvent.legendItemAttributeUpdate, legendItem, e);
+    }
   }
 
   // 获取当前选中的图例项
@@ -830,26 +931,21 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     shape.states = merge({}, DEFAULT_STATES, states);
   }
 
-  private _dispatchEvent(eventName: string, legendItem: any) {
+  private _dispatchLegendEvent(eventName: string, legendItem: any, event: FederatedPointerEvent) {
     const currentSelectedItems = this._getSelectedLegends();
     // 需要保持显示顺序
     currentSelectedItems.sort((pre: LegendItemDatum, next: LegendItemDatum) => pre.index - next.index);
 
     const currentSelected = currentSelectedItems.map((obj: LegendItemDatum) => obj.label);
 
-    // 封装事件
-    const changeEvent = new CustomEvent(eventName, {
+    this._dispatchEvent(eventName, {
       item: legendItem, // 当前被选中的图例项整体
       data: legendItem.data, // 当前图例项的数据
       selected: legendItem.hasState(LegendStateValue.selected), // 当前图例项是否被选中
       currentSelectedItems,
-      currentSelected
+      currentSelected,
+      event
     });
-    // FIXME: 需要在 vrender 的事件系统支持
-    // @ts-ignore
-    changeEvent.manager = this.stage?.eventSystem.manager;
-
-    this.dispatchEvent(changeEvent);
   }
 
   // 处理回调函数
@@ -860,15 +956,26 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     index: number,
     items: LegendItemDatum[]
   ) {
-    const newConfig = merge({}, config);
+    const newConfig: any = {};
     // 处理下样式
-    if (config.style && isFunction(config.style)) {
-      newConfig.style = config.style(item, isSelected, index, items);
+    if (config.style) {
+      if (isFunction(config.style)) {
+        newConfig.style = config.style(item, isSelected, index, items);
+      } else {
+        newConfig.style = config.style;
+      }
     }
+
     if (config.state) {
+      newConfig.state = {};
+
       Object.keys(config.state).forEach(key => {
-        if (config.state[key] && isFunction(config.state[key])) {
-          newConfig.state[key] = config.state[key](item, isSelected, index, items);
+        if (config.state[key]) {
+          if (isFunction(config.state[key])) {
+            newConfig.state[key] = config.state[key](item, isSelected, index, items);
+          } else {
+            newConfig.state[key] = config.state[key];
+          }
         }
       });
     }

@@ -3,6 +3,34 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'draggable-mark-line',
+    name: '可拖拽的均值线'
+  },
+  {
+    path: 'draggable-mark-area',
+    name: '可拖拽的辅助框'
+  },
+  {
+    path: 'multiple-segment',
+    name: '多段绘制线段'
+  },
+  {
+    path: 'compare-mark-line',
+    name: '差异标注组件'
+  },
+  {
+    path: 'grid',
+    name: '坐标轴网格线'
+  },
+  {
+    path: 'axis-interaction',
+    name: '轴交互'
+  },
+  {
+    path: 'cartesian-axis-label-align',
+    name: '轴标签整体对齐'
+  },
+  {
     path: 'axis-overlap',
     name: '轴标签防重叠'
   },
@@ -51,8 +79,24 @@ const specs = [
     name: 'rect 数据标签'
   },
   {
+    path: 'label-rect-horizontal',
+    name: 'rect 水平方向数据标签'
+  },
+  {
     path: 'label-line',
+    name: 'line 标签'
+  },
+  {
+    path: 'label-line-data',
     name: 'line 数据标签'
+  },
+  {
+    path: 'label-arc',
+    name: 'arc 数据标签'
+  },
+  {
+    path: 'label-polygon',
+    name: 'polygon 数据标签'
   },
   {
     path: 'label-multi-mark',
@@ -106,42 +150,42 @@ const specs = [
     path: 'pick-test',
     name: '拾取测试'
   },
-  // {
-  //   path: 'data-zoom',
-  //   name: '水平 dataZoom'
-  // },
+  {
+    path: 'data-zoom',
+    name: '水平 dataZoom'
+  },
   {
     path: 'data-zoom-preview-v',
     name: '水平 背景图表 dataZoom'
   },
-  // {
-  //   path: 'data-zoom-left',
-  //   name: '垂直 左 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-right',
-  //   name: '垂直 右 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-h',
-  //   name: '垂直 背景图表 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-set-state',
-  //   name: '改变状态 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-text-visible',
-  //   name: '文字显示 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-preview-style',
-  //   name: '背景图表样式 dataZoom'
-  // },
-  // {
-  //   path: 'data-zoom-middle-handler',
-  //   name: '中间手柄 dataZoom'
-  // },
+  {
+    path: 'data-zoom-left',
+    name: '垂直 左 dataZoom'
+  },
+  {
+    path: 'data-zoom-right',
+    name: '垂直 右 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-h',
+    name: '垂直 背景图表 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-set-state',
+    name: '改变状态 dataZoom'
+  },
+  {
+    path: 'data-zoom-text-visible',
+    name: '文字显示 dataZoom'
+  },
+  {
+    path: 'data-zoom-preview-style',
+    name: '背景图表样式 dataZoom'
+  },
+  {
+    path: 'data-zoom-middle-handler',
+    name: '中间手柄 dataZoom'
+  },
   {
     path: 'title',
     name: '标题'
@@ -177,6 +221,10 @@ const specs = [
   {
     path: 'brush',
     name: 'brush'
+  },
+  {
+    path: 'checkbox',
+    name: 'checkbox'
   }
 ];
 
@@ -223,7 +271,8 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
         module.run?.();
       })
       .catch(err => {
-        // console.log(err);
+        // eslint-disable-next-line no-console
+        console.log(err);
       });
   }
 };
@@ -268,6 +317,15 @@ const run = () => {
     },
     true
   );
+
+  // document.addEventListener('mousedown', () => {
+  //   // eslint-disable-next-line no-console
+  //   console.log('document mousedown');
+  //   document.addEventListener('mousemove', () => {
+  //     // eslint-disable-next-line no-console
+  //     console.log('document mousemove');
+  //   });
+  // });
 };
 
 run();

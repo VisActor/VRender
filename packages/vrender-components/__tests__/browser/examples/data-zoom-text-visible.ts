@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
 import { DataZoom } from '../../../src';
@@ -14,7 +15,7 @@ export function run() {
   console.log('DataZoom');
 
   const dataZoom = new DataZoom({
-    start: 0.2,
+    start: 0,
     end: 0.5,
     position: {
       x: 50,
@@ -25,17 +26,18 @@ export function run() {
       height: 30
     },
     brushSelect: false,
+    showDetail: 'auto',
     startTextStyle: {
       formatMethod: text => text + '_format'
-    },
-    showDetail: true
+    }
   });
   dataZoom.setStatePointToData(state => state + '_value');
   dataZoom.setPreviewData(data);
-  dataZoom.setPreviewCallbackX(d => d.x);
-  dataZoom.setPreviewCallbackY(d => d.y);
-  dataZoom.setPreviewCallbackX1(d => d.x);
-  dataZoom.setPreviewCallbackY1(d => 265);
+  dataZoom.setPreviewPointsX(d => d.x);
+  dataZoom.setPreviewPointsY(d => d.y);
+  dataZoom.setPreviewPointsX1(d => d.x);
+  dataZoom.setPreviewPointsY1(d => 265);
 
   const stage = render([dataZoom], 'main');
+  console.log('dataz', dataZoom);
 }

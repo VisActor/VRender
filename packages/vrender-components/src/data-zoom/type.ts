@@ -5,10 +5,17 @@ import type {
   ILineGraphicAttribute,
   IRectGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
-import type { OrientType } from '../interface';
+import type { IDelayType, OrientType } from '../interface';
 import type { TagAttributes } from '../tag';
+
+export enum DataZoomActiveTag {
+  startHandler = 'startHandler',
+  endHandler = 'endHandler',
+  middleHandler = 'middleHandler',
+  background = 'background'
+}
 
 export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
@@ -48,7 +55,13 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
    * 起点手柄样式
    */
-  startHandlerStyle?: ISymbolGraphicAttribute;
+  startHandlerStyle?: {
+    /**
+     * 热区最小size
+     * 取handler size 和 min size 的最大值
+     */
+    triggerMinSize?: number;
+  } & ISymbolGraphicAttribute;
 
   /**
    * 中间手柄样式
@@ -75,7 +88,13 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   /**
    * 终点手柄样式
    */
-  endHandlerStyle?: ISymbolGraphicAttribute;
+  endHandlerStyle?: {
+    /**
+     * 热区最小size
+     * 取handler size 和 min size 的最大值
+     */
+    triggerMinSize?: number;
+  } & ISymbolGraphicAttribute;
 
   /**
    * 起点文字样式
@@ -149,17 +168,51 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
   brushSelect?: boolean;
 
   /**
-   * todo: 是否锁定选择区域（或叫做数据窗口）的大小
+   * 是否锁定选择区域（或叫做数据窗口）的大小
    */
   zoomLock?: boolean;
+
+  /**
+   * 用于限制窗口大小的最小值, [0, 1]
+   * @default 0
+   */
+  minSpan?: number;
+
+  /**
+   * 用于限制窗口大小的最大值, [0, 1]
+   * @default 1
+   */
+  maxSpan?: number;
+
+  /**
+   * 事件触发延迟类型
+   * @default 'throttle'
+   */
+  delayType?: IDelayType;
+
+  /**
+   * 事件触发延迟时长
+   * @default 0
+   */
+  delayTime?: number;
+  /**
+   * 是否在操作时动态更新视图
+   * @default true
+   */
+  realTime?: boolean;
 
   /**
    * 绘制背景图表的数据 & 映射函数
    */
   previewData?: any[];
-  previewCallbackX?: (datum: any) => number;
-  previewCallbackY?: (datum: any) => number;
-  previewCallbackX1?: (datum: any) => number;
-  previewCallbackY1?: (datum: any) => number;
+  previewPointsX?: (datum: any) => number;
+  previewPointsY?: (datum: any) => number;
+  previewPointsX1?: (datum: any) => number;
+  previewPointsY1?: (datum: any) => number;
   updateStateCallback?: (start: number, end: number) => any;
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }

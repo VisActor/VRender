@@ -1,6 +1,249 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 03 Aug 2023 10:04:34 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Dec 2023 07:39:54 GMT and should not be manually modified.
+
+## 0.17.6
+Wed, 20 Dec 2023 07:39:54 GMT
+
+_Version update only_
+
+## 0.17.5
+Tue, 19 Dec 2023 09:13:27 GMT
+
+_Version update only_
+
+## 0.17.4
+Thu, 14 Dec 2023 11:00:38 GMT
+
+_Version update only_
+
+## 0.17.3
+Wed, 13 Dec 2023 12:04:17 GMT
+
+_Version update only_
+
+## 0.17.2
+Tue, 12 Dec 2023 13:05:58 GMT
+
+### Updates
+
+- feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'
+
+## 0.17.1
+Wed, 06 Dec 2023 11:19:22 GMT
+
+### Updates
+
+- feat: support pickStrokeBuffer, closed #758
+- fix: fix issue with rebind pick-contribution
+
+## 0.17.0
+Thu, 30 Nov 2023 12:58:15 GMT
+
+### Minor changes
+
+- feat: optmize bounds performance
+
+### Updates
+
+- feat: rect support x1 and y1
+- refactor: refact inversify completely, closed #657
+
+## 0.16.18
+Thu, 30 Nov 2023 09:40:58 GMT
+
+### Updates
+
+- fix: doubletap should not be triggered when the target is different twice before and after
+
+## 0.16.17
+Thu, 23 Nov 2023 13:32:49 GMT
+
+### Updates
+
+- feat: support 'tap' gesture for Gesture plugin
+- fix: \`pickMode: 'imprecise'\` not work in polygon
+
+## 0.16.16
+Fri, 17 Nov 2023 02:33:59 GMT
+
+_Version update only_
+
+## 0.16.15
+Thu, 16 Nov 2023 02:46:27 GMT
+
+_Version update only_
+
+## 0.16.14
+Wed, 15 Nov 2023 09:56:28 GMT
+
+_Version update only_
+
+## 0.16.13
+Thu, 09 Nov 2023 11:49:33 GMT
+
+### Updates
+
+- fix: temp fix issue with lynx measuretext
+
+## 0.16.12
+Tue, 07 Nov 2023 10:52:54 GMT
+
+### Updates
+
+- fix: fix node-canvas max count issue
+
+## 0.16.11
+Thu, 02 Nov 2023 13:43:18 GMT
+
+_Version update only_
+
+## 0.16.10
+Thu, 02 Nov 2023 11:17:24 GMT
+
+### Updates
+
+- fix: fix issue with xul and html attribute, closed #634
+
+## 0.16.9
+Fri, 27 Oct 2023 02:21:19 GMT
+
+_Version update only_
+
+## 0.16.8
+Mon, 23 Oct 2023 11:38:47 GMT
+
+_Version update only_
+
+## 0.16.7
+Mon, 23 Oct 2023 08:53:33 GMT
+
+_Version update only_
+
+## 0.16.6
+Mon, 23 Oct 2023 06:30:33 GMT
+
+_Version update only_
+
+## 0.16.5
+Fri, 20 Oct 2023 04:22:42 GMT
+
+_Version update only_
+
+## 0.16.4
+Thu, 19 Oct 2023 10:30:12 GMT
+
+_Version update only_
+
+## 0.16.3
+Wed, 18 Oct 2023 07:43:09 GMT
+
+### Updates
+
+- fix: add canvas resize support in lynx env, closed #581
+
+## 0.16.2
+Tue, 10 Oct 2023 11:48:48 GMT
+
+_Version update only_
+
+## 0.16.1
+Mon, 09 Oct 2023 09:51:01 GMT
+
+### Updates
+
+- fix: fix flex issue, closed, fix node dpr issue, closed #554, closed #555
+- fix: fix reinit env issue
+
+## 0.16.0
+Thu, 28 Sep 2023 07:23:52 GMT
+
+_Version update only_
+
+## 0.15.5
+Wed, 27 Sep 2023 09:33:50 GMT
+
+_Version update only_
+
+## 0.15.4
+Mon, 25 Sep 2023 03:05:18 GMT
+
+_Version update only_
+
+## 0.15.3
+Wed, 20 Sep 2023 13:12:13 GMT
+
+_Version update only_
+
+## 0.15.2
+Thu, 14 Sep 2023 09:55:56 GMT
+
+_Version update only_
+
+## 0.15.1
+Wed, 13 Sep 2023 02:21:58 GMT
+
+_Version update only_
+
+## 0.15.0
+Tue, 12 Sep 2023 12:20:48 GMT
+
+_Version update only_
+
+## 0.14.8
+Thu, 07 Sep 2023 11:56:00 GMT
+
+_Version update only_
+
+## 0.12.21
+Thu, 31 Aug 2023 10:03:38 GMT
+
+_Version update only_
+
+## 0.12.20
+Tue, 29 Aug 2023 11:30:33 GMT
+
+_Version update only_
+
+## 0.12.19
+Wed, 23 Aug 2023 11:53:28 GMT
+
+_Version update only_
+
+## 0.12.18
+Fri, 18 Aug 2023 10:16:08 GMT
+
+_Version update only_
+
+## 0.12.17
+Wed, 16 Aug 2023 06:46:13 GMT
+
+_Version update only_
+
+## 0.12.16
+Fri, 11 Aug 2023 10:05:27 GMT
+
+_Version update only_
+
+## 0.12.15
+Thu, 10 Aug 2023 12:14:14 GMT
+
+_Version update only_
+
+## 0.12.14
+Thu, 10 Aug 2023 07:22:55 GMT
+
+_Version update only_
+
+## 0.12.13
+Wed, 09 Aug 2023 07:34:23 GMT
+
+_Version update only_
+
+## 0.12.12
+Tue, 08 Aug 2023 09:27:52 GMT
+
+_Version update only_
 
 ## 0.12.11
 Thu, 03 Aug 2023 10:04:34 GMT
@@ -107,6 +350,10 @@ Fri, 16 Jun 2023 03:13:09 GMT
 - upgrade vrender
 - fix enableView3dTranform
 - upgrade vrender
+
+### Updates
+
+- release
 
 ## 0.9.1
 Thu, 08 Jun 2023 11:34:32 GMT

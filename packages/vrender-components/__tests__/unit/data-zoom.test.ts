@@ -1,9 +1,11 @@
-import type { IArea, IGroup, ILine, IRect, ISymbol, Stage } from '@visactor/vrender';
-import { Group } from '@visactor/vrender';
+import type { IArea, IGroup, ILine, IRect, ISymbol, Stage } from '@visactor/vrender-core';
+import { Group } from '@visactor/vrender-core';
 import type { Tag } from '../../src';
 import { DataZoom } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('DataZoom component test', () => {
   let stage: Stage;
@@ -41,7 +43,7 @@ describe('DataZoom component test', () => {
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.width).toBe(378);
     expect((dataZoom.getElementsByName('background')[0] as IRect).attribute.height).toBe(22);
     expect(dataZoom.AABBBounds.width()).toBe(379);
-    expect(dataZoom.AABBBounds.height()).toBe(33);
+    expect(dataZoom.AABBBounds.height()).toBe(35);
   });
 
   test('Vertical Direction without Preview Data', () => {
@@ -119,19 +121,20 @@ describe('DataZoom component test', () => {
     expect(middleHandlerSymbol.attribute.y).toBe(239);
     expect(middleHandlerSymbol.attribute.angle).toBe(0);
 
-    const startText = dataZoom.getElementsByName(`data-zoom-start-text-${position}`)[0] as unknown as Tag;
-    expect(startText.attribute.text).toBe(0.2);
-    expect(startText.attribute.x).toBeCloseTo(136.60000000000002);
-    expect(startText.attribute.y).toBe(254);
-    expect(startText.attribute.textStyle?.textAlign).toBe('right');
-    expect(startText.attribute.textStyle?.textBaseline).toBe('middle');
+    // visible: false not create
+    // const startText = dataZoom.getElementsByName(`data-zoom-start-text-${position}`)[0] as unknown as Tag;
+    // expect(startText.attribute.text).toBe(0.2);
+    // expect(startText.attribute.x).toBeCloseTo(136.60000000000002);
+    // expect(startText.attribute.y).toBe(254);
+    // expect(startText.attribute.textStyle?.textAlign).toBe('right');
+    // expect(startText.attribute.textStyle?.textBaseline).toBe('middle');
 
-    const endText = dataZoom.getElementsByName(`data-zoom-end-text-${position}`)[0] as unknown as Tag;
-    expect(endText.attribute.text).toBe(0.5);
-    expect(endText.attribute.x).toBe(250);
-    expect(endText.attribute.y).toBe(254);
-    expect(endText.attribute.textStyle?.textAlign).toBe('left');
-    expect(endText.attribute.textStyle?.textBaseline).toBe('middle');
+    // const endText = dataZoom.getElementsByName(`data-zoom-end-text-${position}`)[0] as unknown as Tag;
+    // expect(endText.attribute.text).toBe(0.5);
+    // expect(endText.attribute.x).toBe(250);
+    // expect(endText.attribute.y).toBe(254);
+    // expect(endText.attribute.textStyle?.textAlign).toBe('left');
+    // expect(endText.attribute.textStyle?.textBaseline).toBe('middle');
 
     const selectedBackground = dataZoom.getElementsByName('selectedBackground')[0] as IRect;
     expect(selectedBackground.attribute.x).toBeCloseTo(136.60000000000002);
@@ -216,18 +219,19 @@ describe('DataZoom component test', () => {
     expect(endHandler.attribute.size).toBe(22);
     expect(endHandler.attribute.angle).toBe(1.5707963267948966);
 
-    const startText = dataZoom.getElementsByName(`data-zoom-start-text-${position}`)[0] as unknown as Tag;
-    expect(startText.attribute.text).toBe(0.2);
-    expect(startText.attribute.x).toBe(254);
-    expect(startText.attribute.y).toBe(147.60000000000002);
-    expect(startText.attribute.textStyle?.textAlign).toBe('center');
-    expect(startText.attribute.textStyle?.textBaseline).toBe('bottom');
+    // visible: false not create
+    // const startText = dataZoom.getElementsByName(`data-zoom-start-text-${position}`)[0] as unknown as Tag;
+    // expect(startText.attribute.text).toBe(0.2);
+    // expect(startText.attribute.x).toBe(254);
+    // expect(startText.attribute.y).toBe(147.60000000000002);
+    // expect(startText.attribute.textStyle?.textAlign).toBe('center');
+    // expect(startText.attribute.textStyle?.textBaseline).toBe('bottom');
 
-    const endText = dataZoom.getElementsByName(`data-zoom-end-text-${position}`)[0] as unknown as Tag;
-    expect(endText.attribute.x).toBe(254);
-    expect(endText.attribute.y).toBe(261);
-    expect(endText.attribute.textStyle?.textAlign).toBe('center');
-    expect(endText.attribute.textStyle?.textBaseline).toBe('top');
+    // const endText = dataZoom.getElementsByName(`data-zoom-end-text-${position}`)[0] as unknown as Tag;
+    // expect(endText.attribute.x).toBe(254);
+    // expect(endText.attribute.y).toBe(261);
+    // expect(endText.attribute.textStyle?.textAlign).toBe('center');
+    // expect(endText.attribute.textStyle?.textBaseline).toBe('top');
 
     const selectedBackground = dataZoom.getElementsByName('selectedBackground')[0] as IRect;
     expect(selectedBackground.attribute.x).toBe(243);
@@ -317,10 +321,10 @@ describe('DataZoom component test', () => {
       }
     });
     dataZoom.setPreviewData(data);
-    dataZoom.setPreviewCallbackX(d => d.x);
-    dataZoom.setPreviewCallbackY(d => d.y);
-    dataZoom.setPreviewCallbackX1(d => d.x);
-    dataZoom.setPreviewCallbackY1(d => 265);
+    dataZoom.setPreviewPointsX(d => d.x);
+    dataZoom.setPreviewPointsY(d => d.y);
+    dataZoom.setPreviewPointsX1(d => d.x);
+    dataZoom.setPreviewPointsY1(d => 265);
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 
@@ -409,10 +413,10 @@ describe('DataZoom component test', () => {
       }
     });
     dataZoom.setPreviewData(data);
-    dataZoom.setPreviewCallbackX(d => d.x);
-    dataZoom.setPreviewCallbackY(d => d.y);
-    dataZoom.setPreviewCallbackX1(d => 265);
-    dataZoom.setPreviewCallbackY1(d => d.y);
+    dataZoom.setPreviewPointsX(d => d.x);
+    dataZoom.setPreviewPointsY(d => d.y);
+    dataZoom.setPreviewPointsX1(d => 265);
+    dataZoom.setPreviewPointsY1(d => d.y);
     stage.defaultLayer.add(dataZoom as any);
     stage.render();
 

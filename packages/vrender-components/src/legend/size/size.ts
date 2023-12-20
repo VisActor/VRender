@@ -1,63 +1,18 @@
 /**
  * @description 连续尺寸图例
  */
-import { createGroup, createPath, FederatedPointerEvent, INode } from '@visactor/vrender';
+import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
 import { Slider } from '../../slider';
 import { DEFAULT_TITLE_SPACE } from '../constant';
-import { OrientType } from '../../interface';
-import { SizeLegendAttributes } from './type';
+import type { ComponentOptions } from '../../interface';
+import type { SizeLegendAttributes } from './type';
+import { getSizeHandlerPath } from '../util';
+import { loadSizeContinuousLegendComponent } from '../register';
 
-export function getSizeHandlerPath(align: OrientType = 'bottom') {
-  let centerX = 0;
-  const centerY = 0;
-  const upperHalf = 3.5;
-  const leftHalf = 2.5;
-  const arrowY = 6;
-
-  if (align === 'top') {
-    return `
-    M${centerX},${centerY - arrowY}L${centerX - upperHalf},${centerY - leftHalf}
-    v${2 * leftHalf}
-    h${2 * upperHalf}
-    v${-2 * leftHalf}
-    Z
-`;
-  }
-
-  if (align === 'left') {
-    centerX = 1;
-    return `
-    M${centerX - arrowY},${centerY}L${centerX - arrowY + leftHalf},${centerY - upperHalf}
-    h${2 * leftHalf}
-    v${2 * upperHalf}
-    h${-2 * leftHalf}
-    Z
-`;
-  }
-
-  if (align === 'right') {
-    centerX = -1;
-
-    return `
-    M${centerX + arrowY},${centerY}L${centerX + arrowY - leftHalf},${centerY - upperHalf}
-    h${-2 * leftHalf}
-    v${2 * upperHalf}
-    h${2 * leftHalf}
-    Z
-  `;
-  }
-
-  return `
-    M${centerX},${centerY + arrowY}L${centerX - upperHalf},${centerY + leftHalf}
-    v${-2 * leftHalf}
-    h${2 * upperHalf}
-    v${2 * leftHalf}
-    Z
-`;
-}
-
+loadSizeContinuousLegendComponent();
 export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   name = 'sizeLegend';
 
@@ -85,8 +40,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
 
   private _slider!: Slider;
 
-  constructor(attributes: SizeLegendAttributes) {
-    super(merge({}, SizeContinuousLegend.defaultAttributes, attributes));
+  constructor(attributes: SizeLegendAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, SizeContinuousLegend.defaultAttributes, attributes));
   }
 
   setSelected(value: number[]) {
@@ -116,11 +71,12 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
-      sizeBackground
+      sizeBackground,
+      disableTriggerEvent
     } = this.attribute as SizeLegendAttributes;
     const isHorizontal = layout === 'horizontal';
 
-    const mainContainer = createGroup({
+    const mainContainer = graphicCreator.group({
       x: 0,
       y: 0
     });
@@ -153,7 +109,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       endText,
       handlerText,
       showTooltip,
-      tooltip
+      tooltip,
+      disableTriggerEvent
     });
     mainContainer.add(slider as unknown as INode);
 
@@ -179,7 +136,7 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
         slider.setAttribute('x', backgroundHeight);
       }
     }
-    const background = createPath({
+    const background = graphicCreator.path({
       x: 0,
       y: start,
       path,
@@ -199,6 +156,9 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
   }
 
   protected _bindEvents(): void {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
     }

@@ -1,8 +1,8 @@
 import type { IBoundsLike } from '@visactor/vutils';
 import { merge } from '@visactor/vutils';
-import type { ITextGraphicAttribute } from '@visactor/vrender';
 import type { RectLabelAttrs } from './type';
 import { LabelBase } from './base';
+import type { ComponentOptions } from '../interface';
 
 export class RectLabel extends LabelBase<RectLabelAttrs> {
   static tag = 'rect-label';
@@ -20,8 +20,8 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     pickable: false
   };
 
-  constructor(attributes: RectLabelAttrs) {
-    super(merge({}, RectLabel.defaultAttributes, attributes));
+  constructor(attributes: RectLabelAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, RectLabel.defaultAttributes, attributes));
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {
@@ -58,6 +58,21 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
       case 'inside-right':
         sx = 0.5;
         break;
+      case 'top-right':
+        sx = 0.5;
+        sy = -0.5;
+        break;
+      case 'top-left':
+        sx = -0.5;
+        sy = -0.5;
+        break;
+      case 'bottom-right':
+        sx = 0.5;
+        sy = 0.5;
+        break;
+      case 'bottom-left':
+        sx = -0.5;
+        sy = 0.5;
     }
 
     anchorX += sx * rectWidth;
@@ -76,6 +91,19 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
       vx = isInside ? 1 : -1;
     } else if (position.includes('right')) {
       vx = isInside ? -1 : 1;
+    }
+
+    switch (position) {
+      case 'top-right':
+      case 'bottom-right':
+        vx = -1;
+        break;
+      case 'top-left':
+      case 'bottom-left':
+        vx = 1;
+        break;
+      default:
+        break;
     }
 
     const x = anchorX + vx * offset + (vx * width) / 2;

@@ -35,10 +35,10 @@ jobs:
         run: node common/scripts/install-run-rush.js install --bypass-policy
 
       - name: Build
-        run: node common/scripts/install-run-rush.js build -t @visactor/vrender
+        run: node common/scripts/install-run-rush.js build -t @internal/bugserver-trigger
 
       - name: Run CI
-        working-directory: ./packages/vrender
+        working-directory: ./tools/bugserver-trigger
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node ../../common/scripts/install-run-rushx.js ci

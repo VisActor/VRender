@@ -1,5 +1,5 @@
-import { ISymbolGraphicAttribute } from '@visactor/vrender';
-import { BaseGraphicAttributes } from '../../core/type';
+import type { ISymbolGraphicAttribute } from '@visactor/vrender-core';
+import type { BaseGraphicAttributes } from '../../core/type';
 
 /**
  * 控制器属性
@@ -8,10 +8,15 @@ import { BaseGraphicAttributes } from '../../core/type';
 export interface ControllerAttributes {
   visible?: boolean;
   layout?: LayoutType;
-  start: BaseGraphicAttributes<ISymbolGraphicAttribute>;
-  pause: BaseGraphicAttributes<ISymbolGraphicAttribute>;
-  forward: BaseGraphicAttributes<ISymbolGraphicAttribute>;
-  backward: BaseGraphicAttributes<ISymbolGraphicAttribute>;
+  start: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
+  pause: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
+  forward: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
+  backward: BaseGraphicAttributes<ISymbolGraphicAttribute> & { visible?: boolean };
+  /**
+   * 关闭交互效果
+   * @default false
+   */
+  disableTriggerEvent?: boolean;
 }
 
 export type LayoutType = 'horizontal' | 'vertical';

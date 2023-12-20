@@ -111,7 +111,8 @@ describe('EventManager', () => {
 
     const event = new FederatedPointerEvent(manager);
     event.target = target;
-    event.global.set(40, 25);
+    event.global.x = 40;
+    event.global.y = 25;
     event.type = 'click';
 
     const eventSpy = jest.fn();
@@ -159,7 +160,8 @@ describe('EventManager', () => {
 
     const event = new FederatedPointerEvent(manager);
     event.target = target;
-    event.global.set(40, 25);
+    event.global.x = 40;
+    event.global.y = 25;
     event.type = 'pointerleave';
 
     const eventSpy = jest.fn();
@@ -195,12 +197,14 @@ describe('EventManager', () => {
     on.pointerId = 1;
     on.button = 1;
     on.type = 'pointerdown';
-    on.global.set(40, 20);
+    on.global.x = 40;
+    on.global.y = 20;
 
     off.pointerId = 1;
     off.button = 1;
     off.type = 'pointerup';
-    off.global.set(150, 150);
+    off.global.x = 150;
+    off.global.y = 150;
 
     manager.mapEvent(on);
     expect(manager.trackingData(1).pressTargetsByButton[1][3]).toEqual(target);
@@ -249,11 +253,13 @@ describe('EventManager', () => {
 
     on.pointerId = 1;
     on.type = 'pointerover';
-    on.global.set(40, 20);
+    on.global.x = 40;
+    on.global.y = 20;
 
     off.pointerId = 1;
     off.type = 'pointermove';
-    off.global.set(150, 150);
+    off.global.x = 150;
+    off.global.y = 150;
 
     manager.mapEvent(on);
 

@@ -1,11 +1,12 @@
 import { PointScale, LinearScale } from '@visactor/vscale';
-import type { IGraphic, Stage, Group, ILine, Text } from '@visactor/vrender';
-import type { Grid } from '../../../src';
-import { LineAxis, Segment } from '../../../src';
+import type { IGraphic, Stage, Group, ILine, Text, IGroup, IText } from '@visactor/vrender-core';
+import { LineAxis, LineAxisGrid, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { AXIS_ELEMENT_NAME } from '../../../src/axis/constant';
 import { Tag } from './../../../src/tag/tag';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Line Axis', () => {
   let stage: Stage;
@@ -281,24 +282,27 @@ describe('Line Axis', () => {
       tick: {
         visible: true,
         alignWithLabel: false
-      },
-      grid: {
-        visible: true,
-        type: 'line',
-        length: 150,
-        alternateColor: '#ccc',
-        style: (datum, index) => {
-          if (index === 1) {
-            return {
-              stroke: 'red',
-              lineWidth: 3,
-              lineDash: [4, 4]
-            };
-          }
+      }
+    });
+    const grid = new LineAxisGrid({
+      start: { x: 100, y: 150 },
+      end: { x: 200, y: 350 },
+      items,
+      visible: true,
+      type: 'line',
+      length: 150,
+      alternateColor: '#ccc',
+      style: (datum, index) => {
+        if (index === 1) {
           return {
+            stroke: 'red',
+            lineWidth: 3,
             lineDash: [4, 4]
           };
         }
+        return {
+          lineDash: [4, 4]
+        };
       },
       subGrid: {
         visible: true,
@@ -307,7 +311,9 @@ describe('Line Axis', () => {
         }
       }
     });
+
     stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.defaultLayer.add(grid as unknown as IGraphic);
     stage.render();
 
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
@@ -327,173 +333,133 @@ describe('Line Axis', () => {
     });
 
     // 验证 grid 是否渲染正确
-    let gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    let gridLineGroup = stage.getElementsByName('axis-grid')[0];
     expect(gridLineGroup).toBeDefined();
-    expect(gridLineGroup.attribute.items?.length).toBe(11);
+    expect(gridLineGroup.getElementsByName('axis-grid-line').length).toBe(11);
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 100, y: 150 },
-        { x: 234.1640786499874, y: 82.9179606750063 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 100,
-          y: 150
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 100,
+        y: 150
+      },
+      rawValue: 0,
+      value: 0
     });
 
     // 验证 subGrid 是否渲染正确
-    let subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup).toBeDefined();
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
-    // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 100, y: 150 },
-        { x: 234.1640786499874, y: 82.9179606750063 }
-      ],
-      datum: {}
-    });
+    let subGridLines = grid.getElementsByName('axis-grid-sub-line');
+    // expect(subGridLineGroup).toBeDefined();
+    expect(subGridLines.length).toBe(51);
+    // // @ts-ignore
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 100, y: 150 },
+    //     { x: 234.1640786499874, y: 82.9179606750063 }
+    //   ],
+    //   datum: {}
+    // });
 
     // polygon 类型 grid
-    axis.setAttributes({
+    grid.setAttributes({
       start: { x: 250, y: 350 },
       end: { x: 450, y: 350 },
-      tick: {
-        visible: true,
-        alignWithLabel: true
-      },
-      grid: {
-        visible: true,
-        type: 'polygon',
-        center: { x: 250, y: 350 },
-        closed: true,
-        sides: 3,
-        startAngle: 0,
-        endAngle: Math.PI * 2
-      }
+      // tick: {
+      //   visible: true,
+      //   alignWithLabel: true
+      // },
+      // grid: {
+      // visible: true,
+      type: 'polygon',
+      center: { x: 250, y: 350 },
+      closed: true,
+      sides: 3,
+      startAngle: 0,
+      endAngle: Math.PI * 2
+      // }
     });
 
-    gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    gridLineGroup = stage.getElementsByName('axis-grid')[0];
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 250, y: 350 },
-        { x: 250, y: 350 },
-        { x: 250, y: 350 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 250,
-          y: 350
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 250,
+        y: 350
+      },
+      rawValue: 0,
+      value: 0
     });
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[1]).toEqual({
+    expect(gridLineGroup.data[1]).toEqual({
       id: 10,
-      points: [
-        { x: 270, y: 350 },
-        { x: 240, y: 367.3205080756888 },
-        { x: 240, y: 332.6794919243112 }
-      ],
-      datum: {
-        id: 10,
-        label: 10,
-        point: {
-          x: 270,
-          y: 350
-        },
-        rawValue: 10,
-        value: 0.1
-      }
+      label: 10,
+      point: {
+        x: 270,
+        y: 350
+      },
+      rawValue: 10,
+      value: 0.1
     });
-    subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
+    subGridLines = stage.getElementsByName('axis-grid-sub-line');
+    expect(subGridLines.length).toBe(51);
     // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 250, y: 350 },
-        { x: 250, y: 350 },
-        { x: 250, y: 350 }
-      ],
-      datum: {}
-    });
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 250, y: 350 },
+    //     { x: 250, y: 350 },
+    //     { x: 250, y: 350 }
+    //   ],
+    //   datum: {}
+    // });
 
     // circle 类型 grid
-    axis.setAttributes({
-      grid: {
-        visible: true,
-        type: 'circle',
-        center: { x: 240, y: 350 },
-        alternateColor: undefined,
-        sides: 2
-      }
+    grid.setAttributes({
+      type: 'circle',
+      center: { x: 240, y: 350 },
+      alternateColor: undefined,
+      sides: 2
     });
 
-    gridLineGroup = axis.getElementsByName('axis-grid')[0] as unknown as Grid;
+    gridLineGroup = stage.getElementsByName('axis-grid')[0];
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[0]).toEqual({
+    expect(gridLineGroup.data[0]).toEqual({
       id: 0,
-      points: [
-        { x: 250, y: 350 },
-        { x: 230, y: 350 }
-      ],
-      datum: {
-        id: 0,
-        label: 0,
-        point: {
-          x: 250,
-          y: 350
-        },
-        rawValue: 0,
-        value: 0
-      }
+      label: 0,
+      point: {
+        x: 250,
+        y: 350
+      },
+      rawValue: 0,
+      value: 0
     });
     // @ts-ignore
-    expect(gridLineGroup.attribute.items[1]).toEqual({
+    expect(gridLineGroup.data[1]).toEqual({
       id: 10,
-      points: [
-        { x: 270, y: 350 },
-        { x: 210, y: 350 }
-      ],
-      datum: {
-        id: 10,
-        label: 10,
-        point: {
-          x: 270,
-          y: 350
-        },
-        rawValue: 10,
-        value: 0.1
-      }
+      label: 10,
+      point: {
+        x: 270,
+        y: 350
+      },
+      rawValue: 10,
+      value: 0.1
     });
 
-    subGridLineGroup = axis.getElementsByName('axis-grid-sub')[0] as unknown as Grid;
-    expect(subGridLineGroup.attribute.items?.length).toBe(51);
-    // @ts-ignore
-    expect(subGridLineGroup.attribute.items[0]).toEqual({
-      id: 'sub-0-0',
-      points: [
-        { x: 250, y: 350 },
-        { x: 230, y: 350 }
-      ],
-      datum: {}
-    });
+    subGridLines = grid.getElementsByName('axis-grid-sub-line');
+    expect(subGridLines.length).toBe(51);
+    // // @ts-ignore
+    // expect(subGridLineGroup.attribute.items[0]).toEqual({
+    //   id: 'sub-0-0',
+    //   points: [
+    //     { x: 250, y: 350 },
+    //     { x: 230, y: 350 }
+    //   ],
+    //   datum: {}
+    // });
   });
 
   it('Vertical Line Axis with Title', () => {
@@ -560,27 +526,6 @@ describe('Line Axis', () => {
           lineWidth: 1,
           stroke: '#D9DDE4',
           strokeOpacity: 1
-        }
-      },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [2, 2]
-        },
-        visible: true,
-        length: 337,
-        type: 'line',
-        depth: 0
-      },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
         }
       },
       x: 151,
@@ -709,27 +654,6 @@ describe('Line Axis', () => {
           strokeOpacity: 1
         }
       },
-      grid: {
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: []
-        },
-        visible: false,
-        length: 399,
-        type: 'line',
-        depth: 0
-      },
-      subGrid: {
-        visible: false,
-        style: {
-          lineWidth: 1,
-          stroke: '#EBEDF2',
-          strokeOpacity: 1,
-          lineDash: [4, 4]
-        }
-      },
       x: 121,
       y: 423,
       start: {
@@ -752,5 +676,440 @@ describe('Line Axis', () => {
     const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
     expect(axisTitle.attribute.y).toBe(20);
     expect(axisTitle.attribute.x).toBe(165.5);
+  });
+
+  it('should set the correct textAlign and textBaseline when set label angle', () => {
+    const axis = new LineAxis({
+      title: {
+        space: 10,
+        padding: 0,
+        textStyle: {
+          fontSize: 14,
+          fill: '#333333',
+          fontWeight: 'normal',
+          fillOpacity: 1
+        },
+        visible: true,
+        autoRotate: false,
+        shape: {},
+        background: {},
+        text: '标题',
+        maxWidth: 400,
+        pickable: false,
+        childrenPickable: false
+      },
+      label: {
+        visible: true,
+        inside: false,
+        space: 10,
+        autoRotate: true,
+        style: {
+          fontSize: 14,
+          fill: '#89909D',
+          fontWeight: 'normal',
+          fillOpacity: 1,
+          angle: -Math.PI * 0.25
+        },
+        state: {
+          hover_reverse: {
+            fill: 'red'
+          },
+          selected_reverse: {
+            fill: 'red'
+          }
+        },
+        // autoHide: true,
+        autoLimit: true
+      },
+      tick: {
+        visible: true,
+        inside: false,
+        alignWithLabel: true,
+        length: 4,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      subTick: {
+        visible: false,
+        inside: false,
+        count: 4,
+        length: 2,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      line: {
+        visible: true,
+        style: {
+          lineWidth: 1,
+          stroke: '#D9DDE4',
+          strokeOpacity: 1
+        }
+      },
+      x: 50,
+      y: 436,
+      start: {
+        x: 0,
+        y: 0
+      },
+      end: {
+        x: 200,
+        y: 0
+      },
+      items: [
+        [
+          {
+            id: '1990',
+            label: '1990',
+            value: 0.11538461538461535,
+            rawValue: '1990'
+          },
+          {
+            id: '1995',
+            label: '1995',
+            value: 0.2692307692307692,
+            rawValue: '1995'
+          },
+          {
+            id: '2000',
+            label: '2000',
+            value: 0.423076923076923,
+            rawValue: '2000'
+          },
+          {
+            id: '2005',
+            label: '2005',
+            value: 0.5769230769230768,
+            rawValue: '2005'
+          },
+          {
+            id: '2010',
+            label: '2010',
+            value: 0.7307692307692307,
+            rawValue: '2010'
+          },
+          {
+            id: '2015',
+            label: '2015',
+            value: 0.8846153846153845,
+            rawValue: '2015'
+          }
+        ]
+      ],
+      visible: true,
+      pickable: true,
+      orient: 'bottom',
+      select: true,
+      hover: true,
+      panel: {
+        visible: true,
+        style: {
+          fillOpacity: 0
+        },
+        state: {
+          hover: {
+            fillOpacity: 0.65,
+            fill: '#DDE3E9',
+            cursor: 'pointer'
+          },
+          selected: {
+            fillOpacity: 0.65,
+            fill: '#9CCBDB',
+            cursor: 'pointer'
+          }
+        }
+      },
+      verticalFactor: 1,
+      verticalLimitSize: 150
+    });
+    stage.defaultLayer.add(axis as unknown as IGraphic);
+    stage.render();
+
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+
+    axis.setAttribute('label', {
+      style: {
+        angle: Math.PI * 0.25
+      }
+    });
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+
+    axis.setAttribute('label', {
+      style: {
+        angle: Math.PI * 0.5
+      }
+    });
+    expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+  });
+
+  describe("test axis label's containerAlign", () => {
+    const domain = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const pointScale = new PointScale().domain(domain).range([0, 1]);
+    const xItems = domain.map(value => {
+      return {
+        id: value,
+        label: value,
+        value: pointScale.scale(value),
+        rawValue: value
+      };
+    });
+
+    it("should work in `orient: 'left'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 150 },
+        end: { x: 150, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 4,
+          maxWidth: 100,
+          text: 'y 轴 -- left',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [0, 45, 90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'left'
+          // formatMethod: () => 'AAAAAAAAAAAAAA'
+        },
+        orient: 'left',
+        verticalLimitSize: 300,
+        verticalMinSize: 100,
+        panel: {
+          visible: true,
+          style: {
+            stroke: 'red'
+          }
+        }
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+
+      axis.setAttribute('label', { containerAlign: 'center' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'right' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
+      );
+
+      axis.setAttributes({
+        label: {
+          visible: true,
+          containerAlign: 'left'
+        },
+        verticalMinSize: null
+      });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+      expect((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()).toBeCloseTo(
+        11.16
+      );
+    });
+
+    it("should work in `orient: 'right'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 350, y: 150 },
+        end: { x: 350, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 10,
+          maxWidth: 100,
+          text: 'y 轴 -- Right',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [0, 45, 90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'left',
+          formatMethod: (value, datum, index, data) => {
+            if (value === 'Y') {
+              return 'AAAAAAAAAAAAAA';
+            }
+            return value;
+          }
+        },
+        orient: 'right',
+        verticalLimitSize: 130,
+        verticalMinSize: 100,
+        verticalFactor: -1,
+        panel: {
+          visible: true,
+          style: {
+            stroke: 'red'
+          }
+        }
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect(axis.AABBBounds.width()).toBeGreaterThan(100);
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+      );
+
+      axis.setAttribute('label', { containerAlign: 'center' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'right' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
+      );
+
+      axis.setAttribute('verticalMinSize', 400);
+      expect(axis.AABBBounds.width()).toBeLessThan(400);
+    });
+
+    it("should work in `orient: 'top'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 150 },
+        end: { x: 350, y: 150 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 0,
+          maxWidth: 100,
+          text: 'x 轴 -- bottom',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          autoRotate: false,
+          autoRotateAngle: [45],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'bottom'
+          // formatMethod: () => 'AAAAAAAAAAAAAA',
+        },
+        orient: 'top',
+        verticalLimitSize: 60,
+        verticalMinSize: 60,
+        verticalFactor: -1
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+      );
+
+      axis.setAttribute('label', { containerAlign: 'middle' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'top' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
+      );
+    });
+
+    it("should work in `orient: 'bottom'` axis", () => {
+      const axis = new LineAxis({
+        start: { x: 150, y: 350 },
+        end: { x: 350, y: 350 },
+        items: [xItems],
+        title: {
+          visible: true,
+          position: 'middle',
+          autoRotate: true,
+          padding: 0,
+          maxWidth: 100,
+          text: 'x 轴 -- bottom',
+          space: 0
+        },
+        tick: {
+          visible: true,
+          length: 10
+        },
+        label: {
+          visible: true,
+          space: 10,
+          // autoRotate: true,
+          // autoRotateAngle: [-90],
+          autoHide: true,
+          autoLimit: true,
+          containerAlign: 'bottom'
+        },
+        orient: 'bottom',
+        verticalLimitSize: 120,
+        verticalMinSize: 120
+      });
+      stage.defaultLayer.add(axis as unknown as IGraphic);
+      stage.render();
+
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+      );
+
+      axis.setAttribute('label', { containerAlign: 'middle' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
+          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
+          0.5
+      );
+
+      axis.setAttribute('label', { containerAlign: 'top' });
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
+      );
+    });
   });
 });

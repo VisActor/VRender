@@ -2,6 +2,401 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.17.6",
+      "tag": "@visactor/vrender-kits_v0.17.6",
+      "date": "Wed, 20 Dec 2023 07:39:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.5",
+      "tag": "@visactor/vrender-kits_v0.17.5",
+      "date": "Tue, 19 Dec 2023 09:13:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.4",
+      "tag": "@visactor/vrender-kits_v0.17.4",
+      "date": "Thu, 14 Dec 2023 11:00:38 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.3",
+      "tag": "@visactor/vrender-kits_v0.17.3",
+      "date": "Wed, 13 Dec 2023 12:04:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.2",
+      "tag": "@visactor/vrender-kits_v0.17.2",
+      "date": "Tue, 12 Dec 2023 13:05:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(dataZoom): add mask to modify hot zone. feat @visactor/vchart#1415'"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.1",
+      "tag": "@visactor/vrender-kits_v0.17.1",
+      "date": "Wed, 06 Dec 2023 11:19:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support pickStrokeBuffer, closed #758"
+          },
+          {
+            "comment": "fix: fix issue with rebind pick-contribution"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.0",
+      "tag": "@visactor/vrender-kits_v0.17.0",
+      "date": "Thu, 30 Nov 2023 12:58:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: rect support x1 and y1"
+          },
+          {
+            "comment": "refactor: refact inversify completely, closed #657"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "feat: optmize bounds performance"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.18",
+      "tag": "@visactor/vrender-kits_v0.16.18",
+      "date": "Thu, 30 Nov 2023 09:40:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: doubletap should not be triggered when the target is different twice before and after"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.17",
+      "tag": "@visactor/vrender-kits_v0.16.17",
+      "date": "Thu, 23 Nov 2023 13:32:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support 'tap' gesture for Gesture plugin"
+          },
+          {
+            "comment": "fix: \\`pickMode: 'imprecise'\\` not work in polygon"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.16",
+      "tag": "@visactor/vrender-kits_v0.16.16",
+      "date": "Fri, 17 Nov 2023 02:33:59 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.15",
+      "tag": "@visactor/vrender-kits_v0.16.15",
+      "date": "Thu, 16 Nov 2023 02:46:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.14",
+      "tag": "@visactor/vrender-kits_v0.16.14",
+      "date": "Wed, 15 Nov 2023 09:56:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.13",
+      "tag": "@visactor/vrender-kits_v0.16.13",
+      "date": "Thu, 09 Nov 2023 11:49:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: temp fix issue with lynx measuretext"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.12",
+      "tag": "@visactor/vrender-kits_v0.16.12",
+      "date": "Tue, 07 Nov 2023 10:52:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix node-canvas max count issue"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.11",
+      "tag": "@visactor/vrender-kits_v0.16.11",
+      "date": "Thu, 02 Nov 2023 13:43:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.10",
+      "tag": "@visactor/vrender-kits_v0.16.10",
+      "date": "Thu, 02 Nov 2023 11:17:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with xul and html attribute, closed #634"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.9",
+      "tag": "@visactor/vrender-kits_v0.16.9",
+      "date": "Fri, 27 Oct 2023 02:21:19 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.8",
+      "tag": "@visactor/vrender-kits_v0.16.8",
+      "date": "Mon, 23 Oct 2023 11:38:47 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.7",
+      "tag": "@visactor/vrender-kits_v0.16.7",
+      "date": "Mon, 23 Oct 2023 08:53:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.6",
+      "tag": "@visactor/vrender-kits_v0.16.6",
+      "date": "Mon, 23 Oct 2023 06:30:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.5",
+      "tag": "@visactor/vrender-kits_v0.16.5",
+      "date": "Fri, 20 Oct 2023 04:22:42 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.4",
+      "tag": "@visactor/vrender-kits_v0.16.4",
+      "date": "Thu, 19 Oct 2023 10:30:12 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.3",
+      "tag": "@visactor/vrender-kits_v0.16.3",
+      "date": "Wed, 18 Oct 2023 07:43:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add canvas resize support in lynx env, closed #581"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.2",
+      "tag": "@visactor/vrender-kits_v0.16.2",
+      "date": "Tue, 10 Oct 2023 11:48:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.16.1",
+      "tag": "@visactor/vrender-kits_v0.16.1",
+      "date": "Mon, 09 Oct 2023 09:51:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix flex issue, closed, fix node dpr issue, closed #554, closed #555"
+          },
+          {
+            "comment": "fix: fix reinit env issue"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.16.0",
+      "tag": "@visactor/vrender-kits_v0.16.0",
+      "date": "Thu, 28 Sep 2023 07:23:52 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.5",
+      "tag": "@visactor/vrender-kits_v0.15.5",
+      "date": "Wed, 27 Sep 2023 09:33:50 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.4",
+      "tag": "@visactor/vrender-kits_v0.15.4",
+      "date": "Mon, 25 Sep 2023 03:05:18 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.3",
+      "tag": "@visactor/vrender-kits_v0.15.3",
+      "date": "Wed, 20 Sep 2023 13:12:13 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.2",
+      "tag": "@visactor/vrender-kits_v0.15.2",
+      "date": "Thu, 14 Sep 2023 09:55:56 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.1",
+      "tag": "@visactor/vrender-kits_v0.15.1",
+      "date": "Wed, 13 Sep 2023 02:21:58 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.15.0",
+      "tag": "@visactor/vrender-kits_v0.15.0",
+      "date": "Tue, 12 Sep 2023 12:20:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.14.8",
+      "tag": "@visactor/vrender-kits_v0.14.8",
+      "date": "Thu, 07 Sep 2023 11:56:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.12.21",
+      "tag": "@visactor/vrender-kits_v0.12.21",
+      "date": "Thu, 31 Aug 2023 10:03:38 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.6` to `0.14.7`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.20",
+      "tag": "@visactor/vrender-kits_v0.12.20",
+      "date": "Tue, 29 Aug 2023 11:30:33 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.5` to `0.14.6`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.19",
+      "tag": "@visactor/vrender-kits_v0.12.19",
+      "date": "Wed, 23 Aug 2023 11:53:28 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.4` to `0.14.5`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.18",
+      "tag": "@visactor/vrender-kits_v0.12.18",
+      "date": "Fri, 18 Aug 2023 10:16:08 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.3` to `0.14.4`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.17",
+      "tag": "@visactor/vrender-kits_v0.12.17",
+      "date": "Wed, 16 Aug 2023 06:46:13 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.2` to `0.14.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.16",
+      "tag": "@visactor/vrender-kits_v0.12.16",
+      "date": "Fri, 11 Aug 2023 10:05:27 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.1` to `0.14.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.15",
+      "tag": "@visactor/vrender-kits_v0.12.15",
+      "date": "Thu, 10 Aug 2023 12:14:14 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.14.0` to `0.14.1`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.14",
+      "tag": "@visactor/vrender-kits_v0.12.14",
+      "date": "Thu, 10 Aug 2023 07:22:55 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.9` to `0.14.0`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.13",
+      "tag": "@visactor/vrender-kits_v0.12.13",
+      "date": "Wed, 09 Aug 2023 07:34:23 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.8` to `0.13.9`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.12.12",
+      "tag": "@visactor/vrender-kits_v0.12.12",
+      "date": "Tue, 08 Aug 2023 09:27:52 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@visactor/vrender\" from `0.13.7` to `0.13.8`"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.11",
       "tag": "@visactor/vrender-kits_v0.12.11",
       "date": "Thu, 03 Aug 2023 10:04:34 GMT",

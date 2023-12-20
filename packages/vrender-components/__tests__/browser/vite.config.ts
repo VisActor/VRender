@@ -3,8 +3,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   server: {
-    open: './index.html',
-    port: 3333
+    open: true,
+    port: 3000,
+    https: !!process.env.HTTPS,
+    host: true
   },
   define: {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -12,7 +14,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts')
+      '@visactor/vrender-core': path.resolve(__dirname, '../../../vrender-core/src/index.ts'),
+      '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts'),
+      '@visactor/vrender-kits': path.resolve(__dirname, '../../../vrender-kits/src/index.ts')
     }
   }
 });

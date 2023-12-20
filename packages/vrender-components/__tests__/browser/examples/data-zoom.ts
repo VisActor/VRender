@@ -1,3 +1,5 @@
+import { vglobal } from '@visactor/vrender-core';
+import '@visactor/vrender';
 import { IPointLike } from '@visactor/vutils';
 import render from '../../util/render';
 import { DataZoom } from '../../../src';
@@ -16,6 +18,7 @@ export function run() {
       width: 400,
       height: 30
     },
+    showDetail: true,
     // brushSelect: false,
     backgroundChartStyle: {
       line: {
@@ -30,7 +33,35 @@ export function run() {
     }
   });
 
-  const stage = render([dataZoom], 'main');
+  const dataZoomdisableTriggerEvent = new DataZoom({
+    start: 0.2,
+    end: 0.5,
+    position: {
+      x: 50,
+      y: 75
+    },
+    size: {
+      width: 400,
+      height: 30
+    },
+    // brushSelect: false,
+    backgroundChartStyle: {
+      line: {
+        visible: false
+      },
+      area: {
+        visible: false
+      }
+    },
+    middleHandlerStyle: {
+      visible: true
+    },
+    disableTriggerEvent: true
+  });
+
+  vglobal.supportsPointerEvents = false;
+
+  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

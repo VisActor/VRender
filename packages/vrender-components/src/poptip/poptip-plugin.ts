@@ -1,6 +1,5 @@
-import { injectable } from 'inversify';
-import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender';
-import { Generator } from '@visactor/vrender';
+import type { FederatedPointerEvent, IGraphic, IPlugin, IPluginService } from '@visactor/vrender-core';
+import { Generator, injectable } from '@visactor/vrender-core';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 
@@ -78,10 +77,23 @@ export class PopTipForClipedTextPlugin implements IPlugin {
     const { stage } = this.pluginService;
 
     stage.addEventListener('pointerover', this.poptip);
+    stage.addEventListener('pointerleave', this.pointerlave);
   }
+  pointerlave = (e: any) => {
+    const { stage } = this.pluginService;
+    if (e.target === stage) {
+      this.unpoptip(e);
+    }
+  };
   poptip = (e: FederatedPointerEvent) => {
     const graphic = e.target as any;
-    if (graphic.type !== 'text' || !graphic.cliped || graphic.isContainer || !graphic.attribute) {
+    if (
+      graphic.type !== 'text' ||
+      !graphic.cliped ||
+      graphic.isContainer ||
+      !graphic.attribute ||
+      graphic.attribute.disableAutoClipedPoptip
+    ) {
       this.unpoptip(e);
       return;
     }
@@ -121,5 +133,6 @@ export class PopTipForClipedTextPlugin implements IPlugin {
   deactivate(context: IPluginService): void {
     const { stage } = this.pluginService;
     stage.removeEventListener('pointerover', this.poptip);
+    stage.removeEventListener('pointerleave', this.pointerlave);
   }
 }

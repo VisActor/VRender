@@ -1,6 +1,6 @@
-import type { ITextGraphicAttribute } from '@visactor/vrender';
+import type { ITextGraphicAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { getTextBounds } from '@visactor/vrender';
+import { getTextBounds } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { TextMeasure } from '@visactor/vutils';
@@ -32,7 +32,7 @@ export function measureTextSize(text: string | number | string[] | number[], tex
   }
   const bounds = getTextBounds({
     text,
-    fontFamily: textSpec.fontFamily ?? '',
+    fontFamily: textSpec.fontFamily,
     fontSize: textSpec.fontSize || 12,
     fontWeight: textSpec.fontWeight as any,
     textAlign: textSpec.textAlign ?? 'center',

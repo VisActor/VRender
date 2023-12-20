@@ -5,11 +5,10 @@ import type {
   IPolygonAttribute,
   IRichTextGraphicAttribute,
   ISymbolGraphicAttribute
-} from '@visactor/vrender';
-import { IGraphic } from '@visactor/vrender';
-import type { Dict, IPointLike } from '@visactor/vutils';
+} from '@visactor/vrender-core';
 import type { SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
+import type { Point } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -59,14 +58,14 @@ export type IMarkBackgroundAttributes = {
   autoWidth?: boolean;
 } & Partial<SymbolAttributes>;
 
-export interface IMarkLabel extends Omit<TagAttributes, 'x' | 'y' | 'panel'> {
+export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
   /**
    * 标签的背景面板配置
    */
   panel?: IMarkBackgroundAttributes;
-}
+};
 
-export interface IMarkRef {
+export type IMarkRef = {
   /**
    * 自动旋转，沿着线的方向，默认 true
    */
@@ -83,9 +82,9 @@ export interface IMarkRef {
    * label 相对默认角度的偏移 （label跟随line的角度做自动旋转时，默认按照line的平行向量作为初始角度）
    */
   refAngle?: number;
-}
+};
 
-export interface MarkerAttrs extends IGroupGraphicAttribute {
+export type MarkerAttrs = IGroupGraphicAttribute & {
   type?: 'line' | 'area' | 'point';
   /**
    * 是否支持交互
@@ -97,50 +96,75 @@ export interface MarkerAttrs extends IGroupGraphicAttribute {
    * @default true
    */
   visible?: boolean;
-}
+  /**
+   * 是否将组件在绘制区域内进行剪切
+   * @default true
+   */
+  clipInRange?: boolean;
+  /**
+   * 组件绘制范围配置
+   */
+  limitRect?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+};
 
-export interface MarkLineAttrs extends MarkerAttrs, SegmentAttributes {
-  type?: 'line';
-  /**
-   * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
-   */
-  points: IPointLike[];
-  /**
-   * 标签
-   */
-  label?: {
+export type MarkLineAttrs = MarkerAttrs &
+  SegmentAttributes & {
+    type?: 'line';
     /**
-     * label 相对line的位置
+     * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
      */
-    position?: keyof typeof IMarkLineLabelPosition;
-  } & IMarkRef &
-    IMarkLabel;
-}
+    points: Point[] | Point[][];
 
-export interface MarkAreaAttrs extends MarkerAttrs {
+    /**
+     * 标签
+     */
+    label?: {
+      /**
+       * label 相对line的位置
+       */
+      position?: keyof typeof IMarkLineLabelPosition;
+      /**
+       * 当 mark 配置了 clip 之后，label 是否自动调整位置
+       */
+      confine?: boolean;
+    } & IMarkRef &
+      IMarkLabel;
+  };
+
+export type MarkAreaAttrs = MarkerAttrs & {
   type?: 'area';
   /**
    * 构成area的点
    */
-  points: IPointLike[];
+  points: Point[];
   /**
    * 标签
    */
   label?: {
-    position?: IMarkAreaLabelPosition;
+    position?: keyof typeof IMarkAreaLabelPosition;
+    /**
+     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     */
+    confine?: boolean;
   } & IMarkLabel;
   /**
    * area的样式
    */
   areaStyle?: IPolygonAttribute;
-}
+};
 
-export interface IItemContent extends IMarkRef {
+export type IItemContent = IMarkRef & {
   /**
    * 标注类型
+   * Tips: 保留'richText'与之前的定义做兼容
    */
   type?: 'symbol' | 'text' | 'image' | 'richText' | 'custom';
-  position?: IMarkPointItemPosition;
+  position?: keyof typeof IMarkPointItemPosition;
   /**
    * x 方向偏移量
    */
@@ -159,6 +183,7 @@ export interface IItemContent extends IMarkRef {
   imageStyle?: IImageGraphicAttribute;
   /**
    * type为text时, text的配置
+   * 'text'类型的ItemContent新增三种子类型：'text','rich','html'。配置在textStyle.type上，继承自TagAttributes。
    */
   textStyle?: IMarkLabel;
   /**
@@ -169,7 +194,11 @@ export interface IItemContent extends IMarkRef {
    * type为custom时，允许以callback的方式传入需要render的item
    */
   renderCustomCallback?: () => IGroup;
-}
+  // /**
+  //  * 当 mark 配置了 clip 之后，label 是否自动调整位置
+  //  */
+  // confine?: boolean;
+};
 
 export type IItemLine = {
   /** TODO：'type-opo' */
@@ -184,11 +213,11 @@ export type IItemLine = {
   };
 } & Omit<SegmentAttributes, 'points'>;
 
-export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
+export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
   /**
    * markPoint的位置（也是path的起点）
    */
-  position: IPointLike;
+  position: Point;
   /**
    * 标注引导线
    */
@@ -198,4 +227,4 @@ export interface MarkPointAttrs extends Omit<MarkerAttrs, 'labelStyle'> {
    * 标注内容
    */
   itemContent?: IItemContent;
-}
+};

@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IAreaCacheItem,
@@ -9,8 +8,8 @@ import type {
   IArea,
   IAreaGraphicAttribute,
   IDrawContext
-} from '@visactor/vrender';
-import { drawAreaSegments, DefaultCanvasAreaRender, CustomPath2D, drawSegments } from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { drawAreaSegments, DefaultCanvasAreaRender, CustomPath2D, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
 

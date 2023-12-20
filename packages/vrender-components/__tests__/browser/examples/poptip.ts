@@ -1,7 +1,10 @@
 import GUI from 'lil-gui';
+import '@visactor/vrender';
 import { createLine, createText, IText } from '@visactor/vrender';
 import render from '../../util/render';
 import { PopTip, loadPoptip } from '../../../src';
+// import { initBrowserEnv } from '@visactor/vrender-kits';
+// initBrowserEnv();
 loadPoptip();
 
 export function run() {
@@ -63,14 +66,15 @@ export function run() {
         lineDash: [2]
       }),
       createText({
-        text: 'hover这个text，你就能看到poptip',
+        text: 'hover这个text，你就能看到poptip这个poptip实在是太长了呀',
         maxLineWidth: 80,
         textBaseline: 'middle',
         fill: 'red',
         x: 160,
-        y: 100,
+        y: 400,
         poptip: {
-          position: 'top',
+          position: 'auto',
+          contentFormatMethod: t => t + '=========aaa=====',
           panel: {
             size: 0,
             space: 12
@@ -78,7 +82,7 @@ export function run() {
         }
       }),
       createText({
-        text: 'hover那个text，你就能看到poptip',
+        text: 'hover那个text，你就能看到poptiphover这个text，你就能看到poptip这个poptip实在是太长了呀',
         maxLineWidth: 80,
         textBaseline: 'middle',
         fill: 'red',

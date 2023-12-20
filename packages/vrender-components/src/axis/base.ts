@@ -12,9 +12,9 @@ import type {
   FederatedPointerEvent,
   IGraphic,
   IText
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createLine, createText, createGroup, createRect } from '@visactor/vrender';
+import { graphicCreator } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
@@ -26,7 +26,6 @@ import { DEFAULT_STATES, StateValue } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
 import type {
-  GridAttributes,
   LabelAttributes,
   AxisBaseAttributes,
   AxisItem,
@@ -36,7 +35,7 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
-import { Grid } from './grid';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -68,19 +67,38 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   private _lastSelect: IGraphic;
 
   protected abstract renderLine(container: IGroup): void;
-  protected abstract isInValidValue(value: number): boolean;
-  protected abstract getTickCoord(value: number): Point;
-  protected abstract getVerticalVector(offset: number, inside: boolean, point?: Point): any;
-  protected abstract getRelativeVector(point: Point): [number, number];
+  abstract isInValidValue(value: number): boolean;
+  abstract getTickCoord(value: number): Point;
+  abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
+  abstract getRelativeVector(point?: Point): [number, number];
   protected abstract getTitleAttribute(): TagAttributes;
-  protected abstract getGridAttribute(type: string): GridAttributes;
   protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
-  protected abstract handleLabelsOverlap(
+  protected abstract beforeLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
+    labelContainer: IGroup,
     layer: number,
     layerCount: number
   ): void;
+  protected abstract handleLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
+  protected abstract afterLabelsOverlap(
+    labelShapes: IText[],
+    labelData: AxisItem[],
+    labelContainer: IGroup,
+    layer: number,
+    layerCount: number
+  ): void;
+  protected abstract getLabelAlign(
+    vector: [number, number],
+    inside?: boolean,
+    angle?: number
+  ): { textAlign: TextAlignType; textBaseline: TextBaselineType };
 
   /**
    * 坐标轴的一个特殊的方法，用于不更新场景树来获取更新属性后的包围盒
@@ -90,7 +108,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const currentAttribute = cloneDeep(this.attribute);
     merge(this.attribute, attributes);
 
-    const offscreenGroup = createGroup({
+    const offscreenGroup = graphicCreator.group({
       x: this.attribute.x,
       y: this.attribute.y
     });
@@ -106,7 +124,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected render(): void {
     this.removeAllChild();
     this._prevInnerView = this._innerView;
-    this._innerView = createGroup({ x: 0, y: 0, pickable: false });
+    this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
     this._renderInner(this._innerView);
@@ -115,6 +133,9 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   private _bindEvent() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
     const { hover, select } = this.attribute;
 
     if (hover) {
@@ -177,10 +198,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
   };
 
-  private _renderInner(container: IGroup) {
-    const { title, label, tick, line, grid, items, panel } = this.attribute;
+  protected _renderInner(container: IGroup) {
+    const { title, label, tick, line, items } = this.attribute;
 
-    const axisContainer = createGroup({ x: 0, y: 0, zIndex: 1 });
+    const axisContainer = graphicCreator.group({ x: 0, y: 0, zIndex: 1 });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
     axisContainer.id = this._getNodeId('container');
     axisContainer.setMode(this.mode);
@@ -201,7 +222,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       }
       // 渲染标签
       if (label?.visible) {
-        const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
+        const labelGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
         labelGroup.name = AXIS_ELEMENT_NAME.labelContainer;
         labelGroup.id = this._getNodeId('label-container');
         this.axisLabelsContainer = labelGroup;
@@ -209,15 +230,12 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         items.forEach((axisItems: AxisItem[], layer: number) => {
           const layerLabelGroup = this.renderLabels(labelGroup, axisItems, layer);
 
-          // handle overlap
           const labels = layerLabelGroup.getChildren() as IText[];
-          this.handleLabelsOverlap(labels, axisItems, layer, items.length);
+          this.beforeLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          // handle overlap
+          this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+          this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
         });
-      }
-
-      // 渲染网格线
-      if (grid?.visible) {
-        this.renderGrid(container);
       }
     }
 
@@ -225,45 +243,24 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     if (title?.visible) {
       this.renderTitle(axisContainer);
     }
-
-    // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
-    // 坐标轴主体 panel
-    if (panel && panel.visible) {
-      const axisContainerBounds = axisContainer.AABBBounds;
-      const bgRect = createRect({
-        x: axisContainerBounds.x1,
-        y: axisContainerBounds.y1,
-        width: axisContainerBounds.width(),
-        height: axisContainerBounds.height(),
-        ...panel.style
-      });
-      bgRect.name = AXIS_ELEMENT_NAME.background;
-      bgRect.id = this._getNodeId('background');
-
-      if (!isEmpty(panel.state)) {
-        bgRect.states = merge({}, DEFAULT_STATES, panel.state);
-      }
-      axisContainer.insertBefore(bgRect, axisContainer.firstChild);
-    }
   }
-
   protected renderTicks(container: IGroup) {
     const tickLineItems = this.getTickLineItems();
 
-    const tickLineGroup = createGroup({ x: 0, y: 0, pickable: false });
+    const tickLineGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
     tickLineGroup.name = AXIS_ELEMENT_NAME.tickContainer;
     tickLineGroup.id = this._getNodeId('tick-container');
     container.add(tickLineGroup);
 
     tickLineItems.forEach((item: TickLineItem, index) => {
-      const line = createLine({
+      const line = graphicCreator.line({
         ...this._getTickLineAttribute('tick', item, index, tickLineItems)
       });
       line.name = AXIS_ELEMENT_NAME.tick;
       line.id = this._getNodeId(item.id);
 
       if (isEmpty(this.attribute.tick?.state)) {
-        line.states = null;
+        line.states = DEFAULT_STATES;
       } else {
         const data = this.data[index];
         const tickLineState = merge({}, DEFAULT_STATES, this.attribute.tick.state);
@@ -285,14 +282,14 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       const subTickLineItems: TickLineItem[] = this.getSubTickLineItems();
       if (subTickLineItems.length) {
         subTickLineItems.forEach((item: TickLineItem, index) => {
-          const line = createLine({
+          const line = graphicCreator.line({
             ...this._getTickLineAttribute('subTick', item, index, tickLineItems)
           });
           line.name = AXIS_ELEMENT_NAME.subTick;
           line.id = this._getNodeId(`${index}`);
 
           if (isEmpty(subTick.state)) {
-            line.states = null;
+            line.states = DEFAULT_STATES;
           } else {
             const subTickLineState = merge({}, DEFAULT_STATES, subTick.state);
             Object.keys(subTickLineState).forEach(key => {
@@ -318,7 +315,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
     const data = this._transformItems(items);
 
-    const labelGroup = createGroup({ x: 0, y: 0, pickable: false });
+    const labelGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
     container.add(labelGroup);
@@ -327,12 +324,28 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     let textAlign = 'center';
     let textBaseline = 'middle';
     data.forEach((item: TransformedAxisItem, index: number) => {
-      const labelStyle = this._getLabelAttribute(item, index, data, layer);
-      const text = createText(labelStyle);
+      const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
+      let text;
+      if (labelStyle.type === 'rich') {
+        labelStyle.textConfig = labelStyle.text;
+        labelStyle.width = labelStyle.width ?? 0;
+        labelStyle.height = labelStyle.height ?? 0;
+        text = graphicCreator.richtext(labelStyle);
+      } else if (labelStyle.type === 'html') {
+        labelStyle.textConfig = [] as any;
+        labelStyle.html = {
+          dom: labelStyle.text as string,
+          ...DEFAULT_HTML_TEXT_SPEC,
+          ...labelStyle
+        };
+        text = graphicCreator.richtext(labelStyle as any);
+      } else {
+        text = graphicCreator.text(labelStyle as any);
+      }
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {
-        text.states = null;
+        text.states = DEFAULT_STATES;
       } else {
         const labelState = merge({}, DEFAULT_STATES, this.attribute.label.state);
         Object.keys(labelState).forEach(key => {
@@ -373,17 +386,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     container.add(axisTitle as unknown as INode);
   }
 
-  protected renderGrid(container: IGroup): void {
-    // 渲染 subGrid
-    const { visible } = this.attribute.subGrid || {};
-    if (visible) {
-      this._renderGridByType('subGrid', container);
-    }
-
-    // 渲染 Grid，Grid 需要在 subGrid 上层渲染
-    this._renderGridByType('grid', container);
-  }
-
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
     const vector = this.getVerticalVector(offset, inside, point);
     return {
@@ -394,8 +396,17 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   protected getTextAlign(vector: number[]): TextAlignType {
     let align: TextAlignType = 'center';
+
     if (isNumberClose(vector[0], 0)) {
-      align = 'center';
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
+      } else {
+        align = 'center';
+      }
     } else if (vector[0] > 0) {
       align = 'start';
     } else if (vector[0] < 0) {
@@ -518,13 +529,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     tickData: TransformedAxisItem[],
     layer: number
   ) {
-    const {
-      space = 4,
-      inside = false,
-      formatMethod,
-      // layouts = [],
-      ...tagAttributes
-    } = this.attribute.label as LabelAttributes;
+    const { space = 4, inside = false, formatMethod, type = 'text', text } = this.attribute.label as LabelAttributes;
     let offset = space;
     let tickLength = 0;
     if (this.attribute.tick?.visible && this.attribute.tick?.inside === inside) {
@@ -547,18 +552,16 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
     const vector = this.getVerticalVector(offset, inside, point);
-    const text = formatMethod ? formatMethod(tickDatum.label, tickDatum, index, tickData, layer) : tickDatum.label;
-    let { style: textStyle } = tagAttributes;
+    const textContent = formatMethod
+      ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer)
+      : tickDatum.label;
+    let { style: textStyle } = this.attribute.label as LabelAttributes;
     textStyle = isFunction(textStyle)
       ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
       : textStyle;
-    textStyle = merge(
-      {
-        textAlign: this.getTextAlign(vector),
-        textBaseline: this.getTextBaseline(vector, inside)
-      },
-      textStyle
-    ) as Partial<ITextGraphicAttribute>;
+
+    const labelAlign = this.getLabelAlign(vector, inside, (textStyle as ITextGraphicAttribute).angle);
+    textStyle = merge(labelAlign, textStyle) as Partial<ITextGraphicAttribute>;
     // 兼容原先 style.text 回调的方式
     if (isFunction(textStyle.text)) {
       // @ts-ignore
@@ -571,11 +574,21 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     return {
-      ...point,
-      text,
+      ...this.getLabelPosition(point, vector, textContent, textStyle),
+      text: text ?? textContent,
       lineHeight: textStyle?.fontSize,
+      type,
       ...textStyle
     };
+  }
+
+  protected getLabelPosition(
+    point: Point,
+    vector: [number, number],
+    text: string | number,
+    style: Partial<ITextGraphicAttribute>
+  ) {
+    return point;
   }
 
   private _transformItems(items: AxisItem[]) {
@@ -588,19 +601,5 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       });
     });
     return data;
-  }
-
-  private _renderGridByType(type: string, container: IGroup) {
-    const gridAttrs = this.getGridAttribute(type);
-
-    const gridGroup = new Grid({
-      // 默认关闭
-      pickable: false,
-      ...gridAttrs,
-      zIndex: 0
-    });
-    gridGroup.name = type === 'subGrid' ? `${AXIS_ELEMENT_NAME.grid}-sub` : `${AXIS_ELEMENT_NAME.grid}`;
-    gridGroup.id = this._getNodeId(type);
-    container.add(gridGroup as unknown as INode);
   }
 }

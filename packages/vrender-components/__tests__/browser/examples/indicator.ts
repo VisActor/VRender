@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { createLine } from '@visactor/vrender';
 import render from '../../util/render';
 import { Indicator } from '../../../src';
@@ -448,7 +449,22 @@ export function run() {
       //   autoLimit: true,
       autoFit: true,
       style: {
-        text: 'TITLE',
+        type: 'rich',
+        text: [
+          {
+            text: 'Visactor-',
+            fontWeight: 'bold',
+            fontSize: 42,
+            fill: 'red'
+          },
+
+          {
+            text: 'vchart',
+            textDecoration: 'underline',
+            fontSize: 36,
+            fill: 'black'
+          }
+        ],
         fontSize: 42,
 
         fill: 'red'
@@ -463,7 +479,23 @@ export function run() {
         // autoLimit: true,
         style: {
           fontSize: 16,
-          text: 'CONTENT0'
+          // text: 'CONTENT0'
+          type: 'rich',
+          text: [
+            {
+              text: 'Mapbox',
+              fontWeight: 'bold',
+              fontSize: 25,
+              fill: '#3f51b5'
+            },
+
+            {
+              text: '替代方案',
+              fontStyle: 'italic',
+              textDecoration: 'underline',
+              fill: '#3f51b5'
+            }
+          ]
         }
       },
       {

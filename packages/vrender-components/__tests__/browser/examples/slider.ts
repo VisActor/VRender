@@ -1,5 +1,33 @@
+import '@visactor/vrender';
 import { Slider } from '../../../src';
 import render from '../../util/render';
+
+const doubleSlider0 = new Slider({
+  x: 100,
+  y: 50,
+  layout: 'horizontal',
+  railWidth: 200,
+  railHeight: 10,
+  range: {
+    draggableTrack: true
+  },
+  min: 78,
+  max: 78,
+  value: [78, 78],
+  railStyle: {
+    cornerRadius: 5
+  },
+  startText: {
+    visible: true,
+    text: 'Low',
+    space: 8
+  },
+  endText: {
+    visible: true,
+    text: 'High',
+    space: 8
+  }
+});
 
 const doubleSlider1 = new Slider({
   x: 100,
@@ -156,7 +184,7 @@ const singleSlider3 = new Slider({
 });
 
 const stage = render(
-  [doubleSlider1, doubleSlider2, doubleSlider3, singleSlider1, singleSlider2, singleSlider3],
+  [doubleSlider0, doubleSlider1, doubleSlider2, doubleSlider3, singleSlider1, singleSlider2, singleSlider3],
   'main'
 );
 

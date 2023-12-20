@@ -1,18 +1,10 @@
-import type { IGraphic, IStageParams } from '@visactor/vrender';
-import {
-  createStage,
-  createGroup,
-  createLine,
-  createText,
-  createSymbol,
-  createRect,
-  createPath,
-  createArc,
-  createArea,
-  createCircle
-} from '@visactor/vrender';
+import type { IGraphic, IStageParams } from '@visactor/vrender-core';
+
+import { Group, Line, Text, createStage, Symbol, Rect, Path, Arc, Area, Circle, Polygon } from '@visactor/vrender-core';
 
 import { array } from '@visactor/vutils';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 export default function render(component: IGraphic | IGraphic[], canvasId: string) {
   // 创建舞台实例
@@ -34,7 +26,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: false,
+    disableDirtyBounds: true,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {
@@ -43,14 +35,15 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
       x2: 550,
       y2: 550
     },
-    pluginList: ['poptipForText'],
+    pluginList: ['poptipForText', 'scrollbar'],
+    enableHtmlAttribute: true,
     ...option
   });
 }
 
 export function _add(group, json) {
   if (json.type === 'group') {
-    const g = createGroup(json.attribute);
+    const g = new Group(json.attribute);
     group.add(g);
     g.name = json.name;
     json.children &&
@@ -58,20 +51,22 @@ export function _add(group, json) {
         _add(g, item);
       });
   } else if (json.type === 'line') {
-    group.add(createLine(json.attribute));
+    group.add(new Line(json.attribute));
   } else if (json.type === 'text') {
-    group.add(createText(json.attribute));
+    group.add(new Text(json.attribute));
   } else if (json.type === 'symbol') {
-    group.add(createSymbol(json.attribute));
+    group.add(new Symbol(json.attribute));
   } else if (json.type === 'rect') {
-    group.add(createRect(json.attribute));
+    group.add(new Rect(json.attribute));
   } else if (json.type === 'path') {
-    group.add(createPath(json.attribute));
+    group.add(new Path(json.attribute));
   } else if (json.type === 'arc') {
-    group.add(createArc(json.attribute));
+    group.add(new Arc(json.attribute));
   } else if (json.type === 'area') {
-    group.add(createArea(json.attribute));
+    group.add(new Area(json.attribute));
   } else if (json.type === 'circle') {
-    group.add(createCircle(json.attribute));
+    group.add(new Circle(json.attribute));
+  } else if (json.type === 'polygon') {
+    group.add(new Polygon(json.attribute));
   }
 }

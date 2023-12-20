@@ -1,3 +1,4 @@
+import '@visactor/vrender';
 import { createLine, InputText, FadeInPlus } from '@visactor/vrender';
 import render from '../../util/render';
 import { Title } from '../../../src';

@@ -1,4 +1,9 @@
 export const DEFAULT_BRUSH_ATTRIBUTES = {
+  trigger: 'pointerdown',
+  updateTrigger: 'pointermove',
+  endTrigger: 'pointerup',
+  resetTrigger: 'pointerupoutside',
+  hasMask: true,
   brushMode: 'single',
   brushType: 'rect',
   brushStyle: {
@@ -18,3 +23,5 @@ export const DEFAULT_BRUSH_ATTRIBUTES = {
     x2: Infinity
   }
 };
+
+export const DEFAULT_SIZE_THRESHOLD = 5;

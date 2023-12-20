@@ -1,0 +1,14 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "rootDir": "./src",
+    "outDir": "./es",
+    "composite": true,
+    "paths": {
+      "@visactor/vrender-components": ["../../../vrender-components/src/index.ts"],
+      "@visactor/vrender": ["../../../vrender/src/index.ts"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,7 +1,9 @@
-import { IGraphic, Stage, ISymbol } from '@visactor/vrender';
+import type { IGraphic, Stage, ISymbol } from '@visactor/vrender-core';
 import { Pager } from '../../src';
 import { createCanvas } from '../util/dom';
 import { createStage } from '../util/vrender';
+import { initBrowserEnv } from '@visactor/vrender-kits';
+initBrowserEnv();
 
 describe('Pager', () => {
   let stage: Stage;
@@ -11,7 +13,7 @@ describe('Pager', () => {
   });
 
   afterAll(() => {
-    // stage.release();
+    stage.release();
   });
   it('Pager in horizontal should be render correctly', () => {
     const pager = new Pager({

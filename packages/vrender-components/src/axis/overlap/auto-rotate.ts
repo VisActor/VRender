@@ -1,8 +1,9 @@
 /**
  * @description 坐标轴标签自动旋转
  */
-import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender';
-import { degreeToRadian, isEmpty, isRotateAABBIntersect } from '@visactor/vutils';
+import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
+import { degreeToRadian, isEmpty } from '@visactor/vutils';
+import { genRotateBounds, itemIntersect } from './util';
 
 type RotateConfig = {
   /**
@@ -53,10 +54,6 @@ function hasIntersect(items: IText[]): boolean {
   return false;
 }
 
-function itemIntersect(item1: IText, item2: IText) {
-  return isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true);
-}
-
 function tryRotate(orient: string, items: IText[]) {
   // 针对 top bottom轴的自动旋转逻辑
   if (orient === 'bottom' || orient === 'top') {
@@ -69,47 +66,68 @@ function tryRotate(orient: string, items: IText[]) {
   genRotateBounds(items);
 }
 
-function rotate(x: number, y: number, deg: number, originX: number, originY: number) {
-  return {
-    x: (x - originX) * Math.cos(deg) + (y - originY) * Math.sin(deg) + originX,
-    y: (x - originX) * Math.sin(deg) + (originY - y) * Math.cos(deg) + originY
-  };
+function clampAngle(angle = 0) {
+  if (angle < 0) {
+    while (angle < 0) {
+      angle += Math.PI * 2;
+    }
+  }
+  if (angle > 0) {
+    while (angle >= Math.PI * 2) {
+      angle -= Math.PI * 2;
+    }
+  }
+
+  return angle;
 }
 
-// 计算水平情况下的包围盒
-function genNormalBounds(item: IText) {
-  const bounds = item.AABBBounds;
-
-  return {
-    x1: bounds.x1,
-    x2: bounds.x2,
-    y1: bounds.y1,
-    y2: bounds.y2,
-    centerX: item.attribute.x,
-    centerY: item.attribute.y,
-    angle: item.attribute.angle
-  };
-}
-
-function genRotateBounds(items: IText[]) {
-  items.forEach(item => {
-    // 计算水平情况下的包围盒
-    const bounds = genNormalBounds(item);
-    // 旋转
-    const rotatedCenter = rotate(bounds.centerX, bounds.centerY, bounds.angle, item.attribute.x, item.attribute.y);
-    const deltaX = rotatedCenter.x - bounds.centerX;
-    const deltaY = rotatedCenter.y - bounds.centerY;
-    bounds.x1 += deltaX;
-    bounds.x2 += deltaX;
-    bounds.y1 += deltaY;
-    bounds.y2 += deltaY;
-    bounds.centerX += deltaX;
-    bounds.centerY += deltaY;
-    item.rotatedBounds = bounds;
+export function rotateYAxis(orient: string, items: IText[]) {
+  // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
+  items.forEach((item, i) => {
+    item.attribute.angle &&
+      item.setAttributes({
+        ...getYAxisLabelAlign(orient, item.attribute.angle),
+        angle: clampAngle(item.attribute.angle)
+      });
   });
 }
 
-function rotateYAxis(orient: string, items: IText[]) {
+export function rotateXAxis(orient: string, items: IText[]) {
+  items.forEach(item => {
+    item.attribute.angle &&
+      item.setAttributes({
+        ...getXAxisLabelAlign(orient, item.attribute.angle),
+        angle: clampAngle(item.attribute.angle)
+      });
+  });
+}
+
+export function getXAxisLabelAlign(orient: string, angle: number = 0) {
+  //                0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
+  let align = ['center', 'left', 'left', 'left', 'center', 'right', 'right', 'right', 'left'];
+  let baseline = ['top', 'top', 'middle', 'bottom', 'bottom', 'bottom', 'middle', 'top', 'top'];
+  if (orient === 'top') {
+    //            0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
+    align = ['center', 'right', 'right', 'right', 'center', 'left', 'left', 'left', 'right'];
+    baseline = ['bottom', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
+  }
+
+  angle = clampAngle(angle);
+  const step = angle / (Math.PI * 0.5);
+  let index;
+  if (step === Math.floor(step)) {
+    index = Math.floor(step) * 2;
+  } else {
+    index = Math.floor(step) * 2 + 1;
+  }
+
+  return {
+    textAlign: align[index] as TextAlignType,
+    textBaseline: baseline[index] as TextBaselineType
+  };
+}
+
+export function getYAxisLabelAlign(orient: string, angle: number = 0) {
   //                0,      0-90,       90,     90-180,   180,    180-270, 270,     270-360,   360
   let align = ['right', 'right', 'center', 'left', 'center', 'left', 'center', 'right', 'right'];
   let baseline = ['middle', 'middle', 'top', 'top', 'middle', 'middle', 'bottom', 'bottom', 'middle'];
@@ -119,68 +137,18 @@ function rotateYAxis(orient: string, items: IText[]) {
     align = ['left', 'right', 'right', 'right', 'left', 'left', 'left', 'left', 'right'];
     baseline = ['middle', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
   }
-  // 由于左右轴会裁切，所以上下两个label需要额外处理，做tighten处理
-  items.forEach((item, i) => {
-    let angle = item.attribute.angle || 0;
-    if (angle < 0) {
-      while (angle < 0) {
-        angle += Math.PI * 2;
-      }
-    }
-    if (angle > 0) {
-      while (angle >= Math.PI * 2) {
-        angle -= Math.PI * 2;
-      }
-    }
-    const step = angle / (Math.PI * 0.5);
-    let index;
-    if (step === Math.floor(step)) {
-      index = Math.floor(step) * 2;
-    } else {
-      index = Math.floor(step) * 2 + 1;
-    }
-    item.setAttributes({
-      textAlign: align[index] as TextAlignType,
-      textBaseline: baseline[index] as TextBaselineType,
-      angle: angle
-    });
-  });
-}
 
-function rotateXAxis(orient: string, items: IText[]) {
-  //                0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
-  let align = ['center', 'left', 'left', 'left', 'center', 'right', 'right', 'right', 'left'];
-  let baseline = ['top', 'top', 'middle', 'bottom', 'bottom', 'bottom', 'middle', 'top', 'top'];
-  if (orient === 'top') {
-    //            0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
-    align = ['center', 'right', 'right', 'right', 'center', 'left', 'left', 'left', 'right'];
-    baseline = ['bottom', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
+  angle = clampAngle(angle);
+  const step = angle / (Math.PI * 0.5);
+  let index;
+  if (step === Math.floor(step)) {
+    index = Math.floor(step) * 2;
+  } else {
+    index = Math.floor(step) * 2 + 1;
   }
-  items.forEach(item => {
-    let angle = item.attribute.angle || 0;
-    // todo angle为0跳过会导致下轴高度有bug
-    // if (angle === 0) return;
-    if (angle < 0) {
-      while (angle < 0) {
-        angle += Math.PI * 2;
-      }
-    }
-    if (angle > 0) {
-      while (angle >= Math.PI * 2) {
-        angle -= Math.PI * 2;
-      }
-    }
-    const step = angle / (Math.PI * 0.5);
-    let index;
-    if (step === Math.floor(step)) {
-      index = Math.floor(step) * 2;
-    } else {
-      index = Math.floor(step) * 2 + 1;
-    }
-    item.setAttributes({
-      textAlign: align[index] as TextAlignType,
-      textBaseline: baseline[index] as TextBaselineType,
-      angle
-    });
-  });
+
+  return {
+    textAlign: align[index] as TextAlignType,
+    textBaseline: baseline[index] as TextBaselineType
+  };
 }

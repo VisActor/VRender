@@ -6,19 +6,29 @@ import type {
   IImageGraphicAttribute,
   IRichText,
   IRichTextGraphicAttribute,
-  ILine
-} from '@visactor/vrender';
-import { createRichText, createSymbol, createImage, createLine } from '@visactor/vrender';
+  ILine,
+  ILineGraphicAttribute
+} from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
+import { graphicCreator } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
 import { merge } from '@visactor/vutils';
 import { Segment } from '../segment';
+import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
 import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
+// eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
+import type { Point } from '../core/type';
+import type { ComponentOptions } from '../interface';
+import { loadMarkPointComponent } from './register';
 
+loadMarkPointComponent();
 export class MarkPoint extends Marker<MarkPointAttrs> {
+  name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
 
   private _item!: ISymbol | Tag | IImage | IRichText;
@@ -27,8 +37,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   private _decorativeLine!: ILine;
 
-  constructor(attributes: MarkPointAttrs) {
-    super(merge({}, MarkPoint.defaultAttributes, attributes));
+  constructor(attributes: MarkPointAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkPoint.defaultAttributes, attributes));
   }
 
   protected setLabelPos() {
@@ -38,9 +48,12 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
   protected setItemAttributes(
     item: ISymbol | Tag | IImage | IRichText,
     itemContent: IItemContent,
-    itemPosition: IPointLike,
+    itemPosition: Point,
     itemType: 'symbol' | 'text' | 'image' | 'richText' | 'custom'
   ) {
+    if (!item) {
+      return;
+    }
     const {
       autoRotate = true,
       refX = 0,
@@ -55,40 +68,51 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const itemOffsetX = refX * Math.cos(itemAngle) + refY * Math.cos(itemAngle - Math.PI / 2);
     const itemOffsetY = refX * Math.sin(itemAngle) + refY * Math.sin(itemAngle - Math.PI / 2);
     if (itemType === 'text') {
-      item?.setAttributes({
-        ...textStyle,
+      item.setAttributes({
+        ...(textStyle as TagAttributes),
         textStyle: {
           ...DEFAULT_MARK_POINT_TEXT_STYLE_MAP[itemContent?.position || 'end'],
           ...textStyle?.textStyle
         }
       });
     } else if (itemType === 'richText') {
-      item?.setAttributes({
+      item.setAttributes({
         dx: this.getItemDx(item, position, richTextStyle) + (richTextStyle?.dx || 0),
         dy: this.getItemDy(item, position, richTextStyle) + (richTextStyle?.dy || 0)
       });
     } else if (itemType === 'image') {
-      item?.setAttributes({
+      item.setAttributes({
         dx: this.getItemDx(item, position, imageStyle) + (imageStyle?.dx || 0),
         dy: this.getItemDy(item, position, imageStyle) + (imageStyle?.dy || 0)
       });
     }
-    item?.setAttributes({
+    item.setAttributes({
       x: itemPosition.x + (itemOffsetX || 0),
       y: itemPosition.y + (itemOffsetY || 0),
       angle: autoRotate && itemAngle + refAngle
     });
+
+    // if (this.attribute.limitRect && this.attribute.itemContent?.confine) {
+    //   const { x, y, width, height } = this.attribute.limitRect;
+    //   limitShapeInBounds(item, {
+    //     x1: x,
+    //     y1: y,
+    //     x2: x + width,
+    //     y2: y + height
+    //   });
+    // }
   }
 
   protected getItemDx(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const width = (item as IGroup)?.AABBBounds?.width() ?? (style?.width || 0);
     if (position.includes('inside')) {
       return -width;
-    } else if (position === 'insideTop') {
+    }
+    if (position === 'insideTop') {
       return 0;
     }
     return 0;
@@ -96,23 +120,24 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
   protected getItemDy(
     item: ISymbol | Tag | IImage | IRichText,
-    position: IMarkPointItemPosition,
+    position: keyof typeof IMarkPointItemPosition,
     style?: IImageGraphicAttribute | IRichTextGraphicAttribute
   ) {
     const height = (item as IGroup)?.AABBBounds?.height() ?? (style?.height || 0);
     if (position.includes('top') || position.includes('Top')) {
       return -height;
-    } else if (position.includes('middle') || position.includes('Middle')) {
+    }
+    if (position.includes('middle') || position.includes('Middle')) {
       return -height / 2;
     }
     return 0;
   }
 
-  protected initItem(itemContent: IItemContent, itemPosition: IPointLike) {
+  protected initItem(itemContent: IItemContent, itemPosition: Point) {
     const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
     if (type === 'symbol') {
-      item = createSymbol({
+      item = graphicCreator.symbol({
         ...itemPosition,
         ...symbolStyle
       });
@@ -121,12 +146,12 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         ...itemPosition
       });
     } else if (type === 'richText') {
-      item = createRichText({
+      item = graphicCreator.richtext({
         ...itemPosition,
         ...richTextStyle
       });
     } else if (type === 'image') {
-      item = createImage({
+      item = graphicCreator.image({
         ...itemPosition,
         ...imageStyle
       });
@@ -137,8 +162,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     return item;
   }
 
-  protected getItemLineAttr(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike) {
-    let points: IPointLike[] = [];
+  protected getItemLineAttr(itemLine: IItemLine, position: Point, itemPosition: Point) {
+    let points: Point[] = [];
     const { type = 'type-s' } = itemLine;
     if (type === 'type-do') {
       points = [
@@ -173,7 +198,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     return points;
   }
 
-  protected setItemLineAttr(itemLine: IItemLine, position: IPointLike, itemPosition: IPointLike, visible: boolean) {
+  protected setItemLineAttr(itemLine: IItemLine, position: Point, itemPosition: Point, visible: boolean) {
     const { startSymbol, endSymbol, lineStyle } = itemLine;
     const points = this.getItemLineAttr(itemLine, position, itemPosition);
     this._line?.setAttributes({
@@ -185,7 +210,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     });
   }
 
-  protected getDecorativeLineAttr(itemLine: IItemLine, itemPosition: IPointLike) {
+  protected getDecorativeLineAttr(itemLine: IItemLine, itemPosition: Point) {
     const decorativeLength = itemLine?.decorativeLine?.length || 10;
     const itemAngle = this._line.getEndAngle() || 0;
     const startPointOffsetX = (decorativeLength / 2) * Math.cos(itemAngle - Math.PI / 2);
@@ -200,7 +225,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     };
   }
 
-  protected setDecorativeLineAttr(itemLine: IItemLine, itemPosition: IPointLike, visible: boolean) {
+  protected setDecorativeLineAttr(itemLine: IItemLine, itemPosition: Point, visible: boolean) {
     const { lineStyle } = itemLine;
     const { startPointOffsetX, startPointOffsetY, endPointOffsetX, endPointOffsetY } = this.getDecorativeLineAttr(
       itemLine,
@@ -216,8 +241,8 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
           x: itemPosition.x + endPointOffsetX,
           y: itemPosition.y + endPointOffsetY
         }
-      ],
-      ...lineStyle,
+      ] as IPointLike[],
+      ...(lineStyle as Partial<ILineGraphicAttribute>),
       visible
     });
   }
@@ -230,13 +255,14 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     };
 
     const line = new Segment({
-      points: []
+      points: [],
+      pickable: false // 组件容器本身不参与拾取
     });
     line.name = 'mark-point-line';
     this._line = line;
     container.add(line as unknown as INode);
 
-    const decorativeLine = createLine({
+    const decorativeLine = graphicCreator.line({
       points: []
     });
     decorativeLine.name = 'mark-point-decorativeLine';
@@ -261,5 +287,9 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     this.setItemLineAttr(itemLine, position, itemPosition, itemLine?.visible);
     this.setDecorativeLineAttr(itemLine, itemPosition, itemLine?.decorativeLine?.visible);
     this.setItemAttributes(this._item, itemContent, itemPosition, type);
+  }
+
+  protected isValidPoints() {
+    return true;
   }
 }

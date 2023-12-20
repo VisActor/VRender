@@ -7,10 +7,10 @@ export function run() {
 
   const guiObject = {
     name: 'Brush',
-    brushMode: 'single',
+    brushMode: 'multiple',
     brushType: 'x',
     brushMoved: true,
-    removeOnClick: false,
+    removeOnClick: true,
     xRange0: 0,
     xRange1: 500,
     yRange0: 0,
@@ -37,11 +37,13 @@ export function run() {
       maxY: guiObject.interactiveRangeY2,
       minX: guiObject.interactiveRangeX1,
       maxX: guiObject.interactiveRangeX2
-    }
+    },
+    sizeThreshold: 100
   };
 
   const brush = new Brush({
     ...attr,
+    hasMask: false,
     interactiveRange: {
       minX: 0,
       minY: 0,
@@ -56,6 +58,10 @@ export function run() {
       stroke: '#B0C8F9',
       strokeWidth: 2
     }
+  });
+
+  brush.setUpdateDragMaskCallback(a => {
+    console.log(a);
   });
 
   const brush2 = new Brush({

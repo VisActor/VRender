@@ -1,4 +1,3 @@
-import { inject, injectable } from 'inversify';
 import type {
   IGraphicRender,
   IRenderService,
@@ -10,8 +9,8 @@ import type {
   IGraphicAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
-} from '@visactor/vrender';
-import { CIRCLE_NUMBER_TYPE, DefaultCanvasCircleRender, getTheme } from '@visactor/vrender';
+} from '@visactor/vrender-core';
+import { CIRCLE_NUMBER_TYPE, DefaultCanvasCircleRender, getTheme, inject, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
 
 @injectable()

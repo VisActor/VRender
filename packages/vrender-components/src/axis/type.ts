@@ -8,9 +8,9 @@ import type {
   IGroupGraphicAttribute,
   IText,
   IGroup
-} from '@visactor/vrender';
+} from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
-import type { Point } from '../core/type';
+import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
 
@@ -43,79 +43,15 @@ export type TransformedAxisItem = AxisItem & {
 
 export type AxisItem = {
   /** 标识符，用于动画以及图形查找 */
-  id?: string;
+  id?: string | number;
   /** 显示文本 */
-  label: string;
+  label: string | number;
   /** 归一化后的数据 */
   value: number;
   /** 对应原始数据 */
   rawValue: any;
   [key: string]: any;
 };
-
-export type GridItem = {
-  /**
-   * 标识符
-   */
-  id?: string | number;
-  /** 网格线点集合 */
-  points: Point[];
-  [key: string]: any;
-};
-
-// 网格线配置
-export type GridBaseAttributes = {
-  type: 'line' | 'circle' | 'polygon';
-  /**
-   * 网格线绘制点数据
-   */
-  items: GridItem[];
-  /**
-   * 栅格线是否封闭
-   */
-  closed?: boolean;
-  /**
-   * 线样式配置
-   */
-  style?: ILineGraphicAttribute | callbackFunc<Partial<ILineGraphicAttribute> | undefined>;
-  /**
-   * 两个栅格线间的填充色
-   */
-  alternateColor?: string | string[];
-  /**
-   * 网格线的绘图层级
-   */
-  zIndex?: number;
-  /** grid 是否与 label 对齐 */
-  alignWithLabel?: boolean;
-} & IGroupGraphicAttribute;
-
-export type LineGridAttributes = {
-  type: 'line';
-  /**
-   * 当用户配置了 alternateColor 属性时，填充区域是否进行弧线连接
-   */
-  smoothLink?: boolean;
-  center?: Point;
-  /**
-   * 3d网格线的深度
-   */
-  depth?: number;
-} & GridBaseAttributes;
-
-export type PolygonGridAttributes = {
-  type: 'polygon';
-} & GridBaseAttributes;
-
-export type CircleGridAttributes = {
-  type: 'circle';
-  /**
-   * 用于圆弧型网格线的圆心位置声明
-   */
-  center: Point;
-} & GridBaseAttributes;
-
-export type GridAttributes = LineGridAttributes | CircleGridAttributes | PolygonGridAttributes;
 
 export interface AxisBaseAttributes extends IGroupGraphicAttribute {
   /**
@@ -132,11 +68,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    * 垂直于坐标轴方向的因子，默认为 1
    */
   verticalFactor?: number;
-  /**
-   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
-   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
-   */
-  verticalLimitSize?: number;
   /**
    * 坐标轴的显示位置，用于文本的防重叠处理
    */
@@ -164,13 +95,56 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
    */
   line?: LineAttributes;
   /**
-   * 网格线配置
+   * 关闭交互效果
+   * @default false
    */
-  grid?: LineAxisGridAttributes | CircleAxisGridAttributes;
+  disableTriggerEvent?: boolean;
+}
+
+export interface ILine3dType {
+  alpha: number;
+  anchor3d?: [number, number];
+}
+
+export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
-   * 子刻度对应网格线配置
+   * 起始点坐标
    */
-  subGrid?: SubGridAttributesForAxis;
+  start: Point;
+  /**
+   * 结束点坐标
+   */
+  end: Point;
+  /**
+   * 坐标轴垂直方向的限制空间，该配置会影响文本的显示，
+   * 即如果超出，文本则会进行自动旋转、自动隐藏等动作。
+   */
+  verticalLimitSize?: number;
+  /**
+   * 坐标轴垂直方向的最小空间，如果小于该值，则以该值占据显示空间。
+   * 如果同时声明了 verticalLimitSize，请保证 verticalMinSize <= verticalLimitSize，否则会以 verticalLimitSize 为准。
+   */
+  verticalMinSize?: number;
+  /**
+   * 轴标签配置
+   */
+  label?: LabelAttributes & {
+    /**
+     * label 相对于容器整体的对齐方式
+     * - `top`：整体向上对齐（垂直方向）
+     * - `middle`：整体居中对齐（垂直方向）
+     * - `bottom`：整体向下对齐（垂直方向）
+     * - `left`：整体向左对齐（水平方向）
+     * - `center`：整体居中对齐（水平方向）
+     * - `right`：整体向右对齐（水平方向）
+     */
+    containerAlign?: 'left' | 'right' | 'center' | 'top' | 'bottom' | 'middle';
+    /**
+     * 坐标轴首尾文字向内收缩
+     * @default false
+     */
+    flush?: boolean;
+  };
   /**
    * 坐标轴背景配置
    */
@@ -188,85 +162,6 @@ export interface AxisBaseAttributes extends IGroupGraphicAttribute {
      */
     state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
-}
-
-export type LineGridOfLineAxisAttributes = Omit<LineGridAttributes, 'items'> & {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-  /**
-   * 网格线的长度
-   */
-  length: number;
-};
-
-export type PolarGridOfLineAxisAttributes = (
-  | Omit<PolygonGridAttributes, 'items'>
-  | Omit<CircleGridAttributes, 'items'>
-) & {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-  /**
-   * 圆心
-   */
-  center?: Point;
-  /**
-   * 边数
-   */
-  sides?: number;
-  /**
-   * **弧度值**，起始弧度，默认 -0.5 * Math.PI
-   *
-   */
-  startAngle?: number;
-  /**
-   * **弧度值**，结束弧度，默认 1.5 * Math.PI
-   */
-  endAngle?: number;
-};
-
-export type LineAxisGridAttributes = LineGridOfLineAxisAttributes | PolarGridOfLineAxisAttributes;
-export type SubGridAttributesForAxis = {
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
-} & Pick<GridBaseAttributes, 'alternateColor' | 'style' | 'zIndex'>;
-
-export interface ILine3dType {
-  alpha: number;
-  anchor3d?: [number, number];
-}
-
-export interface IGrid3dType {
-  beta: number;
-  anchor3d?: [number, number];
-}
-
-export interface LineAxisAttributes extends AxisBaseAttributes {
-  /**
-   * 起始点坐标
-   */
-  start: Point;
-  /**
-   * 结束点坐标
-   */
-  end: Point;
-  /**
-   * 网格线配置
-   */
-  grid?: LineAxisGridAttributes;
-}
-
-export interface CircleAxisGridAttributes extends Omit<LineGridAttributes, 'items'> {
-  type: 'line';
-  /**
-   * 是否展示网格线
-   */
-  visible?: boolean;
 }
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {
@@ -294,14 +189,10 @@ export interface CircleAxisAttributes extends AxisBaseAttributes {
   radius: number;
   /** 内半径 */
   innerRadius?: number;
-  /**
-   * 网格线配置
-   */
-  grid?: CircleAxisGridAttributes;
 }
 
 // 坐标轴标题配置
-export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' | 'text' | 'panel' | 'state'> {
+export type TitleAttributes = Omit<TagAttributes, 'shape' | 'space' | 'panel' | 'state'> & {
   /**
    * 是否展示标题
    */
@@ -318,10 +209,6 @@ export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' |
    * 标题是否自动旋转以和坐标轴平行
    */
   autoRotate?: boolean;
-  /**
-   * 文本内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
-   */
-  text?: string | string[] | number | number[];
   shape?: {
     /**
      * 是否展示 shape
@@ -364,7 +251,7 @@ export interface TitleAttributes extends Omit<TagAttributes, 'shape' | 'space' |
      */
     background?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
-}
+};
 // 坐标轴线配置
 export interface LineAttributes extends Pick<SegmentAttributes, 'startSymbol' | 'endSymbol'> {
   /**
@@ -508,38 +395,41 @@ export interface AxisLabelOverlap {
   layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
 }
 
-export interface LabelAttributes extends AxisLabelOverlap {
-  /** 是否展示标签 */
-  visible: boolean;
-  /**
-   * 标签朝向，默认朝外(坐标线包围盒外部)
-   * @default false
-   */
-  inside?: boolean;
-  /** 标签同 tick 之间的间距 */
-  space?: number;
-  /**
-   * 格式化文本回调
-   * @param text 文本原始值
-   * @param item 对应的图形元素
-   * @param index 文本索引顺序
-   * @returns 格式化文本
-   */
-  formatMethod?: (value: string, datum: Dict<any>, index: number, data?: Dict<any>[], layer?: number) => string;
-  /**
-   * 文本样式
-   */
-  style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
-  /**
-   * 文本状态样式配置
-   */
-  state?: AxisItemStateStyle<Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>>;
+export type LabelAttributes = Omit<AxisLabelOverlap, 'text'> &
+  TextContent & {
+    /** 是否展示标签 */
+    visible: boolean;
+    /**
+     * 标签朝向，默认朝外(坐标线包围盒外部)
+     * @default false
+     */
+    inside?: boolean;
+    /** 标签同 tick 之间的间距 */
+    space?: number;
+    /**
+     * 格式化文本回调
+     * @param text 文本原始值
+     * @param item 对应的图形元素
+     * @param index 文本索引顺序
+     * @returns 格式化文本
+     */
+    formatMethod?: (value: string, datum: Dict<any>, index: number, data?: Dict<any>[], layer?: number) => string;
+    /**
+     * 文本样式
+     */
+    style?: Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>;
+    /**
+     * 文本状态样式配置
+     */
+    state?: AxisItemStateStyle<
+      Partial<ITextGraphicAttribute> | callbackFunc<Partial<ITextGraphicAttribute> | undefined>
+    >;
 
-  /**
-   * 用于 label 的数据过滤
-   * @param data
-   * @param layer
-   * @returns
-   */
-  dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
-}
+    /**
+     * 用于 label 的数据过滤
+     * @param data
+     * @param layer
+     * @returns
+     */
+    dataFilter?: (data: AxisItem[], layer: number) => AxisItem[];
+  };

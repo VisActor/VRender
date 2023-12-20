@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   runner: 'jest-electron/runner',
   testEnvironment: 'jest-electron/environment',
@@ -9,12 +11,11 @@ module.exports = {
   silent: true,
   globals: {
     'ts-jest': {
-      tsconfig: {
-        resolveJsonModule: true,
-        esModuleInterop: true,
-        experimentalDecorators: true,
-        module: 'ESNext'
-      }
+      resolveJsonModule: true,
+      esModuleInterop: true,
+      experimentalDecorators: true,
+      module: 'ESNext',
+      tsconfig: './tsconfig.test.json'
     },
     __DEV__: true
   },
@@ -22,6 +23,7 @@ module.exports = {
   verbose: true,
   coverageReporters: ['json-summary', 'lcov', 'text'],
   coveragePathIgnorePatterns: ['node_modules', '__tests__', 'interface.ts', '.d.ts', 'typings'],
+  testPathIgnorePatterns: ['__tests__/browser'],
   collectCoverageFrom: [
     '**/src/**',
     '!**/cjs/**',
@@ -40,5 +42,9 @@ module.exports = {
       lines: 80,
       statements: 80
     }
+  },
+  moduleNameMapper: {
+    '@visactor/vrender-kits': path.resolve(__dirname, '../vrender-kits/src/index.ts'),
+    '@visactor/vrender-core': path.resolve(__dirname, '../vrender-core/src/index.ts')
   }
 };

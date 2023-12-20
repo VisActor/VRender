@@ -1,15 +1,19 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText, IRect, ISymbol } from '@visactor/vrender';
-import { builtinSymbolsMap } from '@visactor/vrender';
+import type { IGroup, IText, IRichText, IRect, ISymbol, ITextGraphicAttribute } from '@visactor/vrender-core';
+import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
-import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs } from './type';
+import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipRichTextAttrs } from './type';
 import { getRichTextAttribute, mergeRowAttrs } from './util';
 import { defaultAttributes, TOOLTIP_POSITION_ATTRIBUTES } from './config';
+import type { ComponentOptions } from '../interface';
+import type { TextMeasureInput } from '@visactor/vutils';
+import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { loadTooltipComponent } from './register';
 
 const TOOLTIP_BACKGROUND_NAME = 'tooltip-background';
 const TOOLTIP_TITLE_NAME = 'tooltip-title';
@@ -19,6 +23,7 @@ const TOOLTIP_SHAPE_NAME_SUFFIX = 'shape';
 const TOOLTIP_KEY_NAME_SUFFIX = 'key';
 const TOOLTIP_VALUE_NAME_SUFFIX = 'value';
 
+loadTooltipComponent();
 export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
   name = 'tooltip';
 
@@ -35,8 +40,8 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
 
   static defaultAttributes: Partial<TooltipAttributes> = defaultAttributes;
 
-  constructor(attributes: TooltipAttributes) {
-    super(merge({}, Tooltip.defaultAttributes, attributes));
+  constructor(attributes: TooltipAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, Tooltip.defaultAttributes, attributes), options);
   }
 
   protected render() {
@@ -88,7 +93,44 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     ) as ISymbol;
 
     // 文本
-    if (titleAttr.value.multiLine) {
+    if (
+      typeof titleAttr.value.text === 'object' &&
+      titleAttr.value.text !== null &&
+      ((titleAttr.value.text as TooltipRichTextAttrs).type === 'rich' ||
+        (titleAttr.value.text as TooltipRichTextAttrs).type === 'html')
+    ) {
+      if ((titleAttr.value.text as TooltipRichTextAttrs).type === 'rich') {
+        this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+          `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+            ...getRichTextAttribute(titleAttr.value)
+          },
+          'richtext'
+        ) as IRichText;
+      } else if ((titleAttr.value.text as TooltipRichTextAttrs).type === 'html') {
+        this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
+          `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            html: {
+              dom: (titleAttr.value.text as TooltipRichTextAttrs).text as string,
+              ...DEFAULT_HTML_TEXT_SPEC,
+              ...titleAttr.value
+            },
+            visible: isVisible(titleAttr) && isVisible(titleAttr.value),
+            width: titleAttr.value.width,
+            height: titleAttr.value.height,
+            wordBreak: titleAttr.value.wordBreak as any,
+            textAlign: titleAttr.value.textAlign as any,
+            textBaseline: titleAttr.value.textBaseline as any,
+            singleLine: false,
+            textConfig: [],
+            ...titleAttr.value
+          },
+          'richtext'
+        ) as IRichText;
+      }
+    } else if (titleAttr.value.multiLine) {
       this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
         `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
         {
@@ -101,7 +143,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
       this._tooltipTitle = this._tooltipTitleContainer.createOrUpdateChild(
         `${TOOLTIP_TITLE_NAME}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
         {
-          text: '',
+          text: (titleAttr.value.text ?? '') as any,
           visible: isVisible(titleAttr) && isVisible(titleAttr.value),
           ...titleAttr.value
         },
@@ -165,7 +207,9 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               x: itemAttr.shape.size / 2,
               y:
                 itemAttr.shape.size / 2 +
-                ((itemAttr.key.lineHeight ?? itemAttr.key.fontSize) - itemAttr.shape.size) / 2,
+                ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -
+                  itemAttr.shape.size) /
+                  2,
               ...itemAttr.shape
             },
             'symbol'
@@ -187,11 +231,41 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               },
               'richtext'
             ) as IRichText;
+          } else if (
+            typeof itemAttr.key.text === 'object' &&
+            itemAttr.key.text !== null &&
+            ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich' ||
+              (itemAttr.key.text as TooltipRichTextAttrs).type === 'html')
+          ) {
+            if ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich') {
+              element = itemGroup.createOrUpdateChild(
+                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+                {
+                  visible: true,
+                  ...getRichTextAttribute(itemAttr.key),
+                  textBaseline: 'top'
+                },
+                'richtext'
+              ) as IRichText;
+            } else {
+              element = itemGroup.createOrUpdateChild(
+                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+                {
+                  html: {
+                    dom: (itemAttr.key.text as TooltipRichTextAttrs).text as string,
+                    ...DEFAULT_HTML_TEXT_SPEC,
+                    ...itemAttr.key
+                  }
+                },
+                'richtext'
+              ) as IRichText;
+            }
           } else {
             element = itemGroup.createOrUpdateChild(
               `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
               {
                 visible: true,
+                text: (itemAttr.key.text ?? '') as any,
                 ...itemAttr.key,
                 textBaseline: 'top'
               },
@@ -226,11 +300,44 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               },
               'richtext'
             ) as IRichText;
+          } else if (
+            typeof itemAttr.value.text === 'object' &&
+            itemAttr.value.text !== null &&
+            ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich' ||
+              (itemAttr.value.text as TooltipRichTextAttrs).type === 'html')
+          ) {
+            if ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich') {
+              element = itemGroup.createOrUpdateChild(
+                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+                {
+                  visible: true,
+                  ...getRichTextAttribute(itemAttr.value),
+                  textBaseline: 'top'
+                },
+                'richtext'
+              ) as IRichText;
+            } else {
+              element = itemGroup.createOrUpdateChild(
+                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+                {
+                  html: {
+                    dom: (itemAttr.value.text as TooltipRichTextAttrs).text as string,
+                    container: '',
+                    width: 30,
+                    height: 30,
+                    style: {},
+                    ...itemAttr.value
+                  }
+                },
+                'richtext'
+              ) as IRichText;
+            }
           } else {
             element = itemGroup.createOrUpdateChild(
               `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
               {
                 visible: true,
+                text: (itemAttr.value.text ?? '') as any,
                 ...itemAttr.value,
                 textBaseline: 'top'
               },
@@ -350,8 +457,10 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     const { value: titleValue, shape: titleShape } = titleAttr;
     const { visible: titleHasShape = false, symbolType: titleShapeType = '' } = titleShape ?? {};
 
-    if (isValid(titleValue)) {
-      const { width, height } = initTextMeasure(titleValue).quickMeasure(titleValue.text);
+    if (isValid(titleValue) && typeof titleAttr.value.text !== 'object') {
+      const { width, height } = initTextMeasure(titleValue as Partial<ITextGraphicAttribute>).quickMeasure(
+        titleValue.text as TextMeasureInput
+      );
       maxWidth = width;
       titleMaxHeight = height;
     }
@@ -392,17 +501,17 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
           const itemHasShape = isVisible(shape);
           const itemShapeType = shape?.symbolType ?? '';
 
-          const keyTextMeasure = initTextMeasure(key);
-          const valueTextMeasure = initTextMeasure(value);
+          const keyTextMeasure = initTextMeasure(key as Partial<ITextGraphicAttribute>);
+          const valueTextMeasure = initTextMeasure(value as Partial<ITextGraphicAttribute>);
 
           let itemHeight = 0;
           if (isVisible(key)) {
-            const { width, height } = keyTextMeasure.quickMeasure(key.text);
+            const { width, height } = keyTextMeasure.quickMeasure(key.text as TextMeasureInput);
             keyWidths.push(width);
             itemHeight = Math.max(itemHeight, height);
           }
           if (isVisible(value)) {
-            const { width, height } = valueTextMeasure.quickMeasure(value.text);
+            const { width, height } = valueTextMeasure.quickMeasure(value.text as TextMeasureInput);
             valueWidths.push(width);
             itemHeight = Math.max(itemHeight, height);
           }

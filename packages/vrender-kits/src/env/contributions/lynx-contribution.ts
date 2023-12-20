@@ -137,7 +137,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
    * 获取静态canvas的数量，纯粹canvas
    */
   getStaticCanvasCount(): number {
-    return this.freeCanvasList.length;
+    return 9999;
   }
 
   loadImage(url: string): Promise<{

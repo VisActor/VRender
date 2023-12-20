@@ -25,9 +25,7 @@ import { BaseRender } from './base-render';
 import {
   defaultRectBackgroundRenderContribution,
   defaultRectRenderContribution,
-  defaultRectTextureRenderContribution,
-  splitRectAfterRenderContribution,
-  splitRectBeforeRenderContribution
+  defaultRectTextureRenderContribution
 } from './contributions';
 
 @injectable()
@@ -45,9 +43,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
     this.builtinContributions = [
       defaultRectRenderContribution,
       defaultRectBackgroundRenderContribution,
-      defaultRectTextureRenderContribution,
-      splitRectAfterRenderContribution,
-      splitRectBeforeRenderContribution
+      defaultRectTextureRenderContribution
     ];
     this.init(rectRenderContribitions);
   }

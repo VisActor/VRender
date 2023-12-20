@@ -1,7 +1,11 @@
 import { bindContributionProvider } from '../../../common/contribution-provider';
 import { ContainerModule } from '../../../common/inversify';
 import { DefaultCanvasArcRender } from './arc-render';
-import { DefaultBaseInteractiveRenderContribution } from './contributions';
+import {
+  DefaultBaseInteractiveRenderContribution,
+  SplitRectAfterRenderContribution,
+  SplitRectBeforeRenderContribution
+} from './contributions';
 import { ArcRenderContribution, RectRenderContribution } from './contributions/constants';
 import { DefaultCanvasRectRender } from './rect-render';
 import { ArcRender, GraphicRender, RectRender } from './symbol';
@@ -16,6 +20,10 @@ export const rectModule = new ContainerModule(bind => {
   bind(DefaultCanvasRectRender).toSelf().inSingletonScope();
   bind(RectRender).to(DefaultCanvasRectRender).inSingletonScope();
   bind(GraphicRender).toService(RectRender);
+  bind(SplitRectAfterRenderContribution).toSelf();
+  bind(SplitRectBeforeRenderContribution).toSelf();
+  bind(RectRenderContribution).toService(SplitRectAfterRenderContribution);
+  bind(RectRenderContribution).toService(SplitRectBeforeRenderContribution);
   bind(RectRenderContribution).toService(DefaultBaseInteractiveRenderContribution);
   // rect 渲染器注入contributions
   bindContributionProvider(bind, RectRenderContribution);

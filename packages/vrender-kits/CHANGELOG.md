@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Wed, 20 Dec 2023 07:39:54 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Dec 2023 10:05:55 GMT and should not be manually modified.
+
+## 0.17.7
+Wed, 20 Dec 2023 10:05:55 GMT
+
+### Updates
+
+- fix: fix issue with create layer in miniapp env
 
 ## 0.17.6
 Wed, 20 Dec 2023 07:39:54 GMT

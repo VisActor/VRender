@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix issue with side-effect in some env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

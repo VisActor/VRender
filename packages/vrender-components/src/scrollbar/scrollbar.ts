@@ -93,7 +93,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     (this.attribute as ScrollBarAttributes).range = currScrollRange;
     // 发射 change 事件
     if (realTime) {
-      this._dispatchEvent('scroll', {
+      this._dispatchEvent('scrollDrag', {
         pre: preRange,
         value: currScrollRange
       });
@@ -341,12 +341,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
-    if (!realTime) {
-      this._dispatchEvent('scroll', {
-        pre: preRange,
-        value: clampRange(range, limitRange[0], limitRange[1])
-      });
-    }
+    this._dispatchEvent('scrollUp', {
+      pre: preRange,
+      value: clampRange(range, limitRange[0], limitRange[1])
+    });
     if (vglobal.env === 'browser') {
       vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);

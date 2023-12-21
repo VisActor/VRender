@@ -127,7 +127,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       labelLength += space;
       const layerCount = Object.keys(this.axisLabelLayerSize).length;
       if (axisVector[1] === 0) {
-        const labelBoundsHeight = this.axisLabelsContainer.AABBBounds.height();
+        const labelBoundsHeight = this.axisLabelsContainer ? this.axisLabelsContainer.AABBBounds.height() : 0;
         if (isFinite(labelBoundsHeight)) {
           labelLength += labelBoundsHeight + (layerCount - 1) * space;
         } else {
@@ -135,7 +135,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         }
       } else {
         if (axisVector[0] === 0) {
-          const boundsWidth = this.axisLabelsContainer.AABBBounds.width();
+          const boundsWidth = this.axisLabelsContainer ? this.axisLabelsContainer.AABBBounds.width() : 0;
           if (isFinite(boundsWidth)) {
             labelLength += boundsWidth + (layerCount - 1) * space;
           } else {

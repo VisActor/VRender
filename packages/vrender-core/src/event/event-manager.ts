@@ -71,6 +71,7 @@ export class EventManager {
   dispatch: any = new EventEmitter();
 
   cursor: Cursor | string;
+  cursorTarget: IEventTarget | null = null;
 
   protected mappingTable: Record<
     string,
@@ -354,6 +355,7 @@ export class EventManager {
 
     if (isMouse) {
       this[propagationMethod](e, 'mousemove');
+      this.cursorTarget = e.target;
       this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
 
@@ -378,6 +380,7 @@ export class EventManager {
       this.dispatchEvent(e, 'mouseover');
     }
     if (e.pointerType === 'mouse') {
+      this.cursorTarget = e.target;
       this.cursor = (e.target?.attribute?.cursor as Cursor) || this.rootTarget.getCursor();
     }
 
@@ -443,6 +446,7 @@ export class EventManager {
       this.freeEvent(leaveEvent);
     }
 
+    this.cursorTarget = null;
     this.cursor = '';
   };
 
@@ -817,7 +821,8 @@ export class EventManager {
       target = pickResult.graphic;
     } else if (pickResult && pickResult.group) {
       target = pickResult.group;
-    } else if (x >= 0 && x <= get(this.rootTarget, 'width') && y >= 0 && y <= get(this.rootTarget, 'height')) {
+      // } else if (x >= 0 && x <= get(this.rootTarget, 'width') && y >= 0 && y <= get(this.rootTarget, 'height')) {
+    } else if ((this.rootTarget as unknown as IGraphic).AABBBounds.contains(x, y)) {
       target = this.rootTarget;
     } else {
       target = null;

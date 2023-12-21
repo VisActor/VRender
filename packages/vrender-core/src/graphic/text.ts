@@ -56,7 +56,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get clipedText(): string | undefined {
     const attribute = this.attribute;
     const textTheme = getTheme(this).text;
-    if (Array.isArray(attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -67,7 +67,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.clipedText;
   }
   get clipedWidth(): number | undefined {
-    if (Array.isArray(this.attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     this.tryUpdateAABBBounds();
@@ -76,7 +76,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    if (Array.isArray(attribute.text)) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -87,11 +87,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.clipedText !== attribute.text.toString();
   }
   get multilineLayout(): LayoutType | undefined {
-    if (!Array.isArray(this.attribute.text)) {
+    if (!this.isMultiLine) {
       return undefined;
     }
     this.tryUpdateAABBBounds();
     return this.cache.layoutData;
+  }
+
+  get isMultiLine(): boolean {
+    return Array.isArray(this.attribute.text) || this.attribute.whiteSpace === 'normal';
   }
 
   constructor(params: ITextGraphicAttribute = { text: '', fontSize: 16 }) {

@@ -147,6 +147,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
   }
 }
 
+@injectable()
 export class SplitRectBeforeRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
   useStyle: boolean = true;
@@ -183,6 +184,7 @@ export class SplitRectBeforeRenderContribution implements IRectRenderContributio
   }
 }
 
+@injectable()
 export class SplitRectAfterRenderContribution implements IRectRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -256,7 +258,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
 }
 
 export const defaultRectRenderContribution = new DefaultRectRenderContribution();
-export const splitRectBeforeRenderContribution = new SplitRectBeforeRenderContribution();
-export const splitRectAfterRenderContribution = new SplitRectAfterRenderContribution();
+// export const splitRectBeforeRenderContribution = new SplitRectBeforeRenderContribution();
+// export const splitRectAfterRenderContribution = new SplitRectAfterRenderContribution();
 export const defaultRectTextureRenderContribution = defaultBaseTextureRenderContribution;
 export const defaultRectBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

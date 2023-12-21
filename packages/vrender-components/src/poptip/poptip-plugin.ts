@@ -87,7 +87,13 @@ export class PopTipForClipedTextPlugin implements IPlugin {
   };
   poptip = (e: FederatedPointerEvent) => {
     const graphic = e.target as any;
-    if (graphic.type !== 'text' || !graphic.cliped || graphic.isContainer || !graphic.attribute) {
+    if (
+      graphic.type !== 'text' ||
+      !graphic.cliped ||
+      graphic.isContainer ||
+      !graphic.attribute ||
+      graphic.attribute.disableAutoClipedPoptip
+    ) {
       this.unpoptip(e);
       return;
     }

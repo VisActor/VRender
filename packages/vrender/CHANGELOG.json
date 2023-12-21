@@ -2,6 +2,27 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.17.6",
+      "tag": "@visactor/vrender_v0.17.6",
+      "date": "Wed, 20 Dec 2023 07:39:54 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.5",
+      "tag": "@visactor/vrender_v0.17.5",
+      "date": "Tue, 19 Dec 2023 09:13:27 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add disableAutoClipedPoptip attribute in text graphic"
+          },
+          {
+            "comment": "fix: fix cursor update error in multi-stage"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.4",
       "tag": "@visactor/vrender_v0.17.4",
       "date": "Thu, 14 Dec 2023 11:00:38 GMT",

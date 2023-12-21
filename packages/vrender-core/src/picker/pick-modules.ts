@@ -11,8 +11,12 @@ import {
 } from './pick-interceptor';
 import { bindContributionProvider } from '../common/contribution-provider';
 
-export default new ContainerModule(bind => {
-  bind(PickerService).toService(GlobalPickerService);
+export default new ContainerModule((bind, unbind, isBound) => {
+  if (!isBound(PickerService)) {
+    bind(GlobalPickerService).toSelf();
+    bind(PickerService).toService(GlobalPickerService);
+  }
+  // bind(PickerService).toService(GlobalPickerService);
 
   // bind(DefaultGlobalPickerService).toSelf().inSingletonScope();
   // bind(GlobalPickerService).toService(DefaultGlobalPickerService);

@@ -1,6 +1,6 @@
 import type { ICanvas } from './canvas';
 import type { IContext2d } from './context';
-import type { IGraphicAttribute } from './graphic';
+import type { IGraphic, IGraphicAttribute } from './graphic';
 import type { ITextAttribute } from './graphic/text';
 import type { ILayer, ILayerParams } from './layer';
 import type { IStage } from './stage';
@@ -18,6 +18,10 @@ export interface IGraphicUtil {
     option?: Partial<ITextMeasureOption>,
     getCanvasForMeasure?: () => any
   ) => TextMeasure<ITextAttribute>;
+  drawGraphicToCanvas: (
+    graphic: IGraphic,
+    stage: IStage
+  ) => HTMLCanvasElement | null | Promise<HTMLCanvasElement | null>;
 }
 
 export type TransformType = Pick<IGraphicAttribute, 'x' | 'y' | 'scaleX' | 'scaleY' | 'angle' | 'dx' | 'dy'> & {

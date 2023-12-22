@@ -44,9 +44,9 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       textType,
       text,
       subtextType,
-      textStyle,
+      textStyle = {},
       subtext,
-      subtextStyle,
+      subtextStyle = {},
       width,
       height,
       minWidth,
@@ -66,7 +66,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       'group'
     ) as IGroup;
 
-    if (this.attribute?.visible !== false && textStyle?.visible !== false) {
+    if (this.attribute.visible !== false && textStyle.visible !== false) {
       if (textType === 'rich' || isValid(textStyle.character)) {
         const attr = {
           x: textStyle.x ?? 0,
@@ -107,10 +107,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           {
             text: [text as string],
             ...textStyle,
-            maxLineWidth: textStyle?.maxLineWidth ?? width,
-            heightLimit: textStyle?.heightLimit,
-            lineClamp: textStyle?.lineClamp,
-            ellipsis: textStyle?.ellipsis ?? true,
+            maxLineWidth: textStyle.maxLineWidth ?? width,
+            heightLimit: textStyle.heightLimit,
+            lineClamp: textStyle.lineClamp,
+            ellipsis: textStyle.ellipsis ?? true,
             x: 0,
             y: 0
           },
@@ -119,10 +119,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    const maintextHeight = this._mainTitle ? this._mainTitle?.AABBBounds.height() : 0;
-    const maintextWidth = this._mainTitle ? this._mainTitle?.AABBBounds.width() : 0;
+    const maintextHeight = this._mainTitle ? this._mainTitle.AABBBounds.height() : 0;
+    const maintextWidth = this._mainTitle ? this._mainTitle.AABBBounds.width() : 0;
 
-    if (this.attribute?.visible !== false && subtextStyle?.visible !== false) {
+    if (this.attribute.visible !== false && subtextStyle.visible !== false) {
       if (subtextType === 'rich' || isValid(subtextStyle.character)) {
         const attr: any = {
           x: subtextStyle.x ?? 0,
@@ -163,10 +163,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           {
             text: [subtext as string],
             ...subtextStyle,
-            maxLineWidth: subtextStyle?.maxLineWidth ?? width,
-            heightLimit: subtextStyle?.heightLimit,
-            lineClamp: subtextStyle?.lineClamp,
-            ellipsis: subtextStyle?.ellipsis ?? true,
+            maxLineWidth: subtextStyle.maxLineWidth ?? width,
+            heightLimit: subtextStyle.heightLimit,
+            lineClamp: subtextStyle.lineClamp,
+            ellipsis: subtextStyle.ellipsis ?? true,
             x: 0,
             y: maintextHeight
           },
@@ -175,17 +175,17 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       }
     }
 
-    const subtextHeight = this._subTitle ? this._subTitle?.AABBBounds.height() : 0;
-    const subtextWidth = this._subTitle ? this._subTitle?.AABBBounds.width() : 0;
+    const subtextHeight = this._subTitle ? this._subTitle.AABBBounds.height() : 0;
+    const subtextWidth = this._subTitle ? this._subTitle.AABBBounds.width() : 0;
 
     // 设置宽高
     let titleWidth = Math.max(maintextWidth, subtextWidth);
-    let titleHeight = maintextHeight + (subtextStyle?.height ?? subtextHeight);
+    let titleHeight = maintextHeight + (subtextStyle.height ?? subtextHeight);
 
     if (isValid(width)) {
       titleWidth = width;
-      this._mainTitle?.setAttribute('maxLineWidth', width);
-      this._subTitle?.setAttribute('maxLineWidth', width);
+      this._mainTitle && this._mainTitle.setAttribute('maxLineWidth', width);
+      this._subTitle && this._subTitle.setAttribute('maxLineWidth', width);
     }
 
     if (isValid(height)) {
@@ -196,10 +196,10 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       titleWidth = minWidth;
     }
     if (isValid(maxWidth)) {
-      this._mainTitle?.setAttribute('maxLineWidth', maxWidth);
-      this._subTitle?.setAttribute('maxLineWidth', maxWidth);
-      this._mainTitle?.setAttribute('maxWidth', maxWidth);
-      this._subTitle?.setAttribute('maxWidth', maxWidth);
+      this._mainTitle && this._mainTitle.setAttribute('maxLineWidth', maxWidth);
+      this._subTitle && this._subTitle.setAttribute('maxLineWidth', maxWidth);
+      this._mainTitle && this._mainTitle.setAttribute('maxWidth', maxWidth);
+      this._subTitle && this._subTitle.setAttribute('maxWidth', maxWidth);
       if (titleWidth > maxWidth) {
         titleWidth = maxWidth;
       }
@@ -209,8 +209,8 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       titleHeight = minHeight;
     }
     if (isValid(maxHeight)) {
-      this._mainTitle?.setAttribute('maxHeight', maxHeight);
-      this._subTitle?.setAttribute('maxHeight', maxHeight - maintextHeight);
+      this._mainTitle && this._mainTitle.setAttribute('maxHeight', maxHeight);
+      this._subTitle && this._subTitle.setAttribute('maxHeight', maxHeight - maintextHeight);
       if (titleHeight > maxHeight) {
         titleHeight = maxHeight;
       }
@@ -221,64 +221,68 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     group.attribute.boundsPadding = parsedPadding;
 
     // 设置对齐
-    if (isValid(align) || isValid(textStyle?.align)) {
-      const mainTitleAlign = textStyle?.align ? textStyle?.align : align;
-      const mainTitleWidth = textStyle?.width ?? maintextWidth;
-      if (mainTitleAlign === 'left') {
-        this._mainTitle?.setAttribute('x', 0);
-        this._mainTitle?.setAttribute('textAlign', 'left');
-      } else if (mainTitleAlign === 'center') {
-        this._mainTitle?.setAttribute('x', mainTitleWidth / 2);
-        this._mainTitle?.setAttribute('textAlign', 'center');
-      } else if (mainTitleAlign === 'right') {
-        this._mainTitle?.setAttribute('x', mainTitleWidth);
-        this._mainTitle?.setAttribute('textAlign', 'right');
+    if (this._mainTitle) {
+      if (isValid(align) || isValid(textStyle.align)) {
+        const mainTitleAlign = textStyle.align ? textStyle.align : align;
+        const mainTitleWidth = textStyle.width ?? maintextWidth;
+        if (mainTitleAlign === 'left') {
+          this._mainTitle.setAttribute('x', 0);
+          this._mainTitle.setAttribute('textAlign', 'left');
+        } else if (mainTitleAlign === 'center') {
+          this._mainTitle.setAttribute('x', mainTitleWidth / 2);
+          this._mainTitle.setAttribute('textAlign', 'center');
+        } else if (mainTitleAlign === 'right') {
+          this._mainTitle.setAttribute('x', mainTitleWidth);
+          this._mainTitle.setAttribute('textAlign', 'right');
+        }
+      }
+
+      if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
+        const mainTitleVerticalAlign = textStyle.verticalAlign ? textStyle.verticalAlign : verticalAlign;
+        const mainTitleHeight = textStyle.height ? textStyle.height : titleHeight;
+        if (mainTitleVerticalAlign === 'top') {
+          this._mainTitle.setAttribute('y', 0);
+          this._mainTitle.setAttribute('textBaseline', 'top');
+        } else if (mainTitleVerticalAlign === 'middle') {
+          this._mainTitle.setAttribute('y', mainTitleHeight / 2);
+          this._mainTitle.setAttribute('textBaseline', 'middle');
+        } else if (mainTitleVerticalAlign === 'bottom') {
+          this._mainTitle.setAttribute('y', mainTitleHeight);
+          this._mainTitle.setAttribute('textBaseline', 'bottom');
+        }
       }
     }
 
-    if (isValid(verticalAlign) || isValid(textStyle?.verticalAlign)) {
-      const mainTitleVerticalAlign = textStyle?.verticalAlign ? textStyle?.verticalAlign : verticalAlign;
-      const mainTitleHeight = textStyle?.height ? textStyle?.height : titleHeight;
-      if (mainTitleVerticalAlign === 'top') {
-        this._mainTitle?.setAttribute('y', 0);
-        this._mainTitle?.setAttribute('textBaseline', 'top');
-      } else if (mainTitleVerticalAlign === 'middle') {
-        this._mainTitle?.setAttribute('y', mainTitleHeight / 2);
-        this._mainTitle?.setAttribute('textBaseline', 'middle');
-      } else if (mainTitleVerticalAlign === 'bottom') {
-        this._mainTitle?.setAttribute('y', mainTitleHeight);
-        this._mainTitle?.setAttribute('textBaseline', 'bottom');
+    if (this._subTitle) {
+      if (isValid(align) || isValid(subtextStyle.align)) {
+        const subTitleAlign = subtextStyle.align ? subtextStyle.align : align;
+        const subTitleWidth = subtextStyle.width ?? subtextWidth;
+        if (subTitleAlign === 'left') {
+          this._subTitle.setAttribute('x', 0);
+          this._subTitle.setAttribute('textAlign', 'left');
+        } else if (subTitleAlign === 'center') {
+          this._subTitle.setAttribute('x', subTitleWidth / 2);
+          this._subTitle.setAttribute('textAlign', 'center');
+        } else if (subTitleAlign === 'right') {
+          this._subTitle.setAttribute('x', subTitleWidth);
+          this._subTitle.setAttribute('textAlign', 'right');
+        }
       }
-    }
 
-    if (isValid(align) || isValid(subtextStyle?.align)) {
-      const subTitleAlign = subtextStyle?.align ? subtextStyle?.align : align;
-      const subTitleWidth = subtextStyle?.width ?? subtextWidth;
-      if (subTitleAlign === 'left') {
-        this._subTitle?.setAttribute('x', 0);
-        this._subTitle?.setAttribute('textAlign', 'left');
-      } else if (subTitleAlign === 'center') {
-        this._subTitle?.setAttribute('x', subTitleWidth / 2);
-        this._subTitle?.setAttribute('textAlign', 'center');
-      } else if (subTitleAlign === 'right') {
-        this._subTitle?.setAttribute('x', subTitleWidth);
-        this._subTitle?.setAttribute('textAlign', 'right');
-      }
-    }
-
-    if (isValid(verticalAlign) || isValid(textStyle?.verticalAlign)) {
-      const subTitleVerticalAlign = subtextStyle?.verticalAlign ? subtextStyle?.verticalAlign : verticalAlign;
-      const subTitleYStart = maintextHeight;
-      const subTitleHeight = subtextStyle?.height ?? 0;
-      if (subTitleVerticalAlign === 'top') {
-        this._subTitle?.setAttribute('y', subTitleYStart);
-        this._subTitle?.setAttribute('textBaseline', 'top');
-      } else if (subTitleVerticalAlign === 'middle') {
-        this._subTitle?.setAttribute('y', subTitleYStart + subTitleHeight / 2);
-        this._subTitle?.setAttribute('textBaseline', 'middle');
-      } else if (subTitleVerticalAlign === 'bottom') {
-        this._subTitle?.setAttribute('y', subTitleYStart + subTitleHeight);
-        this._subTitle?.setAttribute('textBaseline', 'bottom');
+      if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
+        const subTitleVerticalAlign = subtextStyle.verticalAlign ? subtextStyle.verticalAlign : verticalAlign;
+        const subTitleYStart = maintextHeight;
+        const subTitleHeight = subtextStyle.height ?? 0;
+        if (subTitleVerticalAlign === 'top') {
+          this._subTitle.setAttribute('y', subTitleYStart);
+          this._subTitle.setAttribute('textBaseline', 'top');
+        } else if (subTitleVerticalAlign === 'middle') {
+          this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight / 2);
+          this._subTitle.setAttribute('textBaseline', 'middle');
+        } else if (subTitleVerticalAlign === 'bottom') {
+          this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight);
+          this._subTitle.setAttribute('textBaseline', 'bottom');
+        }
       }
     }
   }

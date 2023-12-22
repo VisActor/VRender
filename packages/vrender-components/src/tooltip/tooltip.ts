@@ -177,7 +177,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     this._tooltipContent = this.createOrUpdateChild(TOOLTIP_CONTENT_NAME, { visible: true }, 'group') as IGroup;
     this._tooltipContent.removeAllChild(); // 清空内容区
 
-    if (content?.length) {
+    if (content && content.length) {
       this._tooltipContent.setAttribute('x', padding[3]);
       this._tooltipContent.setAttribute('y', padding[0] + titleHeight);
 
@@ -479,7 +479,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     }
 
     // calculate content
-    if (content?.length) {
+    if (content && content.length) {
       // filter content
       const filteredContent: [TooltipRowAttrs, TooltipRowAttrs][] = [];
       content.forEach((item, i) => {

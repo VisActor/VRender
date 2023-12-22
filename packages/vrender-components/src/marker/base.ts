@@ -17,7 +17,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract isValidPoints(): any;
 
   private _initContainer() {
-    const { limitRect, clipInRange } = this.attribute;
+    const { limitRect = {} as T['limitRect'], clipInRange } = this.attribute;
     let group;
     if (clipInRange) {
       // 如果用户配置了剪切
@@ -27,8 +27,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
         pickable: false
       });
       group = graphicCreator.group({
-        x: -(limitRect?.x ?? 0),
-        y: -(limitRect?.y ?? 0),
+        x: -(limitRect.x ?? 0),
+        y: -(limitRect.y ?? 0),
         pickable: false
       });
       groupClip.add(group);
@@ -47,13 +47,16 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   }
 
   private _updateContainer() {
-    const { limitRect, clipInRange } = this.attribute;
-    this._containerClip?.setAttributes({
-      ...limitRect
-    });
+    const { limitRect = {} as T['limitRect'], clipInRange } = this.attribute;
+    if (this._containerClip) {
+      this._containerClip.setAttributes({
+        ...limitRect
+      });
+    }
+
     this._container.setAttributes({
-      x: clipInRange ? -(limitRect?.x ?? 0) : 0,
-      y: clipInRange ? -(limitRect?.y ?? 0) : 0
+      x: clipInRange ? -(limitRect.x ?? 0) : 0,
+      y: clipInRange ? -(limitRect.y ?? 0) : 0
     });
   }
 

@@ -156,7 +156,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
 
     const { autoRotate = true } = attribute;
     let symbol;
-    if (attribute?.visible) {
+    if (attribute && attribute.visible) {
       const startAngle = this._startAngle;
       const endAngle = this._endAngle;
       const { state } = this.attribute as SegmentAttributes;
@@ -227,19 +227,20 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
 
   private _clipPoints(points: Point[]) {
-    const { startSymbol, endSymbol } = this.attribute as SegmentAttributes;
+    const { startSymbol = {} as SegmentAttributes['startSymbol'], endSymbol = {} as SegmentAttributes['endSymbol'] } =
+      this.attribute as SegmentAttributes;
     // 通过改变line起点和终点的方式达到symbol在fill为false的情况下，也可以遮盖line的效果
     let pointsAfterClip = points;
-    if (startSymbol?.visible) {
-      const startSize = startSymbol?.clip ? startSymbol?.size || 10 : 0;
+    if (startSymbol.visible) {
+      const startSize = startSymbol.clip ? startSymbol.size || 10 : 0;
       const pointsStart = {
         x: points[0].x - (startSize / 2) * (Math.cos(this._startAngle) || 0),
         y: points[0].y - (startSize / 2) * (Math.sin(this._startAngle) || 0)
       };
       pointsAfterClip = [pointsStart, ...pointsAfterClip.slice(1)];
     }
-    if (endSymbol?.visible) {
-      const endSize = endSymbol?.clip ? endSymbol?.size || 10 : 0;
+    if (endSymbol.visible) {
+      const endSize = endSymbol.clip ? endSymbol.size || 10 : 0;
       const pointsEnd = {
         x: points[points.length - 1].x - (endSize / 2) * (Math.cos(this._endAngle) || 0),
         y: points[points.length - 1].y - (endSize / 2) * (Math.sin(this._endAngle) || 0)

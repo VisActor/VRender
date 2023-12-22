@@ -85,8 +85,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
           this._slider.setAttribute('y', sliderPos[0], true);
         }
 
-        if (!this.stage?.autoRender) {
-          this.stage?.renderNextFrame();
+        if (this.stage && !this.stage.autoRender) {
+          this.stage.renderNextFrame();
         }
       }
     }
@@ -284,8 +284,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       false
     );
 
-    if (!this.stage?.autoRender) {
-      this.stage?.renderNextFrame();
+    if (this.stage && !this.stage.autoRender) {
+      this.stage.renderNextFrame();
     }
   };
 

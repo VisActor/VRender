@@ -100,7 +100,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     }
     e.stopPropagation();
 
-    const brushMoved = this.attribute?.brushMoved ?? true;
+    const brushMoved = this.attribute.brushMoved ?? true;
     this._activeMoveState = brushMoved && this._isPosInBrushMask(e); // 如果是移动状态，在这里会标记operatingMask为正在移动的mask
     this._activeDrawState = !this._activeMoveState;
 
@@ -160,7 +160,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeDrawState = false;
     this._activeMoveState = false;
     this._isDrawedBeforeEnd = false;
-    this._operatingMask?.setAttribute('pickable', false);
+    if (this._operatingMask) {
+      this._operatingMask.setAttribute('pickable', false);
+    }
   };
 
   /**
@@ -229,8 +231,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
     if (cacheLength > 0) {
-      const lastPos = this._cacheDrawPoints[this._cacheDrawPoints.length - 1];
-      if (pos.x === lastPos?.x && pos.y === lastPos?.y) {
+      const lastPos = this._cacheDrawPoints[this._cacheDrawPoints.length - 1] ?? ({} as IPointLike);
+      if (pos.x === lastPos.x && pos.y === lastPos.y) {
         return;
       }
     }

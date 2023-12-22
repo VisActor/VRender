@@ -36,7 +36,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       radius,
       center,
       innerRadius = 0,
-      line,
+      line = {},
       inside = false
     } = this.attribute as CircleAxisAttributes;
 
@@ -53,13 +53,13 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       endAngle,
       radius: arcRadius,
       innerRadius: arcInnerRadius,
-      ...line?.style
+      ...line.style
     };
     const axisLine = graphicCreator.circle(arcAttrs);
     axisLine.name = AXIS_ELEMENT_NAME.line;
     axisLine.id = this._getNodeId('line');
 
-    if (!isEmpty(line?.state)) {
+    if (!isEmpty(line.state)) {
       axisLine.states = merge({}, DEFAULT_STATES, line.state);
     }
     container.add(axisLine);
@@ -72,21 +72,21 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       textStyle = {},
       shape,
       background,
-      state,
+      state = {},
       ...restAttrs
     } = this.attribute.title as TitleAttributes;
     let titlePoint = center;
     let labelHeight = 0;
-    if (this.attribute.label?.visible && this.attribute.label?.inside === false) {
+    if (this.attribute.label?.visible && this.attribute.label.inside === false) {
       // 这里取 label 的最大长度
       labelHeight = get(this.attribute.label, 'style.fontSize', 12) + get(this.attribute.label, 'space', 4);
     }
     let tickLength = 0;
-    if (this.attribute.tick?.visible && this.attribute.tick?.inside === false) {
-      tickLength = this.attribute.tick?.length || 4;
+    if (this.attribute.tick?.visible && this.attribute.tick.inside === false) {
+      tickLength = this.attribute.tick.length || 4;
     }
-    if (this.attribute.subTick?.visible && this.attribute.subTick?.inside === false) {
-      tickLength = Math.max(tickLength, this.attribute.subTick?.length || 2);
+    if (this.attribute.subTick?.visible && this.attribute.subTick.inside === false) {
+      tickLength = Math.max(tickLength, this.attribute.subTick.length || 2);
     }
     const offset = radius + tickLength + labelHeight + space;
     let textBaseline: TextBaselineType = 'middle';
@@ -116,9 +116,9 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
         ...textStyle
       },
       state: {
-        text: merge({}, DEFAULT_STATES, state?.text),
-        shape: merge({}, DEFAULT_STATES, state?.shape),
-        panel: merge({}, DEFAULT_STATES, state?.background)
+        text: merge({}, DEFAULT_STATES, state.text),
+        shape: merge({}, DEFAULT_STATES, state.shape),
+        panel: merge({}, DEFAULT_STATES, state.background)
       }
     };
 

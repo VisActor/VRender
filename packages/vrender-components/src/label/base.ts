@@ -161,6 +161,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
     }
 
+    if (labels && labels.length) {
+      labels.forEach(label => {
+        this._bindEvent(label);
+        this._setStatesOfText(label);
+      });
+    }
+
     if (smartInvert !== false) {
       this._smartInvert(labels);
     }
@@ -270,8 +277,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
       const text = graphicCreator.richtext(attributes as any);
-      this._bindEvent(text);
-      this._setStatesOfText(text);
       return text;
     } else if (attributes.textType === 'html') {
       attributes.textConfig = [] as IRichTextCharacter[];
@@ -281,13 +286,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         ...attributes
       };
       const text = graphicCreator.richtext(attributes as IRichTextGraphicAttribute);
-      this._bindEvent(text);
-      this._setStatesOfText(text);
       return text;
     }
     const text = graphicCreator.text(attributes);
-    this._bindEvent(text);
-    this._setStatesOfText(text);
     return text;
   }
 

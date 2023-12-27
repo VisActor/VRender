@@ -270,11 +270,13 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
                 y: endPoint.y1 ?? endPoint.y
               });
           }
-          lastBottomSeg = calcLineCache(
-            bottomPoints,
-            curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
-          );
-          bottomCaches.unshift(lastBottomSeg);
+          if (bottomPoints.length > 1) {
+            lastBottomSeg = calcLineCache(
+              bottomPoints,
+              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+            );
+            bottomCaches.unshift(lastBottomSeg);
+          }
         }
         area.cacheArea = bottomCaches.map((item, index) => ({
           top: topCaches[index],

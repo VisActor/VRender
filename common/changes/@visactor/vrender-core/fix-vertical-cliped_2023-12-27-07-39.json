@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with cliped attribute in vertical text, closed #827",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

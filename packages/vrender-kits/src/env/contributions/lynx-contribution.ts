@@ -206,6 +206,13 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
     };
   }
 
+  mapToCanvasPoint(event: any) {
+    if (event?.type?.startsWith('mouse')) {
+      return event;
+    }
+    return event;
+  }
+
   addEventListener<K extends keyof DocumentEventMap>(
     type: K,
     listener: (this: Document, ev: DocumentEventMap[K]) => any,

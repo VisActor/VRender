@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: when axis label space is 0, and axis tick' inside is true, the axis label's position is not correct",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

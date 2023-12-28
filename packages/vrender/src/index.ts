@@ -1,4 +1,5 @@
-import { container, isBrowserEnv, isNodeEnv } from '@visactor/vrender-core';
+import '@visactor/vrender-core';
+import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
 import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
 import {
   registerArc,
@@ -22,6 +23,8 @@ import {
 } from '@visactor/vrender-kits';
 // 导出版本号
 export const version = __VERSION__;
+
+preLoadAllModule();
 
 if (isBrowserEnv()) {
   loadBrowserEnv(container);

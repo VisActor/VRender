@@ -738,7 +738,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _handleRelatedGraphicSetState = (e: any) => {
-    if (e.detail?.type === AttributeUpdateType.STATE) {
+    if (
+      e.detail?.type === AttributeUpdateType.STATE ||
+      (e.detail?.type === AttributeUpdateType.ANIMATE_UPDATE && e.detail.animationState?.isFirstFrameOfStep)
+    ) {
       const currentStates = e.target?.currentStates ?? [];
       const labels = this._isCollectionBase ? [...this._graphicToText.values()] : [this._graphicToText.get(e.target)];
 

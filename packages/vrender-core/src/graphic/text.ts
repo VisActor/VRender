@@ -56,7 +56,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get clipedText(): string | undefined {
     const attribute = this.attribute;
     const textTheme = getTheme(this).text;
-    if (this.isMultiLine) {
+    if (!this.isSimplify()) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -67,7 +67,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.clipedText;
   }
   get clipedWidth(): number | undefined {
-    if (this.isMultiLine) {
+    if (!this.isSimplify()) {
       return undefined;
     }
     this.tryUpdateAABBBounds();
@@ -76,7 +76,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    if (this.isMultiLine) {
+    if (!this.isSimplify()) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -84,6 +84,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
+    if (this.clipedText == null) {
+      return false;
+    }
     return this.clipedText !== attribute.text.toString();
   }
   get multilineLayout(): LayoutType | undefined {
@@ -94,6 +97,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.layoutData;
   }
 
+  // 是否是简单文字
+  // 单行，横排
+  private isSimplify(): boolean {
+    return !this.isMultiLine && this.attribute.direction !== 'vertical';
+  }
   get isMultiLine(): boolean {
     return Array.isArray(this.attribute.text) || this.attribute.whiteSpace === 'normal';
   }

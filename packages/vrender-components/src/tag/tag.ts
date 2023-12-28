@@ -56,7 +56,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       padding = 4,
       visible,
       state,
-      type
+      type,
+      textAlwaysCenter
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -220,6 +221,15 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       } else if (textAlign === 'left' || textAlign === 'start') {
         group.setAttribute('x', parsedPadding[3]);
       }
+
+      if (textAlwaysCenter && (textAlign === 'left' || textAlign === 'start')) {
+        // for flex layout
+        textShape.setAttributes({
+          x: textX + tagWidth / 2,
+          textAlign: 'center'
+        });
+      }
+
       if (textBaseline === 'middle') {
         y -= tagHeight / 2;
         if (symbol) {

@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { isNil, type AABBBounds, type OBBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -69,10 +69,20 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   toCustomPath(): ICustomPath2D {
     // throw new Error('暂不支持');
     const attribute = this.attribute;
-    const width = attribute.width;
-    const height = attribute.height;
-    const x = 0;
-    const y = 0;
+    let width = isNil(attribute.width) ? attribute.x1 - attribute.x : attribute.width;
+    let height = isNil(attribute.height) ? attribute.y1 - attribute.y : attribute.height;
+    let x = 0;
+    let y = 0;
+
+    if (width < 0) {
+      x = width;
+      width = -width;
+    }
+
+    if (height < 0) {
+      y = height;
+      height = -height;
+    }
 
     const path = new CustomPath2D();
     path.moveTo(x, y);

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix morphing of rect\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

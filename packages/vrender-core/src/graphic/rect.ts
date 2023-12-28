@@ -67,18 +67,18 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   }
 
   toCustomPath(): ICustomPath2D {
-    throw new Error('暂不支持');
-    // const attribute = this.attribute;
-    // const width = attribute.width;
-    // const height = attribute.height;
-    // const x = 0;
-    // const y = 0;
+    // throw new Error('暂不支持');
+    const attribute = this.attribute;
+    const width = attribute.width;
+    const height = attribute.height;
+    const x = 0;
+    const y = 0;
 
-    // const path = new CustomPath2D();
-    // path.moveTo(x, y);
-    // path.rect(x, y, width, height);
+    const path = new CustomPath2D();
+    path.moveTo(x, y);
+    path.rect(x, y, width, height);
 
-    // return path;
+    return path;
   }
 
   clone() {

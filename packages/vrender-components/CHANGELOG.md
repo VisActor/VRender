@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 29 Dec 2023 07:20:26 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+
+## 0.17.9
+Fri, 29 Dec 2023 09:59:13 GMT
+
+### Updates
+
+- fix: fix label position when offset is 0
+
+
 
 ## 0.17.8
 Fri, 29 Dec 2023 07:20:26 GMT

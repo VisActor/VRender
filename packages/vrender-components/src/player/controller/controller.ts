@@ -83,13 +83,13 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
     this._layout = this.attribute.layout;
     // 若水平布局
     if (this._layout === 'horizontal') {
-      this._backwardAttr.style.symbolType = this._backwardAttr.style?.symbolType ?? iconLeft;
-      this._forwardAttr.style.symbolType = this._forwardAttr.style?.symbolType ?? iconRight;
+      this._backwardAttr.style.symbolType = this._backwardAttr.style.symbolType ?? iconLeft;
+      this._forwardAttr.style.symbolType = this._forwardAttr.style.symbolType ?? iconRight;
     }
     // 若垂直布局
     else if (this._layout === 'vertical') {
-      this._backwardAttr.style.symbolType = this._backwardAttr.style?.symbolType ?? iconUp;
-      this._forwardAttr.style.symbolType = this._forwardAttr.style?.symbolType ?? iconDown;
+      this._backwardAttr.style.symbolType = this._backwardAttr.style.symbolType ?? iconUp;
+      this._forwardAttr.style.symbolType = this._forwardAttr.style.symbolType ?? iconDown;
     }
   };
 

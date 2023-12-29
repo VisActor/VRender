@@ -63,8 +63,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected setLabelPos() {
     if (this._label && this._area) {
-      const { label } = this.attribute as MarkAreaAttrs;
-      const labelPosition = label?.position ?? 'middle';
+      const { label = {} } = this.attribute as MarkAreaAttrs;
+      const labelPosition = label.position ?? 'middle';
       const labelPoint = this._getPositionByDirection(this._area, labelPosition);
       this._label.setAttributes({
         ...labelPoint,
@@ -74,7 +74,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
         }
       });
 
-      if (this.attribute.limitRect && label?.confine) {
+      if (this.attribute.limitRect && label.confine) {
         const { x, y, width, height } = this.attribute.limitRect;
         limitShapeInBounds(this._label, {
           x1: x,
@@ -107,15 +107,19 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected updateMarker() {
     const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
-    this._area?.setAttributes({
-      points: points,
-      ...areaStyle
-    });
-    this._label?.setAttributes({
-      dx: 0,
-      dy: 0, // 需要进行复位
-      ...(label as TagAttributes)
-    });
+    if (this._area) {
+      this._area.setAttributes({
+        points: points,
+        ...areaStyle
+      });
+    }
+    if (this._area) {
+      this._label.setAttributes({
+        dx: 0,
+        dy: 0, // 需要进行复位
+        ...(label as TagAttributes)
+      });
+    }
     this.setLabelPos();
   }
 

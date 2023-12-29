@@ -107,7 +107,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       autoRotate = true,
       shape,
       background,
-      state,
+      state = {},
       ...restAttrs
     } = this.attribute.title as TitleAttributes;
     let percent = 0.5;
@@ -122,7 +122,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const axisVector = this.getRelativeVector();
     // HACK;
     let labelLength = 0;
-    if (this.attribute.label?.visible && this.attribute.label?.inside === false) {
+    if (this.attribute.label?.visible && this.attribute.label.inside === false) {
       const space = +get(this.attribute, 'label.space', 4);
       labelLength += space;
       const layerCount = Object.keys(this.axisLabelLayerSize).length;
@@ -182,11 +182,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
 
     // 标题都默认朝外
     let tickLength = 0;
-    if (this.attribute.tick?.visible && this.attribute.tick?.inside === false) {
-      tickLength = this.attribute.tick?.length || 4;
+    if (this.attribute.tick?.visible && this.attribute.tick.inside === false) {
+      tickLength = this.attribute.tick.length || 4;
     }
-    if (this.attribute.subTick?.visible && this.attribute.subTick?.inside === false) {
-      tickLength = Math.max(tickLength, this.attribute.subTick?.length || 2);
+    if (this.attribute.subTick?.visible && this.attribute.subTick.inside === false) {
+      tickLength = Math.max(tickLength, this.attribute.subTick.length || 2);
     }
 
     const offset = tickLength + labelLength + space;
@@ -233,9 +233,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         ...textStyle
       },
       state: {
-        text: merge({}, DEFAULT_STATES, state?.text),
-        shape: merge({}, DEFAULT_STATES, state?.shape),
-        panel: merge({}, DEFAULT_STATES, state?.background)
+        text: merge({}, DEFAULT_STATES, state.text),
+        shape: merge({}, DEFAULT_STATES, state.shape),
+        panel: merge({}, DEFAULT_STATES, state.background)
       }
     };
     attrs.angle = angle;
@@ -284,7 +284,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     const orient = this.attribute.orient;
-    if (isValidNumber(angle)) {
+    if (isValidNumber(angle) || (vector[0] === 0 && vector[1] === 0)) {
       if (orient === 'top' || orient === 'bottom') {
         return getXAxisLabelAlign(orient, angle);
       }
@@ -521,9 +521,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     let limitLength = limitSize;
     let titleHeight = 0;
     let titleSpacing = 0;
-    const axisLineWidth = line?.visible ? line.style.lineWidth ?? 1 : 0;
-    const tickLength = tick?.visible ? tick.length ?? 4 : 0;
-    if (title?.visible && typeof title.text === 'string') {
+    const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
+    const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
+    if (title && title.visible && typeof title.text === 'string') {
       titleHeight = measureTextSize(title.text, title.textStyle).height;
       const padding = normalizePadding(title.padding);
       titleSpacing = title.space + padding[0] + padding[2];

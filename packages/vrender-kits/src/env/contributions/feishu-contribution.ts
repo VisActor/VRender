@@ -233,6 +233,6 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
     if (event?.type?.startsWith('mouse')) {
       return event;
     }
-    return null;
+    return event;
   }
 }

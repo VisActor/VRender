@@ -363,7 +363,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let focusStartX = 0;
     let shapeSize = 0;
     let shapeSpace = 0;
-    if (shapeAttr?.visible !== false) {
+    if (shapeAttr && shapeAttr.visible !== false) {
       shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
       shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
       const itemShape = graphicCreator.symbol({
@@ -696,7 +696,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _onHover = (e: FederatedPointerEvent) => {
     const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
+    if (target && target.name && target.name.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
 
@@ -723,7 +723,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _onClick = (e: FederatedPointerEvent) => {
     const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
+    if (target && target.name && target.name.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
 

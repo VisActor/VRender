@@ -140,7 +140,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (isFunction(customLayoutFunc)) {
       labels = customLayoutFunc(
         data,
-        this.getRelatedGrphic,
+        this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
       );
     } else {
@@ -151,7 +151,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (isFunction(customOverlapFunc)) {
       labels = customOverlapFunc(
         labels as Text[],
-        this.getRelatedGrphic,
+        this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
       );
     } else {
@@ -159,6 +159,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (overlap !== false) {
         labels = this._overlapping(labels);
       }
+    }
+
+    if (labels && labels.length) {
+      labels.forEach(label => {
+        this._bindEvent(label);
+        this._setStatesOfText(label);
+      });
     }
 
     if (smartInvert !== false) {
@@ -270,8 +277,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
       const text = graphicCreator.richtext(attributes as any);
-      this._bindEvent(text);
-      this._setStatesOfText(text);
       return text;
     } else if (attributes.textType === 'html') {
       attributes.textConfig = [] as IRichTextCharacter[];
@@ -281,13 +286,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         ...attributes
       };
       const text = graphicCreator.richtext(attributes as IRichTextGraphicAttribute);
-      this._bindEvent(text);
-      this._setStatesOfText(text);
       return text;
     }
     const text = graphicCreator.text(attributes);
-    this._bindEvent(text);
-    this._setStatesOfText(text);
     return text;
   }
 
@@ -373,7 +374,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
   }
 
-  protected getRelatedGrphic(item: LabelItem) {
+  protected getRelatedGraphic(item: LabelItem) {
     return this._idToGraphic.get(item.id);
   }
 
@@ -383,7 +384,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
-      const baseMark = this.getRelatedGrphic(textData);
+      const baseMark = this.getRelatedGraphic(textData);
 
       const labelAttribute = {
         fill: this._isCollectionBase
@@ -472,7 +473,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
 
       const text = labels[i] as IText | IRichText;
-      const baseMark = this.getRelatedGrphic(text.attribute);
+      const baseMark = this.getRelatedGraphic(text.attribute);
       text.update();
       if (!isRectIntersect(baseMark.AABBBounds, { x1: 0, x2: bmpTool.width, y1: 0, y2: bmpTool.height }, true)) {
         continue;
@@ -595,7 +596,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     labels.forEach((text, index) => {
       const labelLine: ILine = this._labelLine(text as any);
-      const relatedGraphic = this.getRelatedGrphic(text.attribute);
+      const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const textId = (text.attribute as LabelItem).id;
       const textKey = this._isCollectionBase ? textId : relatedGraphic;
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
@@ -682,7 +683,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     labels.forEach(text => {
       const labelLine = this._labelLine(text as any);
-      const relatedGraphic = this.getRelatedGrphic(text.attribute);
+      const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
       const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
 
@@ -848,7 +849,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         continue;
       }
 
-      const baseMark = this.getRelatedGrphic(label.attribute as LabelItem);
+      const baseMark = this.getRelatedGraphic(label.attribute as LabelItem);
 
       /**
        * 增加smartInvert时fillStrategy和 strokeStrategy的四种策略：

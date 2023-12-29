@@ -85,15 +85,21 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
           this._slider.setAttribute('y', sliderPos[0], true);
         }
 
-        if (!this.stage?.autoRender) {
-          this.stage?.renderNextFrame();
+        if (this.stage && !this.stage.autoRender) {
+          this.stage.renderNextFrame();
         }
       }
     }
     (this.attribute as ScrollBarAttributes).range = currScrollRange;
     // 发射 change 事件
     if (realTime) {
+      // FIXME: for vchart, 下个中版本删除
       this._dispatchEvent('scroll', {
+        pre: preRange,
+        value: currScrollRange
+      });
+      // FIXME: for vtable, 下个中版本保留
+      this._dispatchEvent('scrollDrag', {
         pre: preRange,
         value: currScrollRange
       });
@@ -284,8 +290,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       false
     );
 
-    if (!this.stage?.autoRender) {
-      this.stage?.renderNextFrame();
+    if (this.stage && !this.stage.autoRender) {
+      this.stage.renderNextFrame();
     }
   };
 
@@ -341,12 +347,19 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
+
+    // FIXME: for vchart, 下个中版本删除
     if (!realTime) {
       this._dispatchEvent('scroll', {
         pre: preRange,
         value: clampRange(range, limitRange[0], limitRange[1])
       });
     }
+    // FIXME: for vtable, 下个中版本保留
+    this._dispatchEvent('scrollUp', {
+      pre: preRange,
+      value: clampRange(range, limitRange[0], limitRange[1])
+    });
     if (vglobal.env === 'browser') {
       vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);

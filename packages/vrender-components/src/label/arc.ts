@@ -1,7 +1,7 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
-import type { ArcLabelAttrs, IPoint, Quadrant, TextAlign, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
+import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
 import {
   type IRichText,
   type IText,
@@ -793,7 +793,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
     if (points[0].x < 0) {
       if (isClose(points[0].y, points[1].y)) {
-        if (Math.abs(arc.middleAngle) < Math.PI / 2) {
+        if (
+          (isGreater(arc.middleAngle, -Math.PI) && isLess(arc.middleAngle, 0)) ||
+          (isGreater(arc.middleAngle, Math.PI) && isLess(arc.middleAngle, Math.PI * 2))
+        ) {
           min = 0;
           max = points[1].y + height / 2;
         } else {

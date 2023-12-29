@@ -112,18 +112,19 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     this._minIndex = 0;
     this._maxIndex = this._data.length - 1;
 
+    const { slider = {}, controller = {} as PlayerAttributes['controller'] } = this.attribute;
     // 轨道样式
-    this._sliderVisible = this.attribute?.slider?.visible;
-    this._railStyle = { ...this.attribute?.slider?.railStyle };
-    this._trackStyle = { ...this.attribute?.slider?.trackStyle };
-    this._handlerStyle = { ...this.attribute?.slider?.handlerStyle };
+    this._sliderVisible = slider.visible;
+    this._railStyle = { ...slider.railStyle };
+    this._trackStyle = { ...slider.trackStyle };
+    this._handlerStyle = { ...slider.handlerStyle };
 
     // 控制器样式
-    this._controllerVisible = this.attribute?.controller?.visible;
-    this._start = { ...this.attribute?.controller?.start };
-    this._pause = { ...this.attribute?.controller?.pause };
-    this._forward = { ...this.attribute?.controller?.forward };
-    this._backward = { ...this.attribute?.controller?.backward };
+    this._controllerVisible = controller.visible;
+    this._start = { ...controller.start };
+    this._pause = { ...controller.pause };
+    this._forward = { ...controller.forward };
+    this._backward = { ...controller.backward };
   }
 
   private _initLayoutInfo() {

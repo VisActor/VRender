@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with conical cache not work as expect",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

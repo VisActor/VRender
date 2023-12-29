@@ -551,7 +551,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
-    const vector = this.getVerticalVector(offset, inside, point);
+    const vector = this.getVerticalVector(offset || 1, inside, point);
     const textContent = formatMethod
       ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer)
       : tickDatum.label;

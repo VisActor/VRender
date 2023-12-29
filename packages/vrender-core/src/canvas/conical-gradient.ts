@@ -22,7 +22,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { pi2 } from '@visactor/vutils';
+import { pi2, LRU } from '@visactor/vutils';
 import { application } from '../application';
 import type { IConicalGradient, IContext2d } from '../interface';
 import { interpolateColor } from '../color-string';
@@ -52,10 +52,25 @@ class ConicalCanvas {
 }
 
 // todo 目前环形渐变缓存还是依赖于x和y，后续优化环形渐变
-export class ColorInterpolate {
+export class ColorInterpolate extends LRU {
   private readonly rgbaSet: Uint8ClampedArray;
+  private cacheParams: {
+    CLEAN_THRESHOLD?: number;
+    L_TIME?: number;
+    R_COUNT?: number;
+    R_TIMESTAMP_MAX_SIZE?: number;
+  } = { CLEAN_THRESHOLD: 100, L_TIME: 1e3 };
+  static _instance: ColorInterpolate;
+
+  static getInstance() {
+    if (!ColorInterpolate._instance) {
+      ColorInterpolate._instance = new ColorInterpolate();
+    }
+    return ColorInterpolate._instance;
+  }
 
   constructor(stops: [number, string][] = [], precision = 100) {
+    super();
     const canvas = ConicalCanvas.GetCanvas();
     const conicalCtx = ConicalCanvas.GetCtx();
     canvas.width = precision;
@@ -84,7 +99,7 @@ export class ColorInterpolate {
     return `rgba(${rgba[0]}, ${rgba[1]}, ${rgba[2]}, ${rgba[3] / 255})`;
   }
 
-  static dataMap: Map<string, ColorInterpolate> = new Map();
+  dataMap: Map<string, { data: ColorInterpolate; timestamp: number[] }> = new Map();
   // static lastCache: {
   //   stops: [number, string][],
   //   precision: number,
@@ -95,24 +110,19 @@ export class ColorInterpolate {
   //   lineWidth: number,
   // } | null = null;
 
-  static GetOrCreate(stops: [number, string][] = [], precision = 100) {
-    let str = '';
+  GetOrCreate(x: number, y: number, w: number, h: number, stops: [number, string][] = [], precision = 100) {
+    let str = `${x}${y}${w}${h}`;
     stops.forEach(item => (str += item.join()));
     str += precision;
-    let colorInter = ColorInterpolate.dataMap.get(str);
+    let colorInter = this.dataMap.get(str);
     if (!colorInter) {
-      colorInter = new ColorInterpolate(stops, precision);
-      ColorInterpolate.dataMap.set(str, colorInter);
+      const data = new ColorInterpolate(stops, precision);
+      colorInter = { data, timestamp: [] };
+      this.addLimitedTimestamp(colorInter, Date.now(), {});
+      this.dataMap.set(str, colorInter);
     }
-    return colorInter;
-  }
-
-  static SetColorInterpolateInstance(stops: string, ins: ColorInterpolate) {
-    ColorInterpolate.dataMap.set(stops, ins);
-  }
-
-  static GetColorInterpolateInstance(stops: string): ColorInterpolate | undefined {
-    return ColorInterpolate.dataMap.get(stops);
+    this.clearCache(this.dataMap, this.cacheParams);
+    return colorInter.data;
   }
 }
 
@@ -269,7 +279,7 @@ export function createConicalGradient(
   // 每一度一个三角形
   const stepNum = deltaDeg + 1;
   const step = deltaAngle / Math.max(1, stepNum - 1);
-  const colorInter = ColorInterpolate.GetOrCreate(stops, stepNum);
+  const colorInter = ColorInterpolate.getInstance().GetOrCreate(x, y, width, height, stops, stepNum);
 
   const lineWidth = (2 * Math.PI * r) / 360;
 

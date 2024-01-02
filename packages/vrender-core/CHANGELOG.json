@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.9",
+      "tag": "@visactor/vrender-core_v0.17.9",
+      "date": "Fri, 29 Dec 2023 09:59:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with conical cache not work as expect"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.8",
       "tag": "@visactor/vrender-core_v0.17.8",
       "date": "Fri, 29 Dec 2023 07:20:26 GMT",

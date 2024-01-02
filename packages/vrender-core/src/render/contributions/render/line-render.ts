@@ -211,10 +211,10 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
     const { points } = line.attribute;
     const startP = points[0];
 
-    context.moveTo(startP.x, startP.y, z);
+    context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
     for (let i = 1; i < points.length; i++) {
       const p = points[i];
-      context.lineTo(p.x, p.y, z);
+      context.lineTo(p.x + offsetX, p.y + offsetY, z);
     }
 
     // shadow

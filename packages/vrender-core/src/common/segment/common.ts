@@ -1,5 +1,8 @@
-import type { IPointLike } from '@visactor/vutils';
+import { abs, type IPointLike } from '@visactor/vutils';
 import type { ILinearSegment } from '../../interface/curve';
+import type { ICurveType, IDirection } from '../../interface';
+import { ReflectSegContext, SegContext } from '../seg-context';
+import { Direction } from '../enums';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -38,4 +41,18 @@ export function genCurveSegments(path: ILinearSegment, points: IPointLike[], ste
       path.point(points[i]);
     }
   }
+}
+
+export function genSegContext(curveType: ICurveType, direction: IDirection, points: IPointLike[]) {
+  const curveDirection =
+    direction ??
+    (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
+      ? Direction.ROW
+      : Direction.COLUMN);
+
+  if (curveType === 'monotoneY') {
+    return new ReflectSegContext(curveType, curveDirection);
+  }
+
+  return new SegContext(curveType, curveDirection);
 }

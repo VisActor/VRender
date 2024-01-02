@@ -1,4 +1,3 @@
-import { injectable } from '../../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -10,11 +9,9 @@ import type {
   IDrawContext
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
-import {
-  defaultBaseBackgroundRenderContribution,
-  defaultBaseTextureRenderContribution
-} from './base-contribution-render';
+import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
+import { defaultBaseTextureRenderContribution } from './base-texture-contribution-render';
 
 export class DefaultCircleRenderContribution implements ICircleRenderContribution {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;

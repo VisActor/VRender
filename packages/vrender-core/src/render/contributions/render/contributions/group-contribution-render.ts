@@ -1,4 +1,3 @@
-import { injectable } from '../../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,

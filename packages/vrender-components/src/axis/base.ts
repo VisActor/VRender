@@ -235,6 +235,31 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           // handle overlap
           this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
           this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+
+          let maxTextWidth = 0;
+          let maxTextHeight = 0;
+          let textAlign = 'center';
+          let textBaseline = 'middle';
+          labels.forEach((label: IText) => {
+            const labelStyle = label.attribute;
+            const angle = labelStyle.angle ?? 0;
+            const textBounds = label.AABBBounds;
+            maxTextWidth = Math.max(maxTextWidth, textBounds.width());
+            maxTextHeight = Math.max(maxTextHeight, textBounds.height());
+            if (angle) {
+              maxTextWidth = Math.abs(maxTextWidth * Math.cos(angle));
+              maxTextHeight = Math.abs(maxTextHeight * Math.sin(angle));
+            }
+            textAlign = labelStyle.textAlign as string;
+            textBaseline = labelStyle.textBaseline as string;
+          });
+          this.axisLabelLayerSize[layer] = {
+            width: maxTextWidth,
+            height: maxTextHeight,
+
+            textAlign,
+            textBaseline
+          };
         });
       }
     }
@@ -319,16 +344,13 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
     container.add(labelGroup);
-    let maxTextWidth = 0;
-    let maxTextHeight = 0;
-    let textAlign = 'center';
-    let textBaseline = 'middle';
+
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
       let text;
       if (labelStyle.type === 'rich') {
         labelStyle.textConfig = labelStyle.text;
-        labelStyle.width = labelStyle.width ?? 0;
+        labelStyle.width = labelStyle.wqidth ?? 0;
         labelStyle.height = labelStyle.height ?? 0;
         text = graphicCreator.richtext(labelStyle);
       } else if (labelStyle.type === 'html') {
@@ -357,22 +379,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       }
 
       labelGroup.add(text);
-      const angle = labelStyle.angle ?? 0;
-      maxTextWidth = Math.max(maxTextWidth, text.AABBBounds.width());
-      maxTextHeight = Math.max(maxTextHeight, text.AABBBounds.height());
-      if (angle) {
-        maxTextWidth = Math.abs(maxTextWidth * Math.cos(angle));
-        maxTextHeight = Math.abs(maxTextHeight * Math.sin(angle));
-      }
-      textAlign = labelStyle.textAlign as string;
-      textBaseline = labelStyle.textBaseline as string;
     });
-    this.axisLabelLayerSize[layer] = {
-      width: maxTextWidth,
-      height: maxTextHeight,
-      textAlign,
-      textBaseline
-    };
+
     return labelGroup;
   }
 

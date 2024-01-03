@@ -235,6 +235,18 @@ export type IGraphicAttribute = IDebugType &
      */
     pickable: boolean;
     /**
+     * 是否支持fill拾取，默认为 true。
+     * @experimental
+     * @default true
+     */
+    fillPickable: boolean;
+    /**
+     * 是否支持stroke拾取，默认为 true。
+     * @experimental
+     * @default true
+     */
+    strokePickable: boolean;
+    /**
      * 对于 group 节点，是否支持其子元素的事件拾取，默认为 true。
      * 如果 group `pickable` 关闭，`childrenPickable` 开启，那么 group 的子节点仍参与事件拾取
      * @default true

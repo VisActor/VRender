@@ -156,6 +156,22 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     }
 
+    this.afterRenderStep(
+      area,
+      context,
+      offsetX,
+      offsetY,
+      !!fillOpacity,
+      false,
+      fill,
+      false,
+      areaAttribute as any,
+      drawContext,
+      fillCb,
+      null,
+      { attribute: area.attribute }
+    );
+
     if (stroke) {
       const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
       if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
@@ -175,24 +191,12 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           }
         }
       }
-      context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
-      context.stroke();
-
-      this.afterRenderStep(
-        area,
-        context,
-        offsetX,
-        offsetY,
-        !!fillOpacity,
-        false,
-        fill,
-        false,
-        areaAttribute as any,
-        drawContext,
-        fillCb,
-        null,
-        { attribute: area.attribute }
-      );
+      if (strokeCb) {
+        strokeCb(context, area.attribute, areaAttribute);
+      } else {
+        context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+        context.stroke();
+      }
     }
   }
 

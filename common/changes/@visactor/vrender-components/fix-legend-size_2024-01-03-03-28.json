@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix issue with legend symbol size",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

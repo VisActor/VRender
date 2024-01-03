@@ -1,8 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import { abs } from '@visactor/vutils';
-import { SegContext } from '../seg-context';
-import { genCurveSegments } from './common';
-import { Direction } from '../enums';
+import { genCurveSegments, genSegContext } from './common';
 import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
@@ -26,7 +23,7 @@ import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interf
 // https://github.com/d3/d3-shape/blob/main/src/curve/linear.js
 export class Linear implements ILinearSegment {
   declare context: ISegPath2D;
-  private _lastDefined?: boolean;
+  protected _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
 
@@ -90,13 +87,8 @@ export function genLinearSegments(points: IPointLike[], params: IGenSegmentParam
     return null;
   }
 
-  const segContext = new SegContext(
-    'linear',
-    direction ??
-      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
-        ? Direction.ROW
-        : Direction.COLUMN)
-  );
+  const segContext = genSegContext('linear', direction, points);
+
   const linear = new Linear(segContext, startPoint);
 
   genLinearTypeSegments(linear, points);

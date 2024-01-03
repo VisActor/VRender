@@ -5,3 +5,6 @@ export * from './group-contribution-render';
 export * from './image-contribution-render';
 export * from './rect-contribution-render';
 export * from './symbol-contribution-render';
+
+export * from './base-texture-contribution-render';
+export * from './area-texture-contribution-render';

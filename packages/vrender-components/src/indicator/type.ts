@@ -64,6 +64,11 @@ export interface IndicatorItemSpec {
    */
   fitPercent?: number;
   /**
+   * 自适应文字策略
+   * @default 'local'
+   */
+  fitStrategy?: 'default' | 'inscribed';
+  /**
    * 文字样式
    */
   style?: Omit<ITextGraphicAttribute, 'text'> & TextContent;

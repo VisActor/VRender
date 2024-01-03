@@ -924,7 +924,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
-  protected _labelLine(text: IText, baseMark?: IGraphic) {
+  protected _createLabelLine(text: IText, baseMark?: IGraphic) {
     const { points, line = {}, visible, fill } = text.attribute as ArcLabelAttrs;
     const labelLine: ILine = (text.attribute as ArcLabelAttrs).points
       ? graphicCreator.line({

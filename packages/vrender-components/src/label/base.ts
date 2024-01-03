@@ -68,11 +68,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       textBaseline: 'middle',
       boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
     },
-    line: {
-      style: {
-        stroke: '#000'
-      }
-    },
     offset: 0,
     pickable: false
   };
@@ -121,12 +116,17 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
-  protected _labelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
+  protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
     const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
     if (points) {
       const line = graphicCreator.line({
         points
       });
+
+      if (baseMark && baseMark.attribute.fill) {
+        line.setAttribute('stroke', baseMark.attribute.fill);
+      }
+
       if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
         line.setAttributes(this.attribute.line.style);
       }
@@ -621,7 +621,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
       let labelLine: ILine;
       if (showLabelLine) {
-        labelLine = this._labelLine(text as IText, relatedGraphic);
+        labelLine = this._createLabelLine(text as IText, relatedGraphic);
       }
       // TODO: add animate
       if (state === 'enter') {
@@ -705,7 +705,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
       let labelLine;
       if (showLabelLine) {
-        labelLine = this._labelLine(text as IText, relatedGraphic);
+        labelLine = this._createLabelLine(text as IText, relatedGraphic);
       }
 
       if (state === 'enter') {

@@ -86,6 +86,10 @@ type HideConfig = {
    * 设置文本之间的间隔距离，单位 px
    */
   separation?: number;
+  /**
+   * 保证最后的label展示
+   */
+  lastVisible?: boolean;
 };
 
 export function autoHide(labels: IText[], config: HideConfig) {
@@ -113,11 +117,24 @@ export function autoHide(labels: IText[], config: HideConfig) {
     do {
       items = reduce(items, sep);
     } while (items.length >= 3 && hasOverlap(items, sep));
+    /**
+     * 0.17.10 之前，当最后label个数小于3 的时候，才做最后的label强制显示的策略
+     */
+    const checkLast = items.length < 3 || config.lastVisible;
 
-    if (items.length < 3 && !last(source).attribute.opacity) {
-      if (items.length > 1) {
-        last(items).setAttribute('opacity', 0);
-        last(source).setAttribute('opacity', 1);
+    if (checkLast) {
+      const lastSourceItem = last(source);
+
+      if (!lastSourceItem.attribute.opacity) {
+        const remainLength = items.length;
+        if (remainLength > 1) {
+          items[remainLength - 1].setAttribute('opacity', 0);
+          lastSourceItem.setAttribute('opacity', 1);
+
+          if (intersect(items[remainLength - 2], lastSourceItem, sep)) {
+            items[remainLength - 2].setAttribute('opacity', 0);
+          }
+        }
       }
     }
   }

@@ -420,7 +420,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitEllipsis,
       autoHide,
       autoHideMethod,
-      autoHideSeparation
+      autoHideSeparation,
+      lastVisible
     } = label;
 
     if (isFunction(layoutFunc)) {
@@ -445,7 +446,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         autoHideFunc(labelShapes, {
           orient,
           method: autoHideMethod,
-          separation: autoHideSeparation
+          separation: autoHideSeparation,
+          lastVisible
         });
       }
     }

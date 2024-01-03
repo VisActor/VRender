@@ -144,6 +144,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * @default false
      */
     flush?: boolean;
+    /**
+     * 保证最后的label必须展示
+     * @default false
+     * @since 0.17.10
+     */
+    lastVisible?: boolean;
   };
   /**
    * 坐标轴背景配置

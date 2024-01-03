@@ -1,9 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
-import { abs } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
-import { genCurveSegments } from './common';
-import { SegContext } from '../seg-context';
-import { Direction } from '../enums';
+import { genCurveSegments, genSegContext } from './common';
 import type { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
 
 /**
@@ -131,13 +128,9 @@ export function genBasisSegments(points: IPointLike[], params: IGenSegmentParams
   if (points.length < 3 - Number(!!startPoint)) {
     return genLinearSegments(points, params);
   }
-  const segContext = new SegContext(
-    'basis',
-    direction ??
-      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
-        ? Direction.ROW
-        : Direction.COLUMN)
-  );
+
+  const segContext = genSegContext('basis', direction, points);
+
   const basis = new Basis(segContext, startPoint);
 
   genBasisTypeSegments(basis, points);

@@ -420,7 +420,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitEllipsis,
       autoHide,
       autoHideMethod,
-      autoHideSeparation
+      autoHideSeparation,
+      lastVisible
     } = label;
 
     if (isFunction(layoutFunc)) {
@@ -435,8 +436,14 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         });
       }
       if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
+        const verticalLimitLength =
+          (orient === 'left' || orient === 'right') &&
+          labelShapes.some(label => label.attribute.direction === 'vertical')
+            ? Math.abs(this.attribute.start.y - this.attribute.end.y) / labelShapes.length
+            : Infinity;
         autoLimitFunc(labelShapes, {
           limitLength,
+          verticalLimitLength,
           ellipsis: limitEllipsis,
           orient
         });
@@ -445,7 +452,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         autoHideFunc(labelShapes, {
           orient,
           method: autoHideMethod,
-          separation: autoHideSeparation
+          separation: autoHideSeparation,
+          lastVisible
         });
       }
     }

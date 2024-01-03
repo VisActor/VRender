@@ -235,6 +235,34 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           // handle overlap
           this.handleLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
           this.afterLabelsOverlap(labels, axisItems, layerLabelGroup, layer, items.length);
+
+          let maxTextWidth = 0;
+          let maxTextHeight = 0;
+          let textAlign = 'center';
+          let textBaseline = 'middle';
+          labels.forEach((label: IText) => {
+            const labelStyle = label.attribute;
+            const angle = labelStyle.angle ?? 0;
+            const textBounds = label.AABBBounds;
+            let textWidth = textBounds.width();
+            let textHeight = textBounds.height();
+            if (angle) {
+              textWidth = Math.abs(textWidth * Math.cos(angle));
+              textHeight = Math.abs(textHeight * Math.sin(angle));
+            }
+            maxTextWidth = Math.max(maxTextWidth, textWidth);
+            maxTextHeight = Math.max(maxTextHeight, textHeight);
+
+            textAlign = labelStyle.textAlign as string;
+            textBaseline = labelStyle.textBaseline as string;
+          });
+          this.axisLabelLayerSize[layer] = {
+            width: maxTextWidth,
+            height: maxTextHeight,
+
+            textAlign,
+            textBaseline
+          };
         });
       }
     }
@@ -319,10 +347,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     labelGroup.name = `${AXIS_ELEMENT_NAME.labelContainer}-layer-${layer}`;
     labelGroup.id = this._getNodeId(`label-container-layer-${layer}`);
     container.add(labelGroup);
-    let maxTextWidth = 0;
-    let maxTextHeight = 0;
-    let textAlign = 'center';
-    let textBaseline = 'middle';
+
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
       let text;
@@ -357,22 +382,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       }
 
       labelGroup.add(text);
-      const angle = labelStyle.angle ?? 0;
-      maxTextWidth = Math.max(maxTextWidth, text.AABBBounds.width());
-      maxTextHeight = Math.max(maxTextHeight, text.AABBBounds.height());
-      if (angle) {
-        maxTextWidth = Math.abs(maxTextWidth * Math.cos(angle));
-        maxTextHeight = Math.abs(maxTextHeight * Math.sin(angle));
-      }
-      textAlign = labelStyle.textAlign as string;
-      textBaseline = labelStyle.textBaseline as string;
     });
-    this.axisLabelLayerSize[layer] = {
-      width: maxTextWidth,
-      height: maxTextHeight,
-      textAlign,
-      textBaseline
-    };
+
     return labelGroup;
   }
 

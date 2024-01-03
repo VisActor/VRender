@@ -28,154 +28,185 @@ const points = [
   [160, 40],
   [200, 20],
   [240, 50]
-].map(item => ({ x: item[0], y: item[1], y1: 120, defined: item[0] !== 40 && item[0] !== 70 }));
+].map(item => ({ x: item[0], y: item[1], y1: 120, defined: true }));
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  ['linear'].forEach((type, i) => {
-    graphics.push(
-      createLine({
-        lineDash: [1, 0],
-        segments: [
-          {
-            lineDash: [1, 0],
-            points: [
-              {
-                x: 0,
-                y: 303.9999579156216,
-                lineDash: [1, 0],
-                y1: 304,
-                context: '20231212_b28a7cc47b8d9f3e453677c61401dd62,1,bulk_copy_dashboard,B'
-              }
-            ]
-          },
-          {
-            lineDash: [5, 3],
-            points: [
-              {
-                x: 1807,
-                y: 304,
-                lineDash: [5, 3],
-                y1: 304,
-                context: '20231213_b28a7cc47b8d9f3e453677c61401dd62,1,bulk_copy_dashboard,B'
-              }
-            ]
-          }
-        ],
-        points: null,
-        visible: true,
-        lineWidth: 2,
-        lineCap: 'round',
-        lineJoin: 'round',
-        fillOpacity: 0.2,
-        fill: '#1AC6FF',
-        stroke: ['#1AC6FF', false, false, false],
-        defined: true,
-        connectedType: 'none',
-        pickable: true,
-        clipRange: 1
-      })
-    );
-    // graphics.push(
-    //   createLine({
-    //     defined: true,
-    //     enableSegments: true,
-    //     segments: null,
-    //     points: [
-    //       {
-    //         x: 230.5,
-    //         y: 151.1037915390441,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 0
-    //       },
-    //       {
-    //         x: 308.6643884293173,
-    //         y: 204.8717692992912,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 1
-    //       },
-    //       {
-    //         x: 230.5,
-    //         y: 250,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 2,
-    //         defined: false
-    //       },
-    //       {
-    //         x: 230.5,
-    //         y: 280.05866037183256,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 3
-    //       },
-    //       {
-    //         x: 188.87948429636262,
-    //         y: 274.0296159453061,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 4
-    //       },
-    //       {
-    //         x: 98.35502938981602,
-    //         y: 173.70606564615522,
-    //         x1: 230.5,
-    //         y1: 250,
-    //         context: 5
-    //       }
-    //     ],
-    //     // fill: 'red',
-    //     visible: true,
-    //     lineWidth: 1,
-    //     lineCap: 'round',
-    //     lineJoin: 'round',
-    //     curveType: 'linearClosed',
-    //     lineDash: [4, 2],
-    //     stroke: '#2E62F1',
-    //     connectedType: 'connect',
-    //     closePath: true,
-    //     x: 0,
-    //     y: 0
-    //     // "pickable": true
-    //   })
-    // );
-  });
-
-  // ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
-  //   i += 7;
+  // ['linear'].forEach((type, i) => {
   //   graphics.push(
   //     createArea({
-  //       points,
-  //       curveType: type as any,
-  //       x: ((i * 300) % 900) + 100,
-  //       y: Math.floor((i * 300) / 900) * 200,
-  //       segments: [
+  //       defined: true,
+  //       enableSegments: true,
+  //       segments: null,
+  //       _debug_bounds: true,
+  //       points: [
   //         {
-  //           points: subP1,
-  //           fill: colorPools[3],
-  //           stroke: ['red', false],
-  //           lineWidth: 10,
-  //           connectedType: 'connect',
-  //           connectedStyle: {
-  //             fill: 'grey'
-  //           }
+  //           x: 230.5,
+  //           y: 151.1037915390441,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 0
   //         },
   //         {
-  //           points: subP2,
-  //           stroke: ['red', false],
-  //           fill: colorPools[2],
-  //           texture: 'bias-rl',
-  //           textureColor: 'grey'
+  //           x: 308.6643884293173,
+  //           y: 204.8717692992912,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 1
+  //         },
+  //         {
+  //           x: 230.5,
+  //           y: 250,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 2
+  //           // defined: false
+  //         },
+  //         {
+  //           x: 230.5,
+  //           y: 280.05866037183256,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 3
+  //         },
+  //         {
+  //           x: 188.87948429636262,
+  //           y: 274.0296159453061,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 4
+  //         },
+  //         {
+  //           x: 98.35502938981602,
+  //           y: 173.70606564615522,
+  //           x1: 230.5,
+  //           y1: 250,
+  //           context: 5
   //         }
   //       ],
+  //       fill: 'red',
+  //       visible: true,
+  //       lineWidth: 6,
+  //       lineCap: 'round',
+  //       lineJoin: 'round',
+  //       curveType: 'linear',
+  //       lineDash: [4, 2],
+  //       stroke: ['orange', false, false, false],
   //       connectedType: 'connect',
-  //       fill: true,
-  //       stroke: true
+  //       // closePath: true,
+  //       x: 0,
+  //       y: 0
+  //       // "pickable": true
   //     })
   //   );
+  //   // graphics.push(
+  //   //   createLine({
+  //   //     defined: true,
+  //   //     enableSegments: true,
+  //   //     segments: null,
+  //   //     points: [
+  //   //       {
+  //   //         x: 230.5,
+  //   //         y: 151.1037915390441,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 0
+  //   //       },
+  //   //       {
+  //   //         x: 308.6643884293173,
+  //   //         y: 204.8717692992912,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 1
+  //   //       },
+  //   //       {
+  //   //         x: 230.5,
+  //   //         y: 250,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 2,
+  //   //         defined: false
+  //   //       },
+  //   //       {
+  //   //         x: 230.5,
+  //   //         y: 280.05866037183256,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 3
+  //   //       },
+  //   //       {
+  //   //         x: 188.87948429636262,
+  //   //         y: 274.0296159453061,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 4
+  //   //       },
+  //   //       {
+  //   //         x: 98.35502938981602,
+  //   //         y: 173.70606564615522,
+  //   //         x1: 230.5,
+  //   //         y1: 250,
+  //   //         context: 5
+  //   //       }
+  //   //     ],
+  //   //     // fill: 'red',
+  //   //     visible: true,
+  //   //     lineWidth: 1,
+  //   //     lineCap: 'round',
+  //   //     lineJoin: 'round',
+  //   //     curveType: 'linearClosed',
+  //   //     lineDash: [4, 2],
+  //   //     stroke: '#2E62F1',
+  //   //     connectedType: 'connect',
+  //   //     closePath: true,
+  //   //     x: 0,
+  //   //     y: 0
+  //   //     // "pickable": true
+  //   //   })
+  //   // );
   // });
+
+  ['linear', 'step', 'stepBefore', 'stepAfter', 'basis', 'monotoneX', 'monotoneY'].forEach((type, i) => {
+    i += 7;
+    const area = createArea({
+      points,
+      curveType: type as any,
+      x: (((i * 300) % 900) + 100) / 2,
+      y: (Math.floor((i * 300) / 900) * 200) / 2,
+      scaleX: 0.5,
+      scaleY: 0.5,
+      // segments: [
+      //   {
+      //     points: subP1,
+      //     fill: colorPools[3],
+      //     stroke: ['red', false],
+      //     lineWidth: 10,
+      //     connectedType: 'connect',
+      //     connectedStyle: {
+      //       fill: 'grey'
+      //     }
+      //   },
+      //   {
+      //     points: subP2,
+      //     stroke: ['red', false],
+      //     fill: colorPools[2],
+      //     texture: 'bias-rl',
+      //     textureColor: 'grey'
+      //   }
+      // ],
+      connectedType: 'connect',
+      fill: 'red',
+      texture: 'bias-rl',
+      textureColor: 'grey',
+      stroke: [true, false, false, false],
+      fillPickable: false,
+      lineWidth: 5
+    });
+    area.addEventListener('mouseenter', e => {
+      console.log(e);
+    });
+    graphics.push(area);
+  });
 
   // graphics.forEach(item => {
   //   item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 10000, 'linear');
@@ -190,7 +221,7 @@ export const page = () => {
     // viewBox: viewOptions.viewBox,
     // dpr: 2,
     // canvas: viewOptions.renderCanvas,
-    canvasControled: false,
+    canvasControled: true,
     // container: viewOptions.container,
     // title: viewOptions.rendererTitle,
     beforeRender: () => {},

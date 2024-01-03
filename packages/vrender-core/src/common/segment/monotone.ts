@@ -1,9 +1,6 @@
 import type { IPointLike } from '@visactor/vutils';
-import { abs } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
-import { genCurveSegments } from './common';
-import { ReflectSegContext, SegContext } from '../seg-context';
-import { Direction } from '../enums';
+import { genCurveSegments, genSegContext } from './common';
 import type { ICurvedSegment, IGenSegmentParams, ISegPath2D } from '../../interface/curve';
 
 /**
@@ -194,7 +191,7 @@ export class MonotoneY extends MonotoneX {
   }
 }
 
-export function genMonotpneXTypeSegments(path: MonotoneX, points: IPointLike[]): void {
+export function genMonotoneXTypeSegments(path: MonotoneX, points: IPointLike[]): void {
   return genCurveSegments(path, points, 2);
 }
 
@@ -207,21 +204,16 @@ export function genMonotoneXSegments(points: IPointLike[], params: IGenSegmentPa
   if (points.length < 3 - Number(!!startPoint)) {
     return genLinearSegments(points, params);
   }
-  const segContext = new SegContext(
-    'monotoneX',
-    direction ??
-      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
-        ? Direction.ROW
-        : Direction.COLUMN)
-  );
+  const segContext = genSegContext('monotoneX', direction, points);
+
   const monotoneX = new MonotoneX(segContext, startPoint);
 
-  genMonotpneXTypeSegments(monotoneX, points);
+  genMonotoneXTypeSegments(monotoneX, points);
 
   return segContext;
 }
 
-export function genMonotpneYTypeSegments(path: MonotoneX, points: IPointLike[]): void {
+export function genMonotoneYTypeSegments(path: MonotoneX, points: IPointLike[]): void {
   return genCurveSegments(path, points, 2);
 }
 
@@ -233,16 +225,10 @@ export function genMonotoneYSegments(points: IPointLike[], params: IGenSegmentPa
   if (points.length < 3 - Number(!!startPoint)) {
     return genLinearSegments(points, params);
   }
-  const segContext = new ReflectSegContext(
-    'monotoneY',
-    direction ??
-      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
-        ? Direction.ROW
-        : Direction.COLUMN)
-  );
+  const segContext = genSegContext('monotoneY', direction, points);
   const monotoneY = new MonotoneY(segContext, startPoint);
 
-  genMonotpneYTypeSegments(monotoneY, points);
+  genMonotoneYTypeSegments(monotoneY, points);
 
   return segContext;
 }

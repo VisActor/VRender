@@ -1,6 +1,15 @@
-import { inject, injectable, getTheme, AreaRender, AREA_NUMBER_TYPE } from '@visactor/vrender-core';
+import { inject, injectable, getTheme, AreaRender, AREA_NUMBER_TYPE, getScaledStroke } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
-import type { IArea, IGraphicPicker, IGraphicRender, IPickParams } from '@visactor/vrender-core';
+import type {
+  IArea,
+  IContext2d,
+  IGraphicAttribute,
+  IGraphicPicker,
+  IGraphicRender,
+  IMarkAttribute,
+  IPickParams,
+  IThemeAttribute
+} from '@visactor/vrender-core';
 
 @injectable()
 export class DefaultCanvasAreaPicker implements IGraphicPicker {
@@ -25,6 +34,7 @@ export class DefaultCanvasAreaPicker implements IGraphicPicker {
     // const areaAttribute = graphicService.themeService.getCurrentTheme().areaAttribute;
     const areaAttribute = getTheme(area).area;
     let { x = areaAttribute.x, y = areaAttribute.y } = area.attribute;
+    const { fillPickable = areaAttribute.fillPickable, strokePickable = areaAttribute.strokePickable } = area.attribute;
 
     pickContext.highPerformanceSave();
     if (!area.transMatrix.onlyTranslate()) {
@@ -42,14 +52,43 @@ export class DefaultCanvasAreaPicker implements IGraphicPicker {
 
     // 详细形状判断
     let picked = false;
-    this.canvasRenderer.drawShape(area, pickContext, x, y, {} as any, null, context => {
-      // 选中后面就不需要再走逻辑了
-      if (picked) {
-        return true;
+    this.canvasRenderer.drawShape(
+      area,
+      pickContext,
+      x,
+      y,
+      {} as any,
+      null,
+      context => {
+        // 选中后面就不需要再走逻辑了
+        if (picked) {
+          return true;
+        }
+        if (!fillPickable) {
+          return false;
+        }
+        picked = context.isPointInPath(point.x, point.y);
+        return picked;
+      },
+      (
+        context: IContext2d,
+        areaAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+        themeAttribute: IThemeAttribute
+      ) => {
+        // 选中后面就不需要再走逻辑了
+        if (picked) {
+          return true;
+        }
+        if (!strokePickable) {
+          return false;
+        }
+        const lineWidth = areaAttribute.lineWidth || themeAttribute.lineWidth;
+        const pickStrokeBuffer = areaAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
+        picked = context.isPointInStroke(point.x, point.y);
+        return picked;
       }
-      picked = context.isPointInPath(point.x, point.y);
-      return picked;
-    });
+    );
 
     pickContext.highPerformanceRestore();
     // area没有stroke pick

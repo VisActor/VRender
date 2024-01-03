@@ -116,19 +116,35 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     const { points } = area.attribute;
     const startP = points[0];
 
-    context.moveTo(startP.x, startP.y, z);
+    context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
     for (let i = 1; i < points.length; i++) {
       const p = points[i];
-      context.lineTo(p.x, p.y, z);
+      context.lineTo(p.x + offsetX, p.y + offsetY, z);
     }
     for (let i = points.length - 1; i >= 0; i--) {
       const p = points[i];
-      context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+      context.lineTo((p.x1 ?? p.x) + offsetX, (p.y1 ?? p.y) + offsetY, z);
     }
     context.closePath();
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(area, area.attribute, areaAttribute);
+
+    this.beforeRenderStep(
+      area,
+      context,
+      offsetX,
+      offsetY,
+      !!fillOpacity,
+      false,
+      fill,
+      false,
+      areaAttribute as any,
+      drawContext,
+      fillCb,
+      null,
+      { attribute: area.attribute }
+    );
 
     const { x: originX = 0, x: originY = 0 } = area.attribute;
     if (fill !== false) {
@@ -140,27 +156,47 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     }
 
+    this.afterRenderStep(
+      area,
+      context,
+      offsetX,
+      offsetY,
+      !!fillOpacity,
+      false,
+      fill,
+      false,
+      areaAttribute as any,
+      drawContext,
+      fillCb,
+      null,
+      { attribute: area.attribute }
+    );
+
     if (stroke) {
       const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
       if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
         context.beginPath();
         if (stroke[0]) {
-          context.moveTo(startP.x, startP.y, z);
+          context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
           for (let i = 1; i < points.length; i++) {
             const p = points[i];
-            context.lineTo(p.x, p.y, z);
+            context.lineTo(p.x + offsetX, p.y + offsetY, z);
           }
         } else if (stroke[2]) {
           const endP = points[points.length - 1];
-          context.moveTo(endP.x, endP.y, z);
+          context.moveTo(endP.x + offsetX, endP.y + offsetY, z);
           for (let i = points.length - 2; i >= 0; i--) {
             const p = points[i];
-            context.lineTo(p.x1 ?? p.x, p.y1 ?? p.y, z);
+            context.lineTo((p.x1 ?? p.x) + offsetX, (p.y1 ?? p.y) + offsetY, z);
           }
         }
       }
-      context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
-      context.stroke();
+      if (strokeCb) {
+        strokeCb(context, area.attribute, areaAttribute);
+      } else {
+        context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+        context.stroke();
+      }
     }
   }
 

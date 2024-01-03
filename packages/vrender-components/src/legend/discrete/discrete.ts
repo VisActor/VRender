@@ -2,7 +2,17 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
+import {
+  merge,
+  isEmpty,
+  normalizePadding,
+  get,
+  isValid,
+  isNil,
+  isFunction,
+  isArray,
+  isValidNumber
+} from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -374,6 +384,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         ...shape,
         ...shapeStyle.style
       });
+
+      if (isArray(shapeSize)) {
+        // symbol support array to set width and height
+        shapeSize = shapeSize[0];
+      }
+
       // 处理下 shape 的 fill stroke
       Object.keys(shapeStyle.state || {}).forEach(key => {
         const color =

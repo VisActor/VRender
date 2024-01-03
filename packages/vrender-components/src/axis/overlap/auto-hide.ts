@@ -128,11 +128,15 @@ export function autoHide(labels: IText[], config: HideConfig) {
       if (!lastSourceItem.attribute.opacity) {
         const remainLength = items.length;
         if (remainLength > 1) {
-          items[remainLength - 1].setAttribute('opacity', 0);
           lastSourceItem.setAttribute('opacity', 1);
 
-          if (intersect(items[remainLength - 2], lastSourceItem, sep)) {
-            items[remainLength - 2].setAttribute('opacity', 0);
+          for (let i = remainLength - 1; i >= 0; i--) {
+            if (intersect(items[i], lastSourceItem, sep)) {
+              items[i].setAttribute('opacity', 0);
+            } else {
+              // 当遇到第一个不相交的label的时候，就可以停止了
+              break;
+            }
           }
         }
       }

@@ -210,18 +210,19 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     // compute the inscribed rect width & height for all texts
     // the font size will be determined by the longest text
     // 1. hx^2 + hy^2 = r^2
-    // 2. hy = c * hx + h
-    // -> (2 * c + 1) * x^2 + (2 * h * c) * x + (h^2 - R^2) = 0
+    // 2. hy = ra * hx + h
+    // -> (ra^2 + 1) * x^2 + (2 * h * ra) * x + (h^2 - r^2) = 0
 
     const r = limit / 2;
 
+    // unify the initial font size for auto fit texts
+    const singleHeight = 12;
     const autoFitTexts: { text: IText; spec: IndicatorItemSpec }[] = [];
     // other text height
     let otherHeight = 0;
     // non auto fit title height
     if (this.attribute.title?.autoFit && this.attribute.title?.fitStrategy === 'inscribed') {
-      // unify the initial font size for auto fit texts
-      this._title.setAttribute('fontSize', 12);
+      this._title.setAttribute('fontSize', singleHeight);
       autoFitTexts.push({ text: this._title, spec: this.attribute.title ?? {} });
     } else {
       otherHeight += this._title?.AABBBounds?.height?.() ?? 0;
@@ -232,8 +233,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     array(this.attribute.content).forEach((contentSpec, index) => {
       const contentText = this._content[index];
       if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
-        // unify the initial font size for auto fit texts
-        contentText.setAttribute('fontSize', 12);
+        contentText.setAttribute('fontSize', singleHeight);
         autoFitTexts.push({ text: contentText, spec: contentSpec });
       } else {
         otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
@@ -249,16 +249,16 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const maxWidth = autoFitTexts.reduce((width, textItem) => {
       return Math.max(width, textItem.text.AABBBounds.width());
     }, 0);
-    // const singleHeight = autoFitTexts[0].text.AABBBounds.height();
-    const singleHeight = 13;
 
     // y = x * (singleHeight / maxWidth * textCount) + otherHeight
     // hy = hx * (singleHeight / maxWidth * textCount) + otherHeight / 2
-    const c = (singleHeight / maxWidth) * autoFitTexts.length;
+    const ra = (singleHeight / maxWidth) * autoFitTexts.length;
     const h = otherHeight / 2;
-
-    const hx = (-(2 * h * c) + Math.sqrt((2 * h * c) ** 2 - 4 * (2 * c + 1) * (h ** 2 - r ** 2))) / (2 * (2 * c + 1));
-    const hy = c * hx + h;
+    const a = ra ** 2 + 1;
+    const b = 2 * h * ra;
+    const c = h ** 2 - r ** 2;
+    const hx = (-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
+    const hy = ra * hx + h;
     const y = 2 * hy;
     const lineHeight = (y - otherHeight) / autoFitTexts.length;
     if (isValidNumber(y)) {
@@ -268,7 +268,6 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
           'lineHeight',
           isValid(textItem.spec.style?.lineHeight) ? textItem.spec.style?.lineHeight : lineHeight
         );
-        textItem.text.setAttribute('maxLineWidth', 10000);
       });
     }
   }

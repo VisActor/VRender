@@ -376,17 +376,18 @@ export function run() {
       fitStrategy: 'inscribed',
       fitPercent: 1,
       style: {
+        fontSize: 64,
         text: 'TitleABCDEFG'
       }
     },
     content: [
       {
         space: 5,
-        autoFit: true,
+        // autoFit: true,
         fitStrategy: 'inscribed',
         fitPercent: 1,
         style: {
-          fontSize: 16,
+          fontSize: 66,
           text: 'CONTENT0'
         }
       },
@@ -395,7 +396,7 @@ export function run() {
         autoFit: true,
         fitPercent: 1,
         fitStrategy: 'inscribed',
-        space: 5,
+        // space: 5,
         style: {
           fontSize: 16,
           // text: 'CONTENT111111111111111111111111111111111111111111111111111111111111111111111111111111',

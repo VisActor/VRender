@@ -366,7 +366,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (shapeAttr && shapeAttr.visible !== false) {
       const s = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
       if (isArray(s)) {
-        shapeSize = Math.max(s[0] || 0, s[1] || 0);
+        shapeSize = s[0] || 0;
       } else {
         shapeSize = s;
       }

@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.10",
+      "tag": "@visactor/vrender-components_v0.17.10",
+      "date": "Wed, 03 Jan 2024 13:19:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `lastVisible` of LineAxis label\n\n"
+          },
+          {
+            "comment": "'feat: support label line in label component'"
+          },
+          {
+            "comment": "fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom\n\n"
+          },
+          {
+            "comment": "fix: fix issue with legend symbol size"
+          },
+          {
+            "comment": "fix: fixed height calculation issue after multi-layer axis text rotation"
+          },
+          {
+            "comment": "fix: fixed height calculation issue after multi-layer axis text rotation"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.9",
       "tag": "@visactor/vrender-components_v0.17.9",
       "date": "Fri, 29 Dec 2023 09:59:13 GMT",

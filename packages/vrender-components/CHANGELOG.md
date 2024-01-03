@@ -1,6 +1,22 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jan 2024 13:19:34 GMT and should not be manually modified.
+
+## 0.17.10
+Wed, 03 Jan 2024 13:19:34 GMT
+
+### Updates
+
+- feat: support `lastVisible` of LineAxis label
+
+
+- 'feat: support label line in label component'
+- fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom
+
+
+- fix: fix issue with legend symbol size
+- fix: fixed height calculation issue after multi-layer axis text rotation
+- fix: fixed height calculation issue after multi-layer axis text rotation
 
 ## 0.17.9
 Fri, 29 Dec 2023 09:59:13 GMT

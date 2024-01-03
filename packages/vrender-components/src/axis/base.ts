@@ -244,12 +244,15 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
             const labelStyle = label.attribute;
             const angle = labelStyle.angle ?? 0;
             const textBounds = label.AABBBounds;
-            maxTextWidth = Math.max(maxTextWidth, textBounds.width());
-            maxTextHeight = Math.max(maxTextHeight, textBounds.height());
+            let textWidth = textBounds.width();
+            let textHeight = textBounds.height();
             if (angle) {
-              maxTextWidth = Math.abs(maxTextWidth * Math.cos(angle));
-              maxTextHeight = Math.abs(maxTextHeight * Math.sin(angle));
+              textWidth = Math.abs(textWidth * Math.cos(angle));
+              textHeight = Math.abs(textHeight * Math.sin(angle));
             }
+            maxTextWidth = Math.max(maxTextWidth, textWidth);
+            maxTextHeight = Math.max(maxTextHeight, textHeight);
+
             textAlign = labelStyle.textAlign as string;
             textBaseline = labelStyle.textBaseline as string;
           });
@@ -350,7 +353,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       let text;
       if (labelStyle.type === 'rich') {
         labelStyle.textConfig = labelStyle.text;
-        labelStyle.width = labelStyle.wqidth ?? 0;
+        labelStyle.width = labelStyle.width ?? 0;
         labelStyle.height = labelStyle.height ?? 0;
         text = graphicCreator.richtext(labelStyle);
       } else if (labelStyle.type === 'html') {

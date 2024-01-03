@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -364,7 +364,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let shapeSize = 0;
     let shapeSpace = 0;
     if (shapeAttr && shapeAttr.visible !== false) {
-      shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
+      const s = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
+      if (isArray(s)) {
+        shapeSize = Math.max(s[0] || 0, s[1] || 0);
+      } else {
+        shapeSize = s;
+      }
       shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
       const itemShape = graphicCreator.symbol({
         x: 0,

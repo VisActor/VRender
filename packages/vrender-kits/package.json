@@ -17,8 +17,7 @@
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
     "start": "vite ./vite",
-    "test": "",
-    "prepublishOnly": "npm run build"
+    "test": ""
   },
   "dependencies": {
     "@visactor/vrender-core": "workspace:0.17.10",

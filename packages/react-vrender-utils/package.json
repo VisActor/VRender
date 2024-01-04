@@ -17,8 +17,7 @@
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
     "test": "",
-    "start": "vite ./vite",
-    "prepublishOnly": "npm run build"
+    "start": "vite ./vite"
   },
   "peerDependencies": {
     "react": "^18.2.0",

@@ -55,8 +55,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _startValue!: string | number;
   private _endValue!: string | number;
   private _showText!: boolean;
-  private _startTextMeasure!: TextMeasure<ITextGraphicAttribute>;
-  private _endTextMeasure!: TextMeasure<ITextGraphicAttribute>;
 
   /** 背景图表 */
   private _previewData: any[] = [];
@@ -474,7 +472,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     componentBoundsLike: IBoundsLike,
     textPosition: IPointLike,
     textMeasure: TextMeasure<ITextMeasureSpec>,
-    textValue: string,
+    textValue: string | number | (string | number)[],
     layout: 'start' | 'end'
   ) {
     const { width: textWidth, height: textHeight } = textMeasure.fullMeasure(textValue);
@@ -703,7 +701,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       middleHandlerStyle = {},
       startHandlerStyle = {},
       endHandlerStyle = {},
-      brushSelect
+      brushSelect,
+      zoomLock
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
     const { position, width, height } = this.getLayoutAttrFromConfig();
@@ -719,7 +718,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         width,
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
-        ...backgroundStyle
+        ...backgroundStyle,
+        pickable: !zoomLock
       },
       'rect'
     ) as IRect;
@@ -742,7 +742,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           width: (end - start) * width,
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle
+          ...selectedBackgroundStyle,
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;
@@ -756,7 +757,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           width,
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle
+          ...selectedBackgroundStyle,
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;
@@ -782,7 +784,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             y: position.y - middleHandlerBackgroundSize,
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
-            ...middleHandlerStyle.background?.style
+            ...middleHandlerStyle.background?.style,
+            pickable: !zoomLock
           },
           'rect'
         ) as IRect;
@@ -794,7 +797,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             strokeBoundsBuffer: 0,
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
-            ...middleHandlerStyle.icon
+            ...middleHandlerStyle.icon,
+            pickable: !zoomLock
           },
           'symbol'
         ) as ISymbol;
@@ -807,7 +811,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: height,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          ...startHandlerStyle
+          ...startHandlerStyle,
+          pickable: !zoomLock
         },
         'symbol'
       ) as ISymbol;
@@ -819,7 +824,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: height,
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          ...endHandlerStyle
+          ...endHandlerStyle,
+          pickable: !zoomLock
         },
         'symbol'
       ) as ISymbol;
@@ -840,7 +846,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;
@@ -854,7 +861,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;
@@ -869,7 +877,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             y: position.y + start * height,
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
-            ...middleHandlerStyle.background?.style
+            ...middleHandlerStyle.background?.style,
+            pickable: !zoomLock
           },
           'rect'
         ) as IRect;
@@ -885,7 +894,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             angle: 90 * (Math.PI / 180),
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
-            ...middleHandlerStyle.icon
+            ...middleHandlerStyle.icon,
+            pickable: !zoomLock
           },
           'symbol'
         ) as ISymbol;
@@ -898,7 +908,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: width,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          ...startHandlerStyle
+          ...startHandlerStyle,
+          pickable: !zoomLock
         },
         'symbol'
       ) as ISymbol;
@@ -911,7 +922,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: width,
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          ...endHandlerStyle
+          ...endHandlerStyle,
+          pickable: !zoomLock
         },
         'symbol'
       ) as ISymbol;
@@ -932,7 +944,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;
@@ -946,7 +959,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
+          pickable: !zoomLock
         },
         'rect'
       ) as IRect;

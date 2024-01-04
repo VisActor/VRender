@@ -1,6 +1,21 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+This log was last generated on Wed, 03 Jan 2024 13:19:34 GMT and should not be manually modified.
+
+## 0.17.10
+Wed, 03 Jan 2024 13:19:34 GMT
+
+### Updates
+
+- feat: support fillPickable and strokePickable for area, closed #792
+- feat: support `lastVisible` of LineAxis label
+
+
+- fix: fix issue with area-line highperformance draw
+- fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom
+
+
+- fix: disable layer picker in interactive layer
 
 ## 0.17.9
 Fri, 29 Dec 2023 09:59:13 GMT

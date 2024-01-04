@@ -54,14 +54,32 @@ jobs:
       - name: Update version
         run: node common/scripts/install-run-rush.js version --bump
 
-      - name: Build packages
-        run: node common/scripts/install-run-rush.js build --only tag:package -t @internal/bugserver-trigger
+      - name: Build vrender-core
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-core
+
+      - name: Build vrender-kits
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-kits
+
+      - name: Build vrender
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender
+
+      - name: Build vrender-components
+        run: node common/scripts/install-run-rush.js build --only @visactor/vrender-components
+
+      - name: Build bugserver
+        run: node common/scripts/install-run-rush.js build --only @@internal/bugserver-trigger
 
       - name: Run CI
         working-directory: ./tools/bugserver-trigger
         env:
           BUG_SERVER_TOKEN: ${{ secrets.BUG_SERVER_TOKEN }}
         run: node ../../common/scripts/install-run-rushx.js ci -t @internal/bugserver-trigger
+
+      - name: Build react-vrender
+        run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender
+
+      - name: Build react-vrender-utils
+        run: node common/scripts/install-run-rush.js build --only @@internal/react-vrender-utils
 
       - name: Publish to npm
         env:

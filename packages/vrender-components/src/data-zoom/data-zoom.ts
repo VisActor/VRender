@@ -1,7 +1,18 @@
-import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
+import type {
+  FederatedPointerEvent,
+  IArea,
+  IGroup,
+  ILine,
+  IRect,
+  ISymbol,
+  INode,
+  ITextGraphicAttribute,
+  IText
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { vglobal } from '@visactor/vrender-core';
-import type { IPointLike } from '@visactor/vutils';
+import type { IBoundsLike, IPointLike, ITextMeasureSpec } from '@visactor/vutils';
+import { TextMeasure } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -44,6 +55,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _startValue!: string | number;
   private _endValue!: string | number;
   private _showText!: boolean;
+  private _startTextMeasure!: TextMeasure<ITextGraphicAttribute>;
+  private _endTextMeasure!: TextMeasure<ITextGraphicAttribute>;
 
   /** 背景图表 */
   private _previewData: any[] = [];
@@ -90,30 +103,28 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
-  constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
-    const {
-      start,
-      end,
-      size,
-      orient,
-      showDetail,
-      position,
-      previewData,
-      previewPointsX,
-      previewPointsY,
-      previewPointsX1,
-      previewPointsY1,
-      updateStateCallback
-    } = this.attribute as DataZoomAttributes;
-    const { width, height } = size;
+  setPropsFromAttrs() {
+    const { start, end, orient, previewData, previewPointsX, previewPointsY, previewPointsX1, previewPointsY1 } = this
+      .attribute as DataZoomAttributes;
     start && (this.state.start = start);
     end && (this.state.end = end);
+    const { width, height } = this.getLayoutAttrFromConfig();
     this._spanCache = this.state.end - this.state.start;
     this._isHorizontal = orient === 'top' || orient === 'bottom';
     this._layoutCache.max = this._isHorizontal ? width : height;
     this._layoutCache.attPos = this._isHorizontal ? 'x' : 'y';
     this._layoutCache.attSize = this._isHorizontal ? 'width' : 'height';
+    previewData && (this._previewData = previewData);
+    isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
+    isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
+    isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
+    isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
+  }
+
+  constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
+    const { position, showDetail } = attributes;
+    // 这些属性在事件交互过程中会改变，所以不能在setAttrs里面动态更改
     this._activeCache.startPos = position;
     this._activeCache.lastPos = position;
     if (showDetail === 'auto') {
@@ -121,11 +132,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     } else {
       this._showText = showDetail as boolean;
     }
-    previewData && (this._previewData = previewData);
-    isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
-    isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
-    isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
-    isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
+    this.setPropsFromAttrs();
+  }
+
+  setAttributes(params: Partial<Required<DataZoomAttributes>>, forceUpdateTag?: boolean): void {
+    super.setAttributes(params, forceUpdateTag);
+    this.setPropsFromAttrs();
   }
 
   protected bindEvents(): void {
@@ -455,84 +467,155 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
   }
 
+  /**
+   * 判断文字是否超出datazoom范围
+   */
+  protected isTextOverflow(
+    componentBoundsLike: IBoundsLike,
+    textPosition: IPointLike,
+    textMeasure: TextMeasure<ITextMeasureSpec>,
+    textValue: string,
+    layout: 'start' | 'end'
+  ) {
+    const { width: textWidth, height: textHeight } = textMeasure.fullMeasure(textValue);
+    if (this._isHorizontal) {
+      if (layout === 'start') {
+        const x1 = textPosition.x - textWidth;
+        if (x1 < componentBoundsLike.x1) {
+          return true;
+        }
+      } else {
+        const x2 = textPosition.x + textWidth;
+        if (x2 > componentBoundsLike.x2) {
+          return true;
+        }
+      }
+    } else {
+      if (layout === 'start') {
+        const y1 = textPosition.y - textHeight;
+        if (y1 < componentBoundsLike.y1) {
+          return true;
+        }
+      } else {
+        const y2 = textPosition.y + textHeight;
+        if (y2 > componentBoundsLike.y2) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   protected renderText() {
     const { startTextStyle, endTextStyle } = this.attribute as DataZoomAttributes;
-    const { formatMethod: startTextFormat, ...restStartStyle } = startTextStyle;
+    const { formatMethod: startTextFormat, ...restStartTextStyle } = startTextStyle;
     const { formatMethod: endTextFormat, ...restEndTextStyle } = endTextStyle;
     const { start, end } = this.state;
     this._startValue = this._statePointToData(start);
     this._endValue = this._statePointToData(end);
     const { position, width, height } = this.getLayoutAttrFromConfig();
 
+    const startTextValue = startTextFormat ? startTextFormat(this._startValue) : this._startValue;
+    const endTextValue = endTextFormat ? endTextFormat(this._endValue) : this._endValue;
+    const startTextMeasure = new TextMeasure({
+      defaultFontParams: restStartTextStyle.textStyle as ITextGraphicAttribute
+    });
+    const endTextMeasure = new TextMeasure({
+      defaultFontParams: restEndTextStyle.textStyle as ITextGraphicAttribute
+    });
+    const componentBoundsLike = {
+      x1: position.x,
+      y1: position.y,
+      x2: position.x + width,
+      y2: position.y + height
+    };
+    let startTextPosition: IPointLike;
+    let endTextPosition: IPointLike;
+    let startTextAlignStyle: any;
+    let endTextAlignStyle: any;
     if (this._isHorizontal) {
-      // 起始文字
-      this._startText = this.maybeAddLabel(
-        this._container,
-        merge({}, restStartStyle, {
-          text: startTextFormat ? startTextFormat(this._startValue) : this._startValue,
-          x: position.x + start * width,
-          y: position.y + height / 2,
-          visible: this._showText,
-          pickable: false,
-          childrenPickable: false,
-          textStyle: {
-            textAlign: 'right',
-            textBaseline: 'middle'
-          }
-        }),
-        `data-zoom-start-text-${position}`
-      );
-      this._endText = this.maybeAddLabel(
-        this._container,
-        merge({}, restEndTextStyle, {
-          text: endTextFormat ? endTextFormat(this._endValue) : this._endValue,
-          x: position.x + end * width,
-          y: position.y + height / 2,
-          visible: this._showText,
-          pickable: false,
-          childrenPickable: false,
-          textStyle: {
-            textAlign: 'left',
-            textBaseline: 'middle'
-          }
-        }),
-        `data-zoom-end-text-${position}`
-      );
+      startTextPosition = {
+        x: position.x + start * width,
+        y: position.y + height / 2
+      };
+      endTextPosition = {
+        x: position.x + end * width,
+        y: position.y + height / 2
+      };
+      startTextAlignStyle = {
+        textAlign: this.isTextOverflow(
+          componentBoundsLike,
+          startTextPosition,
+          startTextMeasure,
+          startTextValue,
+          'start'
+        )
+          ? 'left'
+          : 'right',
+        textBaseline: 'middle'
+      };
+      endTextAlignStyle = {
+        textAlign: this.isTextOverflow(componentBoundsLike, endTextPosition, endTextMeasure, endTextValue, 'end')
+          ? 'right'
+          : 'left',
+        textBaseline: 'middle'
+      };
     } else {
-      // 起始文字
-      this._startText = this.maybeAddLabel(
-        this._container,
-        merge({}, restStartStyle, {
-          text: startTextFormat ? startTextFormat(this._startValue) : this._startValue,
-          x: position.x + width / 2,
-          y: position.y + start * height,
-          visible: this._showText,
-          pickable: false,
-          childrenPickable: false,
-          textStyle: {
-            textAlign: 'center',
-            textBaseline: 'bottom'
-          }
-        }),
-        `data-zoom-start-text-${position}`
-      );
-      this._endText = this.maybeAddLabel(
-        this._container,
-        merge({}, restEndTextStyle, {
-          text: endTextFormat ? endTextFormat(this._endValue) : this._endValue,
-          x: position.x + width / 2,
-          y: position.y + end * height,
-          visible: this._showText,
-          pickable: false,
-          childrenPickable: false,
-          textStyle: {
-            textAlign: 'center',
-            textBaseline: 'top'
-          }
-        }),
-        `data-zoom-end-text-${position}`
-      );
+      startTextPosition = {
+        x: position.x + width / 2,
+        y: position.y + start * height
+      };
+      endTextPosition = {
+        x: position.x + width / 2,
+        y: position.y + end * height
+      };
+      startTextAlignStyle = {
+        textAlign: 'center',
+        textBaseline: this.isTextOverflow(
+          componentBoundsLike,
+          startTextPosition,
+          startTextMeasure,
+          startTextValue,
+          'start'
+        )
+          ? 'top'
+          : 'bottom'
+      };
+      endTextAlignStyle = {
+        textAlign: 'center',
+        textBaseline: this.isTextOverflow(componentBoundsLike, endTextPosition, endTextMeasure, endTextValue, 'end')
+          ? 'bottom'
+          : 'top'
+      };
     }
+
+    // 起始文字
+    this._startText = this.maybeAddLabel(
+      this._container,
+      merge({}, restStartTextStyle, {
+        text: startTextValue,
+        x: startTextPosition.x,
+        y: startTextPosition.y,
+        visible: this._showText,
+        pickable: false,
+        childrenPickable: false,
+        textStyle: startTextAlignStyle
+      }),
+      `data-zoom-start-text-${position}`
+    );
+    this._endText = this.maybeAddLabel(
+      this._container,
+      merge({}, restEndTextStyle, {
+        text: endTextValue,
+        x: endTextPosition.x,
+        y: endTextPosition.y,
+        visible: this._showText,
+        pickable: false,
+        childrenPickable: false,
+        textStyle: endTextAlignStyle
+      }),
+      `data-zoom-end-text-${position}`
+    );
   }
 
   /**

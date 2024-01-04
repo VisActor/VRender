@@ -52,6 +52,7 @@ export const page = () => {
     autoWrapText: false,
     dx: 0,
     ellipsis: '...',
+    direction: 'vertical',
     fill: '#000',
     fontFamily: 'Arial,sans-serif',
     fontSize: 16,
@@ -60,17 +61,17 @@ export const page = () => {
     lineClamp: undefined,
     lineHeight: 16,
     lineThrough: undefined,
-    maxLineWidth: 40,
-    text: ['129.696', '这是第二行'],
+    maxLineWidth: 60,
+    text: '你在唱什么，什么都觉得',
     textAlign: 'left',
     textBaseline: 'top',
     underline: undefined,
-    whiteSpace: 'normal',
+    // whiteSpace: 'no-wrap',
     wordBreak: 'break-word',
     x: 16,
     y: 28
   });
-  console.log(t.AABBBounds);
+  console.log(t, t.cliped);
   graphics.push(t);
   // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 

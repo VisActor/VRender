@@ -80,7 +80,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const lineHeight = calculateLineHeight(text.attribute.lineHeight, fontSize) ?? fontSize;
 
     const data = this.valid(text, textAttribute, fillCb, strokeCb);
-    if (!data) {
+    // 小于1的fontSize一律不绘制
+    if (fontSize < 1 || !data) {
       return;
     }
     const { fVisible, sVisible, doFill, doStroke } = data;

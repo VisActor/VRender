@@ -54,7 +54,7 @@ export const page = () => {
     ellipsis: '...',
     fill: '#000',
     fontFamily: 'Arial,sans-serif',
-    fontSize: 16,
+    fontSize: 0,
     fontWeight: null,
     heightLimit: 52,
     lineClamp: undefined,

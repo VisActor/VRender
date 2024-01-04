@@ -76,7 +76,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    if (!this.isSimplify()) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -84,6 +84,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
+    if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
+      return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
+    }
     if (this.clipedText == null) {
       return false;
     }

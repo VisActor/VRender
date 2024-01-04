@@ -21,7 +21,6 @@
     "test-cov": "jest --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch",
-    "prepublishOnly": "npm run build",
     "analysis-core": "bundle -f umd -a -i core.ts"
   },
   "dependencies": {

@@ -79,7 +79,7 @@ jobs:
         run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender
 
       - name: Build react-vrender-utils
-        run: node common/scripts/install-run-rush.js build --only @internal/react-vrender-utils
+        run: node common/scripts/install-run-rush.js build --only @visactor/react-vrender-utils
 
       - name: Publish to npm
         env:

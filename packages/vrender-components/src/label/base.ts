@@ -587,7 +587,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
   protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
     if (graphic) {
-      if (graphic.attribute.visible) {
+      if (graphic.attribute.visible !== false) {
         return graphic.AABBBounds;
       }
       const { x, y } = graphic.attribute;

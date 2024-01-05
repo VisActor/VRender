@@ -35,6 +35,7 @@ export function run() {
       refX: guiObject.itemRefX,
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
+      confine: true,
       textStyle: {
         // text: 'mark point label text'
         type: 'rich',

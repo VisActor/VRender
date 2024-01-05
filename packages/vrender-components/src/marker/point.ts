@@ -16,6 +16,7 @@ import type { IPointLike } from '@visactor/vutils';
 import { isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import type { TagAttributes } from '../tag';
+// eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
@@ -25,6 +26,7 @@ import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadMarkPointComponent } from './register';
+import { computeOffsetForlimit } from '../util/limit-shape';
 
 loadMarkPointComponent();
 export class MarkPoint extends Marker<MarkPointAttrs> {
@@ -91,16 +93,6 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
       y: itemPosition.y + (itemOffsetY || 0),
       angle: autoRotate && itemAngle + refAngle
     });
-
-    // if (this.attribute.limitRect && this.attribute.itemContent?.confine) {
-    //   const { x, y, width, height } = this.attribute.limitRect;
-    //   limitShapeInBounds(item, {
-    //     x1: x,
-    //     y1: y,
-    //     x2: x + width,
-    //     y2: y + height
-    //   });
-    // }
   }
 
   protected getItemDx(
@@ -251,8 +243,27 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     }
   }
 
+  protected setAllOfItemsAttr(itemPosition: Point) {
+    const { position, itemLine = {}, itemContent = {}, limitRect } = this.attribute as MarkPointAttrs;
+    const { type = 'text', confine } = itemContent;
+    if (limitRect && confine) {
+      const { x, y, width, height } = limitRect;
+      const { dx, dy } = computeOffsetForlimit(this._item, {
+        x1: x,
+        y1: y,
+        x2: x + width,
+        y2: y + height
+      });
+      itemPosition.x = itemPosition.x + dx;
+      itemPosition.y = itemPosition.y + dy;
+    }
+    this.setItemAttributes(this._item, itemContent, itemPosition, type);
+    this.setItemLineAttr(itemLine, position, itemPosition, itemLine.visible);
+    this.setDecorativeLineAttr(itemLine, itemPosition, itemLine.decorativeLine?.visible);
+  }
+
   protected initMarker(container: IGroup) {
-    const { position, itemLine = {}, itemContent = {} } = this.attribute as MarkPointAttrs;
+    const { position, itemContent = {} } = this.attribute as MarkPointAttrs;
     const itemPosition = {
       x: position.x + (itemContent.offsetX || 0),
       y: position.y + (itemContent.offsetY || 0)
@@ -273,24 +284,28 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     this._decorativeLine = decorativeLine;
     container.add(decorativeLine as unknown as INode);
 
-    this.setItemLineAttr(itemLine, position, itemPosition, itemLine.visible);
-    this.setDecorativeLineAttr(itemLine, itemPosition, itemLine.decorativeLine?.visible);
-
+    // 为了强制将itemContent限制在limitRect内, 所以需要先绘制item, 然后根据item bounds 动态调整位置
     const item = this.initItem(itemContent as any, itemPosition);
     this._item = item;
+
+    // 由于itemLine的指向也要变化, 所以需要对所有的内容进行渲染
+    this.setAllOfItemsAttr(itemPosition);
     container.add(item as unknown as INode);
   }
 
   protected updateMarker() {
-    const { position, itemLine = {}, itemContent = {} } = this.attribute as MarkPointAttrs;
+    const { position, itemContent = {} } = this.attribute as MarkPointAttrs;
     const { type = 'text' } = itemContent;
+
     const itemPosition = {
       x: position.x + (itemContent.offsetX || 0),
       y: position.y + (itemContent.offsetY || 0)
     };
-    this.setItemLineAttr(itemLine, position, itemPosition, itemLine.visible);
-    this.setDecorativeLineAttr(itemLine, itemPosition, itemLine.decorativeLine?.visible);
+
+    // 为了强制将itemContent限制在limitRect内, 所以需要先绘制item, 然后根据item bounds 动态调整位置
     this.setItemAttributes(this._item, itemContent, itemPosition, type);
+    // 由于itemLine的指向也要变化, 所以需要对所有的内容进行渲染
+    this.setAllOfItemsAttr(itemPosition);
   }
 
   protected isValidPoints() {

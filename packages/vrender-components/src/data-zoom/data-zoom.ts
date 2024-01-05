@@ -1,18 +1,7 @@
-import type {
-  FederatedPointerEvent,
-  IArea,
-  IGroup,
-  ILine,
-  IRect,
-  ISymbol,
-  INode,
-  ITextGraphicAttribute,
-  IText
-} from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { vglobal } from '@visactor/vrender-core';
-import type { IBoundsLike, IPointLike, ITextMeasureSpec } from '@visactor/vutils';
-import { TextMeasure } from '@visactor/vutils';
+import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -468,35 +457,27 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   /**
    * 判断文字是否超出datazoom范围
    */
-  protected isTextOverflow(
-    componentBoundsLike: IBoundsLike,
-    textPosition: IPointLike,
-    textMeasure: TextMeasure<ITextMeasureSpec>,
-    textValue: string | number | (string | number)[],
-    layout: 'start' | 'end'
-  ) {
-    const { width: textWidth, height: textHeight } = textMeasure.fullMeasure(textValue);
+  protected isTextOverflow(componentBoundsLike: IBoundsLike, textBounds: IBoundsLike | null, layout: 'start' | 'end') {
+    if (!textBounds) {
+      return false;
+    }
     if (this._isHorizontal) {
       if (layout === 'start') {
-        const x1 = textPosition.x - textWidth;
-        if (x1 < componentBoundsLike.x1) {
+        if (textBounds.x1 < componentBoundsLike.x1) {
           return true;
         }
       } else {
-        const x2 = textPosition.x + textWidth;
-        if (x2 > componentBoundsLike.x2) {
+        if (textBounds.x2 > componentBoundsLike.x2) {
           return true;
         }
       }
     } else {
       if (layout === 'start') {
-        const y1 = textPosition.y - textHeight;
-        if (y1 < componentBoundsLike.y1) {
+        if (textBounds.y1 < componentBoundsLike.y1) {
           return true;
         }
       } else {
-        const y2 = textPosition.y + textHeight;
-        if (y2 > componentBoundsLike.y2) {
+        if (textBounds.y2 > componentBoundsLike.y2) {
           return true;
         }
       }
@@ -504,7 +485,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return false;
   }
 
-  protected renderText() {
+  protected setTextAttr(startTextBounds: IBoundsLike, endTextBounds: IBoundsLike) {
     const { startTextStyle, endTextStyle } = this.attribute as DataZoomAttributes;
     const { formatMethod: startTextFormat, ...restStartTextStyle } = startTextStyle;
     const { formatMethod: endTextFormat, ...restEndTextStyle } = endTextStyle;
@@ -515,12 +496,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     const startTextValue = startTextFormat ? startTextFormat(this._startValue) : this._startValue;
     const endTextValue = endTextFormat ? endTextFormat(this._endValue) : this._endValue;
-    const startTextMeasure = new TextMeasure({
-      defaultFontParams: restStartTextStyle.textStyle as ITextGraphicAttribute
-    });
-    const endTextMeasure = new TextMeasure({
-      defaultFontParams: restEndTextStyle.textStyle as ITextGraphicAttribute
-    });
     const componentBoundsLike = {
       x1: position.x,
       y1: position.y,
@@ -541,21 +516,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         y: position.y + height / 2
       };
       startTextAlignStyle = {
-        textAlign: this.isTextOverflow(
-          componentBoundsLike,
-          startTextPosition,
-          startTextMeasure,
-          startTextValue,
-          'start'
-        )
-          ? 'left'
-          : 'right',
+        textAlign: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'left' : 'right',
         textBaseline: 'middle'
       };
       endTextAlignStyle = {
-        textAlign: this.isTextOverflow(componentBoundsLike, endTextPosition, endTextMeasure, endTextValue, 'end')
-          ? 'right'
-          : 'left',
+        textAlign: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'right' : 'left',
         textBaseline: 'middle'
       };
     } else {
@@ -569,25 +534,15 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       };
       startTextAlignStyle = {
         textAlign: 'center',
-        textBaseline: this.isTextOverflow(
-          componentBoundsLike,
-          startTextPosition,
-          startTextMeasure,
-          startTextValue,
-          'start'
-        )
-          ? 'top'
-          : 'bottom'
+        textBaseline: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'top' : 'bottom'
       };
       endTextAlignStyle = {
         textAlign: 'center',
-        textBaseline: this.isTextOverflow(componentBoundsLike, endTextPosition, endTextMeasure, endTextValue, 'end')
-          ? 'bottom'
-          : 'top'
+        textBaseline: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'bottom' : 'top'
       };
     }
 
-    // 起始文字
+    // 第一次绘制, 起始文字
     this._startText = this.maybeAddLabel(
       this._container,
       merge({}, restStartTextStyle, {
@@ -614,6 +569,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       }),
       `data-zoom-end-text-${position}`
     );
+  }
+
+  protected renderText() {
+    let startTextBounds: IBoundsLike | null = null;
+    let endTextBounds: IBoundsLike | null = null;
+
+    // 第一次绘制
+    this.setTextAttr(startTextBounds, endTextBounds);
+    // 得到bounds
+    startTextBounds = this._startText.AABBBounds;
+    endTextBounds = this._endText.AABBBounds;
+    // 第二次绘制
+    this.setTextAttr(startTextBounds, endTextBounds);
   }
 
   /**

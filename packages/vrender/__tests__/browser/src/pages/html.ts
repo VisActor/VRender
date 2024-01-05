@@ -35,7 +35,7 @@ export const page = () => {
       y: (Math.floor((i * 100) / 500) + 1) * 100,
       size: 60,
       html: {
-        dom: '<div xmlns="http://www.w3.org/1999/xhtml">这是abcdefg</div>',
+        dom: '<div>这是abcdefg</div>',
         width: 60,
         height: 60
       },

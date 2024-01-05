@@ -1,9 +1,8 @@
-
 /**
  * @type {Partial<import('@visactor/bundler').Config>}
  */
 module.exports = {
-  formats: ["cjs", "es", "umd"],
+  formats: ['cjs', 'es'],
   name: 'ReactVRender',
   umdOutputFilename: 'index',
   globals: {
@@ -11,9 +10,5 @@ module.exports = {
     '@visactor/vutils': 'VUtils',
     'react-reconciler': 'ReactReconciler'
   },
-  external: [
-    "@visactor/vrender",
-    "@visactor/vutils",
-    "react-reconciler"
-  ]
+  external: ['@visactor/vrender', '@visactor/vutils', 'react-reconciler']
 };

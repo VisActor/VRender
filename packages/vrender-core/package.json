@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.17.10",
+  "version": "0.17.11",
   "description": "",
   "sideEffects": [
     "./src/modules.ts"
@@ -23,8 +23,7 @@
     "test": "jest",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "DEBUG_MODE=1 jest --watch",
-    "test-cov": "jest -w 16 --coverage",
-    "prepublishOnly": "npm run build"
+    "test-cov": "jest -w 16 --coverage"
   },
   "dependencies": {
     "color-convert": "2.0.1",

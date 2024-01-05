@@ -36,7 +36,11 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     options?: any
   ) {
-    const { background, backgroundMode = graphicAttribute.backgroundMode } = graphic.attribute;
+    const {
+      background,
+      backgroundMode = graphicAttribute.backgroundMode,
+      backgroundFit = graphicAttribute.backgroundFit
+    } = graphic.attribute;
     if (!background) {
       return;
     }
@@ -58,7 +62,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       context.clip();
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      this.doDrawImage(context, res.data, b, backgroundMode);
+      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
         context.setTransformForCurrent();
@@ -76,15 +80,49 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     context: IContext2d,
     data: any,
     b: IBounds,
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
-  ) {
+    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat',
+    backgroundFit: boolean
+  ): void {
     if (backgroundMode === 'no-repeat') {
       context.drawImage(data, b.x1, b.y1, b.width(), b.height());
     } else {
+      const targetW = b.width();
+      const targetH = b.height();
+      let w = targetW;
+      let h = targetH;
+      // debugger;
+      // TODO 考虑缓存
+      if (backgroundFit && backgroundMode !== 'repeat' && (data.width || data.height)) {
+        const resW = data.width;
+        const resH = data.height;
+
+        if (backgroundMode === 'repeat-x') {
+          // 高度适应
+          const ratio = targetH / resH;
+          w = resW * ratio;
+        } else if (backgroundMode === 'repeat-y') {
+          // 宽度适应
+          const ratio = targetW / resW;
+          h = resH * ratio;
+        }
+
+        const canvas = canvasAllocate.allocate({ width: w, height: h, dpr: context.dpr });
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.inuse = true;
+          ctx.clearMatrix();
+          ctx.setTransformForCurrent(true);
+          ctx.clearRect(0, 0, w, h);
+          ctx.drawImage(data, 0, 0, w, h);
+          data = canvas.nativeCanvas;
+        }
+        document.body.appendChild(data);
+        canvasAllocate.free(canvas);
+      }
       const pattern = context.createPattern(data, backgroundMode);
       context.fillStyle = pattern;
       context.translate(b.x1, b.y1);
-      context.fillRect(0, 0, b.width(), b.height());
+      context.fillRect(0, 0, targetW, targetH);
       context.translate(-b.x1, -b.y1);
     }
   }

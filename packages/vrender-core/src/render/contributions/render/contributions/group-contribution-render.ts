@@ -29,7 +29,11 @@ export class DefaultGroupBackgroundRenderContribution
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
-    const { background, backgroundMode = graphicAttribute.backgroundMode } = graphic.attribute;
+    const {
+      background,
+      backgroundMode = graphicAttribute.backgroundMode,
+      backgroundFit = graphicAttribute.backgroundFit
+    } = graphic.attribute;
     if (!background) {
       return;
     }
@@ -44,7 +48,7 @@ export class DefaultGroupBackgroundRenderContribution
 
       context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
       const b = graphic.AABBBounds;
-      this.doDrawImage(context, res.data, b, backgroundMode);
+      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {

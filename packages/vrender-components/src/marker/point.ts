@@ -13,7 +13,7 @@ import type {
 import { graphicCreator } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { merge } from '@visactor/vutils';
+import { isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
@@ -294,6 +294,10 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
   }
 
   protected isValidPoints() {
-    return true;
+    const { position } = this.attribute as MarkPointAttrs;
+    if (isValidNumber(position.x) && isValidNumber(position.y)) {
+      return true;
+    }
+    return false;
   }
 }

@@ -1,7 +1,8 @@
 import type { IGroup, INode } from '@visactor/vrender-core';
-import { merge } from '@visactor/vutils';
+import { isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import type { TagAttributes } from '../tag';
+// eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_LINE_THEME, DEFAULT_MARK_LINE_TEXT_STYLE_MAP } from './config';
@@ -9,6 +10,7 @@ import type { MarkLineAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkLineComponent } from './register';
+import type { Point } from '../core/type';
 
 loadMarkLineComponent();
 export class MarkLine extends Marker<MarkLineAttrs> {
@@ -125,6 +127,20 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     if (!points || points.length < 2) {
       return false;
     }
-    return true;
+    let validFlag = true;
+    points.forEach((point: Point | Point[]) => {
+      if ((point as any).length) {
+        (point as Point[]).forEach((p: Point) => {
+          if (!isValidNumber((p as Point).x) || !isValidNumber((p as Point).y)) {
+            validFlag = false;
+            return;
+          }
+        });
+      } else if (!isValidNumber((point as Point).x) || !isValidNumber((point as Point).y)) {
+        validFlag = false;
+        return;
+      }
+    });
+    return validFlag;
   }
 }

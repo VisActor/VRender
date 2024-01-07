@@ -3,7 +3,7 @@ import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode
 import { vglobal } from '@visactor/vrender-core';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
+import { Bounds, array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
@@ -542,7 +542,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       };
     }
 
-    // 第一次绘制, 起始文字
     this._startText = this.maybeAddLabel(
       this._container,
       merge({}, restStartTextStyle, {
@@ -580,8 +579,30 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 得到bounds
     startTextBounds = this._startText.AABBBounds;
     endTextBounds = this._endText.AABBBounds;
-    // 第二次绘制
+
+    // 第二次绘制: 将text限制在组件bounds内
     this.setTextAttr(startTextBounds, endTextBounds);
+    // 得到bounds
+    startTextBounds = this._startText.AABBBounds;
+    endTextBounds = this._endText.AABBBounds;
+    const { x1, x2, y1, y2 } = startTextBounds;
+    const { dx: startTextDx = 0, dy: startTextDy = 0 } = this.attribute.startTextStyle;
+
+    // 第三次绘制: 避免startText和endText重叠, 如果重叠了, 对startText做位置调整(考虑到调整的最小化，只单独调整startText而不调整endText)
+    if (new Bounds().set(x1, y1, x2, y2).intersects(endTextBounds)) {
+      const direction = this.attribute.orient === 'bottom' || this.attribute.orient === 'right' ? -1 : 1;
+      if (this._isHorizontal) {
+        this._startText.setAttribute('dy', startTextDy + direction * Math.abs(endTextBounds.y1 - endTextBounds.y2));
+      } else {
+        this._startText.setAttribute('dx', startTextDx + direction * Math.abs(endTextBounds.x1 - endTextBounds.x2));
+      }
+    } else {
+      if (this._isHorizontal) {
+        this._startText.setAttribute('dy', startTextDy);
+      } else {
+        this._startText.setAttribute('dx', startTextDx);
+      }
+    }
   }
 
   /**

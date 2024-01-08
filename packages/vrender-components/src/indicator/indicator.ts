@@ -221,13 +221,14 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     // other text height
     let otherHeight = 0;
     // non auto fit title height
-    if (this.attribute.title?.autoFit && this.attribute.title?.fitStrategy === 'inscribed') {
+    const titleSpec = this.attribute.title ?? {};
+    if (titleSpec.autoFit && titleSpec.fitStrategy === 'inscribed') {
       this._title.setAttribute('fontSize', singleHeight);
       autoFitTexts.push({ text: this._title, spec: this.attribute.title ?? {} });
     } else {
       otherHeight += this._title?.AABBBounds?.height?.() ?? 0;
     }
-    const titleSpace = this.attribute.title?.space ?? 0;
+    const titleSpace = titleSpec.space ?? 0;
     otherHeight += titleSpace;
     // non auto fit content height
     array(this.attribute.content).forEach((contentSpec, index) => {
@@ -263,11 +264,9 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const lineHeight = (y - otherHeight) / autoFitTexts.length;
     if (isValidNumber(y)) {
       autoFitTexts.forEach(textItem => {
+        const specLineHeight = textItem.spec.style?.lineHeight;
         textItem.text.setAttribute('fontSize', lineHeight);
-        textItem.text.setAttribute(
-          'lineHeight',
-          isValid(textItem.spec.style?.lineHeight) ? textItem.spec.style?.lineHeight : lineHeight
-        );
+        textItem.text.setAttribute('lineHeight', isValid(specLineHeight) ? specLineHeight : lineHeight);
       });
     }
   }

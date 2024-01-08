@@ -757,11 +757,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     selectedBackgroundChartStyle.line?.visible && this.setSelectedPreviewAttributes('line', group);
     selectedBackgroundChartStyle.area?.visible && this.setSelectedPreviewAttributes('area', group);
 
-    /** 左右文字 */
-    if (this._showText) {
-      this.renderText();
-    }
-
     /** 左右 和 中间手柄 */
     if (this._isHorizontal) {
       if (middleHandlerStyle.visible) {
@@ -953,6 +948,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         },
         'rect'
       ) as IRect;
+    }
+
+    /** 左右文字 */
+    if (this._showText) {
+      this.renderText();
     }
   }
 

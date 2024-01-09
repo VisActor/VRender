@@ -16,6 +16,13 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract updateMarker(): any;
   protected abstract isValidPoints(): any;
 
+  setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
+    super.setAttribute(key, value, forceUpdateTag);
+    if (key === 'visible') {
+      this.render();
+    }
+  }
+
   private _initContainer() {
     const { limitRect = {} as T['limitRect'], clipInRange } = this.attribute;
     let group;
@@ -69,19 +76,17 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       this.setAttribute('childrenPickable', false);
     }
 
-    if (markerVisible) {
-      if (!this._container && this.isValidPoints()) {
+    if (markerVisible && this.isValidPoints()) {
+      if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
       } else {
-        if (!this.isValidPoints()) {
-          this._container = null;
-          this.removeAllChild();
-        } else {
-          this._updateContainer();
-          this.updateMarker();
-        }
+        this._updateContainer();
+        this.updateMarker();
       }
+    } else {
+      this._container = null;
+      this.removeAllChild();
     }
   }
 }

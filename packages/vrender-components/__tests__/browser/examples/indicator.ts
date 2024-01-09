@@ -1,5 +1,5 @@
 import '@visactor/vrender';
-import { createLine } from '@visactor/vrender';
+import { createCircle, createLine } from '@visactor/vrender';
 import render from '../../util/render';
 import { Indicator } from '../../../src';
 
@@ -361,6 +361,53 @@ export function run() {
     ]
   };
 
+  const attr7 = {
+    size: {
+      width: 500,
+      height: 500
+    },
+    visible: true,
+    // limitRatio: 0.8,
+    limitRatio: 1,
+    title: {
+      // visible: false,
+      space: 10,
+      autoFit: true,
+      fitStrategy: 'inscribed',
+      fitPercent: 1,
+      style: {
+        fontSize: 64,
+        text: 'TitleABCDEFG'
+      }
+    },
+    content: [
+      {
+        space: 5,
+        // autoFit: true,
+        fitStrategy: 'inscribed',
+        fitPercent: 1,
+        style: {
+          fontSize: 66,
+          text: 'CONTENT0'
+        }
+      },
+      {
+        autoLimit: true,
+        autoFit: true,
+        fitPercent: 1,
+        fitStrategy: 'inscribed',
+        // space: 5,
+        style: {
+          fontSize: 16,
+          // text: 'CONTENT111111111111111111111111111111111111111111111111111111111111111111111111111111',
+          text: 'CONTENT1111111111111111111111111111111111111111111111111111',
+          fill: 'blue',
+          fontWeight: 'bolder'
+        }
+      }
+    ]
+  };
+
   const attr_progress = {
     visible: true,
     size: {
@@ -434,86 +481,89 @@ export function run() {
 
   // const indicator = new Indicator(attr_progress);
 
-  const indicator = new Indicator({
-    // dx: 100,
-    // dy: 100,
-    size: {
-      width: 500,
-      height: 500
-    },
-    visible: true,
-    limitRatio: 0.8,
-    title: {
-      // visible: false,
-      space: 10,
-      //   autoLimit: true,
-      autoFit: true,
-      style: {
-        type: 'rich',
-        text: [
-          {
-            text: 'Visactor-',
-            fontWeight: 'bold',
-            fontSize: 42,
-            fill: 'red'
-          },
+  // const indicator = new Indicator({
+  //   // dx: 100,
+  //   // dy: 100,
+  //   size: {
+  //     width: 500,
+  //     height: 500
+  //   },
+  //   visible: true,
+  //   // limitRatio: 0.8,
+  //   limitRatio: 1,
+  //   title: {
+  //     // visible: false,
+  //     space: 10,
+  //     //   autoLimit: true,
+  //     autoFit: true,
+  //     style: {
+  //       type: 'rich',
+  //       text: [
+  //         {
+  //           text: 'Visactor-',
+  //           fontWeight: 'bold',
+  //           fontSize: 42,
+  //           fill: 'red'
+  //         },
 
-          {
-            text: 'vchart',
-            textDecoration: 'underline',
-            fontSize: 36,
-            fill: 'black'
-          }
-        ],
-        fontSize: 42,
+  //         {
+  //           text: 'vchart',
+  //           textDecoration: 'underline',
+  //           fontSize: 36,
+  //           fill: 'black'
+  //         }
+  //       ],
+  //       fontSize: 42,
 
-        fill: 'red'
-      }
-    },
-    content: [
-      {
-        // fitPercent: 1,
-        // autoFit: true,
-        // visible: true,
-        space: 5,
-        // autoLimit: true,
-        style: {
-          fontSize: 16,
-          // text: 'CONTENT0'
-          type: 'rich',
-          text: [
-            {
-              text: 'Mapbox',
-              fontWeight: 'bold',
-              fontSize: 25,
-              fill: '#3f51b5'
-            },
+  //       fill: 'red'
+  //     }
+  //   },
+  //   content: [
+  //     {
+  //       // fitPercent: 1,
+  //       // autoFit: true,
+  //       // visible: true,
+  //       space: 5,
+  //       // autoLimit: true,
+  //       style: {
+  //         fontSize: 16,
+  //         // text: 'CONTENT0'
+  //         type: 'rich',
+  //         text: [
+  //           {
+  //             text: 'Mapbox',
+  //             fontWeight: 'bold',
+  //             fontSize: 25,
+  //             fill: '#3f51b5'
+  //           },
 
-            {
-              text: '替代方案',
-              fontStyle: 'italic',
-              textDecoration: 'underline',
-              fill: '#3f51b5'
-            }
-          ]
-        }
-      },
-      {
-        // visible: false,
-        // fitPercent: 0.2,
-        autoLimit: true,
-        // autoFit: true,
-        space: 5,
-        style: {
-          fontSize: 16,
-          text: 'CONTENT111111111111111111111111111111111111111111111111111111111111111111111111111111',
+  //           {
+  //             text: '替代方案',
+  //             fontStyle: 'italic',
+  //             textDecoration: 'underline',
+  //             fill: '#3f51b5'
+  //           }
+  //         ]
+  //       }
+  //     },
+  //     {
+  //       // visible: false,
+  //       // fitPercent: 0.2,
+  //       autoLimit: true,
+  //       // autoFit: true,
+  //       space: 5,
+  //       style: {
+  //         fontSize: 16,
+  //         text: 'CONTENT111111111111111111111111111111111111111111111111111111111111111111111111111111',
 
-          fill: 'blue',
-          fontWeight: 'bolder'
-        }
-      }
-    ]
-  });
+  //         fill: 'blue',
+  //         fontWeight: 'bolder'
+  //       }
+  //     }
+  //   ]
+  // });
+
+  const indicator = new Indicator(attr7);
 
   /** 指标卡部分隐藏 */
   // const indicator = new Indicator(attr1);
@@ -563,6 +613,12 @@ export function run() {
 
         stroke: '#ccc',
         lineDash: [2]
+      }),
+      createCircle({
+        x: 250,
+        y: 250,
+        radius: 250,
+        fill: 'rgba(0, 0, 0, 0.1)'
       })
     ],
     'main'

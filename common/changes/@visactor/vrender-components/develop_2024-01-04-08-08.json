@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(marker): fix problem of no render when set visible attr and add valid judgment logic. fix@Visactor/Vchart#1901",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

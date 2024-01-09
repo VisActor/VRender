@@ -129,7 +129,8 @@ export type MarkLineAttrs = MarkerAttrs &
        */
       position?: keyof typeof IMarkLineLabelPosition;
       /**
-       * 当 mark 配置了 clip 之后，label 是否自动调整位置
+       * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+       * @default false
        */
       confine?: boolean;
     } & IMarkRef &
@@ -148,7 +149,8 @@ export type MarkAreaAttrs = MarkerAttrs & {
   label?: {
     position?: keyof typeof IMarkAreaLabelPosition;
     /**
-     * 当 mark 配置了 clip 之后，label 是否自动调整位置
+     * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+     * @default false
      */
     confine?: boolean;
   } & IMarkLabel;
@@ -194,10 +196,11 @@ export type IItemContent = IMarkRef & {
    * type为custom时，允许以callback的方式传入需要render的item
    */
   renderCustomCallback?: () => IGroup;
-  // /**
-  //  * 当 mark 配置了 clip 之后，label 是否自动调整位置
-  //  */
-  // confine?: boolean;
+  /**
+   * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+   * @default false
+   */
+  confine?: boolean;
 };
 
 export type IItemLine = {

@@ -1,5 +1,16 @@
 import { injectable, inject, named } from '../common/inversify-lite';
-import type { ICanvas, IContext2d, EnvType, IGlobal, ITextAttribute, IContributionProvider } from '../interface';
+import type {
+  ICanvas,
+  IContext2d,
+  EnvType,
+  IGlobal,
+  ITextAttribute,
+  IContributionProvider,
+  IGraphic,
+  IGraphicAttribute,
+  IStage,
+  IWindow
+} from '../interface';
 import type { ITextMeasure, TextOptionsType } from '../interface/text';
 import { TextMeasureContribution } from './contributions/textMeasure/textMeasure-contribution';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -10,6 +21,9 @@ import { Matrix, TextMeasure } from '@visactor/vutils';
 import type { IGraphicUtil, ITransformUtil, TransformType } from '../interface/core';
 import { canvasAllocate } from '../allocator/canvas-allocate';
 import { application } from '../application';
+import { container } from '../container';
+import { VWindow } from './window';
+import { graphicCreator } from '../graphic';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -104,6 +118,54 @@ export class DefaultGraphicUtil implements IGraphicUtil {
       },
       textSpec
     );
+  }
+
+  drawGraphicToCanvas(
+    graphic: IGraphic<Partial<IGraphicAttribute>>,
+    stage: IStage,
+    canvas?: HTMLCanvasElement
+  ): HTMLCanvasElement | null | Promise<HTMLCanvasElement> {
+    if (!stage.defaultLayer) {
+      return null;
+    }
+    const window = container.get<IWindow>(VWindow);
+    const bounds = graphic.AABBBounds;
+    const width = bounds.width();
+    const height = bounds.height();
+    window.create({
+      width,
+      height,
+      canvas,
+      dpr: stage.window.dpr,
+      canvasControled: true,
+      offscreen: true,
+      title: ''
+    });
+
+    const x = -bounds.x1;
+    const y = -bounds.y1;
+    const disableCheckGraphicWidthOutRange = stage.params.optimize.disableCheckGraphicWidthOutRange;
+    // 关掉dirtyBounds检测
+    stage.params.optimize.disableCheckGraphicWidthOutRange = true;
+    stage.defaultLayer.getNativeHandler().drawTo(window, [graphic as any], {
+      x,
+      y,
+      width,
+      height,
+      stage,
+      layer: stage.defaultLayer,
+      renderService: stage.renderService,
+      background: 'transparent',
+      clear: true, // 第一个layer需要clear
+      updateBounds: false
+    });
+    stage.params.optimize.disableCheckGraphicWidthOutRange = disableCheckGraphicWidthOutRange;
+
+    const c = window.getNativeHandler();
+    if (c.nativeCanvas) {
+      return c.nativeCanvas;
+    }
+    return null;
   }
 }
 

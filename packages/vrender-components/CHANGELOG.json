@@ -2,6 +2,42 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.9",
+      "tag": "@visactor/vrender-components_v0.17.9",
+      "date": "Fri, 29 Dec 2023 09:59:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix label position when offset is 0\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.8",
+      "tag": "@visactor/vrender-components_v0.17.8",
+      "date": "Fri, 29 Dec 2023 07:20:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optimize outer label layout in tangential direction"
+          },
+          {
+            "comment": "fix: when axis label space is 0, and axis tick' inside is true, the axis label's position is not correct"
+          },
+          {
+            "comment": "fix: fix morphing of rect\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.7",
+      "tag": "@visactor/vrender-components_v0.17.7",
+      "date": "Wed, 20 Dec 2023 10:05:55 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.17.6",
       "tag": "@visactor/vrender-components_v0.17.6",
       "date": "Wed, 20 Dec 2023 07:39:54 GMT",

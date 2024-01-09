@@ -170,6 +170,10 @@ export type DiscreteLegendAttrs = {
    */
   maxCol?: number;
   /**
+   * 延迟渲染，按需渲染图例项目
+   */
+  lazyload?: boolean;
+  /**
    * 是否进行自动分页，默认为 true
    */
   autoPage?: boolean;

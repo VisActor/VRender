@@ -46,6 +46,7 @@ export type TagAttributes = {
    * @default 30
    */
   minWidth?: number;
+  textAlwaysCenter?: boolean;
   /**
    * 最大宽度，像素值。当文字超过最大宽度时，会自动省略。
    */

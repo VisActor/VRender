@@ -209,7 +209,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     container.add(axisContainer);
 
     // 渲染轴线
-    if (line?.visible) {
+    if (line && line.visible) {
       this.renderLine(axisContainer);
     }
 
@@ -217,11 +217,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       this.data = this._transformItems(items[0]);
 
       // 渲染刻度线，包含子刻度线
-      if (tick?.visible) {
+      if (tick && tick.visible) {
         this.renderTicks(axisContainer);
       }
       // 渲染标签
-      if (label?.visible) {
+      if (label && label.visible) {
         const labelGroup = graphicCreator.group({ x: 0, y: 0, pickable: false });
         labelGroup.name = AXIS_ELEMENT_NAME.labelContainer;
         labelGroup.id = this._getNodeId('label-container');
@@ -240,7 +240,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     // 渲染标题
-    if (title?.visible) {
+    if (title && title.visible) {
       this.renderTitle(axisContainer);
     }
   }
@@ -278,7 +278,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     // subTick 处理
     const { subTick } = this.attribute;
-    if (subTick?.visible) {
+    if (subTick && subTick.visible) {
       const subTickLineItems: TickLineItem[] = this.getSubTickLineItems();
       if (subTickLineItems.length) {
         subTickLineItems.forEach((item: TickLineItem, index) => {
@@ -532,11 +532,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     const { space = 4, inside = false, formatMethod, type = 'text', text } = this.attribute.label as LabelAttributes;
     let offset = space;
     let tickLength = 0;
-    if (this.attribute.tick?.visible && this.attribute.tick?.inside === inside) {
-      tickLength = this.attribute.tick?.length || 4;
+    if (this.attribute.tick?.visible && this.attribute.tick.inside === inside) {
+      tickLength = this.attribute.tick.length || 4;
     }
-    if (this.attribute.subTick?.visible && this.attribute.subTick?.inside === inside) {
-      tickLength = Math.max(tickLength, this.attribute.subTick?.length || 2);
+    if (this.attribute.subTick?.visible && this.attribute.subTick.inside === inside) {
+      tickLength = Math.max(tickLength, this.attribute.subTick.length || 2);
     }
     offset += tickLength;
 
@@ -551,7 +551,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     const point = this.getVerticalCoord(tickDatum.point, offset, inside);
-    const vector = this.getVerticalVector(offset, inside, point);
+    const vector = this.getVerticalVector(offset || 1, inside, point);
     const textContent = formatMethod
       ? formatMethod(`${tickDatum.label}`, tickDatum, index, tickData, layer)
       : tickDatum.label;

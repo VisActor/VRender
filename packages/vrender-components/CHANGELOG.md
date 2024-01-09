@@ -1,6 +1,31 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 20 Dec 2023 07:39:54 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+
+## 0.17.9
+Fri, 29 Dec 2023 09:59:13 GMT
+
+### Updates
+
+- fix: fix label position when offset is 0
+
+
+
+## 0.17.8
+Fri, 29 Dec 2023 07:20:26 GMT
+
+### Updates
+
+- feat: optimize outer label layout in tangential direction
+- fix: when axis label space is 0, and axis tick' inside is true, the axis label's position is not correct
+- fix: fix morphing of rect
+
+
+
+## 0.17.7
+Wed, 20 Dec 2023 10:05:55 GMT
+
+_Version update only_
 
 ## 0.17.6
 Wed, 20 Dec 2023 07:39:54 GMT

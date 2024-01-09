@@ -85,8 +85,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
           this._slider.setAttribute('y', sliderPos[0], true);
         }
 
-        if (!this.stage?.autoRender) {
-          this.stage?.renderNextFrame();
+        if (this.stage && !this.stage.autoRender) {
+          this.stage.renderNextFrame();
         }
       }
     }
@@ -284,8 +284,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       false
     );
 
-    if (!this.stage?.autoRender) {
-      this.stage?.renderNextFrame();
+    if (this.stage && !this.stage.autoRender) {
+      this.stage.renderNextFrame();
     }
   };
 
@@ -341,6 +341,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
+
     this._dispatchEvent('scrollUp', {
       pre: preRange,
       value: clampRange(range, limitRange[0], limitRange[1])

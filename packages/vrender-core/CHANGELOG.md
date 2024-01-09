@@ -1,6 +1,36 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 20 Dec 2023 07:39:54 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+
+## 0.17.9
+Fri, 29 Dec 2023 09:59:13 GMT
+
+### Updates
+
+- fix: fix issue with conical cache not work as expect
+
+## 0.17.8
+Fri, 29 Dec 2023 07:20:26 GMT
+
+### Updates
+
+- fix: fix issue with rect.toCustomPath
+- feat: support drawGraphicToCanvas
+- fix: fix issue with area segment with single point, closed #801
+- fix: fix issue with new Function in miniapp
+- fix: fix morphing of rect
+
+
+- fix: fix issue with side-effect in some env
+- fix: fix issue with check tt env
+- fix: fix issue with cliped attribute in vertical text, closed #827
+
+## 0.17.7
+Wed, 20 Dec 2023 10:05:55 GMT
+
+### Updates
+
+- fix: fix issue with create layer in miniapp env
 
 ## 0.17.6
 Wed, 20 Dec 2023 07:39:54 GMT

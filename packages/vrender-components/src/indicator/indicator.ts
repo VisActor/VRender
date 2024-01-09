@@ -18,7 +18,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
   private _content?: IText | IText[];
 
   protected render() {
-    const { visible, title, content, size, limitRatio = Infinity } = this.attribute as IndicatorAttributes;
+    const { visible, title = {}, content, size, limitRatio = Infinity } = this.attribute as IndicatorAttributes;
 
     const limit = Math.min(size.width, size.height) * limitRatio;
 
@@ -107,7 +107,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const titleHeight = this._title ? this._title.AABBBounds.height() : 0;
 
     if (isValid(content)) {
-      const titleSpace = this._title ? (title?.space ? title.space : 0) : 0;
+      const titleSpace = this._title ? (title.space ? title.space : 0) : 0;
       const contents: IndicatorItemSpec[] = array(content);
       const contentComponents: IText[] = [];
       let lastContentHeight = 0;
@@ -171,7 +171,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
           }
 
           contentComponents.push(contentComponent);
-          const contentSpace = contentItem?.space ? contentItem.space : 0;
+          const contentSpace = contentItem.space ? contentItem.space : 0;
           lastContentHeight += contentComponent.AABBBounds.height() + contentSpace;
         } else {
           /**

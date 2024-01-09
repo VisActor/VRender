@@ -132,8 +132,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     context.setTransformForCurrent(true);
 
     const drawInArea =
-      dirtyBounds.width() * context.dpr !== context.canvas.width ||
-      dirtyBounds.height() * context.dpr !== context.canvas.height;
+      dirtyBounds.width() * context.dpr < context.canvas.width ||
+      dirtyBounds.height() * context.dpr < context.canvas.height;
     context.save();
 
     // 设置translate
@@ -164,7 +164,9 @@ export class DefaultDrawContribution implements IDrawContribution {
         return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
       })
       .forEach(group => {
-        this.renderGroup(group as IGroup, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0));
+        group.isContainer
+          ? this.renderGroup(group as IGroup, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0))
+          : this.renderItem(group as IGraphic, drawContext);
       });
 
     context.restore();

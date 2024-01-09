@@ -547,18 +547,18 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       position: positionConfig,
       size,
       orient,
-      middleHandlerStyle,
-      startHandlerStyle,
-      endHandlerStyle
+      middleHandlerStyle = {},
+      startHandlerStyle = {},
+      endHandlerStyle = {}
     } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
-    const middleHandlerSize = middleHandlerStyle?.background?.size ?? 10;
+    const middleHandlerSize = middleHandlerStyle.background?.size ?? 10;
 
     // 如果middleHandler显示的话，要将其宽高计入datazoom宽高
     let width;
     let height;
     let position;
-    if (middleHandlerStyle?.visible) {
+    if (middleHandlerStyle.visible) {
       if (this._isHorizontal) {
         width = widthConfig;
         height = heightConfig - middleHandlerSize;
@@ -580,10 +580,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       position = positionConfig;
     }
 
-    const startHandlerSize = (startHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
-    const endHandlerSize = (endHandlerStyle?.size as number) ?? (this._isHorizontal ? height : width);
+    const startHandlerSize = (startHandlerStyle.size as number) ?? (this._isHorizontal ? height : width);
+    const endHandlerSize = (endHandlerStyle.size as number) ?? (this._isHorizontal ? height : width);
     // 如果startHandler显示的话，要将其宽高计入dataZoom宽高
-    if (startHandlerStyle?.visible) {
+    if (startHandlerStyle.visible) {
       if (this._isHorizontal) {
         width -= (startHandlerSize + endHandlerSize) / 2;
         position = {
@@ -614,12 +614,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // end,
       orient,
       backgroundStyle,
-      backgroundChartStyle,
-      selectedBackgroundStyle,
-      selectedBackgroundChartStyle,
-      middleHandlerStyle,
-      startHandlerStyle,
-      endHandlerStyle,
+      backgroundChartStyle = {},
+      selectedBackgroundStyle = {},
+      selectedBackgroundChartStyle = {},
+      middleHandlerStyle = {},
+      startHandlerStyle = {},
+      endHandlerStyle = {},
       brushSelect
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
@@ -642,8 +642,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     ) as IRect;
 
     /** 背景图表 */
-    backgroundChartStyle?.line?.visible && this.setPreviewAttributes('line', group);
-    backgroundChartStyle?.area?.visible && this.setPreviewAttributes('area', group);
+    backgroundChartStyle.line?.visible && this.setPreviewAttributes('line', group);
+    backgroundChartStyle.area?.visible && this.setPreviewAttributes('area', group);
 
     /** drag mask */
     brushSelect && this.renderDragMask();
@@ -680,8 +680,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
 
     /** 选中的背景图表 */
-    selectedBackgroundChartStyle?.line?.visible && this.setSelectedPreviewAttributes('line', group);
-    selectedBackgroundChartStyle?.area?.visible && this.setSelectedPreviewAttributes('area', group);
+    selectedBackgroundChartStyle.line?.visible && this.setSelectedPreviewAttributes('line', group);
+    selectedBackgroundChartStyle.area?.visible && this.setSelectedPreviewAttributes('area', group);
 
     /** 左右文字 */
     if (this._showText) {
@@ -690,15 +690,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     /** 左右 和 中间手柄 */
     if (this._isHorizontal) {
-      if (middleHandlerStyle?.visible) {
+      if (middleHandlerStyle.visible) {
+        const middleHandlerBackgroundSize = middleHandlerStyle.background?.size || 10;
         this._middleHandlerRect = group.createOrUpdateChild(
           'middleHandlerRect',
           {
             x: position.x + start * width,
-            y: position.y - (middleHandlerStyle?.background?.size || 10),
+            y: position.y - middleHandlerBackgroundSize,
             width: (end - start) * width,
-            height: middleHandlerStyle?.background?.size || 10,
-            ...middleHandlerStyle?.background?.style
+            height: middleHandlerBackgroundSize,
+            ...middleHandlerStyle.background?.style
           },
           'rect'
         ) as IRect;
@@ -706,11 +707,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           'middleHandlerSymbol',
           {
             x: position.x + ((start + end) / 2) * width,
-            y: position.y - (middleHandlerStyle?.background?.size || 10) / 2,
+            y: position.y - middleHandlerBackgroundSize / 2,
             strokeBoundsBuffer: 0,
             angle: 0,
-            symbolType: middleHandlerStyle?.icon?.symbolType ?? 'square',
-            ...middleHandlerStyle?.icon
+            symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
+            ...middleHandlerStyle.icon
           },
           'symbol'
         ) as ISymbol;
@@ -721,7 +722,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + start * width,
           y: position.y + height / 2,
           size: height,
-          symbolType: startHandlerStyle?.symbolType ?? 'square',
+          symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...startHandlerStyle
         },
@@ -733,7 +734,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + end * width,
           y: position.y + height / 2,
           size: height,
-          symbolType: endHandlerStyle?.symbolType ?? 'square',
+          symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...endHandlerStyle
         },
@@ -775,15 +776,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         'rect'
       ) as IRect;
     } else {
-      if (middleHandlerStyle?.visible) {
+      if (middleHandlerStyle.visible) {
+        const middleHandlerBackgroundSize = middleHandlerStyle.background?.size || 10;
+
         this._middleHandlerRect = group.createOrUpdateChild(
           'middleHandlerRect',
           {
-            x: orient === 'left' ? position.x - (middleHandlerStyle?.background?.size || 10) : position.x + width,
+            x: orient === 'left' ? position.x - middleHandlerBackgroundSize : position.x + width,
             y: position.y + start * height,
-            width: middleHandlerStyle?.background?.size || 10,
+            width: middleHandlerBackgroundSize,
             height: (end - start) * height,
-            ...middleHandlerStyle?.background?.style
+            ...middleHandlerStyle.background?.style
           },
           'rect'
         ) as IRect;
@@ -792,14 +795,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           {
             x:
               orient === 'left'
-                ? position.x - (middleHandlerStyle?.background?.size || 10) / 2
-                : position.x + width + (middleHandlerStyle?.background?.size || 10) / 2,
+                ? position.x - middleHandlerBackgroundSize / 2
+                : position.x + width + middleHandlerBackgroundSize / 2,
             y: position.y + ((start + end) / 2) * height,
             // size: height,
             angle: 90 * (Math.PI / 180),
-            symbolType: middleHandlerStyle?.icon?.symbolType ?? 'square',
+            symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
-            ...middleHandlerStyle?.icon
+            ...middleHandlerStyle.icon
           },
           'symbol'
         ) as ISymbol;
@@ -810,7 +813,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + width / 2,
           y: position.y + start * height,
           size: width,
-          symbolType: startHandlerStyle?.symbolType ?? 'square',
+          symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...startHandlerStyle
         },
@@ -823,7 +826,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           x: position.x + width / 2,
           y: position.y + end * height,
           size: width,
-          symbolType: endHandlerStyle?.symbolType ?? 'square',
+          symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle
         },
@@ -965,21 +968,21 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       ) as IArea;
     }
 
-    const { backgroundChartStyle } = this.attribute as DataZoomAttributes;
+    const { backgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
 
     type === 'line' &&
       this._previewLine.setAttributes({
         points: this.getPreviewLinePoints(),
         curveType: 'basis',
         pickable: false,
-        ...backgroundChartStyle?.line
+        ...backgroundChartStyle.line
       });
     type === 'area' &&
       this._previewArea.setAttributes({
         points: this.getPreviewAreaPoints(),
         curveType: 'basis',
         pickable: false,
-        ...backgroundChartStyle?.area
+        ...backgroundChartStyle.area
       });
   }
 
@@ -1012,7 +1015,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       ) as IArea;
     }
 
-    const { selectedBackgroundChartStyle } = this.attribute as DataZoomAttributes;
+    const { selectedBackgroundChartStyle = {} } = this.attribute as DataZoomAttributes;
 
     const { start, end } = this.state;
     const { position, width, height } = this.getLayoutAttrFromConfig();
@@ -1036,14 +1039,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         points: this.getPreviewLinePoints(),
         curveType: 'basis',
         pickable: false,
-        ...selectedBackgroundChartStyle?.line
+        ...selectedBackgroundChartStyle.line
       });
     type === 'area' &&
       this._selectedPreviewArea.setAttributes({
         points: this.getPreviewAreaPoints(),
         curveType: 'basis',
         pickable: false,
-        ...selectedBackgroundChartStyle?.area
+        ...selectedBackgroundChartStyle.area
       });
   }
 
@@ -1101,9 +1104,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   getMiddleHandlerSize() {
-    const { middleHandlerStyle } = this.attribute as DataZoomAttributes;
-    const middleHandlerRectSize = middleHandlerStyle?.background?.size ?? 10;
-    const middleHandlerSymbolSize = middleHandlerStyle?.icon?.size ?? 10;
+    const { middleHandlerStyle = {} } = this.attribute as DataZoomAttributes;
+    const middleHandlerRectSize = middleHandlerStyle.background?.size ?? 10;
+    const middleHandlerSymbolSize = middleHandlerStyle.icon?.size ?? 10;
     return Math.max(middleHandlerRectSize, ...array(middleHandlerSymbolSize));
   }
 

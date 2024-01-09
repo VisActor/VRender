@@ -19,6 +19,7 @@ import {
   AnimateGroup,
   AttributeAnimate
 } from '@visactor/vrender';
+import { graphicUtil } from '@visactor/vrender-core';
 // import { json } from './json';
 // import { json3 } from './xtable';
 import { roughModule } from '@visactor/vrender-kits';
@@ -1358,6 +1359,7 @@ const json = {
 container.load(roughModule);
 
 let arcList = [];
+let tlist = [];
 function _add(group, json) {
   if (json.type === 'group') {
     const g = createGroup(json.attribute);
@@ -1370,11 +1372,12 @@ function _add(group, json) {
     console.log(json.points);
     group.add(createLine({ ...json.attribute, keepDirIn3d: false }));
   } else if (json.type === 'text') {
-    const t = createText({ ...json.attribute, z: json.attribute.z || 0, keepDirIn3d: false });
+    const t = createText({ ...json.attribute, z: json.attribute.z || 0, keepDirIn3d: false, _debug_bounds: true });
     group.add(t);
     t.addEventListener('mousemove', () => {
       t.setAttribute('fill', 'red');
     });
+    tlist.push(t);
   } else if (json.type === 'pyramid3d') {
     group.setMode('3d');
     group.add(createPyramid3d({ ...json.attribute, keepDirIn3d: false }));
@@ -1428,6 +1431,12 @@ export const page = () => {
   setTimeout(() => {
     stage.render();
   }, 2000);
+
+  tlist.reverse().forEach(t => {
+    const c = graphicUtil.drawGraphicToCanvas(t, stage);
+    console.log(c, t.attribute.text);
+    document.body.appendChild(c);
+  });
 
   // const t = performance.now();
   // const b = layer.AABBBounds;

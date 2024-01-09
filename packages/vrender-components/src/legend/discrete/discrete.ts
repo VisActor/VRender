@@ -53,6 +53,21 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
   private _pager!: Pager;
   private _lastActiveItem: IGroup;
+  private _itemContext: {
+    // 水平布局换行标识
+    doWrap: boolean;
+    // 存储每一列最大的宽度，用于垂直布局的换列
+    maxWidthInCol: number;
+    startX: number;
+    startY: number;
+    maxPages: number;
+    pages: number;
+    // 开始渲染的序号
+    startIndex: number;
+    items: LegendItemDatum[];
+    isHorizontal: boolean;
+    currentPage: number;
+  };
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',
@@ -167,56 +182,32 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
   }
 
-  protected _renderContent() {
-    const { item = {}, items, reversed, maxCol = 1, maxRow = 2 } = this.attribute as DiscreteLegendAttrs;
-    if (item.visible === false || isEmpty(items)) {
-      return;
-    }
-
-    let legendItems = items;
-    if (reversed) {
-      legendItems = items?.reverse();
-    }
-
-    const itemsContainer = graphicCreator.group({
-      x: 0,
-      y: 0
-    });
-    this._itemsContainer = itemsContainer;
-
-    const { layout, maxWidth, maxHeight, defaultSelected = [], autoPage } = this.attribute;
-    const isHorizontal = layout === 'horizontal';
-
+  protected _renderItems() {
     const {
-      spaceCol = DEFAULT_ITEM_SPACE_COL,
-      spaceRow = DEFAULT_ITEM_SPACE_ROW,
-      maxWidth: maxItemWidth,
-      width: itemWidth,
-      height: itemHeight
-    } = item;
+      item: itemAttrs = {},
+      maxCol = 1,
+      maxRow = 2,
+      maxWidth,
+      maxHeight,
+      defaultSelected = [],
+      lazyload
+    } = this.attribute as DiscreteLegendAttrs;
+    const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = itemAttrs;
 
-    // 根据用户声明的 maxItemWidth 和 itemWidth 获取图例项宽度
-    if (isValid(maxItemWidth)) {
-      if (isValid(itemWidth)) {
-        this._itemWidthByUser = Math.min(maxItemWidth, itemWidth);
-      } else {
-        this._itemWidthByUser = maxItemWidth;
+    const itemsContainer = this._itemsContainer;
+    const { items: legendItems, isHorizontal, startIndex } = this._itemContext;
+    const maxPages = isHorizontal ? maxRow : maxCol;
+
+    let { doWrap, maxWidthInCol, startX, startY, pages } = this._itemContext;
+    let item: LegendItemDatum;
+
+    for (let index = startIndex, len = legendItems.length; index < len; index++) {
+      if (lazyload && pages > this._itemContext.currentPage * maxPages) {
+        this._itemContext.startIndex = index;
+        break;
       }
-    } else if (isValid(itemWidth)) {
-      this._itemWidthByUser = itemWidth;
-    }
+      item = legendItems[index];
 
-    // 存储用户指定图例项高度
-    if (isValid(itemHeight)) {
-      this._itemHeightByUser = itemHeight;
-    }
-    let doWrap = false; // 水平布局换行标识
-    let maxWidthInCol = 0; // 存储每一列最大的宽度，用于垂直布局的换列
-    let startX = 0;
-    let startY = 0;
-    let maxPages = 1;
-    let pages = 1;
-    legendItems.forEach((item, index) => {
       if (!item.id) {
         item.id = item.label; // 如果没有设置 id，默认使用 label
       }
@@ -236,7 +227,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
       if (isHorizontal) {
-        maxPages = maxRow;
         // 水平布局
         if (isValid(maxWidth)) {
           if (itemWidth >= maxWidth) {
@@ -263,7 +253,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
         startX += spaceCol + itemWidth;
       } else {
-        maxPages = maxCol;
         // 垂直布局
         if (isValid(maxHeight) && maxHeight < startY + itemHeight) {
           // 检测是否换列：如果用户声明了 maxHeight 并且超出了，则进行换列
@@ -283,11 +272,78 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
 
       itemsContainer.add(itemGroup);
+    }
+
+    this._itemContext.doWrap = doWrap;
+    this._itemContext.startX = startX;
+    this._itemContext.startY = startY;
+    this._itemContext.maxWidthInCol = maxWidthInCol;
+    this._itemContext.pages = pages;
+    this._itemContext.maxPages = maxPages;
+
+    if (!lazyload) {
+      this._itemContext.startIndex = legendItems.length;
+    }
+
+    return this._itemContext;
+  }
+
+  protected _renderContent() {
+    const { item = {}, items, reversed } = this.attribute as DiscreteLegendAttrs;
+    if (item.visible === false || isEmpty(items)) {
+      return;
+    }
+
+    let legendItems = items;
+    if (reversed) {
+      legendItems = items?.reverse();
+    }
+
+    const itemsContainer = graphicCreator.group({
+      x: 0,
+      y: 0
     });
+    this._itemsContainer = itemsContainer;
+
+    const { layout, autoPage } = this.attribute;
+    const isHorizontal = layout === 'horizontal';
+
+    const { maxWidth: maxItemWidth, width: itemWidth, height: itemHeight } = item;
+
+    // 根据用户声明的 maxItemWidth 和 itemWidth 获取图例项宽度
+    if (isValid(maxItemWidth)) {
+      if (isValid(itemWidth)) {
+        this._itemWidthByUser = Math.min(maxItemWidth, itemWidth);
+      } else {
+        this._itemWidthByUser = maxItemWidth;
+      }
+    } else if (isValid(itemWidth)) {
+      this._itemWidthByUser = itemWidth;
+    }
+
+    // 存储用户指定图例项高度
+    if (isValid(itemHeight)) {
+      this._itemHeightByUser = itemHeight;
+    }
+
+    this._itemContext = {
+      currentPage: this.attribute.pager ? this.attribute.pager.defaultCurrent || 1 : 1,
+      doWrap: false,
+      maxWidthInCol: 0,
+      maxPages: 1,
+      pages: 1,
+      startX: 0,
+      startY: 0,
+      startIndex: 0,
+      items: legendItems,
+      isHorizontal
+    };
+
+    this._itemContext = this._renderItems();
 
     // TODO: 添加测试用例
     let pagerRendered = false;
-    if (doWrap && autoPage && pages > maxPages) {
+    if (this._itemContext.doWrap && autoPage && this._itemContext.pages > this._itemContext.maxPages) {
       // 进行分页处理
       pagerRendered = this._renderPager(isHorizontal);
     }
@@ -363,7 +419,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let focusStartX = 0;
     let shapeSize = 0;
     let shapeSpace = 0;
-    if (shapeAttr?.visible !== false) {
+    if (shapeAttr && shapeAttr.visible !== false) {
       shapeSize = get(shapeStyle, 'style.size', DEFAULT_SHAPE_SIZE);
       shapeSpace = get(shapeAttr, 'space', DEFAULT_SHAPE_SPACE);
       const itemShape = graphicCreator.symbol({
@@ -580,7 +636,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startX += spaceCol + (width as number);
       });
 
-      pagerComp.setAttribute('total', Math.ceil(pages / maxRow));
+      this._itemContext.startX = startX;
+      this._itemContext.startY = startY;
+      this._itemContext.pages = pages;
+
+      pagerComp.setTotal(Math.ceil(pages / maxRow));
       let y;
       if (position === 'start') {
         y = renderStartY;
@@ -630,7 +690,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startY += spaceRow + (height as number);
       });
 
-      pagerComp.setAttribute('total', Math.ceil(pages / maxCol));
+      pagerComp.setTotal(Math.ceil(pages / maxCol));
 
       let x;
       if (position === 'start') {
@@ -668,6 +728,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const onPaging = (e: CustomEvent) => {
       const { current } = e.detail;
+      this._itemContext.currentPage = current;
+
+      if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
+        this._renderItems();
+
+        // 更新总页数
+        pagerComp.setTotal(Math.ceil(this._itemContext.pages / this._itemContext.maxPages));
+      }
 
       if (animation) {
         itemsContainer
@@ -696,7 +764,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _onHover = (e: FederatedPointerEvent) => {
     const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
+    if (target && target.name && target.name.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
 
@@ -723,7 +791,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _onClick = (e: FederatedPointerEvent) => {
     const target = e.target as unknown as IGroup;
-    if (target?.name?.startsWith(LEGEND_ELEMENT_NAME.item)) {
+    if (target && target.name && target.name.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
 

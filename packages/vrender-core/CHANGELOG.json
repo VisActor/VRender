@@ -2,6 +2,63 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.9",
+      "tag": "@visactor/vrender-core_v0.17.9",
+      "date": "Fri, 29 Dec 2023 09:59:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with conical cache not work as expect"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.8",
+      "tag": "@visactor/vrender-core_v0.17.8",
+      "date": "Fri, 29 Dec 2023 07:20:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with rect.toCustomPath"
+          },
+          {
+            "comment": "feat: support drawGraphicToCanvas"
+          },
+          {
+            "comment": "fix: fix issue with area segment with single point, closed #801"
+          },
+          {
+            "comment": "fix: fix issue with new Function in miniapp"
+          },
+          {
+            "comment": "fix: fix morphing of rect\n\n"
+          },
+          {
+            "comment": "fix: fix issue with side-effect in some env"
+          },
+          {
+            "comment": "fix: fix issue with check tt env"
+          },
+          {
+            "comment": "fix: fix issue with cliped attribute in vertical text, closed #827"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.7",
+      "tag": "@visactor/vrender-core_v0.17.7",
+      "date": "Wed, 20 Dec 2023 10:05:55 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with create layer in miniapp env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.6",
       "tag": "@visactor/vrender-core_v0.17.6",
       "date": "Wed, 20 Dec 2023 07:39:54 GMT",

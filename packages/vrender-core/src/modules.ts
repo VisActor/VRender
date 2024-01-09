@@ -19,14 +19,23 @@ import { GraphicUtil, TransformUtil } from './core/constants';
 import { container } from './container';
 import { VGlobal } from './constants';
 
-container.load(coreModule);
-container.load(graphicModule);
-container.load(renderModule);
-container.load(pickModule);
-// container.load(allocatorModule);
-container.load(pluginModule);
-loadBuiltinContributions(container);
-loadRenderContributions(container);
+let loaded = false;
+export function preLoadAllModule() {
+  if (loaded) {
+    return;
+  }
+  loaded = true;
+  container.load(coreModule);
+  container.load(graphicModule);
+  container.load(renderModule);
+  container.load(pickModule);
+  // container.load(allocatorModule);
+  container.load(pluginModule);
+  loadBuiltinContributions(container);
+  loadRenderContributions(container);
+}
+
+preLoadAllModule();
 // loadPickContributions(container);
 // loadCanvasContributions(container);
 

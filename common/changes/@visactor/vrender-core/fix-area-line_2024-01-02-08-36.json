@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: fix issue with create layer in miniapp env",
+      "comment": "fix: fix issue with area-line highperformance draw",
       "type": "none"
     }
   ],

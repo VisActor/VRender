@@ -132,6 +132,13 @@ export class TaroEnvContribution extends BaseEnvContribution implements IEnvCont
     return 9999;
   }
 
+  mapToCanvasPoint(event: any) {
+    if (event?.type?.startsWith('mouse')) {
+      return event;
+    }
+    return event;
+  }
+
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
   configure(service: IGlobal, params: IConfigureParams) {

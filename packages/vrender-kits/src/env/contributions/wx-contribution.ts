@@ -257,6 +257,6 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
     if (event?.type?.startsWith('mouse')) {
       return event;
     }
-    return null;
+    return event;
   }
 }

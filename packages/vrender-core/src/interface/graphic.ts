@@ -182,13 +182,26 @@ export type IBackgroundConfig = {
   expandY?: number;
 };
 
+type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
+
 export type IGraphicStyle = IFillStyle &
   IStrokeStyle &
   IPickStyle & {
     opacity: number;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
-    background: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig | null; // 背景，可以与fill同时存在
+    background:
+      | IBackgroundType
+      | {
+          background: IBackgroundType;
+          dx?: number;
+          dy?: number;
+          width?: number;
+          height?: number;
+          x?: number;
+          y?: number;
+        }
+      | null; // 背景，可以与fill同时存在
     texture: TextureType | string; // 纹理
     textureColor: string; // 纹理颜色
     textureSize: number; // 纹理大小

@@ -922,6 +922,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             continue;
           }
 
+          const hasIntersect = label.AABBBounds.intersects(baseMark.AABBBounds);
+
+          if (!hasIntersect) {
+            /** 当 label 与图元完全没有交集的时候，不进行任何反色计算 */
+            continue;
+          }
+
           /** 当label未设置stroke，且可设置stroke时，正常计算 */
           const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });

@@ -193,7 +193,8 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     }
     const originWidth = measureTextSize(
       (indicatorItemSpec.style?.text ?? '') as string | number | number[] | string[],
-      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>
+      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>,
+      this.stage?.getTheme().text.fontFamily
     ).width;
     if (originWidth > 0) {
       const ratio = (limit * (indicatorItemSpec.fitPercent ?? 0.5)) / originWidth;

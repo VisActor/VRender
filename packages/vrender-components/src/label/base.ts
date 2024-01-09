@@ -922,21 +922,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             continue;
           }
 
-          /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
-          if (label.attribute.stroke) {
-            label.setAttributes({
-              fill: labelSmartInvert(
-                label.attribute.fill as IColor,
-                label.attribute.stroke as IColor,
-                textType,
-                contrastRatiosThreshold,
-                alternativeColors,
-                mode
-              )
-            });
-            continue;
-          }
-
           /** 当label未设置stroke，且可设置stroke时，正常计算 */
           const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });

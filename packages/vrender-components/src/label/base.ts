@@ -933,8 +933,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });
 
-          const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
-          stroke && label.setAttributes({ stroke });
+          const hasStrokeConfig = isString(label.attribute.stroke);
+
+          if (hasStrokeConfig) {
+            const accessible = contrastAccessibilityChecker(label.attribute.stroke as IColor, fill);
+            if (!accessible) {
+              const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+              stroke && label.setAttributes({ stroke });
+            }
+          } else {
+            const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
+            stroke && label.setAttributes({ stroke });
+          }
         }
       }
     }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(marker): mark point support confine. fix @Visactor/VChart#1573",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

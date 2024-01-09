@@ -1,10 +1,9 @@
 import type { IGraphic } from '@visactor/vrender-core';
 import type { IBoundsLike } from '@visactor/vutils';
 
-export function limitShapeInBounds(shape: IGraphic, bounds: IBoundsLike) {
+export function computeOffsetForlimit(shape: IGraphic, bounds: IBoundsLike) {
   const { x1: regionMinX, y1: regionMinY, x2: regionMaxX, y2: regionMaxY } = bounds;
   const { x1, y1, x2, y2 } = shape.AABBBounds;
-  const { dx: originDx = 0, dy: originDy = 0 } = shape.attribute;
 
   let dx = 0;
   let dy = 0;
@@ -26,6 +25,14 @@ export function limitShapeInBounds(shape: IGraphic, bounds: IBoundsLike) {
     // 整体超出顶部
     dy = regionMaxY - y2;
   }
+  return {
+    dx,
+    dy
+  };
+}
+export function limitShapeInBounds(shape: IGraphic, bounds: IBoundsLike) {
+  const { dx, dy } = computeOffsetForlimit(shape, bounds);
+  const { dx: originDx = 0, dy: originDy = 0 } = shape.attribute;
   if (dx) {
     shape.setAttribute('dx', dx + originDx);
   }

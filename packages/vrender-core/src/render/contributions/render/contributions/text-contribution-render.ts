@@ -48,12 +48,13 @@ export class DefaultTextBackgroundRenderContribution
       context.highPerformanceSave();
 
       context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
-
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
       context.highPerformanceSave();
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = background as string;
       context.fillRect(b.x1, b.y1, b.width(), b.height());
       context.highPerformanceRestore();

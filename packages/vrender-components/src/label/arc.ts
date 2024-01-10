@@ -162,7 +162,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,
-      text: '...'
+      text: '…'
     };
     const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
     const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);

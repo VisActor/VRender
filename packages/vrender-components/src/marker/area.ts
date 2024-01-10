@@ -1,6 +1,6 @@
 import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
-import { merge } from '@visactor/vutils';
+import { isValidNumber, merge } from '@visactor/vutils';
 import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
@@ -9,6 +9,7 @@ import type { MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
+import type { Point } from '../core/type';
 
 loadMarkAreaComponent();
 export class MarkArea extends Marker<MarkAreaAttrs> {
@@ -128,6 +129,13 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     if (!points || points.length < 3) {
       return false;
     }
-    return true;
+    let validFlag = true;
+    points.forEach((point: Point) => {
+      if (!isValidNumber((point as Point).x) || !isValidNumber((point as Point).y)) {
+        validFlag = false;
+        return;
+      }
+    });
+    return validFlag;
   }
 }

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: `measureTextSize` needs to take into account the fonts configured on the stage theme",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

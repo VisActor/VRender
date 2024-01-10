@@ -26,13 +26,17 @@ export const initTextMeasure = (
 };
 
 // FIXME: 和上一个方法统一，使用 TextMeasure 类
-export function measureTextSize(text: string | number | string[] | number[], textSpec: Partial<ITextGraphicAttribute>) {
+export function measureTextSize(
+  text: string | number | string[] | number[],
+  textSpec: Partial<ITextGraphicAttribute>,
+  fontFamily: string = DEFAULT_TEXT_FONT_FAMILY
+) {
   if (!text) {
     return { width: 0, height: 0 };
   }
   const bounds = getTextBounds({
     text,
-    fontFamily: textSpec.fontFamily,
+    fontFamily: textSpec.fontFamily ?? fontFamily,
     fontSize: textSpec.fontSize || 12,
     fontWeight: textSpec.fontWeight as any,
     textAlign: textSpec.textAlign ?? 'center',

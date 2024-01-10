@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: background support opacity",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

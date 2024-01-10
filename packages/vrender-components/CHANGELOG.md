@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 10 Jan 2024 03:56:46 GMT and should not be manually modified.
+This log was last generated on Wed, 10 Jan 2024 14:18:21 GMT and should not be manually modified.
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: filter out invisible indicator spec
+- fix: `measureTextSize` needs to take into account the fonts configured on the stage theme
 
 ## 0.17.12
 Wed, 10 Jan 2024 03:56:46 GMT

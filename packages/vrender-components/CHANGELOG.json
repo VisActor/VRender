@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.13",
+      "tag": "@visactor/vrender-components_v0.17.13",
+      "date": "Wed, 10 Jan 2024 14:18:21 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: filter out invisible indicator spec"
+          },
+          {
+            "comment": "fix: `measureTextSize` needs to take into account the fonts configured on the stage theme"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.12",
       "tag": "@visactor/vrender-components_v0.17.12",
       "date": "Wed, 10 Jan 2024 03:56:46 GMT",

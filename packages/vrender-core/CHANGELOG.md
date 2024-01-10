@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 10 Jan 2024 03:56:46 GMT and should not be manually modified.
+This log was last generated on Wed, 10 Jan 2024 14:18:21 GMT and should not be manually modified.
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: fix issue with incremental draw
+- feat: background support opacity
+- fix: supply the `getTheme()` api for `IStage`
 
 ## 0.17.12
 Wed, 10 Jan 2024 03:56:46 GMT

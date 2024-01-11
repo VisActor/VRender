@@ -1,3 +1,19 @@
+# v0.17.13
+
+2024-01-10
+
+**🆕 新增功能**
+- **@visactor/vrender-core**: background support opacity
+**🐛 功能修复**
+- **@visactor/vrender-components**: filter out invisible indicator spec
+- **@visactor/vrender-components**: `measureTextSize` needs to take into account the fonts configured on the stage theme
+- **@visactor/vrender-core**: fix issue with incremental draw
+- **@visactor/vrender-core**: supply the `getTheme()` api for `IStage`
+
+
+
+[更多详情请查看 v0.17.13](https://github.com/VisActor/VRender/releases/tag/v0.17.13)
+
 # v0.17.12
 
 2024-01-10

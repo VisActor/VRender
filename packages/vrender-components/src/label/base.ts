@@ -664,13 +664,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const { duration, easing } = this._animationConfig.update;
         updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
         if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.animate().to(
-            merge({}, prevLabel.labelLine.attribute, {
-              points: labelLine.attribute.points
-            }),
-            duration,
-            easing
-          );
+          prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
         }
       }
     });
@@ -722,7 +716,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         currentTextMap.set(textKey, prevLabel);
         prevLabel.text.setAttributes(text.attribute as any);
         if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.setAttributes({ points: labelLine.attribute.points });
+          prevLabel.labelLine.setAttributes(labelLine.attribute);
         }
       }
     });

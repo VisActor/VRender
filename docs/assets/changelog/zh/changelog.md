@@ -1,3 +1,14 @@
+# v0.17.14
+
+2024-01-12
+
+**🐛 功能修复**
+- **@visactor/vrender-core**: fix `splitRect` when rect has `x1` or `y1`
+- **@visactor/vrender**: fix `splitRect` when rect has `x1` or `y1`
+
+
+[更多详情请查看 v0.17.14](https://github.com/VisActor/VRender/releases/tag/v0.17.14)
+
 # v0.17.13
 
 2024-01-10

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 10 Jan 2024 14:18:21 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Jan 2024 10:33:32 GMT and should not be manually modified.
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+### Updates
+
+- fix: fix `splitRect` when rect has `x1` or `y1`
+
+
 
 ## 0.17.13
 Wed, 10 Jan 2024 14:18:21 GMT

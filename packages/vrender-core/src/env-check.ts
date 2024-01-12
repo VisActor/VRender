@@ -11,15 +11,6 @@ function initIsBrowserEnv() {
   } catch (err: any) {
     _isBrowserEnv = false;
   }
-  // 字节小程序有window，判断环境中是否有tt，有tt就不是浏览器环境
-  if (_isBrowserEnv) {
-    try {
-      // @ts-ignore
-      _isBrowserEnv = !tt;
-    } catch (err: any) {
-      _isBrowserEnv = true;
-    }
-  }
 }
 
 export function isBrowserEnv(): boolean {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: do not check tt in env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

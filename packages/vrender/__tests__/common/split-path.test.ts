@@ -168,6 +168,90 @@ it('splitRect()', () => {
   ]);
 });
 
+it('splitRect() of x1', () => {
+  const rect = createRect({
+    x: 100,
+    y: 100,
+    x1: 300,
+    height: 100
+  });
+
+  expect(splitRect(rect, 5)).toEqual([
+    {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 50,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 100,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 150,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 0,
+      y: 50,
+      width: 200,
+      height: 50
+    }
+  ]);
+});
+
+it('splitRect() of x1 and y1', () => {
+  const rect = createRect({
+    x: 100,
+    y: 100,
+    x1: 300,
+    y1: 200
+  });
+
+  expect(splitRect(rect, 5)).toEqual([
+    {
+      x: 0,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 50,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 100,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 150,
+      y: 0,
+      width: 50,
+      height: 50
+    },
+    {
+      x: 0,
+      y: 50,
+      width: 200,
+      height: 50
+    }
+  ]);
+});
+
 it('splitArc()', () => {
   const arc = createArc({
     x: 100,

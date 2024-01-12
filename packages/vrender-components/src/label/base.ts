@@ -38,7 +38,6 @@ import type {
   BaseLabelAttrs,
   OverlapAttrs,
   ILabelAnimation,
-  ArcLabelAttrs,
   LabelItem,
   SmartInvertAttrs,
   ILabelEnterAnimation,
@@ -147,7 +146,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected render() {
     this._prepare();
-
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
@@ -406,10 +404,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected _layout(data: LabelItem[] = []): (IText | IRichText)[] {
     const { textStyle = {}, position, offset } = this.attribute;
     const labels = [];
-
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
       const baseMark = this.getRelatedGraphic(textData);
+      if (!baseMark) {
+        continue;
+      }
 
       const labelAttribute = {
         fill: this._isCollectionBase

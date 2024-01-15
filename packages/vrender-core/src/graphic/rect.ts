@@ -6,6 +6,7 @@ import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
+import { normalizeRectAttributes } from '../common/rect-utils';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'x1', 'y1', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -69,20 +70,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
   toCustomPath(): ICustomPath2D {
     // throw new Error('暂不支持');
     const attribute = this.attribute;
-    let width = isNil(attribute.width) ? attribute.x1 - attribute.x : attribute.width;
-    let height = isNil(attribute.height) ? attribute.y1 - attribute.y : attribute.height;
-    let x = 0;
-    let y = 0;
-
-    if (width < 0) {
-      x = width;
-      width = -width;
-    }
-
-    if (height < 0) {
-      y = height;
-      height = -height;
-    }
+    const { x, y, width, height } = normalizeRectAttributes(attribute);
 
     const path = new CustomPath2D();
     path.moveTo(x, y);

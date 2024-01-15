@@ -2,6 +2,57 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.14",
+      "tag": "@visactor/vrender-components_v0.17.14",
+      "date": "Fri, 12 Jan 2024 10:33:32 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.13",
+      "tag": "@visactor/vrender-components_v0.17.13",
+      "date": "Wed, 10 Jan 2024 14:18:21 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: filter out invisible indicator spec"
+          },
+          {
+            "comment": "fix: `measureTextSize` needs to take into account the fonts configured on the stage theme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.12",
+      "tag": "@visactor/vrender-components_v0.17.12",
+      "date": "Wed, 10 Jan 2024 03:56:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(marker): fix problem of no render when set visible attr and add valid judgment logic. fix@Visactor/Vchart#1901"
+          },
+          {
+            "comment": "feat: support fit strategy for indicator"
+          },
+          {
+            "comment": "feat(marker): mark point support confine. fix @Visactor/VChart#1573"
+          },
+          {
+            "comment": "fix(datazoom): adaptive handler text layout. fix@Visactor/VChart#1809"
+          },
+          {
+            "comment": "fix(datazoom): set pickable false when zoomLock. fix @Visactor/VChart#1565"
+          },
+          {
+            "comment": "fix(datazoom): handler not follow mouse after resize. fix@Visactor/Vchart#1490"
+          },
+          {
+            "comment": "fix: arc outside label invisible with visible label line"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.11",
       "tag": "@visactor/vrender-components_v0.17.11",
       "date": "Fri, 05 Jan 2024 11:54:56 GMT",

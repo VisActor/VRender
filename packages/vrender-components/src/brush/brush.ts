@@ -139,7 +139,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
         operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
         event: e
       });
-    } else if (!this._outOfInteractiveRange(e)) {
+    } else {
       if (this._activeDrawState) {
         this._dispatchEvent(IOperateType.drawEnd, {
           operateMask: this._operatingMask as any,

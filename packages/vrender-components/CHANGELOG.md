@@ -1,6 +1,32 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 05 Jan 2024 11:54:56 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Jan 2024 10:33:32 GMT and should not be manually modified.
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+_Version update only_
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: filter out invisible indicator spec
+- fix: `measureTextSize` needs to take into account the fonts configured on the stage theme
+
+## 0.17.12
+Wed, 10 Jan 2024 03:56:46 GMT
+
+### Updates
+
+- fix(marker): fix problem of no render when set visible attr and add valid judgment logic. fix@Visactor/Vchart#1901
+- feat: support fit strategy for indicator
+- feat(marker): mark point support confine. fix @Visactor/VChart#1573
+- fix(datazoom): adaptive handler text layout. fix@Visactor/VChart#1809
+- fix(datazoom): set pickable false when zoomLock. fix @Visactor/VChart#1565
+- fix(datazoom): handler not follow mouse after resize. fix@Visactor/Vchart#1490
+- fix: arc outside label invisible with visible label line
 
 ## 0.17.11
 Fri, 05 Jan 2024 11:54:56 GMT

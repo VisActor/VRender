@@ -2,6 +2,30 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.17.14",
+      "tag": "@visactor/vrender_v0.17.14",
+      "date": "Fri, 12 Jan 2024 10:33:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix `splitRect` when rect has `x1` or `y1`\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.13",
+      "tag": "@visactor/vrender_v0.17.13",
+      "date": "Wed, 10 Jan 2024 14:18:21 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.12",
+      "tag": "@visactor/vrender_v0.17.12",
+      "date": "Wed, 10 Jan 2024 03:56:46 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.17.11",
       "tag": "@visactor/vrender_v0.17.11",
       "date": "Fri, 05 Jan 2024 11:54:56 GMT",

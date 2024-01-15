@@ -193,7 +193,8 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     }
     const originWidth = measureTextSize(
       (indicatorItemSpec.style?.text ?? '') as string | number | number[] | string[],
-      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>
+      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>,
+      this.stage?.getTheme().text.fontFamily
     ).width;
     if (originWidth > 0) {
       const ratio = (limit * (indicatorItemSpec.fitPercent ?? 0.5)) / originWidth;
@@ -231,17 +232,19 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const titleSpace = titleSpec.space ?? 0;
     otherHeight += titleSpace;
     // non auto fit content height
-    array(this.attribute.content).forEach((contentSpec, index) => {
-      const contentText = this._content[index];
-      if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
-        contentText.setAttribute('fontSize', singleHeight);
-        autoFitTexts.push({ text: contentText, spec: contentSpec });
-      } else {
-        otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
-      }
-      const contentSpace = contentSpec.space ?? 0;
-      otherHeight += contentSpace;
-    });
+    array(this.attribute.content)
+      .filter(contentSpec => contentSpec.visible !== false)
+      .forEach((contentSpec, index) => {
+        const contentText = this._content[index];
+        if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
+          contentText.setAttribute('fontSize', singleHeight);
+          autoFitTexts.push({ text: contentText, spec: contentSpec });
+        } else {
+          otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
+        }
+        const contentSpace = contentSpec.space ?? 0;
+        otherHeight += contentSpace;
+      });
     if (autoFitTexts.length <= 0) {
       return;
     }
@@ -276,11 +279,13 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
 
     const titleHeight = this._title?.AABBBounds?.height?.() ?? 0;
     const titleSpace = this.attribute.title?.space ?? 0;
-    array(this.attribute.content).forEach((contentSpec, index) => {
-      const contentText = this._content[index];
-      contentText.setAttribute('y', titleHeight + titleSpace + lastContentHeight);
-      const contentSpace = contentSpec.space ?? 0;
-      lastContentHeight += contentText.AABBBounds.height() + contentSpace;
-    });
+    array(this.attribute.content)
+      .filter(contentSpec => contentSpec.visible !== false)
+      .forEach((contentSpec, index) => {
+        const contentText = this._content[index];
+        contentText.setAttribute('y', titleHeight + titleSpace + lastContentHeight);
+        const contentSpace = contentSpec.space ?? 0;
+        lastContentHeight += contentText.AABBBounds.height() + contentSpace;
+      });
   }
 }

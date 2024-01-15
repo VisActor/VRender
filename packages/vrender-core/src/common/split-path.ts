@@ -12,6 +12,7 @@ import type { IPointLike } from '@visactor/vutils';
 import { isNumber, Bounds, getIntersectPoint } from '@visactor/vutils';
 import type { ILine, IRect, IArc, ICircle, IArea, IPolygon, IPath } from '../interface';
 import { bezierCurversToPath, pathToBezierCurves } from './morphing-utils';
+import { normalizeRectAttributes } from './rect-utils';
 /**
  * split a rect to grids
  */
@@ -59,10 +60,10 @@ export function splitToGrids(width: number, height: number, count: number) {
 }
 
 export const splitRect = (rect: IRect, count: number) => {
+  const { width, height } = normalizeRectAttributes(rect.attribute);
+
   const x = 0;
   const y = 0;
-  const width = rect.getComputedAttribute('width');
-  const height = rect.getComputedAttribute('height');
   const grids = splitToGrids(width, height, count);
   const res = [];
   const gridHeight = height / grids.length;

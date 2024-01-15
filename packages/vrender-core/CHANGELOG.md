@@ -1,6 +1,29 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 05 Jan 2024 11:54:56 GMT and should not be manually modified.
+This log was last generated on Fri, 12 Jan 2024 10:33:32 GMT and should not be manually modified.
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+### Updates
+
+- fix: fix `splitRect` when rect has `x1` or `y1`
+
+
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: fix issue with incremental draw
+- feat: background support opacity
+- fix: supply the `getTheme()` api for `IStage`
+
+## 0.17.12
+Wed, 10 Jan 2024 03:56:46 GMT
+
+_Version update only_
 
 ## 0.17.11
 Fri, 05 Jan 2024 11:54:56 GMT

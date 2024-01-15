@@ -315,83 +315,38 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       const last = peek(labelShapes);
       const isInverse = isX ? first.attribute.x > last.attribute.x : first.attribute.y < last.attribute.y;
       if (isX) {
-        if (isInverse) {
-          const start = axisEnd.x;
-          const end = axisStart.x;
-          const startBound = first.AABBBounds.x2;
-          const endBound = last.AABBBounds.x1;
+        const leftMostLabel = isInverse ? last : first;
+        const rightMostLabel = isInverse ? first : last;
+        const left = axisStart.x;
+        const right = axisEnd.x;
+        const leftBound = leftMostLabel.AABBBounds.x1;
+        const rightBound = rightMostLabel.AABBBounds.x2;
 
-          if (startBound > start) {
-            first.setAttributes({
-              x: start,
-              textAlign: 'right'
-            });
-          }
+        if (leftBound < left) {
+          leftMostLabel.setAttributes({ dx: left - leftBound });
+        }
 
-          if (endBound < end) {
-            last.setAttributes({
-              x: end,
-              textAlign: 'left'
-            });
-          }
-        } else {
-          const start = axisStart.x;
-          const end = axisEnd.x;
-          const startBound = first.AABBBounds.x1;
-          const endBound = last.AABBBounds.x2;
-          if (startBound < start) {
-            first.setAttributes({
-              x: start,
-              textAlign: 'left'
-            });
-          }
-
-          if (endBound > end) {
-            last.setAttributes({
-              x: end,
-              textAlign: 'right'
-            });
-          }
+        if (rightBound > right) {
+          rightMostLabel.setAttributes({ dx: right - rightBound });
         }
       } else {
-        if (isInverse) {
-          const startBound = first.AABBBounds.y1;
-          const endBound = last.AABBBounds.y2;
-          const start = axisStart.y;
-          const end = axisEnd.y;
+        const bottomMostLabel = isInverse ? last : first;
+        const topMostLabel = isInverse ? first : last;
+        const bottomBound = bottomMostLabel.AABBBounds.y2;
+        const topBound = topMostLabel.AABBBounds.y1;
+        const top = axisStart.y;
+        const bottom = axisEnd.y;
 
-          if (startBound < start) {
-            first.setAttributes({
-              y: start,
-              textBaseline: 'top'
-            });
-          }
+        if (topBound < top) {
+          topMostLabel.setAttributes({
+            dy: top - topBound
+          });
+        }
 
-          if (endBound > end) {
-            last.setAttributes({
-              y: end,
-              textBaseline: 'bottom'
-            });
-          }
-        } else {
-          const start = axisEnd.y;
-          const end = axisStart.y;
-          const startBound = first.AABBBounds.y2;
-          const endBound = last.AABBBounds.y1;
-
-          if (startBound > start) {
-            first.setAttributes({
-              y: start,
-              textBaseline: 'bottom'
-            });
-          }
-
-          if (endBound < end) {
-            last.setAttributes({
-              y: end,
-              textBaseline: 'top'
-            });
-          }
+        if (bottomBound > bottom) {
+          bottomMostLabel.setAttributes({
+            dy: bottom - bottomBound
+          });
         }
       }
     }

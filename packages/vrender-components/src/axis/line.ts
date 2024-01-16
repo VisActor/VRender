@@ -341,7 +341,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           if (angle) {
             rightMostLabel.setAttributes({ dx: (rightMostLabel.attribute.dx ?? 0) + right - rightBound });
           } else {
-            leftMostLabel.setAttributes({
+            rightMostLabel.setAttributes({
               x: right,
               textAlign: 'right'
             });

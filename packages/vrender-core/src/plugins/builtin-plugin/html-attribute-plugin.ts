@@ -127,12 +127,12 @@ export class HtmlAttributePlugin implements IPlugin {
     }
     let left: number = 0;
     let top: number = 0;
-    if (anchorType === 'position') {
+    const b = graphic.globalAABBBounds;
+    if (anchorType === 'position' || b.empty()) {
       const matrix = graphic.globalTransMatrix;
       left = matrix.e;
       top = matrix.f;
     } else {
-      const b = graphic.globalAABBBounds;
       left = b.x1;
       top = b.y1;
     }

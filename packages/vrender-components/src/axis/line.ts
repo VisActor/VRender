@@ -338,15 +338,33 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const bottom = axisEnd.y;
 
         if (topBound < top) {
-          topMostLabel.setAttributes({
-            dy: top - topBound
-          });
+          const direction = topMostLabel.attribute.direction;
+
+          if (direction === 'vertical') {
+            topMostLabel.setAttributes({
+              y: top,
+              textBaseline: 'top'
+            });
+          } else {
+            topMostLabel.setAttributes({
+              dy: top - topBound
+            });
+          }
         }
 
         if (bottomBound > bottom) {
-          bottomMostLabel.setAttributes({
-            dy: bottom - bottomBound
-          });
+          const direction = bottomMostLabel.attribute.direction;
+
+          if (direction === 'vertical') {
+            bottomMostLabel.setAttributes({
+              y: bottom,
+              textBaseline: 'bottom'
+            });
+          } else {
+            bottomMostLabel.setAttributes({
+              dy: bottom - bottomBound
+            });
+          }
         }
       }
     }

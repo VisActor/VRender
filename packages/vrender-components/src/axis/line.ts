@@ -323,11 +323,29 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const rightBound = rightMostLabel.AABBBounds.x2;
 
         if (leftBound < left) {
-          leftMostLabel.setAttributes({ dx: (leftMostLabel.attribute.dx ?? 0) + left - leftBound });
+          const angle = leftMostLabel.attribute.angle;
+
+          if (angle) {
+            leftMostLabel.setAttributes({ dx: (leftMostLabel.attribute.dx ?? 0) + left - leftBound });
+          } else {
+            leftMostLabel.setAttributes({
+              x: left,
+              textAlign: 'left'
+            });
+          }
         }
 
         if (rightBound > right) {
-          rightMostLabel.setAttributes({ dx: (rightMostLabel.attribute.dx ?? 0) + right - rightBound });
+          const angle = rightMostLabel.attribute.angle;
+
+          if (angle) {
+            rightMostLabel.setAttributes({ dx: (rightMostLabel.attribute.dx ?? 0) + right - rightBound });
+          } else {
+            leftMostLabel.setAttributes({
+              x: right,
+              textAlign: 'right'
+            });
+          }
         }
       } else {
         const bottomMostLabel = isInverse ? last : first;
@@ -338,31 +356,32 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const bottom = axisEnd.y;
 
         if (topBound < top) {
-          const direction = topMostLabel.attribute.direction;
+          const angle = topMostLabel.attribute.angle;
 
-          if (direction === 'vertical') {
+          if (angle) {
+            // has rotate
             topMostLabel.setAttributes({
-              y: top,
-              textBaseline: 'top'
+              dy: (topMostLabel.attribute.dy ?? 0) + top - topBound
             });
           } else {
             topMostLabel.setAttributes({
-              dy: (topMostLabel.attribute.dy ?? 0) + top - topBound
+              y: top,
+              textBaseline: 'top'
             });
           }
         }
 
         if (bottomBound > bottom) {
-          const direction = bottomMostLabel.attribute.direction;
+          const angle = bottomMostLabel.attribute.angle;
 
-          if (direction === 'vertical') {
+          if (angle) {
             bottomMostLabel.setAttributes({
-              y: bottom,
-              textBaseline: 'bottom'
+              dy: (bottomMostLabel.attribute.dy ?? 0) + bottom - bottomBound
             });
           } else {
             bottomMostLabel.setAttributes({
-              dy: (bottomMostLabel.attribute.dy ?? 0) + bottom - bottomBound
+              y: bottom,
+              textBaseline: 'bottom'
             });
           }
         }

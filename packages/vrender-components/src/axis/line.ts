@@ -323,11 +323,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         const rightBound = rightMostLabel.AABBBounds.x2;
 
         if (leftBound < left) {
-          leftMostLabel.setAttributes({ dx: left - leftBound });
+          leftMostLabel.setAttributes({ dx: (leftMostLabel.attribute.dx ?? 0) + left - leftBound });
         }
 
         if (rightBound > right) {
-          rightMostLabel.setAttributes({ dx: right - rightBound });
+          rightMostLabel.setAttributes({ dx: (rightMostLabel.attribute.dx ?? 0) + right - rightBound });
         }
       } else {
         const bottomMostLabel = isInverse ? last : first;
@@ -347,7 +347,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           } else {
             topMostLabel.setAttributes({
-              dy: top - topBound
+              dy: (topMostLabel.attribute.dy ?? 0) + top - topBound
             });
           }
         }
@@ -362,7 +362,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           } else {
             bottomMostLabel.setAttributes({
-              dy: bottom - bottomBound
+              dy: (bottomMostLabel.attribute.dy ?? 0) + bottom - bottomBound
             });
           }
         }

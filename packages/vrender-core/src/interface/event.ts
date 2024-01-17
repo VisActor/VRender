@@ -248,6 +248,16 @@ export type RenderConfig = {
    * @default 200
    */
   clickInterval?: number;
+
+  /**
+   * 是否支持touch事件，不支持就不监听touch事件
+   */
+  supportsTouchEvents?: boolean;
+
+  /**
+   * 是否支持pointer事件，不支持就监听mouse事件
+   */
+  supportsPointerEvents?: boolean;
 };
 
 export type NativeEvent = MouseEvent | PointerEvent | TouchEvent;

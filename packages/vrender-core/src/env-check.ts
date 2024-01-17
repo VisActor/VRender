@@ -1,35 +1,36 @@
-let _isBrowserEnv: boolean | undefined;
-declare const tt: any;
+import { application } from './application';
 
+let _isBrowserEnv: boolean | undefined;
+
+/**
+ * 仅能判断是否是浏览器环境和NodeJS环境，其他环境不一定判断出来
+ * @returns
+ */
 function initIsBrowserEnv() {
   if (_isBrowserEnv != null) {
     return;
   }
   try {
     // @ts-ignore
-    _isBrowserEnv = !!window;
+    _isBrowserEnv = globalThis === window;
+    if (_isBrowserEnv) {
+      _isBrowserEnv = !!document.createElement;
+    }
   } catch (err: any) {
     _isBrowserEnv = false;
-  }
-  // 字节小程序有window，判断环境中是否有tt，有tt就不是浏览器环境
-  if (_isBrowserEnv) {
-    try {
-      // @ts-ignore
-      _isBrowserEnv = !tt;
-    } catch (err: any) {
-      _isBrowserEnv = true;
-    }
   }
 }
 
 export function isBrowserEnv(): boolean {
   initIsBrowserEnv();
-  return _isBrowserEnv;
+  const env = application.global && application.global.env;
+  return env ? env === 'browser' : _isBrowserEnv;
 }
 
 export function isNodeEnv() {
   initIsBrowserEnv();
-  return !_isBrowserEnv;
+  const env = application.global && application.global.env;
+  return env ? env === 'node' : !_isBrowserEnv;
 }
 
 export function getCurrentEnv(): 'browser' | 'node' {

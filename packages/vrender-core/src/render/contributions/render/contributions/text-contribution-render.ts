@@ -1,3 +1,5 @@
+import type { IAABBBounds } from '@visactor/vutils';
+import { isObject } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import type {
   IContext2d,
@@ -8,6 +10,8 @@ import type {
   IThemeAttribute
 } from '../../../../interface';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
+import { boundsAllocate } from '../../../../allocator/bounds-allocate';
+import { getTextBounds } from '../../../../graphic';
 
 export class DefaultTextBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution
@@ -29,34 +33,70 @@ export class DefaultTextBackgroundRenderContribution
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
-    const {
-      background,
-      backgroundMode = graphicAttribute.backgroundMode,
-      backgroundFit = graphicAttribute.backgroundFit
-    } = graphic.attribute;
+    const { backgroundMode = graphicAttribute.backgroundMode, backgroundFit = graphicAttribute.backgroundFit } =
+      graphic.attribute;
+    let { background } = graphic.attribute;
     if (!background) {
       return;
     }
+    let b: IAABBBounds;
+    const shouldReCalBounds = isObject(background) && (background as any).background;
+    const onlyTranslate = graphic.transMatrix.onlyTranslate();
+    if (shouldReCalBounds) {
+      const _b = graphic.AABBBounds;
+      const x = ((background as any).x ?? _b.x1) + ((background as any).dx ?? 0);
+      const y = ((background as any).y ?? _b.y1) + ((background as any).dy ?? 0);
+      const w = (background as any).width ?? _b.width();
+      const h = (background as any).height ?? _b.height();
+      b = boundsAllocate.allocate(x, y, x + w, y + h);
+      background = (background as any).background;
+      if (!onlyTranslate) {
+        const w = b.width();
+        const h = b.height();
+        b.set(
+          ((background as any).x ?? 0) + ((background as any).dx ?? 0),
+          ((background as any).y ?? 0) + ((background as any).dy ?? 0),
+          w,
+          h
+        );
+      }
+    } else {
+      b = graphic.AABBBounds;
+      if (!onlyTranslate) {
+        b.set(0, 0, b.width(), b.height());
+      }
+    }
 
-    const b = graphic.AABBBounds;
     if (graphic.backgroundImg && graphic.resources) {
-      const res = graphic.resources.get(background);
+      const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
         return;
       }
 
       context.highPerformanceSave();
+      // 默认应用旋转
+      if (!onlyTranslate) {
+        // TODO 性能优化
+        // const _b = getTextBounds({ ...graphic.attribute, angle: 0, scaleX: 1, scaleY: 1, x: 0, y: 0, dx: 0, dy: 0 });
+        // b.copy(_b);
+      } else {
+        context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+      }
 
-      context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
-
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
       context.highPerformanceSave();
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = background as string;
       context.fillRect(b.x1, b.y1, b.width(), b.height());
       context.highPerformanceRestore();
+    }
+
+    if (shouldReCalBounds) {
+      boundsAllocate.free(b);
     }
   }
 }

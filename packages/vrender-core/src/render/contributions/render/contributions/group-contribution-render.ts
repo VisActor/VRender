@@ -39,7 +39,7 @@ export class DefaultGroupBackgroundRenderContribution
     }
 
     if (graphic.backgroundImg && graphic.resources) {
-      const res = graphic.resources.get(background);
+      const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
         return;
       }

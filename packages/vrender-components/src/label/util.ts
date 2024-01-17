@@ -257,7 +257,7 @@ export function labelingLineOrArea(
   offset = 0
 ) {
   if (!textBounds || !graphicBounds) {
-    return;
+    return { x: Infinity, y: Infinity };
   }
 
   const { x1, x2 } = textBounds;

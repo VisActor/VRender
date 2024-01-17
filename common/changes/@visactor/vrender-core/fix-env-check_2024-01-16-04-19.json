@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with env-check",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

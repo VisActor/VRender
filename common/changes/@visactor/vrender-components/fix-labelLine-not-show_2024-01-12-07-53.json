@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": " fix: error happens in line-label when line has no points",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": " feat: support boolean config in label",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -93,14 +93,24 @@ export class EventSystem {
   private eventsAdded: boolean;
 
   constructor(params: RenderConfig) {
-    const { targetElement, resolution, rootNode, global, viewport, autoPreventDefault = false, clickInterval } = params;
+    const {
+      targetElement,
+      resolution,
+      rootNode,
+      global,
+      viewport,
+      autoPreventDefault = false,
+      clickInterval,
+      supportsTouchEvents = global.supportsTouchEvents,
+      supportsPointerEvents = global.supportsPointerEvents
+    } = params;
     this.manager = new EventManager(rootNode, {
       clickInterval
     });
 
     this.globalObj = global;
-    this.supportsPointerEvents = global.supportsPointerEvents;
-    this.supportsTouchEvents = global.supportsTouchEvents;
+    this.supportsPointerEvents = supportsPointerEvents;
+    this.supportsTouchEvents = supportsTouchEvents;
     this.supportsMouseEvents = global.supportsMouseEvents;
     this.applyStyles = global.applyStyles;
 

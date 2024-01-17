@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: add supportsTouchEvents and supportsPointerEvents params",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

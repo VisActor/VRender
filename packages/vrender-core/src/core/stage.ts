@@ -288,6 +288,8 @@ export class Stage extends Group implements IStage {
         resolution: this.window.dpr || this.global.devicePixelRatio,
         rootNode: this as any,
         global: this.global,
+        supportsPointerEvents: this.params.supportsPointerEvents,
+        supportsTouchEvents: this.params.supportsTouchEvents,
         viewport: {
           viewBox: this._viewBox,
           get x(): number {

@@ -719,9 +719,11 @@ export class DefaultGraphicService implements IGraphicService {
     graphic?: IGraphic
   ) {
     if (!this._validCheck(attribute, rectTheme, aabbBounds, graphic)) {
-      return aabbBounds;
-    }
-    if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
+      aabbBounds.clear();
+      if (!graphic.shadowRoot) {
+        return aabbBounds;
+      }
+    } else if (!this.updatePathProxyAABBBounds(aabbBounds, graphic)) {
       let { width, height } = attribute;
       const { x1, y1, x, y } = attribute;
       width = width ?? x1 - x;

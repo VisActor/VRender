@@ -1,3 +1,26 @@
+# v0.17.15
+
+2024-01-17
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support boolean config in label
+- **@visactor/vrender-core**: add supportsTouchEvents and supportsPointerEvents params
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix the flush of axis when axis label has rotate angle
+- **@visactor/vrender-components**: arc label line not shown
+- **@visactor/vrender-components**: error happens in line-label when line has no points
+- **@visactor/vrender-core**: fix issue with html attribute
+- **@visactor/vrender-core**: fix issue with env-check
+- **@visactor/vrender-core**: fix issue with text background opacity
+
+
+
+[more detail about v0.17.15](https://github.com/VisActor/VRender/releases/tag/v0.17.15)
+
 # v0.17.14
 
 2024-01-12

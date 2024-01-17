@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.16",
+      "tag": "@visactor/vrender-components_v0.17.16",
+      "date": "Wed, 17 Jan 2024 09:02:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when no brush is active, brush should not call stopPropagation()\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.15",
       "tag": "@visactor/vrender-components_v0.17.15",
       "date": "Wed, 17 Jan 2024 06:43:01 GMT",

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with text background opacity",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

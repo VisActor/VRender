@@ -1,8 +1,8 @@
-import type { IRichTextAttribute, ITextAttribute } from '../interface';
+import type { IRichTextAttribute, ITextGraphicAttribute } from '../interface';
 import { graphicCreator } from './graphic-creator';
 // import { createRichText, createText } from './graphic-creator';
 
-type ITextBoundsParams = Partial<ITextAttribute>;
+type ITextBoundsParams = Partial<ITextGraphicAttribute>;
 let text: any;
 export function getTextBounds(params: ITextBoundsParams) {
   if (!text) {

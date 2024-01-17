@@ -87,7 +87,7 @@ export class DefaultImageBackgroundRenderContribution
         context.fill();
       }
     } else {
-      const res = graphic.resources.get(background);
+      const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
         return;
       }

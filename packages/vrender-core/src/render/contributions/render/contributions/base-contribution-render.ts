@@ -46,7 +46,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     }
 
     if (graphic.backgroundImg && graphic.resources) {
-      const res = graphic.resources.get(background);
+      const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
         return;
       }
@@ -100,13 +100,16 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
           // 高度适应
           const ratio = targetH / resH;
           w = resW * ratio;
+          h = targetH;
         } else if (backgroundMode === 'repeat-y') {
           // 宽度适应
           const ratio = targetW / resW;
           h = resH * ratio;
+          w = targetW;
         }
 
-        const canvas = canvasAllocate.allocate({ width: w, height: h, dpr: context.dpr });
+        const dpr = context.dpr;
+        const canvas = canvasAllocate.allocate({ width: w, height: h, dpr });
         const ctx = canvas.getContext('2d');
         if (ctx) {
           ctx.inuse = true;
@@ -116,10 +119,11 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
           ctx.drawImage(data, 0, 0, w, h);
           data = canvas.nativeCanvas;
         }
-        document.body.appendChild(data);
         canvasAllocate.free(canvas);
       }
+      const dpr = context.dpr;
       const pattern = context.createPattern(data, backgroundMode);
+      pattern.setTransform && pattern.setTransform(new DOMMatrix([1 / dpr, 0, 0, 1 / dpr, 0, 0]));
       context.fillStyle = pattern;
       context.translate(b.x1, b.y1);
       context.fillRect(0, 0, targetW, targetH);

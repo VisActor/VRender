@@ -270,7 +270,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.attribute = params;
     this.valid = this.isValid();
     if (params.background) {
-      this.loadImage(params.background, true);
+      this.loadImage((params.background as any).background ?? params.background, true);
     }
   }
 

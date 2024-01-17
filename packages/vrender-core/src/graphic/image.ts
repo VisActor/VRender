@@ -1,5 +1,5 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import type { IImage, IImageGraphicAttribute, IRepeatType } from '../interface';
+import type { IImage, IImageGraphicAttribute, IRepeatType, ISetAttributeContext } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
@@ -93,6 +93,24 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
         this.failCallback();
       }
     });
+  }
+
+  setAttributes(
+    params: Partial<IImageGraphicAttribute>,
+    forceUpdateTag?: boolean,
+    context?: ISetAttributeContext
+  ): void {
+    if (params.image) {
+      this.loadImage(params.image);
+    }
+    return super.setAttributes(params, forceUpdateTag, context);
+  }
+
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext): void {
+    if (key === 'image') {
+      this.loadImage(value);
+    }
+    return super.setAttribute(key, value, forceUpdateTag, context);
   }
 
   protected doUpdateAABBBounds(): AABBBounds {

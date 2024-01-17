@@ -3,7 +3,9 @@
   "version": "0.17.14",
   "description": "",
   "sideEffects": [
-    "./src/modules.ts"
+    "./src/modules.ts",
+    "./cjs/modules.ts",
+    "./es/modules.ts"
   ],
   "main": "cjs/index.js",
   "module": "es/index.js",

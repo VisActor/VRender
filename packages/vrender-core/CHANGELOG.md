@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 17 Jan 2024 06:43:01 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Jan 2024 09:02:13 GMT and should not be manually modified.
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+### Updates
+
+- feat: enable pass supportsPointerEvents and supportsTouchEvents
 
 ## 0.17.15
 Wed, 17 Jan 2024 06:43:01 GMT

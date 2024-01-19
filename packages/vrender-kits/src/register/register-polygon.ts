@@ -3,13 +3,16 @@ import { browser } from './env';
 import { polygonCanvasPickModule } from '../picker/contributions/canvas-picker/polygon-module';
 import { polygonMathPickModule } from '../picker/contributions/math-picker/polygon-module';
 
-let loaded = false;
-export function registerPolygon() {
-  if (loaded) {
+function _registerPolygon() {
+  if (_registerPolygon.__loaded) {
     return;
   }
-  loaded = true;
+  _registerPolygon.__loaded = true;
   registerPolygonGraphic();
   container.load(polygonModule);
   container.load(browser ? polygonCanvasPickModule : polygonMathPickModule);
 }
+
+_registerPolygon.__loaded = false;
+
+export const registerPolygon = _registerPolygon;

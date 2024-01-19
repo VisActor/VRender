@@ -2,13 +2,16 @@ import { arc3dModule, container, registerArc3dGraphic } from '@visactor/vrender-
 import { browser } from './env';
 import { arc3dCanvasPickModule } from '../picker/contributions/canvas-picker/arc3d-module';
 
-let loaded = false;
-export function registerArc3d() {
-  if (loaded) {
+function _registerArc3d() {
+  if (_registerArc3d.__loaded) {
     return;
   }
-  loaded = true;
+  _registerArc3d.__loaded = true;
   registerArc3dGraphic();
   container.load(arc3dModule);
   container.load(browser ? arc3dCanvasPickModule : arc3dCanvasPickModule);
 }
+
+_registerArc3d.__loaded = false;
+
+export const registerArc3d = _registerArc3d;

@@ -3,13 +3,16 @@ import { browser } from './env';
 import { pathCanvasPickModule } from '../picker/contributions/canvas-picker/path-module';
 import { pathMathPickModule } from '../picker/contributions/math-picker/path-module';
 
-let loaded = false;
-export function registerPath() {
-  if (loaded) {
+function _registerPath() {
+  if (_registerPath.__loaded) {
     return;
   }
-  loaded = true;
+  _registerPath.__loaded = true;
   registerPathGraphic();
   container.load(pathModule);
   container.load(browser ? pathCanvasPickModule : pathMathPickModule);
 }
+
+_registerPath.__loaded = false;
+
+export const registerPath = _registerPath;

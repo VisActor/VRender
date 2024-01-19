@@ -1,10 +1,13 @@
 import { registerShadowRootGraphic } from '@visactor/vrender-core';
 
-let loaded = false;
-export function registerShadowRoot() {
-  if (loaded) {
+function _registerShadowRoot() {
+  if (_registerShadowRoot.__loaded) {
     return;
   }
-  loaded = true;
+  _registerShadowRoot.__loaded = true;
   registerShadowRootGraphic();
 }
+
+_registerShadowRoot.__loaded = false;
+
+export const registerShadowRoot = _registerShadowRoot;

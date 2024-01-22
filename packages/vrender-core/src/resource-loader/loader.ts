@@ -1,11 +1,14 @@
 import type { IImage, ImagePayload, ResourceData } from '../interface';
 import { application } from '../application';
 
+const PARALLEL_NUMBER = 10;
 export class ResourceLoader {
   private static cache: Map<string, ResourceData> = new Map();
+  private static isLoading: boolean = false;
+  private static toLoadAueue: { url: string; marks: ImagePayload[] }[] = [];
 
   static GetImage(url: string, mark: ImagePayload) {
-    let data = ResourceLoader.cache.get(url);
+    const data = ResourceLoader.cache.get(url);
     if (data) {
       // 存在缓存
       if (data.loadState === 'fail') {
@@ -20,34 +23,35 @@ export class ResourceLoader {
         mark.imageLoadSuccess(url, data.data as HTMLImageElement);
       }
     } else {
-      data = { type: 'image', loadState: 'init' };
-      ResourceLoader.cache.set(url, data);
+      ResourceLoader.loadImage(url, mark);
+      // data = { type: 'image', loadState: 'init' };
+      // ResourceLoader.cache.set(url, data);
 
-      data.dataPromise = application.global.loadImage(url);
-      if (!data.dataPromise) {
-        // 无法获取资源，修改缓存和mark状态
-        data.loadState = 'fail';
-        mark.imageLoadFail(url);
-      } else {
-        // 资源padding队列加入mark信息
-        data.waitingMark = [mark];
+      // data.dataPromise = application.global.loadImage(url);
+      // if (!data.dataPromise) {
+      //   // 无法获取资源，修改缓存和mark状态
+      //   data.loadState = 'fail';
+      //   mark.imageLoadFail(url);
+      // } else {
+      //   // 资源padding队列加入mark信息
+      //   data.waitingMark = [mark];
 
-        data.dataPromise.then(res => {
-          data.loadState = res?.data ? 'success' : 'fail';
-          data.data = res?.data;
-          // 遍历资源padding队列，更新mark信息
-          data.waitingMark?.map((mark: IImage, index) => {
-            if (res?.data) {
-              data.loadState = 'success';
-              data.data = res.data;
-              mark.imageLoadSuccess(url, res.data as HTMLImageElement);
-            } else {
-              data.loadState = 'fail';
-              mark.imageLoadFail(url);
-            }
-          });
-        });
-      }
+      //   data.dataPromise.then(res => {
+      //     data.loadState = res?.data ? 'success' : 'fail';
+      //     data.data = res?.data;
+      //     // 遍历资源padding队列，更新mark信息
+      //     data.waitingMark?.map((mark: IImage, index) => {
+      //       if (res?.data) {
+      //         data.loadState = 'success';
+      //         data.data = res.data;
+      //         mark.imageLoadSuccess(url, res.data as HTMLImageElement);
+      //       } else {
+      //         data.loadState = 'fail';
+      //         mark.imageLoadFail(url);
+      //       }
+      //     });
+      //   });
+      // }
     }
   }
 
@@ -124,4 +128,93 @@ export class ResourceLoader {
 
     return data.dataPromise.then(data => data.data);
   }
+
+  static loading() {
+    setTimeout(() => {
+      if (!ResourceLoader.isLoading && ResourceLoader.toLoadAueue.length) {
+        ResourceLoader.isLoading = true;
+        const tasks = ResourceLoader.toLoadAueue.splice(0, PARALLEL_NUMBER);
+        const promises: Promise<void>[] = [];
+        tasks.forEach(task => {
+          const { url, marks } = task;
+          const data: ResourceData = { type: 'image', loadState: 'init' };
+          ResourceLoader.cache.set(url, data);
+
+          data.dataPromise = application.global.loadImage(url);
+          if (!data.dataPromise) {
+            // 无法获取资源，修改缓存和mark状态
+            data.loadState = 'fail';
+            // mark.imageLoadFail(url);
+            marks.forEach(mark => mark.imageLoadFail(url));
+          } else {
+            // 资源padding队列加入mark信息
+            // data.waitingMark = [mark];
+            data.waitingMark = marks;
+
+            const end = data.dataPromise.then(res => {
+              data.loadState = res?.data ? 'success' : 'fail';
+              data.data = res?.data;
+              // 遍历资源padding队列，更新mark信息
+              data.waitingMark?.map((mark: IImage, index) => {
+                if (res?.data) {
+                  data.loadState = 'success';
+                  data.data = res.data;
+                  // console.log(mark.attribute.y)
+                  mark.imageLoadSuccess(url, res.data as HTMLImageElement);
+                } else {
+                  data.loadState = 'fail';
+                  mark.imageLoadFail(url);
+                }
+              });
+            });
+
+            promises.push(end);
+          }
+        });
+
+        Promise.all(promises)
+          .then(() => {
+            ResourceLoader.isLoading = false;
+            ResourceLoader.loading();
+          })
+          .catch(error => {
+            console.error(error);
+            ResourceLoader.isLoading = false;
+            ResourceLoader.loading();
+          });
+      }
+    }, 0);
+  }
+
+  static loadImage(url: string, mark: ImagePayload) {
+    // find url in toLoadAueue
+    const index = getIndex(url, ResourceLoader.toLoadAueue);
+    if (index !== -1) {
+      // add mark to aueue
+      ResourceLoader.toLoadAueue[index].marks.push(mark);
+      ResourceLoader.loading();
+      return;
+    }
+
+    // add task to aueue
+    ResourceLoader.toLoadAueue.push({ url, marks: [mark] });
+    ResourceLoader.loading();
+  }
+
+  static improveImageLoading(url: string) {
+    const index = getIndex(url, ResourceLoader.toLoadAueue);
+    if (index !== -1) {
+      const elememt = ResourceLoader.toLoadAueue.splice(index, 1);
+      ResourceLoader.toLoadAueue.unshift(elememt[0]);
+    }
+  }
+}
+
+function getIndex(url: string, arr: { url: string; marks: ImagePayload[] }[]) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].url === url) {
+      return i;
+    }
+  }
+  return -1;
 }

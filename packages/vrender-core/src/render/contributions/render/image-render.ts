@@ -19,10 +19,11 @@ import { ImageRenderContribution } from './contributions/constants';
 import { fillVisible, runFill } from './utils';
 import { IMAGE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
-import { isArray } from '@visactor/vutils';
+import { isArray, isString } from '@visactor/vutils';
 import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
 import { defaultImageBackgroundRenderContribution } from './contributions';
+import { ResourceLoader } from '../../../resource-loader/loader';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
 
@@ -136,7 +137,13 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       return;
     }
     const res = image.resources.get(url);
-    if (res.state !== 'success') {
+    // if (res.state !== 'success') {
+    //   return;
+    // }
+    if (res.state === 'loading' && isString(url)) {
+      ResourceLoader.improveImageLoading(url);
+      return;
+    } else if (res.state !== 'success') {
       return;
     }
 

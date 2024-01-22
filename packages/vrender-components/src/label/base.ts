@@ -298,6 +298,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.textConfig = attributes.text as IRichTextCharacter[];
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
+      attributes.maxWidth = attributes.maxLineWidth;
       const text = graphicCreator.richtext(attributes as any);
       return text;
     } else if (attributes.textType === 'html') {

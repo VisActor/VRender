@@ -1,3 +1,26 @@
+# v0.17.17
+
+2024-01-22
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: html only append dom inside body
+- **@visactor/vrender-core**: color support str gradient color
+- **@visactor/vrender**: color support str gradient color
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: title support multiline
+- **@visactor/vrender-kits**: fix issue with loaded tree-shaking
+- **@visactor/vrender-core**: fix issue with rerun getTextBounds
+- **@visactor/vrender-core**: fix issue with set image
+- **@visactor/vrender-core**: fix issue with loaded tree-shaking
+
+
+
+[more detail about v0.17.17](https://github.com/VisActor/VRender/releases/tag/v0.17.17)
+
 # v0.17.16
 
 2024-01-18

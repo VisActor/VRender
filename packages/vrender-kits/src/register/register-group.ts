@@ -1,10 +1,13 @@
 import { registerGroupGraphic } from '@visactor/vrender-core';
 
-let loaded = false;
-export function registerGroup() {
-  if (loaded) {
+function _registerGroup() {
+  if (_registerGroup.__loaded) {
     return;
   }
-  loaded = true;
+  _registerGroup.__loaded = true;
   registerGroupGraphic();
 }
+
+_registerGroup.__loaded = false;
+
+export const registerGroup = _registerGroup;

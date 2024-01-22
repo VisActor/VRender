@@ -19,12 +19,11 @@ import { GraphicUtil, TransformUtil } from './core/constants';
 import { container } from './container';
 import { VGlobal } from './constants';
 
-let loaded = false;
 export function preLoadAllModule() {
-  if (loaded) {
+  if (preLoadAllModule.__loaded) {
     return;
   }
-  loaded = true;
+  preLoadAllModule.__loaded = true;
   container.load(coreModule);
   container.load(graphicModule);
   container.load(renderModule);
@@ -34,6 +33,8 @@ export function preLoadAllModule() {
   loadBuiltinContributions(container);
   loadRenderContributions(container);
 }
+
+preLoadAllModule.__loaded = false;
 
 preLoadAllModule();
 // loadPickContributions(container);

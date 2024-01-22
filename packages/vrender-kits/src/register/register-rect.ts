@@ -3,13 +3,16 @@ import { browser } from './env';
 import { rectCanvasPickModule } from '../picker/contributions/canvas-picker/rect-module';
 import { rectMathPickModule } from '../picker/contributions/math-picker/rect-module';
 
-let loaded = false;
-export function registerRect() {
-  if (loaded) {
+function _registerRect() {
+  if (_registerRect.__loaded) {
     return;
   }
-  loaded = true;
+  _registerRect.__loaded = true;
   registerRectGraphic();
   container.load(rectModule);
   container.load(browser ? rectCanvasPickModule : rectMathPickModule);
 }
+
+_registerRect.__loaded = false;
+
+export const registerRect = _registerRect;

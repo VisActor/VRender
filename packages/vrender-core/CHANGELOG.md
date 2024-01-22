@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 17 Jan 2024 09:02:13 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Jan 2024 08:19:38 GMT and should not be manually modified.
+
+## 0.17.17
+Mon, 22 Jan 2024 08:19:38 GMT
+
+### Updates
+
+- feat: html only append dom inside body
+- feat: color support str gradient color
+- fix: fix issue with rerun getTextBounds
+- fix: fix issue with set image
+- fix: fix issue with loaded tree-shaking
 
 ## 0.17.16
 Wed, 17 Jan 2024 09:02:13 GMT

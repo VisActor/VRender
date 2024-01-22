@@ -168,7 +168,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     if (isFunction(customLayoutFunc)) {
       labels = customLayoutFunc(
-        data,
         labels,
         this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
@@ -434,7 +433,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         continue;
       }
 
-      text.attachedThemeGraphic = this as any;
       const textBounds = this.getGraphicBounds(text);
       text.attachedThemeGraphic = null;
       const actualPosition = isFunction(position) ? position(textData) : (position as string);

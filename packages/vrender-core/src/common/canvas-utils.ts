@@ -3,6 +3,7 @@ import type { IContext2d, ITransform } from '../interface';
 import { ICommonStyleParams } from '../interface';
 import type { IBoundsLike } from '@visactor/vutils';
 import { IMatrix, isArray } from '@visactor/vutils';
+import { GradientParser } from './color-utils';
 
 export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
   let strokeWidth = width;
@@ -39,9 +40,11 @@ export function createColor(
   } else {
     color = c;
   }
+  color = GradientParser.Parse(color);
   if (typeof color === 'string') {
     return color;
   }
+  // TODO 不同scaleCenter有问题
   if (color.gradient === 'linear') {
     result = createLinearGradient(context, color, params, offsetX, offsetY);
   } else if (color.gradient === 'conical') {

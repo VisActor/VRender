@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: fix issue with env-check",
+      "comment": "fix: fix issue with loaded tree-shaking",
       "type": "none"
     }
   ],

@@ -1,3 +1,41 @@
+# v0.17.16
+
+2024-01-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: enable pass supportsPointerEvents and supportsTouchEvents
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: when no brush is active, brush should not call stopPropagation()
+
+[更多详情请查看 v0.17.16](https://github.com/VisActor/VRender/releases/tag/v0.17.16)
+
+# v0.17.15
+
+2024-01-17
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support boolean config in label
+- **@visactor/vrender-core**: add supportsTouchEvents and supportsPointerEvents params
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the flush of axis when axis label has rotate angle
+- **@visactor/vrender-components**: arc label line not shown
+- **@visactor/vrender-components**: error happens in line-label when line has no points
+- **@visactor/vrender-core**: fix issue with html attribute
+- **@visactor/vrender-core**: fix issue with env-check
+- **@visactor/vrender-core**: fix issue with text background opacity
+
+
+
+[更多详情请查看 v0.17.15](https://github.com/VisActor/VRender/releases/tag/v0.17.15)
+
 # v0.17.14
 
 2024-01-12

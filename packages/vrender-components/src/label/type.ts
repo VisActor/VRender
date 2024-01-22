@@ -92,13 +92,13 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 是否开启防重叠
    * @default true
    */
-  overlap?: OverlapAttrs | false;
+  overlap?: OverlapAttrs | boolean;
 
   /** 智能反色 */
-  smartInvert?: SmartInvertAttrs | false;
+  smartInvert?: SmartInvertAttrs | boolean;
 
   /** 动画配置 */
-  animation?: ILabelAnimation | false;
+  animation?: ILabelAnimation | boolean;
   animationEnter?: ILabelUpdateAnimation;
   animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
   animationExit?: ILabelExitAnimation;

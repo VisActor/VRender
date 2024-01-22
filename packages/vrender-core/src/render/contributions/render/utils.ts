@@ -23,7 +23,7 @@ import type {
  */
 export function runFill(
   fill: IFillType,
-  background?: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig
+  background?: string | any | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig
 ) {
   return !!(fill || background);
 }

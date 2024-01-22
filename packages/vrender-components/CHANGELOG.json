@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.16",
+      "tag": "@visactor/vrender-components_v0.17.16",
+      "date": "Wed, 17 Jan 2024 09:02:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when no brush is active, brush should not call stopPropagation()\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.15",
+      "tag": "@visactor/vrender-components_v0.17.15",
+      "date": "Wed, 17 Jan 2024 06:43:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the flush of axis when axis label has rotate angle\n\n"
+          },
+          {
+            "comment": "fix: arc label line not shown"
+          },
+          {
+            "comment": " feat: support boolean config in label"
+          },
+          {
+            "comment": " fix: error happens in line-label when line has no points"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.14",
       "tag": "@visactor/vrender-components_v0.17.14",
       "date": "Fri, 12 Jan 2024 10:33:32 GMT",

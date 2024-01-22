@@ -1,6 +1,23 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 12 Jan 2024 10:33:32 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Jan 2024 09:02:13 GMT and should not be manually modified.
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+### Updates
+
+- feat: enable pass supportsPointerEvents and supportsTouchEvents
+
+## 0.17.15
+Wed, 17 Jan 2024 06:43:01 GMT
+
+### Updates
+
+- fix: fix issue with html attribute
+- feat: add supportsTouchEvents and supportsPointerEvents params
+- fix: fix issue with env-check
+- fix: fix issue with text background opacity
 
 ## 0.17.14
 Fri, 12 Jan 2024 10:33:32 GMT

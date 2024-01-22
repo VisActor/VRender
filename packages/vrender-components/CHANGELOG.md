@@ -1,6 +1,27 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 12 Jan 2024 10:33:32 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Jan 2024 09:02:13 GMT and should not be manually modified.
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+### Updates
+
+- fix: when no brush is active, brush should not call stopPropagation()
+
+
+
+## 0.17.15
+Wed, 17 Jan 2024 06:43:01 GMT
+
+### Updates
+
+- fix: fix the flush of axis when axis label has rotate angle
+
+
+- fix: arc label line not shown
+-  feat: support boolean config in label
+-  fix: error happens in line-label when line has no points
 
 ## 0.17.14
 Fri, 12 Jan 2024 10:33:32 GMT

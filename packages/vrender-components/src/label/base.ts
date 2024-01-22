@@ -16,7 +16,17 @@ import type {
 } from '@visactor/vrender-core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
-import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
+import {
+  isFunction,
+  isEmpty,
+  isValid,
+  isString,
+  merge,
+  isRectIntersect,
+  isNil,
+  isArray,
+  isObject
+} from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
@@ -28,7 +38,6 @@ import type {
   BaseLabelAttrs,
   OverlapAttrs,
   ILabelAnimation,
-  ArcLabelAttrs,
   LabelItem,
   SmartInvertAttrs,
   ILabelEnterAnimation,
@@ -137,7 +146,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected render() {
     this._prepare();
-
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
@@ -378,12 +386,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
 
     if (this.attribute.animation !== false) {
+      const animation = isObject(this.attribute.animation) ? this.attribute.animation : {};
       this._animationConfig = {
-        enter: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationEnter ?? {}),
-        exit: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationExit ?? {}),
+        enter: merge({}, DefaultLabelAnimation, animation, this.attribute.animationEnter ?? {}),
+        exit: merge({}, DefaultLabelAnimation, animation, this.attribute.animationExit ?? {}),
         update: isArray(this.attribute.animationUpdate)
           ? this.attribute.animationUpdate
-          : merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationUpdate ?? {})
+          : merge({}, DefaultLabelAnimation, animation, this.attribute.animationUpdate ?? {})
       };
     }
   }
@@ -395,10 +404,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   protected _layout(data: LabelItem[] = []): (IText | IRichText)[] {
     const { textStyle = {}, position, offset } = this.attribute;
     const labels = [];
-
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
       const baseMark = this.getRelatedGraphic(textData);
+      if (!baseMark) {
+        continue;
+      }
 
       const labelAttribute = {
         fill: this._isCollectionBase
@@ -435,8 +446,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (labels.length === 0) {
       return [];
     }
-    const option = this.attribute.overlap as OverlapAttrs;
-
+    const option = (isObject(this.attribute.overlap) ? this.attribute.overlap : {}) as OverlapAttrs;
     const result: (IText | IRichText)[] = [];
     const baseMarkGroup = this.getBaseMarkGroup();
 
@@ -664,13 +674,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const { duration, easing } = this._animationConfig.update;
         updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
         if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.animate().to(
-            merge({}, prevLabel.labelLine.attribute, {
-              points: labelLine.attribute.points
-            }),
-            duration,
-            easing
-          );
+          prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
         }
       }
     });
@@ -722,7 +726,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         currentTextMap.set(textKey, prevLabel);
         prevLabel.text.setAttributes(text.attribute as any);
         if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.setAttributes({ points: labelLine.attribute.points });
+          prevLabel.labelLine.setAttributes(labelLine.attribute);
         }
       }
     });
@@ -854,7 +858,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
-    const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
+    const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors, mode } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';

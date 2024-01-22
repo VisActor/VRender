@@ -95,6 +95,9 @@ export class HtmlAttributePlugin implements IPlugin {
     let nativeDom: HTMLElement;
     if (typeof dom === 'string') {
       nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
+      if ((nativeDom as any).lastChild) {
+        nativeDom = (nativeDom as any).lastChild.firstChild;
+      }
     } else {
       nativeDom = dom;
     }

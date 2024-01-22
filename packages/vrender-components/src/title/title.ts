@@ -2,7 +2,7 @@
  * @description 标题组件
  */
 import type { IGroup, IText, IRichText, IRichTextCharacter } from '@visactor/vrender-core';
-import { merge, isValid, normalizePadding } from '@visactor/vutils';
+import { merge, isValid, normalizePadding, isArray } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TitleAttrs } from './type';
 import type { ComponentOptions } from '../interface';
@@ -105,7 +105,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         this._mainTitle = group.createOrUpdateChild(
           'mainTitle',
           {
-            text: [text as string],
+            text: isArray(text) ? (text as any) : [text as string],
             ...textStyle,
             maxLineWidth: textStyle.maxLineWidth ?? width,
             heightLimit: textStyle.heightLimit,
@@ -161,7 +161,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         this._subTitle = group.createOrUpdateChild(
           'subTitle',
           {
-            text: [subtext as string],
+            text: isArray(subtext) ? (subtext as any) : [subtext as string],
             ...subtextStyle,
             maxLineWidth: subtextStyle.maxLineWidth ?? width,
             heightLimit: subtextStyle.heightLimit,

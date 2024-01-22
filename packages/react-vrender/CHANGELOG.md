@@ -1,6 +1,11 @@
 # Change Log - @visactor/react-vrender
 
-This log was last generated on Wed, 17 Jan 2024 09:02:13 GMT and should not be manually modified.
+This log was last generated on Mon, 22 Jan 2024 08:19:38 GMT and should not be manually modified.
+
+## 0.17.17
+Mon, 22 Jan 2024 08:19:38 GMT
+
+_Version update only_
 
 ## 0.17.16
 Wed, 17 Jan 2024 09:02:13 GMT

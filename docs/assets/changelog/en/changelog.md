@@ -1,3 +1,18 @@
+# v0.17.16
+
+2024-01-18
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: enable pass supportsPointerEvents and supportsTouchEvents
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: when no brush is active, brush should not call stopPropagation()
+
+[more detail about v0.17.16](https://github.com/VisActor/VRender/releases/tag/v0.17.16)
+
 # v0.17.15
 
 2024-01-17

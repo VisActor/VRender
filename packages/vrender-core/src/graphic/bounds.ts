@@ -8,7 +8,7 @@ export function getTextBounds(params: ITextBoundsParams) {
   if (!text) {
     text = graphicCreator.CreateGraphic('text', {});
   }
-  text.setAttributes(params);
+  text.initAttributes(params);
   return text.AABBBounds;
 }
 

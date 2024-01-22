@@ -1,11 +1,11 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.17.16",
+  "version": "0.17.17",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
-    "./cjs/modules.ts",
-    "./es/modules.ts"
+    "./cjs/modules.js",
+    "./es/modules.js"
   ],
   "main": "cjs/index.js",
   "module": "es/index.js",

@@ -110,7 +110,7 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
   customLayoutFunc?: (
-    data: LabelItem[],
+    data: (IText | IRichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
     getRelatedPoint?: (data: LabelItem) => IPointLike
   ) => (IText | IRichText)[];

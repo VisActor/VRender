@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: color support str gradient color",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

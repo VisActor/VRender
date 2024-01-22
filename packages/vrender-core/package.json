@@ -4,8 +4,8 @@
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
-    "./cjs/modules.ts",
-    "./es/modules.ts"
+    "./cjs/modules.js",
+    "./es/modules.js"
   ],
   "main": "cjs/index.js",
   "module": "es/index.js",

@@ -1,10 +1,12 @@
 import { registerWrapTextGraphic } from '@visactor/vrender-core';
 
-let loaded = false;
-export function registerWrapText() {
-  if (loaded) {
+function _registerWrapText() {
+  if (_registerWrapText.__loaded) {
     return;
   }
-  loaded = true;
+  _registerWrapText.__loaded = true;
   registerWrapTextGraphic();
 }
+_registerWrapText.__loaded = false;
+
+export const registerWrapText = _registerWrapText;

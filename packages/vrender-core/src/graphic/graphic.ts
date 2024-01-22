@@ -530,6 +530,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.loadImage(params.background, true);
     }
     this._updateTag = UpdateTag.INIT;
+    this.valid = this.isValid();
     this.onAttributeUpdate(context);
   }
 

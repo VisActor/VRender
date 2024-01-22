@@ -301,8 +301,22 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   };
 
   protected _createLabelText(attributes: LabelItem) {
-    if (isRichText(attributes as any, 'textType')) {
-      return graphicCreator.richtext(richTextAttributeTransform(attributes as any));
+    if (attributes.textType === 'rich') {
+      attributes.textConfig = attributes.text as IRichTextCharacter[];
+      attributes.width = attributes.width ?? 0;
+      attributes.height = attributes.height ?? 0;
+      attributes.maxWidth = attributes.maxLineWidth;
+      const text = graphicCreator.richtext(attributes as any);
+      return text;
+    } else if (attributes.textType === 'html') {
+      attributes.textConfig = [] as IRichTextCharacter[];
+      attributes.html = {
+        dom: attributes.text as string,
+        ...DEFAULT_HTML_TEXT_SPEC,
+        ...attributes
+      };
+      const text = graphicCreator.richtext(attributes as IRichTextGraphicAttribute);
+      return text;
     }
     return graphicCreator.text(attributes as ITextGraphicAttribute);
   }

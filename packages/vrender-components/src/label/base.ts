@@ -161,6 +161,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
     if (isFunction(customLayoutFunc)) {
       labels = customLayoutFunc(
+        data,
         labels,
         this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null

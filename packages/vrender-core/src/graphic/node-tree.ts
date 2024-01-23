@@ -419,7 +419,6 @@ export class Node extends EventEmitter<any, any> implements INode {
       //   child._rootNode = child;
       child._prev = null;
       child._next = null;
-      child = child._next;
       child = next;
     }
 

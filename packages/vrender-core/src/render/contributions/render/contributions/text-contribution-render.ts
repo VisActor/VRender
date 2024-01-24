@@ -12,6 +12,7 @@ import type {
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { boundsAllocate } from '../../../../allocator/bounds-allocate';
 import { getTextBounds } from '../../../../graphic';
+import { createRectPath } from '../../../../common/shape/rect';
 
 export class DefaultTextBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution
@@ -88,10 +89,17 @@ export class DefaultTextBackgroundRenderContribution
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {
+      const { backgroundCornerRadius } = graphic.attribute;
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = background as string;
-      context.fillRect(b.x1, b.y1, b.width(), b.height());
+      if (backgroundCornerRadius) {
+        // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
+        createRectPath(context, b.x1, b.y1, b.width(), b.height(), backgroundCornerRadius);
+        context.fill();
+      } else {
+        context.fillRect(b.x1, b.y1, b.width(), b.height());
+      }
       context.highPerformanceRestore();
     }
 

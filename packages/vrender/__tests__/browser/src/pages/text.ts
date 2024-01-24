@@ -98,8 +98,10 @@ export const page = () => {
           { offset: 1, color: 'red' }
         ]
       },
-      text: ['这'],
-      fontSize: 180,
+      background: 'red',
+      backgroundCornerRadius: 10,
+      text: ['这是一行文字'],
+      fontSize: 36,
       textBaseline: 'top'
     })
   );
@@ -151,7 +153,7 @@ export const page = () => {
   graphics.push(rect);
 
   const stage = createStage({
-    container: 'container',
+    canvas: 'main',
     autoRender: true
   });
 

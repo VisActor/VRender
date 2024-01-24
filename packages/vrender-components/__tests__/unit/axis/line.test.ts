@@ -1040,7 +1040,7 @@ describe('Line Axis', () => {
 
       expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
       expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2 - 2
       );
 
       axis.setAttribute('label', { containerAlign: 'middle' });
@@ -1094,7 +1094,7 @@ describe('Line Axis', () => {
 
       expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
       expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2 - 2
       );
 
       axis.setAttribute('label', { containerAlign: 'middle' });

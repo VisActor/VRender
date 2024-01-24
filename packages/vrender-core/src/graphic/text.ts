@@ -12,8 +12,9 @@ import { TextDirection, verticalLayout } from './tools';
 const TEXT_UPDATE_TAG_KEY = [
   'text',
   'maxLineWidth',
-  // 'textAlign',
-  // 'textBaseline',
+  // 多行文本要用到
+  'textAlign',
+  'textBaseline',
   'heightLimit',
   'lineClamp',
   'fontSize',
@@ -600,10 +601,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
+      // ignoreBuf = textTheme.ignoreBuf,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
       suffixPosition = textTheme.suffixPosition
     } = attribute;
+    // const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const lineHeight =
       calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
       (attribute.fontSize || textTheme.fontSize);

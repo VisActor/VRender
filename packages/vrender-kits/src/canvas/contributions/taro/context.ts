@@ -146,4 +146,37 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
   createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {
     return null;
   }
+
+  getImageData(sx: number, sy: number, sw: number, sh: number): any {
+    const ctx = this.nativeContext as any;
+    const taro = ctx.taro;
+    if (!(ctx && taro)) {
+      return;
+    }
+    if (!ctx.getImageData && taro.canvasGetImageData) {
+      return new Promise((resolve, reject) => {
+        try {
+          taro.canvasGetImageData({
+            canvasId: this.canvas.nativeCanvas.id,
+            sx,
+            sy,
+            sw,
+            sh,
+            success(res: any) {
+              resolve(res);
+            }
+          });
+        } catch (err) {
+          reject(err);
+        }
+      });
+    }
+  }
+
+  createRadialGradient(x0: number, y0: number, r0: number, x1: number, y1: number, r1: number): CanvasGradient {
+    return (
+      (this.nativeContext as any).createCircularGradient &&
+      (this.nativeContext as any).createCircularGradient(x0, y0, r0, x1, y1, r1)
+    );
+  }
 }

@@ -34,7 +34,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
 
   protected doUpdateAABBBounds(full?: boolean): AABBBounds {
     const circleTheme = getTheme(this).circle;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateCircleAABBBounds(
       attribute,

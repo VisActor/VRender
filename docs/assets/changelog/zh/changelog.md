@@ -1,3 +1,26 @@
+# v0.17.17
+
+2024-01-22
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: html only append dom inside body
+- **@visactor/vrender-core**: color support str gradient color
+- **@visactor/vrender**: color support str gradient color
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: title support multiline
+- **@visactor/vrender-kits**: fix issue with loaded tree-shaking
+- **@visactor/vrender-core**: fix issue with rerun getTextBounds
+- **@visactor/vrender-core**: fix issue with set image
+- **@visactor/vrender-core**: fix issue with loaded tree-shaking
+
+
+
+[更多详情请查看 v0.17.17](https://github.com/VisActor/VRender/releases/tag/v0.17.17)
+
 # v0.17.16
 
 2024-01-18

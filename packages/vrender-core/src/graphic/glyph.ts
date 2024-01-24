@@ -157,7 +157,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   }
 
   protected doUpdateAABBBounds(): AABBBounds {
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const bounds = application.graphicService.updateGlyphAABBBounds(
       this.attribute,
       getTheme(this).glyph,

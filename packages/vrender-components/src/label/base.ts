@@ -157,17 +157,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       data = dataFilter(data);
     }
 
-    let labels: (IText | IRichText)[];
+    let labels: (IText | IRichText)[] = this._initText(data);
 
     if (isFunction(customLayoutFunc)) {
       labels = customLayoutFunc(
         data,
+        labels,
         this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
       );
     } else {
       // 根据关联图元和配置的position计算标签坐标
-      labels = this._layout(data);
+      labels = this._layout(labels);
     }
 
     if (isFunction(customOverlapFunc)) {
@@ -298,6 +299,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.textConfig = attributes.text as IRichTextCharacter[];
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
+      attributes.maxWidth = attributes.maxLineWidth;
       const text = graphicCreator.richtext(attributes as any);
       return text;
     } else if (attributes.textType === 'html') {
@@ -401,8 +403,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return this._idToGraphic.get(item.id);
   }
 
-  protected _layout(data: LabelItem[] = []): (IText | IRichText)[] {
-    const { textStyle = {}, position, offset } = this.attribute;
+  protected _initText(data: LabelItem[] = []): (IText | IRichText)[] {
+    const { textStyle = {} } = this.attribute;
     const labels = [];
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
@@ -421,6 +423,25 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         ...textData
       };
       const text = this._createLabelText(labelAttribute);
+      labels.push(text);
+    }
+
+    return labels;
+  }
+
+  protected _layout(texts: (IText | IRichText)[]): (IText | IRichText)[] {
+    const { position, offset } = this.attribute;
+    for (let i = 0; i < texts.length; i++) {
+      const text = texts[i];
+      if (!text) {
+        return;
+      }
+      const textData = text.attribute as LabelItem;
+      const baseMark = this.getRelatedGraphic(textData);
+      if (!baseMark) {
+        continue;
+      }
+
       const textBounds = this.getGraphicBounds(text);
       const actualPosition = isFunction(position) ? position(textData) : (position as string);
 
@@ -431,15 +452,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const textLocation = this.labeling(textBounds, graphicBounds, actualPosition, offset);
 
       if (textLocation) {
-        labelAttribute.x = textLocation.x;
-        labelAttribute.y = textLocation.y;
         text.setAttributes(textLocation);
       }
-
-      labels.push(text);
     }
 
-    return labels;
+    return texts;
   }
 
   protected _overlapping(labels: (IText | IRichText)[]) {

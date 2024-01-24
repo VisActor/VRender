@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.18",
+      "tag": "@visactor/vrender-components_v0.17.18",
+      "date": "Wed, 24 Jan 2024 10:10:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: adjust the timing for label customLayoutFunc invocation"
+          },
+          {
+            "comment": "feat: label component will sync maxLineWidth to maxWidth in richText"
+          },
+          {
+            "comment": "fix: event pos error when interactive in site"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.17",
       "tag": "@visactor/vrender-components_v0.17.17",
       "date": "Mon, 22 Jan 2024 08:19:38 GMT",

@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 22 Jan 2024 08:19:38 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 10:10:41 GMT and should not be manually modified.
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+### Updates
+
+- feat: support backgroundCornerRadius
+- fix: fix issue with multiline text textBaseline, closed #886
+- fix: fix issue with union empty bounds
+- fix: richtext.textConfig supports number type text
 
 ## 0.17.17
 Mon, 22 Jan 2024 08:19:38 GMT

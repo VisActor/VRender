@@ -23,7 +23,7 @@ export class Arc3d extends Arc implements IArc3d {
 
   protected doUpdateAABBBounds(): AABBBounds {
     const polygonTheme = getTheme(this).arc;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
 
     const attribute = this.attribute;
     const bounds = application.graphicService.updateArc3dAABBBounds(

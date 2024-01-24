@@ -230,7 +230,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
   protected doUpdateAABBBounds(full?: boolean): AABBBounds {
     const arcTheme = getTheme(this).arc;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateArcAABBBounds(
       attribute,

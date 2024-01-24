@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.18",
+      "tag": "@visactor/vrender-core_v0.17.18",
+      "date": "Wed, 24 Jan 2024 10:10:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support backgroundCornerRadius"
+          },
+          {
+            "comment": "fix: fix issue with multiline text textBaseline, closed #886"
+          },
+          {
+            "comment": "fix: fix issue with union empty bounds"
+          },
+          {
+            "comment": "fix: richtext.textConfig supports number type text"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.17",
       "tag": "@visactor/vrender-core_v0.17.17",
       "date": "Mon, 22 Jan 2024 08:19:38 GMT",

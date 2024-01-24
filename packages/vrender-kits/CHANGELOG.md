@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Mon, 22 Jan 2024 08:19:38 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 10:10:41 GMT and should not be manually modified.
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+### Updates
+
+- feat: compatible canvas in lynx env
+- fix: fix issue with interface
 
 ## 0.17.17
 Mon, 22 Jan 2024 08:19:38 GMT

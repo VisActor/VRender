@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 22 Jan 2024 08:19:38 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 10:10:41 GMT and should not be manually modified.
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+### Updates
+
+- feat: adjust the timing for label customLayoutFunc invocation
+- feat: label component will sync maxLineWidth to maxWidth in richText
+- fix: event pos error when interactive in site
 
 ## 0.17.17
 Mon, 22 Jan 2024 08:19:38 GMT

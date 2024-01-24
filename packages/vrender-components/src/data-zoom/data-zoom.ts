@@ -1,9 +1,9 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { vglobal } from '@visactor/vrender-core';
-import type { IBoundsLike, IPointLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { Bounds, array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
+import { array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
@@ -90,28 +90,30 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   private _statePointToData: (state: number) => any = state => state;
   private _layoutAttrFromConfig: any; // 用于缓存
 
-  setPropsFromAttrs() {
-    const { start, end, orient, previewData, previewPointsX, previewPointsY, previewPointsX1, previewPointsY1 } = this
-      .attribute as DataZoomAttributes;
+  constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
+    const {
+      start,
+      end,
+      size,
+      orient,
+      showDetail,
+      position,
+      previewData,
+      previewPointsX,
+      previewPointsY,
+      previewPointsX1,
+      previewPointsY1,
+      updateStateCallback
+    } = this.attribute as DataZoomAttributes;
+    const { width, height } = size;
     start && (this.state.start = start);
     end && (this.state.end = end);
-    const { width, height } = this.getLayoutAttrFromConfig();
     this._spanCache = this.state.end - this.state.start;
     this._isHorizontal = orient === 'top' || orient === 'bottom';
     this._layoutCache.max = this._isHorizontal ? width : height;
     this._layoutCache.attPos = this._isHorizontal ? 'x' : 'y';
     this._layoutCache.attSize = this._isHorizontal ? 'width' : 'height';
-    previewData && (this._previewData = previewData);
-    isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
-    isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
-    isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
-    isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
-  }
-
-  constructor(attributes: DataZoomAttributes, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, DataZoom.defaultAttributes, attributes));
-    const { position, showDetail } = attributes;
-    // 这些属性在事件交互过程中会改变，所以不能在setAttrs里面动态更改
     this._activeCache.startPos = position;
     this._activeCache.lastPos = position;
     if (showDetail === 'auto') {
@@ -119,12 +121,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     } else {
       this._showText = showDetail as boolean;
     }
-    this.setPropsFromAttrs();
-  }
-
-  setAttributes(params: Partial<Required<DataZoomAttributes>>, forceUpdateTag?: boolean): void {
-    super.setAttributes(params, forceUpdateTag);
-    this.setPropsFromAttrs();
+    previewData && (this._previewData = previewData);
+    isFunction(previewPointsX) && (this._previewPointsX = previewPointsX);
+    isFunction(previewPointsY) && (this._previewPointsY = previewPointsY);
+    isFunction(previewPointsX1) && (this._previewPointsX1 = previewPointsX1);
+    isFunction(previewPointsY1) && (this._previewPointsY1 = previewPointsY1);
   }
 
   protected bindEvents(): void {
@@ -220,7 +221,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e);
+    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
     return {
       x: x - (this.stage?.x || 0),
       y: y - (this.stage?.y || 0)
@@ -454,154 +455,83 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
   }
 
-  /**
-   * 判断文字是否超出datazoom范围
-   */
-  protected isTextOverflow(componentBoundsLike: IBoundsLike, textBounds: IBoundsLike | null, layout: 'start' | 'end') {
-    if (!textBounds) {
-      return false;
-    }
-    if (this._isHorizontal) {
-      if (layout === 'start') {
-        if (textBounds.x1 < componentBoundsLike.x1) {
-          return true;
-        }
-      } else {
-        if (textBounds.x2 > componentBoundsLike.x2) {
-          return true;
-        }
-      }
-    } else {
-      if (layout === 'start') {
-        if (textBounds.y1 < componentBoundsLike.y1) {
-          return true;
-        }
-      } else {
-        if (textBounds.y2 > componentBoundsLike.y2) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  protected setTextAttr(startTextBounds: IBoundsLike, endTextBounds: IBoundsLike) {
+  protected renderText() {
     const { startTextStyle, endTextStyle } = this.attribute as DataZoomAttributes;
-    const { formatMethod: startTextFormat, ...restStartTextStyle } = startTextStyle;
+    const { formatMethod: startTextFormat, ...restStartStyle } = startTextStyle;
     const { formatMethod: endTextFormat, ...restEndTextStyle } = endTextStyle;
     const { start, end } = this.state;
     this._startValue = this._statePointToData(start);
     this._endValue = this._statePointToData(end);
     const { position, width, height } = this.getLayoutAttrFromConfig();
 
-    const startTextValue = startTextFormat ? startTextFormat(this._startValue) : this._startValue;
-    const endTextValue = endTextFormat ? endTextFormat(this._endValue) : this._endValue;
-    const componentBoundsLike = {
-      x1: position.x,
-      y1: position.y,
-      x2: position.x + width,
-      y2: position.y + height
-    };
-    let startTextPosition: IPointLike;
-    let endTextPosition: IPointLike;
-    let startTextAlignStyle: any;
-    let endTextAlignStyle: any;
     if (this._isHorizontal) {
-      startTextPosition = {
-        x: position.x + start * width,
-        y: position.y + height / 2
-      };
-      endTextPosition = {
-        x: position.x + end * width,
-        y: position.y + height / 2
-      };
-      startTextAlignStyle = {
-        textAlign: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'left' : 'right',
-        textBaseline: 'middle'
-      };
-      endTextAlignStyle = {
-        textAlign: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'right' : 'left',
-        textBaseline: 'middle'
-      };
+      // 起始文字
+      this._startText = this.maybeAddLabel(
+        this._container,
+        merge({}, restStartStyle, {
+          text: startTextFormat ? startTextFormat(this._startValue) : this._startValue,
+          x: position.x + start * width,
+          y: position.y + height / 2,
+          visible: this._showText,
+          pickable: false,
+          childrenPickable: false,
+          textStyle: {
+            textAlign: 'right',
+            textBaseline: 'middle'
+          }
+        }),
+        `data-zoom-start-text-${position}`
+      );
+      this._endText = this.maybeAddLabel(
+        this._container,
+        merge({}, restEndTextStyle, {
+          text: endTextFormat ? endTextFormat(this._endValue) : this._endValue,
+          x: position.x + end * width,
+          y: position.y + height / 2,
+          visible: this._showText,
+          pickable: false,
+          childrenPickable: false,
+          textStyle: {
+            textAlign: 'left',
+            textBaseline: 'middle'
+          }
+        }),
+        `data-zoom-end-text-${position}`
+      );
     } else {
-      startTextPosition = {
-        x: position.x + width / 2,
-        y: position.y + start * height
-      };
-      endTextPosition = {
-        x: position.x + width / 2,
-        y: position.y + end * height
-      };
-      startTextAlignStyle = {
-        textAlign: 'center',
-        textBaseline: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'top' : 'bottom'
-      };
-      endTextAlignStyle = {
-        textAlign: 'center',
-        textBaseline: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'bottom' : 'top'
-      };
-    }
-
-    this._startText = this.maybeAddLabel(
-      this._container,
-      merge({}, restStartTextStyle, {
-        text: startTextValue,
-        x: startTextPosition.x,
-        y: startTextPosition.y,
-        visible: this._showText,
-        pickable: false,
-        childrenPickable: false,
-        textStyle: startTextAlignStyle
-      }),
-      `data-zoom-start-text-${position}`
-    );
-    this._endText = this.maybeAddLabel(
-      this._container,
-      merge({}, restEndTextStyle, {
-        text: endTextValue,
-        x: endTextPosition.x,
-        y: endTextPosition.y,
-        visible: this._showText,
-        pickable: false,
-        childrenPickable: false,
-        textStyle: endTextAlignStyle
-      }),
-      `data-zoom-end-text-${position}`
-    );
-  }
-
-  protected renderText() {
-    let startTextBounds: IBoundsLike | null = null;
-    let endTextBounds: IBoundsLike | null = null;
-
-    // 第一次绘制
-    this.setTextAttr(startTextBounds, endTextBounds);
-    // 得到bounds
-    startTextBounds = this._startText.AABBBounds;
-    endTextBounds = this._endText.AABBBounds;
-
-    // 第二次绘制: 将text限制在组件bounds内
-    this.setTextAttr(startTextBounds, endTextBounds);
-    // 得到bounds
-    startTextBounds = this._startText.AABBBounds;
-    endTextBounds = this._endText.AABBBounds;
-    const { x1, x2, y1, y2 } = startTextBounds;
-    const { dx: startTextDx = 0, dy: startTextDy = 0 } = this.attribute.startTextStyle;
-
-    // 第三次绘制: 避免startText和endText重叠, 如果重叠了, 对startText做位置调整(考虑到调整的最小化，只单独调整startText而不调整endText)
-    if (new Bounds().set(x1, y1, x2, y2).intersects(endTextBounds)) {
-      const direction = this.attribute.orient === 'bottom' || this.attribute.orient === 'right' ? -1 : 1;
-      if (this._isHorizontal) {
-        this._startText.setAttribute('dy', startTextDy + direction * Math.abs(endTextBounds.y1 - endTextBounds.y2));
-      } else {
-        this._startText.setAttribute('dx', startTextDx + direction * Math.abs(endTextBounds.x1 - endTextBounds.x2));
-      }
-    } else {
-      if (this._isHorizontal) {
-        this._startText.setAttribute('dy', startTextDy);
-      } else {
-        this._startText.setAttribute('dx', startTextDx);
-      }
+      // 起始文字
+      this._startText = this.maybeAddLabel(
+        this._container,
+        merge({}, restStartStyle, {
+          text: startTextFormat ? startTextFormat(this._startValue) : this._startValue,
+          x: position.x + width / 2,
+          y: position.y + start * height,
+          visible: this._showText,
+          pickable: false,
+          childrenPickable: false,
+          textStyle: {
+            textAlign: 'center',
+            textBaseline: 'bottom'
+          }
+        }),
+        `data-zoom-start-text-${position}`
+      );
+      this._endText = this.maybeAddLabel(
+        this._container,
+        merge({}, restEndTextStyle, {
+          text: endTextFormat ? endTextFormat(this._endValue) : this._endValue,
+          x: position.x + width / 2,
+          y: position.y + end * height,
+          visible: this._showText,
+          pickable: false,
+          childrenPickable: false,
+          textStyle: {
+            textAlign: 'center',
+            textBaseline: 'top'
+          }
+        }),
+        `data-zoom-end-text-${position}`
+      );
     }
   }
 
@@ -690,8 +620,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       middleHandlerStyle = {},
       startHandlerStyle = {},
       endHandlerStyle = {},
-      brushSelect,
-      zoomLock
+      brushSelect
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
     const { position, width, height } = this.getLayoutAttrFromConfig();
@@ -707,8 +636,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         width,
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
-        ...backgroundStyle,
-        pickable: !zoomLock
+        ...backgroundStyle
       },
       'rect'
     ) as IRect;
@@ -731,8 +659,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           width: (end - start) * width,
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle,
-          pickable: !zoomLock
+          ...selectedBackgroundStyle
         },
         'rect'
       ) as IRect;
@@ -746,8 +673,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           width,
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
-          ...selectedBackgroundStyle,
-          pickable: !zoomLock
+          ...selectedBackgroundStyle
         },
         'rect'
       ) as IRect;
@@ -756,6 +682,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     /** 选中的背景图表 */
     selectedBackgroundChartStyle.line?.visible && this.setSelectedPreviewAttributes('line', group);
     selectedBackgroundChartStyle.area?.visible && this.setSelectedPreviewAttributes('area', group);
+
+    /** 左右文字 */
+    if (this._showText) {
+      this.renderText();
+    }
 
     /** 左右 和 中间手柄 */
     if (this._isHorizontal) {
@@ -768,8 +699,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             y: position.y - middleHandlerBackgroundSize,
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
-            ...middleHandlerStyle.background?.style,
-            pickable: !zoomLock
+            ...middleHandlerStyle.background?.style
           },
           'rect'
         ) as IRect;
@@ -781,8 +711,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             strokeBoundsBuffer: 0,
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
-            ...middleHandlerStyle.icon,
-            pickable: !zoomLock
+            ...middleHandlerStyle.icon
           },
           'symbol'
         ) as ISymbol;
@@ -795,8 +724,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: height,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          ...startHandlerStyle,
-          pickable: !zoomLock
+          ...startHandlerStyle
         },
         'symbol'
       ) as ISymbol;
@@ -808,8 +736,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: height,
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          ...endHandlerStyle,
-          pickable: !zoomLock
+          ...endHandlerStyle
         },
         'symbol'
       ) as ISymbol;
@@ -830,8 +757,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          pickable: !zoomLock
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
         'rect'
       ) as IRect;
@@ -845,8 +771,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
-          pickable: !zoomLock
+          ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any)
         },
         'rect'
       ) as IRect;
@@ -861,8 +786,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             y: position.y + start * height,
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
-            ...middleHandlerStyle.background?.style,
-            pickable: !zoomLock
+            ...middleHandlerStyle.background?.style
           },
           'rect'
         ) as IRect;
@@ -878,8 +802,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             angle: 90 * (Math.PI / 180),
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
-            ...middleHandlerStyle.icon,
-            pickable: !zoomLock
+            ...middleHandlerStyle.icon
           },
           'symbol'
         ) as ISymbol;
@@ -892,8 +815,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: width,
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          ...startHandlerStyle,
-          pickable: !zoomLock
+          ...startHandlerStyle
         },
         'symbol'
       ) as ISymbol;
@@ -906,8 +828,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           size: width,
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          ...endHandlerStyle,
-          pickable: !zoomLock
+          ...endHandlerStyle
         },
         'symbol'
       ) as ISymbol;
@@ -928,8 +849,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          pickable: !zoomLock
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
         'rect'
       ) as IRect;
@@ -943,16 +863,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           fill: 'white',
           fillOpacity: 0,
           zIndex: 999,
-          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
-          pickable: !zoomLock
+          ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any)
         },
         'rect'
       ) as IRect;
-    }
-
-    /** 左右文字 */
-    if (this._showText) {
-      this.renderText();
     }
   }
 

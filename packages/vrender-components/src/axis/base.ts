@@ -268,7 +268,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     // 渲染标题
-    if (title && title.visible) {
+    if (title && title.visible && title.text) {
       this.renderTitle(axisContainer);
     }
   }

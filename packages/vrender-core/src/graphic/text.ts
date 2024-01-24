@@ -129,7 +129,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   protected doUpdateAABBBounds(): AABBBounds {
     const textTheme = getTheme(this).text;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateTextAABBBounds(
       attribute,

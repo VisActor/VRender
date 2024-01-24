@@ -121,7 +121,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
   protected doUpdateAABBBounds(full?: boolean): AABBBounds {
     const symbolTheme = getTheme(this).symbol;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateSymbolAABBBounds(
       attribute,

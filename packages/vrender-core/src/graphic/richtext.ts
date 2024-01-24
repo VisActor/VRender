@@ -163,7 +163,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
   protected doUpdateAABBBounds(): AABBBounds {
     const richTextTheme = getTheme(this).richtext;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateRichTextAABBBounds(
       attribute,

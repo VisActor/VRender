@@ -22,7 +22,7 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
 
   protected doUpdateAABBBounds(): AABBBounds {
     const polygonTheme = getTheme(this).polygon;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
 
     const attribute = this.attribute;
     const bounds = application.graphicService.updatePyramid3dAABBBounds(

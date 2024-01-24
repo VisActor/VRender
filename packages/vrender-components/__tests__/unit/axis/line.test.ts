@@ -674,7 +674,7 @@ describe('Line Axis', () => {
     stage.defaultLayer.add(axis as unknown as IGraphic);
     stage.render();
     const axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
-    expect(axisTitle.attribute.y).toBe(20);
+    expect(axisTitle.attribute.y).toBe(28);
     expect(axisTitle.attribute.x).toBe(165.5);
   });
 

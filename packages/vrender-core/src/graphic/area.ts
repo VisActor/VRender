@@ -49,7 +49,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
 
   protected doUpdateAABBBounds(): AABBBounds {
     const areaTheme = getTheme(this).area;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
 
     const attribute = this.attribute;
     const bounds = application.graphicService.updateAreaAABBBounds(

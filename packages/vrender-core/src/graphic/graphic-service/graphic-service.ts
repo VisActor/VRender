@@ -1469,34 +1469,39 @@ export class DefaultGraphicService implements IGraphicService {
     miter: boolean,
     graphic?: IGraphic
   ) {
-    const {
-      scaleX = theme.scaleX,
-      scaleY = theme.scaleY,
-      stroke = theme.stroke,
-      shadowBlur = theme.shadowBlur,
-      lineWidth = theme.lineWidth,
-      pickStrokeBuffer = theme.pickStrokeBuffer,
-      strokeBoundsBuffer = theme.strokeBoundsBuffer
-    } = attribute;
-    const tb1 = this.tempAABBBounds1;
-    const tb2 = this.tempAABBBounds2;
-    if (stroke && lineWidth) {
-      const scaledHalfLineWidth = (lineWidth + pickStrokeBuffer) / Math.abs(scaleX + scaleY);
-      boundStroke(tb1, scaledHalfLineWidth, miter, strokeBoundsBuffer);
-      aabbBounds.union(tb1);
-      tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
-    }
-    if (shadowBlur) {
-      const { shadowOffsetX = theme.shadowOffsetX, shadowOffsetY = theme.shadowOffsetY } = attribute;
-      const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2;
-      boundStroke(tb1, shadowBlurWidth, false, strokeBoundsBuffer + 1);
-      tb1.translate(shadowOffsetX, shadowOffsetY);
-      aabbBounds.union(tb1);
-      // tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+    if (!aabbBounds.empty()) {
+      const {
+        scaleX = theme.scaleX,
+        scaleY = theme.scaleY,
+        stroke = theme.stroke,
+        shadowBlur = theme.shadowBlur,
+        lineWidth = theme.lineWidth,
+        pickStrokeBuffer = theme.pickStrokeBuffer,
+        strokeBoundsBuffer = theme.strokeBoundsBuffer
+      } = attribute;
+      const tb1 = this.tempAABBBounds1;
+      const tb2 = this.tempAABBBounds2;
+      if (stroke && lineWidth) {
+        const scaledHalfLineWidth = (lineWidth + pickStrokeBuffer) / Math.abs(scaleX + scaleY);
+        boundStroke(tb1, scaledHalfLineWidth, miter, strokeBoundsBuffer);
+        aabbBounds.union(tb1);
+        tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+      }
+      if (shadowBlur) {
+        const { shadowOffsetX = theme.shadowOffsetX, shadowOffsetY = theme.shadowOffsetY } = attribute;
+        const shadowBlurWidth = (shadowBlur / Math.abs(scaleX + scaleY)) * 2;
+        boundStroke(tb1, shadowBlurWidth, false, strokeBoundsBuffer + 1);
+        tb1.translate(shadowOffsetX, shadowOffsetY);
+        aabbBounds.union(tb1);
+        // tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+      }
     }
 
     // 合并shadowRoot的bounds
     this.combindShadowAABBBounds(aabbBounds, graphic);
+    if (aabbBounds.empty()) {
+      return;
+    }
 
     // 性能优化逻辑，group类型变换较少，不需要矩阵变换
     let updateMatrix = true;

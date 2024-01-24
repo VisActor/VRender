@@ -8,6 +8,7 @@ import type {
   IGlobal,
   ILynxCanvas
 } from '@visactor/vrender-core';
+import { CanvasWrapEnableWH } from './canvas-wrap';
 
 declare const lynx: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -32,9 +33,10 @@ function makeUpCanvas(
   canvasIdLists: string[],
   canvasMap: Map<string, ILynxCanvas>,
   freeCanvasIdx: number,
-  freeCanvasList: ILynxCanvas[]
+  freeCanvasList: ILynxCanvas[],
+  pixelRatio?: number
 ) {
-  const dpr = SystemInfo.pixelRatio;
+  const dpr = pixelRatio ?? SystemInfo.pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
     const _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
@@ -43,29 +45,13 @@ function makeUpCanvas(
     ng && _canvas.attachToCanvasView(id);
 
     const ctx = _canvas.getContext('2d');
-    ctx.draw = (a: any, b: any) => {
-      b();
-    };
     // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
     // ctx.canvas = {
     //   width: domref.width * dpr,
     //   height: domref.height * dpr
     // };
 
-    const canvas = {
-      width: domref.width * dpr,
-      height: domref.height * dpr,
-      offsetWidth: domref.width,
-      offsetHeight: domref.height,
-      id: id ?? '',
-      getContext: () => ctx,
-      // 构造 getBoundingClientRect 方法
-      getBoundingClientRect: () => ({
-        height: domref.height,
-        width: domref.width
-      }),
-      nativeCanvas: _canvas
-    };
+    const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, domref.width, domref.height, id);
 
     canvasMap.set(id, canvas);
     if (i >= freeCanvasIdx) {
@@ -118,10 +104,20 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number }) {
+  configure(
+    service: IGlobal,
+    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; pixelRatio?: number }
+  ) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
+      makeUpCanvas(
+        params.domref,
+        params.canvasIdLists,
+        this.canvasMap,
+        params.freeCanvasIdx,
+        this.freeCanvasList,
+        params.pixelRatio
+      );
 
       // loadFeishuContributions();
     }

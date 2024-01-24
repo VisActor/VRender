@@ -8,6 +8,7 @@ import type {
   IDomRef,
   ITTCanvas
 } from '@visactor/vrender-core';
+import { CanvasWrapDisableWH } from './canvas-wrap';
 
 interface ITaro {
   createCanvasContext: (id: string) => any;
@@ -33,50 +34,9 @@ function makeUpCanvas(
   canvasIdLists.forEach((id, i) => {
     const ctx: any = taro.createCanvasContext(id);
     // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-    ctx.canvas = {
-      width: domref.width * dpr,
-      height: domref.height * dpr
-    };
 
-    // TODO: 这里是一个临时方案，兼容 createCircularGradient 方法
-    if (!ctx.createRadialGradient) {
-      ctx.createRadialGradient = (...cc: any) => ctx.createCircularGradient(...cc);
-    }
-
-    // HACK: 小程序端draw、getImage方法为异步回调, 在此统一封装 getImageData 为 promise
-    if (!ctx.getImageData && taro.canvasGetImageData) {
-      ctx.getImageData = (x: number, y: number, width: number, height: number) =>
-        new Promise((resolve, reject) => {
-          try {
-            taro.canvasGetImageData({
-              canvasId: id,
-              x,
-              y,
-              width,
-              height,
-              success(res) {
-                resolve(res);
-              }
-            });
-          } catch (err) {
-            reject(err);
-          }
-        });
-    }
-
-    const canvas = {
-      id: id,
-      width: domref.width * dpr,
-      height: domref.height * dpr,
-      offsetWidth: domref.width,
-      offsetHeight: domref.height,
-      getContext: () => ctx,
-      // 构造 getBoundingClientRect 方法
-      getBoundingClientRect: () => ({
-        height: domref.height,
-        width: domref.width
-      })
-    };
+    const canvas = new CanvasWrapDisableWH(ctx.canvas || {}, ctx, dpr, domref.width, domref.height, id);
+    ctx.canvas = canvas;
 
     canvasMap.set(id, canvas);
     if (i >= freeCanvasIdx) {

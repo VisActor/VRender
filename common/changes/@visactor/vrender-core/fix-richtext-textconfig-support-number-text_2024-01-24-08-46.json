@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: richtext.textConfig supports number type text",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

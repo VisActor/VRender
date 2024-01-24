@@ -204,29 +204,42 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
       let x = 0;
       let y = 0;
-      if (textAlign === 'center') {
+      let flag = 0;
+      if (textAlign === 'left' || textAlign === 'start') {
+        flag = 1;
+      } else if (textAlign === 'right' || textAlign === 'end') {
+        flag = -1;
+      } else if (textAlign === 'center') {
+        flag = 0;
+      }
+      if (!flag) {
         x -= tagWidth / 2;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
         }
 
         group.setAttribute('x', -symbolPlaceWidth / 2);
-      } else if (textAlign === 'right' || textAlign === 'end') {
+      } else if (flag < 0) {
         x -= tagWidth;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
         }
 
         group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
-      } else if (textAlign === 'left' || textAlign === 'start') {
+      } else if (flag > 0) {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter && (textAlign === 'left' || textAlign === 'start')) {
+      if (textAlwaysCenter) {
         // for flex layout
+        const textPaddingWidth = symbolPlaceWidth - parsedPadding[flag > 0 ? 3 : 1];
+        const contentWidth = textPaddingWidth + textWidth;
         textShape.setAttributes({
-          x: textX + tagWidth / 2,
+          x: (tagWidth / 2 - textPaddingWidth / 2) * flag,
           textAlign: 'center'
+        });
+        symbol.setAttributes({
+          x: ((tagWidth - contentWidth) / 2) * flag + (flag < 0 ? textPaddingWidth : 0)
         });
       }
 

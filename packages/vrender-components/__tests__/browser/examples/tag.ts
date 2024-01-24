@@ -37,11 +37,14 @@ export function run() {
     //     height: 25
     //   }
     // ],
-    type: 'html',
-    text: '<p>这是一个html字符串</p>',
+    // type: 'html',
+    text: 'aaaaa',
+    minWidth: 90,
+    textAlwaysCenter: true,
     textStyle: {
       // width: 20,
       // height: 20,
+      textAlign: 'right',
       fontSize: 12,
       fill: '#08979c'
     },

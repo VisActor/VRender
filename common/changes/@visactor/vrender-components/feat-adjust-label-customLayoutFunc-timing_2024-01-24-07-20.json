@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: label component will sync maxLineWidth to maxWidth in richText",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

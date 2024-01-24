@@ -1,3 +1,27 @@
+# v0.17.18
+
+2024-01-24
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: adjust the timing for label customLayoutFunc invocation
+- **@visactor/vrender-components**: label component will sync maxLineWidth to maxWidth in richText
+- **@visactor/vrender-kits**: compatible canvas in lynx env
+- **@visactor/vrender-core**: support backgroundCornerRadius
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: event pos error when interactive in site
+- **@visactor/vrender-kits**: fix issue with interface
+- **@visactor/vrender-core**: fix issue with multiline text textBaseline, closed [#886](https://github.com/VisActor/VRender/issues/886)
+- **@visactor/vrender-core**: fix issue with union empty bounds
+- **@visactor/vrender-core**: richtext.textConfig supports number type text
+
+
+
+[more detail about v0.17.18](https://github.com/VisActor/VRender/releases/tag/v0.17.18)
+
 # v0.17.17
 
 2024-01-22

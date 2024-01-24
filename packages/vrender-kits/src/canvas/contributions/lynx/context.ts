@@ -83,6 +83,9 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
 
   draw() {
     const _context = this.nativeContext as any;
+    if (!_context.draw) {
+      return;
+    }
     this.drawPromise = new Promise(resolve => {
       _context.draw(true, () => {
         this.drawPromise = null;

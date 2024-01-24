@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: event pos error when interactive in site",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

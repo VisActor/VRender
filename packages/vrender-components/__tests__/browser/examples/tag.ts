@@ -38,13 +38,13 @@ export function run() {
     //   }
     // ],
     // type: 'html',
-    text: 'aaaaa',
+    text: 'aaa',
     minWidth: 90,
     textAlwaysCenter: true,
     textStyle: {
       // width: 20,
       // height: 20,
-      textAlign: 'right',
+      // textAlign: 'right',
       fontSize: 12,
       fill: '#08979c'
     },

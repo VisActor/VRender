@@ -230,17 +230,20 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter) {
-        // for flex layout
-        const textPaddingWidth = symbolPlaceWidth - parsedPadding[flag > 0 ? 3 : 1];
-        const contentWidth = textPaddingWidth + textWidth;
+      if (textAlwaysCenter && flag) {
+        // 剔除padding后的内宽度
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const tsWidth = textWidth + symbolPlaceWidth;
+        const textX = (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2;
+        const symbolX = (containerWidth - tsWidth) / 2 + maxSize / 2;
         textShape.setAttributes({
-          x: (tagWidth / 2 - textPaddingWidth / 2) * flag,
+          x: textX * flag,
           textAlign: 'center'
         });
         symbol.setAttributes({
-          x: ((tagWidth - contentWidth) / 2) * flag + (flag < 0 ? textPaddingWidth : 0)
+          x: symbolX * flag
         });
+        group.setAttribute('x', parsedPadding[2 + flag] * flag);
       }
 
       if (textBaseline === 'middle') {

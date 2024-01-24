@@ -100,7 +100,7 @@ export const page = () => {
       },
       background: 'red',
       backgroundCornerRadius: 10,
-      text: '这',
+      text: ['这是一行文字'],
       fontSize: 36,
       textBaseline: 'top'
     })

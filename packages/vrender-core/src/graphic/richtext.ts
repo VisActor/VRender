@@ -243,14 +243,14 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         if (isNumber(richTextConfig.text)) {
           richTextConfig.text = `${richTextConfig.text}`;
         }
-        if (richTextConfig.text && richTextConfig.text.includes('\n')) {
+        if (richTextConfig.text.includes('\n')) {
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
-            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig));
+            paragraphs.push(new Paragraph(textParts[j], j !== 0, textConfig[i] as IRichTextParagraphCharacter));
           }
-        } else if (richTextConfig.text) {
-          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig));
+        } else {
+          paragraphs.push(new Paragraph(richTextConfig.text, false, textConfig[i] as IRichTextParagraphCharacter));
         }
       }
     }

@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import { isNumber, type AABBBounds, type OBBBounds } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -238,20 +238,20 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           icon.richtextId = config.id;
           paragraphs.push(icon);
         }
-      } else if ((textConfig[i] as IRichTextParagraphCharacter).text.includes('\n')) {
-        // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
-        const textParts = (textConfig[i] as IRichTextParagraphCharacter).text.split('\n');
-        for (let j = 0; j < textParts.length; j++) {
-          paragraphs.push(new Paragraph(textParts[j], j !== 0, textConfig[i] as IRichTextParagraphCharacter));
-        }
       } else {
-        paragraphs.push(
-          new Paragraph(
-            (textConfig[i] as IRichTextParagraphCharacter).text,
-            false,
-            textConfig[i] as IRichTextParagraphCharacter
-          )
-        );
+        const richTextConfig = textConfig[i] as IRichTextParagraphCharacter;
+        if (isNumber(richTextConfig.text)) {
+          richTextConfig.text = `${richTextConfig.text}`;
+        }
+        if (richTextConfig.text.includes('\n')) {
+          // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
+          const textParts = richTextConfig.text.split('\n');
+          for (let j = 0; j < textParts.length; j++) {
+            paragraphs.push(new Paragraph(textParts[j], j !== 0, textConfig[i] as IRichTextParagraphCharacter));
+          }
+        } else {
+          paragraphs.push(new Paragraph(richTextConfig.text, false, textConfig[i] as IRichTextParagraphCharacter));
+        }
       }
     }
 

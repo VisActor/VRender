@@ -425,6 +425,6 @@ describe('DiscreteLegend', () => {
     expect(
       (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemValue')[0] as IText).attribute
         .maxLineWidth
-    ).toBeUndefined();
+    ).toBeCloseTo(49.975);
   });
 });

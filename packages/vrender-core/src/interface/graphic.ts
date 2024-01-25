@@ -112,7 +112,7 @@ export type IFillStyle = {
 };
 
 export type ILayout = {
-  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center';
 };
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
@@ -184,7 +184,8 @@ export type IBackgroundConfig = {
 
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
-export type IGraphicStyle = IFillStyle &
+export type IGraphicStyle = ILayout &
+  IFillStyle &
   IStrokeStyle &
   IPickStyle & {
     opacity: number;

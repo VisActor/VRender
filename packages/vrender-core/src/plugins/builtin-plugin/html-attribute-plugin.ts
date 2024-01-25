@@ -19,7 +19,7 @@ export class HtmlAttributePlugin implements IPlugin {
 
       this.drawHTML(context.stage.renderService);
     });
-    application.graphicService.hooks.onRelease.tap(this.key, graphic => {
+    application.graphicService.hooks.onRemove.tap(this.key, graphic => {
       this.removeDom(graphic);
     });
   }
@@ -83,44 +83,50 @@ export class HtmlAttributePlugin implements IPlugin {
       graphic.bindDom = new Map();
     }
     const lastDom = graphic.bindDom.get(dom);
-    // 如果存在了（dom存在，且container没有变化），就跳过
-    if (lastDom && !(container && container !== lastDom.container)) {
-      return;
-    }
-    // 清除上一次的dom
-    graphic.bindDom.forEach(({ wrapGroup }) => {
-      application.global.removeDom(wrapGroup);
-    });
-    // 转化这个dom为nativeDOM
-    let nativeDom: HTMLElement;
-    if (typeof dom === 'string') {
-      nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
-      if ((nativeDom as any).lastChild) {
-        nativeDom = (nativeDom as any).lastChild.firstChild;
-      }
-    } else {
-      nativeDom = dom;
-    }
+
+    let wrapGroup;
     // 获取container的dom，默认为window的container
     let nativeContainer;
-    const _container =
-      container || (stage.params.enableHtmlAttribute === true ? null : stage.params.enableHtmlAttribute);
-    if (_container) {
-      if (typeof _container === 'string') {
-        nativeContainer = application.global.getElementById(_container);
-      } else {
-        nativeContainer = _container;
-      }
+    // 如果存在了（dom存在，且container没有变化），就不做事情
+    if (lastDom && !(container && container !== lastDom.container)) {
+      wrapGroup = lastDom.wrapGroup;
+      nativeContainer = wrapGroup.parentNode;
     } else {
-      // nativeContainer = application.global.getRootElement();
-      nativeContainer = graphic.stage.window.getContainer();
+      // 清除上一次的dom
+      graphic.bindDom.forEach(({ wrapGroup }) => {
+        application.global.removeDom(wrapGroup);
+      });
+      // 转化这个dom为nativeDOM
+      let nativeDom: HTMLElement;
+      if (typeof dom === 'string') {
+        nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
+        if ((nativeDom as any).lastChild) {
+          nativeDom = (nativeDom as any).lastChild.firstChild;
+        }
+      } else {
+        nativeDom = dom;
+      }
+
+      const _container =
+        container || (stage.params.enableHtmlAttribute === true ? null : stage.params.enableHtmlAttribute);
+      if (_container) {
+        if (typeof _container === 'string') {
+          nativeContainer = application.global.getElementById(_container);
+        } else {
+          nativeContainer = _container;
+        }
+      } else {
+        // nativeContainer = application.global.getRootElement();
+        nativeContainer = graphic.stage.window.getContainer();
+      }
+      // 创建wrapGroup
+      wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
+      if (wrapGroup) {
+        wrapGroup.appendChild(nativeDom);
+        graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
+      }
     }
-    // 创建wrapGroup
-    const wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
-    if (wrapGroup) {
-      wrapGroup.appendChild(nativeDom);
-      graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
-    }
+
     // 事件穿透
     wrapGroup.style.pointerEvents = 'none';
     // 定位wrapGroup

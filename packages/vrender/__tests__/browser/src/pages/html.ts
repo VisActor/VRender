@@ -68,6 +68,16 @@ export const page = () => {
     enableHtmlAttribute: true
   });
 
+  setTimeout(() => {
+    stage.resize(600, 600);
+    graphics.forEach(item => {
+      if (Math.random() > 0.5) {
+        item.parent.removeChild(item);
+      }
+    });
+    stage.render();
+  }, 3000);
+
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });

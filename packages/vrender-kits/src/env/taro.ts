@@ -5,26 +5,28 @@ import { taroCanvasModule } from '../canvas/contributions/taro/modules';
 import { taroWindowModule } from '../window/contributions/taro-contribution';
 import { TaroEnvContribution } from './contributions/taro-contribution';
 
-let isTaroBound = false;
 export const taroEnvModule = new ContainerModule(bind => {
   // taro
-  if (!isTaroBound) {
-    isTaroBound = true;
+  if (!(taroEnvModule as any).isTaroBound) {
+    (taroEnvModule as any).isTaroBound = true;
     bind(TaroEnvContribution).toSelf().inSingletonScope();
     bind(EnvContribution).toService(TaroEnvContribution);
   }
 });
 
-let loaded = false;
+(taroEnvModule as any).isTaroBound = false;
+
 export function loadTaroEnv(container: Container, loadPicker: boolean = true) {
-  if (!loaded) {
-    loaded = true;
+  if (!loadTaroEnv.__loaded) {
+    loadTaroEnv.__loaded = true;
     container.load(taroEnvModule);
     container.load(taroCanvasModule);
     container.load(taroWindowModule);
     loadPicker && loadMathPicker(container);
   }
 }
+
+loadTaroEnv.__loaded = false;
 
 export function initTaroEnv() {
   loadTaroEnv(container);

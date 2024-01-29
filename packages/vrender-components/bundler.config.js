@@ -1,9 +1,8 @@
-
 /**
  * @type {Partial<import('@visactor/bundler').Config>}
  */
 module.exports = {
-  formats: ["cjs", "es", "umd"],
+  formats: ['cjs', 'es'],
   name: 'VRender.Components',
   umdOutputFilename: 'index',
   globals: {
@@ -11,9 +10,5 @@ module.exports = {
     '@visactor/vutils': 'VUtils',
     '@visactor/vscale': 'VScale'
   },
-  external: [
-    "@visactor/vrender",
-    "@visactor/vutils",
-    "@visactor/vscale"
-  ]
+  external: ['@visactor/vrender', '@visactor/vutils', '@visactor/vscale']
 };

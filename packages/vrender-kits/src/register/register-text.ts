@@ -2,14 +2,16 @@ import { container, registerTextGraphic, textModule } from '@visactor/vrender-co
 import { browser } from './env';
 import { textCanvasPickModule } from '../picker/contributions/canvas-picker/text-module';
 import { textMathPickModule } from '../picker/contributions/math-picker/text-module';
-
-let loaded = false;
-export function registerText() {
-  if (loaded) {
+function _registerText() {
+  if (_registerText.__loaded) {
     return;
   }
-  loaded = true;
+  _registerText.__loaded = true;
   registerTextGraphic();
   container.load(textModule);
   container.load(browser ? textCanvasPickModule : textMathPickModule);
 }
+
+_registerText.__loaded = false;
+
+export const registerText = _registerText;

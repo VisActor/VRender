@@ -85,7 +85,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
 
         // auto-fit
         if (title.autoFit && isValidNumber(limit)) {
-          this._setAutoFit(limit, this._title, title);
+          this._setLocalAutoFit(limit, this._title, title);
         }
 
         //auto-limit
@@ -104,13 +104,9 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
       }
     }
 
-    const titleHeight = this._title ? this._title.AABBBounds.height() : 0;
-
     if (isValid(content)) {
-      const titleSpace = this._title ? (title.space ? title.space : 0) : 0;
       const contents: IndicatorItemSpec[] = array(content);
       const contentComponents: IText[] = [];
-      let lastContentHeight = 0;
       contents.forEach((contentItem, i) => {
         if (contentItem.visible !== false) {
           const contentStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'content.style'), contentItem.style);
@@ -123,7 +119,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
                 ...contentStyle,
                 visible: title.visible,
                 x: 0,
-                y: titleHeight + titleSpace + lastContentHeight,
+                y: 0,
                 width: contentStyle.width ?? 0,
                 height: contentStyle.height ?? 0
               },
@@ -142,7 +138,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
                 ...contentStyle,
                 visible: title.visible,
                 x: 0,
-                y: titleHeight + titleSpace + lastContentHeight
+                y: 0
               },
               'richtext'
             ) as IText;
@@ -154,7 +150,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
                 lineHeight: isValid(contentStyle.lineHeight) ? contentStyle.lineHeight : contentStyle.fontSize,
                 visible: contentItem.visible,
                 x: 0,
-                y: titleHeight + titleSpace + lastContentHeight
+                y: 0
               },
               'text'
             ) as IText;
@@ -162,7 +158,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
 
           // auto-fit
           if (contentItem.autoFit && isValidNumber(limit)) {
-            this._setAutoFit(limit, contentComponent, contentItem);
+            this._setLocalAutoFit(limit, contentComponent, contentItem);
           }
 
           //auto-limit
@@ -171,8 +167,6 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
           }
 
           contentComponents.push(contentComponent);
-          const contentSpace = contentItem.space ? contentItem.space : 0;
-          lastContentHeight += contentComponent.AABBBounds.height() + contentSpace;
         } else {
           /**
            * indicator部分隐藏
@@ -184,15 +178,23 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
       this._content = contentComponents;
     }
 
+    this._setGlobalAutoFit(limit);
+    this._setYPosition();
+
     const totalHeight = group?.AABBBounds.height() ?? 0;
     group.setAttribute('y', size.height / 2 - totalHeight / 2);
     group.setAttribute('x', size.width / 2);
   }
 
-  private _setAutoFit(limit: number, indicatorItem: IText, indicatorItemSpec: IndicatorItemSpec) {
+  private _setLocalAutoFit(limit: number, indicatorItem: IText, indicatorItemSpec: IndicatorItemSpec) {
+    // only apply local auto fit for default auto fit text
+    if ((indicatorItemSpec.fitStrategy ?? 'default') !== 'default') {
+      return;
+    }
     const originWidth = measureTextSize(
       (indicatorItemSpec.style?.text ?? '') as string | number | number[] | string[],
-      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>
+      (indicatorItemSpec.style ?? {}) as Partial<ITextGraphicAttribute>,
+      this.stage?.getTheme().text.fontFamily
     ).width;
     if (originWidth > 0) {
       const ratio = (limit * (indicatorItemSpec.fitPercent ?? 0.5)) / originWidth;
@@ -203,5 +205,87 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
         isValid(indicatorItemSpec.style.lineHeight) ? indicatorItemSpec.style.lineHeight : fontSize
       );
     }
+  }
+
+  private _setGlobalAutoFit(limit: number) {
+    // compute the inscribed rect width & height for all texts
+    // the font size will be determined by the longest text
+    // 1. hx^2 + hy^2 = r^2
+    // 2. hy = ra * hx + h
+    // -> (ra^2 + 1) * x^2 + (2 * h * ra) * x + (h^2 - r^2) = 0
+
+    const r = limit / 2;
+
+    // unify the initial font size for auto fit texts
+    const singleHeight = 12;
+    const autoFitTexts: { text: IText; spec: IndicatorItemSpec }[] = [];
+    // other text height
+    let otherHeight = 0;
+    // non auto fit title height
+    const titleSpec = this.attribute.title ?? {};
+    if (titleSpec.autoFit && titleSpec.fitStrategy === 'inscribed') {
+      this._title.setAttribute('fontSize', singleHeight);
+      autoFitTexts.push({ text: this._title, spec: this.attribute.title ?? {} });
+    } else {
+      otherHeight += this._title?.AABBBounds?.height?.() ?? 0;
+    }
+    const titleSpace = titleSpec.space ?? 0;
+    otherHeight += titleSpace;
+    // non auto fit content height
+    array(this.attribute.content)
+      .filter(contentSpec => contentSpec.visible !== false)
+      .forEach((contentSpec, index) => {
+        const contentText = this._content[index];
+        if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
+          contentText.setAttribute('fontSize', singleHeight);
+          autoFitTexts.push({ text: contentText, spec: contentSpec });
+        } else {
+          otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
+        }
+        const contentSpace = contentSpec.space ?? 0;
+        otherHeight += contentSpace;
+      });
+    if (autoFitTexts.length <= 0) {
+      return;
+    }
+
+    // max width for all auto fit texts
+    const maxWidth = autoFitTexts.reduce((width, textItem) => {
+      return Math.max(width, textItem.text.AABBBounds.width());
+    }, 0);
+
+    // y = x * (singleHeight / maxWidth * textCount) + otherHeight
+    // hy = hx * (singleHeight / maxWidth * textCount) + otherHeight / 2
+    const ra = (singleHeight / maxWidth) * autoFitTexts.length;
+    const h = otherHeight / 2;
+    const a = ra ** 2 + 1;
+    const b = 2 * h * ra;
+    const c = h ** 2 - r ** 2;
+    const hx = (-b + Math.sqrt(b ** 2 - 4 * a * c)) / (2 * a);
+    const hy = ra * hx + h;
+    const y = 2 * hy;
+    const lineHeight = (y - otherHeight) / autoFitTexts.length;
+    if (isValidNumber(y)) {
+      autoFitTexts.forEach(textItem => {
+        const specLineHeight = textItem.spec.style?.lineHeight;
+        textItem.text.setAttribute('fontSize', lineHeight);
+        textItem.text.setAttribute('lineHeight', isValid(specLineHeight) ? specLineHeight : lineHeight);
+      });
+    }
+  }
+
+  private _setYPosition() {
+    let lastContentHeight = 0;
+
+    const titleHeight = this._title?.AABBBounds?.height?.() ?? 0;
+    const titleSpace = this.attribute.title?.space ?? 0;
+    array(this.attribute.content)
+      .filter(contentSpec => contentSpec.visible !== false)
+      .forEach((contentSpec, index) => {
+        const contentText = this._content[index];
+        contentText.setAttribute('y', titleHeight + titleSpace + lastContentHeight);
+        const contentSpace = contentSpec.space ?? 0;
+        lastContentHeight += contentText.AABBBounds.height() + contentSpace;
+      });
   }
 }

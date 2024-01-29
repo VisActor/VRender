@@ -1,4 +1,3 @@
-import { injectable } from '../../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -30,13 +29,17 @@ export class DefaultGroupBackgroundRenderContribution
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
-    const { background, backgroundMode = graphicAttribute.backgroundMode } = graphic.attribute;
+    const {
+      background,
+      backgroundMode = graphicAttribute.backgroundMode,
+      backgroundFit = graphicAttribute.backgroundFit
+    } = graphic.attribute;
     if (!background) {
       return;
     }
 
     if (graphic.backgroundImg && graphic.resources) {
-      const res = graphic.resources.get(background);
+      const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
         return;
       }
@@ -45,7 +48,7 @@ export class DefaultGroupBackgroundRenderContribution
 
       context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
       const b = graphic.AABBBounds;
-      this.doDrawImage(context, res.data, b, backgroundMode);
+      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {

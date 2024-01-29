@@ -1,9 +1,7 @@
 import type { INode } from './node-tree';
 import type { ILayer, LayerMode } from './layer';
-import type { IGraphic } from './graphic';
-import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import type { ICamera } from './camera';
 import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
@@ -14,6 +12,7 @@ import type { IPickerService, PickResult } from './picker';
 import type { IPluginService } from './plugin';
 import type { IWindow } from './window';
 import type { ILayerService } from './core';
+import type { IFullThemeSpec } from './graphic/theme';
 
 export type IExportType = 'canvas' | 'imageData';
 
@@ -65,6 +64,18 @@ export interface IStageParams {
    * 事件系统相关配置
    */
   event?: EventConfig;
+
+  /**
+   * @since 0.17.15
+   * 是否支持touch事件，不支持就不监听touch事件
+   */
+  supportsTouchEvents?: boolean;
+
+  /**
+   * @since 0.17.15
+   * 是否支持pointer事件，不支持就监听mouse事件
+   */
+  supportsPointerEvents?: boolean;
 }
 
 export type EventConfig = {
@@ -209,6 +220,8 @@ export interface IStage extends INode {
   setStage: (stage?: IStage) => void;
 
   setCursor: (mode?: string) => void;
+
+  getTheme: () => IFullThemeSpec;
 }
 
 export declare function combineStage(srages: IStage[], params: { canvas: string | HTMLCanvasElement }): IStage;

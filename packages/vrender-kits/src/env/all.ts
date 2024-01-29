@@ -13,10 +13,9 @@ export function loadAllEnv(container: Container) {
   loadAllModule(container);
 }
 
-let loaded = false;
 export function loadAllModule(container: Container) {
-  if (!loaded) {
-    loaded = true;
+  if (!loadAllModule.__loaded) {
+    loadAllModule.__loaded = true;
     loadBrowserEnv(container, false);
     loadFeishuEnv(container, false);
     loadLynxEnv(container, false);
@@ -29,6 +28,8 @@ export function loadAllModule(container: Container) {
     });
   }
 }
+
+loadAllModule.__loaded = false;
 
 export function initAllEnv() {
   loadAllEnv(container);

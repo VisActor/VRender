@@ -19,7 +19,8 @@ export function run() {
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
-    decorativeLineVisible: false
+    decorativeLineVisible: false,
+    visible: true
   };
 
   const styleAttr = {
@@ -34,6 +35,7 @@ export function run() {
       refX: guiObject.itemRefX,
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
+      confine: true,
       textStyle: {
         // text: 'mark point label text'
         type: 'rich',
@@ -108,6 +110,7 @@ export function run() {
         image: `${window.location.origin}/__tests__/browser/sources/shape_logo.png`
       }
     },
+    visible: guiObject.visible,
     clipInRange: false
     // limitRect: {
     //   x: 50,
@@ -194,6 +197,9 @@ export function run() {
         visible: value
       })
     );
+  });
+  gui.add(guiObject, 'visible').onChange(value => {
+    markPoints.forEach(markPoint => markPoint.setAttribute('visible', value, true));
   });
 
   gui.add(guiObject, 'itemOffsetX').onChange(value => {

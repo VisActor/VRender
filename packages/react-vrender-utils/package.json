@@ -1,6 +1,6 @@
 {
   "name": "@visactor/react-vrender-utils",
-  "version": "0.17.9",
+  "version": "0.17.19",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -17,16 +17,15 @@
     "build": "bundle",
     "dev": "bundle --clean -f es -w",
     "test": "",
-    "start": "vite ./vite",
-    "prepublishOnly": "npm run build"
+    "start": "vite ./vite"
   },
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "dependencies": {
-    "@visactor/vrender": "workspace:0.17.9",
-    "@visactor/react-vrender": "workspace:0.17.9",
+    "@visactor/vrender": "workspace:0.17.19",
+    "@visactor/react-vrender": "workspace:0.17.19",
     "@visactor/vutils": "~0.17.3",
     "react-reconciler": "^0.29.0",
     "tslib": "^2.3.1"

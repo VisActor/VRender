@@ -182,12 +182,27 @@ export type IBackgroundConfig = {
   expandY?: number;
 };
 
+type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
+
 export type IGraphicStyle = IFillStyle &
   IStrokeStyle &
   IPickStyle & {
     opacity: number;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
-    background: string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig | null; // 背景，可以与fill同时存在
+    backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+    backgroundCornerRadius: number | number[];
+    background:
+      | IBackgroundType
+      | {
+          background: IBackgroundType;
+          dx?: number;
+          dy?: number;
+          width?: number;
+          height?: number;
+          x?: number;
+          y?: number;
+        }
+      | null; // 背景，可以与fill同时存在
     texture: TextureType | string; // 纹理
     textureColor: string; // 纹理颜色
     textureSize: number; // 纹理大小
@@ -234,6 +249,18 @@ export type IGraphicAttribute = IDebugType &
      * @default true
      */
     pickable: boolean;
+    /**
+     * 是否支持fill拾取，默认为 true。
+     * @experimental
+     * @default true
+     */
+    fillPickable: boolean;
+    /**
+     * 是否支持stroke拾取，默认为 true。
+     * @experimental
+     * @default true
+     */
+    strokePickable: boolean;
     /**
      * 对于 group 节点，是否支持其子元素的事件拾取，默认为 true。
      * 如果 group `pickable` 关闭，`childrenPickable` 开启，那么 group 的子节点仍参与事件拾取

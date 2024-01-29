@@ -2,6 +2,159 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.19",
+      "tag": "@visactor/vrender-components_v0.17.19",
+      "date": "Wed, 24 Jan 2024 13:11:27 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.18",
+      "tag": "@visactor/vrender-components_v0.17.18",
+      "date": "Wed, 24 Jan 2024 10:10:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: adjust the timing for label customLayoutFunc invocation"
+          },
+          {
+            "comment": "feat: label component will sync maxLineWidth to maxWidth in richText"
+          },
+          {
+            "comment": "fix: event pos error when interactive in site"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.17",
+      "tag": "@visactor/vrender-components_v0.17.17",
+      "date": "Mon, 22 Jan 2024 08:19:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: title support multiline"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.16",
+      "tag": "@visactor/vrender-components_v0.17.16",
+      "date": "Wed, 17 Jan 2024 09:02:13 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when no brush is active, brush should not call stopPropagation()\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.15",
+      "tag": "@visactor/vrender-components_v0.17.15",
+      "date": "Wed, 17 Jan 2024 06:43:01 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the flush of axis when axis label has rotate angle\n\n"
+          },
+          {
+            "comment": "fix: arc label line not shown"
+          },
+          {
+            "comment": " feat: support boolean config in label"
+          },
+          {
+            "comment": " fix: error happens in line-label when line has no points"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.14",
+      "tag": "@visactor/vrender-components_v0.17.14",
+      "date": "Fri, 12 Jan 2024 10:33:32 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.13",
+      "tag": "@visactor/vrender-components_v0.17.13",
+      "date": "Wed, 10 Jan 2024 14:18:21 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: filter out invisible indicator spec"
+          },
+          {
+            "comment": "fix: `measureTextSize` needs to take into account the fonts configured on the stage theme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.12",
+      "tag": "@visactor/vrender-components_v0.17.12",
+      "date": "Wed, 10 Jan 2024 03:56:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(marker): fix problem of no render when set visible attr and add valid judgment logic. fix@Visactor/Vchart#1901"
+          },
+          {
+            "comment": "feat: support fit strategy for indicator"
+          },
+          {
+            "comment": "feat(marker): mark point support confine. fix @Visactor/VChart#1573"
+          },
+          {
+            "comment": "fix(datazoom): adaptive handler text layout. fix@Visactor/VChart#1809"
+          },
+          {
+            "comment": "fix(datazoom): set pickable false when zoomLock. fix @Visactor/VChart#1565"
+          },
+          {
+            "comment": "fix(datazoom): handler not follow mouse after resize. fix@Visactor/Vchart#1490"
+          },
+          {
+            "comment": "fix: arc outside label invisible with visible label line"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.11",
+      "tag": "@visactor/vrender-components_v0.17.11",
+      "date": "Fri, 05 Jan 2024 11:54:56 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.10",
+      "tag": "@visactor/vrender-components_v0.17.10",
+      "date": "Wed, 03 Jan 2024 13:19:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `lastVisible` of LineAxis label\n\n"
+          },
+          {
+            "comment": "'feat: support label line in label component'"
+          },
+          {
+            "comment": "fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom\n\n"
+          },
+          {
+            "comment": "fix: fix issue with legend symbol size"
+          },
+          {
+            "comment": "fix: fixed height calculation issue after multi-layer axis text rotation"
+          },
+          {
+            "comment": "fix: fixed height calculation issue after multi-layer axis text rotation"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.9",
       "tag": "@visactor/vrender-components_v0.17.9",
       "date": "Fri, 29 Dec 2023 09:59:13 GMT",

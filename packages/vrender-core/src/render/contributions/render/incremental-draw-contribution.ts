@@ -60,10 +60,6 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     protected readonly drawItemInterceptorContributions: IContributionProvider<IDrawItemInterceptorContribution>
   ) {
     super(contributions, drawItemInterceptorContributions);
-  }
-
-  init(): void {
-    super.init();
     this.defaultRenderMap.set(this.lineRender.numberType, this.lineRender);
     this.defaultRenderMap.set(this.areaRender.numberType, this.areaRender);
   }

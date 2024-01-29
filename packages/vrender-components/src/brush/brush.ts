@@ -118,7 +118,10 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     if (this._outOfInteractiveRange(e)) {
       return;
     }
-    e.stopPropagation();
+
+    if (this._activeDrawState || this._activeMoveState) {
+      e.stopPropagation();
+    }
 
     this._activeDrawState && this._drawing(e); // 如果是绘制状态，在这里会标记operatingMask为正在绘制的mask
     this._activeMoveState && this._moving(e);
@@ -139,7 +142,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
         operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
         event: e
       });
-    } else if (!this._outOfInteractiveRange(e)) {
+    } else {
       if (this._activeDrawState) {
         this._dispatchEvent(IOperateType.drawEnd, {
           operateMask: this._operatingMask as any,
@@ -385,7 +388,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e);
+    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
     return {
       x: x - (this.stage?.x || 0),
       y: y - (this.stage?.y || 0)

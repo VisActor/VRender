@@ -1,6 +1,97 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 13:11:27 GMT and should not be manually modified.
+
+## 0.17.19
+Wed, 24 Jan 2024 13:11:27 GMT
+
+### Updates
+
+- fix: fix issue with 3d draw dirtybounds
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+### Updates
+
+- feat: support backgroundCornerRadius
+- fix: fix issue with multiline text textBaseline, closed #886
+- fix: fix issue with union empty bounds
+- fix: richtext.textConfig supports number type text
+
+## 0.17.17
+Mon, 22 Jan 2024 08:19:38 GMT
+
+### Updates
+
+- feat: html only append dom inside body
+- feat: color support str gradient color
+- fix: fix issue with rerun getTextBounds
+- fix: fix issue with set image
+- fix: fix issue with loaded tree-shaking
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+### Updates
+
+- feat: enable pass supportsPointerEvents and supportsTouchEvents
+
+## 0.17.15
+Wed, 17 Jan 2024 06:43:01 GMT
+
+### Updates
+
+- fix: fix issue with html attribute
+- feat: add supportsTouchEvents and supportsPointerEvents params
+- fix: fix issue with env-check
+- fix: fix issue with text background opacity
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+### Updates
+
+- fix: fix `splitRect` when rect has `x1` or `y1`
+
+
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: fix issue with incremental draw
+- feat: background support opacity
+- fix: supply the `getTheme()` api for `IStage`
+
+## 0.17.12
+Wed, 10 Jan 2024 03:56:46 GMT
+
+_Version update only_
+
+## 0.17.11
+Fri, 05 Jan 2024 11:54:56 GMT
+
+### Updates
+
+- feat: add backgroundFit attribute
+- fix: fix issue with position in html attribute
+
+## 0.17.10
+Wed, 03 Jan 2024 13:19:34 GMT
+
+### Updates
+
+- feat: support fillPickable and strokePickable for area, closed #792
+- feat: support `lastVisible` of LineAxis label
+
+
+- fix: fix issue with area-line highperformance draw
+- fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom
+
+
+- fix: disable layer picker in interactive layer
 
 ## 0.17.9
 Fri, 29 Dec 2023 09:59:13 GMT

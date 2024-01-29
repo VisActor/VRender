@@ -12,12 +12,21 @@ import type {
   IArea,
   IRichTextGraphicAttribute,
   IRichText,
-  IRichTextCharacter,
-  ITextAttribute
+  IRichTextCharacter
 } from '@visactor/vrender-core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
-import { isFunction, isEmpty, isValid, isString, merge, isRectIntersect, isNil, isArray } from '@visactor/vutils';
+import {
+  isFunction,
+  isEmpty,
+  isValid,
+  isString,
+  merge,
+  isRectIntersect,
+  isNil,
+  isArray,
+  isObject
+} from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
@@ -29,15 +38,15 @@ import type {
   BaseLabelAttrs,
   OverlapAttrs,
   ILabelAnimation,
-  ArcLabelAttrs,
   LabelItem,
   SmartInvertAttrs,
   ILabelEnterAnimation,
   ILabelExitAnimation,
-  ILabelUpdateAnimation
+  ILabelUpdateAnimation,
+  LabelContent
 } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
-import { getPointsOfLineArea } from './util';
+import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadLabelComponent } from './register';
@@ -81,7 +90,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._bmpTool = bmpTool;
   }
 
-  protected _graphicToText: Map<IGraphic, { text: IText | IRichText; labelLine?: ILine }>;
+  protected _graphicToText: Map<IGraphic, LabelContent>;
 
   protected _idToGraphic: Map<string, IGraphic>;
 
@@ -116,14 +125,27 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
-  protected _labelLine(text: LabelItem): ILine | undefined {
-    // 基类没有指定的图元类型，需要在 data 中指定位置，故无需进行 labeling
-    return;
+  protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
+    const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    if (points) {
+      const line = graphicCreator.line({
+        points
+      });
+
+      if (baseMark && baseMark.attribute.fill) {
+        line.setAttribute('stroke', baseMark.attribute.fill);
+      }
+
+      if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
+        line.setAttributes(this.attribute.line.style);
+      }
+      this._setStatesOfLabelLine(line);
+      return line;
+    }
   }
 
   protected render() {
     this._prepare();
-
     if (isNil(this._idToGraphic) || (this._isCollectionBase && isNil(this._idToPoint))) {
       return;
     }
@@ -135,17 +157,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       data = dataFilter(data);
     }
 
-    let labels: (IText | IRichText)[];
+    let labels: (IText | IRichText)[] = this._initText(data);
 
     if (isFunction(customLayoutFunc)) {
       labels = customLayoutFunc(
         data,
+        labels,
         this.getRelatedGraphic.bind(this),
         this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
       );
     } else {
       // 根据关联图元和配置的position计算标签坐标
-      labels = this._layout(data);
+      labels = this._layout(labels);
     }
 
     if (isFunction(customOverlapFunc)) {
@@ -208,7 +231,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     target.states = state;
   }
 
-  private _setStatesOfLabelLine(target: IGraphic) {
+  protected _setStatesOfLabelLine(target: IGraphic) {
     if (!target) {
       return;
     }
@@ -276,6 +299,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       attributes.textConfig = attributes.text as IRichTextCharacter[];
       attributes.width = attributes.width ?? 0;
       attributes.height = attributes.height ?? 0;
+      attributes.maxWidth = attributes.maxLineWidth;
       const text = graphicCreator.richtext(attributes as any);
       return text;
     } else if (attributes.textType === 'html') {
@@ -335,7 +359,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const baseMark = currentBaseMarks[i];
         const points = getPointsOfLineArea(baseMark as ILine | IArea);
 
-        if (points?.length) {
+        if (points && points.length) {
           for (let j = 0; j < points.length; j++) {
             const textData = data[cur];
             if (textData && points[j]) {
@@ -364,12 +388,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
 
     if (this.attribute.animation !== false) {
+      const animation = isObject(this.attribute.animation) ? this.attribute.animation : {};
       this._animationConfig = {
-        enter: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationEnter ?? {}),
-        exit: merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationExit ?? {}),
+        enter: merge({}, DefaultLabelAnimation, animation, this.attribute.animationEnter ?? {}),
+        exit: merge({}, DefaultLabelAnimation, animation, this.attribute.animationExit ?? {}),
         update: isArray(this.attribute.animationUpdate)
           ? this.attribute.animationUpdate
-          : merge({}, DefaultLabelAnimation, this.attribute.animation, this.attribute.animationUpdate ?? {})
+          : merge({}, DefaultLabelAnimation, animation, this.attribute.animationUpdate ?? {})
       };
     }
   }
@@ -378,13 +403,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return this._idToGraphic.get(item.id);
   }
 
-  protected _layout(data: LabelItem[] = []): (IText | IRichText)[] {
-    const { textStyle = {}, position, offset } = this.attribute;
+  protected _initText(data: LabelItem[] = []): (IText | IRichText)[] {
+    const { textStyle = {} } = this.attribute;
     const labels = [];
-
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
       const baseMark = this.getRelatedGraphic(textData);
+      if (!baseMark) {
+        continue;
+      }
 
       const labelAttribute = {
         fill: this._isCollectionBase
@@ -396,6 +423,25 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         ...textData
       };
       const text = this._createLabelText(labelAttribute);
+      labels.push(text);
+    }
+
+    return labels;
+  }
+
+  protected _layout(texts: (IText | IRichText)[]): (IText | IRichText)[] {
+    const { position, offset } = this.attribute;
+    for (let i = 0; i < texts.length; i++) {
+      const text = texts[i];
+      if (!text) {
+        return;
+      }
+      const textData = text.attribute as LabelItem;
+      const baseMark = this.getRelatedGraphic(textData);
+      if (!baseMark) {
+        continue;
+      }
+
       const textBounds = this.getGraphicBounds(text);
       const actualPosition = isFunction(position) ? position(textData) : (position as string);
 
@@ -406,23 +452,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const textLocation = this.labeling(textBounds, graphicBounds, actualPosition, offset);
 
       if (textLocation) {
-        labelAttribute.x = textLocation.x;
-        labelAttribute.y = textLocation.y;
         text.setAttributes(textLocation);
       }
-
-      labels.push(text);
     }
 
-    return labels;
+    return texts;
   }
 
   protected _overlapping(labels: (IText | IRichText)[]) {
     if (labels.length === 0) {
       return [];
     }
-    const option = this.attribute.overlap as OverlapAttrs;
-
+    const option = (isObject(this.attribute.overlap) ? this.attribute.overlap : {}) as OverlapAttrs;
     const result: (IText | IRichText)[] = [];
     const baseMarkGroup = this.getBaseMarkGroup();
 
@@ -488,7 +529,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           continue;
         }
 
-        if (checkBounds && baseMark?.AABBBounds && this._canPlaceInside(text.AABBBounds, baseMark?.AABBBounds)) {
+        if (
+          checkBounds &&
+          baseMark &&
+          baseMark.AABBBounds &&
+          this._canPlaceInside(text.AABBBounds, baseMark.AABBBounds)
+        ) {
           bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
           result.push(text);
           continue;
@@ -567,15 +613,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
   protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
-    return (
-      graphic?.AABBBounds ||
-      ({
-        x1: point.x,
-        x2: point.x,
-        y1: point.y,
-        y2: point.y
-      } as IBoundsLike)
-    );
+    if (graphic) {
+      if (graphic.attribute.visible !== false) {
+        return graphic.AABBBounds;
+      }
+      const { x, y } = graphic.attribute;
+      return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
+    }
+    const { x, y } = point;
+    return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
   }
 
   protected _renderLabels(labels: (IText | IRichText)[]) {
@@ -593,14 +639,17 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
     const labelLines = [] as ILine[];
+    const { visible: showLabelLine } = this.attribute.line ?? {};
 
     labels.forEach((text, index) => {
-      const labelLine: ILine = this._labelLine(text as any);
       const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const textId = (text.attribute as LabelItem).id;
       const textKey = this._isCollectionBase ? textId : relatedGraphic;
       const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
-
+      let labelLine: ILine;
+      if (showLabelLine) {
+        labelLine = this._createLabelLine(text as IText, relatedGraphic);
+      }
       // TODO: add animate
       if (state === 'enter') {
         texts.push(text);
@@ -610,7 +659,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           this.add(text);
 
           if (labelLine) {
-            this._setStatesOfLabelLine(labelLine);
             labelLines.push(labelLine);
             this.add(labelLine);
           }
@@ -642,18 +690,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const prevText = prevLabel.text;
         const { duration, easing } = this._animationConfig.update;
         updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
-        if (prevLabel.labelLine) {
-          prevLabel.labelLine.animate().to(
-            merge({}, prevLabel.labelLine.attribute, {
-              visible:
-                ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
-                text.attribute?.visible ??
-                true,
-              points: (text.attribute as ArcLabelAttrs)?.points
-            }),
-            duration,
-            easing
-          );
+        if (prevLabel.labelLine && labelLine) {
+          prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
         }
       }
     });
@@ -667,7 +705,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         )
         .onEnd(() => {
           this.removeChild(label.text);
-          if (label?.labelLine) {
+          if (label.labelLine) {
             this.removeChild(label.labelLine);
           }
         });
@@ -677,15 +715,19 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithOutAnimation(labels: (IText | IRichText)[]) {
-    const currentTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = new Map();
-    const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
+    const currentTextMap: Map<any, LabelContent> = new Map();
+    const prevTextMap: Map<any, LabelContent> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
+    const { visible: showLabelLine } = this.attribute.line ?? {};
 
     labels.forEach(text => {
-      const labelLine = this._labelLine(text as any);
       const relatedGraphic = this.getRelatedGraphic(text.attribute);
       const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
       const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
+      let labelLine;
+      if (showLabelLine) {
+        labelLine = this._createLabelLine(text as IText, relatedGraphic);
+      }
 
       if (state === 'enter') {
         texts.push(text);
@@ -694,22 +736,21 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (labelLine) {
           this.add(labelLine);
         }
-
         this._syncStateWithRelatedGraphic(relatedGraphic);
       } else if (state === 'update') {
         const prevLabel = prevTextMap.get(textKey);
         prevTextMap.delete(textKey);
         currentTextMap.set(textKey, prevLabel);
         prevLabel.text.setAttributes(text.attribute as any);
-        if (prevLabel?.labelLine) {
-          prevLabel.labelLine.setAttributes({ points: (text.attribute as ArcLabelAttrs)?.points });
+        if (prevLabel.labelLine && labelLine) {
+          prevLabel.labelLine.setAttributes(labelLine.attribute);
         }
       }
     });
 
     prevTextMap.forEach(label => {
       this.removeChild(label.text);
-      if (label?.labelLine) {
+      if (label.labelLine) {
         this.removeChild(label.labelLine);
       }
     });
@@ -718,7 +759,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _handleRelatedGraphicSetState = (e: any) => {
-    if (e.detail?.type === AttributeUpdateType.STATE) {
+    if (
+      e.detail?.type === AttributeUpdateType.STATE ||
+      (e.detail?.type === AttributeUpdateType.ANIMATE_UPDATE && e.detail.animationState?.isFirstFrameOfStep)
+    ) {
       const currentStates = e.target?.currentStates ?? [];
       const labels = this._isCollectionBase ? [...this._graphicToText.values()] : [this._graphicToText.get(e.target)];
 
@@ -831,7 +875,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
-    const option = (this.attribute.smartInvert || {}) as SmartInvertAttrs;
+    const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;
     const { textType, contrastRatiosThreshold, alternativeColors, mode } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
@@ -882,7 +926,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const stroke = smartInvertStrategy(strokeStrategy, baseColor, invertColor, similarColor);
         stroke && label.setAttributes({ stroke });
       } else {
-        const isInside = this._canPlaceInside(label.AABBBounds, baseMark?.AABBBounds);
+        const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
         if (isInside) {
           const fill = smartInvertStrategy(fillStrategy, baseColor, invertColor, similarColor);
           fill && label.setAttributes({ fill });

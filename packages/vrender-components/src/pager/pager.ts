@@ -102,11 +102,15 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     container.add(preHandler);
 
     // 获取文本的最大长度，如果不固定的话随着文本的变化整体会发生抖动
-    const { width: maxTextWidth, height: maxTextHeight } = measureTextSize(this._getPageText(total), {
-      textAlign: 'center',
-      textBaseline: 'middle',
-      ...textStyle
-    });
+    const { width: maxTextWidth, height: maxTextHeight } = measureTextSize(
+      this._getPageText(total),
+      {
+        textAlign: 'center',
+        textBaseline: 'middle',
+        ...textStyle
+      },
+      this.stage?.getTheme().text.fontFamily
+    );
 
     const handlerSizeX = isNumber(handlerSize) ? handlerSize : handlerSize[0];
     const handlerSizeY = isNumber(handlerSize) ? handlerSize : handlerSize[1];

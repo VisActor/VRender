@@ -1,6 +1,95 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 13:11:27 GMT and should not be manually modified.
+
+## 0.17.19
+Wed, 24 Jan 2024 13:11:27 GMT
+
+_Version update only_
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+### Updates
+
+- feat: adjust the timing for label customLayoutFunc invocation
+- feat: label component will sync maxLineWidth to maxWidth in richText
+- fix: event pos error when interactive in site
+
+## 0.17.17
+Mon, 22 Jan 2024 08:19:38 GMT
+
+### Updates
+
+- fix: title support multiline
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+### Updates
+
+- fix: when no brush is active, brush should not call stopPropagation()
+
+
+
+## 0.17.15
+Wed, 17 Jan 2024 06:43:01 GMT
+
+### Updates
+
+- fix: fix the flush of axis when axis label has rotate angle
+
+
+- fix: arc label line not shown
+-  feat: support boolean config in label
+-  fix: error happens in line-label when line has no points
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+_Version update only_
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+### Updates
+
+- fix: filter out invisible indicator spec
+- fix: `measureTextSize` needs to take into account the fonts configured on the stage theme
+
+## 0.17.12
+Wed, 10 Jan 2024 03:56:46 GMT
+
+### Updates
+
+- fix(marker): fix problem of no render when set visible attr and add valid judgment logic. fix@Visactor/Vchart#1901
+- feat: support fit strategy for indicator
+- feat(marker): mark point support confine. fix @Visactor/VChart#1573
+- fix(datazoom): adaptive handler text layout. fix@Visactor/VChart#1809
+- fix(datazoom): set pickable false when zoomLock. fix @Visactor/VChart#1565
+- fix(datazoom): handler not follow mouse after resize. fix@Visactor/Vchart#1490
+- fix: arc outside label invisible with visible label line
+
+## 0.17.11
+Fri, 05 Jan 2024 11:54:56 GMT
+
+_Version update only_
+
+## 0.17.10
+Wed, 03 Jan 2024 13:19:34 GMT
+
+### Updates
+
+- feat: support `lastVisible` of LineAxis label
+
+
+- 'feat: support label line in label component'
+- fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom
+
+
+- fix: fix issue with legend symbol size
+- fix: fixed height calculation issue after multi-layer axis text rotation
+- fix: fixed height calculation issue after multi-layer axis text rotation
 
 ## 0.17.9
 Fri, 29 Dec 2023 09:59:13 GMT

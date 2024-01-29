@@ -3,13 +3,16 @@ import { browser } from './env';
 import { richtextCanvasPickModule } from '../picker/contributions/canvas-picker/richtext-module';
 import { richTextMathPickModule } from '../picker/contributions/math-picker/richtext-module';
 
-let loaded = false;
-export function registerRichtext() {
-  if (loaded) {
+function _registerRichtext() {
+  if (_registerRichtext.__loaded) {
     return;
   }
-  loaded = true;
+  _registerRichtext.__loaded = true;
   registerRichtextGraphic();
   container.load(richtextModule);
   container.load(browser ? richtextCanvasPickModule : richTextMathPickModule);
 }
+
+_registerRichtext.__loaded = false;
+
+export const registerRichtext = _registerRichtext;

@@ -204,30 +204,46 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
       let x = 0;
       let y = 0;
-      if (textAlign === 'center') {
+      let flag = 0;
+      if (textAlign === 'left' || textAlign === 'start') {
+        flag = 1;
+      } else if (textAlign === 'right' || textAlign === 'end') {
+        flag = -1;
+      } else if (textAlign === 'center') {
+        flag = 0;
+      }
+      if (!flag) {
         x -= tagWidth / 2;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
         }
 
         group.setAttribute('x', -symbolPlaceWidth / 2);
-      } else if (textAlign === 'right' || textAlign === 'end') {
+      } else if (flag < 0) {
         x -= tagWidth;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
         }
 
         group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
-      } else if (textAlign === 'left' || textAlign === 'start') {
+      } else if (flag > 0) {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter && (textAlign === 'left' || textAlign === 'start')) {
-        // for flex layout
+      if (textAlwaysCenter && flag) {
+        // 剔除padding后的内宽度
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const tsWidth = textWidth + symbolPlaceWidth;
+        const textX = (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2;
+        const symbolX = (containerWidth - tsWidth) / 2 + maxSize / 2;
         textShape.setAttributes({
-          x: textX + tagWidth / 2,
+          x: textX * flag,
           textAlign: 'center'
         });
+        symbol.setAttributes({
+          x: symbolX * flag
+        });
+        group.setAttribute('x', parsedPadding[2 + flag] * flag);
       }
 
       if (textBaseline === 'middle') {

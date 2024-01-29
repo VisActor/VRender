@@ -38,10 +38,10 @@ export const page = () => {
     width: 100,
     background: 'green',
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'row-reverse',
     flexWrap: 'wrap',
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: 'flex-start',
+    alignItems: 'space-around'
   });
 
   const title = createText({
@@ -49,7 +49,36 @@ export const page = () => {
     fontSize: 12,
     lineHeight: 18,
     textBaseline: 'bottom',
+    textAlign: 'center',
     fontWeight: 'bold',
+    fill: 'pink',
+    width: 10,
+    height: 10
+    // alignSelf: 'flex-start'
+    // alignContent: 'flex-start'
+  });
+  const title1 = createText({
+    text: 'def',
+    fontSize: 12,
+    lineHeight: 18,
+    textBaseline: 'bottom',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    alignSelf: 'flex-end',
+    fill: 'pink',
+    width: 10,
+    height: 10
+    // alignSelf: 'flex-start'
+    // alignContent: 'flex-start'
+  });
+  const title2 = createText({
+    text: 'hij',
+    fontSize: 12,
+    lineHeight: 18,
+    textBaseline: 'bottom',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    alignSelf: 'flex-start',
     fill: 'pink',
     width: 10,
     height: 10
@@ -62,14 +91,49 @@ export const page = () => {
     fontSize: 12,
     lineHeight: 18,
     textBaseline: 'bottom',
+    textAlign: 'center',
     fontWeight: 'bold',
     fill: 'orange',
     width: 10,
     height: 10
     // alignSelf: 'flex-end'
   });
-  container.add(title);
-  container.add(date);
+  const date1 = createText({
+    text: 'date1',
+    fontSize: 12,
+    lineHeight: 18,
+    textBaseline: 'bottom',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fill: 'orange',
+    width: 10,
+    height: 10
+    // alignSelf: 'flex-end'
+  });
+  const date2 = createText({
+    text: 'date2',
+    fontSize: 12,
+    lineHeight: 18,
+    textBaseline: 'bottom',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fill: 'orange',
+    width: 10,
+    height: 10
+    // alignSelf: 'flex-end'
+  });
+  const date3 = createText({
+    text: 'date3',
+    fontSize: 12,
+    lineHeight: 18,
+    textBaseline: 'bottom',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fill: 'orange',
+    width: 10,
+    height: 10
+    // alignSelf: 'flex-end'
+  });
 
   const stage = createStage({
     canvas: 'main',
@@ -80,6 +144,18 @@ export const page = () => {
 
   // stage.defaultLayer.add(group);
   stage.defaultLayer.add(container);
+
+  // const plugin = stage.getPluginsByName('FlexLayoutPlugin')[0];
+  // plugin.pauseLayout(true);
+  container.add(title);
+  container.add(title1);
+  container.add(title2);
+  container.add(date);
+  container.add(date1);
+  container.add(date2);
+  container.add(date3);
+  // plugin.pauseLayout(false);
+  // plugin.tryLayoutChildren(container);
 
   stage.render(undefined, { renderStyle: 'rough' });
 };

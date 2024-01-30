@@ -178,6 +178,10 @@ export const pages = [
       {
         name: 'globalCompositeOperation',
         path: 'globalCompositeOperation'
+      },
+      {
+        name: 'react',
+        path: 'react'
       }
     ]
   },

@@ -520,18 +520,18 @@ export class FlexLayoutPlugin implements IPlugin {
 }
 
 function getPadding(graphic: IGraphic, field: string): number {
-  if (!graphic.attribute.boundsPadding) {
-    return 0;
-  } else if (isNumber(graphic.attribute.boundsPadding)) {
-    return graphic.attribute.boundsPadding as number;
-  } else if (isArray(graphic.attribute.boundsPadding) && graphic.attribute.boundsPadding.length === 1) {
-    return graphic.attribute.boundsPadding[0];
-  }
-  const paddingArray = parsePadding(graphic.attribute.boundsPadding);
-  if (field === 'x') {
-    return paddingArray[3];
-  } else if (field === 'y') {
-    return paddingArray[0];
-  }
+  // if (!graphic.attribute.boundsPadding) {
+  //   return 0;
+  // } else if (isNumber(graphic.attribute.boundsPadding)) {
+  //   return graphic.attribute.boundsPadding as number;
+  // } else if (isArray(graphic.attribute.boundsPadding) && graphic.attribute.boundsPadding.length === 1) {
+  //   return graphic.attribute.boundsPadding[0];
+  // }
+  // const paddingArray = parsePadding(graphic.attribute.boundsPadding);
+  // if (field === 'x') {
+  //   return paddingArray[3];
+  // } else if (field === 'y') {
+  //   return paddingArray[0];
+  // }
   return 0;
 }

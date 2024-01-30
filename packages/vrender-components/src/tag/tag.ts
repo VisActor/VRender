@@ -9,15 +9,13 @@ import type {
   ITextAttribute,
   ITextGraphicAttribute,
   IRichTextGraphicAttribute,
-  IRichText,
-  IRichTextCharacter
+  IRichText
 } from '@visactor/vrender-core';
-import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
+import { isBoolean, isEmpty, isNil, isNumber, isObject, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { isRichText, measureTextSize, richTextAttributeTransform } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
-import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTagComponent } from './register';
 import type { TextContent } from '../core/type';
 
@@ -132,7 +130,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
     } else {
       const textAttrs = {
-        text: text as string | number | string[] | number[],
+        text: isObject(text) && 'type' in text && text.type === 'text' ? text.text : text,
         visible: isValid(text) && visible !== false,
         lineHeight: (textStyle as ITextGraphicAttribute)?.fontSize,
         ...(textStyle as ITextGraphicAttribute),
@@ -142,7 +140,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       if (isNil(textAttrs.lineHeight)) {
         textAttrs.lineHeight = (textStyle as ITextGraphicAttribute).fontSize;
       }
-      textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
+      textShape = group.createOrUpdateChild('tag-text', textAttrs as ITextGraphicAttribute, 'text') as IText;
       if (!isEmpty(state?.text)) {
         textShape.states = state.text;
       }

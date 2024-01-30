@@ -59,18 +59,25 @@ export type Padding =
     };
 
 type CommonTextContent = {
-  type?: 'text';
-  text?: string | string[] | number | number[];
+  text?:
+    | string
+    | string[]
+    | number
+    | number[]
+    | {
+        type?: 'text';
+        text: string | string[] | number | number[];
+      };
 };
 
 type RichTextContent = {
-  type?: 'rich';
-  text?: IRichTextCharacter[];
+  text?: {
+    type: 'rich';
+    text: IRichTextCharacter[];
+  };
 };
 
-type HtmlTextContent = {
-  type?: 'html';
-  text?: string | HTMLElement;
+export type TextContent = (CommonTextContent | RichTextContent) & {
+  /** @deprecated */
+  type?: 'text' | 'rich';
 };
-
-export type TextContent = CommonTextContent | RichTextContent;

@@ -33,6 +33,7 @@ import {
 import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
+import { isRichText, richTextAttributeTransform } from '../../util';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -417,23 +418,31 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       focusSpace = focusSize;
     }
-
-    const labelShape = graphicCreator.text({
+    let labelShape;
+    const text = labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label;
+    const labelAttributes = {
       x: shapeSize / 2 + shapeSpace,
       y: 0,
       textAlign: 'start',
       textBaseline: 'middle',
       lineHeight: (labelStyle.style as ITextGraphicAttribute)?.fontSize,
       ...labelStyle.style,
-      text: labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label
-    });
+      text
+    };
+    if (isRichText({ text })) {
+      labelShape = graphicCreator.richtext(richTextAttributeTransform(labelAttributes));
+    } else {
+      labelShape = graphicCreator.text(labelAttributes);
+    }
+
     this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelStyle.state);
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
     innerGroup.add(labelShape);
     const labelSpace = get(labelAttr, 'space', DEFAULT_LABEL_SPACE);
     if (isValid(value)) {
       const valueSpace = get(valueAttr, 'space', focus ? DEFAULT_VALUE_SPACE : 0);
-      const valueShape = graphicCreator.text({
+      const valueText = valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value;
+      const valueAttributes = {
         x: 0,
         y: 0,
         textAlign: 'start',
@@ -441,7 +450,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
         ...valueStyle.style,
         text: valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value
-      });
+      };
+      let valueShape;
+      if (isRichText({ text: valueText })) {
+        valueShape = graphicCreator.richtext(richTextAttributeTransform(valueAttributes));
+      } else {
+        valueShape = graphicCreator.text(valueAttributes);
+      }
+
       this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueStyle.state);
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
 

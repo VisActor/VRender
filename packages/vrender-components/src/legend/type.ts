@@ -4,7 +4,7 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { Padding } from '../core/type';
+import type { Padding, TextContent } from '../core/type';
 
 export type LegendTitle = {
   /**
@@ -26,7 +26,7 @@ export type LegendTitle = {
   /**
    * 标题内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    */
-  text?: string | string[] | number | number[];
+  text?: string | string[] | number | number[] | TextContent;
   /** 标题文本样式 */
   textStyle?: Partial<ITextGraphicAttribute>;
   /** 文本前 mark 图元 */

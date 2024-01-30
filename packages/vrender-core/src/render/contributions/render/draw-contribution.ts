@@ -106,9 +106,19 @@ export class DefaultDrawContribution implements IDrawContribution {
     if (!context) {
       return;
     }
-    // if (context.drawPromise) {
-    //   return;
-    // }
+    // 设置context的transform
+    if (drawContext.keepMatrix) {
+      if (context.nativeContext && context.nativeContext.getTransform) {
+        const t = context.nativeContext.getTransform();
+        context.setTransformFromMatrix(t, true, 1);
+      }
+    } else {
+      context.inuse = true;
+      // 初始化context
+      context.clearMatrix();
+      context.setTransformForCurrent(true);
+    }
+
     const dirtyBounds: IBounds | undefined = this.dirtyBounds.setValue(0, 0, width, height);
     if (stage.dirtyBounds && !stage.dirtyBounds.empty()) {
       const b = getRectIntersect(dirtyBounds, stage.dirtyBounds, false);
@@ -126,10 +136,6 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
     }
     this.backupDirtyBounds.copy(dirtyBounds);
-    context.inuse = true;
-    // 初始化context
-    context.clearMatrix();
-    context.setTransformForCurrent(true);
 
     const drawInArea =
       dirtyBounds.width() * context.dpr < context.canvas.width ||
@@ -173,7 +179,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     context.restore();
     context.draw();
     // this.break = false;
-    context.inuse = false;
+    if (!drawContext.keepMatrix) {
+      context.inuse = false;
+    }
   }
 
   doRegister() {

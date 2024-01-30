@@ -23,7 +23,8 @@ import type {
   ITimeline,
   IOptimizeType,
   LayerMode,
-  PickResult
+  PickResult,
+  IPlugin
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -557,6 +558,10 @@ export class Stage extends Group implements IStage {
     this.pluginService.findPluginsByName('HtmlAttributePlugin').forEach(plugin => {
       this.pluginService.unRegister(plugin);
     });
+  }
+
+  getPluginsByName(name: string): IPlugin[] {
+    return this.pluginService.findPluginsByName(name);
   }
 
   // /**

@@ -10,6 +10,12 @@ import { application } from '../../application';
 
 const _tempBounds = new AABBBounds();
 
+type IAnchorPosMap = {
+  'flex-start': number;
+  'flex-end': number;
+  center: number;
+};
+
 export class FlexLayoutPlugin implements IPlugin {
   name: 'FlexLayoutPlugin' = 'FlexLayoutPlugin';
   activeEvent: 'onRegister' = 'onRegister';
@@ -18,14 +24,25 @@ export class FlexLayoutPlugin implements IPlugin {
   key: string = this.name + this.id;
   tempBounds: AABBBounds = new AABBBounds();
   layouting: boolean;
+  pause: boolean;
 
-  tryLayout(graphic: IGraphic) {
-    if (this.layouting) {
+  pauseLayout(p: boolean) {
+    this.pause = p;
+  }
+
+  tryLayoutChildren(graphic: IGraphic) {
+    if (graphic.firstChild) {
+      this.tryLayout(graphic.firstChild as IGraphic);
+    }
+  }
+
+  tryLayout(graphic: IGraphic, force: boolean = true) {
+    if (this.layouting || this.pause) {
       return;
     }
     this.layouting = true;
     const p = graphic.parent;
-    if (!p || !graphic.needUpdateLayout()) {
+    if (!(force || (p && graphic.needUpdateLayout()))) {
       return;
     }
     const theme = getTheme(p).group;
@@ -38,75 +55,79 @@ export class FlexLayoutPlugin implements IPlugin {
       // height,
       flexDirection = theme.flexDirection,
       flexWrap = theme.flexWrap,
-      justifyContent = theme.justifyContent,
       alignItems = theme.alignItems,
-      alignContent = theme.alignContent,
       clip = theme.clip
     } = p.attribute;
+    const { alignContent = alignItems ?? theme.alignContent } = p.attribute;
     // if (!(width && height)) {
     //   return;
     // }
 
-    let childrenWidth = 0;
-    let childrenHeight = 0;
-    let boundsLegal = 0;
-    p.forEachChildren((child: IGraphic) => {
-      const bounds = child.AABBBounds;
-      if (flexDirection === 'column' || flexDirection === 'column-reverse') {
-        childrenHeight += bounds.height();
-        childrenWidth = Math.max(childrenWidth, bounds.width());
-      } else {
-        childrenWidth += bounds.width();
-        childrenHeight = Math.max(childrenHeight, bounds.height());
+    let { width, height, justifyContent = theme.justifyContent } = p.attribute;
+    const children = p.getChildren() as IGraphic[];
+    if (width == null || height == null) {
+      // 计算子节点flex排列后的宽高
+      let childrenWidth = 0;
+      let childrenHeight = 0;
+      let boundsLegal = 0;
+      children.forEach((child: IGraphic) => {
+        const bounds = child.AABBBounds;
+        if (bounds.empty()) {
+          return;
+        }
+        if (flexDirection === 'column' || flexDirection === 'column-reverse') {
+          childrenHeight += bounds.height();
+          childrenWidth = Math.max(childrenWidth, bounds.width());
+        } else {
+          childrenWidth += bounds.width();
+          childrenHeight = Math.max(childrenHeight, bounds.height());
+        }
+        boundsLegal += bounds.x1;
+        boundsLegal += bounds.y1;
+        boundsLegal += bounds.x2;
+        boundsLegal += bounds.y2;
+      });
+      // judgement children bounds legal
+      if (!isFinite(boundsLegal)) {
+        return;
       }
-      boundsLegal += bounds.x1;
-      boundsLegal += bounds.y1;
-      boundsLegal += bounds.x2;
-      boundsLegal += bounds.y2;
-    });
-    // judgement children bounds legal
-    if (!isFinite(boundsLegal)) {
-      return;
+      width = childrenWidth;
+      height = childrenHeight;
     }
-    const width = p.attribute.width || childrenWidth;
-    const height = p.attribute.height || childrenHeight;
-    if (!p.attribute.width) {
-      p.attribute.width = 0;
-    }
-    if (!p.attribute.height) {
-      p.attribute.height = 0;
-    }
+
+    p.attribute.width = width;
+    p.attribute.height = height;
 
     // 这里使用p._AABBBounds可能会将非布局造成的bounds更新也会触发重新布局
     // TODO: 增加layout前预处理，在非递归布局前将子节点及其全部父节点_AABBBounds更新
     this.tempBounds.copy(p._AABBBounds);
     const result = {
       main: { len: width, field: 'x' },
-      cross: { len: height, field: 'y' },
-      dir: 1
+      cross: { len: height, field: 'y' }
     };
     const main = result.main;
     const cross = result.cross;
-    if (flexDirection === 'row-reverse') {
-      result.dir = -1;
-    } else if (flexDirection === 'column') {
+    if (flexDirection === 'column' || flexDirection === 'column-reverse') {
       main.len = height;
       cross.len = width;
       main.field = 'y';
       cross.field = 'x';
-    } else if (flexDirection === 'column-reverse') {
-      main.len = height;
-      cross.len = width;
-      main.field = 'y';
-      cross.field = 'x';
-      result.dir = -1;
+    }
+    if (flexDirection === 'row-reverse' || flexDirection === 'column-reverse') {
+      if (justifyContent === 'flex-start') {
+        justifyContent = 'flex-end';
+      } else if (justifyContent === 'flex-end') {
+        justifyContent = 'flex-start';
+      } else {
+        children.reverse();
+      }
     }
 
     // 计算宽度
     let mainLen = 0;
     let crossLen = 0;
     const mianLenArray: { mainLen: number; crossLen: number }[] = [];
-    p.forEachChildren((c: IGraphic) => {
+    children.forEach((c: IGraphic) => {
       const b = c.AABBBounds;
       const ml = main.field === 'x' ? b.width() : b.height();
       const cl = cross.field === 'x' ? b.width() : b.height();
@@ -140,8 +161,6 @@ export class FlexLayoutPlugin implements IPlugin {
       mainList.push({ idx: mianLenArray.length - 1, mainLen: mainLen, crossLen });
     }
 
-    const children = p.getChildren() as IGraphic[];
-
     // 布局main
     let lastIdx: number = 0;
     mainList.forEach(s => {
@@ -152,24 +171,25 @@ export class FlexLayoutPlugin implements IPlugin {
     crossLen = mainList.reduce((a, b) => a + b.crossLen, 0);
 
     // 布局cross
+
     if (mainList.length === 1) {
-      if (alignItems === 'flex-end') {
-        const anchorPos = cross.len;
-        this.layoutCross(children, alignItems, cross, anchorPos, mianLenArray, mainList[0], 0);
-      } else if (alignItems === 'center') {
-        const anchorPos = cross.len / 2;
-        this.layoutCross(children, alignItems, cross, anchorPos, mianLenArray, mainList[0], 0);
-      } else {
-        children.forEach(child => {
-          child.attribute[cross.field] = getPadding(child, cross.field);
-        });
-      }
+      const anchorPosMap: IAnchorPosMap = {
+        'flex-start': 0,
+        'flex-end': cross.len,
+        center: cross.len / 2
+      };
+      this.layoutCross(children, alignItems, cross, anchorPosMap, mianLenArray, mainList[0], 0);
     } else {
       if (alignContent === 'flex-start') {
         lastIdx = 0;
         let anchorPos = 0;
         mainList.forEach((s, i) => {
-          this.layoutCross(children, 'flex-start', cross, anchorPos, mianLenArray, mainList[i], lastIdx);
+          const anchorPosMap: IAnchorPosMap = {
+            'flex-start': anchorPos,
+            'flex-end': anchorPos + s.crossLen,
+            center: anchorPos + s.crossLen / 2
+          };
+          this.layoutCross(children, 'flex-start', cross, anchorPosMap, mianLenArray, mainList[i], lastIdx);
           lastIdx = s.idx + 1;
           anchorPos += s.crossLen;
         });
@@ -178,7 +198,12 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = Math.max(0, (cross.len - crossLen) / 2);
         let anchorPos = padding;
         mainList.forEach((s, i) => {
-          this.layoutCross(children, 'center', cross, anchorPos + s.crossLen / 2, mianLenArray, mainList[i], lastIdx);
+          const anchorPosMap: IAnchorPosMap = {
+            'flex-start': anchorPos,
+            'flex-end': anchorPos + s.crossLen,
+            center: anchorPos + s.crossLen / 2
+          };
+          this.layoutCross(children, 'center', cross, anchorPosMap, mianLenArray, mainList[i], lastIdx);
           lastIdx = s.idx + 1;
           anchorPos += s.crossLen;
         });
@@ -187,7 +212,12 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = Math.max(0, (cross.len - crossLen) / mainList.length / 2);
         let anchorPos = padding;
         mainList.forEach((s, i) => {
-          this.layoutCross(children, 'flex-start', cross, anchorPos, mianLenArray, mainList[i], lastIdx);
+          const anchorPosMap: IAnchorPosMap = {
+            'flex-start': anchorPos,
+            'flex-end': anchorPos + s.crossLen,
+            center: anchorPos + s.crossLen / 2
+          };
+          this.layoutCross(children, 'flex-start', cross, anchorPosMap, mianLenArray, mainList[i], lastIdx);
           lastIdx = s.idx + 1;
           anchorPos += s.crossLen + padding * 2;
         });
@@ -196,7 +226,12 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = Math.max(0, (cross.len - crossLen) / (mainList.length * 2 - 2));
         let anchorPos = 0;
         mainList.forEach((s, i) => {
-          this.layoutCross(children, 'flex-start', cross, anchorPos, mianLenArray, mainList[i], lastIdx);
+          const anchorPosMap: IAnchorPosMap = {
+            'flex-start': anchorPos,
+            'flex-end': anchorPos + s.crossLen,
+            center: anchorPos + s.crossLen / 2
+          };
+          this.layoutCross(children, 'flex-start', cross, anchorPosMap, mianLenArray, mainList[i], lastIdx);
           lastIdx = s.idx + 1;
           anchorPos += s.crossLen + padding * 2;
         });
@@ -214,9 +249,14 @@ export class FlexLayoutPlugin implements IPlugin {
     // 更新父级元素的layout，直到存在clip
     if (!clip && !this.tempBounds.equals(p.AABBBounds)) {
       // 判断父元素包围盒是否发生变化
-      this.tryLayout(p);
+      this.tryLayout(p, false);
       this.layouting = false;
     }
+  }
+
+  // 锚点并不一定总在左上角，根据位置和bounds的偏移进行定位
+  private updateChildPos(posBaseLeftTop: number, lastP: number | undefined, lastBP: number): number {
+    return posBaseLeftTop + (lastP ?? 0) - lastBP;
   }
 
   layoutMain(
@@ -231,20 +271,35 @@ export class FlexLayoutPlugin implements IPlugin {
     if (justifyContent === 'flex-start') {
       let pos = 0;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+        const posBaseLeftTop = pos + getPadding(children[i], main.field);
+        children[i].attribute[main.field] = this.updateChildPos(
+          posBaseLeftTop,
+          children[i].attribute[main.field],
+          children[i].AABBBounds[`${main.field}1`]
+        );
         pos += mianLenArray[i].mainLen;
       }
     } else if (justifyContent === 'flex-end') {
       let pos = main.len;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
         pos -= mianLenArray[i].mainLen;
-        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+        const posBaseLeftTop = pos + getPadding(children[i], main.field);
+        children[i].attribute[main.field] = this.updateChildPos(
+          posBaseLeftTop,
+          children[i].attribute[main.field],
+          children[i].AABBBounds[`${main.field}1`]
+        );
       }
     } else if (justifyContent === 'space-around') {
       if (currSeg.mainLen >= main.len) {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+          const posBaseLeftTop = pos + getPadding(children[i], main.field);
+          children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            children[i].AABBBounds[`${main.field}1`]
+          );
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -252,7 +307,12 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = (main.len - currSeg.mainLen) / size / 2;
         let pos = padding;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+          const posBaseLeftTop = pos + getPadding(children[i], main.field);
+          children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            children[i].AABBBounds[`${main.field}1`]
+          );
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
@@ -260,7 +320,12 @@ export class FlexLayoutPlugin implements IPlugin {
       if (currSeg.mainLen >= main.len) {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+          const posBaseLeftTop = pos + getPadding(children[i], main.field);
+          children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            children[i].AABBBounds[`${main.field}1`]
+          );
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -268,14 +333,24 @@ export class FlexLayoutPlugin implements IPlugin {
         const padding = (main.len - currSeg.mainLen) / (size * 2 - 2);
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
-          children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+          const posBaseLeftTop = pos + getPadding(children[i], main.field);
+          children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            children[i].AABBBounds[`${main.field}1`]
+          );
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
     } else if (justifyContent === 'center') {
       let pos = (main.len - currSeg.mainLen) / 2;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[main.field] = pos + getPadding(children[i], main.field);
+        const posBaseLeftTop = pos + getPadding(children[i], main.field);
+        children[i].attribute[main.field] = this.updateChildPos(
+          posBaseLeftTop,
+          children[i].attribute[main.field],
+          children[i].AABBBounds[`${main.field}1`]
+        );
         pos += mianLenArray[i].mainLen;
       }
     }
@@ -285,36 +360,76 @@ export class FlexLayoutPlugin implements IPlugin {
     children: IGraphic[],
     alignItem: IGroupAttribute['alignItems'],
     cross: { len: number; field: string },
-    anchorPos: number,
+    anchorPosMap: IAnchorPosMap,
     lenArray: { mainLen: number; crossLen: number }[],
     currSeg: { idx: number; mainLen: number; crossLen: number },
     lastIdx: number
   ) {
-    if (alignItem === 'flex-end') {
-      for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] = anchorPos - lenArray[i].crossLen + getPadding(children[i], cross.field);
+    for (let i = lastIdx; i <= currSeg.idx; i++) {
+      const child = children[i];
+      let { alignSelf } = child.attribute;
+      if (!alignSelf || alignSelf === 'auto') {
+        alignSelf = alignItem;
       }
-    } else if (alignItem === 'center') {
-      for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] =
-          anchorPos - lenArray[i].crossLen / 2 + getPadding(children[i], cross.field);
-      }
-    } else {
-      for (let i = lastIdx; i <= currSeg.idx; i++) {
-        children[i].attribute[cross.field] = anchorPos + getPadding(children[i], cross.field);
+      const anchorPos = anchorPosMap[alignSelf] ?? anchorPosMap['flex-start'];
+      if (alignSelf === 'flex-end') {
+        child.attribute[cross.field] = this.updateChildPos(
+          anchorPos - lenArray[i].crossLen + getPadding(child, cross.field),
+          child.attribute[cross.field],
+          child.AABBBounds[`${cross.field}1`]
+        );
+      } else if (alignSelf === 'center') {
+        child.attribute[cross.field] = this.updateChildPos(
+          anchorPos - lenArray[i].crossLen / 2 + getPadding(child, cross.field),
+          child.attribute[cross.field],
+          child.AABBBounds[`${cross.field}1`]
+        );
+      } else {
+        child.attribute[cross.field] = this.updateChildPos(
+          anchorPos + getPadding(child, cross.field),
+          child.attribute[cross.field],
+          child.AABBBounds[`${cross.field}1`]
+        );
       }
     }
+    // if (alignItem === 'flex-end') {
+    //   for (let i = lastIdx; i <= currSeg.idx; i++) {
+    //     children[i].attribute[cross.field] = this.updateChildPos(
+    //       anchorPos - lenArray[i].crossLen + getPadding(children[i], cross.field),
+    //       children[i].attribute[cross.field],
+    //       children[i].AABBBounds[`${cross.field}1`]
+    //     );
+    //   }
+    // } else if (alignItem === 'center') {
+    //   for (let i = lastIdx; i <= currSeg.idx; i++) {
+    //     children[i].attribute[cross.field] = this.updateChildPos(
+    //       anchorPos - lenArray[i].crossLen / 2 + getPadding(children[i], cross.field),
+    //       children[i].attribute[cross.field],
+    //       children[i].AABBBounds[`${cross.field}1`]
+    //     );
+    //   }
+    // } else {
+    //   for (let i = lastIdx; i <= currSeg.idx; i++) {
+    //     children[i].attribute[cross.field] = this.updateChildPos(
+    //       anchorPos + getPadding(children[i], cross.field),
+    //       children[i].attribute[cross.field],
+    //       children[i].AABBBounds[`${cross.field}1`]
+    //     );
+    //   }
+    // }
   }
 
   activate(context: IPluginService): void {
     this.pluginService = context;
+    // 属性更新
     application.graphicService.hooks.onAttributeUpdate.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
-      this.tryLayout(graphic);
+      this.tryLayout(graphic, false);
       this.layouting = false;
     });
+    // 包围盒更新（如果包围盒发生变化，就重新布局
     application.graphicService.hooks.beforeUpdateAABBBounds.tap(
       this.key,
       (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => {
@@ -346,22 +461,31 @@ export class FlexLayoutPlugin implements IPlugin {
           return;
         }
         if (!_tempBounds.equals(bounds)) {
-          this.tryLayout(graphic);
+          this.tryLayout(graphic, false);
           this.layouting = false;
         }
       }
     );
+    // 添加到场景树
     application.graphicService.hooks.onSetStage.tap(this.key, graphic => {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
-      this.tryLayout(graphic);
+      this.tryLayout(graphic, false);
       this.layouting = false;
     });
   }
   deactivate(context: IPluginService): void {
     application.graphicService.hooks.onAttributeUpdate.taps =
       application.graphicService.hooks.onAttributeUpdate.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.beforeUpdateAABBBounds.taps =
+      application.graphicService.hooks.beforeUpdateAABBBounds.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.afterUpdateAABBBounds.taps =
+      application.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
     application.graphicService.hooks.onSetStage.taps = application.graphicService.hooks.onSetStage.taps.filter(item => {

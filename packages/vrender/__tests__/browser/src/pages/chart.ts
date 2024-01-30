@@ -106,7 +106,7 @@ export const page = () => {
   tlist.reverse().forEach(t => {
     const c = graphicUtil.drawGraphicToCanvas(t, stage);
     console.log(c, t.attribute.text);
-    document.body.appendChild(c);
+    // document.body.appendChild(c);
   });
 
   // const t = performance.now();

@@ -23,8 +23,8 @@ export class FlexLayoutPlugin implements IPlugin {
   id: number = Generator.GenAutoIncrementId();
   key: string = this.name + this.id;
   tempBounds: AABBBounds = new AABBBounds();
-  layouting: boolean;
   pause: boolean;
+  skipBoundsTrigger: boolean;
 
   pauseLayout(p: boolean) {
     this.pause = p;
@@ -37,10 +37,9 @@ export class FlexLayoutPlugin implements IPlugin {
   }
 
   tryLayout(graphic: IGraphic, force: boolean = true) {
-    if (this.layouting || this.pause) {
+    if (this.pause) {
       return;
     }
-    this.layouting = true;
     const p = graphic.parent;
     if (!(force || (p && graphic.needUpdateLayout()))) {
       return;
@@ -71,7 +70,7 @@ export class FlexLayoutPlugin implements IPlugin {
       let childrenHeight = 0;
       let boundsLegal = 0;
       children.forEach((child: IGraphic) => {
-        const bounds = child.AABBBounds;
+        const bounds = this.getAABBBounds(child);
         if (bounds.empty()) {
           return;
         }
@@ -128,7 +127,10 @@ export class FlexLayoutPlugin implements IPlugin {
     let crossLen = 0;
     const mianLenArray: { mainLen: number; crossLen: number }[] = [];
     children.forEach((c: IGraphic) => {
-      const b = c.AABBBounds;
+      const b = this.getAABBBounds(c);
+      if (b.empty()) {
+        return;
+      }
       const ml = main.field === 'x' ? b.width() : b.height();
       const cl = cross.field === 'x' ? b.width() : b.height();
       mianLenArray.push({ mainLen: ml, crossLen: cl });
@@ -247,11 +249,19 @@ export class FlexLayoutPlugin implements IPlugin {
 
     p.addUpdateLayoutTag();
     // 更新父级元素的layout，直到存在clip
-    if (!clip && !this.tempBounds.equals(p.AABBBounds)) {
+    const b = this.getAABBBounds(p);
+    if (!clip && !this.tempBounds.equals(b)) {
       // 判断父元素包围盒是否发生变化
       this.tryLayout(p, false);
-      this.layouting = false;
     }
+  }
+
+  // 避免获取bounds的时候递归进行布局
+  getAABBBounds(graphic: IGraphic) {
+    this.skipBoundsTrigger = true;
+    const b = graphic.AABBBounds;
+    this.skipBoundsTrigger = false;
+    return b;
   }
 
   // 锚点并不一定总在左上角，根据位置和bounds的偏移进行定位
@@ -272,11 +282,13 @@ export class FlexLayoutPlugin implements IPlugin {
       let pos = 0;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
         const posBaseLeftTop = pos + getPadding(children[i], main.field);
-        children[i].attribute[main.field] = this.updateChildPos(
-          posBaseLeftTop,
-          children[i].attribute[main.field],
-          children[i].AABBBounds[`${main.field}1`]
-        );
+        const b = this.getAABBBounds(children[i]);
+        !b.empty() &&
+          (children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            b[`${main.field}1`]
+          ));
         pos += mianLenArray[i].mainLen;
       }
     } else if (justifyContent === 'flex-end') {
@@ -284,22 +296,26 @@ export class FlexLayoutPlugin implements IPlugin {
       for (let i = lastIdx; i <= currSeg.idx; i++) {
         pos -= mianLenArray[i].mainLen;
         const posBaseLeftTop = pos + getPadding(children[i], main.field);
-        children[i].attribute[main.field] = this.updateChildPos(
-          posBaseLeftTop,
-          children[i].attribute[main.field],
-          children[i].AABBBounds[`${main.field}1`]
-        );
+        const b = this.getAABBBounds(children[i]);
+        !b.empty() &&
+          (children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            b[`${main.field}1`]
+          ));
       }
     } else if (justifyContent === 'space-around') {
       if (currSeg.mainLen >= main.len) {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
           const posBaseLeftTop = pos + getPadding(children[i], main.field);
-          children[i].attribute[main.field] = this.updateChildPos(
-            posBaseLeftTop,
-            children[i].attribute[main.field],
-            children[i].AABBBounds[`${main.field}1`]
-          );
+          const b = this.getAABBBounds(children[i]);
+          !b.empty() &&
+            (children[i].attribute[main.field] = this.updateChildPos(
+              posBaseLeftTop,
+              children[i].attribute[main.field],
+              b[`${main.field}1`]
+            ));
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -308,11 +324,13 @@ export class FlexLayoutPlugin implements IPlugin {
         let pos = padding;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
           const posBaseLeftTop = pos + getPadding(children[i], main.field);
-          children[i].attribute[main.field] = this.updateChildPos(
-            posBaseLeftTop,
-            children[i].attribute[main.field],
-            children[i].AABBBounds[`${main.field}1`]
-          );
+          const b = this.getAABBBounds(children[i]);
+          !b.empty() &&
+            (children[i].attribute[main.field] = this.updateChildPos(
+              posBaseLeftTop,
+              children[i].attribute[main.field],
+              b[`${main.field}1`]
+            ));
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
@@ -321,11 +339,13 @@ export class FlexLayoutPlugin implements IPlugin {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
           const posBaseLeftTop = pos + getPadding(children[i], main.field);
-          children[i].attribute[main.field] = this.updateChildPos(
-            posBaseLeftTop,
-            children[i].attribute[main.field],
-            children[i].AABBBounds[`${main.field}1`]
-          );
+          const b = this.getAABBBounds(children[i]);
+          !b.empty() &&
+            (children[i].attribute[main.field] = this.updateChildPos(
+              posBaseLeftTop,
+              children[i].attribute[main.field],
+              b[`${main.field}1`]
+            ));
           pos += mianLenArray[i].mainLen;
         }
       } else {
@@ -334,11 +354,13 @@ export class FlexLayoutPlugin implements IPlugin {
         let pos = 0;
         for (let i = lastIdx; i <= currSeg.idx; i++) {
           const posBaseLeftTop = pos + getPadding(children[i], main.field);
-          children[i].attribute[main.field] = this.updateChildPos(
-            posBaseLeftTop,
-            children[i].attribute[main.field],
-            children[i].AABBBounds[`${main.field}1`]
-          );
+          const b = this.getAABBBounds(children[i]);
+          !b.empty() &&
+            (children[i].attribute[main.field] = this.updateChildPos(
+              posBaseLeftTop,
+              children[i].attribute[main.field],
+              b[`${main.field}1`]
+            ));
           pos += mianLenArray[i].mainLen + padding * 2;
         }
       }
@@ -346,11 +368,13 @@ export class FlexLayoutPlugin implements IPlugin {
       let pos = (main.len - currSeg.mainLen) / 2;
       for (let i = lastIdx; i <= currSeg.idx; i++) {
         const posBaseLeftTop = pos + getPadding(children[i], main.field);
-        children[i].attribute[main.field] = this.updateChildPos(
-          posBaseLeftTop,
-          children[i].attribute[main.field],
-          children[i].AABBBounds[`${main.field}1`]
-        );
+        const b = this.getAABBBounds(children[i]);
+        !b.empty() &&
+          (children[i].attribute[main.field] = this.updateChildPos(
+            posBaseLeftTop,
+            children[i].attribute[main.field],
+            b[`${main.field}1`]
+          ));
         pos += mianLenArray[i].mainLen;
       }
     }
@@ -371,25 +395,29 @@ export class FlexLayoutPlugin implements IPlugin {
       if (!alignSelf || alignSelf === 'auto') {
         alignSelf = alignItem;
       }
+      const b = this.getAABBBounds(child);
       const anchorPos = anchorPosMap[alignSelf] ?? anchorPosMap['flex-start'];
       if (alignSelf === 'flex-end') {
-        child.attribute[cross.field] = this.updateChildPos(
-          anchorPos - lenArray[i].crossLen + getPadding(child, cross.field),
-          child.attribute[cross.field],
-          child.AABBBounds[`${cross.field}1`]
-        );
+        !b.empty() &&
+          (child.attribute[cross.field] = this.updateChildPos(
+            anchorPos - lenArray[i].crossLen + getPadding(child, cross.field),
+            child.attribute[cross.field],
+            b[`${cross.field}1`]
+          ));
       } else if (alignSelf === 'center') {
-        child.attribute[cross.field] = this.updateChildPos(
-          anchorPos - lenArray[i].crossLen / 2 + getPadding(child, cross.field),
-          child.attribute[cross.field],
-          child.AABBBounds[`${cross.field}1`]
-        );
+        !b.empty() &&
+          (child.attribute[cross.field] = this.updateChildPos(
+            anchorPos - lenArray[i].crossLen / 2 + getPadding(child, cross.field),
+            child.attribute[cross.field],
+            b[`${cross.field}1`]
+          ));
       } else {
-        child.attribute[cross.field] = this.updateChildPos(
-          anchorPos + getPadding(child, cross.field),
-          child.attribute[cross.field],
-          child.AABBBounds[`${cross.field}1`]
-        );
+        !b.empty() &&
+          (child.attribute[cross.field] = this.updateChildPos(
+            anchorPos + getPadding(child, cross.field),
+            child.attribute[cross.field],
+            b[`${cross.field}1`]
+          ));
       }
     }
     // if (alignItem === 'flex-end') {
@@ -427,7 +455,6 @@ export class FlexLayoutPlugin implements IPlugin {
         graphic = graphic.glyphHost;
       }
       this.tryLayout(graphic, false);
-      this.layouting = false;
     });
     // 包围盒更新（如果包围盒发生变化，就重新布局
     application.graphicService.hooks.beforeUpdateAABBBounds.tap(
@@ -439,7 +466,7 @@ export class FlexLayoutPlugin implements IPlugin {
         if (!(stage && stage === this.pluginService.stage)) {
           return;
         }
-        if (!graphic.isContainer) {
+        if (!graphic.isContainer || this.skipBoundsTrigger) {
           return;
         }
         _tempBounds.copy(bounds);
@@ -457,12 +484,11 @@ export class FlexLayoutPlugin implements IPlugin {
         if (!(stage && stage === this.pluginService.stage)) {
           return;
         }
-        if (!graphic.isContainer) {
+        if (!graphic.isContainer || this.skipBoundsTrigger) {
           return;
         }
         if (!_tempBounds.equals(bounds)) {
           this.tryLayout(graphic, false);
-          this.layouting = false;
         }
       }
     );
@@ -472,7 +498,6 @@ export class FlexLayoutPlugin implements IPlugin {
         graphic = graphic.glyphHost;
       }
       this.tryLayout(graphic, false);
-      this.layouting = false;
     });
   }
   deactivate(context: IPluginService): void {

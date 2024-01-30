@@ -288,6 +288,8 @@ export class Stage extends Group implements IStage {
         resolution: this.window.dpr || this.global.devicePixelRatio,
         rootNode: this as any,
         global: this.global,
+        supportsPointerEvents: this.params.supportsPointerEvents,
+        supportsTouchEvents: this.params.supportsTouchEvents,
         viewport: {
           viewBox: this._viewBox,
           get x(): number {
@@ -614,6 +616,7 @@ export class Stage extends Group implements IStage {
     if (this.supportInteractiveLayer && !this.interactiveLayer) {
       this.interactiveLayer = this.createLayer();
       this.interactiveLayer.name = '_builtin_interactive';
+      this.interactiveLayer.attribute.pickable = false;
       this.nextFrameRenderLayerSet.add(this.interactiveLayer as any); // to be fixed
     }
     // this.interactiveLayer.afterDraw(l => {

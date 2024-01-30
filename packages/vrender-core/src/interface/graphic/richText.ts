@@ -38,7 +38,7 @@ export type IRichTextBasicCharacter = {
 };
 
 export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
-  text: string;
+  text: string | number;
   fontSize?: number;
   fontFamily?: string;
   fill?: IColor | boolean;

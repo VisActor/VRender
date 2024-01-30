@@ -1,6 +1,69 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 29 Dec 2023 09:59:13 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Jan 2024 13:11:27 GMT and should not be manually modified.
+
+## 0.17.19
+Wed, 24 Jan 2024 13:11:27 GMT
+
+_Version update only_
+
+## 0.17.18
+Wed, 24 Jan 2024 10:10:41 GMT
+
+_Version update only_
+
+## 0.17.17
+Mon, 22 Jan 2024 08:19:38 GMT
+
+### Updates
+
+- feat: color support str gradient color
+
+## 0.17.16
+Wed, 17 Jan 2024 09:02:13 GMT
+
+_Version update only_
+
+## 0.17.15
+Wed, 17 Jan 2024 06:43:01 GMT
+
+_Version update only_
+
+## 0.17.14
+Fri, 12 Jan 2024 10:33:32 GMT
+
+### Updates
+
+- fix: fix `splitRect` when rect has `x1` or `y1`
+
+
+
+## 0.17.13
+Wed, 10 Jan 2024 14:18:21 GMT
+
+_Version update only_
+
+## 0.17.12
+Wed, 10 Jan 2024 03:56:46 GMT
+
+_Version update only_
+
+## 0.17.11
+Fri, 05 Jan 2024 11:54:56 GMT
+
+_Version update only_
+
+## 0.17.10
+Wed, 03 Jan 2024 13:19:34 GMT
+
+### Updates
+
+- feat: support `lastVisible` of LineAxis label
+
+
+- fix: fix the auto limit width of label when the label has vertical `direction` in orient top or bottom
+
+
 
 ## 0.17.9
 Fri, 29 Dec 2023 09:59:13 GMT

@@ -22,12 +22,11 @@ import { DefaultMathTextPicker } from './text-picker';
 import { DefaultMathPolygonPicker } from './polygon-picker';
 import { DefaultMathGlyphPicker } from './glyph-picker';
 
-let loaded = false;
-export default new ContainerModule(bind => {
-  if (loaded) {
+const m = new ContainerModule(bind => {
+  if ((m as any).__vloaded) {
     return;
   }
-  loaded = true;
+  (m as any).__vloaded = true;
   // // image picker
   // bind(DefaultCanvasImagePicker).toSelf().inSingletonScope();
   // bind(ImagePicker).toService(DefaultCanvasImagePicker);
@@ -35,3 +34,7 @@ export default new ContainerModule(bind => {
 
   bindContributionProvider(bind, MathPickerContribution);
 });
+
+(m as any).__vloaded = false;
+
+export default m;

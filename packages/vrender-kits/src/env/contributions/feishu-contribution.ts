@@ -8,6 +8,7 @@ import type {
   IGlobal,
   ITTCanvas
 } from '@visactor/vrender-core';
+import { CanvasWrapDisableWH } from './canvas-wrap';
 
 declare const tt: {
   getSystemInfoSync: () => { pixelRatio: number };
@@ -20,55 +21,16 @@ function makeUpCanvas(
   canvasIdLists: string[],
   canvasMap: Map<string, ITTCanvas>,
   freeCanvasIdx: number,
-  freeCanvasList: ITTCanvas[]
+  freeCanvasList: ITTCanvas[],
+  pixelRatio?: number
 ) {
-  const dpr = tt.getSystemInfoSync().pixelRatio;
+  const dpr = pixelRatio ?? tt.getSystemInfoSync().pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
     const ctx = tt.createCanvasContext(id);
-    // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
-    ctx.canvas = {
-      width: domref.width * dpr,
-      height: domref.height * dpr
-    };
 
-    // 放到内容里
-    // // TODO: 这里是一个临时方案，兼容 createCircularGradient 方法
-    // ctx.createRadialGradient = (...cc) => ctx.createCircularGradient(...cc);
-
-    // // 封装 getImageData 为 promise
-    // ctx.getImageData = (x, y, width, height) =>
-    //   new Promise((resolve, reject) => {
-    //     try {
-    //       tt.canvasGetImageData({
-    //         canvasId: item.id,
-    //         x,
-    //         y,
-    //         width,
-    //         height,
-    //         success(res) {
-    //           resolve(res);
-    //         },
-    //       });
-    //     } catch (err) {
-    //       reject(err);
-    //     }
-    //   });
-
-    const canvas = {
-      width: domref.width * dpr,
-      height: domref.height * dpr,
-      offsetWidth: domref.width,
-      offsetHeight: domref.height,
-      id: id ?? '',
-      getContext: () => ctx,
-      // 构造 getBoundingClientRect 方法
-      getBoundingClientRect: () => ({
-        height: domref.height,
-        width: domref.width
-      })
-    };
-
+    const canvas = new CanvasWrapDisableWH(ctx.canvas || {}, ctx, dpr, domref.width, domref.height, id);
+    ctx.canvas = canvas;
     canvasMap.set(id, canvas);
     if (i >= freeCanvasIdx) {
       freeCanvasList.push(canvas);
@@ -115,10 +77,20 @@ export class FeishuEnvContribution extends BaseEnvContribution implements IEnvCo
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number }) {
+  configure(
+    service: IGlobal,
+    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; pixelRatio?: number }
+  ) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
-      makeUpCanvas(params.domref, params.canvasIdLists, this.canvasMap, params.freeCanvasIdx, this.freeCanvasList);
+      makeUpCanvas(
+        params.domref,
+        params.canvasIdLists,
+        this.canvasMap,
+        params.freeCanvasIdx,
+        this.freeCanvasList,
+        params.pixelRatio
+      );
 
       // loadFeishuContributions();
     }

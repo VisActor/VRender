@@ -12,8 +12,9 @@ import { TextDirection, verticalLayout } from './tools';
 const TEXT_UPDATE_TAG_KEY = [
   'text',
   'maxLineWidth',
-  // 'textAlign',
-  // 'textBaseline',
+  // 多行文本要用到
+  'textAlign',
+  'textBaseline',
   'heightLimit',
   'lineClamp',
   'fontSize',
@@ -76,7 +77,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = getTheme(this).text;
     const attribute = this.attribute;
-    if (!this.isSimplify()) {
+    if (this.isMultiLine) {
       return undefined;
     }
     const { maxLineWidth = textTheme.maxLineWidth } = attribute;
@@ -84,6 +85,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
+    if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
+      return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
+    }
     if (this.clipedText == null) {
       return false;
     }
@@ -125,7 +129,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   protected doUpdateAABBBounds(): AABBBounds {
     const textTheme = getTheme(this).text;
-    this._AABBBounds.setValue(Infinity, Infinity, -Infinity, -Infinity);
+    this._AABBBounds.clear();
     const attribute = this.attribute;
     const bounds = application.graphicService.updateTextAABBBounds(
       attribute,
@@ -597,10 +601,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       ellipsis = textTheme.ellipsis,
       maxLineWidth,
       stroke = textTheme.stroke,
+      // ignoreBuf = textTheme.ignoreBuf,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
       suffixPosition = textTheme.suffixPosition
     } = attribute;
+    // const buf = ignoreBuf ? 0 : Math.max(2, fontSize * 0.075);
     const lineHeight =
       calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
       (attribute.fontSize || textTheme.fontSize);

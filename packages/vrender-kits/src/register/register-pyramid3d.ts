@@ -2,13 +2,16 @@ import { container, pyramid3dModule, registerPyramid3dGraphic } from '@visactor/
 import { browser } from './env';
 import { pyramid3dCanvasPickModule } from '../picker/contributions/canvas-picker/pyramid3d-module';
 
-let loaded = false;
-export function registerPyramid3d() {
-  if (loaded) {
+function _registerPyramid3d() {
+  if (_registerPyramid3d.__loaded) {
     return;
   }
-  loaded = true;
+  _registerPyramid3d.__loaded = true;
   registerPyramid3dGraphic();
   container.load(pyramid3dModule);
   container.load(browser ? pyramid3dCanvasPickModule : pyramid3dCanvasPickModule);
 }
+
+_registerPyramid3d.__loaded = false;
+
+export const registerPyramid3d = _registerPyramid3d;

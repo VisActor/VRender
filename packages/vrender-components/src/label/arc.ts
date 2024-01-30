@@ -157,16 +157,17 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return { x: 0, y: 0 };
   }
 
-  protected _layout(data: LabelItem[] = []) {
-    const labels = super._layout(data);
+  protected _layout(texts: (IText | IRichText)[]) {
+    const labels = super._layout(texts);
     const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,
-      text: '...'
+      text: '…'
     };
     const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
     const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
     const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    const data = labels.map(label => label.attribute as LabelItem);
 
     const arcs: ArcInfo[] = this.layoutArcLabels(
       this.attribute.position,
@@ -179,20 +180,21 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     for (let i = 0; i < data.length; i++) {
       const textData = data[i];
       const basedArc = arcs.find(arc => arc.refDatum?.id === textData.id);
-      const labelAttribute = {
-        visible: basedArc.labelVisible,
-        x: basedArc.labelPosition.x,
-        y: basedArc.labelPosition.y,
-        angle: basedArc.angle,
-        maxLineWidth: basedArc.labelLimit,
-        points:
-          basedArc?.pointA && basedArc?.pointB && basedArc?.pointC
-            ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
-            : undefined,
-        line: basedArc?.labelLine
-      };
-
-      labels[i].setAttributes(labelAttribute);
+      if (basedArc) {
+        const labelAttribute = {
+          visible: basedArc.labelVisible,
+          x: basedArc.labelPosition.x,
+          y: basedArc.labelPosition.y,
+          angle: basedArc.angle,
+          maxLineWidth: basedArc.labelLimit,
+          points:
+            basedArc.pointA && basedArc.pointB && basedArc.pointC
+              ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
+              : undefined,
+          line: basedArc.labelLine
+        };
+        labels[i].setAttributes(labelAttribute);
+      }
     }
     return labels;
   }
@@ -294,8 +296,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   private _layoutInsideLabels(arcs: ArcInfo[], attribute: ArcLabelAttrs, currentMarks: any[]) {
     const labelConfig = attribute;
     const spaceWidth = labelConfig.spaceWidth as number;
-    const position = labelConfig?.position ?? 'inside';
-    const offsetRadius = labelConfig?.offsetRadius ?? -spaceWidth;
+    const position = labelConfig.position ?? 'inside';
+    const offsetRadius = labelConfig.offsetRadius ?? -spaceWidth;
 
     arcs.forEach((arc: ArcInfo) => {
       const { labelSize, radian } = arc;
@@ -315,7 +317,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         limit = outerRadius - minRadius - spaceWidth;
       }
       // TODO: 对于不旋转的内部标签设置 limit 为 outerRadius
-      if (labelConfig?.rotate !== true) {
+      if (labelConfig.rotate !== true) {
         limit = outerRadius - spaceWidth;
       }
       const text = this._getFormatLabelText(arc.refDatum, limit);
@@ -338,8 +340,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         arc.labelVisible = false;
       }
 
-      arc.angle = attribute?.textStyle?.angle ?? arc.middleAngle;
-      let offsetAngle = labelConfig?.offsetAngle ?? 0;
+      arc.angle = attribute.textStyle?.angle ?? arc.middleAngle;
+      let offsetAngle = labelConfig.offsetAngle ?? 0;
       if (['inside-inner', 'inside-outer'].includes(position as string)) {
         offsetAngle += Math.PI / 2;
       }
@@ -352,7 +354,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    * 布局外部标签
    */
   private _layoutOutsideLabels(arcs: ArcInfo[], attribute: ArcLabelAttrs, currentMarks: any[]) {
-    const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
+    const center = { x: currentMarks[0].attribute.x ?? 0, y: currentMarks[0].attribute.y ?? 0 };
     const height = center.y * 2;
     const line2MinLength = attribute.line.line2MinLength as number;
     const labelLayout = attribute.layout;
@@ -419,13 +421,13 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       ) {
         arc.labelVisible = false;
       }
-      arc.angle = attribute?.textStyle?.angle ?? 0;
-      if (attribute?.offsetAngle) {
+      arc.angle = attribute.textStyle?.angle ?? 0;
+      if (attribute.offsetAngle) {
         arc.angle += attribute.offsetAngle;
       }
 
       arc.labelLine = {
-        ...attribute?.line
+        ...attribute.line
       };
     });
 
@@ -524,7 +526,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
    * 调整标签位置的 Y 值
    */
   private _adjustY(arcs: ArcInfo[], maxLabels: number, attribute: any, currentMarks: any[]) {
-    const center = { x: currentMarks[0].attribute?.x ?? 0, y: currentMarks[0].attribute?.y ?? 0 };
+    const center = { x: currentMarks[0].attribute.x ?? 0, y: currentMarks[0].attribute.y ?? 0 };
     const plotRect = { width: center.x * 2, height: center.y * 2 };
     const labelLayout = attribute.layout;
     if (labelLayout.strategy === 'vertical') {
@@ -923,19 +925,20 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
-  protected _labelLine(text: LabelItem) {
-    const labelLine: ILine = (text.attribute as ArcLabelAttrs)?.points
+  protected _createLabelLine(text: IText, baseMark?: IGraphic) {
+    const { points, line = {}, visible, fill } = text.attribute as ArcLabelAttrs;
+    const labelLine: ILine = (text.attribute as ArcLabelAttrs).points
       ? graphicCreator.line({
-          visible:
-            ((text.attribute as ArcLabelAttrs)?.line?.visible && text.attribute?.visible) ??
-            text.attribute?.visible ??
-            true,
-          stroke: (text.attribute as ArcLabelAttrs)?.line?.style?.stroke ?? text.attribute?.fill,
-          lineWidth: (text.attribute as ArcLabelAttrs)?.line?.style?.lineWidth ?? 1,
-          points: (text.attribute as ArcLabelAttrs)?.points,
-          curveType: (text.attribute as ArcLabelAttrs)?.line?.smooth ? 'basis' : null
+          visible: (line.visible && visible) ?? text.attribute?.visible ?? true,
+          stroke: line.style?.stroke ?? fill,
+          lineWidth: line.style?.lineWidth ?? 1,
+          points: points,
+          curveType: line.smooth ? 'basis' : null
         })
       : undefined;
+    if (labelLine) {
+      this._setStatesOfLabelLine(labelLine);
+    }
     return labelLine;
   }
 

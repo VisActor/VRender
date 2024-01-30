@@ -19,6 +19,8 @@ export type SymbolType =
   | 'diamond'
   | 'square'
   | 'arrow'
+  | 'arrowLeft'
+  | 'arrowRight'
   | 'arrow2Left'
   | 'arrow2Right'
   | 'wedge'
@@ -32,6 +34,8 @@ export type SymbolType =
   | 'star'
   | 'wye'
   | 'rect'
+  | 'rectRound'
+  | 'roundLine'
   | string;
 
 export interface ISymbolClass {

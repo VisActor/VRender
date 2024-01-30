@@ -9,7 +9,8 @@ import type {
   TextBaselineType,
   ILineGraphicAttribute,
   IRichTextCharacter,
-  IRichText
+  IRichText,
+  ILine
 } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 
@@ -41,8 +42,6 @@ export type LabelItem = {
   textBaseline?: 'top' | 'middle' | 'bottom' | 'alphabetic';
 } & Omit<Partial<ITextGraphicAttribute>, 'textAlign' | 'textBaseline'> &
   Omit<Partial<IRichTextGraphicAttribute>, 'textAlign' | 'textBaseline'>;
-// Omit<Partial<ITextGraphicAttribute>, 'text' | 'textAlign'> &
-//   Omit<Partial<IRichTextGraphicAttribute>, 'text' | 'textAlign'>;
 
 export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   type: string;
@@ -76,6 +75,9 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 文本交互样式 */
   state?: LabelItemStateStyle<ITextGraphicAttribute>;
 
+  /** 连接线样式 */
+  line?: ILabelLineSpec;
+
   /** 连线的交互样式 */
   labelLineState?: LabelItemStateStyle<ILineGraphicAttribute>;
 
@@ -90,13 +92,13 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   /** 是否开启防重叠
    * @default true
    */
-  overlap?: OverlapAttrs | false;
+  overlap?: OverlapAttrs | boolean;
 
   /** 智能反色 */
-  smartInvert?: SmartInvertAttrs | false;
+  smartInvert?: SmartInvertAttrs | boolean;
 
   /** 动画配置 */
-  animation?: ILabelAnimation | false;
+  animation?: ILabelAnimation | boolean;
   animationEnter?: ILabelUpdateAnimation;
   animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
   animationExit?: ILabelExitAnimation;
@@ -108,7 +110,8 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
    * @description 当配置了 customLayoutFunc 后，默认布局逻辑将不再生效。（position/offset不生效）
    */
   customLayoutFunc?: (
-    data: LabelItem[],
+    item: LabelItem[],
+    labels: (IText | IRichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
     getRelatedPoint?: (data: LabelItem) => IPointLike
   ) => (IText | IRichText)[];
@@ -418,12 +421,19 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   centerOffset?: number;
 }
 
-export interface IArcLabelLineSpec {
+export interface ILabelLineSpec {
   /**
    * 是否显示引导线
    * @default true
    */
   visible?: boolean;
+  /**
+   * 引导线样式
+   */
+  style?: Partial<ILineGraphicAttribute>;
+}
+
+export interface IArcLabelLineSpec extends ILabelLineSpec {
   /**
    * 引导线 line1 部分最小长度
    * @default 20
@@ -439,10 +449,6 @@ export interface IArcLabelLineSpec {
    * @default false
    */
   smooth?: boolean;
-  /**
-   * 引导线样式
-   */
-  style?: Partial<ILineGraphicAttribute>;
 }
 
 export type ArcLabelAlignType = 'arc' | 'labelLine' | 'edge';
@@ -516,3 +522,8 @@ export interface IPolarPoint {
 export type Quadrant = 1 | 2 | 3 | 4;
 
 export type TextAlign = 'left' | 'right' | 'center';
+
+export type LabelContent = {
+  text: IText | IRichText;
+  labelLine?: ILine;
+};

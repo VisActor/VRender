@@ -31,8 +31,11 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     if (!graphic || graphic.type !== 'line') {
       return super.getGraphicBounds(graphic, point);
     }
-    const points = graphic?.attribute?.points || [point];
+    const points = graphic.attribute.points || [point];
     const index = position === 'start' ? 0 : points.length - 1;
+    if (!points[index]) {
+      return;
+    }
     return {
       x1: points[index].x as number,
       x2: points[index].x as number,

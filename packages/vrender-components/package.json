@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.17.9",
+  "version": "0.17.19",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,12 +21,11 @@
     "test-cov": "jest --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "DEBUG_MODE=1 jest --watch",
-    "prepublishOnly": "npm run build",
     "analysis-core": "bundle -f umd -a -i core.ts"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.17.9",
-    "@visactor/vrender-kits": "workspace:0.17.9",
+    "@visactor/vrender-core": "workspace:0.17.19",
+    "@visactor/vrender-kits": "workspace:0.17.19",
     "@visactor/vutils": "~0.17.3",
     "@visactor/vscale": "~0.17.3"
   },

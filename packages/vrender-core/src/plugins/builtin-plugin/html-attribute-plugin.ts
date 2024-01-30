@@ -95,6 +95,9 @@ export class HtmlAttributePlugin implements IPlugin {
     let nativeDom: HTMLElement;
     if (typeof dom === 'string') {
       nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
+      if ((nativeDom as any).lastChild) {
+        nativeDom = (nativeDom as any).lastChild.firstChild;
+      }
     } else {
       nativeDom = dom;
     }
@@ -127,12 +130,12 @@ export class HtmlAttributePlugin implements IPlugin {
     }
     let left: number = 0;
     let top: number = 0;
-    if (anchorType === 'position') {
-      const matrix = graphic.transMatrix;
+    const b = graphic.globalAABBBounds;
+    if (anchorType === 'position' || b.empty()) {
+      const matrix = graphic.globalTransMatrix;
       left = matrix.e;
       top = matrix.f;
     } else {
-      const b = graphic.AABBBounds;
       left = b.x1;
       top = b.y1;
     }

@@ -104,6 +104,9 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
     let dom = _dom;
     if (typeof _dom === 'string') {
       dom = new DOMParser().parseFromString(_dom, 'text/html').firstChild;
+      if ((dom as any).lastChild) {
+        dom = (dom as any).lastChild.firstChild;
+      }
     }
     if (dom.getBoundingClientRect) {
       const b = dom.getBoundingClientRect();

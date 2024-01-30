@@ -1,9 +1,7 @@
 import type { IPointLike } from '@visactor/vutils';
-import { abs } from '@visactor/vutils';
-import { SegContext } from '../seg-context';
-import { genCurveSegments } from './common';
-import { Direction } from '../enums';
+import { genCurveSegments, genSegContext } from './common';
 import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
+import { Linear } from './linear';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -24,60 +22,13 @@ import type { IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interf
 
 // 基于d3-shape重构，定义绘制线段的方法
 // https://github.com/d3/d3-shape/blob/main/src/curve/linear.js
-export class LinearClosed implements ILinearSegment {
+export class LinearClosed extends Linear implements ILinearSegment {
   declare context: ISegPath2D;
-  private _lastDefined?: boolean;
 
   protected startPoint?: IPointLike;
 
-  constructor(context: ISegPath2D, startPoint?: IPointLike) {
-    this.context = context;
-    startPoint && (this.startPoint = startPoint);
-  }
-  _x: number;
-  _y: number;
-  _x0: number;
-  _x1: number;
-  _y0: number;
-  _y1: number;
-  _line: number;
-  _point: number;
-
-  areaStart() {
-    this._line = 0;
-  }
-  areaEnd() {
-    this._line = NaN;
-  }
-  lineStart() {
-    this._point = 0;
-    this.startPoint && this.point(this.startPoint);
-  }
   lineEnd() {
     this.context.closePath();
-  }
-  point(p: IPointLike): void {
-    const x = p.x;
-    const y = p.y;
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        this._line
-          ? this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p)
-          : this.context.moveTo(x, y, p);
-        break;
-      case 1:
-        this._point = 2; // falls through
-      default:
-        this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p);
-        break;
-    }
-
-    this._lastDefined = p.defined;
-  }
-
-  tryUpdateLength(): number {
-    return this.context.tryUpdateLength();
   }
 }
 
@@ -87,13 +38,8 @@ export function genLinearClosedSegments(points: IPointLike[], params: IGenSegmen
     return null;
   }
 
-  const segContext = new SegContext(
-    'linear',
-    direction ??
-      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
-        ? Direction.ROW
-        : Direction.COLUMN)
-  );
+  const segContext = genSegContext('linear', direction, points);
+
   const linear = new LinearClosed(segContext, startPoint);
 
   genLinearClosedTypeSegments(linear, points);

@@ -76,6 +76,10 @@ export interface IStageParams {
    * 是否支持pointer事件，不支持就监听mouse事件
    */
   supportsPointerEvents?: boolean;
+  /**
+   * Render的时候使用原来的矩阵，不清除
+   */
+  renderKeepMatrix?: boolean;
 }
 
 export type EventConfig = {

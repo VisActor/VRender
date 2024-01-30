@@ -14,11 +14,12 @@ import type {
 } from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { measureTextSize } from '../util';
+import { isRichText, measureTextSize, richTextAttributeTransform } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTagComponent } from './register';
+import type { TextContent } from '../core/type';
 
 loadTagComponent();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
@@ -99,47 +100,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     textX += symbolPlaceWidth;
 
     let textShape;
-    if (type === 'rich') {
+    const isRich = isRichText({ text } as TextContent) || type === 'rich';
+    if (isRich) {
       const richTextAttrs = {
-        textConfig: text as IRichTextCharacter[],
-        visible: isValid(text) && visible !== false,
+        ...richTextAttributeTransform({ type, text, ...textStyle } as any),
         ...(textStyle as IRichTextGraphicAttribute),
-        x: textX,
-        y: 0,
-        width: (textStyle as IRichTextGraphicAttribute).width ?? 0,
-        height: (textStyle as IRichTextGraphicAttribute).height ?? 0
-      };
-      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
-
-      // 绘制背景层
-      const { visible: bgVisible, ...backgroundStyle } = panel;
-      if (visible && isBoolean(bgVisible)) {
-        const bgRect = this.createOrUpdateChild(
-          'tag-panel',
-          {
-            ...backgroundStyle,
-            visible: bgVisible && !!text,
-            x: textShape.AABBBounds.x1,
-            y: textShape.AABBBounds.y1,
-            width: textShape.AABBBounds.width(),
-            height: textShape.AABBBounds.height()
-          },
-          'rect'
-        ) as IRect;
-        if (!isEmpty(state?.panel)) {
-          bgRect.states = state.panel;
-        }
-      }
-    } else if (type === 'html') {
-      const richTextAttrs = {
-        textConfig: [] as IRichTextCharacter[],
         visible: isValid(text) && visible !== false,
-        html: {
-          dom: text as string,
-          ...DEFAULT_HTML_TEXT_SPEC,
-          ...textStyle
-        },
-        ...(textStyle as IRichTextGraphicAttribute),
         x: textX,
         y: 0
       };

@@ -73,4 +73,4 @@ type HtmlTextContent = {
   text?: string | HTMLElement;
 };
 
-export type TextContent = CommonTextContent | RichTextContent | HtmlTextContent;
+export type TextContent = CommonTextContent | RichTextContent;

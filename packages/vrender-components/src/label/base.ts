@@ -442,7 +442,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         continue;
       }
 
+      text.attachedThemeGraphic = this as any;
       const textBounds = this.getGraphicBounds(text);
+      text.attachedThemeGraphic = null;
       const actualPosition = isFunction(position) ? position(textData) : (position as string);
 
       const graphicBounds = this._isCollectionBase

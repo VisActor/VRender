@@ -11,6 +11,7 @@ import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
+import { ITheme } from './graphic/theme';
 
 type IStrokeSeg = {
   start: number; // 百分比
@@ -330,6 +331,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   shadowRoot?: IShadowRoot;
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
+  attachedThemeGraphic?: IGraphic<any>;
 
   bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
 

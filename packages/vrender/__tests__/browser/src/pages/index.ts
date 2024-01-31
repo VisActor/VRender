@@ -208,6 +208,10 @@ export const pages = [
       {
         name: 'vchart',
         path: 'vchart'
+      },
+      {
+        name: 'vtable',
+        path: 'vtable'
       }
     ]
   }

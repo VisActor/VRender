@@ -67,7 +67,8 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     if (!this.theme) {
       this.theme = new Theme();
     }
-    return this.theme.setTheme(t, this);
+    this.theme.setTheme(t, this);
+    this.setAllChildUpdateBoundsTag();
   }
 
   createTheme() {
@@ -253,12 +254,29 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return;
   }
 
+  // group上可能有主题，当添加子元素的时候，需要触发它更新bounds
+  setChildUpdateBoundsTag(child: IGraphic) {
+    if (!this.theme) {
+      return;
+    }
+    child.addUpdateShapeAndBoundsTag();
+    if (child.isContainer) {
+      child.setAllChildUpdateBoundsTag();
+    }
+  }
+  setAllChildUpdateBoundsTag() {
+    this.forEachChildren((c: IGraphic) => {
+      this.setChildUpdateBoundsTag(c);
+    });
+  }
+
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
     if (addStage && this.stage && data) {
       (data as unknown as this).setStage(this.stage, this.layer);
     }
     this.addUpdateBoundTag();
+    this.setChildUpdateBoundsTag(node as IGraphic);
     return data;
   }
   insertBefore(newNode: INode, referenceNode: INode): INode | null {
@@ -267,6 +285,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       (data as unknown as this).setStage(this.stage, this.layer);
     }
     this.addUpdateBoundTag();
+    this.setChildUpdateBoundsTag(newNode as IGraphic);
     return data;
   }
   insertAfter(newNode: INode, referenceNode: INode): INode | null {
@@ -275,6 +294,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       (data as unknown as this).setStage(this.stage, this.layer);
     }
     this.addUpdateBoundTag();
+    this.setChildUpdateBoundsTag(newNode as IGraphic);
     return data;
   }
   insertInto(newNode: INode, idx: number): INode | null {
@@ -283,6 +303,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       (data as unknown as this).setStage(this.stage, this.layer);
     }
     this.addUpdateBoundTag();
+    this.setChildUpdateBoundsTag(newNode as IGraphic);
     return data;
   }
 

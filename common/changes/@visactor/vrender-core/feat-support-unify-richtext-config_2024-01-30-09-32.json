@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: compatible with illegal richText value",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

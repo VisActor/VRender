@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: enhance flex effect, support pauseFlex api, closed #874, closed #912",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

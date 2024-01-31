@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray, max } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -30,10 +30,17 @@ import {
   LegendEvent,
   LEGEND_ELEMENT_NAME
 } from '../constant';
-import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
+import type {
+  DiscreteLegendAttrs,
+  LegendItem,
+  LegendItemDatum,
+  LegendPagerAttributes,
+  LegendScrollbarAttributes
+} from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
 import { isRichText, richTextAttributeTransform } from '../../util';
+import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -52,7 +59,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeightByUser: number | undefined = undefined;
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
-  private _pager!: Pager;
+  private _pagerComponent: Pager | ScrollBar;
   private _lastActiveItem: IGroup;
   private _itemContext: {
     // 水平布局换行标识
@@ -68,6 +75,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     items: LegendItemDatum[];
     isHorizontal: boolean;
     currentPage: number;
+    totalPage: number;
   };
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
@@ -337,7 +345,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       startY: 0,
       startIndex: 0,
       items: legendItems,
-      isHorizontal
+      isHorizontal,
+      totalPage: Infinity
     };
 
     this._itemContext = this._renderItems();
@@ -346,7 +355,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let pagerRendered = false;
     if (this._itemContext.doWrap && autoPage && this._itemContext.pages > this._itemContext.maxPages) {
       // 进行分页处理
-      pagerRendered = this._renderPager(isHorizontal);
+      pagerRendered = this._renderPagerComponent(isHorizontal);
     }
 
     if (!pagerRendered) {
@@ -590,51 +599,208 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     return itemGroup;
   }
 
-  private _renderPager(isHorizontal: boolean) {
-    const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {}, disableTriggerEvent } = this.attribute;
-    const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
-    const itemsContainer = this._itemsContainer as IGroup;
+  private _createPager(
+    isScrollbar: boolean,
+    isHorizontal: boolean,
+    compStyle: LegendScrollbarAttributes,
+    compSize: number
+  ) {
+    const { disableTriggerEvent, maxRow } = this.attribute;
+    if (isScrollbar) {
+      return isHorizontal
+        ? new ScrollBar({
+            direction: 'vertical',
+            width: 12,
+            range: [0, 0.5],
+            ...compStyle,
+            height: compSize,
+            disableTriggerEvent
+          })
+        : new ScrollBar({
+            direction: 'horizontal',
+            disableTriggerEvent,
+            range: [0, 0.5],
+            height: 12,
+            ...compStyle,
+            width: compSize
+          });
+    }
+
+    return isHorizontal
+      ? new Pager({
+          layout: maxRow === 1 ? 'horizontal' : 'vertical',
+          total: 99,
+          ...merge(
+            {
+              handler: {
+                preShape: 'triangleUp',
+                nextShape: 'triangleDown'
+              }
+            },
+            compStyle
+          ),
+          disableTriggerEvent
+        })
+      : new Pager({
+          layout: 'horizontal',
+          total: 99, // 用于估算,
+          disableTriggerEvent,
+          ...compStyle
+        });
+  }
+
+  private _updatePositionOfPager(
+    isScrollbar: boolean,
+    isHorizontal: boolean,
+    contentSize: number,
+    renderStartY: number,
+    compSize: number
+  ) {
+    const { maxHeight, pager } = this.attribute;
+    const { currentPage, totalPage } = this._itemContext;
+
+    if (isScrollbar) {
+      (this._pagerComponent as ScrollBar).setScrollRange([(currentPage - 1) / totalPage, currentPage / totalPage]);
+      if (isHorizontal) {
+        (this._pagerComponent as ScrollBar).setAttributes({
+          x: contentSize,
+          y: renderStartY
+        });
+      } else {
+        (this._pagerComponent as ScrollBar).setAttributes({
+          x: 0,
+          y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        });
+      }
+    } else {
+      const position = (pager && pager.position) || 'middle';
+      (this._pagerComponent as Pager).setTotal(totalPage);
+
+      if (isHorizontal) {
+        let y;
+        if (position === 'start') {
+          y = renderStartY;
+        } else if (position === 'end') {
+          y = renderStartY + compSize - this._pagerComponent.AABBBounds.height() / 2;
+        } else {
+          y = renderStartY + compSize / 2 - this._pagerComponent.AABBBounds.height() / 2;
+        }
+        this._pagerComponent.setAttributes({
+          x: contentSize,
+          y
+        });
+      } else {
+        let x;
+        if (position === 'start') {
+          x = 0;
+        } else if (position === 'end') {
+          x = compSize - this._pagerComponent.AABBBounds.width();
+        } else {
+          x = (compSize - this._pagerComponent.AABBBounds.width()) / 2;
+        }
+        this._pagerComponent.setAttributes({
+          x,
+          y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        });
+      }
+    }
+  }
+
+  private _bindEventsOfPager(isScrollbar: boolean, isHorizontal: boolean, compSize: number, spaceSize: number) {
     const {
       animation = true,
       animationDuration = 450,
       animationEasing = 'quadIn',
-      space: pagerSpace = DEFAULT_PAGER_SPACE,
-      position = 'middle',
-      ...pageStyle
-    } = pager;
+      scrollByPosition
+    } = this.attribute.pager || {};
+    const pageParser = isScrollbar
+      ? (e: CustomEvent) => {
+          const { value } = e.detail;
+          let newPage = value[0] * this._itemContext.totalPage;
 
-    let pagerComp: Pager;
-    let pageHeight = 0; // 每页的高度
-    let pageWidth = 0; // 每页的宽度
+          if (scrollByPosition) {
+            newPage = newPage + 1;
+          } else {
+            newPage = Math.floor(newPage) + 1;
+          }
+
+          return newPage;
+        }
+      : (e: CustomEvent) => {
+          return e.detail.current;
+        };
+
+    const onPaging = (e: CustomEvent) => {
+      const newPage = pageParser(e);
+
+      if (newPage === this._itemContext.currentPage) {
+        return;
+      }
+
+      this._itemContext.currentPage = newPage;
+
+      if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
+        this._renderItems();
+
+        const newTotalPage = Math.ceil(this._itemContext.pages / this._itemContext.maxPages);
+        // 更新总页数
+        this._itemContext.totalPage = newTotalPage;
+        (this._pagerComponent as ScrollBar).setScrollRange([(newPage - 1) / newTotalPage, newPage / newTotalPage]);
+      }
+
+      if (animation) {
+        (this._itemsContainer as IGroup)
+          .animate()
+          .to(
+            isHorizontal
+              ? { y: -(newPage - 1) * (compSize + spaceSize) }
+              : { x: -(newPage - 1) * (compSize + spaceSize) },
+            animationDuration,
+            animationEasing
+          );
+      } else {
+        if (isHorizontal) {
+          (this._itemsContainer as IGroup).setAttribute('y', -(newPage - 1) * (compSize + spaceSize));
+        } else {
+          (this._itemsContainer as IGroup).setAttribute('x', -(newPage - 1) * (compSize + spaceSize));
+        }
+      }
+    };
+    if (isScrollbar) {
+      this._pagerComponent.addEventListener('scrollDrag', onPaging);
+      this._pagerComponent.addEventListener('scrollUp', onPaging);
+    } else {
+      this._pagerComponent.addEventListener('toPrev', onPaging);
+      this._pagerComponent.addEventListener('toNext', onPaging);
+    }
+  }
+
+  private _renderPagerComponent(isHorizontal: boolean) {
+    const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
+    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
+    const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
+    const itemsContainer = this._itemsContainer as IGroup;
+    const { type, space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
+    const isScrollbar = type === 'scrollbar';
+
+    let comp: ScrollBar | Pager;
+    let compSize = 0; // 组件的大小
+    let contentSize = 0; // 内容的大小
     let startX = 0; // 临时变量，用来存储布局的起始点
     let startY = 0; // 临时变量，用来存储布局的起始点
     let pages = 1; // 页数
 
     if (isHorizontal) {
+      compSize = (maxRow - 1) * spaceRow + this._itemHeight * maxRow;
       // 水平布局，支持上下翻页
-      pagerComp = new Pager({
-        layout: maxRow === 1 ? 'horizontal' : 'vertical',
-        total: 99,
-        ...merge(
-          {
-            handler: {
-              preShape: 'triangleUp',
-              nextShape: 'triangleDown'
-            }
-          },
-          pageStyle
-        ),
-        disableTriggerEvent
-      });
-      this._pager = pagerComp;
-      this._innerView.add(pagerComp as unknown as INode);
-      pageHeight = (maxRow - 1) * spaceRow + this._itemHeight * maxRow;
-      pageWidth = (maxWidth as number) - pagerComp.AABBBounds.width() - pagerSpace;
+      comp = this._createPager(isScrollbar, isHorizontal, compStyle, compSize);
+      this._pagerComponent = comp;
+      this._innerView.add(comp as unknown as INode);
+      contentSize = (maxWidth as number) - comp.AABBBounds.width() - pagerSpace;
 
-      if (pageWidth <= 0) {
+      if (contentSize <= 0) {
         // 布局空间不够则不进行分页器渲染
-        this._innerView.removeChild(pagerComp as unknown as INode);
+        this._innerView.removeChild(comp as unknown as INode);
         return false;
       }
 
@@ -642,7 +808,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { width, height } = item.attribute;
 
-        if (pageWidth < startX + (width as number)) {
+        if (contentSize < startX + (width as number)) {
           // 超出了，则换行
           startX = 0;
           startY += (height as number) + spaceRow;
@@ -660,44 +826,30 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._itemContext.startX = startX;
       this._itemContext.startY = startY;
       this._itemContext.pages = pages;
+      const total = Math.ceil(pages / maxRow);
 
-      pagerComp.setTotal(Math.ceil(pages / maxRow));
-      let y;
-      if (position === 'start') {
-        y = renderStartY;
-      } else if (position === 'end') {
-        y = renderStartY + pageHeight - pagerComp.AABBBounds.height() / 2;
-      } else {
-        y = renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2;
-      }
-      pagerComp.setAttributes({
-        x: pageWidth,
-        y
-      });
+      this._itemContext.totalPage = total;
+
+      this._updatePositionOfPager(isScrollbar, isHorizontal, contentSize, renderStartY, compSize);
     } else {
+      compSize = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
       // 垂直布局，支持左右翻页
-      pagerComp = new Pager({
-        layout: 'horizontal',
-        total: 99, // 用于估算,
-        disableTriggerEvent,
-        ...pageStyle
-      });
-      this._pager = pagerComp;
-      this._innerView.add(pagerComp as unknown as INode);
+      comp = this._createPager(isScrollbar, isHorizontal, compStyle, compSize);
+      this._pagerComponent = comp;
+      this._innerView.add(comp as unknown as INode);
 
-      pageWidth = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
-      pageHeight = (maxHeight as number) - pagerComp.AABBBounds.height() - pagerSpace - renderStartY;
+      contentSize = (maxHeight as number) - comp.AABBBounds.height() - pagerSpace - renderStartY;
 
-      if (pageHeight <= 0) {
+      if (contentSize <= 0) {
         // 布局空间不够则不进行分页器渲染
-        this._innerView.removeChild(pagerComp as unknown as INode);
+        this._innerView.removeChild(comp as unknown as INode);
         return false;
       }
 
       // 重新进行布局
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { height } = item.attribute;
-        if (pageHeight < startY + (height as number)) {
+        if (contentSize < startY + (height as number)) {
           startY = 0;
           startX += this._itemMaxWidth + spaceCol;
           pages += 1;
@@ -711,74 +863,34 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startY += spaceRow + (height as number);
       });
 
-      pagerComp.setTotal(Math.ceil(pages / maxCol));
+      // todo
+      const total = Math.ceil(pages / maxCol);
 
-      let x;
-      if (position === 'start') {
-        x = 0;
-      } else if (position === 'end') {
-        x = pageWidth - pagerComp.AABBBounds.width();
-      } else {
-        x = (pageWidth - pagerComp.AABBBounds.width()) / 2;
-      }
-      pagerComp.setAttributes({
-        x,
-        y: (maxHeight as number) - pagerComp.AABBBounds.height()
-      });
+      this._itemContext.totalPage = total;
+      this._updatePositionOfPager(isScrollbar, isHorizontal, contentSize, renderStartY, compSize);
     }
 
     // 初始化 defaultCurrent
-    if (pager.defaultCurrent > 1) {
+    if (defaultCurrent > 1) {
       if (isHorizontal) {
-        itemsContainer.setAttribute('y', -(pager.defaultCurrent - 1) * (pageHeight + spaceRow));
+        itemsContainer.setAttribute('y', -(defaultCurrent - 1) * (compSize + spaceRow));
       } else {
-        itemsContainer.setAttribute('x', -(pager.defaultCurrent - 1) * (pageWidth + spaceCol));
+        itemsContainer.setAttribute('x', -(defaultCurrent - 1) * (compSize + spaceCol));
       }
     }
 
     const clipGroup = graphicCreator.group({
       x: 0,
       y: renderStartY,
-      width: pageWidth,
-      height: pageHeight,
+      width: isHorizontal ? contentSize : compSize,
+      height: isHorizontal ? compSize : contentSize,
       clip: true,
       pickable: false
     });
     clipGroup.add(itemsContainer);
     this._innerView.add(clipGroup);
 
-    const onPaging = (e: CustomEvent) => {
-      const { current } = e.detail;
-      this._itemContext.currentPage = current;
-
-      if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
-        this._renderItems();
-
-        // 更新总页数
-        pagerComp.setTotal(Math.ceil(this._itemContext.pages / this._itemContext.maxPages));
-      }
-
-      if (animation) {
-        itemsContainer
-          .animate()
-          .to(
-            isHorizontal
-              ? { y: -(current - 1) * (pageHeight + spaceRow) }
-              : { x: -(current - 1) * (pageWidth + spaceCol) },
-            animationDuration,
-            animationEasing
-          );
-      } else {
-        if (isHorizontal) {
-          itemsContainer.setAttribute('y', -(current - 1) * (pageHeight + spaceRow));
-        } else {
-          itemsContainer.setAttribute('x', -(current - 1) * (pageWidth + spaceCol));
-        }
-      }
-    };
-
-    this._pager.addEventListener('toPrev', onPaging);
-    this._pager.addEventListener('toNext', onPaging);
+    this._bindEventsOfPager(isScrollbar, isHorizontal, compSize, isHorizontal ? spaceRow : spaceCol);
 
     return true;
   }

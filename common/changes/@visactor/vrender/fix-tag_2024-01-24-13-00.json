@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: tag support textAlwaysCenter, closed #915",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

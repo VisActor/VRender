@@ -16,6 +16,7 @@ import type {
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
+import type { PagerAttributes } from '../../pager';
 import { Pager } from '../../pager';
 import {
   DEFAULT_TITLE_SPACE,
@@ -39,6 +40,7 @@ import type {
 } from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
+import type { ScrollBarAttributes } from '../../scrollbar';
 import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
@@ -586,7 +588,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _createPager(
     isScrollbar: boolean,
     isHorizontal: boolean,
-    compStyle: LegendScrollbarAttributes,
+    compStyle: LegendPagerAttributes | LegendScrollbarAttributes,
     compSize: number
   ) {
     const { disableTriggerEvent, maxRow } = this.attribute;
@@ -596,7 +598,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             direction: 'vertical',
             width: 12,
             range: [0, 0.5],
-            ...compStyle,
+            ...(compStyle as LegendScrollbarAttributes),
             height: compSize,
             disableTriggerEvent
           })
@@ -605,7 +607,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             disableTriggerEvent,
             range: [0, 0.5],
             height: 12,
-            ...compStyle,
+            ...(compStyle as LegendScrollbarAttributes),
             width: compSize
           });
     }
@@ -621,7 +623,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
                 nextShape: 'triangleDown'
               }
             },
-            compStyle
+            compStyle as LegendPagerAttributes
           ),
           disableTriggerEvent
         })
@@ -629,7 +631,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           layout: 'horizontal',
           total: 99, // 用于估算,
           disableTriggerEvent,
-          ...compStyle
+          ...(compStyle as LegendPagerAttributes)
         });
   }
 
@@ -657,7 +659,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         });
       }
     } else {
-      const position = (pager && pager.position) || 'middle';
+      const position = (pager && (pager as LegendPagerAttributes).position) || 'middle';
       (this._pagerComponent as Pager).setTotal(totalPage);
 
       if (isHorizontal) {
@@ -691,18 +693,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   private _bindEventsOfPager(isScrollbar: boolean, isHorizontal: boolean, compSize: number, spaceSize: number) {
-    const {
-      animation = true,
-      animationDuration = 450,
-      animationEasing = 'quadIn',
-      scrollByPosition
-    } = this.attribute.pager || {};
+    const pager = this.attribute.pager || {};
+    const { animation = true, animationDuration = 450, animationEasing = 'quadIn' } = pager;
     const pageParser = isScrollbar
       ? (e: CustomEvent) => {
           const { value } = e.detail;
           let newPage = value[0] * this._itemContext.totalPage;
 
-          if (scrollByPosition) {
+          if ((pager as LegendScrollbarAttributes).scrollByPosition) {
             newPage = newPage + 1;
           } else {
             newPage = Math.floor(newPage) + 1;
@@ -764,8 +762,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
-    const { type, space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
-    const isScrollbar = type === 'scrollbar';
+    const { space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
+    const isScrollbar = (pager as LegendScrollbarAttributes).type === 'scrollbar';
 
     let comp: ScrollBar | Pager;
     let compSize = 0; // 组件的大小

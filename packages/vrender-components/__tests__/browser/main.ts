@@ -63,6 +63,14 @@ const specs = [
     name: '离散图例-垂直'
   },
   {
+    path: 'discrete-legend-scroller',
+    name: '离散图例-带滚动条'
+  },
+  {
+    path: 'discrete-legend-v-scroller',
+    name: '离散图例-垂直-带滚动条'
+  },
+  {
     path: 'tag',
     name: '标签'
   },

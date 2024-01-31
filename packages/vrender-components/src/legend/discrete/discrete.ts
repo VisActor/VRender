@@ -429,7 +429,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ...labelStyle.style,
       text
     };
-    if (isRichText({ text })) {
+    if (isRichText(labelAttributes)) {
       labelShape = graphicCreator.richtext(richTextAttributeTransform(labelAttributes));
     } else {
       labelShape = graphicCreator.text(labelAttributes);
@@ -449,10 +449,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         textBaseline: 'middle',
         lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
         ...valueStyle.style,
-        text: valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value
+        text: valueText
       };
       let valueShape;
-      if (isRichText({ text: valueText })) {
+      if (isRichText(valueAttributes)) {
         valueShape = graphicCreator.richtext(richTextAttributeTransform(valueAttributes));
       } else {
         valueShape = graphicCreator.text(valueAttributes);

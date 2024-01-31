@@ -454,6 +454,9 @@ export class FlexLayoutPlugin implements IPlugin {
       if (graphic.glyphHost) {
         graphic = graphic.glyphHost;
       }
+      if (!(graphic.stage && graphic.stage === this.pluginService.stage)) {
+        return;
+      }
       this.tryLayout(graphic, false);
     });
     // 包围盒更新（如果包围盒发生变化，就重新布局

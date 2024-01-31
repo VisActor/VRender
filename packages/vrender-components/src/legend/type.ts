@@ -26,7 +26,7 @@ export type LegendTitle = {
   /**
    * 标题内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    */
-  text?: string | string[] | number | number[] | TextContent;
+  text?: string | string[] | number | number[] | TextContent['text'];
   /** 标题文本样式 */
   textStyle?: Partial<ITextGraphicAttribute>;
   /** 文本前 mark 图元 */

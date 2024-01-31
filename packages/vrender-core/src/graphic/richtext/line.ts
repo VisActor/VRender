@@ -100,21 +100,17 @@ export default class Line {
     let x = this.left;
     let spacing = 0;
     if (this.actualWidth < width && !isWidthMax) {
-      switch (this.textAlign) {
-        case 'right':
-          x = width - this.actualWidth;
-          break;
-        case 'center':
+      if (this.textAlign === 'right' || this.textAlign === 'end') {
+        x = width - this.actualWidth;
+      } else if (this.textAlign === 'center') {
+        x = (width - this.actualWidth) / 2;
+      } else if (this.textAlign === 'justify') {
+        if (this.paragraphs.length < 2) {
+          // 只有一个paragraph两端对齐居中显示
           x = (width - this.actualWidth) / 2;
-          break;
-        case 'justify':
-          if (this.paragraphs.length < 2) {
-            // 只有一个paragraph两端对齐居中显示
-            x = (width - this.actualWidth) / 2;
-          } else {
-            spacing = (width - this.actualWidth) / (this.paragraphs.length - 1);
-          }
-          break;
+        } else {
+          spacing = (width - this.actualWidth) / (this.paragraphs.length - 1);
+        }
       }
     }
 

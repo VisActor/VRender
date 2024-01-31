@@ -240,7 +240,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
           x: textX * flag,
           textAlign: 'center'
         });
-        symbol.setAttributes({
+        symbol?.setAttributes({
           x: symbolX * flag
         });
         group.setAttribute('x', parsedPadding[2 + flag] * flag);

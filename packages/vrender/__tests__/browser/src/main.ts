@@ -50,7 +50,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
       localStorage.setItem(LOCAL_STORAGE_KEY, path);
     }
 
-    import(path === 'jsx' ? `./pages/${path}.tsx` : `./pages/${path}.ts`)
+    import(path === 'jsx' || path === 'react' ? `./pages/${path}.tsx` : `./pages/${path}.ts`)
       .then(module => {
         container.innerHTML = '<canvas id="main" width=3200 height=1800 style="width: 1600px; height: 900px"></canvas>';
 

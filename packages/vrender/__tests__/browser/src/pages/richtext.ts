@@ -359,8 +359,8 @@ export const page = () => {
         },
         {
           text: '\ntextAlign: right',
-          fill: '#000',
-          textAlign: 'right'
+          fill: 'red',
+          textAlign: 'end'
         },
         {
           // image: 'https://vega.github.io/images/idl-logo.png',

@@ -12,7 +12,8 @@ import type {
   IArea,
   IRichTextGraphicAttribute,
   IRichText,
-  IRichTextCharacter
+  IRichTextCharacter,
+  ITextGraphicAttribute
 } from '@visactor/vrender-core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
@@ -30,7 +31,13 @@ import {
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
-import { getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
+import {
+  getMarksByName,
+  getNoneGroupMarksByName,
+  isRichText,
+  richTextAttributeTransform,
+  traverseGroup
+} from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
@@ -295,25 +302,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   };
 
   protected _createLabelText(attributes: LabelItem) {
-    if (attributes.textType === 'rich') {
-      attributes.textConfig = attributes.text as IRichTextCharacter[];
-      attributes.width = attributes.width ?? 0;
-      attributes.height = attributes.height ?? 0;
-      attributes.maxWidth = attributes.maxLineWidth;
-      const text = graphicCreator.richtext(attributes as any);
-      return text;
-    } else if (attributes.textType === 'html') {
-      attributes.textConfig = [] as IRichTextCharacter[];
-      attributes.html = {
-        dom: attributes.text as string,
-        ...DEFAULT_HTML_TEXT_SPEC,
-        ...attributes
-      };
-      const text = graphicCreator.richtext(attributes as IRichTextGraphicAttribute);
-      return text;
+    if (isRichText(attributes as any, 'textType')) {
+      return graphicCreator.richtext(richTextAttributeTransform(attributes as any));
     }
-    const text = graphicCreator.text(attributes);
-    return text;
+    return graphicCreator.text(attributes as ITextGraphicAttribute);
   }
 
   private _prepare() {

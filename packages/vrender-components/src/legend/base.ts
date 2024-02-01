@@ -70,7 +70,7 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
       padding: normalizePadding(padding),
       minWidth,
       maxWidth
-    };
+    } as TagAttributes;
 
     if (shape && shape.visible) {
       tagAttrs.shape = {

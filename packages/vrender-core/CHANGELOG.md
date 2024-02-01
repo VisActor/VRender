@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 24 Jan 2024 13:11:27 GMT and should not be manually modified.
+This log was last generated on Thu, 01 Feb 2024 09:26:17 GMT and should not be manually modified.
+
+## 0.17.20
+Thu, 01 Feb 2024 09:26:17 GMT
+
+### Updates
+
+- feat: enhance flex effect, support pauseFlex api, closed #874, closed #912
+- feat: support keepMatrix api
+- fix: compatible with illegal richText value
 
 ## 0.17.19
 Wed, 24 Jan 2024 13:11:27 GMT

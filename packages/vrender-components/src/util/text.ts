@@ -1,10 +1,11 @@
-import type { ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IRichTextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { getTextBounds } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { TextMeasure } from '@visactor/vutils';
+import { TextMeasure, isObject } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
+import type { TextContent } from '../core/type';
 
 export const initTextMeasure = (
   textSpec?: Partial<ITextGraphicAttribute>,
@@ -47,4 +48,19 @@ export function measureTextSize(
   });
 
   return { width: bounds.width(), height: bounds.height() };
+}
+
+export function isRichText(attributes: TextContent, typeKey = 'type') {
+  return (
+    (typeKey in attributes && attributes[typeKey] === 'rich') ||
+    (isObject(attributes.text) && (attributes.text as TextContent).type === 'rich')
+  );
+}
+
+export function richTextAttributeTransform(attributes: ITextGraphicAttribute & IRichTextAttribute & TextContent) {
+  attributes.width = attributes.width ?? 0;
+  attributes.height = attributes.height ?? 0;
+  attributes.maxWidth = attributes.maxLineWidth;
+  attributes.textConfig = (attributes.text as unknown as any).text || attributes.text;
+  return attributes;
 }

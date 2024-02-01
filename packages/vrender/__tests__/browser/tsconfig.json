@@ -1,6 +1,8 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
+    "jsx": "react",
+    "jsx": "react",
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./es",

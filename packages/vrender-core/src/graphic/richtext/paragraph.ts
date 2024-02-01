@@ -154,7 +154,7 @@ export default class Paragraph {
     } else if (this.ellipsis === 'add') {
       text += '...';
 
-      if (textAlign === 'right') {
+      if (textAlign === 'right' || textAlign === 'end') {
         left -= this.ellipsisWidth;
       }
     } else if (this.ellipsis === 'replace') {
@@ -169,7 +169,7 @@ export default class Paragraph {
       text = text.slice(0, index);
       text += '...';
 
-      if (textAlign === 'right') {
+      if (textAlign === 'right' || textAlign === 'end') {
         const { width } = measureTextCanvas(this.text.slice(index), this.character);
         if (direction === 'vertical') {
           // baseline -= this.ellipsisWidth - width;

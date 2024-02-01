@@ -44,7 +44,7 @@ export default class Frame {
   verticalDirection: 'top' | 'middle' | 'bottom';
   lines: Line[];
   // ctx: IContext2d;
-  globalAlign: 'left' | 'center' | 'right';
+  globalAlign: 'left' | 'center' | 'right' | 'start' | 'end';
   globalBaseline: 'top' | 'middle' | 'bottom';
   layoutDirection: 'horizontal' | 'vertical';
   directionKey: { width: string; height: string; left: string; top: string; bottom: string };
@@ -64,7 +64,7 @@ export default class Frame {
     wordBreak: 'break-word' | 'break-all',
     verticalDirection: 'top' | 'middle' | 'bottom',
     // ctx: IContext2d,
-    globalAlign: 'left' | 'center' | 'right',
+    globalAlign: 'left' | 'center' | 'right' | 'start' | 'end',
     globalBaseline: 'top' | 'middle' | 'bottom',
     layoutDirection: 'horizontal' | 'vertical',
     isWidthMax: boolean,
@@ -132,18 +132,10 @@ export default class Frame {
     }
 
     let deltaX = 0;
-    switch (this.globalAlign) {
-      case 'left':
-        deltaX = 0;
-        break;
-      case 'center':
-        deltaX = -width / 2;
-        break;
-      case 'right':
-        deltaX = -width;
-        break;
-      default:
-        break;
+    if (this.globalAlign === 'right' || this.globalAlign === 'end') {
+      deltaX = -width;
+    } else if (this.globalAlign === 'center') {
+      deltaX = -width / 2;
     }
 
     let frameHeight = this[this.directionKey.height];

@@ -9,16 +9,15 @@ import type {
   ITextAttribute,
   ITextGraphicAttribute,
   IRichTextGraphicAttribute,
-  IRichText,
-  IRichTextCharacter
+  IRichText
 } from '@visactor/vrender-core';
-import { isBoolean, isEmpty, isNil, isNumber, isValid, merge, normalizePadding } from '@visactor/vutils';
+import { isBoolean, isEmpty, isNil, isNumber, isObject, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { measureTextSize } from '../util';
+import { isRichText, measureTextSize, richTextAttributeTransform } from '../util';
 import type { BackgroundAttributes, ComponentOptions } from '../interface';
 import type { TagAttributes, TagShapeAttributes } from './type';
-import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTagComponent } from './register';
+import type { TextContent } from '../core/type';
 
 loadTagComponent();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
@@ -99,47 +98,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     textX += symbolPlaceWidth;
 
     let textShape;
-    if (type === 'rich') {
+    const isRich = isRichText({ text } as TextContent) || type === 'rich';
+    if (isRich) {
       const richTextAttrs = {
-        textConfig: text as IRichTextCharacter[],
-        visible: isValid(text) && visible !== false,
+        ...richTextAttributeTransform({ type, text, ...textStyle } as any),
         ...(textStyle as IRichTextGraphicAttribute),
-        x: textX,
-        y: 0,
-        width: (textStyle as IRichTextGraphicAttribute).width ?? 0,
-        height: (textStyle as IRichTextGraphicAttribute).height ?? 0
-      };
-      textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
-
-      // 绘制背景层
-      const { visible: bgVisible, ...backgroundStyle } = panel;
-      if (visible && isBoolean(bgVisible)) {
-        const bgRect = this.createOrUpdateChild(
-          'tag-panel',
-          {
-            ...backgroundStyle,
-            visible: bgVisible && !!text,
-            x: textShape.AABBBounds.x1,
-            y: textShape.AABBBounds.y1,
-            width: textShape.AABBBounds.width(),
-            height: textShape.AABBBounds.height()
-          },
-          'rect'
-        ) as IRect;
-        if (!isEmpty(state?.panel)) {
-          bgRect.states = state.panel;
-        }
-      }
-    } else if (type === 'html') {
-      const richTextAttrs = {
-        textConfig: [] as IRichTextCharacter[],
         visible: isValid(text) && visible !== false,
-        html: {
-          dom: text as string,
-          ...DEFAULT_HTML_TEXT_SPEC,
-          ...textStyle
-        },
-        ...(textStyle as IRichTextGraphicAttribute),
         x: textX,
         y: 0
       };
@@ -166,7 +130,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
     } else {
       const textAttrs = {
-        text: text as string | number | string[] | number[],
+        text: isObject(text) && 'type' in text && text.type === 'text' ? text.text : text,
         visible: isValid(text) && visible !== false,
         lineHeight: (textStyle as ITextGraphicAttribute)?.fontSize,
         ...(textStyle as ITextGraphicAttribute),
@@ -176,7 +140,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       if (isNil(textAttrs.lineHeight)) {
         textAttrs.lineHeight = (textStyle as ITextGraphicAttribute).fontSize;
       }
-      textShape = group.createOrUpdateChild('tag-text', textAttrs, 'text') as IText;
+      textShape = group.createOrUpdateChild('tag-text', textAttrs as ITextGraphicAttribute, 'text') as IText;
       if (!isEmpty(state?.text)) {
         textShape.states = state.text;
       }
@@ -204,30 +168,46 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
       let x = 0;
       let y = 0;
-      if (textAlign === 'center') {
+      let flag = 0;
+      if (textAlign === 'left' || textAlign === 'start') {
+        flag = 1;
+      } else if (textAlign === 'right' || textAlign === 'end') {
+        flag = -1;
+      } else if (textAlign === 'center') {
+        flag = 0;
+      }
+      if (!flag) {
         x -= tagWidth / 2;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
         }
 
         group.setAttribute('x', -symbolPlaceWidth / 2);
-      } else if (textAlign === 'right' || textAlign === 'end') {
+      } else if (flag < 0) {
         x -= tagWidth;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
         }
 
         group.setAttribute('x', -parsedPadding[1] - symbolPlaceWidth);
-      } else if (textAlign === 'left' || textAlign === 'start') {
+      } else if (flag > 0) {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter && (textAlign === 'left' || textAlign === 'start')) {
-        // for flex layout
+      if (textAlwaysCenter && flag) {
+        // 剔除padding后的内宽度
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const tsWidth = textWidth + symbolPlaceWidth;
+        const textX = (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2;
+        const symbolX = (containerWidth - tsWidth) / 2 + maxSize / 2;
         textShape.setAttributes({
-          x: textX + tagWidth / 2,
+          x: textX * flag,
           textAlign: 'center'
         });
+        symbol?.setAttributes({
+          x: symbolX * flag
+        });
+        group.setAttribute('x', parsedPadding[2 + flag] * flag);
       }
 
       if (textBaseline === 'middle') {

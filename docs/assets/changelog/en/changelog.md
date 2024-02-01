@@ -1,3 +1,16 @@
+# v0.17.19
+
+2024-02-01
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with 3d draw dirtybounds
+
+
+
+[more detail about v0.17.19](https://github.com/VisActor/VRender/releases/tag/v0.17.19)
+
 # v0.17.18
 
 2024-01-24

@@ -22,7 +22,8 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute,
   CustomEvent,
-  IText
+  IText,
+  IRichText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -340,8 +341,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _autoEllipsis(
     autoEllipsisStrategy: 'labelFirst' | 'valueFirst' | 'none',
     layoutWidth: number,
-    labelShape: IText,
-    valueShape: IText
+    labelShape: IText | IRichText,
+    valueShape: IText | IRichText
   ) {
     const { label: labelAttr, value: valueAttr } = this.attribute.item as LegendItem;
     const valueBounds = valueShape.AABBBounds;

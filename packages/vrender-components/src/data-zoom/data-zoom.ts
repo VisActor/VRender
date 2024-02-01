@@ -272,7 +272,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 3. 在startHandler上拖拽 (activeTag === 'startHandler'): 改变lastPos、start & end + 边界处理: startHandler和endHandler交换 => 所有handler的位置被改变
    * 4. 在endHandler上拖拽，同上
    */
-  private _onHandlerPointerMove = delayMap[this.attribute.delayType]((e: FederatedPointerEvent) => {
+  private _pointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
@@ -318,7 +318,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         tag: this._activeTag
       });
     }
-  }, this.attribute.delayTime);
+  };
+  private _onHandlerPointerMove =
+    this.attribute.delayTime === 0
+      ? this._pointerMove
+      : delayMap[this.attribute.delayType](this._pointerMove, this.attribute.delayTime);
 
   /**
    * 拖拽结束事件

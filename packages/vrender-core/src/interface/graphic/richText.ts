@@ -2,6 +2,7 @@ import type { IColor } from '../color';
 import type { IContext2d } from '../context';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { IImage, IImageGraphicAttribute } from './image';
+import type { ITextGraphicAttribute } from './text';
 
 export type IRichTextAttribute = {
   width: number;

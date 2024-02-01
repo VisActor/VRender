@@ -204,7 +204,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return this._frameCache;
   }
   combinedStyleToCharacter(config: IRichTextImageCharacter | IRichTextParagraphCharacter) {
-    const { fill, stroke, fontSize, fontFamily, fontStyle, fontWeight } = this.attribute;
+    const { fill, stroke, fontSize, fontFamily, fontStyle, fontWeight } = this.attribute as any;
     return { fill, stroke, fontSize, fontFamily, fontStyle, fontWeight, ...config };
   }
   doUpdateFrameCache() {

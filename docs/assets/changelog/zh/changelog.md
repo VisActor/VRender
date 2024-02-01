@@ -1,3 +1,25 @@
+# v0.17.20
+
+2024-02-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: unify richtext config
+- **@visactor/vrender-components**: support richtext in legend components
+- **@visactor/vrender-components**: tag support textAlwaysCenter, closed [#915](https://github.com/VisActor/VRender/issues/915)
+- **@visactor/vrender-core**: enhance flex effect, support pauseFlex api, closed [#874](https://github.com/VisActor/VRender/issues/874), closed [#912](https://github.com/VisActor/VRender/issues/912)
+- **@visactor/vrender-core**: support keepMatrix api
+- **@visactor/vrender**: refactor GetImage in ResourceLoader
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: compatible with illegal richText value
+
+
+
+[更多详情请查看 v0.17.20](https://github.com/VisActor/VRender/releases/tag/v0.17.20)
+
 # v0.17.18
 
 2024-01-24

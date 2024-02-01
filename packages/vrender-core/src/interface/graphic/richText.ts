@@ -19,8 +19,7 @@ export type IRichTextAttribute = {
   singleLine: boolean;
 };
 
-export type IRichTextGraphicAttribute = Partial<IGraphicAttribute & ITextGraphicAttribute> &
-  Partial<IRichTextAttribute>;
+export type IRichTextGraphicAttribute = Partial<IGraphicAttribute> & Partial<IRichTextAttribute>;
 
 export type RichTextWordBreak = 'break-word' | 'break-all';
 export type RichTextVerticalDirection = 'top' | 'middle' | 'bottom';

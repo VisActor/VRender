@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: remove debounce when no delay time",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

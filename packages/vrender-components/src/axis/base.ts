@@ -122,7 +122,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected render(): void {
-    this.removeAllChild();
+    this.removeAllChild(true);
     this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);

@@ -20,43 +20,89 @@ export const page = () => {
     let i = 0;
 
     const spec = {
-      type: 'bar',
-      theme: {
-        fontFamily: 'serif'
+      type: 'line',
+      data: {
+        values: [
+          {
+            time: '2:00',
+            value: 8
+          },
+          {
+            time: '4:00',
+            value: 9
+          },
+          {
+            time: '6:00',
+            value: 11
+          },
+          {
+            time: '8:00',
+            value: 14
+          },
+          {
+            time: '10:00',
+            value: 16
+          },
+          {
+            time: '12:00',
+            value: 17
+          },
+          {
+            time: '14:00',
+            value: 17
+          },
+          {
+            time: '16:00',
+            value: 16
+          },
+          {
+            time: '18:00',
+            value: 15
+          }
+        ]
       },
-      data: [
-        {
-          id: 'barData',
-          values: [
-            { month: 'Monday', sales: 22 },
-            { month: 'Tuesday', sales: 13 },
-            { month: 'Wednesday', sales: 25 },
-            { month: 'Thursday', sales: 29 },
-            { month: 'Friday', sales: 38 }
-          ]
-        }
-      ],
-      xField: 'month',
-      yField: 'sales',
+      xField: 'time',
+      yField: 'value',
       label: {
         visible: true,
-        position: 'inside',
         style: {
-          lineHeight: '100%',
-          _debug_bounds: true,
-          fill: 'red'
-        },
-        overlap: {
-          strategy: []
-        },
-        smartInvert: false,
-        formatMethod: val => {
-          return data[i++ % 5];
+          // html: {
+          //   // anchorType: 'position',
+          //   dom: `<div>这是abcdefg<b>111</b></div>`
+          //   // width: 100,
+          //   // height: 60
+          // }
         }
-      }
+      },
+      axes: [
+        {
+          type: 'band',
+          orient: 'bottom',
+          label: {
+            style: {
+              // fill: 'transparent',
+              stroke: 'transparent',
+              html: {
+                anchorType: 'boundsLeftTop',
+                dom: `<div>这是abcdefg<b>111</b></div>`,
+                width: 100,
+                height: 60
+              }
+            }
+          }
+        }
+      ]
     };
 
-    const chartSpace = new window.ChartSpace.default(spec, { dom: 'container' });
+    const chartSpace = new window.ChartSpace.default(spec, {
+      dom: 'container',
+      enableHtmlAttribute: true,
+      animation: false
+    });
+
+    setTimeout(() => {
+      chartSpace.resize(800, 600);
+    }, 3000);
 
     chartSpace.renderSync();
     console.log(chartSpace);

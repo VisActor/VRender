@@ -77,7 +77,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   }
 
   protected render() {
-    this.removeAllChild();
+    this.removeAllChild(true);
     this._reset();
     const {
       // points,

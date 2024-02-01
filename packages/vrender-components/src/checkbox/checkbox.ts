@@ -73,7 +73,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   }
 
   render() {
-    this.removeAllChild();
+    this.removeAllChild(true);
 
     this.renderBox();
     this.renderIcon();

@@ -312,6 +312,7 @@ export const page = () => {
       x: 500,
       y: 100,
       width: 300,
+      stroke: 'green',
       height: 0,
       textConfig: [
         {

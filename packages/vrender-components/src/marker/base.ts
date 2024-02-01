@@ -86,7 +86,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       }
     } else {
       this._container = null;
-      this.removeAllChild();
+      this.removeAllChild(true);
     }
   }
 }

@@ -152,8 +152,8 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     // 如果存在3d视角，那么不使用dirtyBounds
     if (stage.camera) {
-      this.dirtyBounds.clear();
-      this.backupDirtyBounds.clear();
+      this.dirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
+      this.backupDirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
     }
 
     this.clearScreen(renderService, context, drawContext);
@@ -284,8 +284,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     // 渲染
     const incrementalContext = incrementalLayer.layer.getNativeHandler().getContext();
     const idc = incrementalLayer.drawContribution || container.get(IncrementalDrawContribution);
-    idc.dirtyBounds.clear();
-    idc.backupDirtyBounds.clear();
+    idc.dirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
+    idc.backupDirtyBounds.setValue(-Infinity, -Infinity, Infinity, Infinity);
     (idc as any).draw(this.currentRenderService, {
       ...drawContext,
       drawContribution: idc,

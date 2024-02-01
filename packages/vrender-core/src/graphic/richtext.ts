@@ -203,6 +203,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     return this._frameCache;
   }
+  combinedStyleToCharacter(config: IRichTextImageCharacter | IRichTextParagraphCharacter) {
+    const { fill, stroke, fontSize, fontFamily, fontStyle, fontWeight } = this.attribute;
+    return { fill, stroke, fontSize, fontFamily, fontStyle, fontWeight, ...config };
+  }
   doUpdateFrameCache() {
     // 1. 测量，生成paragraph
     const {
@@ -223,7 +227,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
     for (let i = 0; i < textConfig.length; i++) {
       if ('image' in textConfig[i]) {
-        const config = textConfig[i] as IRichTextImageCharacter;
+        const config = this.combinedStyleToCharacter(
+          textConfig[i] as IRichTextImageCharacter
+        ) as IRichTextImageCharacter;
         // 直接创建icon Mark
         const iconCache =
           config.id && this._frameCache && this._frameCache.icons && this._frameCache.icons.get(config.id);
@@ -239,7 +245,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           paragraphs.push(icon);
         }
       } else {
-        const richTextConfig = textConfig[i] as IRichTextParagraphCharacter;
+        const richTextConfig = this.combinedStyleToCharacter(
+          textConfig[i] as IRichTextParagraphCharacter
+        ) as IRichTextParagraphCharacter;
         if (isNumber(richTextConfig.text)) {
           richTextConfig.text = `${richTextConfig.text}`;
         }

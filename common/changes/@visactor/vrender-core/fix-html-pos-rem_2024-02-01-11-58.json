@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with remove html and change html pos, closed #944",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

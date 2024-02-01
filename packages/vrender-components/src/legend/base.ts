@@ -17,7 +17,7 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
   protected _title: Tag | null = null;
 
   render() {
-    this.removeAllChild();
+    this.removeAllChild(true);
 
     const { interactive = true, title, padding = 0 } = this.attribute;
     const parsedPadding = normalizePadding(padding);

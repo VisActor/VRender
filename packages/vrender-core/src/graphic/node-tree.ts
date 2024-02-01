@@ -408,7 +408,7 @@ export class Node extends EventEmitter<any, any> implements INode {
   /**
    * 删除所有的孩子节点
    */
-  removeAllChild() {
+  removeAllChild(deep?: boolean) {
     if (!this._idMap) {
       return;
     }

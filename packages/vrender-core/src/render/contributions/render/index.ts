@@ -12,4 +12,3 @@ export * from './image-render';
 export * from './symbol';
 export * from './contributions';
 export * from './utils';
-export * from './draw-interceptor';

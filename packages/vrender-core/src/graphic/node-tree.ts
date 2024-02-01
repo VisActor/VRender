@@ -414,12 +414,11 @@ export class Node extends EventEmitter<any, any> implements INode {
     }
     let child = this._firstChild;
     while (child) {
-      const next = child._next;
       child.parent = null;
       //   child._rootNode = child;
       child._prev = null;
       child._next = null;
-      child = next;
+      child = child._next;
     }
 
     this._firstChild = null;

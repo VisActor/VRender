@@ -1373,11 +1373,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         ResourceLoader.GetImage(image, this);
         this.backgroundImg = this.backgroundImg || background;
       }
-    } else if (isObject(image)) {
+    } else {
       (cache.state = 'success'), (cache.data = image);
       this.backgroundImg = this.backgroundImg || background;
-    } else {
-      cache.state = 'fail';
     }
   }
 

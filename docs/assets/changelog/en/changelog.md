@@ -1,3 +1,16 @@
+# v0.17.22
+
+2024-02-02
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: revert richtext inherit
+
+
+
+[more detail about v0.17.22](https://github.com/VisActor/VRender/releases/tag/v0.17.22)
+
 # v0.17.21
 
 2024-02-02

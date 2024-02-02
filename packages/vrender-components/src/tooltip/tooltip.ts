@@ -175,7 +175,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
 
     // 创建内容层
     this._tooltipContent = this.createOrUpdateChild(TOOLTIP_CONTENT_NAME, { visible: true }, 'group') as IGroup;
-    this._tooltipContent.removeAllChild(); // 清空内容区
+    this._tooltipContent.removeAllChild(true); // 清空内容区
 
     if (content && content.length) {
       this._tooltipContent.setAttribute('x', padding[3]);

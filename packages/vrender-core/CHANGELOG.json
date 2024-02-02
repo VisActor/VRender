@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.21",
+      "tag": "@visactor/vrender-core_v0.17.21",
+      "date": "Thu, 01 Feb 2024 12:22:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: richtext support inherit attribute, closed #946"
+          },
+          {
+            "comment": "fix: fix issue with remove html and change html pos, closed #944"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.20",
       "tag": "@visactor/vrender-core_v0.17.20",
       "date": "Thu, 01 Feb 2024 09:26:17 GMT",

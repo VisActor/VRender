@@ -335,15 +335,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected abstract tryUpdateOBBBounds(): OBBBounds;
 
   protected tryUpdateGlobalAABBBounds(): AABBBounds {
+    const b = this.AABBBounds;
     if (!this._globalAABBBounds) {
-      this._globalAABBBounds = this.AABBBounds.clone();
+      this._globalAABBBounds = b.clone();
     } else {
-      this._globalAABBBounds.setValue(
-        this._AABBBounds.x1,
-        this._AABBBounds.y1,
-        this._AABBBounds.x2,
-        this._AABBBounds.y2
-      );
+      this._globalAABBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
     }
     // 使用parent的grloalAABBBounds
     // todo: 考虑是否需要性能优化

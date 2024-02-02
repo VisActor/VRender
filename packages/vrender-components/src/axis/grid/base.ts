@@ -135,7 +135,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   protected abstract getGridAttribute(isSubGrid: boolean): T;
 
   protected render(): void {
-    this.removeAllChild();
+    this.removeAllChild(true);
     this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);

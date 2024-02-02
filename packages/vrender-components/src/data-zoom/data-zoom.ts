@@ -184,8 +184,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       );
     }
     // 拖拽结束
-    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
-    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp);
+    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp);
     // hover
     if (showDetail === 'auto') {
       (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
@@ -258,7 +258,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // 拖拽时
       vglobal.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
       // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+      vglobal.addEventListener('pointerup', this._onHandlerPointerUp);
     }
     // 拖拽时
     (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
@@ -324,7 +324,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 拖拽结束事件
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
-  private _onHandlerPointerUp(e: FederatedPointerEvent) {
+  private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     const { start, end, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     if (this._activeState) {
@@ -353,11 +353,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // 拖拽时
       vglobal.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
       // 拖拽结束
-      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp);
     }
     // 拖拽时
     (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-  }
+    (this as unknown as IGroup).removeEventListener('pointerup', this._onHandlerPointerUp);
+  };
 
   /**
    * 鼠标进入事件

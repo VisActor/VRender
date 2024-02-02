@@ -408,17 +408,19 @@ export class Node extends EventEmitter<any, any> implements INode {
   /**
    * 删除所有的孩子节点
    */
-  removeAllChild() {
+  removeAllChild(deep?: boolean) {
     if (!this._idMap) {
       return;
     }
     let child = this._firstChild;
     while (child) {
+      const next = child._next;
       child.parent = null;
       //   child._rootNode = child;
       child._prev = null;
       child._next = null;
       child = child._next;
+      child = next;
     }
 
     this._firstChild = null;

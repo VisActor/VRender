@@ -1,6 +1,27 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 24 Jan 2024 13:11:27 GMT and should not be manually modified.
+This log was last generated on Fri, 02 Feb 2024 07:17:07 GMT and should not be manually modified.
+
+## 0.17.22
+Fri, 02 Feb 2024 07:17:07 GMT
+
+_Version update only_
+
+## 0.17.21
+Thu, 01 Feb 2024 12:22:29 GMT
+
+### Updates
+
+- fix: fix issue with remove html, closed #944
+
+## 0.17.20
+Thu, 01 Feb 2024 09:26:17 GMT
+
+### Updates
+
+- feat: unify richtext config
+- feat: support richtext in legend components
+- feat: tag support textAlwaysCenter, closed #915
 
 ## 0.17.19
 Wed, 24 Jan 2024 13:11:27 GMT

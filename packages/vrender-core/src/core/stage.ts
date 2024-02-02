@@ -23,7 +23,8 @@ import type {
   ITimeline,
   IOptimizeType,
   LayerMode,
-  PickResult
+  PickResult,
+  IPlugin
 } from '../interface';
 import { VWindow } from './window';
 import type { Layer } from './layer';
@@ -559,6 +560,10 @@ export class Stage extends Group implements IStage {
     });
   }
 
+  getPluginsByName(name: string): IPlugin[] {
+    return this.pluginService.findPluginsByName(name);
+  }
+
   // /**
   //  * stage的appendChild，add
   //  * @param node
@@ -637,7 +642,7 @@ export class Stage extends Group implements IStage {
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(this.children as ILayer[]);
+      this.renderLayerList(this.children as ILayer[], params);
       this.combineLayersToWindow();
       this.nextFrameRenderLayerSet.clear();
       this.hooks.afterRender.call(this);
@@ -724,7 +729,7 @@ export class Stage extends Group implements IStage {
           background: layer === this.defaultLayer ? this.background : undefined,
           updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
-        { renderStyle: this.renderStyle, ...params }
+        { renderStyle: this.renderStyle, keepMatrix: this.params.renderKeepMatrix, ...params }
       );
     });
 

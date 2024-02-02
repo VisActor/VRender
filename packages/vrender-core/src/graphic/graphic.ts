@@ -27,6 +27,7 @@ import { Node } from './node-tree';
 import type {
   IAnimate,
   IAnimateTarget,
+  IFullThemeSpec,
   IGlyphGraphicAttribute,
   IGroup,
   ILayer,
@@ -34,7 +35,8 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate
+  ISubAnimate,
+  ITheme
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
@@ -262,6 +264,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare finalAttrs?: T;
 
   declare pathProxy?: ICustomPath2D;
+  // 依附于某个theme，如果该节点不存在parent，那么这个Theme就作为节点的Theme，避免添加到节点前计算属性
+  declare attachedThemeGraphic?: IGraphic;
 
   constructor(params: T = {} as T) {
     super();
@@ -313,7 +317,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     application.graphicService.beforeUpdateAABBBounds(this, this.stage, true, this._AABBBounds);
     const bounds = this.doUpdateAABBBounds(full);
-    this.addUpdateLayoutTag();
+    // this.addUpdateLayoutTag();
     application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
     return bounds;
   }
@@ -331,15 +335,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   protected abstract tryUpdateOBBBounds(): OBBBounds;
 
   protected tryUpdateGlobalAABBBounds(): AABBBounds {
+    const b = this.AABBBounds;
     if (!this._globalAABBBounds) {
-      this._globalAABBBounds = this.AABBBounds.clone();
+      this._globalAABBBounds = b.clone();
     } else {
-      this._globalAABBBounds.setValue(
-        this._AABBBounds.x1,
-        this._AABBBounds.y1,
-        this._AABBBounds.x2,
-        this._AABBBounds.y2
-      );
+      this._globalAABBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
     }
     // 使用parent的grloalAABBBounds
     // todo: 考虑是否需要性能优化
@@ -1373,9 +1373,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         ResourceLoader.GetImage(image, this);
         this.backgroundImg = this.backgroundImg || background;
       }
-    } else {
+    } else if (isObject(image)) {
       (cache.state = 'success'), (cache.data = image);
       this.backgroundImg = this.backgroundImg || background;
+    } else {
+      cache.state = 'fail';
     }
   }
 

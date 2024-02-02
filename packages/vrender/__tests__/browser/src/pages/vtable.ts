@@ -14,103 +14,249 @@ export const page = () => {
   window.VRenderCore = VRenderCore;
   // @ts-ignore
   window.VRenderKits = VRenderKits;
-  import('https://tosv.byted.org/obj/dpvis/vchart-used-in-vrender-bugserver.js').then(async () => {
-    window.ChartSpace = window.VChart;
-    const data = [['430(9%)'], ['1,428(23%)'], ['1,386(29%)'], ['1,676(27%)'], ['860(18%)']];
-    let i = 0;
-
-    const spec = {
-      type: 'line',
-      data: {
-        values: [
-          {
-            time: '2:00',
-            value: 8
-          },
-          {
-            time: '4:00',
-            value: 9
-          },
-          {
-            time: '6:00',
-            value: 11
-          },
-          {
-            time: '8:00',
-            value: 14
-          },
-          {
-            time: '10:00',
-            value: 16
-          },
-          {
-            time: '12:00',
-            value: 17
-          },
-          {
-            time: '14:00',
-            value: 17
-          },
-          {
-            time: '16:00',
-            value: 16
-          },
-          {
-            time: '18:00',
-            value: 15
-          }
-        ]
-      },
-      xField: 'time',
-      yField: 'value',
-      label: {
-        visible: true,
+  import('https://tosv.byted.org/obj/dpvis/bugserver-vrender/vtable-used-in-vrender-bugserver.js').then(async () => {
+    // your code here
+    const dom = document.querySelector('#container');
+    VTable.register.icon('location', {
+      type: 'svg',
+      name: 'location',
+      positionType: VTable.TYPES.IconPosition.left,
+      svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg'
+    });
+    VTable.register.icon('favorite', {
+      type: 'svg',
+      name: 'favorite',
+      positionType: VTable.TYPES.IconPosition.left,
+      width: 20,
+      height: 20,
+      cursor: 'pointer',
+      tooltip: {
+        placement: VTable.TYPES.Placement.top,
+        title: '关注博主',
         style: {
-          // html: {
-          //   // anchorType: 'position',
-          //   dom: `<div>这是abcdefg<b>111</b></div>`
-          //   // width: 100,
-          //   // height: 60
-          // }
+          font: '10px Arial',
+          bgColor: 'white',
+          color: '#333',
+          arrowMark: true
         }
       },
-      axes: [
-        {
-          type: 'band',
-          orient: 'bottom',
-          label: {
-            style: {
-              // fill: 'transparent',
-              stroke: 'transparent',
-              html: {
-                anchorType: 'boundsLeftTop',
-                dom: `<div>这是abcdefg<b>111</b></div>`,
-                width: 100,
-                height: 60
-              }
-            }
-          }
-        }
-      ]
-    };
-
-    const chartSpace = new window.ChartSpace.default(spec, {
-      dom: 'container',
-      enableHtmlAttribute: true,
-      animation: false
+      svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/favorite.svg'
     });
 
-    setTimeout(() => {
-      chartSpace.resize(800, 600);
-    }, 3000);
+    VTable.register.icon('message', {
+      type: 'svg',
+      name: 'message',
+      positionType: VTable.TYPES.IconPosition.left,
+      width: 20,
+      height: 20,
+      marginLeft: 10,
+      cursor: 'pointer',
+      tooltip: {
+        placement: VTable.TYPES.Placement.top,
+        title: '发消息',
+        style: {
+          font: '10px Arial',
+          bgColor: 'white',
+          color: '#333',
+          arrowMark: true
+        }
+      },
+      svg: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/message.svg'
+    });
 
-    chartSpace.renderSync();
-    console.log(chartSpace);
+    const option = {
+      container: dom,
+      columns: [
+        {
+          field: 'bloggerId',
+          caption: '序号'
+        },
+        {
+          field: 'bloggerName',
+          caption: '主播昵称',
+          width: '260',
+          style: {
+            fontFamily: 'Arial',
+            fontWeight: 500
+          },
+          customLayout: args => {
+            const { table, row, col, rect } = args;
+            const record = table.getRecordByCell(col, row);
+            const { height, width } = rect ?? table.getCellRect(col, row);
+            const percentCalc = VTable.CustomLayout.percentCalc;
 
-    // window.BUGSERVER_SCREENSHOT();
-    // window.BUGSERVER_RELEASE(() => {
-    //   chartSpace.release();
-    // });
+            const container = new VTable.CustomLayout.Container({
+              height,
+              width
+            });
+            const containerLeft = new VTable.CustomLayout.Container({
+              height: percentCalc(100),
+              width: 60,
+              showBounds: false,
+              direction: 'column',
+              alignContent: 'center',
+              justifyContent: 'space-around'
+            });
+            container.add(containerLeft);
+
+            const icon0 = new VTable.CustomLayout.Image({
+              id: 'icon0',
+              width: 50,
+              height: 50,
+              src: record.bloggerAvatar,
+              shape: 'circle',
+              marginLeft: 10
+            });
+            containerLeft.add(icon0);
+
+            const containerRight = new VTable.CustomLayout.Container({
+              height: percentCalc(100),
+              width: 200,
+              showBounds: false,
+              direction: 'column'
+              // justifyContent: 'center',
+            });
+            container.add(containerRight);
+
+            const containerRightTop = new VTable.CustomLayout.Container({
+              height: percentCalc(50),
+              width: percentCalc(100),
+              showBounds: false,
+              alignItems: 'flex-end'
+            });
+
+            const containerRightBottom = new VTable.CustomLayout.Container({
+              height: percentCalc(50),
+              width: percentCalc(100),
+              showBounds: false,
+              alignItems: 'center'
+            });
+
+            containerRight.add(containerRightTop);
+            containerRight.add(containerRightBottom);
+
+            const bloggerName = new VTable.CustomLayout.Text({
+              text: record.bloggerName,
+              fontSize: 13,
+              fontFamily: 'sans-serif',
+              fill: 'black',
+              marginLeft: 10
+            });
+            bloggerName.getSize(table);
+            containerRightTop.add(bloggerName);
+
+            const location = new VTable.CustomLayout.Icon({
+              id: 'location',
+              iconName: 'location',
+              width: 15,
+              height: 15,
+              marginLeft: 10
+            });
+            containerRightTop.add(location);
+
+            const locationName = new VTable.CustomLayout.Text({
+              text: record.city,
+              fontSize: 11,
+              fontFamily: 'sans-serif',
+              fill: '#6f7070'
+            });
+            bloggerName.getSize(table);
+            containerRightTop.add(locationName);
+
+            for (let i = 0; i < record?.tags?.length ?? 0; i++) {
+              const tag = new VTable.CustomLayout.Tag({
+                text: record.tags[i],
+                textStyle: {
+                  fontSize: 10,
+                  fontFamily: 'sans-serif',
+                  fill: 'rgb(51, 101, 238)'
+                },
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                padding: 5,
+                marginLeft: 10
+              });
+              tag.getSize(table);
+              containerRightBottom.add(tag);
+            }
+            return {
+              rootContainer: container,
+              renderDefault: false
+            };
+          }
+        },
+        {
+          field: 'fansCount',
+          caption: '粉丝数',
+          fieldFormat(rec) {
+            return rec.fansCount + 'w';
+          },
+          style: {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontWeight: 'bold'
+          }
+        },
+        {
+          field: 'worksCount',
+          caption: '作品数',
+          style: {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontWeight: 'bold'
+          }
+        },
+        {
+          field: 'viewCount',
+          caption: '播放量',
+          fieldFormat(rec) {
+            return rec.fansCount + 'w';
+          },
+          style: {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontWeight: 'bold'
+          }
+        },
+        {
+          field: 'viewCount',
+          caption: '播放量',
+          fieldFormat(rec) {
+            return rec.fansCount + 'w';
+          },
+          style: {
+            fontFamily: 'Arial',
+            fontSize: 12,
+            fontWeight: 'bold'
+          }
+        },
+        {
+          field: '',
+          caption: '操作',
+          width: 100,
+          icon: ['favorite', 'message']
+        }
+      ],
+      records: [
+        {
+          bloggerId: 1,
+          bloggerName: '虚拟主播小花',
+          bloggerAvatar: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+          introduction: '大家好，我是虚拟主播小花。喜欢游戏、动漫和美食的小仙女，希望通过直播和大家分享快乐时光。',
+          fansCount: 400,
+          worksCount: 10,
+          viewCount: 5,
+          city: '梦幻之都',
+          tags: ['游戏', '动漫', '美食']
+        }
+      ],
+      defaultRowHeight: 80
+    };
+
+    const tableInstance = new VTable.ListTable(option);
   });
   return;
   const graphics: IGraphic[] = [];

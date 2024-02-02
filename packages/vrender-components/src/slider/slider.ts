@@ -148,7 +148,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   render() {
-    this.removeAllChild();
+    this.removeAllChild(true);
     const {
       layout = 'horizontal',
       railWidth,

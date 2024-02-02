@@ -312,6 +312,7 @@ export const page = () => {
       x: 500,
       y: 100,
       width: 300,
+      stroke: 'green',
       height: 0,
       textConfig: [
         {
@@ -359,8 +360,8 @@ export const page = () => {
         },
         {
           text: '\ntextAlign: right',
-          fill: '#000',
-          textAlign: 'right'
+          fill: 'red',
+          textAlign: 'end'
         },
         {
           // image: 'https://vega.github.io/images/idl-logo.png',

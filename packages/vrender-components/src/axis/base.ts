@@ -21,7 +21,7 @@ import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } fr
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
-import { traverseGroup } from '../util';
+import { isRichText, richTextAttributeTransform, traverseGroup } from '../util';
 import { DEFAULT_STATES, StateValue } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
@@ -122,7 +122,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected render(): void {
-    this.removeAllChild();
+    this.removeAllChild(true);
     this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
@@ -351,19 +351,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
       let text;
-      if (labelStyle.type === 'rich') {
-        labelStyle.textConfig = labelStyle.text;
-        labelStyle.width = labelStyle.width ?? 0;
-        labelStyle.height = labelStyle.height ?? 0;
-        text = graphicCreator.richtext(labelStyle);
-      } else if (labelStyle.type === 'html') {
-        labelStyle.textConfig = [] as any;
-        labelStyle.html = {
-          dom: labelStyle.text as string,
-          ...DEFAULT_HTML_TEXT_SPEC,
-          ...labelStyle
-        };
-        text = graphicCreator.richtext(labelStyle as any);
+      if (isRichText(labelStyle)) {
+        text = graphicCreator.richtext(richTextAttributeTransform(labelStyle));
       } else {
         text = graphicCreator.text(labelStyle as any);
       }

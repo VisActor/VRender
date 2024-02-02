@@ -9,7 +9,7 @@ import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
 import type { ITicker, ITimeline } from './animate';
 import type { IPickerService, PickResult } from './picker';
-import type { IPluginService } from './plugin';
+import type { IPlugin, IPluginService } from './plugin';
 import type { IWindow } from './window';
 import type { ILayerService } from './core';
 import type { IFullThemeSpec } from './graphic/theme';
@@ -76,6 +76,10 @@ export interface IStageParams {
    * 是否支持pointer事件，不支持就监听mouse事件
    */
   supportsPointerEvents?: boolean;
+  /**
+   * Render的时候使用原来的矩阵，不清除
+   */
+  renderKeepMatrix?: boolean;
 }
 
 export type EventConfig = {
@@ -215,6 +219,7 @@ export interface IStage extends INode {
   disableDirtyBounds: () => void;
   enableView3dTransform: () => void;
   disableView3dTranform: () => void;
+  getPluginsByName: (name: string) => IPlugin[];
   clearViewBox: (color?: string) => void;
   release: () => void;
   setStage: (stage?: IStage) => void;

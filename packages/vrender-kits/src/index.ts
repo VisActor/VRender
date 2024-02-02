@@ -4,6 +4,7 @@ import _roughModule from './render/contributions/rough/module';
 export const roughModule = _roughModule;
 
 export * from './jsx';
+export * from './react-tree';
 export * from './event/extension';
 // export * from './env/browser';
 export * from './env';

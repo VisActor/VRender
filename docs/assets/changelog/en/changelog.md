@@ -1,3 +1,56 @@
+# v0.17.22
+
+2024-02-02
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: revert richtext inherit
+
+
+
+[more detail about v0.17.22](https://github.com/VisActor/VRender/releases/tag/v0.17.22)
+
+# v0.17.21
+
+2024-02-02
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: richtext support inherit attribute, closed [#946](https://github.com/VisActor/VRender/issues/946)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix issue with remove html, closed [#944](https://github.com/VisActor/VRender/issues/944)
+- **@visactor/vrender-core**: fix issue with remove html and change html pos, closed [#944](https://github.com/VisActor/VRender/issues/944)
+
+
+
+[more detail about v0.17.21](https://github.com/VisActor/VRender/releases/tag/v0.17.21)
+
+# v0.17.20
+
+2024-02-01
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: unify richtext config
+- **@visactor/vrender-components**: support richtext in legend components
+- **@visactor/vrender-components**: tag support textAlwaysCenter, closed [#915](https://github.com/VisActor/VRender/issues/915)
+- **@visactor/vrender-core**: enhance flex effect, support pauseFlex api, closed [#874](https://github.com/VisActor/VRender/issues/874), closed [#912](https://github.com/VisActor/VRender/issues/912)
+- **@visactor/vrender-core**: support keepMatrix api
+- **@visactor/vrender**: refactor GetImage in ResourceLoader
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: compatible with illegal richText value
+
+
+
+[more detail about v0.17.20](https://github.com/VisActor/VRender/releases/tag/v0.17.20)
+
 # v0.17.18
 
 2024-01-24

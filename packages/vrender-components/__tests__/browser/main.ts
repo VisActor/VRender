@@ -67,6 +67,10 @@ const specs = [
     name: '标签'
   },
   {
+    path: 'tag-flex',
+    name: '标签-flex'
+  },
+  {
     path: 'poptip',
     name: 'poptip'
   },

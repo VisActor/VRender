@@ -77,7 +77,7 @@ export interface INode extends Releaseable, IEventElement {
   /**
    * 移除所有节点
    */
-  removeAllChild: () => void;
+  removeAllChild: (deep?: boolean) => void;
   /**
    * 判断该节点是否是node的子节点
    * @param node

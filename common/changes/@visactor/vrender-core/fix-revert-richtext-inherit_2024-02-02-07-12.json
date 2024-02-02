@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: revert richtext inherit",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

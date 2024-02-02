@@ -1,3 +1,16 @@
+# v0.17.22
+
+2024-02-02
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: revert richtext inherit
+
+
+
+[更多详情请查看 v0.17.22](https://github.com/VisActor/VRender/releases/tag/v0.17.22)
+
 # v0.17.21
 
 2024-02-02

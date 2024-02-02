@@ -1,3 +1,21 @@
+# v0.17.21
+
+2024-02-02
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: richtext support inherit attribute, closed [#946](https://github.com/VisActor/VRender/issues/946)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix issue with remove html, closed [#944](https://github.com/VisActor/VRender/issues/944)
+- **@visactor/vrender-core**: fix issue with remove html and change html pos, closed [#944](https://github.com/VisActor/VRender/issues/944)
+
+
+
+[more detail about v0.17.21](https://github.com/VisActor/VRender/releases/tag/v0.17.21)
+
 # v0.17.20
 
 2024-02-01

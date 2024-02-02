@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 01 Feb 2024 09:26:17 GMT and should not be manually modified.
+This log was last generated on Thu, 01 Feb 2024 12:22:29 GMT and should not be manually modified.
+
+## 0.17.21
+Thu, 01 Feb 2024 12:22:29 GMT
+
+### Updates
+
+- feat: richtext support inherit attribute, closed #946
+- fix: fix issue with remove html and change html pos, closed #944
 
 ## 0.17.20
 Thu, 01 Feb 2024 09:26:17 GMT

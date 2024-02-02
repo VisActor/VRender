@@ -214,14 +214,15 @@ export const page = () => {
   const canvas = document.createElement('canvas');
   canvas.width = 1200;
   canvas.height = 600;
-  canvas.getContext('2d')!.setTransform(1, 0, 0, 1, 100, 100);
   document.getElementById('container')?.appendChild(canvas);
 
   const stage1 = createStage({
     canvas,
     width: 1200,
     height: 600,
-    autoRender: false,
+    viewWidth: 1200,
+    viewHeight: 600,
+    autoRender: true,
     canvasControled: false
   });
   const stage2 = createStage({
@@ -242,7 +243,7 @@ export const page = () => {
   });
   stage1.defaultLayer.add(group as any);
   shapes.forEach(item => {
-    item.addEventListener('mouseenter', () => {
+    item.addEventListener('click', () => {
       console.log(item.globalAABBBounds);
     });
     group.add(item as any);
@@ -252,9 +253,7 @@ export const page = () => {
     stage2.defaultLayer.add(item as any);
   });
 
-  stage1.render(null, {
-    keepMatrix: true
-  });
+  stage1.render();
   stage2.render();
 
   // setTimeout(() => {

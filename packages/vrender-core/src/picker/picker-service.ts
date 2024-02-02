@@ -65,17 +65,10 @@ export abstract class DefaultPickService implements IPickerService {
       offsetY = params.bounds.y1;
     }
     if (this.pickContext) {
-      if (params.keepMatrix) {
-        if (this.pickContext.nativeContext && this.pickContext.nativeContext.getTransform) {
-          const t = this.pickContext.nativeContext.getTransform();
-          this.pickContext.setTransformFromMatrix(t, true, 1);
-        }
-      } else {
-        this.pickContext.inuse = true;
-        this.pickContext.clearMatrix(true, 1);
-      }
+      this.pickContext.inuse = true;
     }
     params.pickContext = this.pickContext;
+    this.pickContext && this.pickContext.clearMatrix(true, 1);
 
     const parentMatrix = new Matrix(1, 0, 0, 1, offsetX, offsetY);
     let group: IGroup;
@@ -95,7 +88,7 @@ export abstract class DefaultPickService implements IPickerService {
     if (!result.graphic) {
       result.group = group;
     }
-    if (this.pickContext && !params.keepMatrix) {
+    if (this.pickContext) {
       this.pickContext.inuse = false;
     }
 

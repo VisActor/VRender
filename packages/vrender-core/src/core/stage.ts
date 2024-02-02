@@ -642,7 +642,7 @@ export class Stage extends Group implements IStage {
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(this.children as ILayer[], params);
+      this.renderLayerList(this.children as ILayer[]);
       this.combineLayersToWindow();
       this.nextFrameRenderLayerSet.clear();
       this.hooks.afterRender.call(this);
@@ -729,7 +729,7 @@ export class Stage extends Group implements IStage {
           background: layer === this.defaultLayer ? this.background : undefined,
           updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
         },
-        { renderStyle: this.renderStyle, keepMatrix: this.params.renderKeepMatrix, ...params }
+        { renderStyle: this.renderStyle, ...params }
       );
     });
 

@@ -88,6 +88,10 @@ export const pages = [
         path: 'animate'
       },
       {
+        name: 'window-event',
+        path: 'window-event'
+      },
+      {
         name: 'state测试',
         path: 'state'
       },

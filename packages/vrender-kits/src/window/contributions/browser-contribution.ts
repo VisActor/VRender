@@ -16,7 +16,8 @@ import type {
   IWindowHandlerContribution,
   IWindowParams
 } from '@visactor/vrender-core';
-import type { IBoundsLike } from '@visactor/vutils';
+import type { IBoundsLike, IMatrix, IBounds } from '@visactor/vutils';
+import { Matrix, AABBBounds } from '@visactor/vutils';
 import { BrowserCanvas } from '../../canvas/contributions/browser';
 
 @injectable()
@@ -28,9 +29,9 @@ export class BrowserWindowHandlerContribution
 
   type: EnvType = 'browser';
 
-  canvas: ICanvas;
+  declare canvas: ICanvas;
 
-  observer?: MutationObserver;
+  declare observer?: MutationObserver;
 
   protected _canvasIsIntersecting: boolean;
   protected _onVisibleChangeCb: (currentVisible: boolean) => void;
@@ -52,6 +53,8 @@ export class BrowserWindowHandlerContribution
     super();
     this._canvasIsIntersecting = true;
     this.global = application.global;
+    this.viewBox = new AABBBounds();
+    this.modelMatrix = new Matrix(1, 0, 0, 1, 0, 0);
   }
 
   getTitle(): string {
@@ -298,7 +301,8 @@ export class BrowserWindowHandlerContribution
     return this.canvas.nativeCanvas.getBoundingClientRect();
   }
 
-  clearViewBox(vb: IBoundsLike, color?: string): void {
+  clearViewBox(color?: string): void {
+    const vb = this.viewBox;
     const context = this.getContext();
     const dpr = this.getDpr();
     context.nativeContext.save();

@@ -81,10 +81,6 @@ export interface ILayer extends IGroup {
 }
 
 export interface ILayerHandlerDrawParams extends ILayerDrawParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
   layer: ILayer;
   stage: IStage;
   updateBounds: boolean;

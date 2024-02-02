@@ -101,7 +101,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // this.startAtId = drawParams.startAtId;
     this.currentRenderService = renderService;
     // this.drawParams = drawParams;
-    const { context, stage, x = 0, y = 0, width, height } = drawContext;
+    const { context, stage, viewBox, transMatrix } = drawContext;
 
     if (!context) {
       return;
@@ -109,7 +109,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // if (context.drawPromise) {
     //   return;
     // }
-    const dirtyBounds: IBounds | undefined = this.dirtyBounds.setValue(0, 0, width, height);
+    const dirtyBounds: IBounds | undefined = this.dirtyBounds.setValue(0, 0, viewBox.width(), viewBox.height());
     if (stage.dirtyBounds && !stage.dirtyBounds.empty()) {
       const b = getRectIntersect(dirtyBounds, stage.dirtyBounds, false);
       dirtyBounds.x1 = Math.floor(b.x1);
@@ -127,22 +127,21 @@ export class DefaultDrawContribution implements IDrawContribution {
     }
     this.backupDirtyBounds.copy(dirtyBounds);
     context.inuse = true;
+    context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
     context.clearMatrix();
     context.setTransformForCurrent(true);
 
-    const drawInArea =
-      dirtyBounds.width() * context.dpr < context.canvas.width ||
-      dirtyBounds.height() * context.dpr < context.canvas.height;
-    context.save();
+    // const drawInArea =
+    //   dirtyBounds.width() * context.dpr < context.canvas.width ||
+    //   dirtyBounds.height() * context.dpr < context.canvas.height;
+    // context.save();
 
     // 设置translate
-    context.translate(x, y, true);
-    if (drawInArea) {
-      context.beginPath();
-      context.rect(dirtyBounds.x1, dirtyBounds.y1, dirtyBounds.width(), dirtyBounds.height());
-      context.clip();
-    }
+    context.translate(viewBox.x1, viewBox.y1, true);
+    context.beginPath();
+    context.rect(dirtyBounds.x1, dirtyBounds.y1, dirtyBounds.width(), dirtyBounds.height());
+    context.clip();
 
     // 如果存在3d视角，那么不使用dirtyBounds
     if (stage.camera) {
@@ -172,6 +171,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     context.restore();
     context.restore();
     context.draw();
+    context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
     context.inuse = false;
   }
@@ -406,12 +406,13 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   protected clearScreen(renderService: IRenderService, context: IContext2d, drawContext: IDrawContext) {
-    const { clear } = drawContext;
+    const { clear, viewBox } = drawContext;
+    // 已经translate过了
+    const x = 0;
+    const y = 0;
+    const width = viewBox.width();
+    const height = viewBox.height();
     if (clear) {
-      const canvas = context.getCanvas();
-      const { width = canvas.width, height = canvas.height } = drawContext;
-      const x = 0;
-      const y = 0;
       context.clearRect(x, y, width, height);
       const stage = renderService.drawParams?.stage;
       stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);

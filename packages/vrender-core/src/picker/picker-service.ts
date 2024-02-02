@@ -1,5 +1,5 @@
 import type { IMatrix, IPoint, IPointLike } from '@visactor/vutils';
-import { Matrix, Point } from '@visactor/vutils';
+import { AABBBounds, Matrix, Point } from '@visactor/vutils';
 import { inject, injectable, named } from '../common/inversify-lite';
 import { foreach } from '../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -32,6 +32,7 @@ export abstract class DefaultPickService implements IPickerService {
 
   constructor(
     // 拦截器
+    // @ts-ignore
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
     protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
@@ -54,15 +55,13 @@ export abstract class DefaultPickService implements IPickerService {
       graphic: null,
       group: null
     };
+    // point变换
     params.pickerService = this;
-    let offsetX = 0;
-    let offsetY = 0;
-    if (params && params.bounds) {
-      if (!params.bounds.contains(point.x, point.y)) {
-        return result;
-      }
-      offsetX = params.bounds.x1;
-      offsetY = params.bounds.y1;
+
+    const w = params.bounds.width();
+    const h = params.bounds.height();
+    if (!new AABBBounds().setValue(0, 0, w, h).containsPoint(point)) {
+      return result;
     }
     if (this.pickContext) {
       this.pickContext.inuse = true;
@@ -70,7 +69,7 @@ export abstract class DefaultPickService implements IPickerService {
     params.pickContext = this.pickContext;
     this.pickContext && this.pickContext.clearMatrix(true, 1);
 
-    const parentMatrix = new Matrix(1, 0, 0, 1, offsetX, offsetY);
+    const parentMatrix = new Matrix(1, 0, 0, 1, 0, 0);
     let group: IGroup;
     for (let i = graphics.length - 1; i >= 0; i--) {
       if (graphics[i].isContainer) {

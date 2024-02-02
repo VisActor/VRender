@@ -66,12 +66,10 @@ export class IncrementalAutoRenderPlugin implements IPlugin {
           return;
         }
         subLayer.drawContribution.draw(stage.renderService, {
-          x: stage.x,
-          y: stage.y,
-          width: layer.viewWidth,
-          height: layer.viewHeight,
           stage,
           layer,
+          viewBox: stage.window.getViewBox(),
+          transMatrix: stage.window.getViewBoxTransform(),
           // TODO: 多图层时不应该再用默认background
           clear: 'transparent',
           renderService: stage.renderService,

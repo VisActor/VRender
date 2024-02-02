@@ -86,7 +86,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     }
 
     this.currentRenderService = renderService;
-    const { context, x = 0, y = 0 } = drawContext;
+    const { context, viewBox } = drawContext;
 
     if (!context) {
       return;
@@ -121,7 +121,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     // 绘制之前需要清空画布
     drawContext.restartIncremental && this.clearScreen(this.currentRenderService, context, drawContext);
     // 设置translate
-    context.translate(x, y, true);
+    context.translate(viewBox.x1, viewBox.y1, true);
 
     context.save();
     renderService.renderTreeRoots

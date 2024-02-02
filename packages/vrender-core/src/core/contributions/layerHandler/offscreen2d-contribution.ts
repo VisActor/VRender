@@ -69,9 +69,9 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   render(group: IGroup[], params: ILayerHandlerDrawParams): void {
     params.renderService.render(group, {
       context: this.context,
+      viewBox: params.stage.window.getViewBox(),
+      transMatrix: params.stage.window.getViewBoxTransform(),
       ...params,
-      x: 0,
-      y: 0,
       clear: params.background ?? '#ffffff'
     });
   }

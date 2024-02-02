@@ -310,7 +310,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     end = Math.min(Math.max(end, 0), 1);
 
     // 避免attributes相同时, 重复渲染
-    if (startAttr !== start || endAttr !== end) {
+    if (realTime && (startAttr !== start || endAttr !== end)) {
       this.setStateAttr(start, end, true);
       this._dispatchEvent('change', {
         start,

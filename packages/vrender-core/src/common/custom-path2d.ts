@@ -113,6 +113,10 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
     this.curves.length = 0;
   }
 
+  beginPath() {
+    this.clear();
+  }
+
   toString(): string {
     if (!this.toStringCbList) {
       const list: ((cmd: CommandType) => string)[] = [];
@@ -141,7 +145,7 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
       };
       // list[enumCommandMap.AT] = this.arcToTransform;
       // list[enumCommandMap.E] = this.ellipseTransform;
-      // list[enumCommandMap.R] = this.rectTransform;
+      list[enumCommandMap.R] = (cmd: CommandType) => `M${cmd[1]} ${cmd[2]} h${cmd[3]} v${cmd[4]} H${cmd[1]}Z`;
       // list[enumCommandMap.A] = this.arcTransform;
       list[enumCommandMap.Z] = (cmd: CommandType) => `Z`;
       this.toStringCbList = list;

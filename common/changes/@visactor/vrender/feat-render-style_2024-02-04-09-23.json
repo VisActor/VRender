@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: support renderStyle config",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -2,6 +2,12 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-kits_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.17.22",
       "tag": "@visactor/vrender-kits_v0.17.22",
       "date": "Fri, 02 Feb 2024 07:17:07 GMT",

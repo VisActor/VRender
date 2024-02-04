@@ -234,6 +234,9 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     const { doFill, doStroke } = data;
 
     const { clipRange = areaAttribute.clipRange, closePath, points, segments } = area.attribute;
+    if (points.length < 2) {
+      return;
+    }
     let { curveType = areaAttribute.curveType } = area.attribute;
     if (closePath && curveType === 'linear') {
       curveType = 'linearClosed';
@@ -587,7 +590,17 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       return false;
     }
 
-    if (!cache) {
+    if (
+      !(
+        cache &&
+        cache.top &&
+        cache.bottom &&
+        cache.top.curves &&
+        cache.top.curves.length &&
+        cache.bottom.curves &&
+        cache.bottom.curves.length
+      )
+    ) {
       return;
     }
     context.beginPath();

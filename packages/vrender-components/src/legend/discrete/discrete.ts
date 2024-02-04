@@ -640,12 +640,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             },
             compStyle as LegendPagerAttributes
           ),
+          defaultCurrent: this.attribute.pager?.defaultCurrent,
           disableTriggerEvent
         })
       : new Pager({
           layout: 'horizontal',
           total: 99, // 用于估算,
           disableTriggerEvent,
+          defaultCurrent: this.attribute.pager?.defaultCurrent,
           ...(compStyle as LegendPagerAttributes)
         });
   }

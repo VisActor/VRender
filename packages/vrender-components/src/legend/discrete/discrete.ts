@@ -2,7 +2,7 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray, max } from '@visactor/vutils';
+import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -16,7 +16,6 @@ import type {
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { LegendBase } from '../base';
-import type { PagerAttributes } from '../../pager';
 import { Pager } from '../../pager';
 import {
   DEFAULT_TITLE_SPACE,
@@ -40,7 +39,6 @@ import type {
 } from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
-import type { ScrollBarAttributes } from '../../scrollbar';
 import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
@@ -389,7 +387,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderEachItem(item: LegendItemDatum, isSelected: boolean, index: number, items: LegendItemDatum[]) {
     const { id, label, value, shape } = item;
-    const { padding = 0, focus, focusIconStyle } = this.attribute.item as LegendItem;
+    const { padding = 0, focus, focusIconStyle, align } = this.attribute.item as LegendItem;
 
     const { shape: shapeAttr, label: labelAttr, value: valueAttr, background } = this.attribute.item as LegendItem;
 
@@ -465,7 +463,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       innerGroup.add(itemShape);
     }
 
-    let focusShape;
+    let focusShape: IGraphic;
     let focusSpace = 0;
 
     if (focus) {
@@ -572,6 +570,24 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const innerGroupBounds = innerGroup.AABBBounds;
     const innerGroupWidth = innerGroupBounds.width();
+
+    if (align === 'right') {
+      const x2 = innerGroupBounds.x2;
+      const x1 = innerGroupBounds.x1;
+      innerGroup.forEachChildren((child: IGraphic, index: number) => {
+        if (
+          (child.type === 'text' && child.attribute.textAlign !== 'right') ||
+          child === (focusShape as unknown as IGraphic)
+        ) {
+          child.setAttribute('x', x1 + x2 - child.attribute.x - child.AABBBounds.width());
+        } else if (child.type === 'text') {
+          child.setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'left' });
+        } else {
+          child.setAttribute('x', x1 + x2 - child.attribute.x);
+        }
+      });
+    }
+
     const innerGroupHeight = innerGroupBounds.height();
     const itemGroupWidth = isValid(this.attribute.item.width)
       ? this.attribute.item.width
@@ -581,6 +597,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     itemGroup.attribute.height = itemGroupHeight;
 
     focusShape && focusShape.setAttribute('visible', false);
+
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
     return itemGroup;
   }

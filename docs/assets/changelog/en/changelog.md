@@ -1,3 +1,21 @@
+# v0.17.23
+
+2024-02-04
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: support renderStyle config
+- **@visactor/vrender**: support renderStyle config
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with single point in area graphic
+
+
+
+[more detail about v0.17.23](https://github.com/VisActor/VRender/releases/tag/v0.17.23)
+
 # v0.17.22
 
 2024-02-02

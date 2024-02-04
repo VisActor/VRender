@@ -110,10 +110,13 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
+    const { points } = area.attribute;
+    if (points.length < 2) {
+      return;
+    }
     context.beginPath();
 
     const z = this.z ?? 0;
-    const { points } = area.attribute;
     const startP = points[0];
 
     context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
@@ -554,6 +557,19 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ) {
+    if (
+      !(
+        cache &&
+        cache.top &&
+        cache.bottom &&
+        cache.top.curves &&
+        cache.top.curves.length &&
+        cache.bottom.curves &&
+        cache.bottom.curves.length
+      )
+    ) {
+      return;
+    }
     // 绘制connect区域
     let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
     const da = [];
@@ -587,9 +603,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       return false;
     }
 
-    if (!cache) {
-      return;
-    }
     context.beginPath();
 
     const ret: boolean = false;

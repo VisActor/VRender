@@ -581,7 +581,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         ) {
           child.setAttribute('x', x1 + x2 - child.attribute.x - child.AABBBounds.width());
         } else if (child.type === 'text') {
-          child.setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'left' });
+          child.setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'start' });
         } else {
           child.setAttribute('x', x1 + x2 - child.attribute.x);
         }

@@ -169,6 +169,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   zIndex: 0,
   layout: null,
   boundsPadding: 0,
+  renderStyle: 'default',
   pickMode: 'accurate',
   customPickShape: null,
   boundsMode: 'accurate',

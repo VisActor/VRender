@@ -79,10 +79,25 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       // 更新图形
       const sliderPos = this._getSliderPos(currScrollRange);
       if (this._slider) {
+        const sliderSize = sliderPos[1] - sliderPos[0];
+        this._sliderSize = sliderSize;
+
         if (direction === 'horizontal') {
-          this._slider.setAttribute('x', sliderPos[0], true);
+          this._slider.setAttributes(
+            {
+              x: sliderPos[0],
+              width: sliderSize
+            },
+            true
+          );
         } else {
-          this._slider.setAttribute('y', sliderPos[0], true);
+          this._slider.setAttributes(
+            {
+              y: sliderPos[0],
+              height: sliderSize
+            },
+            true
+          );
         }
 
         if (this.stage && !this.stage.autoRender) {

@@ -11,7 +11,8 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute,
-  CustomEvent
+  CustomEvent,
+  IText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -592,12 +593,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const x1 = innerGroupBounds.x1;
       innerGroup.forEachChildren((child: IGraphic, index: number) => {
         if (
-          (child.type === 'text' && child.attribute.textAlign !== 'right') ||
+          (child.type !== 'symbol' && (child as IText).attribute.textAlign !== 'right') ||
           child === (focusShape as unknown as IGraphic)
         ) {
           child.setAttribute('x', x1 + x2 - child.attribute.x - child.AABBBounds.width());
-        } else if (child.type === 'text') {
-          child.setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'left' });
+        } else if (child.type !== 'symbol') {
+          (child as IText).setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'left' });
         } else {
           child.setAttribute('x', x1 + x2 - child.attribute.x);
         }

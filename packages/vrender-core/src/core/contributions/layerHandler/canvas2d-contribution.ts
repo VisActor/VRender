@@ -105,8 +105,6 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
     params.renderService.render(group, {
       context: this.context,
       clear: params.background ?? '#ffffff',
-      viewBox: params.stage.window.getViewBox(),
-      transMatrix: params.stage.window.getViewBoxTransform(),
       ...params,
       ...userParams
     });
@@ -128,8 +126,6 @@ export class CanvasLayerHandlerContribution implements ILayerHandlerContribution
     const context = target.getContext();
     params.renderService.render(group, {
       context,
-      viewBox: params.stage.window.getViewBox(),
-      transMatrix: params.stage.window.getViewBoxTransform(),
       ...params,
       clear: params.clear ? params.background ?? '#fff' : undefined
     });

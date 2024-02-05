@@ -1,4 +1,4 @@
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrixLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrix, IMatrixLike } from '@visactor/vutils';
 import type { IColor } from './color';
 import type { IContext2d } from './context';
 import type { IGraphic, IGraphicAttribute } from './graphic';

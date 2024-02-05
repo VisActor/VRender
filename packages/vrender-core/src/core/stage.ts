@@ -720,7 +720,9 @@ export class Stage extends Group implements IStage {
         {
           renderService: this.renderService,
           background: layer === this.defaultLayer ? this.background : undefined,
-          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty()),
+          viewBox: this.window.getViewBox(),
+          transMatrix: this.window.getViewBoxTransform()
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -731,7 +733,9 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.render(
         {
           renderService: this.renderService,
-          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty()),
+          viewBox: this.window.getViewBox(),
+          transMatrix: this.window.getViewBoxTransform()
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -870,11 +874,13 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow, params: { x: number; y: number; width: number; height: number }) {
+  renderTo(window: IWindow) {
     this.forEachChildren<ILayer>((layer, i) => {
       layer.drawTo(window, {
-        ...params,
+        // ...params,
         renderService: this.renderService,
+        viewBox: window.getViewBox(),
+        transMatrix: window.getViewBoxTransform(),
         background: layer === this.defaultLayer ? this.background : undefined,
         clear: i === 0, // 第一个layer需要clear
         updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
@@ -889,19 +895,25 @@ export class Stage extends Group implements IStage {
    */
   renderToNewWindow(fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
     const window = container.get<IWindow>(VWindow);
+    const x1 = viewBox ? -viewBox.x1 : 0;
+    const y1 = viewBox ? -viewBox.y1 : 0;
+    const x2 = viewBox ? viewBox.x2 : this.viewWidth;
+    const y2 = viewBox ? viewBox.y2 : this.viewHeight;
+    const width = viewBox ? viewBox.width() : this.viewWidth;
+    const height = viewBox ? viewBox.height() : this.viewHeight;
     if (fullImage) {
       window.create({
-        width: this.viewWidth,
-        height: this.viewHeight,
+        viewBox: { x1, y1, x2, y2 },
+        width,
+        height,
         dpr: this.window.dpr,
         canvasControled: true,
         offscreen: true,
         title: ''
       });
     } else {
-      const width = viewBox ? viewBox.width() : Math.min(this.viewWidth, this.window.width - this.x);
-      const height = viewBox ? viewBox.height() : Math.min(this.viewHeight, this.window.height - this.y);
       window.create({
+        viewBox: { x1, y1, x2, y2 },
         width,
         height,
         dpr: this.window.dpr,
@@ -911,14 +923,7 @@ export class Stage extends Group implements IStage {
       });
     }
 
-    const x = viewBox ? -viewBox.x1 : 0;
-    const y = viewBox ? -viewBox.y1 : 0;
-    this.renderTo(window, {
-      x,
-      y,
-      width: viewBox ? viewBox.x2 : window.width,
-      height: viewBox ? viewBox.y2 : window.height
-    });
+    this.renderTo(window);
     return window;
   }
 

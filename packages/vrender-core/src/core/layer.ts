@@ -173,6 +173,8 @@ export class Layer extends Group implements ILayer {
         renderService: params.renderService,
         stage: this.stage,
         layer: this,
+        viewBox: params.viewBox,
+        transMatrix: params.transMatrix,
         // TODO: 多图层时不应该再用默认background
         background: params.background ?? this.background,
         updateBounds: params.updateBounds
@@ -208,20 +210,20 @@ export class Layer extends Group implements ILayer {
     return;
   }
 
-  // 合并到某个target上
-  combineTo(target: IWindow, params: IDrawToParams) {
-    if (this.offscreen) {
-      this.layerHandler.drawTo(target, [this], {
-        // TODO: 多图层时不应该再用默认background
-        background: params.background ?? this.background,
-        renderService: params.renderService,
-        stage: this.stage,
-        layer: this,
-        ...params
-      });
-      this.afterDrawCbs.forEach(c => c(this));
-    }
-  }
+  // // 合并到某个target上
+  // combineTo(target: IWindow, params: IDrawToParams) {
+  //   if (this.offscreen) {
+  //     this.layerHandler.drawTo(target, [this], {
+  //       // TODO: 多图层时不应该再用默认background
+  //       background: params.background ?? this.background,
+  //       renderService: params.renderService,
+  //       stage: this.stage,
+  //       layer: this,
+  //       ...params
+  //     });
+  //     this.afterDrawCbs.forEach(c => c(this));
+  //   }
+  // }
 
   release(): void {
     super.release();
@@ -239,7 +241,8 @@ export class Layer extends Group implements ILayer {
       // TODO: 多图层时不应该再用默认background
       background: params.background ?? this.background,
       renderService: params.renderService,
-
+      viewBox: params.viewBox,
+      transMatrix: params.transMatrix,
       stage: this.stage,
       layer: this,
       ...params

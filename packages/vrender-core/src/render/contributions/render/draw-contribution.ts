@@ -168,7 +168,7 @@ export class DefaultDrawContribution implements IDrawContribution {
           : this.renderItem(group as IGraphic, drawContext);
       });
 
-    context.restore();
+    // context.restore();
     context.restore();
     context.draw();
     context.setClearMatrix(1, 0, 0, 1, 0, 0);

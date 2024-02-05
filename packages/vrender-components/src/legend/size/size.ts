@@ -1,7 +1,7 @@
 /**
  * @description 连续尺寸图例
  */
-import type { FederatedPointerEvent, INode } from '@visactor/vrender-core';
+import type { FederatedEvent, INode } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { merge, get } from '@visactor/vutils';
 import { LegendBase } from '../base';
@@ -165,11 +165,11 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     }
   }
 
-  private _onSliderChange = (e: FederatedPointerEvent) => {
+  private _onSliderChange = (e: FederatedEvent) => {
     this.dispatchEvent(e);
   };
 
-  private _onSliderToolipChange = (e: FederatedPointerEvent) => {
+  private _onSliderToolipChange = (e: FederatedEvent) => {
     this.dispatchEvent(e);
   };
 }

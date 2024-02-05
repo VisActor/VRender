@@ -429,10 +429,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       }
       if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
         const verticalLimitLength =
-          (orient === 'left' || orient === 'right') &&
-          labelShapes.some(label => label.attribute.direction === 'vertical')
+          orient === 'left' || orient === 'right'
             ? Math.abs(this.attribute.start.y - this.attribute.end.y) / labelShapes.length
-            : Infinity;
+            : Math.abs(this.attribute.start.x - this.attribute.end.x) / labelShapes.length;
         autoLimitFunc(labelShapes, {
           limitLength,
           verticalLimitLength,

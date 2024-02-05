@@ -58,6 +58,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         fill: '#fff',
         stroke: '#91caff',
         lineWidth: 2
+      },
+      text: {
+        style: {
+          fill: '#2C3542',
+          fontSize: 12
+        }
       }
     },
     railStyle: {

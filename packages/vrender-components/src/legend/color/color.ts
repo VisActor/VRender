@@ -3,7 +3,7 @@
  * TODO:
  * showHandlers 测试
  */
-import { merge, isEmpty, get } from '@visactor/vutils';
+import { merge, isEmpty, get, isNil } from '@visactor/vutils';
 import type { FederatedPointerEvent, IColor, ILinearGradient, INode } from '@visactor/vrender-core';
 import type { ILinearScale } from '@visactor/vscale';
 import { LinearScale } from '@visactor/vscale';
@@ -38,6 +38,12 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
         distance: 2,
         lineWidth: 1,
         stroke: '#ccc'
+      }
+    },
+    tooltip: {
+      shapeStyle: {
+        lineWidth: 4,
+        stroke: '#fff'
       }
     }
   };
@@ -142,6 +148,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
+      this._slider.addEventListener('sliderTooltip', this._onSliderToolipChange as EventListenerOrEventListenerObject);
     }
   }
 
@@ -174,6 +181,18 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       y1: isHorizontal ? 0 : 1
     };
   }
+
+  private _onSliderToolipChange = (e: FederatedPointerEvent) => {
+    const tooltipShape = this._slider.tooltipShape;
+
+    if (tooltipShape && !isNil(e.detail.value)) {
+      const color = this._colorScale.scale(e.detail.value);
+
+      tooltipShape.setAttribute('fill', color);
+    }
+
+    this.dispatchEvent(e);
+  };
 
   private _onSliderChange = (e: FederatedPointerEvent) => {
     // 更新 handler 以及 track 的渐变色

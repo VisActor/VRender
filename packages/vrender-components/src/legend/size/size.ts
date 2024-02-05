@@ -161,10 +161,15 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     }
     if (this._slider) {
       this._slider.addEventListener('change', this._onSliderChange as EventListenerOrEventListenerObject);
+      this._slider.addEventListener('sliderTooltip', this._onSliderToolipChange as EventListenerOrEventListenerObject);
     }
   }
 
   private _onSliderChange = (e: FederatedPointerEvent) => {
+    this.dispatchEvent(e);
+  };
+
+  private _onSliderToolipChange = (e: FederatedPointerEvent) => {
     this.dispatchEvent(e);
   };
 }

@@ -220,6 +220,9 @@ export interface IStage extends INode {
   release: () => void;
   setStage: (stage?: IStage) => void;
 
+  pauseRender: () => void;
+  resumeRender: () => void;
+
   setCursor: (mode?: string) => void;
 
   getTheme: () => IFullThemeSpec;

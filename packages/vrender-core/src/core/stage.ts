@@ -289,6 +289,14 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  pauseRender() {
+    this._skipRender = -1;
+  }
+
+  resumeRender() {
+    this._skipRender = 0;
+  }
+
   protected tryInitEventSystem() {
     if (this.global.supportEvent && !this._eventSystem) {
       this._eventSystem = new EventSystem({
@@ -635,9 +643,11 @@ export class Stage extends Group implements IStage {
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(this.children as ILayer[]);
-      this.combineLayersToWindow();
-      this.nextFrameRenderLayerSet.clear();
+      if (!this._skipRender) {
+        this.renderLayerList(this.children as ILayer[]);
+        this.combineLayersToWindow();
+        this.nextFrameRenderLayerSet.clear();
+      }
       this.hooks.afterRender.call(this);
     }
     this.state = state;
@@ -688,10 +698,12 @@ export class Stage extends Group implements IStage {
     this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
-      this.combineLayersToWindow();
+      if (!this._skipRender) {
+        this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
+        this.combineLayersToWindow();
+        this.nextFrameRenderLayerSet.clear();
+      }
       this.hooks.afterRender.call(this);
-      this.nextFrameRenderLayerSet.clear();
     }
     this.state = state;
     this._skipRender && this._skipRender++;

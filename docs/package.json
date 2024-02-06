@@ -6,8 +6,7 @@
   "scripts": {
     "serve": "vite --host",
     "watch": "node ./libs/template-parse/build.js --env dev --watch",
-    "start": "npm run serve",
-    "_start": "npx concurrently --kill-others \"npm:watch\" \"npm:serve\""
+    "start": "npx concurrently --kill-others \"npm:watch\" \"npm:serve\""
   },
   "dependencies": {
     "@arco-design/web-react": "2.46.1",

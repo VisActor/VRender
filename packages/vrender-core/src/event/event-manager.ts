@@ -633,7 +633,7 @@ export class EventManager {
     if (target) {
       event.target = target;
     } else {
-      event.target = this.pickTarget(event.global.x, event.global.y, event);
+      event.target = this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
     }
 
     if (typeof type === 'string') {
@@ -652,7 +652,7 @@ export class EventManager {
 
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
-    event.target = target || this.pickTarget(event.global.x, event.global.y, event);
+    event.target = target || this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
 
     return event;
   }

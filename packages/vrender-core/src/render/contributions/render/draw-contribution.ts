@@ -320,10 +320,9 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   getRenderContribution(graphic: IGraphic): IGraphicRender | null {
-    // let renderer = this.renderSelector.selector(graphic);
     let renderer;
     if (!renderer) {
-      renderer = this.selectRenderByNumberType(graphic.numberType);
+      renderer = this.selectRenderByNumberType(graphic.numberType, graphic);
     }
     if (!renderer) {
       renderer = this.selectRenderByType(graphic.type);
@@ -401,8 +400,13 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
   // 根据type选择对应的render
-  protected selectRenderByNumberType(type?: number): IGraphicRender | null {
-    return this.currentRenderMap.get(type) || this.defaultRenderMap.get(type);
+  protected selectRenderByNumberType(type: number, graphic: IGraphic): IGraphicRender | null {
+    let data;
+    if (graphic.attribute.renderStyle) {
+      const currentRenderMap = this.styleRenderMap.get(graphic.attribute.renderStyle);
+      data = currentRenderMap && currentRenderMap.get(type);
+    }
+    return data || this.currentRenderMap.get(type) || this.defaultRenderMap.get(type);
   }
 
   protected clearScreen(renderService: IRenderService, context: IContext2d, drawContext: IDrawContext) {

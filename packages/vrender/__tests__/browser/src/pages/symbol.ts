@@ -1,10 +1,10 @@
 import { createStage, createSymbol, container, IGraphic, XMLParser } from '@visactor/vrender';
-// import { roughModule } from '@visactor/vrender-kits';
+import { roughModule } from '@visactor/vrender-kits';
 // import { addShapesToStage, colorPools } from '../utils';
 // import { XMLParser, XMLValidator } from 'fast-xml-parser';
 import { AABBBounds } from '@visactor/vutils';
 
-// container.load(roughModule);
+container.load(roughModule);
 
 export const page = () => {
   console.time();
@@ -95,6 +95,7 @@ export const page = () => {
       stroke: 'black',
       lineWidth: 3,
       lineCap: 'round',
+      renderStyle: Math.random() > 0.5 ? 'rough' : '',
       size: 60,
       // fill: 'red'
       background:
@@ -110,9 +111,9 @@ export const page = () => {
 
   const stage = createStage({
     canvas: 'main',
-    autoRender: true,
-    background:
-      'https://s3-alpha-sig.figma.com/img/4747/5f86/562da50af0c51b61008385ba3547c61e?Expires=1699228800&Signature=AZA8zspJv2JOj2m6ICzBiybvIEfzvQV90JZ2QRvyNdOZ8zUv0u9CG2A85tRln~1x8JpNsetdaxj8iY8XnIstKSFrxiXuUvbjgZk8U0wlBqv5ruJgwvIcI3UjPIgr5dB9sxPQG9LGeA9SnpsxMVNLDkq9xV0Vl-7sSJ0aJYdN~uvFISfWvShXvrZoExGdVRMcEuXPQrO1rd-1nSl1VX~RLD1tQhqrftpYxHU0bkalR~Wz6ygCHdLX9VCJ4CuGIyjYVDq7Xl4Lasq-xQMTMLWyYts~SmIRL5BjffsgXRSD9DAI7I4Tm2W7aSsItuUZks7xdrD155Cq3cnvdzuKFdI1wA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4'
+    autoRender: true
+    // background:
+    //   'https://s3-alpha-sig.figma.com/img/4747/5f86/562da50af0c51b61008385ba3547c61e?Expires=1699228800&Signature=AZA8zspJv2JOj2m6ICzBiybvIEfzvQV90JZ2QRvyNdOZ8zUv0u9CG2A85tRln~1x8JpNsetdaxj8iY8XnIstKSFrxiXuUvbjgZk8U0wlBqv5ruJgwvIcI3UjPIgr5dB9sxPQG9LGeA9SnpsxMVNLDkq9xV0Vl-7sSJ0aJYdN~uvFISfWvShXvrZoExGdVRMcEuXPQrO1rd-1nSl1VX~RLD1tQhqrftpYxHU0bkalR~Wz6ygCHdLX9VCJ4CuGIyjYVDq7Xl4Lasq-xQMTMLWyYts~SmIRL5BjffsgXRSD9DAI7I4Tm2W7aSsItuUZks7xdrD155Cq3cnvdzuKFdI1wA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4'
   });
   // stage.set3dOptions({
   //   enable: true,

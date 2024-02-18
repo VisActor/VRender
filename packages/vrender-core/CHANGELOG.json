@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-core_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-core_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support renderStyle config"
+          },
+          {
+            "comment": "fix: fix issue with single point in area graphic"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.22",
+      "tag": "@visactor/vrender-core_v0.17.22",
+      "date": "Fri, 02 Feb 2024 07:17:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: revert richtext inherit"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.21",
       "tag": "@visactor/vrender-core_v0.17.21",
       "date": "Thu, 01 Feb 2024 12:22:29 GMT",

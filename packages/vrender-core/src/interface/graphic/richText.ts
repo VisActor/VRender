@@ -175,7 +175,7 @@ export interface IRichTextFrame {
   wordBreak: 'break-word' | 'break-all';
   verticalDirection: 'top' | 'middle' | 'bottom';
   lines: IRichTextLine[];
-  globalAlign: 'left' | 'center' | 'right';
+  globalAlign: 'left' | 'center' | 'right' | 'start' | 'end';
   globalBaseline: 'top' | 'middle' | 'bottom';
   layoutDirection: 'horizontal' | 'vertical';
   directionKey: {

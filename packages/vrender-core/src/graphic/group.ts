@@ -294,9 +294,12 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return data as IGraphic;
   }
 
-  removeAllChild(): void {
+  removeAllChild(deep: boolean = false): void {
     this.forEachChildren((child: IGraphic) => {
       application.graphicService.onRemove(child);
+      if (deep && child.isContainer) {
+        child.removeAllChild(deep);
+      }
     });
     super.removeAllChild();
     this.addUpdateBoundTag();

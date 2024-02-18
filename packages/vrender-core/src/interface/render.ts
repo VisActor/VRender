@@ -21,6 +21,8 @@ export interface IRenderServiceDrawParams {
   height: number;
   x: number;
   y: number;
+  // 是否使用当前的Matrix，不用重新初始化matrix
+  keepMatrix?: boolean;
   stage: IStage;
   layer: ILayer;
   renderService: IRenderService;

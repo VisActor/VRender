@@ -40,8 +40,10 @@ export type LabelItem = {
    */
   textAlign?: 'left' | 'right' | 'center' | 'start' | 'end';
   textBaseline?: 'top' | 'middle' | 'bottom' | 'alphabetic';
-} & Omit<Partial<ITextGraphicAttribute>, 'textAlign' | 'textBaseline'> &
-  Omit<Partial<IRichTextGraphicAttribute>, 'textAlign' | 'textBaseline'>;
+} & (
+  | Omit<Partial<ITextGraphicAttribute>, 'textAlign' | 'textBaseline'>
+  | Omit<Partial<IRichTextGraphicAttribute>, 'textAlign' | 'textBaseline'>
+);
 
 export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   type: string;

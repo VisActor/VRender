@@ -178,6 +178,10 @@ export const pages = [
       {
         name: 'globalCompositeOperation',
         path: 'globalCompositeOperation'
+      },
+      {
+        name: 'react',
+        path: 'react'
       }
     ]
   },
@@ -204,6 +208,10 @@ export const pages = [
       {
         name: 'vchart',
         path: 'vchart'
+      },
+      {
+        name: 'vtable',
+        path: 'vtable'
       }
     ]
   }

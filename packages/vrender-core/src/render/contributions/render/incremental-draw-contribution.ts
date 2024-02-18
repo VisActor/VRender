@@ -100,9 +100,16 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     //   dirtyBounds.x2 = Math.ceil(b.x2);
     //   dirtyBounds.y2 = Math.ceil(b.y2);
     // }
-    context.inuse = true;
-    // 初始化context
-    context.clearMatrix();
+    if (drawContext.keepMatrix) {
+      if (context.nativeContext && context.nativeContext.getTransform) {
+        const t = context.nativeContext.getTransform();
+        context.setTransformFromMatrix(t, true, 1);
+      }
+    } else {
+      context.inuse = true;
+      // 初始化context
+      context.clearMatrix();
+    }
     context.setTransformForCurrent(true);
 
     // const drawInArea =
@@ -136,7 +143,9 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
       context.restore();
       context.restore();
       context.draw();
-      context.inuse = false;
+      if (!drawContext.keepMatrix) {
+        context.inuse = false;
+      }
       this.rendering = false;
     });
   }

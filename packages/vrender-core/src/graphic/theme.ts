@@ -289,7 +289,11 @@ export function getTheme(graphic: IGraphic, theme?: IFullThemeSpec): IFullThemeS
     return theme;
   }
 
-  return getThemeFromGroup(graphic) || globalTheme.getTheme();
+  return (
+    getThemeFromGroup(graphic) ||
+    (graphic.attachedThemeGraphic && getTheme(graphic.attachedThemeGraphic)) ||
+    globalTheme.getTheme()
+  );
 }
 
 export function getThemeFromGroup(graphic: IGraphic): IFullThemeSpec | null {

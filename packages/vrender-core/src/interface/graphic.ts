@@ -11,6 +11,7 @@ import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
+import { ITheme } from './graphic/theme';
 
 type IStrokeSeg = {
   start: number; // 百分比
@@ -112,7 +113,7 @@ export type IFillStyle = {
 };
 
 export type ILayout = {
-  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center';
 };
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
@@ -184,7 +185,8 @@ export type IBackgroundConfig = {
 
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
-export type IGraphicStyle = IFillStyle &
+export type IGraphicStyle = ILayout &
+  IFillStyle &
   IStrokeStyle &
   IPickStyle & {
     opacity: number;
@@ -209,6 +211,7 @@ export type IGraphicStyle = IFillStyle &
     texturePadding: number; // 纹理间隙
     blur: number;
     cursor: Cursor | null; // 鼠标样式
+    renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string
     html: {
       dom: string | HTMLElement; // dom字符串或者dom
@@ -329,6 +332,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   shadowRoot?: IShadowRoot;
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
+  attachedThemeGraphic?: IGraphic<any>;
 
   bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
 

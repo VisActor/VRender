@@ -2,6 +2,60 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-components_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-components_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.22",
+      "tag": "@visactor/vrender-components_v0.17.22",
+      "date": "Fri, 02 Feb 2024 07:17:07 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.21",
+      "tag": "@visactor/vrender-components_v0.17.21",
+      "date": "Thu, 01 Feb 2024 12:22:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with remove html, closed #944"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.20",
+      "tag": "@visactor/vrender-components_v0.17.20",
+      "date": "Thu, 01 Feb 2024 09:26:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: unify richtext config"
+          },
+          {
+            "comment": "feat: support richtext in legend components"
+          },
+          {
+            "comment": "feat: tag support textAlwaysCenter, closed #915"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.19",
       "tag": "@visactor/vrender-components_v0.17.19",
       "date": "Wed, 24 Jan 2024 13:11:27 GMT",

@@ -245,7 +245,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
   };
 
   private _reset() {
-    this.removeAllChild();
+    this.removeAllChild(true);
     this._current = 1;
     this._total = this.attribute.total as number;
     this.preHandler = this.nextHandler = this.text = null;

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-components_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.23",
       "tag": "@visactor/vrender-components_v0.17.23",
       "date": "Sun, 04 Feb 2024 12:41:45 GMT",

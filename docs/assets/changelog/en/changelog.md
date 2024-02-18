@@ -1,3 +1,16 @@
+# v0.17.24
+
+2024-02-06
+
+
+**🐛 Bug fix**
+
+- **datazoom**: realtime & pickable not work
+
+
+
+[more detail about v0.17.24](https://github.com/VisActor/VRender/releases/tag/v0.17.24)
+
 # v0.17.23
 
 2024-02-04

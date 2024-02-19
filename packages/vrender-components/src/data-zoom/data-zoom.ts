@@ -624,7 +624,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       orient,
       middleHandlerStyle = {},
       startHandlerStyle = {},
-      endHandlerStyle = {}
+      endHandlerStyle = {},
+      backgroundStyle = {}
     } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
     const middleHandlerSize = middleHandlerStyle.background?.size ?? 10;
@@ -669,10 +670,15 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         height -= (startHandlerSize + endHandlerSize) / 2;
         position = {
           x: position.x,
-          y: position.y + startHandlerSize
+          y: position.y + startHandlerSize / 2
         };
       }
     }
+
+    // stroke 需计入宽高, 否则dataZoom在画布边缘会被裁剪lineWidth / 2
+    // middleHandlerSize += middleHandlerStyle.background?.style.lineWidth / 2 ?? 1;
+    height += backgroundStyle.lineWidth / 2 ?? 1;
+    width += backgroundStyle.lineWidth / 2 ?? 1;
 
     this._layoutAttrFromConfig = {
       position,

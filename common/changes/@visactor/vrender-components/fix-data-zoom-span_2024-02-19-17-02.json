@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: datazoom not render when span is not valid",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -683,7 +683,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected render() {
-    this._layoutAttrFromConfig = null;
     const {
       // start,
       // end,
@@ -696,9 +695,19 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       startHandlerStyle = {},
       endHandlerStyle = {},
       brushSelect,
-      zoomLock
+      zoomLock,
+      minSpan = 0,
+      maxSpan = 1
     } = this.attribute as DataZoomAttributes;
+    this._layoutAttrFromConfig = null;
     const { start, end } = this.state;
+
+    // 判断是否需要被更新
+    const span = end - start;
+    if (span !== this._spanCache && (zoomLock || span < minSpan || span > maxSpan)) {
+      return;
+    }
+
     const { position, width, height } = this.getLayoutAttrFromConfig();
     const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
     const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;

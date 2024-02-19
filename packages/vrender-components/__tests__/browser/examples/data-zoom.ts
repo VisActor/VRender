@@ -10,6 +10,8 @@ export function run() {
   const dataZoom = new DataZoom({
     start: 0.2,
     end: 0.5,
+    minSpan: 0.1,
+    maxSpan: 0.5,
     position: {
       x: 50,
       y: 235

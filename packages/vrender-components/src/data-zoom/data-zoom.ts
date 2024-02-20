@@ -309,15 +309,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     start = Math.min(Math.max(start, 0), 1);
     end = Math.min(Math.max(end, 0), 1);
 
-    this.setStateAttr(start, end, true);
-
     // 避免attributes相同时, 重复渲染
-    if (realTime && (startAttr !== start || endAttr !== end)) {
-      this._dispatchEvent('change', {
-        start,
-        end,
-        tag: this._activeTag
-      });
+    if (startAttr !== start || endAttr !== end) {
+      this.setStateAttr(start, end, true);
+      if (realTime) {
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
+      }
     }
   };
   private _onHandlerPointerMove =
@@ -343,10 +344,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // dragMask不依赖于state更新
     brushSelect && this.renderDragMask();
 
-    this.setStateAttr(this.state.start, this.state.end, true);
-
     // 避免attributes相同时, 重复渲染
-    if (!realTime || start !== this.state.start || end !== this.state.end) {
+    if (start !== this.state.start || end !== this.state.end) {
+      this.setStateAttr(this.state.start, this.state.end, true);
       this._dispatchEvent('change', {
         start: this.state.start,
         end: this.state.end,
@@ -703,12 +703,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     } = this.attribute as DataZoomAttributes;
     this._layoutAttrFromConfig = null;
     const { start, end } = this.state;
-
-    // 判断是否需要被更新
-    const span = end - start;
-    if (span !== this._spanCache && (zoomLock || span < minSpan || span > maxSpan)) {
-      return;
-    }
 
     const { position, width, height } = this.getLayoutAttrFromConfig();
     const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;

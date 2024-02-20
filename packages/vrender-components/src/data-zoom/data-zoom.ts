@@ -309,9 +309,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     start = Math.min(Math.max(start, 0), 1);
     end = Math.min(Math.max(end, 0), 1);
 
+    this.setStateAttr(start, end, true);
+
     // 避免attributes相同时, 重复渲染
     if (realTime && (startAttr !== start || endAttr !== end)) {
-      this.setStateAttr(start, end, true);
       this._dispatchEvent('change', {
         start,
         end,
@@ -342,9 +343,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // dragMask不依赖于state更新
     brushSelect && this.renderDragMask();
 
+    this.setStateAttr(this.state.start, this.state.end, true);
+
     // 避免attributes相同时, 重复渲染
     if (!realTime || start !== this.state.start || end !== this.state.end) {
-      this.setStateAttr(this.state.start, this.state.end, true);
       this._dispatchEvent('change', {
         start: this.state.start,
         end: this.state.end,

@@ -10,8 +10,8 @@ export function run() {
   const dataZoom = new DataZoom({
     start: 0.2,
     end: 0.5,
-    minSpan: 0.1,
-    maxSpan: 0.5,
+    minSpan: 0.25,
+    // maxSpan: 0.5,
     position: {
       x: 50,
       y: 235
@@ -21,7 +21,8 @@ export function run() {
       height: 30
     },
     showDetail: true,
-    delayTime: 100,
+    // delayTime: 100,
+    realTime: false,
     // brushSelect: false,
     backgroundChartStyle: {
       line: {
@@ -65,7 +66,7 @@ export function run() {
 
   vglobal.supportsPointerEvents = false;
 
-  const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
+  const stage = render([dataZoom], 'main');
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

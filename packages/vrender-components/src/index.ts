@@ -2,6 +2,7 @@
 export const version = __VERSION__;
 
 export * from './core/base';
+export * from './core/type';
 export * from './scrollbar';
 export * from './tag';
 export * from './poptip';

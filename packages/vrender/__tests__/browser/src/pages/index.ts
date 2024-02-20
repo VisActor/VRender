@@ -100,6 +100,10 @@ export const pages = [
         path: 'graphic'
       },
       {
+        name: '离屏渲染',
+        path: 'offscreen'
+      },
+      {
         name: '主题测试',
         path: 'theme'
       },

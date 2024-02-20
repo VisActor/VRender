@@ -58,7 +58,7 @@ export class BrowserWindowHandlerContribution
   }
 
   getTitle(): string {
-    return this.canvas.id.toString();
+    return this.canvas.id && this.canvas.id.toString();
   }
 
   getWH(): { width: number; height: number } {

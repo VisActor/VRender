@@ -127,6 +127,7 @@ export const NOWORK_ANIMATE_ATTR = {
   zIndex: 1,
   layout: 1,
   keepDirIn3d: 1,
+  globalZIndex: 1,
 
   outerBorder: 1,
   innerBorder: 1,

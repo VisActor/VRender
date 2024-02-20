@@ -35,6 +35,7 @@ import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
 import { loadLineAxisComponent } from './register';
+import { getAxisBreakSymbolAttrs } from './util';
 
 loadLineAxisComponent();
 export interface LineAxis
@@ -72,18 +73,55 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
   }
 
-  // TODO: break
   protected renderLine(container: IGroup): void {
-    const { start, end, line } = this.attribute as LineAxisAttributes;
-    const { startSymbol, endSymbol, style, breakRange, breakShape, breakShapeStyle, state, ...restLineAttrs } =
-      line as LineAttributes;
+    const { start, end, line, breaks } = this.attribute as LineAxisAttributes;
+    const { startSymbol, endSymbol, style, state, ...restLineAttrs } = line as LineAttributes;
+
     const lineAttrs = {
-      points: [start, end],
       startSymbol,
       endSymbol,
       lineStyle: style,
       ...restLineAttrs
     } as SegmentAttributes;
+
+    if (breaks && breaks.length) {
+      // 配置了轴截断
+      breaks.sort((preBreak, currBreak) => preBreak.range[0] - currBreak.range[1]);
+      const linePoints = [];
+      let lastStartPoint = start;
+      breaks.forEach(b => {
+        const { range, breakSymbol } = b;
+        const startPoint = this.getTickCoord(range[0]);
+        const endPoint = this.getTickCoord(range[1]);
+
+        linePoints.push([lastStartPoint, startPoint]);
+        lastStartPoint = endPoint;
+
+        if (breakSymbol?.visible) {
+          const symbolStyle = getAxisBreakSymbolAttrs(breakSymbol);
+          const shape1 = graphicCreator.symbol({
+            x: startPoint.x,
+            y: startPoint.y,
+            ...symbolStyle
+          });
+          shape1.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+          const shape2 = graphicCreator.symbol({
+            x: endPoint.x,
+            y: endPoint.y,
+            ...symbolStyle
+          });
+          shape2.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+
+          container.add(shape1);
+          container.add(shape2);
+        }
+      });
+      linePoints.push([lastStartPoint, end]);
+      lineAttrs.points = linePoints;
+      lineAttrs.multiSegment = true;
+    } else {
+      lineAttrs.points = [start, end];
+    }
 
     if (!isEmpty(state)) {
       lineAttrs.state = {

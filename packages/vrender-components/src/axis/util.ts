@@ -1,7 +1,10 @@
 import { getTextBounds } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { ITextGraphicAttribute } from '@visactor/vrender-core';
-import { isGreater, isLess, tau, type Point } from '@visactor/vutils';
+import { isGreater, isLess, tau, merge } from '@visactor/vutils';
+import type { BreakSymbol } from './type';
+import { DEFAULT_AXIS_BREAK_SYMBOL_STYLE } from './config';
+import type { Point } from '../core/type';
 
 // 和 vutils 版本不同
 export const clampRadian = (angle: number = 0) => {
@@ -68,4 +71,17 @@ export function getLabelPosition(
   const y = baseY - dy;
 
   return { x, y };
+}
+
+export function getAxisBreakSymbolAttrs(props: BreakSymbol) {
+  const { shape, style } = props;
+  const symbolStyle = merge({}, DEFAULT_AXIS_BREAK_SYMBOL_STYLE, style);
+  const symbolSize = symbolStyle.size ?? DEFAULT_AXIS_BREAK_SYMBOL_STYLE.size;
+  return {
+    symbolType:
+      shape ??
+      symbolStyle.symbolType ??
+      `M ${-symbolSize / 2} ${symbolSize / 2} L ${symbolSize / 2} ${-symbolSize / 2}`,
+    ...symbolStyle
+  };
 }

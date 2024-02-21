@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: globalZIndex attribute should not do animation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

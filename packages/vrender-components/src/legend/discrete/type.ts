@@ -155,6 +155,12 @@ export type LegendItem = {
    * 聚焦按钮配置
    */
   focusIconStyle?: Partial<ISymbolGraphicAttribute>;
+  /**
+   * 指定图例项中图标和文字的摆放位置，可选值为：
+   * 'left' 图标在左侧
+   * 'right' 图标在右侧
+   */
+  align?: 'left' | 'right';
 };
 
 export type DiscreteLegendAttrs = {

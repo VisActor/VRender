@@ -312,14 +312,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-    }
 
-    if (realTime) {
-      this._dispatchEvent('change', {
-        start,
-        end,
-        tag: this._activeTag
-      });
+      if (realTime) {
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
+      }
     }
   };
   private _onHandlerPointerMove =
@@ -348,13 +348,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
+      this._dispatchEvent('change', {
+        start: this.state.start,
+        end: this.state.end,
+        tag: this._activeTag
+      });
     }
-
-    this._dispatchEvent('change', {
-      start: this.state.start,
-      end: this.state.end,
-      tag: this._activeTag
-    });
 
     // 拖拽结束后卸载事件
     if (vglobal.env === 'browser') {

@@ -44,7 +44,7 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     if (isRotated) {
       limitLabelLength = Math.abs(limitLength / Math.sin(angle));
     } else if (orient === 'top' || orient === 'bottom') {
-      limitLabelLength = isRotated ? null : verticalLimitLength;
+      limitLabelLength = verticalLimitLength;
     } else {
       limitLabelLength = direction === 'vertical' ? verticalLimitLength : limitLength;
     }
@@ -56,7 +56,7 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     }
     label.setAttributes({
       maxLineWidth: limitLabelLength,
-      ellipsis: label.attribute.ellipsis || ellipsis
+      ellipsis: label.attribute.ellipsis ?? ellipsis
     });
   });
 }

@@ -680,7 +680,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     }
 
     // stroke 需计入宽高, 否则dataZoom在画布边缘会被裁剪lineWidth / 2
-    // middleHandlerSize += middleHandlerStyle.background?.style.lineWidth / 2 ?? 1;
     height += backgroundStyle.lineWidth / 2 ?? 1;
     width += backgroundStyle.lineWidth / 2 ?? 1;
 

@@ -24,6 +24,7 @@ export function run() {
       height: 30
     },
     showDetail: false,
+    realTime: false,
     // delayTime: 100,
     // brushSelect: false,
     selectedBackgroundChartStyle: {
@@ -53,8 +54,6 @@ export function run() {
     previewPointsY1: d => scaleY.scale(265),
     tolerance: 4
   });
-
-  console.log('datazoom', dataZoom);
 
   const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,

@@ -693,6 +693,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected render() {
+    this._layoutAttrFromConfig = null;
     const {
       // start,
       // end,
@@ -708,6 +709,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       zoomLock
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
+
     const { position, width, height } = this.getLayoutAttrFromConfig();
     const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
     const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;

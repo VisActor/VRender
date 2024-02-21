@@ -20,11 +20,11 @@ function simplifyRadialDist(points: IPointLike[], sqTolerance: number): IPointLi
     if (deltaX * deltaX + deltaY * deltaY > sqTolerance) {
       lastX = points[i].x;
       lastY = points[i].y;
-      newPoints.push({ x: lastX, y: lastY });
+      newPoints.push({ x: lastX, y: lastY, ...points[i] });
     }
   }
   if (points[points.length - 1].x !== lastX || points[points.length - 1].y !== lastY) {
-    newPoints.push({ x: lastX, y: lastY });
+    newPoints.push({ x: lastX, y: lastY, ...points[points.length - 1] });
   }
   return newPoints;
 }
@@ -82,7 +82,7 @@ function simplifyDouglasPeucker(points: IPointLike[], sqTolerance: number): IPoi
   return simplified;
 }
 // both algorithms combined for awesome performance
-export function flatten_simplify(points: IPointLike[], tolerance: number, highestQuality: number): IPointLike[] {
+export function flatten_simplify(points: IPointLike[], tolerance: number, highestQuality: boolean): IPointLike[] {
   if (points.length <= 10) {
     return points;
   }

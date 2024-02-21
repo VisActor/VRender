@@ -42,7 +42,18 @@ const hbLegend = new SizeContinuousLegend({
   railHeight: 6,
   min: 0,
   max: 100,
-  value: [0, 100]
+  value: [0, 100],
+  showTooltip: true,
+  tooltip: {
+    shape: true,
+    shapeStyle: {},
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
+  }
 });
 
 const htLegend = new SizeContinuousLegend({

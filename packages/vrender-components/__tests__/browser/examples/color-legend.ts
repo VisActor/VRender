@@ -18,6 +18,17 @@ const hbLegend = new ColorContinuousLegend({
   value: [0, 100],
   railStyle: {
     cornerRadius: 5
+  },
+  showTooltip: true,
+  tooltip: {
+    shape: true,
+    shapeStyle: {},
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
   }
 });
 
@@ -39,6 +50,15 @@ const htLegend = new ColorContinuousLegend({
   value: [0, 100],
   railStyle: {
     cornerRadius: 5
+  },
+  showTooltip: true,
+  tooltip: {
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
   }
 });
 
@@ -59,6 +79,15 @@ const vlLegend = new ColorContinuousLegend({
   value: [10, 100],
   railStyle: {
     cornerRadius: 5
+  },
+  showTooltip: true,
+  tooltip: {
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
   }
 });
 const vrLegend = new ColorContinuousLegend({
@@ -78,6 +107,15 @@ const vrLegend = new ColorContinuousLegend({
   value: [10, 100],
   railStyle: {
     cornerRadius: 5
+  },
+  showTooltip: true,
+  tooltip: {
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
   }
 });
 const disableTriggerEventLegend = new ColorContinuousLegend({
@@ -98,6 +136,15 @@ const disableTriggerEventLegend = new ColorContinuousLegend({
   value: [0, 100],
   railStyle: {
     cornerRadius: 5
+  },
+  showTooltip: true,
+  tooltip: {
+    alwaysShow: true,
+    text: {
+      style: {
+        fill: 'black'
+      }
+    }
   }
   // disableTriggerEvent: true
 });

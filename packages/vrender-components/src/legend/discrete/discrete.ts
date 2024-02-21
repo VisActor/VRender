@@ -401,7 +401,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     let focusShape;
     let focusSpace = 0;
-
     if (focus) {
       const focusSize = get(focusIconStyle, 'size', DEFAULT_SHAPE_SIZE);
       // 绘制聚焦按钮
@@ -495,12 +494,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
         } else {
-          valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
+          valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
         }
       } else {
-        valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
+        valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
       }
-      focusStartX = valueShape.AABBBounds.x2 + valueSpace;
+      focusStartX = valueSpace + (valueShape.AABBBounds.empty() ? 0 : valueShape.AABBBounds.x2);
 
       innerGroup.add(valueShape);
     } else if (this._itemWidthByUser) {
@@ -509,9 +508,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         this._itemWidthByUser - parsedPadding[1] - parsedPadding[3] - shapeSize - shapeSpace - focusSpace
       );
 
-      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+      focusStartX = labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2);
     } else {
-      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+      focusStartX = labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2);
     }
 
     if (focusShape) {
@@ -528,7 +527,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const itemGroupHeight = this._itemHeightByUser || innerGroupHeight + parsedPadding[0] + parsedPadding[2];
     itemGroup.attribute.width = itemGroupWidth;
     itemGroup.attribute.height = itemGroupHeight;
-
     focusShape && focusShape.setAttribute('visible', false);
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
     return itemGroup;

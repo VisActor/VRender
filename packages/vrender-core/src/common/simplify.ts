@@ -20,11 +20,11 @@ function simplifyRadialDist(points: IPointLike[], sqTolerance: number): IPointLi
     if (deltaX * deltaX + deltaY * deltaY > sqTolerance) {
       lastX = points[i].x;
       lastY = points[i].y;
-      newPoints.push({ x: lastX, y: lastY, ...points[i] });
+      newPoints.push(points[i]);
     }
   }
   if (points[points.length - 1].x !== lastX || points[points.length - 1].y !== lastY) {
-    newPoints.push({ x: lastX, y: lastY, ...points[points.length - 1] });
+    newPoints.push(points[points.length - 1]);
   }
   return newPoints;
 }

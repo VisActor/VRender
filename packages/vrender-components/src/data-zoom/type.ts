@@ -215,4 +215,9 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
    * @default false
    */
   disableTriggerEvent?: boolean;
+  /**
+   * 背景图表数据点采样压缩率
+   * 参考: https://mourner.github.io/simplify-js/
+   */
+  tolerance?: number;
 }

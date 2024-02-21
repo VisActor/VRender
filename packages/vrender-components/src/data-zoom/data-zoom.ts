@@ -1,6 +1,6 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal } from '@visactor/vrender-core';
+import { flatten_simplify, vglobal } from '@visactor/vrender-core';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Bounds, array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -1022,7 +1022,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected getPreviewLinePoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d)
@@ -1032,12 +1032,18 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样
+    if (this.attribute.tolerance) {
+      previewPoints = flatten_simplify(previewPoints, this.attribute.tolerance, false);
+    }
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
   protected getPreviewAreaPoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints: IPointLike[] = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d),
@@ -1049,6 +1055,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样
+    if (this.attribute.tolerance) {
+      previewPoints = flatten_simplify(previewPoints, this.attribute.tolerance, false);
+    }
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }

@@ -73,8 +73,8 @@ export function getLabelPosition(
   return { x, y };
 }
 
-export function getAxisBreakSymbolAttrs(props: BreakSymbol) {
-  const { shape, style } = props;
+export function getAxisBreakSymbolAttrs(props: BreakSymbol = {}) {
+  const { shape, style = {} } = props;
   const symbolStyle = merge({}, DEFAULT_AXIS_BREAK_SYMBOL_STYLE, style);
   const symbolSize = symbolStyle.size ?? DEFAULT_AXIS_BREAK_SYMBOL_STYLE.size;
   return {

@@ -130,6 +130,17 @@ export interface AxisBreakProps {
   breakSymbol?: BreakSymbol;
 }
 
+export interface TransformedAxisBreak extends AxisBreakProps {
+  /**
+   * 截断的起始点
+   */
+  startPoint: Point;
+  /**
+   * 截断的结束点
+   */
+  endPoint: Point;
+}
+
 export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
    * 起始点坐标

@@ -310,8 +310,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     end = Math.min(Math.max(end, 0), 1);
 
     // 避免attributes相同时, 重复渲染
-    if (realTime && (startAttr !== start || endAttr !== end)) {
+    if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
+    }
+
+    if (realTime) {
       this._dispatchEvent('change', {
         start,
         end,
@@ -343,14 +346,15 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     brushSelect && this.renderDragMask();
 
     // 避免attributes相同时, 重复渲染
-    if (!realTime || start !== this.state.start || end !== this.state.end) {
+    if (start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
-      this._dispatchEvent('change', {
-        start: this.state.start,
-        end: this.state.end,
-        tag: this._activeTag
-      });
     }
+
+    this._dispatchEvent('change', {
+      start: this.state.start,
+      end: this.state.end,
+      tag: this._activeTag
+    });
 
     // 拖拽结束后卸载事件
     if (vglobal.env === 'browser') {
@@ -689,7 +693,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected render() {
-    this._layoutAttrFromConfig = null;
     const {
       // start,
       // end,

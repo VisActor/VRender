@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: upgrade vutils from 0.17.x to 0.18.x",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

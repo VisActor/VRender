@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: jsx attribute support name and id",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

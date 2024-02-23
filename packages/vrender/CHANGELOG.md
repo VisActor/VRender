@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Tue, 06 Feb 2024 09:48:26 GMT and should not be manually modified.
+This log was last generated on Fri, 23 Feb 2024 04:29:58 GMT and should not be manually modified.
+
+## 0.17.25
+Fri, 23 Feb 2024 04:29:58 GMT
+
+### Updates
+
+- fix: fix issue with text background while angle attr configed, closed #1002
 
 ## 0.17.24
 Tue, 06 Feb 2024 09:48:26 GMT

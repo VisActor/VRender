@@ -312,11 +312,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (realTime && (startAttr !== start || endAttr !== end)) {
       this.setStateAttr(start, end, true);
-      this._dispatchEvent('change', {
-        start,
-        end,
-        tag: this._activeTag
-      });
+
+      if (realTime) {
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
+      }
     }
   };
   private _onHandlerPointerMove =
@@ -343,7 +346,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     brushSelect && this.renderDragMask();
 
     // 避免attributes相同时, 重复渲染
-    if (!realTime || start !== this.state.start || end !== this.state.end) {
+    if (start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
       this._dispatchEvent('change', {
         start: this.state.start,
@@ -624,7 +627,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       orient,
       middleHandlerStyle = {},
       startHandlerStyle = {},
-      endHandlerStyle = {}
+      endHandlerStyle = {},
+      backgroundStyle = {}
     } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
     const middleHandlerSize = middleHandlerStyle.background?.size ?? 10;
@@ -669,10 +673,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         height -= (startHandlerSize + endHandlerSize) / 2;
         position = {
           x: position.x,
-          y: position.y + startHandlerSize
+          y: position.y + startHandlerSize / 2
         };
       }
     }
+
+    // stroke 需计入宽高, 否则dataZoom在画布边缘会被裁剪lineWidth / 2
+    height += backgroundStyle.lineWidth / 2 ?? 1;
+    width += backgroundStyle.lineWidth / 2 ?? 1;
 
     this._layoutAttrFromConfig = {
       position,
@@ -699,6 +707,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       zoomLock
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
+
     const { position, width, height } = this.getLayoutAttrFromConfig();
     const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
     const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;

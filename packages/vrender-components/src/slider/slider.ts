@@ -14,7 +14,7 @@ import type {
   FederatedPointerEvent,
   Cursor
 } from '@visactor/vrender-core';
-import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange } from '@visactor/vutils';
+import { isNil, merge, clamp, isValid, array, isObject, isArray, clampRange, debounce } from '@visactor/vutils';
 import { graphicCreator, vglobal, CustomEvent } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import { SLIDER_ELEMENT_NAME } from './constant';
@@ -52,6 +52,20 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       stroke: '#91caff',
       lineWidth: 2
     },
+    tooltip: {
+      shapeStyle: {
+        symbolType: 'circle',
+        fill: '#fff',
+        stroke: '#91caff',
+        lineWidth: 2
+      },
+      text: {
+        style: {
+          fill: '#2C3542',
+          fontSize: 12
+        }
+      }
+    },
     railStyle: {
       fill: 'rgba(0,0,0,.04)'
     },
@@ -88,6 +102,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   protected _isHorizontal = true;
   protected _innerView!: IGroup;
+  protected _mainContainer!: IGroup;
   protected _startHandler: ISymbol | null = null;
   protected _endHandler: ISymbol | null = null;
   protected _startHandlerText: IText | null = null;
@@ -100,6 +115,15 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 存储当前正在操作的滑块
   private _currentHandler: IGraphic | null = null;
   private _currentValue: { startValue?: number; endValue?: number; startPos?: number; endPos?: number } = {};
+  private _tooltipState: {
+    isActive?: boolean;
+    pos?: number;
+    value?: number;
+  };
+  private _isChanging?: boolean;
+
+  protected _tooltipShape?: ISymbol;
+  protected _tooltipText?: IText;
 
   get track() {
     return this._track;
@@ -115,6 +139,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   get endHandler() {
     return this._endHandler;
+  }
+
+  get tooltipShape() {
+    return this._tooltipShape;
   }
 
   constructor(attributes: SliderAttributes, options?: ComponentOptions) {
@@ -157,7 +185,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       endText,
       min,
       max,
-      showHandler = true
+      showHandler = true,
+      showTooltip
     } = this.attribute as SliderAttributes;
     let { value } = this.attribute as SliderAttributes;
     if (isNil(value)) {
@@ -211,6 +240,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._railContainer = railContainer;
     mainContainer.add(railContainer);
 
+    this._mainContainer = mainContainer;
+
     this._renderRail(railContainer);
 
     startLen += isHorizontal ? (railWidth as number) : (railHeight as number);
@@ -238,6 +269,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (showHandler) {
       this._renderHandlers(mainContainer);
       this._bindEvents();
+    }
+
+    if (showTooltip) {
+      this._renderTooltip();
+      this._bindTooltipEvents();
     }
   }
 
@@ -479,6 +515,101 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return textShape;
   }
 
+  private _renderTooltip() {
+    const { tooltip, railHeight, railWidth, align } = this.attribute as SliderAttributes;
+
+    if (tooltip && tooltip.alwaysShow) {
+      this._tooltipState = {
+        value: this._currentValue.startValue,
+        pos: this._currentValue.startPos
+      };
+    } else {
+      this._tooltipState = null;
+    }
+
+    const cx = this._isHorizontal ? 0 : railWidth / 2;
+    const cy = this._isHorizontal ? railHeight / 2 : 0;
+
+    if (tooltip && tooltip.shape) {
+      const shape = graphicCreator.symbol({
+        pickable: false,
+        visible: !!this._tooltipState,
+        x: cx,
+        y: cy,
+        symbolType: 'circle',
+
+        ...tooltip.shapeStyle
+      });
+
+      this._tooltipShape = shape;
+      this._mainContainer.add(shape);
+    }
+
+    const textConfig = (tooltip && tooltip.text) || {};
+    const space = textConfig.space ?? 6;
+
+    const textStyle: ITextGraphicAttribute = {
+      pickable: false,
+      visible: !!this._tooltipState,
+      text: ''
+    };
+
+    if (this._isHorizontal) {
+      textStyle.x = cx;
+      textStyle.y = align === 'top' ? cy - railHeight / 2 - space : cy + railHeight / 2 + space;
+      textStyle.textAlign = 'center';
+      textStyle.textBaseline = align === 'top' ? 'bottom' : 'top';
+    } else {
+      textStyle.y = cy;
+      textStyle.x = align === 'left' ? cx - railWidth / 2 - space : cy + railWidth / 2 + space;
+      textStyle.textAlign = align === 'left' ? 'end' : 'start';
+      textStyle.textBaseline = 'middle';
+    }
+    const text = graphicCreator.text({
+      ...textStyle,
+      ...textConfig.style
+    });
+
+    this._mainContainer.add(text);
+    this._tooltipText = text;
+
+    if (this._tooltipState) {
+      this._updateTooltip();
+    }
+  }
+
+  private _updateTooltip() {
+    if ((!this._tooltipShape && !this._tooltipText) || !this._tooltipState) {
+      return;
+    }
+
+    const coord = this._isHorizontal
+      ? this._tooltipState.pos * this.attribute.railWidth
+      : this._tooltipState.pos * this.attribute.railHeight;
+    const coordKey = this._isHorizontal ? 'x' : 'y';
+
+    if (this._tooltipShape) {
+      this._tooltipShape.setAttributes({
+        visible: true,
+        [coordKey]: coord
+      });
+    }
+    const { align } = this.attribute;
+
+    if (this._tooltipText) {
+      const textConfig = (this.attribute.tooltip && this.attribute.tooltip.text) || {};
+      this._tooltipText.setAttributes({
+        visible: true,
+        [coordKey]: coord,
+        text: textConfig.formatter
+          ? textConfig.formatter(this._tooltipState.value)
+          : !this._isHorizontal && align === 'left'
+          ? `${this._tooltipState.value.toFixed(textConfig.precision ?? 0)} ≈`
+          : `≈ ${this._tooltipState.value.toFixed(textConfig.precision ?? 0)}`
+      });
+    }
+  }
+
   private _bindEvents() {
     if (this.attribute.disableTriggerEvent) {
       return;
@@ -521,8 +652,76 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
   }
 
+  private _bindTooltipEvents() {
+    if (this.attribute.disableTriggerEvent) {
+      return;
+    }
+
+    this._mainContainer.addEventListener('pointerenter', this._onTooltipShow as EventListenerOrEventListenerObject);
+    this._mainContainer.addEventListener('pointermove', this._onTooltipUpdate as EventListenerOrEventListenerObject);
+    this._mainContainer.addEventListener('pointerleave', this._onTooltipHide as EventListenerOrEventListenerObject);
+  }
+
+  private _onTooltipShow = (e: FederatedPointerEvent) => {
+    if (this._isChanging || (this._tooltipState && this._tooltipState.isActive)) {
+      return;
+    }
+
+    if (!this._tooltipState) {
+      this._tooltipState = { isActive: true };
+    } else {
+      this._tooltipState.isActive = true;
+    }
+
+    this._onTooltipUpdate(e);
+    this._dispatchTooltipEvent('sliderTooltipShow');
+  };
+
+  private _onTooltipUpdate = (e: FederatedPointerEvent) => {
+    if (this._isChanging || !this._tooltipState || !this._tooltipState.isActive) {
+      return;
+    }
+
+    const { min, max } = this.attribute;
+    const pos = clamp(
+      this._isHorizontal
+        ? (e.viewX - this._rail.globalAABBBounds.x1) / this._rail.globalAABBBounds.width()
+        : (e.viewY - this._rail.globalAABBBounds.y1) / this._rail.globalAABBBounds.height(),
+      0,
+      1
+    );
+
+    if (pos !== this._tooltipState.pos) {
+      this._tooltipState.pos = pos;
+      this._tooltipState.value = min + (max - min) * pos;
+
+      this._updateTooltip();
+      this._dispatchTooltipEvent('sliderTooltipUpdate');
+    }
+  };
+
+  private _onTooltipHide = () => {
+    const { tooltip } = this.attribute as SliderAttributes;
+
+    if (tooltip && tooltip.alwaysShow) {
+      return;
+    }
+
+    this._tooltipState = null;
+
+    if (this._tooltipShape) {
+      this._tooltipShape.setAttribute('visible', false);
+    }
+    if (this._tooltipText) {
+      this._tooltipText.setAttribute('visible', false);
+    }
+    this._dispatchTooltipEvent('sliderTooltipHide');
+  };
+
   private _onHandlerPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._isChanging = true;
+
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
@@ -541,6 +740,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+
+    this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
     if (max === min) {
       return;
@@ -579,6 +780,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
+    this._isChanging = false;
     this._currentHandler = null;
     if (vglobal.env === 'browser') {
       vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
@@ -599,6 +801,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._isChanging = true;
     this._prePos = this._isHorizontal ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
       vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
@@ -616,6 +819,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
 
     if (max === min) {
@@ -672,6 +876,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
+    this._isChanging = false;
     if (vglobal.env === 'browser') {
       vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
         capture: true
@@ -688,6 +893,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
 
     if (max === min) {
@@ -835,6 +1041,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
             Math.max(currentValue.endPos as number, currentValue.startPos as number)
           ]
         : currentValue.startPos
+    });
+  }
+
+  private _dispatchTooltipEvent(type: string) {
+    this._dispatchEvent('sliderTooltip', {
+      type,
+      position: this._tooltipState && this._tooltipState.pos,
+      value: this._tooltipState && this._tooltipState.value
     });
   }
 

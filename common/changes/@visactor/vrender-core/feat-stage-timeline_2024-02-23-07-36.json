@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: animate with stage timeline",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

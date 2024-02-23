@@ -9,6 +9,10 @@ export type IArcAttribute = {
   innerRadius: number;
   /** 外半径 */
   outerRadius: number;
+  /* 内边距 */
+  innerPadding: number;
+  /* 外边距 */
+  outerPadding: number;
   /**
    * 起始角度；
    * 以弧度的形式指定，0 表示 12 点钟方向并且顺时针方向为正。

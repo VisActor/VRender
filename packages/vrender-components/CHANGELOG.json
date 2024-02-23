@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.17.25",
+      "tag": "@visactor/vrender-components_v0.17.25",
+      "date": "Fri, 23 Feb 2024 04:29:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": " feat: export more basic type defination in vrender-components"
+          },
+          {
+            "comment": "fix: fix auto-limit of top/bottom axis when no rotate\n\n"
+          },
+          {
+            "comment": "fix: legend disappear when label is empty string in focus mode"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.24",
       "tag": "@visactor/vrender-components_v0.17.24",
       "date": "Tue, 06 Feb 2024 09:48:26 GMT",

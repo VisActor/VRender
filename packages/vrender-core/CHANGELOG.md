@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 06 Feb 2024 09:48:26 GMT and should not be manually modified.
+This log was last generated on Fri, 23 Feb 2024 04:29:58 GMT and should not be manually modified.
+
+## 0.17.25
+Fri, 23 Feb 2024 04:29:58 GMT
+
+### Updates
+
+- feat: support flatten_simplify
+- feat: jsx attribute support name and id
+- fix: fix issue with check gradient str color, closed #984
+- fix: globalZIndex attribute should not do animation
+- fix: fix issue with string star path
+- fix: fix issue with text background while angle attr configed, closed #1002
 
 ## 0.17.24
 Tue, 06 Feb 2024 09:48:26 GMT

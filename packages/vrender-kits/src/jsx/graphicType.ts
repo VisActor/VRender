@@ -79,6 +79,8 @@ export type IDefaultGraphicParamsType<T> = {
   stateProxy?: (stateName: string, targetStates?: string[]) => Partial<T>;
   // react可能类型报错
   children?: any;
+  name: string;
+  id: string;
 } & IEventParamsType;
 
 export function VArc(params: IDefaultGraphicParamsType<IArcGraphicAttribute>) {

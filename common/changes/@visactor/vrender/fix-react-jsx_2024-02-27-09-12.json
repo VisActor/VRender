@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix issue with load svg sync, fix issue with decode react dom",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

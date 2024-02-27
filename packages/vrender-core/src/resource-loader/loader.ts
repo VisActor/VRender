@@ -68,9 +68,7 @@ export class ResourceLoader {
         // 资源padding队列加入mark信息
         data.waitingMark?.push(mark);
       } else if (mark) {
-        application.global.getRequestAnimationFrame()(() => {
-          mark.imageLoadSuccess(svgStr, data.data as HTMLImageElement);
-        });
+        mark.imageLoadSuccess(svgStr, data.data as HTMLImageElement);
       }
     } else {
       data = { type: 'image', loadState: 'init' };

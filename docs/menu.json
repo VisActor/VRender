@@ -8,8 +8,8 @@
     "type": "markdown"
   },
   {
-    "menu": "api",
+    "menu": "option",
     "type": "markdown-template",
-    "entry": "api"
+    "entry": "option"
   }
 ]

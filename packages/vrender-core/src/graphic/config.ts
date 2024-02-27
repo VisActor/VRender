@@ -111,6 +111,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   heightLimit: Infinity,
   lineClamp: Infinity,
   suffixPosition: 'end',
+  underlineDash: [],
+  underlineOffset: 0,
   disableAutoClipedPoptip: undefined
 };
 

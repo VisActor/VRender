@@ -1,4 +1,4 @@
-{{ target: api }}
+{{ target: option }}
 
 {{import: graphic-arc}}
 {{import: graphic-area}}

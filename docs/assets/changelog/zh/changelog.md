@@ -1,3 +1,23 @@
+# v0.17.26
+
+2024-02-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: animate with stage timeline
+- **@visactor/vrender-core**: support underline Dash and undeline offset, closed [#1025](https://github.com/VisActor/VRender/issues/1025)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-kits**: fix issue with load svg sync, fix issue with decode react dom
+- **@visactor/vrender-core**: fix issue with load svg sync, fix issue with decode react dom
+- **@visactor/vrender**: fix issue with load svg sync, fix issue with decode react dom
+
+
+
+[更多详情请查看 v0.17.26](https://github.com/VisActor/VRender/releases/tag/v0.17.26)
+
 # v0.17.25
 
 2024-02-27

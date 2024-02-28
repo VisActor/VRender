@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.17.26",
+      "tag": "@visactor/vrender-core_v0.17.26",
+      "date": "Wed, 28 Feb 2024 08:06:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: animate with stage timeline"
+          },
+          {
+            "comment": "feat: support underline Dash and undeline offset, closed #1025"
+          },
+          {
+            "comment": "fix: fix issue with load svg sync, fix issue with decode react dom"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.25",
       "tag": "@visactor/vrender-core_v0.17.25",
       "date": "Fri, 23 Feb 2024 04:29:58 GMT",

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: support underline Dash and undeline offset, closed #1025",
+      "comment": "feat: support flatten_simplify",
       "type": "none"
     }
   ],

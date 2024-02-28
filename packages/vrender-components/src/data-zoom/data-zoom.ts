@@ -1,6 +1,6 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal } from '@visactor/vrender-core';
+import { flatten_simplify, vglobal } from '@visactor/vrender-core';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Bounds, array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -312,14 +312,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (realTime && (startAttr !== start || endAttr !== end)) {
       this.setStateAttr(start, end, true);
+    }
 
-      if (realTime) {
-        this._dispatchEvent('change', {
-          start,
-          end,
-          tag: this._activeTag
-        });
-      }
+    if (realTime) {
+      this._dispatchEvent('change', {
+        start,
+        end,
+        tag: this._activeTag
+      });
     }
   };
   private _onHandlerPointerMove =
@@ -348,12 +348,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
-      this._dispatchEvent('change', {
-        start: this.state.start,
-        end: this.state.end,
-        tag: this._activeTag
-      });
     }
+    this._dispatchEvent('change', {
+      start: this.state.start,
+      end: this.state.end,
+      tag: this._activeTag
+    });
 
     // 拖拽结束后卸载事件
     if (vglobal.env === 'browser') {
@@ -1022,7 +1022,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
 
   protected getPreviewLinePoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d)
@@ -1032,12 +1032,20 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样, 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
+    const niceCount = 10000; // 经验值
+    const tolerance =
+      this.attribute.tolerance ??
+      (this._previewData.length > niceCount ? this._previewData.length / niceCount : this._previewData.length);
+    previewPoints = flatten_simplify(previewPoints, tolerance, false);
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
   protected getPreviewAreaPoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints: IPointLike[] = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d),
@@ -1049,6 +1057,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样, 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
+    const niceCount = 10000; // 经验值
+    const tolerance =
+      this.attribute.tolerance ??
+      (this._previewData.length > niceCount ? this._previewData.length / niceCount : this._previewData.length);
+    previewPoints = flatten_simplify(previewPoints, tolerance, false);
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }

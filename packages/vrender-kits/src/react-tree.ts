@@ -20,15 +20,23 @@ export function decodeReactDom(dom: any) {
 
   g.id = id;
   g.name = name;
+  parseChildren(children, g);
+  return g;
+}
+
+function parseChildren(children: any, g: any) {
   if (isArray(children)) {
     children.forEach((item: any) => {
-      const c = decodeReactDom(item);
-      c && c.type && g.add(c);
+      if (isArray(item)) {
+        parseChildren(item, g);
+      } else {
+        const c = decodeReactDom(item);
+        c && c.type && g.add(c);
+      }
     });
   } else if (children) {
     g.add(decodeReactDom(children));
   }
-  return g;
 }
 
 function parseToGraphic(g: any, props: any, childrenList: any): any {

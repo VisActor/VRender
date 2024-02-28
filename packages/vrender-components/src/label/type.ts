@@ -482,7 +482,7 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
   /**
    * 防重叠的区域大小
    */
-  size: { width: number; height: number };
+  size: { width: number; height: number; padding?: { top?: number; left?: number; right?: number; bottom?: number } };
 }
 
 export type Functional<T> = T | ((data: any) => T);

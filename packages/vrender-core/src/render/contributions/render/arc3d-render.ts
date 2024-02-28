@@ -203,11 +203,14 @@ export class DefaultCanvasArc3DRender extends BaseRender<IArc3d> implements IGra
     const z = this.z ?? 0;
 
     const {
-      outerRadius = arcAttribute.outerRadius,
-      innerRadius = arcAttribute.innerRadius,
+      outerPadding = arcAttribute.outerPadding,
+      innerPadding = arcAttribute.innerPadding,
       // TODO 3d视角下直接硬编码，避免theme消耗性能
       height = 10
     } = arc.attribute;
+    let { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius } = arc.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
 
     const rgbArray = ColorStore.Get(fill as string, ColorType.Color255);
     const { light } = drawContext.stage || {};

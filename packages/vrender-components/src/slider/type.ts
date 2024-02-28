@@ -42,15 +42,37 @@ export type HandlerTextAttribute = {
 };
 
 export type TooltipConfig = {
-  // /**
-  //  * 是否始终展示
-  //  */
-  // alwaysShow?: boolean;
   /**
-   * 格式化函数
+   * 是否展示图标
    */
-  formatter?: (value: Text) => Text;
-  // TODO： 待补充一些样式属性
+  shape?: boolean;
+  /**
+   * 图标的样式配置
+   */
+  shapeStyle?: Partial<ISymbolGraphicAttribute>;
+
+  text?: {
+    /**
+     * 数据展示的小数精度，默认为0，无小数点。
+     */
+    precision?: number;
+    /**
+     * 文本同滑块的间距，默认为 6
+     */
+    space?: number;
+    /**
+     * 格式化函数
+     */
+    formatter?: (value: Text) => Text;
+    /**
+     * 文本样式
+     */
+    style?: Omit<Partial<ITextGraphicAttribute>, 'text'>;
+  };
+  /**
+   * 是否始终展示
+   */
+  alwaysShow?: boolean;
 };
 
 export type RangeType =
@@ -152,7 +174,11 @@ export type SliderAttributes = {
   handlerText?: HandlerTextAttribute;
 
   /**
-   * TODO
+   * tooltip，默认不显示
+   * 需要通过交互触发展示：
+   * 1. 鼠标移动到组件上
+   * 2. 通过API手动触发显示
+   *
    * 是否显示 hander 上的 tooltip
    */
   showTooltip?: boolean;

@@ -1,11 +1,16 @@
 import { vglobal } from '@visactor/vrender-core';
 import '@visactor/vrender';
-import { IPointLike } from '@visactor/vutils';
+import { IPointLike, getScaleY } from '@visactor/vutils';
 import render from '../../util/render';
 import { DataZoom } from '../../../src';
+import data from '../data-zoom-big-data.json';
+import { BandScale, LinearScale } from '@visactor/vscale';
 
 export function run() {
   console.log('RectCrosshair');
+
+  const scaleX = new BandScale().domain(data.map(d => d.x)).range([50, 450] as any);
+  const scaleY = new LinearScale().domain([0, 500]).range([265, 235]);
 
   const dataZoom = new DataZoom({
     start: 0.2,
@@ -19,9 +24,10 @@ export function run() {
       height: 30
     },
     showDetail: false,
+    realTime: false,
     // delayTime: 100,
     // brushSelect: false,
-    backgroundChartStyle: {
+    selectedBackgroundChartStyle: {
       line: {
         visible: false
       },
@@ -29,9 +35,24 @@ export function run() {
         visible: false
       }
     },
+    backgroundChartStyle: {
+      line: {
+        stroke: 'red',
+        visible: false
+      },
+      area: {
+        fill: 'red'
+      }
+    },
     middleHandlerStyle: {
       visible: true
-    }
+    },
+    previewData: data,
+    previewPointsX: d => scaleX.scale(d.x),
+    previewPointsY: d => scaleY.scale(d.y),
+    previewPointsX1: d => scaleX.scale(d.x),
+    previewPointsY1: d => scaleY.scale(265),
+    tolerance: 4
   });
 
   const dataZoomdisableTriggerEvent = new DataZoom({

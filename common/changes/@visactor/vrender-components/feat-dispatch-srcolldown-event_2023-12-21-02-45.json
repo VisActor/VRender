@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(scrollbar): reconfig scrollbar api of scrollDrag and scrollDown",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

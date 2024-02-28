@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support innerpadding and outerpadding",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

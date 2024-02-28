@@ -3,7 +3,7 @@ import { bindContributionProvider } from '../../../common/contribution-provider'
 import { DefaultDrawContribution } from './draw-contribution';
 import { DefaultCanvasGroupRender } from './group-render';
 import { DefaultIncrementalDrawContribution } from './incremental-draw-contribution';
-import { DrawContribution, GraphicRender, GroupRender, IncrementalDrawContribution } from './symbol';
+import { DrawContribution, GraphicRender, GroupRender, IncrementalDrawContribution, RenderSelector } from './symbol';
 import { CommonDrawItemInterceptorContribution, DrawItemInterceptor } from './draw-interceptor';
 import { GroupRenderContribution, InteractiveSubRenderContribution } from './contributions/constants';
 import {
@@ -38,6 +38,7 @@ export default new ContainerModule(bind => {
   // bind(DrawItemInterceptor).toService(ShadowRootDrawItemInterceptorContribution);
   bind(CommonDrawItemInterceptorContribution).toSelf().inSingletonScope();
   bind(DrawItemInterceptor).toService(CommonDrawItemInterceptorContribution);
+  // bind(RenderSelector).toService()
   // bind(Canvas3DDrawItemInterceptor).toSelf().inSingletonScope();
   // bind(DrawItemInterceptor).toService(Canvas3DDrawItemInterceptor);
   // bind(InteractiveDrawItemInterceptorContribution).toSelf().inSingletonScope();

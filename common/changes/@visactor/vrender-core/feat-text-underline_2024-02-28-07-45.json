@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: multiline text underline bugfix, closed #1029",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

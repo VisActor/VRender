@@ -54,6 +54,8 @@ export type ITextAttribute = {
   wrap: boolean;
   whiteSpace: 'normal' | 'no-wrap';
   suffixPosition: 'start' | 'end' | 'middle';
+  underlineDash: number[];
+  underlineOffset: number;
   // textDecoration: number;
   // textDecorationWidth: number;
   // padding?: number | number[];

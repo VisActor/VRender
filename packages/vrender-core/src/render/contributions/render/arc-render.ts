@@ -260,11 +260,14 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     const { fVisible, sVisible, doFill, doStroke } = data;
 
     const {
-      outerRadius = arcAttribute.outerRadius,
-      innerRadius = arcAttribute.innerRadius,
+      outerPadding = arcAttribute.outerPadding,
+      innerPadding = arcAttribute.innerPadding,
       cap = arcAttribute.cap,
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
+    let { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius } = arc.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     // 判断是否是环形渐变，且有头部cap，那就偏移渐变色角度
     let conicalOffset = 0;
     const tempChangeConicalColor =

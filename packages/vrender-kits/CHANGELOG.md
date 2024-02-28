@@ -1,6 +1,23 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Fri, 02 Feb 2024 07:17:07 GMT and should not be manually modified.
+This log was last generated on Fri, 23 Feb 2024 04:29:58 GMT and should not be manually modified.
+
+## 0.17.25
+Fri, 23 Feb 2024 04:29:58 GMT
+
+### Updates
+
+- feat: support offscreenCanvas in lynx env, closed #994
+
+## 0.17.24
+Tue, 06 Feb 2024 09:48:26 GMT
+
+_Version update only_
+
+## 0.17.23
+Sun, 04 Feb 2024 12:41:45 GMT
+
+_Version update only_
 
 ## 0.17.22
 Fri, 02 Feb 2024 07:17:07 GMT

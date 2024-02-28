@@ -10,7 +10,7 @@ function flatten(list: any, out: any[]): void {
 }
 
 export function jsx(type: string | any, config: Record<string, any>, ...children: any) {
-  const { key, attribute, stateProxy, ...props } = config || {};
+  const { key, name, id, attribute, stateProxy, ...props } = config || {};
 
   let c = type;
   if (isString(type)) {

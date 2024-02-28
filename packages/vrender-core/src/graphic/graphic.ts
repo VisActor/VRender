@@ -127,6 +127,7 @@ export const NOWORK_ANIMATE_ATTR = {
   zIndex: 1,
   layout: 1,
   keepDirIn3d: 1,
+  globalZIndex: 1,
 
   outerBorder: 1,
   innerBorder: 1,
@@ -713,7 +714,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id).bind(this);
+    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline()).bind(this);
     if (params) {
       const { onStart, onFrame, onEnd, onRemove } = params;
       onStart != null && animate.onStart(onStart);

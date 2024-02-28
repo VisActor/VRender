@@ -211,6 +211,7 @@ export type IGraphicStyle = ILayout &
     texturePadding: number; // 纹理间隙
     blur: number;
     cursor: Cursor | null; // 鼠标样式
+    renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string
     html: {
       dom: string | HTMLElement; // dom字符串或者dom

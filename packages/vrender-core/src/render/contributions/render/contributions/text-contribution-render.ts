@@ -64,7 +64,7 @@ export class DefaultTextBackgroundRenderContribution
     } else {
       b = graphic.AABBBounds;
       if (!onlyTranslate) {
-        b.set(0, 0, b.width(), b.height());
+        b = getTextBounds({ ...graphic.attribute, angle: 0, scaleX: 1, scaleY: 1, x: 0, y: 0, dx: 0, dy: 0 }).clone();
       }
     }
 

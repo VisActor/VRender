@@ -313,6 +313,7 @@ export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
 
 export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultTextStyle,
   width: 300,
   height: 300,
   ellipsis: true,

@@ -326,6 +326,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
+      underlineOffset = textAttribute.underlineOffset,
+      underlineDash = textAttribute.underlineDash,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
     const w = text.clipedWidth;
@@ -335,8 +337,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize;
+      const dy = y + offsetY + fontSize + underlineOffset;
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();
@@ -372,6 +375,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
+      underlineOffset = textAttribute.underlineOffset,
+      underlineDash = textAttribute.underlineDash,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
 
@@ -382,8 +387,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize + deltaY;
+      const dy = y + offsetY + fontSize + deltaY + underlineOffset;
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();

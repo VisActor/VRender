@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.0",
+      "tag": "@visactor/vrender-components_v0.18.0",
+      "date": "Wed, 28 Feb 2024 10:09:04 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(scrollbar): reconfig scrollbar api of scrollDrag and scrollDown"
+          },
+          {
+            "comment": "feat: support oriented padding in label overlap bitmap"
+          },
+          {
+            "comment": "feat: support item align of discrete legend"
+          },
+          {
+            "comment": "feat: support scrollbar in legend"
+          },
+          {
+            "comment": "feat: support tooltip in SizeLegend and ColorLegend"
+          },
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          },
+          {
+            "comment": "fix(dataZoom): compute line width when compute bounds"
+          },
+          {
+            "comment": "feat: support lazyload of Legend, and pageFormatter of Pager\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.26",
       "tag": "@visactor/vrender-components_v0.17.26",
       "date": "Wed, 28 Feb 2024 08:06:31 GMT",

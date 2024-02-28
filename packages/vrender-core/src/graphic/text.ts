@@ -348,11 +348,18 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateSingallineAABBBounds(text: number | string): AABBBounds {
     const textTheme = getTheme(this).text;
-    const { direction = textTheme.direction } = this.attribute;
+    const { direction = textTheme.direction, underlineOffset = textTheme.underlineOffset } = this.attribute;
 
-    return direction === 'horizontal'
-      ? this.updateHorizontalSinglelineAABBBounds(text)
-      : this.updateVerticalSinglelineAABBBounds(text);
+    const b =
+      direction === 'horizontal'
+        ? this.updateHorizontalSinglelineAABBBounds(text)
+        : this.updateVerticalSinglelineAABBBounds(text);
+    if (direction === 'horizontal') {
+      if (underlineOffset) {
+        this._AABBBounds.add(this._AABBBounds.x1, this._AABBBounds.y2 + underlineOffset);
+      }
+    }
+    return b;
   }
 
   /**
@@ -361,11 +368,19 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    */
   updateMultilineAABBBounds(text: (number | string)[]): AABBBounds {
     const textTheme = getTheme(this).text;
-    const { direction = textTheme.direction } = this.attribute;
+    const { direction = textTheme.direction, underlineOffset = textTheme.underlineOffset } = this.attribute;
 
-    return direction === 'horizontal'
-      ? this.updateHorizontalMultilineAABBBounds(text)
-      : this.updateVerticalMultilineAABBBounds(text);
+    const b =
+      direction === 'horizontal'
+        ? this.updateHorizontalMultilineAABBBounds(text)
+        : this.updateVerticalMultilineAABBBounds(text);
+
+    if (direction === 'horizontal') {
+      if (underlineOffset) {
+        this._AABBBounds.add(this._AABBBounds.x1, this._AABBBounds.y2 + underlineOffset);
+      }
+    }
+    return b;
   }
 
   /**

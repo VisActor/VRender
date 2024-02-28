@@ -88,7 +88,10 @@ export const page = () => {
     textAlign: 'center',
     _debug_bounds: true,
     textBaseline: 'middle',
-    text: ['aaaa'],
+    text: ['细分'],
+    underline: 1,
+    underlineOffset: 0,
+    underlineDash: [2, 2],
     fontSize: 16,
     whiteSpace: 'normal',
     graphicAlign: 'center',
@@ -98,8 +101,8 @@ export const page = () => {
     fontFamily: 'D-Din',
     maxLineWidth: 120,
     heightLimit: 999999,
-    angle: 0.6,
-    anchor: [971.9754981994629, -213.8625716268361],
+    // angle: 0.6,
+    // anchor: [971.9754981994629, -213.8625716268361],
     visible: true,
     background: '#F54A45'
   });

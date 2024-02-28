@@ -1021,6 +1021,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     };
   }
 
+  protected simplifyPoints(points: IPointLike[]) {
+    // 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
+    const niceCount = 10000; // 经验值
+    if (points.length > niceCount) {
+      const tolerance = this.attribute.tolerance ?? this._previewData.length / niceCount;
+      return flatten_simplify(points, tolerance, false);
+    }
+    return points;
+  }
+
   protected getPreviewLinePoints() {
     let previewPoints = this._previewData.map(d => {
       return {
@@ -1033,12 +1043,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       return previewPoints;
     }
 
-    // 采样, 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
-    const niceCount = 10000; // 经验值
-    const tolerance =
-      this.attribute.tolerance ??
-      (this._previewData.length > niceCount ? this._previewData.length / niceCount : this._previewData.length);
-    previewPoints = flatten_simplify(previewPoints, tolerance, false);
+    // 采样
+    previewPoints = this.simplifyPoints(previewPoints);
 
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
@@ -1058,12 +1064,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       return previewPoints;
     }
 
-    // 采样, 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
-    const niceCount = 10000; // 经验值
-    const tolerance =
-      this.attribute.tolerance ??
-      (this._previewData.length > niceCount ? this._previewData.length / niceCount : this._previewData.length);
-    previewPoints = flatten_simplify(previewPoints, tolerance, false);
+    // 采样
+    previewPoints = this.simplifyPoints(previewPoints);
 
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);

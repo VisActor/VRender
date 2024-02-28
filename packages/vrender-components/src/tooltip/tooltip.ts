@@ -125,7 +125,7 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
             textBaseline: titleAttr.value.textBaseline as any,
             singleLine: false,
             textConfig: [],
-            ...titleAttr.value
+            ...(titleAttr.value as any)
           },
           'richtext'
         ) as IRichText;

@@ -7,7 +7,24 @@ export default defineConfig({
     open: true,
     port: 3012
   },
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        parserOpts: {
+          plugins: ['decorators-legacy', 'classProperties']
+        },
+        plugins: [
+          [
+            '@babel/plugin-transform-react-jsx',
+            {
+              pragma: 'jsx',
+              pragmaFrag: 'Fragment'
+            }
+          ]
+        ]
+      }
+    })
+  ],
   resolve: {
     alias: {
       '@visactor/vrender': path.resolve(__dirname, '../../../vrender/src/index.ts'),

@@ -111,6 +111,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   heightLimit: Infinity,
   lineClamp: Infinity,
   suffixPosition: 'end',
+  underlineDash: [],
+  underlineOffset: 0,
   disableAutoClipedPoptip: undefined
 };
 
@@ -169,6 +171,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   zIndex: 0,
   layout: null,
   boundsPadding: 0,
+  renderStyle: 'default',
   pickMode: 'accurate',
   customPickShape: null,
   boundsMode: 'accurate',

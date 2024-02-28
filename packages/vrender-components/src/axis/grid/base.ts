@@ -241,10 +241,23 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         ? (alternateColor as string[])
         : [alternateColor as string, 'transparent'];
       const getColor = (index: number) => colors[index % colors.length];
-
-      // const regions: any[] = [];
-      for (let index = 0; index < items.length - 1; index++) {
-        const [prev, curr] = [items[index].points, items[index + 1].points];
+      for (let index = 0; index < items.length; index++) {
+        const prev = items[index].points;
+        let curr;
+        if (index !== items.length - 1) {
+          curr = items[index + 1].points;
+        } else {
+          curr = [
+            {
+              x: items[index].points[0].x + (items[index].points[0].x - items[index - 1].points[0].x),
+              y: items[index].points[0].y + (items[index].points[0].y - items[index - 1].points[0].y)
+            },
+            {
+              x: items[index].points[1].x + (items[index].points[1].x - items[index - 1].points[1].x),
+              y: items[index].points[1].y + (items[index].points[1].y - items[index - 1].points[1].y)
+            }
+          ];
+        }
         const path = getRegionPath(prev, curr, gridAttrs);
         const shape = graphicCreator.path({
           path,

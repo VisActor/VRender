@@ -82,6 +82,40 @@ export const page = () => {
   graphics.push(t);
   // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
+  const tt = createText({
+    x: 971.9754981994629,
+    y: -213.8625716268361,
+    textAlign: 'center',
+    _debug_bounds: true,
+    textBaseline: 'middle',
+    text: ['细分'],
+    underline: 1,
+    underlineOffset: 0,
+    underlineDash: [2, 2],
+    fontSize: 16,
+    whiteSpace: 'normal',
+    graphicAlign: 'center',
+    graphicBaseline: 'middle',
+    fill: '#000',
+    ignoreBuf: true,
+    fontFamily: 'D-Din',
+    maxLineWidth: 120,
+    heightLimit: 999999,
+    // angle: 0.6,
+    // anchor: [971.9754981994629, -213.8625716268361],
+    visible: true,
+    background: '#F54A45'
+  });
+  console.log(tt);
+  const g = createGroup({
+    // angle: 0.6
+    x: -600,
+    y: 600
+  });
+  g.add(tt);
+
+  graphics.push(g);
+
   graphics.push(
     createText({
       x: 300,

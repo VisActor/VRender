@@ -167,6 +167,10 @@ const specs = [
     name: '水平 dataZoom'
   },
   {
+    path: 'data-zoom-big-data',
+    name: '水平 dataZoom 大数据量采样'
+  },
+  {
     path: 'data-zoom-preview-v',
     name: '水平 背景图表 dataZoom'
   },

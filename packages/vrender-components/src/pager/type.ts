@@ -49,6 +49,12 @@ export type PagerAttributes = {
    */
   total: number;
   /**
+   * the format method of text in pager
+   * @param current the current page
+   * @param total   the total page
+   */
+  pageFormatter?: string | ((current: number, total: number) => string);
+  /**
    * 默认当前页数
    */
   defaultCurrent?: number;

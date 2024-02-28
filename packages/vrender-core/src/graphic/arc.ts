@@ -110,9 +110,12 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     const arcTheme = getTheme(this).arc;
     const {
       cornerRadius = arcTheme.cornerRadius,
-      outerRadius = arcTheme.outerRadius,
-      innerRadius = arcTheme.innerRadius
+      innerPadding = arcTheme.innerPadding,
+      outerPadding = arcTheme.outerPadding
     } = this.attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     if (cornerRadius === 0 || cornerRadius === '0%') {
       return 0;
     }
@@ -143,7 +146,10 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
         startCap = Number(cap[0]);
         endCap = Number(cap[1]);
       }
-      const { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+      let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+      const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = this.attribute;
+      outerRadius += outerPadding;
+      innerRadius -= innerPadding;
       const capWidth = Math.abs(outerRadius - innerRadius) / 2;
       // 以外边界长度为准
       const capAngle = capWidth / outerRadius;
@@ -168,10 +174,13 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   getParsePadAngle(startAngle: number, endAngle: number) {
     const arcTheme = getTheme(this).arc;
     const {
-      outerRadius = arcTheme.outerRadius,
-      innerRadius = arcTheme.innerRadius,
+      innerPadding = arcTheme.innerPadding,
+      outerPadding = arcTheme.outerPadding,
       padAngle = arcTheme.padAngle
     } = this.attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
 
     const { padRadius = sqrt(outerRadius * outerRadius + innerRadius * innerRadius) } = this.attribute;
     const deltaAngle = abs(endAngle - startAngle);
@@ -271,8 +280,8 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
     const attribute = this.attribute;
     const { startAngle, endAngle } = this.getParsedAngle();
-    let innerRadius = attribute.innerRadius;
-    let outerRadius = attribute.outerRadius;
+    let innerRadius = attribute.innerRadius - (attribute.innerPadding || 0);
+    let outerRadius = attribute.outerRadius - (attribute.outerPadding || 0);
     const deltaAngle = abs(endAngle - startAngle);
     const clockwise: boolean = endAngle > startAngle;
 

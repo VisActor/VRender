@@ -63,6 +63,14 @@ const specs = [
     name: '离散图例-垂直'
   },
   {
+    path: 'discrete-legend-scroller',
+    name: '离散图例-带滚动条'
+  },
+  {
+    path: 'discrete-legend-v-scroller',
+    name: '离散图例-垂直-带滚动条'
+  },
+  {
     path: 'tag',
     name: '标签'
   },
@@ -157,6 +165,10 @@ const specs = [
   {
     path: 'data-zoom',
     name: '水平 dataZoom'
+  },
+  {
+    path: 'data-zoom-big-data',
+    name: '水平 dataZoom 大数据量采样'
   },
   {
     path: 'data-zoom-preview-v',

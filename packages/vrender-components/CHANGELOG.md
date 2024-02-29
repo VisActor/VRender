@@ -1,6 +1,22 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 28 Feb 2024 08:06:31 GMT and should not be manually modified.
+This log was last generated on Wed, 28 Feb 2024 10:09:04 GMT and should not be manually modified.
+
+## 0.18.0
+Wed, 28 Feb 2024 10:09:04 GMT
+
+### Updates
+
+- feat(scrollbar): reconfig scrollbar api of scrollDrag and scrollDown
+- feat: support oriented padding in label overlap bitmap
+- feat: support item align of discrete legend
+- feat: support scrollbar in legend
+- feat: support tooltip in SizeLegend and ColorLegend
+- fix(datazoom): realtime & pickable not work
+- fix(dataZoom): compute line width when compute bounds
+- feat: support lazyload of Legend, and pageFormatter of Pager
+
+
 
 ## 0.17.26
 Wed, 28 Feb 2024 08:06:31 GMT

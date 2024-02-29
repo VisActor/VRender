@@ -1,3 +1,30 @@
+# v0.18.0
+
+2024-02-28
+
+
+**🆕 New feature**
+
+- **scrollbar**: reconfig scrollbar api of scrollDrag and scrollDown
+- **@visactor/vrender-components**: support oriented padding in label overlap bitmap
+- **@visactor/vrender-components**: support item align of discrete legend
+- **@visactor/vrender-components**: support scrollbar in legend
+- **@visactor/vrender-components**: support tooltip in SizeLegend and ColorLegend
+- **@visactor/vrender-components**: support lazyload of Legend, and pageFormatter of Pager
+- **@visactor/vrender-core**: support flatten_simplify
+- **@visactor/vrender-core**: support innerpadding and outerpadding
+- **@visactor/vrender-core**: richtext support inherit attribute, closed [#946](https://github.com/VisActor/VRender/issues/946)
+
+**🐛 Bug fix**
+
+- **datazoom**: realtime & pickable not work
+- **dataZoom**: compute line width when compute bounds
+- **@visactor/vrender-core**: multiline text underline bugfix, closed [#1029](https://github.com/VisActor/VRender/issues/1029)
+
+
+
+[more detail about v0.18.0](https://github.com/VisActor/VRender/releases/tag/v0.18.0)
+
 # v0.17.26
 
 2024-02-28

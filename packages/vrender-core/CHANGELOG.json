@@ -2,6 +2,93 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.0",
+      "tag": "@visactor/vrender-core_v0.18.0",
+      "date": "Wed, 28 Feb 2024 10:09:04 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support flatten_simplify"
+          },
+          {
+            "comment": "feat: support innerpadding and outerpadding"
+          },
+          {
+            "comment": "feat: richtext support inherit attribute, closed #946"
+          },
+          {
+            "comment": "fix: multiline text underline bugfix, closed #1029"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.26",
+      "tag": "@visactor/vrender-core_v0.17.26",
+      "date": "Wed, 28 Feb 2024 08:06:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: animate with stage timeline"
+          },
+          {
+            "comment": "feat: support underline Dash and undeline offset, closed #1025"
+          },
+          {
+            "comment": "fix: fix issue with load svg sync, fix issue with decode react dom"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.25",
+      "tag": "@visactor/vrender-core_v0.17.25",
+      "date": "Fri, 23 Feb 2024 04:29:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support flatten_simplify"
+          },
+          {
+            "comment": "feat: jsx attribute support name and id"
+          },
+          {
+            "comment": "fix: fix issue with check gradient str color, closed #984"
+          },
+          {
+            "comment": "fix: globalZIndex attribute should not do animation"
+          },
+          {
+            "comment": "fix: fix issue with string star path"
+          },
+          {
+            "comment": "fix: fix issue with text background while angle attr configed, closed #1002"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-core_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-core_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support renderStyle config"
+          },
+          {
+            "comment": "fix: fix issue with single point in area graphic"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.17.22",
       "tag": "@visactor/vrender-core_v0.17.22",
       "date": "Fri, 02 Feb 2024 07:17:07 GMT",

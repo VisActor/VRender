@@ -9,15 +9,10 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
 
   static defaultAttributes: Partial<RectLabelAttrs> = {
     textStyle: {
-      fontSize: 12,
-      fill: '#000',
-      textAlign: 'center',
-      textBaseline: 'middle',
-      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+      fill: '#000'
     },
     position: 'top',
-    offset: 5,
-    pickable: false
+    offset: 5
   };
 
   constructor(attributes: RectLabelAttrs, options?: ComponentOptions) {

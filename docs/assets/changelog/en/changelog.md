@@ -1,3 +1,107 @@
+# v0.18.0
+
+2024-02-28
+
+
+**🆕 New feature**
+
+- **scrollbar**: reconfig scrollbar api of scrollDrag and scrollDown
+- **@visactor/vrender-components**: support oriented padding in label overlap bitmap
+- **@visactor/vrender-components**: support item align of discrete legend
+- **@visactor/vrender-components**: support scrollbar in legend
+- **@visactor/vrender-components**: support tooltip in SizeLegend and ColorLegend
+- **@visactor/vrender-components**: support lazyload of Legend, and pageFormatter of Pager
+- **@visactor/vrender-core**: support flatten_simplify
+- **@visactor/vrender-core**: support innerpadding and outerpadding
+- **@visactor/vrender-core**: richtext support inherit attribute, closed [#946](https://github.com/VisActor/VRender/issues/946)
+
+**🐛 Bug fix**
+
+- **datazoom**: realtime & pickable not work
+- **dataZoom**: compute line width when compute bounds
+- **@visactor/vrender-core**: multiline text underline bugfix, closed [#1029](https://github.com/VisActor/VRender/issues/1029)
+
+
+
+[more detail about v0.18.0](https://github.com/VisActor/VRender/releases/tag/v0.18.0)
+
+# v0.17.26
+
+2024-02-28
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: animate with stage timeline
+- **@visactor/vrender-core**: support underline Dash and undeline offset, closed [#1025](https://github.com/VisActor/VRender/issues/1025)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix issue with load svg sync, fix issue with decode react dom
+- **@visactor/vrender-core**: fix issue with load svg sync, fix issue with decode react dom
+- **@visactor/vrender**: fix issue with load svg sync, fix issue with decode react dom
+
+
+
+[more detail about v0.17.26](https://github.com/VisActor/VRender/releases/tag/v0.17.26)
+
+# v0.17.25
+
+2024-02-27
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: export more basic type defination in vrender-components
+- **@visactor/vrender-kits**: support offscreenCanvas in lynx env, closed [#994](https://github.com/VisActor/VRender/issues/994)
+- **@visactor/vrender-core**: support flatten_simplify
+- **@visactor/vrender-core**: jsx attribute support name and id
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix auto-limit of top/bottom axis when no rotate
+- **@visactor/vrender-components**: legend disappear when label is empty string in focus mode
+- **@visactor/vrender-core**: fix issue with check gradient str color, closed [#984](https://github.com/VisActor/VRender/issues/984)
+- **@visactor/vrender-core**: globalZIndex attribute should not do animation
+- **@visactor/vrender-core**: fix issue with string star path
+- **@visactor/vrender-core**: fix issue with text background while angle attr configed, closed [#1002](https://github.com/VisActor/VRender/issues/1002)
+- **@visactor/vrender**: fix issue with text background while angle attr configed, closed [#1002](https://github.com/VisActor/VRender/issues/1002)
+
+
+
+[more detail about v0.17.25](https://github.com/VisActor/VRender/releases/tag/v0.17.25)
+
+# v0.17.24
+
+2024-02-06
+
+
+**🐛 Bug fix**
+
+- **datazoom**: realtime & pickable not work
+
+
+
+[more detail about v0.17.24](https://github.com/VisActor/VRender/releases/tag/v0.17.24)
+
+# v0.17.23
+
+2024-02-04
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: support renderStyle config
+- **@visactor/vrender**: support renderStyle config
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with single point in area graphic
+
+
+
+[more detail about v0.17.23](https://github.com/VisActor/VRender/releases/tag/v0.17.23)
+
 # v0.17.22
 
 2024-02-02

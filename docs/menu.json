@@ -6,5 +6,10 @@
   {
     "menu": "guide",
     "type": "markdown"
+  },
+  {
+    "menu": "option",
+    "type": "markdown-template",
+    "entry": "option"
   }
 ]

@@ -19,7 +19,14 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
   }
 
   labels.forEach(label => {
-    if ((orient === 'top' || orient === 'bottom') && Math.floor(label.AABBBounds.height()) <= limitLength) {
+    const angle = label.attribute.angle;
+    const isRotated = !isNil(angle) && angle !== 0;
+
+    if (
+      (orient === 'top' || orient === 'bottom') &&
+      ((isRotated && Math.floor(label.AABBBounds.height()) <= limitLength) ||
+        (!isRotated && Math.floor(label.AABBBounds.width()) <= verticalLimitLength))
+    ) {
       return;
     }
     const direction = label.attribute.direction;
@@ -31,17 +38,16 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
       return;
     }
 
-    const angle = label.attribute.angle;
-
     // 如果水平并且文本未发生旋转，则不配置 maxLineWidth
-    let limitLabelLength =
-      angle === 0 || isNil(angle)
-        ? orient === 'top' || orient === 'bottom'
-          ? null
-          : direction === 'vertical'
-          ? verticalLimitLength
-          : limitLength
-        : Math.abs(limitLength / Math.sin(angle));
+    let limitLabelLength = null;
+
+    if (isRotated) {
+      limitLabelLength = Math.abs(limitLength / Math.sin(angle));
+    } else if (orient === 'top' || orient === 'bottom') {
+      limitLabelLength = verticalLimitLength;
+    } else {
+      limitLabelLength = direction === 'vertical' ? verticalLimitLength : limitLength;
+    }
 
     if (isValidNumber(label.attribute.maxLineWidth)) {
       limitLabelLength = isValidNumber(limitLabelLength)
@@ -50,7 +56,7 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     }
     label.setAttributes({
       maxLineWidth: limitLabelLength,
-      ellipsis: label.attribute.ellipsis || ellipsis
+      ellipsis: label.attribute.ellipsis ?? ellipsis
     });
   });
 }

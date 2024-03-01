@@ -2,6 +2,81 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.0",
+      "tag": "@visactor/vrender-components_v0.18.0",
+      "date": "Wed, 28 Feb 2024 10:09:04 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(scrollbar): reconfig scrollbar api of scrollDrag and scrollDown"
+          },
+          {
+            "comment": "feat: support oriented padding in label overlap bitmap"
+          },
+          {
+            "comment": "feat: support item align of discrete legend"
+          },
+          {
+            "comment": "feat: support scrollbar in legend"
+          },
+          {
+            "comment": "feat: support tooltip in SizeLegend and ColorLegend"
+          },
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          },
+          {
+            "comment": "fix(dataZoom): compute line width when compute bounds"
+          },
+          {
+            "comment": "feat: support lazyload of Legend, and pageFormatter of Pager\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.26",
+      "tag": "@visactor/vrender-components_v0.17.26",
+      "date": "Wed, 28 Feb 2024 08:06:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.25",
+      "tag": "@visactor/vrender-components_v0.17.25",
+      "date": "Fri, 23 Feb 2024 04:29:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": " feat: export more basic type defination in vrender-components"
+          },
+          {
+            "comment": "fix: fix auto-limit of top/bottom axis when no rotate\n\n"
+          },
+          {
+            "comment": "fix: legend disappear when label is empty string in focus mode"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-components_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-components_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.17.22",
       "tag": "@visactor/vrender-components_v0.17.22",
       "date": "Fri, 02 Feb 2024 07:17:07 GMT",

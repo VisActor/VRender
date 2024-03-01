@@ -41,7 +41,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     if (!dataLabels || dataLabels.length === 0) {
       return;
     }
-    const { width = 0, height = 0 } = size || {};
+    const { width = 0, height = 0, padding } = size || {};
 
     if (!width || !height || !isValidNumber(height * width)) {
       return;
@@ -50,7 +50,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     if (!this._componentMap) {
       this._componentMap = new Map();
     }
-    const tool = bitmapTool(width, height);
+    const tool = bitmapTool(width, height, padding);
     const bitmap = tool.bitmap();
 
     const currentComponentMap = new Map();

@@ -76,7 +76,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
           ...DEFAULT_MARK_POINT_TEXT_STYLE_MAP[itemContent?.position || 'end'],
           ...textStyle.textStyle
         }
-      });
+      } as any);
     } else if (itemType === 'richText') {
       item.setAttributes({
         dx: this.getItemDx(item, position, richTextStyle) + (richTextStyle.dx || 0),

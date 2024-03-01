@@ -114,11 +114,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       fontSize: 14,
       fontWeight: 'normal',
       fillOpacity: 1,
-      textAlign: 'center',
-      textBaseline: 'middle'
+      // arc boundsPadding 宽度设大会家加剧旋转时，AABBbounds.width 大于无旋转角度的情况，导致 arc 内部标签被缩略的问题
+      boundsPadding: [-1, 0, -1, 0]
     },
     position: 'outside',
-    offset: 0,
     line: {
       visible: true,
       line1MinLength: 20,
@@ -128,8 +127,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       align: 'arc',
       strategy: 'priority',
       tangentConstraint: true
-    },
-    pickable: false
+    }
   };
 
   private _ellipsisWidth: number = 0;

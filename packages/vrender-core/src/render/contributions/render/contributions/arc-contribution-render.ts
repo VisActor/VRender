@@ -47,8 +47,8 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       return;
     }
     const {
-      innerRadius = arcAttribute.innerRadius,
-      outerRadius = arcAttribute.outerRadius,
+      innerPadding = arcAttribute.innerPadding,
+      outerPadding = arcAttribute.outerPadding,
       startAngle = arcAttribute.startAngle,
       endAngle = arcAttribute.endAngle,
       opacity = arcAttribute.opacity,
@@ -57,6 +57,9 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       scaleX = arcAttribute.scaleX,
       scaleY = arcAttribute.scaleY
     } = arc.attribute;
+    let { innerRadius = arcAttribute.innerRadius, outerRadius = arcAttribute.outerRadius } = arc.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
     const doStrokeInner = !!(innerBorder && innerBorder.stroke);
 

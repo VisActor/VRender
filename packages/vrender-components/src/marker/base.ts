@@ -16,7 +16,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract updateMarker(): any;
   protected abstract isValidPoints(): any;
 
-  setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined): void {
     super.setAttribute(key, value, forceUpdateTag);
     if (key === 'visible') {
       this.render();

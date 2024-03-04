@@ -45,8 +45,8 @@ export function bitmapTool(
   const scale = (_: number) => ~~(_ / ratio);
 
   scale.bitmap = () => bitmap(w, h);
-  scale.x = (_: number) => ~~(_ + left / ratio);
-  scale.y = (_: number) => ~~(_ + top / ratio);
+  scale.x = (_: number) => ~~((_ + left) / ratio);
+  scale.y = (_: number) => ~~((_ + top) / ratio);
 
   scale.ratio = ratio;
   scale.padding = padding;

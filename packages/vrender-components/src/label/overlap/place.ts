@@ -87,7 +87,7 @@ export function placeToCandidates(
     tempText.setAttributes(validCandidates[i]);
     tempText.update();
 
-    if (canPlace($, bitmap, boundToRange($, tempText.AABBBounds), clampForce, pad)) {
+    if (canPlace($, bitmap, tempText.AABBBounds, clampForce, pad)) {
       bitmap.setRange(boundToRange($, tempText.AABBBounds, true));
       return validCandidates[i];
     }

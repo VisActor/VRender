@@ -2,6 +2,7 @@ import { registerGroup, registerPath } from '@visactor/vrender-kits';
 import { loadTagComponent } from '../tag/register';
 import { loadPagerComponent } from '../pager/register';
 import { loadSliderComponent } from '../slider/register';
+import { loadScrollbarComponent } from '../scrollbar/register';
 
 function loadBaseLegend() {
   registerGroup();
@@ -11,6 +12,7 @@ function loadBaseLegend() {
 export function loadDiscreteLegendComponent() {
   loadBaseLegend();
   loadPagerComponent();
+  loadScrollbarComponent();
 }
 
 export function loadColorContinuousLegendComponent() {

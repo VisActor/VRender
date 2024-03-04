@@ -1,6 +1,6 @@
 // @ts-nocheck
 /* eslint-disable */
-import { FactoryType } from '../utils/factory_type';
+import { FactoryType } from '../inversify-lite/utils/factory_type';
 
 export namespace interfaces {
   export type DynamicValue<T> = (context: interfaces.Context) => T;

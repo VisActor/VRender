@@ -7,6 +7,45 @@ import type {
 import type { BaseGraphicAttributes, Padding } from '../../core/type';
 import type { PagerAttributes } from '../../pager';
 import type { LegendBaseAttributes } from '../type';
+import type { ScrollBarAttributes } from '../../scrollbar/type';
+
+export interface LegendSwitchComponentAttributes {
+  /**
+   * 翻页组件同图例内容项之间的间距
+   */
+  space?: number;
+  /**
+   * the default page
+   */
+  defaultCurrent?: number;
+  /**
+   * 翻页是否开启动画
+   */
+  animation?: boolean;
+  /**
+   * 动画执行时间
+   */
+  animationDuration?: number;
+  /**
+   * 动画执行效果
+   */
+  animationEasing?: EasingType;
+}
+
+export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
+  LegendSwitchComponentAttributes & {
+    /**
+     * 分页器的显示位置，默认 'middle'
+     * @default 'middle'
+     */
+    position?: 'start' | 'middle' | 'end';
+  };
+
+export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'limitRange'> &
+  LegendSwitchComponentAttributes & {
+    type: 'scrollbar';
+    scrollByPosition?: boolean;
+  };
 
 export type LegendItemDatum = {
   /**
@@ -79,10 +118,23 @@ export type LegendItem = {
     /** shape 同后面 label 的间距 */
     space?: number;
   } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute> | StyleCallback<Partial<ISymbolGraphicAttribute>>>;
+
+  /**
+   * 当label+ value同时存在的时候，自动省略的策略
+   * 'labelFirst' - 尽量保证完整展示`label`
+   * 'valueFirst' - 尽量保证完整展示`value`
+   * 'none' - 按照`widthRatio`展示label 和 value
+   */
+  autoEllipsisStrategy?: 'labelFirst' | 'valueFirst' | 'none';
+
   /**
    * 图例项的 label 文本配置
    */
   label?: {
+    /**
+     * 当 label + value 同时展示，切超长的时候，label的宽度占比
+     */
+    widthRatio?: number;
     /**
      * 图例项 label 同后面 value 的间距
      */
@@ -96,6 +148,10 @@ export type LegendItem = {
    * 图例项 value 配置
    */
   value?: {
+    /**
+     * 当 label + value 同时展示，切超长的时候，label的宽度占比
+     */
+    widthRatio?: number;
     /** value 同后面元素的间距 */
     space?: number;
     /**
@@ -116,6 +172,12 @@ export type LegendItem = {
    * 聚焦按钮配置
    */
   focusIconStyle?: Partial<ISymbolGraphicAttribute>;
+  /**
+   * 指定图例项中图标和文字的摆放位置，可选值为：
+   * 'left' 图标在左侧
+   * 'right' 图标在右侧
+   */
+  align?: 'left' | 'right';
 };
 
 export type DiscreteLegendAttrs = {
@@ -170,33 +232,15 @@ export type DiscreteLegendAttrs = {
    */
   maxCol?: number;
   /**
+   * 延迟渲染，按需渲染图例项目
+   */
+  lazyload?: boolean;
+  /**
    * 是否进行自动分页，默认为 true
    */
   autoPage?: boolean;
   /**
    * 翻页器配置
    */
-  pager?: Omit<PagerAttributes, 'total'> & {
-    /**
-     * 翻页器同图例内容项之间的间距
-     */
-    space?: number;
-    /**
-     * 翻页是否开启动画
-     */
-    animation?: boolean;
-    /**
-     * 动画执行时间
-     */
-    animationDuration?: number;
-    /**
-     * 动画执行效果
-     */
-    animationEasing?: EasingType;
-    /**
-     * 分页器的显示位置，默认 'middle'
-     * @default 'middle'
-     */
-    position?: 'start' | 'middle' | 'end';
-  };
+  pager?: LegendPagerAttributes | LegendScrollbarAttributes;
 } & LegendBaseAttributes;

@@ -15,6 +15,7 @@ declare const lynx: {
   createCanvas: (id: string) => any;
   createCanvasNG: (id: string) => any;
   createImage: (id: string) => any;
+  createOffscreenCanvas: () => any;
 };
 declare const SystemInfo: {
   pixelRatio: number;
@@ -34,15 +35,22 @@ function makeUpCanvas(
   canvasMap: Map<string, ILynxCanvas>,
   freeCanvasIdx: number,
   freeCanvasList: ILynxCanvas[],
+  offscreen: boolean,
   pixelRatio?: number
 ) {
   const dpr = pixelRatio ?? SystemInfo.pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
-    const _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
+    let _canvas;
+    if (offscreen) {
+      _canvas = lynx.createOffscreenCanvas();
+    } else {
+      _canvas = ng ? lynx.createCanvasNG(id) : lynx.createCanvas(id);
+      ng && _canvas.attachToCanvasView(id);
+    }
+
     _canvas.width = domref.width * dpr;
     _canvas.height = domref.height * dpr;
-    ng && _canvas.attachToCanvasView(id);
 
     const ctx = _canvas.getContext('2d');
     // TODO: 这里是一个临时方案，向 ctx 内部构造一个 canvas，传递宽高
@@ -106,7 +114,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
   // 这里等待后续和VGrammar沟通
   configure(
     service: IGlobal,
-    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; pixelRatio?: number }
+    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; offscreen?: boolean; pixelRatio?: number }
   ) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
@@ -116,6 +124,7 @@ export class LynxEnvContribution extends BaseEnvContribution implements IEnvCont
         this.canvasMap,
         params.freeCanvasIdx,
         this.freeCanvasList,
+        !!params.offscreen,
         params.pixelRatio
       );
 

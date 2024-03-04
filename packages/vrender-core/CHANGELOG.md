@@ -1,6 +1,42 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 06 Feb 2024 09:48:26 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Mar 2024 08:29:15 GMT and should not be manually modified.
+
+## 0.18.1
+Mon, 04 Mar 2024 08:29:15 GMT
+
+_Version update only_
+
+## 0.18.0
+Wed, 28 Feb 2024 10:09:04 GMT
+
+### Updates
+
+- feat: support flatten_simplify
+- feat: support innerpadding and outerpadding
+- feat: richtext support inherit attribute, closed #946
+- fix: multiline text underline bugfix, closed #1029
+
+## 0.17.26
+Wed, 28 Feb 2024 08:06:31 GMT
+
+### Updates
+
+- feat: animate with stage timeline
+- feat: support underline Dash and undeline offset, closed #1025
+- fix: fix issue with load svg sync, fix issue with decode react dom
+
+## 0.17.25
+Fri, 23 Feb 2024 04:29:58 GMT
+
+### Updates
+
+- feat: support flatten_simplify
+- feat: jsx attribute support name and id
+- fix: fix issue with check gradient str color, closed #984
+- fix: globalZIndex attribute should not do animation
+- fix: fix issue with string star path
+- fix: fix issue with text background while angle attr configed, closed #1002
 
 ## 0.17.24
 Tue, 06 Feb 2024 09:48:26 GMT

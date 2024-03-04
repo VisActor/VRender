@@ -111,6 +111,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   heightLimit: Infinity,
   lineClamp: Infinity,
   suffixPosition: 'end',
+  underlineDash: [],
+  underlineOffset: 0,
   disableAutoClipedPoptip: undefined
 };
 
@@ -198,6 +200,8 @@ export const DefaultArcAttribute: Required<IArcGraphicAttribute> = {
   endAngle: pi2,
   innerRadius: 0,
   outerRadius: 1,
+  innerPadding: 0,
+  outerPadding: 0,
   cornerRadius: 0,
   padRadius: 0,
   padAngle: 0,
@@ -309,6 +313,7 @@ export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
 
 export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultTextStyle,
   width: 300,
   height: 300,
   ellipsis: true,

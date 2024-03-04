@@ -8,7 +8,7 @@ export function decodeReactDom(dom: any) {
     return dom;
   }
   const type = dom.type;
-  const { attribute, children, stateProxy } = dom.props;
+  const { attribute, children, stateProxy, id, name } = dom.props;
   const g = type({ attribute });
   const out = parseToGraphic(g, dom.props, children);
   if (out) {
@@ -18,17 +18,25 @@ export function decodeReactDom(dom: any) {
     g.stateProxy = stateProxy;
   }
 
-  g.id = attribute.id;
-  g.name = attribute.name;
+  g.id = id;
+  g.name = name;
+  parseChildren(children, g);
+  return g;
+}
+
+function parseChildren(children: any, g: any) {
   if (isArray(children)) {
     children.forEach((item: any) => {
-      const c = decodeReactDom(item);
-      c && c.type && g.add(c);
+      if (isArray(item)) {
+        parseChildren(item, g);
+      } else {
+        const c = decodeReactDom(item);
+        c && c.type && g.add(c);
+      }
     });
   } else if (children) {
     g.add(decodeReactDom(children));
   }
-  return g;
 }
 
 function parseToGraphic(g: any, props: any, childrenList: any): any {

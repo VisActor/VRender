@@ -13,7 +13,7 @@ import type {
   ITextRenderContribution,
   IContributionProvider
 } from '../../../interface';
-import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
+import { textDrawOffsetX, textDrawOffsetY, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
 import { BaseRender } from './base-render';
 import { ContributionProvider } from '../../../common/contribution-provider';
@@ -184,7 +184,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
                 lineThrough,
                 text,
                 (line.leftOffset || 0) + x, // 中下划线都是从文字左侧开始，因此不需要+xOffset
-                (line.topOffset || 0) + yOffset + y,
+                // y是基于alphabetic对齐的，这里-0.05是为了和不换行的文字保持效果一致
+                (line.topOffset || 0) + yOffset + y - textDrawOffsetY('bottom', fontSize) - 0.05 * fontSize,
                 z,
                 line.width,
                 textAttribute,
@@ -326,6 +327,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
+      underlineOffset = textAttribute.underlineOffset,
+      underlineDash = textAttribute.underlineDash,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
     const w = text.clipedWidth;
@@ -335,8 +338,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize;
+      const dy = y + offsetY + fontSize + underlineOffset;
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();
@@ -372,6 +376,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
+      underlineOffset = textAttribute.underlineOffset,
+      underlineDash = textAttribute.underlineDash,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
 
@@ -382,8 +388,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize + deltaY;
+      const dy = y + offsetY + fontSize + deltaY + underlineOffset;
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();

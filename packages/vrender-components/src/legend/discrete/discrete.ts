@@ -2,7 +2,17 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray } from '@visactor/vutils';
+import {
+  merge,
+  isEmpty,
+  normalizePadding,
+  get,
+  isValid,
+  isNil,
+  isFunction,
+  isArray,
+  minInArray
+} from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -11,7 +21,9 @@ import type {
   IGroupGraphicAttribute,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute,
-  CustomEvent
+  CustomEvent,
+  IText,
+  IRichText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -30,10 +42,17 @@ import {
   LegendEvent,
   LEGEND_ELEMENT_NAME
 } from '../constant';
-import type { DiscreteLegendAttrs, LegendItem, LegendItemDatum } from './type';
+import type {
+  DiscreteLegendAttrs,
+  LegendItem,
+  LegendItemDatum,
+  LegendPagerAttributes,
+  LegendScrollbarAttributes
+} from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
 import { isRichText, richTextAttributeTransform } from '../../util';
+import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
   [LegendStateValue.focus]: {},
@@ -52,8 +71,24 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeightByUser: number | undefined = undefined;
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
-  private _pager!: Pager;
+  private _pagerComponent: Pager | ScrollBar;
   private _lastActiveItem: IGroup;
+  private _itemContext: {
+    // 水平布局换行标识
+    doWrap: boolean;
+    // 存储每一列最大的宽度，用于垂直布局的换列
+    maxWidthInCol: number;
+    startX: number;
+    startY: number;
+    maxPages: number;
+    pages: number;
+    // 开始渲染的序号
+    startIndex: number;
+    items: LegendItemDatum[];
+    isHorizontal: boolean;
+    currentPage: number;
+    totalPage: number;
+  };
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
     layout: 'horizontal',
@@ -168,56 +203,32 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
   }
 
-  protected _renderContent() {
-    const { item = {}, items, reversed, maxCol = 1, maxRow = 2 } = this.attribute as DiscreteLegendAttrs;
-    if (item.visible === false || isEmpty(items)) {
-      return;
-    }
-
-    let legendItems = items;
-    if (reversed) {
-      legendItems = items?.reverse();
-    }
-
-    const itemsContainer = graphicCreator.group({
-      x: 0,
-      y: 0
-    });
-    this._itemsContainer = itemsContainer;
-
-    const { layout, maxWidth, maxHeight, defaultSelected = [], autoPage } = this.attribute;
-    const isHorizontal = layout === 'horizontal';
-
+  protected _renderItems() {
     const {
-      spaceCol = DEFAULT_ITEM_SPACE_COL,
-      spaceRow = DEFAULT_ITEM_SPACE_ROW,
-      maxWidth: maxItemWidth,
-      width: itemWidth,
-      height: itemHeight
-    } = item;
+      item: itemAttrs = {},
+      maxCol = 1,
+      maxRow = 2,
+      maxWidth,
+      maxHeight,
+      defaultSelected = [],
+      lazyload
+    } = this.attribute as DiscreteLegendAttrs;
+    const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = itemAttrs;
 
-    // 根据用户声明的 maxItemWidth 和 itemWidth 获取图例项宽度
-    if (isValid(maxItemWidth)) {
-      if (isValid(itemWidth)) {
-        this._itemWidthByUser = Math.min(maxItemWidth, itemWidth);
-      } else {
-        this._itemWidthByUser = maxItemWidth;
+    const itemsContainer = this._itemsContainer;
+    const { items: legendItems, isHorizontal, startIndex } = this._itemContext;
+    const maxPages = isHorizontal ? maxRow : maxCol;
+
+    let { doWrap, maxWidthInCol, startX, startY, pages } = this._itemContext;
+    let item: LegendItemDatum;
+
+    for (let index = startIndex, len = legendItems.length; index < len; index++) {
+      if (lazyload && pages > this._itemContext.currentPage * maxPages) {
+        this._itemContext.startIndex = index;
+        break;
       }
-    } else if (isValid(itemWidth)) {
-      this._itemWidthByUser = itemWidth;
-    }
+      item = legendItems[index];
 
-    // 存储用户指定图例项高度
-    if (isValid(itemHeight)) {
-      this._itemHeightByUser = itemHeight;
-    }
-    let doWrap = false; // 水平布局换行标识
-    let maxWidthInCol = 0; // 存储每一列最大的宽度，用于垂直布局的换列
-    let startX = 0;
-    let startY = 0;
-    let maxPages = 1;
-    let pages = 1;
-    legendItems.forEach((item, index) => {
       if (!item.id) {
         item.id = item.label; // 如果没有设置 id，默认使用 label
       }
@@ -237,7 +248,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
       if (isHorizontal) {
-        maxPages = maxRow;
         // 水平布局
         if (isValid(maxWidth)) {
           if (itemWidth >= maxWidth) {
@@ -264,7 +274,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         }
         startX += spaceCol + itemWidth;
       } else {
-        maxPages = maxCol;
         // 垂直布局
         if (isValid(maxHeight) && maxHeight < startY + itemHeight) {
           // 检测是否换列：如果用户声明了 maxHeight 并且超出了，则进行换列
@@ -284,13 +293,85 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
 
       itemsContainer.add(itemGroup);
+    }
+
+    this._itemContext.doWrap = doWrap;
+    this._itemContext.startX = startX;
+    this._itemContext.startY = startY;
+    this._itemContext.maxWidthInCol = maxWidthInCol;
+    this._itemContext.pages = pages;
+    this._itemContext.maxPages = maxPages;
+
+    if (!lazyload) {
+      this._itemContext.startIndex = legendItems.length;
+    }
+
+    return this._itemContext;
+  }
+
+  protected _renderContent() {
+    const { item = {}, items, reversed, maxWidth } = this.attribute as DiscreteLegendAttrs;
+    if (item.visible === false || isEmpty(items)) {
+      return;
+    }
+
+    let legendItems = items;
+    if (reversed) {
+      legendItems = items?.reverse();
+    }
+
+    const itemsContainer = graphicCreator.group({
+      x: 0,
+      y: 0
     });
+    this._itemsContainer = itemsContainer;
+
+    const { layout, autoPage } = this.attribute;
+    const isHorizontal = layout === 'horizontal';
+
+    const { maxWidth: maxItemWidth, width: itemWidth, height: itemHeight } = item;
+
+    const widthsOptions = [];
+    // 根据用户声明的 maxItemWidth 和 itemWidth 获取图例项宽度
+    if (isValid(maxItemWidth)) {
+      widthsOptions.push(maxItemWidth);
+    }
+    if (isValid(itemWidth)) {
+      widthsOptions.push(itemWidth);
+    }
+
+    if (widthsOptions.length) {
+      if (isValid(maxWidth)) {
+        widthsOptions.push(maxWidth);
+      }
+      this._itemWidthByUser = minInArray(widthsOptions);
+    }
+    // 存储用户指定图例项高度
+    if (isValid(itemHeight)) {
+      this._itemHeightByUser = itemHeight;
+    }
+
+    this._itemContext = {
+      currentPage: this.attribute.pager ? this.attribute.pager.defaultCurrent || 1 : 1,
+      doWrap: false,
+      maxWidthInCol: 0,
+      maxPages: 1,
+      pages: 1,
+      startX: 0,
+      startY: 0,
+      startIndex: 0,
+      items: legendItems,
+      isHorizontal,
+      totalPage: Infinity
+    };
+
+    this._itemContext = this._renderItems();
 
     // TODO: 添加测试用例
     let pagerRendered = false;
-    if (doWrap && autoPage && pages > maxPages) {
+    if (this._itemContext.doWrap && autoPage && this._itemContext.pages > this._itemContext.maxPages) {
       // 进行分页处理
-      pagerRendered = this._renderPager(isHorizontal);
+      pagerRendered = this._renderPagerComponent(isHorizontal);
     }
 
     if (!pagerRendered) {
@@ -321,9 +402,50 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
   }
 
+  private _autoEllipsis(
+    autoEllipsisStrategy: 'labelFirst' | 'valueFirst' | 'none',
+    layoutWidth: number,
+    labelShape: IText | IRichText,
+    valueShape: IText | IRichText
+  ) {
+    const { label: labelAttr, value: valueAttr } = this.attribute.item as LegendItem;
+    const valueBounds = valueShape.AABBBounds;
+    const labelBounds = labelShape.AABBBounds;
+    const valueWidth = valueBounds.width();
+    const labelWidth = labelBounds.width();
+    let useWidthRatio = false;
+
+    if (autoEllipsisStrategy === 'labelFirst') {
+      if (labelWidth > layoutWidth) {
+        useWidthRatio = true;
+      } else {
+        valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
+      }
+    } else if (autoEllipsisStrategy === 'valueFirst') {
+      if (valueWidth > layoutWidth) {
+        useWidthRatio = true;
+      } else {
+        labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
+      }
+    } else if (valueWidth + labelWidth > layoutWidth) {
+      useWidthRatio = true;
+    }
+
+    if (useWidthRatio) {
+      valueShape.setAttribute(
+        'maxLineWidth',
+        Math.max(layoutWidth * (labelAttr.widthRatio ?? 0.5), layoutWidth - labelWidth)
+      );
+      labelShape.setAttribute(
+        'maxLineWidth',
+        Math.max(layoutWidth * (valueAttr.widthRatio ?? 0.5), layoutWidth - valueWidth)
+      );
+    }
+  }
+
   private _renderEachItem(item: LegendItemDatum, isSelected: boolean, index: number, items: LegendItemDatum[]) {
     const { id, label, value, shape } = item;
-    const { padding = 0, focus, focusIconStyle } = this.attribute.item as LegendItem;
+    const { padding = 0, focus, focusIconStyle, align, autoEllipsisStrategy } = this.attribute.item as LegendItem;
 
     const { shape: shapeAttr, label: labelAttr, value: valueAttr, background } = this.attribute.item as LegendItem;
 
@@ -399,9 +521,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       innerGroup.add(itemShape);
     }
 
-    let focusShape;
+    let focusShape: IGraphic;
     let focusSpace = 0;
-
     if (focus) {
       const focusSize = get(focusIconStyle, 'size', DEFAULT_SHAPE_SIZE);
       // 绘制聚焦按钮
@@ -472,21 +593,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           labelSpace -
           focusSpace -
           valueSpace;
-        const valueBounds = valueShape.AABBBounds;
-        const labelBounds = labelShape.AABBBounds;
-        const valueWidth = valueBounds.width();
-        const labelWidth = labelBounds.width();
-        if (labelWidth > layoutWidth) {
-          if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
-            // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
-            labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
-          } else {
-            valueShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
-            labelShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
-          }
-        } else {
-          valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
-        }
+
+        this._autoEllipsis(autoEllipsisStrategy, layoutWidth, labelShape, valueShape);
 
         if (valueAttr.alignRight) {
           valueShape.setAttributes({
@@ -495,12 +603,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
         } else {
-          valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
+          valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
         }
       } else {
-        valueShape.setAttribute('x', labelShape.AABBBounds.x2 + valueSpace);
+        valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
       }
-      focusStartX = valueShape.AABBBounds.x2 + valueSpace;
+      focusStartX = valueSpace + (valueShape.AABBBounds.empty() ? 0 : valueShape.AABBBounds.x2);
 
       innerGroup.add(valueShape);
     } else if (this._itemWidthByUser) {
@@ -509,9 +617,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         this._itemWidthByUser - parsedPadding[1] - parsedPadding[3] - shapeSize - shapeSpace - focusSpace
       );
 
-      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+      focusStartX = labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2);
     } else {
-      focusStartX = labelShape.AABBBounds.x2 + labelSpace;
+      focusStartX = labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2);
     }
 
     if (focusShape) {
@@ -521,6 +629,24 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const innerGroupBounds = innerGroup.AABBBounds;
     const innerGroupWidth = innerGroupBounds.width();
+
+    if (align === 'right') {
+      const x2 = innerGroupBounds.x2;
+      const x1 = innerGroupBounds.x1;
+      innerGroup.forEachChildren((child: IGraphic, index: number) => {
+        if (
+          (child.type !== 'symbol' && (child as IText).attribute.textAlign !== 'right') ||
+          child === (focusShape as unknown as IGraphic)
+        ) {
+          child.setAttribute('x', x1 + x2 - child.attribute.x - child.AABBBounds.width());
+        } else if (child.type !== 'symbol') {
+          (child as IText).setAttributes({ x: x1 + x2 - child.attribute.x, textAlign: 'left' });
+        } else {
+          child.setAttribute('x', x1 + x2 - child.attribute.x);
+        }
+      });
+    }
+
     const innerGroupHeight = innerGroupBounds.height();
     const itemGroupWidth = isValid(this.attribute.item.width)
       ? this.attribute.item.width
@@ -528,57 +654,212 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const itemGroupHeight = this._itemHeightByUser || innerGroupHeight + parsedPadding[0] + parsedPadding[2];
     itemGroup.attribute.width = itemGroupWidth;
     itemGroup.attribute.height = itemGroupHeight;
-
     focusShape && focusShape.setAttribute('visible', false);
+
     innerGroup.translateTo(-innerGroupBounds.x1 + parsedPadding[3], -innerGroupBounds.y1 + parsedPadding[0]);
     return itemGroup;
   }
 
-  private _renderPager(isHorizontal: boolean) {
+  private _createPager(
+    isScrollbar: boolean,
+    isHorizontal: boolean,
+    compStyle: LegendPagerAttributes | LegendScrollbarAttributes,
+    compSize: number
+  ) {
+    const { disableTriggerEvent, maxRow } = this.attribute;
+    if (isScrollbar) {
+      return isHorizontal
+        ? new ScrollBar({
+            direction: 'vertical',
+            width: 12,
+            range: [0, 0.5],
+            ...(compStyle as LegendScrollbarAttributes),
+            height: compSize,
+            disableTriggerEvent
+          })
+        : new ScrollBar({
+            direction: 'horizontal',
+            disableTriggerEvent,
+            range: [0, 0.5],
+            height: 12,
+            ...(compStyle as LegendScrollbarAttributes),
+            width: compSize
+          });
+    }
+
+    return isHorizontal
+      ? new Pager({
+          layout: maxRow === 1 ? 'horizontal' : 'vertical',
+          total: 99,
+          ...merge(
+            {
+              handler: {
+                preShape: 'triangleUp',
+                nextShape: 'triangleDown'
+              }
+            },
+            compStyle as LegendPagerAttributes
+          ),
+          defaultCurrent: this.attribute.pager?.defaultCurrent,
+          disableTriggerEvent
+        })
+      : new Pager({
+          layout: 'horizontal',
+          total: 99, // 用于估算,
+          disableTriggerEvent,
+          defaultCurrent: this.attribute.pager?.defaultCurrent,
+          ...(compStyle as LegendPagerAttributes)
+        });
+  }
+
+  private _updatePositionOfPager(
+    isScrollbar: boolean,
+    isHorizontal: boolean,
+    contentSize: number,
+    renderStartY: number,
+    compSize: number
+  ) {
+    const { maxHeight, pager } = this.attribute;
+    const { currentPage, totalPage } = this._itemContext;
+
+    if (isScrollbar) {
+      (this._pagerComponent as ScrollBar).setScrollRange([(currentPage - 1) / totalPage, currentPage / totalPage]);
+      if (isHorizontal) {
+        (this._pagerComponent as ScrollBar).setAttributes({
+          x: contentSize,
+          y: renderStartY
+        });
+      } else {
+        (this._pagerComponent as ScrollBar).setAttributes({
+          x: 0,
+          y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        });
+      }
+    } else {
+      const position = (pager && (pager as LegendPagerAttributes).position) || 'middle';
+      (this._pagerComponent as Pager).setTotal(totalPage);
+
+      if (isHorizontal) {
+        let y;
+        if (position === 'start') {
+          y = renderStartY;
+        } else if (position === 'end') {
+          y = renderStartY + compSize - this._pagerComponent.AABBBounds.height() / 2;
+        } else {
+          y = renderStartY + compSize / 2 - this._pagerComponent.AABBBounds.height() / 2;
+        }
+        this._pagerComponent.setAttributes({
+          x: contentSize,
+          y
+        });
+      } else {
+        let x;
+        if (position === 'start') {
+          x = 0;
+        } else if (position === 'end') {
+          x = compSize - this._pagerComponent.AABBBounds.width();
+        } else {
+          x = (compSize - this._pagerComponent.AABBBounds.width()) / 2;
+        }
+        this._pagerComponent.setAttributes({
+          x,
+          y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        });
+      }
+    }
+  }
+
+  private _bindEventsOfPager(isScrollbar: boolean, isHorizontal: boolean, compSize: number, spaceSize: number) {
+    const pager = this.attribute.pager || {};
+    const { animation = true, animationDuration = 450, animationEasing = 'quadIn' } = pager;
+    const pageParser = isScrollbar
+      ? (e: CustomEvent) => {
+          const { value } = e.detail;
+          let newPage = value[0] * this._itemContext.totalPage;
+
+          if ((pager as LegendScrollbarAttributes).scrollByPosition) {
+            newPage = newPage + 1;
+          } else {
+            newPage = Math.floor(newPage) + 1;
+          }
+
+          return newPage;
+        }
+      : (e: CustomEvent) => {
+          return e.detail.current;
+        };
+
+    const onPaging = (e: CustomEvent) => {
+      const newPage = pageParser(e);
+
+      if (newPage === this._itemContext.currentPage) {
+        return;
+      }
+
+      this._itemContext.currentPage = newPage;
+
+      if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
+        this._renderItems();
+
+        const newTotalPage = Math.ceil(this._itemContext.pages / this._itemContext.maxPages);
+        // 更新总页数
+        this._itemContext.totalPage = newTotalPage;
+        (this._pagerComponent as ScrollBar).setScrollRange([(newPage - 1) / newTotalPage, newPage / newTotalPage]);
+      }
+
+      if (animation) {
+        (this._itemsContainer as IGroup)
+          .animate()
+          .to(
+            isHorizontal
+              ? { y: -(newPage - 1) * (compSize + spaceSize) }
+              : { x: -(newPage - 1) * (compSize + spaceSize) },
+            animationDuration,
+            animationEasing
+          );
+      } else {
+        if (isHorizontal) {
+          (this._itemsContainer as IGroup).setAttribute('y', -(newPage - 1) * (compSize + spaceSize));
+        } else {
+          (this._itemsContainer as IGroup).setAttribute('x', -(newPage - 1) * (compSize + spaceSize));
+        }
+      }
+    };
+    if (isScrollbar) {
+      this._pagerComponent.addEventListener('scrollDrag', onPaging);
+      this._pagerComponent.addEventListener('scrollUp', onPaging);
+    } else {
+      this._pagerComponent.addEventListener('toPrev', onPaging);
+      this._pagerComponent.addEventListener('toNext', onPaging);
+    }
+  }
+
+  private _renderPagerComponent(isHorizontal: boolean) {
     const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {}, disableTriggerEvent } = this.attribute;
+    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
-    const {
-      animation = true,
-      animationDuration = 450,
-      animationEasing = 'quadIn',
-      space: pagerSpace = DEFAULT_PAGER_SPACE,
-      position = 'middle',
-      ...pageStyle
-    } = pager;
+    const { space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
+    const isScrollbar = (pager as LegendScrollbarAttributes).type === 'scrollbar';
 
-    let pagerComp: Pager;
-    let pageHeight = 0; // 每页的高度
-    let pageWidth = 0; // 每页的宽度
+    let comp: ScrollBar | Pager;
+    let compSize = 0; // 组件的大小
+    let contentSize = 0; // 内容的大小
     let startX = 0; // 临时变量，用来存储布局的起始点
     let startY = 0; // 临时变量，用来存储布局的起始点
     let pages = 1; // 页数
 
     if (isHorizontal) {
+      compSize = (maxRow - 1) * spaceRow + this._itemHeight * maxRow;
       // 水平布局，支持上下翻页
-      pagerComp = new Pager({
-        layout: maxRow === 1 ? 'horizontal' : 'vertical',
-        total: 99,
-        ...merge(
-          {
-            handler: {
-              preShape: 'triangleUp',
-              nextShape: 'triangleDown'
-            }
-          },
-          pageStyle
-        ),
-        disableTriggerEvent
-      });
-      this._pager = pagerComp;
-      this._innerView.add(pagerComp as unknown as INode);
-      pageHeight = (maxRow - 1) * spaceRow + this._itemHeight * maxRow;
-      pageWidth = (maxWidth as number) - pagerComp.AABBBounds.width() - pagerSpace;
+      comp = this._createPager(isScrollbar, isHorizontal, compStyle, compSize);
+      this._pagerComponent = comp;
+      this._innerView.add(comp as unknown as INode);
+      contentSize = (maxWidth as number) - comp.AABBBounds.width() - pagerSpace;
 
-      if (pageWidth <= 0) {
+      if (contentSize <= 0) {
         // 布局空间不够则不进行分页器渲染
-        this._innerView.removeChild(pagerComp as unknown as INode);
+        this._innerView.removeChild(comp as unknown as INode);
         return false;
       }
 
@@ -586,7 +867,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { width, height } = item.attribute;
 
-        if (pageWidth < startX + (width as number)) {
+        if (contentSize < startX + (width as number)) {
           // 超出了，则换行
           startX = 0;
           startY += (height as number) + spaceRow;
@@ -601,43 +882,33 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startX += spaceCol + (width as number);
       });
 
-      pagerComp.setAttribute('total', Math.ceil(pages / maxRow));
-      let y;
-      if (position === 'start') {
-        y = renderStartY;
-      } else if (position === 'end') {
-        y = renderStartY + pageHeight - pagerComp.AABBBounds.height() / 2;
-      } else {
-        y = renderStartY + pageHeight / 2 - pagerComp.AABBBounds.height() / 2;
-      }
-      pagerComp.setAttributes({
-        x: pageWidth,
-        y
-      });
+      this._itemContext.startX = startX;
+      this._itemContext.startY = startY;
+      this._itemContext.pages = pages;
+      const total = Math.ceil(pages / maxRow);
+
+      this._itemContext.totalPage = total;
+
+      this._updatePositionOfPager(isScrollbar, isHorizontal, contentSize, renderStartY, compSize);
     } else {
+      compSize = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
       // 垂直布局，支持左右翻页
-      pagerComp = new Pager({
-        layout: 'horizontal',
-        total: 99, // 用于估算,
-        disableTriggerEvent,
-        ...pageStyle
-      });
-      this._pager = pagerComp;
-      this._innerView.add(pagerComp as unknown as INode);
+      comp = this._createPager(isScrollbar, isHorizontal, compStyle, compSize);
+      this._pagerComponent = comp;
+      this._innerView.add(comp as unknown as INode);
 
-      pageWidth = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
-      pageHeight = (maxHeight as number) - pagerComp.AABBBounds.height() - pagerSpace - renderStartY;
+      contentSize = (maxHeight as number) - comp.AABBBounds.height() - pagerSpace - renderStartY;
 
-      if (pageHeight <= 0) {
+      if (contentSize <= 0) {
         // 布局空间不够则不进行分页器渲染
-        this._innerView.removeChild(pagerComp as unknown as INode);
+        this._innerView.removeChild(comp as unknown as INode);
         return false;
       }
 
       // 重新进行布局
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { height } = item.attribute;
-        if (pageHeight < startY + (height as number)) {
+        if (contentSize < startY + (height as number)) {
           startY = 0;
           startX += this._itemMaxWidth + spaceCol;
           pages += 1;
@@ -651,66 +922,34 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         startY += spaceRow + (height as number);
       });
 
-      pagerComp.setAttribute('total', Math.ceil(pages / maxCol));
+      // todo
+      const total = Math.ceil(pages / maxCol);
 
-      let x;
-      if (position === 'start') {
-        x = 0;
-      } else if (position === 'end') {
-        x = pageWidth - pagerComp.AABBBounds.width();
-      } else {
-        x = (pageWidth - pagerComp.AABBBounds.width()) / 2;
-      }
-      pagerComp.setAttributes({
-        x,
-        y: (maxHeight as number) - pagerComp.AABBBounds.height()
-      });
+      this._itemContext.totalPage = total;
+      this._updatePositionOfPager(isScrollbar, isHorizontal, contentSize, renderStartY, compSize);
     }
 
     // 初始化 defaultCurrent
-    if (pager.defaultCurrent > 1) {
+    if (defaultCurrent > 1) {
       if (isHorizontal) {
-        itemsContainer.setAttribute('y', -(pager.defaultCurrent - 1) * (pageHeight + spaceRow));
+        itemsContainer.setAttribute('y', -(defaultCurrent - 1) * (compSize + spaceRow));
       } else {
-        itemsContainer.setAttribute('x', -(pager.defaultCurrent - 1) * (pageWidth + spaceCol));
+        itemsContainer.setAttribute('x', -(defaultCurrent - 1) * (compSize + spaceCol));
       }
     }
 
     const clipGroup = graphicCreator.group({
       x: 0,
       y: renderStartY,
-      width: pageWidth,
-      height: pageHeight,
+      width: isHorizontal ? contentSize : compSize,
+      height: isHorizontal ? compSize : contentSize,
       clip: true,
       pickable: false
     });
     clipGroup.add(itemsContainer);
     this._innerView.add(clipGroup);
 
-    const onPaging = (e: CustomEvent) => {
-      const { current } = e.detail;
-
-      if (animation) {
-        itemsContainer
-          .animate()
-          .to(
-            isHorizontal
-              ? { y: -(current - 1) * (pageHeight + spaceRow) }
-              : { x: -(current - 1) * (pageWidth + spaceCol) },
-            animationDuration,
-            animationEasing
-          );
-      } else {
-        if (isHorizontal) {
-          itemsContainer.setAttribute('y', -(current - 1) * (pageHeight + spaceRow));
-        } else {
-          itemsContainer.setAttribute('x', -(current - 1) * (pageWidth + spaceCol));
-        }
-      }
-    };
-
-    this._pager.addEventListener('toPrev', onPaging);
-    this._pager.addEventListener('toNext', onPaging);
+    this._bindEventsOfPager(isScrollbar, isHorizontal, compSize, isHorizontal ? spaceRow : spaceCol);
 
     return true;
   }

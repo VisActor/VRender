@@ -1318,8 +1318,10 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
   ): IAABBBounds {
-    const { innerRadius = arcTheme.innerRadius } = attribute;
-    let { outerRadius = arcTheme.outerRadius } = attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     if (outerRadius < innerRadius) {
       outerRadius = innerRadius;
     }
@@ -1335,6 +1337,9 @@ export class DefaultGraphicService implements IGraphicService {
     graphic?: IGraphic
   ): IAABBBounds {
     let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     if (outerRadius < innerRadius) {
       // 不用解构，避免性能问题
       const temp = outerRadius;

@@ -4,7 +4,7 @@
 import type { ISymbol, IText, FederatedPointerEvent } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
-import { merge, normalizePadding, isNumber } from '@visactor/vutils';
+import { merge, normalizePadding, isNumber, isFunction } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { measureTextSize } from '../util';
 import type { PagerAttributes } from './type';
@@ -103,7 +103,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
 
     // 获取文本的最大长度，如果不固定的话随着文本的变化整体会发生抖动
     const { width: maxTextWidth, height: maxTextHeight } = measureTextSize(
-      `${total}/${total}`,
+      this._getPageText(total),
       {
         textAlign: 'center',
         textBaseline: 'middle',
@@ -118,7 +118,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const text = graphicCreator.text({
       x: isHorizontal ? handlerSizeX / 2 + handlerSpace + maxTextWidth / 2 : 0,
       y: isHorizontal ? 0 : handlerSizeY / 2 + handlerSpace + maxTextHeight / 2,
-      text: `${defaultCurrent}/${total}`,
+      text: this._getPageText(defaultCurrent),
       textAlign: 'center',
       textBaseline: 'middle',
       lineHeight: textStyle?.fontSize,
@@ -241,7 +241,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
       (this.nextHandler as ISymbol).removeState('disable');
     }
 
-    (this.text as IText).setAttribute('text', `${this._current}/${this._total}`);
+    (this.text as IText).setAttribute('text', this._getPageText(this._current));
   };
 
   private _reset() {
@@ -249,5 +249,29 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     this._current = 1;
     this._total = this.attribute.total as number;
     this.preHandler = this.nextHandler = this.text = null;
+  }
+
+  private _getPageText(current: number) {
+    const { pageFormatter } = this.attribute;
+
+    if (pageFormatter) {
+      return isFunction(pageFormatter)
+        ? pageFormatter(current, this._total)
+        : `${pageFormatter}`.replace('{current}', `${current}`).replace('{total}', `${this._total}`);
+    }
+
+    return `${current}/${this._total}`;
+  }
+
+  setTotal(total: number) {
+    if (total !== this.attribute.total) {
+      this._total = total;
+
+      if (this._current !== 1 && this._current <= total) {
+        this.setAttributes({ total, defaultCurrent: this._current });
+      } else {
+        this.setAttribute('total', total);
+      }
+    }
   }
 }

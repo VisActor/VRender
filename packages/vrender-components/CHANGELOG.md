@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 28 Feb 2024 10:09:04 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Mar 2024 08:29:15 GMT and should not be manually modified.
+
+## 0.18.1
+Mon, 04 Mar 2024 08:29:15 GMT
+
+### Updates
+
+-     feat: support `autoEllipsisStrategy` of legend item
 
 ## 0.18.0
 Wed, 28 Feb 2024 10:09:04 GMT

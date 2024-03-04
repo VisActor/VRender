@@ -2,7 +2,17 @@
  * @description 离散图例
  * @author 章伟星
  */
-import { merge, isEmpty, normalizePadding, get, isValid, isNil, isFunction, isArray } from '@visactor/vutils';
+import {
+  merge,
+  isEmpty,
+  normalizePadding,
+  get,
+  isValid,
+  isNil,
+  isFunction,
+  isArray,
+  minInArray
+} from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
   IGroup,
@@ -12,7 +22,8 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute,
   CustomEvent,
-  IText
+  IText,
+  IRichText
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -299,7 +310,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   protected _renderContent() {
-    const { item = {}, items, reversed } = this.attribute as DiscreteLegendAttrs;
+    const { item = {}, items, reversed, maxWidth } = this.attribute as DiscreteLegendAttrs;
     if (item.visible === false || isEmpty(items)) {
       return;
     }
@@ -320,17 +331,21 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     const { maxWidth: maxItemWidth, width: itemWidth, height: itemHeight } = item;
 
+    const widthsOptions = [];
     // 根据用户声明的 maxItemWidth 和 itemWidth 获取图例项宽度
     if (isValid(maxItemWidth)) {
-      if (isValid(itemWidth)) {
-        this._itemWidthByUser = Math.min(maxItemWidth, itemWidth);
-      } else {
-        this._itemWidthByUser = maxItemWidth;
-      }
-    } else if (isValid(itemWidth)) {
-      this._itemWidthByUser = itemWidth;
+      widthsOptions.push(maxItemWidth);
+    }
+    if (isValid(itemWidth)) {
+      widthsOptions.push(itemWidth);
     }
 
+    if (widthsOptions.length) {
+      if (isValid(maxWidth)) {
+        widthsOptions.push(maxWidth);
+      }
+      this._itemWidthByUser = minInArray(widthsOptions);
+    }
     // 存储用户指定图例项高度
     if (isValid(itemHeight)) {
       this._itemHeightByUser = itemHeight;
@@ -387,9 +402,50 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
   }
 
+  private _autoEllipsis(
+    autoEllipsisStrategy: 'labelFirst' | 'valueFirst' | 'none',
+    layoutWidth: number,
+    labelShape: IText | IRichText,
+    valueShape: IText | IRichText
+  ) {
+    const { label: labelAttr, value: valueAttr } = this.attribute.item as LegendItem;
+    const valueBounds = valueShape.AABBBounds;
+    const labelBounds = labelShape.AABBBounds;
+    const valueWidth = valueBounds.width();
+    const labelWidth = labelBounds.width();
+    let useWidthRatio = false;
+
+    if (autoEllipsisStrategy === 'labelFirst') {
+      if (labelWidth > layoutWidth) {
+        useWidthRatio = true;
+      } else {
+        valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
+      }
+    } else if (autoEllipsisStrategy === 'valueFirst') {
+      if (valueWidth > layoutWidth) {
+        useWidthRatio = true;
+      } else {
+        labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
+      }
+    } else if (valueWidth + labelWidth > layoutWidth) {
+      useWidthRatio = true;
+    }
+
+    if (useWidthRatio) {
+      valueShape.setAttribute(
+        'maxLineWidth',
+        Math.max(layoutWidth * (labelAttr.widthRatio ?? 0.5), layoutWidth - labelWidth)
+      );
+      labelShape.setAttribute(
+        'maxLineWidth',
+        Math.max(layoutWidth * (valueAttr.widthRatio ?? 0.5), layoutWidth - valueWidth)
+      );
+    }
+  }
+
   private _renderEachItem(item: LegendItemDatum, isSelected: boolean, index: number, items: LegendItemDatum[]) {
     const { id, label, value, shape } = item;
-    const { padding = 0, focus, focusIconStyle, align } = this.attribute.item as LegendItem;
+    const { padding = 0, focus, focusIconStyle, align, autoEllipsisStrategy } = this.attribute.item as LegendItem;
 
     const { shape: shapeAttr, label: labelAttr, value: valueAttr, background } = this.attribute.item as LegendItem;
 
@@ -537,21 +593,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           labelSpace -
           focusSpace -
           valueSpace;
-        const valueBounds = valueShape.AABBBounds;
-        const labelBounds = labelShape.AABBBounds;
-        const valueWidth = valueBounds.width();
-        const labelWidth = labelBounds.width();
-        if (labelWidth > layoutWidth) {
-          if ((layoutWidth - valueWidth) / labelWidth > 0.4) {
-            // 设置一个值，如果剩余的宽度和 label 自身的比例不低于 0.4 的话，优先展示全 label
-            labelShape.setAttribute('maxLineWidth', layoutWidth - valueWidth);
-          } else {
-            valueShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
-            labelShape.setAttribute('maxLineWidth', layoutWidth * 0.5);
-          }
-        } else {
-          valueShape.setAttribute('maxLineWidth', layoutWidth - labelWidth);
-        }
+
+        this._autoEllipsis(autoEllipsisStrategy, layoutWidth, labelShape, valueShape);
 
         if (valueAttr.alignRight) {
           valueShape.setAttributes({

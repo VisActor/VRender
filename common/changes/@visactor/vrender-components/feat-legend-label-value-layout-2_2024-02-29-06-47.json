@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "    feat: support `autoEllipsisStrategy` of legend item",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

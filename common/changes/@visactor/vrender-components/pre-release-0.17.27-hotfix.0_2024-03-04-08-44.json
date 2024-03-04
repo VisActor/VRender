@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(dataZoom): datazoom enhance",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -1,3 +1,16 @@
+# v0.18.1
+
+2024-03-04
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `autoEllipsisStrategy` of legend item
+
+
+
+[more detail about v0.18.1](https://github.com/VisActor/VRender/releases/tag/v0.18.1)
+
 # v0.18.0
 
 2024-02-28

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support native render for react, closed #400",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -60,3 +60,33 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     });
   });
 }
+
+type CircleLimitConfig = {
+  ellipsis?: string;
+  width: number;
+};
+
+export function polarAutoLimit(labels: IText[], config: CircleLimitConfig) {
+  const { ellipsis = '...', width } = config;
+  if (isEmpty(labels) || !isValidNumber(width)) {
+    return;
+  }
+
+  labels.forEach(label => {
+    const { x1, x2 } = label.globalAABBBounds;
+    const maxX = Math.max(x1, x2);
+    const minX = Math.min(x1, x2);
+
+    if (maxX > width) {
+      label.setAttributes({
+        maxLineWidth: label.AABBBounds.width() - (maxX - width),
+        ellipsis
+      });
+    } else if (minX < 0) {
+      label.setAttributes({
+        maxLineWidth: label.AABBBounds.width() + minX,
+        ellipsis
+      });
+    }
+  });
+}

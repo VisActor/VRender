@@ -16,6 +16,7 @@ import { CircleAxisMixin } from './mixin/circle';
 import { getLabelPosition } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
+import { polarAutoLimit } from './overlap/auto-limit';
 
 loadCircleAxisComponent();
 export interface CircleAxis
@@ -204,9 +205,13 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
-    // 暂不支持
-    return;
+    const { label } = this.attribute;
+    const { autoLimit, limitEllipsis } = label;
+    if (autoLimit) {
+      polarAutoLimit(labelShapes, { ellipsis: limitEllipsis, width: this.stage.width });
+    }
   }
+
   protected afterLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],

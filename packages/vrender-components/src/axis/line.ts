@@ -224,8 +224,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
 
     // 计算标题缩略
-    let maxTagWidth;
-    if (isNil(maxWidth)) {
+    let maxTagWidth = maxWidth;
+    if (isNil(maxTagWidth)) {
       const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
       const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
       if (isValidNumber(limitSize)) {
@@ -246,8 +246,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           }
         }
       }
-    } else {
-      maxTagWidth = maxWidth - offset;
     }
 
     const attrs: TagAttributes = {

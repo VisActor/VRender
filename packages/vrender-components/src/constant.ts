@@ -27,3 +27,5 @@ export const DEFAULT_HTML_TEXT_SPEC = {
   height: 30,
   style: {}
 };
+
+export const SCROLLBAR_EVENT = 'scrollDrag';

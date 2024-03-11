@@ -220,7 +220,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
+    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage?.window?.getContext()?.canvas?.nativeCanvas);
     return {
       x: x - (this.stage?.x || 0),
       y: y - (this.stage?.y || 0)
@@ -310,7 +310,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     end = Math.min(Math.max(end, 0), 1);
 
     // 避免attributes相同时, 重复渲染
-    if (realTime && (startAttr !== start || endAttr !== end)) {
+    if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
     }
 

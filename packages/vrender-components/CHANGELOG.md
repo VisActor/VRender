@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 08 Mar 2024 03:19:08 GMT and should not be manually modified.
+This log was last generated on Mon, 11 Mar 2024 08:24:00 GMT and should not be manually modified.
+
+## 0.18.3
+Mon, 11 Mar 2024 08:24:00 GMT
+
+### Updates
+
+- fix(dataZoom): fix datazoom realtime error and export scrollbar event name 
 
 ## 0.18.2
 Fri, 08 Mar 2024 03:19:08 GMT

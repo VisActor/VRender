@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.3",
+      "tag": "@visactor/vrender-components_v0.18.3",
+      "date": "Mon, 11 Mar 2024 08:24:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(dataZoom): fix datazoom realtime error and export scrollbar event name "
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.2",
       "tag": "@visactor/vrender-components_v0.18.2",
       "date": "Fri, 08 Mar 2024 03:19:08 GMT",

@@ -50,8 +50,6 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       return;
     }
     const {
-      delayType = 'throttle',
-      delayTime = 0,
       trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger,
       updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
@@ -60,7 +58,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     // 拖拽绘制开始
     this.stage.addEventListener(trigger, this._onBrushStart as EventListener);
     // 拖拽绘制时
-    this.stage.addEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.addEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
     // 拖拽绘制结束
     this.stage.addEventListener(endTrigger, this._onBrushEnd as EventListener);
     this.stage.addEventListener(resetTrigger, this._onBrushEnd as EventListener);
@@ -126,6 +124,11 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeDrawState && this._drawing(e); // 如果是绘制状态，在这里会标记operatingMask为正在绘制的mask
     this._activeMoveState && this._moving(e);
   };
+
+  private _onBrushingWithDelay =
+    this.attribute.delayTime === 0
+      ? this._onBrushing
+      : delayMap[this.attribute.delayType](this._onBrushing, this.attribute.delayTime);
 
   /**
    * 结束绘制 和 移动
@@ -411,7 +414,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
     } = this.attribute as BrushAttributes;
     this.stage.removeEventListener(trigger, this._onBrushStart as EventListener);
-    this.stage.removeEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.removeEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
     this.stage.removeEventListener(endTrigger, this._onBrushEnd as EventListener);
     this.stage.removeEventListener(resetTrigger, this._onBrushEnd as EventListener);
   }

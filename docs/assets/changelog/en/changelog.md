@@ -1,3 +1,16 @@
+# v0.18.3
+
+2024-03-12
+
+
+**🐛 Bug fix**
+
+- **dataZoom**: fix datazoom realtime error and export scrollbar event name
+
+
+
+[more detail about v0.18.3](https://github.com/VisActor/VRender/releases/tag/v0.18.3)
+
 # v0.18.1
 
 2024-03-04

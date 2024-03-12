@@ -1,8 +1,7 @@
 import '@visactor/vrender';
 import render from '../../util/render';
-import { ScrollBar, loadScrollbar } from '../../../src';
+import { ScrollBar } from '../../../src';
 import { createGroup, createRect } from '@visactor/vrender';
-loadScrollbar();
 
 export function run() {
   console.log('SCROLLBAR');
@@ -18,7 +17,7 @@ export function run() {
       fill: 'rgba(0, 0, 0, .1)'
     },
     range: [0, 0.05],
-    delayTime: 10
+    delayTime: 0
     // scrollRange: [0.4, 0.8]
   });
 
@@ -30,7 +29,7 @@ export function run() {
     width: 12,
     height: 500,
     padding: [0, 2],
-    delayTime: 110,
+    delayTime: 0,
     railStyle: {
       fill: 'rgba(0, 0, 0, .1)'
       //

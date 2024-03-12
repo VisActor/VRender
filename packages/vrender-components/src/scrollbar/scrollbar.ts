@@ -291,10 +291,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const { direction } = this.attribute as ScrollBarAttributes;
     this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      vglobal.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this.stage.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      this.stage.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       this.stage.addEventListener('pointerup', this._onSliderPointerUp);
       this.stage.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }
@@ -319,13 +319,18 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     return [currentPos, currentScrollValue];
   };
 
-  private _onSliderPointerMove = delayMap[this.attribute.delayType]((e: any) => {
+  private _onSliderPointerMove = (e: any) => {
     e.stopPropagation();
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     this.setScrollRange([preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue], true);
     this._prePos = currentPos;
-  }, this.attribute.delayTime);
+  };
+
+  private _onSliderPointerMoveWithDelay =
+    this.attribute.delayTime === 0
+      ? this._onSliderPointerMove
+      : delayMap[this.attribute.delayType](this._onSliderPointerMove, this.attribute.delayTime);
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
@@ -341,10 +346,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       });
     }
     if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      vglobal.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this.stage.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      this.stage.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       this.stage.removeEventListener('pointerup', this._onSliderPointerUp);
       this.stage.removeEventListener('pointerupoutside', this._onSliderPointerUp);
     }

@@ -18,7 +18,8 @@ export function run() {
       width: 400,
       height: 30
     },
-    showDetail: true,
+    showDetail: false,
+    delayTime: 1000,
     // brushSelect: false,
     backgroundChartStyle: {
       line: {

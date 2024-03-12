@@ -145,7 +145,7 @@ export class EventManager {
     ) {
       target = this._prePointTargetCache[cacheKey];
     } else {
-      target = this.pickTarget(e.canvasX, e.canvasY, e);
+      target = this.pickTarget(e.viewX, e.viewY, e);
       // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
       // 如果存在params，那么就不缓存
       if (!(e as any).pickParams) {
@@ -633,7 +633,7 @@ export class EventManager {
     if (target) {
       event.target = target;
     } else {
-      event.target = this.pickTarget(event.global.x, event.global.y, event);
+      event.target = this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
     }
 
     if (typeof type === 'string') {
@@ -652,7 +652,7 @@ export class EventManager {
 
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
-    event.target = target || this.pickTarget(event.global.x, event.global.y, event);
+    event.target = target || this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
 
     return event;
   }

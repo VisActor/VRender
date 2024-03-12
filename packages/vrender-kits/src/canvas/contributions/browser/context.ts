@@ -23,7 +23,7 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
+import type { IPointLike, TextMeasure, ITextMeasureSpec, IMatrix } from '@visactor/vutils';
 import { Matrix, pi, pi2, Logger } from '@visactor/vutils';
 import {
   injectable,
@@ -56,7 +56,6 @@ import type {
 const outP: [number, number, number] = [0, 0, 0];
 
 // https://github.com/konvajs/konva/blob/master/src/Context.ts
-const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);
 
 const addArcToBezierPath = (
   bezierPath: Array<number[]>,
@@ -125,6 +124,7 @@ export class BrowserContext2d implements IContext2d {
   protected applyedMatrix?: Matrix; // 被应用的matrix
   declare fontFamily: string;
   declare fontSize: number;
+  declare _clearMatrix: IMatrix;
   // 属性代理
   set fillStyle(d: string | CanvasGradient | CanvasPattern) {
     this.nativeContext.fillStyle = d;
@@ -247,6 +247,7 @@ export class BrowserContext2d implements IContext2d {
     this.stack = [];
     this.dpr = dpr;
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this._clearMatrix = new Matrix(1, 0, 0, 1, 0, 0);
   }
 
   reset() {
@@ -1182,7 +1183,11 @@ export class BrowserContext2d implements IContext2d {
   }
 
   clearMatrix(setTransform: boolean = true, dpr: number = this.dpr) {
-    this.setTransformFromMatrix(initMatrix, setTransform, dpr);
+    this.setTransformFromMatrix(this._clearMatrix, setTransform, dpr);
+  }
+
+  setClearMatrix(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this._clearMatrix.setValue(a, b, c, d, e, f);
   }
 
   onlyTranslate(dpr: number = this.dpr): boolean {

@@ -69,9 +69,9 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
   render(group: IGroup[], params: ILayerHandlerDrawParams): void {
     params.renderService.render(group, {
       context: this.context,
+      viewBox: params.stage.window.getViewBox(),
+      transMatrix: params.stage.window.getViewBoxTransform(),
       ...params,
-      x: 0,
-      y: 0,
       clear: params.background ?? '#ffffff'
     });
   }
@@ -92,7 +92,11 @@ export class OffscreenLayerHandlerContribution implements ILayerHandlerContribut
     const context = target.getContext();
     const targetDpr = target.dpr;
 
-    const { x = 0, y = 0, width = this.layer.viewWidth, height = this.layer.viewHeight } = params;
+    const { viewBox } = params;
+    const x = viewBox.x1;
+    const y = viewBox.y1;
+    const width = viewBox.width();
+    const height = viewBox.height();
     // 这个context可能是外部的，不要使用内置的状态，直接用原生的context
     context.nativeContext.save();
     context.nativeContext.setTransform(targetDpr, 0, 0, targetDpr, 0, 0);

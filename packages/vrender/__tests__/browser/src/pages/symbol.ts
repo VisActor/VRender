@@ -126,5 +126,5 @@ export const page = () => {
   console.log(stage);
 
   const c = stage.toCanvas(false, new AABBBounds().set(100, 100, 300, 360));
-  // document.body.appendChild(c);
+  document.body.appendChild(c);
 };

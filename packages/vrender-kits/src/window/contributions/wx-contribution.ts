@@ -223,7 +223,8 @@ export class WxWindowHandlerContribution extends BaseWindowHandlerContribution i
     };
   }
 
-  clearViewBox(vb: IBoundsLike, color?: string): void {
+  clearViewBox(color?: string): void {
+    const vb = this.viewBox;
     const context = this.getContext();
     const dpr = this.getDpr();
     context.nativeContext.save();

@@ -88,12 +88,20 @@ export const pages = [
         path: 'animate'
       },
       {
+        name: 'window-event',
+        path: 'window-event'
+      },
+      {
         name: 'state测试',
         path: 'state'
       },
       {
         name: '图形测试',
         path: 'graphic'
+      },
+      {
+        name: '离屏渲染',
+        path: 'offscreen'
       },
       {
         name: '主题测试',

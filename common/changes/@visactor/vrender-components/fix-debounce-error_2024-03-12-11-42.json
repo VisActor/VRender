@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(debounce): dataZoom and scrollbar and brush debounce leads to remove event fail",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -1,3 +1,18 @@
+# v0.18.4
+
+2024-03-12
+
+
+**What's Changed**
+
+* Feat/window event by @neuqzxy in https://github.com/VisActor/VRender/pull/978
+* [Auto release] release 0.18.4 by @github-actions in https://github.com/VisActor/VRender/pull/1063
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.1...v0.18.4
+
+[更多详情请查看 v0.18.4](https://github.com/VisActor/VRender/releases/tag/v0.18.4)
+
 # v0.18.1
 
 2024-03-04

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.5",
+      "tag": "@visactor/vrender-components_v0.18.5",
+      "date": "Tue, 12 Mar 2024 15:16:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(debounce): dataZoom and scrollbar and brush debounce leads to remove event fail"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.4",
       "tag": "@visactor/vrender-components_v0.18.4",
       "date": "Tue, 12 Mar 2024 09:40:06 GMT",

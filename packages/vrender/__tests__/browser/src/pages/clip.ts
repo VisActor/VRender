@@ -65,7 +65,8 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     width: 1200,
-    height: 600
+    height: 600,
+    autoRender: true
     // ticker: new ManualTicker([defaultTimeline])
   });
 

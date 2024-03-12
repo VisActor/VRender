@@ -1,5 +1,5 @@
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
-import { AABBBounds, Bounds, Point, isString } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, AABBBounds } from '@visactor/vutils';
+import { Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
   IExportType,
@@ -75,9 +75,7 @@ export class Stage extends Group implements IStage {
 
   declare state: IStageState;
 
-  protected _viewBox: AABBBounds;
   private _background: string | IColor;
-  private _subView: boolean; // 是否是存在子视图
   protected nextFrameRenderLayerSet: Set<Layer>;
   protected willNextFrameRender: boolean;
   protected _cursor: string;
@@ -94,23 +92,39 @@ export class Stage extends Group implements IStage {
   };
 
   set viewBox(b: IBoundsLike) {
-    this._viewBox.setValue(b.x1, b.y1, b.x2, b.y2);
+    this.window.setViewBox(b);
   }
-  get viewBox(): AABBBounds {
-    return this._viewBox;
+  get viewBox(): IAABBBounds {
+    return this.window.getViewBox();
   }
 
+  /**
+   * @deprecated 不建议使用
+   */
   get x(): number {
-    return this._viewBox.x1;
+    return this.window.getViewBox().x1;
   }
+  /**
+   * @deprecated 不建议使用
+   */
   set x(x: number) {
-    this._viewBox.translate(x - this._viewBox.x1, 0);
+    const b = this.window.getViewBox();
+    b.translate(x - b.x1, 0);
+    this.window.setViewBox(b);
   }
+  /**
+   * @deprecated 不建议使用
+   */
   get y(): number {
-    return this._viewBox.y1;
+    return this.window.getViewBox().y1;
   }
+  /**
+   * @deprecated 不建议使用
+   */
   set y(y: number) {
-    this._viewBox.translate(0, y - this._viewBox.y1);
+    const b = this.window.getViewBox();
+    b.translate(0, y - b.y1);
+    this.window.setViewBox(b);
   }
   get width(): number {
     return this.window.width;
@@ -119,13 +133,13 @@ export class Stage extends Group implements IStage {
     this.resize(w, this.height);
   }
   get viewWidth(): number {
-    return this._viewBox.width();
+    return this.window.getViewBox().width();
   }
   set viewWidth(w: number) {
     this.resizeView(w, this.viewHeight);
   }
   get viewHeight(): number {
-    return this._viewBox.height();
+    return this.window.getViewBox().height();
   }
   set viewHeight(h: number) {
     this.resizeView(this.viewWidth, h);
@@ -212,19 +226,13 @@ export class Stage extends Group implements IStage {
     this.window.create({
       width: params.width,
       height: params.height,
+      viewBox: params.viewBox,
       container: params.container,
       dpr: params.dpr || this.global.devicePixelRatio,
       canvasControled: params.canvasControled !== false,
       title: params.title || '',
       canvas: params.canvas
     });
-
-    this._viewBox = new AABBBounds();
-    if (params.viewBox) {
-      this._viewBox.setValue(params.viewBox.x1, params.viewBox.y1, params.viewBox.x2, params.viewBox.y2);
-    } else {
-      this._viewBox.setValue(0, 0, this.width, this.height);
-    }
 
     this.state = 'normal';
     this.renderCount = 0;
@@ -235,7 +243,6 @@ export class Stage extends Group implements IStage {
     // // 没有传入view的宽高则默认为window的宽高
     // this._viewWidth = params.viewWidth ?? this.window.width;
     // this._viewHeight = params.viewHeight ?? this.window.height;
-    this._subView = !(this._viewBox.width() === this.width && this._viewBox.height() === this.height);
     // this._AABBBounds.set(this._x, this._y, this._viewWidth + this._x, this._viewHeight + this._y);
     // 背景色默认为纯白色
     this._background = params.background ?? DefaultConfig.BACKGROUND;
@@ -282,6 +289,14 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  pauseRender() {
+    this._skipRender = -1;
+  }
+
+  resumeRender() {
+    this._skipRender = 0;
+  }
+
   protected tryInitEventSystem() {
     if (this.global.supportEvent && !this._eventSystem) {
       this._eventSystem = new EventSystem({
@@ -291,21 +306,6 @@ export class Stage extends Group implements IStage {
         global: this.global,
         supportsPointerEvents: this.params.supportsPointerEvents,
         supportsTouchEvents: this.params.supportsTouchEvents,
-        viewport: {
-          viewBox: this._viewBox,
-          get x(): number {
-            return this.viewBox.x1;
-          },
-          get y(): number {
-            return this.viewBox.y1;
-          },
-          get width(): number {
-            return this.viewBox.width();
-          },
-          get height(): number {
-            return this.viewBox.height();
-          }
-        },
         ...this.params.event
       });
     }
@@ -346,7 +346,8 @@ export class Stage extends Group implements IStage {
     }
     if (visible) {
       if (this.dirtyBounds) {
-        this.dirtyBounds.setValue(0, 0, this._viewBox.width(), this._viewBox.height());
+        const b = this.window.getViewBox();
+        this.dirtyBounds.setValue(b.x1, b.y1, b.width(), b.height());
       }
       if (this._skipRender > 1) {
         this.renderNextFrame();
@@ -578,7 +579,7 @@ export class Stage extends Group implements IStage {
   // }
 
   protected tryUpdateAABBBounds(): AABBBounds {
-    const viewBox = this._viewBox;
+    const viewBox = this.window.getViewBox();
     this._AABBBounds.setValue(viewBox.x1, viewBox.y1, viewBox.x2, viewBox.y2);
     return this._AABBBounds;
   }
@@ -630,7 +631,7 @@ export class Stage extends Group implements IStage {
   }
 
   clearViewBox(color?: string) {
-    this.window.clearViewBox(this._viewBox, color);
+    this.window.clearViewBox(color);
   }
 
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
@@ -642,9 +643,11 @@ export class Stage extends Group implements IStage {
     if (!this._skipRender) {
       this.lastRenderparams = params;
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(this.children as ILayer[], params);
-      this.combineLayersToWindow();
-      this.nextFrameRenderLayerSet.clear();
+      if (!this._skipRender) {
+        this.renderLayerList(this.children as ILayer[]);
+        this.combineLayersToWindow();
+        this.nextFrameRenderLayerSet.clear();
+      }
       this.hooks.afterRender.call(this);
     }
     this.state = state;
@@ -695,10 +698,12 @@ export class Stage extends Group implements IStage {
     this.layerService.prepareStageLayer(this);
     if (this.nextFrameRenderLayerSet.size && !this._skipRender) {
       this.hooks.beforeRender.call(this);
-      this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
-      this.combineLayersToWindow();
+      if (!this._skipRender) {
+        this.renderLayerList(Array.from(this.nextFrameRenderLayerSet.values()), this.lastRenderparams || {});
+        this.combineLayersToWindow();
+        this.nextFrameRenderLayerSet.clear();
+      }
       this.hooks.afterRender.call(this);
-      this.nextFrameRenderLayerSet.clear();
     }
     this.state = state;
     this._skipRender && this._skipRender++;
@@ -727,9 +732,11 @@ export class Stage extends Group implements IStage {
         {
           renderService: this.renderService,
           background: layer === this.defaultLayer ? this.background : undefined,
-          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty()),
+          viewBox: this.window.getViewBox(),
+          transMatrix: this.window.getViewBoxTransform()
         },
-        { renderStyle: this.renderStyle, keepMatrix: this.params.renderKeepMatrix, ...params }
+        { renderStyle: this.renderStyle, ...params }
       );
     });
 
@@ -738,7 +745,9 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.render(
         {
           renderService: this.renderService,
-          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
+          updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty()),
+          viewBox: this.window.getViewBox(),
+          transMatrix: this.window.getViewBoxTransform()
         },
         { renderStyle: this.renderStyle, ...params }
       );
@@ -757,14 +766,14 @@ export class Stage extends Group implements IStage {
    * @param rerender
    */
   resize(w: number, h: number, rerender: boolean = true): void {
+    // 如果不是子图的stage，那么认为用户也想要resize view
+    if (!this.window.hasSubView()) {
+      this.viewBox.setValue(this.viewBox.x1, this.viewBox.y1, this.viewBox.x1 + w, this.viewBox.y1 + h);
+    }
     this.window.resize(w, h);
     this.forEachChildren<ILayer>(c => {
       c.resize(w, h);
     });
-    // 如果不是子图的stage，那么认为用户也想要resize view
-    if (!this._subView) {
-      this.viewBox.setValue(this.viewBox.x1, this.viewBox.y1, this.viewBox.x1 + w, this.viewBox.y1 + h);
-    }
     // 设置camera
     // this.camera && (this.camera.params = { ...this.camera.params, right: this.width, bottom: this.height });
     this.camera && this.option3d && this.set3dOptions(this.option3d);
@@ -877,11 +886,13 @@ export class Stage extends Group implements IStage {
     return layer[0] as ILayer;
   }
 
-  renderTo(window: IWindow, params: { x: number; y: number; width: number; height: number }) {
+  renderTo(window: IWindow) {
     this.forEachChildren<ILayer>((layer, i) => {
       layer.drawTo(window, {
-        ...params,
+        // ...params,
         renderService: this.renderService,
+        viewBox: window.getViewBox(),
+        transMatrix: window.getViewBoxTransform(),
         background: layer === this.defaultLayer ? this.background : undefined,
         clear: i === 0, // 第一个layer需要clear
         updateBounds: !!(this.dirtyBounds && !this.dirtyBounds.empty())
@@ -896,19 +907,25 @@ export class Stage extends Group implements IStage {
    */
   renderToNewWindow(fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
     const window = container.get<IWindow>(VWindow);
+    const x1 = viewBox ? -viewBox.x1 : 0;
+    const y1 = viewBox ? -viewBox.y1 : 0;
+    const x2 = viewBox ? viewBox.x2 : this.viewWidth;
+    const y2 = viewBox ? viewBox.y2 : this.viewHeight;
+    const width = viewBox ? viewBox.width() : this.viewWidth;
+    const height = viewBox ? viewBox.height() : this.viewHeight;
     if (fullImage) {
       window.create({
-        width: this.viewWidth,
-        height: this.viewHeight,
+        viewBox: { x1, y1, x2, y2 },
+        width,
+        height,
         dpr: this.window.dpr,
         canvasControled: true,
         offscreen: true,
         title: ''
       });
     } else {
-      const width = viewBox ? viewBox.width() : Math.min(this.viewWidth, this.window.width - this.x);
-      const height = viewBox ? viewBox.height() : Math.min(this.viewHeight, this.window.height - this.y);
       window.create({
+        viewBox: { x1, y1, x2, y2 },
         width,
         height,
         dpr: this.window.dpr,
@@ -918,14 +935,7 @@ export class Stage extends Group implements IStage {
       });
     }
 
-    const x = viewBox ? -viewBox.x1 : 0;
-    const y = viewBox ? -viewBox.y1 : 0;
-    this.renderTo(window, {
-      x,
-      y,
-      width: viewBox ? viewBox.x2 : window.width,
-      height: viewBox ? viewBox.y2 : window.height
-    });
+    this.renderTo(window);
     return window;
   }
 

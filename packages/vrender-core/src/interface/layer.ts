@@ -1,4 +1,4 @@
-import type { IAABBBounds, IBounds, IBoundsLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import type { IGraphic } from './graphic';
 import type { IGroup } from './graphic/group';
 import type { IColor } from './color';
@@ -22,13 +22,13 @@ export interface ILayerDrawParams {
   renderService: IRenderService;
   background?: string | IColor;
   updateBounds: boolean;
+  viewBox: IAABBBounds;
+  transMatrix: IMatrix;
 }
 
 export interface IDrawToParams {
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
+  viewBox: IAABBBounds;
+  transMatrix: IMatrix;
   clear?: boolean;
   renderService: IRenderService;
   background?: string | IColor;
@@ -76,15 +76,11 @@ export interface ILayer extends IGroup {
   setToFrame: (t: number) => void;
   prepare: (dirtyBounds: IBounds, params: ILayerHandlerDrawParams) => void;
   drawTo: (target: IWindow, params: IDrawToParams) => void;
-  combineTo: (target: IWindow, params: IDrawToParams) => void;
+  // combineTo: (target: IWindow, params: IDrawToParams) => void;
   // 考虑操作回放
 }
 
 export interface ILayerHandlerDrawParams extends ILayerDrawParams {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
   layer: ILayer;
   stage: IStage;
   updateBounds: boolean;

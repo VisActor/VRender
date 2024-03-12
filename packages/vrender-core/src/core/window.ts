@@ -1,5 +1,6 @@
 import { inject, injectable } from '../common/inversify-lite';
-import type { IBoundsLike } from '@visactor/vutils';
+import type { IPointLike } from '@visactor/vutils';
+import { Matrix, type IBoundsLike, type IMatrix, IBounds, Point } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type {
   ICanvas,
@@ -101,7 +102,7 @@ export class DefaultWindow implements IWindow {
   }
 
   get style(): CSSStyleDeclaration | Record<string, any> {
-    return this._handler.getStyle();
+    return this._handler.getStyle() ?? {};
   }
 
   set style(style: CSSStyleDeclaration | Record<string, any>) {
@@ -116,6 +117,18 @@ export class DefaultWindow implements IWindow {
     const windowWH = this._handler.getWH();
     this._width = windowWH.width;
     this._height = windowWH.height;
+
+    // 设置viewBox
+    if (params.viewBox) {
+      this.setViewBox(params.viewBox);
+    } else {
+      if (params.canvasControled !== false) {
+        this.setViewBox({ x1: 0, y1: 0, x2: this._width, y2: this._height });
+      } else {
+        this.setViewBox({ x1: 0, y1: 0, x2: params.width ?? this._width, y2: params.height ?? this._height });
+      }
+    }
+
     // 使用window的xy
     // const windowXY = this._handler.getXY();
     // this.x = windowXY.x;
@@ -191,8 +204,39 @@ export class DefaultWindow implements IWindow {
     return this._handler.container;
   }
 
-  clearViewBox(viewBox: IBoundsLike, color?: string) {
-    this._handler.clearViewBox(viewBox, color);
+  clearViewBox(color?: string) {
+    this._handler.clearViewBox(color);
+  }
+  setViewBox(viewBox: IBoundsLike) {
+    this._handler.setViewBox(viewBox);
+  }
+  setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this._handler.setViewBoxTransform(a, b, c, d, e, f);
+  }
+  getViewBox() {
+    return this._handler.getViewBox();
+  }
+  getViewBoxTransform() {
+    return this._handler.getViewBoxTransform();
+  }
+  pointTransform(x: number, y: number): IPointLike {
+    const vb = this._handler.getViewBox();
+    const m = this._handler.getViewBoxTransform();
+    const nextP = { x, y };
+    m.transformPoint({ x, y }, nextP);
+    nextP.x -= vb.x1;
+    nextP.y -= vb.y1;
+    return nextP;
+  }
+
+  hasSubView() {
+    const viewBox = this._handler.getViewBox();
+    return !(
+      viewBox.x1 === 0 &&
+      viewBox.y1 === 0 &&
+      this.width === viewBox.width() &&
+      this.height === viewBox.height()
+    );
   }
 
   isVisible(bbox?: IBoundsLike): boolean {

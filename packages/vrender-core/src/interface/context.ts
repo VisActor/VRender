@@ -316,6 +316,7 @@ export interface IContext2d extends Releaseable {
   draw: (...params: any) => void;
 
   clearMatrix: (setTransform?: boolean, dpr?: number) => void;
+  setClearMatrix: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
   onlyTranslate: (dpr?: number) => boolean;
 }
 

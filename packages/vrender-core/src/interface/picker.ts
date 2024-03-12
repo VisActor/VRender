@@ -24,8 +24,6 @@ export interface IPickParams {
   group?: boolean;
   graphic?: boolean;
   bounds?: IBounds;
-  // 是否使用当前的Matrix，不用重新初始化matrix
-  keepMatrix?: boolean;
   pickContext?: IContext2d;
   pickerService?: IPickerService;
   // 内部设置

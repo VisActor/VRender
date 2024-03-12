@@ -10,7 +10,7 @@ import type {
   IWindow,
   IWindowParams
 } from '../../../interface';
-import type { IBoundsLike } from '@visactor/vutils';
+import { AABBBounds, Matrix, type IBounds, type IBoundsLike, type IMatrix } from '@visactor/vutils';
 
 type OnchangeCbType = (params?: { x?: number; y?: number; width?: number; height?: number }) => void;
 
@@ -19,9 +19,13 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
   declare type: EnvType;
 
   declare _uid: number;
+  protected viewBox: IBounds;
+  protected modelMatrix: IMatrix;
 
   constructor() {
     this._uid = Generator.GenAutoIncrementId();
+    this.viewBox = new AABBBounds();
+    this.modelMatrix = new Matrix(1, 0, 0, 1, 0, 0);
   }
 
   protected declare _onChangeCb?: OnchangeCbType;
@@ -48,7 +52,7 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
   abstract getXY(): { x: number; y: number };
   abstract getNativeHandler(): ICanvas | any;
   abstract getDpr(): number;
-  abstract clearViewBox(vb: IBoundsLike, color?: string): void;
+  abstract clearViewBox(color?: string): void;
   abstract addEventListener<K extends keyof DocumentEventMap>(
     type: K,
     listener: (this: Document, ev: DocumentEventMap[K]) => any,
@@ -88,5 +92,18 @@ export abstract class BaseWindowHandlerContribution implements IWindowHandlerCon
       top: 0,
       left: 0
     };
+  }
+
+  setViewBox(vb: IBoundsLike) {
+    this.viewBox.setValue(vb.x1, vb.y1, vb.x2, vb.y2);
+  }
+  getViewBox() {
+    return this.viewBox;
+  }
+  setViewBoxTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this.modelMatrix.setValue(a, b, c, d, e, f);
+  }
+  getViewBoxTransform(): IMatrix {
+    return this.modelMatrix;
   }
 }

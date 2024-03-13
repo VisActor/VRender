@@ -17,7 +17,7 @@ export function run() {
     yRange0: 0,
     yRange1: 500,
     delayType: 'throttle',
-    delayTime: 10,
+    delayTime: 100,
     interactiveRangeY1: 0,
     interactiveRangeY2: 5000,
     interactiveRangeX1: 0,
@@ -58,11 +58,8 @@ export function run() {
       fillOpacity: 0.2,
       stroke: '#B0C8F9',
       strokeWidth: 2
-    }
-  });
-
-  brush.setUpdateDragMaskCallback(a => {
-    console.log(a);
+    },
+    delayTime: 100
   });
 
   const brush2 = new Brush({

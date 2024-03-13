@@ -1,3 +1,21 @@
+# v0.18.2
+
+2024-03-12
+
+
+**What's Changed**
+
+* [Auto Sync] Sync the code from branch main to branch develop after release 0.18.1 by @github-actions in https://github.com/VisActor/VRender/pull/1045
+* [Auto changelog] changlog of v0.18.1 by @github-actions in https://github.com/VisActor/VRender/pull/1046
+* fix: label strategy overlapping not work in some cases by @xiaoluoHe in https://github.com/VisActor/VRender/pull/1043
+* Revert "Merge pull request [#1021](https://github.com/VisActor/VRender/issues/1021) from VisActor/fix/last-alternateColo… by @xiaoluoHe in https://github.com/VisActor/VRender/pull/1052
+* [Auto release] release 0.18.2 by @github-actions in https://github.com/VisActor/VRender/pull/1054
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.1...v0.18.2
+
+[more detail about v0.18.2](https://github.com/VisActor/VRender/releases/tag/v0.18.2)
+
 # v0.18.1
 
 2024-03-04

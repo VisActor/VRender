@@ -2,6 +2,12 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.5",
+      "tag": "@visactor/vrender-core_v0.18.5",
+      "date": "Tue, 12 Mar 2024 15:16:46 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.18.4",
       "tag": "@visactor/vrender-core_v0.18.4",
       "date": "Tue, 12 Mar 2024 09:40:06 GMT",

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 12 Mar 2024 09:40:06 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Mar 2024 15:16:46 GMT and should not be manually modified.
+
+## 0.18.5
+Tue, 12 Mar 2024 15:16:46 GMT
+
+### Updates
+
+- fix(debounce): dataZoom and scrollbar and brush debounce leads to remove event fail
 
 ## 0.18.4
 Tue, 12 Mar 2024 09:40:06 GMT

@@ -282,7 +282,7 @@ const legend = new DiscreteLegend({
     },
     width: 400
   },
-  autoPage: false,
+  autoPage: true,
   pager: {
     type: 'scrollbar'
   },

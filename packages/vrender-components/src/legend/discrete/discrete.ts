@@ -212,7 +212,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       maxWidth,
       maxHeight,
       defaultSelected = [],
-      lazyload
+      lazyload,
+      autoPage
     } = this.attribute as DiscreteLegendAttrs;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = itemAttrs;
 
@@ -255,8 +256,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       if (isHorizontal) {
         // 水平布局
         if (isValid(maxWidth)) {
-          if (isScrollbar) {
-            pages = Math.floor((startX + itemWidth) / maxWidth) + 1;
+          if (isScrollbar && autoPage) {
+            pages = Math.ceil((startX + itemWidth) / maxWidth);
             doWrap = pages > 1;
           } else if (startX + itemWidth > maxWidth) {
             doWrap = true;
@@ -278,8 +279,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       } else {
         // 垂直布局
         if (isValid(maxHeight)) {
-          if (isScrollbar) {
-            pages = Math.floor((startY + itemHeight) / maxHeight);
+          if (isScrollbar && autoPage) {
+            pages = Math.ceil((startY + itemHeight) / maxHeight);
             doWrap = pages > 1;
           } else if (maxHeight < startY + itemHeight) {
             // 检测是否换列：如果用户声明了 maxHeight 并且超出了，则进行换列

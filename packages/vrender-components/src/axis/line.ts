@@ -108,6 +108,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       shape,
       background,
       state = {},
+      maxWidth,
       ...restAttrs
     } = this.attribute.title as TitleAttributes;
     let percent = 0.5;
@@ -222,9 +223,35 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       textBaseline = this.getTextBaseline(vector as number[], false);
     }
 
+    // 计算标题缩略
+    let maxTagWidth = maxWidth;
+    if (isNil(maxTagWidth)) {
+      const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+      const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+      if (isValidNumber(limitSize)) {
+        const isX = orient === 'bottom' || orient === 'top';
+        if (isX) {
+          if (angle !== Math.PI / 2) {
+            const cosValue = Math.abs(Math.cos(angle ?? 0));
+            maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        } else {
+          if (angle && angle !== 0) {
+            const sinValue = Math.abs(Math.sin(angle));
+            maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        }
+      }
+    }
+
     const attrs: TagAttributes = {
       ...titlePoint,
       ...restAttrs,
+      maxWidth: maxTagWidth,
       textStyle: {
         // @ts-ignore
         textAlign,

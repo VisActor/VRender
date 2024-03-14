@@ -2,13 +2,14 @@
  * @description 网格线
  */
 import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
-import type { IGroup, Path } from '@visactor/vrender-core';
+import type { IGraphic, IGroup, Path } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
 import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
 import type { AxisItem, TransformedAxisItem } from '../type';
 import { AXIS_ELEMENT_NAME } from '../constant';
+import { getElMap } from '../util';
 
 function getLinePath(points: Point[], closed: boolean) {
   let path = '';
@@ -118,7 +119,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
     return this._innerView;
   }
 
-  protected _prevInnerView: IGroup; // 缓存旧场景树，用于自定义动画
+  protected _prevInnerView: { [key: string]: IGraphic }; // 缓存旧场景树，用于自定义动画
   /**
    * 获取更新前的旧场景树
    * @returns 返回更新前的旧场景树
@@ -135,8 +136,9 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   protected abstract getGridAttribute(isSubGrid: boolean): T;
 
   protected render(): void {
+    this._prevInnerView = this._innerView && getElMap(this._innerView);
+
     this.removeAllChild(true);
-    this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
@@ -264,5 +266,11 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
    */
   protected _getNodeId(id: string) {
     return `${this.id}-${id}`;
+  }
+
+  release(): void {
+    super.release();
+    this._prevInnerView = null;
+    this._innerView = null;
   }
 }

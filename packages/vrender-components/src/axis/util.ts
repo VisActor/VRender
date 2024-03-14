@@ -1,7 +1,9 @@
 import { getTextBounds } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IGraphic, IGroup, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { Dict } from '@visactor/vutils';
 import { isGreater, isLess, tau, type Point } from '@visactor/vutils';
+import { traverseGroup } from '../util/common';
 
 // 和 vutils 版本不同
 export const clampRadian = (angle: number = 0) => {
@@ -68,4 +70,14 @@ export function getLabelPosition(
   const y = baseY - dy;
 
   return { x, y };
+}
+
+export function getElMap(g: IGroup) {
+  const elMap: Dict<IGraphic> = {};
+  traverseGroup(g, (el: IGraphic) => {
+    if ((el as IGraphic).type !== 'group' && el.id) {
+      elMap[el.id] = el;
+    }
+  });
+  return elMap;
 }

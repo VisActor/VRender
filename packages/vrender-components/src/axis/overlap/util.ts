@@ -52,3 +52,64 @@ export function itemIntersect(item1: IText, item2: IText) {
       : true)
   );
 }
+
+// 计算矩形内的点与矩形边的交点
+export function borderPoint(
+  rect: { left: number; top: number; width: number; height: number },
+  pt: { x: number; y: number },
+  angle: number
+) {
+  // catch cases where point is outside rectangle
+  if (pt.x < rect.left) {
+    return null;
+  }
+  if (pt.x > rect.left + rect.width) {
+    return null;
+  }
+  if (pt.y < rect.top) {
+    return null;
+  }
+  if (pt.y > rect.top + rect.height) {
+    return null;
+  }
+
+  const dx = Math.cos(angle);
+  const dy = Math.sin(angle);
+
+  if (dx < 1.0e-16) {
+    // left border
+    const y = ((rect.left - pt.x) * dy) / dx + pt.y;
+
+    if (y >= rect.top && y <= rect.top + rect.height) {
+      return { x: rect.left, y: y };
+    }
+  }
+
+  if (dx > 1.0e-16) {
+    // right border
+    const y = ((rect.left + rect.width - pt.x) * dy) / dx + pt.y;
+
+    if (y >= rect.top && y <= rect.top + rect.height) {
+      return { x: rect.left + rect.width, y: y };
+    }
+  }
+
+  if (dy < 1.0e-16) {
+    // top border
+    const x = ((rect.top - pt.y) * dx) / dy + pt.x;
+
+    if (x >= rect.left && x <= rect.left + rect.width) {
+      return { x: x, y: rect.top };
+    }
+  }
+
+  if (dy > 1.0e-16) {
+    // bottom border
+    const x = ((rect.top + rect.height - pt.y) * dx) / dy + pt.x;
+    if (x >= rect.left && x <= rect.left + rect.width) {
+      return { x: x, y: rect.top + rect.height };
+    }
+  }
+
+  return null;
+}

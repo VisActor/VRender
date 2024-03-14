@@ -455,17 +455,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         });
       }
       if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
-        const verticalLimitLength =
-          orient === 'left' || orient === 'right'
-            ? Math.abs(this.attribute.start.y - this.attribute.end.y) / labelShapes.length
-            : !autoHide && !autoRotate
-            ? Math.abs(this.attribute.start.x - this.attribute.end.x) / labelShapes.length
-            : Infinity;
+        const isVertical = orient === 'left' || orient === 'right';
+        const axisLength = isVertical
+          ? Math.abs(this.attribute.start.y - this.attribute.end.y)
+          : Math.abs(this.attribute.start.x - this.attribute.end.x);
+
+        const verticalLimitLength = isVertical
+          ? axisLength / labelShapes.length
+          : !autoHide && !autoRotate
+          ? axisLength / labelShapes.length
+          : Infinity;
+
         autoLimitFunc(labelShapes, {
           limitLength,
           verticalLimitLength,
           ellipsis: limitEllipsis,
-          orient
+          orient,
+          axisLength
         });
       }
       if (autoHide) {

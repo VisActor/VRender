@@ -1,3 +1,16 @@
+# v0.18.5
+
+2024-03-14
+
+
+**🐛 功能修复**
+
+- **debounce**: dataZoom and scrollbar and brush debounce leads to remove event fail
+
+
+
+[更多详情请查看 v0.18.5](https://github.com/VisActor/VRender/releases/tag/v0.18.5)
+
 # v0.18.2
 
 2024-03-12

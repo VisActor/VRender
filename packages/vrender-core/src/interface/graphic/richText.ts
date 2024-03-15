@@ -46,6 +46,7 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   fill?: IColor | boolean;
   stroke?: IColor | boolean;
   fontWeight?: string;
+  lineWidth?: number;
   // lineHeight?: number;
   fontStyle?: RichTextFontStyle; // normal, italic, oblique
   textDecoration?: RichTextTextDecoration; // none, underline, line-through

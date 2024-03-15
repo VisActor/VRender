@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: richtext support combine linewidth style",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -314,6 +314,7 @@ export const page = () => {
       width: 300,
       stroke: 'green',
       height: 0,
+      lineWidth: 10,
       textConfig: [
         {
           text: '图标测试',

@@ -132,7 +132,7 @@ export class EventSystem {
 
   release(): void {
     this.removeEvents();
-    this.manager.release();
+    this.manager && this.manager.release();
     this.domElement = null;
     (this as any).manager = null;
     (this as any).globalObj = null;

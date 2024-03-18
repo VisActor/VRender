@@ -2,76 +2,32 @@ import { Generator } from '../../common/generator';
 import type { IGraphic, IPlugin, IPluginService, IRenderService, IDrawContext, IGroup } from '../../interface';
 import { application } from '../../application';
 import { DefaultAttribute } from '../../graphic';
+import { HtmlAttributePlugin } from './html-attribute-plugin';
 
-export class HtmlAttributePlugin implements IPlugin {
-  name: string = 'HtmlAttributePlugin';
+export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin {
+  name: 'ReactAttributePlugin' = 'ReactAttributePlugin';
   activeEvent: 'onRegister' = 'onRegister';
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
 
-  activate(context: IPluginService): void {
-    this.pluginService = context;
-    context.stage.hooks.afterRender.tap(this.key, stage => {
-      if (!(stage && stage === this.pluginService.stage)) {
-        return;
-      }
-
-      this.drawHTML(context.stage.renderService);
-    });
-    application.graphicService.hooks.onRemove.tap(this.key, graphic => {
-      this.removeDom(graphic);
-    });
-    application.graphicService.hooks.onRelease.tap(this.key, graphic => {
-      this.removeDom(graphic);
-    });
-  }
-  deactivate(context: IPluginService): void {
-    context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
-      return item.name !== this.key;
-    });
-  }
-
-  protected drawHTML(renderService: IRenderService) {
-    if (application.global.env === 'browser') {
-      renderService.renderTreeRoots
-        .sort((a, b) => {
-          return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
-        })
-        .forEach(group => {
-          this.renderGroupHTML(group as IGroup);
-        });
-    }
-  }
-
-  renderGroupHTML(group: IGroup) {
-    this.renderGraphicHTML(group);
-    group.forEachChildren((g: IGraphic) => {
-      if (g.isContainer) {
-        this.renderGroupHTML(g as IGroup);
-      } else {
-        this.renderGraphicHTML(g);
-      }
-    });
-  }
-
   removeDom(graphic: IGraphic) {
     if (graphic.bindDom && graphic.bindDom.size) {
       // 删除dom
       graphic.bindDom.forEach(item => {
-        item.dom && item.dom.parentElement.removeChild(item.dom);
+        item.root && item.root.unmount();
       });
       graphic.bindDom.clear();
     }
   }
 
   renderGraphicHTML(graphic: IGraphic) {
-    const { html } = graphic.attribute;
-    if (!html) {
+    const { react } = graphic.attribute;
+    if (!react) {
       if (graphic.bindDom && graphic.bindDom.size) {
         // 删除dom
         graphic.bindDom.forEach(item => {
-          item.dom && item.dom.parentElement.removeChild(item.dom);
+          item.root && item.root.unmount();
         });
         graphic.bindDom.clear();
       }
@@ -81,11 +37,16 @@ export class HtmlAttributePlugin implements IPlugin {
     if (!stage) {
       return;
     }
-    const { dom, container, width, height, style, anchorType = 'boundsLeftTop', pointerEvents } = html;
+    const ReactDOM = stage.params.ReactDOM;
+    const { element, container, width, height, style, anchorType = 'boundsLeftTop', pointerEvents } = react;
+    if (!(element && ReactDOM && ReactDOM.createRoot)) {
+      return;
+    }
+
     if (!graphic.bindDom) {
       graphic.bindDom = new Map();
     }
-    const lastDom = graphic.bindDom.get(dom);
+    const lastDom = graphic.bindDom.get(element);
 
     let wrapGroup;
     // 获取container的dom，默认为window的container
@@ -99,19 +60,8 @@ export class HtmlAttributePlugin implements IPlugin {
       graphic.bindDom.forEach(({ wrapGroup }) => {
         application.global.removeDom(wrapGroup);
       });
-      // 转化这个dom为nativeDOM
-      let nativeDom: HTMLElement;
-      if (typeof dom === 'string') {
-        nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
-        if ((nativeDom as any).lastChild) {
-          nativeDom = (nativeDom as any).lastChild.firstChild;
-        }
-      } else {
-        nativeDom = dom;
-      }
 
-      const _container =
-        container || (stage.params.enableHtmlAttribute === true ? null : stage.params.enableHtmlAttribute);
+      const _container = container;
       if (_container) {
         if (typeof _container === 'string') {
           nativeContainer = application.global.getElementById(_container);
@@ -125,8 +75,10 @@ export class HtmlAttributePlugin implements IPlugin {
       // 创建wrapGroup
       wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
       if (wrapGroup) {
-        wrapGroup.appendChild(nativeDom);
-        graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
+        const root = ReactDOM.createRoot(wrapGroup);
+        root.render(element);
+        // wrapGroup.appendChild(nativeDom);
+        graphic.bindDom.set(element, { dom: element, container, wrapGroup: wrapGroup, root });
       }
     }
 

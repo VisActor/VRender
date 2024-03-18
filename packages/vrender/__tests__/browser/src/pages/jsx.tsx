@@ -1,6 +1,8 @@
 import { createStage, VGroup, VSymbol, VText, VImage, VRichText, Fragment, jsx } from '@visactor/vrender';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { VTag } from '@visactor/vrender-components';
-import { roughModule } from '@visactor/vrender-kits';
+import { decodeReactDom, roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
 import { IGroup } from '@visactor/vrender';
@@ -306,7 +308,8 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
-    enableLayout: true
+    enableLayout: true,
+    ReactDOM
   });
 
   const paths = {
@@ -1045,46 +1048,59 @@ export const page = () => {
   //     </VGroup>
   //   </VGroup>
   // );
+  console.log(ReactDOM);
   stage.defaultLayer.add(
-    <VGroup attribute={{ x: 100, y: 100 }}>
-      {new Array(10).fill(0).map(() => (
-        <VGroup attribute={{ x: 100, y: 100 }}>
-          <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
-          <VSymbol
-            onPointerEnter={(e, g) => {
-              e.target.setAttributes({
-                background: greenMask
-              });
-            }}
-            onPointerLeave={(e, g) => {
-              e.target.setAttributes({
-                background: mask
-              });
-            }}
-            attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
-          />
-        </VGroup>
-      ))}
-      {new Array(10).fill(0).map(() => (
-        <VGroup attribute={{ x: 200, y: 100 }}>
-          <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
-          <VSymbol
-            onPointerEnter={(e, g) => {
-              e.target.setAttributes({
-                background: greenMask
-              });
-            }}
-            onPointerLeave={(e, g) => {
-              e.target.setAttributes({
-                background: mask
-              });
-            }}
-            attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
-          />
-        </VGroup>
-      ))}
-    </VGroup>
+    decodeReactDom(
+      <VGroup attribute={{ x: 100, y: 100 }}>
+        {new Array(1).fill(0).map(() => (
+          <VGroup attribute={{ x: 100, y: 100 }}>
+            <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+            <VSymbol
+              onPointerEnter={(e, g) => {
+                e.target.setAttributes({
+                  background: greenMask
+                });
+              }}
+              onPointerLeave={(e, g) => {
+                e.target.setAttributes({
+                  background: mask
+                });
+              }}
+              attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+            />
+          </VGroup>
+        ))}
+        {new Array(1).fill(0).map(() => (
+          <VGroup attribute={{ x: 200, y: 100 }}>
+            <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+            <VSymbol
+              name="abc"
+              onPointerEnter={(e, g) => {
+                e.target.setAttributes({
+                  background: greenMask
+                });
+              }}
+              onPointerLeave={(e, g) => {
+                e.target.setAttributes({
+                  background: mask
+                });
+              }}
+              attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+            />
+          </VGroup>
+        ))}
+      </VGroup>
+    )
   );
+  const symbol = stage.getElementsByName('abc')[0];
+  symbol.setAttributes({
+    react: {
+      // pointerEvents: true,
+      element: <button>abc</button>,
+      width: 60,
+      height: 60
+    }
+  });
   console.log();
 
   // const graphics: IGraphic[] = [];

@@ -48,6 +48,7 @@ import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
+import { ReactAttributePlugin } from '../plugins/builtin-plugin/react-attribute-plugin';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -171,6 +172,7 @@ export class Stage extends Group implements IStage {
   autoRender: boolean;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
+  reactAttribute: boolean | string | any;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -267,6 +269,9 @@ export class Stage extends Group implements IStage {
 
     if (params.enableHtmlAttribute) {
       this.enableHtmlAttribute(params.enableHtmlAttribute);
+    }
+    if (params.ReactDOM) {
+      this.enableReactAttribute(params.ReactDOM);
     }
 
     params.enableLayout && this.enableLayout();
@@ -557,6 +562,22 @@ export class Stage extends Group implements IStage {
     }
     this.htmlAttribute = false;
     this.pluginService.findPluginsByName('HtmlAttributePlugin').forEach(plugin => {
+      this.pluginService.unRegister(plugin);
+    });
+  }
+  enableReactAttribute(container?: any) {
+    if (this.reactAttribute) {
+      return;
+    }
+    this.reactAttribute = container;
+    this.pluginService.register(new ReactAttributePlugin());
+  }
+  disableReactAttribute() {
+    if (!this.reactAttribute) {
+      return;
+    }
+    this.reactAttribute = false;
+    this.pluginService.findPluginsByName('ReactAttributePlugin').forEach(plugin => {
       this.pluginService.unRegister(plugin);
     });
   }

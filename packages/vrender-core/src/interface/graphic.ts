@@ -218,8 +218,19 @@ export type IGraphicStyle = ILayout &
       container: string | HTMLElement | null; // id或者dom
       width: number; // 容器的宽度
       height: number; // 容器的高度
-      style: string | Record<string, any>; // 容器的样式
+      style?: string | Record<string, any>; // 容器的样式
       visible?: boolean;
+      pointerEvents?: boolean;
+      anchorType?: 'position' | 'boundsLeftTop';
+    } | null;
+    react: {
+      element: any; // react场景节点
+      container: string | HTMLElement | null; // id或者dom
+      width: number; // 容器的宽度
+      height: number; // 容器的高度
+      style?: string | Record<string, any>; // 容器的样式
+      visible?: boolean;
+      pointerEvents?: boolean;
       anchorType?: 'position' | 'boundsLeftTop';
     } | null;
   };
@@ -334,7 +345,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   backgroundImg?: boolean;
   attachedThemeGraphic?: IGraphic<any>;
 
-  bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
+  bindDom?: Map<
+    string | HTMLElement,
+    { container: HTMLElement | string; dom: HTMLElement | any; wrapGroup: HTMLDivElement | any; root?: any }
+  >;
 
   valid: boolean;
   parent: IGroup | null;

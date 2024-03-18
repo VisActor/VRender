@@ -128,7 +128,11 @@ export class EventSystem {
   }
 
   release(): void {
-    this.setTargetElement(null);
+    this.removeEvents();
+    this.manager.release();
+    this.domElement = null;
+    (this as any).manager = null;
+    (this as any).globalObj = null;
   }
 
   setCursor(mode: string, target: IEventTarget | null | 'ignore'): void {

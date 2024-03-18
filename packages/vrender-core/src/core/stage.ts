@@ -849,7 +849,12 @@ export class Stage extends Group implements IStage {
 
   release() {
     super.release();
+
+    this.hooks.beforeRender.unTap('constructor', this.beforeRender);
+    this.hooks.afterRender.unTap('constructor', this.afterRender);
+
     this.eventSystem && this.eventSystem.release();
+    this.layerService.releaseStage(this);
     this.pluginService.release();
     this.forEach(layer => {
       layer.release();

@@ -43,4 +43,5 @@ export interface ILayerService {
   restLayerCount: (stage: IStage) => number;
   getStageLayer: (stage: IStage) => ILayer[];
   layerCount: (stage: IStage) => number;
+  releaseStage: (stage: IStage) => void;
 }

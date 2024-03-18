@@ -82,13 +82,11 @@ export class DefaultWindow implements IWindow {
   }
 
   protected postInit() {
-    this.global.hooks.onSetEnv.tap('window', () => {
-      this.active();
-    });
+    this.global.hooks.onSetEnv.tap('window', this.active);
     this.active();
   }
 
-  protected active() {
+  protected active = () => {
     const global = this.global;
     if (!global.env || this.actived) {
       return;
@@ -99,7 +97,7 @@ export class DefaultWindow implements IWindow {
     //   handlerContribution.configure(this, this.global);
     // });
     this.actived = true;
-  }
+  };
 
   get style(): CSSStyleDeclaration | Record<string, any> {
     return this._handler.getStyle() ?? {};
@@ -152,6 +150,8 @@ export class DefaultWindow implements IWindow {
     throw new Error('暂不支持');
   }
   release(): void {
+    this.global.hooks.onSetEnv.unTap('window', this.active);
+
     return this._handler.releaseWindow();
   }
   getContext(): IContext2d {

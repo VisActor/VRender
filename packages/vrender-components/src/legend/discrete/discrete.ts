@@ -375,7 +375,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       items: legendItems,
       isHorizontal,
       totalPage: Infinity,
-      isScrollbar: (pager as LegendScrollbarAttributes).type === 'scrollbar'
+      isScrollbar: pager && (pager as LegendScrollbarAttributes).type === 'scrollbar'
     };
 
     this._itemContext = this._renderItems();
@@ -842,7 +842,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
     const { space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
-    const { isScrollbar, isHorizontal } = this._itemContext;
+    const { isHorizontal } = this._itemContext;
 
     let comp: ScrollBar | Pager;
     let compWidth = 0;

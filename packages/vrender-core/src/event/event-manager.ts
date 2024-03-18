@@ -832,4 +832,13 @@ export class EventManager {
     }
     return target;
   }
+
+  release() {
+    this.dispatch.removeAllListeners();
+    this.eventPool.clear();
+    this.rootTarget = null;
+    this.mappingTable = null;
+    this.mappingState = null;
+    this.cursorTarget = null;
+  }
 }

@@ -20,76 +20,48 @@ export const page = () => {
     let i = 0;
 
     const spec = {
-      type: 'line',
-      data: {
-        values: [
-          {
-            time: '2:00',
-            value: 8
-          },
-          {
-            time: '4:00',
-            value: 9
-          },
-          {
-            time: '6:00',
-            value: 11
-          },
-          {
-            time: '8:00',
-            value: 14
-          },
-          {
-            time: '10:00',
-            value: 16
-          },
-          {
-            time: '12:00',
-            value: 17
-          },
-          {
-            time: '14:00',
-            value: 17
-          },
-          {
-            time: '16:00',
-            value: 16
-          },
-          {
-            time: '18:00',
-            value: 15
-          }
-        ]
-      },
-      xField: 'time',
-      yField: 'value',
+      type: 'treemap',
+      color: ['#F2F6FF', '#D9E3FF', '#BFD0FF', '#A6BDFF', '#8CAAFF', '#7397FF', '#5984FF', '#4071FF', '#2E5DE5'],
       label: {
         visible: true,
+        animation: false,
         style: {
-          // html: {
-          //   // anchorType: 'position',
-          //   dom: `<div>这是abcdefg<b>111</b></div>`
-          //   // width: 100,
-          //   // height: 60
-          // }
+          html: (_, a) => {
+            return {
+              dom: `<div style="color: red;">测试</div>`,
+              width: 70,
+              height: 60
+            };
+          }
         }
       },
-      axes: [
+      categoryField: 'name',
+      valueField: 'value',
+      data: [
         {
-          type: 'band',
-          orient: 'bottom',
-          label: {
-            style: {
-              // fill: 'transparent',
-              stroke: 'transparent',
-              html: {
-                anchorType: 'boundsLeftTop',
-                dom: `<div>这是abcdefg<b>111</b></div>`,
-                width: 100,
-                height: 60
-              }
+          id: 'data0',
+          values: [
+            {
+              name: 'A',
+              value: 1
+            },
+            {
+              name: 'B',
+              value: 2
+            },
+            {
+              name: 'C',
+              value: 6
+            },
+            {
+              name: 'D',
+              value: 12
+            },
+            {
+              name: 'E',
+              value: 22
             }
-          }
+          ]
         }
       ]
     };
@@ -101,11 +73,94 @@ export const page = () => {
     });
 
     setTimeout(() => {
-      chartSpace.resize(800, 600);
+      chartSpace.updateSpec({
+        type: 'treemap',
+        color: ['#F2F6FF', '#D9E3FF', '#BFD0FF', '#A6BDFF', '#8CAAFF', '#7397FF', '#5984FF', '#4071FF', '#2E5DE5'],
+        label: {
+          visible: true,
+          style: {
+            html: (_, a) => {
+              return {
+                dom: `<div style="color: red;">测试</div>`,
+                width: 70,
+                height: 60
+              };
+            }
+          }
+        },
+        categoryField: 'name',
+        valueField: 'value',
+        data: [
+          {
+            values: [
+              {
+                name: 'A',
+                value: 1
+              },
+              {
+                name: 'B',
+                value: 2
+              },
+              {
+                name: 'C',
+                value: 6
+              },
+              {
+                name: 'D',
+                value: 12
+              },
+              {
+                name: 'E',
+                value: 29
+              }
+            ]
+          }
+        ]
+      });
+
+      // chartSpace.updateData('data0', [
+      //   {
+      //     name: 'A',
+      //     value: 1
+      //   },
+      //   {
+      //     name: 'B',
+      //     value: 2
+      //   },
+      //   {
+      //     name: 'C',
+      //     value: 6
+      //   },
+      //   {
+      //     name: 'D',
+      //     value: 12
+      //   },
+      //   {
+      //     name: 'E',
+      //     value: 29
+      //   }
+      // ]);
+      setTimeout(() => {
+        console.log(
+          '2',
+          chartSpace
+            .getStage()
+            .getElementsByType('text')
+            .map(item => item._uid)
+        );
+      }, 2000);
     }, 3000);
 
     chartSpace.renderSync();
+    console.log(
+      '1',
+      chartSpace
+        .getStage()
+        .getElementsByType('text')
+        .map(item => item._uid)
+    );
     console.log(chartSpace);
+    window.vchart = chartSpace;
 
     // window.BUGSERVER_SCREENSHOT();
     // window.BUGSERVER_RELEASE(() => {

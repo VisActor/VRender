@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: html-plugin support release",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

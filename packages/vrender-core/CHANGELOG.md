@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 12 Mar 2024 15:16:46 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Mar 2024 10:10:17 GMT and should not be manually modified.
+
+## 0.18.6
+Tue, 19 Mar 2024 10:10:17 GMT
+
+### Updates
+
+- feat: richtext support combine linewidth style
+- fix: html-plugin support release
+- feat: support native render for react, closed #400
 
 ## 0.18.5
 Tue, 12 Mar 2024 15:16:46 GMT

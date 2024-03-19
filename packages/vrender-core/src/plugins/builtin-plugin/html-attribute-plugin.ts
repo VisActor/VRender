@@ -176,6 +176,8 @@ export class HtmlAttributePlugin implements IPlugin {
   release() {
     if (application.global.env === 'browser') {
       this.removeAllDom(this.pluginService.stage.defaultLayer);
+      this.lastDomContainerSet.clear();
+      this.currentDomContainerSet.clear();
     }
   }
   removeAllDom(g: IGraphic) {

@@ -4,20 +4,9 @@ import type { Dict } from '@visactor/vutils';
 import { cloneDeep, interpolateString, isEqual, isValidNumber } from '@visactor/vutils';
 import { traverseGroup } from '../../util';
 
-function getElMap(g: IGroup) {
-  const elMap: Dict<IGraphic> = {};
-  traverseGroup(g, (el: IGraphic) => {
-    if ((el as IGraphic).type !== 'group' && el.id) {
-      elMap[el.id] = el;
-    }
-  });
-  return elMap;
-}
-
 export class GroupTransition extends ACustomAnimate<any> {
   declare target: IGroup;
 
-  private _oldElementMap: Dict<IGraphic>;
   private _newElementAttrMap: Dict<any>;
   mode = AnimateMode.NORMAL; // 组件的群组动画不需要设置走 AnimateMode.SET_ATTR_IMMEDIATELY
 
@@ -30,14 +19,13 @@ export class GroupTransition extends ACustomAnimate<any> {
       return;
     }
 
-    this._oldElementMap = getElMap(prevInnerView);
     this._newElementAttrMap = {};
 
     // 遍历新的场景树，将新节点属性更新为旧节点
     // TODO: 目前只处理更新场景
     traverseGroup(currentInnerView, (el: IGraphic) => {
       if ((el as IGraphic).type !== 'group' && el.id) {
-        const oldEl = this._oldElementMap[el.id];
+        const oldEl = prevInnerView[el.id];
         if (oldEl) {
           if (!isEqual((el as IGraphic).attribute, (oldEl as IGraphic).attribute)) {
             // 更新

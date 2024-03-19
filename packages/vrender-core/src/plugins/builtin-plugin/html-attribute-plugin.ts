@@ -4,11 +4,13 @@ import { application } from '../../application';
 import { DefaultAttribute } from '../../graphic';
 
 export class HtmlAttributePlugin implements IPlugin {
-  name: 'HtmlAttributePlugin' = 'HtmlAttributePlugin';
+  name: string = 'HtmlAttributePlugin';
   activeEvent: 'onRegister' = 'onRegister';
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
+  lastDomContainerSet: Set<any> = new Set();
+  currentDomContainerSet: Set<any> = new Set();
 
   activate(context: IPluginService): void {
     this.pluginService = context;
@@ -30,6 +32,9 @@ export class HtmlAttributePlugin implements IPlugin {
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {
       return item.name !== this.key;
     });
+    application.graphicService.hooks.onRemove.unTap(this.key);
+    application.graphicService.hooks.onRelease.unTap(this.key);
+    this.release();
   }
 
   protected drawHTML(renderService: IRenderService) {
@@ -41,6 +46,14 @@ export class HtmlAttributePlugin implements IPlugin {
         .forEach(group => {
           this.renderGroupHTML(group as IGroup);
         });
+      // 删掉这次不存在的节点
+      this.lastDomContainerSet.forEach(item => {
+        if (!this.currentDomContainerSet.has(item)) {
+          item.parentElement && item.parentElement.removeChild(item);
+        }
+      });
+      this.lastDomContainerSet = new Set(this.currentDomContainerSet);
+      this.currentDomContainerSet.clear();
     }
   }
 
@@ -81,7 +94,7 @@ export class HtmlAttributePlugin implements IPlugin {
     if (!stage) {
       return;
     }
-    const { dom, container, width, height, style, anchorType = 'boundsLeftTop' } = html;
+    const { dom, container, width, height, style, anchorType = 'boundsLeftTop', pointerEvents } = html;
     if (!graphic.bindDom) {
       graphic.bindDom = new Map();
     }
@@ -131,7 +144,7 @@ export class HtmlAttributePlugin implements IPlugin {
     }
 
     // 事件穿透
-    wrapGroup.style.pointerEvents = 'none';
+    wrapGroup.style.pointerEvents = pointerEvents || 'none';
     // 定位wrapGroup
     if (!wrapGroup.style.position) {
       wrapGroup.style.position = 'absolute';
@@ -157,5 +170,22 @@ export class HtmlAttributePlugin implements IPlugin {
     // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
     wrapGroup.style.left = `${offsetX}px`;
     wrapGroup.style.top = `${offsetTop}px`;
+    this.currentDomContainerSet.add(wrapGroup);
+  }
+
+  release() {
+    if (application.global.env === 'browser') {
+      this.removeAllDom(this.pluginService.stage.defaultLayer);
+      this.lastDomContainerSet.clear();
+      this.currentDomContainerSet.clear();
+    }
+  }
+  removeAllDom(g: IGraphic) {
+    this.removeDom(g);
+    g.forEachChildren((item: IGraphic) => {
+      if (item.isContainer) {
+        this.removeAllDom(g);
+      }
+    });
   }
 }

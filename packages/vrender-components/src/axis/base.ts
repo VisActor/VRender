@@ -36,6 +36,7 @@ import type {
 } from './type';
 import { Tag } from '../tag/tag';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
+import { getElMap } from './util';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -46,7 +47,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     return this._innerView;
   }
 
-  protected _prevInnerView: IGroup; // 缓存旧场景树，用于自定义动画
+  protected _prevInnerView: { [key: string]: IGraphic }; // 缓存旧场景树，用于自定义动画
   /**
    * 获取更新前的旧场景树
    * @returns 返回更新前的旧场景树
@@ -122,8 +123,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected render(): void {
+    this._prevInnerView = this._innerView && getElMap(this._innerView);
     this.removeAllChild(true);
-    this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
@@ -601,5 +602,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       });
     });
     return data;
+  }
+
+  release(): void {
+    super.release();
+    this._prevInnerView = null;
+    this._innerView = null;
   }
 }

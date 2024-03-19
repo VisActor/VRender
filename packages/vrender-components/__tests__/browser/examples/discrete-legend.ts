@@ -4,7 +4,7 @@ import render from '../../util/render';
 
 const hLegend = new DiscreteLegend({
   x: 20,
-  y: 20,
+  y: 10,
 
   // ==== 测试使用 ====
   stroke: 'red',
@@ -68,107 +68,6 @@ const hLegend = new DiscreteLegend({
     fill: 'red',
     padding: 10
   }
-});
-
-const vLegend = new DiscreteLegend({
-  x: 20,
-  y: 200,
-
-  // ==== 测试使用 ====
-  stroke: 'red',
-  // ==== 测试使用 end ====
-
-  layout: 'vertical',
-  maxHeight: 200,
-  maxCol: 2,
-  // autoPage: false,
-  title: {
-    visible: true,
-    align: 'center',
-    text: '垂直布局',
-    padding: 4,
-    background: {
-      visible: true,
-      style: {
-        fill: 'red'
-      }
-    }
-  },
-  item: {
-    // padding: 4,
-    padding: [4, 20, 0, 0],
-    width: 120,
-    // height: 25,
-    shape: {
-      style: {
-        size: 8
-      },
-      state: {
-        selectedHover: {
-          size: 10
-        }
-      }
-    },
-    label: {
-      state: {
-        selectedHover: {
-          fill: 'red'
-        }
-      }
-    },
-    value: {
-      alignRight: true,
-      style: {
-        fill: '#666'
-      },
-      state: {
-        selectedHover: {
-          fill: 'red'
-        }
-      }
-    },
-    // background: {
-    //   style: {
-    //     stroke: '#000',
-    //     lineWidth: 1
-    //     // cornerRadius: 5
-    //   },
-    //   state: {
-    //     selectedHover: {
-    //       fill: 'rgba(0,0,0,.3)'
-    //     },
-    //     selected: {
-    //       fill: 'pink',
-    //       fillOpacity: 0.5
-    //     },
-    //     unSelected: {
-    //       fill: 'blue'
-    //     }
-    //   }
-    // },
-    focus: true
-  },
-  items: [
-    { label: '苹果', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
-    { label: '香蕉', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
-    { label: '橘子', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
-    { label: '梨', value: 100, shape: { fill: 'green', symbolType: 'star' } },
-    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
-    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
-    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
-    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
-    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
-    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
-    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
-    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
-    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
-  ],
-  defaultSelected: ['苹果'],
-  allowAllCanceled: false,
-  selectMode: 'single'
-  // reversed: true
 });
 
 const legend = new DiscreteLegend({
@@ -321,12 +220,12 @@ const legend = new DiscreteLegend({
   dx: -0.5,
   dy: 0,
   x: 12,
-  y: 422
+  y: 380
 });
 
 const disableTriggerEventLegend = new DiscreteLegend({
   x: 20,
-  y: 110,
+  y: 100,
   disableTriggerEvent: true,
   // ==== 测试使用 ====
   stroke: 'red',
@@ -392,7 +291,176 @@ const disableTriggerEventLegend = new DiscreteLegend({
   }
 });
 
-const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend], 'main');
+const hLegend2 = new DiscreteLegend({
+  x: 20,
+  y: 440,
+
+  // ==== 测试使用 ====
+  stroke: 'red',
+  // ==== 测试使用 end ====
+
+  maxWidth: 400,
+  maxRow: 1,
+  title: {
+    visible: true,
+    text: '水平布局',
+    padding: 4,
+    background: {
+      visible: true,
+      style: {
+        fill: 'red'
+      }
+    }
+  },
+  item: {
+    focus: true,
+    // padding: [0, 20, 0, 0],
+    // width: 120,
+    shape: {
+      style: {
+        size: 8
+      }
+    },
+    value: {
+      alignRight: true,
+      style: {
+        fill: '#666',
+        fontWeight: 'bold'
+      }
+    },
+    background: {
+      style: {
+        stroke: '#000',
+        lineWidth: 1
+      }
+    }
+  },
+  items: [
+    { label: '苹果', shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
+  ],
+  allowAllCanceled: false,
+  pager: {
+    fill: 'red',
+    padding: 10
+  }
+});
+
+const vLegend = new DiscreteLegend({
+  x: 20,
+  y: 180,
+
+  // ==== 测试使用 ====
+  stroke: 'red',
+  // ==== 测试使用 end ====
+
+  layout: 'vertical',
+  maxHeight: 200,
+  maxCol: 2,
+  // autoPage: false,
+  title: {
+    visible: true,
+    align: 'center',
+    text: '垂直布局',
+    padding: 4,
+    background: {
+      visible: true,
+      style: {
+        fill: 'red'
+      }
+    }
+  },
+  item: {
+    // padding: 4,
+    padding: [4, 20, 0, 0],
+    width: 120,
+    // height: 25,
+    shape: {
+      style: {
+        size: 8
+      },
+      state: {
+        selectedHover: {
+          size: 10
+        }
+      }
+    },
+    label: {
+      state: {
+        selectedHover: {
+          fill: 'red'
+        }
+      }
+    },
+    value: {
+      alignRight: true,
+      style: {
+        fill: '#666'
+      },
+      state: {
+        selectedHover: {
+          fill: 'red'
+        }
+      }
+    },
+    // background: {
+    //   style: {
+    //     stroke: '#000',
+    //     lineWidth: 1
+    //     // cornerRadius: 5
+    //   },
+    //   state: {
+    //     selectedHover: {
+    //       fill: 'rgba(0,0,0,.3)'
+    //     },
+    //     selected: {
+    //       fill: 'pink',
+    //       fillOpacity: 0.5
+    //     },
+    //     unSelected: {
+    //       fill: 'blue'
+    //     }
+    //   }
+    // },
+    focus: true
+  },
+  items: [
+    { label: '苹果', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
+  ],
+  defaultSelected: ['苹果'],
+  allowAllCanceled: false,
+  selectMode: 'single'
+  // reversed: true
+});
+
+const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend, hLegend2], 'main');
 
 vLegend.addEventListener('legendItemClick', e => {
   console.log(e, e.detail.currentSelected);

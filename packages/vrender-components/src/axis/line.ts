@@ -108,6 +108,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       shape,
       background,
       state = {},
+      maxWidth,
       ...restAttrs
     } = this.attribute.title as TitleAttributes;
     let percent = 0.5;
@@ -222,9 +223,35 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       textBaseline = this.getTextBaseline(vector as number[], false);
     }
 
+    // 计算标题缩略
+    let maxTagWidth = maxWidth;
+    if (isNil(maxTagWidth)) {
+      const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+      const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+      if (isValidNumber(limitSize)) {
+        const isX = orient === 'bottom' || orient === 'top';
+        if (isX) {
+          if (angle !== Math.PI / 2) {
+            const cosValue = Math.abs(Math.cos(angle ?? 0));
+            maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        } else {
+          if (angle && angle !== 0) {
+            const sinValue = Math.abs(Math.sin(angle));
+            maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        }
+      }
+    }
+
     const attrs: TagAttributes = {
       ...titlePoint,
       ...restAttrs,
+      maxWidth: maxTagWidth,
       textStyle: {
         // @ts-ignore
         textAlign,
@@ -428,17 +455,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         });
       }
       if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
-        const verticalLimitLength =
-          orient === 'left' || orient === 'right'
-            ? Math.abs(this.attribute.start.y - this.attribute.end.y) / labelShapes.length
-            : !autoHide && !autoRotate
-            ? Math.abs(this.attribute.start.x - this.attribute.end.x) / labelShapes.length
-            : Infinity;
+        const isVertical = orient === 'left' || orient === 'right';
+        const axisLength = isVertical
+          ? Math.abs(this.attribute.start.y - this.attribute.end.y)
+          : Math.abs(this.attribute.start.x - this.attribute.end.x);
+
+        const verticalLimitLength = isVertical
+          ? axisLength / labelShapes.length
+          : !autoHide && !autoRotate
+          ? axisLength / labelShapes.length
+          : Infinity;
+
         autoLimitFunc(labelShapes, {
           limitLength,
           verticalLimitLength,
           ellipsis: limitEllipsis,
-          orient
+          orient,
+          axisLength
         });
       }
       if (autoHide) {

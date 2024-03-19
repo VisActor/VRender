@@ -48,6 +48,7 @@ import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
+import { ReactAttributePlugin } from '../plugins/builtin-plugin/react-attribute-plugin';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -171,6 +172,7 @@ export class Stage extends Group implements IStage {
   autoRender: boolean;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
+  reactAttribute: boolean | string | any;
   increaseAutoRender: boolean;
   view3dTranform: boolean;
   readonly window: IWindow;
@@ -267,6 +269,9 @@ export class Stage extends Group implements IStage {
 
     if (params.enableHtmlAttribute) {
       this.enableHtmlAttribute(params.enableHtmlAttribute);
+    }
+    if (params.ReactDOM) {
+      this.enableReactAttribute(params.ReactDOM);
     }
 
     params.enableLayout && this.enableLayout();
@@ -560,6 +565,22 @@ export class Stage extends Group implements IStage {
       this.pluginService.unRegister(plugin);
     });
   }
+  enableReactAttribute(container?: any) {
+    if (this.reactAttribute) {
+      return;
+    }
+    this.reactAttribute = container;
+    this.pluginService.register(new ReactAttributePlugin());
+  }
+  disableReactAttribute() {
+    if (!this.reactAttribute) {
+      return;
+    }
+    this.reactAttribute = false;
+    this.pluginService.findPluginsByName('ReactAttributePlugin').forEach(plugin => {
+      this.pluginService.unRegister(plugin);
+    });
+  }
 
   getPluginsByName(name: string): IPlugin[] {
     return this.pluginService.findPluginsByName(name);
@@ -849,7 +870,12 @@ export class Stage extends Group implements IStage {
 
   release() {
     super.release();
+
+    this.hooks.beforeRender.unTap('constructor', this.beforeRender);
+    this.hooks.afterRender.unTap('constructor', this.afterRender);
+
     this.eventSystem && this.eventSystem.release();
+    this.layerService.releaseStage(this);
     this.pluginService.release();
     this.forEach(layer => {
       layer.release();

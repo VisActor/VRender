@@ -260,6 +260,9 @@ describe('Line Axis', () => {
     expect(axisTitle.attribute.y).toBeCloseTo(523.9777151704094);
     expect(axisTitle.attribute.angle).toBeCloseTo(0.6947382761967031);
     expect(axisTitle.getElementsByName('tag-panel')).toBeDefined();
+
+    expect(axis.getPrevInnerView()).not.toBeNull();
+    expect(Object.keys(axis.getPrevInnerView()).length).toBe(23);
   });
 
   it('Line Axis with Gird, and tick.alignWithLabel set false', () => {
@@ -451,15 +454,9 @@ describe('Line Axis', () => {
 
     subGridLines = grid.getElementsByName('axis-grid-sub-line');
     expect(subGridLines.length).toBe(51);
-    // // @ts-ignore
-    // expect(subGridLineGroup.attribute.items[0]).toEqual({
-    //   id: 'sub-0-0',
-    //   points: [
-    //     { x: 250, y: 350 },
-    //     { x: 230, y: 350 }
-    //   ],
-    //   datum: {}
-    // });
+
+    expect(grid.getPrevInnerView()).not.toBeNull();
+    expect(Object.keys(grid.getPrevInnerView()).length).toBe(122);
   });
 
   it('Vertical Line Axis with Title', () => {

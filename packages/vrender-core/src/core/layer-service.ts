@@ -118,4 +118,8 @@ export class DefaultLayerService implements ILayerService {
     }
     return 0;
   }
+
+  releaseStage(stage: IStage) {
+    this.layerMap.delete(stage);
+  }
 }

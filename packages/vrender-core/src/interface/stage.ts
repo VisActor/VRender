@@ -48,6 +48,8 @@ export interface IStageParams {
   interactiveLayer: boolean;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
+  // 是否支持react-dom(传入ReactDOM)
+  ReactDOM: any;
   // 是否支持滚动条
   enableScroll: boolean;
   poptip: boolean;

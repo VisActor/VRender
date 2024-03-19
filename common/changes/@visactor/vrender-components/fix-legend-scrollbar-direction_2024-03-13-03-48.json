@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the direction of legend scrollbar",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

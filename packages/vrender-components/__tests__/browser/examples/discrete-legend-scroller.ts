@@ -80,7 +80,7 @@ const vLegend = new DiscreteLegend({
 
   layout: 'vertical',
   maxHeight: 200,
-  maxCol: 2,
+  maxCol: 1,
   // autoPage: false,
   title: {
     visible: true,
@@ -95,6 +95,7 @@ const vLegend = new DiscreteLegend({
     }
   },
   item: {
+    contentScrollDirection: 'vertical',
     // padding: 4,
     padding: [4, 20, 0, 0],
     width: 120,
@@ -170,7 +171,7 @@ const vLegend = new DiscreteLegend({
   selectMode: 'single',
   pager: {
     type: 'scrollbar',
-    scrollByPosition: true,
+    scrollByPosition: false,
     railStyle: {
       fill: 'pink'
     }
@@ -281,7 +282,7 @@ const legend = new DiscreteLegend({
     },
     width: 400
   },
-  autoPage: false,
+  autoPage: true,
   pager: {
     type: 'scrollbar'
   },
@@ -393,7 +394,7 @@ const disableTriggerEventLegend = new DiscreteLegend({
   allowAllCanceled: false,
   pager: {
     type: 'scrollbar',
-    scrollByPosition: true
+    scrollByPosition: false
   }
 });
 

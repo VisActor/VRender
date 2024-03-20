@@ -1,3 +1,23 @@
+# v0.18.6
+
+2024-03-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: richtext support combine linewidth style
+- **@visactor/vrender-core**: support native render for react, closed [#400](https://github.com/VisActor/VRender/issues/400)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the issue of axis's update transition animation not work
+- **@visactor/vrender-components**: fix the direction of legend scrollbar
+- **@visactor/vrender-core**: html-plugin support release
+
+
+
+[更多详情请查看 v0.18.6](https://github.com/VisActor/VRender/releases/tag/v0.18.6)
+
 # v0.18.5
 
 2024-03-14

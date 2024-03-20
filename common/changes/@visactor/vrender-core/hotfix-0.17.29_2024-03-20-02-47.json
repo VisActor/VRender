@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix memory-leak i",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

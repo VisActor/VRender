@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 12 Mar 2024 15:16:46 GMT and should not be manually modified.
+This log was last generated on Tue, 19 Mar 2024 10:10:17 GMT and should not be manually modified.
+
+## 0.18.6
+Tue, 19 Mar 2024 10:10:17 GMT
+
+### Updates
+
+- fix: fix the issue of axis's update transition animation not work
+- fix: fix the direction of legend scrollbar
 
 ## 0.18.5
 Tue, 12 Mar 2024 15:16:46 GMT

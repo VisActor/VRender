@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.6",
+      "tag": "@visactor/vrender-core_v0.18.6",
+      "date": "Tue, 19 Mar 2024 10:10:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: richtext support combine linewidth style"
+          },
+          {
+            "comment": "fix: html-plugin support release"
+          },
+          {
+            "comment": "feat: support native render for react, closed #400"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.5",
       "tag": "@visactor/vrender-core_v0.18.5",
       "date": "Tue, 12 Mar 2024 15:16:46 GMT",

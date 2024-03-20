@@ -78,7 +78,7 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
   };
 }
 
-interface ILineGraphicWithCornerRadius extends Partial<ILineGraphicAttribute> {
+export interface ILineGraphicWithCornerRadius extends Partial<ILineGraphicAttribute> {
   /**
    * 折现拐角处的圆角配置
    */

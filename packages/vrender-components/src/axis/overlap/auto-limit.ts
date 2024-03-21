@@ -3,7 +3,6 @@
  */
 import type { IText } from '@visactor/vrender-core';
 import { isEmpty, isNil, isValidNumber } from '@visactor/vutils';
-import { borderPoint } from './util';
 
 type LimitConfig = {
   orient: string;
@@ -12,6 +11,8 @@ type LimitConfig = {
   verticalLimitLength?: number;
   ellipsis?: string;
 };
+
+const EPS = 1e-16;
 
 export function autoLimit(labels: IText[], config: LimitConfig) {
   const { limitLength, verticalLimitLength, ellipsis = '...', orient, axisLength } = config;
@@ -56,22 +57,33 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     let limitLabelLength = null;
 
     if (!isHorizontal && !isVertical) {
-      const { x1: x, y1: y } = label.AABBBounds;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      if (isX) {
+        const { x1, x2 } = label.AABBBounds;
 
-      const width = isX ? axisLength : limitLength;
-      const height = isX ? limitLength : axisLength;
-
-      const intersection = borderPoint({ width, height, left: 0, top: 0 }, { x, y }, label.attribute.angle);
-      if (intersection) {
-        const { x: _x, y: _y } = intersection;
-        limitLabelLength = Math.floor(Math.sqrt((_x - x) ** 2 + (_y - y) ** 2));
+        if (cos > EPS && x1 <= axisLength && (cos * limitLength) / Math.abs(sin) + x1 > axisLength) {
+          limitLabelLength = (axisLength - x1) / cos;
+        } else if (cos < -EPS && x2 >= 0 && (cos * limitLength) / Math.abs(sin) + x2 < 0) {
+          limitLabelLength = -x2 / cos;
+        } else {
+          limitLabelLength = Math.abs(limitLength / sin);
+        }
       } else {
-        limitLabelLength = Math.abs(limitLength / Math.sin(angle));
+        const { y1, y2 } = label.AABBBounds;
+
+        if (sin > EPS && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
+          limitLabelLength = y2 / sin;
+        } else if (sin < EPS && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
+          limitLabelLength = -(axisLength - y1) / sin;
+        } else {
+          limitLabelLength = Math.abs(limitLength / cos);
+        }
       }
     } else if (isX) {
-      limitLabelLength = verticalLimitLength;
+      limitLabelLength = isHorizontal ? verticalLimitLength : limitLength;
     } else {
-      limitLabelLength = direction === 'vertical' ? verticalLimitLength : limitLength;
+      limitLabelLength = direction === 'vertical' || isVertical ? verticalLimitLength : limitLength;
     }
 
     if (isValidNumber(label.attribute.maxLineWidth)) {

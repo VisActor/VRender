@@ -2,7 +2,7 @@
  * 自动省略
  */
 import type { IText } from '@visactor/vrender-core';
-import { isEmpty, isNil, isValidNumber } from '@visactor/vutils';
+import { isEmpty, isNil, isNumberClose, isValidNumber } from '@visactor/vutils';
 
 type LimitConfig = {
   orient: string;
@@ -11,8 +11,6 @@ type LimitConfig = {
   verticalLimitLength?: number;
   ellipsis?: string;
 };
-
-const EPS = 1e-16;
 
 export function autoLimit(labels: IText[], config: LimitConfig) {
   const { limitLength, verticalLimitLength, ellipsis = '...', orient, axisLength } = config;
@@ -24,8 +22,10 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     const angle = label.attribute.angle;
 
     const hasAngle = !isNil(angle);
-    const isHorizontal = !hasAngle || angle === 0 || angle === Math.PI;
-    const isVertical = hasAngle && (angle === Math.PI / 2 || angle === (Math.PI * 2) / 3);
+    const cos = hasAngle ? Math.cos(angle) : 1;
+    const sin = hasAngle ? Math.sin(angle) : 0;
+    const isHorizontal = !hasAngle || isNumberClose(sin, 0);
+    const isVertical = hasAngle && isNumberClose(cos, 0);
     const isX = orient === 'top' || orient === 'bottom';
 
     if (isX) {
@@ -62,9 +62,9 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
       if (isX) {
         const { x1, x2 } = label.AABBBounds;
 
-        if (cos > EPS && x1 <= axisLength && (cos * limitLength) / Math.abs(sin) + x1 > axisLength) {
+        if (cos > 0 && x1 <= axisLength && (cos * limitLength) / Math.abs(sin) + x1 > axisLength) {
           limitLabelLength = (axisLength - x1) / cos;
-        } else if (cos < -EPS && x2 >= 0 && (cos * limitLength) / Math.abs(sin) + x2 < 0) {
+        } else if (cos < 0 && x2 >= 0 && (cos * limitLength) / Math.abs(sin) + x2 < 0) {
           limitLabelLength = -x2 / cos;
         } else {
           limitLabelLength = Math.abs(limitLength / sin);
@@ -72,9 +72,9 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
       } else {
         const { y1, y2 } = label.AABBBounds;
 
-        if (sin > EPS && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
+        if (sin > 0 && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
           limitLabelLength = y2 / sin;
-        } else if (sin < EPS && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
+        } else if (sin < 0 && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
           limitLabelLength = -(axisLength - y1) / sin;
         } else {
           limitLabelLength = Math.abs(limitLength / cos);

@@ -2,8 +2,7 @@
  * 自动省略
  */
 import type { IText } from '@visactor/vrender-core';
-import { isEmpty, isNil, isValidNumber } from '@visactor/vutils';
-import { borderPoint } from './util';
+import { isEmpty, isNil, isNumberClose, isValidNumber } from '@visactor/vutils';
 
 type LimitConfig = {
   orient: string;
@@ -23,8 +22,10 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     const angle = label.attribute.angle;
 
     const hasAngle = !isNil(angle);
-    const isHorizontal = !hasAngle || angle === 0 || angle === Math.PI;
-    const isVertical = hasAngle && (angle === Math.PI / 2 || angle === (Math.PI * 2) / 3);
+    const cos = hasAngle ? Math.cos(angle) : 1;
+    const sin = hasAngle ? Math.sin(angle) : 0;
+    const isHorizontal = !hasAngle || isNumberClose(sin, 0);
+    const isVertical = hasAngle && isNumberClose(cos, 0);
     const isX = orient === 'top' || orient === 'bottom';
 
     if (isX) {
@@ -56,22 +57,33 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     let limitLabelLength = null;
 
     if (!isHorizontal && !isVertical) {
-      const { x1: x, y1: y } = label.AABBBounds;
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      if (isX) {
+        const { x1, x2 } = label.AABBBounds;
 
-      const width = isX ? axisLength : limitLength;
-      const height = isX ? limitLength : axisLength;
-
-      const intersection = borderPoint({ width, height, left: 0, top: 0 }, { x, y }, label.attribute.angle);
-      if (intersection) {
-        const { x: _x, y: _y } = intersection;
-        limitLabelLength = Math.floor(Math.sqrt((_x - x) ** 2 + (_y - y) ** 2));
+        if (cos > 0 && x1 <= axisLength && (cos * limitLength) / Math.abs(sin) + x1 > axisLength) {
+          limitLabelLength = (axisLength - x1) / cos;
+        } else if (cos < 0 && x2 >= 0 && (cos * limitLength) / Math.abs(sin) + x2 < 0) {
+          limitLabelLength = -x2 / cos;
+        } else {
+          limitLabelLength = Math.abs(limitLength / sin);
+        }
       } else {
-        limitLabelLength = Math.abs(limitLength / Math.sin(angle));
+        const { y1, y2 } = label.AABBBounds;
+
+        if (sin > 0 && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
+          limitLabelLength = y2 / sin;
+        } else if (sin < 0 && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
+          limitLabelLength = -(axisLength - y1) / sin;
+        } else {
+          limitLabelLength = Math.abs(limitLength / cos);
+        }
       }
     } else if (isX) {
-      limitLabelLength = verticalLimitLength;
+      limitLabelLength = isHorizontal ? verticalLimitLength : limitLength;
     } else {
-      limitLabelLength = direction === 'vertical' ? verticalLimitLength : limitLength;
+      limitLabelLength = direction === 'vertical' || isVertical ? verticalLimitLength : limitLength;
     }
 
     if (isValidNumber(label.attribute.maxLineWidth)) {

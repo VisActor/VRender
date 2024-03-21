@@ -74,7 +74,7 @@ export const DEFAULT_DATA_ZOOM_ATTRIBUTES = {
   startHandlerStyle: {
     visible: true,
     triggerMinSize: 0,
-    symbolType: 'circle',
+    symbolType: DEFAULT_HANDLER_PATH,
     fill: 'white',
     stroke: '#B0C8F9',
     lineWidth: 0.5

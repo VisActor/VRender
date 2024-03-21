@@ -99,7 +99,7 @@ export class DefaultWindow implements IWindow {
   };
 
   get style(): CSSStyleDeclaration | Record<string, any> {
-    return this._handler.getStyle();
+    return this._handler.getStyle() ?? {};
   }
 
   set style(style: CSSStyleDeclaration | Record<string, any>) {

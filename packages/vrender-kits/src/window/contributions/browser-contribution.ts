@@ -274,7 +274,7 @@ export class BrowserWindowHandlerContribution
   }
 
   getStyle(): CSSStyleDeclaration | Record<string, any> {
-    return this.canvas.nativeCanvas.style;
+    return this.canvas.nativeCanvas.style ?? {};
   }
   setStyle(style: CSSStyleDeclaration | Record<string, any>) {
     this.canvas.nativeCanvas.style = style;

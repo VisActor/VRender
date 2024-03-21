@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "fix: set vtag params to optional",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

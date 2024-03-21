@@ -149,11 +149,33 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     super(options?.skipDefault ? attributes : merge({}, Slider.defaultAttributes, attributes));
   }
 
+  protected calculatePosByValue(value: number, pos?: 'start' | 'end') {
+    const { layout, railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
+    let ratio = 0;
+
+    if (min === max) {
+      ratio = pos === 'start' ? 0 : pos === 'end' ? 1 : 0;
+    } else {
+      ratio = (value - min) / (max - min);
+    }
+    const railLen = layout === 'vertical' ? railHeight : railWidth;
+
+    return (inverse ? 1 - ratio : ratio) * railLen;
+  }
+
+  protected calculateValueByPos(pos: number) {
+    const { layout, railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
+
+    const railLen = layout === 'vertical' ? railHeight : railWidth;
+
+    return min + (max - min) * (inverse ? 1 - pos / railLen : pos / railLen);
+  }
+
   /**
    * 更新值域
    */
   setValue(value: number | number[]) {
-    const { layout, railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    const { min, max } = this.attribute as SliderAttributes;
     if (max === min) {
       return;
     }
@@ -161,15 +183,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const [startValue, endValue] = array(value);
 
     const { startHandler, endHandler } = this._getHandlers();
-    const railLen = layout === 'vertical' ? railHeight : railWidth;
-    const startPos = ((startValue - min) / (max - min)) * railLen;
     if (startHandler) {
-      this._updateHandler(startHandler, startPos, startValue);
+      this._updateHandler(startHandler, this.calculatePosByValue(startValue), startValue);
     }
 
     if (endHandler) {
-      const endPos = ((endValue - min) / (max - min)) * railLen;
-      this._updateHandler(endHandler, endPos, endValue);
+      this._updateHandler(endHandler, this.calculatePosByValue(endValue), endValue);
     }
 
     this._updateTrack();
@@ -321,14 +340,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const handlerTextVisible = handlerText && handlerText.visible;
     const isHorizontal = this._isHorizontal;
-    const railLen = isHorizontal ? railWidth : railHeight;
 
     const [startValue, endValue] = convertValueToRange(value);
     // 单滑块
-    const handlerStart = max === min ? (range ? 0 : railLen) : (((startValue as number) - min) / (max - min)) * railLen;
+    const startPos = this.calculatePosByValue(startValue, range ? 'start' : 'end');
     const startHandler = this._renderHandler({
-      x: isHorizontal ? handlerStart : railWidth / 2,
-      y: isHorizontal ? railHeight / 2 : handlerStart,
+      x: isHorizontal ? startPos : railWidth / 2,
+      y: isHorizontal ? railHeight / 2 : startPos,
       size: handlerSize,
       strokeBoundsBuffer: 0,
       cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal),
@@ -337,7 +355,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     startHandler.name = SLIDER_ELEMENT_NAME.startHandler;
     this._startHandler = startHandler;
     container.add(startHandler);
-    this._currentValue.startPos = handlerStart;
+    this._currentValue.startPos = startPos;
 
     if (handlerTextVisible) {
       const startHandlerText = this._renderHandlerText(startValue, range ? 'start' : 'end');
@@ -350,10 +368,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (range) {
       // 绘制第二个滑块
       // 单滑块
-      const handlerEnd = max === min ? railLen : (((endValue as number) - min) / (max - min)) * railLen;
+      const endPos = this.calculatePosByValue(endValue, 'end');
       const endHandler = this._renderHandler({
-        x: isHorizontal ? handlerEnd : railWidth / 2,
-        y: isHorizontal ? railHeight / 2 : handlerEnd,
+        x: isHorizontal ? endPos : railWidth / 2,
+        y: isHorizontal ? railHeight / 2 : endPos,
         size: handlerSize,
         strokeBoundsBuffer: 0,
         cursor: slidable === false ? 'default' : getDefaultCursor(isHorizontal),
@@ -362,7 +380,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       endHandler.name = SLIDER_ELEMENT_NAME.endHandler;
       this._endHandler = endHandler;
       container.add(endHandler);
-      this._currentValue.endPos = handlerEnd;
+      this._currentValue.endPos = endPos;
 
       if (handlerTextVisible) {
         const endHandlerText = this._renderHandlerText(endValue, 'end');
@@ -401,7 +419,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
 
     const isHorizontal = this._isHorizontal;
-    const railLen = isHorizontal ? railWidth : railHeight;
     // eslint-disable-next-line prefer-const
     // let [startValue, endValue] = convertValueToRange(value);
 
@@ -432,13 +449,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       cursor = getDefaultCursor(isHorizontal);
     }
 
-    const trackWidth = max === min ? railLen : ((endValue - startValue) / (max - min)) * railLen;
-    const startPos = max === min ? 0 : ((startValue - min) / (max - min)) * railLen;
+    const startPos = this.calculatePosByValue(startValue, 'start');
+    const endPos = this.calculatePosByValue(endValue, range ? 'end' : 'start');
+
     const track = graphicCreator.rect({
-      x: isHorizontal ? startPos : 0,
-      y: isHorizontal ? 0 : startPos,
-      width: isHorizontal ? trackWidth : railWidth,
-      height: isHorizontal ? railHeight : trackWidth,
+      x: isHorizontal ? Math.min(startPos, endPos) : 0,
+      y: isHorizontal ? 0 : Math.min(startPos, endPos),
+      width: isHorizontal ? Math.abs(endPos - startPos) : railWidth,
+      height: isHorizontal ? railHeight : Math.abs(endPos - startPos),
       cursor,
       ...trackStyle
     });
@@ -455,11 +473,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     return handler;
   }
 
-  private _renderHandlerText(value: number, position: string) {
+  private _renderHandlerText(value: number, position: 'start' | 'end') {
     const {
       align,
-      min,
-      max,
       handlerSize = 14,
       handlerText = {},
       railHeight,
@@ -468,9 +484,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     } = this.attribute as SliderAttributes;
 
     const isHorizontal = this._isHorizontal;
-    const railLen = isHorizontal ? railWidth : railHeight;
-    const handlerStart =
-      max === min ? (position === 'start' ? 0 : railLen) : (((value as number) - min) / (max - min)) * railLen;
+
+    const pos = this.calculatePosByValue(value, position);
     const textSpace = handlerText.space ?? 4;
     const textStyle: ITextGraphicAttribute = {
       text: handlerText.formatter ? handlerText.formatter(value) : value.toFixed(handlerText.precision ?? 0),
@@ -482,13 +497,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         // 展示 slider 上部
         textStyle.textBaseline = 'bottom';
         textStyle.textAlign = 'center';
-        textStyle.x = handlerStart;
+        textStyle.x = pos;
         textStyle.y = (railHeight - handlerSize) / 2 - textSpace;
       } else {
         // 展示 slider 下部
         textStyle.textBaseline = 'top';
         textStyle.textAlign = 'center';
-        textStyle.x = handlerStart;
+        textStyle.x = pos;
         textStyle.y = (railHeight + handlerSize) / 2 + textSpace;
       }
     } else {
@@ -497,13 +512,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         textStyle.textBaseline = 'middle';
         textStyle.textAlign = 'end';
         textStyle.x = (railWidth - handlerSize) / 2 - textSpace;
-        textStyle.y = handlerStart;
+        textStyle.y = pos;
       } else {
         // 展示 slider 右侧
         textStyle.textBaseline = 'middle';
         textStyle.textAlign = 'start';
         textStyle.x = (railWidth + handlerSize) / 2 + textSpace;
-        textStyle.y = handlerStart;
+        textStyle.y = pos;
       }
     }
 
@@ -582,10 +597,10 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if ((!this._tooltipShape && !this._tooltipText) || !this._tooltipState) {
       return;
     }
+    const { railWidth, railHeight } = this.attribute;
 
-    const coord = this._isHorizontal
-      ? this._tooltipState.pos * this.attribute.railWidth
-      : this._tooltipState.pos * this.attribute.railHeight;
+    const railLen = this._isHorizontal ? railWidth : railHeight;
+    const coord = this._tooltipState.pos * railLen;
     const coordKey = this._isHorizontal ? 'x' : 'y';
 
     if (this._tooltipShape) {
@@ -681,19 +696,18 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (this._isChanging || !this._tooltipState || !this._tooltipState.isActive) {
       return;
     }
-
-    const { min, max } = this.attribute;
+    const railLen = this._isHorizontal ? this._rail.globalAABBBounds.width() : this._rail.globalAABBBounds.height();
     const pos = clamp(
       this._isHorizontal
-        ? (e.viewX - this._rail.globalAABBBounds.x1) / this._rail.globalAABBBounds.width()
-        : (e.viewY - this._rail.globalAABBBounds.y1) / this._rail.globalAABBBounds.height(),
+        ? (e.viewX - this._rail.globalAABBBounds.x1) / railLen
+        : (e.viewY - this._rail.globalAABBBounds.y1) / railLen,
       0,
       1
     );
 
     if (pos !== this._tooltipState.pos) {
       this._tooltipState.pos = pos;
-      this._tooltipState.value = min + (max - min) * pos;
+      this._tooltipState.value = this.calculateValueByPos(pos * railLen);
 
       this._updateTooltip();
       this._dispatchTooltipEvent('sliderTooltipUpdate');
@@ -764,7 +778,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     }
 
     const newPos = clamp(originPos + delta, 0, railLen);
-    const currentValue = (newPos / railLen) * (max - min) + min;
+    const currentValue = this.calculateValueByPos(newPos);
 
     if (this._currentHandler.type === 'text') {
       this._updateHandlerText(this._currentHandler as IText, newPos, currentValue);
@@ -820,7 +834,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     this._isChanging = true;
-    const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
+    const { railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
 
     if (max === min) {
       return;
@@ -844,15 +858,19 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const delta = currentPos - this._prePos; // 实际位移的变化
     if (startHandler) {
       const originPos = (this._isHorizontal ? startHandler.attribute.x : startHandler.attribute.y) as number;
-      const newPos = clamp(originPos + delta, 0, railLen - trackLen);
-      const currentValue = (newPos / railLen) * (max - min) + min;
+      const newPos = inverse
+        ? clamp(originPos + delta, trackLen, railLen)
+        : clamp(originPos + delta, 0, railLen - trackLen);
+      const currentValue = this.calculateValueByPos(newPos);
       this._updateHandler(startHandler, newPos, currentValue);
     }
 
     if (endHandler) {
       const originPos = (this._isHorizontal ? endHandler.attribute.x : endHandler.attribute.y) as number;
-      const newPos = clamp(originPos + delta, trackLen, railLen);
-      const currentValue = (newPos / railLen) * (max - min) + min;
+      const newPos = inverse
+        ? clamp(originPos + delta, 0, railLen - trackLen)
+        : clamp(originPos + delta, trackLen, railLen);
+      const currentValue = this.calculateValueByPos(newPos);
       const startHandlerAttribute = startHandler?.attribute;
       this._updateHandler(endHandler, newPos, currentValue);
       this._track.setAttributes(
@@ -920,7 +938,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       railLen = railHeight;
     }
 
-    const currentValue = (currentPos / railLen) * (max - min) + min;
+    const currentValue = this.calculateValueByPos(currentPos);
 
     if (isValid(endHandlerPos)) {
       const updateHandler = (
@@ -938,6 +956,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   // 更新 track 样式
   private _updateTrack() {
     // 更新 track
+    const { inverse, railWidth, railHeight } = this.attribute;
     const startHandler = this._startHandler;
     const endHandler = this._endHandler;
 
@@ -950,6 +969,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
           x: Math.min(startHandlerPos, endHandlerPos),
           // @ts-ignore
           width: Math.abs(startHandlerPos - endHandlerPos)
+        });
+      } else if (inverse) {
+        this._track.setAttributes({
+          x: startHandlerPos,
+          // @ts-ignore
+          width: railWidth - startHandlerPos
         });
       } else {
         this._track.setAttributes({
@@ -966,6 +991,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
           y: Math.min(startHandlerPos, endHandlerPos),
           // @ts-ignore
           height: Math.abs(startHandlerPos - endHandlerPos)
+        });
+      } else if (inverse) {
+        this._track.setAttributes({
+          y: startHandlerPos,
+          // @ts-ignore
+          height: railHeight - startHandlerPos
         });
       } else {
         this._track.setAttributes({

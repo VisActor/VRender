@@ -72,9 +72,9 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       showTooltip,
       tooltip,
       sizeBackground,
-      disableTriggerEvent
+      disableTriggerEvent,
+      inverse
     } = this.attribute as SizeLegendAttributes;
-    const isHorizontal = layout === 'horizontal';
 
     const mainContainer = graphicCreator.group({
       x: 0,
@@ -110,7 +110,8 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
-      disableTriggerEvent
+      disableTriggerEvent,
+      inverse
     });
     mainContainer.add(slider as unknown as INode);
 
@@ -120,19 +121,19 @@ export class SizeContinuousLegend extends LegendBase<SizeLegendAttributes> {
     const backgroundHeight = 12; // 目前暂不开放配置
     if (layout === 'horizontal') {
       if (align === 'top') {
-        path = `M0,0L${railWidth},0L${railWidth},${backgroundHeight}Z`;
+        path = `M0,0L${railWidth},0L${inverse ? 0 : railWidth},${backgroundHeight}Z`;
         start = railHeight;
       } else {
-        path = `M0,${backgroundHeight}L${railWidth},${backgroundHeight}L${railWidth},0Z`;
+        path = `M0,${backgroundHeight}L${railWidth},${backgroundHeight}L${inverse ? 0 : railWidth},0Z`;
         slider.setAttribute('y', backgroundHeight);
       }
     } else {
       if (align === 'left') {
-        path = `M${railWidth},0L${railWidth},0L${
-          railWidth + backgroundHeight
-        },${railHeight}L${railWidth},${railHeight}Z`;
+        path = `M${railWidth},0L${railWidth + backgroundHeight},${
+          inverse ? 0 : railHeight
+        }L${railWidth},${railHeight}Z`;
       } else {
-        path = `M0,${railHeight}L${backgroundHeight},${railHeight}L${backgroundHeight},0Z`;
+        path = `M0,${inverse ? 0 : railHeight}L${backgroundHeight},${railHeight}L${backgroundHeight},0Z`;
         slider.setAttribute('x', backgroundHeight);
       }
     }

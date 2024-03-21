@@ -176,7 +176,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     }
     const isHorizontal = layout === 'horizontal';
 
-    const res = {
+    const res: IColor = {
       gradient: 'linear',
       stops,
       x0: 0,

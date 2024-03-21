@@ -6,6 +6,7 @@ export class ResourceLoader {
   private static cache: Map<string, ResourceData> = new Map();
   private static isLoading: boolean = false;
   private static toLoadAueue: { url: string; marks: ImagePayload[] }[] = [];
+  private static onLoadSuccessCb: (() => void)[] = [];
 
   static GetImage(url: string, mark: ImagePayload) {
     const data = ResourceLoader.cache.get(url);
@@ -173,11 +174,13 @@ export class ResourceLoader {
         Promise.all(promises)
           .then(() => {
             ResourceLoader.isLoading = false;
+            this.onLoadSuccessCb.forEach(cb => cb());
             ResourceLoader.loading();
           })
           .catch(error => {
             console.error(error);
             ResourceLoader.isLoading = false;
+            this.onLoadSuccessCb.forEach(cb => cb());
             ResourceLoader.loading();
           });
       }
@@ -205,6 +208,10 @@ export class ResourceLoader {
       const elememt = ResourceLoader.toLoadAueue.splice(index, 1);
       ResourceLoader.toLoadAueue.unshift(elememt[0]);
     }
+  }
+
+  static onLoadSuccess(cb: () => void) {
+    this.onLoadSuccessCb.push(cb);
   }
 }
 

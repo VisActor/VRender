@@ -17,6 +17,7 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
   if (isEmpty(labels) || !isValidNumber(limitLength)) {
     return;
   }
+  const DELTA = Math.sin(Math.PI / 10);
 
   labels.forEach(label => {
     const angle = label.attribute.angle;
@@ -24,8 +25,8 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     const hasAngle = !isNil(angle);
     const cos = hasAngle ? Math.cos(angle) : 1;
     const sin = hasAngle ? Math.sin(angle) : 0;
-    const isHorizontal = !hasAngle || isNumberClose(sin, 0);
-    const isVertical = hasAngle && isNumberClose(cos, 0);
+    const isHorizontal = !hasAngle || Math.abs(sin) <= DELTA;
+    const isVertical = hasAngle && Math.abs(cos) <= DELTA;
     const isX = orient === 'top' || orient === 'bottom';
 
     if (isX) {
@@ -57,8 +58,6 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     let limitLabelLength = null;
 
     if (!isHorizontal && !isVertical) {
-      const cos = Math.cos(angle);
-      const sin = Math.sin(angle);
       if (isX) {
         const { x1, x2 } = label.AABBBounds;
 

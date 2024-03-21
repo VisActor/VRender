@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(segment): support curve type. feat VisActor/VChart#2417",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

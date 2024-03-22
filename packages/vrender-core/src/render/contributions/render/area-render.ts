@@ -621,7 +621,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     const xTotalLength = abs(endP.x - startP.x);
     const yTotalLength = abs(endP.y - startP.y);
-    direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
+    if (!Number.isFinite(xTotalLength + yTotalLength)) {
+      direction = Direction.ROW;
+    } else {
+      direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
+    }
     drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
       offsetX,
       offsetY,

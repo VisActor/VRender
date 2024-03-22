@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 19 Mar 2024 10:10:17 GMT and should not be manually modified.
+This log was last generated on Fri, 22 Mar 2024 08:46:19 GMT and should not be manually modified.
+
+## 0.18.7
+Fri, 22 Mar 2024 08:46:19 GMT
+
+### Updates
+
+- fix: fix issue with offscreen style
+- fix: fix issue with area animate
 
 ## 0.18.6
 Tue, 19 Mar 2024 10:10:17 GMT

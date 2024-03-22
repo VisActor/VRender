@@ -265,4 +265,65 @@ describe('Segment', () => {
     expect(lines[2].attribute.stroke).toBe('red');
     expect(lines[2].attribute.lineDash).toEqual([2, 2]);
   });
+
+  it('Segment with cornerRadius', () => {
+    const segment = new Segment({
+      points: [
+        {
+          x: 100,
+          y: 250
+        },
+        {
+          x: 400,
+          y: 150
+        },
+        {
+          x: 500,
+          y: 350
+        }
+      ],
+      lineStyle: {
+        cornerRadius: 5
+      }
+    });
+    segment.id = 'segment';
+
+    stage.defaultLayer.add(segment as unknown as IGraphic);
+    stage.render();
+
+    const lines = segment.getElementsByName('segment-line') as ILine[];
+
+    expect(lines[0].type).toBe('polygon');
+  });
+
+  it('Segment without cornerRadius', () => {
+    const segment = new Segment({
+      points: [
+        {
+          x: 100,
+          y: 250
+        },
+        {
+          x: 400,
+          y: 150
+        },
+        {
+          x: 500,
+          y: 350
+        }
+      ],
+      lineStyle: {
+        curveType: 'monotoneX'
+      }
+    });
+    segment.id = 'segment';
+
+    stage.defaultLayer.add(segment as unknown as IGraphic);
+    stage.render();
+
+    const lines = segment.getElementsByName('segment-line') as ILine[];
+    lines[0].type;
+
+    expect(lines[0].type).toBe('line');
+  });
 });

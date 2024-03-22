@@ -5,7 +5,7 @@ import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@vi
 import type { ISymbol } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
-import type { SegmentAttributes, SymbolAttributes } from './type';
+import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadSegmentComponent } from './register';
@@ -132,7 +132,12 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         this.add(line);
       });
     } else {
-      const line = graphicCreator.polygon({
+      // 如果配置了cornerRadius, 则绘制polygon, 否则绘制line
+      let lineCreator = graphicCreator.line;
+      if ((array(lineStyle)[0] as ILineGraphicWithCornerRadius).cornerRadius) {
+        lineCreator = graphicCreator.polygon;
+      }
+      const line = lineCreator({
         points: this._clipPoints(this.attribute.points as Point[]),
         ...array(lineStyle)[0],
         fill: false,

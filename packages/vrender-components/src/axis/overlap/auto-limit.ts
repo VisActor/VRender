@@ -2,8 +2,7 @@
  * 自动省略
  */
 import type { IText } from '@visactor/vrender-core';
-import { isEmpty, isNil, isValidNumber } from '@visactor/vutils';
-import { borderPoint } from './util';
+import { isEmpty, isNil, isNumberClose, isValidNumber } from '@visactor/vutils';
 
 type LimitConfig = {
   orient: string;
@@ -18,13 +17,16 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
   if (isEmpty(labels) || !isValidNumber(limitLength)) {
     return;
   }
+  const DELTA = Math.sin(Math.PI / 10);
 
   labels.forEach(label => {
     const angle = label.attribute.angle;
 
     const hasAngle = !isNil(angle);
-    const isHorizontal = !hasAngle || angle === 0 || angle === Math.PI;
-    const isVertical = hasAngle && (angle === Math.PI / 2 || angle === (Math.PI * 2) / 3);
+    const cos = hasAngle ? Math.cos(angle) : 1;
+    const sin = hasAngle ? Math.sin(angle) : 0;
+    const isHorizontal = !hasAngle || Math.abs(sin) <= DELTA;
+    const isVertical = hasAngle && Math.abs(cos) <= DELTA;
     const isX = orient === 'top' || orient === 'bottom';
 
     if (isX) {
@@ -56,22 +58,34 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     let limitLabelLength = null;
 
     if (!isHorizontal && !isVertical) {
-      const { x1: x, y1: y } = label.AABBBounds;
+      if (isX) {
+        const { x1, x2 } = label.AABBBounds;
+        const tan = sin / cos;
 
-      const width = isX ? axisLength : limitLength;
-      const height = isX ? limitLength : axisLength;
-
-      const intersection = borderPoint({ width, height, left: 0, top: 0 }, { x, y }, label.attribute.angle);
-      if (intersection) {
-        const { x: _x, y: _y } = intersection;
-        limitLabelLength = Math.floor(Math.sqrt((_x - x) ** 2 + (_y - y) ** 2));
+        if (tan > 0 && x1 <= axisLength && limitLength / tan + x1 > axisLength) {
+          limitLabelLength = (axisLength - x1) / Math.abs(cos);
+        } else if (tan < 0 && x2 >= 0 && limitLength / tan + x2 < 0) {
+          limitLabelLength = x2 / Math.abs(cos);
+        } else {
+          limitLabelLength = Math.abs(limitLength / sin);
+        }
       } else {
-        limitLabelLength = Math.abs(limitLength / Math.sin(angle));
+        // y轴暂时不限制在平行于坐标轴的矩形内，后续可以考虑通过配置开启
+        // const { y1, y2 } = label.AABBBounds;
+        // const tan = sin / cos;
+
+        // if (tan > 0 && y2 >= 0 && y2 - tan * limitLength < 0) {
+        //   limitLabelLength = y2 / Math.abs(sin);
+        // } else if (tan < 0 && y1 <= axisLength && y1 - tan * limitLength > axisLength) {
+        //   limitLabelLength = (axisLength - y1) / Math.abs(sin);
+        // } else {
+        // }
+        limitLabelLength = Math.abs(limitLength / cos);
       }
     } else if (isX) {
-      limitLabelLength = verticalLimitLength;
+      limitLabelLength = isHorizontal ? verticalLimitLength : limitLength;
     } else {
-      limitLabelLength = direction === 'vertical' ? verticalLimitLength : limitLength;
+      limitLabelLength = direction === 'vertical' || isVertical ? verticalLimitLength : limitLength;
     }
 
     if (isValidNumber(label.attribute.maxLineWidth)) {

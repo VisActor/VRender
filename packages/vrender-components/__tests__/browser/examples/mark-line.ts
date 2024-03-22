@@ -17,6 +17,9 @@ export function run() {
   };
 
   const styleAttr = {
+    lineStyle: {
+      curveType: 'monotoneX'
+    },
     endSymbol: {
       //  symbolType: 'triangleLeft',
       // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
@@ -105,6 +108,10 @@ export function run() {
       {
         x: 400,
         y: 150
+      },
+      {
+        x: 500,
+        y: 350
       }
     ]
   });

@@ -102,7 +102,9 @@ export function drawPathProxy(
     fillOpacity = themeAttributes.fillOpacity,
     lineWidth = themeAttributes.lineWidth,
     strokeOpacity = themeAttributes.strokeOpacity,
-    visible = themeAttributes.visible
+    visible = themeAttributes.visible,
+    x: originX = themeAttributes.x,
+    y: originY = themeAttributes.y
   } = graphic.attribute;
   // 不绘制或者透明
   const fVisible = fillVisible(opacity, fillOpacity, fill);
@@ -134,7 +136,7 @@ export function drawPathProxy(
     if (strokeCb) {
       strokeCb(context, graphic.attribute, themeAttributes);
     } else if (sVisible) {
-      context.setStrokeStyle(graphic, graphic.attribute, x, y, themeAttributes);
+      context.setStrokeStyle(graphic, graphic.attribute, x - originX, y - originY, themeAttributes);
       context.stroke();
     }
   }
@@ -142,7 +144,7 @@ export function drawPathProxy(
     if (fillCb) {
       fillCb(context, graphic.attribute, themeAttributes);
     } else if (fVisible) {
-      context.setCommonStyle(graphic, graphic.attribute, x, y, themeAttributes);
+      context.setCommonStyle(graphic, graphic.attribute, x - originX, y - originY, themeAttributes);
       context.fill();
     }
   }

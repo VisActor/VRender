@@ -69,15 +69,16 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
           limitLabelLength = Math.abs(limitLength / sin);
         }
       } else {
-        const { y1, y2 } = label.AABBBounds;
+        // y轴暂时不限制在平行于坐标轴的矩形内，后续可以考虑通过配置开启
+        // const { y1, y2 } = label.AABBBounds;
 
-        if (sin > 0 && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
-          limitLabelLength = y2 / sin;
-        } else if (sin < 0 && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
-          limitLabelLength = -(axisLength - y1) / sin;
-        } else {
-          limitLabelLength = Math.abs(limitLength / cos);
-        }
+        // if (sin > 0 && y2 >= 0 && y2 - (sin * limitLength) / Math.abs(cos) < 0) {
+        //   limitLabelLength = y2 / sin;
+        // } else if (sin < 0 && y1 <= axisLength && y1 - (sin * limitLength) / Math.abs(cos) > axisLength) {
+        //   limitLabelLength = -(axisLength - y1) / sin;
+        // } else {
+        // }
+        limitLabelLength = Math.abs(limitLength / cos);
       }
     } else if (isX) {
       limitLabelLength = isHorizontal ? verticalLimitLength : limitLength;

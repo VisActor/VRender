@@ -555,6 +555,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let labelShape;
     const text = labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label;
     const labelAttributes = {
+      ...this.stage?.getTheme()?.text,
       x: shapeSize / 2 + shapeSpace,
       y: 0,
       textAlign: 'start',
@@ -577,6 +578,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const valueSpace = get(valueAttr, 'space', focus ? DEFAULT_VALUE_SPACE : 0);
       const valueText = valueAttr.formatMethod ? valueAttr.formatMethod(value, item, index) : value;
       const valueAttributes = {
+        ...this.stage?.getTheme()?.text,
         x: 0,
         y: 0,
         textAlign: 'start',

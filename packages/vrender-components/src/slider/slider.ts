@@ -213,6 +213,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     if (startText && startText.visible) {
       // 渲染首部文本
       startTextShape = graphicCreator.text({
+        ...this.stage?.getTheme()?.text,
         x: isHorizontal ? 0 : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : 0,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -252,6 +253,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
       // 渲染首部文本
       endTextShape = graphicCreator.text({
+        ...this.stage?.getTheme()?.text,
         x: isHorizontal ? startLen + space : railWidth / 2,
         y: isHorizontal ? (railHeight as number) / 2 : startLen + space,
         textAlign: isHorizontal ? 'start' : 'center',
@@ -509,6 +511,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     // 展示 handler 当前所在的数值
     const textShape = graphicCreator.text({
+      ...this.stage?.getTheme()?.text,
       ...textStyle,
       ...handlerText.style
     });
@@ -566,6 +569,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       textStyle.textBaseline = 'middle';
     }
     const text = graphicCreator.text({
+      ...this.stage?.getTheme()?.text,
       ...textStyle,
       ...textConfig.style
     });

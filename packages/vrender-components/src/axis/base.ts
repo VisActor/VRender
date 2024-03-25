@@ -575,6 +575,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     }
 
     return {
+      ...this.stage?.getTheme()?.text,
       ...this.getLabelPosition(point, vector, textContent, textStyle),
       text: text ?? textContent,
       lineHeight: textStyle?.fontSize,

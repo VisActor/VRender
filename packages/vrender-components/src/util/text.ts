@@ -30,21 +30,21 @@ export const initTextMeasure = (
 export function measureTextSize(
   text: string | number | string[] | number[],
   textSpec: Partial<ITextGraphicAttribute>,
-  fontFamily: string = DEFAULT_TEXT_FONT_FAMILY
+  defaultTextTheme: Partial<ITextGraphicAttribute> = {}
 ) {
   if (!text) {
     return { width: 0, height: 0 };
   }
   const bounds = getTextBounds({
     text,
-    fontFamily: textSpec.fontFamily ?? fontFamily,
-    fontSize: textSpec.fontSize || 12,
-    fontWeight: textSpec.fontWeight as any,
-    textAlign: textSpec.textAlign ?? 'center',
+    fontFamily: textSpec.fontFamily || defaultTextTheme.fontFamily || DEFAULT_TEXT_FONT_FAMILY,
+    fontSize: textSpec.fontSize || defaultTextTheme.fontSize || 12,
+    fontWeight: textSpec.fontWeight || defaultTextTheme.fontWeight,
+    textAlign: textSpec.textAlign || 'center',
     textBaseline: textSpec.textBaseline,
     ellipsis: !!textSpec.ellipsis,
     maxLineWidth: textSpec.maxLineWidth || Infinity,
-    lineHeight: textSpec.fontSize || 12
+    lineHeight: textSpec.fontSize || defaultTextTheme.fontSize || 12
   });
 
   return { width: bounds.width(), height: bounds.height() };

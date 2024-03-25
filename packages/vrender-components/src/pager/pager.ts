@@ -109,13 +109,14 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
         textBaseline: 'middle',
         ...textStyle
       },
-      this.stage?.getTheme().text.fontFamily
+      this.stage?.getTheme()?.text
     );
 
     const handlerSizeX = isNumber(handlerSize) ? handlerSize : handlerSize[0];
     const handlerSizeY = isNumber(handlerSize) ? handlerSize : handlerSize[1];
 
     const text = graphicCreator.text({
+      ...this.stage?.getTheme()?.text,
       x: isHorizontal ? handlerSizeX / 2 + handlerSpace + maxTextWidth / 2 : 0,
       y: isHorizontal ? 0 : handlerSizeY / 2 + handlerSpace + maxTextHeight / 2,
       text: this._getPageText(defaultCurrent),

@@ -1,3 +1,23 @@
+# v0.18.7
+
+2024-03-25
+
+
+**🆕 New feature**
+
+- **segment**: support curve type. feat VisActor/VChart[#2417](https://github.com/VisActor/VRender/issues/2417)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix auto-limit of horizontal and vertical text
+- **@visactor/vrender-kits**: set vtag params to optional
+- **@visactor/vrender-core**: fix issue with offscreen style
+- **@visactor/vrender-core**: fix issue with area animate
+
+
+
+[more detail about v0.18.7](https://github.com/VisActor/VRender/releases/tag/v0.18.7)
+
 # v0.18.6
 
 2024-03-19

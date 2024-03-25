@@ -183,7 +183,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
                 underline,
                 lineThrough,
                 text,
-                (line.leftOffset || 0) + x, // 中下划线都是从文字左侧开始，因此不需要+xOffset
+                (line.leftOffset || 0) + xOffset + x,
                 // y是基于alphabetic对齐的，这里-0.05是为了和不换行的文字保持效果一致
                 (line.topOffset || 0) + yOffset + y - textDrawOffsetY('bottom', fontSize) - 0.05 * fontSize,
                 z,
@@ -372,7 +372,6 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     }
 
     const {
-      textAlign = textAttribute.textAlign,
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
@@ -381,7 +380,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
 
-    const offsetX = textDrawOffsetX(textAlign, w);
+    const offsetX = 0;
     const offsetY = textLayoutOffsetY('alphabetic', fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
     let deltaY = -3;

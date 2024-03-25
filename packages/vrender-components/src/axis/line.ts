@@ -311,12 +311,12 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     const orient = this.attribute.orient;
-    if (isValidNumber(angle) || (vector[0] === 0 && vector[1] === 0)) {
+    if ((angle && isValidNumber(angle)) || (vector[0] === 0 && vector[1] === 0)) {
       if (orient === 'top' || orient === 'bottom') {
-        return getXAxisLabelAlign(orient, angle);
+        return getXAxisLabelAlign(inside ? (orient === 'bottom' ? 'top' : 'bottom') : orient, angle);
       }
       if (orient === 'left' || orient === 'right') {
-        return getYAxisLabelAlign(orient, angle);
+        return getYAxisLabelAlign(inside ? (orient === 'left' ? 'right' : 'left') : orient, angle);
       }
     }
 

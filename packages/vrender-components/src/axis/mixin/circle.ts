@@ -2,6 +2,7 @@ import { polarToCartesian } from '@visactor/vutils';
 import { POLAR_START_ANGLE, POLAR_END_ANGLE } from '../../constant';
 import { scale, length } from '../../util';
 import type { Point } from '../../core/type';
+import { getCircleVerticalVector } from '../util';
 
 export interface CircleAxisMixin {
   attribute: {
@@ -56,10 +57,7 @@ export class CircleAxisMixin {
   }
 
   getVerticalVector(offset: number, inside = false, point: Point): [number, number] {
-    const { inside: axisInside = false } = this.attribute;
-    const { center } = this.attribute;
-    const vector: [number, number] = [point.x - center.x, point.y - center.y];
-    return scale(vector, ((inside ? -1 : 1) * (axisInside ? -1 : 1) * offset) / length(vector));
+    return getCircleVerticalVector(offset, point, this.attribute.center, inside, this.attribute.inside);
   }
 
   getRelativeVector(point?: Point): [number, number] {

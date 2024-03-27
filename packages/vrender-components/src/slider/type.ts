@@ -86,6 +86,11 @@ export type RangeType =
 
 export type SliderAttributes = {
   /**
+   * 是否开启反向展示
+   * @default false
+   */
+  inverse?: boolean;
+  /**
    * 是否允许拖动，默认为 true
    */
   slidable?: boolean;

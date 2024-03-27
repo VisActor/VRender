@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 22 Mar 2024 08:46:19 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Mar 2024 11:33:58 GMT and should not be manually modified.
+
+## 0.18.8
+Wed, 27 Mar 2024 11:33:58 GMT
+
+### Updates
+
+- feat: support `inverse` in slider and size-lengend, color-legend
+
+
 
 ## 0.18.7
 Fri, 22 Mar 2024 08:46:19 GMT

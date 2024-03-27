@@ -116,7 +116,6 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
     const handlerSizeY = isNumber(handlerSize) ? handlerSize : handlerSize[1];
 
     const text = graphicCreator.text({
-      ...this.stage?.getTheme()?.text,
       x: isHorizontal ? handlerSizeX / 2 + handlerSpace + maxTextWidth / 2 : 0,
       y: isHorizontal ? 0 : handlerSizeY / 2 + handlerSpace + maxTextHeight / 2,
       text: this._getPageText(defaultCurrent),

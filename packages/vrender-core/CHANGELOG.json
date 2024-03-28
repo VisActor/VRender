@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.9",
+      "tag": "@visactor/vrender-core_v0.18.9",
+      "date": "Thu, 28 Mar 2024 10:13:24 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with empty global bounds"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.8",
       "tag": "@visactor/vrender-core_v0.18.8",
       "date": "Wed, 27 Mar 2024 11:33:58 GMT",

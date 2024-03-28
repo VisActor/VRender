@@ -342,6 +342,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } else {
       this._globalAABBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
     }
+    if (this._globalAABBBounds.empty()) {
+      return this._globalAABBBounds;
+    }
     // 使用parent的grloalAABBBounds
     // todo: 考虑是否需要性能优化
     if (this.parent) {

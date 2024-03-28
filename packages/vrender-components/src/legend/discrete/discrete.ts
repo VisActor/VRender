@@ -211,7 +211,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       maxRow = 2,
       maxWidth,
       maxHeight,
-      defaultSelected = [],
+      defaultSelected,
       lazyload,
       autoPage
     } = this.attribute as DiscreteLegendAttrs;
@@ -239,12 +239,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
       item.index = index; // 用于维护图例的顺序
 
-      const itemGroup = this._renderEachItem(
-        item,
-        isEmpty(defaultSelected) ? true : defaultSelected?.includes(item.label),
-        index,
-        legendItems
-      );
+      let isSelected = true;
+      if (isArray(defaultSelected)) {
+        isSelected = defaultSelected.includes(item.label);
+      }
+
+      const itemGroup = this._renderEachItem(item, isSelected, index, legendItems);
 
       const itemWidth = itemGroup.attribute.width;
       const itemHeight = itemGroup.attribute.height;

@@ -302,10 +302,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   };
 
   protected _createLabelText(attributes: LabelItem) {
+    const textAttrs = {
+      ...this.stage?.getTheme()?.text,
+      ...attributes
+    };
     if (isRichText(attributes as any, 'textType')) {
-      return graphicCreator.richtext(richTextAttributeTransform(attributes as any));
+      return graphicCreator.richtext(richTextAttributeTransform(textAttrs as any));
     }
-    return graphicCreator.text(attributes as ITextGraphicAttribute);
+    return graphicCreator.text(textAttrs as ITextGraphicAttribute);
   }
 
   private _prepare() {

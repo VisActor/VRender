@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix alignment calculation for line axis axis text, fixed https://github.com/VisActor/VChart/issues/2449",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

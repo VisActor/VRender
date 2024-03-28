@@ -146,7 +146,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
 
       // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
-      const textBounds = measureTextSize(textAttrs.text as string, textStyle, this.stage?.getTheme().text.fontFamily);
+      const textBounds = measureTextSize(textAttrs.text as string, textStyle, this.stage?.getTheme()?.text);
       const textWidth = textBounds.width;
       const textHeight = textBounds.height;
       tagWidth += textWidth;

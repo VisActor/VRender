@@ -311,12 +311,12 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     const orient = this.attribute.orient;
-    if (isValidNumber(angle) || (vector[0] === 0 && vector[1] === 0)) {
+    if ((angle && isValidNumber(angle)) || (vector[0] === 0 && vector[1] === 0)) {
       if (orient === 'top' || orient === 'bottom') {
-        return getXAxisLabelAlign(orient, angle);
+        return getXAxisLabelAlign(inside ? (orient === 'bottom' ? 'top' : 'bottom') : orient, angle);
       }
       if (orient === 'left' || orient === 'right') {
-        return getYAxisLabelAlign(orient, angle);
+        return getYAxisLabelAlign(inside ? (orient === 'left' ? 'right' : 'left') : orient, angle);
       }
     }
 
@@ -558,7 +558,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
     const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
     if (title && title.visible && typeof title.text === 'string') {
-      titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme().text.fontFamily).height;
+      titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);
       titleSpacing = title.space + padding[0] + padding[2];
     }

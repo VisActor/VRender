@@ -200,10 +200,10 @@ export type MarkLineAttrs = MarkerAttrs &
        * @default false
        */
       confine?: boolean;
-
-      state?: MarkLineState;
     } & IMarkRef &
       IMarkLabel;
+
+    state?: MarkLineState;
   } & BaseMarkerAnimation<MarkLineAnimationType>;
 
 export type MarkAreaAttrs = MarkerAttrs & {

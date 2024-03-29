@@ -8,7 +8,7 @@ import { AbstractComponent } from '../core/base';
 import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
-import { loadSegmentComponent, registerSegmentAnimate } from './register';
+import { loadSegmentComponent } from './register';
 
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {

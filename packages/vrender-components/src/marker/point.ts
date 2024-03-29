@@ -27,6 +27,7 @@ import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadMarkPointComponent } from './register';
 import { computeOffsetForlimit } from '../util/limit-shape';
+import { DEFAULT_STATES } from '../constant';
 
 loadMarkPointComponent();
 export class MarkPoint extends Marker<MarkPointAttrs> {
@@ -126,6 +127,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
   }
 
   protected initItem(itemContent: IItemContent, itemPosition: Point) {
+    const { state } = this.attribute as MarkPointAttrs;
     const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
     if (type === 'symbol') {
@@ -133,23 +135,32 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         ...itemPosition,
         ...symbolStyle
       });
+      item.states = merge({}, DEFAULT_STATES, state.symbol);
     } else if (type === 'text') {
       item = new Tag({
-        ...itemPosition
+        ...itemPosition,
+        state: {
+          panel: merge({}, DEFAULT_STATES, state.textBackground),
+          text: merge({}, DEFAULT_STATES, state.text)
+        }
       });
     } else if (type === 'richText') {
       item = graphicCreator.richtext({
         ...itemPosition,
         ...richTextStyle
       });
+      item.states = merge({}, DEFAULT_STATES, state.richText);
     } else if (type === 'image') {
       item = graphicCreator.image({
         ...itemPosition,
         ...imageStyle
       });
+      item.states = merge({}, DEFAULT_STATES, state.image);
     } else if (type === 'custom' && renderCustomCallback) {
       item = renderCustomCallback();
+      item.states = merge({}, DEFAULT_STATES, state.customMark);
     }
+    item.name = `mark-point-${type}`;
     this.setItemAttributes(item, itemContent, itemPosition, type);
     return item;
   }
@@ -263,7 +274,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
   }
 
   protected initMarker(container: IGroup) {
-    const { position, itemContent = {} } = this.attribute as MarkPointAttrs;
+    const { position, itemContent = {}, state } = this.attribute as MarkPointAttrs;
     const itemPosition = {
       x: position.x + (itemContent.offsetX || 0),
       y: position.y + (itemContent.offsetY || 0)
@@ -271,7 +282,12 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
 
     const line = new Segment({
       points: [],
-      pickable: false // 组件容器本身不参与拾取
+      pickable: false, // 组件容器本身不参与拾取
+      state: {
+        line: merge({}, DEFAULT_STATES, state.line),
+        startSymbol: merge({}, DEFAULT_STATES, state.lineStartSymbol),
+        endSymbol: merge({}, DEFAULT_STATES, state.lineEndSymbol)
+      }
     });
     line.name = 'mark-point-line';
     this._line = line;
@@ -280,6 +296,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const decorativeLine = graphicCreator.line({
       points: []
     });
+    decorativeLine.states = merge({}, DEFAULT_STATES, state.line);
     decorativeLine.name = 'mark-point-decorativeLine';
     this._decorativeLine = decorativeLine;
     container.add(decorativeLine as unknown as INode);

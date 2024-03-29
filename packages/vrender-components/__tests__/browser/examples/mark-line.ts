@@ -17,37 +17,94 @@ export function run() {
   };
 
   const styleAttr = {
+    state: {
+      line: {
+        hover: {
+          stroke: 'red'
+        },
+        selected: {
+          stroke: 'blue'
+        }
+      },
+      startSymbol: {
+        // hover: {
+        //   fill: 'red'
+        // },
+        selected: {
+          fill: 'blue'
+        }
+      },
+      endSymbol: {
+        hover: {
+          fill: 'red'
+        },
+        selected: {
+          fill: 'green'
+        }
+      }
+    },
     lineStyle: {
-      curveType: 'monotoneX'
+      curveType: 'monotoneX',
+      state: {
+        hover: {
+          stroke: 'red'
+        },
+        selected: {
+          stroke: 'blue'
+        }
+      }
+    },
+    startSymbol: {
+      visible: true,
+      state: {
+        hover: {
+          fill: 'red'
+        },
+        selected: {
+          fill: 'blue'
+        }
+      }
     },
     endSymbol: {
       //  symbolType: 'triangleLeft',
       // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
-      size: 10,
-      autoRotate: false
+      size: 20,
+      autoRotate: true,
       // refAngle: degreeToRadian(-90)
+      state: {
+        hover: {
+          fill: 'red'
+        },
+        selected: {
+          fill: 'green'
+        }
+      }
     },
     label: {
-      // text: '平均值: 17.7',
-      type: 'rich',
-      text: [
-        {
-          text: 'Mapbox',
-          fontWeight: 'bold',
-          fontSize: 25,
-          fill: '#3f51b5',
-          height: 25
-        },
-        {
-          text: '替代方案',
-          fontStyle: 'italic',
-          textDecoration: 'underline',
-          fill: '#3f51b5',
-          height: 25
+      text: 'aaa',
+      visible: false,
+      textStyle: {
+        fill: 'red',
+        fontSize: 20,
+        state: {
+          hover: {
+            fill: 'green'
+          },
+          selected: {
+            fill: 'blue'
+          }
         }
-      ],
+      },
       panel: {
-        visible: false
+        visible: true,
+        state: {
+          hover: {
+            fill: 'red'
+          },
+          selected: {
+            fill: 'blue'
+          }
+        }
       },
       position: guiObject.labelPos,
       autoRotate: guiObject.labelAutoRotate,
@@ -55,7 +112,10 @@ export function run() {
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
-    clipInRange: false
+    clipInRange: false,
+    interactive: true,
+    hover: true,
+    select: true
     // limitRect: {
     //   x: 50,
     //   y: 50,
@@ -97,6 +157,7 @@ export function run() {
   });
 
   const markLines = [markLine];
+  console.log('markline', markLine);
 
   const stage = render(markLines, 'main');
   markLine.setAttributes({
@@ -106,7 +167,7 @@ export function run() {
         y: 250
       },
       {
-        x: 400,
+        x: 300,
         y: 150
       },
       {
@@ -115,6 +176,7 @@ export function run() {
       }
     ]
   });
+  console.log('markLine', markLine);
 
   // gui
   const gui = new GUI();

@@ -10,6 +10,7 @@ import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
 import type { Point } from '../core/type';
+import { DEFAULT_STATES } from '../constant';
 
 loadMarkAreaComponent();
 export class MarkArea extends Marker<MarkAreaAttrs> {
@@ -88,17 +89,22 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
   }
 
   protected initMarker(container: IGroup) {
-    const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    const { points, label, areaStyle, state } = this.attribute as MarkAreaAttrs;
     const area = graphicCreator.polygon({
       points: points,
       ...areaStyle
     });
+    area.states = state.area;
     area.name = 'mark-area-area';
     this._area = area;
     container.add(area);
 
     const markLabel = new Tag({
-      ...(label as TagAttributes)
+      ...(label as TagAttributes),
+      state: {
+        panel: merge({}, DEFAULT_STATES, state.labelBackground),
+        text: merge({}, DEFAULT_STATES, state.label)
+      }
     });
     markLabel.name = 'mark-area-label';
     this._label = markLabel;

@@ -2,13 +2,13 @@
  * @description 标签组件
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
-import type { ISymbol } from '@visactor/vrender-core';
+import type { ILine, ISymbol } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
-import { loadSegmentComponent } from './register';
+import { loadSegmentComponent, registerSegmentAnimate } from './register';
 
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
@@ -16,6 +16,8 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
 
   startSymbol?: ISymbol;
   endSymbol?: ISymbol;
+  lines?: ILine[] = [];
+  // animate?: (startSymbol, endSymbol, lines) => void;
 
   private _startAngle!: number;
   /**
@@ -130,6 +132,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
           line.states = isArray(state.line) ? state.line[index] ?? state.line[state.line.length - 1] : state.line;
         }
         this.add(line);
+        this.lines.push(line);
       });
     } else {
       // 如果配置了cornerRadius, 则绘制polygon, 否则绘制line
@@ -150,7 +153,13 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         line.states = [].concat(state.line)[0];
       }
       this.add(line);
+      this.lines.push(line);
     }
+
+    // if(Segment.animate) {
+    //   console.log('animate', this.animate)
+    //   Segment.animate(this.startSymbol, this.endSymbol, this.lines)
+    // }
   }
 
   private _renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
@@ -200,8 +209,20 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       symbol.name = `${this.name}-${dim}-symbol`;
       symbol.id = this._getNodeId(`${dim}-symbol`);
 
+      // 兼容旧逻辑, state.symbol同时应用到startSymbol和endSymbol
       if (!isEmpty(state?.symbol)) {
         symbol.states = state.symbol;
+      }
+
+      // 新逻辑, state.startSymbol和state.endSymbol做不同匹配
+      if (dim === 'start') {
+        if (!isEmpty(state?.startSymbol)) {
+          symbol.states = state.startSymbol;
+        }
+      } else {
+        if (!isEmpty(state?.endSymbol)) {
+          symbol.states = state.endSymbol;
+        }
       }
 
       this.add(symbol);

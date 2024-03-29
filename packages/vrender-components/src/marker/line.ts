@@ -1,5 +1,5 @@
 import type { IGroup, INode } from '@visactor/vrender-core';
-import { isValidNumber, merge } from '@visactor/vutils';
+import { isEmpty, isFunction, isValidNumber, merge } from '@visactor/vutils';
 import { Segment } from '../segment';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
@@ -11,6 +11,7 @@ import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkLineComponent } from './register';
 import type { Point } from '../core/type';
+import { DEFAULT_STATES } from '../constant';
 
 loadMarkLineComponent();
 export class MarkLine extends Marker<MarkLineAttrs> {
@@ -73,7 +74,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
   }
 
   protected initMarker(container: IGroup) {
-    const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment } = this
+    const { points, startSymbol, endSymbol, label, lineStyle, mainSegmentIndex, multiSegment, state } = this
       .attribute as MarkLineAttrs;
     const line = new Segment({
       points,
@@ -82,14 +83,23 @@ export class MarkLine extends Marker<MarkLineAttrs> {
       lineStyle,
       mainSegmentIndex,
       multiSegment,
-      pickable: false // 组件容器本身不参与拾取
+      pickable: false, // 组件容器本身不参与拾取
+      state: {
+        line: merge({}, DEFAULT_STATES, state.line),
+        startSymbol: merge({}, DEFAULT_STATES, state.lineStartSymbol),
+        endSymbol: merge({}, DEFAULT_STATES, state.lineEndSymbol)
+      }
     });
     line.name = 'mark-line-line';
     this._line = line;
     container.add(line as unknown as INode);
 
     const markLabel = new Tag({
-      ...(label as TagAttributes)
+      ...(label as TagAttributes),
+      state: {
+        panel: merge({}, DEFAULT_STATES, state.labelBackgound),
+        text: merge({}, DEFAULT_STATES, state.label)
+      }
     });
     markLabel.name = 'mark-line-label';
     this._label = markLabel;

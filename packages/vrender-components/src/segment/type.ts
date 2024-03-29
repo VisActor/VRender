@@ -75,6 +75,8 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
   state?: {
     line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
     symbol?: State<Partial<ISymbolGraphicAttribute>>;
+    startSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+    endSymbol?: State<Partial<ISymbolGraphicAttribute>>;
   };
 }
 

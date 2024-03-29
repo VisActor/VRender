@@ -1,14 +1,19 @@
 import type {
+  EasingType,
   IGroup,
   IGroupGraphicAttribute,
   IImageGraphicAttribute,
+  ILineGraphicAttribute,
   IPolygonAttribute,
+  IPolygonGraphicAttribute,
+  IRectGraphicAttribute,
   IRichTextGraphicAttribute,
-  ISymbolGraphicAttribute
+  ISymbolGraphicAttribute,
+  ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { SegmentAttributes, SymbolAttributes } from '../segment';
+import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
-import type { Point } from '../core/type';
+import type { Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
@@ -88,9 +93,19 @@ export type MarkerAttrs = IGroupGraphicAttribute & {
   type?: 'line' | 'area' | 'point';
   /**
    * 是否支持交互
-   * @default false
+   * @default true
    */
   interactive?: boolean;
+  /**
+   * 是否开启选中交互
+   * @default false
+   */
+  select?: boolean;
+  /**
+   * 是否开启 hover 交互
+   * @default false
+   */
+  hover?: boolean;
   /**
    * 是否显示marker组件
    * @default true
@@ -112,8 +127,60 @@ export type MarkerAttrs = IGroupGraphicAttribute & {
   };
 };
 
+/** animation type */
+export type BaseMarkerAnimation<T> = {
+  animation?: MarkerAnimation<T> | boolean;
+  animationEnter?: MarkerUpdateAnimation<T>;
+  animationUpdate?: MarkerUpdateAnimation<T>;
+  animationExit?: MarkerExitAnimation;
+};
+export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerUpdateAnimation<T>;
+
+export type MarkerUpdateAnimation<T> = {
+  type: T;
+} & MarkerExitAnimation;
+
+export type MarkLineAnimationType = 'clipIn' | 'fadeIn';
+
+export type MarkAreaAnimationType = 'fadeIn';
+
+export type MarkPointAnimationType = 'callIn' | 'fadeIn';
+
+export type MarkerExitAnimation = {
+  duration?: number;
+  delay?: number;
+  easing?: EasingType;
+};
+
+/** state type */
+export type MarkLineState = {
+  line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
+  lineStartSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  label?: State<Partial<ITextGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+};
+
+export type MarkAreaState = {
+  area?: State<Partial<IPolygonGraphicAttribute>>;
+  label?: State<Partial<ITextGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+};
+
+export type MarkPointState = {
+  line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
+  lineStartSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  symbol?: State<Partial<ISymbolGraphicAttribute>>;
+  image?: State<Partial<IImageGraphicAttribute>>;
+  text?: State<Partial<ITextGraphicAttribute>>;
+  textBackground?: State<Partial<IRectGraphicAttribute>>;
+  richText?: State<Partial<IRichTextGraphicAttribute>>;
+  customMark?: State<Partial<IGroupGraphicAttribute>>;
+};
+
 export type MarkLineAttrs = MarkerAttrs &
-  SegmentAttributes & {
+  Omit<SegmentAttributes, 'state'> & {
     type?: 'line';
     /**
      * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
@@ -133,9 +200,11 @@ export type MarkLineAttrs = MarkerAttrs &
        * @default false
        */
       confine?: boolean;
+
+      state?: MarkLineState;
     } & IMarkRef &
       IMarkLabel;
-  };
+  } & BaseMarkerAnimation<MarkLineAnimationType>;
 
 export type MarkAreaAttrs = MarkerAttrs & {
   type?: 'area';
@@ -158,7 +227,9 @@ export type MarkAreaAttrs = MarkerAttrs & {
    * area的样式
    */
   areaStyle?: IPolygonAttribute;
-};
+
+  state?: MarkAreaState;
+} & BaseMarkerAnimation<MarkAreaAnimationType>;
 
 export type IItemContent = IMarkRef & {
   /**
@@ -230,4 +301,6 @@ export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
    * 标注内容
    */
   itemContent?: IItemContent;
-};
+
+  state?: MarkPointState;
+} & BaseMarkerAnimation<MarkPointAnimationType>;

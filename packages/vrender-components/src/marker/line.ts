@@ -97,7 +97,7 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     const markLabel = new Tag({
       ...(label as TagAttributes),
       state: {
-        panel: merge({}, DEFAULT_STATES, state.labelBackgound),
+        panel: merge({}, DEFAULT_STATES, state.labelBackground),
         text: merge({}, DEFAULT_STATES, state.label)
       }
     });

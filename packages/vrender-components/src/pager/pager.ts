@@ -109,7 +109,7 @@ export class Pager extends AbstractComponent<Required<PagerAttributes>> {
         textBaseline: 'middle',
         ...textStyle
       },
-      this.stage?.getTheme().text.fontFamily
+      this.stage?.getTheme()?.text
     );
 
     const handlerSizeX = isNumber(handlerSize) ? handlerSize : handlerSize[0];

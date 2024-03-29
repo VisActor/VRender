@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 28 Mar 2024 10:13:24 GMT and should not be manually modified.
+This log was last generated on Fri, 29 Mar 2024 08:02:16 GMT and should not be manually modified.
+
+## 0.18.10
+Fri, 29 Mar 2024 08:02:16 GMT
+
+### Updates
+
+- fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445
+- fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445
+- fix: fix alignment calculation for line axis axis text, fixed https://github.com/VisActor/VChart/issues/2449
 
 ## 0.18.9
 Thu, 28 Mar 2024 10:13:24 GMT

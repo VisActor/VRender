@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 22 Mar 2024 08:46:19 GMT and should not be manually modified.
+This log was last generated on Wed, 27 Mar 2024 11:33:58 GMT and should not be manually modified.
+
+## 0.18.8
+Wed, 27 Mar 2024 11:33:58 GMT
+
+### Updates
+
+- fix: fix issue with pointer tap event point map
+- fix: fix issue for multi line text with underline, closed #1100
 
 ## 0.18.7
 Fri, 22 Mar 2024 08:46:19 GMT

@@ -9,7 +9,7 @@ import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
 import type { AxisItem, TransformedAxisItem } from '../type';
 import { AXIS_ELEMENT_NAME } from '../constant';
-import { getElMap } from '../util';
+import { getElMap, getVerticalCoord } from '../util';
 
 function getLinePath(points: Point[], closed: boolean) {
   let path = '';
@@ -150,11 +150,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   }
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
-    const vector = this.getVerticalVector(offset, inside, point);
-    return {
-      x: point.x + vector[0],
-      y: point.y + vector[1]
-    };
+    return getVerticalCoord(point, this.getVerticalVector(offset, inside, point));
   }
 
   private _transformItems(items: AxisItem[]) {

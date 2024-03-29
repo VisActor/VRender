@@ -36,7 +36,7 @@ import type {
 } from './type';
 import { Tag } from '../tag/tag';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
-import { getElMap } from './util';
+import { getElMap, getVerticalCoord } from './util';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -388,11 +388,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
-    const vector = this.getVerticalVector(offset, inside, point);
-    return {
-      x: point.x + vector[0],
-      y: point.y + vector[1]
-    };
+    return getVerticalCoord(point, this.getVerticalVector(offset, inside, point));
   }
 
   protected getTextAlign(vector: number[]): TextAlignType {

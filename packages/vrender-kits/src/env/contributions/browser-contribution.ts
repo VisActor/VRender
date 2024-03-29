@@ -77,9 +77,27 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
     this.applyStyles = true;
   }
 
-  mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent, domElement?: any): IPointLike {
+  mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent | TouchEvent, domElement?: any): IPointLike {
+    let clientX: number = 0;
+    let clientY: number = 0;
+    let offsetX: number = 0;
+    let offsetY: number = 0;
+    if ((nativeEvent as TouchEvent).changedTouches) {
+      const data = (nativeEvent as TouchEvent).changedTouches[0] ?? ({} as any);
+      clientX = data.clientX || 0;
+      clientY = data.clientY || 0;
+      offsetX = clientX;
+      offsetY = clientY;
+    } else {
+      clientX = (nativeEvent as PointerEvent | WheelEvent).clientX || 0;
+      clientY = (nativeEvent as PointerEvent | WheelEvent).clientY || 0;
+      offsetX = (nativeEvent as PointerEvent | WheelEvent).offsetX || 0;
+      offsetY = (nativeEvent as PointerEvent | WheelEvent).offsetY || 0;
+    }
+
     if (domElement) {
-      const { clientX: x, clientY: y } = nativeEvent;
+      const x = clientX;
+      const y = clientY;
       const rect = domElement.getBoundingClientRect();
       const nativeCanvas = domElement.getNativeHandler?.().nativeCanvas;
       let scaleX;
@@ -95,8 +113,8 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
       };
     }
     return {
-      x: nativeEvent.offsetX,
-      y: nativeEvent.offsetY
+      x: offsetX,
+      y: offsetY
     };
   }
 

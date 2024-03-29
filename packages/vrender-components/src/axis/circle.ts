@@ -13,7 +13,7 @@ import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
-import { getLabelPosition } from './util';
+import { getCircleLabelPosition } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
 
@@ -234,7 +234,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     text: string | number,
     style: Partial<ITextGraphicAttribute>
   ) {
-    return getLabelPosition(point, vector, text, style);
+    return getCircleLabelPosition(point, vector, text, style);
   }
 }
 

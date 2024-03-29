@@ -346,14 +346,23 @@ export class EventSystem {
     return event;
   }
 
-  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent): EventPoint {
+  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent | TouchEvent): EventPoint {
     const point = this.globalObj?.mapToCanvasPoint(nativeEvent, this.domElement);
 
     if (point) {
       return point;
     }
 
-    const { clientX: x, clientY: y } = nativeEvent;
+    let x: number = 0;
+    let y: number = 0;
+    if ((nativeEvent as TouchEvent).changedTouches) {
+      const data = (nativeEvent as TouchEvent).changedTouches[0] ?? ({} as any);
+      x = data.clientX || 0;
+      y = data.clientY || 0;
+    } else {
+      x = (nativeEvent as PointerEvent | WheelEvent).clientX || 0;
+      y = (nativeEvent as PointerEvent | WheelEvent).clientY || 0;
+    }
     const rect = this.domElement.getBoundingClientRect();
     return {
       x: x - rect.left,

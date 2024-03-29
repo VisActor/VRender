@@ -2,8 +2,13 @@ import { getTextBounds } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { IGraphic, IGroup, ITextGraphicAttribute } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
-import { isGreater, isLess, tau, type Point } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
+import { isGreater, isLess, tau } from '@visactor/vutils';
 import { traverseGroup } from '../util/common';
+import type { Vector2 } from '../util';
+// eslint-disable-next-line no-duplicate-imports
+import { scale, length } from '../util';
+import type { Point } from '../core/type';
 
 // 和 vutils 版本不同
 export const clampRadian = (angle: number = 0) => {
@@ -24,7 +29,7 @@ export function isInRange(a: number, min: number, max: number) {
   return !isLess(a, min, 0, 1e-6) && !isGreater(a, max, 0, 1e-6);
 }
 
-export function getLabelPosition(
+export function getCircleLabelPosition(
   tickPosition: Point,
   tickVector: [number, number],
   text: string | number,
@@ -80,4 +85,22 @@ export function getElMap(g: IGroup) {
     }
   });
   return elMap;
+}
+
+export function getVerticalCoord(point: Point, vector: Vector2): Point {
+  return {
+    x: point.x + vector[0],
+    y: point.y + vector[1]
+  };
+}
+
+export function getCircleVerticalVector(
+  offset: number,
+  point: Point,
+  center: Point,
+  inside = false,
+  axisInside = false
+): Vector2 {
+  const vector: [number, number] = [point.x - center.x, point.y - center.y];
+  return scale(vector, ((inside ? -1 : 1) * (axisInside ? -1 : 1) * offset) / length(vector));
 }

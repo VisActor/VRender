@@ -2,6 +2,7 @@ import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { IMarkAreaLabelPosition, IMarkLineLabelPosition } from './type';
 
 export const DEFAULT_MARK_LINE_THEME = {
+  interactive: true,
   startSymbol: {
     visible: false,
     symbolType: 'triangle',
@@ -91,6 +92,7 @@ export const DEFAULT_MARK_LINE_TEXT_STYLE_MAP: {
 };
 
 export const DEFAULT_MARK_AREA_THEME = {
+  interactive: true,
   label: {
     position: IMarkAreaLabelPosition.right,
     textStyle: {
@@ -164,6 +166,7 @@ export const DEFAULT_MARK_AREA_TEXT_STYLE_MAP: {
 };
 
 export const DEFAULT_MARK_POINT_THEME = {
+  interactive: true,
   itemLine: {
     visible: true,
     decorativeLine: {

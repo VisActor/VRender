@@ -108,7 +108,11 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         y: 0
       };
       textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
+      // if (!isEmpty(state?.text)) {
+      //   textShape.states = state.text;
+      // }
 
+      // console.log('rich-tag', textShape)
       // 绘制背景层
       const { visible: bgVisible, ...backgroundStyle } = panel;
       if (visible && isBoolean(bgVisible)) {

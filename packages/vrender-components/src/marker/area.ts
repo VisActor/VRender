@@ -94,7 +94,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
       points: points,
       ...areaStyle
     });
-    area.states = state.area;
+    area.states = merge({}, DEFAULT_STATES, state?.area);
     area.name = 'mark-area-area';
     this._area = area;
     container.add(area);
@@ -102,8 +102,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     const markLabel = new Tag({
       ...(label as TagAttributes),
       state: {
-        panel: merge({}, DEFAULT_STATES, state.labelBackground),
-        text: merge({}, DEFAULT_STATES, state.label)
+        panel: merge({}, DEFAULT_STATES, state?.labelBackground),
+        text: merge({}, DEFAULT_STATES, state?.label)
       }
     });
     markLabel.name = 'mark-area-label';

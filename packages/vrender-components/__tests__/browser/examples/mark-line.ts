@@ -33,15 +33,15 @@ export function run() {
         selected: {
           fill: 'blue'
         }
-      },
-      endSymbol: {
-        hover: {
-          fill: 'red'
-        },
-        selected: {
-          fill: 'green'
-        }
       }
+      // endSymbol: {
+      //   hover: {
+      //     fill: 'red'
+      //   },
+      //   selected: {
+      //     fill: 'green'
+      //   }
+      // }
     },
     lineStyle: {
       curveType: 'monotoneX',
@@ -82,7 +82,7 @@ export function run() {
     },
     label: {
       text: 'aaa',
-      visible: false,
+      visible: true,
       textStyle: {
         fill: 'red',
         fontSize: 20,

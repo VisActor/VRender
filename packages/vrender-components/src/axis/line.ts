@@ -311,7 +311,9 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     const orient = this.attribute.orient;
-    if ((angle && isValidNumber(angle)) || (vector[0] === 0 && vector[1] === 0)) {
+    const isCartesian = ['top', 'bottom', 'right', 'left'].includes(orient);
+    // 目前的向量方法暂无法返回正确的笛卡尔坐标轴下文本旋转后的问题，所以通过这种方法判断，保证旋转后 textAlign 和 textBaseline 也正确
+    if (isCartesian || (vector[0] === 0 && vector[1] === 0)) {
       if (orient === 'top' || orient === 'bottom') {
         return getXAxisLabelAlign(inside ? (orient === 'bottom' ? 'top' : 'bottom') : orient, angle);
       }

@@ -1,3 +1,16 @@
+# v0.18.9
+
+2024-03-29
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with empty global bounds
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.8...v0.18.9
+
+[more detail about v0.18.9](https://github.com/VisActor/VRender/releases/tag/v0.18.9)
+
 # v0.18.7
 
 2024-03-25

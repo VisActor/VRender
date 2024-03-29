@@ -135,13 +135,13 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         ...itemPosition,
         ...symbolStyle
       });
-      item.states = merge({}, DEFAULT_STATES, state.symbol);
+      item.states = merge({}, DEFAULT_STATES, state?.symbol);
     } else if (type === 'text') {
       item = new Tag({
         ...itemPosition,
         state: {
-          panel: merge({}, DEFAULT_STATES, state.textBackground),
-          text: merge({}, DEFAULT_STATES, state.text)
+          panel: merge({}, DEFAULT_STATES, state?.textBackground),
+          text: merge({}, DEFAULT_STATES, state?.text)
         }
       });
     } else if (type === 'richText') {
@@ -149,16 +149,16 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
         ...itemPosition,
         ...richTextStyle
       });
-      item.states = merge({}, DEFAULT_STATES, state.richText);
+      item.states = merge({}, DEFAULT_STATES, state?.richText);
     } else if (type === 'image') {
       item = graphicCreator.image({
         ...itemPosition,
         ...imageStyle
       });
-      item.states = merge({}, DEFAULT_STATES, state.image);
+      item.states = merge({}, DEFAULT_STATES, state?.image);
     } else if (type === 'custom' && renderCustomCallback) {
       item = renderCustomCallback();
-      item.states = merge({}, DEFAULT_STATES, state.customMark);
+      item.states = merge({}, DEFAULT_STATES, state?.customMark);
     }
     item.name = `mark-point-${type}`;
     this.setItemAttributes(item, itemContent, itemPosition, type);
@@ -284,9 +284,9 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
       points: [],
       pickable: false, // 组件容器本身不参与拾取
       state: {
-        line: merge({}, DEFAULT_STATES, state.line),
-        startSymbol: merge({}, DEFAULT_STATES, state.lineStartSymbol),
-        endSymbol: merge({}, DEFAULT_STATES, state.lineEndSymbol)
+        line: merge({}, DEFAULT_STATES, state?.line),
+        startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
+        endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
       }
     });
     line.name = 'mark-point-line';
@@ -296,7 +296,7 @@ export class MarkPoint extends Marker<MarkPointAttrs> {
     const decorativeLine = graphicCreator.line({
       points: []
     });
-    decorativeLine.states = merge({}, DEFAULT_STATES, state.line);
+    decorativeLine.states = merge({}, DEFAULT_STATES, state?.line);
     decorativeLine.name = 'mark-point-decorativeLine';
     this._decorativeLine = decorativeLine;
     container.add(decorativeLine as unknown as INode);

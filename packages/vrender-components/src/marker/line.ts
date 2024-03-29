@@ -85,9 +85,9 @@ export class MarkLine extends Marker<MarkLineAttrs> {
       multiSegment,
       pickable: false, // 组件容器本身不参与拾取
       state: {
-        line: merge({}, DEFAULT_STATES, state.line),
-        startSymbol: merge({}, DEFAULT_STATES, state.lineStartSymbol),
-        endSymbol: merge({}, DEFAULT_STATES, state.lineEndSymbol)
+        line: merge({}, DEFAULT_STATES, state?.line),
+        startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
+        endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
       }
     });
     line.name = 'mark-line-line';
@@ -97,8 +97,8 @@ export class MarkLine extends Marker<MarkLineAttrs> {
     const markLabel = new Tag({
       ...(label as TagAttributes),
       state: {
-        panel: merge({}, DEFAULT_STATES, state.labelBackground),
-        text: merge({}, DEFAULT_STATES, state.label)
+        panel: merge({}, DEFAULT_STATES, state?.labelBackground),
+        text: merge({}, DEFAULT_STATES, state?.label)
       }
     });
     markLabel.name = 'mark-line-label';

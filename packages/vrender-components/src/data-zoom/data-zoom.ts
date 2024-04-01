@@ -129,6 +129,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   protected bindEvents(): void {
     if (this.attribute.disableTriggerEvent) {
+      this.setAttribute('childrenPickable', false);
       return;
     }
     const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
@@ -221,9 +222,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
     const { x, y } = vglobal.mapToCanvasPoint(e, this.stage?.window?.getContext()?.canvas?.nativeCanvas);
+    const layerPosition = { x, y };
+    this.parent.globalTransMatrix.transformPoint({ x, y }, layerPosition);
     return {
-      x: x - (this.stage?.x || 0),
-      y: y - (this.stage?.y || 0)
+      x: layerPosition.x,
+      y: layerPosition.y
     };
   }
 

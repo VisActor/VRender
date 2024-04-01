@@ -123,6 +123,7 @@ export const DefaultPickStyle: IPickStyle = {
 export const DefaultStyle: IGraphicStyle = {
   opacity: 1,
   background: null,
+  backgroundOpacity: 1,
   backgroundCornerRadius: 0,
   texture: null,
   textureColor: 'black',

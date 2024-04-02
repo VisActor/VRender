@@ -166,6 +166,24 @@ export const page = () => {
   });
   graphics.push(circle);
 
+  const wt = createText({
+    text: ['省/自治区字段信息jfkdlafjkdag'],
+    ellipsis: '...',
+    fill: 'red',
+    fontSize: 68,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    textBaseline: 'top',
+    width: 1628,
+    maxLineWidth: 1628,
+    x: 814,
+    y: 100,
+    _debug_bounds: true,
+    wrap: true
+  });
+  graphics.push(wt);
+  console.log('wt', wt);
+
   const rect = createRect({
     x: t.AABBBounds.x1,
     y: t.AABBBounds.y1,

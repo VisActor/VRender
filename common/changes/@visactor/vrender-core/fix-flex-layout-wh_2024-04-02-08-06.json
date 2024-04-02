@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with wh changed by flex layout, closed #1088",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

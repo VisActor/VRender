@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.10",
+      "tag": "@visactor/vrender-components_v0.18.10",
+      "date": "Fri, 29 Mar 2024 08:02:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445"
+          },
+          {
+            "comment": "fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445"
+          },
+          {
+            "comment": "fix: fix alignment calculation for line axis axis text, fixed https://github.com/VisActor/VChart/issues/2449"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.9",
       "tag": "@visactor/vrender-components_v0.18.9",
       "date": "Thu, 28 Mar 2024 10:13:24 GMT",

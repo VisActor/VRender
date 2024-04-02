@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: 支持background-opacity配置",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

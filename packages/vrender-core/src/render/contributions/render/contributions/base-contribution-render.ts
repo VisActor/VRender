@@ -38,6 +38,8 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
   ) {
     const {
       background,
+      backgroundOpacity = graphic.attribute.fillOpacity ?? graphicAttribute.backgroundOpacity,
+      opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit
     } = graphic.attribute;
@@ -62,6 +64,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       context.clip();
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.globalAlpha = backgroundOpacity * opacity;
       this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
@@ -70,6 +73,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     } else {
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.globalAlpha = backgroundOpacity * opacity;
       context.fillStyle = background as string;
       context.fill();
       context.highPerformanceRestore();

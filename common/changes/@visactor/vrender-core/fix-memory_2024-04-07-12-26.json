@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix memory issue with stage timeline and DefaultRenderService",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

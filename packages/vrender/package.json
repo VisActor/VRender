@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.18.10",
+  "version": "0.18.11-alpha.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -24,8 +24,8 @@
     "test-watch": "DEBUG_MODE=1 jest --watch"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.18.10",
-    "@visactor/vrender-kits": "workspace:0.18.10"
+    "@visactor/vrender-core": "workspace:0.18.11-alpha.0",
+    "@visactor/vrender-kits": "workspace:0.18.11-alpha.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

@@ -1,21 +1,23 @@
 import type { IGroup, INode, IPolygon } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { isValidNumber, merge } from '@visactor/vutils';
-import type { TagAttributes } from '../tag';
-import { Tag } from '../tag';
-import { Marker } from './base';
-import { DEFAULT_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
-import type { MarkAreaAttrs } from './type';
-import { limitShapeInBounds } from '../util/limit-shape';
-import type { ComponentOptions } from '../interface';
-import { loadMarkAreaComponent } from './register';
-import type { Point } from '../core/type';
-import { DEFAULT_STATES } from '../constant';
+import type { TagAttributes } from '../../tag';
+// eslint-disable-next-line no-duplicate-imports
+import { Tag } from '../../tag';
+import { Marker } from '../base';
+import { DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_CARTESIAN_MARK_AREA_THEME } from '../config';
+import type { CartesianMarkAreaAttrs } from '../type';
+import { limitShapeInBounds } from '../../util/limit-shape';
+import type { ComponentOptions } from '../../interface';
+import { loadCartesianMarkAreaComponent } from '../register';
+import type { Point } from '../../core/type';
+import { DEFAULT_STATES } from '../../constant';
 
-loadMarkAreaComponent();
-export class MarkArea extends Marker<MarkAreaAttrs> {
-  name = 'markArea';
-  static defaultAttributes = DEFAULT_MARK_AREA_THEME;
+loadCartesianMarkAreaComponent();
+export class CartesianMarkArea extends Marker<CartesianMarkAreaAttrs> {
+  name = 'cartesianMarkArea';
+  static defaultAttributes = DEFAULT_CARTESIAN_MARK_AREA_THEME;
   private _area!: IPolygon;
   getArea() {
     return this._area;
@@ -25,8 +27,8 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     return this._label;
   }
 
-  constructor(attributes: MarkAreaAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, MarkArea.defaultAttributes, attributes));
+  constructor(attributes: CartesianMarkAreaAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, CartesianMarkArea.defaultAttributes, attributes));
   }
 
   private _getPositionByDirection(area: IPolygon, direction: string) {
@@ -65,13 +67,13 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
 
   protected setLabelPos() {
     if (this._label && this._area) {
-      const { label = {} } = this.attribute as MarkAreaAttrs;
+      const { label = {} } = this.attribute as CartesianMarkAreaAttrs;
       const labelPosition = label.position ?? 'middle';
       const labelPoint = this._getPositionByDirection(this._area, labelPosition);
       this._label.setAttributes({
         ...labelPoint,
         textStyle: {
-          ...DEFAULT_MARK_AREA_TEXT_STYLE_MAP[labelPosition],
+          ...DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP[labelPosition],
           ...label.textStyle
         }
       });
@@ -89,13 +91,13 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
   }
 
   protected initMarker(container: IGroup) {
-    const { points, label, areaStyle, state } = this.attribute as MarkAreaAttrs;
+    const { points, label, areaStyle, state } = this.attribute as CartesianMarkAreaAttrs;
     const area = graphicCreator.polygon({
       points: points,
       ...areaStyle
     });
     area.states = merge({}, DEFAULT_STATES, state?.area);
-    area.name = 'mark-area-area';
+    area.name = 'mark-polygon-polygon';
     this._area = area;
     container.add(area);
 
@@ -106,14 +108,14 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
         text: merge({}, DEFAULT_STATES, state?.label)
       }
     });
-    markLabel.name = 'mark-area-label';
+    markLabel.name = 'mark-polygon-label';
     this._label = markLabel;
     container.add(markLabel as unknown as INode);
     this.setLabelPos();
   }
 
   protected updateMarker() {
-    const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    const { points, label, areaStyle } = this.attribute as CartesianMarkAreaAttrs;
     if (this._area) {
       this._area.setAttributes({
         points: points,
@@ -131,7 +133,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
   }
 
   protected isValidPoints() {
-    const { points } = this.attribute as MarkAreaAttrs;
+    const { points } = this.attribute as CartesianMarkAreaAttrs;
     if (!points || points.length < 3) {
       return false;
     }

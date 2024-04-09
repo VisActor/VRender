@@ -1,6 +1,6 @@
 import type { IGraphic, Stage, Polygon, Group } from '@visactor/vrender-core';
 import type { Tag } from '../../../src';
-import { MarkArea } from '../../../src';
+import { CartesianMarkArea } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
 import { initBrowserEnv } from '@visactor/vrender-kits';
@@ -18,7 +18,7 @@ describe('Marker', () => {
   });
 
   it('MarkArea', () => {
-    const markArea = new MarkArea({
+    const markArea = new CartesianMarkArea({
       points: [
         {
           x: 100,
@@ -78,7 +78,7 @@ describe('Marker', () => {
   });
 
   it('MarkArea with invalid points', () => {
-    const markArea = new MarkArea({
+    const markArea = new CartesianMarkArea({
       points: [
         {
           x: 100,
@@ -100,7 +100,7 @@ describe('Marker', () => {
   });
 
   it('MarkArea with update invalid points', () => {
-    const markArea = new MarkArea({
+    const markArea = new CartesianMarkArea({
       points: [
         {
           x: 100,
@@ -133,7 +133,7 @@ describe('Marker', () => {
   });
 
   it('MarkArea with update valid points', () => {
-    const markArea = new MarkArea({
+    const markArea = new CartesianMarkArea({
       points: [],
       label: {
         text: 'markArea-label',

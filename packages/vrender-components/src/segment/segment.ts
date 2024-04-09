@@ -3,6 +3,7 @@
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
 import type { ILine, ISymbol } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
@@ -19,7 +20,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   lines?: ILine[] = [];
   // animate?: (startSymbol, endSymbol, lines) => void;
 
-  private _startAngle!: number;
+  protected _startAngle!: number;
   /**
    * 外部获取segment起点正方向
    */
@@ -27,7 +28,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     return this._startAngle;
   }
 
-  private _endAngle!: number;
+  protected _endAngle!: number;
   /**
    * 外部获取segment终点正方向
    */
@@ -35,7 +36,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     return this._endAngle;
   }
 
-  private _mainSegmentPoints: Point[]; // 组成主线段的点
+  protected _mainSegmentPoints: Point[]; // 组成主线段的点
   getMainSegmentPoints() {
     return this._mainSegmentPoints;
   }
@@ -103,8 +104,9 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     this._computeLineAngle();
 
     // 绘制start和end symbol
-    const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, 'start');
-    const endSymbolShape = this._renderSymbol(endSymbol as SymbolAttributes, 'end');
+    const points = this._getMainSegmentPoints();
+    const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, points, 'start');
+    const endSymbolShape = this._renderSymbol(endSymbol as SymbolAttributes, points, 'end');
 
     this.startSymbol = startSymbolShape;
     this.endSymbol = endSymbolShape;
@@ -162,12 +164,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     // }
   }
 
-  private _renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
-    const points = this._getMainSegmentPoints();
+  protected _computeRotate(angle: number) {
+    return angle + Math.PI / 2;
+  }
+
+  protected _renderSymbol(attribute: SymbolAttributes, points: Point[], dim: string): ISymbol | undefined {
     if (!points.length) {
       return;
     }
-
     const { autoRotate = true } = attribute;
     let symbol;
     if (attribute && attribute.visible) {
@@ -188,14 +192,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
             start.y +
             (isValidNumber(startAngle) ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
         };
-        rotate = startAngle + Math.PI / 2; // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
+        rotate = this._computeRotate(startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
       } else {
         position = {
           x:
             end.x + (isValidNumber(endAngle) ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
           y: end.y + (isValidNumber(endAngle) ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
         };
-        rotate = endAngle + Math.PI / 2;
+        rotate = this._computeRotate(endAngle);
       }
 
       symbol = graphicCreator.symbol({
@@ -295,7 +299,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     this._endAngle = endAngle;
   }
 
-  private _reset() {
+  protected _reset() {
     this.startSymbol = null;
     this.endSymbol = null;
     this._startAngle = null;

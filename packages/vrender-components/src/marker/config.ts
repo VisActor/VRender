@@ -1,7 +1,7 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import { IMarkAreaLabelPosition, IMarkLineLabelPosition } from './type';
+import { ICartesianMarkAreaLabelPosition, ICommonMarkLineLabelPosition, IPolarMarkAreaLabelPosition } from './type';
 
-export const DEFAULT_MARK_LINE_THEME = {
+export const DEFAULT_COMMON_MARK_LINE_THEME = {
   interactive: true,
   startSymbol: {
     visible: false,
@@ -18,7 +18,7 @@ export const DEFAULT_MARK_LINE_THEME = {
     lineWidth: 0
   },
   label: {
-    position: IMarkLineLabelPosition.end,
+    position: ICommonMarkLineLabelPosition.end,
     refX: 0,
     refY: 0,
     refAngle: 0,
@@ -45,7 +45,7 @@ export const DEFAULT_MARK_LINE_THEME = {
   }
 };
 
-export const DEFAULT_MARK_LINE_TEXT_STYLE_MAP: {
+export const DEFAULT_COMMON_MARK_LINE_TEXT_STYLE_MAP: {
   [K: string]: {
     textAlign: TextAlignType;
     textBaseline: TextBaselineType;
@@ -91,10 +91,10 @@ export const DEFAULT_MARK_LINE_TEXT_STYLE_MAP: {
   }
 };
 
-export const DEFAULT_MARK_AREA_THEME = {
+export const DEFAULT_CARTESIAN_MARK_AREA_THEME = {
   interactive: true,
   label: {
-    position: IMarkAreaLabelPosition.right,
+    position: ICartesianMarkAreaLabelPosition.right,
     textStyle: {
       fill: '#fff',
       stroke: '#fff',
@@ -117,7 +117,35 @@ export const DEFAULT_MARK_AREA_THEME = {
   }
 };
 
-export const DEFAULT_MARK_AREA_TEXT_STYLE_MAP: {
+export const DEFAULT_POLAR_MARK_AREA_THEME = {
+  interactive: true,
+  label: {
+    position: IPolarMarkAreaLabelPosition.arcInner,
+    textStyle: {
+      fill: '#fff',
+      stroke: '#fff',
+      lineWidth: 0,
+      fontSize: 10,
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      textAlign: 'center',
+      textBaseLine: 'middle'
+    },
+    padding: [2, 2, 4, 4],
+    panel: {
+      visible: true,
+      cornerRadius: 0,
+      fill: 'rgb(48, 115, 242)',
+      fillOpacity: 0.8
+    }
+  },
+  areaStyle: {
+    fill: '#b2bacf',
+    visible: true
+  }
+};
+
+export const DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP: {
   [K: string]: {
     textAlign: TextAlignType;
     textBaseline: TextBaselineType;

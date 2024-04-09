@@ -1,4 +1,5 @@
 import type {
+  IArcGraphicAttribute,
   IGraphicAttribute,
   IGroupGraphicAttribute,
   ILineGraphicAttribute,
@@ -46,12 +47,18 @@ export type SymbolAttributes = {
   style?: Partial<IGraphicAttribute>;
 };
 
-export interface SegmentAttributes extends IGroupGraphicAttribute {
+export interface CommonSegmentAttributes extends IGroupGraphicAttribute {
   /**
    * 可见性
    * @default true
    */
   visible?: boolean;
+  /** 轴线起始点 symbol 配置 */
+  startSymbol?: SymbolAttributes;
+  /** 轴线末端 symbol 配置 */
+  endSymbol?: SymbolAttributes;
+}
+export interface SegmentAttributes extends CommonSegmentAttributes {
   /**
    * 是否对 points 进行多段处理，默认为 false，即直接将所有的点连接成线。
    * 如果需要进行多段处理，需要将 points 属性配置为 Point[][] 类型
@@ -63,17 +70,50 @@ export interface SegmentAttributes extends IGroupGraphicAttribute {
    */
   mainSegmentIndex?: number;
   points: Point[] | Point[][];
-  /** 轴线起始点 symbol 配置 */
-  startSymbol?: SymbolAttributes;
-  /** 轴线末端 symbol 配置 */
-  endSymbol?: SymbolAttributes;
   /**
    * 线样式配置
    */
   lineStyle?: ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[];
-
+  /**
+   * 图元状态
+   */
   state?: {
     line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
+    symbol?: State<Partial<ISymbolGraphicAttribute>>;
+    startSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+    endSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  };
+}
+
+export interface ArcSegmentAttributes extends CommonSegmentAttributes {
+  /**
+   * 弧线中心位置
+   */
+  center: {
+    x: number;
+    y: number;
+  };
+  /**
+   * 弧线半径
+   */
+  radius: number;
+  /**
+   * 弧线起始角度（弧度）
+   */
+  startAngle: number;
+  /**
+   * 弧线终点角度（弧度）
+   */
+  endAngle: number;
+  /**
+   * 线样式配置
+   */
+  lineStyle?: IArcGraphicAttribute;
+  /**
+   * 图元状态
+   */
+  state?: {
+    line?: State<IArcGraphicAttribute>;
     symbol?: State<Partial<ISymbolGraphicAttribute>>;
     startSymbol?: State<Partial<ISymbolGraphicAttribute>>;
     endSymbol?: State<Partial<ISymbolGraphicAttribute>>;

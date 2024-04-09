@@ -2,7 +2,7 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
-import { MarkLine } from '../../../src';
+import { CartesianMarkLine } from '../../../src';
 
 export function run() {
   console.log('MarkLine');
@@ -44,7 +44,7 @@ export function run() {
       // }
     },
     lineStyle: {
-      curveType: 'monotoneX',
+      // curveType: 'monotoneX',
       state: {
         hover: {
           stroke: 'red'
@@ -123,12 +123,7 @@ export function run() {
     //   height: 200
     // }
   };
-  const markLine = new MarkLine({
-    points: [],
-    ...(styleAttr as any)
-  });
-
-  const markLine2 = new MarkLine({
+  const markLine = new CartesianMarkLine({
     points: [
       {
         x: 100,
@@ -142,7 +137,21 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine3 = new MarkLine({
+  const markLine2 = new CartesianMarkLine({
+    points: [
+      {
+        x: 100,
+        y: 250
+      },
+      {
+        x: 400,
+        y: 150
+      }
+    ],
+    ...(styleAttr as any)
+  });
+
+  const markLine3 = new CartesianMarkLine({
     points: [
       {
         x: 100,
@@ -169,11 +178,11 @@ export function run() {
       {
         x: 300,
         y: 150
-      },
-      {
-        x: 500,
-        y: 350
       }
+      // {
+      //   x: 500,
+      //   y: 350
+      // }
     ]
   });
   console.log('markLine', markLine);

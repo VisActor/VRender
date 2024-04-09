@@ -1,7 +1,7 @@
 import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
-import { MarkArea } from '../../../src';
+import { CartesianMarkArea, PolarMarkArea } from '../../../src';
 
 export function run() {
   console.log('MarkArea');
@@ -75,78 +75,44 @@ export function run() {
     // }
   };
 
-  const markArea = new MarkArea({
-    points: [
-      {
-        x: 100,
-        y: 50
-      },
-      {
-        x: 400,
-        y: 100
-      },
-      {
-        x: 200,
-        y: 150
-      },
-      {
-        x: 100,
-        y: 50
-      }
-    ],
+  const markArea = new PolarMarkArea({
+    center: {
+      x: 100,
+      y: 100
+    },
+    innerRadius: 50,
+    outerRadius: 70,
+    startAngle: 0,
+    endAngle: Math.PI / 2,
     ...(styleAttr as any)
   });
 
-  const markArea2 = new MarkArea({
-    points: [
-      {
-        x: 100,
-        y: 250
-      },
-      {
-        x: 200,
-        y: 250
-      },
-      {
-        x: 200,
-        y: 450
-      },
-      {
-        x: 100,
-        y: 450
-      }
-    ],
-    ...(styleAttr as any),
-    areaStyle: {
-      cornerRadius: guiObject.cornerRadius
-    }
+  const markArea2 = new PolarMarkArea({
+    center: {
+      x: 100,
+      y: 300
+    },
+    innerRadius: 50,
+    outerRadius: 70,
+    startAngle: 0,
+    endAngle: Math.PI / 2,
+    ...(styleAttr as any)
   });
 
-  const markAreas = [markArea, markArea2];
+  const markAreas = [markArea2];
+  console.log('markArea', markArea2);
 
   const stage = render(markAreas, 'main');
 
   const gui = new GUI();
   gui.add(guiObject, 'name');
-  gui
-    .add(guiObject, 'labelPos', [
-      'left',
-      'right',
-      'top',
-      'bottom',
-      'middle',
-      'insideLeft',
-      'insideRight',
-      'insideTop',
-      'insideBottom'
-    ])
-    .onChange(value => {
-      markAreas.forEach(markArea =>
-        markArea.setAttribute('label', {
-          position: value
-        })
-      );
-    });
+  gui.add(guiObject, 'labelPos', ['arcStart', 'arcEnd', 'arcInner', 'arcOuter', 'center']).onChange(value => {
+    markAreas.forEach(markArea =>
+      markArea.setAttribute('label', {
+        position: value
+      })
+    );
+  });
 
   gui.add(guiObject, 'labelDx').onChange(value => {
     markAreas.forEach(markArea =>

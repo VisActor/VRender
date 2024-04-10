@@ -3,7 +3,7 @@ import type { Group, IGraphic, Stage } from '@visactor/vrender-core';
 import type { Tag, Segment } from '../../../src';
 import { createCanvas } from '../../util/dom';
 import { createStage } from '../../util/vrender';
-import { CartesianMarkLine } from '../../../src/marker/cartesian/line';
+import { MarkLine } from '../../../src/marker/line';
 import { initBrowserEnv } from '@visactor/vrender-kits';
 initBrowserEnv();
 
@@ -19,7 +19,7 @@ describe('Marker', () => {
   // });
 
   it('MarkLine', () => {
-    const markLine = new CartesianMarkLine({
+    const markLine = new MarkLine({
       points: [
         {
           x: 100,
@@ -69,7 +69,7 @@ describe('Marker', () => {
   });
 
   it('MarkLine with invalid type', () => {
-    const markLine = new CartesianMarkLine({
+    const markLine = new MarkLine({
       points: [
         {
           x: 100,
@@ -91,7 +91,7 @@ describe('Marker', () => {
   });
 
   it('MarkArea with update invalid points', () => {
-    const markLine = new CartesianMarkLine({
+    const markLine = new MarkLine({
       points: [
         {
           x: 100,
@@ -120,7 +120,7 @@ describe('Marker', () => {
   });
 
   it('MarkLine with update valid points', () => {
-    const markLine = new CartesianMarkLine({
+    const markLine = new MarkLine({
       points: [],
       label: {
         text: 'markLine-label',

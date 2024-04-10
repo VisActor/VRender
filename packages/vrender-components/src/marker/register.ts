@@ -13,27 +13,22 @@ function loadBaseMarker() {
   loadTagComponent();
 }
 
-export function loadCartesianMarkLineComponent() {
+export function loadMarkLineComponent() {
   loadBaseMarker();
   loadSegmentComponent();
 }
 
-export function loadPolarMarkLineComponent() {
-  loadBaseMarker();
-  loadSegmentComponent();
-}
-
-export function loadPolarMarkArcLineComponent() {
+export function loadMarkArcLineComponent() {
   loadBaseMarker();
   loadArcSegmentComponent();
 }
 
-export function loadCartesianMarkAreaComponent() {
+export function loadMarkAreaComponent() {
   loadBaseMarker();
   registerPolygon();
 }
 
-export function loadPolarMarkAreaComponent() {
+export function loadMarkArcAreaComponent() {
   loadBaseMarker();
   registerArc();
 }

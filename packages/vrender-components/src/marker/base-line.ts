@@ -9,7 +9,9 @@ import { limitShapeInBounds } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { Marker } from './base';
 
-export abstract class BaseMarkLine<T> extends Marker<CommonMarkLineAttrs<T>> {
+export abstract class BaseMarkLine<LineAttr, LabelPosition> extends Marker<
+  CommonMarkLineAttrs<LineAttr, LabelPosition>
+> {
   name = 'baseMarkLine';
 
   protected _line!: Segment | ArcSegment;
@@ -44,7 +46,7 @@ export abstract class BaseMarkLine<T> extends Marker<CommonMarkLineAttrs<T>> {
   }
 
   protected initMarker(container: IGroup) {
-    const { label, state } = this.attribute as CommonMarkLineAttrs<T>;
+    const { label, state } = this.attribute as CommonMarkLineAttrs<LineAttr, LabelPosition>;
     const line = this.createSegment();
     line.name = 'cartesian-mark-line-line';
     this._line = line;
@@ -64,7 +66,7 @@ export abstract class BaseMarkLine<T> extends Marker<CommonMarkLineAttrs<T>> {
   }
 
   protected updateMarker() {
-    const { label } = this.attribute as CommonMarkLineAttrs<T>;
+    const { label } = this.attribute as CommonMarkLineAttrs<LineAttr, LabelPosition>;
 
     this.setLineAttributes();
 

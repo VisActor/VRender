@@ -223,19 +223,19 @@ const specs = [
     name: 'link-path'
   },
   {
-    path: 'cartesian-mark-line',
+    path: 'mark-line',
     name: '直角坐标系markLine'
   },
   {
-    path: 'polar-mark-arc-line',
+    path: 'mark-arc-line',
     name: '极坐标系markArcLine'
   },
   {
-    path: 'cartesian-mark-area',
+    path: 'mark-area',
     name: '直角坐标系markArea'
   },
   {
-    path: 'polar-mark-area',
+    path: 'mark-arc-area',
     name: '极坐标系markArea'
   },
   {

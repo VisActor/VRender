@@ -1,7 +1,7 @@
 import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
-import { CartesianMarkArea } from '../../../src';
+import { MarkArea } from '../../../src';
 
 export function run() {
   console.log('MarkArea');
@@ -75,7 +75,7 @@ export function run() {
     // }
   };
 
-  const markArea = new CartesianMarkArea({
+  const markArea = new MarkArea({
     points: [
       {
         x: 100,
@@ -97,7 +97,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markArea2 = new CartesianMarkArea({
+  const markArea2 = new MarkArea({
     points: [
       {
         x: 100,

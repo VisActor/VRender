@@ -1,7 +1,7 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import { ICartesianMarkAreaLabelPosition, ICartesianMarkLineLabelPosition, IPolarMarkLabelPosition } from './type';
+import { IMarkAreaLabelPosition, IMarkLineLabelPosition, IMarkCommonArcLabelPosition } from './type';
 
-export const DEFAULT_CARTESIAN_MARK_LINE_THEME = {
+export const DEFAULT_MARK_LINE_THEME = {
   interactive: true,
   startSymbol: {
     visible: false,
@@ -18,7 +18,7 @@ export const DEFAULT_CARTESIAN_MARK_LINE_THEME = {
     lineWidth: 0
   },
   label: {
-    position: ICartesianMarkLineLabelPosition.end,
+    position: IMarkLineLabelPosition.end,
     refX: 0,
     refY: 0,
     refAngle: 0,
@@ -47,7 +47,7 @@ export const DEFAULT_CARTESIAN_MARK_LINE_THEME = {
   }
 };
 
-export const DEFAULT_POLAR_MARK_LINE_THEME = {
+export const DEFAULT_MARK_ARC_LINE_THEME = {
   interactive: true,
   startSymbol: {
     visible: false,
@@ -64,7 +64,7 @@ export const DEFAULT_POLAR_MARK_LINE_THEME = {
     lineWidth: 0
   },
   label: {
-    position: IPolarMarkLabelPosition.arcOuterMiddle,
+    position: IMarkCommonArcLabelPosition.arcOuterMiddle,
     refX: 0,
     refY: 0,
     refAngle: 0,
@@ -93,10 +93,10 @@ export const DEFAULT_POLAR_MARK_LINE_THEME = {
   }
 };
 
-export const DEFAULT_CARTESIAN_MARK_AREA_THEME = {
+export const DEFAULT_MARK_AREA_THEME = {
   interactive: true,
   label: {
-    position: ICartesianMarkAreaLabelPosition.right,
+    position: IMarkAreaLabelPosition.right,
     textStyle: {
       fill: '#fff',
       stroke: '#fff',
@@ -121,10 +121,10 @@ export const DEFAULT_CARTESIAN_MARK_AREA_THEME = {
   }
 };
 
-export const DEFAULT_POLAR_MARK_AREA_THEME = {
+export const DEFAULT_MARK_ARC_AREA_THEME = {
   interactive: true,
   label: {
-    position: IPolarMarkLabelPosition.arcOuterMiddle,
+    position: IMarkCommonArcLabelPosition.arcOuterMiddle,
     textStyle: {
       fill: '#fff',
       stroke: '#fff',

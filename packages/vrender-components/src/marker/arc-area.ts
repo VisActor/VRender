@@ -2,21 +2,21 @@ import type { IArc, IGroup, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { merge } from '@visactor/vutils';
-import type { TagAttributes } from '../../tag';
+import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
-import { Tag } from '../../tag';
-import { Marker } from '../base';
-import { DEFAULT_POLAR_MARK_AREA_THEME } from '../config';
-import { IPolarMarkLabelPosition, type PolarMarkAreaAttrs } from '../type';
-import { limitShapeInBounds } from '../../util/limit-shape';
-import type { ComponentOptions } from '../../interface';
-import { loadPolarMarkAreaComponent } from '../register';
-import { DEFAULT_STATES } from '../../constant';
+import { Tag } from '../tag';
+import { Marker } from './base';
+import { DEFAULT_MARK_ARC_AREA_THEME } from './config';
+import { IMarkCommonArcLabelPosition, type MarkArcAreaAttrs } from './type';
+import { limitShapeInBounds } from '../util/limit-shape';
+import type { ComponentOptions } from '../interface';
+import { loadMarkArcAreaComponent } from './register';
+import { DEFAULT_STATES } from '../constant';
 
-loadPolarMarkAreaComponent();
-export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
+loadMarkArcAreaComponent();
+export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
   name = 'polarMarkArea';
-  static defaultAttributes = DEFAULT_POLAR_MARK_AREA_THEME;
+  static defaultAttributes = DEFAULT_MARK_ARC_AREA_THEME;
   private _area!: IArc;
 
   getArea() {
@@ -27,12 +27,12 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
     return this._label;
   }
 
-  constructor(attributes: PolarMarkAreaAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, PolarMarkArea.defaultAttributes, attributes));
+  constructor(attributes: MarkArcAreaAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkArcArea.defaultAttributes, attributes));
   }
 
   protected getPositionByDirection(direction: string) {
-    const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as PolarMarkAreaAttrs;
+    const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as MarkArcAreaAttrs;
     const { refX = 0, refY = 0 } = label;
     // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
@@ -51,37 +51,37 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
     let orthogonalOffsetDirection;
 
     switch (direction) {
-      case IPolarMarkLabelPosition.center:
+      case IMarkCommonArcLabelPosition.center:
         radius = (innerRadius + outerRadius) / 2;
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = 0;
         break;
-      case IPolarMarkLabelPosition.arcInnerStart:
+      case IMarkCommonArcLabelPosition.arcInnerStart:
         radius = innerRadius;
         angle = startAngle;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterStart:
+      case IMarkCommonArcLabelPosition.arcOuterStart:
         radius = outerRadius;
         angle = startAngle;
         orthogonalOffsetDirection = 1;
         break;
-      case IPolarMarkLabelPosition.arcInnerEnd:
+      case IMarkCommonArcLabelPosition.arcInnerEnd:
         radius = innerRadius;
         angle = endAngle;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterEnd:
+      case IMarkCommonArcLabelPosition.arcOuterEnd:
         radius = outerRadius;
         angle = endAngle;
         orthogonalOffsetDirection = 1;
         break;
-      case IPolarMarkLabelPosition.arcInnerMiddle:
+      case IMarkCommonArcLabelPosition.arcInnerMiddle:
         radius = innerRadius;
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterMiddle:
+      case IMarkCommonArcLabelPosition.arcOuterMiddle:
         radius = outerRadius;
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = 1;
@@ -109,7 +109,7 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
 
   protected setLabelPos() {
     if (this._label && this._area) {
-      const { label = {} } = this.attribute as PolarMarkAreaAttrs;
+      const { label = {} } = this.attribute as MarkArcAreaAttrs;
       const { position: labelPosition = 'arcInnerMiddle', autoRotate = true } = label;
       const labelAttr = this.getPositionByDirection(labelPosition);
 
@@ -132,7 +132,7 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
 
   protected initMarker(container: IGroup) {
     const { center, innerRadius, outerRadius, startAngle, endAngle, areaStyle, label, state } = this
-      .attribute as PolarMarkAreaAttrs;
+      .attribute as MarkArcAreaAttrs;
     const area = graphicCreator.arc({
       x: center.x,
       y: center.y,
@@ -162,7 +162,7 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
 
   protected updateMarker() {
     const { center, innerRadius, outerRadius, startAngle, endAngle, areaStyle, label } = this
-      .attribute as PolarMarkAreaAttrs;
+      .attribute as MarkArcAreaAttrs;
     if (this._area) {
       this._area.setAttributes({
         x: center.x,

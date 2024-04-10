@@ -1,30 +1,30 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import { ICartesianMarkLineLabelPosition } from '../type';
-import type { CartesianMarkLineAttrs, ICartesianMarkAreaLabelPosition } from '../type';
-import type { ComponentOptions } from '../../interface';
-import { loadCartesianMarkLineComponent } from '../register';
-import type { Point } from '../../core/type';
-import { BaseMarkLine } from '../base-line';
-import type { ArcSegment } from '../../segment';
+import { IMarkLineLabelPosition } from './type';
+import type { MarkLineAttrs } from './type';
+import type { ComponentOptions } from '../interface';
+import { loadMarkLineComponent } from './register';
+import type { Point } from '../core/type';
+import { BaseMarkLine } from './base-line';
+import type { ArcSegment } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
-import { Segment } from '../../segment';
-import { DEFAULT_STATES } from '../../constant';
-import { DEFAULT_CARTESIAN_MARK_LINE_THEME } from '../config';
+import { Segment } from '../segment';
+import { DEFAULT_STATES } from '../constant';
+import { DEFAULT_MARK_LINE_THEME } from './config';
+import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 
-loadCartesianMarkLineComponent();
-export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosition> {
-  name = 'cartesianMarkLine';
+loadMarkLineComponent();
+export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
+  name = 'MarkLine';
   // eslint-disable-next-line max-len
-  static defaultAttributes: Partial<CartesianMarkLineAttrs> =
-    DEFAULT_CARTESIAN_MARK_LINE_THEME as unknown as CartesianMarkLineAttrs;
+  static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME as unknown as MarkLineAttrs;
   protected _line!: Segment | ArcSegment;
 
-  constructor(attributes: CartesianMarkLineAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, CartesianMarkLine.defaultAttributes, attributes));
+  constructor(attributes: MarkLineAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));
   }
 
   protected isValidPoints() {
-    const { points } = this.attribute as CartesianMarkLineAttrs;
+    const { points } = this.attribute as MarkLineAttrs;
     if (!points || points.length < 2) {
       return false;
     }
@@ -45,7 +45,7 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
     return validFlag;
   }
 
-  protected getLabelOffsetByDirection(direction: ICartesianMarkLineLabelPosition) {
+  protected getLabelOffsetByDirection(direction: IMarkLineLabelPosition) {
     // labelHeight
     // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
@@ -69,47 +69,47 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
     const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
     switch (direction) {
-      case ICartesianMarkLineLabelPosition.start:
+      case IMarkLineLabelPosition.start:
         return {
           offsetX: -labelWidth / 2,
           offsetY: 0
         };
-      case ICartesianMarkLineLabelPosition.insideStartTop:
+      case IMarkLineLabelPosition.insideStartTop:
         return {
           offsetX: labelWidth / 2,
           offsetY: labelHeight / 2
         };
-      case ICartesianMarkLineLabelPosition.insideStartBottom:
+      case IMarkLineLabelPosition.insideStartBottom:
         return {
           offsetX: labelWidth / 2,
           offsetY: -labelHeight / 2
         };
-      case ICartesianMarkLineLabelPosition.middle:
+      case IMarkLineLabelPosition.middle:
         return {
           offsetX: 0,
           offsetY: 0
         };
-      case ICartesianMarkLineLabelPosition.insideMiddleTop:
+      case IMarkLineLabelPosition.insideMiddleTop:
         return {
           offsetX: 0,
           offsetY: labelHeight / 2
         };
-      case ICartesianMarkLineLabelPosition.insideMiddleBottom:
+      case IMarkLineLabelPosition.insideMiddleBottom:
         return {
           offsetX: 0,
           offsetY: -labelHeight / 2
         };
-      case ICartesianMarkLineLabelPosition.end:
+      case IMarkLineLabelPosition.end:
         return {
           offsetX: labelWidth / 2,
           offsetY: 0
         };
-      case ICartesianMarkLineLabelPosition.insideEndTop:
+      case IMarkLineLabelPosition.insideEndTop:
         return {
           offsetX: -labelWidth / 2,
           offsetY: labelHeight / 2
         };
-      case ICartesianMarkLineLabelPosition.insideEndBottom:
+      case IMarkLineLabelPosition.insideEndBottom:
         return {
           offsetX: -labelWidth / 2,
           offsetY: -labelHeight / 2
@@ -122,7 +122,7 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
     }
   }
 
-  protected getPositionByDirection(direction: ICartesianMarkLineLabelPosition) {
+  protected getPositionByDirection(direction: IMarkLineLabelPosition) {
     const { label = {} } = this.attribute;
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
@@ -162,7 +162,7 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
 
   protected setLabelPos(): void {
     super.setLabelPos();
-    const { label = {} } = this.attribute as CartesianMarkLineAttrs;
+    const { label = {} } = this.attribute as MarkLineAttrs;
     const { position = 'end', autoRotate = true } = label;
     const labelAttr = this.getPositionByDirection(position as any);
     this._label.setAttributes({
@@ -173,7 +173,7 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
 
   protected createSegment() {
     const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment, state } = this
-      .attribute as CartesianMarkLineAttrs;
+      .attribute as MarkLineAttrs;
     return new Segment({
       points,
       startSymbol,
@@ -192,7 +192,7 @@ export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosit
 
   protected setLineAttributes() {
     const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment } = this
-      .attribute as CartesianMarkLineAttrs;
+      .attribute as MarkLineAttrs;
     if (this._line) {
       this._line.setAttributes({
         points,

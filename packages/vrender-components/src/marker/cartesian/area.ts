@@ -31,31 +31,52 @@ export class CartesianMarkArea extends Marker<CartesianMarkAreaAttrs> {
     super(options?.skipDefault ? attributes : merge({}, CartesianMarkArea.defaultAttributes, attributes));
   }
 
-  private _getPositionByDirection(area: IPolygon, direction: string) {
+  protected getPositionByDirection(direction: string) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
+    // labelHeight
+    // eslint-disable-next-line max-len
+    const labelRectHeight = Math.abs(
+      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
+    );
+    // eslint-disable-next-line max-len
+    const labelTextHeight = Math.abs(
+      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
+    );
+    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
+
+    // labelWidth
+    // eslint-disable-next-line max-len
+    const labelRectWidth = Math.abs(
+      (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
+    );
+    // eslint-disable-next-line max-len
+    const labelTextWidth = Math.abs(
+      (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
+    );
+    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
     if (direction.includes('left') || direction.includes('Left')) {
       return {
-        x: x1,
+        x: x1 + (direction.includes('inside') ? 0.5 : -0.5) * labelWidth,
         y: (y1 + y2) / 2
       };
     }
     if (direction.includes('right') || direction.includes('Right')) {
       return {
-        x: x2,
+        x: x2 + (direction.includes('inside') ? -0.5 : 0.5) * labelWidth,
         y: (y1 + y2) / 2
       };
     }
     if (direction.includes('top') || direction.includes('Top')) {
       return {
         x: (x1 + x2) / 2,
-        y: y1
+        y: y1 + (direction.includes('inside') ? 0.5 : -0.5) * labelHeight
       };
     }
     if (direction.includes('bottom') || direction.includes('Bottom')) {
       return {
         x: (x1 + x2) / 2,
-        y: y2
+        y: y2 + (direction.includes('inside') ? -0.5 : 0.5) * labelHeight
       };
     }
 
@@ -69,13 +90,9 @@ export class CartesianMarkArea extends Marker<CartesianMarkAreaAttrs> {
     if (this._label && this._area) {
       const { label = {} } = this.attribute as CartesianMarkAreaAttrs;
       const labelPosition = label.position ?? 'middle';
-      const labelPoint = this._getPositionByDirection(this._area, labelPosition);
+      const labelPoint = this.getPositionByDirection(labelPosition);
       this._label.setAttributes({
-        ...labelPoint,
-        textStyle: {
-          ...DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP[labelPosition],
-          ...label.textStyle
-        }
+        ...labelPoint
       });
 
       if (this.attribute.limitRect && label.confine) {

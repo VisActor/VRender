@@ -1,7 +1,7 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import { ICartesianMarkAreaLabelPosition, ICommonMarkLineLabelPosition, IPolarMarkAreaLabelPosition } from './type';
+import { ICartesianMarkAreaLabelPosition, ICartesianMarkLineLabelPosition, IPolarMarkLabelPosition } from './type';
 
-export const DEFAULT_COMMON_MARK_LINE_THEME = {
+export const DEFAULT_CARTESIAN_MARK_LINE_THEME = {
   interactive: true,
   startSymbol: {
     visible: false,
@@ -18,7 +18,7 @@ export const DEFAULT_COMMON_MARK_LINE_THEME = {
     lineWidth: 0
   },
   label: {
-    position: ICommonMarkLineLabelPosition.end,
+    position: ICartesianMarkLineLabelPosition.end,
     refX: 0,
     refY: 0,
     refAngle: 0,
@@ -28,7 +28,9 @@ export const DEFAULT_COMMON_MARK_LINE_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal'
+      fontStyle: 'normal',
+      textAlign: 'center',
+      textBaseline: 'middle'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -45,49 +47,49 @@ export const DEFAULT_COMMON_MARK_LINE_THEME = {
   }
 };
 
-export const DEFAULT_COMMON_MARK_LINE_TEXT_STYLE_MAP: {
-  [K: string]: {
-    textAlign: TextAlignType;
-    textBaseline: TextBaselineType;
-  };
-} = {
-  start: {
-    textAlign: 'right',
-    textBaseline: 'middle'
+export const DEFAULT_POLAR_MARK_LINE_THEME = {
+  interactive: true,
+  startSymbol: {
+    visible: false,
+    symbolType: 'triangle',
+    size: 12,
+    fill: 'rgba(46, 47, 50)',
+    lineWidth: 0
   },
-  insideStartTop: {
-    textAlign: 'left',
-    textBaseline: 'bottom'
+  endSymbol: {
+    visible: true,
+    symbolType: 'triangle',
+    size: 12,
+    fill: 'rgba(46, 47, 50)',
+    lineWidth: 0
   },
-  insideStartBottom: {
-    textAlign: 'left',
-    textBaseline: 'top'
+  label: {
+    position: IPolarMarkLabelPosition.arcOuterMiddle,
+    refX: 0,
+    refY: 0,
+    refAngle: 0,
+    textStyle: {
+      fill: '#fff',
+      stroke: '#fff',
+      lineWidth: 0,
+      fontSize: 10,
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      textAlign: 'center',
+      textBaseline: 'middle'
+    },
+    padding: [2, 2, 4, 4],
+    panel: {
+      visible: true,
+      cornerRadius: 0,
+      fill: 'rgb(48, 115, 242)',
+      fillOpacity: 0.8
+    }
   },
-
-  middle: {
-    textAlign: 'center',
-    textBaseline: 'middle'
-  },
-  insideMiddleTop: {
-    textAlign: 'center',
-    textBaseline: 'bottom'
-  },
-  insideMiddleBottom: {
-    textAlign: 'center',
-    textBaseline: 'top'
-  },
-
-  end: {
-    textAlign: 'left',
-    textBaseline: 'middle'
-  },
-  insideEndTop: {
-    textAlign: 'right',
-    textBaseline: 'bottom'
-  },
-  insideEndBottom: {
-    textAlign: 'right',
-    textBaseline: 'top'
+  lineStyle: {
+    stroke: '#b2bacf',
+    lineWidth: 1,
+    lineDash: [2]
   }
 };
 
@@ -101,7 +103,9 @@ export const DEFAULT_CARTESIAN_MARK_AREA_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal'
+      fontStyle: 'normal',
+      textAlign: 'center',
+      textBaseline: 'middle'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -120,7 +124,7 @@ export const DEFAULT_CARTESIAN_MARK_AREA_THEME = {
 export const DEFAULT_POLAR_MARK_AREA_THEME = {
   interactive: true,
   label: {
-    position: IPolarMarkAreaLabelPosition.arcInner,
+    position: IPolarMarkLabelPosition.arcOuterMiddle,
     textStyle: {
       fill: '#fff',
       stroke: '#fff',
@@ -129,7 +133,7 @@ export const DEFAULT_POLAR_MARK_AREA_THEME = {
       fontWeight: 'normal',
       fontStyle: 'normal',
       textAlign: 'center',
-      textBaseLine: 'middle'
+      textBaseline: 'middle'
     },
     padding: [2, 2, 4, 4],
     panel: {

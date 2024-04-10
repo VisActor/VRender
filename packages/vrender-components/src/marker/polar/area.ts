@@ -7,7 +7,7 @@ import type { TagAttributes } from '../../tag';
 import { Tag } from '../../tag';
 import { Marker } from '../base';
 import { DEFAULT_POLAR_MARK_AREA_THEME } from '../config';
-import { IPolarMarkAreaLabelPosition, type PolarMarkAreaAttrs } from '../type';
+import { IPolarMarkLabelPosition, type PolarMarkAreaAttrs } from '../type';
 import { limitShapeInBounds } from '../../util/limit-shape';
 import type { ComponentOptions } from '../../interface';
 import { loadPolarMarkAreaComponent } from '../register';
@@ -31,50 +31,91 @@ export class PolarMarkArea extends Marker<PolarMarkAreaAttrs> {
     super(options?.skipDefault ? attributes : merge({}, PolarMarkArea.defaultAttributes, attributes));
   }
 
-  private _getPositionByDirection(area: IArc, direction: string) {
-    const { center, innerRadius, outerRadius, startAngle, endAngle } = this.attribute as PolarMarkAreaAttrs;
+  protected getPositionByDirection(direction: string) {
+    const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as PolarMarkAreaAttrs;
+    const { refX = 0, refY = 0 } = label;
+    // eslint-disable-next-line max-len
+    const labelRectHeight = Math.abs(
+      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
+    );
+    // eslint-disable-next-line max-len
+    const labelTextHeight = Math.abs(
+      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
+    );
+    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
+
+    let radius;
+    let angle;
+    // tag在正交方向是向内偏移，还是向外偏移
+    // 不偏移: 0, 内: -1, 外: 1
+    let orthogonalOffsetDirection;
 
     switch (direction) {
-      case IPolarMarkAreaLabelPosition.center:
-        return {
-          x: center.x + ((innerRadius + outerRadius) / 2) * Math.cos((startAngle + endAngle) / 2),
-          y: center.y + ((innerRadius + outerRadius) / 2) * Math.sin((startAngle + endAngle) / 2)
-        };
-      case IPolarMarkAreaLabelPosition.arcStart:
-        return {
-          x: center.x + ((innerRadius + outerRadius) / 2) * Math.cos(startAngle),
-          y: center.y + ((innerRadius + outerRadius) / 2) * Math.sin(startAngle)
-        };
-      case IPolarMarkAreaLabelPosition.arcEnd:
-        return {
-          x: center.x + ((innerRadius + outerRadius) / 2) * Math.cos(endAngle),
-          y: center.y + ((innerRadius + outerRadius) / 2) * Math.sin(endAngle)
-        };
-      case IPolarMarkAreaLabelPosition.arcInner:
-        return {
-          x: center.x + innerRadius * Math.cos((startAngle + endAngle) / 2),
-          y: center.y + innerRadius * Math.sin((startAngle + endAngle) / 2)
-        };
-      case IPolarMarkAreaLabelPosition.arcOuter:
-        return {
-          x: center.x + outerRadius * Math.cos((startAngle + endAngle) / 2),
-          y: center.y + outerRadius * Math.sin((startAngle + endAngle) / 2)
-        };
-      default: // default arcOuter
-        return {
-          x: center.x + innerRadius * Math.cos((startAngle + endAngle) / 2),
-          y: center.y + innerRadius * Math.sin((startAngle + endAngle) / 2)
-        };
+      case IPolarMarkLabelPosition.center:
+        radius = (innerRadius + outerRadius) / 2;
+        angle = (startAngle + endAngle) / 2;
+        orthogonalOffsetDirection = 0;
+        break;
+      case IPolarMarkLabelPosition.arcInnerStart:
+        radius = innerRadius;
+        angle = startAngle;
+        orthogonalOffsetDirection = -1;
+        break;
+      case IPolarMarkLabelPosition.arcOuterStart:
+        radius = outerRadius;
+        angle = startAngle;
+        orthogonalOffsetDirection = 1;
+        break;
+      case IPolarMarkLabelPosition.arcInnerEnd:
+        radius = innerRadius;
+        angle = endAngle;
+        orthogonalOffsetDirection = -1;
+        break;
+      case IPolarMarkLabelPosition.arcOuterEnd:
+        radius = outerRadius;
+        angle = endAngle;
+        orthogonalOffsetDirection = 1;
+        break;
+      case IPolarMarkLabelPosition.arcInnerMiddle:
+        radius = innerRadius;
+        angle = (startAngle + endAngle) / 2;
+        orthogonalOffsetDirection = -1;
+        break;
+      case IPolarMarkLabelPosition.arcOuterMiddle:
+        radius = outerRadius;
+        angle = (startAngle + endAngle) / 2;
+        orthogonalOffsetDirection = 1;
+        break;
+      default: // default arcInnerMiddle
+        radius = innerRadius;
+        angle = (startAngle + endAngle) / 2;
+        orthogonalOffsetDirection = -1;
     }
+
+    return {
+      position: {
+        x:
+          center.x +
+          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.cos(angle) +
+          refX * Math.cos(angle - Math.PI / 2),
+        y:
+          center.y +
+          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.sin(angle) +
+          refX * Math.sin(angle - Math.PI / 2)
+      },
+      angle
+    };
   }
 
   protected setLabelPos() {
     if (this._label && this._area) {
       const { label = {} } = this.attribute as PolarMarkAreaAttrs;
-      const labelPosition = label.position ?? 'middle';
-      const labelPoint = this._getPositionByDirection(this._area, labelPosition);
+      const { position: labelPosition = 'arcInnerMiddle', autoRotate = true } = label;
+      const labelAttr = this.getPositionByDirection(labelPosition);
+
       this._label.setAttributes({
-        ...labelPoint
+        ...labelAttr.position,
+        angle: autoRotate ? labelAttr.angle - Math.PI / 2 + (label.refAngle ?? 0) : 0
       });
 
       if (this.attribute.limitRect && label.confine) {

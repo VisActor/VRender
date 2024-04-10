@@ -4,20 +4,19 @@ import type { ArcSegment, Segment } from '../segment';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
-import { DEFAULT_COMMON_MARK_LINE_THEME, DEFAULT_COMMON_MARK_LINE_TEXT_STYLE_MAP } from './config';
 import type { CommonMarkLineAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { Marker } from './base';
 
-export abstract class BaseMarkLine extends Marker<CommonMarkLineAttrs> {
+export abstract class BaseMarkLine<T> extends Marker<CommonMarkLineAttrs<T>> {
   name = 'baseMarkLine';
-  static defaultAttributes: Partial<CommonMarkLineAttrs> = DEFAULT_COMMON_MARK_LINE_THEME;
 
   protected _line!: Segment | ArcSegment;
 
   protected abstract createSegment(): any;
   protected abstract setLineAttributes(): any;
+  protected abstract getPositionByDirection(direction: any): any;
 
   getLine() {
     return this._line;
@@ -29,34 +28,9 @@ export abstract class BaseMarkLine extends Marker<CommonMarkLineAttrs> {
   protected setLabelPos() {
     const { label = {}, limitRect } = this.attribute;
     const { position = 'end', refX = 0, refY = 0, confine } = label;
-    const points = this._line.getMainSegmentPoints();
-    const labelAngle = this._line.getEndAngle() ?? 0;
-    const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
-    const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
-    let labelPoint;
-    if (position.includes('start') || position.includes('Start')) {
-      labelPoint = {
-        x: points[0].x + labelOffsetX,
-        y: points[0].y + labelOffsetY
-      };
-    } else if (position.includes('middle') || position.includes('Middle')) {
-      labelPoint = {
-        x: (points[0].x + points[points.length - 1].x) / 2 + labelOffsetX,
-        y: (points[0].y + points[points.length - 1].y) / 2 + labelOffsetY
-      };
-    } else {
-      labelPoint = {
-        x: points[points.length - 1].x + labelOffsetX,
-        y: points[points.length - 1].y + labelOffsetY
-      };
-    }
+    const labelPoint = this.getPositionByDirection(position);
     this._label.setAttributes({
-      ...labelPoint,
-      angle: label.autoRotate ? labelAngle + (label.refAngle ?? 0) : 0,
-      textStyle: {
-        ...DEFAULT_COMMON_MARK_LINE_TEXT_STYLE_MAP[position],
-        ...label.textStyle
-      }
+      ...labelPoint
     });
     if (limitRect && confine) {
       const { x, y, width, height } = limitRect;
@@ -70,7 +44,7 @@ export abstract class BaseMarkLine extends Marker<CommonMarkLineAttrs> {
   }
 
   protected initMarker(container: IGroup) {
-    const { label, state } = this.attribute as CommonMarkLineAttrs;
+    const { label, state } = this.attribute as CommonMarkLineAttrs<T>;
     const line = this.createSegment();
     line.name = 'cartesian-mark-line-line';
     this._line = line;
@@ -90,7 +64,7 @@ export abstract class BaseMarkLine extends Marker<CommonMarkLineAttrs> {
   }
 
   protected updateMarker() {
-    const { label } = this.attribute as CommonMarkLineAttrs;
+    const { label } = this.attribute as CommonMarkLineAttrs<T>;
 
     this.setLineAttributes();
 

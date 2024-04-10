@@ -23,6 +23,17 @@ loadTagComponent();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
 
+  private _bgRect!: IRect;
+  private _textShape!: IText | IRichText;
+
+  getBgRect() {
+    return this._bgRect;
+  }
+
+  getTextShape() {
+    return this._textShape;
+  }
+
   static defaultAttributes: Partial<TagAttributes> = {
     visible: true,
     textStyle: {
@@ -131,6 +142,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
         }
+        this._bgRect = bgRect;
       }
     } else {
       const textAttrs = {
@@ -251,7 +263,9 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
         }
+        this._bgRect = bgRect;
       }
     }
+    this._textShape = textShape;
   }
 }

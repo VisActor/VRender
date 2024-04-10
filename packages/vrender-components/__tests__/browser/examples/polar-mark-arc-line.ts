@@ -9,7 +9,9 @@ export function run() {
 
   const guiObject = {
     name: 'MarkLine',
-    labelPos: 'start',
+    labelPos: 'arcOuterMiddle',
+    labelDx: 0,
+    labelDy: 0,
     labelAutoRotate: false,
     labelRefX: 5,
     labelRefY: 5,
@@ -81,7 +83,8 @@ export function run() {
       }
     },
     label: {
-      // text: 'aaa',
+      text: 'aaa',
+      // position: 'insideStartTop',
       visible: true,
       textStyle: {
         fill: 'red',
@@ -112,6 +115,7 @@ export function run() {
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
+    autoRotate: true,
     clipInRange: false,
     interactive: true,
     hover: true,
@@ -167,15 +171,13 @@ export function run() {
   gui.add(guiObject, 'name');
   gui
     .add(guiObject, 'labelPos', [
-      'start',
-      'middle',
-      'end',
-      'insideStartTop',
-      'insideStartBottom',
-      'insideMiddleTop',
-      'insideMiddleBottom',
-      'insideEndTop',
-      'insideEndBottom'
+      'arcInnerStart',
+      'arcInnerEnd',
+      'arcOuterStart',
+      'arcOuterEnd',
+      'arcInnerMiddle',
+      'arcOuterMiddle',
+      'center'
     ])
     .onChange(value => {
       markLines.forEach(markLine =>
@@ -184,6 +186,23 @@ export function run() {
         })
       );
     });
+
+  gui.add(guiObject, 'labelDx').onChange(value => {
+    markLines.forEach(markLine =>
+      markLine.setAttribute('label', {
+        dx: value
+      })
+    );
+  });
+
+  gui.add(guiObject, 'labelDy').onChange(value => {
+    markLines.forEach(markLine =>
+      markLine.setAttribute('label', {
+        dy: value
+      })
+    );
+  });
+
   gui.add(guiObject, 'labelAutoRotate').onChange(value => {
     markLines.forEach(markLine =>
       markLine.setAttribute('label', {

@@ -1,17 +1,22 @@
 import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
-import { CartesianMarkArea, PolarMarkArea } from '../../../src';
+import { PolarMarkArea } from '../../../src';
+import { degreeToRadian } from '@visactor/vutils';
 
 export function run() {
   console.log('MarkArea');
 
   const guiObject = {
     name: 'MarkArea',
-    labelPos: 'left',
+    labelPos: 'arcOuterMiddle',
     cornerRadius: 0,
     labelDx: 0,
-    labelDy: 0
+    labelDy: 0,
+    labelAutoRotate: false,
+    labelRefX: 5,
+    labelRefY: 5,
+    labelRefAngle: 0
   };
 
   const styleAttr = {
@@ -106,13 +111,23 @@ export function run() {
 
   const gui = new GUI();
   gui.add(guiObject, 'name');
-  gui.add(guiObject, 'labelPos', ['arcStart', 'arcEnd', 'arcInner', 'arcOuter', 'center']).onChange(value => {
-    markAreas.forEach(markArea =>
-      markArea.setAttribute('label', {
-        position: value
-      })
-    );
-  });
+  gui
+    .add(guiObject, 'labelPos', [
+      'arcInnerStart',
+      'arcInnerEnd',
+      'arcOuterStart',
+      'arcOuterEnd',
+      'arcInnerMiddle',
+      'arcOuterMiddle',
+      'center'
+    ])
+    .onChange(value => {
+      markAreas.forEach(markArea =>
+        markArea.setAttribute('label', {
+          position: value
+        })
+      );
+    });
 
   gui.add(guiObject, 'labelDx').onChange(value => {
     markAreas.forEach(markArea =>
@@ -130,10 +145,32 @@ export function run() {
     );
   });
 
-  gui.add(guiObject, 'cornerRadius').onChange(value => {
+  gui.add(guiObject, 'labelAutoRotate').onChange(value => {
     markAreas.forEach(markArea =>
-      markArea.setAttribute('areaStyle', {
-        cornerRadius: value
+      markArea.setAttribute('label', {
+        autoRotate: value
+      })
+    );
+  });
+  gui.add(guiObject, 'labelRefX').onChange(value => {
+    markAreas.forEach(markArea =>
+      markArea.setAttribute('label', {
+        refX: value
+      })
+    );
+  });
+  gui.add(guiObject, 'labelRefY').onChange(value => {
+    markAreas.forEach(markArea =>
+      markArea.setAttribute('label', {
+        refY: value
+      })
+    );
+  });
+
+  gui.add(guiObject, 'labelRefAngle').onChange(value => {
+    markAreas.forEach(markArea =>
+      markArea.setAttribute('label', {
+        refAngle: degreeToRadian(value)
       })
     );
   });

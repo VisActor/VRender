@@ -22,7 +22,7 @@ import type {
 import type { TagAttributes } from '../tag';
 import type { Point, State } from '../core/type';
 
-export enum ICommonMarkLineLabelPosition {
+export enum ICartesianMarkLineLabelPosition {
   start = 'start',
   middle = 'middle',
   end = 'end',
@@ -46,11 +46,13 @@ export enum ICartesianMarkAreaLabelPosition {
   insideBottom = 'insideBottom'
 }
 
-export enum IPolarMarkAreaLabelPosition {
-  arcStart = 'arcStart',
-  arcEnd = 'arcEnd',
-  arcInner = 'arcInner',
-  arcOuter = 'arcOuter',
+export enum IPolarMarkLabelPosition {
+  arcInnerStart = 'arcInnerStart',
+  arcInnerEnd = 'arcInnerEnd',
+  arcInnerMiddle = 'arcInnerMiddle',
+  arcOuterStart = 'arcOuterStart',
+  arcOuterEnd = 'arcOuterEnd',
+  arcOuterMiddle = 'arcOuterMiddle',
   center = 'center'
 }
 
@@ -200,7 +202,7 @@ export type MarkPointState = {
   customMark?: State<Partial<IGroupGraphicAttribute>>;
 };
 
-export type CommonMarkLineAttrs = MarkerAttrs &
+export type CommonMarkLineAttrs<T> = MarkerAttrs &
   Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
     /**
      * 标签
@@ -209,7 +211,7 @@ export type CommonMarkLineAttrs = MarkerAttrs &
       /**
        * label 相对line的位置
        */
-      position?: keyof typeof ICommonMarkLineLabelPosition;
+      position?: T;
       /**
        * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
        * @default false
@@ -220,7 +222,7 @@ export type CommonMarkLineAttrs = MarkerAttrs &
     state?: CommonMarkLineState;
   } & BaseMarkerAnimation<CommonMarkLineAnimationType>;
 
-export type CartesianMarkLineAttrs = CommonMarkLineAttrs & {
+export type CartesianMarkLineAttrs = CommonMarkLineAttrs<keyof typeof ICartesianMarkLineLabelPosition> & {
   type?: 'cartesian-line';
   /**
    * 是否对 points 进行多段处理，默认为 false，即直接将所有的点连接成线。
@@ -239,7 +241,7 @@ export type CartesianMarkLineAttrs = CommonMarkLineAttrs & {
   lineStyle?: ILineGraphicAttribute;
 };
 
-export type PolarMarkLineAttrs = CommonMarkLineAttrs & {
+export type PolarMarkLineAttrs = CommonMarkLineAttrs<keyof typeof ICartesianMarkLineLabelPosition> & {
   type?: 'polar-line';
   /**
    * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
@@ -248,7 +250,7 @@ export type PolarMarkLineAttrs = CommonMarkLineAttrs & {
   lineStyle?: ILineGraphicAttribute;
 };
 
-export type PolarMarkArcLineAttrs = CommonMarkLineAttrs & {
+export type PolarMarkArcLineAttrs = CommonMarkLineAttrs<keyof typeof IPolarMarkLabelPosition> & {
   type?: 'polar-arc-line';
   /**
    * 弧线中心位置
@@ -326,13 +328,14 @@ export type PolarMarkAreaAttrs = MarkerAttrs & {
    * 标签
    */
   label?: {
-    position?: keyof typeof IPolarMarkAreaLabelPosition;
+    position?: keyof typeof IPolarMarkLabelPosition;
     /**
      * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
      * @default false
      */
     confine?: boolean;
-  } & IMarkLabel;
+  } & IMarkRef &
+    IMarkLabel;
   /**
    * area的样式
    */

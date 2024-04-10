@@ -1,6 +1,6 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import { DEFAULT_COMMON_MARK_LINE_THEME } from '../config';
-import type { CartesianMarkLineAttrs } from '../type';
+import { ICartesianMarkLineLabelPosition } from '../type';
+import type { CartesianMarkLineAttrs, ICartesianMarkAreaLabelPosition } from '../type';
 import type { ComponentOptions } from '../../interface';
 import { loadCartesianMarkLineComponent } from '../register';
 import type { Point } from '../../core/type';
@@ -9,11 +9,14 @@ import type { ArcSegment } from '../../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../../segment';
 import { DEFAULT_STATES } from '../../constant';
+import { DEFAULT_CARTESIAN_MARK_LINE_THEME } from '../config';
 
 loadCartesianMarkLineComponent();
-export class CartesianMarkLine extends BaseMarkLine {
+export class CartesianMarkLine extends BaseMarkLine<ICartesianMarkLineLabelPosition> {
   name = 'cartesianMarkLine';
-  static defaultAttributes: Partial<CartesianMarkLineAttrs> = DEFAULT_COMMON_MARK_LINE_THEME;
+  // eslint-disable-next-line max-len
+  static defaultAttributes: Partial<CartesianMarkLineAttrs> =
+    DEFAULT_CARTESIAN_MARK_LINE_THEME as unknown as CartesianMarkLineAttrs;
   protected _line!: Segment | ArcSegment;
 
   constructor(attributes: CartesianMarkLineAttrs, options?: ComponentOptions) {
@@ -42,6 +45,132 @@ export class CartesianMarkLine extends BaseMarkLine {
     return validFlag;
   }
 
+  protected getLabelOffsetByDirection(direction: ICartesianMarkLineLabelPosition) {
+    // labelHeight
+    // eslint-disable-next-line max-len
+    const labelRectHeight = Math.abs(
+      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
+    );
+    // eslint-disable-next-line max-len
+    const labelTextHeight = Math.abs(
+      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
+    );
+    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
+
+    // labelWidth
+    // eslint-disable-next-line max-len
+    const labelRectWidth = Math.abs(
+      (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
+    );
+    // eslint-disable-next-line max-len
+    const labelTextWidth = Math.abs(
+      (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
+    );
+    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
+
+    switch (direction) {
+      case ICartesianMarkLineLabelPosition.start:
+        return {
+          offsetX: -labelWidth / 2,
+          offsetY: 0
+        };
+      case ICartesianMarkLineLabelPosition.insideStartTop:
+        return {
+          offsetX: labelWidth / 2,
+          offsetY: labelHeight / 2
+        };
+      case ICartesianMarkLineLabelPosition.insideStartBottom:
+        return {
+          offsetX: labelWidth / 2,
+          offsetY: -labelHeight / 2
+        };
+      case ICartesianMarkLineLabelPosition.middle:
+        return {
+          offsetX: 0,
+          offsetY: 0
+        };
+      case ICartesianMarkLineLabelPosition.insideMiddleTop:
+        return {
+          offsetX: 0,
+          offsetY: labelHeight / 2
+        };
+      case ICartesianMarkLineLabelPosition.insideMiddleBottom:
+        return {
+          offsetX: 0,
+          offsetY: -labelHeight / 2
+        };
+      case ICartesianMarkLineLabelPosition.end:
+        return {
+          offsetX: labelWidth / 2,
+          offsetY: 0
+        };
+      case ICartesianMarkLineLabelPosition.insideEndTop:
+        return {
+          offsetX: -labelWidth / 2,
+          offsetY: labelHeight / 2
+        };
+      case ICartesianMarkLineLabelPosition.insideEndBottom:
+        return {
+          offsetX: -labelWidth / 2,
+          offsetY: -labelHeight / 2
+        };
+      default: // default end
+        return {
+          offsetX: labelWidth / 2,
+          offsetY: 0
+        };
+    }
+  }
+
+  protected getPositionByDirection(direction: ICartesianMarkLineLabelPosition) {
+    const { label = {} } = this.attribute;
+    const { refX = 0, refY = 0 } = label;
+    const points = this._line.getMainSegmentPoints();
+    const labelAngle = this._line.getEndAngle() ?? 0;
+
+    const totalRefX = refX + this.getLabelOffsetByDirection(direction).offsetX;
+    const totalRefY = refY + this.getLabelOffsetByDirection(direction).offsetY;
+
+    const labelOffsetX = totalRefX * Math.cos(labelAngle) + totalRefY * Math.cos(labelAngle - Math.PI / 2);
+    const labelOffsetY = totalRefX * Math.sin(labelAngle) + totalRefY * Math.sin(labelAngle - Math.PI / 2);
+
+    if (direction.includes('start') || direction.includes('Start')) {
+      return {
+        position: {
+          x: points[0].x + labelOffsetX,
+          y: points[0].y + labelOffsetY
+        },
+        angle: labelAngle
+      };
+    } else if (direction.includes('middle') || direction.includes('Middle')) {
+      return {
+        position: {
+          x: (points[0].x + points[points.length - 1].x) / 2 + labelOffsetX,
+          y: (points[0].y + points[points.length - 1].y) / 2 + labelOffsetY
+        },
+        angle: labelAngle
+      };
+    }
+    return {
+      position: {
+        x: points[points.length - 1].x + labelOffsetX,
+        y: points[points.length - 1].y + labelOffsetY
+      },
+      angle: labelAngle
+    };
+  }
+
+  protected setLabelPos(): void {
+    super.setLabelPos();
+    const { label = {} } = this.attribute as CartesianMarkLineAttrs;
+    const { position = 'end', autoRotate = true } = label;
+    const labelAttr = this.getPositionByDirection(position as any);
+    this._label.setAttributes({
+      ...labelAttr.position,
+      angle: autoRotate ? labelAttr.angle + (label.refAngle ?? 0) : 0
+    });
+  }
+
   protected createSegment() {
     const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment, state } = this
       .attribute as CartesianMarkLineAttrs;
@@ -60,6 +189,7 @@ export class CartesianMarkLine extends BaseMarkLine {
       }
     });
   }
+
   protected setLineAttributes() {
     const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment } = this
       .attribute as CartesianMarkLineAttrs;

@@ -36,12 +36,12 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     super(options?.skipDefault ? attributes : merge({}, attributes));
 
     this._initAttributes();
+    this._initDataIndex();
     this._initEvents();
   }
 
   setAttributes(params: Partial<Required<PlayerAttributes>>, forceUpdateTag?: boolean): void {
     super.setAttributes(params, forceUpdateTag);
-
     this._initAttributes();
   }
 
@@ -53,7 +53,12 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
     this._alternate = this.attribute.alternate ?? false;
     this._interval = this.attribute.interval ?? 1000;
     this._direction = this.attribute.direction ?? DirectionEnum.Default;
+  };
 
+  /**
+   * 初始化dataIndex
+   */
+  private _initDataIndex = () => {
     this._dataIndex = isNil(this.attribute.dataIndex)
       ? this._direction === 'default'
         ? this._minIndex

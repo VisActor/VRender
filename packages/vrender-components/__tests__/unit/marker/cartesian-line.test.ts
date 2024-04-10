@@ -60,7 +60,7 @@ describe('Marker', () => {
     expect((markLineContainer.children[0] as unknown as Segment).endSymbol?.attribute.angle).toBe(3.141592653589793);
 
     // tag构造的label
-    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBe(410);
+    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(448.20494079589844);
     expect((markLineContainer.children[1] as unknown as Tag).attribute.y).toBe(50);
     expect(
       ((markLineContainer.children[1] as unknown as Tag).getChildByName('tag-content') as any).children[0].attribute

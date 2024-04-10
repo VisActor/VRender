@@ -2,7 +2,7 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
-import { PolarMarkArcLine } from '../../../src';
+import { MarkArcLine } from '../../../src';
 
 export function run() {
   console.log('MarkLine');
@@ -127,7 +127,7 @@ export function run() {
     //   height: 200
     // }
   };
-  const markLine = new PolarMarkArcLine({
+  const markLine = new MarkArcLine({
     radius: 100,
     startAngle: 3.141592653589793,
     endAngle: 0,
@@ -138,7 +138,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine2 = new PolarMarkArcLine({
+  const markLine2 = new MarkArcLine({
     center: {
       x: 200,
       y: 200
@@ -146,7 +146,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine3 = new PolarMarkArcLine({
+  const markLine3 = new MarkArcLine({
     center: {
       x: 300,
       y: 300

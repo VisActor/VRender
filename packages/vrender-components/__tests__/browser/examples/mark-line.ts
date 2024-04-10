@@ -2,7 +2,7 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
-import { CartesianMarkLine } from '../../../src';
+import { MarkLine } from '../../../src';
 
 export function run() {
   console.log('MarkLine');
@@ -123,7 +123,7 @@ export function run() {
     //   height: 200
     // }
   };
-  const markLine = new CartesianMarkLine({
+  const markLine = new MarkLine({
     points: [
       {
         x: 100,
@@ -137,7 +137,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine2 = new CartesianMarkLine({
+  const markLine2 = new MarkLine({
     points: [
       {
         x: 100,
@@ -151,7 +151,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine3 = new CartesianMarkLine({
+  const markLine3 = new MarkLine({
     points: [
       {
         x: 100,

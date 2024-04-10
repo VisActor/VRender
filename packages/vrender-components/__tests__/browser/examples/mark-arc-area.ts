@@ -1,7 +1,7 @@
 import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
-import { PolarMarkArea } from '../../../src';
+import { MarkArcArea } from '../../../src';
 import { degreeToRadian } from '@visactor/vutils';
 
 export function run() {
@@ -80,7 +80,7 @@ export function run() {
     // }
   };
 
-  const markArea = new PolarMarkArea({
+  const markArea = new MarkArcArea({
     center: {
       x: 100,
       y: 100
@@ -92,7 +92,7 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markArea2 = new PolarMarkArea({
+  const markArea2 = new MarkArcArea({
     center: {
       x: 100,
       y: 300

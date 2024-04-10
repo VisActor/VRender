@@ -1,32 +1,32 @@
 import { merge } from '@visactor/vutils';
-import { ArcSegment } from '../../segment';
-import { loadPolarMarkArcLineComponent } from '../register';
-import { DEFAULT_STATES } from '../../constant';
-import { BaseMarkLine } from '../base-line';
-import { IPolarMarkLabelPosition } from '../type';
+import { ArcSegment } from '../segment';
+import { loadMarkArcLineComponent } from './register';
+import { DEFAULT_STATES } from '../constant';
+import { BaseMarkLine } from './base-line';
+import type { ComponentOptions } from '../interface';
+import type { IArcGraphicAttribute } from '@visactor/vrender-core';
+import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
-import type { PolarMarkArcLineAttrs } from '../type';
-import { DEFAULT_POLAR_MARK_LINE_THEME } from '../config';
-import type { ComponentOptions } from '../../interface';
+import type { MarkArcLineAttrs } from './type';
+import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
 
-loadPolarMarkArcLineComponent();
-export class PolarMarkArcLine extends BaseMarkLine<IPolarMarkLabelPosition> {
+loadMarkArcLineComponent();
+export class MarkArcLine extends BaseMarkLine<IArcGraphicAttribute, IMarkCommonArcLabelPosition> {
   name = 'polarMarkArcLine';
   // eslint-disable-next-line max-len
-  static defaultAttributes: Partial<PolarMarkArcLineAttrs> =
-    DEFAULT_POLAR_MARK_LINE_THEME as unknown as PolarMarkArcLineAttrs;
+  static defaultAttributes: Partial<MarkArcLineAttrs> = DEFAULT_MARK_ARC_LINE_THEME as unknown as MarkArcLineAttrs;
   protected _line!: ArcSegment;
 
-  constructor(attributes: PolarMarkArcLineAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, PolarMarkArcLine.defaultAttributes, attributes));
+  constructor(attributes: MarkArcLineAttrs, options?: ComponentOptions) {
+    super(options?.skipDefault ? attributes : merge({}, MarkArcLine.defaultAttributes, attributes));
   }
 
   protected isValidPoints() {
     return true;
   }
 
-  protected getPositionByDirection(direction: IPolarMarkLabelPosition) {
-    const { center, radius, startAngle, endAngle, label } = this.attribute as PolarMarkArcLineAttrs;
+  protected getPositionByDirection(direction: IMarkCommonArcLabelPosition) {
+    const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
     const { refX = 0, refY = 0 } = label;
     // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
@@ -44,31 +44,31 @@ export class PolarMarkArcLine extends BaseMarkLine<IPolarMarkLabelPosition> {
     let orthogonalOffsetDirection;
 
     switch (direction) {
-      case IPolarMarkLabelPosition.center:
+      case IMarkCommonArcLabelPosition.center:
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = 0;
         break;
-      case IPolarMarkLabelPosition.arcInnerStart:
+      case IMarkCommonArcLabelPosition.arcInnerStart:
         angle = startAngle;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterStart:
+      case IMarkCommonArcLabelPosition.arcOuterStart:
         angle = startAngle;
         orthogonalOffsetDirection = 1;
         break;
-      case IPolarMarkLabelPosition.arcInnerEnd:
+      case IMarkCommonArcLabelPosition.arcInnerEnd:
         angle = endAngle;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterEnd:
+      case IMarkCommonArcLabelPosition.arcOuterEnd:
         angle = endAngle;
         orthogonalOffsetDirection = 1;
         break;
-      case IPolarMarkLabelPosition.arcInnerMiddle:
+      case IMarkCommonArcLabelPosition.arcInnerMiddle:
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = -1;
         break;
-      case IPolarMarkLabelPosition.arcOuterMiddle:
+      case IMarkCommonArcLabelPosition.arcOuterMiddle:
         angle = (startAngle + endAngle) / 2;
         orthogonalOffsetDirection = 1;
         break;
@@ -94,7 +94,7 @@ export class PolarMarkArcLine extends BaseMarkLine<IPolarMarkLabelPosition> {
 
   protected setLabelPos(): void {
     super.setLabelPos();
-    const { label = {} } = this.attribute as PolarMarkArcLineAttrs;
+    const { label = {} } = this.attribute as MarkArcLineAttrs;
     const { position = 'arcInnerMiddle', autoRotate = true } = label;
     const labelAttr = this.getPositionByDirection(position as any);
     this._label.setAttributes({
@@ -105,7 +105,7 @@ export class PolarMarkArcLine extends BaseMarkLine<IPolarMarkLabelPosition> {
 
   protected createSegment() {
     const { center, radius, startAngle, endAngle, startSymbol, endSymbol, lineStyle, state } = this
-      .attribute as PolarMarkArcLineAttrs;
+      .attribute as MarkArcLineAttrs;
     return new ArcSegment({
       center,
       radius,
@@ -124,7 +124,7 @@ export class PolarMarkArcLine extends BaseMarkLine<IPolarMarkLabelPosition> {
 
   protected setLineAttributes() {
     const { center, radius, startAngle, endAngle, startSymbol, endSymbol, lineStyle } = this
-      .attribute as PolarMarkArcLineAttrs;
+      .attribute as MarkArcLineAttrs;
     if (this._line) {
       (this._line as any).setAttributes({
         center,

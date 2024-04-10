@@ -84,7 +84,7 @@ describe('Marker', () => {
         visible: true,
         refAngle: degreeToRadian(90)
       }
-    });
+    } as any);
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
     expect(markLine.childrenCount).toBe(0);
@@ -110,7 +110,7 @@ describe('Marker', () => {
         visible: true,
         refAngle: degreeToRadian(90)
       }
-    });
+    } as any);
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
     markLine.setAttributes({
@@ -144,7 +144,7 @@ describe('Marker', () => {
           y: 50
         }
       ]
-    });
+    } as any);
     const markAreaContainer = markLine.children[0] as unknown as Group;
     expect(markAreaContainer.childrenCount).toBe(2);
   });

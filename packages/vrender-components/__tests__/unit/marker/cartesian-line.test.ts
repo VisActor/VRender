@@ -115,7 +115,7 @@ describe('Marker', () => {
     stage.render();
     markLine.setAttributes({
       points: []
-    });
+    } as any);
     expect(markLine.childrenCount).toBe(0);
   });
 

@@ -17,7 +17,6 @@ loadContinuousPlayerComponent();
 export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
   declare attribute: ContinuousPlayerAttributes;
 
-  private _dataIndex: number;
   private _activeIndex: number;
 
   protected _alternate: boolean;
@@ -69,7 +68,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
   /**
    * 初始化dataIndex
    */
-  private _initDataIndex = () => {
+  _initDataIndex = () => {
     this._dataIndex = this.attribute.dataIndex ?? this._minIndex;
   };
 

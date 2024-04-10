@@ -20,7 +20,6 @@ loadDiscretePlayerComponent();
 export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> implements IDiscretePlayer {
   declare attribute: DiscretePlayerAttributes;
 
-  private _dataIndex: number;
   private _activeIndex = -1;
 
   protected _alternate: boolean;
@@ -58,7 +57,7 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
   /**
    * 初始化dataIndex
    */
-  private _initDataIndex = () => {
+  _initDataIndex = () => {
     this._dataIndex = isNil(this.attribute.dataIndex)
       ? this._direction === 'default'
         ? this._minIndex

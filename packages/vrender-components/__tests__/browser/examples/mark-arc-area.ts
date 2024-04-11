@@ -5,10 +5,10 @@ import { MarkArcArea } from '../../../src';
 import { degreeToRadian } from '@visactor/vutils';
 
 export function run() {
-  console.log('MarkArea');
+  console.log('MarkArcArea');
 
   const guiObject = {
-    name: 'MarkArea',
+    name: 'MarkArcArea',
     labelPos: 'arcOuterMiddle',
     cornerRadius: 0,
     labelDx: 0,
@@ -93,18 +93,59 @@ export function run() {
   });
 
   const markArea2 = new MarkArcArea({
-    center: {
-      x: 100,
-      y: 300
+    interactive: false,
+    label: {
+      position: 'arcOuterMiddle',
+      textStyle: {
+        fill: '#21252c',
+        stroke: '#fff',
+        lineWidth: 0,
+        fontSize: 14,
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+        textAlign: 'center',
+        textBaseline: 'middle'
+      },
+      padding: [2, 4, 2, 4],
+      panel: {
+        visible: true,
+        cornerRadius: 3,
+        fill: '#f1f2f5',
+        fillOpacity: 0.8
+      },
+      shape: {
+        visible: false
+      }
     },
-    innerRadius: 50,
-    outerRadius: 70,
-    startAngle: 0,
-    endAngle: Math.PI / 2,
+    areaStyle: {
+      fill: 'rgba(217,221,228,0.25)',
+      visible: true
+    },
+    zIndex: 100,
+    points: [
+      {
+        x: 0,
+        y: 0
+      }
+    ],
+    center: {
+      x: 390.5,
+      y: 400
+    },
+    innerRadius: 41.68125,
+    outerRadius: 316.7775,
+    startAngle: 2.0943951023931953,
+    endAngle: 2.0943951023931953,
+    clipInRange: false,
+    state: {},
+    pickable: false,
+    childrenPickable: false,
+    dx: 0,
+    dy: 0,
     ...(styleAttr as any)
   });
 
-  const markAreas = [markArea2];
+  const markAreas = [markArea];
   console.log('markArea', markArea2);
 
   const stage = render(markAreas, 'main');

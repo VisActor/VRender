@@ -35,8 +35,8 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
-import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { getElMap } from './util';
+import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
   name = 'axis';
@@ -150,53 +150,15 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   }
 
   private _onHover = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGraphic;
-    if (target !== this._lastHover && target.name && !isEmpty(target.states)) {
-      target.addState(StateValue.hover, true);
-      traverseGroup(this.axisContainer, (node: IGraphic) => {
-        if (node !== target && node.name && !isEmpty(node.states)) {
-          node.addState(StateValue.hoverReverse, true);
-        }
-      });
-      this._lastHover = target;
-    }
+    this._lastHover = dispatchHoverState(e, this.axisContainer, this._lastHover);
   };
 
   private _onUnHover = (e: FederatedPointerEvent) => {
-    if (this._lastHover) {
-      traverseGroup(this.axisContainer, (node: IGraphic) => {
-        if (node.name && !isEmpty(node.states)) {
-          node.removeState(StateValue.hoverReverse);
-          node.removeState(StateValue.hover);
-        }
-      });
-      this._lastHover = null;
-    }
+    this._lastHover = dispatchUnHoverState(e, this.axisContainer, this._lastHover);
   };
 
   private _onClick = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGraphic;
-    if (this._lastSelect === target && target.hasState(StateValue.selected)) {
-      // 取消选中
-      this._lastSelect = null;
-      traverseGroup(this.axisContainer, (node: IGraphic) => {
-        if (node.name && !isEmpty(node.states)) {
-          node.removeState(StateValue.selectedReverse);
-          node.removeState(StateValue.selected);
-        }
-      });
-      return;
-    }
-
-    if (target.name && !isEmpty(target.states)) {
-      target.addState(StateValue.selected, true);
-      traverseGroup(this.axisContainer, (node: IGraphic) => {
-        if (node !== target && node.name && !isEmpty(node.states)) {
-          node.addState(StateValue.selectedReverse, true);
-        }
-      });
-      this._lastSelect = target;
-    }
+    this._lastSelect = dispatchClickState(e, this.axisContainer, this._lastSelect);
   };
 
   protected _renderInner(container: IGroup) {

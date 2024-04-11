@@ -15,7 +15,7 @@ import { DEFAULT_STATES } from '../constant';
 
 loadMarkArcAreaComponent();
 export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
-  name = 'polarMarkArea';
+  name = 'markArcArea';
   static defaultAttributes = DEFAULT_MARK_ARC_AREA_THEME;
   private _area!: IArc;
 
@@ -31,7 +31,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
     super(options?.skipDefault ? attributes : merge({}, MarkArcArea.defaultAttributes, attributes));
   }
 
-  protected getPositionByDirection(direction: string) {
+  protected getPointAttrByPosition(position: IMarkCommonArcLabelPosition) {
     const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as MarkArcAreaAttrs;
     const { refX = 0, refY = 0 } = label;
     // eslint-disable-next-line max-len
@@ -50,7 +50,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
     // 不偏移: 0, 内: -1, 外: 1
     let orthogonalOffsetDirection;
 
-    switch (direction) {
+    switch (position) {
       case IMarkCommonArcLabelPosition.center:
         radius = (innerRadius + outerRadius) / 2;
         angle = (startAngle + endAngle) / 2;
@@ -111,7 +111,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
     if (this._label && this._area) {
       const { label = {} } = this.attribute as MarkArcAreaAttrs;
       const { position: labelPosition = 'arcInnerMiddle', autoRotate = true } = label;
-      const labelAttr = this.getPositionByDirection(labelPosition);
+      const labelAttr = this.getPointAttrByPosition(labelPosition as IMarkCommonArcLabelPosition);
 
       this._label.setAttributes({
         ...labelAttr.position,

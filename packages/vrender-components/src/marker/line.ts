@@ -4,7 +4,7 @@ import type { MarkLineAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadMarkLineComponent } from './register';
 import type { Point } from '../core/type';
-import { BaseMarkLine } from './base-line';
+import { MarkCommonLine } from './common-line';
 import type { ArcSegment } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -13,8 +13,8 @@ import { DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 
 loadMarkLineComponent();
-export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
-  name = 'MarkLine';
+export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
+  name = 'markLine';
   // eslint-disable-next-line max-len
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME as unknown as MarkLineAttrs;
   protected _line!: Segment | ArcSegment;
@@ -23,52 +23,26 @@ export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabel
     super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));
   }
 
-  protected isValidPoints() {
-    const { points } = this.attribute as MarkLineAttrs;
-    if (!points || points.length < 2) {
-      return false;
-    }
-    let validFlag = true;
-    points.forEach((point: Point | Point[]) => {
-      if ((point as any).length) {
-        (point as Point[]).forEach((p: Point) => {
-          if (!isValidNumber((p as Point).x) || !isValidNumber((p as Point).y)) {
-            validFlag = false;
-            return;
-          }
-        });
-      } else if (!isValidNumber((point as Point).x) || !isValidNumber((point as Point).y)) {
-        validFlag = false;
-        return;
-      }
-    });
-    return validFlag;
-  }
-
-  protected getLabelOffsetByDirection(direction: IMarkLineLabelPosition) {
+  protected getLabelOffsetByPosition(position: IMarkLineLabelPosition) {
     // labelHeight
-    // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
-      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
+      (this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
     );
-    // eslint-disable-next-line max-len
     const labelTextHeight = Math.abs(
-      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
+      (this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
     );
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     // labelWidth
-    // eslint-disable-next-line max-len
     const labelRectWidth = Math.abs(
-      (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
+      (this._label.getTextShape()?.AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
     );
-    // eslint-disable-next-line max-len
     const labelTextWidth = Math.abs(
-      (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
+      (this._label.getBgRect()?.AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
     );
     const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
-    switch (direction) {
+    switch (position) {
       case IMarkLineLabelPosition.start:
         return {
           offsetX: -labelWidth / 2,
@@ -122,19 +96,19 @@ export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabel
     }
   }
 
-  protected getPositionByDirection(direction: IMarkLineLabelPosition) {
+  protected getPointAttrByPosition(position: IMarkLineLabelPosition) {
     const { label = {} } = this.attribute;
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
     const labelAngle = this._line.getEndAngle() ?? 0;
 
-    const totalRefX = refX + this.getLabelOffsetByDirection(direction).offsetX;
-    const totalRefY = refY + this.getLabelOffsetByDirection(direction).offsetY;
+    const totalRefX = refX + this.getLabelOffsetByPosition(position).offsetX;
+    const totalRefY = refY + this.getLabelOffsetByPosition(position).offsetY;
 
     const labelOffsetX = totalRefX * Math.cos(labelAngle) + totalRefY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = totalRefX * Math.sin(labelAngle) + totalRefY * Math.sin(labelAngle - Math.PI / 2);
 
-    if (direction.includes('start') || direction.includes('Start')) {
+    if (position.includes('start') || position.includes('Start')) {
       return {
         position: {
           x: points[0].x + labelOffsetX,
@@ -142,7 +116,7 @@ export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabel
         },
         angle: labelAngle
       };
-    } else if (direction.includes('middle') || direction.includes('Middle')) {
+    } else if (position.includes('middle') || position.includes('Middle')) {
       return {
         position: {
           x: (points[0].x + points[points.length - 1].x) / 2 + labelOffsetX,
@@ -160,15 +134,8 @@ export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabel
     };
   }
 
-  protected setLabelPos(): void {
-    super.setLabelPos();
-    const { label = {} } = this.attribute as MarkLineAttrs;
-    const { position = 'end', autoRotate = true } = label;
-    const labelAttr = this.getPositionByDirection(position as any);
-    this._label.setAttributes({
-      ...labelAttr.position,
-      angle: autoRotate ? labelAttr.angle + (label.refAngle ?? 0) : 0
-    });
+  protected getRotateByAngle(angle: number): number {
+    return angle + (this.attribute.label.refAngle ?? 0);
   }
 
   protected createSegment() {
@@ -203,5 +170,27 @@ export class MarkLine extends BaseMarkLine<ILineGraphicAttribute, IMarkLineLabel
         multiSegment
       });
     }
+  }
+
+  protected isValidPoints() {
+    const { points } = this.attribute as MarkLineAttrs;
+    if (!points || points.length < 2) {
+      return false;
+    }
+    let validFlag = true;
+    points.forEach((point: Point | Point[]) => {
+      if ((point as any).length) {
+        (point as Point[]).forEach((p: Point) => {
+          if (!isValidNumber((p as Point).x) || !isValidNumber((p as Point).y)) {
+            validFlag = false;
+            return;
+          }
+        });
+      } else if (!isValidNumber((point as Point).x) || !isValidNumber((point as Point).y)) {
+        validFlag = false;
+        return;
+      }
+    });
+    return validFlag;
   }
 }

@@ -2,7 +2,7 @@ import { merge } from '@visactor/vutils';
 import { ArcSegment } from '../segment';
 import { loadMarkArcLineComponent } from './register';
 import { DEFAULT_STATES } from '../constant';
-import { BaseMarkLine } from './base-line';
+import { MarkCommonLine } from './common-line';
 import type { ComponentOptions } from '../interface';
 import type { IArcGraphicAttribute } from '@visactor/vrender-core';
 import { IMarkCommonArcLabelPosition } from './type';
@@ -11,8 +11,8 @@ import type { MarkArcLineAttrs } from './type';
 import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
 
 loadMarkArcLineComponent();
-export class MarkArcLine extends BaseMarkLine<IArcGraphicAttribute, IMarkCommonArcLabelPosition> {
-  name = 'polarMarkArcLine';
+export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommonArcLabelPosition> {
+  name = 'markArcLine';
   // eslint-disable-next-line max-len
   static defaultAttributes: Partial<MarkArcLineAttrs> = DEFAULT_MARK_ARC_LINE_THEME as unknown as MarkArcLineAttrs;
   protected _line!: ArcSegment;
@@ -21,20 +21,14 @@ export class MarkArcLine extends BaseMarkLine<IArcGraphicAttribute, IMarkCommonA
     super(options?.skipDefault ? attributes : merge({}, MarkArcLine.defaultAttributes, attributes));
   }
 
-  protected isValidPoints() {
-    return true;
-  }
-
-  protected getPositionByDirection(direction: IMarkCommonArcLabelPosition) {
+  protected getPointAttrByPosition(direction: IMarkCommonArcLabelPosition) {
     const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
     const { refX = 0, refY = 0 } = label;
-    // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
-      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
+      (this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
     );
-    // eslint-disable-next-line max-len
     const labelTextHeight = Math.abs(
-      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
+      (this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
     );
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
@@ -92,15 +86,8 @@ export class MarkArcLine extends BaseMarkLine<IArcGraphicAttribute, IMarkCommonA
     };
   }
 
-  protected setLabelPos(): void {
-    super.setLabelPos();
-    const { label = {} } = this.attribute as MarkArcLineAttrs;
-    const { position = 'arcInnerMiddle', autoRotate = true } = label;
-    const labelAttr = this.getPositionByDirection(position as any);
-    this._label.setAttributes({
-      ...labelAttr.position,
-      angle: autoRotate ? labelAttr.angle - Math.PI / 2 + (label.refAngle ?? 0) : 0
-    });
+  protected getRotateByAngle(angle: number): number {
+    return angle - Math.PI / 2 + (this.attribute.label.refAngle ?? 0);
   }
 
   protected createSegment() {
@@ -136,5 +123,9 @@ export class MarkArcLine extends BaseMarkLine<IArcGraphicAttribute, IMarkCommonA
         lineStyle
       });
     }
+  }
+
+  protected isValidPoints() {
+    return true;
   }
 }

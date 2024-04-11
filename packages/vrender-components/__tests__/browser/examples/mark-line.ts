@@ -17,6 +17,8 @@ export function run() {
   };
 
   const styleAttr = {
+    select: true,
+    hover: true,
     state: {
       line: {
         hover: {
@@ -26,7 +28,7 @@ export function run() {
           stroke: 'blue'
         }
       },
-      startSymbol: {
+      lineStartSymbol: {
         // hover: {
         //   fill: 'red'
         // },
@@ -82,7 +84,7 @@ export function run() {
     },
     label: {
       text: 'aaa',
-      visible: true,
+      visible: false,
       textStyle: {
         fill: 'red',
         fontSize: 20,
@@ -96,7 +98,7 @@ export function run() {
         }
       },
       panel: {
-        visible: true,
+        visible: false,
         state: {
           hover: {
             fill: 'red'
@@ -113,9 +115,7 @@ export function run() {
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
     clipInRange: false,
-    interactive: true,
-    hover: true,
-    select: true
+    interactive: true
     // limitRect: {
     //   x: 50,
     //   y: 50,
@@ -169,22 +169,22 @@ export function run() {
   console.log('markline', markLine);
 
   const stage = render(markLines, 'main');
-  markLine.setAttributes({
-    points: [
-      {
-        x: 100,
-        y: 250
-      },
-      {
-        x: 300,
-        y: 150
-      }
-      // {
-      //   x: 500,
-      //   y: 350
-      // }
-    ]
-  });
+  // markLine.setAttributes({
+  //   points: [
+  //     {
+  //       x: 100,
+  //       y: 250
+  //     },
+  //     {
+  //       x: 300,
+  //       y: 150
+  //     }
+  //     // {
+  //     //   x: 500,
+  //     //   y: 350
+  //     // }
+  //   ]
+  // });
   console.log('markLine', markLine);
 
   // gui

@@ -5,10 +5,10 @@ import render from '../../util/render';
 import { MarkArcLine } from '../../../src';
 
 export function run() {
-  console.log('MarkLine');
+  console.log('MarkArcLine');
 
   const guiObject = {
-    name: 'MarkLine',
+    name: 'MarkArcLine',
     labelPos: 'arcOuterMiddle',
     labelDx: 0,
     labelDy: 0,
@@ -28,52 +28,15 @@ export function run() {
           stroke: 'blue'
         }
       },
-      startSymbol: {
-        // hover: {
-        //   fill: 'red'
-        // },
-        selected: {
-          fill: 'blue'
-        }
-      }
-      // endSymbol: {
-      //   hover: {
-      //     fill: 'red'
-      //   },
-      //   selected: {
-      //     fill: 'green'
-      //   }
-      // }
-    },
-    lineStyle: {
-      curveType: 'monotoneX',
-      state: {
-        hover: {
-          stroke: 'red'
-        },
-        selected: {
-          stroke: 'blue'
-        }
-      }
-    },
-    startSymbol: {
-      visible: true,
-      state: {
+      lineStartSymbol: {
         hover: {
           fill: 'red'
         },
         selected: {
           fill: 'blue'
         }
-      }
-    },
-    endSymbol: {
-      //  symbolType: 'triangleLeft',
-      // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
-      size: 20,
-      autoRotate: true,
-      // refAngle: degreeToRadian(-90)
-      state: {
+      },
+      lineEndSymbol: {
         hover: {
           fill: 'red'
         },
@@ -82,32 +45,29 @@ export function run() {
         }
       }
     },
+    lineStyle: {
+      curveType: 'monotoneX'
+    },
+    startSymbol: {
+      visible: true
+    },
+    endSymbol: {
+      //  symbolType: 'triangleLeft',
+      // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
+      size: 20,
+      autoRotate: true
+      // refAngle: degreeToRadian(-90)
+    },
     label: {
       text: 'aaa',
       // position: 'insideStartTop',
       visible: true,
       textStyle: {
         fill: 'red',
-        fontSize: 20,
-        state: {
-          hover: {
-            fill: 'green'
-          },
-          selected: {
-            fill: 'blue'
-          }
-        }
+        fontSize: 20
       },
       panel: {
-        visible: true,
-        state: {
-          hover: {
-            fill: 'red'
-          },
-          selected: {
-            fill: 'blue'
-          }
-        }
+        visible: true
       },
       position: guiObject.labelPos,
       autoRotate: guiObject.labelAutoRotate,

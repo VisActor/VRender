@@ -7,7 +7,7 @@ import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_THEME } from './config';
-import type { MarkAreaAttrs } from './type';
+import type { IMarkAreaLabelPosition, MarkAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
@@ -31,52 +31,48 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     super(options?.skipDefault ? attributes : merge({}, MarkArea.defaultAttributes, attributes));
   }
 
-  protected getPositionByDirection(direction: string) {
+  protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
     // labelHeight
-    // eslint-disable-next-line max-len
     const labelRectHeight = Math.abs(
       (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
     );
-    // eslint-disable-next-line max-len
     const labelTextHeight = Math.abs(
       (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
     );
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     // labelWidth
-    // eslint-disable-next-line max-len
     const labelRectWidth = Math.abs(
       (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
     );
-    // eslint-disable-next-line max-len
     const labelTextWidth = Math.abs(
       (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
     );
     const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
-    if (direction.includes('left') || direction.includes('Left')) {
+    if (position.includes('left') || position.includes('Left')) {
       return {
-        x: x1 + (direction.includes('inside') ? 0.5 : -0.5) * labelWidth,
+        x: x1 + (position.includes('inside') ? 0.5 : -0.5) * labelWidth,
         y: (y1 + y2) / 2
       };
     }
-    if (direction.includes('right') || direction.includes('Right')) {
+    if (position.includes('right') || position.includes('Right')) {
       return {
-        x: x2 + (direction.includes('inside') ? -0.5 : 0.5) * labelWidth,
+        x: x2 + (position.includes('inside') ? -0.5 : 0.5) * labelWidth,
         y: (y1 + y2) / 2
       };
     }
-    if (direction.includes('top') || direction.includes('Top')) {
+    if (position.includes('top') || position.includes('Top')) {
       return {
         x: (x1 + x2) / 2,
-        y: y1 + (direction.includes('inside') ? 0.5 : -0.5) * labelHeight
+        y: y1 + (position.includes('inside') ? 0.5 : -0.5) * labelHeight
       };
     }
-    if (direction.includes('bottom') || direction.includes('Bottom')) {
+    if (position.includes('bottom') || position.includes('Bottom')) {
       return {
         x: (x1 + x2) / 2,
-        y: y2 + (direction.includes('inside') ? -0.5 : 0.5) * labelHeight
+        y: y2 + (position.includes('inside') ? -0.5 : 0.5) * labelHeight
       };
     }
 
@@ -90,7 +86,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
     if (this._label && this._area) {
       const { label = {} } = this.attribute as MarkAreaAttrs;
       const labelPosition = label.position ?? 'middle';
-      const labelPoint = this.getPositionByDirection(labelPosition);
+      const labelPoint = this.getPointAttrByPosition(labelPosition as IMarkAreaLabelPosition);
       this._label.setAttributes({
         ...labelPoint
       });
@@ -114,7 +110,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
       ...areaStyle
     });
     area.states = merge({}, DEFAULT_STATES, state?.area);
-    area.name = 'mark-polygon-polygon';
+    area.name = 'mark-area-polygon';
     this._area = area;
     container.add(area);
 
@@ -125,7 +121,7 @@ export class MarkArea extends Marker<MarkAreaAttrs> {
         text: merge({}, DEFAULT_STATES, state?.label)
       }
     });
-    markLabel.name = 'mark-polygon-label';
+    markLabel.name = 'mark-area-label';
     this._label = markLabel;
     container.add(markLabel as unknown as INode);
     this.setLabelPos();

@@ -7,6 +7,7 @@ import type { MarkerAttrs } from './type';
 import { StateValue } from '../constant';
 import { traverseGroup } from '../util';
 import { isEmpty } from '@visactor/vutils';
+import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
 
 export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
   name = 'marker';
@@ -45,54 +46,22 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
     }
   }
 
+  private _releaseEvent() {
+    this._container?.removeEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
+    this._container?.removeEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
+    this._container?.removeEventListener('pointerdown', this._onClick as EventListenerOrEventListenerObject);
+  }
+
   private _onHover = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGraphic;
-    if (target !== this._lastHover && target.name && !isEmpty(target.states)) {
-      target.addState(StateValue.hover, true);
-      traverseGroup(this._container, (node: IGraphic) => {
-        if (node !== target && node.name && !isEmpty(node.states)) {
-          node.addState(StateValue.hoverReverse, true);
-        }
-      });
-      this._lastHover = target;
-    }
+    this._lastHover = dispatchHoverState(e, this._container, this._lastHover);
   };
 
   private _onUnHover = (e: FederatedPointerEvent) => {
-    if (this._lastHover) {
-      traverseGroup(this._container, (node: IGraphic) => {
-        if (node.name && !isEmpty(node.states)) {
-          node.removeState(StateValue.hoverReverse);
-          node.removeState(StateValue.hover);
-        }
-      });
-      this._lastHover = null;
-    }
+    this._lastHover = dispatchUnHoverState(e, this._container, this._lastHover);
   };
 
   private _onClick = (e: FederatedPointerEvent) => {
-    const target = e.target as unknown as IGraphic;
-    if (this._lastSelect === target && target.hasState(StateValue.selected)) {
-      // 取消选中
-      this._lastSelect = null;
-      traverseGroup(this._container, (node: IGraphic) => {
-        if (node.name && !isEmpty(node.states)) {
-          node.removeState(StateValue.selectedReverse);
-          node.removeState(StateValue.selected);
-        }
-      });
-      return;
-    }
-
-    if (target.name && !isEmpty(target.states)) {
-      target.addState(StateValue.selected, true);
-      traverseGroup(this._container, (node: IGraphic) => {
-        if (node !== target && node.name && !isEmpty(node.states)) {
-          node.addState(StateValue.selectedReverse, true);
-        }
-      });
-      this._lastSelect = target;
-    }
+    this._lastSelect = dispatchClickState(e, this._container, this._lastSelect);
   };
 
   private _initContainer() {
@@ -161,14 +130,14 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       this.removeAllChild(true);
     }
 
+    // 先把之前的event都release掉，否则会重复触发
+    this._releaseEvent();
     this._bindEvent();
   }
 
   release(): void {
     super.release();
-    this._container?.removeEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
-    this._container?.removeEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
-    this._container?.removeEventListener('pointerdown', this._onClick as EventListenerOrEventListenerObject);
+    this._releaseEvent();
     this._container = null;
   }
 }

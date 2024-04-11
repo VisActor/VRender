@@ -27,6 +27,7 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
       innerRadius: 3,
       startAngle: 0,
       endAngle: 2 * Math.PI,
+      lineWidth: 1,
       fill: '#fff',
       stroke: 'rgb(229,230,235)',
       disableFill: 'rgb(242,243,245)',
@@ -100,14 +101,15 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   }
 
   layout() {
-    const circleHeight = this.attribute.circle.outerRadius * 2;
+    const circleHeight = (this.attribute.circle.outerRadius + this.attribute.circle.lineWidth) * 2;
     const textHeight = this._text.AABBBounds.height();
     const maxHeight = Math.max(circleHeight, textHeight);
-    const circleY = maxHeight / 2 - circleHeight / 2 + this.attribute.circle.outerRadius;
+    const circleY =
+      maxHeight / 2 - circleHeight / 2 + this.attribute.circle.outerRadius + this.attribute.circle.lineWidth;
     const textY = maxHeight / 2 - textHeight / 2;
 
-    const circleWidth = this.attribute.circle.outerRadius * 2;
-    const circleX = this.attribute.circle.outerRadius;
+    const circleWidth = (this.attribute.circle.outerRadius + this.attribute.circle.lineWidth) * 2;
+    const circleX = this.attribute.circle.outerRadius + this.attribute.circle.lineWidth;
     const textX = circleWidth + this.attribute.spaceBetweenTextAndIcon;
 
     this._circle.setAttributes({
@@ -131,5 +133,7 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
       eventType: 'radio_checked',
       target: this
     });
+
+    this.stage.renderNextFrame();
   };
 }

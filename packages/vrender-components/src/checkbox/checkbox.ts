@@ -189,5 +189,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       eventType: 'checkbox_state_change',
       checked: this.attribute.checked
     });
+
+    this.stage.renderNextFrame();
   };
 }

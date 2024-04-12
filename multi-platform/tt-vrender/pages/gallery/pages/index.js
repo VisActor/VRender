@@ -34071,14 +34071,10 @@
                     _context.next = 3;
                     return new Promise(function (resolve) {
                       var data = tt.createSelectorQuery();
-                      component && (data = data["in"](component)), data.select("#".concat(id)).fields({
-                        node: !0,
-                        size: !0
-                      }).exec(function (res) {
-                        if (!res[0]) return;
+                      component && (data = data["in"](component)), data.select("#".concat(id)).node().exec(function (res) {
                         var canvas = res[0].node,
-                          width = res[0].width,
-                          height = res[0].height;
+                          width = canvas.width,
+                          height = canvas.height;
                         canvas.width = width * dpr, canvas.height = height * dpr, canvasMap.set(id, canvas), i >= freeCanvasIdx && freeCanvasList.push(canvas), resolve(null);
                       });
                     });

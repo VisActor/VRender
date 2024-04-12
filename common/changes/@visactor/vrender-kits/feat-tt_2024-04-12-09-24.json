@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "feat: support tt env, closed #1129",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

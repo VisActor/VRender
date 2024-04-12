@@ -138,24 +138,33 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
     return true;
   }
 
-  createDom(params: CreateDOMParamsType): HTMLElement | null {
-    const { tagName = 'div', width, height, style, parent } = params;
-    const element = document.createElement(tagName);
+  updateDom(dom: HTMLElement, params: CreateDOMParamsType): boolean {
+    const { width, height, style } = params;
+
     if (style) {
       if (isString(style)) {
-        element.setAttribute('style', style);
+        dom.setAttribute('style', style);
       } else {
         Object.keys(style).forEach(k => {
-          element.setAttribute(k, style[k]);
+          dom.setAttribute(k, style[k]);
         });
       }
     }
     if (width != null) {
-      element.style.width = `${width}px`;
+      dom.style.width = `${width}px`;
     }
     if (height != null) {
-      element.style.height = `${height}px`;
+      dom.style.height = `${height}px`;
     }
+
+    return true;
+  }
+
+  createDom(params: CreateDOMParamsType): HTMLElement | null {
+    const { tagName = 'div', parent } = params;
+    const element = document.createElement(tagName);
+
+    this.updateDom(element, params);
 
     if (parent) {
       const pd = isString(parent) ? this.getElementById(parent) : parent;

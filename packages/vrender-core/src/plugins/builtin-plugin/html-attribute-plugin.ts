@@ -1,5 +1,15 @@
 import { Generator } from '../../common/generator';
-import type { IGraphic, IPlugin, IPluginService, IRenderService, IDrawContext, IGroup } from '../../interface';
+import type {
+  IGraphic,
+  IPlugin,
+  IPluginService,
+  IRenderService,
+  IGroup,
+  IStage,
+  CreateDOMParamsType,
+  CommonDomOptions,
+  SimpleDomStyleOptions
+} from '../../interface';
 import { application } from '../../application';
 import { DefaultAttribute } from '../../graphic';
 
@@ -37,6 +47,74 @@ export class HtmlAttributePlugin implements IPlugin {
     this.release();
   }
 
+  getWrapContainer(stage: IStage, userContainer?: string | HTMLElement | null, domParams?: CreateDOMParamsType) {
+    let nativeContainer;
+    if (userContainer) {
+      if (typeof userContainer === 'string') {
+        nativeContainer = application.global.getElementById(userContainer);
+      } else {
+        nativeContainer = userContainer;
+      }
+    } else {
+      nativeContainer = stage.window.getContainer();
+    }
+    // 创建wrapGroup
+    return {
+      wrapContainer: application.global.createDom({ tagName: 'div', parent: nativeContainer, ...domParams }),
+      nativeContainer
+    };
+  }
+
+  updateStyleOfWrapContainer(
+    graphic: IGraphic,
+    stage: IStage,
+    wrapContainer: HTMLElement,
+    nativeContainer: HTMLElement,
+    options: SimpleDomStyleOptions & CommonDomOptions
+  ) {
+    const { pointerEvents, anchorType = 'boundsLeftTop' } = options;
+
+    application.global.updateDom(wrapContainer, options);
+    // 事件穿透
+    wrapContainer.style.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
+    // 定位wrapGroup
+    if (!wrapContainer.style.position) {
+      wrapContainer.style.position = 'absolute';
+      nativeContainer.style.position = 'relative';
+    }
+    let left: number = 0;
+    let top: number = 0;
+    const b = graphic.globalAABBBounds;
+    if (anchorType === 'position' || b.empty()) {
+      const matrix = graphic.globalTransMatrix;
+      left = matrix.e;
+      top = matrix.f;
+    } else {
+      left = b.x1;
+      top = b.y1;
+    }
+    // 查看wrapGroup的位置
+    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
+    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
+    const windowTL = stage.window.getTopLeft(false);
+    const offsetX = left + windowTL.left - containerTL.left;
+    const offsetTop = top + windowTL.top - containerTL.top;
+    // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
+    wrapContainer.style.left = `${offsetX}px`;
+    wrapContainer.style.top = `${offsetTop}px`;
+  }
+
+  protected clearCacheContainer() {
+    // 删掉这次不存在的节点
+    this.lastDomContainerSet.forEach(item => {
+      if (!this.currentDomContainerSet.has(item)) {
+        application.global.removeDom(item);
+      }
+    });
+    this.lastDomContainerSet = new Set(this.currentDomContainerSet);
+    this.currentDomContainerSet.clear();
+  }
+
   protected drawHTML(renderService: IRenderService) {
     if (application.global.env === 'browser') {
       renderService.renderTreeRoots
@@ -46,14 +124,8 @@ export class HtmlAttributePlugin implements IPlugin {
         .forEach(group => {
           this.renderGroupHTML(group as IGroup);
         });
-      // 删掉这次不存在的节点
-      this.lastDomContainerSet.forEach(item => {
-        if (!this.currentDomContainerSet.has(item)) {
-          item.parentElement && item.parentElement.removeChild(item);
-        }
-      });
-      this.lastDomContainerSet = new Set(this.currentDomContainerSet);
-      this.currentDomContainerSet.clear();
+
+      this.clearCacheContainer();
     }
   }
 
@@ -72,7 +144,7 @@ export class HtmlAttributePlugin implements IPlugin {
     if (graphic.bindDom && graphic.bindDom.size) {
       // 删除dom
       graphic.bindDom.forEach(item => {
-        item.dom && item.dom.parentElement.removeChild(item.dom);
+        application.global.removeDom(item.dom);
       });
       graphic.bindDom.clear();
     }
@@ -84,7 +156,7 @@ export class HtmlAttributePlugin implements IPlugin {
       if (graphic.bindDom && graphic.bindDom.size) {
         // 删除dom
         graphic.bindDom.forEach(item => {
-          item.dom && item.dom.parentElement.removeChild(item.dom);
+          application.global.removeDom(item.dom);
         });
         graphic.bindDom.clear();
       }
@@ -94,7 +166,7 @@ export class HtmlAttributePlugin implements IPlugin {
     if (!stage) {
       return;
     }
-    const { dom, container, width, height, style, anchorType = 'boundsLeftTop', pointerEvents } = html;
+    const { dom, container, width, height, style } = html;
     if (!graphic.bindDom) {
       graphic.bindDom = new Map();
     }
@@ -123,53 +195,29 @@ export class HtmlAttributePlugin implements IPlugin {
         nativeDom = dom;
       }
 
-      const _container =
-        container || (stage.params.enableHtmlAttribute === true ? null : stage.params.enableHtmlAttribute);
-      if (_container) {
-        if (typeof _container === 'string') {
-          nativeContainer = application.global.getElementById(_container);
-        } else {
-          nativeContainer = _container;
-        }
-      } else {
-        // nativeContainer = application.global.getRootElement();
-        nativeContainer = graphic.stage.window.getContainer();
-      }
       // 创建wrapGroup
-      wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
+      const res = this.getWrapContainer(
+        stage,
+        container ||
+          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement)),
+        {
+          style,
+          width,
+          height
+        }
+      );
+      wrapGroup = res.wrapContainer;
+      nativeContainer = res.nativeContainer;
       if (wrapGroup) {
         wrapGroup.appendChild(nativeDom);
         graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
       }
     }
 
-    // 事件穿透
-    wrapGroup.style.pointerEvents = pointerEvents || 'none';
-    // 定位wrapGroup
-    if (!wrapGroup.style.position) {
-      wrapGroup.style.position = 'absolute';
-      nativeContainer.style.position = 'relative';
+    if (wrapGroup) {
+      this.updateStyleOfWrapContainer(graphic, stage, wrapGroup, nativeContainer, html);
     }
-    let left: number = 0;
-    let top: number = 0;
-    const b = graphic.globalAABBBounds;
-    if (anchorType === 'position' || b.empty()) {
-      const matrix = graphic.globalTransMatrix;
-      left = matrix.e;
-      top = matrix.f;
-    } else {
-      left = b.x1;
-      top = b.y1;
-    }
-    // 查看wrapGroup的位置
-    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
-    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
-    const windowTL = stage.window.getTopLeft(false);
-    const offsetX = left + windowTL.left - containerTL.left;
-    const offsetTop = top + windowTL.top - containerTL.top;
-    // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
-    wrapGroup.style.left = `${offsetX}px`;
-    wrapGroup.style.top = `${offsetTop}px`;
+
     this.currentDomContainerSet.add(wrapGroup);
   }
 

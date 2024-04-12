@@ -185,6 +185,20 @@ export type IBackgroundConfig = {
 
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
+export interface SimpleDomStyleOptions {
+  width: number; // 容器的宽度
+  height: number; // 容器的高度
+  style?: string | Record<string, any>; // 容器的样式
+}
+
+export interface CommonDomOptions {
+  id?: string;
+  container: string | HTMLElement | null; // id或者dom
+  visible?: boolean;
+  pointerEvents?: boolean | string;
+  anchorType?: 'position' | 'boundsLeftTop';
+}
+
 export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
@@ -216,26 +230,18 @@ export type IGraphicStyle = ILayout &
     cursor: Cursor | null; // 鼠标样式
     renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string
-    html: {
-      dom: string | HTMLElement; // dom字符串或者dom
-      container: string | HTMLElement | null; // id或者dom
-      width: number; // 容器的宽度
-      height: number; // 容器的高度
-      style?: string | Record<string, any>; // 容器的样式
-      visible?: boolean;
-      pointerEvents?: boolean;
-      anchorType?: 'position' | 'boundsLeftTop';
-    } | null;
-    react: {
-      element: any; // react场景节点
-      container: string | HTMLElement | null; // id或者dom
-      width: number; // 容器的宽度
-      height: number; // 容器的高度
-      style?: string | Record<string, any>; // 容器的样式
-      visible?: boolean;
-      pointerEvents?: boolean;
-      anchorType?: 'position' | 'boundsLeftTop';
-    } | null;
+    html:
+      | ({
+          dom: string | HTMLElement; // dom字符串或者dom
+        } & SimpleDomStyleOptions &
+          CommonDomOptions)
+      | null;
+    react:
+      | ({
+          element: any; // react场景节点
+        } & SimpleDomStyleOptions &
+          CommonDomOptions)
+      | null;
   };
 
 export type IPickStyle = {

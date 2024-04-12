@@ -13,6 +13,8 @@ import type {
 import { application } from '../../application';
 import { DefaultAttribute, getTheme } from '../../graphic';
 import { textAttributesToStyle } from '../../common/text';
+import { isFunction, isObject, isString } from '@visactor/vutils';
+import { styleStringToObject } from '../../common/utils';
 
 export class HtmlAttributePlugin implements IPlugin {
   name: string = 'HtmlAttributePlugin';
@@ -80,14 +82,10 @@ export class HtmlAttributePlugin implements IPlugin {
     options: SimpleDomStyleOptions & CommonDomOptions
   ) {
     const { pointerEvents, anchorType = 'boundsLeftTop' } = options;
-
-    // 解析图形上的配置，转换为style，优先级最低，可以被用户配置覆盖
-    application.global.updateDom(wrapContainer, { style: this.parseDefaultStyleFromGraphic(graphic) });
-    // 更新样式
-    application.global.updateDom(wrapContainer, options);
+    let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
     // 事件穿透
-    wrapContainer.style.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
+    calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';
@@ -111,8 +109,27 @@ export class HtmlAttributePlugin implements IPlugin {
     const offsetX = left + windowTL.left - containerTL.left;
     const offsetTop = top + windowTL.top - containerTL.top;
     // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
-    wrapContainer.style.left = `${offsetX}px`;
-    wrapContainer.style.top = `${offsetTop}px`;
+    calculateStyle.left = `${offsetX}px`;
+    calculateStyle.top = `${offsetTop}px`;
+
+    if (isFunction(options.style)) {
+      const userStyle = options.style({ top: offsetTop, left: offsetX }, graphic, wrapContainer);
+
+      if (userStyle) {
+        calculateStyle = { ...calculateStyle, userStyle };
+      }
+    } else if (isObject(options.style)) {
+      calculateStyle = { ...calculateStyle, ...options.style };
+    } else if (isString(options.style) && options.style) {
+      calculateStyle = { ...calculateStyle, ...styleStringToObject(options.style as string) };
+    }
+
+    // 更新样式
+    application.global.updateDom(wrapContainer, {
+      width: options.width,
+      height: options.width,
+      style: calculateStyle
+    });
   }
 
   protected clearCacheContainer() {

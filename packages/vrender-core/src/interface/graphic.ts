@@ -188,7 +188,10 @@ type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgrou
 export interface SimpleDomStyleOptions {
   width: number; // 容器的宽度
   height: number; // 容器的高度
-  style?: string | Record<string, any>; // 容器的样式
+  style?:
+    | string
+    | Record<string, any>
+    | ((pos: { top: number; left: number }, graphic: IGraphic, wrapContainer: HTMLElement) => Record<string, any>); // 容器的样式
 }
 
 export interface CommonDomOptions {

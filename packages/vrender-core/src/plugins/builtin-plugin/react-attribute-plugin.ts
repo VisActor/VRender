@@ -83,12 +83,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       const { wrapContainer, nativeContainer } = this.getWrapContainer(
         stage,
         container ||
-          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement)),
-        {
-          style,
-          width,
-          height
-        }
+          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement))
       );
 
       if (wrapContainer) {

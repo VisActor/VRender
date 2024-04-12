@@ -11,7 +11,8 @@ import type {
   SimpleDomStyleOptions
 } from '../../interface';
 import { application } from '../../application';
-import { DefaultAttribute } from '../../graphic';
+import { DefaultAttribute, getTheme } from '../../graphic';
+import { textAttributesToStyle } from '../../common/text';
 
 export class HtmlAttributePlugin implements IPlugin {
   name: string = 'HtmlAttributePlugin';
@@ -65,6 +66,12 @@ export class HtmlAttributePlugin implements IPlugin {
     };
   }
 
+  parseDefaultStyleFromGraphic(graphic: IGraphic) {
+    const attrs: any = graphic.type === 'text' && graphic.attribute ? graphic.attribute : getTheme(graphic).text;
+
+    return textAttributesToStyle(attrs);
+  }
+
   updateStyleOfWrapContainer(
     graphic: IGraphic,
     stage: IStage,
@@ -74,7 +81,11 @@ export class HtmlAttributePlugin implements IPlugin {
   ) {
     const { pointerEvents, anchorType = 'boundsLeftTop' } = options;
 
+    // 解析图形上的配置，转换为style，优先级最低，可以被用户配置覆盖
+    application.global.updateDom(wrapContainer, { style: this.parseDefaultStyleFromGraphic(graphic) });
+    // 更新样式
     application.global.updateDom(wrapContainer, options);
+
     // 事件穿透
     wrapContainer.style.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
     // 定位wrapGroup
@@ -199,12 +210,7 @@ export class HtmlAttributePlugin implements IPlugin {
       const res = this.getWrapContainer(
         stage,
         container ||
-          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement)),
-        {
-          style,
-          width,
-          height
-        }
+          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement))
       );
       wrapGroup = res.wrapContainer;
       nativeContainer = res.nativeContainer;

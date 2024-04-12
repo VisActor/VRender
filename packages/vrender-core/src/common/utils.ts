@@ -368,3 +368,7 @@ export const calculateLineHeight = (lineHeight: string | number, fontSize: numbe
   }
   return lineHeight as number;
 };
+
+export const lowerCamelCaseToMiddle = (str: string) => {
+  return str.replace(/([A-Z])/g, '-$1').toLowerCase();
+};

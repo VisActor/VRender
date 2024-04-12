@@ -146,7 +146,7 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
         dom.setAttribute('style', style);
       } else {
         Object.keys(style).forEach(k => {
-          dom.setAttribute(k, style[k]);
+          dom.style[k] = style[k];
         });
       }
     }

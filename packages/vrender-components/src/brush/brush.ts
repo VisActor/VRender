@@ -138,13 +138,15 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     e.preventDefault();
     const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
+      if (this._operatingMask?._AABBBounds.empty()) {
+        this._dispatchEvent(IOperateType.brushClear, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
       this._container.incrementalClearChild();
       this._brushMaskAABBBoundsDict = {};
-      this._dispatchEvent(IOperateType.brushClear, {
-        operateMask: this._operatingMask as any,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
-        event: e
-      });
     } else {
       if (this._activeDrawState) {
         this._dispatchEvent(IOperateType.drawEnd, {

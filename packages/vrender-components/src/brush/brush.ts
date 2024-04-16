@@ -229,11 +229,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
-    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
     const { sizeThreshold = DEFAULT_SIZE_THRESHOLD, brushType } = this.attribute as BrushAttributes;
 
     const cacheLength = this._cacheDrawPoints.length;
-    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
     if (cacheLength > 0) {
@@ -251,12 +249,22 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     // 更新mask形状
     const maskPoints = this._computeMaskPoints();
     this._operatingMask.setAttribute('points', maskPoints);
-    this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._dispatchEvent(IOperateType.drawing, {
-      operateMask: this._operatingMask as any,
-      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
-      event: e
-    });
+
+    // 更新形状之后再判断是否需要正在绘制
+    // if not, 则_isDrawedBeforeEnd false
+    // then: 1. 不暴露drawing状态    2. 在brushEnd时该形状会被清空
+    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
+    this._isDrawedBeforeEnd =
+      !this._operatingMask._AABBBounds.empty() &&
+      !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
+    if (this._isDrawedBeforeEnd) {
+      this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
+      this._dispatchEvent(IOperateType.drawing, {
+        operateMask: this._operatingMask as any,
+        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+        event: e
+      });
+    }
   }
 
   /**

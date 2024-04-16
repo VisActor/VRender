@@ -30,8 +30,8 @@ import { FederatedEvent, CustomEvent } from './federated-event';
  */
 
 export const EventTarget: Omit<IEventTarget, Exclude<keyof INode, 'dispatchEvent'>> = {
-  pickable: true,
-  visible: true,
+  // pickable: true,
+  // visible: true,
   // attribute: {},
 
   /**

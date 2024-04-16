@@ -167,18 +167,11 @@ export interface IFederatedPointerEvent extends IFederatedMouseEvent {
  */
 
 export interface IEventTarget extends INode {
-  /** Whether this event target should fire UI events. */
-  pickable: boolean;
   /** The parent of this event target. */
   parent: IEventTarget | null;
-  /** Whether this event target should be visible. */
-  visible: boolean;
 
   /** The children of this event target. */
   children?: IEventTarget[];
-
-  /** Whether this event target has any children that need UI events. This can be used optimize event propagation. */
-  childrenPickable?: boolean;
 
   attribute?: Partial<IGraphicAttribute>;
 

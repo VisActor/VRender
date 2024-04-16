@@ -49,11 +49,11 @@ export class DragNDrop implements IEventExtension {
 
         if (!isRoot) {
           // 获取当前坐标系的元素，目前认为所有的元素都是可以 dropable 的
-          (target as IEventTarget).pickable = false;
+          (target as IEventTarget).attribute.pickable = false;
           // @ts-ignore
           const clickResult = rootNode?.pick(moveEvent.global.x, moveEvent.global.y);
           const elemBelow = clickResult.graphic;
-          (target as IEventTarget).pickable = true;
+          (target as IEventTarget).attribute.pickable = true;
 
           if (currentDroppable !== elemBelow) {
             if (currentDroppable) {

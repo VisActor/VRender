@@ -138,6 +138,10 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     e.preventDefault();
     const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
+      // _isDrawedBeforeEnd有两种情况:
+      // 1. 没有绘制mask
+      // 2. 绘制了mask但没有超过阈值
+      // 只有第2种情况才会触发clear, 可以理解为双击才触发clear
       if (this._operatingMask?._AABBBounds.empty()) {
         this._dispatchEvent(IOperateType.brushClear, {
           operateMask: this._operatingMask as any,

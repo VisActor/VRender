@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix for dragenter triggering error in drag event",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

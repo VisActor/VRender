@@ -106,7 +106,7 @@ export type IMarkRef = {
   refAngle?: number;
 };
 
-export type MarkerAttrs = IGroupGraphicAttribute & {
+export type MarkerAttrs<AnimationType> = IGroupGraphicAttribute & {
   type?: 'line' | 'arc-line' | 'area' | 'arc-area' | 'point';
   /**
    * 是否支持交互
@@ -142,7 +142,7 @@ export type MarkerAttrs = IGroupGraphicAttribute & {
     width: number;
     height: number;
   };
-};
+} & BaseMarkerAnimation<AnimationType>;
 
 /** animation type */
 export type BaseMarkerAnimation<T> = {
@@ -164,10 +164,13 @@ export type CommonMarkAreaAnimationType = 'fadeIn';
 export type MarkPointAnimationType = 'callIn' | 'fadeIn';
 
 export type MarkerExitAnimation = {
+  type: 'fadeOut';
   duration?: number;
   delay?: number;
   easing?: EasingType;
 };
+
+export type MarkerAnimationState = 'enter' | 'update' | 'exit';
 
 /** state type */
 export type CommonMarkLineState<LineAttr> = {
@@ -196,29 +199,31 @@ export type MarkPointState = {
   customMark?: State<Partial<IGroupGraphicAttribute>>;
 };
 
-export type CommonMarkLineAttrs<LineAttr, LineLabelPosition> = MarkerAttrs &
-  Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
-    /**
-     * 标签
-     */
-    label?: {
+export type CommonMarkLineAttrs<LineAttr, LineLabelPosition, CommonMarkLineAnimationType> =
+  MarkerAttrs<CommonMarkLineAnimationType> &
+    Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
       /**
-       * label 相对line的位置
+       * 标签
        */
-      position?: LineLabelPosition;
-      /**
-       * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
-       * @default false
-       */
-      confine?: boolean;
-    } & IMarkRef &
-      IMarkLabel;
-    state?: CommonMarkLineState<LineAttr>;
-  } & BaseMarkerAnimation<CommonMarkLineAnimationType>;
+      label?: {
+        /**
+         * label 相对line的位置
+         */
+        position?: LineLabelPosition;
+        /**
+         * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+         * @default false
+         */
+        confine?: boolean;
+      } & IMarkRef &
+        IMarkLabel;
+      state?: CommonMarkLineState<LineAttr>;
+    };
 
 export type MarkLineAttrs = CommonMarkLineAttrs<
   ILineGraphicWithCornerRadius | ILineGraphicAttribute[],
-  keyof typeof IMarkLineLabelPosition
+  keyof typeof IMarkLineLabelPosition,
+  CommonMarkLineAnimationType
 > & {
   type?: 'line';
   /**
@@ -238,7 +243,11 @@ export type MarkLineAttrs = CommonMarkLineAttrs<
   lineStyle?: ILineGraphicAttribute;
 };
 
-export type MarkArcLineAttrs = CommonMarkLineAttrs<IArcGraphicAttribute, keyof typeof IMarkCommonArcLabelPosition> & {
+export type MarkArcLineAttrs = CommonMarkLineAttrs<
+  IArcGraphicAttribute,
+  keyof typeof IMarkCommonArcLabelPosition,
+  CommonMarkLineAnimationType
+> & {
   type?: 'arc-line';
   /**
    * 弧线中心位置
@@ -262,7 +271,7 @@ export type MarkArcLineAttrs = CommonMarkLineAttrs<IArcGraphicAttribute, keyof t
   lineStyle?: IArcGraphicAttribute;
 };
 
-export type MarkAreaAttrs = MarkerAttrs & {
+export type MarkAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   type?: 'area';
   /**
    * 构成area的点
@@ -285,9 +294,9 @@ export type MarkAreaAttrs = MarkerAttrs & {
   areaStyle?: IPolygonAttribute;
 
   state?: CommonMarkAreaState<IPolygonGraphicAttribute>;
-} & BaseMarkerAnimation<CommonMarkAreaAnimationType>;
+};
 
-export type MarkArcAreaAttrs = MarkerAttrs & {
+export type MarkArcAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   type?: 'arc-area';
   /**
    * 扇区中心位置
@@ -330,7 +339,7 @@ export type MarkArcAreaAttrs = MarkerAttrs & {
   areaStyle?: IArcGraphicAttribute;
 
   state?: CommonMarkAreaState<IArcGraphicAttribute>;
-} & BaseMarkerAnimation<CommonMarkAreaAnimationType>;
+};
 
 export type IItemContent = IMarkRef & {
   /**
@@ -388,7 +397,7 @@ export type IItemLine = {
   };
 } & Omit<SegmentAttributes, 'points'>;
 
-export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
+export type MarkPointAttrs = Omit<MarkerAttrs<MarkPointAnimationType>, 'labelStyle'> & {
   /**
    * markPoint的位置（也是path的起点）
    */

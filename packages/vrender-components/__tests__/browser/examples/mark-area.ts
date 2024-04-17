@@ -2,6 +2,9 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
 import { MarkArea } from '../../../src';
+import { registerMarkAreaAnimate } from '../../../src/marker/register';
+
+registerMarkAreaAnimate();
 
 export function run() {
   console.log('MarkArea');
@@ -125,6 +128,10 @@ export function run() {
   const markAreas = [markArea, markArea2];
 
   const stage = render(markAreas, 'main');
+
+  setTimeout(() => {
+    markArea.release();
+  }, 500);
 
   const gui = new GUI();
   gui.add(guiObject, 'name');

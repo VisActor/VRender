@@ -4,22 +4,34 @@ import type { ArcSegment, Segment } from '../segment';
 import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
-import type { CommonMarkLineAttrs } from './type';
+import type {
+  CommonMarkLineAnimationType,
+  CommonMarkLineAttrs,
+  MarkerAnimationState,
+  MarkerExitAnimation
+} from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { Marker } from './base';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkLineAnimation } from './animate/animate';
 
 export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
-  CommonMarkLineAttrs<LineAttr, LabelPosition>
+  CommonMarkLineAttrs<LineAttr, LabelPosition, CommonMarkLineAnimationType>,
+  CommonMarkLineAnimationType
 > {
   name = 'markCommonLine';
 
-  protected _line!: Segment | ArcSegment;
+  /** animate */
+  static _animate?: (line: Segment | ArcSegment, label: Tag, animationConfig: any, state: MarkerAnimationState) => void;
+  defaultUpdateAnimation = DefaultUpdateMarkLineAnimation;
+  defaultExitAnimation = DefaultExitMarkerAnimation;
 
+  protected _line!: Segment | ArcSegment;
   protected abstract createSegment(): any;
   protected abstract setLineAttributes(): any;
   protected abstract getPointAttrByPosition(position: any): any;
   protected abstract getRotateByAngle(angle: number): number;
+  protected abstract markerAnimate(state: MarkerAnimationState): void;
 
   getLine() {
     return this._line;
@@ -48,7 +60,11 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
   }
 
   protected initMarker(container: IGroup) {
-    const { label, state } = this.attribute as CommonMarkLineAttrs<LineAttr, LabelPosition>;
+    const { label, state } = this.attribute as CommonMarkLineAttrs<
+      LineAttr,
+      LabelPosition,
+      CommonMarkLineAnimationType
+    >;
     const line = this.createSegment();
     line.name = 'mark-common-line-line';
     this._line = line;
@@ -68,7 +84,7 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
   }
 
   protected updateMarker() {
-    const { label } = this.attribute as CommonMarkLineAttrs<LineAttr, LabelPosition>;
+    const { label } = this.attribute as CommonMarkLineAttrs<LineAttr, LabelPosition, CommonMarkLineAnimationType>;
 
     this.setLineAttributes();
 

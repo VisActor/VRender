@@ -7,7 +7,7 @@ import type { ComponentOptions } from '../interface';
 import type { IArcGraphicAttribute } from '@visactor/vrender-core';
 import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
-import type { MarkArcLineAttrs } from './type';
+import type { MarkArcLineAttrs, MarkerAnimationState } from './type';
 import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
 
 loadMarkArcLineComponent();
@@ -16,6 +16,12 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   // eslint-disable-next-line max-len
   static defaultAttributes: Partial<MarkArcLineAttrs> = DEFAULT_MARK_ARC_LINE_THEME as unknown as MarkArcLineAttrs;
   protected _line!: ArcSegment;
+
+  protected markerAnimate(state: MarkerAnimationState) {
+    if (MarkArcLine._animate) {
+      MarkArcLine._animate(this._line, this._label, this._animationConfig, state);
+    }
+  }
 
   constructor(attributes: MarkArcLineAttrs, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, MarkArcLine.defaultAttributes, attributes));

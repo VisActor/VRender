@@ -3,6 +3,9 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkArcLine } from '../../../src';
+import { registerMarkArcLineAnimate } from '../../../src/marker/register';
+
+registerMarkArcLineAnimate();
 
 export function run() {
   console.log('MarkArcLine');
@@ -125,6 +128,10 @@ export function run() {
   //   }
   // });
   // console.log('markLine', markLine);
+
+  setTimeout(() => {
+    markLine.release();
+  }, 500);
 
   // gui
   const gui = new GUI();

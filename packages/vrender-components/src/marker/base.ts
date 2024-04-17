@@ -1,20 +1,39 @@
-import type { FederatedPointerEvent, IGraphic, IGroup } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGraphic, IGroup, IImage, IRichText, ISymbol } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
-import type { MarkerAttrs } from './type';
-import { StateValue } from '../constant';
-import { traverseGroup } from '../util';
-import { isEmpty } from '@visactor/vutils';
+import type { MarkerAnimationState, MarkerAttrs, MarkerExitAnimation, MarkerUpdateAnimation } from './type';
 import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
+import { isObject, merge } from '@visactor/vutils';
 
-export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
+export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr> extends AbstractComponent<
+  Required<T>
+> {
   name = 'marker';
+
   private _containerClip!: IGroup;
   private _container!: IGroup;
 
   protected _label!: Tag;
+
+  /** animate */
+  static _animate?: (
+    marker: any,
+    label: Tag | IRichText | ISymbol | IImage,
+    animationConfig: any,
+    state: MarkerAnimationState
+  ) => void;
+
+  defaultUpdateAnimation!: MarkerUpdateAnimation<AnimationAttr>;
+  defaultExitAnimation!: MarkerExitAnimation;
+
+  protected _animationConfig?: {
+    enter: MarkerUpdateAnimation<AnimationAttr>;
+    exit: MarkerExitAnimation;
+    update: MarkerUpdateAnimation<AnimationAttr>;
+  };
+
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
 
@@ -22,7 +41,28 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   protected abstract initMarker(container: IGroup): any;
   protected abstract updateMarker(): any;
   protected abstract isValidPoints(): any;
+  protected abstract markerAnimate(state: MarkerAnimationState): void;
 
+  private transAnimationConfig(): void {
+    if (this.attribute.animation !== false) {
+      const animation = isObject(this.attribute.animation) ? this.attribute.animation : {};
+      this._animationConfig = {
+        enter: merge(
+          {},
+          this.defaultUpdateAnimation,
+          animation,
+          this.attribute.animationEnter ?? {}
+        ) as MarkerUpdateAnimation<AnimationAttr>,
+        exit: merge({}, this.defaultExitAnimation, animation, this.attribute.animationExit ?? {}),
+        update: merge(
+          {},
+          this.defaultUpdateAnimation,
+          animation,
+          this.attribute.animationUpdate ?? {}
+        ) as MarkerUpdateAnimation<AnimationAttr>
+      };
+    }
+  }
   setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined): void {
     super.setAttribute(key, value, forceUpdateTag);
     if (key === 'visible') {
@@ -109,6 +149,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   }
 
   protected render() {
+    this.transAnimationConfig();
+
     // 因为标注本身不规则，所以默认将组件的 group 设置为不可拾取
     this.setAttribute('pickable', false);
 
@@ -121,11 +163,14 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
+        this.markerAnimate('enter');
       } else {
         this._updateContainer();
         this.updateMarker();
+        this.markerAnimate('update');
       }
     } else {
+      this.markerAnimate('exit');
       this._container = null;
       this.removeAllChild(true);
     }
@@ -136,6 +181,7 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   }
 
   release(): void {
+    this.markerAnimate('exit');
     super.release();
     this._releaseEvent();
     this._container = null;

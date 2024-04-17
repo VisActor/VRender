@@ -1,8 +1,9 @@
 import { isValidNumber, merge } from '@visactor/vutils';
 import { IMarkLineLabelPosition } from './type';
-import type { MarkLineAttrs } from './type';
+// eslint-disable-next-line no-duplicate-imports
+import type { MarkLineAttrs, MarkerAnimationState } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadMarkLineComponent } from './register';
+import { loadMarkLineComponent, registerMarkLineAnimate } from './register';
 import type { Point } from '../core/type';
 import { MarkCommonLine } from './common-line';
 import type { ArcSegment } from '../segment';
@@ -18,6 +19,13 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   // eslint-disable-next-line max-len
   static defaultAttributes: Partial<MarkLineAttrs> = DEFAULT_MARK_LINE_THEME as unknown as MarkLineAttrs;
   protected _line!: Segment | ArcSegment;
+
+  /** animate */
+  protected markerAnimate(state: MarkerAnimationState) {
+    if (MarkLine._animate) {
+      MarkLine._animate(this._line, this._label, this._animationConfig, state);
+    }
+  }
 
   constructor(attributes: MarkLineAttrs, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));

@@ -20,7 +20,7 @@ import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
-import type { IItemContent, IItemLine, MarkPointAttrs } from './type';
+import type { IItemContent, IItemLine, MarkPointAnimationType, MarkPointAttrs, MarkerAnimationState } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
@@ -28,11 +28,21 @@ import type { ComponentOptions } from '../interface';
 import { loadMarkPointComponent } from './register';
 import { computeOffsetForlimit } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation } from './animate/animate';
 
 loadMarkPointComponent();
-export class MarkPoint extends Marker<MarkPointAttrs> {
+export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
+
+  /** animate */
+  defaultUpdateAnimation = DefaultUpdateMarkPointAnimation;
+  defaultExitAnimation = DefaultExitMarkerAnimation;
+  protected markerAnimate(state: MarkerAnimationState): void {
+    if (MarkPoint._animate) {
+      MarkPoint._animate([this._line, this._decorativeLine], this._item, this._animationConfig, state);
+    }
+  }
 
   private _item!: ISymbol | Tag | IImage | IRichText;
 

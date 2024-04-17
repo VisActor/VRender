@@ -3,6 +3,9 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkLine } from '../../../src';
+import { registerMarkLineAnimate } from '../../../src/marker/register';
+
+registerMarkLineAnimate();
 
 export function run() {
   console.log('MarkLine');
@@ -19,6 +22,7 @@ export function run() {
   const styleAttr = {
     select: true,
     hover: true,
+    // animation: false,
     state: {
       line: {
         hover: {
@@ -169,6 +173,11 @@ export function run() {
   console.log('markline', markLine);
 
   const stage = render(markLines, 'main');
+
+  setTimeout(() => {
+    markLine.release();
+  }, 500);
+
   // markLine.setAttributes({
   //   points: [
   //     {

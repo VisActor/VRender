@@ -7,17 +7,29 @@ import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_ARC_AREA_THEME } from './config';
+import type { CommonMarkAreaAnimationType, MarkerAnimationState } from './type';
+// eslint-disable-next-line no-duplicate-imports
 import { IMarkCommonArcLabelPosition, type MarkArcAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkArcAreaComponent } from './register';
 import { DEFAULT_STATES } from '../constant';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
 
 loadMarkArcAreaComponent();
-export class MarkArcArea extends Marker<MarkArcAreaAttrs> {
+export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimationType> {
   name = 'markArcArea';
   static defaultAttributes = DEFAULT_MARK_ARC_AREA_THEME;
   private _area!: IArc;
+
+  /** animate */
+  defaultUpdateAnimation = DefaultUpdateMarkAreaAnimation;
+  defaultExitAnimation = DefaultExitMarkerAnimation;
+  protected markerAnimate(state: MarkerAnimationState) {
+    if (MarkArcArea._animate) {
+      MarkArcArea._animate(this._area, this._label, this._animationConfig, state);
+    }
+  }
 
   getArea() {
     return this._area;

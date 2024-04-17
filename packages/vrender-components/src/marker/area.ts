@@ -7,17 +7,28 @@ import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_THEME } from './config';
-import type { IMarkAreaLabelPosition, MarkAreaAttrs } from './type';
+import type { CommonMarkAreaAnimationType, IMarkAreaLabelPosition, MarkAreaAttrs, MarkerAnimationState } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
 import type { Point } from '../core/type';
 import { DEFAULT_STATES } from '../constant';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
 
 loadMarkAreaComponent();
-export class MarkArea extends Marker<MarkAreaAttrs> {
+export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType> {
   name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;
+
+  /** animate */
+  defaultUpdateAnimation = DefaultUpdateMarkAreaAnimation;
+  defaultExitAnimation = DefaultExitMarkerAnimation;
+  protected markerAnimate(state: MarkerAnimationState) {
+    if (MarkArea._animate) {
+      MarkArea._animate(this._area, this._label, this._animationConfig, state);
+    }
+  }
+
   private _area!: IPolygon;
   getArea() {
     return this._area;

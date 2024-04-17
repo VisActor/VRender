@@ -46,23 +46,3 @@ export function loadMarkPointComponent() {
   registerImage();
   registerLine();
 }
-
-export function registerMarkLineAnimate() {
-  MarkLine._animate = commonMarkLineAnimate;
-}
-
-export function registerMarkArcLineAnimate() {
-  MarkArcLine._animate = commonMarkLineAnimate;
-}
-
-export function registerMarkAreaAnimate() {
-  MarkArea._animate = markAreaAnimate;
-}
-
-export function registerMarkArcAreaAnimate() {
-  MarkArcArea._animate = markArcAreaAnimate;
-}
-
-export function registerMarkPointAnimate() {
-  MarkPoint._animate = markPointAnimate;
-}

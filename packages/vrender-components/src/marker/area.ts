@@ -13,9 +13,14 @@ import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
 import type { Point } from '../core/type';
 import { DEFAULT_STATES } from '../constant';
-import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation, markAreaAnimate } from './animate/animate';
 
 loadMarkAreaComponent();
+
+export function registerMarkAreaAnimate() {
+  MarkArea._animate = markAreaAnimate;
+}
+
 export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType> {
   name = 'markArea';
   static defaultAttributes = DEFAULT_MARK_AREA_THEME;

@@ -14,9 +14,14 @@ import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkArcAreaComponent } from './register';
 import { DEFAULT_STATES } from '../constant';
-import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation, markArcAreaAnimate } from './animate/animate';
 
 loadMarkArcAreaComponent();
+
+export function registerMarkArcAreaAnimate() {
+  MarkArcArea._animate = markArcAreaAnimate;
+}
+
 export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimationType> {
   name = 'markArcArea';
   static defaultAttributes = DEFAULT_MARK_ARC_AREA_THEME;

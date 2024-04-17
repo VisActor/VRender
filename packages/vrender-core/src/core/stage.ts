@@ -882,6 +882,7 @@ export class Stage extends Group implements IStage {
     });
     this.interactiveLayer && this.interactiveLayer.release();
     this.window.release();
+    this.ticker.remTimeline(this.timeline);
   }
 
   setStage(stage?: IStage) {

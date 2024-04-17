@@ -9,8 +9,13 @@ import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkArcLineAttrs, MarkerAnimationState } from './type';
 import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
+import { commonMarkLineAnimate } from './animate/animate';
 
 loadMarkArcLineComponent();
+
+export function registerMarkArcLineAnimate() {
+  MarkArcLine._animate = commonMarkLineAnimate;
+}
 export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommonArcLabelPosition> {
   name = 'markArcLine';
   // eslint-disable-next-line max-len

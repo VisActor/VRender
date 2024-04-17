@@ -28,9 +28,14 @@ import type { ComponentOptions } from '../interface';
 import { loadMarkPointComponent } from './register';
 import { computeOffsetForlimit } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
-import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation } from './animate/animate';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation, markPointAnimate } from './animate/animate';
 
 loadMarkPointComponent();
+
+export function registerMarkPointAnimate() {
+  MarkPoint._animate = markPointAnimate;
+}
+
 export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;

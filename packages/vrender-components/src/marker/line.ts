@@ -3,7 +3,7 @@ import { IMarkLineLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkLineAttrs, MarkerAnimationState } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadMarkLineComponent, registerMarkLineAnimate } from './register';
+import { loadMarkLineComponent } from './register';
 import type { Point } from '../core/type';
 import { MarkCommonLine } from './common-line';
 import type { ArcSegment } from '../segment';
@@ -12,8 +12,14 @@ import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
+import { commonMarkLineAnimate } from './animate/animate';
 
 loadMarkLineComponent();
+
+export function registerMarkLineAnimate() {
+  MarkLine._animate = commonMarkLineAnimate;
+}
+
 export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
   name = 'markLine';
   // eslint-disable-next-line max-len

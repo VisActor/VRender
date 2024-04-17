@@ -3,7 +3,7 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkLine } from '../../../src';
-import { registerMarkLineAnimate } from '../../../src/marker/register';
+import { registerMarkLineAnimate } from '../../../src/marker';
 
 registerMarkLineAnimate();
 

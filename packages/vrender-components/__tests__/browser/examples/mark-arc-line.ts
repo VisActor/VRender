@@ -2,8 +2,7 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
-import { MarkArcLine } from '../../../src';
-import { registerMarkArcLineAnimate } from '../../../src/marker/register';
+import { MarkArcLine, registerMarkArcLineAnimate } from '../../../src';
 
 registerMarkArcLineAnimate();
 

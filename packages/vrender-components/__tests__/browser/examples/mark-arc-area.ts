@@ -3,7 +3,7 @@ import '@visactor/vrender';
 import render from '../../util/render';
 import { MarkArcArea } from '../../../src';
 import { degreeToRadian } from '@visactor/vutils';
-import { registerMarkArcAreaAnimate } from '../../../src/marker/register';
+import { registerMarkArcAreaAnimate } from '../../../src/marker';
 
 registerMarkArcAreaAnimate();
 

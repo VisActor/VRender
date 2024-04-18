@@ -1,3 +1,27 @@
+# v0.18.11
+
+2024-04-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: 支持background-opacity配置
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: change click into pointup in checkbox
+- **@visactor/vrender-components**: player click event not working
+- **@visactor/vrender-components**: player slider value error after resize
+- **@visactor/vrender-kits**: fix for dragenter triggering error in drag event
+- **@visactor/vrender-core**: fix issue with wh changed by flex layout, closed [#1088](https://github.com/VisActor/VRender/issues/1088)
+- **@visactor/vrender-core**: pointerenter and pointerleave do not bubble, fixed [#1132](https://github.com/VisActor/VRender/issues/1132)
+- **@visactor/vrender-core**: fix for dragenter triggering error in drag event
+- **@visactor/vrender-core**: fix memory issue with stage timeline and DefaultRenderService
+
+
+
+[更多详情请查看 v0.18.11](https://github.com/VisActor/VRender/releases/tag/v0.18.11)
+
 # v0.18.10
 
 2024-03-29

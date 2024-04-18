@@ -1,6 +1,17 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 29 Mar 2024 08:02:16 GMT and should not be manually modified.
+This log was last generated on Wed, 17 Apr 2024 03:02:22 GMT and should not be manually modified.
+
+## 0.18.11
+Wed, 17 Apr 2024 03:02:22 GMT
+
+### Updates
+
+- feat: 支持background-opacity配置
+- fix: fix issue with wh changed by flex layout, closed #1088
+- fix: pointerenter and pointerleave do not bubble, fixed #1132
+- fix: fix for dragenter triggering error in drag event
+- fix: fix memory issue with stage timeline and DefaultRenderService
 
 ## 0.18.10
 Fri, 29 Mar 2024 08:02:16 GMT

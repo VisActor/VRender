@@ -5,7 +5,7 @@ import type { BaseGraphicAttributes } from '../../core/type';
 import type { ControllerAttributes, LayoutType } from './type';
 import { iconRight, iconPause, iconPlay, iconLeft, iconUp, iconDown } from './assets';
 import { PlayerIcon } from './icon';
-import { ControllerTypeEnum } from './constant';
+import { ControllerEventEnum, ControllerTypeEnum } from './constant';
 import type { ComponentOptions } from '../../interface';
 
 export class Controller extends AbstractComponent<Required<ControllerAttributes>> {
@@ -182,19 +182,19 @@ export class Controller extends AbstractComponent<Required<ControllerAttributes>
   };
 
   play = () => {
-    this._dispatchEvent('ControllerEventEnum.OnPlay');
+    this._dispatchEvent(ControllerEventEnum.OnPlay);
   };
 
   pause = () => {
-    this._dispatchEvent('ControllerEventEnum.OnPause');
+    this._dispatchEvent(ControllerEventEnum.OnPause);
   };
 
   forward = () => {
-    this._dispatchEvent('ControllerEventEnum.OnForward');
+    this._dispatchEvent(ControllerEventEnum.OnForward);
   };
 
   backward = () => {
-    this._dispatchEvent('ControllerEventEnum.OnBackward');
+    this._dispatchEvent(ControllerEventEnum.OnBackward);
   };
 
   togglePlay = () => {

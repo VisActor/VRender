@@ -79,6 +79,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   private _size: { width: number; height: number };
   private _orient: OrientType;
 
+  // dataIndex, 代表slider的value
+  protected _dataIndex: number = 0;
+
   private _layoutInfo: {
     // 滚动条位置
     slider?: { x: number; y: number; size: number };
@@ -94,6 +97,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     super(options?.skipDefault ? attributes : merge({}, BasePlayer.defaultAttributes, attributes));
     // 先初始化属性, 再初始化Slider、Controller, 最后初始化事件.
     this._initAttributes();
+    this._initDataIndex();
     this._initLayoutInfo();
     this._initController();
     this._initSlider();
@@ -125,6 +129,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     this._pause = { ...controller.pause };
     this._forward = { ...controller.forward };
     this._backward = { ...controller.backward };
+  }
+
+  /**
+   * 初始化dataIndex
+   */
+  _initDataIndex() {
+    this._dataIndex = this.attribute.dataIndex ?? 0;
   }
 
   private _initLayoutInfo() {
@@ -216,7 +227,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       // 重要参数
       min: this._minIndex,
       max: this._maxIndex,
-      value: this.attribute.dataIndex ?? 0,
+      value: this._dataIndex,
       railWidth: this._railStyle.width,
       railHeight: this._railStyle.height,
       railStyle: this._railStyle,

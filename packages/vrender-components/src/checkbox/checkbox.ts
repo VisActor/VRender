@@ -69,7 +69,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       return undefined;
     };
 
-    this.addEventListener('click', this.handleClick);
+    this.addEventListener('pointerup', this._handlePointerUp);
   }
 
   render() {
@@ -174,7 +174,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
     });
   }
 
-  handleClick() {
+  private _handlePointerUp = () => {
     if (this.attribute.disabled) {
       return;
     } else if (this.attribute.checked) {
@@ -189,5 +189,5 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       eventType: 'checkbox_state_change',
       checked: this.attribute.checked
     });
-  }
+  };
 }

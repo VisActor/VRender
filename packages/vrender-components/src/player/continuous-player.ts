@@ -17,7 +17,6 @@ loadContinuousPlayerComponent();
 export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
   declare attribute: ContinuousPlayerAttributes;
 
-  private _dataIndex: number;
   private _activeIndex: number;
 
   protected _alternate: boolean;
@@ -33,6 +32,7 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     super(attributes);
 
     this._initAttributes();
+    this._initDataIndex();
     this._initEvents();
   }
 
@@ -48,7 +48,6 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
     this._isPlaying = false;
     this._elapsed = 0;
     this._interval = this.attribute.interval ?? 1000;
-    this._dataIndex = this.attribute.dataIndex ?? this._minIndex;
 
     // 播放帧数(10条数据, 需要10个播放帧)
     const frames = this._data.length;
@@ -64,6 +63,13 @@ export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> imp
       this._totalDuration = this._interval * frames;
       this._interval = this.attribute.interval;
     }
+  };
+
+  /**
+   * 初始化dataIndex
+   */
+  _initDataIndex = () => {
+    this._dataIndex = this.attribute.dataIndex ?? this._minIndex;
   };
 
   /**

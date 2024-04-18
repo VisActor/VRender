@@ -285,7 +285,7 @@ export class EventManager {
 
         leaveEvent.eventPhase = leaveEvent.AT_TARGET;
 
-        while (leaveEvent.target && !e.composedPath().includes(leaveEvent.target)) {
+        if (leaveEvent.target && !e.composedPath().includes(leaveEvent.target)) {
           leaveEvent.currentTarget = leaveEvent.target;
 
           this.notifyTarget(leaveEvent);
@@ -293,7 +293,7 @@ export class EventManager {
             this.notifyTarget(leaveEvent, 'mouseleave');
           }
 
-          leaveEvent.target = leaveEvent.target.parent as IEventTarget;
+          // leaveEvent.target = leaveEvent.target.parent as IEventTarget;
         }
 
         this.freeEvent(leaveEvent);
@@ -327,8 +327,8 @@ export class EventManager {
         const enterEvent = this.clonePointerEvent(e, 'pointerenter');
 
         enterEvent.eventPhase = enterEvent.AT_TARGET;
-
-        while (enterEvent.target && enterEvent.target !== outTarget && enterEvent.target !== this.rootTarget.parent) {
+        // 不冒泡
+        if (enterEvent.target && enterEvent.target !== outTarget && enterEvent.target !== this.rootTarget.parent) {
           enterEvent.currentTarget = enterEvent.target;
 
           this.notifyTarget(enterEvent);
@@ -336,7 +336,7 @@ export class EventManager {
             this.notifyTarget(enterEvent, 'mouseenter');
           }
 
-          enterEvent.target = enterEvent.target.parent as IEventTarget;
+          // enterEvent.target = enterEvent.target.parent as IEventTarget;
         }
 
         this.freeEvent(enterEvent);
@@ -388,7 +388,7 @@ export class EventManager {
 
     enterEvent.eventPhase = enterEvent.AT_TARGET;
 
-    while (enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
+    if (enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
       enterEvent.currentTarget = enterEvent.target;
 
       this.notifyTarget(enterEvent);
@@ -396,7 +396,7 @@ export class EventManager {
         this.notifyTarget(enterEvent, 'mouseenter');
       }
 
-      enterEvent.target = enterEvent.target.parent as IEventTarget;
+      // enterEvent.target = enterEvent.target.parent as IEventTarget;
     }
 
     trackingData.overTargets = e.composedPath();
@@ -429,7 +429,7 @@ export class EventManager {
 
       leaveEvent.eventPhase = leaveEvent.AT_TARGET;
 
-      while (leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
+      if (leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
         leaveEvent.currentTarget = leaveEvent.target;
 
         this.notifyTarget(leaveEvent);
@@ -437,7 +437,7 @@ export class EventManager {
           this.notifyTarget(leaveEvent, 'mouseleave');
         }
 
-        leaveEvent.target = leaveEvent.target.parent as IEventTarget;
+        // leaveEvent.target = leaveEvent.target.parent as IEventTarget;
       }
 
       trackingData.overTargets = [];

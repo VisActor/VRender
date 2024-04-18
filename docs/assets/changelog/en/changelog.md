@@ -1,3 +1,36 @@
+# v0.18.10
+
+2024-03-29
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445
+- **@visactor/vrender-components**: fix alignment calculation for line axis axis text, fixed https://github.com/VisActor/VChart/issues/2449
+
+
+
+[more detail about v0.18.10](https://github.com/VisActor/VRender/releases/tag/v0.18.10)
+
+# v0.18.8
+
+2024-03-29
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `inverse` in slider and size-lengend, color-legend
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix issue with pointer tap event point map
+- **@visactor/vrender-core**: fix issue with pointer tap event point map
+- **@visactor/vrender-core**: fix issue for multi line text with underline, closed [#1100](https://github.com/VisActor/VRender/issues/1100)
+
+
+
+[more detail about v0.18.8](https://github.com/VisActor/VRender/releases/tag/v0.18.8)
+
 # v0.18.7
 
 2024-03-25

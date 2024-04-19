@@ -1,3 +1,40 @@
+# v0.18.12
+
+2024-04-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add radio component
+
+**🐛 功能修复**
+
+- **brush**: state not correctly when operating mask bounds is not right. fix@VisActor/VChart[#2555](https://github.com/VisActor/VRender/issues/2555)
+- **@visactor/vrender-components**: when clear states, the animations of state should clear
+- **event**: event pos error when scale
+- **@visactor/vrender-components**: fix the issue of update selected value of slider
+- **@visactor/vrender-core**: when clear states, the animations of state should clear
+- **@visactor/vrender-core**: fix issue with render html
+- **@visactor/vrender-core**: fix issue with richtext background
+- **@visactor/vrender-core**: fix the issue of update selected value of slider
+- **@visactor/vrender-core**: add ellipsis in height limit
+
+**🔨 功能重构**
+
+- **@visactor/vrender-components**: replace wrapText with text
+
+**📖 文档更新**
+
+- **@visactor/vrender-components**: update changlog of rush
+- **@visactor/vrender-core**: update changlog of rush
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.10...v0.18.12
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.12...v0.18.12
+
+[更多详情请查看 v0.18.12](https://github.com/VisActor/VRender/releases/tag/v0.18.12)
+
 # v0.18.11
 
 2024-04-18

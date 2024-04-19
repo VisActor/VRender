@@ -94,6 +94,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     const titleAttrs = {
       text: isArray(title) ? title : ([title] as any),
       visible: titleVisible,
+      wrap: true,
       ...titleStyle,
       x: parsedPadding[3],
       y: parsedPadding[0],
@@ -102,7 +103,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textBaseline: 'top' as TextBaselineType
     };
 
-    const titleShape = group.createOrUpdateChild('poptip-title', titleAttrs, 'wrapText') as IText;
+    const titleShape = group.createOrUpdateChild('poptip-title', titleAttrs, 'text') as IText;
     if (!isEmpty(state?.title)) {
       titleShape.states = state.title;
     }
@@ -119,6 +120,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     const contentAttrs = {
       text: isArray(content) ? content : ([content] as any),
       visible: contentVisible,
+      wrap: true,
       ...contentStyle,
       x: parsedPadding[3],
       y: parsedPadding[0] + height,
@@ -127,7 +129,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textBaseline: 'top' as TextBaselineType
     };
 
-    const contentShape = group.createOrUpdateChild('poptip-content', contentAttrs, 'wrapText') as IText;
+    const contentShape = group.createOrUpdateChild('poptip-content', contentAttrs, 'text') as IText;
     if (!isEmpty(state?.content)) {
       contentShape.states = state.content;
     }

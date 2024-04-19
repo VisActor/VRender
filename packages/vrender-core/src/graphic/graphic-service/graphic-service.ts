@@ -750,6 +750,9 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: IGroup
   ) {
+    const originalAABBBounds = aabbBounds; // fix aabbbounds update error in flex layout
+    aabbBounds = aabbBounds.clone();
+
     const { width, height, path, clip = groupTheme.clip } = attribute;
     // 添加自身的fill或者clip
     if (path && path.length) {
@@ -757,7 +760,7 @@ export class DefaultGraphicService implements IGraphicService {
         aabbBounds.union(g.AABBBounds);
       });
     } else if (width != null && height != null) {
-      aabbBounds.set(0, 0, width, height);
+      aabbBounds.set(0, 0, Math.max(0, width), Math.max(0, height)); // fix bounds set when auto size in vtable
     }
     if (!clip) {
       // 添加子节点
@@ -771,7 +774,9 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     this.transformAABBBounds(attribute, aabbBounds, groupTheme, false, graphic);
-    return aabbBounds;
+
+    originalAABBBounds.copy(aabbBounds);
+    return originalAABBBounds;
   }
 
   updateGlyphAABBBounds(

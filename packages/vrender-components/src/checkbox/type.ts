@@ -4,12 +4,12 @@ import type {
   IGroupGraphicAttribute,
   IImageGraphicAttribute,
   IRectGraphicAttribute,
-  IWrapTextGraphicAttribute
+  ITextGraphicAttribute
 } from '@visactor/vrender-core';
 
 export type CheckboxText = {
   disableFill?: IColor;
-} & IWrapTextGraphicAttribute;
+} & ITextGraphicAttribute;
 
 export type CheckboxIcon = {
   checkIconImage?: string | HTMLImageElement | HTMLCanvasElement;

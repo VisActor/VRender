@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 17 Apr 2024 03:02:22 GMT and should not be manually modified.
+This log was last generated on Fri, 19 Apr 2024 07:48:17 GMT and should not be manually modified.
+
+## 0.18.12
+Fri, 19 Apr 2024 07:48:17 GMT
+
+### Updates
+
+- fix: when clear states, the animations of state should clear
+
+
+- fix: fix issue with render html
+- fix: fix issue with richtext background
+- fix: fix the issue of update selected value of slider
+
+
+- docs: update changlog of rush
+
+
+- fix: add ellipsis in height limit
 
 ## 0.18.11
 Wed, 17 Apr 2024 03:02:22 GMT

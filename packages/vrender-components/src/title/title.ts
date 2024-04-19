@@ -106,6 +106,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           'mainTitle',
           {
             text: isArray(text) ? (text as any) : [text as string],
+            wrap: true,
             ...textStyle,
             maxLineWidth: textStyle.maxLineWidth ?? width,
             heightLimit: textStyle.heightLimit,
@@ -114,7 +115,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
             x: 0,
             y: 0
           },
-          'wrapText'
+          'text'
         ) as IText;
       }
     }
@@ -162,6 +163,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           'subTitle',
           {
             text: isArray(subtext) ? (subtext as any) : [subtext as string],
+            wrap: true,
             ...subtextStyle,
             maxLineWidth: subtextStyle.maxLineWidth ?? width,
             heightLimit: subtextStyle.heightLimit,
@@ -170,7 +172,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
             x: 0,
             y: maintextHeight
           },
-          'wrapText'
+          'text'
         ) as IText;
       }
     }

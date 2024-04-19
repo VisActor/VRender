@@ -69,6 +69,6 @@ export class DefaultRenderService implements IRenderService {
     this.draw(params);
     this.afterDraw(params);
     this.drawParams = null;
-    this.renderTreeRoots = [];
+    // this.renderTreeRoots = [];
   }
 }

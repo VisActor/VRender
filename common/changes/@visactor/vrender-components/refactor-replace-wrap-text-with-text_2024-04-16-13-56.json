@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "refactor: replace wrapText with text",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

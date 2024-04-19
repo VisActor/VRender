@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: when clear states, the animations of state should clear\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

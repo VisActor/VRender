@@ -406,9 +406,11 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
     const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
+    const layerPosition = { x, y };
+    this.parent.globalTransMatrix.transformPoint({ x, y }, layerPosition);
     return {
-      x: x - (this.stage?.x || 0),
-      y: y - (this.stage?.y || 0)
+      x: layerPosition.x,
+      y: layerPosition.y
     };
   }
 

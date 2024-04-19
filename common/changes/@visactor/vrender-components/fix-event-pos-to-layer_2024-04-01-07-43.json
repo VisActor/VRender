@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(event): event pos error when scale",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

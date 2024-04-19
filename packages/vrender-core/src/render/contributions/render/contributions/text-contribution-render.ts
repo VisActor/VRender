@@ -1,4 +1,4 @@
-import type { IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix, IMatrixLike } from '@visactor/vutils';
 import { isObject } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import type {
@@ -40,6 +40,23 @@ export class DefaultTextBackgroundRenderContribution
     if (!background) {
       return;
     }
+    let matrix: IMatrix;
+    const save = () => {
+      if (graphic.type === 'richtext') {
+        matrix = context.currentMatrix.clone();
+        context.restore();
+        context.save();
+        context.setTransformForCurrent();
+      }
+    };
+    const restore = () => {
+      if (graphic.type === 'richtext') {
+        context.restore();
+        context.save();
+        matrix && context.setTransformFromMatrix(matrix, true, 1);
+      }
+    };
+    save();
     let b: IAABBBounds;
     const shouldReCalBounds = isObject(background) && (background as any).background;
     const onlyTranslate = graphic.transMatrix.onlyTranslate();
@@ -71,6 +88,7 @@ export class DefaultTextBackgroundRenderContribution
     if (graphic.backgroundImg && graphic.resources) {
       const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
+        restore();
         return;
       }
 
@@ -106,6 +124,7 @@ export class DefaultTextBackgroundRenderContribution
     if (shouldReCalBounds) {
       boundsAllocate.free(b);
     }
+    restore();
   }
 }
 

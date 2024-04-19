@@ -25,4 +25,5 @@ export * from './tooltip';
 export * from './interface';
 export * from './jsx';
 export * from './checkbox';
+export * from './radio';
 export * from './util';

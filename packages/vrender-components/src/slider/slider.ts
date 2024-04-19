@@ -1084,21 +1084,27 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   }
 
   private _getHandlers() {
+    const { inverse } = this.attribute as SliderAttributes;
     let startHandler = this._startHandler;
     let endHandler = this._endHandler;
-    let temp;
+
+    if (!endHandler) {
+      return { startHandler, endHandler };
+    }
 
     if (this._isHorizontal) {
-      if (endHandler && (endHandler.attribute.x as number) < (startHandler?.attribute.x as number)) {
-        temp = startHandler;
-        startHandler = endHandler;
-        endHandler = temp;
+      if (
+        (!inverse && (endHandler.attribute.x as number) < (startHandler?.attribute.x as number)) ||
+        (inverse && (endHandler.attribute.x as number) > (startHandler?.attribute.x as number))
+      ) {
+        [startHandler, endHandler] = [endHandler, startHandler];
       }
     } else {
-      if (endHandler && (endHandler.attribute.y as number) < (startHandler?.attribute.y as number)) {
-        temp = startHandler;
-        startHandler = endHandler;
-        endHandler = temp;
+      if (
+        (!inverse && (endHandler.attribute.y as number) < (startHandler?.attribute.y as number)) ||
+        (inverse && (endHandler.attribute.y as number) > (startHandler?.attribute.y as number))
+      ) {
+        [startHandler, endHandler] = [endHandler, startHandler];
       }
     }
 

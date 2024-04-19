@@ -176,6 +176,24 @@ export const page = () => {
   });
   graphics.push(rect);
 
+  const textLimit = createText({
+    x: 800,
+    y: 500,
+    fill: colorPools[5],
+    // text: ['Tffg'],
+    text: ['这是textabc这aaaaa是什么', '这是阿萨姆abcaaaaabcdef', '这是textabc这aaaaa是什么', '这是阿萨姆abcaaaaa'],
+    // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+    heightLimit: 40,
+    wordBreak: 'break-word',
+    maxLineWidth: 200,
+    stroke: 'green',
+    textAlign: 'left',
+    textBaseline: 'middle',
+    whiteSpace: 'normal'
+    // wrap: true
+  });
+  graphics.push(textLimit);
+
   const stage = createStage({
     canvas: 'main',
     autoRender: true

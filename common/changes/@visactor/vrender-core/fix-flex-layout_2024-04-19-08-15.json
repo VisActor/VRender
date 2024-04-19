@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: pointerenter and pointerleave do not bubble, fixed #1132",
+      "comment": "fix: fix flex layout crossLen problem",
       "type": "none"
     }
   ],

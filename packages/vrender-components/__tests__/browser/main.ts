@@ -241,6 +241,10 @@ const specs = [
   {
     path: 'checkbox',
     name: 'checkbox'
+  },
+  {
+    path: 'radio',
+    name: 'radio'
   }
 ];
 

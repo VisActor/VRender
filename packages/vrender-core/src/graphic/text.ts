@@ -216,14 +216,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
           // 判断是否超过高度限制
           if (i === lineCountLimit - 1) {
-            // 当前行为最后一行
+            // 当前行为最后一行，如果后面还有行，需要显示省略号
             const clip = layoutObj.textMeasure.clipTextWithSuffix(
               str,
               layoutObj.textOptions,
               maxLineWidth,
               ellipsis,
               false,
-              suffixPosition
+              suffixPosition,
+              i !== lines.length - 1
             );
             linesLayout.push({
               str: clip.str,

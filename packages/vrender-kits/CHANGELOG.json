@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.18.12",
+      "tag": "@visactor/vrender-kits_v0.18.12",
+      "date": "Fri, 19 Apr 2024 07:48:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.11",
+      "tag": "@visactor/vrender-kits_v0.18.11",
+      "date": "Wed, 17 Apr 2024 03:02:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix for dragenter triggering error in drag event"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.10",
       "tag": "@visactor/vrender-kits_v0.18.10",
       "date": "Fri, 29 Mar 2024 08:02:16 GMT",

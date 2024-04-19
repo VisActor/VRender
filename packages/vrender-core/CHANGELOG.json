@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.12",
+      "tag": "@visactor/vrender-core_v0.18.12",
+      "date": "Fri, 19 Apr 2024 07:48:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when clear states, the animations of state should clear\n\n"
+          },
+          {
+            "comment": "fix: fix issue with render html"
+          },
+          {
+            "comment": "fix: fix issue with richtext background"
+          },
+          {
+            "comment": "fix: fix the issue of update selected value of slider\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "fix: add ellipsis in height limit"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.11",
       "tag": "@visactor/vrender-core_v0.18.11",
       "date": "Wed, 17 Apr 2024 03:02:22 GMT",

@@ -329,19 +329,17 @@ export class EventManager {
         enterEvent.eventPhase = enterEvent.AT_TARGET;
 
         let currentTarget = enterEvent.target;
-        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
-          // Check if currentTarget is an ancestor of outTarget to avoid triggering pointerenter
-          let isAncestorOfOutTarget = false;
-          let ancestor = outTarget;
-          while (ancestor && ancestor !== this.rootTarget) {
-            if (ancestor.parent === currentTarget) {
-              isAncestorOfOutTarget = true;
-              break;
-            }
-            ancestor = ancestor.parent;
-          }
+        // 预先计算 outTarget 的所有祖先
+        const outTargetAncestors = new Set<IEventTarget>();
+        let ancestor = outTarget;
+        while (ancestor && ancestor !== this.rootTarget) {
+          outTargetAncestors.add(ancestor);
+          ancestor = ancestor.parent;
+        }
 
-          if (!isAncestorOfOutTarget) {
+        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
+          // 检查 currentTarget 是否是 outTarget 的祖先
+          if (!outTargetAncestors.has(currentTarget)) {
             enterEvent.currentTarget = currentTarget;
 
             this.notifyTarget(enterEvent);

@@ -1,3 +1,17 @@
+# v0.18.13
+
+2024-04-23
+
+
+**What's Changed**
+
+* [Auto release] release 0.18.13 by @github-actions in https://github.com/VisActor/VRender/pull/1150
+https://github.com/VisActor/VRender/pull/1147
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.11...v0.18.13
+
+[more detail about v0.18.13](https://github.com/VisActor/VRender/releases/tag/v0.18.13)
+
 # v0.18.12
 
 2024-04-19

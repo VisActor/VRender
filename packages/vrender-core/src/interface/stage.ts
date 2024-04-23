@@ -228,6 +228,7 @@ export interface IStage extends INode {
   setCursor: (mode?: string) => void;
 
   getTheme: () => IFullThemeSpec;
+  eventPointTransform: (e: PointerEvent | WheelEvent | TouchEvent) => { x: number; y: number };
 }
 
 export declare function combineStage(srages: IStage[], params: { canvas: string | HTMLCanvasElement }): IStage;

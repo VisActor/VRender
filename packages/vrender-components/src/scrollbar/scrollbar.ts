@@ -308,7 +308,8 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { direction } = this.attribute as ScrollBarAttributes;
-    this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
+    const { x, y } = this.stage.eventPointTransform(e);
+    this._prePos = direction === 'horizontal' ? x : y;
     this._dispatchEvent('scrollDown', {
       pos: this._prePos,
       event: e
@@ -325,17 +326,19 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _computeScrollValue = (e: any) => {
     const { direction } = this.attribute as ScrollBarAttributes;
+    const { x, y } = this.stage.eventPointTransform(e);
+
     let currentScrollValue;
     let currentPos;
     let delta = 0;
 
     const { width, height } = this._getSliderRenderBounds();
     if (direction === 'vertical') {
-      currentPos = e.clientY;
+      currentPos = y;
       delta = currentPos - this._prePos;
       currentScrollValue = delta / height;
     } else {
-      currentPos = e.clientX;
+      currentPos = x;
       delta = currentPos - this._prePos;
       currentScrollValue = delta / width;
     }

@@ -776,32 +776,20 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
     if (hasAnimation) {
       const keys = Object.keys(attrs);
-      const noWorkAAttr = this.getNoWorkAnimateAttr();
+      const noWorkAttrs = this.getNoWorkAnimateAttr();
       const animateAttrs: Partial<T> = {};
       let noAnimateAttrs: Partial<T> | undefined;
-      if (isClear) {
-        keys.forEach(key => {
-          if (!noWorkAAttr[key]) {
-            animateAttrs[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
-          } else {
-            if (!noAnimateAttrs) {
-              noAnimateAttrs = {};
-            }
-            noAnimateAttrs[key] = attrs[key];
+
+      keys.forEach(key => {
+        if (!noWorkAttrs[key]) {
+          animateAttrs[key] = isClear && attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
+        } else {
+          if (!noAnimateAttrs) {
+            noAnimateAttrs = {};
           }
-        });
-      } else {
-        keys.forEach(key => {
-          if (!noWorkAAttr[key]) {
-            animateAttrs[key] = attrs[key];
-          } else {
-            if (!noAnimateAttrs) {
-              noAnimateAttrs = {};
-            }
-            noAnimateAttrs[key] = attrs[key];
-          }
-        });
-      }
+          noAnimateAttrs[key] = attrs[key];
+        }
+      });
 
       const animate = this.animate();
       (animate as any).stateNames = stateNames;
@@ -812,6 +800,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
       noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
+      this.stopStateAnimates();
       this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
     }
   }
@@ -837,6 +826,16 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
 
     this.normalAttrs = newNormalAttrs;
+  }
+
+  private stopStateAnimates(type: 'start' | 'end' = 'end') {
+    if (this.animates) {
+      this.animates.forEach(animate => {
+        if ((animate as any).stateNames) {
+          animate.stop(type);
+        }
+      });
+    }
   }
 
   private getNormalAttribute(key: string) {

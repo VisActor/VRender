@@ -882,6 +882,8 @@ export class Stage extends Group implements IStage {
     });
     this.interactiveLayer && this.interactiveLayer.release();
     this.window.release();
+    this.ticker.remTimeline(this.timeline);
+    this.renderService.renderTreeRoots = [];
   }
 
   setStage(stage?: IStage) {

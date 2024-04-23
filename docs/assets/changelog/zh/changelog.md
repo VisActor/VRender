@@ -1,3 +1,64 @@
+# v0.18.12
+
+2024-04-19
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add radio component
+
+**🐛 功能修复**
+
+- **brush**: state not correctly when operating mask bounds is not right. fix@VisActor/VChart[#2555](https://github.com/VisActor/VRender/issues/2555)
+- **@visactor/vrender-components**: when clear states, the animations of state should clear
+- **event**: event pos error when scale
+- **@visactor/vrender-components**: fix the issue of update selected value of slider
+- **@visactor/vrender-core**: when clear states, the animations of state should clear
+- **@visactor/vrender-core**: fix issue with render html
+- **@visactor/vrender-core**: fix issue with richtext background
+- **@visactor/vrender-core**: fix the issue of update selected value of slider
+- **@visactor/vrender-core**: add ellipsis in height limit
+
+**🔨 功能重构**
+
+- **@visactor/vrender-components**: replace wrapText with text
+
+**📖 文档更新**
+
+- **@visactor/vrender-components**: update changlog of rush
+- **@visactor/vrender-core**: update changlog of rush
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.10...v0.18.12
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.12...v0.18.12
+
+[更多详情请查看 v0.18.12](https://github.com/VisActor/VRender/releases/tag/v0.18.12)
+
+# v0.18.11
+
+2024-04-18
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: 支持background-opacity配置
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: change click into pointup in checkbox
+- **@visactor/vrender-components**: player click event not working
+- **@visactor/vrender-components**: player slider value error after resize
+- **@visactor/vrender-kits**: fix for dragenter triggering error in drag event
+- **@visactor/vrender-core**: fix issue with wh changed by flex layout, closed [#1088](https://github.com/VisActor/VRender/issues/1088)
+- **@visactor/vrender-core**: pointerenter and pointerleave do not bubble, fixed [#1132](https://github.com/VisActor/VRender/issues/1132)
+- **@visactor/vrender-core**: fix for dragenter triggering error in drag event
+- **@visactor/vrender-core**: fix memory issue with stage timeline and DefaultRenderService
+
+
+
+[更多详情请查看 v0.18.11](https://github.com/VisActor/VRender/releases/tag/v0.18.11)
+
 # v0.18.10
 
 2024-03-29

@@ -431,7 +431,8 @@ export class ATextMeasure implements ITextMeasure {
     width: number,
     suffix: string,
     wordBreak: boolean,
-    position: 'start' | 'end' | 'middle'
+    position: 'start' | 'end' | 'middle',
+    forceSuffix: boolean = false
   ): {
     str: string;
     width: number;
@@ -443,12 +444,15 @@ export class ATextMeasure implements ITextMeasure {
       return { str: '', width: 0 };
     }
     const length = this.measureTextWidth(text, options);
-    if (length <= width) {
+    if (!forceSuffix && length <= width) {
       return { str: text, width: length };
     }
     const suffixWidth = this.measureTextWidth(suffix, options);
     if (suffixWidth > width) {
       return { str: '', width: 0 };
+    }
+    if (forceSuffix && length + suffixWidth <= width) {
+      return { str: text + suffix, width: length + suffixWidth };
     }
     width -= suffixWidth;
     const data = this._clipText(text, options, width, 0, text.length - 1, position, suffix);
@@ -457,9 +461,11 @@ export class ATextMeasure implements ITextMeasure {
     if (wordBreak && data.str !== text) {
       const index = testLetter(text, data.str.length);
       if (index !== data.str.length) {
-        data.str = text.substring(0, index);
+        data.result = text.substring(0, index);
         data.width = this.measureTextWidth(data.str, options);
       }
+    } else if (forceSuffix && data.str === text) {
+      data.result = text + suffix;
     }
     data.str = data.result!;
     data.width += suffixWidth;

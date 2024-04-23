@@ -94,8 +94,16 @@ export class FlexLayoutPlugin implements IPlugin {
       height = childrenHeight;
     }
 
-    p.attribute.width = width;
-    p.attribute.height = height;
+    if (p.attribute.width == null) {
+      p.attribute.width = width;
+    } else {
+      width = p.attribute.width;
+    }
+    if (p.attribute.height == null) {
+      p.attribute.height = height;
+    } else {
+      height = p.attribute.height;
+    }
 
     // 这里使用p._AABBBounds可能会将非布局造成的bounds更新也会触发重新布局
     // TODO: 增加layout前预处理，在非递归布局前将子节点及其全部父节点_AABBBounds更新
@@ -149,7 +157,7 @@ export class FlexLayoutPlugin implements IPlugin {
             tempMainL = 0;
             tempCrossL = 0;
           } else {
-            mainList.push({ idx: i - 1, mainLen: tempMainL, crossLen });
+            mainList.push({ idx: i - 1, mainLen: tempMainL, crossLen: tempCrossL });
             tempMainL = mainLen;
             tempCrossL = crossLen;
           }

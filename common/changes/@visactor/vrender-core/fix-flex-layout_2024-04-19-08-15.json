@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: 支持background-opacity配置",
+      "comment": "fix: fix flex layout crossLen problem",
       "type": "none"
     }
   ],

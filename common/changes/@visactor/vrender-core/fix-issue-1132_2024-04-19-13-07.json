@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: pointerenter should not bubble when inside the same group, and revert previous wrong fix, fixed #1132",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

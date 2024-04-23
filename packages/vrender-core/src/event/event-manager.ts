@@ -328,15 +328,27 @@ export class EventManager {
 
         enterEvent.eventPhase = enterEvent.AT_TARGET;
 
-        while (enterEvent.target && enterEvent.target !== outTarget && enterEvent.target !== this.rootTarget.parent) {
-          enterEvent.currentTarget = enterEvent.target;
+        let currentTarget = enterEvent.target;
+        // 预先计算 outTarget 的所有祖先
+        const outTargetAncestors = new Set<IEventTarget>();
+        let ancestor = outTarget;
+        while (ancestor && ancestor !== this.rootTarget) {
+          outTargetAncestors.add(ancestor);
+          ancestor = ancestor.parent;
+        }
 
-          this.notifyTarget(enterEvent);
-          if (isMouse) {
-            this.notifyTarget(enterEvent, 'mouseenter');
+        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
+          // 检查 currentTarget 是否是 outTarget 的祖先
+          if (!outTargetAncestors.has(currentTarget)) {
+            enterEvent.currentTarget = currentTarget;
+
+            this.notifyTarget(enterEvent);
+            if (isMouse) {
+              this.notifyTarget(enterEvent, 'mouseenter');
+            }
           }
 
-          enterEvent.target = enterEvent.target.parent as IEventTarget;
+          currentTarget = currentTarget.parent as IEventTarget;
         }
 
         this.freeEvent(enterEvent);

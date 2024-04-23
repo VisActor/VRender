@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with feishu program, closed #2567",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -31,7 +31,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
   defaultUpdateAnimation = DefaultUpdateMarkAreaAnimation;
   defaultExitAnimation = DefaultExitMarkerAnimation;
   protected markerAnimate(state: MarkerAnimationState) {
-    if (MarkArcArea._animate) {
+    if (MarkArcArea._animate && this._animationConfig) {
       MarkArcArea._animate(this._area, this._label, this._animationConfig, state);
     }
   }
@@ -52,13 +52,13 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
     const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as MarkArcAreaAttrs;
     const { refX = 0, refY = 0 } = label;
     // eslint-disable-next-line max-len
-    const labelRectHeight = Math.abs(
-      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
-    );
+    const labelTextHeight = this._label.getTextShape().attribute.visible
+      ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
+      : 0;
     // eslint-disable-next-line max-len
-    const labelTextHeight = Math.abs(
-      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
-    );
+    const labelRectHeight = this._label.getBgRect().attribute.visible
+      ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
+      : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     let radius;

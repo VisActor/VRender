@@ -9,12 +9,12 @@ import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkArcLineAttrs, MarkerAnimationState } from './type';
 import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
-import { commonMarkLineAnimate } from './animate/animate';
+import { markCommonLineAnimate } from './animate/animate';
 
 loadMarkArcLineComponent();
 
 export function registerMarkArcLineAnimate() {
-  MarkArcLine._animate = commonMarkLineAnimate;
+  MarkArcLine._animate = markCommonLineAnimate;
 }
 export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommonArcLabelPosition> {
   name = 'markArcLine';
@@ -23,7 +23,7 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   protected _line!: ArcSegment;
 
   protected markerAnimate(state: MarkerAnimationState) {
-    if (MarkArcLine._animate) {
+    if (MarkArcLine._animate && this._animationConfig) {
       MarkArcLine._animate(this._line, this._label, this._animationConfig, state);
     }
   }
@@ -35,12 +35,12 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   protected getPointAttrByPosition(direction: IMarkCommonArcLabelPosition) {
     const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
     const { refX = 0, refY = 0 } = label;
-    const labelRectHeight = Math.abs(
-      (this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
-    );
-    const labelTextHeight = Math.abs(
-      (this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
-    );
+    const labelTextHeight = this._label.getTextShape().attribute.visible
+      ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
+      : 0;
+    const labelRectHeight = this._label.getBgRect().attribute.visible
+      ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
+      : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     let angle;

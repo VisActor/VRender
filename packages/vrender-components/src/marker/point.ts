@@ -44,7 +44,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   defaultUpdateAnimation = DefaultUpdateMarkPointAnimation;
   defaultExitAnimation = DefaultExitMarkerAnimation;
   protected markerAnimate(state: MarkerAnimationState): void {
-    if (MarkPoint._animate) {
+    if (MarkPoint._animate && this._animationConfig) {
       MarkPoint._animate([this._line, this._decorativeLine], this._item, this._animationConfig, state);
     }
   }

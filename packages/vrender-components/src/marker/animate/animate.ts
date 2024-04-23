@@ -5,7 +5,7 @@ import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import type {
   CommonMarkAreaAnimationType,
-  CommonMarkLineAnimationType,
+  MarkCommonLineAnimationType,
   MarkPointAnimationType,
   MarkerAnimationState,
   MarkerExitAnimation,
@@ -16,7 +16,7 @@ import { areaFadeIn, commonLineFadeIn, arcAreaFadeIn, pointFadeIn } from './fade
 import { areaFadeOut, commonLineFadeOut, arcAreaFadeOut, pointFadeOut } from './fade-out';
 import { pointCallIn } from './call-in';
 
-export function commonMarkLineAnimate(
+export function markCommonLineAnimate(
   line: Segment | ArcSegment,
   label: Tag,
   animationconfig: any,
@@ -107,7 +107,7 @@ export function markPointAnimate(
   }
 }
 
-export const DefaultUpdateMarkLineAnimation: MarkerUpdateAnimation<CommonMarkLineAnimationType> = {
+export const DefaultUpdateMarkLineAnimation: MarkerUpdateAnimation<MarkCommonLineAnimationType> = {
   type: 'clipIn',
   duration: 500,
   easing: 'linear',

@@ -29,7 +29,7 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
   defaultUpdateAnimation = DefaultUpdateMarkAreaAnimation;
   defaultExitAnimation = DefaultExitMarkerAnimation;
   protected markerAnimate(state: MarkerAnimationState) {
-    if (MarkArea._animate) {
+    if (MarkArea._animate && this._animationConfig) {
       MarkArea._animate(this._area, this._label, this._animationConfig, state);
     }
   }
@@ -50,12 +50,12 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
   protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
     // labelHeight
-    const labelRectHeight = Math.abs(
-      (this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
-    );
-    const labelTextHeight = Math.abs(
-      (this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
-    );
+    const labelTextHeight = this._label.getTextShape().attribute.visible
+      ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
+      : 0;
+    const labelRectHeight = this._label.getBgRect().attribute.visible
+      ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
+      : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     // labelWidth

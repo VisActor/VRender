@@ -12,12 +12,12 @@ import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
-import { commonMarkLineAnimate } from './animate/animate';
+import { markCommonLineAnimate } from './animate/animate';
 
 loadMarkLineComponent();
 
 export function registerMarkLineAnimate() {
-  MarkLine._animate = commonMarkLineAnimate;
+  MarkLine._animate = markCommonLineAnimate;
 }
 
 export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
@@ -28,7 +28,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
 
   /** animate */
   protected markerAnimate(state: MarkerAnimationState) {
-    if (MarkLine._animate) {
+    if (MarkLine._animate && this._animationConfig) {
       MarkLine._animate(this._line, this._label, this._animationConfig, state);
     }
   }
@@ -39,21 +39,21 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
 
   protected getLabelOffsetByPosition(position: IMarkLineLabelPosition) {
     // labelHeight
-    const labelRectHeight = Math.abs(
-      (this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0)
-    );
-    const labelTextHeight = Math.abs(
-      (this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0)
-    );
+    const labelTextHeight = this._label.getTextShape().attribute.visible
+      ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
+      : 0;
+    const labelRectHeight = this._label.getBgRect().attribute.visible
+      ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
+      : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     // labelWidth
-    const labelRectWidth = Math.abs(
-      (this._label.getTextShape()?.AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
-    );
-    const labelTextWidth = Math.abs(
-      (this._label.getBgRect()?.AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
-    );
+    const labelTextWidth = this._label.getTextShape().attribute.visible
+      ? Math.abs((this._label.getTextShape()?.AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0))
+      : 0;
+    const labelRectWidth = this._label.getBgRect().attribute.visible
+      ? Math.abs((this._label.getBgRect()?.AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0))
+      : 0;
     const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
     switch (position) {

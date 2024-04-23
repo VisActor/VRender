@@ -157,7 +157,7 @@ export type MarkerUpdateAnimation<T> = {
   type: T;
 } & MarkerExitAnimation;
 
-export type CommonMarkLineAnimationType = 'clipIn' | 'fadeIn';
+export type MarkCommonLineAnimationType = 'clipIn' | 'fadeIn';
 
 export type CommonMarkAreaAnimationType = 'fadeIn';
 
@@ -173,7 +173,7 @@ export type MarkerExitAnimation = {
 export type MarkerAnimationState = 'enter' | 'update' | 'exit';
 
 /** state type */
-export type CommonMarkLineState<LineAttr> = {
+export type MarkCommonLineState<LineAttr> = {
   line?: State<LineAttr>;
   lineStartSymbol?: State<Partial<ISymbolGraphicAttribute>>;
   lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
@@ -199,8 +199,8 @@ export type MarkPointState = {
   customMark?: State<Partial<IGroupGraphicAttribute>>;
 };
 
-export type CommonMarkLineAttrs<LineAttr, LineLabelPosition, CommonMarkLineAnimationType> =
-  MarkerAttrs<CommonMarkLineAnimationType> &
+export type MarkCommonLineAttrs<LineAttr, LineLabelPosition, MarkCommonLineAnimationType> =
+  MarkerAttrs<MarkCommonLineAnimationType> &
     Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
       /**
        * 标签
@@ -217,13 +217,13 @@ export type CommonMarkLineAttrs<LineAttr, LineLabelPosition, CommonMarkLineAnima
         confine?: boolean;
       } & IMarkRef &
         IMarkLabel;
-      state?: CommonMarkLineState<LineAttr>;
+      state?: MarkCommonLineState<LineAttr>;
     };
 
-export type MarkLineAttrs = CommonMarkLineAttrs<
+export type MarkLineAttrs = MarkCommonLineAttrs<
   ILineGraphicWithCornerRadius | ILineGraphicAttribute[],
   keyof typeof IMarkLineLabelPosition,
-  CommonMarkLineAnimationType
+  MarkCommonLineAnimationType
 > & {
   type?: 'line';
   /**
@@ -243,10 +243,10 @@ export type MarkLineAttrs = CommonMarkLineAttrs<
   lineStyle?: ILineGraphicAttribute;
 };
 
-export type MarkArcLineAttrs = CommonMarkLineAttrs<
+export type MarkArcLineAttrs = MarkCommonLineAttrs<
   IArcGraphicAttribute,
   keyof typeof IMarkCommonArcLabelPosition,
-  CommonMarkLineAnimationType
+  MarkCommonLineAnimationType
 > & {
   type?: 'arc-line';
   /**

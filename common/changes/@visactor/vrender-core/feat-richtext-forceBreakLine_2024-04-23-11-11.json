@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: richtext support forceBreakLine, closed #1055",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

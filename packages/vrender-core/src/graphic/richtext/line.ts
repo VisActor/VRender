@@ -138,13 +138,17 @@ export default class Line {
     lastLine: boolean,
     x: number,
     y: number,
+    drawEllipsis: boolean | string,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) {
-    if (lastLine) {
+    if (drawEllipsis && (lastLine || this.paragraphs.some(p => (p as Paragraph).overflow))) {
       // 处理省略号
       let otherParagraphWidth = 0;
       for (let i = this.paragraphs.length - 1; i >= 0; i--) {
         const paragraph = this.paragraphs[i];
+        if ((paragraph as Paragraph).overflow) {
+          continue;
+        }
         if (paragraph instanceof RichTextIcon) {
           break; // todo: 处理最后为图标，显示省略号的情况
         }

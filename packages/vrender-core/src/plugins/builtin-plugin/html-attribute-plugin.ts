@@ -13,7 +13,7 @@ import type {
 import { application } from '../../application';
 import { DefaultAttribute, getTheme } from '../../graphic';
 import { textAttributesToStyle } from '../../common/text';
-import { isFunction, isObject, isString } from '@visactor/vutils';
+import { isFunction, isNil, isObject, isString } from '@visactor/vutils';
 import { styleStringToObject } from '../../common/utils';
 
 export class HtmlAttributePlugin implements IPlugin {
@@ -22,8 +22,17 @@ export class HtmlAttributePlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
-  lastDomContainerSet: Set<any> = new Set();
-  currentDomContainerSet: Set<any> = new Set();
+
+  htmlMap: Record<
+    string,
+    {
+      wrapContainer: HTMLElement;
+      nativeContainer: HTMLElement;
+      container: string | HTMLElement | null;
+      renderId: number;
+    }
+  > = {};
+  renderId: number = 0;
 
   activate(context: IPluginService): void {
     this.pluginService = context;
@@ -33,12 +42,6 @@ export class HtmlAttributePlugin implements IPlugin {
       }
 
       this.drawHTML(context.stage.renderService);
-    });
-    application.graphicService.hooks.onRemove.tap(this.key, graphic => {
-      this.removeDom(graphic);
-    });
-    application.graphicService.hooks.onRelease.tap(this.key, graphic => {
-      this.removeDom(graphic);
     });
   }
   deactivate(context: IPluginService): void {
@@ -84,6 +87,7 @@ export class HtmlAttributePlugin implements IPlugin {
     const { pointerEvents, anchorType = 'boundsLeftTop' } = options;
     let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
+    calculateStyle.display = graphic.attribute.visible !== false ? 'block' : 'none';
     // 事件穿透
     calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
     // 定位wrapGroup
@@ -94,6 +98,7 @@ export class HtmlAttributePlugin implements IPlugin {
     let left: number = 0;
     let top: number = 0;
     const b = graphic.globalAABBBounds;
+
     if (anchorType === 'position' || b.empty()) {
       const matrix = graphic.globalTransMatrix;
       left = matrix.e;
@@ -113,10 +118,14 @@ export class HtmlAttributePlugin implements IPlugin {
     calculateStyle.top = `${offsetTop}px`;
 
     if (isFunction(options.style)) {
-      const userStyle = options.style({ top: offsetTop, left: offsetX }, graphic, wrapContainer);
+      const userStyle = options.style(
+        { top: offsetTop, left: offsetX, width: b.width(), height: b.height() },
+        graphic,
+        wrapContainer
+      );
 
       if (userStyle) {
-        calculateStyle = { ...calculateStyle, userStyle };
+        calculateStyle = { ...calculateStyle, ...userStyle };
       }
     } else if (isObject(options.style)) {
       calculateStyle = { ...calculateStyle, ...options.style };
@@ -133,14 +142,15 @@ export class HtmlAttributePlugin implements IPlugin {
   }
 
   protected clearCacheContainer() {
-    // 删掉这次不存在的节点
-    this.lastDomContainerSet.forEach(item => {
-      if (!this.currentDomContainerSet.has(item)) {
-        application.global.removeDom(item);
-      }
-    });
-    this.lastDomContainerSet = new Set(this.currentDomContainerSet);
-    this.currentDomContainerSet.clear();
+    if (this.htmlMap) {
+      Object.keys(this.htmlMap).forEach(key => {
+        if (this.htmlMap[key] && this.htmlMap[key].renderId !== this.renderId) {
+          this.removeElement(key);
+        }
+      });
+    }
+
+    this.renderId += 1;
   }
 
   protected drawHTML(renderService: IRenderService) {
@@ -168,95 +178,89 @@ export class HtmlAttributePlugin implements IPlugin {
     });
   }
 
-  removeDom(graphic: IGraphic) {
-    if (graphic.bindDom && graphic.bindDom.size) {
-      // 删除dom
-      graphic.bindDom.forEach(item => {
-        application.global.removeDom(item.dom);
-      });
-      graphic.bindDom.clear();
+  removeElement(id: string) {
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      return;
     }
+
+    const { wrapContainer } = this.htmlMap[id];
+
+    wrapContainer && application.global.removeDom(wrapContainer);
+
+    this.htmlMap[id] = null;
   }
 
   renderGraphicHTML(graphic: IGraphic) {
     const { html } = graphic.attribute;
     if (!html) {
-      if (graphic.bindDom && graphic.bindDom.size) {
-        // 删除dom
-        graphic.bindDom.forEach(item => {
-          application.global.removeDom(item.dom);
-        });
-        graphic.bindDom.clear();
-      }
       return;
     }
     const stage = graphic.stage;
     if (!stage) {
       return;
     }
-    const { dom, container, width, height, style } = html;
-    if (!graphic.bindDom) {
-      graphic.bindDom = new Map();
-    }
-    const lastDom = graphic.bindDom.get(dom);
+    const { dom, container } = html;
 
-    let wrapGroup;
-    // 获取container的dom，默认为window的container
-    let nativeContainer;
-    // 如果存在了（dom存在，且container没有变化），就不做事情
-    if (lastDom && !(container && container !== lastDom.container)) {
-      wrapGroup = lastDom.wrapGroup;
-      nativeContainer = wrapGroup.parentNode;
-    } else {
-      // 清除上一次的dom
-      graphic.bindDom.forEach(({ wrapGroup }) => {
-        application.global.removeDom(wrapGroup);
-      });
-      // 转化这个dom为nativeDOM
-      let nativeDom: HTMLElement;
-      if (typeof dom === 'string') {
-        nativeDom = new DOMParser().parseFromString(dom, 'text/html').firstChild as any;
-        if ((nativeDom as any).lastChild) {
-          nativeDom = (nativeDom as any).lastChild.firstChild;
+    if (!dom) {
+      return;
+    }
+    const id = isNil(html.id) ? `${graphic.id ?? graphic._uid}_react` : html.id;
+
+    if (this.htmlMap && this.htmlMap[id] && container && container !== this.htmlMap[id].container) {
+      this.removeElement(id);
+    }
+
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      // createa a wrapper contianer to be the root of react element
+      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
+
+      if (wrapContainer) {
+        // init append
+        if (typeof dom === 'string') {
+          wrapContainer.innerHTML = dom;
+        } else {
+          wrapContainer.appendChild(dom);
         }
+
+        if (!this.htmlMap) {
+          this.htmlMap = {};
+        }
+
+        this.htmlMap[id] = { wrapContainer, nativeContainer, container, renderId: this.renderId };
+      }
+    } else {
+      if (typeof dom === 'string') {
+        this.htmlMap[id].wrapContainer.innerHTML = dom;
       } else {
-        nativeDom = dom;
-      }
-
-      // 创建wrapGroup
-      const res = this.getWrapContainer(
-        stage,
-        container ||
-          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement))
-      );
-      wrapGroup = res.wrapContainer;
-      nativeContainer = res.nativeContainer;
-      if (wrapGroup) {
-        wrapGroup.appendChild(nativeDom);
-        graphic.bindDom.set(dom, { dom: nativeDom, container, wrapGroup: wrapGroup as any });
+        if (dom !== this.htmlMap[id].wrapContainer.firstChild) {
+          this.htmlMap[id].wrapContainer.removeChild(this.htmlMap[id].wrapContainer.firstChild);
+          this.htmlMap[id].wrapContainer.appendChild(dom);
+        }
       }
     }
 
-    if (wrapGroup) {
-      this.updateStyleOfWrapContainer(graphic, stage, wrapGroup, nativeContainer, html);
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      return;
     }
 
-    this.currentDomContainerSet.add(wrapGroup);
+    const { wrapContainer, nativeContainer } = this.htmlMap[id];
+
+    this.updateStyleOfWrapContainer(graphic, stage, wrapContainer, nativeContainer, html);
+    this.htmlMap[id].renderId = this.renderId;
   }
 
   release() {
     if (application.global.env === 'browser') {
       this.removeAllDom(this.pluginService.stage.defaultLayer);
-      this.lastDomContainerSet.clear();
-      this.currentDomContainerSet.clear();
     }
   }
   removeAllDom(g: IGraphic) {
-    this.removeDom(g);
-    g.forEachChildren((item: IGraphic) => {
-      if (item.isContainer) {
-        this.removeAllDom(g);
-      }
-    });
+    if (this.htmlMap) {
+      Object.keys(this.htmlMap).forEach(key => {
+        this.removeElement(key);
+      });
+
+      this.htmlMap = null;
+    }
   }
 }

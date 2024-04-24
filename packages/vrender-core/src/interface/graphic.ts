@@ -191,7 +191,11 @@ export interface SimpleDomStyleOptions {
   style?:
     | string
     | Record<string, any>
-    | ((pos: { top: number; left: number }, graphic: IGraphic, wrapContainer: HTMLElement) => Record<string, any>); // 容器的样式
+    | ((
+        pos: { top: number; left: number; width: number; height: number },
+        graphic: IGraphic,
+        wrapContainer: HTMLElement
+      ) => Record<string, any>); // 容器的样式
 }
 
 export interface CommonDomOptions {

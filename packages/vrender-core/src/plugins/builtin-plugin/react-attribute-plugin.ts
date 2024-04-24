@@ -11,7 +11,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
 
-  reactRootMap: Record<
+  htmlMap: Record<
     string,
     {
       root: any;
@@ -21,14 +21,13 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       renderId: number;
     }
   > = {};
-  reactRenderId: number = 0;
 
-  removeReact(id: string) {
-    if (!this.reactRootMap || !this.reactRootMap[id]) {
+  removeElement(id: string) {
+    if (!this.htmlMap || !this.htmlMap[id]) {
       return;
     }
 
-    const { root, wrapContainer } = this.reactRootMap[id];
+    const { root, wrapContainer } = this.htmlMap[id];
 
     if (root) {
       const raf = application.global.getRequestAnimationFrame();
@@ -39,23 +38,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
 
     wrapContainer && application.global.removeDom(wrapContainer);
 
-    this.reactRootMap[id] = null;
-  }
-
-  removeDom(graphic: IGraphic) {
-    // do nothing
-  }
-
-  protected clearCacheContainer() {
-    if (this.reactRootMap) {
-      Object.keys(this.reactRootMap).forEach(key => {
-        if (this.reactRenderId[key] && this.reactRenderId[key].renderId !== this.reactRenderId) {
-          this.removeReact(key);
-        }
-      });
-    }
-
-    this.reactRenderId += 1;
+    this.htmlMap[id] = null;
   }
 
   renderGraphicHTML(graphic: IGraphic) {
@@ -68,56 +51,42 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       return;
     }
     const ReactDOM = stage.params.ReactDOM;
-    const { element, container, width, height, style } = react;
+    const { element, container } = react;
     if (!(element && ReactDOM && ReactDOM.createRoot)) {
       return;
     }
     const id = isNil(react.id) ? `${graphic.id ?? graphic._uid}_react` : react.id;
 
-    if (this.reactRootMap && this.reactRootMap[id] && container && container !== this.reactRootMap[id].container) {
-      this.removeReact(id);
+    if (this.htmlMap && this.htmlMap[id] && container && container !== this.htmlMap[id].container) {
+      this.removeElement(id);
     }
 
-    if (!this.reactRootMap || !this.reactRootMap[id]) {
+    if (!this.htmlMap || !this.htmlMap[id]) {
       // createa a wrapper contianer to be the root of react element
-      const { wrapContainer, nativeContainer } = this.getWrapContainer(
-        stage,
-        container ||
-          (stage.params.enableHtmlAttribute === true ? null : (stage.params.enableHtmlAttribute as HTMLElement))
-      );
+      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
       if (wrapContainer) {
         const root = ReactDOM.createRoot(wrapContainer);
         root.render(element);
 
-        if (!this.reactRootMap) {
-          this.reactRootMap = {};
+        if (!this.htmlMap) {
+          this.htmlMap = {};
         }
 
-        this.reactRootMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.reactRenderId };
+        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId };
       }
     } else {
       // update react element
-      this.reactRootMap[id].root.render(element);
+      this.htmlMap[id].root.render(element);
     }
 
-    if (!this.reactRootMap || !this.reactRootMap[id]) {
+    if (!this.htmlMap || !this.htmlMap[id]) {
       return;
     }
 
-    const { wrapContainer, nativeContainer } = this.reactRootMap[id];
+    const { wrapContainer, nativeContainer } = this.htmlMap[id];
 
     this.updateStyleOfWrapContainer(graphic, stage, wrapContainer, nativeContainer, react);
-    this.reactRootMap[id].renderId = this.reactRenderId;
-  }
-
-  removeAllDom(g: IGraphic) {
-    if (this.reactRootMap) {
-      Object.keys(this.reactRootMap).forEach(key => {
-        this.removeReact(key);
-      });
-
-      this.reactRootMap = null;
-    }
+    this.htmlMap[id].renderId = this.renderId;
   }
 }

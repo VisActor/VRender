@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.14",
+      "tag": "@visactor/vrender-core_v0.18.14",
+      "date": "Wed, 24 Apr 2024 08:07:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: richtext support forceBreakLine, closed #1055"
+          },
+          {
+            "comment": "fix: fix flex layout crossLen problem"
+          },
+          {
+            "comment": "fix: pointerenter should not bubble when inside the same group, and revert previous wrong fix, fixed #1132"
+          },
+          {
+            "comment": "fix: fix issue with feishu program, closed #2567"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.13",
       "tag": "@visactor/vrender-core_v0.18.13",
       "date": "Fri, 19 Apr 2024 08:46:08 GMT",

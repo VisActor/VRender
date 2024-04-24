@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 19 Apr 2024 08:46:08 GMT and should not be manually modified.
+This log was last generated on Wed, 24 Apr 2024 08:07:48 GMT and should not be manually modified.
+
+## 0.18.14
+Wed, 24 Apr 2024 08:07:48 GMT
+
+### Updates
+
+- feat: richtext support forceBreakLine, closed #1055
+- fix: fix flex layout crossLen problem
+- fix: pointerenter should not bubble when inside the same group, and revert previous wrong fix, fixed #1132
+- fix: fix issue with feishu program, closed #2567
 
 ## 0.18.13
 Fri, 19 Apr 2024 08:46:08 GMT

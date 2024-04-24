@@ -121,6 +121,8 @@ export const DefaultPickStyle: IPickStyle = {
 };
 
 export const DefaultStyle: IGraphicStyle = {
+  forceBoundsWidth: undefined,
+  forceBoundsHeight: undefined,
   opacity: 1,
   background: null,
   backgroundOpacity: 1,

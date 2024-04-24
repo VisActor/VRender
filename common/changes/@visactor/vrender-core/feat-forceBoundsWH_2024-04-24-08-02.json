@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support forceBoundsWH, closed #1128",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -21,7 +21,7 @@ import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } fr
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
-import { isRichText, richTextAttributeTransform, traverseGroup } from '../util';
+import { createTextGraphicByType, traverseGroup } from '../util';
 import { DEFAULT_STATES, StateValue } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
@@ -35,7 +35,6 @@ import type {
   TickLineItem
 } from './type';
 import { Tag } from '../tag/tag';
-import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { getElMap, getVerticalCoord } from './util';
 
 export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractComponent<Required<T>> {
@@ -351,12 +350,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
     data.forEach((item: TransformedAxisItem, index: number) => {
       const labelStyle: any = this._getLabelAttribute(item, index, data, layer);
-      let text;
-      if (isRichText(labelStyle)) {
-        text = graphicCreator.richtext(richTextAttributeTransform(labelStyle));
-      } else {
-        text = graphicCreator.text(labelStyle as any);
-      }
+      const text = createTextGraphicByType(labelStyle);
+
       text.name = AXIS_ELEMENT_NAME.label;
       text.id = this._getNodeId(`layer${layer}-label-${item.id}`);
       if (isEmpty(this.attribute.label?.state)) {

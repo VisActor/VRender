@@ -1,4 +1,4 @@
-import type { IRichTextCharacter } from '@visactor/vrender-core';
+import type { IGraphicStyle, IRichTextCharacter } from '@visactor/vrender-core';
 
 export type Point = {
   x: number;
@@ -77,7 +77,14 @@ type RichTextContent = {
   };
 };
 
-export type TextContent = (CommonTextContent | RichTextContent) & {
+export type HTMLTextContent = {
+  text: {
+    type: 'html';
+    dom: IGraphicStyle['html']['dom'];
+  };
+};
+
+export type TextContent = (CommonTextContent | RichTextContent | HTMLTextContent) & {
   /** @deprecated */
   type?: 'text' | 'rich';
 };

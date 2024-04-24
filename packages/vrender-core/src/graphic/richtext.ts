@@ -221,7 +221,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textAlign,
       textBaseline,
       layoutDirection,
-      singleLine
+      singleLine,
+      forceBreakLine
     } = this.attribute;
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
 
@@ -313,8 +314,37 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       this._frameCache?.icons
     );
     const wrapper = new Wrapper(frame);
-    for (let i = 0; i < paragraphs.length; i++) {
-      wrapper.deal(paragraphs[i]);
+    // debugger;
+    if (forceBreakLine) {
+      let lineCount = 0;
+      let skip = false;
+      for (let i = 0; i < paragraphs.length; i++) {
+        const p = paragraphs[i];
+        if (skip) {
+          (p as Paragraph).overflow = true;
+          (p as Paragraph).left = Infinity;
+          (p as Paragraph).top = Infinity;
+          !(p as Paragraph).newLine && frame.lines[frame.lines.length - 1].paragraphs.push(p);
+        } else {
+          wrapper.deal(p);
+        }
+        if (frame.lines.length !== lineCount) {
+          lineCount = frame.lines.length;
+          wrapper.lineBuffer.length = 0;
+          (p as Paragraph).overflow = true;
+          (p as Paragraph).left = 1000;
+          (p as Paragraph).top = 1000;
+          frame.lines[frame.lines.length - 1].paragraphs.push(p);
+          skip = true;
+        }
+        if ((p as Paragraph).newLine) {
+          skip = false;
+        }
+      }
+    } else {
+      for (let i = 0; i < paragraphs.length; i++) {
+        wrapper.deal(paragraphs[i]);
+      }
     }
 
     wrapper.send(); // 最后一行手动输出

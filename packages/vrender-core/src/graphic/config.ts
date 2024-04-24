@@ -325,6 +325,7 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   textBaseline: 'top' as RichTextGlobalBaselineType,
   layoutDirection: 'horizontal',
   textConfig: [],
+  forceBreakLine: false,
   maxHeight: undefined,
   maxWidth: undefined,
   singleLine: false

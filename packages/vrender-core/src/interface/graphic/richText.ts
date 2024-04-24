@@ -16,6 +16,8 @@ export type IRichTextAttribute = {
   textBaseline: RichTextGlobalBaselineType;
   layoutDirection: RichTextLayoutDirectionType;
   textConfig: IRichTextCharacter[];
+  // 是否强制每行break
+  forceBreakLine: boolean;
   singleLine: boolean;
 };
 
@@ -161,6 +163,7 @@ export interface IRichTextLine {
     lastLine: boolean,
     x: number,
     y: number,
+    drawEllipsis: boolean | string,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) => void;
   getWidthWithEllips: () => number;

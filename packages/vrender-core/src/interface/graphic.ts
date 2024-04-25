@@ -292,7 +292,7 @@ export type IGraphicAttribute = IDebugType &
     /**
      * 是否隐藏元素（只是绘制的时候不绘制）
      */
-    hide: boolean;
+    renderable: boolean;
     /**
      * 是否在3d中控制方向
      * false: 不控制方向

@@ -285,7 +285,7 @@ export class EventManager {
 
         leaveEvent.eventPhase = leaveEvent.AT_TARGET;
 
-        if (leaveEvent.target && !e.composedPath().includes(leaveEvent.target)) {
+        while (leaveEvent.target && !e.composedPath().includes(leaveEvent.target)) {
           leaveEvent.currentTarget = leaveEvent.target;
 
           this.notifyTarget(leaveEvent);
@@ -293,7 +293,7 @@ export class EventManager {
             this.notifyTarget(leaveEvent, 'mouseleave');
           }
 
-          // leaveEvent.target = leaveEvent.target.parent as IEventTarget;
+          leaveEvent.target = leaveEvent.target.parent as IEventTarget;
         }
 
         this.freeEvent(leaveEvent);
@@ -327,16 +327,28 @@ export class EventManager {
         const enterEvent = this.clonePointerEvent(e, 'pointerenter');
 
         enterEvent.eventPhase = enterEvent.AT_TARGET;
-        // 不冒泡
-        if (enterEvent.target && enterEvent.target !== outTarget && enterEvent.target !== this.rootTarget.parent) {
-          enterEvent.currentTarget = enterEvent.target;
 
-          this.notifyTarget(enterEvent);
-          if (isMouse) {
-            this.notifyTarget(enterEvent, 'mouseenter');
+        let currentTarget = enterEvent.target;
+        // 预先计算 outTarget 的所有祖先
+        const outTargetAncestors = new Set<IEventTarget>();
+        let ancestor = outTarget;
+        while (ancestor && ancestor !== this.rootTarget) {
+          outTargetAncestors.add(ancestor);
+          ancestor = ancestor.parent;
+        }
+
+        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
+          // 检查 currentTarget 是否是 outTarget 的祖先
+          if (!outTargetAncestors.has(currentTarget)) {
+            enterEvent.currentTarget = currentTarget;
+
+            this.notifyTarget(enterEvent);
+            if (isMouse) {
+              this.notifyTarget(enterEvent, 'mouseenter');
+            }
           }
 
-          // enterEvent.target = enterEvent.target.parent as IEventTarget;
+          currentTarget = currentTarget.parent as IEventTarget;
         }
 
         this.freeEvent(enterEvent);
@@ -388,7 +400,7 @@ export class EventManager {
 
     enterEvent.eventPhase = enterEvent.AT_TARGET;
 
-    if (enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
+    while (enterEvent.target && enterEvent.target !== this.rootTarget.parent) {
       enterEvent.currentTarget = enterEvent.target;
 
       this.notifyTarget(enterEvent);
@@ -396,7 +408,7 @@ export class EventManager {
         this.notifyTarget(enterEvent, 'mouseenter');
       }
 
-      // enterEvent.target = enterEvent.target.parent as IEventTarget;
+      enterEvent.target = enterEvent.target.parent as IEventTarget;
     }
 
     trackingData.overTargets = e.composedPath();
@@ -429,7 +441,7 @@ export class EventManager {
 
       leaveEvent.eventPhase = leaveEvent.AT_TARGET;
 
-      if (leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
+      while (leaveEvent.target && leaveEvent.target !== this.rootTarget.parent) {
         leaveEvent.currentTarget = leaveEvent.target;
 
         this.notifyTarget(leaveEvent);
@@ -437,7 +449,7 @@ export class EventManager {
           this.notifyTarget(leaveEvent, 'mouseleave');
         }
 
-        // leaveEvent.target = leaveEvent.target.parent as IEventTarget;
+        leaveEvent.target = leaveEvent.target.parent as IEventTarget;
       }
 
       trackingData.overTargets = [];

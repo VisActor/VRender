@@ -157,7 +157,7 @@ export class FlexLayoutPlugin implements IPlugin {
             tempMainL = 0;
             tempCrossL = 0;
           } else {
-            mainList.push({ idx: i - 1, mainLen: tempMainL, crossLen });
+            mainList.push({ idx: i - 1, mainLen: tempMainL, crossLen: tempCrossL });
             tempMainL = mainLen;
             tempCrossL = crossLen;
           }

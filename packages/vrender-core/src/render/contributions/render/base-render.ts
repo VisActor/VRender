@@ -370,6 +370,11 @@ export abstract class BaseRender<T extends IGraphic> {
     if (!context) {
       return;
     }
+    // 如果hide，直接跳过后续绘制
+    const { hide } = graphic.attribute;
+    if (hide) {
+      return;
+    }
 
     context.highPerformanceSave();
 

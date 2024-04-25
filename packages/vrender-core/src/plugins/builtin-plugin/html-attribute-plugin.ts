@@ -8,7 +8,8 @@ import type {
   IStage,
   CreateDOMParamsType,
   CommonDomOptions,
-  SimpleDomStyleOptions
+  SimpleDomStyleOptions,
+  IText
 } from '../../interface';
 import { application } from '../../application';
 import { DefaultAttribute, getTheme } from '../../graphic';
@@ -77,6 +78,43 @@ export class HtmlAttributePlugin implements IPlugin {
     return textAttributesToStyle(attrs);
   }
 
+  getTransformOfText(graphic: IText) {
+    const textTheme = getTheme(graphic).text;
+    const { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = graphic.attribute;
+    const matrix = graphic.globalTransMatrix;
+    const cssAttrs = matrix.toTransformAttrs();
+    const { rotateDeg, scaleX, scaleY } = cssAttrs;
+    const translateMap: any = {
+      left: '0',
+      start: '0',
+      end: '-100%',
+      center: '-50%',
+      right: '-100%',
+      top: '0',
+      middle: '-50%',
+      bottom: '-100%',
+      alphabetic: '-79%'
+    };
+    const originMap: any = {
+      left: '0',
+      start: '0',
+      end: '100%',
+      center: '50%',
+      right: '100%',
+      top: '0',
+      middle: '50%',
+      bottom: '100%',
+      alphabetic: '79%'
+    };
+
+    return {
+      textAlign,
+      // textBaseline,
+      transform: `translate(${translateMap[textAlign]},${translateMap[textBaseline]}) rotate(${rotateDeg}deg) scaleX(${scaleX}) scaleY(${scaleY})`,
+      transformOrigin: `${originMap[textAlign]} ${originMap[textBaseline]}`
+    };
+  }
+
   updateStyleOfWrapContainer(
     graphic: IGraphic,
     stage: IStage,
@@ -84,7 +122,7 @@ export class HtmlAttributePlugin implements IPlugin {
     nativeContainer: HTMLElement,
     options: SimpleDomStyleOptions & CommonDomOptions
   ) {
-    const { pointerEvents, anchorType = 'boundsLeftTop' } = options;
+    const { pointerEvents } = options;
     let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
     calculateStyle.display = graphic.attribute.visible !== false ? 'block' : 'none';
@@ -99,6 +137,11 @@ export class HtmlAttributePlugin implements IPlugin {
     let top: number = 0;
     const b = graphic.globalAABBBounds;
 
+    let anchorType = options.anchorType;
+
+    if (isNil(anchorType)) {
+      anchorType = graphic.type === 'text' ? 'position' : 'boundsLeftTop';
+    }
     if (anchorType === 'position' || b.empty()) {
       const matrix = graphic.globalTransMatrix;
       left = matrix.e;
@@ -107,6 +150,7 @@ export class HtmlAttributePlugin implements IPlugin {
       left = b.x1;
       top = b.y1;
     }
+
     // 查看wrapGroup的位置
     // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
     const containerTL = application.global.getElementTopLeft(nativeContainer, false);
@@ -116,6 +160,13 @@ export class HtmlAttributePlugin implements IPlugin {
     // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
     calculateStyle.left = `${offsetX}px`;
     calculateStyle.top = `${offsetTop}px`;
+
+    if (graphic.type === 'text' && anchorType === 'position') {
+      calculateStyle = {
+        ...calculateStyle,
+        ...this.getTransformOfText(graphic as IText)
+      };
+    }
 
     if (isFunction(options.style)) {
       const userStyle = options.style(

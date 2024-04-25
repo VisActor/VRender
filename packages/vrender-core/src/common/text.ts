@@ -96,7 +96,7 @@ export function textLayoutOffsetY(
 }
 
 export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
-  const stringTypes = ['textAlign', 'textBaseline', 'fontFamily', 'fontVariant', 'fontStyle', 'fontWeight'];
+  const stringTypes = ['textAlign', 'fontFamily', 'fontVariant', 'fontStyle', 'fontWeight'];
   const pxKeys = ['fontSize', 'lineHeight'];
   const style: any = {};
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: draw-contribution support check appName, closed #1122",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

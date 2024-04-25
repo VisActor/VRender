@@ -88,7 +88,7 @@ export function run() {
     },
     label: {
       text: 'aaa',
-      visible: false,
+      // visible: false,
       textStyle: {
         fill: 'red',
         fontSize: 20,
@@ -102,7 +102,7 @@ export function run() {
         }
       },
       panel: {
-        visible: false,
+        visible: true,
         state: {
           hover: {
             fill: 'red'

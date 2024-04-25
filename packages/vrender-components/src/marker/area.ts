@@ -49,22 +49,24 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
 
   protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
+    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
+    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
     // labelHeight
-    const labelTextHeight = this._label.getTextShape().attribute.visible
+    const labelTextHeight = labelVisible
       ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
       : 0;
-    const labelRectHeight = this._label.getBgRect().attribute.visible
+    const labelRectHeight = labelRectVisible
       ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
       : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     // labelWidth
-    const labelRectWidth = Math.abs(
-      (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
-    );
-    const labelTextWidth = Math.abs(
-      (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
-    );
+    const labelTextWidth = labelVisible
+      ? Math.abs((this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0))
+      : 0;
+    const labelRectWidth = labelRectVisible
+      ? Math.abs((this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0))
+      : 0;
     const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
     if (position.includes('left') || position.includes('Left')) {

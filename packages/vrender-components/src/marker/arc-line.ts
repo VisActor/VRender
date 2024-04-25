@@ -35,10 +35,12 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   protected getPointAttrByPosition(direction: IMarkCommonArcLabelPosition) {
     const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
     const { refX = 0, refY = 0 } = label;
-    const labelTextHeight = this._label.getTextShape().attribute.visible
+    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
+    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
+    const labelTextHeight = labelVisible
       ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
       : 0;
-    const labelRectHeight = this._label.getBgRect().attribute.visible
+    const labelRectHeight = labelRectVisible
       ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
       : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);

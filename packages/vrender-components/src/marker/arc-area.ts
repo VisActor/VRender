@@ -51,12 +51,14 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
   protected getPointAttrByPosition(position: IMarkCommonArcLabelPosition) {
     const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as MarkArcAreaAttrs;
     const { refX = 0, refY = 0 } = label;
+    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
+    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
     // eslint-disable-next-line max-len
-    const labelTextHeight = this._label.getTextShape().attribute.visible
+    const labelTextHeight = labelVisible
       ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
       : 0;
     // eslint-disable-next-line max-len
-    const labelRectHeight = this._label.getBgRect().attribute.visible
+    const labelRectHeight = labelRectVisible
       ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
       : 0;
     const labelHeight = Math.max(labelRectHeight, labelTextHeight);

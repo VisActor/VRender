@@ -1,6 +1,6 @@
 import { inject, injectable, named } from '../../common/inversify-lite';
 import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
-import { AABBBounds, epsilon, isArray, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
+import { AABBBounds, epsilon, isArray, isNumber, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
 import type {
   mat4,
@@ -47,7 +47,7 @@ import type {
   IPathBoundsContribution,
   IContributionProvider
 } from '../../interface';
-import { textDrawOffsetX } from '../../common/text';
+import { textDrawOffsetX, textLayoutOffsetY } from '../../common/text';
 import { DefaultSymbolOuterBorderBoundsContribution } from './symbol-contribution';
 import { boundStroke } from '../tools';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
@@ -798,6 +798,25 @@ export class DefaultGraphicService implements IGraphicService {
     return aabbBounds;
   }
 
+  updateHTMLTextAABBBounds(
+    attribute: ITextGraphicAttribute,
+    textTheme: Required<ITextGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IText
+  ) {
+    const { textAlign, textBaseline } = attribute;
+    if (attribute.forceBoundsHeight != null) {
+      const h = isNumber(attribute.forceBoundsHeight) ? attribute.forceBoundsHeight : attribute.forceBoundsHeight();
+      const dy = textLayoutOffsetY(textBaseline, h, h);
+      aabbBounds.set(aabbBounds.x1, dy, aabbBounds.x2, dy + h);
+    }
+    if (attribute.forceBoundsWidth != null) {
+      const w = isNumber(attribute.forceBoundsWidth) ? attribute.forceBoundsWidth : attribute.forceBoundsWidth();
+      const dx = textDrawOffsetX(textAlign, w);
+      aabbBounds.set(dx, aabbBounds.y1, dx + w, aabbBounds.y2);
+    }
+  }
+
   updateRichTextAABBBounds(
     attribute: IRichTextGraphicAttribute,
     richtextTheme: Required<IRichTextGraphicAttribute>,
@@ -872,6 +891,9 @@ export class DefaultGraphicService implements IGraphicService {
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
+      this.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
+    }
     this.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, graphic);
     return aabbBounds;
   }
@@ -913,6 +935,10 @@ export class DefaultGraphicService implements IGraphicService {
     }
     // 合并shadowRoot的bounds
     this.combindShadowAABBBounds(aabbBounds, graphic);
+
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
+      this.updateHTMLTextAABBBounds(attribute, textTheme, aabbBounds);
+    }
 
     transformBoundsWithMatrix(aabbBounds, aabbBounds, graphic.transMatrix);
     return aabbBounds;
@@ -1537,6 +1563,10 @@ export class DefaultGraphicService implements IGraphicService {
     graphic?: IGraphic
   ): boolean {
     if (!graphic) {
+      return true;
+    }
+    // 设置了强制wh，那就直接认为是合法的
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
       return true;
     }
     if (!graphic.valid) {

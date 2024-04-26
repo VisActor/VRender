@@ -1,4 +1,4 @@
-import type { IAABBBounds, IOBBBounds, IMatrix, IPointLike, IPoint } from '@visactor/vutils';
+import type { IAABBBounds, IOBBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
 import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
@@ -11,7 +11,6 @@ import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
-import { ITheme } from './graphic/theme';
 
 type IStrokeSeg = {
   start: number; // 百分比
@@ -203,7 +202,7 @@ export interface CommonDomOptions {
   container: string | HTMLElement | null; // id或者dom
   visible?: boolean;
   pointerEvents?: boolean | string;
-  anchorType?: 'position' | 'boundsLeftTop';
+  anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 
 export type IGraphicStyle = ILayout &

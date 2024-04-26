@@ -1,8 +1,7 @@
 // 存放一些公共方法，公共配置
 
-import { isNil, isString, type ITextFontParams } from '@visactor/vutils';
+import { isNil, isString, type ITextFontParams, lowerCamelCaseToMiddle } from '@visactor/vutils';
 import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
-import { lowerCamelCaseToMiddle } from './utils';
 
 export function getContextFont(
   text: Partial<ITextFontParams>,

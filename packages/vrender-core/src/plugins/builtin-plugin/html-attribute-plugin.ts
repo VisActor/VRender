@@ -14,8 +14,7 @@ import type {
 import { application } from '../../application';
 import { DefaultAttribute, getTheme } from '../../graphic';
 import { textAttributesToStyle } from '../../common/text';
-import { isFunction, isNil, isObject, isString } from '@visactor/vutils';
-import { styleStringToObject } from '../../common/utils';
+import { isFunction, isNil, isObject, isString, styleStringToObject, calculateAnchorOfBounds } from '@visactor/vutils';
 
 export class HtmlAttributePlugin implements IPlugin {
   name: string = 'HtmlAttributePlugin';
@@ -141,14 +140,19 @@ export class HtmlAttributePlugin implements IPlugin {
 
     if (isNil(anchorType)) {
       anchorType = graphic.type === 'text' ? 'position' : 'boundsLeftTop';
+    } else if (anchorType === 'boundsLeftTop') {
+      // 兼容老的配置，统一配置
+      anchorType = 'top-left';
     }
     if (anchorType === 'position' || b.empty()) {
       const matrix = graphic.globalTransMatrix;
       left = matrix.e;
       top = matrix.f;
     } else {
-      left = b.x1;
-      top = b.y1;
+      const anchor = calculateAnchorOfBounds(b, anchorType);
+
+      left = anchor.x;
+      top = anchor.y;
     }
 
     // 查看wrapGroup的位置

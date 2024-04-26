@@ -167,6 +167,7 @@ export const DefaultDebugAttribute: Required<IDebugType> = {
 
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
+  renderable: true,
   pickable: true,
   childrenPickable: true,
   fillPickable: true,

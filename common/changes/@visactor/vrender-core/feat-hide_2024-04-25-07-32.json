@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support renderable attribute, closed #1128",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

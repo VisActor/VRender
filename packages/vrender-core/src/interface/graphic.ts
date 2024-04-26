@@ -292,6 +292,10 @@ export type IGraphicAttribute = IDebugType &
     zIndex: number;
     layout: any;
     /**
+     * 是否隐藏元素（只是绘制的时候不绘制）
+     */
+    renderable: boolean;
+    /**
      * 是否在3d中控制方向
      * false: 不控制方向
      * true: 始终控制方向朝摄像机

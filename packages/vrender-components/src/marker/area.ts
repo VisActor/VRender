@@ -7,19 +7,17 @@ import type { TagAttributes } from '../tag';
 import { Tag } from '../tag';
 import { Marker } from './base';
 import { DEFAULT_MARK_AREA_THEME } from './config';
-import type { CommonMarkAreaAnimationType, IMarkAreaLabelPosition, MarkAreaAttrs, MarkerAnimationState } from './type';
+import type { CommonMarkAreaAnimationType, MarkAreaAttrs, MarkerAnimationState } from './type';
+import { IMarkAreaLabelPosition } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
 import { loadMarkAreaComponent } from './register';
 import type { Point } from '../core/type';
 import { DEFAULT_STATES } from '../constant';
-import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation, markAreaAnimate } from './animate/animate';
+import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
+import { calculateAnchorOfBounds } from '@visactor/vutils';
 
 loadMarkAreaComponent();
-
-export function registerMarkAreaAnimate() {
-  MarkArea._animate = markAreaAnimate;
-}
 
 export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType> {
   name = 'markArea';
@@ -47,54 +45,58 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
     super(options?.skipDefault ? attributes : merge({}, MarkArea.defaultAttributes, attributes));
   }
 
+  private _transformPosToAnchorType = (position: IMarkAreaLabelPosition) => {
+    switch (position) {
+      case IMarkAreaLabelPosition.left:
+      case IMarkAreaLabelPosition.insideLeft:
+        return 'left';
+      case IMarkAreaLabelPosition.right:
+      case IMarkAreaLabelPosition.insideRight:
+        return 'right';
+      case IMarkAreaLabelPosition.top:
+      case IMarkAreaLabelPosition.insideTop:
+        return 'top';
+      case IMarkAreaLabelPosition.bottom:
+      case IMarkAreaLabelPosition.insideBottom:
+        return 'bottom';
+      default:
+        return 'center';
+    }
+  };
+
+  private _calculateLabelOffset = (position: IMarkAreaLabelPosition) => {
+    let dx = 0;
+    let dy = 0;
+    switch (position) {
+      case IMarkAreaLabelPosition.left:
+      case IMarkAreaLabelPosition.insideRight:
+        dx = -0.5;
+        break;
+      case IMarkAreaLabelPosition.right:
+      case IMarkAreaLabelPosition.insideLeft:
+        dx = 0.5;
+        break;
+      case IMarkAreaLabelPosition.top:
+      case IMarkAreaLabelPosition.insideBottom:
+        dy = -0.5;
+        break;
+      case IMarkAreaLabelPosition.bottom:
+      case IMarkAreaLabelPosition.insideTop:
+        dy = 0.5;
+    }
+    return { dx, dy };
+  };
+
   protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
-    const { x1, x2, y1, y2 } = this._area.AABBBounds;
-    // labelHeight
-    const labelTextHeight = this._label.getTextShape().attribute.visible
-      ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelRectHeight = this._label.getBgRect().attribute.visible
-      ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
+    const labelHeight = this._label.getTagHeight();
+    const labelWidth = this._label.getTagWidth();
 
-    // labelWidth
-    const labelRectWidth = Math.abs(
-      (this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0)
-    );
-    const labelTextWidth = Math.abs(
-      (this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0)
-    );
-    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
-
-    if (position.includes('left') || position.includes('Left')) {
-      return {
-        x: x1 + (position.includes('inside') ? 0.5 : -0.5) * labelWidth,
-        y: (y1 + y2) / 2
-      };
-    }
-    if (position.includes('right') || position.includes('Right')) {
-      return {
-        x: x2 + (position.includes('inside') ? -0.5 : 0.5) * labelWidth,
-        y: (y1 + y2) / 2
-      };
-    }
-    if (position.includes('top') || position.includes('Top')) {
-      return {
-        x: (x1 + x2) / 2,
-        y: y1 + (position.includes('inside') ? 0.5 : -0.5) * labelHeight
-      };
-    }
-    if (position.includes('bottom') || position.includes('Bottom')) {
-      return {
-        x: (x1 + x2) / 2,
-        y: y2 + (position.includes('inside') ? -0.5 : 0.5) * labelHeight
-      };
-    }
+    const { x, y } = calculateAnchorOfBounds(this._area.AABBBounds, this._transformPosToAnchorType(position));
+    const { dx: labelDx, dy: labelDy } = this._calculateLabelOffset(position);
 
     return {
-      x: (x1 + x2) / 2,
-      y: (y1 + y2) / 2
+      x: x + labelDx * labelWidth,
+      y: y + labelDy * labelHeight
     };
   }
 

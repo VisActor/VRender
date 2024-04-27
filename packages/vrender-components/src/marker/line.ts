@@ -12,13 +12,8 @@ import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
-import { markCommonLineAnimate } from './animate/animate';
 
 loadMarkLineComponent();
-
-export function registerMarkLineAnimate() {
-  MarkLine._animate = markCommonLineAnimate;
-}
 
 export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLabelPosition> {
   name = 'markLine';
@@ -38,23 +33,8 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   }
 
   protected getLabelOffsetByPosition(position: IMarkLineLabelPosition) {
-    // labelHeight
-    const labelTextHeight = this._label.getTextShape().attribute.visible
-      ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelRectHeight = this._label.getBgRect().attribute.visible
-      ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
-
-    // labelWidth
-    const labelTextWidth = this._label.getTextShape().attribute.visible
-      ? Math.abs((this._label.getTextShape()?.AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelRectWidth = this._label.getBgRect().attribute.visible
-      ? Math.abs((this._label.getBgRect()?.AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
+    const labelHeight = this._label.getTagHeight();
+    const labelWidth = this._label.getTagWidth();
 
     switch (position) {
       case IMarkLineLabelPosition.start:

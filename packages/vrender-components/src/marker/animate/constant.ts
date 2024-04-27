@@ -1,0 +1,10 @@
+export const CALL_IN_START_SYMBOL_DURATION = 0.1;
+export const CALL_IN_LINE_DURATION = 0.65;
+export const CALL_IN_DECORATIVE_DURATION = 0.05;
+export const CALL_IN_END_SYMBOL_DURATION = 0.1;
+export const CALL_IN_LABEL_DURATION = 0.1;
+
+export const CLIP_IN_START_SYMBOL_DRUATION = 0.1;
+export const CLIP_IN_LINE_DRATION = 0.7;
+export const CLIP_IN_END_SYMBOL_DURATION = 0.1;
+export const CLIP_IN_LABEL_DURATION = 0.1;

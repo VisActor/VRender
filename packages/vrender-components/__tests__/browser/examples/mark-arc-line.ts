@@ -2,7 +2,8 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
-import { MarkArcLine, registerMarkArcLineAnimate } from '../../../src';
+import { MarkArcLine } from '../../../src';
+import { registerMarkArcLineAnimate } from '../../../src/marker/register';
 
 registerMarkArcLineAnimate();
 
@@ -63,7 +64,7 @@ export function run() {
     label: {
       text: 'aaa',
       // position: 'insideStartTop',
-      visible: true,
+      visible: false,
       textStyle: {
         fill: 'red',
         fontSize: 20
@@ -129,7 +130,7 @@ export function run() {
   // console.log('markLine', markLine);
 
   setTimeout(() => {
-    markLine.release();
+    // markLine.release();
   }, 500);
 
   // gui

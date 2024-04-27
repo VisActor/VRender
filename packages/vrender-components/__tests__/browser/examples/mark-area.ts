@@ -2,7 +2,7 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
 import { MarkArea } from '../../../src';
-import { registerMarkAreaAnimate } from '../../../src/marker';
+import { registerMarkAreaAnimate } from '../../../src/marker/register';
 
 registerMarkAreaAnimate();
 

@@ -2,6 +2,13 @@ import type { EasingType, IImage, ILine, IRichText, ISymbol } from '@visactor/vr
 import type { Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import { graphicFadeIn } from './common';
+import {
+  CALL_IN_DECORATIVE_DURATION,
+  CALL_IN_END_SYMBOL_DURATION,
+  CALL_IN_LABEL_DURATION,
+  CALL_IN_LINE_DURATION,
+  CALL_IN_START_SYMBOL_DURATION
+} from './constant';
 
 export function pointCallIn(
   itemLine: Segment,
@@ -11,11 +18,11 @@ export function pointCallIn(
   delay: number,
   easing: EasingType
 ) {
-  const startSymbolDuration = 0.1 * duration;
-  const lineDuration = 0.65 * duration;
-  const decorativeDuration = 0.05 * duration;
-  const endSymbolDuration = 0.1 * duration;
-  const labelDuration = 0.1 * duration;
+  const startSymbolDuration = CALL_IN_START_SYMBOL_DURATION * duration;
+  const lineDuration = CALL_IN_LINE_DURATION * duration;
+  const decorativeDuration = CALL_IN_DECORATIVE_DURATION * duration;
+  const endSymbolDuration = CALL_IN_END_SYMBOL_DURATION * duration;
+  const labelDuration = CALL_IN_LABEL_DURATION * duration;
 
   // start symbol
   graphicFadeIn(itemLine.startSymbol, delay, startSymbolDuration, easing);

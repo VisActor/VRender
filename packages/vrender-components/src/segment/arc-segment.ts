@@ -1,7 +1,7 @@
 /**
  * @description 标签组件
  */
-import { isEmpty, merge } from '@visactor/vutils';
+import { isEmpty, merge, polarToCartesian } from '@visactor/vutils';
 import type { IArc } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -52,14 +52,9 @@ export class ArcSegment extends Segment {
     this._endAngle = endAngle;
 
     // 绘制start和end symbol
-    const startPoint: Point = {
-      x: center.x + radius * Math.cos(this._startAngle),
-      y: center.y + radius * Math.sin(this._startAngle)
-    };
-    const endPoint: Point = {
-      x: center.x + radius * Math.cos(this._endAngle),
-      y: center.y + radius * Math.sin(this._endAngle)
-    };
+    const startPoint: Point = polarToCartesian(center, radius, this._startAngle);
+    const endPoint: Point = polarToCartesian(center, radius, this._endAngle);
+
     this._mainSegmentPoints = [startPoint, endPoint];
 
     const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, this._mainSegmentPoints, 'start');

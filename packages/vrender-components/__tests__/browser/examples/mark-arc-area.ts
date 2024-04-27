@@ -3,7 +3,7 @@ import '@visactor/vrender';
 import render from '../../util/render';
 import { MarkArcArea } from '../../../src';
 import { degreeToRadian } from '@visactor/vutils';
-import { registerMarkArcAreaAnimate } from '../../../src/marker';
+import { registerMarkArcAreaAnimate } from '../../../src/marker/register';
 
 registerMarkArcAreaAnimate();
 
@@ -153,7 +153,7 @@ export function run() {
 
   const stage = render(markAreas, 'main');
   setTimeout(() => {
-    markArea.release();
+    // markArea.release();
   }, 500);
 
   const gui = new GUI();

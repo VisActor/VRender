@@ -3,7 +3,7 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkPoint } from '../../../src/marker';
-import { registerMarkPointAnimate } from '../../../src/marker';
+import { registerMarkPointAnimate } from '../../../src/marker/register';
 
 registerMarkPointAnimate();
 
@@ -249,7 +249,7 @@ export function run() {
 
   setTimeout(() => {
     markPoint.release();
-  }, 500);
+  }, 800);
 
   // gui
   const gui = new GUI();

@@ -3,7 +3,7 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkLine } from '../../../src';
-import { registerMarkLineAnimate } from '../../../src/marker';
+import { registerMarkLineAnimate } from '../../../src/marker/register';
 
 registerMarkLineAnimate();
 
@@ -88,7 +88,7 @@ export function run() {
     },
     label: {
       text: 'aaa',
-      visible: false,
+      visible: true,
       textStyle: {
         fill: 'red',
         fontSize: 20,
@@ -176,7 +176,7 @@ export function run() {
 
   setTimeout(() => {
     markLine.release();
-  }, 500);
+  }, 800);
 
   // markLine.setAttributes({
   //   points: [

@@ -34,6 +34,38 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     return this._textShape;
   }
 
+  getTagHeight() {
+    if (!this.getBgRect() || !this.getTextShape()) {
+      return 0;
+    }
+    // eslint-disable-next-line max-len
+    const textHeight =
+      this.getTextShape().attribute.visible && !this.getTextShape().AABBBounds.empty()
+        ? Math.abs((this.getTextShape().AABBBounds?.y2 ?? 0) - (this.getTextShape()?.AABBBounds.y1 ?? 0))
+        : 0;
+    // eslint-disable-next-line max-len
+    const rectHeight =
+      this.getBgRect().attribute.visible && !this.getBgRect().AABBBounds.empty()
+        ? Math.abs((this.getBgRect().AABBBounds?.y2 ?? 0) - (this.getBgRect()?.AABBBounds.y1 ?? 0))
+        : 0;
+    return Math.max(rectHeight, textHeight);
+  }
+
+  getTagWidth() {
+    if (!this.getBgRect() || !this.getTextShape()) {
+      return 0;
+    }
+    const textWidth =
+      this.getTextShape().attribute.visible && !this.getTextShape().AABBBounds.empty()
+        ? Math.abs((this.getTextShape().AABBBounds?.x2 ?? 0) - (this.getTextShape()?.AABBBounds.x1 ?? 0))
+        : 0;
+    const labelWidth =
+      this.getBgRect().attribute.visible && !this.getBgRect().AABBBounds.empty()
+        ? Math.abs((this.getBgRect().AABBBounds?.x2 ?? 0) - (this.getBgRect()?.AABBBounds.x1 ?? 0))
+        : 0;
+    return Math.max(labelWidth, textWidth);
+  }
+
   static defaultAttributes: Partial<TagAttributes> = {
     visible: true,
     textStyle: {

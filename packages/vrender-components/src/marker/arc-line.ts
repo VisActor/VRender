@@ -1,6 +1,6 @@
 import { merge } from '@visactor/vutils';
 import { ArcSegment } from '../segment';
-import { loadMarkArcLineComponent } from './register';
+import { loadMarkArcLineComponent } from './register/component';
 import { DEFAULT_STATES } from '../constant';
 import { MarkCommonLine } from './common-line';
 import type { ComponentOptions } from '../interface';

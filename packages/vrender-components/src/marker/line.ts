@@ -3,7 +3,7 @@ import { IMarkLineLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkLineAttrs, MarkerAnimationState } from './type';
 import type { ComponentOptions } from '../interface';
-import { loadMarkLineComponent } from './register';
+import { loadMarkLineComponent } from './register/component';
 import type { Point } from '../core/type';
 import { MarkCommonLine } from './common-line';
 import type { ArcSegment } from '../segment';

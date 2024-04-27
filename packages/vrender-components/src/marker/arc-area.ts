@@ -13,7 +13,7 @@ import type { IMarkCommonArcLabelPosition } from './type';
 import { type MarkArcAreaAttrs } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
-import { loadMarkArcAreaComponent } from './register';
+import { loadMarkArcAreaComponent } from './register/component';
 import { DEFAULT_STATES } from '../constant';
 import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';
 import { getPointAttrByArcPosition } from './util';

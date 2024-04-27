@@ -11,7 +11,7 @@ import type { CommonMarkAreaAnimationType, MarkAreaAttrs, MarkerAnimationState }
 import { IMarkAreaLabelPosition } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
-import { loadMarkAreaComponent } from './register';
+import { loadMarkAreaComponent } from './register/component';
 import type { Point } from '../core/type';
 import { DEFAULT_STATES } from '../constant';
 import { DefaultExitMarkerAnimation, DefaultUpdateMarkAreaAnimation } from './animate/animate';

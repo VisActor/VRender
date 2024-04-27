@@ -25,7 +25,7 @@ import type { IItemContent, IItemLine, MarkPointAnimationType, MarkPointAttrs, M
 import { IMarkPointItemPosition } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
-import { loadMarkPointComponent } from './register';
+import { loadMarkPointComponent } from './register/component';
 import { computeOffsetForlimit } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation } from './animate/animate';

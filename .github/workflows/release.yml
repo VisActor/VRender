@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macOS-latest # 如果用了electron，记得改成 macOS-latest
+    runs-on: macos-12 # 如果用了electron，记得改成 macos-12
     permissions:
       contents: write
       pull-requests: write

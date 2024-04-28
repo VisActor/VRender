@@ -338,12 +338,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         arc.labelVisible = false;
       }
 
-      arc.angle = attribute.textStyle?.angle ?? arc.middleAngle;
-      let offsetAngle = labelConfig.offsetAngle ?? 0;
-      if (['inside-inner', 'inside-outer'].includes(position as string)) {
-        offsetAngle += Math.PI / 2;
+      if (labelConfig.rotate !== false) {
+        arc.angle = attribute.textStyle?.angle ?? arc.middleAngle;
+        let offsetAngle = labelConfig.offsetAngle ?? 0;
+        if (['inside-inner', 'inside-outer'].includes(position as string)) {
+          offsetAngle += Math.PI / 2;
+        }
+        arc.angle += offsetAngle;
       }
-      arc.angle += offsetAngle;
     });
     return arcs;
   }

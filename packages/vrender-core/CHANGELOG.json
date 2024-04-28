@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.15",
+      "tag": "@visactor/vrender-core_v0.18.15",
+      "date": "Fri, 26 Apr 2024 10:37:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support forceBoundsWH, closed #1128"
+          },
+          {
+            "comment": "feat: support renderable attribute, closed #1128"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.14",
       "tag": "@visactor/vrender-core_v0.18.14",
       "date": "Wed, 24 Apr 2024 08:07:48 GMT",

@@ -140,7 +140,9 @@ export class HtmlAttributePlugin implements IPlugin {
 
     if (isNil(anchorType)) {
       anchorType = graphic.type === 'text' ? 'position' : 'boundsLeftTop';
-    } else if (anchorType === 'boundsLeftTop') {
+    }
+
+    if (anchorType === 'boundsLeftTop') {
       // 兼容老的配置，统一配置
       anchorType = 'top-left';
     }

@@ -1,5 +1,5 @@
-import { Logger, clone } from '@visactor/vutils';
-import type { IGraphicAttribute, IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
+import { Logger } from '@visactor/vutils';
+import type { IFullThemeSpec, IGraphic, IGroup, ITheme, IThemeSpec } from '../interface';
 import {
   DefaultArcAttribute,
   DefaultAreaAttribute,
@@ -10,7 +10,6 @@ import {
   DefaultLineAttribute,
   DefaultPathAttribute,
   DefaultPolygonAttribute,
-  DefaultRect3dAttribute,
   DefaultRectAttribute,
   DefaultSymbolAttribute,
   DefaultTextAttribute,
@@ -27,7 +26,6 @@ const defaultThemeObj = {
   symbol: DefaultSymbolAttribute,
   text: DefaultTextAttribute,
   rect: DefaultRectAttribute,
-  rect3d: DefaultRect3dAttribute,
   polygon: DefaultPolygonAttribute,
   richtext: DefaultRichTextAttribute,
   richtextIcon: DefaultRichTextIconAttribute,
@@ -48,7 +46,6 @@ export function newThemeObj(): IFullThemeSpec {
     symbol: Object.assign({}, defaultThemeObj.symbol),
     text: Object.assign({}, defaultThemeObj.text),
     rect: Object.assign({}, defaultThemeObj.rect),
-    rect3d: Object.assign({}, defaultThemeObj.rect3d),
     polygon: Object.assign({}, defaultThemeObj.polygon),
     richtext: Object.assign({}, defaultThemeObj.richtext),
     richtextIcon: Object.assign({}, defaultThemeObj.richtextIcon),

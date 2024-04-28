@@ -93,7 +93,7 @@ export function drawPathProxy(
     return false;
   }
 
-  const themeAttributes = getTheme(graphic, params?.theme)[graphic.type];
+  const themeAttributes = getTheme(graphic, params?.theme)[graphic.type.replace('3d', '')];
 
   const {
     fill = themeAttributes.fill,

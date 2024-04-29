@@ -1,0 +1,12 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support `opacity`/`fillOpacity`/`strokeOpacity` in richtext",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+
+}

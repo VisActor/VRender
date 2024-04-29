@@ -46,7 +46,10 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
     ctx.globalAlpha = 0;
     return;
   }
-  ctx.globalAlpha = 1;
+
+  const { fillOpacity = 1, opacity = 1 } = character;
+
+  ctx.globalAlpha = fillOpacity * opacity;
   ctx.fillStyle = fillStyle as string;
 
   let fontSize = character.fontSize || 16;
@@ -73,7 +76,10 @@ export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphC
     ctx.globalAlpha = 0;
     return;
   }
-  ctx.globalAlpha = 1;
+
+  const { strokeOpacity = 1, opacity = 1 } = character;
+
+  ctx.globalAlpha = strokeOpacity * opacity;
   ctx.lineWidth = character && typeof character.lineWidth === 'number' ? character.lineWidth : 1;
   ctx.strokeStyle = strokeStyle as string;
 

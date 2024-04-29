@@ -12,7 +12,7 @@ import type {
   IRichText,
   ILine
 } from '@visactor/vrender-core';
-import type { IPointLike } from '@visactor/vutils';
+import type { BoundsAnchorType, IPointLike, InsideBoundsAnchorType } from '@visactor/vutils';
 
 export type LabelItemStateStyle<T> = {
   hover?: T;
@@ -286,9 +286,7 @@ export interface SymbolLabelAttrs extends BaseLabelAttrs {
    * 标签位置
    * @default 'top'
    */
-  position?: Functional<
-    'top' | 'bottom' | 'left' | 'right' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center'
-  >;
+  position?: Functional<BoundsAnchorType>;
 }
 
 export interface RectLabelAttrs extends BaseLabelAttrs {
@@ -297,21 +295,7 @@ export interface RectLabelAttrs extends BaseLabelAttrs {
    * 标签位置
    * @default 'top'
    */
-  position?: Functional<
-    | 'top'
-    | 'bottom'
-    | 'left'
-    | 'right'
-    | 'inside'
-    | 'inside-top'
-    | 'inside-bottom'
-    | 'inside-right'
-    | 'inside-left'
-    | 'top-right'
-    | 'top-left'
-    | 'bottom-right'
-    | 'bottom-left'
-  >;
+  position?: Functional<InsideBoundsAnchorType | BoundsAnchorType>;
 }
 
 export interface LineLabelAttrs extends BaseLabelAttrs {
@@ -339,9 +323,7 @@ export interface LineDataLabelAttrs extends BaseLabelAttrs {
    * 标签位置
    * @default 'top'
    */
-  position?: Functional<
-    'top' | 'bottom' | 'left' | 'right' | 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left' | 'center'
-  >;
+  position?: Functional<BoundsAnchorType>;
 }
 
 export interface PolygonLabelAttrs extends BaseLabelAttrs {

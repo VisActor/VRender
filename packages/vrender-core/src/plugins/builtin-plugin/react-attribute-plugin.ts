@@ -1,8 +1,8 @@
 import { Generator } from '../../common/generator';
-import type { IGraphic, IPlugin, IPluginService, IRenderService, IDrawContext, IGroup } from '../../interface';
+import type { IGraphic, IPlugin, IPluginService } from '../../interface';
 import { application } from '../../application';
-import { DefaultAttribute } from '../../graphic';
 import { HtmlAttributePlugin } from './html-attribute-plugin';
+import { isNil } from '@visactor/vutils';
 
 export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin {
   name: 'ReactAttributePlugin' = 'ReactAttributePlugin';
@@ -11,26 +11,39 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
 
-  removeDom(graphic: IGraphic) {
-    if (graphic.bindDom && graphic.bindDom.size) {
-      // 删除dom
-      graphic.bindDom.forEach(item => {
-        item.root && item.root.unmount();
-      });
-      graphic.bindDom.clear();
+  htmlMap: Record<
+    string,
+    {
+      root: any;
+      wrapContainer: HTMLElement;
+      nativeContainer: HTMLElement;
+      container: string | HTMLElement | null;
+      renderId: number;
     }
+  > = {};
+
+  removeElement(id: string) {
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      return;
+    }
+
+    const { root, wrapContainer } = this.htmlMap[id];
+
+    if (root) {
+      const raf = application.global.getRequestAnimationFrame();
+      raf(() => {
+        root.unmount();
+      });
+    }
+
+    wrapContainer && application.global.removeDom(wrapContainer);
+
+    this.htmlMap[id] = null;
   }
 
   renderGraphicHTML(graphic: IGraphic) {
     const { react } = graphic.attribute;
     if (!react) {
-      if (graphic.bindDom && graphic.bindDom.size) {
-        // 删除dom
-        graphic.bindDom.forEach(item => {
-          item.root && item.root.unmount();
-        });
-        graphic.bindDom.clear();
-      }
       return;
     }
     const stage = graphic.stage;
@@ -38,76 +51,42 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       return;
     }
     const ReactDOM = stage.params.ReactDOM;
-    const { element, container, width, height, style, anchorType = 'boundsLeftTop', pointerEvents } = react;
+    const { element, container } = react;
     if (!(element && ReactDOM && ReactDOM.createRoot)) {
       return;
     }
+    const id = isNil(react.id) ? `${graphic.id ?? graphic._uid}_react` : react.id;
 
-    if (!graphic.bindDom) {
-      graphic.bindDom = new Map();
+    if (this.htmlMap && this.htmlMap[id] && container && container !== this.htmlMap[id].container) {
+      this.removeElement(id);
     }
-    const lastDom = graphic.bindDom.get(element);
 
-    let wrapGroup;
-    // 获取container的dom，默认为window的container
-    let nativeContainer;
-    // 如果存在了（dom存在，且container没有变化），就不做事情
-    if (lastDom && !(container && container !== lastDom.container)) {
-      wrapGroup = lastDom.wrapGroup;
-      nativeContainer = wrapGroup.parentNode;
-    } else {
-      // 清除上一次的dom
-      graphic.bindDom.forEach(({ wrapGroup }) => {
-        application.global.removeDom(wrapGroup);
-      });
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      // createa a wrapper contianer to be the root of react element
+      const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
-      const _container = container;
-      if (_container) {
-        if (typeof _container === 'string') {
-          nativeContainer = application.global.getElementById(_container);
-        } else {
-          nativeContainer = _container;
-        }
-      } else {
-        // nativeContainer = application.global.getRootElement();
-        nativeContainer = graphic.stage.window.getContainer();
-      }
-      // 创建wrapGroup
-      wrapGroup = application.global.createDom({ tagName: 'div', width, height, style, parent: nativeContainer });
-      if (wrapGroup) {
-        const root = ReactDOM.createRoot(wrapGroup);
+      if (wrapContainer) {
+        const root = ReactDOM.createRoot(wrapContainer);
         root.render(element);
-        // wrapGroup.appendChild(nativeDom);
-        graphic.bindDom.set(element, { dom: element, container, wrapGroup: wrapGroup, root });
+
+        if (!this.htmlMap) {
+          this.htmlMap = {};
+        }
+
+        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId };
       }
+    } else {
+      // update react element
+      this.htmlMap[id].root.render(element);
     }
 
-    // 事件穿透
-    wrapGroup.style.pointerEvents = pointerEvents || 'none';
-    // 定位wrapGroup
-    if (!wrapGroup.style.position) {
-      wrapGroup.style.position = 'absolute';
-      nativeContainer.style.position = 'relative';
+    if (!this.htmlMap || !this.htmlMap[id]) {
+      return;
     }
-    let left: number = 0;
-    let top: number = 0;
-    const b = graphic.globalAABBBounds;
-    if (anchorType === 'position' || b.empty()) {
-      const matrix = graphic.globalTransMatrix;
-      left = matrix.e;
-      top = matrix.f;
-    } else {
-      left = b.x1;
-      top = b.y1;
-    }
-    // 查看wrapGroup的位置
-    // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
-    const containerTL = application.global.getElementTopLeft(nativeContainer, false);
-    const windowTL = stage.window.getTopLeft(false);
-    const offsetX = left + windowTL.left - containerTL.left;
-    const offsetTop = top + windowTL.top - containerTL.top;
-    // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
-    wrapGroup.style.left = `${offsetX}px`;
-    wrapGroup.style.top = `${offsetTop}px`;
+
+    const { wrapContainer, nativeContainer } = this.htmlMap[id];
+
+    this.updateStyleOfWrapContainer(graphic, stage, wrapContainer, nativeContainer, react);
+    this.htmlMap[id].renderId = this.renderId;
   }
 }

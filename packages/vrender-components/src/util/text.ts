@@ -100,8 +100,11 @@ export function createTextGraphicByType(textAttributes: ITextGraphicAttribute, t
   if (textType === 'rich') {
     return graphicCreator.richtext(richTextAttributeTransform(textAttributes as IRichTextAttribute));
   }
+
   if (textType === 'html') {
-    textAttributes = htmlAttributeTransform(textAttributes as any);
+    textAttributes = htmlAttributeTransform(textAttributes);
+  } else if (textType === 'rect') {
+    textAttributes = reactAttributeTransform(textAttributes);
   }
 
   return graphicCreator.text(textAttributes as ITextGraphicAttribute);

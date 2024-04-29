@@ -6,7 +6,7 @@ import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
-import { DEFAULT_MARK_AREA_THEME } from './config';
+import { DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP, DEFAULT_MARK_AREA_THEME } from './config';
 import type { CommonMarkAreaAnimationType, IMarkAreaLabelPosition, MarkAreaAttrs, MarkerAnimationState } from './type';
 import { limitShapeInBounds } from '../util/limit-shape';
 import type { ComponentOptions } from '../interface';
@@ -49,48 +49,29 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
 
   protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
-    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
-    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
-    // labelHeight
-    const labelTextHeight = labelVisible
-      ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelRectHeight = labelRectVisible
-      ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
-
-    // labelWidth
-    const labelTextWidth = labelVisible
-      ? Math.abs((this._label.getTextShape().AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelRectWidth = labelRectVisible
-      ? Math.abs((this._label.getBgRect().AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
 
     if (position.includes('left') || position.includes('Left')) {
       return {
-        x: x1 + (position.includes('inside') ? 0.5 : -0.5) * labelWidth,
+        x: x1,
         y: (y1 + y2) / 2
       };
     }
     if (position.includes('right') || position.includes('Right')) {
       return {
-        x: x2 + (position.includes('inside') ? -0.5 : 0.5) * labelWidth,
+        x: x2,
         y: (y1 + y2) / 2
       };
     }
     if (position.includes('top') || position.includes('Top')) {
       return {
         x: (x1 + x2) / 2,
-        y: y1 + (position.includes('inside') ? 0.5 : -0.5) * labelHeight
+        y: y1
       };
     }
     if (position.includes('bottom') || position.includes('Bottom')) {
       return {
         x: (x1 + x2) / 2,
-        y: y2 + (position.includes('inside') ? -0.5 : 0.5) * labelHeight
+        y: y2
       };
     }
 
@@ -106,7 +87,11 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
       const labelPosition = label.position ?? 'middle';
       const labelPoint = this.getPointAttrByPosition(labelPosition as IMarkAreaLabelPosition);
       this._label.setAttributes({
-        ...labelPoint
+        ...labelPoint,
+        textStyle: {
+          ...DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP[labelPosition],
+          ...label.textStyle
+        }
       });
 
       if (this.attribute.limitRect && label.confine) {

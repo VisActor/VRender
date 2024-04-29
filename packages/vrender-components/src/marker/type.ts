@@ -89,7 +89,10 @@ export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
 
 export type IMarkRef = {
   /**
-   * 自动旋转，沿着线的方向，默认 true
+   * 自动旋转，沿着线的方向
+   * @default
+   * mark-line/mark-area/mark-point: false - 旧逻辑里autoRotate是false
+   * mark-arc-line/mark-arc-area: true - 新增逻辑, 如果不开启的话，效果不太好，所以开启
    */
   autoRotate?: boolean;
   /**

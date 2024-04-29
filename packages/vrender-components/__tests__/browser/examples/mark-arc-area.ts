@@ -53,7 +53,8 @@ export function run() {
       dy: guiObject.labelDy,
       areaStyle: {
         cornerRadius: guiObject.cornerRadius
-      }
+      },
+      autoRotate: guiObject.labelAutoRotate
     },
     clipInRange: false,
     state: {

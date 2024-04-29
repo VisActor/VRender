@@ -8,7 +8,7 @@ import type { IArcGraphicAttribute } from '@visactor/vrender-core';
 import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkArcLineAttrs, MarkerAnimationState } from './type';
-import { DEFAULT_MARK_ARC_LINE_THEME } from './config';
+import { DEFAULT_MARK_ARC_LINE_THEME, DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP } from './config';
 import { markCommonLineAnimate } from './animate/animate';
 
 loadMarkArcLineComponent();
@@ -29,74 +29,50 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   }
 
   constructor(attributes: MarkArcLineAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, MarkArcLine.defaultAttributes, attributes));
+    // eslint-disable-next-line max-len
+    super(
+      options?.skipDefault
+        ? attributes
+        : merge({}, MarkArcLine.defaultAttributes, attributes, { label: { autoRotate: true } })
+    );
   }
 
   protected getPointAttrByPosition(direction: IMarkCommonArcLabelPosition) {
     const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
     const { refX = 0, refY = 0 } = label;
-    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
-    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
-    const labelTextHeight = labelVisible
-      ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelRectHeight = labelRectVisible
-      ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
-
     let angle;
-    // tag在正交方向是向内偏移，还是向外偏移
-    // 不偏移: 0, 内: -1, 外: 1
-    let orthogonalOffsetDirection;
 
     switch (direction) {
-      case IMarkCommonArcLabelPosition.center:
-        angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = 0;
-        break;
       case IMarkCommonArcLabelPosition.arcInnerStart:
         angle = startAngle;
-        orthogonalOffsetDirection = -1;
-        break;
       case IMarkCommonArcLabelPosition.arcOuterStart:
         angle = startAngle;
-        orthogonalOffsetDirection = 1;
         break;
       case IMarkCommonArcLabelPosition.arcInnerEnd:
         angle = endAngle;
-        orthogonalOffsetDirection = -1;
-        break;
       case IMarkCommonArcLabelPosition.arcOuterEnd:
         angle = endAngle;
-        orthogonalOffsetDirection = 1;
         break;
+      case IMarkCommonArcLabelPosition.center:
       case IMarkCommonArcLabelPosition.arcInnerMiddle:
-        angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = -1;
-        break;
       case IMarkCommonArcLabelPosition.arcOuterMiddle:
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = 1;
         break;
       default: // default arcInnerMiddle
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = -1;
     }
 
     return {
       position: {
-        x:
-          center.x +
-          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.cos(angle) +
-          refX * Math.cos(angle - Math.PI / 2),
-        y:
-          center.y +
-          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.sin(angle) +
-          refX * Math.sin(angle - Math.PI / 2)
+        x: center.x + (radius + refY) * Math.cos(angle) + refX * Math.cos(angle - Math.PI / 2),
+        y: center.y + (radius + refY) * Math.sin(angle) + refX * Math.sin(angle - Math.PI / 2)
       },
       angle
     };
+  }
+
+  protected getTextStyle(position: IMarkCommonArcLabelPosition) {
+    return DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP[position];
   }
 
   protected getRotateByAngle(angle: number): number {

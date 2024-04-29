@@ -28,9 +28,7 @@ export const DEFAULT_MARK_LINE_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal',
-      textAlign: 'center',
-      textBaseline: 'middle'
+      fontStyle: 'normal'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -44,6 +42,52 @@ export const DEFAULT_MARK_LINE_THEME = {
     stroke: '#b2bacf',
     lineWidth: 1,
     lineDash: [2]
+  }
+};
+
+export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
+  [K: string]: {
+    textAlign: TextAlignType;
+    textBaseline: TextBaselineType;
+  };
+} = {
+  start: {
+    textAlign: 'right',
+    textBaseline: 'middle'
+  },
+  insideStartTop: {
+    textAlign: 'left',
+    textBaseline: 'bottom'
+  },
+  insideStartBottom: {
+    textAlign: 'left',
+    textBaseline: 'top'
+  },
+
+  middle: {
+    textAlign: 'center',
+    textBaseline: 'middle'
+  },
+  insideMiddleTop: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+  insideMiddleBottom: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+
+  end: {
+    textAlign: 'left',
+    textBaseline: 'middle'
+  },
+  insideEndTop: {
+    textAlign: 'right',
+    textBaseline: 'bottom'
+  },
+  insideEndBottom: {
+    textAlign: 'right',
+    textBaseline: 'top'
   }
 };
 
@@ -74,9 +118,7 @@ export const DEFAULT_MARK_ARC_LINE_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal',
-      textAlign: 'center',
-      textBaseline: 'middle'
+      fontStyle: 'normal'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -103,9 +145,7 @@ export const DEFAULT_MARK_AREA_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal',
-      textAlign: 'center',
-      textBaseline: 'middle'
+      fontStyle: 'normal'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -131,9 +171,7 @@ export const DEFAULT_MARK_ARC_AREA_THEME = {
       lineWidth: 0,
       fontSize: 10,
       fontWeight: 'normal',
-      fontStyle: 'normal',
-      textAlign: 'center',
-      textBaseline: 'middle'
+      fontStyle: 'normal'
     },
     padding: [2, 2, 4, 4],
     panel: {
@@ -146,6 +184,45 @@ export const DEFAULT_MARK_ARC_AREA_THEME = {
   areaStyle: {
     fill: '#b2bacf',
     visible: true
+  }
+};
+
+export const DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP: {
+  [K: string]: {
+    textAlign: TextAlignType;
+    textBaseline: TextBaselineType;
+  };
+} = {
+  arcInnerStart: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+  arcInnerEnd: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+
+  arcInnerMiddle: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+  arcOuterStart: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+
+  arcOuterEnd: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+  arcOuterMiddle: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+
+  center: {
+    textAlign: 'center',
+    textBaseline: 'middle'
   }
 };
 

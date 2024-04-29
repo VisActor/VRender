@@ -26,6 +26,7 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
   protected abstract setLineAttributes(): any;
   protected abstract getPointAttrByPosition(position: any): any;
   protected abstract getRotateByAngle(angle: number): number;
+  protected abstract getTextStyle(position: any): any;
   protected abstract markerAnimate(state: MarkerAnimationState): void;
 
   getLine() {
@@ -35,13 +36,17 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
     return this._label;
   }
 
-  protected setLabelPos() {
+  protected setLabelPos(): void {
     const { label = {}, limitRect } = this.attribute;
     const { position, confine, autoRotate = true } = label;
     const labelPoint = this.getPointAttrByPosition(position);
     this._label.setAttributes({
       ...labelPoint.position,
-      angle: autoRotate ? this.getRotateByAngle(labelPoint.angle) : 0
+      angle: autoRotate ? this.getRotateByAngle(labelPoint.angle) : 0,
+      textStyle: {
+        ...this.getTextStyle(position),
+        ...label.textStyle
+      }
     });
     if (limitRect && confine) {
       const { x, y, width, height } = limitRect;

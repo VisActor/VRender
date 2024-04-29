@@ -95,6 +95,10 @@ export function run() {
         visible: true,
         symbolType: 'circle',
         size: 10
+      },
+      lineStyle: {
+        stroke: 'red',
+        curveType: 'monotoneX'
       }
     },
     itemContent: {

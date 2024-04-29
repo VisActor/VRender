@@ -6,7 +6,7 @@ import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
-import { DEFAULT_MARK_ARC_AREA_THEME } from './config';
+import { DEFAULT_MARK_ARC_AREA_THEME, DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP } from './config';
 import type { CommonMarkAreaAnimationType, MarkerAnimationState } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkCommonArcLabelPosition, type MarkArcAreaAttrs } from './type';
@@ -45,82 +45,59 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
   }
 
   constructor(attributes: MarkArcAreaAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, MarkArcArea.defaultAttributes, attributes));
+    // eslint-disable-next-line max-len
+    super(
+      options?.skipDefault
+        ? attributes
+        : merge({}, MarkArcArea.defaultAttributes, attributes, { label: { autoRotate: true } })
+    );
   }
 
   protected getPointAttrByPosition(position: IMarkCommonArcLabelPosition) {
     const { center, innerRadius, outerRadius, startAngle, endAngle, label } = this.attribute as MarkArcAreaAttrs;
     const { refX = 0, refY = 0 } = label;
-    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
-    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
-    // eslint-disable-next-line max-len
-    const labelTextHeight = labelVisible
-      ? Math.abs((this._label.getTextShape().AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    // eslint-disable-next-line max-len
-    const labelRectHeight = labelRectVisible
-      ? Math.abs((this._label.getBgRect().AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
 
     let radius;
     let angle;
-    // tag在正交方向是向内偏移，还是向外偏移
-    // 不偏移: 0, 内: -1, 外: 1
-    let orthogonalOffsetDirection;
 
     switch (position) {
       case IMarkCommonArcLabelPosition.center:
         radius = (innerRadius + outerRadius) / 2;
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = 0;
         break;
       case IMarkCommonArcLabelPosition.arcInnerStart:
         radius = innerRadius;
         angle = startAngle;
-        orthogonalOffsetDirection = -1;
         break;
       case IMarkCommonArcLabelPosition.arcOuterStart:
         radius = outerRadius;
         angle = startAngle;
-        orthogonalOffsetDirection = 1;
         break;
       case IMarkCommonArcLabelPosition.arcInnerEnd:
         radius = innerRadius;
         angle = endAngle;
-        orthogonalOffsetDirection = -1;
         break;
       case IMarkCommonArcLabelPosition.arcOuterEnd:
         radius = outerRadius;
         angle = endAngle;
-        orthogonalOffsetDirection = 1;
         break;
       case IMarkCommonArcLabelPosition.arcInnerMiddle:
         radius = innerRadius;
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = -1;
         break;
       case IMarkCommonArcLabelPosition.arcOuterMiddle:
         radius = outerRadius;
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = 1;
         break;
       default: // default arcInnerMiddle
         radius = innerRadius;
         angle = (startAngle + endAngle) / 2;
-        orthogonalOffsetDirection = -1;
     }
 
     return {
       position: {
-        x:
-          center.x +
-          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.cos(angle) +
-          refX * Math.cos(angle - Math.PI / 2),
-        y:
-          center.y +
-          (radius + (orthogonalOffsetDirection * labelHeight) / 2 + refY) * Math.sin(angle) +
-          refX * Math.sin(angle - Math.PI / 2)
+        x: center.x + (radius + refY) * Math.cos(angle) + refX * Math.cos(angle - Math.PI / 2),
+        y: center.y + (radius + refY) * Math.sin(angle) + refX * Math.sin(angle - Math.PI / 2)
       },
       angle
     };
@@ -134,7 +111,11 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
 
       this._label.setAttributes({
         ...labelAttr.position,
-        angle: autoRotate ? labelAttr.angle - Math.PI / 2 + (label.refAngle ?? 0) : 0
+        angle: autoRotate ? labelAttr.angle - Math.PI / 2 + (label.refAngle ?? 0) : 0,
+        textStyle: {
+          ...DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP[labelPosition],
+          ...label.textStyle
+        }
       });
 
       if (this.attribute.limitRect && label.confine) {

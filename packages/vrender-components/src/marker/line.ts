@@ -1,5 +1,5 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import { IMarkLineLabelPosition } from './type';
+import type { IMarkLineLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkLineAttrs, MarkerAnimationState } from './type';
 import type { ComponentOptions } from '../interface';
@@ -10,9 +10,10 @@ import type { ArcSegment } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
-import { DEFAULT_MARK_LINE_THEME } from './config';
+import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
+import { limitShapeInBounds } from '../util/limit-shape';
 
 loadMarkLineComponent();
 
@@ -37,92 +38,14 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));
   }
 
-  protected getLabelOffsetByPosition(position: IMarkLineLabelPosition) {
-    const labelRectVisible = this._label.getTextShape()?.attribute?.visible ?? false;
-    const labelVisible = this._label.getBgRect()?.attribute?.visible ?? false;
-    // labelHeight
-    const labelTextHeight = labelVisible
-      ? Math.abs((this._label.getTextShape()?.AABBBounds?.y2 ?? 0) - (this._label.getTextShape()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelRectHeight = labelRectVisible
-      ? Math.abs((this._label.getBgRect()?.AABBBounds?.y2 ?? 0) - (this._label.getBgRect()?.AABBBounds.y1 ?? 0))
-      : 0;
-    const labelHeight = Math.max(labelRectHeight, labelTextHeight);
-
-    // labelWidth
-    const labelTextWidth = labelVisible
-      ? Math.abs((this._label.getTextShape()?.AABBBounds?.x2 ?? 0) - (this._label.getTextShape()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelRectWidth = labelRectVisible
-      ? Math.abs((this._label.getBgRect()?.AABBBounds?.x2 ?? 0) - (this._label.getBgRect()?.AABBBounds.x1 ?? 0))
-      : 0;
-    const labelWidth = Math.max(labelRectWidth, labelTextWidth);
-
-    switch (position) {
-      case IMarkLineLabelPosition.start:
-        return {
-          offsetX: -labelWidth / 2,
-          offsetY: 0
-        };
-      case IMarkLineLabelPosition.insideStartTop:
-        return {
-          offsetX: labelWidth / 2,
-          offsetY: labelHeight / 2
-        };
-      case IMarkLineLabelPosition.insideStartBottom:
-        return {
-          offsetX: labelWidth / 2,
-          offsetY: -labelHeight / 2
-        };
-      case IMarkLineLabelPosition.middle:
-        return {
-          offsetX: 0,
-          offsetY: 0
-        };
-      case IMarkLineLabelPosition.insideMiddleTop:
-        return {
-          offsetX: 0,
-          offsetY: labelHeight / 2
-        };
-      case IMarkLineLabelPosition.insideMiddleBottom:
-        return {
-          offsetX: 0,
-          offsetY: -labelHeight / 2
-        };
-      case IMarkLineLabelPosition.end:
-        return {
-          offsetX: labelWidth / 2,
-          offsetY: 0
-        };
-      case IMarkLineLabelPosition.insideEndTop:
-        return {
-          offsetX: -labelWidth / 2,
-          offsetY: labelHeight / 2
-        };
-      case IMarkLineLabelPosition.insideEndBottom:
-        return {
-          offsetX: -labelWidth / 2,
-          offsetY: -labelHeight / 2
-        };
-      default: // default end
-        return {
-          offsetX: labelWidth / 2,
-          offsetY: 0
-        };
-    }
-  }
-
   protected getPointAttrByPosition(position: IMarkLineLabelPosition) {
     const { label = {} } = this.attribute;
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
     const labelAngle = this._line.getEndAngle() ?? 0;
 
-    const totalRefX = refX + this.getLabelOffsetByPosition(position).offsetX;
-    const totalRefY = refY + this.getLabelOffsetByPosition(position).offsetY;
-
-    const labelOffsetX = totalRefX * Math.cos(labelAngle) + totalRefY * Math.cos(labelAngle - Math.PI / 2);
-    const labelOffsetY = totalRefX * Math.sin(labelAngle) + totalRefY * Math.sin(labelAngle - Math.PI / 2);
+    const labelOffsetX = refX * Math.cos(labelAngle) + refX * Math.cos(labelAngle - Math.PI / 2);
+    const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
 
     if (position.includes('start') || position.includes('Start')) {
       return {
@@ -152,6 +75,10 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
 
   protected getRotateByAngle(angle: number): number {
     return angle + (this.attribute.label.refAngle ?? 0);
+  }
+
+  protected getTextStyle(position: IMarkLineLabelPosition) {
+    return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP[position];
   }
 
   protected createSegment() {

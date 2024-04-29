@@ -106,7 +106,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
   protected setLabelPos() {
     if (this._label && this._area) {
       const { label = {} } = this.attribute as MarkArcAreaAttrs;
-      const { position: labelPosition = 'arcInnerMiddle', autoRotate = true } = label;
+      const { position: labelPosition = 'arcInnerMiddle', autoRotate } = label;
       const labelAttr = this.getPointAttrByPosition(labelPosition as IMarkCommonArcLabelPosition);
 
       this._label.setAttributes({

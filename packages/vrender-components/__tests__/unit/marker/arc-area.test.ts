@@ -47,8 +47,8 @@ describe('Marker', () => {
     expect((markAreaContainer.children[0] as Arc).attribute.fill).toBeTruthy();
     expect((markAreaContainer.children[0] as Arc).attribute.fill).toBe('#b2bacf');
     // tag构造的label
-    expect((markAreaContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(155.1543289325507);
-    expect((markAreaContainer.children[1] as unknown as Tag).attribute.y).toBe(155.1543289325507);
+    expect((markAreaContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(149.49747468305833);
+    expect((markAreaContainer.children[1] as unknown as Tag).attribute.y).toBe(149.49747468305833);
     expect((markAreaContainer.children[1] as unknown as Tag).attribute.dx).toBe(10);
     expect(
       (markAreaContainer.children[1] as unknown as any).getChildByName('tag-content').children[0].attribute.text

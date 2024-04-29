@@ -91,8 +91,9 @@ export type IMarkRef = {
   /**
    * 自动旋转，沿着线的方向
    * @default
-   * mark-line/mark-area/mark-point: false - 旧逻辑里autoRotate是false
-   * mark-arc-line/mark-arc-area: true - 新增逻辑, 如果不开启的话，效果不太好，所以开启
+   * mark-line/mark-area/mark-point: false - 旧逻辑里autoRotate是false, 保持不变
+   * mark-arc-line/mark-arc-area: true - 新增逻辑, 如果不开启的话, 效果不太好, 所以默认true
+   * mark-point - 旧逻辑里autoRotate是true, 保持不变
    */
   autoRotate?: boolean;
   /**

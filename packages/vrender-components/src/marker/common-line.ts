@@ -38,7 +38,7 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
 
   protected setLabelPos(): void {
     const { label = {}, limitRect } = this.attribute;
-    const { position, confine, autoRotate = true } = label;
+    const { position, confine, autoRotate } = label;
     const labelPoint = this.getPointAttrByPosition(position);
     this._label.setAttributes({
       ...labelPoint.position,

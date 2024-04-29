@@ -47,8 +47,8 @@ describe('Marker', () => {
     expect((markLineContainer.children[0] as unknown as ArcSegment).endSymbol?.attribute.angle).toBe(6.283185307179586);
 
     // tag构造的label
-    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(233.4386001800126);
-    expect((markLineContainer.children[1] as unknown as Tag).attribute.y).toBe(219.29646455628165);
+    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(227.78174593052023);
+    expect((markLineContainer.children[1] as unknown as Tag).attribute.y).toBe(213.63961030678928);
     expect(
       ((markLineContainer.children[1] as unknown as Tag).getChildByName('tag-content') as any).children[0].attribute
         .text

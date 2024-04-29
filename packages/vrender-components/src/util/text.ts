@@ -103,7 +103,7 @@ export function createTextGraphicByType(textAttributes: ITextGraphicAttribute, t
 
   if (textType === 'html') {
     textAttributes = htmlAttributeTransform(textAttributes);
-  } else if (textType === 'rect') {
+  } else if (textType === 'react') {
     textAttributes = reactAttributeTransform(textAttributes);
   }
 

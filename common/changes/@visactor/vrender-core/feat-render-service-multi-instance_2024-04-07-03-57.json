@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: set renderService to multi-instance",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -42,7 +42,6 @@ export const regFirstSpace = /\S/;
 // Applies the style of a run to the canvas context
 export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
   const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
-
   if (!fillStyle) {
     ctx.globalAlpha = 0;
     return;
@@ -50,12 +49,7 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
 
   const { fillOpacity = 1, opacity = 1 } = character;
 
-  if (fillOpacity > 1e-12 && opacity > 1e-12) {
-    ctx.globalAlpha = fillOpacity * opacity;
-  } else {
-    ctx.globalAlpha = 1;
-  }
-
+  ctx.globalAlpha = fillOpacity * opacity;
   ctx.fillStyle = fillStyle as string;
 
   let fontSize = character.fontSize || 16;
@@ -85,12 +79,7 @@ export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphC
 
   const { strokeOpacity = 1, opacity = 1 } = character;
 
-  if (strokeOpacity > 1e-12 && opacity > 1e-12) {
-    ctx.globalAlpha = strokeOpacity * opacity;
-  } else {
-    ctx.globalAlpha = 1;
-  }
-
+  ctx.globalAlpha = strokeOpacity * opacity;
   ctx.lineWidth = character && typeof character.lineWidth === 'number' ? character.lineWidth : 1;
   ctx.strokeStyle = strokeStyle as string;
 

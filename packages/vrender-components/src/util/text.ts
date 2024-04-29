@@ -1,11 +1,11 @@
 import type { IRichTextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { getTextBounds } from '@visactor/vrender-core';
+import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { TextMeasure, isObject } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
-import type { TextContent } from '../core/type';
+import type { HTMLTextContent, ReactTextContent, TextContent } from '../core/type';
 
 export const initTextMeasure = (
   textSpec?: Partial<ITextGraphicAttribute>,
@@ -51,10 +51,19 @@ export function measureTextSize(
 }
 
 export function isRichText(attributes: TextContent, typeKey = 'type') {
-  return (
-    (typeKey in attributes && attributes[typeKey] === 'rich') ||
-    (isObject(attributes.text) && (attributes.text as TextContent).type === 'rich')
-  );
+  return getTextType(attributes, typeKey) === 'rich';
+}
+
+export function getTextType(attributes: TextContent, typeKey = 'type') {
+  if (isObject(attributes.text) && 'type' in attributes.text) {
+    return attributes.text.type ?? 'text';
+  }
+
+  if (typeKey in attributes) {
+    return attributes[typeKey] ?? 'text';
+  }
+
+  return 'text';
 }
 
 export function richTextAttributeTransform(attributes: ITextGraphicAttribute & IRichTextAttribute & TextContent) {
@@ -63,4 +72,40 @@ export function richTextAttributeTransform(attributes: ITextGraphicAttribute & I
   attributes.maxWidth = attributes.maxLineWidth;
   attributes.textConfig = (attributes.text as unknown as any).text || attributes.text;
   return attributes;
+}
+
+export function htmlAttributeTransform(attributes: ITextGraphicAttribute) {
+  const { text, _originText } = attributes as unknown as HTMLTextContent;
+  const { text: html } = text;
+
+  attributes.html = html;
+  attributes.text = _originText;
+  attributes.renderable = false; // 文字图元配置了 html，则不绘制原始文字
+  return attributes;
+}
+
+export function reactAttributeTransform(attributes: ITextGraphicAttribute) {
+  const { text, _originText } = attributes as unknown as ReactTextContent;
+  const { text: react } = text;
+
+  attributes.react = react;
+  attributes.text = _originText;
+  attributes.renderable = false; // 文字图元配置了 react，则不绘制原始文字
+
+  return attributes;
+}
+
+export function createTextGraphicByType(textAttributes: ITextGraphicAttribute, typeKey = 'type') {
+  const textType = getTextType(textAttributes, typeKey);
+  if (textType === 'rich') {
+    return graphicCreator.richtext(richTextAttributeTransform(textAttributes as IRichTextAttribute));
+  }
+
+  if (textType === 'html') {
+    textAttributes = htmlAttributeTransform(textAttributes);
+  } else if (textType === 'react') {
+    textAttributes = reactAttributeTransform(textAttributes);
+  }
+
+  return graphicCreator.text(textAttributes as ITextGraphicAttribute);
 }

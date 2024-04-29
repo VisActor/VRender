@@ -10,10 +10,7 @@ import type {
   IColor,
   ILine,
   IArea,
-  IRichTextGraphicAttribute,
-  IRichText,
-  IRichTextCharacter,
-  ITextGraphicAttribute
+  IRichText
 } from '@visactor/vrender-core';
 import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
@@ -31,13 +28,7 @@ import {
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
-import {
-  getMarksByName,
-  getNoneGroupMarksByName,
-  isRichText,
-  richTextAttributeTransform,
-  traverseGroup
-} from '../util';
+import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
@@ -55,7 +46,6 @@ import type {
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
 import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
-import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadLabelComponent } from './register';
 
 loadLabelComponent();
@@ -306,10 +296,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       ...this.stage?.getTheme()?.text,
       ...attributes
     };
-    if (isRichText(attributes as any, 'textType')) {
-      return graphicCreator.richtext(richTextAttributeTransform(textAttrs as any));
-    }
-    return graphicCreator.text(textAttrs as ITextGraphicAttribute);
+    return createTextGraphicByType(textAttrs, 'textType');
   }
 
   private _prepare() {

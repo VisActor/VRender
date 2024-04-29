@@ -77,6 +77,9 @@ export type RichTextContent = {
   };
 };
 
+/**
+ * html supported @since 0.19.0
+ */
 export type HTMLTextContent = {
   text: {
     type: 'html';
@@ -85,6 +88,9 @@ export type HTMLTextContent = {
   _originText: string; // 原始 text，用于预估 bounds
 };
 
+/**
+ * react supported @since 0.19.0
+ */
 export type ReactTextContent = {
   text: {
     type: 'react';

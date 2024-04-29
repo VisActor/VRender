@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 26 Apr 2024 10:37:19 GMT and should not be manually modified.
+This log was last generated on Mon, 29 Apr 2024 07:40:31 GMT and should not be manually modified.
+
+## 0.18.16
+Mon, 29 Apr 2024 07:40:31 GMT
+
+### Updates
+
+- fix: theme should not support 3d graphics
+
+
 
 ## 0.18.15
 Fri, 26 Apr 2024 10:37:19 GMT

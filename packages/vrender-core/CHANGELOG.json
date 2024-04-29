@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.18.16",
+      "tag": "@visactor/vrender-core_v0.18.16",
+      "date": "Mon, 29 Apr 2024 07:40:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: theme should not support 3d graphics\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.15",
       "tag": "@visactor/vrender-core_v0.18.15",
       "date": "Fri, 26 Apr 2024 10:37:19 GMT",

@@ -156,6 +156,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   protected _layout(texts: (IText | IRichText)[]) {
+    if (!texts || !texts.length) {
+      return;
+    }
+
     const labels = super._layout(texts);
     const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
     const ellipsisLabelAttribute = {

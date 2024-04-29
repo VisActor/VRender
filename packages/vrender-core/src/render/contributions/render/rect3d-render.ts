@@ -15,7 +15,6 @@ import type {
   IRenderService
 } from '../../../interface';
 import { rectFillVisible, rectStrokeVisible, runFill, runStroke } from './utils';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { RECT3D_NUMBER_TYPE } from '../../../graphic/constants';
 import { ColorStore, ColorType } from '../../../color-string';
@@ -44,7 +43,7 @@ export class DefaultCanvasRect3dRender extends BaseRender<IRect3d> implements IG
     ) => boolean
   ) {
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
-    const rectAttribute = getTheme(rect, params?.theme).rect3d;
+    const rectAttribute = getTheme(rect, params?.theme).rect;
     const {
       fill = rectAttribute.fill,
       stroke = rectAttribute.stroke,

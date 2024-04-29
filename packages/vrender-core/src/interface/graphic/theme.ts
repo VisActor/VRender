@@ -9,7 +9,6 @@ import type { ILineGraphicAttribute } from './line';
 import type { IPathGraphicAttribute } from './path';
 import type { IPolygonGraphicAttribute } from './polygon';
 import type { IRectGraphicAttribute } from './rect';
-import type { IRect3dGraphicAttribute } from './rect3d';
 import type { IRichTextGraphicAttribute, IRichTextIconGraphicAttribute } from './richText';
 import type { ISymbolGraphicAttribute } from './symbol';
 import type { ITextGraphicAttribute } from './text';
@@ -17,7 +16,6 @@ import type { ITextGraphicAttribute } from './text';
 export interface IThemeSpec {
   text?: Partial<ITextGraphicAttribute>;
   rect?: Partial<IRectGraphicAttribute>;
-  rect3d?: Partial<IRect3dGraphicAttribute>;
   arc?: Partial<IArcGraphicAttribute>;
   area?: Partial<IAreaGraphicAttribute>;
   circle?: Partial<ICircleGraphicAttribute>;
@@ -39,7 +37,6 @@ export interface IFullThemeSpec {
   symbol: Required<ISymbolGraphicAttribute>;
   text: Required<ITextGraphicAttribute>;
   rect: Required<IRectGraphicAttribute>;
-  rect3d: Required<IRect3dGraphicAttribute>;
   glyph: Required<IGlyphGraphicAttribute>;
   group: Required<IGroupGraphicAttribute>;
   polygon: Required<IPolygonGraphicAttribute>;

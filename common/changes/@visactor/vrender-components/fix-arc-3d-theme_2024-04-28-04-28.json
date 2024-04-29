@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: theme should not support 3d graphics\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "dingling112@gmail.com"
+}

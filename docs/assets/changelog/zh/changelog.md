@@ -1,3 +1,35 @@
+# v0.18.15
+
+2024-04-28
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: support forceBoundsWH, closed [#1128](https://github.com/VisActor/VRender/issues/1128)
+- **@visactor/vrender-core**: support renderable attribute, closed [#1128](https://github.com/VisActor/VRender/issues/1128)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: `label.rotate: false` not work in inside arc label
+
+
+
+[更多详情请查看 v0.18.15](https://github.com/VisActor/VRender/releases/tag/v0.18.15)
+
+# v0.18.13
+
+2024-04-23
+
+
+**What's Changed**
+
+* [Auto release] release 0.18.13 by @github-actions in https://github.com/VisActor/VRender/pull/1150
+https://github.com/VisActor/VRender/pull/1147
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.18.11...v0.18.13
+
+[更多详情请查看 v0.18.13](https://github.com/VisActor/VRender/releases/tag/v0.18.13)
+
 # v0.18.12
 
 2024-04-19

@@ -189,6 +189,8 @@ export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
   IPickStyle & {
+    forceBoundsWidth: number | (() => number) | undefined;
+    forceBoundsHeight: number | (() => number) | undefined;
     opacity: number;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
@@ -289,6 +291,10 @@ export type IGraphicAttribute = IDebugType &
     visible: boolean;
     zIndex: number;
     layout: any;
+    /**
+     * 是否隐藏元素（只是绘制的时候不绘制）
+     */
+    renderable: boolean;
     /**
      * 是否在3d中控制方向
      * false: 不控制方向

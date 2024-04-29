@@ -170,10 +170,10 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     // context.restore();
     context.restore();
-    context.draw();
     context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
     context.inuse = false;
+    context.draw();
   }
 
   doRegister() {

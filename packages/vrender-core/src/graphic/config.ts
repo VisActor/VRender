@@ -121,6 +121,8 @@ export const DefaultPickStyle: IPickStyle = {
 };
 
 export const DefaultStyle: IGraphicStyle = {
+  forceBoundsWidth: undefined,
+  forceBoundsHeight: undefined,
   opacity: 1,
   background: null,
   backgroundOpacity: 1,
@@ -165,6 +167,7 @@ export const DefaultDebugAttribute: Required<IDebugType> = {
 
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
+  renderable: true,
   pickable: true,
   childrenPickable: true,
   fillPickable: true,
@@ -325,6 +328,7 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   textBaseline: 'top' as RichTextGlobalBaselineType,
   layoutDirection: 'horizontal',
   textConfig: [],
+  forceBreakLine: false,
   maxHeight: undefined,
   maxWidth: undefined,
   singleLine: false

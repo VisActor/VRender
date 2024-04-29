@@ -54,6 +54,7 @@ export default class Paragraph {
   ellipsisWidth: number;
   ellipsisOtherParagraphWidth: number;
   verticalEllipsis?: boolean;
+  overflow?: boolean;
 
   constructor(text: string, newLine: boolean, character: IRichTextParagraphCharacter) {
     // 测量文字

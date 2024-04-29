@@ -70,7 +70,7 @@ type CommonTextContent = {
       };
 };
 
-type RichTextContent = {
+export type RichTextContent = {
   text?: {
     type: 'rich';
     text: IRichTextCharacter[];
@@ -80,11 +80,20 @@ type RichTextContent = {
 export type HTMLTextContent = {
   text: {
     type: 'html';
-    dom: IGraphicStyle['html']['dom'];
+    text: IGraphicStyle['html'];
   };
+  _originText: string; // 原始 text，用于预估 bounds
 };
 
-export type TextContent = (CommonTextContent | RichTextContent | HTMLTextContent) & {
+export type ReactTextContent = {
+  text: {
+    type: 'react';
+    text: IGraphicStyle['react'];
+  };
+  _originText: string; // 原始 text，用于预估 bounds
+};
+
+export type TextContent = (CommonTextContent | RichTextContent | HTMLTextContent | ReactTextContent) & {
   /** @deprecated */
   type?: 'text' | 'rich';
 };

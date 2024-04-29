@@ -560,7 +560,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       textBaseline: 'middle',
       lineHeight: (labelStyle.style as ITextGraphicAttribute)?.fontSize,
       ...labelStyle.style,
-      text
+      text,
+      _originText: labelAttr.formatMethod ? label : undefined
     };
 
     const labelShape = createTextGraphicByType(labelAttributes);
@@ -579,7 +580,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         textBaseline: 'middle',
         lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
         ...valueStyle.style,
-        text: valueText
+        text: valueText,
+        _originText: valueAttr.formatMethod ? value : undefined
       };
 
       const valueShape = createTextGraphicByType(valueAttributes);

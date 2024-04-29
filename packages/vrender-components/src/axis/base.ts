@@ -564,10 +564,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         layer
       });
     }
-
     return {
       ...this.getLabelPosition(point, vector, textContent, textStyle),
       text: text ?? textContent,
+      _originText: tickDatum.label,
       lineHeight: textStyle?.fontSize,
       type,
       ...textStyle

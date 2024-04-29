@@ -3,9 +3,9 @@ import type { IRichTextAttribute, ITextGraphicAttribute } from '@visactor/vrende
 import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { TextMeasure, isObject, isValidNumber } from '@visactor/vutils';
+import { TextMeasure, isObject } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
-import type { HTMLTextContent, TextContent } from '../core/type';
+import type { HTMLTextContent, ReactTextContent, TextContent } from '../core/type';
 
 export const initTextMeasure = (
   textSpec?: Partial<ITextGraphicAttribute>,
@@ -74,19 +74,28 @@ export function richTextAttributeTransform(attributes: ITextGraphicAttribute & I
   return attributes;
 }
 
-export function htmlAttributeTransform(attributes: ITextGraphicAttribute & HTMLTextContent) {
-  const { forceWidth, forceHeight } = attributes as any;
-  attributes.html = {
-    dom: attributes.text.dom
-  };
-  attributes.opacity = 0;
-  if (isValidNumber(forceWidth * forceHeight)) {
-    (attributes as ITextGraphicAttribute).text = '';
-  }
+export function htmlAttributeTransform(attributes: ITextGraphicAttribute) {
+  const { text, _originText } = attributes as unknown as HTMLTextContent;
+  const { text: html } = text;
+
+  attributes.html = html;
+  attributes.text = _originText;
+  attributes.renderable = false; // 文字图元配置了 html，则不绘制原始文字
   return attributes;
 }
 
-export function createTextGraphicByType(textAttributes: ITextGraphicAttribute & TextContent, typeKey = 'type') {
+export function reactAttributeTransform(attributes: ITextGraphicAttribute) {
+  const { text, _originText } = attributes as unknown as ReactTextContent;
+  const { text: react } = text;
+
+  attributes.react = react;
+  attributes.text = _originText;
+  attributes.renderable = false; // 文字图元配置了 react，则不绘制原始文字
+
+  return attributes;
+}
+
+export function createTextGraphicByType(textAttributes: ITextGraphicAttribute, typeKey = 'type') {
   const textType = getTextType(textAttributes, typeKey);
   if (textType === 'rich') {
     return graphicCreator.richtext(richTextAttributeTransform(textAttributes as IRichTextAttribute));

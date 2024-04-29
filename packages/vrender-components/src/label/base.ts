@@ -639,60 +639,61 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const labelLines = [] as ILine[];
     const { visible: showLabelLine } = this.attribute.line ?? {};
 
-    labels.forEach((text, index) => {
-      const relatedGraphic = this.getRelatedGraphic(text.attribute);
-      const textId = (text.attribute as LabelItem).id;
-      const textKey = this._isCollectionBase ? textId : relatedGraphic;
-      const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
-      let labelLine: ILine;
-      if (showLabelLine) {
-        labelLine = this._createLabelLine(text as IText, relatedGraphic);
-      }
-      // TODO: add animate
-      if (state === 'enter') {
-        texts.push(text);
-        currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
-        if (relatedGraphic) {
-          const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
-          this.add(text);
+    labels &&
+      labels.forEach((text, index) => {
+        const relatedGraphic = this.getRelatedGraphic(text.attribute);
+        const textId = (text.attribute as LabelItem).id;
+        const textKey = this._isCollectionBase ? textId : relatedGraphic;
+        const state = prevTextMap?.get(textKey) ? 'update' : 'enter';
+        let labelLine: ILine;
+        if (showLabelLine) {
+          labelLine = this._createLabelLine(text as IText, relatedGraphic);
+        }
+        // TODO: add animate
+        if (state === 'enter') {
+          texts.push(text);
+          currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
+          if (relatedGraphic) {
+            const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
+            this.add(text);
 
-          if (labelLine) {
-            labelLines.push(labelLine);
-            this.add(labelLine);
+            if (labelLine) {
+              labelLines.push(labelLine);
+              this.add(labelLine);
+            }
+
+            this._syncStateWithRelatedGraphic(relatedGraphic);
+            // enter的时长如果不是大于0，那么直接跳过动画
+            this._animationConfig.enter.duration > 0 &&
+              relatedGraphic.once('animate-bind', a => {
+                // text和labelLine共用一个from
+                text.setAttributes(from);
+                labelLine && labelLine.setAttributes(from);
+                const listener = this._afterRelatedGraphicAttributeUpdate(
+                  text,
+                  texts,
+                  labelLine,
+                  labelLines,
+                  index,
+                  relatedGraphic,
+                  to,
+                  this._animationConfig.enter
+                );
+                relatedGraphic.on('afterAttributeUpdate', listener);
+              });
           }
-
-          this._syncStateWithRelatedGraphic(relatedGraphic);
-          // enter的时长如果不是大于0，那么直接跳过动画
-          this._animationConfig.enter.duration > 0 &&
-            relatedGraphic.once('animate-bind', a => {
-              // text和labelLine共用一个from
-              text.setAttributes(from);
-              labelLine && labelLine.setAttributes(from);
-              const listener = this._afterRelatedGraphicAttributeUpdate(
-                text,
-                texts,
-                labelLine,
-                labelLines,
-                index,
-                relatedGraphic,
-                to,
-                this._animationConfig.enter
-              );
-              relatedGraphic.on('afterAttributeUpdate', listener);
-            });
+        } else if (state === 'update') {
+          const prevLabel = prevTextMap.get(textKey);
+          prevTextMap.delete(textKey);
+          currentTextMap.set(textKey, prevLabel);
+          const prevText = prevLabel.text;
+          const { duration, easing } = this._animationConfig.update;
+          updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
+          if (prevLabel.labelLine && labelLine) {
+            prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
+          }
         }
-      } else if (state === 'update') {
-        const prevLabel = prevTextMap.get(textKey);
-        prevTextMap.delete(textKey);
-        currentTextMap.set(textKey, prevLabel);
-        const prevText = prevLabel.text;
-        const { duration, easing } = this._animationConfig.update;
-        updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
-        if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
-        }
-      }
-    });
+      });
     prevTextMap.forEach(label => {
       label.text
         ?.animate()

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: support style callback in html and react, fix 1102\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-kits"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits",
+  "email": "dingling112@gmail.com"
+}

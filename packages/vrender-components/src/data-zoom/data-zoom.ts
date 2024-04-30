@@ -221,13 +221,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage?.window?.getContext()?.canvas?.nativeCanvas);
-    const layerPosition = { x, y };
-    this.parent.globalTransMatrix.transformPoint({ x, y }, layerPosition);
-    return {
-      x: layerPosition.x,
-      y: layerPosition.y
-    };
+    return this.stage.eventPointTransform(e);
   }
 
   /**

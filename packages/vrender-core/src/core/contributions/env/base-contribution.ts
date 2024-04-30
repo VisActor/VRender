@@ -38,6 +38,10 @@ export abstract class BaseEnvContribution implements IEnvContribution {
     return null;
   }
 
+  updateDom(dom: HTMLElement, params: CreateDOMParamsType): boolean {
+    return false;
+  }
+
   /**
    * 获取动态canvas的数量，offscreenCanvas或者framebuffer
    */

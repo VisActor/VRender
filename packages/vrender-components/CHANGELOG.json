@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.0",
+      "tag": "@visactor/vrender-components_v0.19.0",
+      "date": "Tue, 30 Apr 2024 08:40:53 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix point of event when stage has transform\n\n"
+          },
+          {
+            "comment": "feat: support style callback in html and react, fix 1102\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.17",
       "tag": "@visactor/vrender-components_v0.18.17",
       "date": "Tue, 30 Apr 2024 07:48:41 GMT",

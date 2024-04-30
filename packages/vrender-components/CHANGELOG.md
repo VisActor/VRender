@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Mon, 29 Apr 2024 07:40:31 GMT and should not be manually modified.
+This log was last generated on Tue, 30 Apr 2024 07:48:41 GMT and should not be manually modified.
+
+## 0.18.17
+Tue, 30 Apr 2024 07:48:41 GMT
+
+### Updates
+
+- fix: fix error of label when all the labels are cleared
+
+
 
 ## 0.18.16
 Mon, 29 Apr 2024 07:40:31 GMT

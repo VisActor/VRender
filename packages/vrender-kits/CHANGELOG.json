@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.18.17",
+      "tag": "@visactor/vrender-kits_v0.18.17",
+      "date": "Tue, 30 Apr 2024 07:48:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with setLineDash crash, closed #1047"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.16",
       "tag": "@visactor/vrender-kits_v0.18.16",
       "date": "Mon, 29 Apr 2024 07:40:31 GMT",

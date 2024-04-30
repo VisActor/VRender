@@ -51,7 +51,7 @@ import type {
 } from './type';
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
-import { isRichText, richTextAttributeTransform } from '../../util';
+import { createTextGraphicByType } from '../../util';
 import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
@@ -552,7 +552,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       focusSpace = focusSize;
     }
-    let labelShape;
     const text = labelAttr.formatMethod ? labelAttr.formatMethod(label, item, index) : label;
     const labelAttributes = {
       x: shapeSize / 2 + shapeSpace,
@@ -561,13 +560,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       textBaseline: 'middle',
       lineHeight: (labelStyle.style as ITextGraphicAttribute)?.fontSize,
       ...labelStyle.style,
-      text
+      text,
+      _originText: labelAttr.formatMethod ? label : undefined
     };
-    if (isRichText(labelAttributes)) {
-      labelShape = graphicCreator.richtext(richTextAttributeTransform(labelAttributes));
-    } else {
-      labelShape = graphicCreator.text(labelAttributes);
-    }
+
+    const labelShape = createTextGraphicByType(labelAttributes);
 
     this._appendDataToShape(labelShape, LEGEND_ELEMENT_NAME.itemLabel, item, itemGroup, labelStyle.state);
     labelShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);
@@ -583,14 +580,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         textBaseline: 'middle',
         lineHeight: (valueStyle.style as ITextGraphicAttribute).fontSize,
         ...valueStyle.style,
-        text: valueText
+        text: valueText,
+        _originText: valueAttr.formatMethod ? value : undefined
       };
-      let valueShape;
-      if (isRichText(valueAttributes)) {
-        valueShape = graphicCreator.richtext(richTextAttributeTransform(valueAttributes));
-      } else {
-        valueShape = graphicCreator.text(valueAttributes);
-      }
+
+      const valueShape = createTextGraphicByType(valueAttributes);
 
       this._appendDataToShape(valueShape, LEGEND_ELEMENT_NAME.itemValue, item, itemGroup, valueStyle.state);
       valueShape.addState(isSelected ? LegendStateValue.selected : LegendStateValue.unSelected);

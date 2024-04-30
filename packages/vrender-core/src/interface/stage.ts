@@ -16,6 +16,9 @@ import type { IFullThemeSpec } from './graphic/theme';
 
 export type IExportType = 'canvas' | 'imageData';
 
+export type IStageCreateContext = {
+  appName?: 'vchart' | 'vgrammar' | 'vtable' | string;
+};
 export interface IStageParams {
   // x: number;
   // y: number;
@@ -78,6 +81,8 @@ export interface IStageParams {
    * 是否支持pointer事件，不支持就监听mouse事件
    */
   supportsPointerEvents?: boolean;
+
+  context?: IStageCreateContext;
 }
 
 export type EventConfig = {
@@ -228,6 +233,7 @@ export interface IStage extends INode {
   setCursor: (mode?: string) => void;
 
   getTheme: () => IFullThemeSpec;
+  eventPointTransform: (e: PointerEvent | WheelEvent | TouchEvent) => { x: number; y: number };
 }
 
 export declare function combineStage(srages: IStage[], params: { canvas: string | HTMLCanvasElement }): IStage;

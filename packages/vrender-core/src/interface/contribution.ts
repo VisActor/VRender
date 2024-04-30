@@ -25,6 +25,7 @@ export interface IBaseRenderContribution<GraphicType, AttributeType> {
   time: BaseRenderContributionTime;
   useStyle: boolean;
   order: number;
+  supportedAppName?: string | string[];
 
   drawShape: (
     graphic: GraphicType,

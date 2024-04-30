@@ -984,4 +984,10 @@ export class Stage extends Group implements IStage {
   getCursor() {
     return this._cursor;
   }
+
+  eventPointTransform(e: PointerEvent | WheelEvent | TouchEvent): { x: number; y: number } {
+    const point = this.global.mapToCanvasPoint(e, this.window.getContext().canvas.nativeCanvas);
+
+    return this.stage.window.pointTransform(point.x, point.y);
+  }
 }

@@ -3,6 +3,9 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkPoint } from '../../../src/marker';
+import { registerMarkPointAnimate } from '../../../src/marker';
+
+registerMarkPointAnimate();
 
 export function run() {
   console.log('MarkPoint');
@@ -19,15 +22,84 @@ export function run() {
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
-    decorativeLineVisible: false,
+    decorativeLineVisible: true,
     visible: true
   };
 
   const styleAttr = {
+    hover: true,
+    interactive: true,
+    state: {
+      line: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      lineStartSymbol: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      lineEndSymbol: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      symbol: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      image: {
+        hover: {
+          stroke: 'red',
+          fill: 'red',
+          width: 200,
+          height: 200
+        }
+      },
+      text: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      textBackground: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      richText: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      },
+      customMark: {
+        hover: {
+          stroke: 'red',
+          fill: 'red'
+        }
+      }
+    },
     itemLine: {
       type: guiObject.itemLineType,
       visible: guiObject.itemLineVisible,
-      decorativeLineVisible: guiObject.decorativeLineVisible
+      decorativeLineVisible: guiObject.decorativeLineVisible,
+      endSymbol: {
+        visible: true,
+        symbolType: 'circle',
+        size: 10
+      },
+      lineStyle: {
+        stroke: 'red',
+        curveType: 'monotoneX'
+      }
     },
     itemContent: {
       offsetX: guiObject.itemOffsetX,
@@ -38,23 +110,26 @@ export function run() {
       confine: true,
       textStyle: {
         // text: 'mark point label text'
-        type: 'rich',
-        text: [
-          {
-            text: 'Mapbox',
-            fontWeight: 'bold',
-            fontSize: 25,
-            fill: '#3f51b5',
-            height: 25
-          },
-          {
-            text: '替代方案',
-            fontStyle: 'italic',
-            textDecoration: 'underline',
-            fill: '#3f51b5',
-            height: 25
-          }
-        ]
+        type: 'text',
+        textStyle: {
+          text: '标注值: 30',
+          fontWeight: 'bold',
+          fontSize: 25,
+          fill: '#3f51b5',
+          height: 25
+        }
+        // text: [
+        //   {
+
+        // },
+        // {
+        //   text: '替代方案',
+        //   fontStyle: 'italic',
+        //   textDecoration: 'underline',
+        //   fill: '#3f51b5',
+        //   height: 25
+        // }
+        // ]
       },
       richTextStyle: {
         textConfig: [
@@ -107,7 +182,9 @@ export function run() {
         ]
       },
       imageStyle: {
-        image: `${window.location.origin}/__tests__/browser/sources/shape_logo.png`
+        image: `https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/shape_logo.png`
+        // width: 400,
+        // height: 400
       }
     },
     visible: guiObject.visible,
@@ -171,6 +248,12 @@ export function run() {
   const markPoints = [markPoint, markPoint2, markPoint3, markPoint4];
 
   const stage = render(markPoints, 'main');
+
+  console.log('markPoint', markPoints);
+
+  setTimeout(() => {
+    markPoint.release();
+  }, 500);
 
   // gui
   const gui = new GUI();

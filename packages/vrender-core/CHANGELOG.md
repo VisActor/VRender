@@ -1,6 +1,21 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 30 Apr 2024 07:48:41 GMT and should not be manually modified.
+This log was last generated on Tue, 30 Apr 2024 08:40:53 GMT and should not be manually modified.
+
+## 0.19.0
+Tue, 30 Apr 2024 08:40:53 GMT
+
+### Updates
+
+- fix: fix point of event when stage has transform
+
+
+- feat: draw-contribution support check appName, closed #1122
+- feat: set renderService to multi-instance
+- feat: support `opacity`/`fillOpacity`/`strokeOpacity` in richtext
+- feat: support style callback in html and react, fix 1102
+
+
 
 ## 0.18.17
 Tue, 30 Apr 2024 07:48:41 GMT

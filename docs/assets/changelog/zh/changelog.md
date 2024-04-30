@@ -1,3 +1,26 @@
+# v0.19.0
+
+2024-04-30
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support style callback in html and react, fix 1102
+- **@visactor/vrender-kits**: support style callback in html and react, fix 1102
+- **@visactor/vrender-core**: draw-contribution support check appName, closed [#1122](https://github.com/VisActor/VRender/issues/1122)
+- **@visactor/vrender-core**: set renderService to multi-instance
+- **@visactor/vrender-core**: support `opacity`/`fillOpacity`/`strokeOpacity` in richtext
+- **@visactor/vrender-core**: support style callback in html and react, fix 1102
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix point of event when stage has transform
+- **@visactor/vrender-core**: fix point of event when stage has transform
+
+
+
+[更多详情请查看 v0.19.0](https://github.com/VisActor/VRender/releases/tag/v0.19.0)
+
 # v0.18.17
 
 2024-04-30

@@ -147,6 +147,10 @@ const specs = [
     name: '两端可带 symbol 的线'
   },
   {
+    path: 'arc-segment',
+    name: '两端可带 symbol 的弧线'
+  },
+  {
     path: 'line-axis',
     name: '笛卡尔坐标轴'
   },
@@ -220,11 +224,19 @@ const specs = [
   },
   {
     path: 'mark-line',
-    name: 'markLine'
+    name: '直角坐标系markLine'
+  },
+  {
+    path: 'mark-arc-line',
+    name: '极坐标系markArcLine'
   },
   {
     path: 'mark-area',
-    name: 'markArea'
+    name: '直角坐标系markArea'
+  },
+  {
+    path: 'mark-arc-area',
+    name: '极坐标系markArea'
   },
   {
     path: 'mark-point',

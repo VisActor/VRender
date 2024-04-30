@@ -2,6 +2,9 @@ import GUI from 'lil-gui';
 import '@visactor/vrender';
 import render from '../../util/render';
 import { MarkArea } from '../../../src';
+import { registerMarkAreaAnimate } from '../../../src/marker';
+
+registerMarkAreaAnimate();
 
 export function run() {
   console.log('MarkArea');
@@ -16,27 +19,30 @@ export function run() {
 
   const styleAttr = {
     label: {
-      // text: '平均值: 17.7',
-      type: 'rich',
-      text: [
-        {
-          text: 'Mapbox',
-          fontWeight: 'bold',
-          fontSize: 25,
-          fill: '#3f51b5',
-          height: 25
-        },
-        {
-          text: '替代方案',
-          fontStyle: 'italic',
-          textDecoration: 'underline',
-          fill: '#3f51b5',
-          height: 25
-        }
-      ],
-      // panel: {
-      //   visible: false
-      // },
+      text: '平均值: 17.7',
+      // type: 'rich',
+      // text: [
+      //   {
+      //     text: 'Mapbox',
+      //     fontWeight: 'bold',
+      //     fontSize: 25,
+      //     fill: '#3f51b5',
+      //     height: 25
+      //   },
+      //   {
+      //     text: '替代方案',
+      //     fontStyle: 'italic',
+      //     textDecoration: 'underline',
+      //     fill: '#3f51b5',
+      //     height: 25
+      //   }
+      // ],
+      panel: {
+        visible: true
+      },
+      textStyle: {
+        fontSize: 12
+      },
       position: guiObject.labelPos,
       dx: guiObject.labelDx,
       dy: guiObject.labelDy,
@@ -44,7 +50,26 @@ export function run() {
         cornerRadius: guiObject.cornerRadius
       }
     },
-    clipInRange: false
+    clipInRange: false,
+    state: {
+      area: {
+        hover: {
+          fill: 'red'
+        }
+      },
+      label: {
+        hover: {
+          fill: 'red'
+        }
+      },
+      labelBackground: {
+        hover: {
+          fill: 'red'
+        }
+      }
+    },
+    hover: true,
+    select: true
     // limitRect: {
     //   x: 50,
     //   y: 50,
@@ -103,6 +128,10 @@ export function run() {
   const markAreas = [markArea, markArea2];
 
   const stage = render(markAreas, 'main');
+
+  setTimeout(() => {
+    markArea.release();
+  }, 500);
 
   const gui = new GUI();
   gui.add(guiObject, 'name');

@@ -222,7 +222,8 @@ export class CanvasTextLayout {
     }
 
     // line.topOffset = lineHeight * 0.79 + origin[1]; // 渲染默认使用alphabetic
-    line.topOffset = (lineHeight - this.textOptions.fontSize) / 2 + this.textOptions.fontSize * 0.79 + origin[1];
+    // 0.79在中文会超出，使用0.82
+    line.topOffset = (lineHeight - this.textOptions.fontSize) / 2 + this.textOptions.fontSize * 0.82 + origin[1];
     origin[1] += lineHeight;
 
     return line;

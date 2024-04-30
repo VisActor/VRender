@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with multiline text render pos",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

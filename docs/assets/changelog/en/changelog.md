@@ -1,3 +1,35 @@
+# v0.18.17
+
+2024-04-30
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix error of label when all the labels are cleared
+- **@visactor/vrender-kits**: fix issue with setLineDash crash, closed [#1047](https://github.com/VisActor/VRender/issues/1047)
+- **@visactor/vrender-core**: fix issue with setLineDash crash, closed [#1047](https://github.com/VisActor/VRender/issues/1047)
+- **@visactor/vrender-core**: fix error of label when all the labels are cleared
+- **@visactor/vrender-core**: fix flex-end layout order
+- **@visactor/vrender-core**: fix issue with rect stroke array while defined by x1y1, closed [#1169](https://github.com/VisActor/VRender/issues/1169)
+
+
+
+[more detail about v0.18.17](https://github.com/VisActor/VRender/releases/tag/v0.18.17)
+
+# v0.18.16
+
+2024-04-29
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: theme should not support 3d graphics
+- **@visactor/vrender-core**: theme should not support 3d graphics
+
+
+
+[more detail about v0.18.16](https://github.com/VisActor/VRender/releases/tag/v0.18.16)
+
 # v0.18.15
 
 2024-04-28

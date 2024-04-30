@@ -338,7 +338,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
-      context.setLineDash(underlineDash);
+      underlineDash && context.setLineDash(underlineDash);
       context.beginPath();
       const dy = y + offsetY + fontSize + underlineOffset;
       context.moveTo(x + offsetX, dy, z);
@@ -387,7 +387,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
-      context.setLineDash(underlineDash);
+      underlineDash && context.setLineDash(underlineDash);
       context.beginPath();
       const dy = y + offsetY + fontSize + deltaY + underlineOffset;
       context.moveTo(x + offsetX, dy, z);

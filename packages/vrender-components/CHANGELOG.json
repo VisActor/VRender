@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.18.17",
+      "tag": "@visactor/vrender-components_v0.18.17",
+      "date": "Tue, 30 Apr 2024 07:48:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix error of label when all the labels are cleared\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.16",
+      "tag": "@visactor/vrender-components_v0.18.16",
+      "date": "Mon, 29 Apr 2024 07:40:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: theme should not support 3d graphics\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.18.15",
       "tag": "@visactor/vrender-components_v0.18.15",
       "date": "Fri, 26 Apr 2024 10:37:19 GMT",

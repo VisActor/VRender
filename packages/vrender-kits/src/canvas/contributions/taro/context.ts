@@ -106,7 +106,7 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
       _context.setLineWidth(getScaledStroke(this, lineWidth, this.dpr));
       _context.setStrokeStyle(createColor(this, stroke as any, params, offsetX, offsetY));
       _context.setLineJoin(lineJoin);
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
       _context.setLineCap(lineCap);
       _context.setMiterLimit(miterLimit);
     }

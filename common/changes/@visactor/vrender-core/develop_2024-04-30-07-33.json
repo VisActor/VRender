@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with setLineDash crash, closed #1047",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

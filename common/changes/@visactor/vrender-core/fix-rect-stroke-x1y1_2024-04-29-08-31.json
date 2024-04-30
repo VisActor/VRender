@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with rect stroke array while defined by x1y1, closed #1169",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

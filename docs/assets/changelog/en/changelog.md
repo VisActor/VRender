@@ -1,3 +1,17 @@
+# v0.18.16
+
+2024-04-29
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: theme should not support 3d graphics
+- **@visactor/vrender-core**: theme should not support 3d graphics
+
+
+
+[more detail about v0.18.16](https://github.com/VisActor/VRender/releases/tag/v0.18.16)
+
 # v0.18.15
 
 2024-04-28

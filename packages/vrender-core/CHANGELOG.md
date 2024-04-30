@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 29 Apr 2024 07:40:31 GMT and should not be manually modified.
+This log was last generated on Tue, 30 Apr 2024 07:48:41 GMT and should not be manually modified.
+
+## 0.18.17
+Tue, 30 Apr 2024 07:48:41 GMT
+
+### Updates
+
+- fix: fix issue with setLineDash crash, closed #1047
+- fix: fix error of label when all the labels are cleared
+
+
+- fix: fix flex-end layout order
+- fix: fix issue with rect stroke array while defined by x1y1, closed #1169
 
 ## 0.18.16
 Mon, 29 Apr 2024 07:40:31 GMT

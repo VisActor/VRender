@@ -210,10 +210,16 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     ) => boolean
   ) {
     const {
-      width = groupAttribute.width,
-      height = groupAttribute.height,
+      x1,
+      y1,
+      x: originX = groupAttribute.x,
+      y: originY = groupAttribute.y,
       stroke = groupAttribute.stroke
     } = rect.attribute as any;
+
+    let { width, height } = rect.attribute;
+    width = (width ?? x1 - originX) || 0;
+    height = (height ?? y1 - originY) || 0;
 
     // 不是数组
     if (!(Array.isArray(stroke) && stroke.some(s => s === false))) {

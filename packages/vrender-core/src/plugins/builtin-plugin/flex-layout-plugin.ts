@@ -301,7 +301,7 @@ export class FlexLayoutPlugin implements IPlugin {
       }
     } else if (justifyContent === 'flex-end') {
       let pos = main.len;
-      for (let i = lastIdx; i <= currSeg.idx; i++) {
+      for (let i = currSeg.idx; i >= lastIdx; i--) {
         pos -= mianLenArray[i].mainLen;
         const posBaseLeftTop = pos + getPadding(children[i], main.field);
         const b = this.getAABBBounds(children[i]);

@@ -56,6 +56,9 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   script?: RichTextScript; // normal, sub, super
   underline?: boolean;
   lineThrough?: boolean;
+  opacity?: number;
+  fillOpacity?: number;
+  strokeOpacity?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

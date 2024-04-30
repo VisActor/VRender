@@ -79,6 +79,18 @@ export abstract class BaseRender<T extends IGraphic> {
   ) {
     this._beforeRenderContribitions &&
       this._beforeRenderContribitions.forEach(c => {
+        if (
+          c.supportedAppName &&
+          graphic.stage &&
+          graphic.stage.params &&
+          graphic.stage.params.context &&
+          graphic.stage.params.context.appName
+        ) {
+          const names = Array.isArray(c.supportedAppName) ? c.supportedAppName : [c.supportedAppName];
+          if (!names.includes(graphic.stage.params.context.appName)) {
+            return;
+          }
+        }
         c.drawShape(
           graphic,
           context,
@@ -122,6 +134,18 @@ export abstract class BaseRender<T extends IGraphic> {
   ) {
     this._afterRenderContribitions &&
       this._afterRenderContribitions.forEach(c => {
+        if (
+          c.supportedAppName &&
+          graphic.stage &&
+          graphic.stage.params &&
+          graphic.stage.params.context &&
+          graphic.stage.params.context.appName
+        ) {
+          const names = Array.isArray(c.supportedAppName) ? c.supportedAppName : [c.supportedAppName];
+          if (!names.includes(graphic.stage.params.context.appName)) {
+            return;
+          }
+        }
         c.drawShape(
           graphic,
           context,

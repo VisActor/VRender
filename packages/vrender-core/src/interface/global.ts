@@ -48,6 +48,7 @@ export interface IEnvContribution
   getNativeAABBBounds: (dom: string | HTMLElement | any) => IAABBBoundsLike;
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+  updateDom: (dom: HTMLElement, params: CreateDOMParamsType) => boolean;
   getElementTop: (dom: any, baseWindow?: boolean) => number;
   getElementLeft: (dom: any, baseWindow?: boolean) => number;
   getElementTopLeft: (dom: any, baseWindow?: boolean) => { top: number; left: number };
@@ -261,6 +262,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+  updateDom: (dom: HTMLElement, params: CreateDOMParamsType) => boolean;
 
   getElementTop: (dom: any, baseWindow?: boolean) => number;
   getElementLeft: (dom: any, baseWindow?: boolean) => number;

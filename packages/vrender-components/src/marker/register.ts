@@ -1,6 +1,13 @@
-import { registerGroup, registerImage, registerLine, registerPolygon, registerSymbol } from '@visactor/vrender-kits';
+import {
+  registerArc,
+  registerGroup,
+  registerImage,
+  registerLine,
+  registerPolygon,
+  registerSymbol
+} from '@visactor/vrender-kits';
 import { loadTagComponent } from '../tag/register';
-import { loadSegmentComponent } from '../segment/register';
+import { loadArcSegmentComponent, loadSegmentComponent } from '../segment/register';
 function loadBaseMarker() {
   registerGroup();
   loadTagComponent();
@@ -11,9 +18,19 @@ export function loadMarkLineComponent() {
   loadSegmentComponent();
 }
 
+export function loadMarkArcLineComponent() {
+  loadBaseMarker();
+  loadArcSegmentComponent();
+}
+
 export function loadMarkAreaComponent() {
   loadBaseMarker();
   registerPolygon();
+}
+
+export function loadMarkArcAreaComponent() {
+  loadBaseMarker();
+  registerArc();
 }
 
 export function loadMarkPointComponent() {

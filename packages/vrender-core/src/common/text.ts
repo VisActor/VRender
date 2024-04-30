@@ -1,7 +1,7 @@
 // 存放一些公共方法，公共配置
 
-import type { ITextFontParams } from '@visactor/vutils';
-import type { TextAlignType, TextBaselineType } from '../interface';
+import { isNil, isString, type ITextFontParams, lowerCamelCaseToMiddle } from '@visactor/vutils';
+import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
 
 export function getContextFont(
   text: Partial<ITextFontParams>,
@@ -92,4 +92,37 @@ export function textLayoutOffsetY(
     return -(lineHeight - fontSize) / 2 - 0.79 * fontSize;
   }
   return 0;
+}
+
+export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
+  const stringTypes = ['textAlign', 'fontFamily', 'fontVariant', 'fontStyle', 'fontWeight'];
+  const pxKeys = ['fontSize', 'lineHeight'];
+  const style: any = {};
+
+  stringTypes.forEach(key => {
+    if (attrs[key]) {
+      style[lowerCamelCaseToMiddle(key)] = attrs[key];
+    }
+  });
+
+  pxKeys.forEach(key => {
+    const styleKey = lowerCamelCaseToMiddle(key);
+    if (!isNil(attrs[key])) {
+      style[styleKey] = /^[0-9]*$/.test(`${attrs[key]}`) ? `${attrs[key]}px` : `${attrs[key]}`;
+    }
+  });
+
+  if (attrs.underline) {
+    style['text-decoration'] = 'underline';
+  } else if (attrs.lineThrough) {
+    style['text-decoration'] = 'line-through';
+  }
+
+  if (attrs.fill) {
+    if (isString(attrs.fill)) {
+      style.color = attrs.fill;
+    }
+  }
+
+  return style;
 }

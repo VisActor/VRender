@@ -735,9 +735,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onHandlerPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     this._isChanging = true;
-
+    const { x, y } = this.stage.eventPointTransform(e);
     this._currentHandler = e.target as unknown as IGraphic;
-    this._prePos = this._isHorizontal ? e.clientX : e.clientY;
+    this._prePos = this._isHorizontal ? x : y;
     if (vglobal.env === 'browser') {
       vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
         capture: true
@@ -761,17 +761,18 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       return;
     }
 
+    const { x, y } = this.stage.eventPointTransform(e);
     let currentPos;
     let delta = 0;
     let originPos;
     let railLen;
     if (!this._isHorizontal) {
-      currentPos = e.clientY;
+      currentPos = y;
       delta = currentPos - this._prePos; // 实际位移的变化
       originPos = this._currentHandler?.attribute.y as number;
       railLen = railHeight;
     } else {
-      currentPos = e.clientX;
+      currentPos = x;
       delta = currentPos - this._prePos; // 实际位移的变化
       originPos = this._currentHandler?.attribute.x as number;
       railLen = railWidth;
@@ -816,7 +817,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     this._isChanging = true;
-    this._prePos = this._isHorizontal ? e.clientX : e.clientY;
+
+    const { x, y } = this.stage.eventPointTransform(e);
+    this._prePos = this._isHorizontal ? x : y;
     if (vglobal.env === 'browser') {
       vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
         capture: true
@@ -844,13 +847,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     let currentPos;
     let trackLen;
     let railLen;
+    const { x, y } = this.stage.eventPointTransform(e);
     if (this._isHorizontal) {
-      currentPos = e.clientX;
+      currentPos = x;
       // @ts-ignore
       trackLen = this._track.attribute.width;
       railLen = railWidth;
     } else {
-      currentPos = e.clientY;
+      currentPos = y;
       // @ts-ignore
       trackLen = this._track.attribute.height;
       railLen = railHeight;

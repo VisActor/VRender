@@ -1,7 +1,8 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import { IMarkAreaLabelPosition, IMarkLineLabelPosition } from './type';
+import { IMarkAreaLabelPosition, IMarkLineLabelPosition, IMarkCommonArcLabelPosition } from './type';
 
 export const DEFAULT_MARK_LINE_THEME = {
+  interactive: true,
   startSymbol: {
     visible: false,
     symbolType: 'triangle',
@@ -44,7 +45,7 @@ export const DEFAULT_MARK_LINE_THEME = {
   }
 };
 
-export const DEFAULT_MARK_LINE_TEXT_STYLE_MAP: {
+export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
   [K: string]: {
     textAlign: TextAlignType;
     textBaseline: TextBaselineType;
@@ -90,7 +91,52 @@ export const DEFAULT_MARK_LINE_TEXT_STYLE_MAP: {
   }
 };
 
+export const DEFAULT_MARK_ARC_LINE_THEME = {
+  interactive: true,
+  startSymbol: {
+    visible: false,
+    symbolType: 'triangle',
+    size: 12,
+    fill: 'rgba(46, 47, 50)',
+    lineWidth: 0
+  },
+  endSymbol: {
+    visible: true,
+    symbolType: 'triangle',
+    size: 12,
+    fill: 'rgba(46, 47, 50)',
+    lineWidth: 0
+  },
+  label: {
+    position: IMarkCommonArcLabelPosition.arcOuterMiddle,
+    refX: 0,
+    refY: 0,
+    refAngle: 0,
+    textStyle: {
+      fill: '#fff',
+      stroke: '#fff',
+      lineWidth: 0,
+      fontSize: 10,
+      fontWeight: 'normal',
+      fontStyle: 'normal'
+    },
+    padding: [2, 2, 4, 4],
+    panel: {
+      visible: true,
+      cornerRadius: 0,
+      fill: 'rgb(48, 115, 242)',
+      fillOpacity: 0.8
+    }
+  },
+  lineStyle: {
+    stroke: '#b2bacf',
+    lineWidth: 1,
+    lineDash: [2]
+  }
+};
+
 export const DEFAULT_MARK_AREA_THEME = {
+  interactive: true,
   label: {
     position: IMarkAreaLabelPosition.right,
     textStyle: {
@@ -115,7 +161,72 @@ export const DEFAULT_MARK_AREA_THEME = {
   }
 };
 
-export const DEFAULT_MARK_AREA_TEXT_STYLE_MAP: {
+export const DEFAULT_MARK_ARC_AREA_THEME = {
+  interactive: true,
+  label: {
+    position: IMarkCommonArcLabelPosition.arcOuterMiddle,
+    textStyle: {
+      fill: '#fff',
+      stroke: '#fff',
+      lineWidth: 0,
+      fontSize: 10,
+      fontWeight: 'normal',
+      fontStyle: 'normal'
+    },
+    padding: [2, 2, 4, 4],
+    panel: {
+      visible: true,
+      cornerRadius: 0,
+      fill: 'rgb(48, 115, 242)',
+      fillOpacity: 0.8
+    }
+  },
+  areaStyle: {
+    fill: '#b2bacf',
+    visible: true
+  }
+};
+
+export const DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP: {
+  [K: string]: {
+    textAlign: TextAlignType;
+    textBaseline: TextBaselineType;
+  };
+} = {
+  arcInnerStart: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+  arcInnerEnd: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+
+  arcInnerMiddle: {
+    textAlign: 'center',
+    textBaseline: 'bottom'
+  },
+  arcOuterStart: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+
+  arcOuterEnd: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+  arcOuterMiddle: {
+    textAlign: 'center',
+    textBaseline: 'top'
+  },
+
+  center: {
+    textAlign: 'center',
+    textBaseline: 'middle'
+  }
+};
+
+export const DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP: {
   [K: string]: {
     textAlign: TextAlignType;
     textBaseline: TextBaselineType;
@@ -164,6 +275,7 @@ export const DEFAULT_MARK_AREA_TEXT_STYLE_MAP: {
 };
 
 export const DEFAULT_MARK_POINT_THEME = {
+  interactive: true,
   itemLine: {
     visible: true,
     decorativeLine: {

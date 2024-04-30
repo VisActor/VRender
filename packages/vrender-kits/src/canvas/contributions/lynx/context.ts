@@ -29,7 +29,7 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
       if (lineDash[0] === 0 && lineDash[1] === 0) {
         return;
       }
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
     }
   }
 
@@ -61,7 +61,7 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
       _context.lineJoin = lineJoin;
       // lynx环境中lineDash不能为[0, 0]
       if (!(lineDash[0] === 0 && lineDash[1] === 0)) {
-        _context.setLineDash(lineDash);
+        lineDash && _context.setLineDash(lineDash);
       }
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;

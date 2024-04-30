@@ -871,7 +871,7 @@ export class BrowserContext2d implements IContext2d {
 
     // works for Chrome and IE11
     if (!!this.nativeContext.setLineDash) {
-      _context.setLineDash(a[0]);
+      a[0] && _context.setLineDash(a[0]);
     } else if ('mozDash' in _context) {
       // verified that this works in firefox
       (_context as any).mozDash = a[0];
@@ -1132,7 +1132,7 @@ export class BrowserContext2d implements IContext2d {
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;
     }

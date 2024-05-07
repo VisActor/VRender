@@ -16,8 +16,8 @@ export type IRichTextAttribute = {
   textBaseline: RichTextGlobalBaselineType;
   layoutDirection: RichTextLayoutDirectionType;
   textConfig: IRichTextCharacter[];
-  // 是否强制每行break
-  forceBreakLine: boolean;
+  // 是否不自动每行截断
+  disableAutoWrapLine: boolean;
   singleLine: boolean;
 };
 

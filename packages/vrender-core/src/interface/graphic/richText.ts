@@ -169,7 +169,7 @@ export interface IRichTextLine {
     drawEllipsis: boolean | string,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) => void;
-  getWidthWithEllips: () => number;
+  getWidthWithEllips: (ellipsis: string) => number;
 }
 
 export interface IRichTextFrame {

@@ -362,6 +362,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         }
         if ((p as Paragraph).newLine) {
           skip = false;
+          wrapper.lineWidth = 0;
         }
       }
     } else {

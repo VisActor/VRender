@@ -322,7 +322,8 @@ export default class Frame {
               this.lines[i + 1] &&
               this.lines[i + 1].top + this.lines[i + 1].height > this[this.directionKey.top] + frameHeight
             ) {
-              const lineWidth = this.lines[i].getWidthWithEllips();
+              const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+              const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
               if (lineWidth > widthBound) {
                 widthBound = lineWidth;
               }
@@ -363,7 +364,8 @@ export default class Frame {
           // 判断需要显示省略号且是展示范围内的最后一行
           const lastLine = false;
           if (this.ellipsis && this.lines[i + 1] && y - this.lines[i + 1].height < this[this.directionKey.top]) {
-            const lineWidth = this.lines[i].getWidthWithEllips();
+            const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+            const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
             if (lineWidth > widthBound) {
               widthBound = lineWidth;
             }
@@ -397,7 +399,8 @@ export default class Frame {
             this.lines[i + 1] &&
             this.lines[i + 1].top + this.lines[i + 1].height > this[this.directionKey.top] + frameHeight
           ) {
-            const lineWidth = this.lines[i].getWidthWithEllips();
+            const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+            const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
             if (lineWidth > widthBound) {
               widthBound = lineWidth;
             }

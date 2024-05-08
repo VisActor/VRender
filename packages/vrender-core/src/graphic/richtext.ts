@@ -245,7 +245,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textBaseline,
       layoutDirection,
       singleLine,
-      forceBreakLine
+      disableAutoWrapLine
     } = this.attribute;
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
 
@@ -338,7 +338,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     );
     const wrapper = new Wrapper(frame);
     // debugger;
-    if (forceBreakLine) {
+    if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
       for (let i = 0; i < paragraphs.length; i++) {
@@ -362,6 +362,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         }
         if ((p as Paragraph).newLine) {
           skip = false;
+          wrapper.lineWidth = 0;
         }
       }
     } else {

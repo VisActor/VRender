@@ -312,6 +312,15 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
   ): boolean {
     // 默认使用原始的图元
     const baseGraphic = graphic.baseGraphic as IGraphic;
+    // 如果主图元被删除了，那把交互图元这个也删除
+    if (!baseGraphic.stage) {
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      if (interactiveLayer) {
+        const shadowRoot = this.getShadowRoot(interactiveLayer);
+        shadowRoot.removeChild(graphic);
+      }
+      return true;
+    }
     if (baseGraphic) {
       this.processing = true;
       const { context } = drawContext;

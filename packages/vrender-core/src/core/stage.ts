@@ -990,4 +990,11 @@ export class Stage extends Group implements IStage {
 
     return this.stage.window.pointTransform(point.x, point.y);
   }
+
+  pauseTriggerEvent() {
+    this._eventSystem && this._eventSystem.pauseTriggerEvent();
+  }
+  resumeTriggerEvent() {
+    this._eventSystem && this._eventSystem.resumeTriggerEvent();
+  }
 }

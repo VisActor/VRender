@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support pauseTriggerEvent to pause stage event trigger",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

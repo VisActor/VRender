@@ -72,6 +72,7 @@ export class EventManager {
 
   cursor: Cursor | string;
   cursorTarget: IEventTarget | null = null;
+  pauseNotify: boolean = false;
 
   protected mappingTable: Record<
     string,
@@ -224,6 +225,9 @@ export class EventManager {
   }
 
   protected notifyTarget(e: FederatedEvent, type?: string): void {
+    if (this.pauseNotify) {
+      return;
+    }
     type = type ?? e.type;
     const key = e.eventPhase === e.CAPTURING_PHASE || e.eventPhase === e.AT_TARGET ? `${type}capture` : type;
 

@@ -1080,9 +1080,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (target && target.name && target.name.startsWith(LEGEND_ELEMENT_NAME.item)) {
       // @ts-ignore
       const legendItem = target.delegate;
+      const { selectMode = 'multiple' } = this.attribute;
 
       // 图例聚焦功能
-      if (target.name === LEGEND_ELEMENT_NAME.focus) {
+      if (target.name === LEGEND_ELEMENT_NAME.focus || selectMode === 'focus') {
         const isFocusSelected = legendItem.hasState(LegendStateValue.focus);
         legendItem.toggleState(LegendStateValue.focus);
 
@@ -1116,7 +1117,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         this._itemsContainer?.getChildren().forEach(item => {
           (item as unknown as IGroup).removeState(LegendStateValue.focus);
         });
-        const { selectMode = 'multiple', allowAllCanceled = true } = this.attribute;
+        const { allowAllCanceled = true } = this.attribute;
         const isSelected = legendItem.hasState(LegendStateValue.selected);
         const currentSelectedItems = this._getSelectedLegends();
         if (selectMode === 'multiple') {

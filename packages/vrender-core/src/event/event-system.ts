@@ -614,6 +614,13 @@ export class EventSystem {
 
     return target !== nativeElement;
   }
+
+  pauseTriggerEvent() {
+    this.manager.pauseNotify = true;
+  }
+  resumeTriggerEvent() {
+    this.manager.pauseNotify = false;
+  }
 }
 
 interface VRenderPointerEvent extends PointerEvent {

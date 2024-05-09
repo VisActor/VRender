@@ -110,23 +110,49 @@ export const page = () => {
     createText({
       x: 300,
       y: 200,
-      fill: {
-        gradient: 'linear',
-        x0: 0,
-        y0: 0,
-        x1: 1,
-        y1: 1,
-        stops: [
-          { offset: 0, color: 'green' },
-          { offset: 0.5, color: 'orange' },
-          { offset: 1, color: 'red' }
-        ]
-      },
-      background: 'red',
-      backgroundCornerRadius: 10,
-      text: ['这是一行文字'],
+      // fill: {
+      //   gradient: 'linear',
+      //   x0: 0,
+      //   y0: 0,
+      //   x1: 1,
+      //   y1: 1,
+      //   stops: [
+      //     { offset: 0, color: 'green' },
+      //     { offset: 0.5, color: 'orange' },
+      //     { offset: 1, color: 'red' }
+      //   ]
+      // },
+      // background: 'red',
+      // backgroundCornerRadius: 10,
+      text: '这是一行文字',
+      fill: 'red',
       fontSize: 36,
       textBaseline: 'top'
+    })
+  );
+  graphics.push(
+    createLine({
+      x: 300,
+      y: 200,
+      // fill: {
+      //   gradient: 'linear',
+      //   x0: 0,
+      //   y0: 0,
+      //   x1: 1,
+      //   y1: 1,
+      //   stops: [
+      //     { offset: 0, color: 'green' },
+      //     { offset: 0.5, color: 'orange' },
+      //     { offset: 1, color: 'red' }
+      //   ]
+      // },
+      // background: 'red',
+      // backgroundCornerRadius: 10,
+      stroke: 'green',
+      points: [
+        { x: -100, y: 0 },
+        { x: 300, y: 0 }
+      ]
     })
   );
 

@@ -201,8 +201,9 @@ export type DiscreteLegendAttrs = {
    * 单选/多选模式配置，默认 'multiple'。
    * - `single` 表示单选
    * - `multiple` 表示多选
+   * - `focus` 表示聚焦模式 （自 0.19.2版本开始支持）
    */
-  selectMode?: 'single' | 'multiple';
+  selectMode?: 'single' | 'multiple' | 'focus';
   /**
    * 是否允许图例全部取消，多选模式下生效
    */

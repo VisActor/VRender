@@ -141,7 +141,7 @@ export const page = () => {
   });
   graphics.push(arc);
 
-  arc.animate().from({ endAngle: 0 }, 10000, 'linear');
+  arc.animate().from({ endAngle: 0 }, 10000, 'linear').loop(Infinity);
 
   graphics.push(
     createArc({

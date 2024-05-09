@@ -1,3 +1,21 @@
+# v0.19.1
+
+2024-05-08
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: rename forceBreakLine to disableAutoWrapLine
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with disableAutoWrapLine ellipsis
+- **@visactor/vrender-core**: fix issue with interactive graphic while base graphic is removed
+
+
+
+[more detail about v0.19.1](https://github.com/VisActor/VRender/releases/tag/v0.19.1)
+
 # v0.19.0
 
 2024-04-30

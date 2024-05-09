@@ -1,3 +1,21 @@
+# v0.19.1
+
+2024-05-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: rename forceBreakLine to disableAutoWrapLine
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with disableAutoWrapLine ellipsis
+- **@visactor/vrender-core**: fix issue with interactive graphic while base graphic is removed
+
+
+
+[更多详情请查看 v0.19.1](https://github.com/VisActor/VRender/releases/tag/v0.19.1)
+
 # v0.19.0
 
 2024-04-30

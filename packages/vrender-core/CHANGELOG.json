@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.2",
+      "tag": "@visactor/vrender-core_v0.19.2",
+      "date": "Thu, 09 May 2024 12:26:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: event support detailPath"
+          },
+          {
+            "comment": "feat: support pauseTriggerEvent to pause stage event trigger"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.1",
       "tag": "@visactor/vrender-core_v0.19.1",
       "date": "Wed, 08 May 2024 08:47:35 GMT",

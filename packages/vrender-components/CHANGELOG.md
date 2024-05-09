@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 08 May 2024 08:47:35 GMT and should not be manually modified.
+This log was last generated on Thu, 09 May 2024 12:26:00 GMT and should not be manually modified.
+
+## 0.19.2
+Thu, 09 May 2024 12:26:00 GMT
+
+### Updates
+
+- feat: support `focus` mode in discrete legend
+
+
 
 ## 0.19.1
 Wed, 08 May 2024 08:47:35 GMT

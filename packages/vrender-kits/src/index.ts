@@ -2,6 +2,7 @@ import _roughModule from './render/contributions/rough/module';
 // import _canvasModuleLoader from './canvas/contributions/canvas-module';
 
 export const roughModule = _roughModule;
+export * from './picker/contributions/constants';
 
 export * from './jsx';
 export * from './react-tree';

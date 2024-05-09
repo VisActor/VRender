@@ -47,6 +47,7 @@ export const EventTarget: Omit<IEventTarget, Exclude<keyof INode, 'dispatchEvent
 
     e.defaultPrevented = false;
     e.path = [];
+    e.detailPath && (e.detailPath = []);
     e.target = this as IEventTarget;
     e?.manager?.dispatchEvent(e);
 

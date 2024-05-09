@@ -110,10 +110,12 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     if (!picker) {
       return null;
     }
-    const g = picker.contains(graphic, point, params) ? graphic : null;
+    const pd = picker.contains(graphic, point, params);
+    const g = pd ? graphic : null;
 
     const data = {
-      graphic: g
+      graphic: g,
+      params: pd
     };
     if (g) {
       return data;

@@ -1,3 +1,19 @@
+# v0.19.2
+
+2024-05-09
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `focus` mode in discrete legend
+- **@visactor/vrender-kits**: support tt env, closed [#1129](https://github.com/VisActor/VRender/issues/1129)
+- **@visactor/vrender-core**: event support detailPath
+- **@visactor/vrender-core**: support pauseTriggerEvent to pause stage event trigger
+
+
+
+[more detail about v0.19.2](https://github.com/VisActor/VRender/releases/tag/v0.19.2)
+
 # v0.19.1
 
 2024-05-08

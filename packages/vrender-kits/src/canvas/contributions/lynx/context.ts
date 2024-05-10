@@ -15,8 +15,8 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
     return this._globalAlpha;
   }
   set globalAlpha(ga: number) {
-    this.nativeContext.globalAlpha = ga;
-    this._globalAlpha = ga;
+    this.nativeContext.globalAlpha = ga * this.baseGlobalAlpha;
+    this._globalAlpha = ga * this.baseGlobalAlpha;
   }
 
   setLineDash(segments: number[]) {
@@ -55,7 +55,7 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit
       } = attribute;
-      _context.globalAlpha = strokeOpacity * opacity;
+      _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;

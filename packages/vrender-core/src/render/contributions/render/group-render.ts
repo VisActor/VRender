@@ -202,12 +202,13 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       return;
     }
     // debugger;
-    const { clip } = group.attribute;
+    const { clip, baseOpacity = 1 } = group.attribute;
     if (clip) {
       context.save();
     } else {
       context.highPerformanceSave();
     }
+    context.baseGlobalAlpha *= baseOpacity;
 
     const groupAttribute = getTheme(group, params?.theme).group;
 
@@ -280,6 +281,8 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       mat4Allocate.free(context.modelMatrix);
     }
     context.modelMatrix = lastModelMatrix;
+
+    context.baseGlobalAlpha /= baseOpacity;
 
     if (p && p.then) {
       p.then(() => {

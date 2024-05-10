@@ -244,7 +244,8 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  alignContent: 'flex-start'
+  alignContent: 'flex-start',
+  baseOpacity: 1
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {

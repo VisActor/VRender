@@ -20,8 +20,8 @@ export class FeishuContext2d extends BrowserContext2d implements IContext2d {
     return this._globalAlpha;
   }
   set globalAlpha(ga: number) {
-    this.nativeContext.globalAlpha = ga;
-    this._globalAlpha = ga;
+    this.nativeContext.globalAlpha = ga * this.baseGlobalAlpha;
+    this._globalAlpha = ga * this.baseGlobalAlpha;
   }
 
   getImageData(sx: number, sy: number, sw: number, sh: number): any {

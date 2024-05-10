@@ -108,6 +108,7 @@ const addArcToBezierPath = (
 @injectable()
 export class BrowserContext2d implements IContext2d {
   static env: EnvType = 'browser';
+  baseGlobalAlpha: number;
   drawPromise?: Promise<any>;
   declare mathTextMeasure: TextMeasure<ITextMeasureSpec>;
 
@@ -139,7 +140,7 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.font;
   }
   set globalAlpha(d: number) {
-    this.nativeContext.globalAlpha = d;
+    this.nativeContext.globalAlpha = d * this.baseGlobalAlpha;
   }
   get globalAlpha(): number {
     return this.nativeContext.globalAlpha;
@@ -248,6 +249,7 @@ export class BrowserContext2d implements IContext2d {
     this.dpr = dpr;
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
     this._clearMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this.baseGlobalAlpha = 1;
   }
 
   reset() {
@@ -994,11 +996,11 @@ export class BrowserContext2d implements IContext2d {
       fill = defaultParams.fill
     } = attribute;
     if (fillOpacity > 1e-12 && opacity > 1e-12) {
-      _context.globalAlpha = fillOpacity * opacity;
+      _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
       _context.fillStyle = createColor(this, fill, params, offsetX, offsetY);
       // todo 小程序
     } else {
-      _context.globalAlpha = fillOpacity * opacity;
+      _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
     }
   }
 
@@ -1128,7 +1130,7 @@ export class BrowserContext2d implements IContext2d {
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit
       } = attribute;
-      _context.globalAlpha = strokeOpacity * opacity;
+      _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;

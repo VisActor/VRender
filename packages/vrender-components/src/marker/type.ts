@@ -9,16 +9,11 @@ import type {
   IPolygonGraphicAttribute,
   IRectGraphicAttribute,
   IRichTextGraphicAttribute,
+  ISymbol,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type {
-  ArcSegmentAttributes,
-  CommonSegmentAttributes,
-  ILineGraphicWithCornerRadius,
-  SegmentAttributes,
-  SymbolAttributes
-} from '../segment';
+import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
 import type { Point, State } from '../core/type';
 
@@ -78,7 +73,7 @@ export type IMarkBackgroundAttributes = {
    * TODO: 根据文高度度进行背景 panel size自适应
    */
   autoWidth?: boolean;
-} & Partial<SymbolAttributes>;
+} & Partial<IRectGraphicAttribute>;
 
 export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
   /**
@@ -201,6 +196,7 @@ export type MarkPointState = {
   textBackground?: State<Partial<IRectGraphicAttribute>>;
   richText?: State<Partial<IRichTextGraphicAttribute>>;
   customMark?: State<Partial<IGroupGraphicAttribute>>;
+  targetItem?: State<Partial<ISymbolGraphicAttribute>>;
 };
 
 export type MarkCommonLineAttrs<LineAttr, LineLabelPosition, MarkCommonLineAnimationType> =
@@ -390,8 +386,13 @@ export type IItemContent = IMarkRef & {
 
 export type IItemLine = {
   /** TODO：'type-opo' */
-  type?: 'type-s' | 'type-do' | 'type-po' | 'type-op';
+  type?: 'type-s' | 'type-do' | 'type-po' | 'type-op' | 'type-arc';
   visible?: boolean;
+  /**
+   * 当type为type-arc时生效, 数值决定曲率, 符号决定法向, 不能等于0
+   * @default 0.8
+   */
+  arcRatio?: number;
   /**
    * 垂直于引导线的装饰线，参考案例: https://observablehq.com/@mikelotis/edmonton-population-history-line-chart
    */
@@ -415,6 +416,28 @@ export type MarkPointAttrs = Omit<MarkerAttrs<MarkPointAnimationType>, 'labelSty
    * 标注内容
    */
   itemContent?: IItemContent;
+
+  /**
+   * 被标注的内容
+   */
+  targetItemContent?: {
+    /**
+     * 被标注内容与标记线间的间隙
+     * @default 0
+     */
+    margin?: number;
+    /**
+     * 是否显示
+     * @default false
+     */
+    visible?: boolean;
+    /**
+     * 大小
+     * @default 20
+     */
+    size?: number;
+    style?: ISymbol;
+  };
 
   state?: MarkPointState;
 } & BaseMarkerAnimation<MarkPointAnimationType>;

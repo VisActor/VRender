@@ -14,7 +14,7 @@ import { loadSegmentComponent } from './register';
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
-
+  key = 'segment';
   startSymbol?: ISymbol;
   endSymbol?: ISymbol;
   lines?: ILine[] = [];
@@ -157,11 +157,6 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       this.add(line);
       this.lines.push(line);
     }
-
-    // if(Segment.animate) {
-    //   console.log('animate', this.animate)
-    //   Segment.animate(this.startSymbol, this.endSymbol, this.lines)
-    // }
   }
 
   protected _computeRotate(angle: number) {
@@ -252,6 +247,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       points = originPoints as Point[];
     }
     this._mainSegmentPoints = points;
+    // 去除重复的点, 目前发现计算startAngle和endAngle时会有问题
 
     return points;
   }

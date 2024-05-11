@@ -14,10 +14,25 @@ import { Segment } from './segment';
 loadArcSegmentComponent();
 export class ArcSegment extends Segment {
   name = 'arc-segment';
+  key = 'arc-segment';
   line?: IArc;
 
   constructor(attributes: ArcSegmentAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, Segment.defaultAttributes, attributes));
+  }
+
+  /**
+   * 外部获取segment起点正方向
+   */
+  getStartAngle() {
+    return this._startAngle - Math.PI / 2;
+  }
+
+  /**
+   * 外部获取segment终点正方向
+   */
+  getEndAngle() {
+    return this._endAngle - Math.PI / 2;
   }
 
   getMainSegmentPoints() {

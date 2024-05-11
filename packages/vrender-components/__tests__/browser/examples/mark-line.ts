@@ -61,7 +61,7 @@ export function run() {
       }
     },
     startSymbol: {
-      visible: true,
+      visible: false,
       state: {
         hover: {
           fill: 'red'
@@ -72,6 +72,7 @@ export function run() {
       }
     },
     endSymbol: {
+      visible: true,
       //  symbolType: 'triangleLeft',
       // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
       size: 20,
@@ -130,12 +131,12 @@ export function run() {
   const markLine = new MarkLine({
     points: [
       {
-        x: 100,
-        y: 250
+        x: 200,
+        y: 350
       },
       {
-        x: 400,
-        y: 150
+        x: 200,
+        y: 250
       }
     ],
     ...(styleAttr as any)
@@ -175,7 +176,7 @@ export function run() {
   const stage = render(markLines, 'main');
 
   setTimeout(() => {
-    markLine.release();
+    // markLine.release();
   }, 500);
 
   // markLine.setAttributes({

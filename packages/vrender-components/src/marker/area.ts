@@ -131,18 +131,23 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
   }
 
   protected updateMarker() {
-    const { points, label, areaStyle } = this.attribute as MarkAreaAttrs;
+    const { points, label, areaStyle, state } = this.attribute as MarkAreaAttrs;
     if (this._area) {
       this._area.setAttributes({
         points: points,
         ...areaStyle
       });
+      this._area.states = merge({}, DEFAULT_STATES, state?.area);
     }
-    if (this._area) {
+    if (this._label) {
       this._label.setAttributes({
         dx: 0,
         dy: 0, // 需要进行复位
-        ...(label as TagAttributes)
+        ...(label as TagAttributes),
+        state: {
+          panel: merge({}, DEFAULT_STATES, state?.labelBackground),
+          text: merge({}, DEFAULT_STATES, state?.label)
+        }
       });
     }
     this.setLabelPos();

@@ -7,13 +7,23 @@ export function graphicFadeIn(graphic: IGraphic, delay: number, duration: number
   if (!graphic) {
     return;
   }
+  graphic?.animates?.forEach(a => a.stop('end'));
+  const fillOpacityConfig = graphic.attribute?.fillOpacity ?? 1;
+  const strokeOpacityConfig = graphic.attribute?.strokeOpacity ?? 1;
 
   graphic.setAttributes({
     fillOpacity: 0,
     strokeOpacity: 0
   });
 
-  graphic.animate().wait(delay).to({ fillOpacity: 1, strokeOpacity: 1 }, duration, easing);
+  graphic.animate().wait(delay).to(
+    {
+      fillOpacity: fillOpacityConfig,
+      strokeOpacity: strokeOpacityConfig
+    },
+    duration,
+    easing
+  );
 }
 
 export function segmentFadeIn(segment: Segment, delay: number, duration: number, easing: EasingType) {

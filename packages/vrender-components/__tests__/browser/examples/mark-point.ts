@@ -16,8 +16,8 @@ export function run() {
     itemLineVisible: true,
     // itemType: 'text',
     itemPos: 'middle',
-    itemOffsetX: 100,
-    itemOffsetY: 30,
+    itemOffsetX: -100,
+    itemOffsetY: 0,
     itemAutoRotate: true,
     itemRefX: 10,
     itemRefY: 0,
@@ -30,6 +30,12 @@ export function run() {
     hover: true,
     interactive: true,
     state: {
+      targetItem: {
+        hover: {
+          stroke: 'blue',
+          fill: 'blue'
+        }
+      },
       line: {
         hover: {
           stroke: 'red',
@@ -87,18 +93,37 @@ export function run() {
         }
       }
     },
+    // animation: true,
+    // animationEnter: {
+    //   type: 'fadeIn',
+    //   // delay: 0
+    // },
+    //   animationUpdate: {
+    //   type: 'fadeIn',
+    //   // delay: 0
+    // },
     itemLine: {
       type: guiObject.itemLineType,
       visible: guiObject.itemLineVisible,
-      decorativeLineVisible: guiObject.decorativeLineVisible,
+      decorativeLine: {
+        visible: guiObject.decorativeLineVisible
+      },
+      startSymbol: {
+        visible: false
+      },
       endSymbol: {
         visible: true,
         symbolType: 'circle',
-        size: 10
+        size: 10,
+        style: {
+          fill: 'blue'
+        }
+
+        // fill: true
       },
       lineStyle: {
-        stroke: 'red',
-        curveType: 'monotoneX'
+        stroke: 'red'
+        // curveType: 'monotoneX'
       }
     },
     itemContent: {
@@ -187,6 +212,16 @@ export function run() {
         // height: 400
       }
     },
+    targetItemContent: {
+      visible: true,
+      margin: 10,
+      style: {
+        fill: 'red',
+        stroke: 'blue'
+      }
+      // fill: 'red',
+      // stroke: 'black'
+    },
     visible: guiObject.visible,
     clipInRange: false
     // limitRect: {
@@ -211,8 +246,8 @@ export function run() {
 
   const markPoint2 = new MarkPoint({
     position: {
-      x: 100,
-      y: 150
+      x: 200,
+      y: 200
     },
     ...(styleAttr as any),
     itemContent: {
@@ -245,14 +280,15 @@ export function run() {
     }
   });
 
-  const markPoints = [markPoint, markPoint2, markPoint3, markPoint4];
+  const markPoints = [markPoint2];
 
   const stage = render(markPoints, 'main');
 
   console.log('markPoint', markPoints);
+  window['markPoint'] = markPoints;
 
   setTimeout(() => {
-    markPoint.release();
+    // markPoint.release();
   }, 500);
 
   // gui
@@ -267,7 +303,7 @@ export function run() {
         })
       );
     });
-  gui.add(guiObject, 'itemLineType', ['type-do', 'type-s', 'type-op', 'type-po']).onChange(value => {
+  gui.add(guiObject, 'itemLineType', ['type-do', 'type-s', 'type-op', 'type-po', 'type-arc']).onChange(value => {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemLine', {
         type: value

@@ -46,7 +46,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     const lineEndAngle = this._line.getEndAngle() ?? 0;
     const labelAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle;
 
-    const labelOffsetX = refX * Math.cos(labelAngle) + refX * Math.cos(labelAngle - Math.PI / 2);
+    const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
 
     if (position.includes('start') || position.includes('Start')) {

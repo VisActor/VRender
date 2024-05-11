@@ -109,11 +109,12 @@ export function run() {
         visible: guiObject.decorativeLineVisible
       },
       startSymbol: {
-        visible: false
+        visible: true,
+        symbolType: 'triangle'
       },
       endSymbol: {
         visible: true,
-        symbolType: 'circle',
+        symbolType: 'triangle',
         size: 10,
         style: {
           fill: 'blue'

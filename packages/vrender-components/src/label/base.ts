@@ -706,33 +706,34 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const texts = [] as (IText | IRichText)[];
     const { visible: showLabelLine } = this.attribute.line ?? {};
 
-    labels.forEach(text => {
-      const relatedGraphic = this.getRelatedGraphic(text.attribute);
-      const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
-      const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
-      let labelLine;
-      if (showLabelLine) {
-        labelLine = this._createLabelLine(text as IText, relatedGraphic);
-      }
+    labels &&
+      labels.forEach(text => {
+        const relatedGraphic = this.getRelatedGraphic(text.attribute);
+        const state = prevTextMap?.get(relatedGraphic) ? 'update' : 'enter';
+        const textKey = this._isCollectionBase ? (text.attribute as LabelItem).id : relatedGraphic;
+        let labelLine;
+        if (showLabelLine) {
+          labelLine = this._createLabelLine(text as IText, relatedGraphic);
+        }
 
-      if (state === 'enter') {
-        texts.push(text);
-        currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
-        this.add(text);
-        if (labelLine) {
-          this.add(labelLine);
+        if (state === 'enter') {
+          texts.push(text);
+          currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
+          this.add(text);
+          if (labelLine) {
+            this.add(labelLine);
+          }
+          this._syncStateWithRelatedGraphic(relatedGraphic);
+        } else if (state === 'update') {
+          const prevLabel = prevTextMap.get(textKey);
+          prevTextMap.delete(textKey);
+          currentTextMap.set(textKey, prevLabel);
+          prevLabel.text.setAttributes(text.attribute as any);
+          if (prevLabel.labelLine && labelLine) {
+            prevLabel.labelLine.setAttributes(labelLine.attribute);
+          }
         }
-        this._syncStateWithRelatedGraphic(relatedGraphic);
-      } else if (state === 'update') {
-        const prevLabel = prevTextMap.get(textKey);
-        prevTextMap.delete(textKey);
-        currentTextMap.set(textKey, prevLabel);
-        prevLabel.text.setAttributes(text.attribute as any);
-        if (prevLabel.labelLine && labelLine) {
-          prevLabel.labelLine.setAttributes(labelLine.attribute);
-        }
-      }
-    });
+      });
 
     prevTextMap.forEach(label => {
       this.removeChild(label.text);

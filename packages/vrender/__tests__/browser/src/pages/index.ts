@@ -220,6 +220,10 @@ export const pages = [
       {
         name: 'vtable',
         path: 'vtable'
+      },
+      {
+        name: 'harmony',
+        path: 'harmony'
       }
     ]
   }

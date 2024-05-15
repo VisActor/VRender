@@ -65,9 +65,14 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     //do nothing
   }
 
-  protected getTextAlignAttr(autoRotate: boolean, angle: number, itemPosition: keyof typeof IMarkPointItemPosition) {
+  protected getTextAlignAttr(
+    autoRotate: boolean,
+    offsetX: number,
+    offsetY: number,
+    itemPosition: keyof typeof IMarkPointItemPosition
+  ) {
     // 垂直方向例外
-    if (Math.abs(angle) === Math.PI / 2) {
+    if (offsetX === 0) {
       if (autoRotate) {
         return {
           textAlign: 'right',
@@ -77,13 +82,13 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       return {
         textAlign: 'center',
         textBaseline:
-          (angle > 0 && itemPosition.includes('inside')) || (angle < 0 && !itemPosition.includes('inside'))
+          (offsetY > 0 && itemPosition.includes('inside')) || (offsetY < 0 && !itemPosition.includes('inside'))
             ? 'bottom'
             : 'top'
       };
     }
 
-    if (isPostiveXAxis(angle)) {
+    if (offsetX > 0) {
       return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.postiveXAxis[itemPosition];
     }
     return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.negativeXAxis[itemPosition];
@@ -92,6 +97,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   protected setItemAttributes(
     item: ISymbol | Tag | IImage | IRichText,
     itemContent: IItemContent,
+    newPosition: Point,
     newItemPosition: Point,
     itemType: 'symbol' | 'text' | 'image' | 'richText' | 'custom'
   ) {
@@ -113,12 +119,15 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle - Math.PI / 2);
     const itemRefOffsetY = refX * Math.sin(lineEndAngle) + refY * Math.sin(lineEndAngle - Math.PI / 2);
     if (itemType === 'text') {
+      const offsetX = newItemPosition.x - newPosition.x;
+      const offsetY = newItemPosition.y - newPosition.y;
       item.setAttributes({
         ...(textStyle as TagAttributes),
         textStyle: {
           ...this.getTextAlignAttr(
             autoRotate,
-            lineEndAngle,
+            offsetX,
+            offsetY,
             itemContent.position ?? ('end' as keyof typeof IMarkPointItemPosition)
           ),
           ...textStyle.textStyle
@@ -181,7 +190,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     return 0;
   }
 
-  protected initItem(itemContent: IItemContent, newItemPosition: Point) {
+  protected initItem(itemContent: IItemContent, newPosition: Point, newItemPosition: Point) {
     const { state } = this.attribute as MarkPointAttrs;
     const { type = 'text', symbolStyle, richTextStyle, imageStyle, renderCustomCallback } = itemContent;
     let item: ISymbol | Tag | IImage | IRichText | IGroup;
@@ -216,7 +225,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       item.states = merge({}, DEFAULT_STATES, state?.customMark);
     }
     item.name = `mark-point-${type}`;
-    this.setItemAttributes(item, itemContent, newItemPosition, type);
+    this.setItemAttributes(item, itemContent, newPosition, newItemPosition, type);
     return item;
   }
 
@@ -401,7 +410,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     }
     this.setTargetItemAttributes(targetItemContent, position);
     this.setItemLineAttr(itemLine, newPosition, newItemPosition, itemLine.visible);
-    this.setItemAttributes(this._item, itemContent, newItemPosition, type);
+    this.setItemAttributes(this._item, itemContent, newPosition, newItemPosition, type);
     this.setDecorativeLineAttr(itemLine, newItemPosition, itemLine.decorativeLine?.visible);
   }
 
@@ -416,11 +425,11 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     } = targetItemContent;
     const targetSize = targetItemvisible ? targetItemContentSize || (targetItemContentStyle.size ?? 10) : 0;
     const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
-    const newPosition = {
+    const newPosition: Point = {
       x: position.x + (targetSize + targetItemContentMargin) * Math.cos(targetOffsetAngle),
       y: position.y + (targetSize + targetItemContentMargin) * Math.sin(targetOffsetAngle)
     };
-    const newItemPosition = {
+    const newItemPosition: Point = {
       x: position.x + (targetSize + targetItemContentMargin) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
       y: position.y + (targetSize + targetItemContentMargin) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
     };
@@ -466,7 +475,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
 
     /** item - 标注的内容 */
     // 为了强制将itemContent限制在limitRect内, 所以需要先绘制item, 然后根据item bounds 动态调整位置
-    const item = this.initItem(itemContent as any, newItemPosition);
+    const item = this.initItem(itemContent as any, newPosition, newItemPosition);
     this._item = item;
     container.add(item as unknown as INode);
 
@@ -483,7 +492,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);
 
     // 为了强制将itemContent限制在limitRect内, 所以需要先绘制item, 然后根据item bounds 动态调整位置
-    this.setItemAttributes(this._item, itemContent, newItemPosition, type);
+    this.setItemAttributes(this._item, itemContent, newPosition, newItemPosition, type);
     // 由于itemLine的指向也要变化, 所以需要对所有的内容进行渲染
     this.setAllOfItemsAttr(newPosition, newItemPosition);
   }

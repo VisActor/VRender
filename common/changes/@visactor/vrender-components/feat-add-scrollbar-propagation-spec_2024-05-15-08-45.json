@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: add  scrollbar propagation spec to allow close stop propagation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

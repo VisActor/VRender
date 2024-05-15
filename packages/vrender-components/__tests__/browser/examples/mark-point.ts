@@ -12,17 +12,17 @@ export function run() {
 
   const guiObject = {
     name: 'MarkPoint',
-    itemLineType: 'type-do',
+    itemLineType: 'type-arc',
     itemLineVisible: true,
     // itemType: 'text',
     itemPos: 'middle',
-    itemOffsetX: -100,
-    itemOffsetY: 0,
-    itemAutoRotate: true,
+    itemOffsetX: 100,
+    itemOffsetY: -100,
+    itemAutoRotate: false,
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
-    decorativeLineVisible: true,
+    decorativeLineVisible: false,
     visible: true
   };
 
@@ -93,6 +93,7 @@ export function run() {
         }
       }
     },
+
     // animation: true,
     // animationEnter: {
     //   type: 'fadeIn',
@@ -103,6 +104,7 @@ export function run() {
     //   // delay: 0
     // },
     itemLine: {
+      arcRatio: -0.8,
       type: guiObject.itemLineType,
       visible: guiObject.itemLineVisible,
       decorativeLine: {
@@ -113,7 +115,7 @@ export function run() {
         symbolType: 'triangle'
       },
       endSymbol: {
-        visible: true,
+        visible: false,
         symbolType: 'triangle',
         size: 10,
         style: {
@@ -134,15 +136,18 @@ export function run() {
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
       confine: true,
+
+      autoRotate: guiObject.itemAutoRotate,
       textStyle: {
         // text: 'mark point label text'
         type: 'text',
         textStyle: {
-          text: '标注值: 30',
-          fontWeight: 'bold',
-          fontSize: 25,
+          text: 'Type your annotation text here',
+          // fontWeight: 'bold',
+          fontSize: 12,
           fill: '#3f51b5',
-          height: 25
+          height: 25,
+          textAlign: 'center'
         }
         // text: [
         //   {
@@ -217,7 +222,8 @@ export function run() {
       visible: true,
       margin: 10,
       style: {
-        fill: 'red',
+        size: 20,
+        // fill: 'red',
         stroke: 'blue'
       }
       // fill: 'red',

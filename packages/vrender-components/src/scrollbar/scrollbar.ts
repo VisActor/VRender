@@ -306,7 +306,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
+    const { stopSliderDownPropagation = true } = this.attribute as ScrollBarAttributes;
+    if (stopSliderDownPropagation) {
+      e.stopPropagation();
+    }
     const { direction } = this.attribute as ScrollBarAttributes;
     const { x, y } = this.stage.eventPointTransform(e);
     this._prePos = direction === 'horizontal' ? x : y;
@@ -346,7 +349,10 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerMove = (e: any) => {
-    e.stopPropagation();
+    const { stopSliderMovePropagation = true } = this.attribute as ScrollBarAttributes;
+    if (stopSliderMovePropagation) {
+      e.stopPropagation();
+    }
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     this.setScrollRange([preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue], true);

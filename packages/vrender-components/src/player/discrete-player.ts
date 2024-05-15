@@ -234,7 +234,13 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    * 后退接口
    */
   backward = () => {
-    const index = Math.max(this._dataIndex - 1, this._minIndex);
+    const { loop = false } = this.attribute as PlayerAttributes;
+    let index;
+    if (loop) {
+      index = this._dataIndex - 1 < this._minIndex ? this._maxIndex : this._dataIndex - 1;
+    } else {
+      index = Math.max(this._dataIndex - 1, this._minIndex);
+    }
     this._updateDataIndex(index);
 
     this.dispatchCustomEvent(PlayerEventEnum.change);
@@ -245,7 +251,13 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    * 前进接口
    */
   forward = () => {
-    const index = Math.min(this._dataIndex + 1, this._maxIndex);
+    const { loop = false } = this.attribute as PlayerAttributes;
+    let index;
+    if (loop) {
+      index = this._dataIndex + 1 > this._maxIndex ? this._minIndex : this._dataIndex + 1;
+    } else {
+      index = Math.min(this._dataIndex + 1, this._maxIndex);
+    }
     this._updateDataIndex(index);
 
     this.dispatchCustomEvent(PlayerEventEnum.change);

@@ -54,4 +54,16 @@ export interface ScrollBarAttributes extends IGroupGraphicAttribute {
    * @default true
    */
   realTime?: boolean;
+  /**
+   * pointerMove时是否阻止冒泡
+   * @default true
+   * 内部使用, vtable不需要阻止冒泡
+   */
+  stopSliderMovePropagation?: boolean;
+  /**
+   * pointerDown时是否阻止冒泡
+   * @default true
+   * 内部使用, vtable不需要阻止冒泡
+   */
+  stopSliderDownPropagation?: boolean;
 }

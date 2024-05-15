@@ -1,4 +1,4 @@
-import { injectable, BaseEnvContribution, rafBasedSto } from '@visactor/vrender-core';
+import { injectable, BaseEnvContribution, RafBasedSTO } from '@visactor/vrender-core';
 // import { loadFeishuContributions } from '../../../kits';
 import type {
   ICanvasLike,
@@ -20,11 +20,15 @@ function createCanvas(width: number, height: number, id?: string) {
     width,
     height,
     context,
+    _c,
     getBoundingClientRect() {
       return {
         width,
         height
       };
+    },
+    getContext() {
+      return context;
     }
   };
   return new CanvasWrapDisableWH(nativeCanvas, context, 1, width, height, id);
@@ -33,6 +37,8 @@ function createCanvas(width: number, height: number, id?: string) {
 @injectable()
 export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'harmony';
+  supportEvent: boolean = true;
+  rafSTO: RafBasedSTO;
 
   constructor() {
     super();
@@ -45,6 +51,7 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
       this.supportsMouseEvents = false;
     }
     this.applyStyles = true;
+    this.rafSTO = new RafBasedSTO(0);
   }
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
@@ -113,14 +120,14 @@ export class HarmonyEnvContribution extends BaseEnvContribution implements IEnvC
     // return function (callback: FrameRequestCallback) {
     //   return setTimeout(callback, 1000 / 60, true);
     // } as any;
-    return function (callback: FrameRequestCallback) {
-      return rafBasedSto.call(callback);
-    } as any;
+    return (callback: FrameRequestCallback) => {
+      return this.rafSTO.call(callback);
+    };
   }
 
   getCancelAnimationFrame(): (h: number) => void {
     return (h: number) => {
-      rafBasedSto.clear(h);
+      this.rafSTO.clear(h);
     };
   }
 

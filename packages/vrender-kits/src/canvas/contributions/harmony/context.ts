@@ -1,6 +1,12 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke, application } from '@visactor/vrender-core';
-import type { IContext2d, EnvType, ISetStrokeStyleParams, IStrokeStyleParams } from '@visactor/vrender-core';
+import { injectable, createColor, getScaledStroke, application, getContextFont } from '@visactor/vrender-core';
+import type {
+  IContext2d,
+  EnvType,
+  ISetStrokeStyleParams,
+  IStrokeStyleParams,
+  ITextStyleParams
+} from '@visactor/vrender-core';
 import { BrowserContext2d } from '../browser';
 
 @injectable()
@@ -75,6 +81,47 @@ export class HarmonyContext2d extends BrowserContext2d implements IContext2d {
     this.setTransform(1, 0, 0, 1, 0, 0, true, application.global.devicePixelRatio);
     const data = super.measureText(text, method);
     return data;
+  }
+
+  setTextStyleWithoutAlignBaseline(params: Partial<ITextStyleParams>, defaultParams?: ITextStyleParams, z?: number) {
+    const _context = this.nativeContext;
+    if (!defaultParams) {
+      defaultParams = this.textAttributes;
+    }
+    const { scaleIn3d = defaultParams.scaleIn3d } = params;
+    let font = '';
+    if (params.font) {
+      font = params.font;
+    } else {
+      font = getContextFont(params, defaultParams, scaleIn3d && this.camera && this.camera.getProjectionScale(z));
+    }
+    _context.font = (font || '').replace('px', 'vp');
+    const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
+    this.fontFamily = fontFamily;
+    this.fontSize = fontSize;
+    _context.textAlign = 'left';
+    _context.textBaseline = 'alphabetic';
+    // // 这里不使用defaultParams
+    // _context.textAlign = params.textAlign || 'left';
+    // _context.textBaseline = params.textBaseline || 'alphabetic';
+  }
+  setTextStyle(params: Partial<ITextStyleParams>, defaultParams?: ITextStyleParams, z?: number) {
+    const _context = this.nativeContext;
+    if (!defaultParams) {
+      defaultParams = this.textAttributes;
+    }
+    let font = '';
+    if (params.font) {
+      font = params.font;
+    } else {
+      font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
+    }
+    _context.font = (font || '').replace('px', 'vp');
+    const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
+    this.fontFamily = fontFamily;
+    this.fontSize = fontSize;
+    _context.textAlign = params.textAlign ?? defaultParams.textAlign;
+    _context.textBaseline = params.textBaseline ?? defaultParams.textBaseline;
   }
 
   createPattern(image: HTMLImageElement | HTMLCanvasElement | HTMLVideoElement, repetition: string): CanvasPattern {

@@ -63,19 +63,6 @@ export const page = () => {
     const spec = {
       type: 'treemap',
       color: ['#F2F6FF', '#D9E3FF', '#BFD0FF', '#A6BDFF', '#8CAAFF', '#7397FF', '#5984FF', '#4071FF', '#2E5DE5'],
-      label: {
-        visible: true,
-        animation: false,
-        style: {
-          html: (_, a) => {
-            return {
-              dom: `<div style="color: red;">测试</div>`,
-              width: 70,
-              height: 60
-            };
-          }
-        }
-      },
       tooltip: {
         renderMode: 'canvas'
       },
@@ -121,11 +108,14 @@ export const page = () => {
     const chartSpace = new window.ChartSpace.default(spec, {
       renderCanvas: canvas,
       enableHtmlAttribute: true,
-      animation: false
+      animation: true
     });
 
     chartSpace.renderSync();
     console.log(chartSpace);
+
+    VRender.loadHarmonyEnv(VRender.container);
+    VRender.vglobal.setEnv('harmony');
     window.vchart = chartSpace;
   });
   return;

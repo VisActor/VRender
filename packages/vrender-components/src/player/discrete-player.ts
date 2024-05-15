@@ -234,7 +234,6 @@ export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> impleme
    * 后退接口
    */
   backward = () => {
-    const { auto } = this.attribute as PlayerAttributes;
     const index = Math.max(this._dataIndex - 1, this._minIndex);
     this._updateDataIndex(index);
 

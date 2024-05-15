@@ -1,3 +1,17 @@
+# v0.19.3
+
+2024-05-10
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-kits**: support baseOpacity for group
+- **@visactor/vrender-core**: support baseOpacity for group
+
+
+
+[more detail about v0.19.3](https://github.com/VisActor/VRender/releases/tag/v0.19.3)
+
 # v0.19.2
 
 2024-05-09

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.19.3",
+      "tag": "@visactor/vrender-kits_v0.19.3",
+      "date": "Fri, 10 May 2024 09:24:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support baseOpacity for group"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.2",
       "tag": "@visactor/vrender-kits_v0.19.2",
       "date": "Thu, 09 May 2024 12:26:00 GMT",

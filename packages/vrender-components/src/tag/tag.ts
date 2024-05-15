@@ -67,7 +67,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       visible,
       state,
       type,
-      textAlwaysCenter
+      textAlwaysCenter,
+      containerTextAlign
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -81,7 +82,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     const { visible: shapeVisible, ...shapeStyle } = shape;
     if (isBoolean(shapeVisible)) {
       const size = shapeStyle?.size || 10;
-      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      const maxSize = (isNumber(size) ? size : Math.max(size[0], size[1])) as number;
 
       symbol = group.createOrUpdateChild(
         'tag-shape',
@@ -163,7 +164,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       const textHeight = textBounds.height;
       tagWidth += textWidth;
       const size = shape.size ?? 10;
-      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      const maxSize = (isNumber(size) ? size : Math.max(size[0], size[1])) as number;
       tagHeight += Math.max(textHeight, shape.visible ? maxSize : 0);
 
       const { textAlign, textBaseline } = textStyle as ITextAttribute;
@@ -206,20 +207,69 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter && flag) {
+      const shouldCenter = containerTextAlign ? containerTextAlign === 'center' : textAlwaysCenter;
+      const shouldRight = containerTextAlign === 'right' || containerTextAlign === 'end';
+      const shouldLeft = containerTextAlign === 'left' || containerTextAlign === 'start';
+
+      if (shouldCenter && flag) {
+        // 文本容器内居中
         // 剔除padding后的内宽度
         const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
         const tsWidth = textWidth + symbolPlaceWidth;
-        const textX = (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2;
-        const symbolX = (containerWidth - tsWidth) / 2 + maxSize / 2;
+        const textX =
+          flag === 1
+            ? (containerWidth - tsWidth) / 2 + symbolPlaceWidth
+            : parsedPadding[0] + symbolPlaceWidth - (tagWidth / 2 + tsWidth / 2 - symbolPlaceWidth);
+
         textShape.setAttributes({
-          x: textX * flag,
-          textAlign: 'center'
+          x: textX,
+          textAlign: 'left'
         });
-        symbol?.setAttributes({
-          x: symbolX * flag
+        if (symbol) {
+          const symbolX = textX - symbolPlaceWidth + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
+      }
+
+      if (shouldLeft && flag !== 1) {
+        // 文本容器内朝左展示
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const offset =
+          flag === 0
+            ? -containerWidth / 2 + symbolPlaceWidth / 2
+            : -tagWidth + parsedPadding[3] + parsedPadding[1] + symbolPlaceWidth;
+        const textX = offset + symbolPlaceWidth;
+
+        textShape.setAttributes({
+          x: textX,
+          textAlign: 'left'
         });
-        group.setAttribute('x', parsedPadding[2 + flag] * flag);
+
+        if (symbol) {
+          const symbolX = offset + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
+      }
+
+      if (shouldRight && flag !== -1) {
+        // 文本容器内朝右展示
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const textX = flag === 0 ? containerWidth / 2 + symbolPlaceWidth / 2 : containerWidth;
+
+        textShape.setAttributes({
+          x: textX,
+          textAlign: 'right'
+        });
+        if (symbol) {
+          const symbolX = textX - textWidth - symbolPlaceWidth + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
       }
 
       if (textBaseline === 'middle') {

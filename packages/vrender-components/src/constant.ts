@@ -3,9 +3,9 @@ export const POLAR_END_ANGLE = 1.5 * Math.PI;
 
 export const DEFAULT_TEXT_FONT_FAMILY =
   // eslint-disable-next-line max-len
-  'PingFang SC,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui symbol';
+  'PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol';
 
-export const DEFAULT_TEXT_FONT_SIZE = 11;
+export const DEFAULT_TEXT_FONT_SIZE = 14;
 
 export enum StateValue {
   selected = 'selected',

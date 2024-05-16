@@ -10,13 +10,15 @@ import type { HTMLTextContent, ReactTextContent, TextContent } from '../core/typ
 export const initTextMeasure = (
   textSpec?: Partial<ITextGraphicAttribute>,
   option?: Partial<ITextMeasureOption>,
-  useNaiveCanvas?: boolean
+  useNaiveCanvas?: boolean,
+  defaultFontParams?: Partial<ITextGraphicAttribute>
 ): TextMeasure<ITextGraphicAttribute> => {
   return new TextMeasure<ITextGraphicAttribute>(
     {
       defaultFontParams: {
         fontFamily: DEFAULT_TEXT_FONT_FAMILY,
-        fontSize: DEFAULT_TEXT_FONT_SIZE
+        fontSize: DEFAULT_TEXT_FONT_SIZE,
+        ...defaultFontParams
       },
       getTextBounds: useNaiveCanvas ? undefined : getTextBounds,
       specialCharSet: '-/: .,@%\'"~' + TextMeasure.ALPHABET_CHAR_SET + TextMeasure.ALPHABET_CHAR_SET.toUpperCase(),

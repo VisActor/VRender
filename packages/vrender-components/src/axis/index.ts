@@ -6,3 +6,5 @@ export * from './animate';
 export * from './constant';
 
 export * from './util';
+
+export * from './tick-data';

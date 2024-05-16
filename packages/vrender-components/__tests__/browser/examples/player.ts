@@ -251,35 +251,36 @@ const layoutPlayer6 = new DiscretePlayer({
     width: 50
   },
   orient: 'right',
-  disableTriggerEvent: true
+  disableTriggerEvent: false,
+  loop: false
 });
 
 layoutPlayer4.addEventListener(PlayerEventEnum.OnChange, e => {
   console.log('change!', e.detail);
 });
 
-layoutPlayer4.addEventListener(PlayerEventEnum.OnPlay, () => {
-  console.log('onplay');
-});
+// layoutPlayer4.addEventListener(PlayerEventEnum.OnPlay, () => {
+//   console.log('onplay');
+// });
 
-layoutPlayer4.addEventListener(PlayerEventEnum.OnPause, () => {
-  console.log('onpause');
-});
+// layoutPlayer4.addEventListener(PlayerEventEnum.OnPause, () => {
+//   console.log('onpause');
+// });
 
-layoutPlayer4.addEventListener(PlayerEventEnum.OnForward, () => {
-  console.log('onforward');
-});
+// layoutPlayer4.addEventListener(PlayerEventEnum.OnForward, () => {
+//   console.log('onforward');
+// });
 
-layoutPlayer4.addEventListener(PlayerEventEnum.OnBackward, () => {
-  console.log('onbackward');
-});
+// layoutPlayer4.addEventListener(PlayerEventEnum.OnBackward, () => {
+//   console.log('onbackward');
+// });
 
-layoutPlayer4.addEventListener(PlayerEventEnum.OnEnd, () => {
-  console.log('onend');
-});
+// layoutPlayer4.addEventListener(PlayerEventEnum.OnEnd, () => {
+//   console.log('onend');
+// });
 
 // Layout 测试
-const LAYOUT = [layoutPlayer1, layoutPlayer2, layoutPlayer3, layoutPlayer4, layoutPlayer5, layoutPlayer6];
+const LAYOUT = [layoutPlayer6];
 LAYOUT.forEach(d => d.play());
 
 render(LAYOUT as IGraphic[], 'main');

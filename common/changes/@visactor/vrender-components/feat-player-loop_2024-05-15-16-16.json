@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat(player): index can be looped when set backward or forward button in player if user config loop. close@Vi",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

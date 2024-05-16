@@ -681,8 +681,11 @@ export class Stage extends Group implements IStage {
       const ctx = this.window.getContext().nativeContext;
       this.forEachChildren<ILayer>((layer, i) => {
         if (i > 0) {
-          const image = layer.getNativeHandler().getContext().canvas.nativeCanvas.transferToImageBitmap();
-          ctx.drawImage(image, 0, 0);
+          const image = layer
+            .getNativeHandler()
+            .getContext()
+            .canvas.nativeCanvas.nativeCanvas._c.transferToImageBitmap();
+          ctx.transferFromImageBitmap(image);
         }
       });
     }

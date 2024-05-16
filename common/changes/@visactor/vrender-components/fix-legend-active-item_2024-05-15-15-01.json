@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(legend): active item error when rerender legend. fix@VisActor/VChart#2690",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

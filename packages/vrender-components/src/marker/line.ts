@@ -81,7 +81,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
 
   protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean) {
     // 垂直方向例外
-    if (Math.abs(labelAngle) === Math.PI / 2) {
+    if (Math.abs(Math.abs(labelAngle) - Math.PI / 2) < 0.0001) {
       if (autoRotate) {
         return {
           textAlign: 'right',

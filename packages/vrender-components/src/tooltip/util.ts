@@ -44,6 +44,6 @@ export const getRichTextAttribute = (attr: TooltipTextAttrs): IRichTextGraphicAt
     textAlign: textAlign as any,
     textBaseline: textBaseline as any,
     singleLine: false,
-    textConfig: (text as TooltipRichTextAttrs).text as IRichTextCharacter[]
+    textConfig: (text as TooltipRichTextAttrs)?.text as IRichTextCharacter[]
   };
 };

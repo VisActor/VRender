@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix error of tooltip when rich text is empty\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "dingling112@gmail.com"
+}

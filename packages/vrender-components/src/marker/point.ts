@@ -29,7 +29,7 @@ import { loadMarkPointComponent } from './register';
 import { computeOffsetForlimit } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation, markPointAnimate } from './animate/animate';
-import { deltaXYToAngle, isPostiveXAxis, removeRepeatPoint } from '../util';
+import { deltaXYToAngle, isPostiveXAxisCartes, isPostiveXAxisPolar, removeRepeatPoint } from '../util';
 
 loadMarkPointComponent();
 
@@ -56,6 +56,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   private _line?: Segment;
 
   private _decorativeLine!: ILine;
+  private _isArcLine: boolean = false;
 
   constructor(attributes: MarkPointAttrs, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, MarkPoint.defaultAttributes, attributes));
@@ -69,26 +70,17 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     autoRotate: boolean,
     offsetX: number,
     offsetY: number,
+    lineEndAngle: number,
     itemPosition: keyof typeof IMarkPointItemPosition
   ) {
-    // 垂直方向例外
-    if (offsetX === 0) {
-      if (autoRotate) {
-        return {
-          textAlign: 'right',
-          textBaseline: 'middle'
-        };
-      }
-      return {
-        textAlign: 'center',
-        textBaseline:
-          (offsetY > 0 && itemPosition.includes('inside')) || (offsetY < 0 && !itemPosition.includes('inside'))
-            ? 'bottom'
-            : 'top'
-      };
+    let isPostiveXAxis = true;
+    if (this._isArcLine) {
+      isPostiveXAxis = isPostiveXAxisPolar(lineEndAngle, (this._line as ArcSegment).isReverseArc);
+    } else {
+      isPostiveXAxis = isPostiveXAxisCartes(lineEndAngle);
     }
 
-    if (offsetX > 0) {
+    if (isPostiveXAxis) {
       return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.postiveXAxis[itemPosition];
     }
     return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.negativeXAxis[itemPosition];
@@ -116,8 +108,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     } = itemContent;
     const { state } = this.attribute as MarkPointAttrs;
     const lineEndAngle = this._line?.getEndAngle() || 0;
-    const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle - Math.PI / 2);
-    const itemRefOffsetY = refX * Math.sin(lineEndAngle) + refY * Math.sin(lineEndAngle - Math.PI / 2);
+    const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle);
+    const itemRefOffsetY = refX * Math.sin(lineEndAngle) + refY * Math.sin(lineEndAngle);
     if (itemType === 'text') {
       const offsetX = newItemPosition.x - newPosition.x;
       const offsetY = newItemPosition.y - newPosition.y;
@@ -128,6 +120,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
             autoRotate,
             offsetX,
             offsetY,
+            lineEndAngle,
             itemContent.position ?? ('end' as keyof typeof IMarkPointItemPosition)
           ),
           ...textStyle.textStyle
@@ -151,7 +144,16 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       item.states = merge({}, DEFAULT_STATES, state?.image);
     }
 
-    const itemAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle - Math.PI;
+    let isPostiveXAxis = true;
+    let itemAngle;
+    if (this._isArcLine) {
+      isPostiveXAxis = isPostiveXAxisPolar(lineEndAngle, (this._line as ArcSegment).isReverseArc);
+      // 文字翻转
+      itemAngle = isPostiveXAxis ? lineEndAngle : lineEndAngle - Math.PI;
+    } else {
+      isPostiveXAxis = isPostiveXAxisCartes(lineEndAngle);
+      itemAngle = isPostiveXAxis ? lineEndAngle : lineEndAngle - Math.PI;
+    }
 
     item.setAttributes({
       x: newItemPosition.x + (itemRefOffsetX || 0),
@@ -236,9 +238,10 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     let startAngle = 0;
     let endAngle = 0;
     const { type = 'type-s', arcRatio = 0.8 } = itemLine;
-    if (type === 'type-arc') {
+    if (this._isArcLine) {
       const { x: x1, y: y1 } = newPosition;
       const { x: x2, y: y2 } = newItemPosition;
+
       // 得到中点和斜率
       const x0 = (x1 + x2) / 2;
       const y0 = (y1 + y2) / 2;
@@ -246,12 +249,15 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const k = y1 === y2 ? 0 : -(x1 - x2) / (y1 - y2); // 垂直平分线斜率 * 两点连线斜率 = -1
       const line = (x: number) => k * (x - x0) + y0;
       // 在垂直平分线上找圆心
-      const deltaX = arcRatio * x0; // 数值决定曲率, 符号决定法向, 可通过配置自定义
+      const direction = y2 > y1 ? -1 : 1;
+
+      const deltaX = arcRatio * direction * x0; // 数值决定曲率, 符号决定法向, 可通过配置自定义
       const centerX = x0 + deltaX;
       const centerY = line(centerX);
       center = { x: centerX, y: centerY };
       startAngle = deltaXYToAngle(y1 - centerY, x1 - centerX);
       endAngle = deltaXYToAngle(y2 - centerY, x2 - centerX);
+
       radius = Math.sqrt((centerX - x1) * (centerX - x1) + (centerY - y1) * (centerY - y1));
     } else if (type === 'type-do') {
       points = [
@@ -294,7 +300,29 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     };
   }
 
-  protected setItemLineAttr(itemLine: IItemLine, newPosition: Point, newItemPosition: Point, visible: boolean) {
+  protected reDrawLine(itemLine: IItemLine, pointsAttr: any) {
+    this._line.release();
+    const { startSymbol, endSymbol, lineStyle, type = 'type-s' } = itemLine;
+    const { state } = this.attribute as MarkPointAttrs;
+    const lineConstructor = this._isArcLine ? ArcSegment : Segment;
+    this._container.removeChild(this._line);
+    this._line = new lineConstructor({
+      ...pointsAttr,
+      pickable: false,
+      startSymbol,
+      endSymbol,
+      lineStyle,
+      visible: itemLine.visible,
+      state: {
+        line: merge({}, DEFAULT_STATES, state?.line),
+        startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
+        endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
+      }
+    } as any);
+    this._container.add(this._line as unknown as INode);
+  }
+
+  protected setItemLineAttr(itemLine: IItemLine, newPosition: Point, newItemPosition: Point) {
     if (this._line) {
       const { startSymbol, endSymbol, lineStyle, type = 'type-s' } = itemLine;
       const { state } = this.attribute as MarkPointAttrs;
@@ -308,7 +336,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
           startSymbol,
           endSymbol,
           lineStyle,
-          visible,
+          visible: itemLine.visible,
           state: {
             line: merge({}, DEFAULT_STATES, state?.line),
             startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
@@ -316,23 +344,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
           }
         });
       } else {
-        this._line.release();
-        const lineConstructor = type === 'type-arc' ? ArcSegment : Segment;
-        this._container.removeChild(this._line);
-        this._line = new lineConstructor({
-          ...pointsAttr,
-          pickable: false,
-          startSymbol,
-          endSymbol,
-          lineStyle,
-          visible,
-          state: {
-            line: merge({}, DEFAULT_STATES, state?.line),
-            startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
-            endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
-          }
-        } as any);
-        this._container.add(this._line as unknown as INode);
+        this.reDrawLine(itemLine, pointsAttr);
       }
     }
   }
@@ -389,13 +401,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   }
 
   protected setAllOfItemsAttr(newPosition: Point, newItemPosition: Point) {
-    const {
-      position,
-      itemLine = {},
-      itemContent = {},
-      limitRect,
-      targetItemContent
-    } = this.attribute as MarkPointAttrs;
+    const { position, itemLine = {}, itemContent = {}, limitRect, targetSymbol } = this.attribute as MarkPointAttrs;
     const { type = 'text', confine } = itemContent;
     if (limitRect && confine) {
       const { x, y, width, height } = limitRect;
@@ -408,30 +414,30 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       newItemPosition.x = newItemPosition.x + dx;
       newItemPosition.y = newItemPosition.y + dy;
     }
-    this.setTargetItemAttributes(targetItemContent, position);
-    this.setItemLineAttr(itemLine, newPosition, newItemPosition, itemLine.visible);
+    this.setTargetItemAttributes(targetSymbol, position);
+    this.setItemLineAttr(itemLine, newPosition, newItemPosition);
     this.setItemAttributes(this._item, itemContent, newPosition, newItemPosition, type);
     this.setDecorativeLineAttr(itemLine, newItemPosition, itemLine.decorativeLine?.visible);
   }
 
   protected computeNewPositionAfterTargetItem(position: Point) {
-    const { itemContent = {}, targetItemContent } = this.attribute as MarkPointAttrs;
+    const { itemContent = {}, targetSymbol } = this.attribute as MarkPointAttrs;
     const { offsetX: itemContentOffsetX = 0, offsetY: itemContentOffsetY = 0 } = itemContent;
     const {
-      margin: targetItemContentMargin = 0,
-      style: targetItemContentStyle,
+      offset: targetSymbolOffset = 0,
+      style: targetSymbolStyle,
       visible: targetItemvisible = false,
-      size: targetItemContentSize
-    } = targetItemContent;
-    const targetSize = targetItemvisible ? targetItemContentSize || (targetItemContentStyle.size ?? 10) : 0;
+      size: targetSymbolSize
+    } = targetSymbol;
+    const targetSize = targetItemvisible ? targetSymbolSize || (targetSymbolStyle.size ?? 10) : 0;
     const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
     const newPosition: Point = {
-      x: position.x + (targetSize + targetItemContentMargin) * Math.cos(targetOffsetAngle),
-      y: position.y + (targetSize + targetItemContentMargin) * Math.sin(targetOffsetAngle)
+      x: position.x + (targetSize + targetSymbolOffset) * Math.cos(targetOffsetAngle),
+      y: position.y + (targetSize + targetSymbolOffset) * Math.sin(targetOffsetAngle)
     };
     const newItemPosition: Point = {
-      x: position.x + (targetSize + targetItemContentMargin) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
-      y: position.y + (targetSize + targetItemContentMargin) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
+      x: position.x + (targetSize + targetSymbolOffset) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
+      y: position.y + (targetSize + targetSymbolOffset) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
     };
 
     return { newPosition, newItemPosition };
@@ -439,13 +445,19 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
 
   protected initMarker(container: IGroup) {
     const { position, itemContent = {}, itemLine } = this.attribute as MarkPointAttrs;
-    const { type: itemLineType = 'type-s' } = itemLine;
+    const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
 
     /** 根据targetItem计算新的弧线起点 */
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);
 
     /** itemline - 连接线 */
-    const lineConstructor = itemLineType === 'type-arc' ? ArcSegment : Segment;
+    this._isArcLine =
+      itemLineType === 'type-arc' &&
+      arcRatio !== 0 &&
+      newPosition.x !== newItemPosition.x &&
+      newPosition.y !== newItemPosition.y;
+
+    const lineConstructor = this._isArcLine ? ArcSegment : Segment;
     const line = new lineConstructor({
       points: [],
       pickable: false, // 组件容器本身不参与拾取
@@ -485,11 +497,30 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   }
 
   protected updateMarker() {
-    const { position, itemContent = {} } = this.attribute as MarkPointAttrs;
+    const { position, itemContent = {}, itemLine } = this.attribute as MarkPointAttrs;
     const { type = 'text' } = itemContent;
-
+    const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
     /** 根据targetItem计算新的弧线起点 */
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);
+    const isArcLine =
+      itemLineType === 'type-arc' &&
+      arcRatio !== 0 &&
+      newPosition.x !== newItemPosition.x &&
+      newPosition.y !== newItemPosition.y;
+    if (isArcLine !== this._isArcLine) {
+      // 如果曲线和直线相互切换了, 则需要重新绘制line
+      this._isArcLine = isArcLine;
+      this.reDrawLine(itemLine, {
+        points: [{ x: 0, y: 0 }],
+        pickable: false,
+        center: { x: 0, y: 0 },
+        radius: 0,
+        startAngle: 0,
+        endAngle: 0
+      });
+    } else {
+      this._isArcLine = isArcLine;
+    }
 
     // 为了强制将itemContent限制在limitRect内, 所以需要先绘制item, 然后根据item bounds 动态调整位置
     this.setItemAttributes(this._item, itemContent, newPosition, newItemPosition, type);

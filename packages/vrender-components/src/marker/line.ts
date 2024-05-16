@@ -13,8 +13,7 @@ import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
-import { limitShapeInBounds } from '../util/limit-shape';
-import { isPostiveXAxis } from '../util';
+import { isPostiveXAxisCartes } from '../util';
 
 loadMarkLineComponent();
 
@@ -44,7 +43,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
     const lineEndAngle = this._line.getEndAngle() ?? 0;
-    const labelAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle;
+    const labelAngle = isPostiveXAxisCartes(lineEndAngle) ? lineEndAngle : lineEndAngle;
 
     const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
@@ -76,7 +75,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   }
 
   protected getRotateByAngle(angle: number): number {
-    const itemAngle = isPostiveXAxis(angle) ? angle : angle - Math.PI;
+    const itemAngle = isPostiveXAxisCartes(angle) ? angle : angle - Math.PI;
     return itemAngle + (this.attribute.label.refAngle ?? 0);
   }
 
@@ -98,7 +97,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
       };
     }
 
-    if (isPostiveXAxis(labelAngle)) {
+    if (isPostiveXAxisCartes(labelAngle)) {
       return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.postiveXAxis[position];
     }
     return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.negativeXAxis[position];

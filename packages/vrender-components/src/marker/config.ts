@@ -320,13 +320,15 @@ export const DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP: {
 
 export const DEFAULT_MARK_POINT_THEME = {
   interactive: true,
-  targetItemContent: {
+  targetSymbol: {
     visible: false,
-    margin: 0,
-    symbolType: 'circle',
-    size: 20,
-    fill: false,
-    stroke: 'rgba(46, 47, 50)'
+    offset: 0,
+    style: {
+      symbolType: 'circle',
+      size: 20,
+      fill: false,
+      stroke: 'rgba(46, 47, 50)'
+    }
   },
   itemLine: {
     visible: true,

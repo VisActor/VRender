@@ -159,7 +159,11 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     }
   }
 
-  protected _computeRotate(angle: number) {
+  protected _computeStartRotate(angle: number) {
+    return angle + Math.PI / 2;
+  }
+
+  protected _computeEndRotate(angle: number) {
     return angle + Math.PI / 2;
   }
 
@@ -187,14 +191,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
             start.y +
             (isValidNumber(startAngle) ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
         };
-        rotate = this._computeRotate(startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
+        rotate = this._computeStartRotate(startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
       } else {
         position = {
           x:
             end.x + (isValidNumber(endAngle) ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
           y: end.y + (isValidNumber(endAngle) ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
         };
-        rotate = this._computeRotate(endAngle);
+        rotate = this._computeEndRotate(endAngle);
       }
 
       symbol = graphicCreator.symbol({

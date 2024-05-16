@@ -53,6 +53,13 @@ export function removeRepeatPoint(points: Point[]) {
   return result;
 }
 
-export function isPostiveXAxis(angle: number) {
+export function isPostiveXAxisCartes(angle: number) {
   return angle > -Math.PI / 2 && angle < Math.PI / 2;
+}
+
+export function isPostiveXAxisPolar(angle: number, isReverse: boolean) {
+  if (isReverse) {
+    return (angle > 0 && angle < Math.PI / 2) || (angle < 0 && angle > -Math.PI * 2);
+  }
+  return (angle > 0 && angle < Math.PI / 2) || (angle > (Math.PI * 3) / 2 && angle < Math.PI * 2);
 }

@@ -4,6 +4,7 @@ import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkLine } from '../../../src';
 import { registerMarkLineAnimate } from '../../../src/marker';
+import { truncate } from 'fs';
 
 registerMarkLineAnimate();
 
@@ -61,7 +62,7 @@ export function run() {
       }
     },
     startSymbol: {
-      visible: false,
+      visible: true,
       state: {
         hover: {
           fill: 'red'

@@ -17,13 +17,14 @@ export function run() {
     // itemType: 'text',
     itemPos: 'middle',
     itemOffsetX: 100,
-    itemOffsetY: -100,
+    itemOffsetY: 100,
     itemAutoRotate: false,
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
     decorativeLineVisible: false,
-    visible: true
+    visible: true,
+    arcRatio: 0.8
   };
 
   const styleAttr = {
@@ -104,7 +105,7 @@ export function run() {
     //   // delay: 0
     // },
     itemLine: {
-      arcRatio: -0.8,
+      arcRatio: guiObject.arcRatio,
       type: guiObject.itemLineType,
       visible: guiObject.itemLineVisible,
       decorativeLine: {
@@ -115,7 +116,7 @@ export function run() {
         symbolType: 'triangle'
       },
       endSymbol: {
-        visible: false,
+        visible: true,
         symbolType: 'triangle',
         size: 10,
         style: {
@@ -146,8 +147,8 @@ export function run() {
           // fontWeight: 'bold',
           fontSize: 12,
           fill: '#3f51b5',
-          height: 25,
-          textAlign: 'center'
+          height: 25
+          // textAlign: 'center'
         }
         // text: [
         //   {
@@ -218,14 +219,14 @@ export function run() {
         // height: 400
       }
     },
-    targetItemContent: {
+    targetSymbol: {
       visible: true,
-      margin: 10,
-      style: {
-        size: 20,
-        // fill: 'red',
-        stroke: 'blue'
-      }
+      offset: 10
+      // style: {
+      //   size: 30,
+      //   // fill: 'red',
+      //   stroke: 'blue'
+      // }
       // fill: 'red',
       // stroke: 'black'
     },
@@ -334,6 +335,7 @@ export function run() {
         offsetX: value
       })
     );
+    console.log('markpoints', markPoints);
   });
 
   gui.add(guiObject, 'itemOffsetY').onChange(value => {
@@ -342,6 +344,7 @@ export function run() {
         offsetY: value
       })
     );
+    console.log('markpoints', markPoints);
   });
 
   gui.add(guiObject, 'itemAutoRotate').onChange(value => {
@@ -382,6 +385,14 @@ export function run() {
         decorativeLine: {
           visible: value
         }
+      })
+    );
+  });
+
+  gui.add(guiObject, 'arcRatio').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        arcRatio: value
       })
     );
   });

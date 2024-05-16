@@ -420,12 +420,12 @@ export type MarkPointAttrs = Omit<MarkerAttrs<MarkPointAnimationType>, 'labelSty
   /**
    * 被标注的内容
    */
-  targetItemContent?: {
+  targetSymbol?: {
     /**
      * 被标注内容与标记线间的间隙
      * @default 0
      */
-    margin?: number;
+    offset?: number;
     /**
      * 是否显示
      * @default false

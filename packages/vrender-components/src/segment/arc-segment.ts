@@ -16,31 +16,38 @@ export class ArcSegment extends Segment {
   name = 'arc-segment';
   key = 'arc-segment';
   line?: IArc;
+  isReverseArc: boolean = false;
 
   constructor(attributes: ArcSegmentAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, Segment.defaultAttributes, attributes));
   }
 
   /**
-   * 外部获取segment起点正方向
+   * 外部获取segment起点切线正方向
    */
   getStartAngle() {
-    return this._startAngle - Math.PI / 2;
+    const startAngle = this.isReverseArc ? this._startAngle + Math.PI / 2 : this._startAngle - Math.PI / 2;
+    return startAngle > Math.PI * 2 ? startAngle - Math.PI * 2 : startAngle;
   }
 
   /**
-   * 外部获取segment终点正方向
+   * 外部获取segment终点切线正方向
    */
   getEndAngle() {
-    return this._endAngle - Math.PI / 2;
+    const endAngle = this.isReverseArc ? this._endAngle - Math.PI / 2 : this._endAngle + Math.PI / 2;
+    return endAngle > Math.PI * 2 ? endAngle - Math.PI * 2 : endAngle;
   }
 
   getMainSegmentPoints() {
     return this._mainSegmentPoints;
   }
 
-  protected _computeRotate(angle: number) {
-    return angle + Math.PI;
+  protected _computeStartRotate(angle: number) {
+    return this.isReverseArc ? angle + Math.PI : angle;
+  }
+
+  protected _computeEndRotate(angle: number) {
+    return this.isReverseArc ? angle : angle + Math.PI;
   }
 
   protected render() {
@@ -65,6 +72,7 @@ export class ArcSegment extends Segment {
 
     this._startAngle = startAngle;
     this._endAngle = endAngle;
+    this.isReverseArc = startAngle > endAngle;
 
     // 绘制start和end symbol
     const startPoint: Point = {

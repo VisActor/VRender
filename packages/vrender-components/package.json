@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.19.3",
+  "version": "0.19.4-alpha.5",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -24,8 +24,8 @@
     "analysis-core": "bundle -f umd -a -i core.ts"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.19.3",
-    "@visactor/vrender-kits": "workspace:0.19.3",
+    "@visactor/vrender-core": "workspace:0.19.4-alpha.5",
+    "@visactor/vrender-kits": "workspace:0.19.4-alpha.5",
     "@visactor/vutils": "~0.18.7",
     "@visactor/vscale": "~0.18.7"
   },

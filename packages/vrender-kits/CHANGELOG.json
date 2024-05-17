@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.19.4",
+      "tag": "@visactor/vrender-kits_v0.19.4",
+      "date": "Fri, 17 May 2024 06:46:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support harmony env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.3",
       "tag": "@visactor/vrender-kits_v0.19.3",
       "date": "Fri, 10 May 2024 09:24:39 GMT",

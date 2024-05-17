@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 10 May 2024 09:24:39 GMT and should not be manually modified.
+This log was last generated on Fri, 17 May 2024 06:46:41 GMT and should not be manually modified.
+
+## 0.19.4
+Fri, 17 May 2024 06:46:41 GMT
+
+### Updates
+
+- feat: support harmony env
 
 ## 0.19.3
 Fri, 10 May 2024 09:24:39 GMT

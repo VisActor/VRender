@@ -130,7 +130,7 @@ export function run() {
   const stage = render(markAreas, 'main');
 
   setTimeout(() => {
-    markArea.release();
+    // markArea.release();
   }, 500);
 
   const gui = new GUI();

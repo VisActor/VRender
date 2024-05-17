@@ -47,47 +47,91 @@ export const DEFAULT_MARK_LINE_THEME = {
 
 export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
   [K: string]: {
-    textAlign: TextAlignType;
-    textBaseline: TextBaselineType;
+    [T: string]: {
+      textAlign: TextAlignType;
+      textBaseline: TextBaselineType;
+    };
   };
 } = {
-  start: {
-    textAlign: 'right',
-    textBaseline: 'middle'
-  },
-  insideStartTop: {
-    textAlign: 'left',
-    textBaseline: 'bottom'
-  },
-  insideStartBottom: {
-    textAlign: 'left',
-    textBaseline: 'top'
-  },
+  postiveXAxis: {
+    start: {
+      textAlign: 'right',
+      textBaseline: 'middle'
+    },
+    insideStartTop: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    insideStartBottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    },
 
-  middle: {
-    textAlign: 'center',
-    textBaseline: 'middle'
-  },
-  insideMiddleTop: {
-    textAlign: 'center',
-    textBaseline: 'bottom'
-  },
-  insideMiddleBottom: {
-    textAlign: 'center',
-    textBaseline: 'top'
-  },
+    middle: {
+      textAlign: 'center',
+      textBaseline: 'middle'
+    },
+    insideMiddleTop: {
+      textAlign: 'center',
+      textBaseline: 'bottom'
+    },
+    insideMiddleBottom: {
+      textAlign: 'center',
+      textBaseline: 'top'
+    },
 
-  end: {
-    textAlign: 'left',
-    textBaseline: 'middle'
+    end: {
+      textAlign: 'left',
+      textBaseline: 'middle'
+    },
+    insideEndTop: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    insideEndBottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    }
   },
-  insideEndTop: {
-    textAlign: 'right',
-    textBaseline: 'bottom'
-  },
-  insideEndBottom: {
-    textAlign: 'right',
-    textBaseline: 'top'
+  negativeXAxis: {
+    start: {
+      textAlign: 'left',
+      textBaseline: 'middle'
+    },
+    insideStartTop: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    insideStartBottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    },
+
+    middle: {
+      textAlign: 'center',
+      textBaseline: 'middle'
+    },
+    insideMiddleTop: {
+      textAlign: 'center',
+      textBaseline: 'bottom'
+    },
+    insideMiddleBottom: {
+      textAlign: 'center',
+      textBaseline: 'top'
+    },
+
+    end: {
+      textAlign: 'right',
+      textBaseline: 'middle'
+    },
+    insideEndTop: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    insideEndBottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    }
   }
 };
 
@@ -276,6 +320,16 @@ export const DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP: {
 
 export const DEFAULT_MARK_POINT_THEME = {
   interactive: true,
+  targetSymbol: {
+    visible: false,
+    offset: 0,
+    style: {
+      symbolType: 'circle',
+      size: 20,
+      fill: false,
+      stroke: 'rgba(46, 47, 50)'
+    }
+  },
   itemLine: {
     visible: true,
     decorativeLine: {
@@ -334,32 +388,62 @@ export const DEFAULT_MARK_POINT_THEME = {
 
 export const DEFAULT_MARK_POINT_TEXT_STYLE_MAP: {
   [K: string]: {
-    textAlign: TextAlignType;
-    textBaseline: TextBaselineType;
+    [T: string]: {
+      textAlign: TextAlignType;
+      textBaseline: TextBaselineType;
+    };
   };
 } = {
-  top: {
-    textAlign: 'left',
-    textBaseline: 'bottom'
+  postiveXAxis: {
+    top: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    bottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    },
+    middle: {
+      textAlign: 'left',
+      textBaseline: 'middle'
+    },
+    insideTop: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    insideBottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    },
+    insideMiddle: {
+      textAlign: 'right',
+      textBaseline: 'middle'
+    }
   },
-  bottom: {
-    textAlign: 'left',
-    textBaseline: 'top'
-  },
-  middle: {
-    textAlign: 'left',
-    textBaseline: 'middle'
-  },
-  insideTop: {
-    textAlign: 'right',
-    textBaseline: 'bottom'
-  },
-  insideBottom: {
-    textAlign: 'right',
-    textBaseline: 'top'
-  },
-  insideMiddle: {
-    textAlign: 'right',
-    textBaseline: 'middle'
+  negativeXAxis: {
+    top: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    bottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    },
+    middle: {
+      textAlign: 'right',
+      textBaseline: 'middle'
+    },
+    insideTop: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    insideBottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    },
+    insideMiddle: {
+      textAlign: 'left',
+      textBaseline: 'middle'
+    }
   }
 };

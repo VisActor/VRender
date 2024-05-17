@@ -13,7 +13,7 @@ import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
-import { limitShapeInBounds } from '../util/limit-shape';
+import { isPostiveXAxisCartes } from '../util';
 
 loadMarkLineComponent();
 
@@ -42,9 +42,10 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     const { label = {} } = this.attribute;
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
-    const labelAngle = this._line.getEndAngle() ?? 0;
+    const lineEndAngle = this._line.getEndAngle() ?? 0;
+    const labelAngle = isPostiveXAxisCartes(lineEndAngle) ? lineEndAngle : lineEndAngle;
 
-    const labelOffsetX = refX * Math.cos(labelAngle) + refX * Math.cos(labelAngle - Math.PI / 2);
+    const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
 
     if (position.includes('start') || position.includes('Start')) {
@@ -74,11 +75,32 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   }
 
   protected getRotateByAngle(angle: number): number {
-    return angle + (this.attribute.label.refAngle ?? 0);
+    const itemAngle = isPostiveXAxisCartes(angle) ? angle : angle - Math.PI;
+    return itemAngle + (this.attribute.label.refAngle ?? 0);
   }
 
-  protected getTextStyle(position: IMarkLineLabelPosition) {
-    return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP[position];
+  protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean) {
+    // 垂直方向例外
+    if (Math.abs(Math.abs(labelAngle) - Math.PI / 2) < 0.0001) {
+      if (autoRotate) {
+        return {
+          textAlign: 'right',
+          textBaseline: 'middle'
+        };
+      }
+      return {
+        textAlign: 'center',
+        textBaseline:
+          (labelAngle > 0 && position.includes('inside')) || (labelAngle < 0 && !position.includes('inside'))
+            ? 'bottom'
+            : 'top'
+      };
+    }
+
+    if (isPostiveXAxisCartes(labelAngle)) {
+      return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.postiveXAxis[position];
+    }
+    return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.negativeXAxis[position];
   }
 
   protected createSegment() {
@@ -101,7 +123,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   }
 
   protected setLineAttributes() {
-    const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment } = this
+    const { points, startSymbol, endSymbol, lineStyle, mainSegmentIndex, multiSegment, state } = this
       .attribute as MarkLineAttrs;
     if (this._line) {
       this._line.setAttributes({
@@ -110,7 +132,12 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
         endSymbol,
         lineStyle,
         mainSegmentIndex,
-        multiSegment
+        multiSegment,
+        state: {
+          line: merge({}, DEFAULT_STATES, state?.line),
+          startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
+          endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
+        }
       });
     }
   }

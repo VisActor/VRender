@@ -36,6 +36,7 @@ export function loadMarkArcAreaComponent() {
 export function loadMarkPointComponent() {
   loadBaseMarker();
   loadSegmentComponent();
+  loadArcSegmentComponent();
   registerSymbol();
   registerImage();
   registerLine();

@@ -161,7 +161,7 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
   }
 
   protected updateMarker() {
-    const { center, innerRadius, outerRadius, startAngle, endAngle, areaStyle, label } = this
+    const { center, innerRadius, outerRadius, startAngle, endAngle, areaStyle, label, state } = this
       .attribute as MarkArcAreaAttrs;
     if (this._area) {
       this._area.setAttributes({
@@ -173,15 +173,20 @@ export class MarkArcArea extends Marker<MarkArcAreaAttrs, CommonMarkAreaAnimatio
         endAngle,
         ...areaStyle
       });
+      this._area.states = merge({}, DEFAULT_STATES, state?.area);
     }
-    if (this._area) {
+    if (this._label) {
       this._label.setAttributes({
         dx: 0,
         dy: 0, // 需要进行复位
-        ...(label as TagAttributes)
+        ...(label as TagAttributes),
+        state: {
+          panel: merge({}, DEFAULT_STATES, state?.labelBackground),
+          text: merge({}, DEFAULT_STATES, state?.label)
+        }
       });
+      this.setLabelPos();
     }
-    this.setLabelPos();
   }
 
   protected isValidPoints() {

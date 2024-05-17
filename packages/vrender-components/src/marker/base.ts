@@ -13,7 +13,7 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
   name = 'marker';
 
   private _containerClip!: IGroup;
-  private _container!: IGroup;
+  protected _container!: IGroup;
 
   protected _label!: Tag;
 

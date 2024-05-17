@@ -7,7 +7,7 @@ import { isNil } from '@visactor/vutils';
 export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin {
   name: 'ReactAttributePlugin' = 'ReactAttributePlugin';
   activeEvent: 'onRegister' = 'onRegister';
-  pluginService: IPluginService;
+  declare pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
 

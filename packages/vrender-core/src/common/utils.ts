@@ -323,9 +323,9 @@ export class RafBasedSTO {
   lastDate: number;
   durationsListThreshold: number;
 
-  constructor() {
+  constructor(timeout: number = RafBasedSTO.TimeOut) {
     this.durations = [];
-    this.timeout = RafBasedSTO.TimeOut;
+    this.timeout = timeout;
     this.lastDate = 0;
     this.durationsListThreshold = 30;
   }

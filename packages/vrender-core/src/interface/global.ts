@@ -10,7 +10,7 @@ export interface ILoader {
 }
 
 // 环境定义
-export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx';
+export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx' | 'harmony';
 
 // 创建canvas需要的参数
 export interface ICreateCanvasParams {
@@ -151,6 +151,7 @@ export interface IEnvParamsMap {
   readonly native: any;
   readonly lynx: any;
   readonly wx: any;
+  readonly harmony: any;
 }
 
 export type CreateDOMParamsType = {

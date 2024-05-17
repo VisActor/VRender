@@ -25,7 +25,7 @@ import { Linear } from './linear';
 export class LinearClosed extends Linear implements ILinearSegment {
   declare context: ISegPath2D;
 
-  protected startPoint?: IPointLike;
+  protected declare startPoint?: IPointLike;
 
   lineEnd() {
     this.context.closePath();

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: support harmony env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

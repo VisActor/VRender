@@ -6,3 +6,4 @@ export * from './node';
 export * from './taro';
 export * from './wx';
 export * from './tt';
+export * from './harmony';

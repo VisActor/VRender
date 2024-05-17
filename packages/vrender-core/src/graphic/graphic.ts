@@ -276,6 +276,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.valid = this.isValid();
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
   }
 
@@ -454,6 +456,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     if (params.background) {
       this.loadImage(params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
 
     this._setAttributes(params, forceUpdateTag, context);
@@ -501,6 +505,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (key === 'background') {
       this.loadImage(value, true);
+    } else if (key === 'shadowGraphic') {
+      this.setShadowGraphic(value);
     }
   }
 
@@ -532,6 +538,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.attribute = params;
     if (params.background) {
       this.loadImage(params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;
     this.valid = this.isValid();
@@ -1381,6 +1389,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.backgroundImg = this.backgroundImg || background;
     } else {
       cache.state = 'fail';
+    }
+  }
+
+  setShadowGraphic(graphic: IGraphic) {
+    if (!graphic) {
+      this.detachShadow();
+    } else {
+      const root = this.attachShadow();
+      root.add(graphic);
     }
   }
 

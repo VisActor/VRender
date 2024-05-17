@@ -103,3 +103,181 @@ const group = (
   onDblClick: 'dblclick'
 }
 ```
+
+## Demo
+
+我们可以通过如下所示的`jsx`配置支持一个 flex 布局效果
+
+<div style="text-align: center;">
+  <img src="https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/screenshot-20240516-175519.png" alt="jsx编写Demo">
+</div>
+
+```tsx
+import { decodeReactDom, VGroup, VImage, VText, VTag } from '@visactor/vrender';
+decodeReactDom(
+  <VGroup attribute={{ x: 100, y: 100, width: 260, height: 80, background: '#cecece', display: 'flex' }}>
+    <VGroup
+      attribute={{
+        display: 'flex',
+        background: 'green',
+        width: 60,
+        height: 80,
+        direction: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-around'
+      }}
+    >
+      <VImage
+        attribute={{
+          image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+          width: 50,
+          height: 50
+        }}
+      ></VImage>
+    </VGroup>
+    <VGroup
+      attribute={{
+        display: 'flex',
+        background: 'red',
+        width: 200,
+        height: 80,
+        direction: 'column'
+      }}
+    >
+      <VGroup
+        attribute={{
+          display: 'flex',
+          background: 'orange',
+          width: 200,
+          height: 40,
+          direction: 'column',
+          alignItems: 'flex-end',
+          justifyContent: 'center'
+        }}
+      >
+        <VText attribute={{ text: '虚拟主播小花', fontSize: 13, fontFamily: 'sans-serif', fill: 'black' }}></VText>
+        <VImage
+          attribute={{
+            name: 'aaa',
+            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
+            width: 15,
+            height: 15,
+            boundsPadding: [0, 0, 0, 10]
+          }}
+        ></VImage>
+        <VText attribute={{ text: '梦幻之都', fontSize: 11, fontFamily: 'sans-serif', fill: '#6f7070' }}></VText>
+      </VGroup>
+      <VGroup
+        attribute={{
+          display: 'flex',
+          background: 'pink',
+          width: 200,
+          height: 40,
+          direction: 'column',
+          alignItems: 'center'
+        }}
+      >
+        <VTag
+          attribute={{
+            visible: true,
+            textStyle: {
+              fontSize: 10,
+              fill: 'rgb(51, 101, 238)',
+              textAlign: 'left',
+              textBaseline: 'top',
+              fontFamily: 'sans-serif'
+            },
+            space: 4,
+            padding: 5,
+            shape: {
+              fill: '#000'
+            },
+            text: '游戏',
+            panel: {
+              visible: true,
+              fill: '#f4f4f2',
+              cornerRadius: 5
+            },
+            marginLeft: 10,
+            boundsPadding: [0, 0, 0, 10],
+            x: 20,
+            y: 10
+          }}
+        ></VTag>
+        <VTag
+          attribute={{
+            visible: true,
+            textStyle: {
+              fontSize: 10,
+              fill: 'rgb(51, 101, 238)',
+              textAlign: 'left',
+              textBaseline: 'top',
+              fontFamily: 'sans-serif'
+            },
+            space: 4,
+            padding: 5,
+            shape: {
+              fill: '#000'
+            },
+            text: '动漫',
+            panel: {
+              visible: true,
+              fill: '#f4f4f2',
+              cornerRadius: 5
+            },
+            marginLeft: 10,
+            boundsPadding: [0, 0, 0, 10],
+            x: 60,
+            y: 10
+          }}
+        ></VTag>
+        <VTag
+          attribute={{
+            visible: true,
+            textStyle: {
+              fontSize: 10,
+              fill: 'rgb(51, 101, 238)',
+              textAlign: 'left',
+              textBaseline: 'top',
+              fontFamily: 'sans-serif'
+            },
+            space: 4,
+            padding: 5,
+            shape: {
+              fill: '#000'
+            },
+            text: '美食',
+            panel: {
+              visible: true,
+              fill: '#f4f4f2',
+              cornerRadius: 5
+            },
+            marginLeft: 10,
+            boundsPadding: [0, 0, 0, 10],
+            x: 100,
+            y: 10
+          }}
+        ></VTag>
+      </VGroup>
+    </VGroup>
+  </VGroup>
+);
+```
+
+## 推荐用法
+
+如果希望给一个图元添加子图元，除了可以给 group 添加节点外，还可以使用 shadowGraphic 配合 JSX，非常适合在 VChart 环境中使用
+
+```ts
+const text = createText({
+  x: 200,
+  y: 300,
+  text: '这是一段文字',
+  fill: 'red',
+  shadowGraphic: decodeReactDom(
+    <VGroup>
+      <VSymbol attribute={{ symbolType: 'star', x: 100, y: 100, fill: 'green' }}></VSymbol>
+    </VGroup>
+  )
+});
+```

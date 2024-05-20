@@ -51,6 +51,7 @@ export type TagAttributes = {
    * Tag 内容器整体的文本对齐方式，
    * textStyle.textAlign 决定了 Tag 自己相对位置点的对齐方式
    * containerTextAlign 在 textStyle.textAlign 的基础上，绝对内部文本的对齐方式
+   * @since 0.19.5
    */
   containerTextAlign?: TextAlignType;
   /**

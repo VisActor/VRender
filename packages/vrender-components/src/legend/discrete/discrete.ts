@@ -184,6 +184,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     super(options?.skipDefault ? attributes : merge({}, DiscreteLegend.defaultAttributes, attributes));
   }
 
+  render() {
+    super.render();
+    this._lastActiveItem = null;
+  }
+
   /**
    * 更新选中数据
    * @param value 选中数据范围

@@ -169,6 +169,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
   renderable: true,
   pickable: true,
+  shadowGraphic: undefined,
   childrenPickable: true,
   fillPickable: true,
   strokePickable: true,

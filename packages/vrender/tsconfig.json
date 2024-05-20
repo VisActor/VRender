@@ -1,11 +1,13 @@
 {
   "extends": "@internal/ts-config/tsconfig.base.json",
   "compilerOptions": {
+    "lib": ["DOM", "ESNext"],
     "baseUrl": "./",
     "rootDir": "./src",
     "outDir": "./es",
     "typeRoots": ["./node_modules/@types", "./src/types"],
-    "composite": true
+    "composite": true,
+    "target": "ES2016"
   },
   "include": ["src"],
   "references": [

@@ -12,24 +12,31 @@ export function run() {
 
   const guiObject = {
     name: 'MarkPoint',
-    itemLineType: 'type-do',
+    itemLineType: 'type-arc',
     itemLineVisible: true,
     // itemType: 'text',
     itemPos: 'middle',
     itemOffsetX: 100,
-    itemOffsetY: 30,
-    itemAutoRotate: true,
+    itemOffsetY: 100,
+    itemAutoRotate: false,
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
-    decorativeLineVisible: true,
-    visible: true
+    decorativeLineVisible: false,
+    visible: true,
+    arcRatio: 0.8
   };
 
   const styleAttr = {
     hover: true,
     interactive: true,
     state: {
+      targetItem: {
+        hover: {
+          stroke: 'blue',
+          fill: 'blue'
+        }
+      },
       line: {
         hover: {
           stroke: 'red',
@@ -87,18 +94,40 @@ export function run() {
         }
       }
     },
+
+    // animation: true,
+    // animationEnter: {
+    //   type: 'fadeIn',
+    //   // delay: 0
+    // },
+    //   animationUpdate: {
+    //   type: 'fadeIn',
+    //   // delay: 0
+    // },
     itemLine: {
+      arcRatio: guiObject.arcRatio,
       type: guiObject.itemLineType,
       visible: guiObject.itemLineVisible,
-      decorativeLineVisible: guiObject.decorativeLineVisible,
+      decorativeLine: {
+        visible: guiObject.decorativeLineVisible
+      },
+      startSymbol: {
+        visible: true,
+        symbolType: 'triangle'
+      },
       endSymbol: {
         visible: true,
-        symbolType: 'circle',
-        size: 10
+        symbolType: 'triangle',
+        size: 10,
+        style: {
+          fill: 'blue'
+        }
+
+        // fill: true
       },
       lineStyle: {
-        stroke: 'red',
-        curveType: 'monotoneX'
+        stroke: 'red'
+        // curveType: 'monotoneX'
       }
     },
     itemContent: {
@@ -108,15 +137,18 @@ export function run() {
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
       confine: true,
+
+      autoRotate: guiObject.itemAutoRotate,
       textStyle: {
         // text: 'mark point label text'
         type: 'text',
         textStyle: {
-          text: '标注值: 30',
-          fontWeight: 'bold',
-          fontSize: 25,
+          text: 'Type your annotation text here',
+          // fontWeight: 'bold',
+          fontSize: 12,
           fill: '#3f51b5',
           height: 25
+          // textAlign: 'center'
         }
         // text: [
         //   {
@@ -187,6 +219,17 @@ export function run() {
         // height: 400
       }
     },
+    targetSymbol: {
+      visible: true,
+      offset: 10
+      // style: {
+      //   size: 30,
+      //   // fill: 'red',
+      //   stroke: 'blue'
+      // }
+      // fill: 'red',
+      // stroke: 'black'
+    },
     visible: guiObject.visible,
     clipInRange: false
     // limitRect: {
@@ -211,8 +254,8 @@ export function run() {
 
   const markPoint2 = new MarkPoint({
     position: {
-      x: 100,
-      y: 150
+      x: 200,
+      y: 200
     },
     ...(styleAttr as any),
     itemContent: {
@@ -245,14 +288,15 @@ export function run() {
     }
   });
 
-  const markPoints = [markPoint, markPoint2, markPoint3, markPoint4];
+  const markPoints = [markPoint2];
 
   const stage = render(markPoints, 'main');
 
   console.log('markPoint', markPoints);
+  window['markPoint'] = markPoints;
 
   setTimeout(() => {
-    markPoint.release();
+    // markPoint.release();
   }, 500);
 
   // gui
@@ -267,7 +311,7 @@ export function run() {
         })
       );
     });
-  gui.add(guiObject, 'itemLineType', ['type-do', 'type-s', 'type-op', 'type-po']).onChange(value => {
+  gui.add(guiObject, 'itemLineType', ['type-do', 'type-s', 'type-op', 'type-po', 'type-arc']).onChange(value => {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemLine', {
         type: value
@@ -291,6 +335,7 @@ export function run() {
         offsetX: value
       })
     );
+    console.log('markpoints', markPoints);
   });
 
   gui.add(guiObject, 'itemOffsetY').onChange(value => {
@@ -299,6 +344,7 @@ export function run() {
         offsetY: value
       })
     );
+    console.log('markpoints', markPoints);
   });
 
   gui.add(guiObject, 'itemAutoRotate').onChange(value => {
@@ -339,6 +385,14 @@ export function run() {
         decorativeLine: {
           visible: value
         }
+      })
+    );
+  });
+
+  gui.add(guiObject, 'arcRatio').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        arcRatio: value
       })
     );
   });

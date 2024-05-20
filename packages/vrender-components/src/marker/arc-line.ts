@@ -99,7 +99,7 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
   }
 
   protected setLineAttributes() {
-    const { center, radius, startAngle, endAngle, startSymbol, endSymbol, lineStyle } = this
+    const { center, radius, startAngle, endAngle, startSymbol, endSymbol, lineStyle, state } = this
       .attribute as MarkArcLineAttrs;
     if (this._line) {
       (this._line as any).setAttributes({
@@ -109,7 +109,12 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
         endAngle,
         startSymbol,
         endSymbol,
-        lineStyle
+        lineStyle,
+        state: {
+          line: merge({}, DEFAULT_STATES, state?.line),
+          startSymbol: merge({}, DEFAULT_STATES, state?.lineStartSymbol),
+          endSymbol: merge({}, DEFAULT_STATES, state?.lineEndSymbol)
+        }
       });
     }
   }

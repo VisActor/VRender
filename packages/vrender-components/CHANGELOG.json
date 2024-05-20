@@ -2,6 +2,36 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.4",
+      "tag": "@visactor/vrender-components_v0.19.4",
+      "date": "Fri, 17 May 2024 06:46:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add  scrollbar propagation spec to allow close stop propagation"
+          },
+          {
+            "comment": "feat: support harmony env"
+          },
+          {
+            "comment": "feat(marker): mark point support arc and target item. close@VisActor/VChart#2590"
+          },
+          {
+            "comment": "feat(player): index can be looped when set backward or forward button in player if user config loop. close@Vi"
+          },
+          {
+            "comment": "fix: fix error of arc label\n\n"
+          },
+          {
+            "comment": "fix: fix error of tooltip when rich text is empty\n\n"
+          },
+          {
+            "comment": "fix(legend): active item error when rerender legend. fix@VisActor/VChart#2690"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.3",
       "tag": "@visactor/vrender-components_v0.19.3",
       "date": "Fri, 10 May 2024 09:24:38 GMT",

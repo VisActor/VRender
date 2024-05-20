@@ -3,6 +3,7 @@
  */
 import type { IGraphicAttribute, IGraphic, IGroup } from '@visactor/vrender-core';
 import { isNil } from '@visactor/vutils';
+import type { Point } from '../core/type';
 
 export function traverseGroup(group: IGraphic, cb: (node: IGraphic) => boolean | void) {
   group.forEachChildren(node => {
@@ -40,4 +41,25 @@ export function getNoneGroupMarksByName(root: IGroup, name: string) {
     return [];
   }
   return group.findAll(node => node.type !== 'group', true) as unknown as IGraphic[];
+}
+
+export function removeRepeatPoint(points: Point[]) {
+  const result = [points[0]];
+  for (let i = 1; i < points.length; i++) {
+    if (points[i].x !== points[i - 1].x || points[i].y !== points[i - 1].y) {
+      result.push(points[i]);
+    }
+  }
+  return result;
+}
+
+export function isPostiveXAxisCartes(angle: number) {
+  return angle > -Math.PI / 2 && angle < Math.PI / 2;
+}
+
+export function isPostiveXAxisPolar(angle: number, isReverse: boolean) {
+  if (isReverse) {
+    return (angle > 0 && angle < Math.PI / 2) || (angle < 0 && angle > -Math.PI * 2);
+  }
+  return (angle > 0 && angle < Math.PI / 2) || (angle > (Math.PI * 3) / 2 && angle < Math.PI * 2);
 }

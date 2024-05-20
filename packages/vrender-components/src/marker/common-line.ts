@@ -26,7 +26,7 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
   protected abstract setLineAttributes(): any;
   protected abstract getPointAttrByPosition(position: any): any;
   protected abstract getRotateByAngle(angle: number): number;
-  protected abstract getTextStyle(position: any): any;
+  protected abstract getTextStyle(position: any, labelAngle: number, autoRotate: boolean): any;
   protected abstract markerAnimate(state: MarkerAnimationState): void;
 
   getLine() {
@@ -40,11 +40,12 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
     const { label = {}, limitRect } = this.attribute;
     const { position, confine, autoRotate } = label;
     const labelPoint = this.getPointAttrByPosition(position);
+    const labelAngle = this._line.getEndAngle() || 0;
     this._label.setAttributes({
       ...labelPoint.position,
       angle: autoRotate ? this.getRotateByAngle(labelPoint.angle) : 0,
       textStyle: {
-        ...this.getTextStyle(position),
+        ...this.getTextStyle(position, labelAngle, autoRotate),
         ...label.textStyle
       }
     });
@@ -84,7 +85,11 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
   }
 
   protected updateMarker() {
-    const { label } = this.attribute as MarkCommonLineAttrs<LineAttr, LabelPosition, MarkCommonLineAnimationType>;
+    const { label, state } = this.attribute as MarkCommonLineAttrs<
+      LineAttr,
+      LabelPosition,
+      MarkCommonLineAnimationType
+    >;
 
     this.setLineAttributes();
 
@@ -92,10 +97,13 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
       this._label.setAttributes({
         dx: 0,
         dy: 0, // 需要进行复位
-        ...(label as TagAttributes)
+        ...(label as TagAttributes),
+        state: {
+          panel: merge({}, DEFAULT_STATES, state?.labelBackground),
+          text: merge({}, DEFAULT_STATES, state?.label)
+        }
       });
+      this.setLabelPos();
     }
-
-    this.setLabelPos();
   }
 }

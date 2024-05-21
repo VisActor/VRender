@@ -1,3 +1,28 @@
+# v0.19.4
+
+2024-05-20
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add  scrollbar propagation spec to allow close stop propagation
+- **@visactor/vrender-components**: support harmony env
+- **marker**: mark point support arc and target item. close@VisActor/VChart[#2590](https://github.com/VisActor/VRender/issues/2590)
+- **player**: index can be looped when set backward or forward button in player if user config loop. close@Vi
+- **@visactor/vrender-kits**: support harmony env
+- **@visactor/vrender-core**: support harmony env
+- **@visactor/vrender**: support harmony env
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix error of arc label
+- **@visactor/vrender-components**: fix error of tooltip when rich text is empty
+- **legend**: active item error when rerender legend. fix@VisActor/VChart[#2690](https://github.com/VisActor/VRender/issues/2690)
+
+
+
+[更多详情请查看 v0.19.4](https://github.com/VisActor/VRender/releases/tag/v0.19.4)
+
 # v0.19.3
 
 2024-05-10

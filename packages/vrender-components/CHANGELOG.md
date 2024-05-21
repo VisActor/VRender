@@ -1,6 +1,23 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 10 May 2024 09:24:38 GMT and should not be manually modified.
+This log was last generated on Fri, 17 May 2024 06:46:41 GMT and should not be manually modified.
+
+## 0.19.4
+Fri, 17 May 2024 06:46:41 GMT
+
+### Updates
+
+- feat: add  scrollbar propagation spec to allow close stop propagation
+- feat: support harmony env
+- feat(marker): mark point support arc and target item. close@VisActor/VChart#2590
+- feat(player): index can be looped when set backward or forward button in player if user config loop. close@Vi
+- fix: fix error of arc label
+
+
+- fix: fix error of tooltip when rich text is empty
+
+
+- fix(legend): active item error when rerender legend. fix@VisActor/VChart#2690
 
 ## 0.19.3
 Fri, 10 May 2024 09:24:38 GMT

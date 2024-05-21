@@ -11,7 +11,7 @@ import Undertaker from 'undertaker';
 import Spinnies from '@trufflesuite/spinnies';
 import { clean } from './tasks/clean';
 import { compile, getTSCompilerOptions, readUserTsconfig } from './tasks/modules';
-import { buildUmd } from './tasks/umd';
+import { buildES, buildUmd } from './tasks/umd';
 import { buildStyle } from './tasks/style';
 import { copyFiles } from './tasks/copy';
 
@@ -102,6 +102,9 @@ async function bootstrap() {
         }
         _task(`${taskName}`, () => buildUmd(config, PROJECT_ROOT, rawPackageJson, false));
         return;
+      } else if (format === 'es') {
+        subBuildTasks.push(`${taskName}_total`);
+        _task(`${taskName}_total`, () => buildES({ ...config, minify: false }, PROJECT_ROOT, rawPackageJson, false));
       }
 
       _task(taskName, () =>

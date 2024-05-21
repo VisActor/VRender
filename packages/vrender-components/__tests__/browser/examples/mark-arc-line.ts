@@ -129,7 +129,7 @@ export function run() {
   // console.log('markLine', markLine);
 
   setTimeout(() => {
-    markLine.release();
+    // markLine.release();
   }, 500);
 
   // gui

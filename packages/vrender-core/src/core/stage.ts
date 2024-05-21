@@ -676,6 +676,19 @@ export class Stage extends Group implements IStage {
   }
 
   protected combineLayersToWindow() {
+    // TODO 后续支持通用的渲染模型
+    if (this.global.env === 'harmony') {
+      const ctx = this.window.getContext().nativeContext;
+      this.forEachChildren<ILayer>((layer, i) => {
+        if (i > 0) {
+          const image = layer
+            .getNativeHandler()
+            .getContext()
+            .canvas.nativeCanvas.nativeCanvas._c.transferToImageBitmap();
+          ctx.transferFromImageBitmap(image);
+        }
+      });
+    }
     return;
     // this.forEach<ILayer>((layer, i) => {
     //   layer.combineTo(this.window, {

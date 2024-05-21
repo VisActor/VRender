@@ -7,6 +7,7 @@ import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
 import { IGroup } from '@visactor/vrender';
 import { IFederatedEvent } from '@visactor/vrender';
+import { createText } from '@visactor/vrender-core';
 
 const background = `<svg width="346" height="221" viewBox="0 0 346 221" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_63_45558)">
@@ -897,210 +898,223 @@ export const page = () => {
   //   </VGroup>
   // );
 
-  // stage.defaultLayer.add(
-  //   // <>
-  //   //   <VText attribute={{ text: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', x: 200, y: 200, fill: 'blue' }}></VText>
-  //   // </>
-  //   <VGroup attribute={{ x: 100, y: 100, width: 260, height: 80, background: '#cecece', display: 'flex' }}>
-  //     {/* <VGroup
-  //       attribute={{
-  //         display: 'flex',
-  //         background: 'green',
-  //         width: 60,
-  //         height: 80,
-  //         direction: 'column',
-  //         alignItems: 'center',
-  //         justifyContent: 'space-around'
-  //       }}
-  //     >
-  //       <VImage
-  //         attribute={{
-  //           image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
-  //           width: 50,
-  //           height: 50
-  //         }}
-  //       ></VImage>
-  //     </VGroup> */}
-  //     <VGroup
-  //       attribute={{
-  //         display: 'flex',
-  //         background: 'red',
-  //         width: 200,
-  //         height: 80,
-  //         direction: 'column'
-  //       }}
-  //     >
-  //       <VGroup
-  //         attribute={{
-  //           display: 'flex',
-  //           background: 'orange',
-  //           width: 200,
-  //           height: 40,
-  //           direction: 'column',
-  //           alignItems: 'flex-end',
-  //           justifyContent: 'center'
-  //         }}
-  //       >
-  //         <VText attribute={{ text: '虚拟主播小花', fontSize: 13, fontFamily: 'sans-serif', fill: 'black' }}></VText>
-  //         <VImage
-  //           attribute={{
-  //             name: 'aaa',
-  //             image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
-  //             width: 15,
-  //             height: 15,
-  //             boundsPadding: [0, 0, 0, 10]
-  //           }}
-  //         ></VImage>
-  //         <VText attribute={{ text: '梦幻之都', fontSize: 11, fontFamily: 'sans-serif', fill: '#6f7070' }}></VText>
-  //       </VGroup>
-  //       <VGroup
-  //         attribute={{
-  //           display: 'flex',
-  //           background: 'pink',
-  //           width: 200,
-  //           height: 40,
-  //           direction: 'column',
-  //           alignItems: 'center'
-  //         }}
-  //       >
-  //         <VTag
-  //           attribute={{
-  //             visible: true,
-  //             textStyle: {
-  //               fontSize: 10,
-  //               fill: 'rgb(51, 101, 238)',
-  //               textAlign: 'left',
-  //               textBaseline: 'top',
-  //               fontFamily: 'sans-serif'
-  //             },
-  //             space: 4,
-  //             padding: 5,
-  //             shape: {
-  //               fill: '#000'
-  //             },
-  //             text: '游戏',
-  //             panel: {
-  //               visible: true,
-  //               fill: '#f4f4f2',
-  //               cornerRadius: 5
-  //             },
-  //             marginLeft: 10,
-  //             boundsPadding: [0, 0, 0, 10],
-  //             x: 20,
-  //             y: 10
-  //           }}
-  //         ></VTag>
-  //         <VTag
-  //           attribute={{
-  //             visible: true,
-  //             textStyle: {
-  //               fontSize: 10,
-  //               fill: 'rgb(51, 101, 238)',
-  //               textAlign: 'left',
-  //               textBaseline: 'top',
-  //               fontFamily: 'sans-serif'
-  //             },
-  //             space: 4,
-  //             padding: 5,
-  //             shape: {
-  //               fill: '#000'
-  //             },
-  //             text: '动漫',
-  //             panel: {
-  //               visible: true,
-  //               fill: '#f4f4f2',
-  //               cornerRadius: 5
-  //             },
-  //             marginLeft: 10,
-  //             boundsPadding: [0, 0, 0, 10],
-  //             x: 60,
-  //             y: 10
-  //           }}
-  //         ></VTag>
-  //         <VTag
-  //           attribute={{
-  //             visible: true,
-  //             textStyle: {
-  //               fontSize: 10,
-  //               fill: 'rgb(51, 101, 238)',
-  //               textAlign: 'left',
-  //               textBaseline: 'top',
-  //               fontFamily: 'sans-serif'
-  //             },
-  //             space: 4,
-  //             padding: 5,
-  //             shape: {
-  //               fill: '#000'
-  //             },
-  //             text: '美食',
-  //             panel: {
-  //               visible: true,
-  //               fill: '#f4f4f2',
-  //               cornerRadius: 5
-  //             },
-  //             marginLeft: 10,
-  //             boundsPadding: [0, 0, 0, 10],
-  //             x: 100,
-  //             y: 10
-  //           }}
-  //         ></VTag>
-  //       </VGroup>
-  //     </VGroup>
-  //   </VGroup>
-  // );
-  console.log(ReactDOM);
   stage.defaultLayer.add(
     decodeReactDom(
-      <VGroup attribute={{ x: 100, y: 100 }}>
-        {new Array(1).fill(0).map(() => (
-          <VGroup attribute={{ x: 100, y: 100 }}>
-            <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
-            <VSymbol
-              onPointerEnter={(e, g) => {
-                e.target.setAttributes({
-                  background: greenMask
-                });
+      <VGroup attribute={{ x: 100, y: 100, width: 260, height: 80, background: '#cecece', display: 'flex' }}>
+        <VGroup
+          attribute={{
+            display: 'flex',
+            background: 'green',
+            width: 60,
+            height: 80,
+            direction: 'column',
+            alignItems: 'center',
+            justifyContent: 'space-around'
+          }}
+        >
+          <VImage
+            attribute={{
+              image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+              width: 50,
+              height: 50
+            }}
+          ></VImage>
+        </VGroup>
+        <VGroup
+          attribute={{
+            display: 'flex',
+            background: 'red',
+            width: 200,
+            height: 80,
+            direction: 'column'
+          }}
+        >
+          <VGroup
+            attribute={{
+              display: 'flex',
+              background: 'orange',
+              width: 200,
+              height: 40,
+              direction: 'column',
+              alignItems: 'flex-end',
+              justifyContent: 'center'
+            }}
+          >
+            <VText attribute={{ text: '虚拟主播小花', fontSize: 13, fontFamily: 'sans-serif', fill: 'black' }}></VText>
+            <VImage
+              attribute={{
+                name: 'aaa',
+                image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
+                width: 15,
+                height: 15,
+                boundsPadding: [0, 0, 0, 10]
               }}
-              onPointerLeave={(e, g) => {
-                e.target.setAttributes({
-                  background: mask
-                });
-              }}
-              attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
-            />
+            ></VImage>
+            <VText attribute={{ text: '梦幻之都', fontSize: 11, fontFamily: 'sans-serif', fill: '#6f7070' }}></VText>
           </VGroup>
-        ))}
-        {new Array(1).fill(0).map(() => (
-          <VGroup attribute={{ x: 200, y: 100 }}>
-            <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
-            <VSymbol
-              name="abc"
-              onPointerEnter={(e, g) => {
-                e.target.setAttributes({
-                  background: greenMask
-                });
+          <VGroup
+            attribute={{
+              display: 'flex',
+              background: 'pink',
+              width: 200,
+              height: 40,
+              direction: 'column',
+              alignItems: 'center'
+            }}
+          >
+            <VTag
+              attribute={{
+                visible: true,
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '游戏',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 20,
+                y: 10
               }}
-              onPointerLeave={(e, g) => {
-                e.target.setAttributes({
-                  background: mask
-                });
+            ></VTag>
+            <VTag
+              attribute={{
+                visible: true,
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '动漫',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 60,
+                y: 10
               }}
-              attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
-            />
+            ></VTag>
+            <VTag
+              attribute={{
+                visible: true,
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '美食',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 100,
+                y: 10
+              }}
+            ></VTag>
           </VGroup>
-        ))}
+        </VGroup>
       </VGroup>
     )
   );
-  const symbol = stage.getElementsByName('abc')[0];
-  symbol.setAttributes({
-    react: {
-      // pointerEvents: true,
-      element: <button>abc</button>,
-      width: 60,
-      height: 60
-    }
+
+  const text = createText({
+    x: 200,
+    y: 300,
+    text: '这是一段文字',
+    fill: 'red',
+    shadowGraphic: decodeReactDom(
+      <VGroup>
+        <VSymbol attribute={{ symbolType: 'star', x: 100, y: 100, fill: 'green' }}></VSymbol>
+      </VGroup>
+    )
   });
+
+  stage.defaultLayer.add(text);
+  // console.log(ReactDOM);
+  // stage.defaultLayer.add(
+  //   decodeReactDom(
+  //     <VGroup attribute={{ x: 100, y: 100 }}>
+  //       {new Array(1).fill(0).map(() => (
+  //         <VGroup attribute={{ x: 100, y: 100 }}>
+  //           <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+  //           <VSymbol
+  //             onPointerEnter={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: greenMask
+  //               });
+  //             }}
+  //             onPointerLeave={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: mask
+  //               });
+  //             }}
+  //             attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+  //           />
+  //         </VGroup>
+  //       ))}
+  //       {new Array(1).fill(0).map(() => (
+  //         <VGroup attribute={{ x: 200, y: 100 }}>
+  //           <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+  //           <VSymbol
+  //             name="abc"
+  //             onPointerEnter={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: greenMask
+  //               });
+  //             }}
+  //             onPointerLeave={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: mask
+  //               });
+  //             }}
+  //             attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+  //           />
+  //         </VGroup>
+  //       ))}
+  //     </VGroup>
+  //   )
+  // );
+  // const symbol = stage.getElementsByName('abc')[0];
+  // symbol.setAttributes({
+  //   react: {
+  //     // pointerEvents: true,
+  //     element: <button>abc</button>,
+  //     width: 60,
+  //     height: 60
+  //   }
+  // });
   console.log();
 
   // const graphics: IGraphic[] = [];

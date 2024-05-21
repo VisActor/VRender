@@ -218,15 +218,15 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         const tsWidth = textWidth + symbolPlaceWidth;
         const textX =
           flag === 1
-            ? (containerWidth - tsWidth) / 2 + symbolPlaceWidth
-            : parsedPadding[0] + symbolPlaceWidth - (tagWidth / 2 + tsWidth / 2 - symbolPlaceWidth);
+            ? (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2
+            : parsedPadding[0] + symbolPlaceWidth - (tagWidth / 2 + tsWidth / 2 - symbolPlaceWidth) + textWidth / 2;
 
         textShape.setAttributes({
           x: textX,
-          textAlign: 'left'
+          textAlign: 'center'
         });
         if (symbol) {
-          const symbolX = textX - symbolPlaceWidth + maxSize / 2;
+          const symbolX = textX - textWidth / 2 - symbolPlaceWidth + maxSize / 2;
           symbol.setAttributes({
             x: symbolX
           });

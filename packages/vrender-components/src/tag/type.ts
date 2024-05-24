@@ -4,7 +4,8 @@ import type {
   IGroupGraphicAttribute,
   IRectGraphicAttribute,
   IRichTextCharacter,
-  IRichTextGraphicAttribute
+  IRichTextGraphicAttribute,
+  TextAlignType
 } from '@visactor/vrender-core';
 import type { Padding, State, TextContent } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
@@ -46,6 +47,16 @@ export type TagAttributes = {
    * @default 30
    */
   minWidth?: number;
+  /**
+   * Tag 内容器整体的文本对齐方式，
+   * textStyle.textAlign 决定了 Tag 自己相对位置点的对齐方式
+   * containerTextAlign 在 textStyle.textAlign 的基础上，绝对内部文本的对齐方式
+   * @since 0.19.5
+   */
+  containerTextAlign?: TextAlignType;
+  /**
+   * @deprecated 待废弃，请使用 containerTextAlign: 'center' 来代替
+   */
   textAlwaysCenter?: boolean;
   /**
    * 最大宽度，像素值。当文字超过最大宽度时，会自动省略。

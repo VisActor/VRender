@@ -1,3 +1,16 @@
+# v0.19.5
+
+2024-05-24
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: add \`containerTextAlign\` for tag component
+
+
+
+[more detail about v0.19.5](https://github.com/VisActor/VRender/releases/tag/v0.19.5)
+
 # v0.19.4
 
 2024-05-20

@@ -41,6 +41,8 @@ export function run() {
     text: 'aaa',
     minWidth: 90,
     textAlwaysCenter: true,
+    // textAlwaysLeft: true,
+    // textAlwaysRight: true,
     textStyle: {
       // width: 20,
       // height: 20,
@@ -60,12 +62,17 @@ export function run() {
     shape: {
       visible: guiObject.symbolVisible,
       symbolType: guiObject.symbolType,
-      fill: '#08979c'
-    }
-    // padding: 0
+      fill: '#08979c',
+      fillOpacity: 0.3
+    },
+    padding: 10
+    // space: 0
     // minWidth: 500
     // maxWidth: 80
   });
+
+  window['tag'] = tag;
+
   const stage = render(
     [
       tag,
@@ -114,6 +121,9 @@ export function run() {
   // gui
   const gui = new GUI();
   gui.add(guiObject, 'name');
+  gui.add(guiObject, 'containerTextAlign', ['left', 'center', 'right']).onChange(value => {
+    tag.setAttribute('containerTextAlign', value);
+  });
   gui.add(guiObject, 'textAlign', ['left', 'center', 'right']).onChange(value => {
     tag.setAttribute('textStyle', {
       textAlign: value

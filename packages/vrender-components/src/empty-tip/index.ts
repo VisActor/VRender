@@ -1,2 +1,2 @@
-// export * from './checkbox';
-// export * from './type';
+export * from './empty-tip';
+export * from './type';

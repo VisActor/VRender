@@ -13,7 +13,7 @@ import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
-import { isPostiveXAxisCartes } from '../util';
+import { fuzzyEqualNumber, getTextAlignAttrOfVerticalDir, isPostiveXAxis } from '../util';
 
 loadMarkLineComponent();
 
@@ -43,7 +43,7 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     const { refX = 0, refY = 0 } = label;
     const points = this._line.getMainSegmentPoints();
     const lineEndAngle = this._line.getEndAngle() ?? 0;
-    const labelAngle = isPostiveXAxisCartes(lineEndAngle) ? lineEndAngle : lineEndAngle;
+    const labelAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle;
 
     const labelOffsetX = refX * Math.cos(labelAngle) + refY * Math.cos(labelAngle - Math.PI / 2);
     const labelOffsetY = refX * Math.sin(labelAngle) + refY * Math.sin(labelAngle - Math.PI / 2);
@@ -75,29 +75,20 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   }
 
   protected getRotateByAngle(angle: number): number {
-    const itemAngle = isPostiveXAxisCartes(angle) ? angle : angle - Math.PI;
+    const itemAngle = isPostiveXAxis(angle) ? angle : angle - Math.PI;
     return itemAngle + (this.attribute.label.refAngle ?? 0);
   }
 
   protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean) {
     // 垂直方向例外
-    if (Math.abs(Math.abs(labelAngle) - Math.PI / 2) < 0.0001) {
-      if (autoRotate) {
-        return {
-          textAlign: 'right',
-          textBaseline: 'middle'
-        };
-      }
-      return {
-        textAlign: 'center',
-        textBaseline:
-          (labelAngle > 0 && position.includes('inside')) || (labelAngle < 0 && !position.includes('inside'))
-            ? 'bottom'
-            : 'top'
-      };
+    if (
+      fuzzyEqualNumber(Math.abs(labelAngle), Math.PI / 2, 0.0001) ||
+      fuzzyEqualNumber(Math.abs(labelAngle), (Math.PI * 3) / 2, 0.0001)
+    ) {
+      return getTextAlignAttrOfVerticalDir(autoRotate, labelAngle, position);
     }
 
-    if (isPostiveXAxisCartes(labelAngle)) {
+    if (isPostiveXAxis(labelAngle)) {
       return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.postiveXAxis[position];
     }
     return DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP.negativeXAxis[position];

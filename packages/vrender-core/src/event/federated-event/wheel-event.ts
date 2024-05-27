@@ -58,6 +58,7 @@ export class FederatedWheelEvent extends FederatedMouseEvent implements WheelEve
     event.eventPhase = event.NONE;
     event.currentTarget = null;
     event.path = [];
+    event.detailPath = [];
     event.target = null;
 
     event.nativeEvent = this.nativeEvent;
@@ -69,6 +70,8 @@ export class FederatedWheelEvent extends FederatedMouseEvent implements WheelEve
 
     event.target = this.target;
     event.path = this.composedPath().slice();
+    const p = this.composedDetailPath();
+    event.detailPath = p && p.slice();
     event.type = this.type;
 
     return event;

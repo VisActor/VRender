@@ -12,5 +12,5 @@
       "@visactor/vrender-kits": ["../../../vrender-kits/src/index.ts"]
     }
   },
-  "include": ["src"]
+  "include": ["src", "../../../vrender/__tests__/browser/src/pages/brush.ts"]
 }

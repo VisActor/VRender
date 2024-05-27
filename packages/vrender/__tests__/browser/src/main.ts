@@ -52,7 +52,7 @@ const handleClick = (e: { target: any }, isInit?: boolean) => {
 
     import(path === 'jsx' || path === 'react' ? `./pages/${path}.tsx` : `./pages/${path}.ts`)
       .then(module => {
-        container.innerHTML = '<canvas id="main" width=3200 height=1800 style="width: 1600px; height: 900px"></canvas>';
+        container.innerHTML = '<canvas id="main" width=1600 height=1200 style="width: 800px; height: 600px"></canvas>';
 
         if (module.page) {
           module.page();

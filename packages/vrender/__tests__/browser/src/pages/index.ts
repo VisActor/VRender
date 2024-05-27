@@ -226,5 +226,14 @@ export const pages = [
         path: 'harmony'
       }
     ]
+  },
+  {
+    menu: '实验',
+    children: [
+      {
+        name: 'brush',
+        path: 'brush'
+      }
+    ]
   }
 ];

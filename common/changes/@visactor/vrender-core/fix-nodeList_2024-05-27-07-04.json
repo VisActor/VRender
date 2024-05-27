@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with _nodeList while removeAllChild",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

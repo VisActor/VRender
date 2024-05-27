@@ -11,21 +11,16 @@ const emptyTipSvg =
 loadEmptyTipComponent();
 export class EmptyTip extends AbstractComponent<Required<EmptyTipAttributes>> {
   static defaultAttributes: Partial<EmptyTipAttributes> = {
-    // align: 'center',
-    verticalAlign: 'middle',
-    // layout: 'vertical',
-    padding: [0, 0, 0, 0],
     spaceBetweenTextAndIcon: 20,
     text: {
       text: 'no data',
       fontSize: 14,
       fill: '#000',
       disableFill: 'rgb(201,205,212)',
-      // textBaseline: 'top',
       pickable: false
     },
     icon: {
-      emptyTipIconImage: emptyTipSvg,
+      image: emptyTipSvg,
       width: 100,
       height: 100,
       pickable: false
@@ -40,118 +35,34 @@ export class EmptyTip extends AbstractComponent<Required<EmptyTipAttributes>> {
   render() {
     this.removeAllChild(true);
 
-    // this.renderBox();
     this.renderIcon();
     this.renderText();
     this.layout();
   }
 
-  // renderBox() {
-  //   this._box = new Rect(merge({}, this.attribute.box));
-  //   const isCheckedOrIndeterminate = this.attribute.checked || this.attribute.indeterminate;
-  //   if (isCheckedOrIndeterminate && this.attribute.disabled) {
-  //     this._box.setAttributes({
-  //       fill: this.attribute.box.disableCheckedFill,
-  //       stroke: this.attribute.box.disableCheckedStroke
-  //     });
-  //   } else if (isCheckedOrIndeterminate) {
-  //     this._box.setAttributes({
-  //       fill: this.attribute.box.checkedFill,
-  //       stroke: this.attribute.box.checkedStroke
-  //     });
-  //   }
-  //   this.appendChild(this._box);
-  // }
-
   renderIcon() {
-    this._emptyTipIcon = new Image(merge({ image: this.attribute.icon.emptyTipIconImage }, this.attribute.icon));
+    this._emptyTipIcon = new Image(merge({ image: this.attribute.icon.image }, this.attribute.icon));
     this.appendChild(this._emptyTipIcon);
   }
 
   renderText() {
     this._text = new Text(merge({ wrap: true }, this.attribute.text));
-
     this.appendChild(this._text);
   }
-
-  // renderGroup() {
-  //   if (!this.attribute.interactive) {
-  //     this.setAttribute('pickable', false);
-  //   }
-  //   if (this.attribute.disabled) {
-  //     this.setAttribute('cursor', this.attribute.disableCursor);
-  //   }
-  // }
 
   layout() {
     const iconHeight = this.attribute.icon.height;
     const textHeight = this._text.AABBBounds.height();
-    const maxHeight = Math.max(iconHeight, textHeight);
-
-    const iconY = maxHeight / 2 - iconHeight / 2;
-    const textY = maxHeight / 2 - textHeight / 2;
 
     const iconWidth = this.attribute.icon.width;
-    const textWidth = this._text.AABBBounds.width();
-    // const maxWidth = Math.max(boxWidth, iconWidth);
-    const iconX = 0;
-    const textX = iconWidth + this.attribute.spaceBetweenTextAndIcon;
 
-    this._emptyTipIcon.setAttributes({
-      x: iconX,
-      y: iconY
-    });
+    const { width, height, spaceBetweenTextAndIcon } = this.attribute as EmptyTipAttributes;
 
-    this._text.setAttributes({
-      x: textX,
-      y: textY
-    });
-
-    const {
-      text,
-      width,
-      height,
-      // align,
-      // verticalAlign,
-      padding = 0,
-      spaceBetweenTextAndIcon
-    } = this.attribute as EmptyTipAttributes;
-    const parsedPadding = normalizePadding(padding);
-
-    const { textAlign, textBaseline } = this.attribute.text;
-
-    // if (this._emptyTipIcon) {
-    // if (isValid(align)) {
-    //   const mainTitleAlign = align;
-    //   const mainTitleWidth = width - parsedPadding[1] - parsedPadding[3];
-    // if (mainTitleAlign === 'left') {
-    //   this._emptyTipIcon.setAttribute('x', parsedPadding[3]);
-    //   this._emptyTipIcon.setAttribute('textAlign', 'left');
-    // } else if (mainTitleAlign === 'center') {
     this._emptyTipIcon.setAttribute('x', width / 2 - iconWidth / 2);
-    this._emptyTipIcon.setAttribute('textAlign', 'center');
-    // } else if (mainTitleAlign === 'right') {
-    //   this._emptyTipIcon.setAttribute('x', mainTitleWidth);
-    //   this._emptyTipIcon.setAttribute('textAlign', 'right');
-    // }
-    // }
-    this._emptyTipIcon.setAttribute('y', height / 2 - iconHeight / 2 - textHeight / 2 - spaceBetweenTextAndIcon / 2);
-    this._emptyTipIcon.setAttribute('textBaseline', 'middle');
-    // if (isValid(verticalAlign)) {
-    //   debugger;
-    //   const mainTitleVerticalAlign = verticalAlign;
-    //   const mainTitleHeight = height - parsedPadding[0] - parsedPadding[2];
-    //   if (mainTitleVerticalAlign === 'top') {
-    //     this._emptyTipIcon.setAttribute('y', parsedPadding[0]);
-    //     this._emptyTipIcon.setAttribute('textBaseline', 'top');
-    //   } else if (mainTitleVerticalAlign === 'middle') {
+    // this._emptyTipIcon.setAttribute('textAlign', 'center');
 
-    //   } else if (mainTitleVerticalAlign === 'bottom') {
-    //     this._emptyTipIcon.setAttribute('y', mainTitleHeight);
-    //     this._emptyTipIcon.setAttribute('textBaseline', 'bottom');
-    //   }
-    // }
-    // }
+    this._emptyTipIcon.setAttribute('y', height / 2 - iconHeight / 2 - textHeight / 2 - spaceBetweenTextAndIcon / 2);
+    // this._emptyTipIcon.setAttribute('textBaseline', 'middle');
 
     this._text.setAttribute('x', width / 2);
     this._text.setAttribute('textAlign', 'center');

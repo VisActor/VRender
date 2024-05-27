@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.5",
+      "tag": "@visactor/vrender-components_v0.19.5",
+      "date": "Fri, 24 May 2024 09:21:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add \\`containerTextAlign\\` for tag component"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.4",
       "tag": "@visactor/vrender-components_v0.19.4",
       "date": "Fri, 17 May 2024 06:46:41 GMT",

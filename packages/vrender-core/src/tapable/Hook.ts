@@ -56,7 +56,7 @@ export abstract class Hook<T, R, AdditionalOptions = UnsetAdditionalOptions> {
     const name = typeof options === 'string' ? options.trim() : options.name;
 
     if (name) {
-      this.taps = this.taps.filter(tap => tap.name !== name && (!fn || tap.fn === fn));
+      this.taps = this.taps.filter(tap => !(tap.name === name && (!fn || tap.fn === fn)));
     }
   }
 

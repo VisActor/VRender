@@ -43,6 +43,7 @@ export function registerMarkPointAnimate() {
   MarkPoint._animate = markPointAnimate;
 }
 
+const FUZZY_EQUAL_DELTA = 0.001;
 export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;
@@ -82,8 +83,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   ) {
     // 垂直方向例外
     if (
-      fuzzyEqualNumber(Math.abs(lineEndAngle), Math.PI / 2, 0.0001) ||
-      fuzzyEqualNumber(Math.abs(lineEndAngle), (Math.PI * 3) / 2, 0.0001)
+      fuzzyEqualNumber(Math.abs(lineEndAngle), Math.PI / 2, FUZZY_EQUAL_DELTA) ||
+      fuzzyEqualNumber(Math.abs(lineEndAngle), (Math.PI * 3) / 2, FUZZY_EQUAL_DELTA)
     ) {
       return getTextAlignAttrOfVerticalDir(autoRotate, lineEndAngle, itemPosition);
     }
@@ -237,6 +238,11 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     let startAngle = 0;
     let endAngle = 0;
     const { type = 'type-s', arcRatio = 0.8 } = itemLine;
+    // confine之后位置会变化，所以这里需要重新check是否是直线
+    const itemOffsetX = newItemPosition.x - newPosition.x;
+    const itemOffsetY = newItemPosition.y - newPosition.y;
+    this._isStraightLine =
+      fuzzyEqualNumber(itemOffsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(itemOffsetY, 0, FUZZY_EQUAL_DELTA);
     if (this._isArcLine) {
       const { x: x1, y: y1 } = newPosition;
       const { x: x2, y: y2 } = newItemPosition;
@@ -458,7 +464,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
     const { offsetX = 0, offsetY = 0 } = itemContent;
 
-    this._isStraightLine = fuzzyEqualNumber(offsetX, 0, 0.0001) || fuzzyEqualNumber(offsetY, 0, 0.0001);
+    this._isStraightLine =
+      fuzzyEqualNumber(offsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(offsetY, 0, FUZZY_EQUAL_DELTA);
     this._isArcLine = itemLineType === 'type-arc' && arcRatio !== 0 && !this._isStraightLine;
 
     /** 根据targetItem计算新的弧线起点 */
@@ -511,7 +518,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
     const { offsetX = 0, offsetY = 0 } = itemContent;
 
-    this._isStraightLine = fuzzyEqualNumber(offsetX, 0, 0.001) || fuzzyEqualNumber(offsetY, 0, 0.001);
+    this._isStraightLine =
+      fuzzyEqualNumber(offsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(offsetY, 0, FUZZY_EQUAL_DELTA);
     const isArcLine = itemLineType === 'type-arc' && arcRatio !== 0 && !this._isStraightLine;
     /** 根据targetItem计算新的弧线起点 */
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);

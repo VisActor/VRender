@@ -55,15 +55,27 @@ export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
 } = {
   postiveXAxis: {
     start: {
+      textAlign: 'left',
+      textBaseline: 'middle'
+    },
+    startTop: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    startBottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    },
+    insideStart: {
       textAlign: 'right',
       textBaseline: 'middle'
     },
     insideStartTop: {
-      textAlign: 'left',
+      textAlign: 'right',
       textBaseline: 'bottom'
     },
     insideStartBottom: {
-      textAlign: 'left',
+      textAlign: 'right',
       textBaseline: 'top'
     },
 
@@ -82,6 +94,18 @@ export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
 
     end: {
       textAlign: 'left',
+      textBaseline: 'middle'
+    },
+    endTop: {
+      textAlign: 'left',
+      textBaseline: 'bottom'
+    },
+    endBottom: {
+      textAlign: 'left',
+      textBaseline: 'top'
+    },
+    insideEnd: {
+      textAlign: 'right',
       textBaseline: 'middle'
     },
     insideEndTop: {
@@ -95,15 +119,27 @@ export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
   },
   negativeXAxis: {
     start: {
+      textAlign: 'right',
+      textBaseline: 'middle'
+    },
+    startTop: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    startBottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    },
+    insideStart: {
       textAlign: 'left',
       textBaseline: 'middle'
     },
     insideStartTop: {
-      textAlign: 'right',
+      textAlign: 'left',
       textBaseline: 'bottom'
     },
     insideStartBottom: {
-      textAlign: 'right',
+      textAlign: 'left',
       textBaseline: 'top'
     },
 
@@ -122,6 +158,18 @@ export const DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP: {
 
     end: {
       textAlign: 'right',
+      textBaseline: 'middle'
+    },
+    endTop: {
+      textAlign: 'right',
+      textBaseline: 'bottom'
+    },
+    endBottom: {
+      textAlign: 'right',
+      textBaseline: 'top'
+    },
+    insideEnd: {
+      textAlign: 'left',
       textBaseline: 'middle'
     },
     insideEndTop: {

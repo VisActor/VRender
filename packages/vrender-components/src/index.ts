@@ -26,4 +26,5 @@ export * from './interface';
 export * from './jsx';
 export * from './checkbox';
 export * from './radio';
+export * from './empty-tip';
 export * from './util';

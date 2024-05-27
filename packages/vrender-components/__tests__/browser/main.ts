@@ -257,6 +257,10 @@ const specs = [
   {
     path: 'radio',
     name: 'radio'
+  },
+  {
+    path: 'empty-tip',
+    name: 'empty-tip'
   }
 ];
 

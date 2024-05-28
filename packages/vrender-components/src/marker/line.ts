@@ -10,7 +10,7 @@ import type { ArcSegment } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
-import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME } from './config';
+import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME, FUZZY_EQUAL_DELTA } from './config';
 import type { ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
 import { fuzzyEqualNumber, getTextAlignAttrOfVerticalDir, isPostiveXAxis } from '../util';
@@ -82,8 +82,8 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
   protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean) {
     // 垂直方向例外
     if (
-      fuzzyEqualNumber(Math.abs(labelAngle), Math.PI / 2, 0.0001) ||
-      fuzzyEqualNumber(Math.abs(labelAngle), (Math.PI * 3) / 2, 0.0001)
+      fuzzyEqualNumber(Math.abs(labelAngle), Math.PI / 2, FUZZY_EQUAL_DELTA) ||
+      fuzzyEqualNumber(Math.abs(labelAngle), (Math.PI * 3) / 2, FUZZY_EQUAL_DELTA)
     ) {
       return getTextAlignAttrOfVerticalDir(autoRotate, labelAngle, position);
     }

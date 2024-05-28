@@ -19,7 +19,7 @@ import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
-import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
+import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME, FUZZY_EQUAL_DELTA } from './config';
 import type { IItemContent, IItemLine, MarkPointAnimationType, MarkPointAttrs, MarkerAnimationState } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
@@ -43,7 +43,6 @@ export function registerMarkPointAnimate() {
   MarkPoint._animate = markPointAnimate;
 }
 
-const FUZZY_EQUAL_DELTA = 0.001;
 export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   name = 'markPoint';
   static defaultAttributes = DEFAULT_MARK_POINT_THEME;

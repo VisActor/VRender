@@ -1,6 +1,7 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { IMarkAreaLabelPosition, IMarkLineLabelPosition, IMarkCommonArcLabelPosition } from './type';
 
+export const FUZZY_EQUAL_DELTA = 0.001;
 export const DEFAULT_MARK_LINE_THEME = {
   interactive: true,
   startSymbol: {

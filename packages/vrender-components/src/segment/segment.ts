@@ -10,6 +10,7 @@ import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes 
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadSegmentComponent } from './register';
+import { normalizeAngle } from '@visactor/vutils';
 
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
@@ -25,11 +26,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
    * 外部获取segment起点正方向
    */
   getStartAngle() {
-    return this._startAngle < 0
-      ? this._startAngle + Math.PI * 2
-      : this._startAngle > Math.PI * 2
-      ? this._startAngle - Math.PI * 2
-      : this._startAngle;
+    return normalizeAngle(this._startAngle);
   }
 
   protected _endAngle!: number;
@@ -37,11 +34,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
    * 外部获取segment终点正方向
    */
   getEndAngle() {
-    return this._endAngle < 0
-      ? this._endAngle + Math.PI * 2
-      : this._endAngle > Math.PI * 2
-      ? this._endAngle - Math.PI * 2
-      : this._endAngle;
+    return normalizeAngle(this._endAngle);
   }
 
   protected _mainSegmentPoints: Point[]; // 组成主线段的点

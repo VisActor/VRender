@@ -1,5 +1,5 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import { getDecimalPlaces, isArray, isNumber, pi, pi2, Point, PointService } from '@visactor/vutils';
+import { getDecimalPlaces, isArray, isNumber, max, pi, pi2, Point, PointService } from '@visactor/vutils';
 import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -25,7 +25,6 @@ import { ACustomAnimate } from './animate';
 import { Easing } from './easing';
 import { pointInterpolation } from '../common/utils';
 import { divideCubic } from '../common/segment/curve/cubic-bezier';
-import { LineCurve } from '../common/segment/curve/line';
 
 export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
   declare valid: boolean;
@@ -302,7 +301,7 @@ export class StreamLight extends ACustomAnimate<any> {
     to: any,
     duration: number,
     easing: EasingType,
-    params?: { attribute?: Partial<IRectAttribute | ILineAttribute>; streamLength?: number }
+    params?: { attribute?: Partial<IRectAttribute | ILineAttribute>; streamLength?: number; isHorizontal?: boolean }
   ) {
     super(from, to, duration, easing, params);
   }
@@ -337,17 +336,21 @@ export class StreamLight extends ACustomAnimate<any> {
   onStartRect(): void {
     const root = this.target.attachShadow();
 
-    const height = this.target.AABBBounds.height();
+    const isHorizontal = this.params?.isHorizontal ?? true;
+    const sizeAttr = isHorizontal ? 'height' : 'width';
+    const otherSizeAttr = isHorizontal ? 'width' : 'height';
+    const size = this.target.AABBBounds[sizeAttr]();
+    const y = isHorizontal ? 0 : this.target.AABBBounds.y1;
 
     const rect = application.graphicService.creator.rect({
-      height: height,
+      [sizeAttr]: size,
       fill: '#bcdeff',
       shadowBlur: 30,
       shadowColor: '#bcdeff',
       ...this.params?.attribute,
       x: 0,
-      y: 0,
-      width: 0
+      y,
+      [otherSizeAttr]: 0
     });
     this.rect = rect;
     root.add(rect);
@@ -370,28 +373,72 @@ export class StreamLight extends ACustomAnimate<any> {
   }
 
   protected onUpdateRect(end: boolean, ratio: number, out: Record<string, any>): void {
-    const parentWidth = (this.target as any).attribute.width ?? 250;
-    const streamLength = this.params?.streamLength ?? parentWidth;
-    const maxLength = this.params?.attribute?.width ?? 60;
-    const startX = -maxLength;
-    const currentX = startX + (streamLength - startX) * ratio;
-    const x = Math.max(currentX, 0);
-    const w = Math.min(Math.min(currentX + maxLength, maxLength), streamLength - currentX);
-    const width = w + x > parentWidth ? Math.max(parentWidth - x, 0) : w;
-    this.rect.setAttributes(
-      {
-        x,
-        width
-      } as any,
-      false,
-      {
-        type: AttributeUpdateType.ANIMATE_PLAY,
-        animationState: {
-          ratio,
-          end
+    const isHorizontal = this.params?.isHorizontal ?? true;
+    const parentAttr = (this.target as any).attribute;
+    if (isHorizontal) {
+      const parentWidth = parentAttr.width ?? parentAttr.x1 - parentAttr.x ?? 250;
+      const streamLength = this.params?.streamLength ?? parentWidth;
+      const maxLength = this.params?.attribute?.width ?? 60;
+      // 起点，x右端点 对齐 parent左端点
+      const startX = -maxLength;
+      // 插值
+      const currentX = startX + (streamLength - startX) * ratio;
+      // 位置限定 > 0
+      const x = Math.max(currentX, 0);
+      // 宽度计算
+      const w = Math.min(Math.min(currentX + maxLength, maxLength), streamLength - currentX);
+      // 如果 rect右端点 超出 parent右端点, 宽度动态调整
+      const width = w + x > parentWidth ? Math.max(parentWidth - x, 0) : w;
+      this.rect.setAttributes(
+        {
+          x,
+          width
+        } as any,
+        false,
+        {
+          type: AttributeUpdateType.ANIMATE_PLAY,
+          animationState: {
+            ratio,
+            end
+          }
         }
+      );
+    } else {
+      const parentHeight = parentAttr.height ?? parentAttr.y1 - parentAttr.y ?? 250;
+      const streamLength = this.params?.streamLength ?? parentHeight;
+      const maxLength = this.params?.attribute?.height ?? 60;
+      // 起点，y上端点 对齐 parent下端点
+      const startY = parentHeight;
+      // 插值
+      const currentY = startY - (streamLength + maxLength) * ratio;
+      // 位置限定 < parentHeight
+      let y = Math.min(currentY, parentHeight);
+      // 高度最小值
+      const h = Math.min(parentHeight - currentY, maxLength);
+      // 如果 rect上端点=y 超出 parent上端点 = 0, 则高度不断变小
+      let height;
+      if (y <= 0) {
+        // 必须先得到高度再将y置为0, 顺序很重要
+        height = Math.max(y + h, 0);
+        y = 0;
+      } else {
+        height = h;
       }
-    );
+      this.rect.setAttributes(
+        {
+          y,
+          height
+        } as any,
+        false,
+        {
+          type: AttributeUpdateType.ANIMATE_PLAY,
+          animationState: {
+            ratio,
+            end
+          }
+        }
+      );
+    }
   }
 
   protected onUpdateLineOrArea(end: boolean, ratio: number, out: Record<string, any>) {

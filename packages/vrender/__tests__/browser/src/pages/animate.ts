@@ -219,18 +219,36 @@ export const page = () => {
     stage.render();
   });
   addCase('stream-light', container, stage => {
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
       const r = createRect({
-        x: 100,
+        x: 400,
         y: 50 + i * 100,
-        width: 0,
+        x1: 400,
+        // width: 0,
         height: 20,
         fill: 'blue'
       });
       r.animate()
-        .to({ width: Math.random() * 900 + 300 }, 1000, 'quadIn')
+        .to({ x1: Math.random() * 400 + 400 }, 1000, 'quadIn')
         .subAnimate()
         .play(new StreamLight('', 0, 2000, 'quadIn'))
+        .loop(Infinity);
+      stage.defaultLayer.add(r as any);
+    }
+
+    for (let i = 0; i < 3; i++) {
+      const r = createRect({
+        y: 400,
+        y1: 400,
+        x: 80 + i * 100,
+        width: 20,
+        // height: 300,
+        fill: 'blue'
+      });
+      r.animate()
+        .to({ y: Math.random() * 200 + 100 }, 1000, 'quadIn')
+        .subAnimate()
+        .play(new StreamLight('', 0, 2000, 'quadIn', { isHorizontal: false }))
         .loop(Infinity);
       stage.defaultLayer.add(r as any);
     }

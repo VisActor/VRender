@@ -520,6 +520,7 @@ export class EventManager {
 
       clickEvent.target = clickTarget;
       clickEvent.path = [];
+      clickEvent.detailPath = [];
 
       if (!trackingData.clicksByButton[from.button]) {
         trackingData.clicksByButton[from.button] = {
@@ -685,6 +686,8 @@ export class EventManager {
 
     event.target = from.target;
     event.path = from.composedPath().slice();
+    const p = from.composedDetailPath();
+    event.detailPath = p && p.slice();
     event.type = type ?? event.type;
 
     return event;
@@ -772,6 +775,7 @@ export class EventManager {
     event.eventPhase = event.NONE;
     event.currentTarget = null;
     event.path = [];
+    event.detailPath = [];
     event.target = null;
 
     return event;

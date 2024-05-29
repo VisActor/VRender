@@ -26,16 +26,24 @@ export class ArcSegment extends Segment {
    * 外部获取segment起点切线正方向
    */
   getStartAngle() {
-    const startAngle = this.isReverseArc ? this._startAngle + Math.PI / 2 : this._startAngle - Math.PI / 2;
-    return startAngle > Math.PI * 2 ? startAngle - Math.PI * 2 : startAngle;
+    // 如果是顺时针弧, start切线方向 = 弧度方向 - Math.PI / 2, 反之相反
+    const tangAng = this.isReverseArc ? this._startAngle + Math.PI / 2 : this._startAngle - Math.PI / 2;
+
+    // 经过刚刚的计算角度范围: [0, 360] => [-90, 270] 或 [0, 450]
+    // 将其规范范围到[0, 360]
+    return tangAng < 0 ? tangAng + Math.PI * 2 : tangAng > Math.PI * 2 ? tangAng - Math.PI * 2 : tangAng;
   }
 
   /**
    * 外部获取segment终点切线正方向
    */
   getEndAngle() {
-    const endAngle = this.isReverseArc ? this._endAngle - Math.PI / 2 : this._endAngle + Math.PI / 2;
-    return endAngle > Math.PI * 2 ? endAngle - Math.PI * 2 : endAngle;
+    // 如果是顺时针弧, end切线方向 = 弧度方向 + Math.PI / 2, 反之相反
+    const tangAng = this.isReverseArc ? this._endAngle - Math.PI / 2 : this._endAngle + Math.PI / 2;
+
+    // 经过刚刚的计算角度范围: [0, 360] => [-90, 270] 或 [0, 450]
+    // 将其规范范围到[0, 360]
+    return tangAng < 0 ? tangAng + Math.PI * 2 : tangAng > Math.PI * 2 ? tangAng - Math.PI * 2 : tangAng;
   }
 
   getMainSegmentPoints() {
@@ -94,6 +102,8 @@ export class ArcSegment extends Segment {
     const line = graphicCreator.arc({
       x: center.x,
       y: center.y,
+      // startAngle: Math.PI + 0.5,
+      // endAngle: 0,
       startAngle,
       endAngle,
       innerRadius: radius,

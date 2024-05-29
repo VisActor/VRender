@@ -40,7 +40,9 @@ export abstract class MarkCommonLine<LineAttr, LabelPosition> extends Marker<
     const { label = {}, limitRect } = this.attribute;
     const { position, confine, autoRotate } = label;
     const labelPoint = this.getPointAttrByPosition(position);
-    const labelAngle = this._line.getEndAngle() || 0;
+    const labelAngle = position.toString().toLocaleLowerCase().includes('start')
+      ? this._line.getStartAngle() || 0
+      : this._line.getEndAngle() || 0;
     this._label.setAttributes({
       ...labelPoint.position,
       angle: autoRotate ? this.getRotateByAngle(labelPoint.angle) : 0,

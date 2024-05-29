@@ -120,6 +120,12 @@ export function run() {
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
+    limitRect: {
+      x: 180,
+      y: 250,
+      width: 30,
+      height: 3000
+    },
     clipInRange: false,
     interactive: true
     // limitRect: {
@@ -136,7 +142,7 @@ export function run() {
         y: 350
       },
       {
-        x: 200,
+        x: 300,
         y: 250
       }
     ],
@@ -204,12 +210,20 @@ export function run() {
   gui
     .add(guiObject, 'labelPos', [
       'start',
-      'middle',
-      'end',
+      'startTop',
+      'startBottom',
+      'insideStart',
       'insideStartTop',
       'insideStartBottom',
+
+      'middle',
       'insideMiddleTop',
       'insideMiddleBottom',
+
+      'end',
+      'endTop',
+      'endBottom',
+      'insideEnd',
       'insideEndTop',
       'insideEndBottom'
     ])

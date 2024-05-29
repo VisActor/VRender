@@ -19,7 +19,7 @@ import type { TagAttributes } from '../tag';
 // eslint-disable-next-line no-duplicate-imports
 import { Tag } from '../tag';
 import { Marker } from './base';
-import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME } from './config';
+import { DEFAULT_MARK_POINT_TEXT_STYLE_MAP, DEFAULT_MARK_POINT_THEME, FUZZY_EQUAL_DELTA } from './config';
 import type { IItemContent, IItemLine, MarkPointAnimationType, MarkPointAttrs, MarkerAnimationState } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import { IMarkPointItemPosition } from './type';
@@ -29,7 +29,13 @@ import { loadMarkPointComponent } from './register';
 import { computeOffsetForlimit } from '../util/limit-shape';
 import { DEFAULT_STATES } from '../constant';
 import { DefaultExitMarkerAnimation, DefaultUpdateMarkPointAnimation, markPointAnimate } from './animate/animate';
-import { deltaXYToAngle, isPostiveXAxisCartes, isPostiveXAxisPolar, removeRepeatPoint } from '../util';
+import {
+  deltaXYToAngle,
+  fuzzyEqualNumber,
+  getTextAlignAttrOfVerticalDir,
+  isPostiveXAxis,
+  removeRepeatPoint
+} from '../util';
 
 loadMarkPointComponent();
 
@@ -56,7 +62,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   private _line?: Segment;
 
   private _decorativeLine!: ILine;
-  private _isArcLine: boolean = false;
+  private _isArcLine: boolean = false; // 用于区分 arc-segment 和 segment
+  private _isStraightLine: boolean = false; // 用于区分绘制 纯直线 和 折线,（type-do/op/po时, 如果偏移量很小, 视觉无法分辨, 也需要绘制成直线）
 
   constructor(attributes: MarkPointAttrs, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, MarkPoint.defaultAttributes, attributes));
@@ -73,14 +80,15 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     lineEndAngle: number,
     itemPosition: keyof typeof IMarkPointItemPosition
   ) {
-    let isPostiveXAxis = true;
-    if (this._isArcLine) {
-      isPostiveXAxis = isPostiveXAxisPolar(lineEndAngle, (this._line as ArcSegment).isReverseArc);
-    } else {
-      isPostiveXAxis = isPostiveXAxisCartes(lineEndAngle);
+    // 垂直方向例外
+    if (
+      fuzzyEqualNumber(Math.abs(lineEndAngle), Math.PI / 2, FUZZY_EQUAL_DELTA) ||
+      fuzzyEqualNumber(Math.abs(lineEndAngle), (Math.PI * 3) / 2, FUZZY_EQUAL_DELTA)
+    ) {
+      return getTextAlignAttrOfVerticalDir(autoRotate, lineEndAngle, itemPosition);
     }
 
-    if (isPostiveXAxis) {
+    if (isPostiveXAxis(lineEndAngle)) {
       return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.postiveXAxis[itemPosition];
     }
     return DEFAULT_MARK_POINT_TEXT_STYLE_MAP.negativeXAxis[itemPosition];
@@ -108,8 +116,8 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     } = itemContent;
     const { state } = this.attribute as MarkPointAttrs;
     const lineEndAngle = this._line?.getEndAngle() || 0;
-    const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle);
-    const itemRefOffsetY = refX * Math.sin(lineEndAngle) + refY * Math.sin(lineEndAngle);
+    const itemRefOffsetX = refX * Math.cos(lineEndAngle) + refY * Math.cos(lineEndAngle - Math.PI / 2);
+    const itemRefOffsetY = refX * Math.sin(lineEndAngle) + refY * Math.sin(lineEndAngle - Math.PI / 2);
     if (itemType === 'text') {
       const offsetX = newItemPosition.x - newPosition.x;
       const offsetY = newItemPosition.y - newPosition.y;
@@ -144,16 +152,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       item.states = merge({}, DEFAULT_STATES, state?.image);
     }
 
-    let isPostiveXAxis = true;
-    let itemAngle;
-    if (this._isArcLine) {
-      isPostiveXAxis = isPostiveXAxisPolar(lineEndAngle, (this._line as ArcSegment).isReverseArc);
-      // 文字翻转
-      itemAngle = isPostiveXAxis ? lineEndAngle : lineEndAngle - Math.PI;
-    } else {
-      isPostiveXAxis = isPostiveXAxisCartes(lineEndAngle);
-      itemAngle = isPostiveXAxis ? lineEndAngle : lineEndAngle - Math.PI;
-    }
+    const itemAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle - Math.PI;
 
     item.setAttributes({
       x: newItemPosition.x + (itemRefOffsetX || 0),
@@ -238,6 +237,11 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     let startAngle = 0;
     let endAngle = 0;
     const { type = 'type-s', arcRatio = 0.8 } = itemLine;
+    // confine之后位置会变化，所以这里需要重新check是否是直线
+    const itemOffsetX = newItemPosition.x - newPosition.x;
+    const itemOffsetY = newItemPosition.y - newPosition.y;
+    this._isStraightLine =
+      fuzzyEqualNumber(itemOffsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(itemOffsetY, 0, FUZZY_EQUAL_DELTA);
     if (this._isArcLine) {
       const { x: x1, y: y1 } = newPosition;
       const { x: x2, y: y2 } = newItemPosition;
@@ -254,12 +258,26 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const deltaX = arcRatio * direction * x0; // 数值决定曲率, 符号决定法向, 可通过配置自定义
       const centerX = x0 + deltaX;
       const centerY = line(centerX);
-      center = { x: centerX, y: centerY };
       startAngle = deltaXYToAngle(y1 - centerY, x1 - centerX);
       endAngle = deltaXYToAngle(y2 - centerY, x2 - centerX);
+      center = { x: centerX, y: centerY };
+
+      if (arcRatio > 0) {
+        // 此时绘制凹圆弧, 顺时针绘制
+        // 根据arc图元绘制逻辑, 需要保证endAngle > startAngle, 才能顺时针绘制
+        if (endAngle < startAngle) {
+          endAngle += Math.PI * 2;
+        }
+      } else {
+        // 此时绘制凸圆弧, 顺时针绘制
+        // 根据arc图元绘制逻辑, 需要保证endAngle < startAngle, 才能逆时针绘制
+        if (startAngle < endAngle) {
+          startAngle += Math.PI * 2;
+        }
+      }
 
       radius = Math.sqrt((centerX - x1) * (centerX - x1) + (centerY - y1) * (centerY - y1));
-    } else if (type === 'type-do') {
+    } else if (type === 'type-do' && !this._isStraightLine) {
       points = [
         newPosition,
         {
@@ -268,7 +286,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
         },
         newItemPosition
       ];
-    } else if (type === 'type-po') {
+    } else if (type === 'type-po' && !this._isStraightLine) {
       points = [
         newPosition,
         {
@@ -277,7 +295,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
         },
         newItemPosition
       ];
-    } else if (type === 'type-op') {
+    } else if (type === 'type-op' && !this._isStraightLine) {
       points = [
         newPosition,
         {
@@ -327,10 +345,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const { startSymbol, endSymbol, lineStyle, type = 'type-s' } = itemLine;
       const { state } = this.attribute as MarkPointAttrs;
       const pointsAttr = this.getItemLineAttr(itemLine, newPosition, newItemPosition);
-      if (
-        (type === 'type-arc' && this._line.key === 'arc-segment') ||
-        (type !== 'type-arc' && this._line.key === 'segment')
-      ) {
+      if ((this._isArcLine && this._line.key === 'arc-segment') || (!this._isArcLine && this._line.key === 'segment')) {
         this._line.setAttributes({
           ...pointsAttr,
           startSymbol,
@@ -432,12 +447,12 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const targetSize = targetItemvisible ? targetSymbolSize || (targetSymbolStyle.size ?? 10) : 0;
     const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
     const newPosition: Point = {
-      x: position.x + (targetSize + targetSymbolOffset) * Math.cos(targetOffsetAngle),
-      y: position.y + (targetSize + targetSymbolOffset) * Math.sin(targetOffsetAngle)
+      x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle),
+      y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle)
     };
     const newItemPosition: Point = {
-      x: position.x + (targetSize + targetSymbolOffset) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
-      y: position.y + (targetSize + targetSymbolOffset) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
+      x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
+      y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
     };
 
     return { newPosition, newItemPosition };
@@ -446,16 +461,16 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   protected initMarker(container: IGroup) {
     const { position, itemContent = {}, itemLine } = this.attribute as MarkPointAttrs;
     const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
+    const { offsetX = 0, offsetY = 0 } = itemContent;
+
+    this._isStraightLine =
+      fuzzyEqualNumber(offsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(offsetY, 0, FUZZY_EQUAL_DELTA);
+    this._isArcLine = itemLineType === 'type-arc' && arcRatio !== 0 && !this._isStraightLine;
 
     /** 根据targetItem计算新的弧线起点 */
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);
 
     /** itemline - 连接线 */
-    this._isArcLine =
-      itemLineType === 'type-arc' &&
-      arcRatio !== 0 &&
-      newPosition.x !== newItemPosition.x &&
-      newPosition.y !== newItemPosition.y;
 
     const lineConstructor = this._isArcLine ? ArcSegment : Segment;
     const line = new lineConstructor({
@@ -500,13 +515,14 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     const { position, itemContent = {}, itemLine } = this.attribute as MarkPointAttrs;
     const { type = 'text' } = itemContent;
     const { type: itemLineType = 'type-s', arcRatio = 0.8 } = itemLine;
+    const { offsetX = 0, offsetY = 0 } = itemContent;
+
+    this._isStraightLine =
+      fuzzyEqualNumber(offsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(offsetY, 0, FUZZY_EQUAL_DELTA);
+    const isArcLine = itemLineType === 'type-arc' && arcRatio !== 0 && !this._isStraightLine;
     /** 根据targetItem计算新的弧线起点 */
     const { newPosition, newItemPosition } = this.computeNewPositionAfterTargetItem(position);
-    const isArcLine =
-      itemLineType === 'type-arc' &&
-      arcRatio !== 0 &&
-      newPosition.x !== newItemPosition.x &&
-      newPosition.y !== newItemPosition.y;
+
     if (isArcLine !== this._isArcLine) {
       // 如果曲线和直线相互切换了, 则需要重新绘制line
       this._isArcLine = isArcLine;

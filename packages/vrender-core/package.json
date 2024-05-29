@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.19.5",
+  "version": "0.19.6",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -18,13 +18,13 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle --clean",
-    "build-umd": "bundle --clean -f umd",
-    "dev": "bundle --clean -f es -w",
+    "build": "cross-env DEBUG='Bundler*' bundle --clean",
+    "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
+    "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser",
     "test": "jest",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
-    "test-watch": "DEBUG_MODE=1 jest --watch",
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
     "test-cov": "jest -w 16 --coverage"
   },
   "dependencies": {
@@ -48,7 +48,8 @@
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "cross-env": "^7.0.3"
   },
   "keywords": [
     "VisActor",

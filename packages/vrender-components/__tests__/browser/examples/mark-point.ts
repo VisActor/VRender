@@ -16,15 +16,22 @@ export function run() {
     itemLineVisible: true,
     // itemType: 'text',
     itemPos: 'middle',
-    itemOffsetX: 100,
-    itemOffsetY: 100,
+    // itemOffsetX: 100,
+    // itemOffsetY: 100,
+    offsetLen: 150,
+    angleOfOffset: 0,
     itemAutoRotate: false,
     itemRefX: 10,
     itemRefY: 0,
     itemRefAngle: 0,
     decorativeLineVisible: false,
     visible: true,
-    arcRatio: 0.8
+    arcRatio: 0.8,
+    startSymbolRefX: 30,
+    startSymbolRefY: 0,
+    endSymbolRefX: 30,
+    endSymbolRefY: 0,
+    targetSymbolOffset: 0
   };
 
   const styleAttr = {
@@ -112,13 +119,17 @@ export function run() {
         visible: guiObject.decorativeLineVisible
       },
       startSymbol: {
-        visible: true,
-        symbolType: 'triangle'
+        visible: false,
+        symbolType: 'triangle',
+        refX: guiObject.startSymbolRefX,
+        refY: guiObject.startSymbolRefY
       },
       endSymbol: {
-        visible: true,
+        visible: false,
         symbolType: 'triangle',
         size: 10,
+        refX: guiObject.endSymbolRefX,
+        refY: guiObject.endSymbolRefY,
         style: {
           fill: 'blue'
         }
@@ -131,8 +142,8 @@ export function run() {
       }
     },
     itemContent: {
-      offsetX: guiObject.itemOffsetX,
-      offsetY: guiObject.itemOffsetY,
+      offsetX: Math.cos((guiObject.angleOfOffset / 180) * Math.PI) * guiObject.offsetLen,
+      offsetY: Math.sin((guiObject.angleOfOffset / 180) * Math.PI) * guiObject.offsetLen,
       refX: guiObject.itemRefX,
       refY: guiObject.itemRefY,
       refAngle: guiObject.itemRefAngle,
@@ -221,7 +232,7 @@ export function run() {
     },
     targetSymbol: {
       visible: true,
-      offset: 10
+      offset: guiObject.targetSymbolOffset
       // style: {
       //   size: 30,
       //   // fill: 'red',
@@ -254,8 +265,8 @@ export function run() {
 
   const markPoint2 = new MarkPoint({
     position: {
-      x: 200,
-      y: 200
+      x: 250,
+      y: 250
     },
     ...(styleAttr as any),
     itemContent: {
@@ -329,22 +340,40 @@ export function run() {
     markPoints.forEach(markPoint => markPoint.setAttribute('visible', value, true));
   });
 
-  gui.add(guiObject, 'itemOffsetX').onChange(value => {
+  // gui.add(guiObject, 'itemOffsetX').onChange(value => {
+  //   markPoints.forEach(markPoint =>
+  //     markPoint.setAttribute('itemContent', {
+  //       offsetX: value
+  //     })
+  //   );
+  //   console.log('markpoints', markPoints);
+  // });
+
+  // gui.add(guiObject, 'itemOffsetY').onChange(value => {
+  //   markPoints.forEach(markPoint =>
+  //     markPoint.setAttribute('itemContent', {
+  //       offsetY: value
+  //     })
+  //   );
+  //   console.log('markpoints', markPoints);
+  // });
+
+  gui.add(guiObject, 'offsetLen').onChange(value => {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemContent', {
-        offsetX: value
+        offsetX: value * Math.cos((guiObject.angleOfOffset / 180) * Math.PI),
+        offsetY: value * Math.sin((guiObject.angleOfOffset / 180) * Math.PI)
       })
     );
-    console.log('markpoints', markPoints);
   });
 
-  gui.add(guiObject, 'itemOffsetY').onChange(value => {
+  gui.add(guiObject, 'angleOfOffset', 0, 360).onChange(value => {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemContent', {
-        offsetY: value
+        offsetX: guiObject.offsetLen * Math.cos((value / 180) * Math.PI),
+        offsetY: guiObject.offsetLen * Math.sin((value / 180) * Math.PI)
       })
     );
-    console.log('markpoints', markPoints);
   });
 
   gui.add(guiObject, 'itemAutoRotate').onChange(value => {
@@ -371,6 +400,46 @@ export function run() {
     );
   });
 
+  gui.add(guiObject, 'startSymbolRefX').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        startSymbol: {
+          refX: value
+        }
+      })
+    );
+  });
+
+  gui.add(guiObject, 'startSymbolRefY').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        startSymbol: {
+          refY: value
+        }
+      })
+    );
+  });
+
+  gui.add(guiObject, 'endSymbolRefX').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        endSymbol: {
+          refX: value
+        }
+      })
+    );
+  });
+
+  gui.add(guiObject, 'endSymbolRefY').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('itemLine', {
+        endSymbol: {
+          refY: value
+        }
+      })
+    );
+  });
+
   gui.add(guiObject, 'itemRefAngle').onChange(value => {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemContent', {
@@ -393,6 +462,14 @@ export function run() {
     markPoints.forEach(markPoint =>
       markPoint.setAttribute('itemLine', {
         arcRatio: value
+      })
+    );
+  });
+
+  gui.add(guiObject, 'targetSymbolOffset').onChange(value => {
+    markPoints.forEach(markPoint =>
+      markPoint.setAttribute('targetSymbol', {
+        offset: value
       })
     );
   });

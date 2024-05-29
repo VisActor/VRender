@@ -181,7 +181,10 @@ export class FederatedEvent<N extends Event = Event> implements Event {
     if (this.pickParams && (this.pickParams as any).graphic) {
       this.detailPath = this.path.slice();
       this._composedDetailPath(this.pickParams);
+    } else {
+      this.detailPath = this.path.slice();
     }
+    return this.detailPath;
   }
 
   _composedDetailPath(params: any) {

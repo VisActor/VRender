@@ -10,6 +10,7 @@ import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes 
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadSegmentComponent } from './register';
+import { normalizeAngle } from '@visactor/vutils';
 
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
@@ -25,7 +26,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
    * 外部获取segment起点正方向
    */
   getStartAngle() {
-    return this._startAngle;
+    return normalizeAngle(this._startAngle);
   }
 
   protected _endAngle!: number;
@@ -33,7 +34,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
    * 外部获取segment终点正方向
    */
   getEndAngle() {
-    return this._endAngle;
+    return normalizeAngle(this._endAngle);
   }
 
   protected _mainSegmentPoints: Point[]; // 组成主线段的点
@@ -174,8 +175,8 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     const { autoRotate = true } = attribute;
     let symbol;
     if (attribute && attribute.visible) {
-      const startAngle = this._startAngle;
-      const endAngle = this._endAngle;
+      const startAngle = this.getStartAngle();
+      const endAngle = this.getEndAngle();
       const { state } = this.attribute as SegmentAttributes;
       const start = points[0];
       const end = points[points.length - 1];
@@ -191,14 +192,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
             start.y +
             (isValidNumber(startAngle) ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
         };
-        rotate = this._computeStartRotate(startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
+        rotate = this._computeStartRotate(this._startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
       } else {
         position = {
           x:
             end.x + (isValidNumber(endAngle) ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
           y: end.y + (isValidNumber(endAngle) ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
         };
-        rotate = this._computeEndRotate(endAngle);
+        rotate = this._computeEndRotate(this._endAngle);
       }
 
       symbol = graphicCreator.symbol({

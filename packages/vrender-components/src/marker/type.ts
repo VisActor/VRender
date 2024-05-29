@@ -19,12 +19,20 @@ import type { Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
-  middle = 'middle',
-  end = 'end',
+  startTop = 'startTop',
+  startBottom = 'startBottom',
+  insideStart = 'insideStart',
   insideStartTop = 'insideStartTop',
   insideStartBottom = 'insideStartBottom',
+
+  middle = 'middle',
   insideMiddleTop = 'insideMiddleTop',
   insideMiddleBottom = 'insideMiddleBottom',
+
+  end = 'end',
+  endTop = 'endTop',
+  endBottom = 'endBottom',
+  insideEnd = 'insideEnd',
   insideEndTop = 'insideEndTop',
   insideEndBottom = 'insideEndBottom'
 }

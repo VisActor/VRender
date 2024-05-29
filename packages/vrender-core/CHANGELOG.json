@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.6",
+      "tag": "@visactor/vrender-core_v0.19.6",
+      "date": "Wed, 29 May 2024 06:57:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with color array interpolate"
+          },
+          {
+            "comment": "fix: fix issue with detailPath that list will not be cleard"
+          },
+          {
+            "comment": "fix: fix issue with _nodeList while removeAllChild"
+          },
+          {
+            "comment": "fix: fix issue with unTap"
+          },
+          {
+            "comment": "fix: fix animation of state change\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.5",
       "tag": "@visactor/vrender-core_v0.19.5",
       "date": "Fri, 24 May 2024 09:21:23 GMT",

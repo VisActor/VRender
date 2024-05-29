@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 24 May 2024 09:21:23 GMT and should not be manually modified.
+This log was last generated on Wed, 29 May 2024 06:57:11 GMT and should not be manually modified.
+
+## 0.19.6
+Wed, 29 May 2024 06:57:11 GMT
+
+### Updates
+
+- feat: add empty-tip component
+
+
+- fix(marker): fix marker position and ref bad case. fix@visactor/vchart#2721
+- fix: fix animation of state change
+
+
 
 ## 0.19.5
 Fri, 24 May 2024 09:21:23 GMT

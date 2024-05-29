@@ -14,8 +14,8 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle",
-    "dev": "bundle --clean -f es -w",
+    "build": "cross-env DEBUG='Bundler*' bundle",
+    "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./vite",
     "prepublishOnly": "npm run build"
   },

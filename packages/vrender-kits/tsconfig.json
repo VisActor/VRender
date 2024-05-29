@@ -5,7 +5,7 @@
     "outDir": "./es",
     "rootDir": "./src",
     "composite": true,
-    "target": "ESNext"
+    "target": "ES2016"
   },
   "include": ["src"],
   "references": [

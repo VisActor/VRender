@@ -14,8 +14,8 @@
     "postinstall": "npm run build",
     "prepublishOnly": "npm run build",
     "eslint": "eslint -c .eslintrc.js src/",
-    "compile": "rm -rf ./output && tsc --project ./tsconfig.json --noEmit",
-    "build": "rm -rf ./output && tsc --project ./tsconfig.json",
+    "compile": "rimraf ./output && tsc --project ./tsconfig.json --noEmit",
+    "build": "rimraf ./output && tsc --project ./tsconfig.json",
     "test": "vitest --run",
     "run": "DEBUG='Bundler*' node ./output/bootstrap.js",
     "dev": "DEBUG='Bundler*' ts-node --project ./tsconfig.json src/bootstrap.ts"
@@ -63,7 +63,8 @@
     "through2": "4.0.2",
     "undertaker": "1.3.0",
     "vinyl": "2.2.1",
-    "yargs-parser": "21.1.1"
+    "yargs-parser": "21.1.1",
+    "rimraf": "3.0.2"
   },
   "devDependencies": {
     "@internal/eslint-config": "workspace:*",

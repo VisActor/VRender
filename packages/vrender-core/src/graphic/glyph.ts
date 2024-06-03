@@ -192,6 +192,8 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
       return;
     }
 
+    this.stopStateAnimates();
+
     const stateAttrs = {};
     const subAttrs = this.subGraphic.map(() => ({}));
     states.forEach(stateName => {
@@ -219,19 +221,18 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   }
 
   clearStates(hasAnimation?: boolean) {
-    if (!this.hasState() || !this.normalAttrs) {
-      return;
+    this.stopStateAnimates();
+    if (this.hasState() && this.normalAttrs) {
+      this.currentStates = [];
+      this.subGraphic.forEach(graphic => {
+        graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);
+        graphic.normalAttrs = null;
+      });
+      this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
+    } else {
+      this.currentStates = [];
     }
-
-    this.subGraphic.forEach(graphic => {
-      graphic.applyStateAttrs(graphic.normalAttrs, this.currentStates, hasAnimation, true);
-      graphic.normalAttrs = null;
-    });
-
-    this.applyStateAttrs(this.normalAttrs, this.currentStates, hasAnimation, true);
     this.normalAttrs = null;
-
-    this.currentStates = [];
   }
 
   clone(): Graphic<Partial<IGlyphGraphicAttribute>> {

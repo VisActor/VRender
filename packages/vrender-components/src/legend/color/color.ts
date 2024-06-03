@@ -32,6 +32,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     },
     handlerSize: 10,
     handlerStyle: {
+      fill: null as any,
       lineWidth: 4,
       stroke: '#fff',
       outerBorder: {
@@ -220,12 +221,20 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     const { layout = 'horizontal', colors, railWidth, railHeight } = this.attribute as ColorLegendAttributes;
     const { startHandler, endHandler, track } = this._slider;
     const { startValue, endValue, startPos, endPos } = this._slider.currentValue;
-
     // 计算颜色
-    const startHandlerColor = this._colorScale.scale(startValue);
-    const endHandlerColor = this._colorScale.scale(endValue);
-    startHandler?.setAttribute('fill', startHandlerColor);
-    endHandler?.setAttribute('fill', endHandlerColor);
+    if (startHandler) {
+      if (!startHandler.attribute.fill) {
+        const startHandlerColor = this._colorScale.scale(startValue);
+        startHandler.setAttribute('fill', startHandlerColor);
+      }
+    }
+
+    if (endHandler) {
+      if (!endHandler.attribute.fill) {
+        const endHandlerColor = this._colorScale.scale(endValue);
+        endHandler.setAttribute('fill', endHandlerColor);
+      }
+    }
 
     const isHorizontal = layout === 'horizontal';
     const railLen = isHorizontal ? railWidth : railHeight;

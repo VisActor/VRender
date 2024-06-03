@@ -1,3 +1,26 @@
+# v0.19.6
+
+2024-05-29
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add empty-tip component
+
+**🐛 功能修复**
+
+- **marker**: fix marker position and ref bad case. fix@visactor/vchart[#2721](https://github.com/VisActor/VRender/issues/2721)
+- **@visactor/vrender-components**: fix animation of state change
+- **@visactor/vrender-core**: fix issue with color array interpolate
+- **@visactor/vrender-core**: fix issue with detailPath that list will not be cleard
+- **@visactor/vrender-core**: fix issue with _nodeList while removeAllChild
+- **@visactor/vrender-core**: fix issue with unTap
+- **@visactor/vrender-core**: fix animation of state change
+
+
+
+[更多详情请查看 v0.19.6](https://github.com/VisActor/VRender/releases/tag/v0.19.6)
+
 # v0.19.5
 
 2024-05-24

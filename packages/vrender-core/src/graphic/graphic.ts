@@ -27,7 +27,6 @@ import { Node } from './node-tree';
 import type {
   IAnimate,
   IAnimateTarget,
-  IFullThemeSpec,
   IGlyphGraphicAttribute,
   IGroup,
   ILayer,
@@ -35,8 +34,7 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate,
-  ITheme
+  ISubAnimate
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
@@ -834,7 +832,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.normalAttrs = newNormalAttrs;
   }
 
-  private stopStateAnimates(type: 'start' | 'end' = 'end') {
+  protected stopStateAnimates(type: 'start' | 'end' = 'end') {
     if (this.animates) {
       this.animates.forEach(animate => {
         if ((animate as any).stateNames) {

@@ -249,3 +249,11 @@ export interface ISymbolBoundsContribution {
     graphic?: IGraphic
   ) => IAABBBounds;
 }
+export interface IImageBoundsContribution {
+  updateBounds: (
+    attribute: IImageGraphicAttribute,
+    ImageTheme: Required<IImageGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IGraphic
+  ) => IAABBBounds;
+}

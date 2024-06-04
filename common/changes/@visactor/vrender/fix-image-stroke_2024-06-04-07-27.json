@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: image support stroke and border, closed #1242",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

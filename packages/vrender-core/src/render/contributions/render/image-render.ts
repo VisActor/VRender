@@ -22,7 +22,7 @@ import { BaseRenderContributionTime } from '../../../common/enums';
 import { isArray, isString } from '@visactor/vutils';
 import { createRectPath } from '../../../common/shape/rect';
 import { BaseRender } from './base-render';
-import { defaultImageBackgroundRenderContribution } from './contributions';
+import { defaultImageBackgroundRenderContribution, defaultImageRenderContribution } from './contributions';
 import { ResourceLoader } from '../../../resource-loader/loader';
 
 const repeatStr = ['', 'repeat-x', 'repeat-y', 'repeat'];
@@ -38,7 +38,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     protected readonly imageRenderContribitions: IContributionProvider<IImageRenderContribution>
   ) {
     super();
-    this.builtinContributions = [defaultImageBackgroundRenderContribution];
+    this.builtinContributions = [defaultImageRenderContribution, defaultImageBackgroundRenderContribution];
     this.init(imageRenderContribitions);
   }
 
@@ -53,6 +53,11 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
     ) => boolean
   ) {
     // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
@@ -62,6 +67,8 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       height = imageAttribute.height,
       repeatX = imageAttribute.repeatX,
       repeatY = imageAttribute.repeatY,
+      x: originX = imageAttribute.x,
+      y: originY = imageAttribute.y,
       cornerRadius = imageAttribute.cornerRadius,
       image: url
     } = image.attribute;
@@ -125,6 +132,15 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
         if (needRestore) {
           context.restore();
         }
+      }
+    }
+
+    if (doStroke) {
+      if (strokeCb) {
+        strokeCb(context, image.attribute, imageAttribute);
+      } else if (sVisible) {
+        context.setStrokeStyle(image, image.attribute, originX - x, originY - y, imageAttribute);
+        context.stroke();
       }
     }
 

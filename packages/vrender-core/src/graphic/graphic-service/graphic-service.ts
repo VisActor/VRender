@@ -45,7 +45,8 @@ import type {
   ICircleBoundsContribution,
   IArcBoundsContribution,
   IPathBoundsContribution,
-  IContributionProvider
+  IContributionProvider,
+  IImageBoundsContribution
 } from '../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../common/text';
 import { DefaultSymbolOuterBorderBoundsContribution } from './symbol-contribution';
@@ -619,6 +620,7 @@ export class DefaultGraphicService implements IGraphicService {
 
   protected _rectBoundsContribitions: IRectBoundsContribution[];
   protected _symbolBoundsContribitions: ISymbolBoundsContribution[];
+  protected _imageBoundsContribitions: IImageBoundsContribution[];
   protected _circleBoundsContribitions: ICircleBoundsContribution[];
   protected _arcBoundsContribitions: IArcBoundsContribution[];
   protected _pathBoundsContribitions: IPathBoundsContribution[];
@@ -651,6 +653,7 @@ export class DefaultGraphicService implements IGraphicService {
     this.tempAABBBounds2 = new AABBBounds();
     this._rectBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
     this._symbolBoundsContribitions = [new DefaultSymbolOuterBorderBoundsContribution()];
+    this._imageBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
     this._circleBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
     this._arcBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
     this._pathBoundsContribitions = [new DefaultOuterBorderBoundsContribution()];
@@ -1485,6 +1488,12 @@ export class DefaultGraphicService implements IGraphicService {
     const tb2 = this.tempAABBBounds2;
     tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
     tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    this._imageBoundsContribitions.length &&
+      this._imageBoundsContribitions.forEach(c => {
+        c.updateBounds(attribute, imageTheme, tb1, graphic);
+        aabbBounds.union(tb1);
+        tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+      });
 
     this.transformAABBBounds(attribute, aabbBounds, imageTheme, false, graphic);
     return aabbBounds;

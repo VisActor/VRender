@@ -31,7 +31,8 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 100,
-    image: svg
+    image: svg,
+    stroke: 'green'
   });
   shapes.push(svgImage);
 
@@ -40,7 +41,15 @@ export const page = () => {
     y: 100,
     width: 100,
     height: 100,
-    image: base64
+    image: urlPng,
+    cornerRadius: 100,
+    // stroke: 'green',
+    // lineWidth: 10,
+    outerBorder: {
+      distance: 50,
+      lineWidth: 100,
+      stroke: 'pink'
+    }
   });
   shapes.push(image);
 

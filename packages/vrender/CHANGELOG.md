@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 29 May 2024 06:57:11 GMT and should not be manually modified.
+This log was last generated on Tue, 04 Jun 2024 11:10:08 GMT and should not be manually modified.
+
+## 0.19.7
+Tue, 04 Jun 2024 11:10:08 GMT
+
+### Updates
+
+- feat: image support stroke and border, closed #1242
 
 ## 0.19.6
 Wed, 29 May 2024 06:57:11 GMT

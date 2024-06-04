@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.7",
+      "tag": "@visactor/vrender-core_v0.19.7",
+      "date": "Tue, 04 Jun 2024 11:10:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix `useStates` of glyph\n\n"
+          },
+          {
+            "comment": "feat: image support stroke and border, closed #1242"
+          },
+          {
+            "comment": "fix: fix env check in micro frontend env"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.6",
       "tag": "@visactor/vrender-core_v0.19.6",
       "date": "Wed, 29 May 2024 06:57:11 GMT",

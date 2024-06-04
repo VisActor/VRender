@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix env check in micro frontend env",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

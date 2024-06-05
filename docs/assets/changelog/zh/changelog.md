@@ -1,3 +1,23 @@
+# v0.19.7
+
+2024-06-04
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: image support stroke and border, closed [#1242](https://github.com/VisActor/VRender/issues/1242)
+- **@visactor/vrender**: image support stroke and border, closed [#1242](https://github.com/VisActor/VRender/issues/1242)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix useless re-render of datazoom and brush
+- **@visactor/vrender-core**: fix `useStates` of glyph
+- **@visactor/vrender-core**: fix env check in micro frontend env
+
+
+
+[更多详情请查看 v0.19.7](https://github.com/VisActor/VRender/releases/tag/v0.19.7)
+
 # v0.19.6
 
 2024-05-29

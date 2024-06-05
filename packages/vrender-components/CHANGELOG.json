@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.9",
+      "tag": "@visactor/vrender-components_v0.19.9",
+      "date": "Wed, 05 Jun 2024 12:25:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: colorLegend handler cannot customize fill color"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.8",
       "tag": "@visactor/vrender-components_v0.19.8",
       "date": "Wed, 05 Jun 2024 08:24:28 GMT",

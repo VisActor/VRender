@@ -1,3 +1,38 @@
+# v0.19.8
+
+2024-06-05
+
+
+**What's Changed**
+
+* fix issue with https://github.com/VisActor/VRender/pull/1247
+* [Auto release] release 0.19.8 by @github-actions in https://github.com/VisActor/VRender/pull/1249
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.19.7...v0.19.8
+
+[more detail about v0.19.8](https://github.com/VisActor/VRender/releases/tag/v0.19.8)
+
+# v0.19.7
+
+2024-06-04
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: image support stroke and border, closed [#1242](https://github.com/VisActor/VRender/issues/1242)
+- **@visactor/vrender**: image support stroke and border, closed [#1242](https://github.com/VisActor/VRender/issues/1242)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix useless re-render of datazoom and brush
+- **@visactor/vrender-core**: fix `useStates` of glyph
+- **@visactor/vrender-core**: fix env check in micro frontend env
+
+
+
+[more detail about v0.19.7](https://github.com/VisActor/VRender/releases/tag/v0.19.7)
+
 # v0.19.6
 
 2024-05-29

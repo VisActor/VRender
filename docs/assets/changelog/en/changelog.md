@@ -1,3 +1,16 @@
+# v0.19.9
+
+2024-06-05
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: colorLegend handler cannot customize fill color
+
+
+
+[more detail about v0.19.9](https://github.com/VisActor/VRender/releases/tag/v0.19.9)
+
 # v0.19.8
 
 2024-06-05

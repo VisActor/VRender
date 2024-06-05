@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 05 Jun 2024 08:24:28 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Jun 2024 12:25:00 GMT and should not be manually modified.
+
+## 0.19.9
+Wed, 05 Jun 2024 12:25:00 GMT
+
+### Updates
+
+- fix: colorLegend handler cannot customize fill color
 
 ## 0.19.8
 Wed, 05 Jun 2024 08:24:28 GMT

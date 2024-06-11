@@ -779,7 +779,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
-    this.stopStateAnimates();
     if (hasAnimation) {
       const keys = Object.keys(attrs);
       const noWorkAttrs = this.getNoWorkAnimateAttr();
@@ -806,6 +805,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
       noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
+      this.stopStateAnimates();
       this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
     }
   }
@@ -851,7 +851,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.animates.forEach(animate => {
         if ((animate as any).stateNames) {
           const endProps = animate.getEndProps();
-
           if (has(endProps, key)) {
             value = endProps[key];
           }

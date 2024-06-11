@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: only clear animation when has no state animation",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

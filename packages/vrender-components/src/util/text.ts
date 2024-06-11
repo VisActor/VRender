@@ -1,4 +1,10 @@
-import type { IRichTextAttribute, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  IRichText,
+  IRichTextAttribute,
+  IText,
+  ITextGraphicAttribute,
+  TextAlignType
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
@@ -110,4 +116,34 @@ export function createTextGraphicByType(textAttributes: ITextGraphicAttribute, t
   }
 
   return graphicCreator.text(textAttributes as ITextGraphicAttribute);
+}
+
+export function alignTextInLine(
+  layoutAlign: 'left' | 'right',
+  graphic: IText | IRichText,
+  textAlign: TextAlignType,
+  pos: number,
+  textWidth: number
+) {
+  if (layoutAlign === 'right') {
+    if (textAlign === 'center') {
+      graphic.setAttribute('x', pos - textWidth / 2);
+    } else if (textAlign === 'right' || textAlign === 'end') {
+      // 右对齐
+      graphic.setAttribute('x', pos);
+    } else {
+      // 默认左对齐
+      graphic.setAttribute('x', pos - textWidth);
+    }
+  } else {
+    if (textAlign === 'center') {
+      graphic.setAttribute('x', pos + textWidth / 2);
+    } else if (textAlign === 'right' || textAlign === 'end') {
+      // 右对齐
+      graphic.setAttribute('x', pos + textWidth);
+    } else {
+      // 默认左对齐
+      graphic.setAttribute('x', pos);
+    }
+  }
 }

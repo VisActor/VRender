@@ -1,11 +1,19 @@
 /**
  * @description 标题组件
  */
-import type { IGroup, IText, IRichText, IRect, ISymbol, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  IGroup,
+  IText,
+  IRichText,
+  IRect,
+  ISymbol,
+  ITextGraphicAttribute,
+  TextAlignType
+} from '@visactor/vrender-core';
 import { builtinSymbolsMap, calculateLineHeight } from '@visactor/vrender-core';
 import { merge, isValid, normalizePadding, isNil } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { initTextMeasure } from '../util/text';
+import { alignTextInLine, initTextMeasure } from '../util/text';
 import { isVisible } from '../util';
 import type { TooltipAttributes, TooltipRowAttrs, TooltipRowStyleAttrs, TooltipRichTextAttrs } from './type';
 import { getRichTextAttribute, mergeRowAttrs } from './util';
@@ -45,8 +53,17 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
   }
 
   protected render() {
-    const { visible, content, panel, keyWidth, valueWidth, hasContentShape, autoCalculatePosition, autoMeasure } =
-      this.attribute;
+    const {
+      visible,
+      content,
+      panel,
+      keyWidth,
+      valueWidth,
+      hasContentShape,
+      autoCalculatePosition,
+      autoMeasure,
+      align
+    } = this.attribute;
 
     if (!visible) {
       this.hideAll();
@@ -197,181 +214,200 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
           'group'
         ) as IGroup;
 
-        let x = 0;
-        if (isVisible(itemAttr.shape)) {
-          // 存在 symbol
-          itemGroup.createOrUpdateChild(
-            `${itemGroupName}-${TOOLTIP_SHAPE_NAME_SUFFIX}`,
-            {
-              visible: true,
-              x: itemAttr.shape.size / 2,
-              y:
-                itemAttr.shape.size / 2 +
-                ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -
-                  itemAttr.shape.size) /
-                  2,
-              ...itemAttr.shape
-            },
-            'symbol'
-          ) as ISymbol;
-        }
+        const shapeOffsetWidth = itemAttr.shape.size + itemAttr.shape.spacing;
+        let x =
+          align === 'right'
+            ? (hasContentShape ? shapeOffsetWidth : 0) +
+              (isVisible(itemAttr.key) ? keyWidth + itemAttr.key.spacing : 0) +
+              (isVisible(itemAttr.value) ? valueWidth : 0)
+            : 0;
+
+        const shapeGraphic = this._createShape(itemAttr, itemGroup, itemGroupName);
         if (hasContentShape) {
-          x += itemAttr.shape.size + itemAttr.shape.spacing;
+          if (shapeGraphic) {
+            shapeGraphic.setAttribute('x', x);
+          }
+          if (align === 'right') {
+            x -= shapeOffsetWidth;
+          } else {
+            x += shapeOffsetWidth;
+          }
         }
 
-        if (isVisible(itemAttr.key)) {
-          let element: IRichText | IText;
-          if (itemAttr.key.multiLine) {
-            element = itemGroup.createOrUpdateChild(
-              `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
-              {
-                visible: true,
-                ...getRichTextAttribute(itemAttr.key),
-                textBaseline: 'top'
-              },
-              'richtext'
-            ) as IRichText;
-          } else if (
-            typeof itemAttr.key.text === 'object' &&
-            itemAttr.key.text !== null &&
-            ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich' ||
-              (itemAttr.key.text as TooltipRichTextAttrs).type === 'html')
-          ) {
-            if ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich') {
-              element = itemGroup.createOrUpdateChild(
-                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-                {
-                  visible: true,
-                  ...getRichTextAttribute(itemAttr.key),
-                  textBaseline: 'top'
-                },
-                'richtext'
-              ) as IRichText;
-            } else {
-              element = itemGroup.createOrUpdateChild(
-                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-                {
-                  html: {
-                    dom: (itemAttr.key.text as TooltipRichTextAttrs).text as string,
-                    ...DEFAULT_HTML_TEXT_SPEC,
-                    ...itemAttr.key
-                  }
-                },
-                'richtext'
-              ) as IRichText;
-            }
-          } else {
-            element = itemGroup.createOrUpdateChild(
-              `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
-              {
-                visible: true,
-                text: (itemAttr.key.text ?? '') as any,
-                ...itemAttr.key,
-                textBaseline: 'top'
-              },
-              'text'
-            ) as IText;
-          }
+        const keyGraphic = this._createKey(itemAttr, itemGroup, itemGroupName);
 
-          const { textAlign } = itemAttr.key;
-          if (textAlign === 'center') {
-            element.setAttribute('x', x + keyWidth / 2);
-          } else if (textAlign === 'right' || textAlign === 'end') {
-            // 右对齐
-            element.setAttribute('x', x + keyWidth);
+        if (keyGraphic) {
+          alignTextInLine(align, keyGraphic, itemAttr.key.textAlign, x, keyWidth);
+          keyGraphic.setAttribute('y', 0);
+          if (align === 'right') {
+            x -= keyWidth + itemAttr.key.spacing;
           } else {
-            // 默认左对齐
-            element.setAttribute('x', x);
+            x += keyWidth + itemAttr.key.spacing;
           }
-
-          element.setAttribute('y', 0);
-          x += keyWidth + itemAttr.key.spacing;
         }
+        const valueGraphic = this._createValue(itemAttr, itemGroup, itemGroupName);
+        if (valueGraphic) {
+          let textAlign: TextAlignType = 'right';
 
-        if (isVisible(itemAttr.value)) {
-          let element: IRichText | IText;
-          if (itemAttr.value.multiLine) {
-            element = itemGroup.createOrUpdateChild(
-              `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-              {
-                visible: true,
-                ...getRichTextAttribute(itemAttr.value),
-                textBaseline: 'top'
-              },
-              'richtext'
-            ) as IRichText;
-          } else if (
-            typeof itemAttr.value.text === 'object' &&
-            itemAttr.value.text !== null &&
-            ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich' ||
-              (itemAttr.value.text as TooltipRichTextAttrs).type === 'html')
-          ) {
-            if ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich') {
-              element = itemGroup.createOrUpdateChild(
-                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-                {
-                  visible: true,
-                  ...getRichTextAttribute(itemAttr.value),
-                  textBaseline: 'top'
-                },
-                'richtext'
-              ) as IRichText;
-            } else {
-              element = itemGroup.createOrUpdateChild(
-                `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-                {
-                  html: {
-                    dom: (itemAttr.value.text as TooltipRichTextAttrs).text as string,
-                    container: '',
-                    width: 30,
-                    height: 30,
-                    style: {},
-                    ...itemAttr.value
-                  }
-                },
-                'richtext'
-              ) as IRichText;
-            }
-          } else {
-            element = itemGroup.createOrUpdateChild(
-              `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
-              {
-                visible: true,
-                text: (itemAttr.value.text ?? '') as any,
-                ...itemAttr.value,
-                textBaseline: 'top'
-              },
-              'text'
-            ) as IText;
-          }
-
-          let textAlign = 'right';
           if (isValid(itemAttr.value.textAlign)) {
             textAlign = itemAttr.value.textAlign;
-          } else if (!isVisible(itemAttr.key)) {
+          } else if (!isVisible(itemAttr.key) && align !== 'right') {
             textAlign = 'left';
           }
-          element.setAttribute('textAlign', textAlign);
-
-          if (textAlign === 'center') {
-            element.setAttribute('x', x + valueWidth / 2);
-          } else if (textAlign === 'right' || textAlign === 'end') {
-            // 右对齐
-            element.setAttribute('x', x + valueWidth);
-          } else {
-            // 默认左对齐
-            element.setAttribute('x', x);
-          }
-          x += valueWidth;
-
-          element.setAttribute('y', 0);
-
-          itemGroup.add(element);
+          valueGraphic.setAttribute('textAlign', textAlign);
+          alignTextInLine(align, valueGraphic, textAlign, x, valueWidth);
+          valueGraphic.setAttribute('y', 0);
         }
 
         lastYPos += itemAttr.height + itemAttr.spaceRow;
       });
     }
+  }
+
+  protected _createShape(itemAttr: TooltipRowAttrs & TooltipRowStyleAttrs, itemGroup: IGroup, itemGroupName: string) {
+    if (isVisible(itemAttr.shape)) {
+      // 存在 symbol
+      return itemGroup.createOrUpdateChild(
+        `${itemGroupName}-${TOOLTIP_SHAPE_NAME_SUFFIX}`,
+        {
+          visible: true,
+          x: itemAttr.shape.size / 2,
+          y:
+            itemAttr.shape.size / 2 +
+            ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -
+              itemAttr.shape.size) /
+              2,
+          ...itemAttr.shape
+        },
+        'symbol'
+      ) as ISymbol;
+    }
+
+    return;
+  }
+
+  protected _createKey(itemAttr: TooltipRowAttrs & TooltipRowStyleAttrs, itemGroup: IGroup, itemGroupName: string) {
+    if (isVisible(itemAttr.key)) {
+      let element: IRichText | IText;
+      if (itemAttr.key.multiLine) {
+        element = itemGroup.createOrUpdateChild(
+          `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
+          {
+            visible: true,
+            ...getRichTextAttribute(itemAttr.key),
+            textBaseline: 'top'
+          },
+          'richtext'
+        ) as IRichText;
+      } else if (
+        typeof itemAttr.key.text === 'object' &&
+        itemAttr.key.text !== null &&
+        ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich' ||
+          (itemAttr.key.text as TooltipRichTextAttrs).type === 'html')
+      ) {
+        if ((itemAttr.key.text as TooltipRichTextAttrs).type === 'rich') {
+          element = itemGroup.createOrUpdateChild(
+            `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+            {
+              visible: true,
+              ...getRichTextAttribute(itemAttr.key),
+              textBaseline: 'top'
+            },
+            'richtext'
+          ) as IRichText;
+        } else {
+          element = itemGroup.createOrUpdateChild(
+            `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+            {
+              html: {
+                dom: (itemAttr.key.text as TooltipRichTextAttrs).text as string,
+                ...DEFAULT_HTML_TEXT_SPEC,
+                ...itemAttr.key
+              }
+            },
+            'richtext'
+          ) as IRichText;
+        }
+      } else {
+        element = itemGroup.createOrUpdateChild(
+          `${itemGroupName}-${TOOLTIP_KEY_NAME_SUFFIX}`,
+          {
+            visible: true,
+            text: (itemAttr.key.text ?? '') as any,
+            ...itemAttr.key,
+            textBaseline: 'top'
+          },
+          'text'
+        ) as IText;
+      }
+
+      return element;
+    }
+    return;
+  }
+
+  protected _createValue(itemAttr: TooltipRowAttrs & TooltipRowStyleAttrs, itemGroup: IGroup, itemGroupName: string) {
+    if (isVisible(itemAttr.value)) {
+      let element: IRichText | IText;
+      if (itemAttr.value.multiLine) {
+        element = itemGroup.createOrUpdateChild(
+          `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            visible: true,
+            ...getRichTextAttribute(itemAttr.value),
+            textBaseline: 'top'
+          },
+          'richtext'
+        ) as IRichText;
+      } else if (
+        typeof itemAttr.value.text === 'object' &&
+        itemAttr.value.text !== null &&
+        ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich' ||
+          (itemAttr.value.text as TooltipRichTextAttrs).type === 'html')
+      ) {
+        if ((itemAttr.value.text as TooltipRichTextAttrs).type === 'rich') {
+          element = itemGroup.createOrUpdateChild(
+            `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+            {
+              visible: true,
+              ...getRichTextAttribute(itemAttr.value),
+              textBaseline: 'top'
+            },
+            'richtext'
+          ) as IRichText;
+        } else {
+          element = itemGroup.createOrUpdateChild(
+            `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+            {
+              html: {
+                dom: (itemAttr.value.text as TooltipRichTextAttrs).text as string,
+                container: '',
+                width: 30,
+                height: 30,
+                style: {},
+                ...itemAttr.value
+              }
+            },
+            'richtext'
+          ) as IRichText;
+        }
+      } else {
+        element = itemGroup.createOrUpdateChild(
+          `${itemGroupName}-${TOOLTIP_VALUE_NAME_SUFFIX}`,
+          {
+            visible: true,
+            text: (itemAttr.value.text ?? '') as any,
+            ...itemAttr.value,
+            textBaseline: 'top'
+          },
+          'text'
+        ) as IText;
+      }
+
+      return element;
+    }
+
+    return;
   }
 
   setAttributes(params: Partial<Required<TooltipAttributes>>, forceUpdateTag?: boolean | undefined): void {

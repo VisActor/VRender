@@ -229,7 +229,7 @@ export const page = () => {
         fill: 'blue'
       });
       r.animate()
-        .to({ x1: Math.random() * 400 + 400 }, 1000, 'quadIn')
+        .to({ x: Math.random() * 400 + 400 }, 1000, 'quadIn')
         .subAnimate()
         .play(new StreamLight('', 0, 2000, 'quadIn'))
         .loop(Infinity);
@@ -252,6 +252,23 @@ export const page = () => {
         .loop(Infinity);
       stage.defaultLayer.add(r as any);
     }
+
+    // for (let i = 0; i < 3; i++) {
+    //   const r = createRect({
+    //     y: 400,
+    //     y1: 400,
+    //     x: 80 + i * 100,
+    //     x1: 80 + i * 100 + 20,
+    //     // height: 300,
+    //     fill: 'blue'
+    //   });
+    //   r.animate()
+    //     .to({ y: Math.random() * 200 + 100 }, 1000, 'quadIn')
+    //     .subAnimate()
+    //     .play(new StreamLight('', 0, 2000, 'quadIn', { isHorizontal: false }))
+    //     .loop(Infinity);
+    //   stage.defaultLayer.add(r as any);
+    // }
   });
   addCase('stream-light2', container, stage => {
     const points = [

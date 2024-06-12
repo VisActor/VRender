@@ -379,7 +379,8 @@ export class StreamLight extends ACustomAnimate<any> {
       const parentWidth = parentAttr.width ?? Math.abs(parentAttr.x1 - parentAttr.x) ?? 250;
       const streamLength = this.params?.streamLength ?? parentWidth;
       const maxLength = this.params?.attribute?.width ?? 60;
-      // 起点，x右端点 对齐 parent左端点
+      // 起点，rect x右端点 对齐 parent左端点
+      // 如果parent.x1 < parent.x, 需要把rect属性移到parent x1的位置上, 因为初始 rect.x = parent.x
       const startX = -maxLength;
       // 插值
       const currentX = startX + (streamLength - startX) * ratio;
@@ -392,7 +393,8 @@ export class StreamLight extends ACustomAnimate<any> {
       this.rect.setAttributes(
         {
           x,
-          width
+          width,
+          dx: Math.min(parentAttr.x1 - parentAttr.x, 0)
         } as any,
         false,
         {
@@ -427,7 +429,8 @@ export class StreamLight extends ACustomAnimate<any> {
       this.rect.setAttributes(
         {
           y,
-          height
+          height,
+          dy: Math.min(parentAttr.y1 - parentAttr.y, 0)
         } as any,
         false,
         {

@@ -28,6 +28,7 @@ export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
 // }
 
 const tempDirtyBounds = new AABBBounds();
+const tempBackupDirtyBounds = new AABBBounds();
 /**
  * 影子节点拦截器，用于渲染影子节点
  */
@@ -79,8 +80,10 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     // 变换dirtyBounds
     if (drawContribution.dirtyBounds && drawContribution.backupDirtyBounds) {
       tempDirtyBounds.copy(drawContribution.dirtyBounds);
+      tempBackupDirtyBounds.copy(drawContribution.backupDirtyBounds);
       const m = graphic.globalTransMatrix.getInverse();
       drawContribution.dirtyBounds.copy(drawContribution.backupDirtyBounds).transformWithMatrix(m);
+      drawContribution.backupDirtyBounds.copy(drawContribution.dirtyBounds);
     }
 
     // 设置context的transform到上一个节点
@@ -90,6 +93,7 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
 
     if (drawContribution.dirtyBounds && drawContribution.backupDirtyBounds) {
       drawContribution.dirtyBounds.copy(tempDirtyBounds);
+      drawContribution.backupDirtyBounds.copy(tempBackupDirtyBounds);
     }
 
     return true;

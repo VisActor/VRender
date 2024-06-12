@@ -376,7 +376,7 @@ export class StreamLight extends ACustomAnimate<any> {
     const isHorizontal = this.params?.isHorizontal ?? true;
     const parentAttr = (this.target as any).attribute;
     if (isHorizontal) {
-      const parentWidth = parentAttr.width ?? parentAttr.x1 - parentAttr.x ?? 250;
+      const parentWidth = parentAttr.width ?? Math.abs(parentAttr.x1 - parentAttr.x) ?? 250;
       const streamLength = this.params?.streamLength ?? parentWidth;
       const maxLength = this.params?.attribute?.width ?? 60;
       // 起点，x右端点 对齐 parent左端点
@@ -404,7 +404,7 @@ export class StreamLight extends ACustomAnimate<any> {
         }
       );
     } else {
-      const parentHeight = parentAttr.height ?? parentAttr.y1 - parentAttr.y ?? 250;
+      const parentHeight = parentAttr.height ?? Math.abs(parentAttr.y1 - parentAttr.y) ?? 250;
       const streamLength = this.params?.streamLength ?? parentHeight;
       const maxLength = this.params?.attribute?.height ?? 60;
       // 起点，y上端点 对齐 parent下端点

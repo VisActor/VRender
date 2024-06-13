@@ -1,6 +1,7 @@
 import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds, pi2 } from '@visactor/vutils';
-import { graphicCreator, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic/graphic-service/graphic-service';
+import { graphicCreator } from '../../../graphic/graphic-creator';
 import type {
   IArc,
   IContext2d,
@@ -8,7 +9,6 @@ import type {
   IDrawContribution,
   IDrawItemInterceptorContribution,
   IGraphic,
-  IGraphicAttribute,
   IGraphicRenderDrawParams,
   IGroup,
   ILayer,

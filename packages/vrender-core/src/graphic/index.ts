@@ -1,19 +1,3 @@
-// export { Node } from './node-tree';
-// export { Circle, DefaultCircleAttribute, CIRCLE_NUMBER_TYPE } from './circle';
-// export { Text, DefaultTextAttribute, TEXT_NUMBER_TYPE } from './text';
-// export { Symbol, DefaultSymbolAttribute, SYMBOL_NUMBER_TYPE } from './symbol';
-// export { builtinSymbolsMap } from './builtin-symbol';
-// export { Line, DefaultLineAttribute, LINE_NUMBER_TYPE } from './line';
-// export { Rect, DefaultRectAttribute, RECT_NUMBER_TYPE } from './rect';
-// export { Path, DefaultPathAttribute, PATH_NUMBER_TYPE } from './path';
-// export { RichText, DefaultRichTextAttribute, RICHTEXT_NUMBER_TYPE } from './richtext';
-// export { Area, DefaultAreaAttribute, AREA_NUMBER_TYPE } from './area';
-// export { Image, DefaultImageAttribute, IMAGE_NUMBER_TYPE } from './image';
-// export { Arc, DefaultArcAttribute, ARC_NUMBER_TYPE } from './arc';
-// export { Group } from './group';
-// export { DefaultAttribute, DefaultFillStyle, DefaultStrokeStyle, DefaultTransform } from './config';
-// export * from './graphic-service/graphic-service';
-
 export * from './node-tree';
 export * from './circle';
 export * from './text';

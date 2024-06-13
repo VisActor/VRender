@@ -1,21 +1,18 @@
 import type { IPointLike } from '@visactor/vutils';
-import { injectable } from '../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   ICamera,
   IContext2d,
   IGraphic,
   mat4,
-  IRenderService,
   IDrawContext,
   IGraphicRenderDrawParams,
   IMarkAttribute,
   IThemeAttribute,
   IContributionProvider,
-  ICircleRenderContribution,
   IBaseRenderContribution
 } from '../../../interface';
-import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
+import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';

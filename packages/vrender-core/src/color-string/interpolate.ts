@@ -22,11 +22,9 @@ export function interpolateColor(
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor | string[] {
   if ((Array.isArray(from) && !isNumber(from[0])) || (Array.isArray(to) && !isNumber(to[0]))) {
-    const out: string[] = [];
-    out[0] = _interpolateColor(from[0], to[0], ratio, alphaChannel) as string;
-    out[1] = _interpolateColor(from[1], to[1], ratio, alphaChannel) as string;
-    out[2] = _interpolateColor(from[2], to[2], ratio, alphaChannel) as string;
-    out[3] = _interpolateColor(from[3], to[3], ratio, alphaChannel) as string;
+    const out: string[] = new Array(4).fill(0).map((_, index) => {
+      return _interpolateColor(from[index], to[index], ratio, alphaChannel) as string;
+    });
     return out;
     // cb && cb(from!, to!);
   }

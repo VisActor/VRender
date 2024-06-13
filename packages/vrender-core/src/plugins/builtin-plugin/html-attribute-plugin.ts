@@ -12,7 +12,8 @@ import type {
   IText
 } from '../../interface';
 import { application } from '../../application';
-import { DefaultAttribute, getTheme } from '../../graphic';
+import { getTheme } from '../../graphic/theme';
+import { DefaultAttribute } from '../../graphic/config';
 import { textAttributesToStyle } from '../../common/text';
 import { isFunction, isNil, isObject, isString, styleStringToObject, calculateAnchorOfBounds } from '@visactor/vutils';
 

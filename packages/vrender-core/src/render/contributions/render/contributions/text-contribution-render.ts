@@ -1,4 +1,4 @@
-import type { IAABBBounds, IMatrix, IMatrixLike } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix } from '@visactor/vutils';
 import { isObject } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import type {
@@ -11,7 +11,7 @@ import type {
 } from '../../../../interface';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { boundsAllocate } from '../../../../allocator/bounds-allocate';
-import { getTextBounds } from '../../../../graphic';
+import { getTextBounds } from '../../../../graphic/bounds';
 import { createRectPath } from '../../../../common/shape/rect';
 
 export class DefaultTextBackgroundRenderContribution

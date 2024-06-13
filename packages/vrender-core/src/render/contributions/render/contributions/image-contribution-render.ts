@@ -7,10 +7,9 @@ import type {
   IDrawContext,
   IBackgroundConfig,
   IGraphic,
-  IImageGraphicAttribute,
   IMarkAttribute
 } from '../../../../interface';
-import { getTheme } from '../../../../graphic';
+import { getTheme } from '../../../../graphic/theme';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import { isNumber, isObject } from '@visactor/vutils';

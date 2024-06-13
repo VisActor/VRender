@@ -198,7 +198,7 @@ export const page = () => {
       fill: 'red',
       texture: 'bias-rl',
       textureColor: 'grey',
-      stroke: [true, false, false, false],
+      stroke: ['blue', false, false, false],
       fillPickable: false,
       lineWidth: 5
     });
@@ -208,126 +208,127 @@ export const page = () => {
     graphics.push(area);
   });
 
-  graphics.length = 0;
-  graphics.push(
-    createArea({
-      visible: true,
-      lineWidth: 2,
-      lineCap: 'round',
-      lineJoin: 'round',
-      fillOpacity: 0.2,
-      curveType: 'monotoneX',
-      enableSegments: true,
-      stroke: false,
-      connectedType: 'none',
-      fill: '#F5222D',
-      y1: 0,
-      defined: true,
-      segments: [
-        {
-          visible: true,
-          lineWidth: 2,
-          lineCap: 'round',
-          lineJoin: 'round',
-          fillOpacity: 0.2,
-          curveType: 'monotoneX',
-          x: 0,
-          y: 0,
-          stroke: false,
-          connectedType: 'none',
-          fill: '#F5222D',
-          y1: 136.8,
-          points: [
-            {
-              x: 0,
-              y: 296.40000000000003,
-              context: '1700_0',
-              y1: 136.8
-            },
-            {
-              x: 94.1875,
-              y: 186.96,
-              context: '1710_0',
-              y1: 86.63999999999997
-            },
-            {
-              x: 188.375,
-              y: 109.44,
-              context: '1720_0',
-              y1: 18.240000000000016
-            },
-            {
-              x: 282.5625,
-              y: 159.6,
-              context: '1730_0',
-              y1: 13.680000000000012
-            },
-            {
-              x: 376.75,
-              y: 150.48,
-              context: '1740_0',
-              y1: 31.919999999999977
-            },
-            {
-              x: 470.9375,
-              y: 95.75999999999999,
-              context: '1750_0',
-              y1: 45.59999999999999
-            },
-            {
-              x: 499.19374999999997,
-              y: 59.28,
-              context: '1753_0',
-              y1: 59.28
-            }
-          ]
-        },
-        {
-          visible: true,
-          lineWidth: 2,
-          lineCap: 'round',
-          lineJoin: 'round',
-          fillOpacity: 0.2,
-          curveType: 'monotoneX',
-          x: 0,
-          y: 0,
-          stroke: false,
-          connectedType: 'none',
-          fill: '#FAAD14',
-          y1: 95.75999999999999,
-          points: [
-            {
-              x: 565.125,
-              context: '1760_0',
-              y1: 95.75999999999999,
-              defined: false
-            },
-            {
-              x: 659.3125,
-              context: '1770_0',
-              y1: 68.4,
-              defined: false
-            },
-            {
-              x: 753.5,
-              context: '1780_0',
-              y1: 31.919999999999977,
-              defined: false
-            }
-          ]
-        }
-      ],
-      points: null,
-      x: 0,
-      y: 0,
-      x1: 0,
-      pickable: true,
-      clipRange: 0.8
-    })
-  );
+  // graphics.length = 0;
+  // graphics.push(
+  //   createArea({
+  //     visible: true,
+  //     lineWidth: 2,
+  //     lineCap: 'round',
+  //     lineJoin: 'round',
+  //     fillOpacity: 0.2,
+  //     curveType: 'monotoneX',
+  //     enableSegments: true,
+  //     stroke: false,
+  //     connectedType: 'none',
+  //     fill: '#F5222D',
+  //     y1: 0,
+  //     defined: true,
+  //     segments: [
+  //       {
+  //         visible: true,
+  //         lineWidth: 2,
+  //         lineCap: 'round',
+  //         lineJoin: 'round',
+  //         fillOpacity: 0.2,
+  //         curveType: 'monotoneX',
+  //         x: 0,
+  //         y: 0,
+  //         stroke: false,
+  //         connectedType: 'none',
+  //         fill: '#F5222D',
+  //         y1: 136.8,
+  //         points: [
+  //           {
+  //             x: 0,
+  //             y: 296.40000000000003,
+  //             context: '1700_0',
+  //             y1: 136.8
+  //           },
+  //           {
+  //             x: 94.1875,
+  //             y: 186.96,
+  //             context: '1710_0',
+  //             y1: 86.63999999999997
+  //           },
+  //           {
+  //             x: 188.375,
+  //             y: 109.44,
+  //             context: '1720_0',
+  //             y1: 18.240000000000016
+  //           },
+  //           {
+  //             x: 282.5625,
+  //             y: 159.6,
+  //             context: '1730_0',
+  //             y1: 13.680000000000012
+  //           },
+  //           {
+  //             x: 376.75,
+  //             y: 150.48,
+  //             context: '1740_0',
+  //             y1: 31.919999999999977
+  //           },
+  //           {
+  //             x: 470.9375,
+  //             y: 95.75999999999999,
+  //             context: '1750_0',
+  //             y1: 45.59999999999999
+  //           },
+  //           {
+  //             x: 499.19374999999997,
+  //             y: 59.28,
+  //             context: '1753_0',
+  //             y1: 59.28
+  //           }
+  //         ]
+  //       },
+  //       {
+  //         visible: true,
+  //         lineWidth: 2,
+  //         lineCap: 'round',
+  //         lineJoin: 'round',
+  //         fillOpacity: 0.2,
+  //         curveType: 'monotoneX',
+  //         x: 0,
+  //         y: 0,
+  //         stroke: ['red', false, false, false],
+  //         connectedType: 'none',
+  //         fill: '#FAAD14',
+  //         y1: 95.75999999999999,
+  //         points: [
+  //           {
+  //             x: 565.125,
+  //             context: '1760_0',
+  //             y1: 95.75999999999999,
+  //             defined: false
+  //           },
+  //           {
+  //             x: 659.3125,
+  //             context: '1770_0',
+  //             y1: 68.4,
+  //             defined: false
+  //           },
+  //           {
+  //             x: 753.5,
+  //             context: '1780_0',
+  //             y1: 31.919999999999977,
+  //             defined: false
+  //           }
+  //         ]
+  //       }
+  //     ],
+  //     points: null,
+  //     x: 0,
+  //     y: 0,
+  //     x1: 0,
+  //     pickable: true
+  //     // clipRange: 0.8
+  //   })
+  // );
 
   graphics.forEach(item => {
-    item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 10000, 'linear');
+    // item.animate().to({ clipRange: 0 }, 0, 'linear').to({ clipRange: 1 }, 10000, 'linear');
+    item.animate().to({ stroke: ['red', false, false, false] }, 1000, 'linear');
   });
 
   console.time();

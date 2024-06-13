@@ -21,6 +21,25 @@ export function interpolateColor(
   alphaChannel: boolean,
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor | string[] {
+  if ((Array.isArray(from) && !isNumber(from[0])) || (Array.isArray(to) && !isNumber(to[0]))) {
+    const out: string[] = [];
+    out[0] = _interpolateColor(from[0], to[0], ratio, alphaChannel) as string;
+    out[1] = _interpolateColor(from[1], to[1], ratio, alphaChannel) as string;
+    out[2] = _interpolateColor(from[2], to[2], ratio, alphaChannel) as string;
+    out[3] = _interpolateColor(from[3], to[3], ratio, alphaChannel) as string;
+    return out;
+    // cb && cb(from!, to!);
+  }
+  return _interpolateColor(from, to, ratio, alphaChannel, cb);
+}
+
+export function _interpolateColor(
+  from: [number, number, number, number] | string | IGradientColor,
+  to: [number, number, number, number] | string | IGradientColor,
+  ratio: number,
+  alphaChannel: boolean,
+  cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
+): false | string | IGradientColor | string[] {
   if (!(from && to)) {
     return (from && colorArrayToString(from)) || (to && colorArrayToString(to)) || (false as any);
   }

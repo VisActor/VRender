@@ -2,6 +2,21 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.19.10",
+      "tag": "@visactor/vrender_v0.19.10",
+      "date": "Thu, 13 Jun 2024 09:52:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(streamLight): streamLight support direction and  parent support x1y1 attribute. close@Visactor/VChart#2734"
+          },
+          {
+            "comment": "fix: fix issue with interploate while color is array"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.9",
       "tag": "@visactor/vrender_v0.19.9",
       "date": "Wed, 05 Jun 2024 12:25:00 GMT",

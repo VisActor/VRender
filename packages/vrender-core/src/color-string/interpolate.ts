@@ -1,6 +1,6 @@
 import { ColorStore, ColorType } from './store';
 import type { IGradientColor, ILinearGradient, IRadialGradient, IConicalGradient } from '../interface';
-import { isNumber } from '@visactor/vutils';
+import { isArray, isNumber } from '@visactor/vutils';
 
 function colorArrayToString(
   color: string | IGradientColor | [number, number, number, number],
@@ -15,20 +15,25 @@ function colorArrayToString(
 }
 
 export function interpolateColor(
-  from: [number, number, number, number] | string | IGradientColor,
-  to: [number, number, number, number] | string | IGradientColor,
+  from: [number, number, number, number] | [string, string, string, string] | string | IGradientColor,
+  to: [number, number, number, number] | [string, string, string, string] | string | IGradientColor,
   ratio: number,
   alphaChannel: boolean,
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor | string[] {
   if ((Array.isArray(from) && !isNumber(from[0])) || (Array.isArray(to) && !isNumber(to[0]))) {
     const out: string[] = new Array(4).fill(0).map((_, index) => {
-      return _interpolateColor(from[index], to[index], ratio, alphaChannel) as string;
+      return _interpolateColor(
+        isArray(from) ? (from[index] as string) : from,
+        isArray(to) ? (to[index] as string) : to,
+        ratio,
+        alphaChannel
+      ) as string;
     });
     return out;
     // cb && cb(from!, to!);
   }
-  return _interpolateColor(from, to, ratio, alphaChannel, cb);
+  return _interpolateColor(from as any, to as any, ratio, alphaChannel, cb);
 }
 
 export function _interpolateColor(

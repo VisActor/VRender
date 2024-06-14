@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 05 Jun 2024 12:25:00 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Jun 2024 09:52:46 GMT and should not be manually modified.
+
+## 0.19.10
+Thu, 13 Jun 2024 09:52:46 GMT
+
+### Updates
+
+- feat(streamLight): streamLight support direction and  parent support x1y1 attribute. close@Visactor/VChart#2734
+- fix: fix issue with interploate while color is array
 
 ## 0.19.9
 Wed, 05 Jun 2024 12:25:00 GMT

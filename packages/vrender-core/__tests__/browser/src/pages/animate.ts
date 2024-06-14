@@ -220,16 +220,16 @@ export const page = () => {
   addCase('stream-light', container, stage => {
     for (let i = 0; i < 6; i++) {
       const r = createRect({
-        x: 100,
-        y: 50 + i * 100,
-        width: 0,
-        height: 20,
+        y: 100,
+        x: 50 + i * 100,
+        width: 20,
+        height: 0,
         fill: 'blue'
       });
       r.animate()
         .to({ width: Math.random() * 900 + 300 }, 1000, 'quadIn')
         .subAnimate()
-        .play(new StreamLight('', 0, 2000, 'quadIn'))
+        .play(new StreamLight('', 0, 2000, 'quadIn', { isHorizontal: false }))
         .loop(Infinity);
       stage.defaultLayer.add(r as any);
     }

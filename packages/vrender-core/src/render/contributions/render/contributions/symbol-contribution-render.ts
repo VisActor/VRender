@@ -6,7 +6,8 @@ import type {
   ISymbolGraphicAttribute,
   IThemeAttribute,
   ISymbolRenderContribution,
-  IDrawContext
+  IDrawContext,
+  IBorderStyle
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
@@ -61,15 +62,15 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       scaleY = symbolAttribute.scaleY
     } = symbol.attribute;
 
-    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
-    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+    const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
+      const doStroke = !!(borderStyle && borderStyle.stroke);
 
-    if (doOuterBorder) {
-      const { distance = symbolAttribute.outerBorder.distance } = outerBorder;
+      const { distance = symbolAttribute[key].distance } = borderStyle;
       const d = getScaledStroke(context, distance as number, context.dpr);
+      const sign = key === 'outerBorder' ? 1 : -1;
 
       context.beginPath();
-      if (parsedPath.drawOffset(context, size, x, y, d) === false) {
+      if (parsedPath.drawOffset(context, size, x, y, sign * d) === false) {
         context.closePath();
       }
 
@@ -77,52 +78,25 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);
 
       if (strokeCb) {
-        strokeCb(context, outerBorder, symbolAttribute.outerBorder);
-      } else if (doStrokeOuter) {
+        strokeCb(context, borderStyle, symbolAttribute[key]);
+      } else if (doStroke) {
         // 存在stroke
-        const lastOpacity = (symbolAttribute.outerBorder as any).opacity;
-        (symbolAttribute.outerBorder as any).opacity = opacity;
+        const lastOpacity = (symbolAttribute[key] as any).opacity;
+        (symbolAttribute[key] as any).opacity = opacity;
         context.setStrokeStyle(
           symbol,
-          outerBorder,
+          borderStyle,
           (originX - x) / scaleX,
           (originY - y) / scaleY,
-          symbolAttribute.outerBorder as any
+          symbolAttribute[key] as any
         );
-        (symbolAttribute.outerBorder as any).opacity = lastOpacity;
+        (symbolAttribute[key] as any).opacity = lastOpacity;
         context.stroke();
       }
-    }
+    };
 
-    if (doInnerBorder) {
-      const { distance = symbolAttribute.innerBorder.distance } = innerBorder;
-      const d = getScaledStroke(context, distance as number, context.dpr);
-
-      context.beginPath();
-      if (parsedPath.drawOffset(context, size, x, y, -d) === false) {
-        context.closePath();
-      }
-
-      // shadow
-      context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);
-
-      if (strokeCb) {
-        strokeCb(context, innerBorder, symbolAttribute.innerBorder);
-      } else if (doStrokeInner) {
-        // 存在stroke
-        const lastOpacity = (symbolAttribute.innerBorder as any).opacity;
-        (symbolAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(
-          symbol,
-          innerBorder,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          symbolAttribute.innerBorder as any
-        );
-        (symbolAttribute.innerBorder as any).opacity = lastOpacity;
-        context.stroke();
-      }
-    }
+    doOuterBorder && renderBorder(outerBorder, 'outerBorder');
+    doInnerBorder && renderBorder(innerBorder, 'innerBorder');
   }
 }
 

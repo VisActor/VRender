@@ -68,48 +68,46 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
     const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
       const doStroke = !!(borderStyle && borderStyle.stroke);
 
-      if (doStroke) {
-        const sign = key === 'outerBorder' ? -1 : 1;
-        const { distance = rectAttribute[key].distance } = borderStyle;
-        const d = getScaledStroke(context, distance as number, context.dpr);
-        const nextX = x + sign * d;
-        const nextY = y + sign * d;
-        const dw = d * 2;
-        if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
-          // 不需要处理圆角
-          context.beginPath();
-          context.rect(nextX, nextY, width - sign * dw, height - sign * dw);
-        } else {
-          context.beginPath();
+      const sign = key === 'outerBorder' ? -1 : 1;
+      const { distance = rectAttribute[key].distance } = borderStyle;
+      const d = getScaledStroke(context, distance as number, context.dpr);
+      const nextX = x + sign * d;
+      const nextY = y + sign * d;
+      const dw = d * 2;
+      if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
+        // 不需要处理圆角
+        context.beginPath();
+        context.rect(nextX, nextY, width - sign * dw, height - sign * dw);
+      } else {
+        context.beginPath();
 
-          // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-          createRectPath(context, nextX, nextY, width - sign * dw, height - sign * dw, cornerRadius);
-        }
+        // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
+        createRectPath(context, nextX, nextY, width - sign * dw, height - sign * dw, cornerRadius);
+      }
 
-        // shadow
-        context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
+      // shadow
+      context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
 
-        if (strokeCb) {
-          strokeCb(context, borderStyle, rectAttribute[key]);
-        } else if (doStroke) {
-          // 存在stroke
-          const lastOpacity = (rectAttribute[key] as any).opacity;
-          (rectAttribute[key] as any).opacity = opacity;
-          context.setStrokeStyle(
-            rect,
-            borderStyle,
-            (originX - x) / scaleX,
-            (originY - y) / scaleY,
-            rectAttribute[key] as any
-          );
-          (rectAttribute[key] as any).opacity = lastOpacity;
-          context.stroke();
-        }
+      if (strokeCb) {
+        strokeCb(context, borderStyle, rectAttribute[key]);
+      } else if (doStroke) {
+        // 存在stroke
+        const lastOpacity = (rectAttribute[key] as any).opacity;
+        (rectAttribute[key] as any).opacity = opacity;
+        context.setStrokeStyle(
+          rect,
+          borderStyle,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          rectAttribute[key] as any
+        );
+        (rectAttribute[key] as any).opacity = lastOpacity;
+        context.stroke();
       }
     };
 
-    renderBorder(outerBorder, 'outerBorder');
-    renderBorder(innerBorder, 'innerBorder');
+    doOuterBorder && renderBorder(outerBorder, 'outerBorder');
+    doInnerBorder && renderBorder(innerBorder, 'innerBorder');
   }
 }
 

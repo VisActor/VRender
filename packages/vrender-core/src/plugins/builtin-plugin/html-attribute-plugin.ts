@@ -16,6 +16,7 @@ import { getTheme } from '../../graphic/theme';
 import { DefaultAttribute } from '../../graphic/config';
 import { textAttributesToStyle } from '../../common/text';
 import { isFunction, isNil, isObject, isString, styleStringToObject, calculateAnchorOfBounds } from '@visactor/vutils';
+import { Factory } from '../../factory';
 
 export class HtmlAttributePlugin implements IPlugin {
   name: string = 'HtmlAttributePlugin';
@@ -322,3 +323,7 @@ export class HtmlAttributePlugin implements IPlugin {
     }
   }
 }
+
+export const registerHtmlAttributePlugin = () => {
+  Factory.registerPlugin('ReactAttributePlugin', HtmlAttributePlugin);
+};

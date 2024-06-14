@@ -18,6 +18,7 @@ export * from './picker';
 export * from './animate';
 export * from './resource-loader/loader';
 export * from './color-string';
+export * from './factory';
 
 /* export common */
 export * from './common/text';
@@ -93,5 +94,6 @@ export * from './register/register-text';
 export * from './register/register-shadowRoot';
 export * from './register/register-wraptext';
 
-export * from './plugins/builtin-plugin/react-attribute-plugin';
+// plugin
 export * from './plugins/builtin-plugin/html-attribute-plugin';
+export * from './plugins/builtin-plugin/react-attribute-plugin';

@@ -38,7 +38,6 @@ import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
-import { HtmlAttributePlugin } from '../plugins/builtin-plugin/html-attribute-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
@@ -47,7 +46,6 @@ import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
-import { ReactAttributePlugin } from '../plugins/builtin-plugin/react-attribute-plugin';
 import { Factory } from '../factory';
 
 const DefaultConfig = {
@@ -560,8 +558,12 @@ export class Stage extends Group implements IStage {
     if (this.htmlAttribute) {
       return;
     }
-    this.htmlAttribute = container;
-    this.pluginService.register(new HtmlAttributePlugin());
+    const HtmlAttributePlugin = Factory.getPlugin('HtmlAttributePlugin');
+
+    if (HtmlAttributePlugin) {
+      this.htmlAttribute = container;
+      this.pluginService.register(new HtmlAttributePlugin());
+    }
   }
   disableHtmlAttribute() {
     if (!this.htmlAttribute) {
@@ -576,8 +578,12 @@ export class Stage extends Group implements IStage {
     if (this.reactAttribute) {
       return;
     }
-    this.reactAttribute = container;
-    this.pluginService.register(new ReactAttributePlugin());
+    const ReactAttributePlugin = Factory.getPlugin('ReactAttributePlugin');
+
+    if (ReactAttributePlugin) {
+      this.reactAttribute = container;
+      this.pluginService.register(new ReactAttributePlugin());
+    }
   }
   disableReactAttribute() {
     if (!this.reactAttribute) {

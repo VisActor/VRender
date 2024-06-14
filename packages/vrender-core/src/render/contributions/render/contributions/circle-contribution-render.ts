@@ -6,7 +6,8 @@ import type {
   ICircleGraphicAttribute,
   IThemeAttribute,
   ICircleRenderContribution,
-  IDrawContext
+  IDrawContext,
+  IBorderStyle
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
@@ -56,67 +57,39 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       scaleY = circleAttribute.scaleY
     } = circle.attribute;
 
-    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
-    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+    const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
+      const doStroke = !!(borderStyle && borderStyle.stroke);
 
-    if (doOuterBorder) {
-      const { distance = circleAttribute.outerBorder.distance } = outerBorder;
+      const { distance = circleAttribute[key].distance } = borderStyle;
       const d = getScaledStroke(context, distance as number, context.dpr);
-      const dw = d;
+      const sign = key === 'outerBorder' ? 1 : -1;
       context.beginPath();
-      context.arc(x, y, radius + dw, startAngle, endAngle);
+      context.arc(x, y, radius + sign * d, startAngle, endAngle);
       context.closePath();
 
       // shadow
       context.setShadowBlendStyle && context.setShadowBlendStyle(circle, circle.attribute, circleAttribute);
 
       if (strokeCb) {
-        strokeCb(context, outerBorder, circleAttribute.outerBorder);
-      } else if (doStrokeOuter) {
+        strokeCb(context, borderStyle, circleAttribute[key]);
+      } else if (doStroke) {
         // 存在stroke
-        const lastOpacity = (circleAttribute.outerBorder as any).opacity;
-        (circleAttribute.outerBorder as any).opacity = opacity;
+        const lastOpacity = (circleAttribute[key] as any).opacity;
+        (circleAttribute[key] as any).opacity = opacity;
         context.setStrokeStyle(
           circle,
-          outerBorder,
+          borderStyle,
           (originX - x) / scaleX,
           (originY - y) / scaleY,
-          circleAttribute.outerBorder as any
+          circleAttribute[key] as any
         );
-        (circleAttribute.outerBorder as any).opacity = lastOpacity;
+        (circleAttribute[key] as any).opacity = lastOpacity;
         context.stroke();
       }
-    }
+    };
 
-    if (doInnerBorder) {
-      const { distance = circleAttribute.innerBorder.distance } = innerBorder;
-      const d = getScaledStroke(context, distance as number, context.dpr);
-      const dw = d;
-
-      context.beginPath();
-      context.arc(x, y, radius - dw, startAngle, endAngle);
-      context.closePath();
-
-      // shadow
-      context.setShadowBlendStyle && context.setShadowBlendStyle(circle, circle.attribute, circleAttribute);
-
-      if (strokeCb) {
-        strokeCb(context, innerBorder, circleAttribute.innerBorder);
-      } else if (doStrokeInner) {
-        // 存在stroke
-        const lastOpacity = (circleAttribute.innerBorder as any).opacity;
-        (circleAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(
-          circle,
-          innerBorder,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          circleAttribute.innerBorder as any
-        );
-        (circleAttribute.innerBorder as any).opacity = lastOpacity;
-        context.stroke();
-      }
-    }
+    doOuterBorder && renderBorder(outerBorder, 'outerBorder');
+    doInnerBorder && renderBorder(innerBorder, 'innerBorder');
   }
 }
 

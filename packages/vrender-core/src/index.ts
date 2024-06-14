@@ -12,6 +12,8 @@ export * from './render';
 export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
+export * from './core/light';
+export * from './core/camera';
 export * from './picker';
 export * from './animate';
 export * from './resource-loader/loader';

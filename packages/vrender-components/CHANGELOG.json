@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.11",
+      "tag": "@visactor/vrender-components_v0.19.11",
+      "date": "Fri, 14 Jun 2024 09:50:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix position of canvas tooltip shape\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.10",
       "tag": "@visactor/vrender-components_v0.19.10",
       "date": "Thu, 13 Jun 2024 09:52:46 GMT",

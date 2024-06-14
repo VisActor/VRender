@@ -1,3 +1,24 @@
+# v0.19.10
+
+2024-06-14
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `align` right of canvas tooltip
+- **streamLight**: streamLight support direction and  parent support x1y1 attribute. close@Visactor/VChart[#2734](https://github.com/VisActor/VRender/issues/2734)
+- **streamLight**: streamLight support direction and  parent support x1y1 attribute. close@Visactor/VChart[#2734](https://github.com/VisActor/VRender/issues/2734)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with interploate while color is array
+- **@visactor/vrender-core**: only clear animation when has no state animation
+- **@visactor/vrender**: fix issue with interploate while color is array
+
+
+
+[more detail about v0.19.10](https://github.com/VisActor/VRender/releases/tag/v0.19.10)
+
 # v0.19.9
 
 2024-06-05

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 13 Jun 2024 09:52:46 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Jun 2024 09:50:59 GMT and should not be manually modified.
+
+## 0.19.11
+Fri, 14 Jun 2024 09:50:59 GMT
+
+### Updates
+
+- fix: fix position of canvas tooltip shape
+
+
 
 ## 0.19.10
 Thu, 13 Jun 2024 09:52:46 GMT

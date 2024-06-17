@@ -1,3 +1,16 @@
+# v0.19.11
+
+2024-06-17
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix position of canvas tooltip shape
+
+
+
+[更多详情请查看 v0.19.11](https://github.com/VisActor/VRender/releases/tag/v0.19.11)
+
 # v0.19.10
 
 2024-06-14

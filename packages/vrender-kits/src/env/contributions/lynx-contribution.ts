@@ -62,10 +62,22 @@ function makeUpCanvas(
     const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, domref.width, domref.height, id);
 
     canvasMap.set(id, canvas);
-    if (i >= freeCanvasIdx) {
+    if (i > freeCanvasIdx) {
       freeCanvasList.push(canvas);
     }
   });
+
+  if (!freeCanvasList.length && lynx.createOffscreenCanvas) {
+    const _canvas = lynx.createOffscreenCanvas();
+    _canvas.width = domref.width * dpr;
+    _canvas.height = domref.height * dpr;
+    const ctx = _canvas.getContext('2d');
+
+    const id = Math.random().toString();
+    const canvas = new CanvasWrapEnableWH(_canvas, ctx, dpr, domref.width, domref.height, id);
+    canvasMap.set(id, canvas);
+    freeCanvasList.push(canvas);
+  }
 }
 
 export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {

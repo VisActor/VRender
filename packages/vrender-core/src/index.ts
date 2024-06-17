@@ -89,3 +89,6 @@ export * from './register/register-symbol';
 export * from './register/register-text';
 export * from './register/register-shadowRoot';
 export * from './register/register-wraptext';
+
+export * from './plugins/builtin-plugin/react-attribute-plugin';
+export * from './plugins/builtin-plugin/html-attribute-plugin';

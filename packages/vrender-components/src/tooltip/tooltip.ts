@@ -222,11 +222,13 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
               (isVisible(itemAttr.value) ? valueWidth : 0)
             : 0;
 
-        const shapeGraphic = this._createShape(itemAttr, itemGroup, itemGroupName);
+        this._createShape(
+          align === 'right' ? x - itemAttr.shape.size / 2 : x + itemAttr.shape.size / 2,
+          itemAttr,
+          itemGroup,
+          itemGroupName
+        );
         if (hasContentShape) {
-          if (shapeGraphic) {
-            shapeGraphic.setAttribute('x', x);
-          }
           if (align === 'right') {
             x -= shapeOffsetWidth;
           } else {
@@ -264,14 +266,19 @@ export class Tooltip extends AbstractComponent<Required<TooltipAttributes>> {
     }
   }
 
-  protected _createShape(itemAttr: TooltipRowAttrs & TooltipRowStyleAttrs, itemGroup: IGroup, itemGroupName: string) {
+  protected _createShape(
+    x: number,
+    itemAttr: TooltipRowAttrs & TooltipRowStyleAttrs,
+    itemGroup: IGroup,
+    itemGroupName: string
+  ) {
     if (isVisible(itemAttr.shape)) {
       // 存在 symbol
       return itemGroup.createOrUpdateChild(
         `${itemGroupName}-${TOOLTIP_SHAPE_NAME_SUFFIX}`,
         {
           visible: true,
-          x: itemAttr.shape.size / 2,
+          x: x,
           y:
             itemAttr.shape.size / 2 +
             ((calculateLineHeight(itemAttr.key.lineHeight, itemAttr.key.fontSize) ?? itemAttr.key.fontSize) -

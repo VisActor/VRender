@@ -1,193 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <style>
-    body {
-      display: flex;
-      margin: 0;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      canvas {
+        width: 98vmin;
+        height: 98vmin;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="scene"></canvas>
+  </body>
+  <script>
+    console.clear();
+
+    // Get the canvas element from the DOM
+    const canvas = document.getElementById('scene');
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+    // Store the 2D context
+    const ctx = canvas.getContext('2d');
+
+    if (window.devicePixelRatio > 1) {
+      canvas.width = canvas.clientWidth * 2;
+      canvas.height = canvas.clientHeight * 2;
+      ctx.scale(2, 2);
     }
-    canvas {
-      width:98vmin;
-      height:98vmin;
+
+    function getTexture(emoji) {
+      const tempCanvas = document.createElement('canvas');
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCanvas.width = 60;
+      tempCanvas.height = 60;
+      tempCtx.textAlign = 'center';
+      tempCtx.textBaseline = 'middle';
+      tempCtx.font = '54px serif';
+      tempCtx.fillText(emoji, 30, 35);
+      return tempCanvas;
     }
-  </style>
-</head>
-<body>
-  <canvas id="scene"></canvas>
-</body>
-<script>
-console.clear();
+    const textures = [getTexture('🦊'), getTexture('🦓'), getTexture('🐹'), getTexture('🐨')];
 
-// Get the canvas element from the DOM
-const canvas = document.getElementById('scene');
-canvas.width = canvas.clientWidth;
-canvas.height = canvas.clientHeight;
-// Store the 2D context
-const ctx = canvas.getContext('2d');
+    /* ====================== */
+    /* ====== VARIABLES ===== */
+    /* ====================== */
+    let width = canvas.offsetWidth; // Width of the canvas
+    let height = canvas.offsetHeight; // Height of the canvas
+    const dots = []; // Every dots in an array
 
-if (window.devicePixelRatio > 1) {
-  canvas.width = canvas.clientWidth * 2;
-  canvas.height = canvas.clientHeight * 2;
-  ctx.scale(2, 2);
-}
+    /* ====================== */
+    /* ====== CONSTANTS ===== */
+    /* ====================== */
+    /* Some of those constants may change if the user resizes their screen but I still strongly believe they belong to the Constants part of the variables */
+    let DOTS_AMOUNT = 10; // Amount of dots on the screen
+    const DOT_RADIUS = 20; // Radius of the dots
+    let PROJECTION_CENTER_X = 360; // X center of the canvas HTML
+    let PROJECTION_CENTER_Y = height / 2; // Y center of the canvas HTML
+    let PERSPECTIVE = 1280;
+    let GLOBE_RADIUS = 200;
 
-function getTexture(emoji) {
-  const tempCanvas = document.createElement("canvas");
-  const tempCtx = tempCanvas.getContext("2d");
-  tempCanvas.width = 60;
-  tempCanvas.height = 60;
-  tempCtx.textAlign = 'center';
-  tempCtx.textBaseline = 'middle';
-  tempCtx.font = '54px serif';
-  tempCtx.fillText(emoji, 30, 35);
-  return tempCanvas;
-}
-const textures = [getTexture('🦊'), getTexture('🦓'), getTexture('🐹'), getTexture('🐨')];
+    class Dot {
+      constructor(theta, phi) {
+        this.theta = theta; // Random value between [0, 2Pi]
+        this.phi = phi; // Random value between [0, Pi]
 
-/* ====================== */
-/* ====== VARIABLES ===== */
-/* ====================== */
-let width = canvas.offsetWidth; // Width of the canvas
-let height = canvas.offsetHeight; // Height of the canvas
-const dots = []; // Every dots in an array
+        this.texture = textures[Math.floor(Math.random() * textures.length)];
 
-/* ====================== */
-/* ====== CONSTANTS ===== */
-/* ====================== */
-/* Some of those constants may change if the user resizes their screen but I still strongly believe they belong to the Constants part of the variables */
-let DOTS_AMOUNT = 10; // Amount of dots on the screen
-const DOT_RADIUS = 20; // Radius of the dots
-let PROJECTION_CENTER_X = 360; // X center of the canvas HTML
-let PROJECTION_CENTER_Y = height / 2; // Y center of the canvas HTML
-let PERSPECTIVE = 1280;
-let GLOBE_RADIUS = 200;
+        // Calculate the [x, y, z] coordinates of the dot along the globe
+        this.x = 0;
+        this.y = 0;
+        this.z = 0;
 
-class Dot {
-  constructor(theta, phi) {
-    this.theta = theta; // Random value between [0, 2Pi]
-    this.phi = phi; // Random value between [0, Pi]
-    
-    this.texture = textures[Math.floor(Math.random() * textures.length)];
-    
-    // Calculate the [x, y, z] coordinates of the dot along the globe
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    
-    this.radius = GLOBE_RADIUS;
-    
-    this.xProjected = 0;
-    this.yProjected = 0;
-    this.scaleProjected = 0;
-    
-  }
-  // Do some math to project the 3D position into the 2D canvas
-  project() {
-    this.x = this.radius * Math.sin(this.phi) * Math.cos(this.theta);
-    this.y = this.radius * Math.cos(this.phi);
-    this.z = this.radius * Math.sin(this.phi) * Math.sin(this.theta);
-    
-    this.scaleProjected = PERSPECTIVE / (PERSPECTIVE + this.z);
-    this.xProjected = (this.x * this.scaleProjected) + PROJECTION_CENTER_X;
-    this.yProjected = (this.y * this.scaleProjected) + PROJECTION_CENTER_Y;
-  }
-  // Draw the dot on the canvas
-  draw() {
-    // ctx.drawImage(this.texture, this.xProjected - DOT_RADIUS, this.yProjected - DOT_RADIUS, DOT_RADIUS * 2 * this.scaleProjected, DOT_RADIUS * 2 * this.scaleProjected)
-    ctx.fillText('啊', this.xProjected - DOT_RADIUS, this.yProjected - DOT_RADIUS);
-  }
-}
+        this.radius = GLOBE_RADIUS;
 
-function createDots() {
-  // Empty the array of dots
-  dots.length = 0;
-  
-  // Create a new dot based on the amount needed
-  // for (let i = 0; i < DOTS_AMOUNT; i++) {
-  //   // Create a new dot and push it into the array
-  //   dots.push(new Dot());
-  // }
+        this.xProjected = 0;
+        this.yProjected = 0;
+        this.scaleProjected = 0;
+      }
+      // Do some math to project the 3D position into the 2D canvas
+      project() {
+        this.x = this.radius * Math.sin(this.phi) * Math.cos(this.theta);
+        this.y = this.radius * Math.cos(this.phi);
+        this.z = this.radius * Math.sin(this.phi) * Math.sin(this.theta);
 
-  const n = DOTS_AMOUNT;
-  for (let i = 1; i < n; i++) {
-    const alpha = Math.PI * 2 / n * i;
-    console.log(alpha);
-    for (let j = 1; j < n; j++) {
-      const beta = Math.PI / n * j;
-      dots.push(new Dot(alpha, beta));
+        this.scaleProjected = PERSPECTIVE / (PERSPECTIVE + this.z);
+        this.xProjected = this.x * this.scaleProjected + PROJECTION_CENTER_X;
+        this.yProjected = this.y * this.scaleProjected + PROJECTION_CENTER_Y;
+      }
+      // Draw the dot on the canvas
+      draw() {
+        // ctx.drawImage(this.texture, this.xProjected - DOT_RADIUS, this.yProjected - DOT_RADIUS, DOT_RADIUS * 2 * this.scaleProjected, DOT_RADIUS * 2 * this.scaleProjected)
+        ctx.fillText('啊', this.xProjected - DOT_RADIUS, this.yProjected - DOT_RADIUS);
+      }
     }
-  }
-}
 
-/* ====================== */
-/* ======== RENDER ====== */
-/* ====================== */
-function render() {
-  // Clear the scene
-  ctx.clearRect(0, 0, width, height);
-  
-  // Loop through the dots array and project every dot
-  for (var i = 0; i < dots.length; i++) {
-    dots[i].project();
-  }
-  
-  // Sort dots array based on their projected size
-  dots.sort((dot1, dot2) => {
-    return dot1.scaleProjected - dot2.scaleProjected;
-  });
-  
-  // Loop through the dots array and draw every dot
-  for (var i = 0; i < dots.length; i++) {
-    dots[i].draw();
-  }
-  
-  window.requestAnimationFrame(render);
-}
+    function createDots() {
+      // Empty the array of dots
+      dots.length = 0;
 
-// Function called after the user resized its screen
-// function afterResize () {
-//   width = canvas.offsetWidth;
-//   height = canvas.offsetHeight;
-//   if (window.devicePixelRatio > 1) {
-//     canvas.width = canvas.clientWidth * 2;
-//     canvas.height = canvas.clientHeight * 2;
-//     ctx.scale(2, 2);
-//   } else {
-//     canvas.width = width;
-//     canvas.height = height;
-//   }
-//   PROJECTION_CENTER_X = width / 2;
-//   PROJECTION_CENTER_Y = height / 2;
-//   PERSPECTIVE = width * 0.8;
-//   GLOBE_RADIUS = Math.min(width, height) * 0.4;
-//   DOTS_AMOUNT = Math.min(width, height);
-  
-//   createDots(); // Reset all dots
-// }
+      // Create a new dot based on the amount needed
+      // for (let i = 0; i < DOTS_AMOUNT; i++) {
+      //   // Create a new dot and push it into the array
+      //   dots.push(new Dot());
+      // }
 
-// // Variable used to store a timeout when user resized its screen
-// let resizeTimeout;
-// // Function called right after user resized its screen
-// function onResize () {
-//   // Clear the timeout variable
-//   resizeTimeout = window.clearTimeout(resizeTimeout);
-//   // Store a new timeout to avoid calling afterResize for every resize event
-//   resizeTimeout = window.setTimeout(afterResize, 500);
-// }
-// window.addEventListener('resize', onResize);
+      const n = DOTS_AMOUNT;
+      for (let i = 1; i < n; i++) {
+        const alpha = ((Math.PI * 2) / n) * i;
+        console.log(alpha);
+        for (let j = 1; j < n; j++) {
+          const beta = (Math.PI / n) * j;
+          dots.push(new Dot(alpha, beta));
+        }
+      }
+    }
 
-// // Populate the dots array with random dots
-createDots();
-render();
+    /* ====================== */
+    /* ======== RENDER ====== */
+    /* ====================== */
+    function render() {
+      // Clear the scene
+      ctx.clearRect(0, 0, width, height);
 
-// // Render the scene
-// window.requestAnimationFrame(render);
-</script>
+      // Loop through the dots array and project every dot
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].project();
+      }
+
+      // Sort dots array based on their projected size
+      dots.sort((dot1, dot2) => {
+        return dot1.scaleProjected - dot2.scaleProjected;
+      });
+
+      // Loop through the dots array and draw every dot
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].draw();
+      }
+
+      window.requestAnimationFrame(render);
+    }
+
+    // Function called after the user resized its screen
+    // function afterResize () {
+    //   width = canvas.offsetWidth;
+    //   height = canvas.offsetHeight;
+    //   if (window.devicePixelRatio > 1) {
+    //     canvas.width = canvas.clientWidth * 2;
+    //     canvas.height = canvas.clientHeight * 2;
+    //     ctx.scale(2, 2);
+    //   } else {
+    //     canvas.width = width;
+    //     canvas.height = height;
+    //   }
+    //   PROJECTION_CENTER_X = width / 2;
+    //   PROJECTION_CENTER_Y = height / 2;
+    //   PERSPECTIVE = width * 0.8;
+    //   GLOBE_RADIUS = Math.min(width, height) * 0.4;
+    //   DOTS_AMOUNT = Math.min(width, height);
+
+    //   createDots(); // Reset all dots
+    // }
+
+    // // Variable used to store a timeout when user resized its screen
+    // let resizeTimeout;
+    // // Function called right after user resized its screen
+    // function onResize () {
+    //   // Clear the timeout variable
+    //   resizeTimeout = window.clearTimeout(resizeTimeout);
+    //   // Store a new timeout to avoid calling afterResize for every resize event
+    //   resizeTimeout = window.setTimeout(afterResize, 500);
+    // }
+    // window.addEventListener('resize', onResize);
+
+    // // Populate the dots array with random dots
+    createDots();
+    render();
+
+    // // Render the scene
+    // window.requestAnimationFrame(render);
+  </script>
 </html>

@@ -7,6 +7,7 @@ export class EditModule {
   currRt: IRichText;
   isComposing: boolean;
   cursorIndex: number;
+  selectionStartCursorIdx: number;
   // 输入的回调（composing的时候每次也会触发）
   onInputCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
   // change的回调（composing确认才会触发）
@@ -61,14 +62,14 @@ export class EditModule {
   handleCompositionEnd = () => {
     this.isComposing = false;
 
+    const curIdx = this.cursorIndex + 1;
     // 拆分上一次的内容
     const { textConfig = [] } = this.currRt.attribute;
-    const lastConfig = textConfig[this.cursorIndex];
-    textConfig.splice(this.cursorIndex, 1);
+    const lastConfig = textConfig[curIdx];
+    textConfig.splice(curIdx, 1);
     const text = (lastConfig as any).text;
-    for (let i = this.cursorIndex; i < this.cursorIndex + text.length; i++) {
-      const t = text[i - this.cursorIndex];
-      textConfig.splice(i, 0, { ...lastConfig, text: t });
+    for (let i = 0; i < text.length; i++) {
+      textConfig.splice(i + curIdx, 0, { ...lastConfig, text: text[i] });
     }
     this.currRt.setAttributes({ textConfig });
     this.onChangeCbList.forEach(cb => {
@@ -82,34 +83,53 @@ export class EditModule {
     }
     const str = (ev as any).data || '\n';
     // 如果是回车，那就不往后+1
-    let cursorOffset = (ev as any).data ? 1 : 0;
     const { textConfig = [] } = this.currRt.attribute;
-    const lastConfig = textConfig[this.cursorIndex + (this.isComposing ? 1 : 0)];
+
+    // 如果有选中多个文字，那就先删除
+    let startIdx = this.selectionStartCursorIdx;
+    let endIdx = this.cursorIndex;
+    if (startIdx > endIdx) {
+      [startIdx, endIdx] = [endIdx, startIdx];
+    }
+    // 无论是否composition都立刻恢复到没有选中的idx状态
+    this.selectionStartCursorIdx = startIdx;
+    this.cursorIndex = startIdx;
+
+    const lastConfig = textConfig[startIdx + (this.isComposing ? 1 : 0)];
     let currConfig = lastConfig;
-    if (ev.type === 'Backspace') {
-      textConfig.splice(this.cursorIndex, 1);
-      cursorOffset = -1;
+    if (ev.type === 'Backspace' && !this.isComposing) {
+      if (startIdx !== endIdx) {
+        textConfig.splice(startIdx + 1, endIdx - startIdx);
+      } else {
+        textConfig.splice(startIdx, 1);
+        startIdx -= 1;
+      }
     } else {
+      if (startIdx !== endIdx) {
+        textConfig.splice(startIdx + 1, endIdx - startIdx);
+      }
+
       if (!this.isComposing) {
         currConfig = { ...lastConfig, text: '' };
-        textConfig.splice(this.cursorIndex + 1, 0, currConfig);
+        startIdx += 1;
+        textConfig.splice(startIdx, 0, currConfig);
       }
       (currConfig as any).text = str;
     }
+
     this.currRt.setAttributes({ textConfig });
     if (!this.isComposing) {
       this.onChangeCbList.forEach(cb => {
-        cb(str, this.isComposing, this.cursorIndex + cursorOffset, this.currRt);
+        cb(str, this.isComposing, startIdx, this.currRt);
       });
     } else {
       this.onInputCbList.forEach(cb => {
-        cb(str, this.isComposing, this.cursorIndex + cursorOffset, this.currRt);
+        cb(str, this.isComposing, startIdx, this.currRt);
       });
     }
-    // this.cursorIndex = textConfig.findIndex(item => item === currConfig);
   };
 
-  moveTo(x: number, y: number, rt: IRichText, cursorIndex: number) {
+  moveTo(x: number, y: number, rt: IRichText, cursorIndex: number, selectionStartCursorIdx: number) {
     this.textAreaDom.style.left = `${x}px`;
     this.textAreaDom.style.top = `${y}px`;
     setTimeout(() => {
@@ -119,6 +139,7 @@ export class EditModule {
     this.currRt = rt;
 
     this.cursorIndex = cursorIndex;
+    this.selectionStartCursorIdx = selectionStartCursorIdx;
   }
 
   release() {

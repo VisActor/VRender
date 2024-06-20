@@ -28,8 +28,13 @@ export class RichTextEditPlugin implements IPlugin {
   editLine: ILine;
   editBg: IGroup;
   pointerDown: boolean = false;
+  // 用于selection中保存上一次click时候的位置
   lastPoint?: IPointLike;
   editModule: EditModule;
+
+  // 当前的cursor信息
+  curCursorIdx: number;
+  selectionStartCursorIdx: number;
 
   activate(context: IPluginService): void {
     this.pluginService = context;
@@ -45,14 +50,18 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
-    // 修改cursor的位置
+    // 修改cursor的位置，但并不同步，因为这可能是临时的
     const p = this.getPointByColumnIdx(cursorIdx, rt);
+    this.hideSelection();
     this.setCursor(p.x, p.y1, p.y2);
   };
   handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
     // 修改cursor的位置，并同步到editModule
     const p = this.getPointByColumnIdx(cursorIdx, rt);
-    this.setCursorAndTextArea(p.x, p.y1, p.y2, rt, cursorIdx);
+    this.curCursorIdx = cursorIdx;
+    this.selectionStartCursorIdx = cursorIdx;
+    this.setCursorAndTextArea(p.x, p.y1, p.y2, rt);
+    this.hideSelection();
   };
 
   handleMove = (e: PointerEvent) => {
@@ -152,9 +161,17 @@ export class RichTextEditPlugin implements IPlugin {
         }
       }
 
-      this.setCursorAndTextArea(x, y1 + 2, y2 - 2, e.target as IRichText, cursorIndex);
+      this.curCursorIdx = cursorIndex;
+      this.setCursorAndTextArea(x, y1 + 2, y2 - 2, e.target as IRichText);
     }
     this.applyUpdate();
+  }
+
+  hideSelection() {
+    if (this.editBg) {
+      this.editBg.removeAllChild();
+      this.editBg.setAttributes({ fill: 'transparent' });
+    }
   }
 
   handlePointerDown = (e: PointerEvent) => {
@@ -267,7 +284,9 @@ export class RichTextEditPlugin implements IPlugin {
 
       this.lastPoint = { x, y: (y1 + y2) / 2 };
 
-      this.setCursorAndTextArea(x, y1, y2, target, cursorIndex);
+      this.curCursorIdx = cursorIndex;
+      this.selectionStartCursorIdx = cursorIndex;
+      this.setCursorAndTextArea(x, y1, y2, target);
     }
   }
 
@@ -322,7 +341,7 @@ export class RichTextEditPlugin implements IPlugin {
     return null;
   }
 
-  protected setCursorAndTextArea(x: number, y1: number, y2: number, rt: IRichText, cursorIndex: number) {
+  protected setCursorAndTextArea(x: number, y1: number, y2: number, rt: IRichText) {
     this.editLine.setAttributes({
       points: [
         { x, y: y1 },
@@ -336,7 +355,7 @@ export class RichTextEditPlugin implements IPlugin {
     out.x += left;
     out.y += top;
 
-    this.editModule.moveTo(out.x, out.y, rt, cursorIndex);
+    this.editModule.moveTo(out.x, out.y, rt, this.curCursorIdx, this.selectionStartCursorIdx);
   }
   protected setCursor(x: number, y1: number, y2: number) {
     this.editLine.setAttributes({

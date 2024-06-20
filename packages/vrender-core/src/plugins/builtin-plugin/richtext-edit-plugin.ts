@@ -383,19 +383,25 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
+  splitText(text: string) {
+    // 😁这种emoji长度算两个，所以得处理一下
+    return Array.from(text);
+  }
+
   tryUpdateRichtext(richtext: IRichText) {
     const cache = richtext.getFrameCache();
     if (
       !cache.lines.every(line =>
-        line.paragraphs.every(item => !(item.text && isString(item.text) && item.text.length > 1))
+        line.paragraphs.every(item => !(item.text && isString(item.text) && this.splitText(item.text).length > 1))
       )
     ) {
       const tc: IRichTextCharacter[] = [];
       richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
-        if (isString(item.text) && item.text.length > 1) {
+        const textList = this.splitText(item.text.toString());
+        if (isString(item.text) && textList.length > 1) {
           // 拆分
-          for (let i = 0; i < item.text.length; i++) {
-            const t = item.text[i];
+          for (let i = 0; i < textList.length; i++) {
+            const t = textList[i];
             tc.push({ ...item, text: t });
           }
         } else {

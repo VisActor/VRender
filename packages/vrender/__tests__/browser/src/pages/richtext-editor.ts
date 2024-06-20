@@ -91,7 +91,7 @@ export const page = () => {
           fill: '#0f51b5'
         },
         {
-          text: '尘',
+          text: '尘😁',
           fontSize: 26,
           textAlign: 'center',
           fill: '#0f51b5'

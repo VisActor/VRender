@@ -68,12 +68,13 @@ export class EditModule {
     const lastConfig = textConfig[curIdx];
     textConfig.splice(curIdx, 1);
     const text = (lastConfig as any).text;
-    for (let i = 0; i < text.length; i++) {
-      textConfig.splice(i + curIdx, 0, { ...lastConfig, text: text[i] });
+    const textList: string[] = Array.from(text.toString());
+    for (let i = 0; i < textList.length; i++) {
+      textConfig.splice(i + curIdx, 0, { ...lastConfig, text: textList[i] });
     }
     this.currRt.setAttributes({ textConfig });
     this.onChangeCbList.forEach(cb => {
-      cb(text, this.isComposing, this.cursorIndex + text.length, this.currRt);
+      cb(text, this.isComposing, this.cursorIndex + textList.length, this.currRt);
     });
   };
 

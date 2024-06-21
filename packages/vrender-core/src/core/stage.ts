@@ -611,6 +611,9 @@ export class Stage extends Group implements IStage {
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
   // 但需要注意的是依然是两个图层（用于解决Table嵌入ChartSpace不影响Table的绘制）
   createLayer(canvasId?: string, layerMode?: LayerMode): ILayer {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     // 创建一个默认layer图层
     const layer = this.layerService.createLayer(this, {
       main: false,
@@ -638,6 +641,9 @@ export class Stage extends Group implements IStage {
     return this.removeChild(this.findChildByUid(ILayerId) as IGraphic) as ILayer;
   }
   tryInitInteractiveLayer() {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     // TODO：顺序可能会存在问题
     // 支持交互层，且没有创建过，那就创建
     if (this.supportInteractiveLayer && !this.interactiveLayer) {
@@ -656,6 +662,9 @@ export class Stage extends Group implements IStage {
   }
 
   render(layers?: ILayer[], params?: Partial<IDrawContext>): void {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     this.ticker.start();
     this.timeline.resume();
     const state = this.state;
@@ -725,6 +734,9 @@ export class Stage extends Group implements IStage {
   }
 
   _doRenderInThisFrame() {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     this.timeline.resume();
     this.ticker.start();
     const state = this.state;
@@ -800,6 +812,9 @@ export class Stage extends Group implements IStage {
    * @param rerender
    */
   resize(w: number, h: number, rerender: boolean = true): void {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     // 如果不是子图的stage，那么认为用户也想要resize view
     if (!this.window.hasSubView()) {
       this.viewBox.setValue(this.viewBox.x1, this.viewBox.y1, this.viewBox.x1 + w, this.viewBox.y1 + h);
@@ -814,6 +829,9 @@ export class Stage extends Group implements IStage {
     rerender && this.render();
   }
   resizeView(w: number, h: number, rerender: boolean = true) {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     this.viewBox.setValue(this.viewBox.x1, this.viewBox.y1, this.viewBox.x1 + w, this.viewBox.y1 + h);
     this.forEachChildren<ILayer>(c => {
       c.resizeView(w, h);
@@ -860,6 +878,9 @@ export class Stage extends Group implements IStage {
     throw new Error('暂不支持');
   }
   pick(x: number, y: number): PickResult | false {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     if (!this.pickerService) {
       this.pickerService = container.get<IPickerService>(PickerService);
     }
@@ -913,6 +934,9 @@ export class Stage extends Group implements IStage {
    * @param matrix
    */
   dirty(b: IBounds, matrix?: IMatrix) {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     if (matrix) {
       b.transformWithMatrix(matrix);
     }
@@ -928,6 +952,9 @@ export class Stage extends Group implements IStage {
   }
 
   renderTo(window: IWindow) {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     this.forEachChildren<ILayer>((layer, i) => {
       layer.drawTo(window, {
         // ...params,
@@ -947,6 +974,9 @@ export class Stage extends Group implements IStage {
    * @returns
    */
   renderToNewWindow(fullImage: boolean = true, viewBox?: IAABBBounds): IWindow {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     const window = container.get<IWindow>(VWindow);
     const x1 = viewBox ? -viewBox.x1 : 0;
     const y1 = viewBox ? -viewBox.y1 : 0;
@@ -981,6 +1011,9 @@ export class Stage extends Group implements IStage {
   }
 
   toCanvas(fullImage: boolean = true, viewBox?: IAABBBounds): HTMLCanvasElement | null {
+    if (this.releaseStatus === 'released') {
+      return;
+    }
     const window = this.renderToNewWindow(fullImage, viewBox);
     const c = window.getNativeHandler();
     if (c.nativeCanvas) {

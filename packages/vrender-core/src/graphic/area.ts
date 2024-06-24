@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import type { AABBBounds, IPointLike } from '@visactor/vutils';
 import type { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -118,10 +118,6 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
   //   this._AABBBounds.translate(dx, dy);
   //   return b;
   // }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
-  }
 
   protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any): void {
     if (key === 'points') {

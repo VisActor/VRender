@@ -31,24 +31,22 @@ import type { Layer } from './layer';
 import { EventSystem } from '../event';
 import { container } from '../container';
 import { RenderService } from '../render';
-import { Group, Theme } from '../graphic';
+import { Group } from '../graphic/group';
+import { Theme } from '../graphic/theme';
 import { PickerService } from '../picker/constants';
 import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
-import { HtmlAttributePlugin } from '../plugins/builtin-plugin/html-attribute-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
-import { DirectionalLight } from './light';
-import { OrthoCamera } from './camera';
 import { LayerService } from './constants';
 import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
-import { ReactAttributePlugin } from '../plugins/builtin-plugin/react-attribute-plugin';
+import { Factory } from '../factory';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -410,7 +408,11 @@ export class Stage extends Group implements IStage {
       cameraZ = Math.cos(alpha) * Math.cos(beta) * z;
     }
 
-    this.light = new DirectionalLight(dir, color, ambient);
+    const DirectionalLight = Factory.getPlugin('DirectionalLight');
+
+    if (DirectionalLight) {
+      this.light = new DirectionalLight(dir, color, ambient);
+    }
     const cameraParams = {
       left: 0,
       right: this.width,
@@ -427,7 +429,10 @@ export class Stage extends Group implements IStage {
     if (this.camera) {
       this.camera.params = cameraParams;
     } else {
-      this.camera = new OrthoCamera(cameraParams);
+      const OrthoCamera = Factory.getPlugin('OrthoCamera');
+      if (OrthoCamera) {
+        this.camera = new OrthoCamera(cameraParams);
+      }
     }
 
     if (options.enableView3dTransform) {
@@ -553,8 +558,12 @@ export class Stage extends Group implements IStage {
     if (this.htmlAttribute) {
       return;
     }
-    this.htmlAttribute = container;
-    this.pluginService.register(new HtmlAttributePlugin());
+    const HtmlAttributePlugin = Factory.getPlugin('HtmlAttributePlugin');
+
+    if (HtmlAttributePlugin) {
+      this.htmlAttribute = container;
+      this.pluginService.register(new HtmlAttributePlugin());
+    }
   }
   disableHtmlAttribute() {
     if (!this.htmlAttribute) {
@@ -569,8 +578,12 @@ export class Stage extends Group implements IStage {
     if (this.reactAttribute) {
       return;
     }
-    this.reactAttribute = container;
-    this.pluginService.register(new ReactAttributePlugin());
+    const ReactAttributePlugin = Factory.getPlugin('ReactAttributePlugin');
+
+    if (ReactAttributePlugin) {
+      this.reactAttribute = container;
+      this.pluginService.register(new ReactAttributePlugin());
+    }
   }
   disableReactAttribute() {
     if (!this.reactAttribute) {

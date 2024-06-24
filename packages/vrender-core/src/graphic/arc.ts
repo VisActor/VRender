@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds } from '@visactor/vutils';
 import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt } from '@visactor/vutils';
 import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
@@ -256,10 +256,6 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     }
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   protected needUpdateTags(keys: string[]): boolean {

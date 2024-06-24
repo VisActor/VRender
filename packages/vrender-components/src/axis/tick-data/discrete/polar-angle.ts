@@ -1,9 +1,47 @@
-import type { BandScale } from '@visactor/vscale';
+import type { BandScale, IBaseScale } from '@visactor/vscale';
 import { isFunction, isValid, maxInArray, minInArray } from '@visactor/vutils';
 import type { IPolarTickDataOpt, ITickData } from '../../type';
-import { convertDomainToTickData, getPolarAngleLabelBounds, labelOverlap } from '../util';
-import type { AABBBounds } from '@visactor/vutils';
+import { MIN_TICK_GAP, convertDomainToTickData, labelOverlap } from '../util';
+import { AABBBounds } from '@visactor/vutils';
+import { initTextMeasure } from '../../../util/text';
+import { getPolarAngleLabelPosition } from '../../util';
 
+export const getPolarAngleLabelBounds = (scale: IBaseScale, domain: any[], op: IPolarTickDataOpt): AABBBounds[] => {
+  const { labelStyle, getRadius, labelOffset, labelFormatter, inside } = op;
+  const radius = getRadius?.();
+  const labelAngle = labelStyle.angle ?? 0;
+
+  const textMeasure = initTextMeasure(labelStyle);
+  const labelBoundsList = domain.map((v: any) => {
+    const str = labelFormatter ? labelFormatter(v) : `${v}`;
+
+    // 估算文本宽高
+    const { width, height } = textMeasure.quickMeasure(str);
+    const textWidth = Math.max(width, MIN_TICK_GAP);
+    const textHeight = Math.max(height, MIN_TICK_GAP);
+
+    // 估算文本位置
+    const angle = scale.scale(v);
+    let textX = 0;
+    let textY = 0;
+    const orient = {
+      align: labelStyle.textAlign ?? 'center',
+      baseline: labelStyle.textBaseline ?? 'middle'
+    };
+
+    const { x, y } = getPolarAngleLabelPosition(angle, { x: 0, y: 0 }, radius, labelOffset, inside, str, labelStyle);
+    textX = x + (orient.align === 'right' ? -textWidth : orient.align === 'center' ? -textWidth / 2 : 0);
+    textY = y + (orient.baseline === 'bottom' ? -textHeight : orient.baseline === 'middle' ? -textHeight / 2 : 0);
+
+    // 计算 label 包围盒
+    const bounds = new AABBBounds()
+      .set(textX, textY, textX + textWidth, textY + textHeight)
+      .rotate(labelAngle, textX + textWidth / 2, textY + textHeight / 2);
+    return bounds;
+  });
+
+  return labelBoundsList;
+};
 /**
  * 对于离散轴：
  * - 如果spec配了tickCount、forceTickCount、tickStep，则直接输出BandScale的ticks()、forceTicks()、stepTicks()结果；

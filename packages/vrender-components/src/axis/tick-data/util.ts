@@ -4,8 +4,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { AABBBounds, degreeToRadian } from '@visactor/vutils';
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { initTextMeasure } from '../../util/text';
-import type { ICartesianTickDataOpt, ILabelItem, IOrientType, IPolarTickDataOpt, ITickData } from '../type';
-import { getPolarAngleLabelPosition } from '../util';
+import type { ICartesianTickDataOpt, ILabelItem, IOrientType, ITickData } from '../type';
 
 export const convertDomainToTickData = (domain: any[]): ITickData[] => {
   const ticks = domain.map((t: number, index: number) => {
@@ -141,43 +140,6 @@ export const getCartesianLabelBounds = (scale: IBaseScale, domain: any[], op: IC
       bounds.rotate(labelAngle, baseTextX, baseTextY);
     }
 
-    return bounds;
-  });
-
-  return labelBoundsList;
-};
-
-export const getPolarAngleLabelBounds = (scale: IBaseScale, domain: any[], op: IPolarTickDataOpt): AABBBounds[] => {
-  const { labelStyle, getRadius, labelOffset, labelFormatter, inside } = op;
-  const radius = getRadius?.();
-  const labelAngle = labelStyle.angle ?? 0;
-
-  const textMeasure = initTextMeasure(labelStyle);
-  const labelBoundsList = domain.map((v: any) => {
-    const str = labelFormatter ? labelFormatter(v) : `${v}`;
-
-    // 估算文本宽高
-    const { width, height } = textMeasure.quickMeasure(str);
-    const textWidth = Math.max(width, MIN_TICK_GAP);
-    const textHeight = Math.max(height, MIN_TICK_GAP);
-
-    // 估算文本位置
-    const angle = scale.scale(v);
-    let textX = 0;
-    let textY = 0;
-    const orient = {
-      align: labelStyle.textAlign ?? 'center',
-      baseline: labelStyle.textBaseline ?? 'middle'
-    };
-
-    const { x, y } = getPolarAngleLabelPosition(angle, { x: 0, y: 0 }, radius, labelOffset, inside, str, labelStyle);
-    textX = x + (orient.align === 'right' ? -textWidth : orient.align === 'center' ? -textWidth / 2 : 0);
-    textY = y + (orient.baseline === 'bottom' ? -textHeight : orient.baseline === 'middle' ? -textHeight / 2 : 0);
-
-    // 计算 label 包围盒
-    const bounds = new AABBBounds()
-      .set(textX, textY, textX + textWidth, textY + textHeight)
-      .rotate(labelAngle, textX + textWidth / 2, textY + textHeight / 2);
     return bounds;
   });
 

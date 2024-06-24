@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import type { AABBBounds, IPointLike } from '@visactor/vutils';
 import type { ILine, ILineGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
@@ -70,10 +70,6 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
 
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

@@ -1,9 +1,8 @@
 import type { IPointLike } from '@visactor/vutils';
-import { epsilon, IPoint } from '@visactor/vutils';
-import { DefaultMat4Allocate } from '../allocator/matrix-allocate';
 import type { ICamera, mat4, OrthoParameters, vec3 } from '../interface';
 import { mat4Allocate } from '../allocator/matrix-allocate';
 import { lookAt, multiply, ortho, transformMat4 } from '../common/matrix';
+import { Factory } from '../factory';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix
@@ -194,3 +193,7 @@ export class OrthoCamera implements ICamera {
     };
   }
 }
+
+export const registerOrthoCamera = () => {
+  Factory.registerPlugin('OrthoCamera', OrthoCamera);
+};

@@ -21,8 +21,8 @@ import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } fr
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
-import { createTextGraphicByType, traverseGroup } from '../util';
-import { DEFAULT_STATES, StateValue } from '../constant';
+import { createTextGraphicByType } from '../util';
+import { DEFAULT_STATES } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
 import type {

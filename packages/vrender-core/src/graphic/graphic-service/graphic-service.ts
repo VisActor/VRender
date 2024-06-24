@@ -1,4 +1,4 @@
-import { inject, injectable, named } from '../../common/inversify-lite';
+import { inject, injectable } from '../../common/inversify-lite';
 import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
 import { AABBBounds, epsilon, isArray, isNumber, pi2, transformBoundsWithMatrix } from '@visactor/vutils';
 import { SyncHook } from '../../tapable';
@@ -45,7 +45,6 @@ import type {
   ICircleBoundsContribution,
   IArcBoundsContribution,
   IPathBoundsContribution,
-  IContributionProvider,
   IImageBoundsContribution
 } from '../../interface';
 import { textDrawOffsetX, textLayoutOffsetY } from '../../common/text';
@@ -53,7 +52,6 @@ import { DefaultSymbolOuterBorderBoundsContribution } from './symbol-contributio
 import { boundStroke } from '../tools';
 import { mat4Allocate } from '../../allocator/matrix-allocate';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import { ContributionProvider } from '../../common/contribution-provider';
 import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { circleBounds } from '../../common/utils';

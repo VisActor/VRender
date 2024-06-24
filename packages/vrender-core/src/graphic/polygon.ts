@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
@@ -49,10 +49,6 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     this.clearUpdateBoundTag();
 
     return this._AABBBounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any): void {

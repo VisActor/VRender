@@ -2,6 +2,7 @@ import type { vec4 } from '@visactor/vutils';
 import { isString, max, min, sqrt } from '@visactor/vutils';
 import type { vec3 } from '../interface';
 import { ColorStore, ColorType } from '../color-string';
+import { Factory } from '../factory';
 
 export class DirectionalLight {
   declare dir: vec3;
@@ -41,3 +42,7 @@ export class DirectionalLight {
     }, ${lightColorArray[2] * colorArray[2] * brightness})`;
   }
 }
+
+export const registerDirectionalLight = () => {
+  Factory.registerPlugin('DirectionalLight', DirectionalLight);
+};

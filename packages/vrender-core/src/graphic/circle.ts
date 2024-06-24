@@ -1,5 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { transformBounds } from '@visactor/vutils';
+import type { AABBBounds } from '@visactor/vutils';
 import type { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -52,10 +51,6 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
 
     this.clearUpdateBoundTag();
     return bounds as AABBBounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

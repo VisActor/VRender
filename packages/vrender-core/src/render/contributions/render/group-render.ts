@@ -12,7 +12,8 @@ import type {
   IGraphicRenderDrawParams,
   IContributionProvider
 } from '../../../interface';
-import { getModelMatrix, getTheme, multiplyMat4Mat4 } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { getModelMatrix, multiplyMat4Mat4 } from '../../../graphic/graphic-service/graphic-service';
 import { isArray } from '@visactor/vutils';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';

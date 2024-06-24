@@ -3,6 +3,7 @@ import { calculateAnchorOfBounds, merge } from '@visactor/vutils';
 import type { RectLabelAttrs } from './type';
 import { LabelBase } from './base';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class RectLabel extends LabelBase<RectLabelAttrs> {
   static tag = 'rect-label';
@@ -64,3 +65,7 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     return { x, y };
   }
 }
+
+export const registerRectDataLabel = () => {
+  registerLabelComponent('rect', RectLabel);
+};

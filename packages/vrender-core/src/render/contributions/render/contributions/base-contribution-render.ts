@@ -2,7 +2,6 @@ import type {
   IGraphicAttribute,
   IContext2d,
   IGraphic,
-  IStage,
   IThemeAttribute,
   IBaseRenderContribution,
   IContributionProvider,
@@ -10,9 +9,8 @@ import type {
 } from '../../../../interface';
 import type { IBounds } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../../common/inversify-lite';
-import { getTheme } from '../../../../graphic';
+import { getTheme } from '../../../../graphic/theme';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
-import { pi2 } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import { ContributionProvider } from '../../../../common/contribution-provider';
 import { InteractiveSubRenderContribution } from './constants';

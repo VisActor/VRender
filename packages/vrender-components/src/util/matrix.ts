@@ -1,3 +1,5 @@
+import { crossProduct } from '@visactor/vutils';
+
 export type Vector2 = [number, number];
 
 /**
@@ -19,10 +21,9 @@ export function length(vector: Vector2) {
  * Normalize a vec2
  */
 export function normalize(vector: Vector2) {
-  const [x, y] = vector;
-  let len = x * x + y * y;
+  let len = length(vector);
   if (len > 0) {
-    len = 1 / Math.sqrt(len);
+    len = 1 / len;
   }
   return [vector[0] * len, vector[1] * len];
 }
@@ -39,16 +40,6 @@ export function angle(vector1: Vector2, vector2: Vector2) {
 }
 
 /**
- * 向量 v1 到 向量 v2 夹角的方向
- * @param  {Array} v1 向量
- * @param  {Array} v2 向量
- * @return {Boolean} >= 0 顺时针 < 0 逆时针
- */
-export function direction(v1: number[], v2: number[]): number {
-  return v1[0] * v2[1] - v2[0] * v1[1];
-}
-
-/**
  * 二维向量 v1 到 v2 的夹角
  * @param v1
  * @param v2
@@ -56,7 +47,7 @@ export function direction(v1: number[], v2: number[]): number {
  */
 export function angleTo(v1: [number, number], v2: [number, number], direct: boolean): number {
   const ang = angle(v1, v2);
-  const angleLargeThanPI = direction(v1, v2) >= 0;
+  const angleLargeThanPI = crossProduct(v1, v2) >= 0;
   if (direct) {
     if (angleLargeThanPI) {
       return Math.PI * 2 - ang;

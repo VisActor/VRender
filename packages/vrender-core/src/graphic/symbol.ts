@@ -1,4 +1,3 @@
-import type { OBBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
@@ -139,10 +138,6 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
     this.clearUpdateBoundTag();
     return bounds as AABBBounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

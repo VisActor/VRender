@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds } from '@visactor/vutils';
 import type { IImage, IImageGraphicAttribute, IRepeatType, ISetAttributeContext } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
@@ -132,10 +132,6 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
 
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

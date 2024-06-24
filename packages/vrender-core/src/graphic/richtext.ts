@@ -1,4 +1,4 @@
-import { isNumber, type AABBBounds, type OBBBounds } from '@visactor/vutils';
+import { isNumber, type AABBBounds } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -180,10 +180,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

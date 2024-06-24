@@ -1,4 +1,4 @@
-import { isNil, type AABBBounds, type OBBBounds } from '@visactor/vutils';
+import { type AABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -49,10 +49,6 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
 
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

@@ -23,8 +23,6 @@ import { canvasAllocate } from '../allocator/canvas-allocate';
 import { application } from '../application';
 import { container } from '../container';
 import { VWindow } from './window';
-import { graphicCreator } from '../graphic';
-import { matrixAllocate } from '../allocator/matrix-allocate';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {

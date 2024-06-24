@@ -11,18 +11,16 @@ import type {
   IContributionProvider,
   IDrawItemInterceptorContribution,
   IDrawContribution,
-  IRenderSelector,
   IGlobal
 } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { DefaultAttribute } from '../../../graphic';
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IMatrixLike } from '@visactor/vutils';
-import { Bounds, Logger, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
-import { LayerService } from '../../../core/constants';
+import { DefaultAttribute } from '../../../graphic/config';
+import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
+import { Bounds, Logger, getRectIntersect, isRectIntersect } from '@visactor/vutils';
 import { container } from '../../../container';
-import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
+import { GraphicRender, IncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';

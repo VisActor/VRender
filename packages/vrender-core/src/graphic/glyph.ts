@@ -1,4 +1,4 @@
-import type { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, IPointLike } from '@visactor/vutils';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import type {
   GraphicType,
@@ -166,10 +166,6 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     ) as AABBBounds;
     this.clearUpdateBoundTag();
     return bounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   protected needUpdateTags(keys: string[]): boolean {

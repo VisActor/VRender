@@ -1,4 +1,4 @@
-import { max, type AABBBounds, type OBBBounds, isArray } from '@visactor/vutils';
+import { max, type AABBBounds, isArray } from '@visactor/vutils';
 import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
@@ -770,10 +770,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     return this._AABBBounds;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   getDefaultAttribute(name: string) {

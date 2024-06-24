@@ -4,6 +4,7 @@ import type { SymbolLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingPoint } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
   name = 'symbol-label';
@@ -24,3 +25,8 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
     return labelingPoint(textBounds, graphicBounds, position, offset);
   }
 }
+
+export const registerSymbolDataLabel = () => {
+  registerLabelComponent('symbol', SymbolLabel);
+  registerLabelComponent('line-data', SymbolLabel);
+};

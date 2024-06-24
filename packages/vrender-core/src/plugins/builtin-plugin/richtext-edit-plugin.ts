@@ -49,15 +49,15 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.onChange(this.handleChange);
   }
 
-  handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+  handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, orient: 'left' | 'right') => {
     // 修改cursor的位置，但并不同步，因为这可能是临时的
-    const p = this.getPointByColumnIdx(cursorIdx, rt);
+    const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
     this.hideSelection();
     this.setCursor(p.x, p.y1, p.y2);
   };
-  handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+  handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, orient: 'left' | 'right') => {
     // 修改cursor的位置，并同步到editModule
-    const p = this.getPointByColumnIdx(cursorIdx, rt);
+    const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
     this.curCursorIdx = cursorIdx;
     this.selectionStartCursorIdx = cursorIdx;
     this.setCursorAndTextArea(p.x, p.y1, p.y2, rt);
@@ -290,12 +290,12 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
-  protected getPointByColumnIdx(idx: number, rt: IRichText) {
+  protected getPointByColumnIdx(idx: number, rt: IRichText, orient: 'left' | 'right') {
     const cache = rt.getFrameCache();
     const { lineInfo, columnInfo } = this.getColumnByIndex(cache, idx);
     let y1 = lineInfo.top;
     let y2 = lineInfo.top + lineInfo.height;
-    const x = columnInfo.left + columnInfo.width;
+    const x = columnInfo.left + (orient === 'left' ? 0 : columnInfo.width);
     y1 += 2;
     y2 -= 2;
 
@@ -408,6 +408,7 @@ export class RichTextEditPlugin implements IPlugin {
           tc.push(item);
         }
       });
+      richtext.setAttributes({ textConfig: tc });
       richtext.doUpdateFrameCache(tc);
     }
   }

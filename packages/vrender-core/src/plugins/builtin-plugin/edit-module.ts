@@ -1,4 +1,4 @@
-import type { IRichText } from '../../interface';
+import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
 import { IRichTextIcon, IRichTextParagraph } from '../../interface';
 
 export class EditModule {
@@ -9,9 +9,13 @@ export class EditModule {
   cursorIndex: number;
   selectionStartCursorIdx: number;
   // 输入的回调（composing的时候每次也会触发）
-  onInputCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
+  onInputCbList: Array<
+    (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void
+  >;
   // change的回调（composing确认才会触发）
-  onChangeCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
+  onChangeCbList: Array<
+    (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void
+  >;
 
   constructor(container?: HTMLElement) {
     this.container = container ?? document.body;
@@ -27,11 +31,11 @@ export class EditModule {
     this.onChangeCbList = [];
   }
 
-  onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
+  onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void) {
     this.onInputCbList.push(cb);
   }
 
-  onChange(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
+  onChange(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void) {
     this.onChangeCbList.push(cb);
   }
 
@@ -53,18 +57,33 @@ export class EditModule {
     }
   };
 
+  findCursorIndexIgnoreLinebreak(textConfig: IRichTextCharacter[], cursorIndex: number): number {
+    let index = 0;
+    for (index = 0; index < textConfig.length; index++) {
+      const c = textConfig[index] as IRichTextParagraphCharacter;
+      if (!(c.text && c.text === '\n')) {
+        cursorIndex--;
+      }
+      if (cursorIndex < 0) {
+        break;
+      }
+    }
+    return index;
+  }
+
   handleCompositionStart = () => {
     const { textConfig = [] } = this.currRt.attribute;
-    const lastConfig = textConfig[this.cursorIndex];
-    textConfig.splice(this.cursorIndex + 1, 0, { ...lastConfig, text: '' });
+    const cursorIndex = this.findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex);
+    const lastConfig = textConfig[cursorIndex];
+    textConfig.splice(cursorIndex + 1, 0, { ...lastConfig, text: '' });
     this.isComposing = true;
   };
   handleCompositionEnd = () => {
     this.isComposing = false;
-
-    const curIdx = this.cursorIndex + 1;
     // 拆分上一次的内容
     const { textConfig = [] } = this.currRt.attribute;
+    const curIdx = this.findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex + 1);
+
     const lastConfig = textConfig[curIdx];
     textConfig.splice(curIdx, 1);
     const text = (lastConfig as any).text;
@@ -74,7 +93,7 @@ export class EditModule {
     }
     this.currRt.setAttributes({ textConfig });
     this.onChangeCbList.forEach(cb => {
-      cb(text, this.isComposing, this.cursorIndex + textList.length, this.currRt);
+      cb(text, this.isComposing, this.cursorIndex + textList.length, this.currRt, 'right');
     });
   };
 
@@ -82,7 +101,10 @@ export class EditModule {
     if (!this.currRt) {
       return;
     }
-    const str = (ev as any).data || '\n';
+    let str = (ev as any).data;
+    if (ev.type !== 'Backspace' && !str) {
+      str = '\n';
+    }
     // 如果是回车，那就不往后+1
     const { textConfig = [] } = this.currRt.attribute;
 
@@ -95,6 +117,11 @@ export class EditModule {
     // 无论是否composition都立刻恢复到没有选中的idx状态
     this.selectionStartCursorIdx = startIdx;
     this.cursorIndex = startIdx;
+
+    // 转换成基于textConfig的
+    startIdx = this.findCursorIndexIgnoreLinebreak(textConfig, startIdx);
+    const delta = this.selectionStartCursorIdx - startIdx;
+    endIdx = this.findCursorIndexIgnoreLinebreak(textConfig, endIdx);
 
     const lastConfig = textConfig[startIdx + (this.isComposing ? 1 : 0)];
     let currConfig = lastConfig;
@@ -121,11 +148,11 @@ export class EditModule {
     this.currRt.setAttributes({ textConfig });
     if (!this.isComposing) {
       this.onChangeCbList.forEach(cb => {
-        cb(str, this.isComposing, startIdx, this.currRt);
+        cb(str, this.isComposing, startIdx + delta, this.currRt, str === '\n' ? 'left' : 'right');
       });
     } else {
       this.onInputCbList.forEach(cb => {
-        cb(str, this.isComposing, startIdx, this.currRt);
+        cb(str, this.isComposing, startIdx + delta, this.currRt, str === '\n' ? 'left' : 'right');
       });
     }
   };

@@ -1,3 +1,26 @@
+# v0.19.12
+
+2024-06-21
+
+fix: fix issue with stage while it is released [#1270](https://github.com/VisActor/VRender/issues/1270)
+
+
+
+[更多详情请查看 v0.19.12](https://github.com/VisActor/VRender/releases/tag/v0.19.12)
+
+# v0.19.11
+
+2024-06-17
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix position of canvas tooltip shape
+
+
+
+[更多详情请查看 v0.19.11](https://github.com/VisActor/VRender/releases/tag/v0.19.11)
+
 # v0.19.10
 
 2024-06-14

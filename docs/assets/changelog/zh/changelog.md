@@ -1,3 +1,16 @@
+# v0.19.13
+
+2024-06-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with stage while it is released
+
+
+
+[更多详情请查看 v0.19.13](https://github.com/VisActor/VRender/releases/tag/v0.19.13)
+
 # v0.19.12
 
 2024-06-21

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.13",
+      "tag": "@visactor/vrender-core_v0.19.13",
+      "date": "Tue, 25 Jun 2024 11:17:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with stage while it is released"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.12",
       "tag": "@visactor/vrender-core_v0.19.12",
       "date": "Fri, 21 Jun 2024 06:52:50 GMT",

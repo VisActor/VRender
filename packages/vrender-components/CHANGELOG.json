@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.14",
+      "tag": "@visactor/vrender-components_v0.19.14",
+      "date": "Wed, 26 Jun 2024 09:16:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: upgrade @visactor/vutils"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.13",
       "tag": "@visactor/vrender-components_v0.19.13",
       "date": "Tue, 25 Jun 2024 11:17:14 GMT",

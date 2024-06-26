@@ -33,6 +33,7 @@ export const page = () => {
       width: 0,
       x: 100,
       y: 100,
+      editable: true,
       // background: 'green',
       // "textAlign": "center",
       textConfig: [
@@ -264,6 +265,31 @@ export const page = () => {
     stage.defaultLayer.add(item);
   });
   stage.render();
+
+  const plugin = stage.pluginService.findPluginsByName('RichTextEditPlugin')[0] as RichTextEditPlugin;
+  console.log('plugin', plugin);
+
+  plugin.registerUpdateListener((type, p) => {
+    if (type === 'selection') {
+      const selection = p.getSelection();
+      if (selection && selection.hasFormat('fill')) {
+        const fill = selection.getFormat('fill');
+        console.log('当前颜色: ', fill, selection.getAllFormat('fill'));
+      } else if (selection) {
+        const allFill = selection.getAllFormat('fill');
+        console.log('当前没有反色', allFill);
+      }
+    }
+  });
+
+  ['bold', 'italic', 'underline', 'lineThrough', { fill: 'red' }].forEach(item => {
+    const btn = document.createElement('button');
+    btn.innerHTML = typeof item === 'string' ? item : JSON.stringify(item);
+    btn.addEventListener('click', () => {
+      plugin.dispatchCommand('FORMAT_TEXT_COMMAND', item);
+    });
+    document.body.appendChild(btn);
+  });
 
   console.log(shapes);
 

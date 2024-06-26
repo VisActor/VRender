@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import { isString } from '@visactor/vutils';
+import { isObject, isString, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
 import { createGroup, createLine, createRect } from '../../graphic';
 import type {
@@ -16,8 +16,72 @@ import type {
   IRichTextParagraph,
   IRichTextParagraphCharacter
 } from '../../interface';
-import { EditModule } from './edit-module';
+import { EditModule, findCursorIndexIgnoreLinebreak } from './edit-module';
 
+type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
+
+class Selection {
+  cacheSelectionStartCursorIdx: number;
+  cacheCurCursorIdx: number;
+  selectionStartCursorIdx: number;
+  curCursorIdx: number;
+  rt: IRichText;
+
+  constructor(
+    cacheSelectionStartCursorIdx: number,
+    cacheCurCursorIdx: number,
+    selectionStartCursorIdx: number,
+    curCursorIdx: number,
+    rt: IRichText
+  ) {
+    this.curCursorIdx = curCursorIdx;
+    this.selectionStartCursorIdx = selectionStartCursorIdx;
+    this.cacheCurCursorIdx = cacheCurCursorIdx;
+    this.cacheSelectionStartCursorIdx = cacheSelectionStartCursorIdx;
+    this.rt = rt;
+  }
+
+  hasFormat(key: string): boolean {
+    return this.getFormat(key) != null;
+  }
+  getFormat(key: string): any {
+    if (!this.rt) {
+      return null;
+    }
+    const config = this.rt.attribute.textConfig;
+    const val: any = config[this.selectionStartCursorIdx + 1][key];
+    if (val == null) {
+      return null;
+    }
+    for (let i = this.selectionStartCursorIdx + 2; i <= this.curCursorIdx; i++) {
+      const item = config[i];
+      if (val === item[key]) {
+        continue;
+      }
+      return null;
+    }
+    return val;
+  }
+
+  getAllFormat(key: string): any {
+    if (!this.rt) {
+      return [];
+    }
+    const config = this.rt.attribute.textConfig;
+    const val: any = config[this.selectionStartCursorIdx + 1][key];
+    const set = new Set();
+    set.add(val);
+    for (let i = this.selectionStartCursorIdx + 2; i <= this.curCursorIdx; i++) {
+      const item = config[i];
+      set.add(item[key]);
+    }
+    const list = Array.from(set.values());
+    return list;
+  }
+}
+
+export const FORMAT_TEXT_COMMAND = 'FORMAT_TEXT_COMMAND';
+export const FORMAT_ELEMENT_COMMAND = 'FORMAT_ELEMENT_COMMAND';
 export class RichTextEditPlugin implements IPlugin {
   name: 'RichTextEditPlugin' = 'RichTextEditPlugin';
   activeEvent: 'onRegister' = 'onRegister';
@@ -31,10 +95,80 @@ export class RichTextEditPlugin implements IPlugin {
   // 用于selection中保存上一次click时候的位置
   lastPoint?: IPointLike;
   editModule: EditModule;
+  currRt: IRichText;
 
   // 当前的cursor信息
   curCursorIdx: number;
   selectionStartCursorIdx: number;
+
+  commandCbs: Map<string, Array<(payload: any, p: RichTextEditPlugin) => void>>;
+  updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin) => void>;
+
+  constructor() {
+    this.commandCbs = new Map();
+    this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
+    this.updateCbs = [];
+  }
+
+  getSelection() {
+    if (
+      this.selectionStartCursorIdx &&
+      this.curCursorIdx &&
+      this.selectionStartCursorIdx !== this.curCursorIdx &&
+      this.currRt
+    ) {
+      return new Selection(
+        this.selectionStartCursorIdx,
+        this.curCursorIdx,
+        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.selectionStartCursorIdx),
+        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.curCursorIdx),
+        this.currRt
+      );
+    }
+    return null;
+  }
+
+  /* command */
+  formatTextCommandCb(payload: string, p: RichTextEditPlugin) {
+    const rt = p.currRt;
+    if (!rt) {
+      return;
+    }
+    const selectionData = p.getSelection();
+    if (!selectionData) {
+      return;
+    }
+    const { selectionStartCursorIdx, curCursorIdx } = selectionData;
+    const config = rt.attribute.textConfig.slice(selectionStartCursorIdx + 1, curCursorIdx + 1);
+    if (payload === 'bold') {
+      config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
+    } else if (payload === 'italic') {
+      config.forEach((item: IRichTextParagraphCharacter) => (item.fontStyle = 'italic'));
+    } else if (payload === 'underline') {
+      config.forEach((item: IRichTextParagraphCharacter) => (item.underline = true));
+    } else if (payload === 'lineThrough') {
+      config.forEach((item: IRichTextParagraphCharacter) => (item.lineThrough = true));
+    } else if (isObject(payload)) {
+      config.forEach((item: IRichTextParagraphCharacter) => merge(item, payload));
+    }
+    rt.setAttributes(rt.attribute);
+  }
+
+  dispatchCommand(command: string, payload: any) {
+    const cbs = this.commandCbs.get(command);
+    cbs && cbs.forEach(cb => cb(payload, this));
+    this.updateCbs.forEach(cb => cb('dispatch', this));
+  }
+
+  registerCommand(command: string, cb: (payload: any, p: RichTextEditPlugin) => void) {
+    const cbs: Array<(payload: any, p: RichTextEditPlugin) => void> = this.commandCbs.get(command) || [];
+    cbs.push(cb);
+  }
+
+  registerUpdateListener(cb: (type: UpdateType, p: RichTextEditPlugin) => void) {
+    const cbs = this.updateCbs || [];
+    cbs.push(cb);
+  }
 
   activate(context: IPluginService): void {
     this.pluginService = context;
@@ -54,6 +188,7 @@ export class RichTextEditPlugin implements IPlugin {
     const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
     this.hideSelection();
     this.setCursor(p.x, p.y1, p.y2);
+    this.updateCbs.forEach(cb => cb('input', this));
   };
   handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, orient: 'left' | 'right') => {
     // 修改cursor的位置，并同步到editModule
@@ -62,12 +197,14 @@ export class RichTextEditPlugin implements IPlugin {
     this.selectionStartCursorIdx = cursorIdx;
     this.setCursorAndTextArea(p.x, p.y1, p.y2, rt);
     this.hideSelection();
+    this.updateCbs.forEach(cb => cb('change', this));
   };
 
   handleMove = (e: PointerEvent) => {
     if (!this.isRichtext(e)) {
       return;
     }
+    this.currRt = e.target as IRichText;
     this.handleEnter(e);
     (e.target as any).once('pointerleave', this.handleLeave);
 
@@ -163,8 +300,10 @@ export class RichTextEditPlugin implements IPlugin {
 
       this.curCursorIdx = cursorIndex;
       this.setCursorAndTextArea(x, y1 + 2, y2 - 2, e.target as IRichText);
+
+      this.applyUpdate();
+      this.updateCbs.forEach(cb => cb('selection', this));
     }
-    this.applyUpdate();
   }
 
   hideSelection() {
@@ -182,6 +321,7 @@ export class RichTextEditPlugin implements IPlugin {
     }
     this.applyUpdate();
     this.pointerDown = true;
+    this.updateCbs.forEach(cb => cb(this.editing ? 'onfocus' : 'defocus', this));
   };
   handlePointerUp = (e: PointerEvent) => {
     this.pointerDown = false;
@@ -198,7 +338,7 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   isRichtext(e: PointerEvent) {
-    return !!(e.target && (e.target as any).type === 'richtext');
+    return !!(e.target && (e.target as any).type === 'richtext' && (e.target as any).attribute.editable);
   }
 
   protected getEventPosition(e: PointerEvent): IPointLike {
@@ -372,6 +512,7 @@ export class RichTextEditPlugin implements IPlugin {
   deFocus(e: PointerEvent) {
     const target = e.target as IRichText;
     target.detachShadow();
+    this.currRt = null;
     if (this.editLine) {
       this.editLine.parent.removeChild(this.editLine);
       this.editLine.release();

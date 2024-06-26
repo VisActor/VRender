@@ -1,6 +1,20 @@
 import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
 import { IRichTextIcon, IRichTextParagraph } from '../../interface';
 
+export function findCursorIndexIgnoreLinebreak(textConfig: IRichTextCharacter[], cursorIndex: number): number {
+  let index = 0;
+  for (index = 0; index < textConfig.length; index++) {
+    const c = textConfig[index] as IRichTextParagraphCharacter;
+    if (!(c.text && c.text === '\n')) {
+      cursorIndex--;
+    }
+    if (cursorIndex < 0) {
+      break;
+    }
+  }
+  return index;
+}
+
 export class EditModule {
   container: HTMLElement;
   textAreaDom: HTMLTextAreaElement;
@@ -57,23 +71,9 @@ export class EditModule {
     }
   };
 
-  findCursorIndexIgnoreLinebreak(textConfig: IRichTextCharacter[], cursorIndex: number): number {
-    let index = 0;
-    for (index = 0; index < textConfig.length; index++) {
-      const c = textConfig[index] as IRichTextParagraphCharacter;
-      if (!(c.text && c.text === '\n')) {
-        cursorIndex--;
-      }
-      if (cursorIndex < 0) {
-        break;
-      }
-    }
-    return index;
-  }
-
   handleCompositionStart = () => {
     const { textConfig = [] } = this.currRt.attribute;
-    const cursorIndex = this.findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex);
+    const cursorIndex = findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex);
     const lastConfig = textConfig[cursorIndex];
     textConfig.splice(cursorIndex + 1, 0, { ...lastConfig, text: '' });
     this.isComposing = true;
@@ -82,7 +82,7 @@ export class EditModule {
     this.isComposing = false;
     // 拆分上一次的内容
     const { textConfig = [] } = this.currRt.attribute;
-    const curIdx = this.findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex + 1);
+    const curIdx = findCursorIndexIgnoreLinebreak(textConfig, this.cursorIndex + 1);
 
     const lastConfig = textConfig[curIdx];
     textConfig.splice(curIdx, 1);
@@ -119,9 +119,9 @@ export class EditModule {
     this.cursorIndex = startIdx;
 
     // 转换成基于textConfig的
-    startIdx = this.findCursorIndexIgnoreLinebreak(textConfig, startIdx);
+    startIdx = findCursorIndexIgnoreLinebreak(textConfig, startIdx);
     const delta = this.selectionStartCursorIdx - startIdx;
-    endIdx = this.findCursorIndexIgnoreLinebreak(textConfig, endIdx);
+    endIdx = findCursorIndexIgnoreLinebreak(textConfig, endIdx);
 
     const lastConfig = textConfig[startIdx + (this.isComposing ? 1 : 0)];
     let currConfig = lastConfig;

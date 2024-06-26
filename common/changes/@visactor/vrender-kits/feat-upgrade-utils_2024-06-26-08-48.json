@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-kits",
+      "comment": "feat: upgrade @visactor/vutils",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits"
+}

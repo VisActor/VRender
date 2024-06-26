@@ -24,6 +24,10 @@ export const page = () => {
   const x = 300;
   const y = 300;
 
+  const group = createGroup({});
+  group.add(createRect({ fill: 'red' }));
+  console.log('aaa', group.AABBBounds);
+
   const rectW = 5;
   const _startAngle = startAngle + (rectW / (2 * pi * outerRadius)) * pi * 2;
   const _endAngle = endAngle - (rectW / (2 * pi * outerRadius)) * pi * 2 * 2;

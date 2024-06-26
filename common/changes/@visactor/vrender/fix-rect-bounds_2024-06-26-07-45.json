@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix issue with rect bounds while the wh is not setted",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

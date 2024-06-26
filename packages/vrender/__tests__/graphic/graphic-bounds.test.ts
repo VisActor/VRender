@@ -217,6 +217,9 @@ describe('Graphic-Bounds', () => {
     expect(rect.AABBBounds.x2).toEqual(113);
     expect(rect.AABBBounds.y2).toEqual(113);
 
+    rect = createRect({ fill: 'red' });
+    expect(rect.AABBBounds.empty()).toEqual(true);
+
     // arc
     const arc = createArc({
       x: 0,

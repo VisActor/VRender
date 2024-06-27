@@ -230,10 +230,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       ...config
     };
   }
-  doUpdateFrameCache() {
+  doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
     const {
-      textConfig = [],
+      textConfig: _tc = [],
       maxWidth,
       maxHeight,
       width,
@@ -248,6 +248,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       disableAutoWrapLine
     } = this.attribute;
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
+
+    const textConfig = tc ?? _tc;
 
     for (let i = 0; i < textConfig.length; i++) {
       if ('image' in textConfig[i]) {

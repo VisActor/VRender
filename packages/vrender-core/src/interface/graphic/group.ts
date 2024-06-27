@@ -10,7 +10,7 @@ export type IGroupAttribute = {
   cornerRadius: number | number[];
   clip: boolean;
   visibleAll: boolean;
-  display?: 'relative' | 'flex';
+  display?: 'relative' | 'inner-block' | 'flex';
   flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   flexWrap?: 'nowrap' | 'wrap';
   justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';

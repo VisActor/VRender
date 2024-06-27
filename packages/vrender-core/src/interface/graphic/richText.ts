@@ -7,6 +7,7 @@ import type { ITextGraphicAttribute } from './text';
 export type IRichTextAttribute = {
   width: number;
   height: number;
+  editable: boolean;
   ellipsis: boolean | string;
   wordBreak: RichTextWordBreak;
   verticalDirection: RichTextVerticalDirection;

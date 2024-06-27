@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.19.13",
+  "version": "0.19.14",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~0.18.9"
+    "@visactor/vutils": "~0.18.10"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

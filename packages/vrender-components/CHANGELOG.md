@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 25 Jun 2024 11:17:14 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Jun 2024 09:16:23 GMT and should not be manually modified.
+
+## 0.19.14
+Wed, 26 Jun 2024 09:16:23 GMT
+
+### Updates
+
+- feat: upgrade @visactor/vutils
 
 ## 0.19.13
 Tue, 25 Jun 2024 11:17:14 GMT

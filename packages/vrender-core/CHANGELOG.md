@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 25 Jun 2024 11:17:14 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Jun 2024 09:16:23 GMT and should not be manually modified.
+
+## 0.19.14
+Wed, 26 Jun 2024 09:16:23 GMT
+
+### Updates
+
+- feat: support richtext editor
+- feat: upgrade @visactor/vutils
+- fix: fix issue with rect bounds while the wh is not setted
 
 ## 0.19.13
 Tue, 25 Jun 2024 11:17:14 GMT

@@ -729,7 +729,9 @@ export class DefaultGraphicService implements IGraphicService {
       const { x1, y1, x, y } = attribute;
       width = width ?? x1 - x;
       height = height ?? y1 - y;
-      aabbBounds.set(0, 0, width || 0, height || 0);
+      if (isFinite(width) || isFinite(height) || isFinite(x) || isFinite(y)) {
+        aabbBounds.set(0, 0, width || 0, height || 0);
+      }
     }
 
     const tb1 = this.tempAABBBounds1;
@@ -756,7 +758,7 @@ export class DefaultGraphicService implements IGraphicService {
     const originalAABBBounds = aabbBounds; // fix aabbbounds update error in flex layout
     aabbBounds = aabbBounds.clone();
 
-    const { width, height, path, clip = groupTheme.clip } = attribute;
+    const { width, height, path, clip = groupTheme.clip, display } = attribute;
     // 添加自身的fill或者clip
     if (path && path.length) {
       path.forEach(g => {

@@ -207,6 +207,10 @@ export const pages = [
       {
         name: '3d点图',
         path: 'points3d'
+      },
+      {
+        name: 'richtext-editor',
+        path: 'richtext-editor'
       }
     ]
   },

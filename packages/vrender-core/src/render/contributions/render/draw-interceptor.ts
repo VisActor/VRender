@@ -42,7 +42,19 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+    // 如果graphic没设置shadowRootIdx，shadowRoot设置了，那就使用shadowRoot的shadowRootIdx
+    if (
+      graphic.attribute.shadowRootIdx == null &&
+      graphic.shadowRoot &&
+      graphic.shadowRoot.attribute.shadowRootIdx < 0
+    ) {
+      return false;
+    }
+    if (
+      graphic.attribute.shadowRootIdx > 0 ||
+      !graphic.attribute.shadowRootIdx ||
+      (graphic.shadowRoot && graphic.shadowRoot.attribute.shadowRootIdx > 0)
+    ) {
       this.drawItem(graphic, renderService, drawContext, drawContribution, params);
     }
     return false;
@@ -55,7 +67,15 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    if (graphic.attribute.shadowRootIdx < 0) {
+    // 如果graphic没设置shadowRootIdx，shadowRoot设置了，那就使用shadowRoot的shadowRootIdx
+    if (
+      graphic.attribute.shadowRootIdx == null &&
+      graphic.shadowRoot &&
+      graphic.shadowRoot.attribute.shadowRootIdx > 0
+    ) {
+      return false;
+    }
+    if (graphic.attribute.shadowRootIdx < 0 || (graphic.shadowRoot && graphic.shadowRoot.attribute.shadowRootIdx < 0)) {
       this.drawItem(graphic, renderService, drawContext, drawContribution, params);
     }
     return false;

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: get default end props",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

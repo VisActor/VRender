@@ -1,5 +1,15 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import { getDecimalPlaces, isArray, isNumber, max, pi, pi2, Point, PointService } from '@visactor/vutils';
+import {
+  getDecimalPlaces,
+  isArray,
+  isNumber,
+  isValidNumber,
+  max,
+  pi,
+  pi2,
+  Point,
+  PointService
+} from '@visactor/vutils';
 import { application } from '../application';
 import { AttributeUpdateType } from '../common/enums';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -8,6 +18,7 @@ import type {
   IArcGraphicAttribute,
   IArea,
   IAreaCacheItem,
+  IClipRangeByDimensionType,
   ICubicBezierCurve,
   ICurve,
   ICustomPath2D,
@@ -698,16 +709,18 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
   protected interpolatePoints: [IPointLike, IPointLike][];
   protected newPointAnimateType: 'grow' | 'appear' | 'clip';
   protected clipRange: number;
+  protected clipRangeByDimension: 'x' | 'y';
 
   constructor(
     from: any,
     to: any,
     duration: number,
     easing: EasingType,
-    params?: { newPointAnimateType?: 'grow' | 'appear' | 'clip' }
+    params?: { newPointAnimateType?: 'grow' | 'appear' | 'clip'; clipRangeByDimension?: 'x' | 'y' }
   ) {
     super(from, to, duration, easing, params);
     this.newPointAnimateType = params?.newPointAnimateType ?? 'grow';
+    this.clipRangeByDimension = params?.clipRangeByDimension ?? 'x';
   }
 
   onBind(): void {
@@ -744,7 +757,17 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
     if (this.newPointAnimateType === 'clip') {
       if (this.toPoints.length !== 0) {
         if (Number.isFinite(lastMatchedIndex)) {
-          this.clipRange = lastMatchedIndex / this.toPoints.length;
+          this.clipRange =
+            this.toPoints[lastMatchedIndex][this.clipRangeByDimension] /
+            this.toPoints[this.toPoints.length - 1][this.clipRangeByDimension];
+
+          if (!isValidNumber(this.clipRange)) {
+            this.clipRange = 0;
+          } else if (this.clipRange > 1) {
+            this.clipRange = 1;
+          } else if (this.clipRange < 0) {
+            this.clipRange = 0;
+          }
         } else {
           this.clipRange = 0;
         }

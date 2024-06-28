@@ -696,17 +696,18 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
   protected toPoints: IPointLike[];
   protected points: IPointLike[];
   protected interpolatePoints: [IPointLike, IPointLike][];
-  protected newPointAnimateType: 'grow' | 'appear';
+  protected newPointAnimateType: 'grow' | 'appear' | 'clip';
+  protected clipRange: number;
 
   constructor(
     from: any,
     to: any,
     duration: number,
     easing: EasingType,
-    params?: { newPointAnimateType?: 'grow' | 'appear' }
+    params?: { newPointAnimateType?: 'grow' | 'appear' | 'clip' }
   ) {
     super(from, to, duration, easing, params);
-    this.newPointAnimateType = params?.newPointAnimateType === 'appear' ? 'appear' : 'grow';
+    this.newPointAnimateType = params?.newPointAnimateType ?? 'grow';
   }
 
   onBind(): void {
@@ -739,6 +740,16 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
         break;
       }
     }
+
+    if (this.newPointAnimateType === 'clip') {
+      if (this.toPoints.length !== 0) {
+        if (Number.isFinite(lastMatchedIndex)) {
+          this.clipRange = lastMatchedIndex / this.toPoints.length;
+        } else {
+          this.clipRange = 0;
+        }
+      }
+    }
     // TODO: shrink removed points
     // if no point is matched, animation should start from toPoint[0]
     let prevMatchedPoint = this.toPoints[0];
@@ -749,7 +760,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
         return [matchedPoint, point];
       }
       // appear new point
-      if (this.newPointAnimateType === 'appear') {
+      if (this.newPointAnimateType === 'appear' || this.newPointAnimateType === 'clip') {
         return [point, point];
       }
       // grow new point
@@ -777,6 +788,9 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
       newPoint.context = point.context;
       return newPoint;
     });
+    if (this.clipRange) {
+      out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
+    }
     out.points = this.points;
   }
 }

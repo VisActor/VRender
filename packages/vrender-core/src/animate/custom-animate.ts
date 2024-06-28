@@ -1,5 +1,6 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
 import {
+  clamp,
   getDecimalPlaces,
   isArray,
   isNumber,
@@ -763,10 +764,8 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
 
           if (!isValidNumber(this.clipRange)) {
             this.clipRange = 0;
-          } else if (this.clipRange > 1) {
-            this.clipRange = 1;
-          } else if (this.clipRange < 0) {
-            this.clipRange = 0;
+          } else {
+            this.clipRange = clamp(this.clipRange, 0, 1);
           }
         } else {
           this.clipRange = 0;

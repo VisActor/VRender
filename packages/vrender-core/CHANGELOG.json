@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.15",
+      "tag": "@visactor/vrender-core_v0.19.15",
+      "date": "Fri, 28 Jun 2024 10:32:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with area clip direction"
+          },
+          {
+            "comment": "feat: support `clip` effect for new points in tagPointsUpdate animation"
+          },
+          {
+            "comment": "fix: get default end props"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.14",
       "tag": "@visactor/vrender-core_v0.19.14",
       "date": "Wed, 26 Jun 2024 09:16:23 GMT",

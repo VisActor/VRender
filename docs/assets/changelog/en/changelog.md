@@ -1,3 +1,28 @@
+# v0.19.14
+
+2024-06-28
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: upgrade @visactor/vutils
+- **@visactor/react-vrender-utils**: upgrade @visactor/vutils
+- **@visactor/react-vrender**: upgrade @visactor/vutils
+- **@visactor/vrender-kits**: upgrade @visactor/vutils
+- **@visactor/vrender-core**: support richtext editor
+- **@visactor/vrender-core**: upgrade @visactor/vutils
+- **@visactor/vrender**: support richtext editor
+- **@visactor/vrender**: upgrade @visactor/vutils
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with rect bounds while the wh is not setted
+- **@visactor/vrender**: fix issue with rect bounds while the wh is not setted
+
+
+
+[more detail about v0.19.14](https://github.com/VisActor/VRender/releases/tag/v0.19.14)
+
 # v0.19.13
 
 2024-06-25

@@ -94,7 +94,7 @@ export abstract class ACustomAnimate<T> implements ICustomAnimate {
   }
 
   getEndProps(): Record<string, any> | void {
-    return;
+    return this.to;
   }
 
   getFromProps(): Record<string, any> | void {

@@ -2,6 +2,12 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.15",
+      "tag": "@visactor/vrender-components_v0.19.15",
+      "date": "Fri, 28 Jun 2024 10:32:37 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.19.14",
       "tag": "@visactor/vrender-components_v0.19.14",
       "date": "Wed, 26 Jun 2024 09:16:23 GMT",

@@ -1,3 +1,21 @@
+# v0.19.15
+
+2024-07-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: support `clip` effect for new points in tagPointsUpdate animation
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with area clip direction
+- **@visactor/vrender-core**: get default end props
+
+
+
+[更多详情请查看 v0.19.15](https://github.com/VisActor/VRender/releases/tag/v0.19.15)
+
 # v0.19.14
 
 2024-06-28

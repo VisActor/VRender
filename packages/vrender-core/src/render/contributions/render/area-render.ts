@@ -621,7 +621,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     const xTotalLength = abs(endP.x - startP.x);
     const yTotalLength = abs(endP.y - startP.y);
-    if (!Number.isFinite(xTotalLength + yTotalLength)) {
+    if (endP.x1 == null) {
+      direction = Direction.ROW;
+    } else if (endP.y1 == null) {
+      direction = Direction.COLUMN;
+    } else if (!Number.isFinite(xTotalLength + yTotalLength)) {
       direction = Direction.ROW;
     } else {
       direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;

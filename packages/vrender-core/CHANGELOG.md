@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 26 Jun 2024 09:16:23 GMT and should not be manually modified.
+This log was last generated on Fri, 28 Jun 2024 10:32:37 GMT and should not be manually modified.
+
+## 0.19.15
+Fri, 28 Jun 2024 10:32:37 GMT
+
+### Updates
+
+- fix: fix issue with area clip direction
+- feat: support `clip` effect for new points in tagPointsUpdate animation
+- fix: get default end props
 
 ## 0.19.14
 Wed, 26 Jun 2024 09:16:23 GMT

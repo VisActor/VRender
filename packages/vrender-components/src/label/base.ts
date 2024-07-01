@@ -93,8 +93,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _idToPoint: Map<string, IPointLike>;
 
-  onAfterLabelOverlap?: (bitmap: Bitmap) => void;
-
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
 
@@ -179,6 +177,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (overlap !== false) {
         labels = this._overlapping(labels);
       }
+    }
+
+    if (isFunction(this.attribute.onAfterOverlapping)) {
+      this.attribute.onAfterOverlapping(
+        labels as Text[],
+        this.getRelatedGraphic.bind(this),
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+      );
     }
 
     if (labels && labels.length) {
@@ -581,10 +587,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       !hasPlace && !hideOnHit && result.push(text);
     }
 
-    if (isFunction(this.onAfterLabelOverlap)) {
-      this.onAfterLabelOverlap(bitmap);
-    }
-
     return result;
   }
 
@@ -620,6 +622,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithAnimation(labels: (IText | IRichText)[]) {
+    const { syncState } = this.attribute;
     const currentTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = new Map();
     const prevTextMap: Map<any, { text: IText | IRichText; labelLine?: ILine }> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
@@ -636,6 +639,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         if (showLabelLine) {
           labelLine = this._createLabelLine(text as IText, relatedGraphic);
         }
+
+        if (syncState) {
+          this.updateStatesOfLabels([labelLine ? { text, labelLine } : { text }], relatedGraphic.currentStates ?? []);
+        }
+
         // TODO: add animate
         if (state === 'enter') {
           texts.push(text);
@@ -675,6 +683,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           currentTextMap.set(textKey, prevLabel);
           const prevText = prevLabel.text;
           const { duration, easing } = this._animationConfig.update;
+
           updateAnimation(prevText as Text, text as Text, this._animationConfig.update);
           if (prevLabel.labelLine && labelLine) {
             prevLabel.labelLine.animate().to(labelLine.attribute, duration, easing);
@@ -701,6 +710,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _renderWithOutAnimation(labels: (IText | IRichText)[]) {
+    const { syncState } = this.attribute;
     const currentTextMap: Map<any, LabelContent> = new Map();
     const prevTextMap: Map<any, LabelContent> = this._graphicToText || new Map();
     const texts = [] as (IText | IRichText)[];
@@ -716,6 +726,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           labelLine = this._createLabelLine(text as IText, relatedGraphic);
         }
 
+        if (syncState) {
+          this.updateStatesOfLabels([labelLine ? { text, labelLine } : { text }], relatedGraphic.currentStates ?? []);
+        }
+
         if (state === 'enter') {
           texts.push(text);
           currentTextMap.set(textKey, labelLine ? { text, labelLine } : { text });
@@ -728,6 +742,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           const prevLabel = prevTextMap.get(textKey);
           prevTextMap.delete(textKey);
           currentTextMap.set(textKey, prevLabel);
+
           prevLabel.text.setAttributes(text.attribute as any);
           if (prevLabel.labelLine && labelLine) {
             prevLabel.labelLine.setAttributes(labelLine.attribute);
@@ -745,6 +760,20 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._graphicToText = currentTextMap;
   }
 
+  private updateStatesOfLabels(labels: LabelContent[], currentStates?: string[]) {
+    labels.forEach(label => {
+      if (label) {
+        if (label.text) {
+          label.text.useStates(currentStates);
+        }
+
+        if (label.labelLine) {
+          label.labelLine.useStates(currentStates);
+        }
+      }
+    });
+  }
+
   protected _handleRelatedGraphicSetState = (e: any) => {
     if (
       e.detail?.type === AttributeUpdateType.STATE ||
@@ -753,17 +782,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const currentStates = e.target?.currentStates ?? [];
       const labels = this._isCollectionBase ? [...this._graphicToText.values()] : [this._graphicToText.get(e.target)];
 
-      labels.forEach(label => {
-        if (label) {
-          if (label.text) {
-            label.text.useStates(currentStates);
-          }
-
-          if (label.labelLine) {
-            label.labelLine.useStates(currentStates);
-          }
-        }
-      });
+      this.updateStatesOfLabels(labels, currentStates);
     }
   };
 

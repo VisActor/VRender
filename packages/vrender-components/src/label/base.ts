@@ -93,8 +93,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _idToPoint: Map<string, IPointLike>;
 
-  onAfterLabelOverlap?: (bitmap: Bitmap) => void;
-
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
 
@@ -179,6 +177,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (overlap !== false) {
         labels = this._overlapping(labels);
       }
+    }
+
+    if (isFunction(this.attribute.onAfterOverlapping)) {
+      this.attribute.onAfterOverlapping(
+        labels as Text[],
+        this.getRelatedGraphic.bind(this),
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+      );
     }
 
     if (labels && labels.length) {
@@ -579,10 +585,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
 
       !hasPlace && !hideOnHit && result.push(text);
-    }
-
-    if (isFunction(this.onAfterLabelOverlap)) {
-      this.onAfterLabelOverlap(bitmap);
     }
 
     return result;

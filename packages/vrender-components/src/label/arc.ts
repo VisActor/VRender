@@ -166,9 +166,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       ...this.attribute.textStyle,
       text: '…'
     };
-    const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
-    const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
-    const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    let ellipsisWidth = Infinity;
+    if (ellipsisLabelAttribute.ellipsis !== false) {
+      const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+      const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+      ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    }
     const data = labels.map(label => label.attribute as LabelItem);
 
     const arcs: ArcInfo[] = this.layoutArcLabels(

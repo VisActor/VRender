@@ -127,6 +127,15 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
     getRelatedPoint?: (data: LabelItem) => IPointLike
   ) => (IText | IRichText)[];
   /**
+   * 防重叠计算完成后的回调函数
+   * @since 1.19.16
+   */
+  onAfterOverlapping?: (
+    labels: (IText | IRichText)[],
+    getRelatedGraphic: (data: LabelItem) => IGraphic,
+    getRelatedPoint?: (data: LabelItem) => IPointLike
+  ) => void;
+  /**
    * 关闭交互效果
    * @default false
    */

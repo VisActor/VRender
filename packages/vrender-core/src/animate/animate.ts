@@ -253,7 +253,7 @@ export class Animate implements IAnimate {
       const stage = (this.target as IGraphic).stage;
       stage && stage.renderNextFrame();
     }
-    if (this.subAnimates.length === 1 && this.tailAnimate.duration === customAnimate.duration) {
+    if (this.subAnimates.length === 1 && this.tailAnimate.totalDuration === customAnimate.duration) {
       this.trySetAttribute(customAnimate.getFromProps(), customAnimate.mode);
     }
     return this;

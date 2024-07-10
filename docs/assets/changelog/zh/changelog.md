@@ -1,3 +1,19 @@
+# v0.19.16
+
+2024-07-10
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the issue where the arc label is still truncated despite setting `ellipsis: false`
+- **@visactor/vrender-components**: fix syncState of label when re-render stage
+- **@visactor/vrender-core**: fix syncState of label when re-render stage
+- **@visactor/vrender-core**: fix issue with setAttribute while play with startAt
+
+
+
+[更多详情请查看 v0.19.16](https://github.com/VisActor/VRender/releases/tag/v0.19.16)
+
 # v0.19.15
 
 2024-07-01

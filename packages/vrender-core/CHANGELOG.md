@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 28 Jun 2024 10:32:37 GMT and should not be manually modified.
+This log was last generated on Fri, 05 Jul 2024 14:29:15 GMT and should not be manually modified.
+
+## 0.19.16
+Fri, 05 Jul 2024 14:29:15 GMT
+
+### Updates
+
+- fix: fix syncState of label when re-render stage
+
+
+- fix: fix issue with setAttribute while play with startAt
 
 ## 0.19.15
 Fri, 28 Jun 2024 10:32:37 GMT

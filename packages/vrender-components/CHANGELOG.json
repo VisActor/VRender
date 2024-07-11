@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.16",
+      "tag": "@visactor/vrender-components_v0.19.16",
+      "date": "Fri, 05 Jul 2024 14:29:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue where the arc label is still truncated despite setting `ellipsis: false`"
+          },
+          {
+            "comment": "fix: fix syncState of label when re-render stage\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.15",
       "tag": "@visactor/vrender-components_v0.19.15",
       "date": "Fri, 28 Jun 2024 10:32:37 GMT",

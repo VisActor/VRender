@@ -1,3 +1,17 @@
+# v0.19.17
+
+2024-07-11
+
+
+**What's Changed**
+
+* [Auto release] release 0.19.17 by @github-actions in https://github.com/VisActor/VRender/pull/1295
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.19.16...v0.19.17
+
+[更多详情请查看 v0.19.17](https://github.com/VisActor/VRender/releases/tag/v0.19.17)
+
 # v0.19.16
 
 2024-07-10

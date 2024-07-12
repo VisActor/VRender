@@ -14,7 +14,8 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
   htmlMap: Record<
     string,
     {
-      root: any;
+      root?: any;
+      unmount?: () => void;
       wrapContainer: HTMLElement;
       nativeContainer: HTMLElement;
       container: string | HTMLElement | null;
@@ -27,13 +28,15 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       return;
     }
 
-    const { root, wrapContainer } = this.htmlMap[id];
+    const { root, wrapContainer, unmount } = this.htmlMap[id];
 
     if (root) {
       const raf = application.global.getRequestAnimationFrame();
       raf(() => {
         root.unmount();
       });
+    } else if (unmount) {
+      unmount();
     }
 
     wrapContainer && application.global.removeDom(wrapContainer);
@@ -52,7 +55,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
     }
     const ReactDOM = stage.params.ReactDOM;
     const { element, container } = react;
-    if (!(element && ReactDOM && ReactDOM.createRoot)) {
+    if (!(element && ReactDOM && (ReactDOM.createRoot || ReactDOM.render))) {
       return;
     }
     const id = isNil(react.id) ? `${graphic.id ?? graphic._uid}_react` : react.id;
@@ -66,18 +69,35 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
       const { wrapContainer, nativeContainer } = this.getWrapContainer(stage, container);
 
       if (wrapContainer) {
-        const root = ReactDOM.createRoot(wrapContainer);
-        root.render(element);
-
         if (!this.htmlMap) {
           this.htmlMap = {};
         }
+        if (ReactDOM.createRoot) {
+          const root = ReactDOM.createRoot(wrapContainer);
+          root.render(element);
 
-        this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId };
+          this.htmlMap[id] = { root, wrapContainer, nativeContainer, container, renderId: this.renderId };
+        } else {
+          ReactDOM.render(element, wrapContainer);
+
+          this.htmlMap[id] = {
+            wrapContainer,
+            nativeContainer,
+            container,
+            renderId: this.renderId,
+            unmount: () => {
+              ReactDOM.unmountComponentAtNode(wrapContainer);
+            }
+          };
+        }
       }
     } else {
       // update react element
-      this.htmlMap[id].root.render(element);
+      if (ReactDOM.createRoot) {
+        this.htmlMap[id].root.render(element);
+      } else {
+        ReactDOM.render(element, this.htmlMap[id].wrapContainer);
+      }
     }
 
     if (!this.htmlMap || !this.htmlMap[id]) {

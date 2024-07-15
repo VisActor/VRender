@@ -1166,7 +1166,9 @@ export class DefaultGraphicService implements IGraphicService {
     const { points = lineTheme.points } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
-      b.add(p.x, p.y);
+      if (p.defined !== false) {
+        b.add(p.x, p.y);
+      }
     });
     return b;
   }
@@ -1180,7 +1182,9 @@ export class DefaultGraphicService implements IGraphicService {
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
-        b.add(p.x, p.y);
+        if (p.defined !== false) {
+          b.add(p.x, p.y);
+        }
       });
     });
     return b;

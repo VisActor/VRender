@@ -1163,10 +1163,12 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: ILine
   ): IAABBBounds {
-    const { points = lineTheme.points } = attribute;
+    const { points = lineTheme.points, connectedType } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
-      b.add(p.x, p.y);
+      if (p.defined !== false || connectedType === 'zero') {
+        b.add(p.x, p.y);
+      }
     });
     return b;
   }
@@ -1176,11 +1178,13 @@ export class DefaultGraphicService implements IGraphicService {
     aabbBounds: IAABBBounds,
     graphic?: ILine
   ): IAABBBounds {
-    const { segments = lineTheme.segments } = attribute;
+    const { segments = lineTheme.segments, connectedType } = attribute;
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
-        b.add(p.x, p.y);
+        if (p.defined !== false || connectedType === 'zero') {
+          b.add(p.x, p.y);
+        }
       });
     });
     return b;

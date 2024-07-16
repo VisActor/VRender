@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.18",
+      "tag": "@visactor/vrender-core_v0.19.18",
+      "date": "Fri, 12 Jul 2024 07:18:10 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: support react 17 in react attributes\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.17",
       "tag": "@visactor/vrender-core_v0.19.17",
       "date": "Fri, 05 Jul 2024 17:26:17 GMT",

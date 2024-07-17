@@ -42,10 +42,10 @@ export class DefaultCanvasPathPicker extends BasePicker<IPath> implements IGraph
       return false;
     }
 
+    pickContext.highPerformanceSave();
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = getTheme(path).path;
 
-    pickContext.highPerformanceSave();
     const data = this.transform(path, pathAttribute, pickContext);
     const { x, y, z, lastModelMatrix } = data;
 

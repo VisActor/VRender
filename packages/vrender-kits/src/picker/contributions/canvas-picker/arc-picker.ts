@@ -1,9 +1,12 @@
-import { inject, injectable, ArcRender } from '@visactor/vrender-core';
+import { inject, injectable, ArcRender, ARC_NUMBER_TYPE } from '@visactor/vrender-core';
 import type { IGraphicPicker, IGraphicRender } from '@visactor/vrender-core';
-import { ArcPickerBase } from '../common/arc-picker-base';
+import { PickerBase } from '../common/base';
 
 @injectable()
-export class DefaultCanvasArcPicker extends ArcPickerBase implements IGraphicPicker {
+export class DefaultCanvasArcPicker extends PickerBase implements IGraphicPicker {
+  type: string = 'arc';
+  numberType: number = ARC_NUMBER_TYPE;
+
   constructor(@inject(ArcRender) public readonly canvasRenderer: IGraphicRender) {
     super();
   }

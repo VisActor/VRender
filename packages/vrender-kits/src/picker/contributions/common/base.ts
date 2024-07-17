@@ -10,7 +10,7 @@ import type {
   IGraphic
 } from '@visactor/vrender-core';
 
-export class PickerBase {
+export abstract class PickerBase {
   canvasRenderer!: IGraphicRender;
 
   contains(graphic: IGraphic, point: IPoint, params?: IPickParams): boolean {
@@ -26,19 +26,16 @@ export class PickerBase {
       return false;
     }
 
-    const arcAttribute = getTheme(graphic)[graphic.type];
-
-    // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
-
+    const attribute = getTheme(graphic)[graphic.type];
     pickContext.highPerformanceSave();
-    let { x = arcAttribute.x, y = arcAttribute.y } = graphic.attribute;
+    let { x = attribute.x, y = attribute.y } = graphic.attribute;
     if (!graphic.transMatrix.onlyTranslate()) {
       // 性能较差
       x = 0;
       y = 0;
       pickContext.transformFromMatrix(graphic.transMatrix, true);
     } else {
-      const point = graphic.getOffsetXY(arcAttribute);
+      const point = graphic.getOffsetXY(attribute);
       x += point.x;
       y += point.y;
       // 当前context有rotate/scale，重置matrix

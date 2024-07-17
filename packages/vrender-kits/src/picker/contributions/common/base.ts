@@ -1,26 +1,23 @@
-import { getTheme, getScaledStroke, ARC_NUMBER_TYPE } from '@visactor/vrender-core';
+import { getTheme, getScaledStroke } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
-  IArc,
   IGraphicAttribute,
   IContext2d,
   IMarkAttribute,
   IThemeAttribute,
   IPickParams,
-  IGraphicRender
+  IGraphicRender,
+  IGraphic
 } from '@visactor/vrender-core';
 
-export class ArcPickerBase {
-  type: string = 'arc';
-  numberType: number = ARC_NUMBER_TYPE;
-
+export class PickerBase {
   canvasRenderer!: IGraphicRender;
 
-  contains(arc: IArc, point: IPoint, params?: IPickParams): boolean {
-    if (!arc.AABBBounds.containsPoint(point)) {
+  contains(graphic: IGraphic, point: IPoint, params?: IPickParams): boolean {
+    if (!graphic.AABBBounds.containsPoint(point)) {
       return false;
     }
-    if (arc.attribute.pickMode === 'imprecise') {
+    if (graphic.attribute.pickMode === 'imprecise') {
       return true;
     }
 
@@ -29,19 +26,19 @@ export class ArcPickerBase {
       return false;
     }
 
-    const arcAttribute = getTheme(arc).arc;
+    const arcAttribute = getTheme(graphic)[graphic.type];
 
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
 
     pickContext.highPerformanceSave();
-    let { x = arcAttribute.x, y = arcAttribute.y } = arc.attribute;
-    if (!arc.transMatrix.onlyTranslate()) {
+    let { x = arcAttribute.x, y = arcAttribute.y } = graphic.attribute;
+    if (!graphic.transMatrix.onlyTranslate()) {
       // 性能较差
       x = 0;
       y = 0;
-      pickContext.transformFromMatrix(arc.transMatrix, true);
+      pickContext.transformFromMatrix(graphic.transMatrix, true);
     } else {
-      const point = arc.getOffsetXY(arcAttribute);
+      const point = graphic.getOffsetXY(arcAttribute);
       x += point.x;
       y += point.y;
       // 当前context有rotate/scale，重置matrix
@@ -51,7 +48,7 @@ export class ArcPickerBase {
     // 详细形状判断
     let picked = false;
     this.canvasRenderer.drawShape(
-      arc,
+      graphic,
       pickContext,
       x,
       y,

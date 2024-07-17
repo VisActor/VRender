@@ -266,9 +266,7 @@ export function drawArcPath(
   let collapsedToLine: boolean = false;
   // 规范化outerRadius和innerRadius
   if (outerRadius < innerRadius) {
-    const temp = outerRadius;
-    outerRadius = innerRadius;
-    innerRadius = temp;
+    [innerRadius, outerRadius] = [outerRadius, innerRadius];
   }
   // Is it a point?
   if (outerRadius <= epsilon) {

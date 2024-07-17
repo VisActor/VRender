@@ -1,33 +1,8 @@
 // 存放一些公共方法，公共配置
 
-import { isNil, isString, type ITextFontParams, lowerCamelCaseToMiddle } from '@visactor/vutils';
+import { isNil, isString, lowerCamelCaseToMiddle } from '@visactor/vutils';
 import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
 
-export function getContextFont(
-  text: Partial<ITextFontParams>,
-  defaultAttr: Partial<ITextFontParams> = {},
-  fontSizeScale?: number
-): string {
-  if (!fontSizeScale) {
-    fontSizeScale = 1;
-  }
-  const {
-    fontStyle = defaultAttr.fontStyle,
-    fontVariant = defaultAttr.fontVariant,
-    fontWeight = defaultAttr.fontWeight,
-    fontSize = defaultAttr.fontSize,
-    fontFamily = defaultAttr.fontFamily
-  } = text;
-  return (
-    '' +
-    (fontStyle ? fontStyle + ' ' : '') +
-    (fontVariant ? fontVariant + ' ' : '') +
-    (fontWeight ? fontWeight + ' ' : '') +
-    fontSize * fontSizeScale +
-    'px ' +
-    (fontFamily ? fontFamily : 'sans-serif')
-  );
-}
 // TODO: 更好的方案
 /**
  * 用于绘制的时候偏移

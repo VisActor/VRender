@@ -228,6 +228,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
     let { doWrap, maxWidthInCol, startX, startY, pages } = this._itemContext;
     let item: LegendItemDatum;
+    let lastItemWidth = 0;
 
     for (let index = startIndex, len = legendItems.length; index < len; index++) {
       if (lazyload && pages > this._itemContext.currentPage * maxPages) {
@@ -254,7 +255,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const itemWidth = itemGroup.attribute.width;
       const itemHeight = itemGroup.attribute.height;
       this._itemHeight = Math.max(this._itemHeight, itemHeight);
-
+      maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
       if (isHorizontal) {
@@ -291,11 +292,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             pages += 1;
             doWrap = true;
             startY = 0;
-            startX += maxWidthInCol + spaceCol;
-            maxWidthInCol = itemWidth;
+            if (index > 0) {
+              startX += lastItemWidth + spaceCol;
+            }
           } else if (maxHeight < startY + itemHeight) {
-            maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
-
             // 检测是否换列：如果用户声明了 maxHeight 并且超出了，则进行换列
             pages += 1;
             doWrap = true;
@@ -314,6 +314,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
 
       itemsContainer.add(itemGroup);
+      lastItemWidth = itemWidth;
     }
 
     this._itemContext.doWrap = doWrap;

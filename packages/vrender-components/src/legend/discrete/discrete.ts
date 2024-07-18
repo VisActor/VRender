@@ -254,7 +254,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const itemWidth = itemGroup.attribute.width;
       const itemHeight = itemGroup.attribute.height;
       this._itemHeight = Math.max(this._itemHeight, itemHeight);
-      maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
 
       this._itemMaxWidth = Math.max(itemWidth, this._itemMaxWidth);
 
@@ -287,7 +286,16 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           if (isScrollbar && autoPage) {
             pages = Math.ceil((startY + itemHeight) / maxHeight);
             doWrap = pages > 1;
+          } else if (maxHeight <= itemHeight) {
+            // 如果最大高度小于图例项高度，说明只有一行，那么就按照图例项自己的宽度进行布局即可，不需要每列同宽
+            pages += 1;
+            doWrap = true;
+            startY = 0;
+            startX += maxWidthInCol + spaceCol;
+            maxWidthInCol = itemWidth;
           } else if (maxHeight < startY + itemHeight) {
+            maxWidthInCol = Math.max(itemWidth, maxWidthInCol);
+
             // 检测是否换列：如果用户声明了 maxHeight 并且超出了，则进行换列
             pages += 1;
             doWrap = true;
@@ -384,7 +392,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     };
 
     this._itemContext = this._renderItems();
-
     // TODO: 添加测试用例
     let pagerRendered = false;
     if (this._itemContext.doWrap && autoPage && this._itemContext.pages > this._itemContext.maxPages) {

@@ -1,4 +1,4 @@
-import type { AABBBounds, Matrix, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, Matrix } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Point } from '@visactor/vutils';
 import { application } from '../application';
@@ -204,10 +204,6 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   protected clearUpdateBoundTag() {
     this._updateTag &= UpdateTag.CLEAR_BOUNDS;
     this._childUpdateTag &= UpdateTag.CLEAR_BOUNDS;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   addUpdateBoundTag() {

@@ -218,10 +218,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  protected declare _OBBBounds?: OBBBounds;
-  get OBBBounds(): OBBBounds {
-    return this.tryUpdateOBBBounds();
-  }
+  // protected declare _OBBBounds?: OBBBounds;
+  // get OBBBounds(): OBBBounds {
+  //   return this.tryUpdateOBBBounds();
+  // }
   protected declare _globalAABBBounds: AABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
   get globalAABBBounds(): AABBBounds {
@@ -332,8 +332,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   protected abstract doUpdateAABBBounds(full?: boolean): AABBBounds;
-
-  protected abstract tryUpdateOBBBounds(): OBBBounds;
 
   protected tryUpdateGlobalAABBBounds(): AABBBounds {
     const b = this.AABBBounds;

@@ -17,9 +17,7 @@ import type {
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRender } from './base-render';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawSegments } from '../../../common/render-curve';
 import { calcLineCache } from '../../../common/segment';
 

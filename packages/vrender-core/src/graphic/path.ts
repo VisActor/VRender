@@ -1,4 +1,4 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds } from '@visactor/vutils';
 import { isString, isNil } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
@@ -89,11 +89,6 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
       attribute.customPath(this.cache, this);
     }
   }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
-  }
-
   getDefaultAttribute(name: string) {
     const pathTheme = getTheme(this).path;
     return pathTheme[name];

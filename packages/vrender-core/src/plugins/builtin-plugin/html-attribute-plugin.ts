@@ -325,5 +325,5 @@ export class HtmlAttributePlugin implements IPlugin {
 }
 
 export const registerHtmlAttributePlugin = () => {
-  Factory.registerPlugin('ReactAttributePlugin', HtmlAttributePlugin);
+  Factory.registerPlugin('HtmlAttributePlugin', HtmlAttributePlugin);
 };

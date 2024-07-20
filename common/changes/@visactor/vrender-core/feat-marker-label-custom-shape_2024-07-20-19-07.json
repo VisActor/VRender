@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: marker label support custom shape. close @Visactor/VChart#2959",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

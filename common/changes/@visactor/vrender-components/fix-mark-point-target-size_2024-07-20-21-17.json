@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: markpoint target size compute error. fix@Visactor/VChart#2766",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -89,7 +89,7 @@ export function run() {
       }
     },
     label: {
-      text: 'aaa',
+      text: 'aaaaaa',
       // visible: false,
       textStyle: {
         fill: 'red',
@@ -105,6 +105,18 @@ export function run() {
       },
       panel: {
         visible: true,
+        customShape: (data, attrs, path) => {
+          console.log('data', data, attrs, path);
+          const width = attrs.width;
+          const deltaY = attrs.height == null ? attrs.y1 - attrs.y : attrs.height;
+
+          path.moveTo(0, deltaY);
+          path.quadraticCurveTo(0.45 * width, 0.67 * deltaY, 0.5 * width, 0);
+          path.quadraticCurveTo(0.55 * width, 0.67 * deltaY, width, deltaY);
+          path.lineTo(0, deltaY);
+          path.closePath();
+          return path;
+        },
         state: {
           hover: {
             fill: 'red'

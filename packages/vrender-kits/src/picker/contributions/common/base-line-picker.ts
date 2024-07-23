@@ -1,4 +1,4 @@
-import { BaseRender, getTheme, mat4Allocate } from '@visactor/vrender-core';
+import { BaseRender, getScaledStroke, getTheme, mat4Allocate } from '@visactor/vrender-core';
 import type {
   IGraphicAttribute,
   IGraphic,
@@ -10,21 +10,27 @@ import type {
 } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 
-export abstract class BasePicker<T extends IGraphic<Partial<IGraphicAttribute>>> extends BaseRender<T> {
+export abstract class BaseLinePicker<T extends IGraphic<Partial<IGraphicAttribute>>> extends BaseRender<T> {
   canvasRenderer!: IGraphicRender;
 
-  declare themeType: string;
-
   contains(graphic: IGraphic, point: IPoint, params?: IPickParams): boolean {
+    if (!graphic.AABBBounds.containsPoint(point)) {
+      return false;
+    }
+    if (graphic.attribute.pickMode === 'imprecise') {
+      return true;
+    }
+
     const { pickContext } = params ?? {};
     if (!pickContext) {
       return false;
     }
 
-    const attribute = getTheme(graphic)[this.themeType ?? graphic.type];
-
+    // const lineAttribute = graphicService.themeService.getCurrentTheme().lineAttribute;
     pickContext.highPerformanceSave();
-    const data = this.transform(graphic, attribute, pickContext);
+    const lineAttribute = getTheme(graphic)[graphic.type];
+
+    const data = this.transform(graphic, lineAttribute, pickContext);
     const { x, y, z, lastModelMatrix } = data;
 
     let pickPoint = point;
@@ -36,24 +42,36 @@ export abstract class BasePicker<T extends IGraphic<Partial<IGraphicAttribute>>>
     }
 
     this.canvasRenderer.z = z;
+    // 详细形状判断
     let picked = false;
     this.canvasRenderer.drawShape(
       graphic,
       pickContext,
       x,
       y,
-      params as any,
+      {} as any,
       null,
+      context => {
+        // 选中后面就不需要再走逻辑了
+        if (picked) {
+          return true;
+        }
+        picked = context.isPointInPath(pickPoint.x, pickPoint.y);
+        return picked;
+      },
       (
         context: IContext2d,
-        arc3dAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+        lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
         themeAttribute: IThemeAttribute
       ) => {
         // 选中后面就不需要再走逻辑了
         if (picked) {
           return true;
         }
-        picked = context.isPointInPath(pickPoint.x, pickPoint.y);
+        const lineWidth = lineAttribute.lineWidth || themeAttribute.lineWidth;
+        const pickStrokeBuffer = lineAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
+        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
+        picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }
     );
@@ -64,6 +82,6 @@ export abstract class BasePicker<T extends IGraphic<Partial<IGraphicAttribute>>>
     }
     pickContext.modelMatrix = lastModelMatrix;
     pickContext.highPerformanceRestore();
-    return picked; // 无圆角形状判断通过
+    return picked;
   }
 }

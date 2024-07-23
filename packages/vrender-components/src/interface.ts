@@ -12,6 +12,7 @@ export type BackgroundAttributes = {
   visible: boolean;
   /**
    * 自定义路径
+   * @since 0.19.19
    */
   customShape?: (
     text: Pick<TextContent, 'text'>,

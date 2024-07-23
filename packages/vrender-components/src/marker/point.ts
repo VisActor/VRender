@@ -409,6 +409,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
         x: position.x,
         y: position.y,
         visible: targetItem.visible ?? false,
+        size: targetItem.size,
         ...targetItem.style
       });
       this._targetItem.states = merge({}, DEFAULT_STATES, this.attribute.state?.targetItem);
@@ -444,7 +445,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       visible: targetItemvisible = false,
       size: targetSymbolSize
     } = targetSymbol;
-    const targetSize = targetItemvisible ? targetSymbolSize || (targetSymbolStyle.size ?? 10) : 0;
+    const targetSize = targetItemvisible ? targetSymbolStyle.size ?? targetSymbolSize ?? 20 : 0;
     const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
     const newPosition: Point = {
       x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle),

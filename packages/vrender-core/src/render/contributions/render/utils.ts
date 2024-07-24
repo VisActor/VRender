@@ -15,7 +15,6 @@ import type {
   IDrawContext,
   IBackgroundConfig
 } from '../../../interface';
-
 /**
  * 是否需要执行fill逻辑
  * @param fill

@@ -1,4 +1,3 @@
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { inject, injectable, named } from '../../../common/inversify-lite';
 // eslint-disable-next-line
 import { ContributionProvider } from '../../../common/contribution-provider';
@@ -15,13 +14,12 @@ import type {
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider
+  IContributionProvider,
+  ICustomPath2D
 } from '../../../interface';
 import type {} from '../../render-service';
 import { BaseRender } from './base-render';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { SymbolRenderContribution } from './contributions/constants';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { isArray } from '@visactor/vutils';
 import {
   defaultSymbolBackgroundRenderContribution,
@@ -92,6 +90,34 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     const { keepDirIn3d = symbolAttribute.keepDirIn3d } = symbol.attribute;
     const z = this.z ?? 0;
     context.beginPath();
+
+    const callback = (p: ICustomPath2D, a: any) => {
+      // 如果是svg的话，合并一下fill和stroke
+      if (symbol._parsedPath.svgCache) {
+        const obj = Object.assign({}, a);
+        obj.fill = a.fill ?? symbol.attribute.fill;
+        obj.opacity = a.fill ?? symbol.attribute.opacity;
+        obj.fillOpacity = symbol.attribute.fillOpacity;
+        obj.stroke = a.stroke ?? symbol.attribute.stroke;
+        a = obj;
+      }
+      if (a.fill) {
+        if (fillCb) {
+          fillCb(context, symbol.attribute, symbolAttribute);
+        } else {
+          context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
+          context.fill();
+        }
+      }
+      if (a.stroke) {
+        if (strokeCb) {
+          strokeCb(context, symbol.attribute, symbolAttribute);
+        } else {
+          context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
+          context.stroke();
+        }
+      }
+    };
     if (keepDirIn3d && context.camera && context.project) {
       const p = context.project(x, y, z);
       const camera = context.camera;
@@ -103,68 +129,14 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
           p.x,
           p.y,
           undefined,
-          (p, a) => {
-            // 如果是svg的话，合并一下fill和stroke
-            if (symbol._parsedPath.svgCache) {
-              const obj = Object.assign({}, a);
-              obj.fill = a.fill ?? symbol.attribute.fill;
-              obj.opacity = a.fill ?? symbol.attribute.opacity;
-              obj.fillOpacity = symbol.attribute.fillOpacity;
-              obj.stroke = a.stroke ?? symbol.attribute.stroke;
-              a = obj;
-            }
-            if (a.fill) {
-              if (fillCb) {
-                fillCb(context, symbol.attribute, symbolAttribute);
-              } else {
-                context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
-                context.fill();
-              }
-            }
-            if (a.stroke) {
-              if (strokeCb) {
-                strokeCb(context, symbol.attribute, symbolAttribute);
-              } else {
-                context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
-                context.stroke();
-              }
-            }
-          }
+          callback
         ) === false
       ) {
         context.closePath();
       }
       context.camera = camera;
     } else {
-      if (
-        parsedPath.draw(context, size, x, y, z, (p, a) => {
-          // 如果是svg的话，合并一下fill和stroke
-          if (symbol._parsedPath.svgCache) {
-            const obj = Object.assign({}, a);
-            obj.fill = a.fill ?? symbol.attribute.fill;
-            obj.opacity = a.opacity ?? symbol.attribute.opacity;
-            obj.fillOpacity = symbol.attribute.fillOpacity;
-            obj.stroke = a.stroke ?? symbol.attribute.stroke;
-            a = obj;
-          }
-          if (a.fill) {
-            if (fillCb) {
-              fillCb(context, symbol.attribute, symbolAttribute);
-            } else {
-              context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
-              context.fill();
-            }
-          }
-          if (a.stroke) {
-            if (strokeCb) {
-              strokeCb(context, symbol.attribute, symbolAttribute);
-            } else {
-              context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
-              context.stroke();
-            }
-          }
-        }) === false
-      ) {
+      if (parsedPath.draw(context, size, x, y, z, callback) === false) {
         context.closePath();
       }
     }

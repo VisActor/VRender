@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 12 Jul 2024 07:18:10 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jul 2024 11:56:39 GMT and should not be manually modified.
+
+## 0.19.19
+Tue, 23 Jul 2024 11:56:39 GMT
+
+### Updates
+
+- feat: marker label support custom shape. close @Visactor/VChart#2959
+- fix: fixed the problem that the bounds calculation of line mark is wrong when the defiend of some points is false
+
+
 
 ## 0.19.18
 Fri, 12 Jul 2024 07:18:10 GMT

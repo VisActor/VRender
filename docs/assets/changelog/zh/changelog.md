@@ -1,3 +1,16 @@
+# v0.19.18
+
+2024-07-15
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: support react 17 in react attributes
+
+
+
+[更多详情请查看 v0.19.18](https://github.com/VisActor/VRender/releases/tag/v0.19.18)
+
 # v0.19.17
 
 2024-07-11

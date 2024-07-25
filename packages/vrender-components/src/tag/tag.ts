@@ -1,15 +1,17 @@
 /**
  * @description 标签组件
  */
-import type {
-  IGroup,
-  IRect,
-  ISymbol,
-  IText,
-  ITextAttribute,
-  ITextGraphicAttribute,
-  IRichTextGraphicAttribute,
-  IRichText
+import {
+  type IGroup,
+  type IRect,
+  type ISymbol,
+  type IText,
+  type ITextAttribute,
+  type ITextGraphicAttribute,
+  type IRichTextGraphicAttribute,
+  type IRichText,
+  type IGraphicAttribute,
+  CustomPath2D
 } from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isObject, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -138,6 +140,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         ) as IRect;
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
+        }
+        if (backgroundStyle.customShape) {
+          const customShape = backgroundStyle.customShape;
+          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
+            return customShape(text as Pick<TextContent, 'text'>, attrs, new CustomPath2D());
+          };
         }
         this._bgRect = bgRect;
       }
@@ -308,6 +316,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         ) as IRect;
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
+        }
+        if (backgroundStyle.customShape) {
+          const customShape = backgroundStyle.customShape;
+          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
+            return customShape(text as Pick<TextContent, 'text'>, attrs, new CustomPath2D());
+          };
         }
         this._bgRect = bgRect;
       }

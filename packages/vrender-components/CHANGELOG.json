@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.19",
+      "tag": "@visactor/vrender-components_v0.19.19",
+      "date": "Tue, 23 Jul 2024 11:56:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: marker label support custom shape. close @Visactor/VChart#2959"
+          },
+          {
+            "comment": "fix: in vertical layout, if only one line can be displayed, the layout will be directly based on the width of the legend item itself"
+          },
+          {
+            "comment": "fix: markpoint target size compute error. fix@Visactor/VChart#2766"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.18",
       "tag": "@visactor/vrender-components_v0.19.18",
       "date": "Fri, 12 Jul 2024 07:18:10 GMT",

@@ -1,6 +1,6 @@
 import { injectable } from '../../../common/inversify-lite';
 import { AABBBounds } from '@visactor/vutils';
-import { mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic/graphic-service/graphic-service';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../../../common/matrix';
 import { graphicCreator } from '../../../graphic/graphic-creator';
 import type {
   IContext2d,

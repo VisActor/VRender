@@ -12,10 +12,11 @@ import type {
   IContributionProvider,
   IBaseRenderContribution
 } from '../../../interface';
-import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
+import { getModelMatrix, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { multiplyMat4Mat4 } from '../../../common/matrix';
 
 const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
 

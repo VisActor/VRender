@@ -3,7 +3,7 @@ import type { ICamera, mat4, OrthoParameters, vec3 } from '../interface';
 import { mat4Allocate } from '../allocator/matrix-allocate';
 import { lookAt, ortho, transformMat4 } from '../common/matrix';
 import { Factory } from '../factory';
-import { multiplyMat4Mat4 } from '../graphic/graphic-service/graphic-service';
+import { multiplyMat4Mat4 } from '../common/matrix';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix

@@ -1,5 +1,23 @@
 import type { IGraphic } from '../interface';
 
+function parseChildMap(graphic: IGraphic, defaultZIndex: number, reverse: boolean) {
+  const childMap: { [id: number]: IGraphic[] } = {};
+  const zIdxArray: number[] = [];
+
+  graphic.forEachChildren((item: IGraphic) => {
+    const { zIndex = defaultZIndex } = item.attribute;
+    if (childMap[zIndex]) {
+      childMap[zIndex].push(item);
+    } else {
+      childMap[zIndex] = [item];
+      zIdxArray.push(zIndex);
+    }
+  }, reverse);
+  zIdxArray.sort((a, b) => (reverse ? b - a : a - b));
+
+  return { childMap, zIdxArray };
+}
+
 export function foreach(
   graphic: IGraphic,
   defaultZIndex: number,
@@ -7,8 +25,6 @@ export function foreach(
   reverse: boolean = false,
   sort3d: boolean = false
 ) {
-  const childMap: { [id: number]: IGraphic[] } = {};
-  const zIdxArray: number[] = [];
   // 遍历一遍查看是否有zIndex不同的
   let needSort = false;
   if (sort3d) {
@@ -27,16 +43,7 @@ export function foreach(
     }, reverse);
   }
   if (needSort) {
-    graphic.forEachChildren((item: IGraphic) => {
-      const { zIndex = defaultZIndex } = item.attribute;
-      if (childMap[zIndex]) {
-        childMap[zIndex].push(item);
-      } else {
-        childMap[zIndex] = [item];
-        zIdxArray.push(zIndex);
-      }
-    }, reverse);
-    zIdxArray.sort((a, b) => (reverse ? b - a : a - b));
+    const { childMap, zIdxArray } = parseChildMap(graphic, defaultZIndex, reverse);
     let skip = false;
     for (let i = 0; i < zIdxArray.length; i++) {
       if (skip) {
@@ -120,8 +127,6 @@ export async function foreachAsync(
 }
 
 export function findNextGraphic(graphic: IGraphic, id: number, defaultZIndex: number, reverse: boolean = false) {
-  const childMap: { [id: number]: IGraphic[] } = {};
-  const zIdxArray: number[] = [];
   // 遍历一遍查看是否有zIndex不同的
   let needSort = false;
   let lastZIndex: number;
@@ -138,16 +143,7 @@ export function findNextGraphic(graphic: IGraphic, id: number, defaultZIndex: nu
   let result: IGraphic | null = null;
   let next: boolean = false;
   if (needSort) {
-    graphic.forEachChildren((item: IGraphic) => {
-      const { zIndex = defaultZIndex } = item.attribute;
-      if (childMap[zIndex]) {
-        childMap[zIndex].push(item);
-      } else {
-        childMap[zIndex] = [item];
-        zIdxArray.push(zIndex);
-      }
-    }, reverse);
-    zIdxArray.sort((a, b) => (reverse ? b - a : a - b));
+    const { childMap, zIdxArray } = parseChildMap(graphic, defaultZIndex, reverse);
     let skip = false;
     for (let i = 0; i < zIdxArray.length; i++) {
       if (skip) {

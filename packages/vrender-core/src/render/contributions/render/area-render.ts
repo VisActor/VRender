@@ -44,11 +44,12 @@ import {
   defaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
 import { segments } from '../../../common/shape/arc';
+import { genCatmullRomSegments } from '../../../common/segment/catmull-rom';
 
 function calcLineCache(
   points: IPointLike[],
   curveType: ICurveType,
-  params?: { direction?: IDirection; startPoint?: IPointLike }
+  params?: { direction?: IDirection; startPoint?: IPointLike; curveTension?: number }
 ): ISegPath2D | null {
   switch (curveType) {
     case 'linear':
@@ -65,6 +66,8 @@ function calcLineCache(
       return genStepSegments(points, 0, params);
     case 'stepAfter':
       return genStepSegments(points, 1, params);
+    case 'catmullRom':
+      return genCatmullRomSegments(points, params?.curveTension ?? 0.5, params);
     case 'linearClosed':
       return genLinearClosedSegments(points, params);
     default:
@@ -227,7 +230,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       stroke = areaAttribute.stroke,
       fillOpacity = areaAttribute.fillOpacity,
       z = areaAttribute.z,
-      strokeOpacity = areaAttribute.strokeOpacity
+      strokeOpacity = areaAttribute.strokeOpacity,
+      curveTension = areaAttribute.curveTension
     } = area.attribute;
 
     const data = this.valid(area, areaAttribute, fillCb, strokeCb);
@@ -282,7 +286,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               startPoint.y = lastTopSeg.endY;
             }
             const data = calcLineCache(seg.points, curveType, {
-              startPoint
+              startPoint,
+              curveTension
             });
             lastTopSeg = data;
             return data;
@@ -312,7 +317,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           if (bottomPoints.length > 1) {
             lastBottomSeg = calcLineCache(
               bottomPoints,
-              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+              { curveTension }
             );
             bottomCaches.unshift(lastBottomSeg);
           }
@@ -331,10 +337,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
             y: points[i].y1 ?? points[i].y
           });
         }
-        const topCache = calcLineCache(topPoints, curveType);
+        const topCache = calcLineCache(topPoints, curveType, { curveTension });
         const bottomCache = calcLineCache(
           bottomPoints,
-          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+          { curveTension }
         );
 
         area.cacheArea = { top: topCache, bottom: bottomCache };

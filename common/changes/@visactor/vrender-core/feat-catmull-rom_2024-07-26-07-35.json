@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support catmull-rom curve, closed #1320",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

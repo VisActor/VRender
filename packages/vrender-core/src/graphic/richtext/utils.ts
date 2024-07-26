@@ -39,19 +39,8 @@ const nbsp = String.fromCharCode(160);
 export const regLetter = /\w|\(|\)|-/;
 const regPunctuation = /[.?!,;:/，。？！、；：]/;
 export const regFirstSpace = /\S/;
-// Applies the style of a run to the canvas context
-export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
-  const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
-  if (!fillStyle) {
-    ctx.globalAlpha = 0;
-    return;
-  }
 
-  const { fillOpacity = 1, opacity = 1 } = character;
-
-  ctx.globalAlpha = fillOpacity * opacity;
-  ctx.fillStyle = fillStyle as string;
-
+const setTextStyle = (ctx: IContext2d, character: IRichTextParagraphCharacter) => {
   let fontSize = character.fontSize || 16;
   switch (character.script) {
     case 'super':
@@ -68,6 +57,22 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
     fontSize,
     fontFamily: character.fontFamily || 'sans-serif'
   } as ITextStyleParams);
+};
+
+// Applies the style of a run to the canvas context
+export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+  const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
+  if (!fillStyle) {
+    ctx.globalAlpha = 0;
+    return;
+  }
+
+  const { fillOpacity = 1, opacity = 1 } = character;
+
+  ctx.globalAlpha = fillOpacity * opacity;
+  ctx.fillStyle = fillStyle as string;
+
+  setTextStyle(ctx, character);
 }
 
 export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
@@ -83,22 +88,7 @@ export function applyStrokeStyle(ctx: IContext2d, character: IRichTextParagraphC
   ctx.lineWidth = character && typeof character.lineWidth === 'number' ? character.lineWidth : 1;
   ctx.strokeStyle = strokeStyle as string;
 
-  let fontSize = character.fontSize || 16;
-  switch (character.script) {
-    case 'super':
-    case 'sub':
-      fontSize *= 0.8;
-      break;
-  }
-
-  ctx.setTextStyle({
-    textAlign: 'left',
-    textBaseline: character.textBaseline || 'alphabetic',
-    fontStyle: character.fontStyle || '',
-    fontWeight: character.fontWeight || '',
-    fontSize,
-    fontFamily: character.fontFamily || 'sans-serif'
-  } as ITextStyleParams);
+  setTextStyle(ctx, character);
 }
 
 export function prepareContext(ctx: IContext2d) {

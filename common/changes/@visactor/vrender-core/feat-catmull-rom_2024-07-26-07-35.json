@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: support catmull-rom curve, closed #1320",
+      "comment": "feat: support catmull-rom and catmull-rom-closed curve, closed #1320",
       "type": "none"
     }
   ],

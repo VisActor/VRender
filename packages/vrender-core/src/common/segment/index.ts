@@ -6,6 +6,7 @@ import { genMonotoneXSegments, genMonotoneYSegments } from './monotone';
 import { genStepSegments } from './step';
 import { genLinearClosedSegments } from './linear-closed';
 import { genCatmullRomSegments } from './catmull-rom';
+import { genCatmullRomClosedSegments } from './catmull-rom-close';
 
 export * from './linear';
 export * from './linear-closed';
@@ -36,6 +37,8 @@ export function calcLineCache(
       return genStepSegments(points, 1, params);
     case 'catmullRom':
       return genCatmullRomSegments(points, params?.curveTension ?? 0.5, params);
+    case 'catmullRomClosed':
+      return genCatmullRomClosedSegments(points, params?.curveTension ?? 0.5, params);
     case 'linearClosed':
       return genLinearClosedSegments(points, params);
     default:

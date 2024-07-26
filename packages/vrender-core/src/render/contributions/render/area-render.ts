@@ -45,6 +45,7 @@ import {
 } from './contributions/area-contribution-render';
 import { segments } from '../../../common/shape/arc';
 import { genCatmullRomSegments } from '../../../common/segment/catmull-rom';
+import { genCatmullRomClosedSegments } from '../../../common/segment/catmull-rom-close';
 
 function calcLineCache(
   points: IPointLike[],
@@ -68,6 +69,8 @@ function calcLineCache(
       return genStepSegments(points, 1, params);
     case 'catmullRom':
       return genCatmullRomSegments(points, params?.curveTension ?? 0.5, params);
+    case 'catmullRomClosed':
+      return genCatmullRomClosedSegments(points, params?.curveTension ?? 0.5, params);
     case 'linearClosed':
       return genLinearClosedSegments(points, params);
     default:

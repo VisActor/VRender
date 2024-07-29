@@ -9,7 +9,7 @@ export type IArc3dGraphicAttribute = Partial<IArcGraphicAttribute> & {
 export interface IArc3d extends IGraphic<IArc3dGraphicAttribute> {
   cache?: ICustomPath2D;
 
-  getParsedCornerRadius: () => number;
+  getParsedCornerRadius: () => number | number[];
   getParsedAngle: () => { startAngle: number; endAngle: number };
   getParsePadAngle: (
     startAngle: number,

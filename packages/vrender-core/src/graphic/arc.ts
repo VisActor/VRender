@@ -120,14 +120,14 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       return 0;
     }
     const deltaRadius = Math.abs(outerRadius - innerRadius);
-    function parseCR(cornerRadius: number | string) {
+    const parseCR = (cornerRadius: number | string) => {
       return Math.min(
         isNumber(cornerRadius, true)
           ? (cornerRadius as number)
           : (deltaRadius * parseFloat(cornerRadius as string)) / 100,
         deltaRadius / 2
       );
-    }
+    };
     if (isArray(cornerRadius)) {
       const crList = cornerRadius.map(cr => parseCR(cr) || 0);
       if (crList.length === 0) {

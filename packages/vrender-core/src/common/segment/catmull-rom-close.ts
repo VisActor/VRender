@@ -2,7 +2,7 @@ import { epsilon, type IPointLike } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
 import { genCurveSegments, genSegContext } from './common';
 import type { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
-import { point } from './catmull-rom';
+import { commonGenCatmullRomSegments, point } from './catmull-rom';
 
 export class CatmullRomClosed implements ICurvedSegment {
   private _lastDefined1?: boolean;
@@ -132,28 +132,30 @@ export class CatmullRomClosed implements ICurvedSegment {
   }
 }
 
-export function genCatmullRomClosedTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
-  return genCurveSegments(path, points, 2);
-}
+// export function genCatmullRomClosedTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
+//   return genCurveSegments(path, points, 2);
+// }
 
-export function genCatmullRomClosedSegments(
-  points: IPointLike[],
-  alpha: number,
-  params: IGenSegmentParams = {}
-): ISegPath2D | null {
-  const { direction, startPoint } = params;
-  if (points.length < 2 - Number(!!startPoint)) {
-    return null;
-  }
-  if (points.length < 3 - Number(!!startPoint)) {
-    return genLinearSegments(points, params);
-  }
+export const genCatmullRomClosedSegments = commonGenCatmullRomSegments('catmullRomClosed', CatmullRomClosed);
 
-  const segContext = genSegContext('catmullRom', direction, points);
+// export function genCatmullRomClosedSegments(
+//   points: IPointLike[],
+//   alpha: number,
+//   params: IGenSegmentParams = {}
+// ): ISegPath2D | null {
+//   const { direction, startPoint } = params;
+//   if (points.length < 2 - Number(!!startPoint)) {
+//     return null;
+//   }
+//   if (points.length < 3 - Number(!!startPoint)) {
+//     return genLinearSegments(points, params);
+//   }
 
-  const gatmullRom = new CatmullRomClosed(segContext, alpha, startPoint);
+//   const segContext = genSegContext('catmullRom', direction, points);
 
-  genCatmullRomClosedTypeSegments(gatmullRom, points);
+//   const gatmullRom = new CatmullRomClosed(segContext, alpha, startPoint);
 
-  return segContext;
-}
+//   genCatmullRomClosedTypeSegments(gatmullRom, points);
+
+//   return segContext;
+// }

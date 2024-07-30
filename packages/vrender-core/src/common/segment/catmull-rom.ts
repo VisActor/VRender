@@ -2,6 +2,7 @@ import { epsilon, type IPointLike } from '@visactor/vutils';
 import { genLinearSegments } from './linear';
 import { genCurveSegments, genSegContext } from './common';
 import type { ICurvedSegment, IGenSegmentParams, ILinearSegment, ISegPath2D } from '../../interface/curve';
+import type { ICurveType } from '../../interface';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -148,28 +149,55 @@ export class CatmullRom implements ICurvedSegment {
   }
 }
 
-export function genCatmullRomTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
-  return genCurveSegments(path, points, 2);
+// export function genCatmullRomTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
+//   return genCurveSegments(path, points, 2);
+// }
+
+export function commonGenCatmullRomSegments(type: ICurveType, cons: any) {
+  return function genCatmullRomSegments(
+    points: IPointLike[],
+    alpha: number,
+    params: IGenSegmentParams = {}
+  ): ISegPath2D | null {
+    const { direction, startPoint } = params;
+    if (points.length < 2 - Number(!!startPoint)) {
+      return null;
+    }
+    if (points.length < 3 - Number(!!startPoint)) {
+      return genLinearSegments(points, params);
+    }
+
+    const segContext = genSegContext(type, direction, points);
+
+    const gatmullRom = new cons(segContext, alpha, startPoint);
+
+    genCurveSegments(gatmullRom, points, 2);
+    // genCatmullRomTypeSegments(gatmullRom, points);
+
+    return segContext;
+  };
 }
 
-export function genCatmullRomSegments(
-  points: IPointLike[],
-  alpha: number,
-  params: IGenSegmentParams = {}
-): ISegPath2D | null {
-  const { direction, startPoint } = params;
-  if (points.length < 2 - Number(!!startPoint)) {
-    return null;
-  }
-  if (points.length < 3 - Number(!!startPoint)) {
-    return genLinearSegments(points, params);
-  }
+export const genCatmullRomSegments = commonGenCatmullRomSegments('catmullRom', CatmullRom);
 
-  const segContext = genSegContext('catmullRom', direction, points);
+// export function genCatmullRomSegments(
+//   points: IPointLike[],
+//   alpha: number,
+//   params: IGenSegmentParams = {}
+// ): ISegPath2D | null {
+//   const { direction, startPoint } = params;
+//   if (points.length < 2 - Number(!!startPoint)) {
+//     return null;
+//   }
+//   if (points.length < 3 - Number(!!startPoint)) {
+//     return genLinearSegments(points, params);
+//   }
 
-  const gatmullRom = new CatmullRom(segContext, alpha, startPoint);
+//   const segContext = genSegContext('catmullRom', direction, points);
 
-  genCatmullRomTypeSegments(gatmullRom, points);
+//   const gatmullRom = new CatmullRom(segContext, alpha, startPoint);
 
-  return segContext;
-}
+//   genCatmullRomTypeSegments(gatmullRom, points);
+
+//   return segContext;
+// }

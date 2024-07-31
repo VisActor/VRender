@@ -7,7 +7,7 @@ import { parsePadding, pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { LINE_NUMBER_TYPE } from './constants';
 
-const LINE_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDATE_TAG_KEY];
+const LINE_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', 'curveTension', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
   type: 'line' = 'line';

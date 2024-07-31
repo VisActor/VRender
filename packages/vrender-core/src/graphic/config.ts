@@ -222,7 +222,8 @@ export const DefaultAreaAttribute: Required<IAreaGraphicAttribute> = {
   segments: [],
   curveType: 'linear',
   clipRange: 1,
-  closePath: false
+  closePath: false,
+  curveTension: 1
 };
 
 export const DefaultCircleAttribute: Required<ICircleGraphicAttribute> = {
@@ -266,7 +267,8 @@ export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   curveType: 'linear',
   clipRange: 1,
   clipRangeByDimension: 'default',
-  closePath: false
+  closePath: false,
+  curveTension: 1
 };
 
 export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {

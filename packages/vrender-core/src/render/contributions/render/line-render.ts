@@ -267,7 +267,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
       strokeOpacity = lineAttribute.strokeOpacity,
       segments,
       points,
-      closePath
+      closePath,
+      curveTension = lineAttribute.curveTension
     } = line.attribute;
 
     const data = this.valid(line, lineAttribute, fillCb, strokeCb);
@@ -337,7 +338,8 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
               startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
             }
             const data = calcLineCache(seg.points, curveType, {
-              startPoint
+              startPoint,
+              curveTension
             });
             lastSeg = data;
             return data;
@@ -362,7 +364,7 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
           line.cache[line.cache.length - 1] && line.cache[line.cache.length - 1].lineTo(startP.x, startP.y, true);
         }
       } else if (points && points.length) {
-        line.cache = calcLineCache(_points, curveType);
+        line.cache = calcLineCache(_points, curveType, { curveTension });
       } else {
         line.cache = null;
         line.clearUpdateShapeTag();

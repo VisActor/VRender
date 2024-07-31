@@ -92,7 +92,7 @@ export function drawPathProxy(
     return false;
   }
 
-  const themeAttributes = getTheme(graphic, params?.theme)[graphic.type.replace('3d', '')];
+  const themeAttributes = (getTheme(graphic, params?.theme) as any)[graphic.type.replace('3d', '')];
 
   const {
     fill = themeAttributes.fill,
@@ -265,7 +265,9 @@ export function drawArcPath(
   let collapsedToLine: boolean = false;
   // 规范化outerRadius和innerRadius
   if (outerRadius < innerRadius) {
-    [innerRadius, outerRadius] = [outerRadius, innerRadius];
+    const temp = outerRadius;
+    outerRadius = innerRadius;
+    innerRadius = temp;
   }
   // Is it a point?
   if (outerRadius <= epsilon) {

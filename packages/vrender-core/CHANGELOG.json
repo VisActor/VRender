@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.20",
+      "tag": "@visactor/vrender-core_v0.19.20",
+      "date": "Wed, 31 Jul 2024 09:48:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support array cornerRadius, closed #1322"
+          },
+          {
+            "comment": "feat: support catmull-rom and catmull-rom-closed curve, closed #1320"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.19",
       "tag": "@visactor/vrender-core_v0.19.19",
       "date": "Tue, 23 Jul 2024 11:56:39 GMT",

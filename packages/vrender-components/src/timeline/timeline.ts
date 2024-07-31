@@ -4,7 +4,7 @@ import { loadTimelineComponent } from './register';
 import type { TimelineAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import type { IGraphicAttribute, IGroup, ILine, IText } from '@visactor/vrender-core';
-import { ISymbol } from '@visactor/vrender-core';
+import type { ISymbol } from '@visactor/vrender-core';
 
 loadTimelineComponent();
 
@@ -186,6 +186,67 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
     setActive(symbolGroup, activeSymbolStyle);
   }
 
+  appearAnimate(animateConfig: { duration?: number; easing?: string }) {
+    // 基准时间，line[0, 500], point[100, 600] 100 onebyone, pointNormal[600, 1000] 90+90 onebyone, activeLine[500, 700]
+    // line和activeLine的clipRange
+    const { duration = 1000, easing = 'quadOut' } = animateConfig;
+    const { activeLabelStyle, activeSymbolStyle } = this.attribute;
+    const percent = duration / 1000;
+    const lineDuration = percent * 500;
+    const activeLineDuration = percent * 200;
+    const perSymbolDuration = percent * 100;
+    const perSymbolNormalDuration = percent * 90;
+    const symbolDelay = percent * 100;
+    const symbolNormalDelay = percent * 600;
+    if (this._line) {
+      this._line.setAttributes({ clipRange: 0 });
+      this._line.animate().to({ clipRange: 1 }, lineDuration, easing as any);
+    }
+    if (this._activeLine) {
+      this._activeLine.setAttributes({ opacity: 0 });
+      this._activeLine
+        .animate()
+        .wait(500)
+        .to({ opacity: 1 }, activeLineDuration, easing as any);
+    }
+    if (this._symbolGroup) {
+      const size = this._symbolGroup.count - 1;
+      const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
+      const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
+      this._symbolGroup.forEachChildren((symbol: ISymbol, i) => {
+        const originAttrs = { ...symbol.attribute };
+        symbol.setAttributes({ opacity: 0 });
+        symbol
+          .animate()
+          .wait(symbolDelay + delay * i)
+          .to({ opacity: 1 }, perSymbolDuration, easing as any);
+        symbol
+          .animate()
+          .wait(symbolNormalDelay + delayNormal * i)
+          .to({ scaleX: 1.8, scaleY: 1.8, ...activeSymbolStyle }, perSymbolNormalDuration, easing as any)
+          .to({ scaleX: 1, scaleY: 1, ...originAttrs }, perSymbolNormalDuration, easing as any);
+      });
+    }
+    if (this._labelGroup) {
+      const size = this._labelGroup.count - 1;
+      const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
+      const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
+      this._labelGroup.forEachChildren((label: IText, i) => {
+        const originAttrs = { ...label.attribute };
+        label.setAttributes({ opacity: 0 });
+        label
+          .animate()
+          .wait(symbolDelay + delay * i)
+          .to({ opacity: 1 }, perSymbolDuration, easing as any);
+        label
+          .animate()
+          .wait(symbolNormalDelay + delayNormal * i)
+          .to({ dy: 10, ...activeLabelStyle }, perSymbolNormalDuration, easing as any)
+          .to({ dy: 0, ...originAttrs }, perSymbolNormalDuration, easing as any);
+      });
+    }
+  }
+
   goto(flag: 1 | -1, animateConfig: { duration?: number; easing?: string }) {
     let { clipRange } = this.attribute;
     const { animation } = this.attribute;
@@ -219,7 +280,7 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
 
     const nextClipRange = flag > 0 ? this._timesPercent[i] : this._timesPercent[i - 1] || 0;
     if (animation) {
-      const { duration = 1000, easing = 'linear' } = animateConfig;
+      const { duration = 1000, easing = 'quadOut' } = animateConfig;
       const actDuration =
         (Math.abs(nextClipRange - clipRange) / (this._timesPercent[i] - (this._timesPercent[i - 1] ?? 0))) * duration;
       this.animate().to({ clipRange: nextClipRange }, actDuration, easing as any);

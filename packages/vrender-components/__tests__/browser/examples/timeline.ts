@@ -26,7 +26,8 @@ export function run() {
   );
 
   setTimeout(() => {
-    timelines[0].forward({ duration: 1000 });
+    // timelines[0].forward({ duration: 1000 });
+    timelines[0].appearAnimate({ duration: 5000 });
   }, 2000);
 
   const stage = render(timelines as any, 'main');

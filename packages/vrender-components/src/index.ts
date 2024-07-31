@@ -22,6 +22,7 @@ export * from './link-path';
 export * from './player';
 export * from './brush';
 export * from './tooltip';
+export * from './timeline';
 export * from './interface';
 export * from './jsx';
 export * from './checkbox';

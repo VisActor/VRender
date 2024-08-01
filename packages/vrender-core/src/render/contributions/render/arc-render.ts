@@ -1,4 +1,4 @@
-import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2, isBoolean } from '@visactor/vutils';
+import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2, isBoolean, isArray } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
@@ -103,14 +103,15 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     }
 
     const cornerRadius = arc.getParsedCornerRadius();
+    const cornerRadiusIsArray = isArray(cornerRadius);
     // Or is it a circular or annular sector?
     const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
       arc.getParsePadAngle(startAngle, endAngle);
 
-    const outerCornerRadiusStart = cornerRadius;
-    const outerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusStart = cornerRadius;
+    const outerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[0] : cornerRadius;
+    const outerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[1] : cornerRadius;
+    const innerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[2] : cornerRadius;
+    const innerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[3] : cornerRadius;
     const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
     const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
     let limitedOcr = maxOuterCornerRadius;

@@ -188,7 +188,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       stroke = areaAttribute.stroke,
       fillOpacity = areaAttribute.fillOpacity,
       z = areaAttribute.z,
-      strokeOpacity = areaAttribute.strokeOpacity
+      strokeOpacity = areaAttribute.strokeOpacity,
+      curveTension = areaAttribute.curveTension
     } = area.attribute;
 
     const data = this.valid(area, areaAttribute, fillCb, strokeCb);
@@ -243,7 +244,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               startPoint.y = lastTopSeg.endY;
             }
             const data = calcLineCache(seg.points, curveType, {
-              startPoint
+              startPoint,
+              curveTension
             });
             lastTopSeg = data;
             return data;
@@ -273,7 +275,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           if (bottomPoints.length > 1) {
             lastBottomSeg = calcLineCache(
               bottomPoints,
-              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+              { curveTension }
             );
             bottomCaches.unshift(lastBottomSeg);
           }
@@ -292,10 +295,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
             y: points[i].y1 ?? points[i].y
           });
         }
-        const topCache = calcLineCache(topPoints, curveType);
+        const topCache = calcLineCache(topPoints, curveType, { curveTension });
         const bottomCache = calcLineCache(
           bottomPoints,
-          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+          { curveTension }
         );
 
         area.cacheArea = { top: topCache, bottom: bottomCache };

@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 12 Jul 2024 07:18:10 GMT and should not be manually modified.
+This log was last generated on Tue, 23 Jul 2024 11:56:39 GMT and should not be manually modified.
+
+## 0.19.19
+Tue, 23 Jul 2024 11:56:39 GMT
+
+### Updates
+
+- feat: marker label support custom shape. close @Visactor/VChart#2959
+- fix: in vertical layout, if only one line can be displayed, the layout will be directly based on the width of the legend item itself
+- fix: markpoint target size compute error. fix@Visactor/VChart#2766
 
 ## 0.19.18
 Fri, 12 Jul 2024 07:18:10 GMT

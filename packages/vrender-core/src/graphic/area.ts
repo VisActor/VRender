@@ -7,7 +7,7 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { AREA_NUMBER_TYPE } from './constants';
 
-const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', ...GRAPHIC_UPDATE_TAG_KEY];
+const AREA_UPDATE_TAG_KEY = ['segments', 'points', 'curveType', 'curveTension', ...GRAPHIC_UPDATE_TAG_KEY];
 
 export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
   type: 'area' = 'area';

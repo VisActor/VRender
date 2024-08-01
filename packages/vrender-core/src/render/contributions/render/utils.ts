@@ -283,14 +283,15 @@ export function drawArcPath(
     }
   } else {
     const cornerRadius = arc.getParsedCornerRadius();
+    const cornerRadiusIsArray = isArray(cornerRadius);
     // Or is it a circular or annular sector?
     const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
       arc.getParsePadAngle(startAngle, endAngle);
 
-    const outerCornerRadiusStart = cornerRadius;
-    const outerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusStart = cornerRadius;
+    const outerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[0] : cornerRadius;
+    const outerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[1] : cornerRadius;
+    const innerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[2] : cornerRadius;
+    const innerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[3] : cornerRadius;
     const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
     const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
     let limitedOcr = maxOuterCornerRadius;

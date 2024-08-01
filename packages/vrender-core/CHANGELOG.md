@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 23 Jul 2024 11:56:39 GMT and should not be manually modified.
+This log was last generated on Wed, 31 Jul 2024 09:48:37 GMT and should not be manually modified.
+
+## 0.19.20
+Wed, 31 Jul 2024 09:48:37 GMT
+
+### Updates
+
+- feat: support array cornerRadius, closed #1322
+- feat: support catmull-rom and catmull-rom-closed curve, closed #1320
 
 ## 0.19.19
 Tue, 23 Jul 2024 11:56:39 GMT

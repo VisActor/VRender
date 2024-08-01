@@ -1,3 +1,23 @@
+# v0.19.19
+
+2024-07-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: marker label support custom shape. close @Visactor/VChart[#2959](https://github.com/VisActor/VRender/issues/2959)
+- **@visactor/vrender-core**: marker label support custom shape. close @Visactor/VChart[#2959](https://github.com/VisActor/VRender/issues/2959)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: in vertical layout, if only one line can be displayed, the layout will be directly based on the width of the legend item itself
+- **@visactor/vrender-components**: markpoint target size compute error. fix@Visactor/VChart[#2766](https://github.com/VisActor/VRender/issues/2766)
+- **@visactor/vrender-core**: fixed the problem that the bounds calculation of line mark is wrong when the defiend of some points is false
+
+
+
+[更多详情请查看 v0.19.19](https://github.com/VisActor/VRender/releases/tag/v0.19.19)
+
 # v0.19.18
 
 2024-07-15

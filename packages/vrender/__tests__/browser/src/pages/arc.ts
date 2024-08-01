@@ -161,6 +161,7 @@ export const page = () => {
       forceShowCap: true,
       x: 105,
       y: 92.5,
+      cornerRadius: [10, 10, 0, 0],
       startAngle: -1.5707963267948966,
       endAngle: -0.3141592653589793,
       outerRadius: 54.75,

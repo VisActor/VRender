@@ -1,5 +1,5 @@
 import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt } from '@visactor/vutils';
+import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt, isArray } from '@visactor/vutils';
 import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -120,12 +120,26 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       return 0;
     }
     const deltaRadius = Math.abs(outerRadius - innerRadius);
-    return Math.min(
-      isNumber(cornerRadius, true)
-        ? (cornerRadius as number)
-        : (deltaRadius * parseFloat(cornerRadius as string)) / 100,
-      deltaRadius / 2
-    );
+    const parseCR = (cornerRadius: number | string) => {
+      return Math.min(
+        isNumber(cornerRadius, true)
+          ? (cornerRadius as number)
+          : (deltaRadius * parseFloat(cornerRadius as string)) / 100,
+        deltaRadius / 2
+      );
+    };
+    if (isArray(cornerRadius)) {
+      const crList = cornerRadius.map(cr => parseCR(cr) || 0);
+      if (crList.length === 0) {
+        return [crList[0], crList[0], crList[0], crList[0]];
+      } else if (crList.length === 2) {
+        return [crList[0], crList[1], crList[0], crList[1]];
+      } else if (crList.length === 3) {
+        crList.push(0);
+      }
+      return crList;
+    }
+    return parseCR(cornerRadius);
   }
 
   getParsedAngle() {

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.19.20",
+      "tag": "@visactor/vrender_v0.19.20",
+      "date": "Wed, 31 Jul 2024 09:48:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support array cornerRadius, closed #1322"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.19",
       "tag": "@visactor/vrender_v0.19.19",
       "date": "Tue, 23 Jul 2024 11:56:39 GMT",

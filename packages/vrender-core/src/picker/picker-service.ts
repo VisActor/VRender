@@ -19,7 +19,7 @@ import type {
 } from '../interface';
 import { getTheme } from '../graphic/theme';
 import { DefaultAttribute } from '../graphic/config';
-import { mat3Tomat4, multiplyMat4Mat4 } from '../graphic/graphic-service/graphic-service';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
 import { PickItemInterceptor } from './pick-interceptor';
 import { application } from '../application';

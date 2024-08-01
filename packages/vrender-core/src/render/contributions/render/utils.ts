@@ -15,7 +15,6 @@ import type {
   IDrawContext,
   IBackgroundConfig
 } from '../../../interface';
-
 /**
  * 是否需要执行fill逻辑
  * @param fill
@@ -93,7 +92,7 @@ export function drawPathProxy(
     return false;
   }
 
-  const themeAttributes = getTheme(graphic, params?.theme)[graphic.type.replace('3d', '')];
+  const themeAttributes = (getTheme(graphic, params?.theme) as any)[graphic.type.replace('3d', '')];
 
   const {
     fill = themeAttributes.fill,

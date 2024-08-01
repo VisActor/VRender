@@ -294,79 +294,40 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       disableTriggerEvent: this.attribute.disableTriggerEvent
     };
     // 横向布局
-    if (isHorizontal(this._orient)) {
-      attrs.layout = 'horizontal';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        // 暂停按钮, 复用开始按钮的布局
-        style: {
-          ...attrs.pause.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
-    // 纵向布局
-    else {
-      attrs.layout = 'vertical';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        style: {
-          ...attrs.pause.style,
-          // 暂停按钮, 复用开始按钮的布局
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
+    attrs.layout = isHorizontal(this._orient) ? 'horizontal' : 'vertical';
+    attrs.start = {
+      ...attrs.start,
+      style: {
+        ...attrs.start.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.pause = {
+      ...attrs.pause,
+      // 暂停按钮, 复用开始按钮的布局
+      style: {
+        ...attrs.pause.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.backward = {
+      ...attrs.backward,
+      style: {
+        ...attrs.backward.style,
+        x: this._layoutInfo.backward.x,
+        y: this._layoutInfo.backward.y
+      }
+    };
+    attrs.forward = {
+      ...attrs.forward,
+      style: {
+        ...attrs.forward.style,
+        x: this._layoutInfo.forward.x,
+        y: this._layoutInfo.forward.y
+      }
+    };
     return attrs;
   };
 

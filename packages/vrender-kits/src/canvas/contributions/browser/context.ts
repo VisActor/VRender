@@ -24,7 +24,7 @@
   SOFTWARE.
  */
 import type { IPointLike, TextMeasure, ITextMeasureSpec, IMatrix } from '@visactor/vutils';
-import { Matrix, pi, pi2, Logger } from '@visactor/vutils';
+import { Matrix, pi, pi2, Logger, getContextFont } from '@visactor/vutils';
 import {
   injectable,
   DefaultFillStyle,
@@ -35,7 +35,6 @@ import {
   application,
   matrixAllocate,
   transformMat4,
-  getContextFont,
   createConicalGradient
 } from '@visactor/vrender-core';
 import type {

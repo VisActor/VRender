@@ -19,10 +19,10 @@ import type {
   IGraphicRender,
   IPickParams
 } from '@visactor/vrender-core';
-import { BasePicker } from './base-picker';
+import { Base3dPicker } from '../common/base-3d-picker';
 
 @injectable()
-export class DefaultCanvasTextPicker extends BasePicker<IText> implements IGraphicPicker {
+export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGraphicPicker {
   type: string = 'text';
   numberType: number = TEXT_NUMBER_TYPE;
 

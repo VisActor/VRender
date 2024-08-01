@@ -18,10 +18,10 @@ import type {
   IGraphicRender,
   IPickParams
 } from '@visactor/vrender-core';
-import { BasePicker } from './base-picker';
+import { Base3dPicker } from '../common/base-3d-picker';
 
 @injectable()
-export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IGraphicPicker {
+export class DefaultCanvasSymbolPicker extends Base3dPicker<ISymbol> implements IGraphicPicker {
   type: string = 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
 

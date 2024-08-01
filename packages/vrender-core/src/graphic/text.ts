@@ -1,5 +1,5 @@
-import { max, type AABBBounds, isArray } from '@visactor/vutils';
-import { getContextFont, textDrawOffsetX, textLayoutOffsetY } from '../common/text';
+import { max, type AABBBounds, isArray, getContextFont } from '@visactor/vutils';
+import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';

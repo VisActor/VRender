@@ -13,7 +13,7 @@ import type {
   IContributionProvider
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
-import { getModelMatrix, multiplyMat4Mat4 } from '../../../graphic/graphic-service/graphic-service';
+import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
 import { isArray } from '@visactor/vutils';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
@@ -24,6 +24,7 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
+import { multiplyMat4Mat4 } from '../../../common/matrix';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {

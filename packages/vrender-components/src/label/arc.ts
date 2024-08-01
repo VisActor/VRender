@@ -1,14 +1,18 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
+import type { ILineGraphicAttribute } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import {
   type IRichText,
   type IText,
   type IArcGraphicAttribute,
   type IGraphic,
   type ILine,
-  graphicCreator
+  graphicCreator,
+  CustomPath2D
 } from '@visactor/vrender-core';
 import {
   circlePoint,
@@ -944,6 +948,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         })
       : undefined;
     if (labelLine) {
+      if (line.style?.customShape) {
+        const customShape = line.style.customShape;
+        labelLine.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
+          return customShape(attrs, new CustomPath2D());
+        };
+      }
       this._setStatesOfLabelLine(labelLine);
     }
     return labelLine;

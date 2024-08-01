@@ -1,6 +1,5 @@
 import { polarToCartesian } from '@visactor/vutils';
 import { POLAR_START_ANGLE, POLAR_END_ANGLE } from '../../constant';
-import { scale, length } from '../../util';
 import type { Point } from '../../core/type';
 import { getCircleVerticalVector } from '../util';
 

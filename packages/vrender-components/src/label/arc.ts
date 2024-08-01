@@ -21,6 +21,7 @@ import {
 } from '@visactor/vrender-core';
 import { isQuadrantRight, isQuadrantLeft, lineCirclePoints, connectLineRadian, checkBoundsOverlap } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class ArcInfo {
   key!: string;
@@ -965,3 +966,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio;
   }
 }
+
+export const registerArcDataLabel = () => {
+  registerLabelComponent('arc', ArcLabel);
+};

@@ -1,3 +1,18 @@
+# v0.19.20
+
+2024-08-01
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: support array cornerRadius, closed [#1322](https://github.com/VisActor/VRender/issues/1322)
+- **@visactor/vrender-core**: support catmull-rom and catmull-rom-closed curve, closed [#1320](https://github.com/VisActor/VRender/issues/1320)
+- **@visactor/vrender**: support array cornerRadius, closed [#1322](https://github.com/VisActor/VRender/issues/1322)
+
+
+
+[更多详情请查看 v0.19.20](https://github.com/VisActor/VRender/releases/tag/v0.19.20)
+
 # v0.19.19
 
 2024-07-25

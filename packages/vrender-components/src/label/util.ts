@@ -1,72 +1,7 @@
 import type { IArea, ILine } from '@visactor/vrender-core';
-import type { IPolarPoint, IPoint, Quadrant } from './type';
+import type { IPoint, Quadrant } from './type';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
-import { radianToDegree, isValidNumber, isRectIntersect } from '@visactor/vutils';
-
-/**
- * 极坐标系 -> 直角坐标系
- * @param point
- * @returns
- */
-export function polarToCartesian(point: IPolarPoint): IPoint {
-  if (!point.radius) {
-    return { x: 0, y: 0 };
-  }
-  return {
-    x: Math.cos(point.angle) * point.radius,
-    y: Math.sin(point.angle) * point.radius
-  };
-}
-
-/**
- * 计算圆弧上的点坐标
- * @param x0 圆心 x 坐标
- * @param y0 圆心 y 坐标
- * @param radius 圆弧半径
- * @param radian 点所在弧度
- */
-export function circlePoint(x0: number, y0: number, radius: number, radian: number): IPoint {
-  const offset = polarToCartesian({
-    radius,
-    angle: radian
-  });
-  return {
-    x: x0 + offset.x,
-    y: y0 + offset.y
-  };
-}
-
-/**
- * 根据角度计算象限
- * 计算角度所在象限
- * @param angle
- * @returns
- */
-export function computeQuadrant(angle: number): Quadrant {
-  angle = normalizeAngle(angle);
-  if (angle > 0 && angle <= Math.PI / 2) {
-    return 2;
-  } else if (angle > Math.PI / 2 && angle <= Math.PI) {
-    return 3;
-  } else if (angle > Math.PI && angle <= (3 * Math.PI) / 2) {
-    return 4;
-  }
-  return 1;
-}
-
-/**
- * 角度标准化处理
- * @param angle 弧度角
- */
-export function normalizeAngle(angle: number): number {
-  while (angle < 0) {
-    angle += Math.PI * 2;
-  }
-  while (angle >= Math.PI * 2) {
-    angle -= Math.PI * 2;
-  }
-  return angle;
-}
+import { radianToDegree, isValidNumber, isRectIntersect, normalizeAngle, polarToCartesian } from '@visactor/vutils';
 
 export function isQuadrantLeft(quadrant: Quadrant): boolean {
   return quadrant === 3 || quadrant === 4;

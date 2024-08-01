@@ -1253,48 +1253,6 @@ const latestData = [
   // }
 ];
 
-function drawRoundedPolyline(ctx, points, radius) {
-  for (let i = 0; i < points.length - 1; i++) {
-    const startPoint = points[i];
-    const endPoint = points[i + 1];
-
-    // 计算线段的方向向量
-    const dx = endPoint.x - startPoint.x;
-    const dy = endPoint.y - startPoint.y;
-
-    // 计算转折点处的切线方向
-    let tangentDx = -dy;
-    let tangentDy = dx;
-
-    // 标准化切线方向向量
-    const tangentLength = Math.sqrt(tangentDx * tangentDx + tangentDy * tangentDy);
-    tangentDx /= tangentLength;
-    tangentDy /= tangentLength;
-
-    // 计算圆角的起始点和结束点
-    const startRadiusPoint = {
-      x: startPoint.x + tangentDx * radius,
-      y: startPoint.y + tangentDy * radius
-    };
-
-    const endRadiusPoint = {
-      x: endPoint.x - tangentDx * radius,
-      y: endPoint.y - tangentDy * radius
-    };
-
-    // 绘制圆弧
-    // ctx.beginPath();
-    ctx.arc(startPoint.x, startPoint.y, radius, Math.atan2(tangentDy, tangentDx), Math.atan2(-dy, -dx));
-    // ctx.stroke();
-
-    // 绘制直线部分
-    // ctx.beginPath();
-    ctx.moveTo(startRadiusPoint.x, startRadiusPoint.y);
-    ctx.lineTo(endRadiusPoint.x, endRadiusPoint.y);
-    // ctx.stroke();
-  }
-}
-
 function createContent(stage: Stage) {
   const pieSpec = pieGenerator();
   const pieGroup = createGroup(pieSpec.attribute);

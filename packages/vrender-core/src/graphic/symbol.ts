@@ -138,10 +138,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
         : this.updateSymbolAABBBoundsAccurate(attribute, symbolTheme, aabbBounds);
     }
 
-    const tb1 = application.graphicService.tempAABBBounds1;
-    const tb2 = application.graphicService.tempAABBBounds2;
-    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfSymbolOuterBorder(attribute, symbolTheme, tb1);
     aabbBounds.union(tb1);

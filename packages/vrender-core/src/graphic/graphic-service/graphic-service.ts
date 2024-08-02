@@ -178,8 +178,8 @@ export class DefaultGraphicService implements IGraphicService {
   };
 
   // 临时bounds，用作缓存
-  tempAABBBounds1: AABBBounds;
-  tempAABBBounds2: AABBBounds;
+  protected tempAABBBounds1: AABBBounds;
+  protected tempAABBBounds2: AABBBounds;
   constructor(@inject(GraphicCreator) public readonly creator: IGraphicCreator) {
     this.hooks = {
       onAttributeUpdate: new SyncHook<[IGraphic]>(['graphic']),
@@ -370,5 +370,14 @@ export class DefaultGraphicService implements IGraphicService {
       return false;
     }
     return true;
+  }
+
+  updateTempAABBBounds(aabbBounds: IAABBBounds) {
+    const tb1 = this.tempAABBBounds1;
+    const tb2 = this.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+
+    return { tb1, tb2 };
   }
 }

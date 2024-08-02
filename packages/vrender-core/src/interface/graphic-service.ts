@@ -7,17 +7,13 @@ import type {
   IRectGraphicAttribute,
   IGroup,
   IGroupGraphicAttribute,
-  IGlyphGraphicAttribute,
   ISymbolGraphicAttribute,
   ICircleGraphicAttribute,
   ICircle,
-  IGlyph,
   ISymbol,
   IArcGraphicAttribute,
   IArc,
-  IArc3dGraphicAttribute,
   IAreaGraphicAttribute,
-  IArc3d,
   IArea,
   ILineGraphicAttribute,
   IPathGraphicAttribute,
@@ -25,8 +21,6 @@ import type {
   IPath,
   IPolygonGraphicAttribute,
   IPolygon,
-  IPyramid3dGraphicAttribute,
-  IPyramid3d,
   ITextGraphicAttribute,
   IText,
   IRichTextGraphicAttribute,
@@ -91,8 +85,7 @@ export interface IGraphicService {
   ) => void;
 
   combindShadowAABBBounds: (bounds: IAABBBounds, graphic?: IGraphic) => void;
-  tempAABBBounds1: IAABBBounds;
-  tempAABBBounds2: IAABBBounds;
+  updateTempAABBBounds: (aabbBounds: IAABBBounds) => { tb1: IAABBBounds; tb2: IAABBBounds };
 }
 
 export type IGraphicCreator = {

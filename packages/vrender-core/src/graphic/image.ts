@@ -130,10 +130,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
       aabbBounds.set(0, 0, width, height);
     }
 
-    const tb1 = application.graphicService.tempAABBBounds1;
-    const tb2 = application.graphicService.tempAABBBounds2;
-    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
-    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
 
     updateBoundsOfCommonOuterBorder(attribute, imageTheme, tb1);
     aabbBounds.union(tb1);

@@ -38,7 +38,6 @@ import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
-import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
 import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { LayerService } from './constants';
@@ -546,7 +545,12 @@ export class Stage extends Group implements IStage {
       return;
     }
     this._enableLayout = true;
-    this.pluginService.register(new FlexLayoutPlugin());
+
+    const FlexLayoutPlugin = Factory.getPlugin('FlexLayoutPlugin');
+
+    if (FlexLayoutPlugin) {
+      this.pluginService.register(new FlexLayoutPlugin());
+    }
   }
   disableLayout() {
     if (!this._enableLayout) {

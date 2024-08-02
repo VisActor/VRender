@@ -5,6 +5,7 @@ import { Generator } from '../../common/generator';
 import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { application } from '../../application';
+import { Factory } from '../../factory';
 
 const _tempBounds = new AABBBounds();
 
@@ -544,3 +545,7 @@ function getPadding(graphic: IGraphic, field: string): number {
   // }
   return 0;
 }
+
+export const registerFlexLayoutPlugin = () => {
+  Factory.registerPlugin('FlexLayoutPlugin', FlexLayoutPlugin);
+};

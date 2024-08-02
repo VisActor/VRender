@@ -98,3 +98,4 @@ export * from './register/register-wraptext';
 export * from './plugins/builtin-plugin/html-attribute-plugin';
 export * from './plugins/builtin-plugin/react-attribute-plugin';
 export * from './plugins/builtin-plugin/3dview-transform-plugin';
+export * from './plugins/builtin-plugin/flex-layout-plugin';

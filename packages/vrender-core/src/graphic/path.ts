@@ -1,4 +1,4 @@
-import type { AABBBounds } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
 import { isString, isNil } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
@@ -7,6 +7,7 @@ import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { PATH_NUMBER_TYPE } from './constants';
+import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
 const PATH_UPDATE_TAG_KEY = ['path', 'customPath', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -39,7 +40,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
   }
 
   getParsedPathShape(): CustomPath2D {
-    const pathTheme = getTheme(this).path;
+    const pathTheme = this.getGraphicTheme();
     if (!this.valid) {
       return pathTheme.path as CustomPath2D;
     }
@@ -58,26 +59,34 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     return pathTheme.path as CustomPath2D;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const pathTheme = getTheme(this).path;
-    this.doUpdatePathShape();
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updatePathAABBBounds(
-      attribute,
-      getTheme(this).path,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme() {
+    return getTheme(this).path;
+  }
 
-    const { boundsPadding = pathTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IPathGraphicAttribute,
+    pathTheme: Required<IPathGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, pathTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      const pathShape = this.getParsedPathShape();
+      aabbBounds.union(pathShape.getBounds());
     }
 
-    this.clearUpdateBoundTag();
-    return bounds;
+    const tb1 = application.graphicService.tempAABBBounds1;
+    const tb2 = application.graphicService.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+
+    updateBoundsOfCommonOuterBorder(attribute, pathTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+    const { lineJoin = pathTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, pathTheme, lineJoin === 'miter', this);
+    return aabbBounds;
   }
 
   protected doUpdatePathShape() {
@@ -88,10 +97,6 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
       this.cache = new CustomPath2D();
       attribute.customPath(this.cache, this);
     }
-  }
-  getDefaultAttribute(name: string) {
-    const pathTheme = getTheme(this).path;
-    return pathTheme[name];
   }
 
   protected needUpdateTags(keys: string[]): boolean {

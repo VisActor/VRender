@@ -28,7 +28,7 @@ export abstract class BaseLinePicker<T extends IGraphic<Partial<IGraphicAttribut
 
     // const lineAttribute = graphicService.themeService.getCurrentTheme().lineAttribute;
     pickContext.highPerformanceSave();
-    const lineAttribute = getTheme(graphic)[graphic.type];
+    const lineAttribute = graphic.getGraphicTheme();
 
     const data = this.transform(graphic, lineAttribute, pickContext);
     const { x, y, z, lastModelMatrix } = data;

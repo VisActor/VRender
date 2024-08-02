@@ -1,4 +1,4 @@
-import type { AABBBounds, IPointLike } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds, IPointLike } from '@visactor/vutils';
 import type { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -47,87 +47,73 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     return false;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const areaTheme = getTheme(this).area;
-    this._AABBBounds.clear();
-
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateAreaAABBBounds(
-      attribute,
-      getTheme(this).area,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = areaTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
-    }
-
-    this.clearUpdateBoundTag();
-    return bounds;
+  getGraphicTheme() {
+    return getTheme(this).area;
   }
-  // private tryUpdateAABBBoundsByPoints(): AABBBounds {
-  //   const areaTheme = getTheme(this).area;
-  //   const { points = areaTheme.points } = this.attribute;
-  //   const b = this._AABBBounds;
-  //   points.forEach(p => {
-  //     b.add(p.x, p.y);
-  //     b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
-  //   });
-  //   const {
-  //     x = areaTheme.x,
-  //     y = areaTheme.y,
-  //     dx = areaTheme.dx,
-  //     dy = areaTheme.dy,
-  //     scaleX = areaTheme.scaleX,
-  //     scaleY = areaTheme.scaleY,
-  //     angle = areaTheme.angle
-  //   } = this.attribute;
-  //   // 合并shadowRoot的bounds
-  //   this.combindShadowAABBBounds(this._AABBBounds);
-  //   // TODO 加上锚点
-  //   transformBounds(b, x, y, scaleX, scaleY, angle);
-  //   this._AABBBounds.translate(dx, dy);
-  //   return b;
-  // }
-  // private tryUpdateAABBBoundsBySegments(): AABBBounds {
-  //   const areaTheme = getTheme(this).area;
-  //   const { segments = areaTheme.segments } = this.attribute;
-  //   const b = this._AABBBounds;
-  //   segments.forEach(s => {
-  //     s.points.forEach(p => {
-  //       b.add(p.x, p.y);
-  //       b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
-  //     });
-  //   });
-  //   const {
-  //     x = areaTheme.x,
-  //     y = areaTheme.y,
-  //     dx = areaTheme.dx,
-  //     dy = areaTheme.dy,
-  //     scaleX = areaTheme.scaleX,
-  //     scaleY = areaTheme.scaleY,
-  //     angle = areaTheme.angle
-  //   } = this.attribute;
-  //   // 合并shadowRoot的bounds
-  //   this.combindShadowAABBBounds(this._AABBBounds);
-  //   // TODO 加上锚点
-  //   transformBounds(b, x, y, scaleX, scaleY, angle);
-  //   this._AABBBounds.translate(dx, dy);
-  //   return b;
-  // }
+
+  protected updateAABBBounds(
+    attribute: IAreaGraphicAttribute,
+    areaTheme: Required<IAreaGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, areaTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      attribute.segments
+        ? this.updateAreaAABBBoundsBySegments(attribute, areaTheme, aabbBounds)
+        : this.updateAreaAABBBoundsByPoints(attribute, areaTheme, aabbBounds);
+    }
+    // if (!this._rectBoundsContribitions) {
+    //   this._rectBoundsContribitions = this.rectBoundsContribitions.getContributions() || [];
+    // }
+    // this._rectBoundsContribitions.length &&
+    //   this._rectBoundsContribitions.forEach(c => {
+    //     c.updateBounds(attribute, areaTheme, tb1, graphic);
+    //     aabbBounds.union(tb1);
+    //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+    //   });
+
+    const { lineJoin = areaTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, areaTheme, lineJoin === 'miter', this);
+    return aabbBounds;
+  }
+
+  protected updateAreaAABBBoundsByPoints(
+    attribute: IAreaGraphicAttribute,
+    areaTheme: Required<IAreaGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IArea
+  ): IAABBBounds {
+    const { points = areaTheme.points } = attribute;
+    const b = aabbBounds;
+    points.forEach(p => {
+      b.add(p.x, p.y);
+      b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
+    });
+    return b;
+  }
+  protected updateAreaAABBBoundsBySegments(
+    attribute: IAreaGraphicAttribute,
+    areaTheme: Required<IAreaGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: IArea
+  ): IAABBBounds {
+    const { segments = areaTheme.segments } = attribute;
+    const b = aabbBounds;
+    segments.forEach(s => {
+      s.points.forEach(p => {
+        b.add(p.x, p.y);
+        b.add(p.x1 ?? p.x, p.y1 ?? p.y); //面积图特殊性：由三个值构成，横向面积图，x1会省略；纵向面积图，y1会省略
+      });
+    });
+    return b;
+  }
 
   protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any): void {
     if (key === 'points') {
       (nextAttributes as any).points = pointsInterpolation(lastStepVal, nextStepVal, ratio);
     }
-  }
-
-  getDefaultAttribute(name: string) {
-    const areaTheme = getTheme(this).area;
-    return areaTheme[name];
   }
 
   protected needUpdateTags(keys: string[]): boolean {

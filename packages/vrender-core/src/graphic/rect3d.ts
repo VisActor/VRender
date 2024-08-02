@@ -29,7 +29,7 @@ export class Rect3d extends Rect implements IRect3d {
 
   findFace(): IFace3d {
     const faces: IFace3d = { polygons: [], vertices: [], edges: [] };
-    const rectTheme = getTheme(this).rect;
+    const rectTheme = this.getGraphicTheme();
     const { x1, y1, x, y, length = min(rectTheme.width, rectTheme.height) } = this.attribute;
     let { width, height } = this.attribute;
     width = width ?? x1 - x;

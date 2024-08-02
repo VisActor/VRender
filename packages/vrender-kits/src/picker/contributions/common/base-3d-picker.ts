@@ -21,7 +21,7 @@ export abstract class Base3dPicker<T extends IGraphic<Partial<IGraphicAttribute>
       return false;
     }
 
-    const attribute = getTheme(graphic)[this.themeType ?? graphic.type];
+    const attribute = graphic.getGraphicTheme();
 
     pickContext.highPerformanceSave();
     const data = this.transform(graphic, attribute, pickContext);

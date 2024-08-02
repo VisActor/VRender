@@ -1,7 +1,6 @@
 import {
   inject,
   injectable,
-  getTheme,
   SymbolRender,
   mat4Allocate,
   getScaledStroke,
@@ -47,7 +46,7 @@ export class DefaultCanvasSymbolPicker extends Base3dPicker<ISymbol> implements 
 
     pickContext.highPerformanceSave();
     // const symbolAttribute = graphicService.themeService.getCurrentTheme().symbolAttribute;
-    const symbolAttribute = getTheme(symbol).symbol;
+    const symbolAttribute = symbol.getGraphicTheme();
 
     const data = this.transform(symbol, symbolAttribute, pickContext);
     const { x, y, z, lastModelMatrix } = data;

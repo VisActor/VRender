@@ -32,7 +32,7 @@ export class RectPickerBase {
     }
 
     // const { rectAttribute } = graphicService.themeService.getCurrentTheme();
-    const rectAttribute = getTheme(rect).rect;
+    const rectAttribute = rect.getGraphicTheme();
     const { cornerRadius = rectAttribute.cornerRadius } = rect.attribute;
     let { x = rectAttribute.x, y = rectAttribute.y } = rect.attribute;
 

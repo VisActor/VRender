@@ -1,3 +1,4 @@
+import type { IAABBBounds } from '@visactor/vutils';
 import { type AABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
@@ -7,6 +8,7 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
 import { normalizeRectAttributes } from '../common/rect-utils';
+import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
 const RECT_UPDATE_TAG_KEY = ['width', 'x1', 'y1', 'height', 'cornerRadius', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -30,30 +32,39 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     // return (this._validNumber(width) || this._validNumber(x1)) && (this._validNumber(height) || this._validNumber(y1));
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const rectTheme = getTheme(this).rect;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateRectAABBBounds(
-      attribute,
-      getTheme(this).rect,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = rectTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
-    }
-
-    this.clearUpdateBoundTag();
-    return bounds;
+  getGraphicTheme() {
+    return getTheme(this).rect;
   }
 
-  getDefaultAttribute(name: string) {
-    const rectTheme = getTheme(this).rect;
-    return rectTheme[name];
+  protected updateAABBBounds(
+    attribute: IRectGraphicAttribute,
+    rectTheme: Required<IRectGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, rectTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      let { width, height } = attribute;
+      const { x1, y1, x, y } = attribute;
+      width = width ?? x1 - x;
+      height = height ?? y1 - y;
+      if (isFinite(width) || isFinite(height) || isFinite(x) || isFinite(y)) {
+        aabbBounds.set(0, 0, width || 0, height || 0);
+      }
+    }
+
+    const tb1 = application.graphicService.tempAABBBounds1;
+    const tb2 = application.graphicService.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+
+    updateBoundsOfCommonOuterBorder(attribute, rectTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, rectTheme, false, this);
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {

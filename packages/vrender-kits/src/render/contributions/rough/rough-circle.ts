@@ -35,7 +35,7 @@ export class RoughCanvasCircleRender extends RoughBaseRender implements IGraphic
     const rc = rough.canvas(canvas, {});
 
     // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
-    const circleAttribute = getTheme(circle).circle;
+    const circleAttribute = circle.getGraphicTheme();
     let { x = circleAttribute.x, y = circleAttribute.y } = circle.attribute;
     if (!circle.transMatrix.onlyTranslate()) {
       // 性能较差

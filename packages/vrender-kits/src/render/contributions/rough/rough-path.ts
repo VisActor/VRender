@@ -37,7 +37,7 @@ export class RoughCanvasPathRender extends RoughBaseRender implements IGraphicRe
 
     context.highPerformanceSave();
 
-    const pathAttribute = getTheme(path).path;
+    const pathAttribute = path.getGraphicTheme();
     context.transformFromMatrix(path.transMatrix, true);
 
     const {

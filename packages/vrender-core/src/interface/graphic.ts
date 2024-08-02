@@ -495,6 +495,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   clone: () => IGraphic;
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
+  getGraphicTheme: () => Required<T>;
 }
 
 export interface IRoot extends IGraphic {

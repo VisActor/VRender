@@ -26,7 +26,7 @@ export abstract class PickerBase {
       return false;
     }
 
-    const attribute = getTheme(graphic)[graphic.type];
+    const attribute = graphic.getGraphicTheme();
     pickContext.highPerformanceSave();
     let { x = attribute.x, y = attribute.y } = graphic.attribute;
     if (!graphic.transMatrix.onlyTranslate()) {

@@ -426,7 +426,7 @@ export interface ILabelLineSpec {
    * @since 0.19.21
    */
   customShape?: (
-    text: string | number | string[] | number[],
+    text: ITextGraphicAttribute,
     attrs: Partial<ILineGraphicAttribute>,
     path: ICustomPath2D
   ) => ICustomPath2D;

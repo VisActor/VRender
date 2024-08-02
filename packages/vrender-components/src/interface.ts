@@ -1,4 +1,10 @@
-import type { ICustomPath2D, IGraphicAttribute, IRectGraphicAttribute } from '@visactor/vrender-core';
+import type {
+  ICustomPath2D,
+  IGraphicAttribute,
+  IRectGraphicAttribute,
+  IRichTextAttribute,
+  ITextGraphicAttribute
+} from '@visactor/vrender-core';
 import type { TextContent } from './core/type';
 
 export type Direction = 'horizontal' | 'vertical';
@@ -15,7 +21,7 @@ export type BackgroundAttributes = {
    * @since 0.19.19
    */
   customShape?: (
-    text: Pick<TextContent, 'text'>,
+    text: ITextGraphicAttribute | IRichTextAttribute,
     attrs: Partial<IGraphicAttribute>,
     path: ICustomPath2D
   ) => ICustomPath2D;

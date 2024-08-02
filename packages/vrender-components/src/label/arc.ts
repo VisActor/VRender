@@ -951,7 +951,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       if (line?.customShape) {
         const customShape = line.customShape;
         labelLine.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(text.attribute.text, attrs, new CustomPath2D());
+          return customShape(text.attribute, attrs, new CustomPath2D());
         };
       }
       this._setStatesOfLabelLine(labelLine);

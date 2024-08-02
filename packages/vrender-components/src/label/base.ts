@@ -133,7 +133,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (line?.customShape) {
         const customShape = line.customShape;
         line.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(text.attribute.text, attrs, new CustomPath2D());
+          return customShape(text.attribute, attrs, new CustomPath2D());
         };
       }
 

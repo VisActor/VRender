@@ -130,10 +130,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const line = graphicCreator.line({
         points
       });
-      if (line.style?.customShape) {
-        const customShape = line.style.customShape;
+      if (line?.customShape) {
+        const customShape = line.customShape;
         line.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(attrs, new CustomPath2D());
+          return customShape(text.attribute.text, attrs, new CustomPath2D());
         };
       }
 

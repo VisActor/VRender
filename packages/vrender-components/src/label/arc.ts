@@ -948,10 +948,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         })
       : undefined;
     if (labelLine) {
-      if (line.style?.customShape) {
-        const customShape = line.style.customShape;
+      if (line?.customShape) {
+        const customShape = line.customShape;
         labelLine.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(attrs, new CustomPath2D());
+          return customShape(text.attribute.text, attrs, new CustomPath2D());
         };
       }
       this._setStatesOfLabelLine(labelLine);

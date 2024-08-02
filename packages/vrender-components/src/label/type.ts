@@ -422,15 +422,18 @@ export interface ILabelLineSpec {
    */
   visible?: boolean;
   /**
+   * 自定义路径
+   * @since 0.19.21
+   */
+  customShape?: (
+    text: string | number | string[] | number[],
+    attrs: Partial<ILineGraphicAttribute>,
+    path: ICustomPath2D
+  ) => ICustomPath2D;
+  /**
    * 引导线样式
    */
-  style?: Partial<ILineGraphicAttribute> & {
-    /**
-     * 自定义路径
-     * @since 0.19.21
-     */
-    customShape?: (attrs: Partial<ILineGraphicAttribute>, path: ICustomPath2D) => ICustomPath2D;
-  };
+  style?: Partial<ILineGraphicAttribute>;
 }
 
 export interface IArcLabelLineSpec extends ILabelLineSpec {

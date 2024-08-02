@@ -1,8 +1,8 @@
-import { epsilon, pi2, type AABBBounds, type IAABBBounds } from '@visactor/vutils';
+import { epsilon, pi2, type IAABBBounds } from '@visactor/vutils';
 import type { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
-import { circleBounds, parsePadding } from '../common/utils';
+import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CIRCLE_NUMBER_TYPE } from './constants';
@@ -32,7 +32,7 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     return this._validNumber(startAngle) && this._validNumber(endAngle) && this._validNumber(radius);
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<ICircleGraphicAttribute> {
     return getTheme(this).circle;
   }
 

@@ -1,4 +1,4 @@
-import type { AABBBounds, IAABBBounds, Matrix } from '@visactor/vutils';
+import type { IAABBBounds, Matrix } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Point } from '@visactor/vutils';
 import { application } from '../application';
@@ -15,7 +15,6 @@ import type {
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme, Theme } from './theme';
-import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
 import { GROUP_NUMBER_TYPE } from './constants';
 import { DefaultTransform } from './config';
@@ -173,7 +172,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return super.doUpdateLocalMatrix();
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IGroupGraphicAttribute> {
     return getTheme(this).group;
   }
 

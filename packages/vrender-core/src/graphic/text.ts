@@ -128,7 +128,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return text != null && text !== '';
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<ITextGraphicAttribute> {
     return getTheme(this).text;
   }
 

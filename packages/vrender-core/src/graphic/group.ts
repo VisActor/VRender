@@ -76,26 +76,23 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     }
   }
 
-  hideAll() {
-    this.setAttribute('visible', false);
+  visibleAll(visible: boolean) {
+    this.setAttribute('visible', visible);
     this.forEachChildren((item: IGraphic) => {
-      if (item.isContainer && (item as any).hideAll) {
-        (item as any).hideAll();
+      if (item.isContainer && (item as any).visibleAll) {
+        (item as any).visibleAll(visible);
       } else {
-        item.setAttribute('visible', false);
+        item.setAttribute('visible', visible);
       }
     });
   }
 
+  hideAll() {
+    this.visibleAll(false);
+  }
+
   showAll() {
-    this.setAttribute('visible', true);
-    this.forEachChildren((item: IGraphic) => {
-      if (item.isContainer && (item as any).showAll) {
-        (item as any).showAll();
-      } else {
-        item.setAttribute('visible', true);
-      }
-    });
+    this.visibleAll(true);
   }
 
   /**
@@ -249,6 +246,14 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return;
   }
 
+  protected _updateChildToStage(child: IGraphic) {
+    if (this.stage && child) {
+      child.setStage(this.stage, this.layer);
+    }
+    this.addUpdateBoundTag();
+    return child;
+  }
+  // TODO 代码优化
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
     if (addStage && this.stage && data) {
@@ -258,28 +263,13 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return data;
   }
   insertBefore(newNode: INode, referenceNode: INode): INode | null {
-    const data = super.insertBefore(newNode, referenceNode);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertBefore(newNode, referenceNode) as undefined as IGraphic);
   }
   insertAfter(newNode: INode, referenceNode: INode): INode | null {
-    const data = super.insertAfter(newNode, referenceNode);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertAfter(newNode, referenceNode) as undefined as IGraphic);
   }
   insertInto(newNode: INode, idx: number): INode | null {
-    const data = super.insertInto(newNode, idx);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertInto(newNode, idx) as undefined as IGraphic);
   }
 
   removeChild(child: IGraphic): IGraphic {

@@ -126,7 +126,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const titleSpec = this.attribute.title ?? {};
     if (titleSpec.autoFit && titleSpec.fitStrategy === 'inscribed') {
       this._title.setAttribute('fontSize', singleHeight);
-      autoFitTexts.push({ text: this._title, spec: this.attribute.title ?? {} });
+      autoFitTexts.push({ text: this._title as IText, spec: this.attribute.title ?? {} });
     } else {
       otherHeight += this._title?.AABBBounds?.height?.() ?? 0;
     }
@@ -139,7 +139,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
         const contentText = this._content[index];
         if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
           contentText.setAttribute('fontSize', singleHeight);
-          autoFitTexts.push({ text: contentText, spec: contentSpec });
+          autoFitTexts.push({ text: contentText as IText, spec: contentSpec });
         } else {
           otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
         }

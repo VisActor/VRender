@@ -8,6 +8,7 @@ export * from './symbol-render';
 export * from './text-render';
 export * from './graphic-render';
 export * from './polygon-render';
+export * from './group-render';
 export * from './image-render';
 export * from './symbol';
 export * from './contributions';

@@ -1,7 +1,7 @@
 import type { IAABBBounds } from '@visactor/vutils';
 
 import type { ISyncHook } from './sync-hook';
-import type { IGraphic } from './graphic';
+import type { IGraphic, IGraphicAttribute } from './graphic';
 import type { IStage } from './stage';
 import type {
   IRectGraphicAttribute,
@@ -68,114 +68,31 @@ export interface IGraphicService {
   ) => void;
 
   creator: IGraphicCreator;
-
-  updateRectAABBBounds: (
-    attribute: IRectGraphicAttribute,
-    rectTheme: Required<IRectGraphicAttribute>,
+  validCheck: (
+    attribute: Partial<IGraphicAttribute>,
+    theme: Required<IGraphicAttribute>,
     aabbBounds: IAABBBounds,
     graphic?: IGraphic
-  ) => IAABBBounds;
+  ) => boolean;
 
-  updateGroupAABBBounds: (
-    attribute: IGroupGraphicAttribute,
-    groupTheme: Required<IGroupGraphicAttribute>,
+  transformAABBBounds: (
+    attribute: Partial<IGraphicAttribute>,
     aabbBounds: IAABBBounds,
-    graphic?: IGroup
-  ) => IAABBBounds;
+    theme: Required<IGraphicAttribute>,
+    miter: boolean,
+    graphic?: IGraphic
+  ) => void;
 
-  updateGlyphAABBBounds: (
-    attribute: IGlyphGraphicAttribute,
-    groupTheme: Required<IGlyphGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IGlyph
-  ) => IAABBBounds;
-
-  updateSymbolAABBBounds: (
-    attribute: ISymbolGraphicAttribute,
-    symbolTheme: Required<ISymbolGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ISymbol
-  ) => IAABBBounds;
-
-  updateCircleAABBBounds: (
-    attribute: ICircleGraphicAttribute,
-    circleTheme: Required<ICircleGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: ICircle
-  ) => IAABBBounds;
-
-  updateArcAABBBounds: (
-    attribute: IArcGraphicAttribute,
-    arcTheme: Required<IArcGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    full?: boolean,
-    graphic?: IArc
-  ) => IAABBBounds;
-
-  updateArc3dAABBBounds: (
-    attribute: IArc3dGraphicAttribute,
-    arcTheme: Required<IArc3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArc3d
-  ) => IAABBBounds;
-
-  updateAreaAABBBounds: (
-    attribute: IAreaGraphicAttribute,
-    areaTheme: Required<IAreaGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IArea
-  ) => IAABBBounds;
-
-  updateLineAABBBounds: (
-    attribute: ILineGraphicAttribute,
-    lineTheme: Required<ILineGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: ILine
-  ) => IAABBBounds;
-
-  updatePathAABBBounds: (
-    attribute: IPathGraphicAttribute,
-    pathTheme: Required<IPathGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPath
-  ) => IAABBBounds;
-
-  updatePolygonAABBBounds: (
-    attribute: IPolygonGraphicAttribute,
-    polygonTheme: Required<IPolygonGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPolygon
-  ) => IAABBBounds;
-
-  updatePyramid3dAABBBounds: (
-    attribute: IPyramid3dGraphicAttribute,
-    polygonTheme: Required<IPyramid3dGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IPyramid3d
-  ) => IAABBBounds;
-
-  updateTextAABBBounds: (
+  updateHTMLTextAABBBounds: (
     attribute: ITextGraphicAttribute,
     textTheme: Required<ITextGraphicAttribute>,
     aabbBounds: IAABBBounds,
     graphic?: IText
-  ) => IAABBBounds;
+  ) => void;
 
-  updateRichTextAABBBounds: (
-    attribute: IRichTextGraphicAttribute,
-    textTheme: Required<IRichTextGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IRichText
-  ) => IAABBBounds;
-
-  updateImageAABBBounds: (
-    attribute: IImageGraphicAttribute,
-    textTheme: Required<IImageGraphicAttribute>,
-    aabbBounds: IAABBBounds,
-    graphic?: IImage
-  ) => IAABBBounds;
+  combindShadowAABBBounds: (bounds: IAABBBounds, graphic?: IGraphic) => void;
+  tempAABBBounds1: IAABBBounds;
+  tempAABBBounds2: IAABBBounds;
 }
 
 export type IGraphicCreator = {

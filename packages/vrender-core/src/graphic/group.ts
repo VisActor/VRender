@@ -1,4 +1,4 @@
-import type { AABBBounds, Matrix } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds, Matrix } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Point } from '@visactor/vutils';
 import { application } from '../application';
@@ -139,7 +139,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     // return needUpdate;
   }
 
-  protected tryUpdateAABBBounds(): AABBBounds {
+  protected tryUpdateAABBBounds(): IAABBBounds {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -173,28 +173,46 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return super.doUpdateLocalMatrix();
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const attribute = this.attribute;
-    const groupTheme = getTheme(this).group;
-    // debugger;
-    this._AABBBounds.clear();
-    const bounds = application.graphicService.updateGroupAABBBounds(
-      attribute,
-      groupTheme,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme() {
+    return getTheme(this).group;
+  }
 
-    const { boundsPadding = groupTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IGroupGraphicAttribute,
+    groupTheme: Required<IGroupGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    const originalAABBBounds = aabbBounds; // fix aabbbounds update error in flex layout
+    aabbBounds = aabbBounds.clone();
+
+    const { width, height, path, clip = groupTheme.clip, display } = attribute;
+    // 添加自身的fill或者clip
+    if (path && path.length) {
+      path.forEach(g => {
+        aabbBounds.union(g.AABBBounds);
+      });
+    } else if (width != null && height != null) {
+      aabbBounds.set(0, 0, Math.max(0, width), Math.max(0, height)); // fix bounds set when auto size in vtable
     }
+    if (!clip) {
+      // 添加子节点
+      this.forEachChildren((node: IGraphic) => {
+        aabbBounds.union(node.AABBBounds);
+      });
+    }
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, groupTheme, false, this);
+
+    originalAABBBounds.copy(aabbBounds);
+    return originalAABBBounds;
+  }
+
+  protected doUpdateAABBBounds(): IAABBBounds {
+    const bounds = super.doUpdateAABBBounds();
+
     // 更新bounds之后需要设置父节点，否则tag丢失
     this.parent && this.parent.addChildUpdateBoundTag();
-    this.clearUpdateBoundTag();
-
     this._emitCustomEvent('AAABBBoundsChange');
+
     return bounds;
   }
 
@@ -223,10 +241,6 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   getTheme() {
     return this.theme.getTheme(this);
   }
-
-  // getDefaultAttribute(name: string) {
-  //   return DefaultGroupAttribute[name];
-  // }
 
   /* 场景树结构 */
   incrementalAppendChild(node: INode): INode | null {

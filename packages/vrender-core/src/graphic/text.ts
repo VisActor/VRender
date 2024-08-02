@@ -1,13 +1,14 @@
-import { max, type AABBBounds, isArray, getContextFont } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { max, isArray, getContextFont, transformBoundsWithMatrix } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { calculateLineHeight, parsePadding } from '../common/utils';
+import { calculateLineHeight } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
-import { TextDirection, verticalLayout } from './tools';
+import { boundStroke, TextDirection, verticalLayout } from './tools';
 
 const TEXT_UPDATE_TAG_KEY = [
   'text',
@@ -47,7 +48,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   _font: string;
 
   get font(): string {
-    const textTheme = getTheme(this).text;
+    const textTheme = this.getGraphicTheme();
     if (!this._font) {
       this._font = getContextFont(this.attribute, textTheme);
     }
@@ -56,7 +57,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   get clipedText(): string | undefined {
     const attribute = this.attribute;
-    const textTheme = getTheme(this).text;
+    const textTheme = this.getGraphicTheme();
     if (!this.isSimplify()) {
       return undefined;
     }
@@ -75,7 +76,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.clipedWidth;
   }
   get cliped(): boolean | undefined {
-    const textTheme = getTheme(this).text;
+    const textTheme = this.getGraphicTheme();
     const attribute = this.attribute;
     if (this.isMultiLine) {
       return undefined;
@@ -127,25 +128,50 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return text != null && text !== '';
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const textTheme = getTheme(this).text;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateTextAABBBounds(
-      attribute,
-      textTheme,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme() {
+    return getTheme(this).text;
+  }
 
-    const { boundsPadding = textTheme.boundsPadding } = this.attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: ITextGraphicAttribute,
+    textTheme: Required<ITextGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, textTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    const { text = textTheme.text } = this.attribute;
+    if (Array.isArray(text)) {
+      this.updateMultilineAABBBounds(text as (number | string)[]);
+    } else {
+      this.updateSingallineAABBBounds(text as number | string);
     }
 
-    this.clearUpdateBoundTag();
-    return bounds;
+    const tb1 = application.graphicService.tempAABBBounds1;
+    const tb2 = application.graphicService.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+
+    const {
+      scaleX = textTheme.scaleX,
+      scaleY = textTheme.scaleY,
+      shadowBlur = textTheme.shadowBlur,
+      strokeBoundsBuffer = textTheme.strokeBoundsBuffer
+    } = attribute;
+    if (shadowBlur) {
+      const shadowBlurHalfWidth = shadowBlur / Math.abs(scaleX + scaleY);
+      boundStroke(tb1, shadowBlurHalfWidth, true, strokeBoundsBuffer);
+      aabbBounds.union(tb1);
+    }
+    // 合并shadowRoot的bounds
+    application.graphicService.combindShadowAABBBounds(aabbBounds, this);
+
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
+      application.graphicService.updateHTMLTextAABBBounds(attribute, textTheme, aabbBounds);
+    }
+
+    transformBoundsWithMatrix(aabbBounds, aabbBounds, this.transMatrix);
+    return aabbBounds;
   }
 
   /**
@@ -154,7 +180,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * @param text
    */
   updateWrapAABBBounds(text: (number | string) | (number | string)[]) {
-    const textTheme = getTheme(this).text;
+    const textTheme = this.getGraphicTheme();
     const {
       fontFamily = textTheme.fontFamily,
       textAlign = textTheme.textAlign,
@@ -347,8 +373,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateSingallineAABBBounds(text: number | string): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateSingallineAABBBounds(text: number | string): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const { direction = textTheme.direction, underlineOffset = textTheme.underlineOffset } = this.attribute;
 
     const b =
@@ -367,8 +393,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateMultilineAABBBounds(text: (number | string)[]): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateMultilineAABBBounds(text: (number | string)[]): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const { direction = textTheme.direction, underlineOffset = textTheme.underlineOffset } = this.attribute;
 
     const b =
@@ -388,8 +414,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateHorizontalSinglelineAABBBounds(text: number | string): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateHorizontalSinglelineAABBBounds(text: number | string): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const { wrap = textTheme.wrap } = this.attribute;
     if (wrap) {
       return this.updateWrapAABBBounds([text]);
@@ -499,8 +525,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算垂直布局的单行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateVerticalSinglelineAABBBounds(text: number | string): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateVerticalSinglelineAABBBounds(text: number | string): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     let str: string;
@@ -526,8 +552,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
     if (!verticalMode) {
       const t = textAlign;
-      textAlign = Text.baselineMapAlign[textBaseline] ?? 'left';
-      textBaseline = Text.alignMapBaseline[t] ?? 'top';
+      textAlign = (Text.baselineMapAlign as any)[textBaseline] ?? 'left';
+      textBaseline = (Text.alignMapBaseline as any)[t] ?? 'top';
     }
     if (!this.shouldUpdateShape() && this.cache) {
       width = this.cache.clipedWidth;
@@ -600,8 +626,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算多行文字的bounds，缓存每行文字的布局位置
    * @param text
    */
-  updateHorizontalMultilineAABBBounds(text: (number | string)[]): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateHorizontalMultilineAABBBounds(text: (number | string)[]): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const { wrap = textTheme.wrap } = this.attribute;
     if (wrap) {
       return this.updateWrapAABBBounds(text);
@@ -666,8 +692,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * 计算垂直布局的多行文字的bounds，可以缓存长度以及截取的文字
    * @param text
    */
-  updateVerticalMultilineAABBBounds(text: (number | string)[]): AABBBounds {
-    const textTheme = getTheme(this).text;
+  updateVerticalMultilineAABBBounds(text: (number | string)[]): IAABBBounds {
+    const textTheme = this.getGraphicTheme();
     const textMeasure = application.graphicUtil.textMeasure;
     let width: number;
     const attribute = this.attribute;
@@ -691,8 +717,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
     if (!verticalMode) {
       const t = textAlign;
-      textAlign = Text.baselineMapAlign[textBaseline] ?? 'left';
-      textBaseline = Text.alignMapBaseline[t] ?? 'top';
+      textAlign = (Text.baselineMapAlign as any)[textBaseline] ?? 'left';
+      textBaseline = (Text.alignMapBaseline as any)[t] ?? 'top';
     }
     width = 0;
     if (!this.shouldUpdateShape() && this.cache) {
@@ -770,11 +796,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     return this._AABBBounds;
-  }
-
-  getDefaultAttribute(name: string) {
-    const textTheme = getTheme(this).text;
-    return textTheme[name];
   }
 
   protected needUpdateTags(keys: string[], k = TEXT_UPDATE_TAG_KEY): boolean {

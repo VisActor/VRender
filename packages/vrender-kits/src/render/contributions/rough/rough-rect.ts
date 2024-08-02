@@ -37,7 +37,7 @@ export class RoughCanvasRectRender extends RoughBaseRender implements IGraphicRe
     context.highPerformanceSave();
 
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
-    const rectAttribute = getTheme(rect).rect;
+    const rectAttribute = rect.getGraphicTheme();
     let { x = rectAttribute.x, y = rectAttribute.y } = rect.attribute;
     if (!rect.transMatrix.onlyTranslate()) {
       // 性能较差

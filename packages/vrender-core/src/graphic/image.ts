@@ -1,4 +1,4 @@
-import type { AABBBounds } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
 import type { IImage, IImageGraphicAttribute, IRepeatType, ISetAttributeContext } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
@@ -6,6 +6,7 @@ import { getTheme } from './theme';
 import { application } from '../application';
 import { parsePadding } from '../common/utils';
 import { IMAGE_NUMBER_TYPE } from './constants';
+import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
 const IMAGE_UPDATE_TAG_KEY = ['width', 'height', 'image', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -113,29 +114,38 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     return super.setAttribute(key, value, forceUpdateTag, context);
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const imageTheme = getTheme(this).image;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateImageAABBBounds(
-      attribute,
-      getTheme(this).image,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme() {
+    return getTheme(this).image;
+  }
 
-    const { boundsPadding = imageTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IImageGraphicAttribute,
+    imageTheme: Required<IImageGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, imageTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      const { width = imageTheme.width, height = imageTheme.height } = attribute;
+      aabbBounds.set(0, 0, width, height);
     }
 
-    this.clearUpdateBoundTag();
-    return bounds;
+    const tb1 = application.graphicService.tempAABBBounds1;
+    const tb2 = application.graphicService.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+
+    updateBoundsOfCommonOuterBorder(attribute, imageTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, imageTheme, false, this);
+    return aabbBounds;
   }
 
   getDefaultAttribute(name: string) {
-    return DefaultImageAttribute[name];
+    return (DefaultImageAttribute as any)[name];
   }
 
   protected needUpdateTags(keys: string[]): boolean {

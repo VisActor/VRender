@@ -111,7 +111,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     tagWidth += symbolPlaceWidth;
     textX += symbolPlaceWidth;
 
-    let textShape;
+    let textShape: IRichText | IText;
     const isRich = isRichText({ text } as TextContent) || type === 'rich';
     if (isRich) {
       const richTextAttrs = {
@@ -144,7 +144,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (backgroundStyle.customShape) {
           const customShape = backgroundStyle.customShape;
           bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
-            return customShape(text as Pick<TextContent, 'text'>, attrs, new CustomPath2D());
+            return customShape(textShape.attribute, attrs, new CustomPath2D());
           };
         }
         this._bgRect = bgRect;
@@ -320,7 +320,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (backgroundStyle.customShape) {
           const customShape = backgroundStyle.customShape;
           bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
-            return customShape(text as Pick<TextContent, 'text'>, attrs, new CustomPath2D());
+            return customShape(textShape.attribute, attrs, new CustomPath2D());
           };
         }
         this._bgRect = bgRect;

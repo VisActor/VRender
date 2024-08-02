@@ -43,6 +43,10 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       this.updatePolygonAABBBoundsImprecise(attribute, polygonTheme, aabbBounds);
     }
+    const tb1 = application.graphicService.tempAABBBounds1;
+    const tb2 = application.graphicService.tempAABBBounds2;
+    tb1.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
+    tb2.setValue(aabbBounds.x1, aabbBounds.y1, aabbBounds.x2, aabbBounds.y2);
 
     const { lineJoin = polygonTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', this);

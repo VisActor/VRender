@@ -1508,7 +1508,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   abstract getNoWorkAnimateAttr(): Record<string, number>;
 
-  abstract clone(): Graphic<any>;
+  abstract clone(): IGraphic<any>;
 }
 
 Graphic.mixin(EventTarget);

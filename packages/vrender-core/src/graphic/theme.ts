@@ -288,7 +288,7 @@ export function getTheme(graphic: IGraphic, theme?: IFullThemeSpec): IFullThemeS
 
   return (
     getThemeFromGroup(graphic) ||
-    (graphic.attachedThemeGraphic && getTheme(graphic.attachedThemeGraphic)) ||
+    (graphic.attachedThemeGraphic && getTheme(graphic.attachedThemeGraphic as IGraphic)) ||
     globalTheme.getTheme()
   );
 }

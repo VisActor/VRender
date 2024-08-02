@@ -1,8 +1,7 @@
-import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { isString, isNil } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { ICustomPath2D, IPath, IPathGraphicAttribute } from '../interface';
-import { parsePadding } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { getTheme } from './theme';
 import { application } from '../application';
@@ -59,7 +58,7 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     return pathTheme.path as CustomPath2D;
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IPathGraphicAttribute> {
     return getTheme(this).path;
   }
 

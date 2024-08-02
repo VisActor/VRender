@@ -1,9 +1,7 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { type AABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { GraphicType, ICustomPath2D, IRect, IRectGraphicAttribute } from '../interface';
 import { CustomPath2D } from '../common/custom-path2d';
-import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { RECT_NUMBER_TYPE } from './constants';
@@ -32,7 +30,7 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     // return (this._validNumber(width) || this._validNumber(x1)) && (this._validNumber(height) || this._validNumber(y1));
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IRectGraphicAttribute> {
     return getTheme(this).rect;
   }
 

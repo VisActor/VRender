@@ -1,8 +1,8 @@
-import type { AABBBounds, IAABBBounds, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import type { IArea, IAreaCacheItem, IAreaGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
-import { parsePadding, pointsInterpolation } from '../common/utils';
+import { pointsInterpolation } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { AREA_NUMBER_TYPE } from './constants';
@@ -47,7 +47,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     return false;
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IAreaGraphicAttribute> {
     return getTheme(this).area;
   }
 

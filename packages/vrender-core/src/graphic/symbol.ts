@@ -4,7 +4,6 @@ import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
-import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
@@ -120,7 +119,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     return this._parsedPath;
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<ISymbolGraphicAttribute> {
     return getTheme(this).symbol;
   }
 

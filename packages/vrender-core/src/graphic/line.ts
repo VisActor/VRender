@@ -51,7 +51,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     }
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<ILineGraphicAttribute> {
     return getTheme(this).line;
   }
 

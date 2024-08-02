@@ -1,8 +1,8 @@
-import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
-import { parsePadding, pointsInterpolation } from '../common/utils';
+import { pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { application } from '../application';
 import type { GraphicType } from '../interface';
@@ -28,7 +28,7 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     return points && points.length >= 2;
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IPolygonGraphicAttribute> {
     return getTheme(this).polygon;
   }
 

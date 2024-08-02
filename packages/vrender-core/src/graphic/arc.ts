@@ -1,9 +1,9 @@
-import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt, isArray } from '@visactor/vutils';
 import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
-import { circleBounds, parsePadding } from '../common/utils';
+import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import type { GraphicType } from '../interface';
@@ -252,7 +252,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     };
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IArcGraphicAttribute> {
     return getTheme(this).arc;
   }
 

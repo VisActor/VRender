@@ -1,5 +1,5 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { isNumber, type AABBBounds } from '@visactor/vutils';
+import { isNumber } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -161,7 +161,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     this.addUpdateShapeAndBoundsTag();
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IRichTextGraphicAttribute> {
     return getTheme(this).richtext;
   }
 

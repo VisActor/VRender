@@ -156,8 +156,8 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     return this;
   }
 
-  getGraphicTheme() {
-    return getTheme(this).glyph;
+  getGraphicTheme(): Required<IGlyphGraphicAttribute> {
+    return getTheme(this as IGraphic).glyph;
   }
 
   protected updateAABBBounds(
@@ -248,7 +248,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     this.normalAttrs = null;
   }
 
-  clone(): Graphic<Partial<IGlyphGraphicAttribute>> {
+  clone(): IGraphic<Partial<IGlyphGraphicAttribute>> {
     const glyph = new Glyph({ ...this.attribute });
     glyph.setSubGraphic(this.subGraphic.map(g => g.clone()));
     return glyph;

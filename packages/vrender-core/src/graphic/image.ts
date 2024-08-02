@@ -1,10 +1,9 @@
-import type { AABBBounds, IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import type { IImage, IImageGraphicAttribute, IRepeatType, ISetAttributeContext } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultImageAttribute } from './config';
 import { getTheme } from './theme';
 import { application } from '../application';
-import { parsePadding } from '../common/utils';
 import { IMAGE_NUMBER_TYPE } from './constants';
 import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
@@ -114,7 +113,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     return super.setAttribute(key, value, forceUpdateTag, context);
   }
 
-  getGraphicTheme() {
+  getGraphicTheme(): Required<IImageGraphicAttribute> {
     return getTheme(this).image;
   }
 

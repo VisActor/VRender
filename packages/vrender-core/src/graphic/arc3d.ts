@@ -57,7 +57,7 @@ export class Arc3d extends Arc implements IArc3d {
     //   }
     //   aabbBounds.add(x, y);
     // });
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
     application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, false, this);
     return aabbBounds;
   }

@@ -64,7 +64,7 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
         ? this.updateAreaAABBBoundsBySegments(attribute, areaTheme, aabbBounds)
         : this.updateAreaAABBBoundsByPoints(attribute, areaTheme, aabbBounds);
     }
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
     // if (!this._rectBoundsContribitions) {
     //   this._rectBoundsContribitions = this.rectBoundsContribitions.getContributions() || [];
     // }

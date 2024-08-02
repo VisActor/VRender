@@ -36,7 +36,6 @@ import { Theme } from '../graphic/theme';
 import { PickerService } from '../picker/constants';
 import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
-import { ViewTransform3dPlugin } from '../plugins/builtin-plugin/3dview-transform-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { FlexLayoutPlugin } from '../plugins/builtin-plugin/flex-layout-plugin';
@@ -471,7 +470,11 @@ export class Stage extends Group implements IStage {
       return;
     }
     this.view3dTranform = true;
-    this.pluginService.register(new ViewTransform3dPlugin());
+    const ViewTransform3dPlugin = Factory.getPlugin('ViewTransform3dPlugin');
+
+    if (ViewTransform3dPlugin) {
+      this.pluginService.register(new ViewTransform3dPlugin());
+    }
   }
 
   disableView3dTranform() {

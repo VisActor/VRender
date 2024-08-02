@@ -69,7 +69,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
         : this.updateLineAABBBoundsByPoints(attribute, lineTheme, aabbBounds);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
 
     const { lineJoin = lineTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, lineTheme, lineJoin === 'miter', this);

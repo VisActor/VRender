@@ -199,7 +199,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
         aabbBounds.union(node.AABBBounds);
       });
     }
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
 
     application.graphicService.transformAABBBounds(attribute, aabbBounds, groupTheme, false, this);
 

@@ -230,7 +230,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     aabbBounds.translate(deltaX, deltaY);
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
 
     if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
       application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);

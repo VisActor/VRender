@@ -147,7 +147,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       this.updateSingallineAABBBounds(text as number | string);
     }
 
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    const { tb1 } = application.graphicService.updateTempAABBBounds(aabbBounds);
 
     const {
       scaleX = textTheme.scaleX,

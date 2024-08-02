@@ -35,7 +35,7 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
       const y = v[1];
       aabbBounds.add(x, y);
     });
-    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.updateTempAABBBounds(aabbBounds);
     application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, false, this);
     return aabbBounds;
   }

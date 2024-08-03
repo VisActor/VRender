@@ -1,4 +1,4 @@
-import type { AABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { isArray } from '@visactor/vutils';
 import type { ICustomPath2D, IRichTextIcon, IRichTextIconGraphicAttribute } from '../../interface';
 import { Image } from '../image';
@@ -63,7 +63,7 @@ export class RichTextIcon extends Image implements IRichTextIcon {
     return (this.attribute.height ?? 0) + this._marginArray[0] + this._marginArray[2];
   }
 
-  protected tryUpdateAABBBounds(): AABBBounds {
+  protected tryUpdateAABBBounds(): IAABBBounds {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -75,7 +75,7 @@ export class RichTextIcon extends Image implements IRichTextIcon {
     const { backgroundWidth = width, backgroundHeight = height } = this.attribute;
     const expandX = (backgroundWidth - width) / 2;
     const expandY = (backgroundHeight - height) / 2;
-    this._AABBBounds.expand([0, expandX * 2, expandY * 2, 0]);
+    (this._AABBBounds as any).expand([0, expandX * 2, expandY * 2, 0]);
 
     return this._AABBBounds;
   }

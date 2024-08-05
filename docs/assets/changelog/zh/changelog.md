@@ -1,3 +1,16 @@
+# v0.19.21
+
+2024-08-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: label line support custom path. feat @VisActor/VChart[#3000](https://github.com/VisActor/VRender/issues/3000)
+
+
+
+[更多详情请查看 v0.19.21](https://github.com/VisActor/VRender/releases/tag/v0.19.21)
+
 # v0.19.20
 
 2024-08-01

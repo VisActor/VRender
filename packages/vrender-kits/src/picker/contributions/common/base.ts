@@ -1,4 +1,4 @@
-import { getTheme, getScaledStroke } from '@visactor/vrender-core';
+import { getScaledStroke } from '@visactor/vrender-core';
 import type { IPoint } from '@visactor/vutils';
 import type {
   IGraphicAttribute,
@@ -7,7 +7,8 @@ import type {
   IThemeAttribute,
   IPickParams,
   IGraphicRender,
-  IGraphic
+  IGraphic,
+  ITransform
 } from '@visactor/vrender-core';
 
 export abstract class PickerBase {
@@ -35,7 +36,7 @@ export abstract class PickerBase {
       y = 0;
       pickContext.transformFromMatrix(graphic.transMatrix, true);
     } else {
-      const point = graphic.getOffsetXY(attribute);
+      const point = graphic.getOffsetXY(attribute as ITransform);
       x += point.x;
       y += point.y;
       // 当前context有rotate/scale，重置matrix

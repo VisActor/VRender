@@ -94,6 +94,11 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
 
     context.highPerformanceRestore();
 
+    // 影子节点pick到group也算pick到graphic
+    if (!result.graphic && result.group) {
+      result.graphic = result.group;
+    }
+
     return result;
   }
 }

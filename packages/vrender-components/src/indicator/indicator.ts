@@ -1,7 +1,7 @@
 /**
  * @description 指标卡组件
  */
-import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroup, INode, IRichTextGraphicAttribute, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
 import { merge, isValid, array, isValidNumber, get } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import { isRichText, measureTextSize, richTextAttributeTransform } from '../util';
@@ -32,44 +32,46 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     if (isValid(title)) {
       if (title.visible !== false) {
         const titleStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'title.style'), title.style);
+        let attr: IRichTextGraphicAttribute | ITextGraphicAttribute;
+        let type: 'richtext' | 'text';
         if (isRichText(titleStyle)) {
-          this._title = group.createOrUpdateChild(
-            'indicator-title',
-            {
-              ...richTextAttributeTransform(titleStyle),
-              visible: title.visible,
-              x: 0,
-              y: 0
-            },
-            'richtext'
-          ) as IText;
+          type = 'richtext';
+          attr = {
+            ...richTextAttributeTransform(titleStyle),
+            visible: title.visible,
+            x: 0,
+            y: 0
+          };
         } else {
-          this._title = group.createOrUpdateChild(
-            'indicator-title',
-            {
-              ...titleStyle,
-              /**
-               * 加入以下逻辑：如果没有声明lineHeight，默认 lineHeight 等于 fontSize
-               * 因为如果不声明 vrender 底层会默认给文本加上 2px 的高度，会影响布局计算
-               * 注意：在autoFit改变fontsize时，lineHeight也要同步修改
-               */
-              lineHeight: isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize,
-              visible: title.visible,
-              x: 0,
-              y: 0
-            },
-            'text'
-          ) as IText;
+          type = 'text';
+          attr = {
+            ...titleStyle,
+            /**
+             * 加入以下逻辑：如果没有声明lineHeight，默认 lineHeight 等于 fontSize
+             * 因为如果不声明 vrender 底层会默认给文本加上 2px 的高度，会影响布局计算
+             * 注意：在autoFit改变fontsize时，lineHeight也要同步修改
+             */
+            lineHeight: isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize,
+            visible: title.visible,
+            x: 0,
+            y: 0
+          };
         }
+        this._title = group.createOrUpdateChild('indicator-title', attr, type) as IText;
 
         // auto-fit
         if (title.autoFit && isValidNumber(limit)) {
           this._setLocalAutoFit(limit, this._title, title);
+        } else {
+          this._title.setAttribute('fontSize', attr.fontSize);
+          this._title.setAttribute('lineHeight', attr.lineHeight);
         }
 
         //auto-limit
         if (title.autoLimit && isValidNumber(limitRatio)) {
           this._title.setAttribute('maxLineWidth', limit);
+        } else {
+          this._title.setAttribute('maxLineWidth', attr.maxLineWidth);
         }
       } else {
         /**

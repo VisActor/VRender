@@ -1,6 +1,6 @@
 import type { IPoint } from '@visactor/vutils';
 import { isArray, isNumber, AABBBounds } from '@visactor/vutils';
-import { getScaledStroke, getTheme, RECT_NUMBER_TYPE } from '@visactor/vrender-core';
+import { getScaledStroke, RECT_NUMBER_TYPE } from '@visactor/vrender-core';
 import type {
   IGraphicAttribute,
   IContext2d,
@@ -8,7 +8,8 @@ import type {
   IRect,
   IThemeAttribute,
   IGraphicRender,
-  IPickParams
+  IPickParams,
+  ITransform
 } from '@visactor/vrender-core';
 const _bounds = new AABBBounds();
 
@@ -45,7 +46,7 @@ export class RectPickerBase {
       onlyTranslate = false;
       pickContext.transformFromMatrix(rect.transMatrix, true);
     } else {
-      const point = rect.getOffsetXY(rectAttribute);
+      const point = rect.getOffsetXY(rectAttribute as ITransform);
       x += point.x;
       y += point.y;
       // 当前context有rotate/scale，重置matrix

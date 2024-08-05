@@ -10,10 +10,13 @@ import type {
   IColor,
   ILine,
   IArea,
-  IRichText
+  IRichText,
+  ILineGraphicAttribute
 } from '@visactor/vrender-core';
-import { graphicCreator, AttributeUpdateType, IContainPointMode } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
+import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
 import type { IAABBBounds, IBoundsLike, IPointLike } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
 import {
   isFunction,
   isEmpty,
@@ -31,6 +34,7 @@ import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } f
 import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
 import type { Bitmap } from './overlap';
+// eslint-disable-next-line no-duplicate-imports
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
 import type {
   BaseLabelAttrs,
@@ -126,6 +130,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const line = graphicCreator.line({
         points
       });
+      if (line?.customShape) {
+        const customShape = line.customShape;
+        line.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
+          return customShape(text.attribute, attrs, new CustomPath2D());
+        };
+      }
 
       if (baseMark && baseMark.attribute.fill) {
         line.setAttribute('stroke', baseMark.attribute.fill);

@@ -108,7 +108,7 @@ export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
   pxKeys.forEach(key => {
     const styleKey = lowerCamelCaseToMiddle(key);
     if (!isNil(attrs[key])) {
-      style[styleKey] = /^[0-9]*$/.test(`${attrs[key]}`) ? `${attrs[key]}px` : `${attrs[key]}`;
+      style[styleKey] = /^\d+(\.\d+)?$/.test(`${attrs[key]}`) ? `${attrs[key]}px` : `${attrs[key]}`;
     }
   });
 

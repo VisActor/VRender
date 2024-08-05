@@ -247,6 +247,10 @@ const specs = [
     name: '指标卡'
   },
   {
+    path: 'indicator-html',
+    name: '指标卡使用html展示'
+  },
+  {
     path: 'brush',
     name: 'brush'
   },

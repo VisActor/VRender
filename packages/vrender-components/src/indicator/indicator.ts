@@ -29,12 +29,17 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
         visible: title.visible
       });
       titleStyle.lineHeight = isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize;
+
+      if (title.formatMethod) {
+        titleStyle._originText = titleStyle.text;
+        titleStyle.text = title.formatMethod(titleStyle.text, titleStyle);
+      }
       const textGraphic = createTextGraphicByType(titleStyle);
       textGraphic.name = graphicName;
       group.appendChild(textGraphic);
 
       // auto-fit
-      if (title.autoFit && isValidNumber(limit) && textGraphic.type === 'text') {
+      if (title.autoFit && isValidNumber(limit)) {
         this._setLocalAutoFit(limit, textGraphic as IText, title);
       }
 

@@ -161,8 +161,9 @@ export class HtmlAttributePlugin implements IPlugin {
     // const wrapGroupTL = application.global.getElementTopLeft(wrapGroup, false);
     const containerTL = application.global.getElementTopLeft(nativeContainer, false);
     const windowTL = stage.window.getTopLeft(false);
-    const offsetX = left + windowTL.left - containerTL.left;
-    const offsetTop = top + windowTL.top - containerTL.top;
+    const viewBox = stage.viewBox;
+    const offsetX = left + windowTL.left - containerTL.left + viewBox.x1;
+    const offsetTop = top + windowTL.top - containerTL.top + viewBox.y1;
     // wrapGroup.style.transform = `translate(${offsetX}px, ${offsetTop}px)`;
     calculateStyle.left = `${offsetX}px`;
     calculateStyle.top = `${offsetTop}px`;

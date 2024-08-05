@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.19.22",
+      "tag": "@visactor/vrender-components_v0.19.22",
+      "date": "Mon, 05 Aug 2024 09:08:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support react and html of indicator\n\n"
+          },
+          {
+            "comment": "feat: support timeline component"
+          },
+          {
+            "comment": "fix: fix issue with indicator autolimit"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.21",
       "tag": "@visactor/vrender-components_v0.19.21",
       "date": "Mon, 05 Aug 2024 01:39:45 GMT",

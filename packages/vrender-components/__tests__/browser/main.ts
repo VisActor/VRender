@@ -261,6 +261,10 @@ const specs = [
   {
     path: 'empty-tip',
     name: 'empty-tip'
+  },
+  {
+    path: 'timeline',
+    name: 'timeline'
   }
 ];
 

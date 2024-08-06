@@ -1,3 +1,23 @@
+# v0.19.22
+
+2024-08-06
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support react and html of indicator
+- **@visactor/vrender-components**: support timeline component
+- **@visactor/vrender-core**: shadow graphic support pick group
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix issue with indicator autolimit
+- **@visactor/vrender-core**: fix issue with Event class in harmony event
+
+
+
+[more detail about v0.19.22](https://github.com/VisActor/VRender/releases/tag/v0.19.22)
+
 # v0.19.21
 
 2024-08-05

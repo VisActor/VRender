@@ -247,6 +247,89 @@ export function cornerTangents(
   };
 }
 
+export function calculateArcCornerRadius(
+  arc: IArc,
+  startAngle: number,
+  endAngle: number,
+  innerRadius: number,
+  outerRadius: number
+) {
+  const deltaAngle = abs(endAngle - startAngle);
+  const cornerRadius = arc.getParsedCornerRadius();
+  const cornerRadiusIsArray = isArray(cornerRadius);
+  // Or is it a circular or annular sector?
+  const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
+    arc.getParsePadAngle(startAngle, endAngle);
+
+  const outerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[0] : cornerRadius;
+  const outerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[1] : cornerRadius;
+  const innerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[2] : cornerRadius;
+  const innerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[3] : cornerRadius;
+  const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
+  const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
+  let limitedOcr = maxOuterCornerRadius;
+  let limitedIcr = maxInnerCornerRadius;
+
+  const xors = outerRadius * cos(outerStartAngle);
+  const yors = outerRadius * sin(outerStartAngle);
+  const xire = innerRadius * cos(innerEndAngle);
+  const yire = innerRadius * sin(innerEndAngle);
+
+  // Apply rounded corners?
+  let xore: number;
+  let yore: number;
+  let xirs: number;
+  let yirs: number;
+  if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
+    xore = outerRadius * cos(outerEndAngle);
+    yore = outerRadius * sin(outerEndAngle);
+    xirs = innerRadius * cos(innerStartAngle);
+    yirs = innerRadius * sin(innerStartAngle);
+
+    // Restrict the corner radius according to the sector angle.
+    if (deltaAngle < pi) {
+      const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
+
+      if (oc) {
+        const ax = xors - oc[0];
+        const ay = yors - oc[1];
+        const bx = xore - oc[0];
+        const by = yore - oc[1];
+        const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
+        const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+
+        limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
+        limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
+      }
+    }
+  }
+
+  return {
+    outerDeltaAngle,
+    xors,
+    yors,
+    xirs,
+    yirs,
+    xore,
+    yore,
+    xire,
+    yire,
+    limitedOcr,
+    limitedIcr,
+    outerCornerRadiusStart,
+    outerCornerRadiusEnd,
+    maxOuterCornerRadius,
+    maxInnerCornerRadius,
+    outerStartAngle,
+    outerEndAngle,
+    innerDeltaAngle,
+    innerEndAngle,
+    innerStartAngle,
+    innerCornerRadiusStart,
+    innerCornerRadiusEnd
+  };
+}
+
 // 基于d3-shape
 // https://github.com/d3/d3-shape/blob/main/src/arc.js
 export function drawArcPath(
@@ -282,55 +365,30 @@ export function drawArcPath(
       context.arc(cx, cy, innerRadius, endAngle, startAngle, clockwise);
     }
   } else {
-    const cornerRadius = arc.getParsedCornerRadius();
-    const cornerRadiusIsArray = isArray(cornerRadius);
-    // Or is it a circular or annular sector?
-    const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
-      arc.getParsePadAngle(startAngle, endAngle);
-
-    const outerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[0] : cornerRadius;
-    const outerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[1] : cornerRadius;
-    const innerCornerRadiusEnd = cornerRadiusIsArray ? cornerRadius[2] : cornerRadius;
-    const innerCornerRadiusStart = cornerRadiusIsArray ? cornerRadius[3] : cornerRadius;
-    const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
-    const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
-    let limitedOcr = maxOuterCornerRadius;
-    let limitedIcr = maxInnerCornerRadius;
-
-    const xors = outerRadius * cos(outerStartAngle);
-    const yors = outerRadius * sin(outerStartAngle);
-    const xire = innerRadius * cos(innerEndAngle);
-    const yire = innerRadius * sin(innerEndAngle);
-
-    // Apply rounded corners?
-    let xore: number;
-    let yore: number;
-    let xirs: number;
-    let yirs: number;
-    if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
-      xore = outerRadius * cos(outerEndAngle);
-      yore = outerRadius * sin(outerEndAngle);
-      xirs = innerRadius * cos(innerStartAngle);
-      yirs = innerRadius * sin(innerStartAngle);
-
-      // Restrict the corner radius according to the sector angle.
-      if (deltaAngle < pi) {
-        const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
-
-        if (oc) {
-          const ax = xors - oc[0];
-          const ay = yors - oc[1];
-          const bx = xore - oc[0];
-          const by = yore - oc[1];
-          const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
-          const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-
-          limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
-          limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
-        }
-      }
-    }
-
+    const {
+      outerDeltaAngle,
+      xors,
+      yors,
+      xirs,
+      yirs,
+      limitedOcr,
+      outerCornerRadiusStart,
+      outerCornerRadiusEnd,
+      maxOuterCornerRadius,
+      xore,
+      yore,
+      xire,
+      yire,
+      outerStartAngle,
+      outerEndAngle,
+      limitedIcr,
+      innerDeltaAngle,
+      innerEndAngle,
+      innerStartAngle,
+      innerCornerRadiusStart,
+      innerCornerRadiusEnd,
+      maxInnerCornerRadius
+    } = calculateArcCornerRadius(arc, startAngle, endAngle, innerRadius, outerRadius);
     // Is the sector collapsed to a line?
     // 角度过小，会将acr处理为圆心到半径的一条线
     if (outerDeltaAngle < 0.001) {

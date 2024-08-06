@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: optimize triangle symbols\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender"
+    }
+  ],
+  "packageName": "@visactor/vrender",
+  "email": "dingling112@gmail.com"
+}

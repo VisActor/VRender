@@ -1,7 +1,6 @@
-import type { IBounds } from '@visactor/vutils';
 import { sqrt } from '@visactor/vutils';
 import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
-import { trianglUp, TriangleUpSymbol } from './triangle-up';
+import { BaseSymbol } from './base';
 
 /**
  * 
@@ -33,7 +32,7 @@ export function thinTriangle(ctx: IContext2d, r: number, x: number, y: number) {
   return true;
 }
 
-export class ThinTriangleSymbol extends TriangleUpSymbol implements ISymbolClass {
+export class ThinTriangleSymbol extends BaseSymbol implements ISymbolClass {
   type: SymbolType = 'thinTriangle';
   pathStr: string = 'M0,-0.5773502691896257L-0.5,0.28867513459481287L0.5,0.28867513459481287Z';
 

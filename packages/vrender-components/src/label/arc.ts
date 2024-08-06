@@ -3,7 +3,7 @@ import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
 import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
-import type { ILineGraphicAttribute } from '@visactor/vrender-core';
+import type { ILineGraphicAttribute, IRichTextAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import {
   type IRichText,
@@ -119,7 +119,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       fontWeight: 'normal',
       fillOpacity: 1,
       // arc boundsPadding 宽度设大会家加剧旋转时，AABBbounds.width 大于无旋转角度的情况，导致 arc 内部标签被缩略的问题
-      boundsPadding: [-1, 0, -1, 0]
+      boundsPadding: [-1, 0, -1, 0],
+      ellipsis: true
     },
     position: 'outside',
     line: {
@@ -202,6 +203,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
               : undefined,
           line: basedArc.labelLine
         };
+        if (labels[i].type === 'richtext') {
+          (labelAttribute as unknown as IRichTextAttribute).width = basedArc.labelLimit;
+        }
         labels[i].setAttributes(labelAttribute);
       }
     }

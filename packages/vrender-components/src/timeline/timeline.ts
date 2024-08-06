@@ -214,7 +214,11 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
       const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
       this._symbolGroup.forEachChildren((symbol: ISymbol, i) => {
-        const originAttrs = { ...symbol.attribute };
+        const originAttrs: Record<string, any> = {};
+        Object.keys(activeSymbolStyle).forEach(k => {
+          originAttrs[k] = (symbol.attribute as any)[k];
+        });
+
         symbol.setAttributes({ opacity: 0 });
         symbol
           .animate()
@@ -232,7 +236,10 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
       const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
       this._labelGroup.forEachChildren((label: IText, i) => {
-        const originAttrs = { ...label.attribute };
+        const originAttrs: Record<string, any> = {};
+        Object.keys(activeSymbolStyle).forEach(k => {
+          originAttrs[k] = (label.attribute as any)[k];
+        });
         label.setAttributes({ opacity: 0 });
         label
           .animate()

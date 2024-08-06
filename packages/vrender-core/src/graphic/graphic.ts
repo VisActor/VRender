@@ -346,7 +346,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const graphicTheme = this.getGraphicTheme();
     this._AABBBounds.clear();
     const attribute = this.attribute;
-    const bounds = this.updateAABBBounds(attribute, graphicTheme as Required<T>, this._AABBBounds) as AABBBounds;
+    const bounds = this.updateAABBBounds(attribute, graphicTheme as Required<T>, this._AABBBounds, full) as AABBBounds;
 
     const { boundsPadding = graphicTheme.boundsPadding } = attribute;
     const paddingArray = parsePadding(boundsPadding);

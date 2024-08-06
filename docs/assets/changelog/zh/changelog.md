@@ -1,7 +1,18 @@
-# v0.19.22
+
+# v0.19.23
 
 2024-08-06
 
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix picker of shadow root group
+
+
+[更多详情请查看 v0.19.23](https://github.com/VisActor/VRender/releases/tag/v0.19.23)
+
+# v0.19.22
+
+2024-08-06
 
 **🆕 新增功能**
 
@@ -15,8 +26,8 @@
 - **@visactor/vrender-core**: fix issue with Event class in harmony event
 
 
-
 [更多详情请查看 v0.19.22](https://github.com/VisActor/VRender/releases/tag/v0.19.22)
+
 
 # v0.19.21
 

@@ -3,7 +3,7 @@ import { AbstractComponent } from '../core/base';
 import { loadTimelineComponent } from './register';
 import type { TimelineAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import type { IGraphicAttribute, IGroup, ILine, IText } from '@visactor/vrender-core';
+import { getTheme, type IGraphicAttribute, type IGroup, type ILine, type IText } from '@visactor/vrender-core';
 import type { ISymbol } from '@visactor/vrender-core';
 
 loadTimelineComponent();
@@ -237,7 +237,7 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
       this._labelGroup.forEachChildren((label: IText, i) => {
         const originAttrs: Record<string, any> = {};
-        Object.keys(activeSymbolStyle).forEach(k => {
+        Object.keys(activeLabelStyle).forEach(k => {
           originAttrs[k] = (label.attribute as any)[k];
         });
         label.setAttributes({ opacity: 0 });

@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 05 Aug 2024 01:39:45 GMT and should not be manually modified.
+This log was last generated on Mon, 05 Aug 2024 09:08:30 GMT and should not be manually modified.
+
+## 0.19.22
+Mon, 05 Aug 2024 09:08:30 GMT
+
+### Updates
+
+- feat: shadow graphic support pick group
+- fix: fix issue with Event class in harmony event
 
 ## 0.19.21
 Mon, 05 Aug 2024 01:39:45 GMT

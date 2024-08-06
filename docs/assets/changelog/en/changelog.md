@@ -1,3 +1,16 @@
+# v0.19.23
+
+2024-08-06
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix picker of shadow root group
+
+
+
+[more detail about v0.19.23](https://github.com/VisActor/VRender/releases/tag/v0.19.23)
+
 # v0.19.21
 
 2024-08-05

@@ -1,10 +1,10 @@
 /**
  * @description 指标卡组件
  */
-import type { IGroup, INode, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroup, IRichText, IText, ITextGraphicAttribute } from '@visactor/vrender-core';
 import { merge, isValid, array, isValidNumber, get } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import { isRichText, measureTextSize, richTextAttributeTransform } from '../util';
+import { createTextGraphicByType, measureTextSize } from '../util';
 import type { IndicatorAttributes, IndicatorItemSpec } from './type';
 import { DEFAULT_INDICATOR_THEME } from './config';
 import { loadIndicatorComponent } from './register';
@@ -13,125 +13,72 @@ loadIndicatorComponent();
 export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> {
   name = 'indicator';
 
-  private _title?: IText;
-  private _content?: IText | IText[];
+  private _title?: IText | IRichText;
+  private _content?: (IText | IRichText)[];
+
+  protected _renderText(
+    group: IGroup,
+    title: IndicatorItemSpec,
+    limit: number,
+    limitRatio: number,
+    themePath: string,
+    graphicName: string
+  ) {
+    if (title.visible !== false) {
+      const titleStyle = merge({}, get(DEFAULT_INDICATOR_THEME, themePath), title.style, {
+        visible: title.visible
+      });
+      titleStyle.lineHeight = isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize;
+
+      if (title.formatMethod) {
+        titleStyle._originText = titleStyle.text;
+        titleStyle.text = title.formatMethod(titleStyle.text, titleStyle);
+      }
+      const textGraphic = createTextGraphicByType(titleStyle);
+      textGraphic.name = graphicName;
+      group.appendChild(textGraphic);
+
+      // auto-fit
+      if (title.autoFit && isValidNumber(limit)) {
+        this._setLocalAutoFit(limit, textGraphic as IText, title);
+      }
+
+      //auto-limit
+      if (title.autoLimit && isValidNumber(limitRatio)) {
+        textGraphic.setAttribute('maxLineWidth', limit);
+      }
+
+      return textGraphic;
+    }
+
+    return undefined;
+  }
 
   protected render() {
-    const { visible, title = {}, content, size, limitRatio = Infinity } = this.attribute as IndicatorAttributes;
+    this.removeAllChild(true);
+
+    if (this.attribute.visible !== true) {
+      return;
+    }
+    const { title = {}, content, size, limitRatio = Infinity } = this.attribute as IndicatorAttributes;
 
     const limit = Math.min(size.width, size.height) * limitRatio;
 
     const group = this.createOrUpdateChild('indicator-container', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
 
-    // 指标卡全部隐藏
-    if (visible !== true) {
-      group && group.hideAll();
-      return;
-    }
-
     if (isValid(title)) {
-      if (title.visible !== false) {
-        const titleStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'title.style'), title.style);
-        if (isRichText(titleStyle)) {
-          this._title = group.createOrUpdateChild(
-            'indicator-title',
-            {
-              ...richTextAttributeTransform(titleStyle),
-              visible: title.visible,
-              x: 0,
-              y: 0
-            },
-            'richtext'
-          ) as IText;
-        } else {
-          this._title = group.createOrUpdateChild(
-            'indicator-title',
-            {
-              ...titleStyle,
-              /**
-               * 加入以下逻辑：如果没有声明lineHeight，默认 lineHeight 等于 fontSize
-               * 因为如果不声明 vrender 底层会默认给文本加上 2px 的高度，会影响布局计算
-               * 注意：在autoFit改变fontsize时，lineHeight也要同步修改
-               */
-              lineHeight: isValid(titleStyle.lineHeight) ? titleStyle.lineHeight : titleStyle.fontSize,
-              visible: title.visible,
-              x: 0,
-              y: 0
-            },
-            'text'
-          ) as IText;
-        }
-
-        // auto-fit
-        if (title.autoFit && isValidNumber(limit)) {
-          this._setLocalAutoFit(limit, this._title, title);
-        }
-
-        //auto-limit
-        if (title.autoLimit && isValidNumber(limitRatio)) {
-          this._title.setAttribute('maxLineWidth', limit);
-        }
-      } else {
-        /**
-         * indicator部分隐藏
-         * 例如title隐藏了，content还保留。直接设置visible:false 计算group.AABBounts是错的，影响上下居中。
-         * 这里把隐藏的nodes删除后，group.AABBounts计算才正确。
-         */
-        const titleNode = group.find(node => node.name === 'indicator-title', false);
-        titleNode && group.removeChild(titleNode as INode);
-        this._title = undefined;
-      }
+      this._title = this._renderText(group, title, limit, limitRatio, 'title.style', 'indicator-title');
     }
 
     if (isValid(content)) {
       const contents: IndicatorItemSpec[] = array(content);
-      const contentComponents: IText[] = [];
+      const contentComponents: (IText | IRichText)[] = [];
       contents.forEach((contentItem, i) => {
         if (contentItem.visible !== false) {
-          const contentStyle = merge({}, get(DEFAULT_INDICATOR_THEME, 'content.style'), contentItem.style);
-          let contentComponent;
-          if (isRichText(contentStyle)) {
-            contentComponent = group.createOrUpdateChild(
-              'indicator-content-' + i,
-              {
-                ...richTextAttributeTransform(contentStyle),
-                visible: title.visible,
-                x: 0,
-                y: 0
-              },
-              'richtext'
-            ) as IText;
-          } else {
-            contentComponent = group.createOrUpdateChild(
-              'indicator-content-' + i,
-              {
-                ...contentStyle,
-                lineHeight: isValid(contentStyle.lineHeight) ? contentStyle.lineHeight : contentStyle.fontSize,
-                visible: contentItem.visible,
-                x: 0,
-                y: 0
-              },
-              'text'
-            ) as IText;
-          }
-
-          // auto-fit
-          if (contentItem.autoFit && isValidNumber(limit)) {
-            this._setLocalAutoFit(limit, contentComponent, contentItem);
-          }
-
-          //auto-limit
-          if (contentItem.autoLimit && isValidNumber(limitRatio)) {
-            contentComponent.setAttribute('maxLineWidth', limit);
-          }
-
-          contentComponents.push(contentComponent);
+          contentComponents.push(
+            this._renderText(group, contentItem, limit, limitRatio, 'content.style', 'indicator-content-' + i)
+          );
         } else {
-          /**
-           * indicator部分隐藏
-           */
-          const contentItemNode = group.find(node => node.name === 'indicator-content-' + i, false);
-          contentItemNode && group.removeChild(contentItemNode as INode);
         }
       });
       this._content = contentComponents;
@@ -184,7 +131,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
     const titleSpec = this.attribute.title ?? {};
     if (titleSpec.autoFit && titleSpec.fitStrategy === 'inscribed') {
       this._title.setAttribute('fontSize', singleHeight);
-      autoFitTexts.push({ text: this._title, spec: this.attribute.title ?? {} });
+      autoFitTexts.push({ text: this._title as IText, spec: this.attribute.title ?? {} });
     } else {
       otherHeight += this._title?.AABBBounds?.height?.() ?? 0;
     }
@@ -197,7 +144,7 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
         const contentText = this._content[index];
         if (contentSpec.autoFit && contentSpec.fitStrategy === 'inscribed') {
           contentText.setAttribute('fontSize', singleHeight);
-          autoFitTexts.push({ text: contentText, spec: contentSpec });
+          autoFitTexts.push({ text: contentText as IText, spec: contentSpec });
         } else {
           otherHeight += contentText?.AABBBounds?.height?.() ?? 0;
         }

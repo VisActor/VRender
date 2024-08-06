@@ -11,13 +11,16 @@ import {
 } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
+import type { ILineGraphicAttribute } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import {
   type IRichText,
   type IText,
   type IArcGraphicAttribute,
   type IGraphic,
   type ILine,
-  graphicCreator
+  graphicCreator,
+  CustomPath2D
 } from '@visactor/vrender-core';
 import { isQuadrantRight, isQuadrantLeft, lineCirclePoints, connectLineRadian, checkBoundsOverlap } from './util';
 import type { ComponentOptions } from '../interface';
@@ -940,6 +943,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         })
       : undefined;
     if (labelLine) {
+      if (line?.customShape) {
+        const customShape = line.customShape;
+        labelLine.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
+          return customShape(text.attribute, attrs, new CustomPath2D());
+        };
+      }
       this._setStatesOfLabelLine(labelLine);
     }
     return labelLine;

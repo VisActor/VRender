@@ -12,6 +12,7 @@ import type {
 } from '../interface';
 import { matrixAllocate } from '../allocator/matrix-allocate';
 import { draw3dItem } from '../common/3d-interceptor';
+import { getTheme } from '../graphic';
 
 // 拦截器
 export const PickItemInterceptor = Symbol.for('PickItemInterceptor');
@@ -72,6 +73,8 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
     const context = pickerService.pickContext;
     context.highPerformanceSave();
 
+    const theme = (getTheme(graphic) as any)?.[graphic.type];
+    const { shadowPickMode = theme?.shadowPickMode } = graphic.attribute;
     const g = graphic.shadowRoot;
     const currentGroupMatrix = matrixAllocate.allocateByObj(parentMatrix);
     const newPoint = new Point(
@@ -92,6 +95,11 @@ export class ShadowRootPickItemInterceptorContribution implements IPickItemInter
     const result = pickerService.pickGroup(g, newPoint, currentGroupMatrix, pickParams);
 
     context.highPerformanceRestore();
+
+    // 影子节点pick到group也算pick到graphic
+    if (!result.graphic && result.group && shadowPickMode === 'full') {
+      result.graphic = result.group;
+    }
 
     return result;
   }

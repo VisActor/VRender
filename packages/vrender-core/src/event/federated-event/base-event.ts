@@ -1,3 +1,4 @@
+import { isFunction } from '@visactor/vutils';
 import type { IPickEventParams } from '../../interface';
 import type { EventPoint, IEventTarget } from '../../interface/event';
 import type { EventManager } from '../event-manager';
@@ -200,8 +201,14 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   preventDefault(): void {
-    if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
-      this.nativeEvent.preventDefault();
+    try {
+      if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
+        this.nativeEvent.preventDefault();
+      }
+    } catch (err) {
+      this.nativeEvent.preventDefault &&
+        isFunction(this.nativeEvent.preventDefault) &&
+        this.nativeEvent.preventDefault();
     }
 
     this.defaultPrevented = true;
@@ -212,8 +219,14 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   stopPropagation(): void {
-    if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
-      this.nativeEvent.stopPropagation();
+    try {
+      if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
+        this.nativeEvent.stopPropagation();
+      }
+    } catch (err) {
+      this.nativeEvent.stopPropagation &&
+        isFunction(this.nativeEvent.stopPropagation) &&
+        this.nativeEvent.stopPropagation();
     }
 
     this.propagationStopped = true;

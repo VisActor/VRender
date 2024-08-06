@@ -1,6 +1,6 @@
 // 存放一些公共方法，公共配置
 
-import { isNil, isString, lowerCamelCaseToMiddle } from '@visactor/vutils';
+import { isNil, isString, isValid, lowerCamelCaseToMiddle } from '@visactor/vutils';
 import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
 
 // TODO: 更好的方案
@@ -73,6 +73,9 @@ export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
   const stringTypes = ['textAlign', 'fontFamily', 'fontVariant', 'fontStyle', 'fontWeight'];
   const pxKeys = ['fontSize', 'lineHeight'];
   const style: any = {};
+  const parsePxValue = (value: string | number) => {
+    return /^\d+(\.\d+)?$/.test(`${value}`) ? `${value}px` : `${value}`;
+  };
 
   stringTypes.forEach(key => {
     if (attrs[key]) {
@@ -83,9 +86,13 @@ export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
   pxKeys.forEach(key => {
     const styleKey = lowerCamelCaseToMiddle(key);
     if (!isNil(attrs[key])) {
-      style[styleKey] = /^[0-9]*$/.test(`${attrs[key]}`) ? `${attrs[key]}px` : `${attrs[key]}`;
+      style[styleKey] = parsePxValue(attrs[key]);
     }
   });
+
+  if (isValid(attrs.maxLineWidth)) {
+    style['max-width'] = parsePxValue(attrs.maxLineWidth);
+  }
 
   if (attrs.underline) {
     style['text-decoration'] = 'underline';

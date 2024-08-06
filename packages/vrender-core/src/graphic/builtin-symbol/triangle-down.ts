@@ -20,16 +20,7 @@ import { BaseSymbol } from './base';
  */
 // 借鉴自d3
 // https://github.com/d3/d3-shape/blob/main/src/symbol/triangle.js
-
-export function trianglDown(ctx: IContext2d, r: number, x: number, y: number) {
-  ctx.moveTo(x - r, y - r);
-  ctx.lineTo(x + r, y - r);
-  ctx.lineTo(x, y + r);
-  ctx.closePath();
-  return true;
-}
-
-export function trianglDownOffset(ctx: IContext2d, r: number, x: number, y: number, offset: number) {
+export function trianglDownOffset(ctx: IContext2d, r: number, x: number, y: number, offset: number = 0) {
   ctx.moveTo(x - r - offset * 2, y - r - offset);
   ctx.lineTo(x + r + offset * 2, y - r - offset);
   ctx.lineTo(x, y + r + offset * 2);
@@ -44,7 +35,7 @@ export class TriangleDownSymbol extends BaseSymbol implements ISymbolClass {
 
   draw(ctx: IContext2d, size: number, x: number, y: number) {
     const r = size / 2;
-    return trianglDown(ctx, r, x, y);
+    return trianglDownOffset(ctx, r, x, y);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {

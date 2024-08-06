@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "refactor: optimize cornerRadius parse of arc\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-kits"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits",
+  "email": "dingling112@gmail.com"
+}

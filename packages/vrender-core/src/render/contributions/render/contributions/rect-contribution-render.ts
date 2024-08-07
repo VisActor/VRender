@@ -214,7 +214,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       y1,
       x: originX = groupAttribute.x,
       y: originY = groupAttribute.y,
-      stroke = groupAttribute.stroke
+      stroke = groupAttribute.stroke,
+      cornerRadius = groupAttribute.cornerRadius
     } = rect.attribute as any;
 
     let { width, height } = rect.attribute;
@@ -227,6 +228,35 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
     }
 
     context.setStrokeStyle(rect, rect.attribute, x, y, groupAttribute);
+
+    // 带不同stroke边框
+    if (!(cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0)))) {
+      let lastStrokeI = 0;
+      let lastStroke: any;
+      createRectPath(
+        context,
+        x,
+        y,
+        width,
+        height,
+        cornerRadius,
+        new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
+          if (stroke[i]) {
+            if (!(lastStrokeI === i - 1 && stroke[i] === lastStroke)) {
+              context.setStrokeStyle(rect, { ...rect.attribute, stroke: stroke[i] }, x, y, groupAttribute);
+              context.beginPath();
+              context.moveTo(x1, y1);
+              lastStroke = stroke[i];
+            }
+            lastStrokeI = i;
+            context.lineTo(x2, y2);
+            context.stroke();
+          }
+        })
+      );
+      return;
+    }
+
     // 单独处理每条边界，目前不考虑圆角
     context.beginPath();
     context.moveTo(x, y);

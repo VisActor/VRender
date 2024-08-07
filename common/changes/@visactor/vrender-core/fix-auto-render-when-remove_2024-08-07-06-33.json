@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix bug of auto-render when remove some graphics\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

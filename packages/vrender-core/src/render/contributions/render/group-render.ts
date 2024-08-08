@@ -208,6 +208,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     } else {
       context.highPerformanceSave();
     }
+    const baseGlobalAlpha = context.baseGlobalAlpha;
     context.baseGlobalAlpha *= baseOpacity;
 
     const groupAttribute = getTheme(group, params?.theme).group;
@@ -282,7 +283,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     }
     context.modelMatrix = lastModelMatrix;
 
-    context.baseGlobalAlpha /= baseOpacity;
+    context.baseGlobalAlpha = baseGlobalAlpha;
 
     if (p && p.then) {
       p.then(() => {

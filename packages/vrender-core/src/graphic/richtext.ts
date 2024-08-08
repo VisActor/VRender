@@ -461,11 +461,13 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     // }
     let pickIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach(icon => {
-      if (icon.AABBBounds.containsPoint({ x: point.x - x, y: point.y - y })) {
+      const bounds = icon.AABBBounds.clone();
+      bounds.translate(icon._marginArray[3], icon._marginArray[0]);
+      if (bounds.containsPoint({ x: point.x - x, y: point.y - y })) {
         pickIcon = icon;
 
-        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x;
-        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y;
+        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x + icon._marginArray[3];
+        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y + icon._marginArray[0];
       }
     });
 

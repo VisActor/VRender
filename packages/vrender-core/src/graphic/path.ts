@@ -85,6 +85,11 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     return aabbBounds;
   }
 
+  protected doUpdateAABBBounds(full?: boolean) {
+    this.doUpdatePathShape();
+    return super.doUpdateAABBBounds(full);
+  }
+
   protected doUpdatePathShape() {
     const attribute = this.attribute;
     if (isString(attribute.path, true)) {

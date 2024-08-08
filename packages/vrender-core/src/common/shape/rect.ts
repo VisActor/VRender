@@ -178,6 +178,6 @@ export function createRectPath(
     );
     // path.arcTo(leftTop[0], leftTop[1], leftTopPoint1[0], leftTopPoint1[1], _cornerRadius[0]);
   }
-  path.closePath();
+  !edgeCb && path.closePath();
   return path;
 }

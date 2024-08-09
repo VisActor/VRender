@@ -40,8 +40,10 @@ export const page = () => {
     scaleY: 2,
     width: 200,
     height: 200,
+    cornerRadius: [0, 10, 10, 0],
+    stroke: ['red', 'red', 'red', false],
     // scaleCenter: ['50%', '50%'],
-    _debug_bounds: true,
+    // _debug_bounds: true,
     fill: 'conic-gradient(from 90deg, rgba(5,0,255,1) 16%, rgba(0,255,10,1) 41%, rgba(9,9,121,1) 53%, rgba(0,212,255,1) 100%)',
     // cornerRadius: [5, 10, 15, 20],
     lineWidth: 5

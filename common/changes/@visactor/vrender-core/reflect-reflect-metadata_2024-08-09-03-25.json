@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "refactor: remove polyfill from reflect-metadata",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

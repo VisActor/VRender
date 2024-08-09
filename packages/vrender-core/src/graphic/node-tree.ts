@@ -702,7 +702,7 @@ export class Node extends EventEmitter<any, any> implements INode {
   setAllDescendantsProps(propsName: string, propsValue: any) {
     let child = this._firstChild;
     while (child) {
-      child[propsName] = propsValue;
+      (child as any)[propsName] = propsValue;
       child.setAllDescendantsProps(propsName, propsValue);
       child = child._next;
     }

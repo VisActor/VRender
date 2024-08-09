@@ -1,4 +1,5 @@
-import { isNumber, type AABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { isNumber } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -23,7 +24,6 @@ import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
-import { parsePadding } from '../common/utils';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 const RICHTEXT_UPDATE_TAG_KEY = [
@@ -161,29 +161,82 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     this.addUpdateShapeAndBoundsTag();
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const richTextTheme = getTheme(this).richtext;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateRichTextAABBBounds(
-      attribute,
-      getTheme(this).richtext,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = richTextTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
-    }
-
-    this.clearUpdateBoundTag();
-    return bounds;
+  getGraphicTheme(): Required<IRichTextGraphicAttribute> {
+    return getTheme(this).richtext;
   }
 
-  getDefaultAttribute(name: string) {
-    return DefaultRichTextAttribute[name];
+  protected updateAABBBounds(
+    attribute: IRichTextGraphicAttribute,
+    richtextTheme: Required<IRichTextGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, richtextTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+
+    const {
+      width = richtextTheme.width,
+      height = richtextTheme.height,
+      maxWidth = richtextTheme.maxWidth,
+      maxHeight = richtextTheme.maxHeight,
+      textAlign = richtextTheme.textAlign,
+      textBaseline = richtextTheme.textBaseline
+    } = attribute;
+
+    if (width > 0 && height > 0) {
+      // 外部设置宽高
+      aabbBounds.set(0, 0, width, height);
+    } else {
+      // 获取内容宽高
+      const frameCache = this.getFrameCache();
+      const { width: actualWidth, height: actualHeight } = frameCache.getActualSize();
+      let contentWidth = width || actualWidth || 0;
+      let contentHeight = height || actualHeight || 0;
+
+      contentHeight = typeof maxHeight === 'number' && contentHeight > maxHeight ? maxHeight : contentHeight || 0;
+      contentWidth = typeof maxWidth === 'number' && contentWidth > maxWidth ? maxWidth : contentWidth || 0;
+
+      aabbBounds.set(0, 0, contentWidth, contentHeight);
+    }
+
+    // 调整对齐方式
+    let deltaY = 0;
+    switch (textBaseline) {
+      case 'top':
+        deltaY = 0;
+        break;
+      case 'middle':
+        deltaY = -aabbBounds.height() / 2;
+        break;
+      case 'bottom':
+        deltaY = -aabbBounds.height();
+        break;
+      default:
+        break;
+    }
+    let deltaX = 0;
+    switch (textAlign) {
+      case 'left':
+        deltaX = 0;
+        break;
+      case 'center':
+        deltaX = -aabbBounds.width() / 2;
+        break;
+      case 'right':
+        deltaX = -aabbBounds.width();
+        break;
+      default:
+        break;
+    }
+    aabbBounds.translate(deltaX, deltaY);
+
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
+      application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
+    }
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {

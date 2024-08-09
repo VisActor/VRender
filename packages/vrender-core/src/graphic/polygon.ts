@@ -1,8 +1,8 @@
-import type { AABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import type { IPolygon, IPolygonGraphicAttribute } from '../interface/graphic/polygon';
 import { getTheme } from './theme';
-import { parsePadding, pointsInterpolation } from '../common/utils';
+import { pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { application } from '../application';
 import type { GraphicType } from '../interface';
@@ -28,38 +28,45 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     return points && points.length >= 2;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const polygonTheme = getTheme(this).polygon;
-    this._AABBBounds.clear();
+  getGraphicTheme(): Required<IPolygonGraphicAttribute> {
+    return getTheme(this).polygon;
+  }
 
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updatePolygonAABBBounds(
-      attribute,
-      getTheme(this).polygon,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = polygonTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IPolygonGraphicAttribute,
+    polygonTheme: Required<IPolygonGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, polygonTheme, aabbBounds, this)) {
+      return aabbBounds;
     }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      this.updatePolygonAABBBoundsImprecise(attribute, polygonTheme, aabbBounds);
+    }
+    application.graphicService.updateTempAABBBounds(aabbBounds);
 
-    this.clearUpdateBoundTag();
+    const { lineJoin = polygonTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', this);
+    return aabbBounds;
+  }
 
-    return this._AABBBounds;
+  protected updatePolygonAABBBoundsImprecise(
+    attribute: IPolygonGraphicAttribute,
+    polygonTheme: Required<IPolygonGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    const { points = polygonTheme.points } = attribute;
+    points.forEach(p => {
+      aabbBounds.add(p.x, p.y);
+    });
+
+    return aabbBounds;
   }
 
   protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any): void {
     if (key === 'points') {
       (nextAttributes as any).points = pointsInterpolation(lastStepVal, nextStepVal, ratio);
     }
-  }
-
-  getDefaultAttribute(name: string) {
-    const polygonTheme = getTheme(this).polygon;
-    return polygonTheme[name];
   }
 
   protected needUpdateTags(keys: string[]): boolean {

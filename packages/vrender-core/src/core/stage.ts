@@ -1,4 +1,4 @@
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, AABBBounds } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IBoundsLike, IMatrix } from '@visactor/vutils';
 import { Bounds, Point, isString } from '@visactor/vutils';
 import type {
   IGraphic,
@@ -619,7 +619,7 @@ export class Stage extends Group implements IStage {
   //   return layer.appendChild<T>(node);
   // }
 
-  protected tryUpdateAABBBounds(): AABBBounds {
+  protected tryUpdateAABBBounds(): IAABBBounds {
     const viewBox = this.window.getViewBox();
     this._AABBBounds.setValue(viewBox.x1, viewBox.y1, viewBox.x2, viewBox.y2);
     return this._AABBBounds;

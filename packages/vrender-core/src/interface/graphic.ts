@@ -1,4 +1,4 @@
-import type { IAABBBounds, IOBBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
 import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
@@ -495,6 +495,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   clone: () => IGraphic;
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
+  getGraphicTheme: () => T;
 }
 
 export interface IRoot extends IGraphic {

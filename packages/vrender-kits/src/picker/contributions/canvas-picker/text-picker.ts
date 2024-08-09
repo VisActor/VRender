@@ -52,7 +52,7 @@ export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGra
 
     // const symbolAttribute = graphicService.themeService.getCurrentTheme().symbolAttribute;
     pickContext.highPerformanceSave();
-    const textAttribute = getTheme(text).text;
+    const textAttribute = text.getGraphicTheme();
 
     const { keepDirIn3d = textAttribute.keepDirIn3d } = text.attribute;
     // 文字如果需要变换，那就一定要计算3d矩阵

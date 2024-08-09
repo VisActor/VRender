@@ -163,7 +163,7 @@ class GraphicCreator {
 
   RegisterGraphicCreator(name: string, cb: any) {
     this.store.set(name, cb);
-    this[name] = cb;
+    (this as any)[name] = cb;
   }
 
   CreateGraphic(name: string, params: any) {

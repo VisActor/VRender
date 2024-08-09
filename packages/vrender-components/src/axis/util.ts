@@ -151,3 +151,32 @@ export function getPolarAngleLabelPosition(
   const vector = getCircleVerticalVector(labelOffset || 1, labelPoint, center, inside);
   return getCircleLabelPosition(labelPoint, vector, text, style);
 }
+
+export function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
+  const points: Point[] = [];
+  const range = endAngle - startAngle;
+  for (let i = 0; i < count; i++) {
+    const angle = startAngle + (i * range) / count;
+    points.push(polarToCartesian(center, radius, angle));
+  }
+  return points;
+}
+
+export function getPolygonPath(points: Point[], closed: boolean) {
+  let path = '';
+  if (points.length === 0) {
+    return path;
+  }
+  points.forEach((point, index) => {
+    if (index === 0) {
+      path = `M${point.x},${point.y}`;
+    } else {
+      path += `L${point.x},${point.y}`;
+    }
+  });
+  if (closed) {
+    path += 'Z';
+  }
+
+  return path;
+}

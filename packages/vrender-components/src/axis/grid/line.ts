@@ -18,16 +18,7 @@ import type { TransformedAxisItem } from '../type';
 import { LineAxisMixin } from '../mixin/line';
 import type { ComponentOptions } from '../../interface';
 import { loadLineAxisGridComponent } from '../register';
-
-function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {
-  const points: Point[] = [];
-  const range = endAngle - startAngle;
-  for (let i = 0; i < count; i++) {
-    const angle = startAngle + (i * range) / count;
-    points.push(polarToCartesian(center, radius, angle));
-  }
-  return points;
-}
+import { getCirclePoints } from '../util';
 
 export interface LineAxisGrid
   extends Pick<LineAxisMixin, 'isInValidValue' | 'getTickCoord' | 'getVerticalVector'>,

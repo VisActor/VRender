@@ -15,6 +15,7 @@ import type { CustomTicksFunc } from '@visactor/vscale';
 import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
+import type { BaseScale } from '@visactor/vscale/es/base-scale';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;
@@ -454,7 +455,7 @@ export interface ITickDataOpt {
   tickCount?: number | ((option: ITickCallbackOption) => number);
   forceTickCount?: number;
   tickStep?: number;
-  tickMode?: 'average' | 'd3' | string;
+  tickMode?: 'average' | 'd3' | string | CustomTicksFunc<BaseScale>;
   noDecimals?: boolean;
 
   coordinateType: CoordinateType;
@@ -464,7 +465,6 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
-  customTicks?: CustomTicksFunc;
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {

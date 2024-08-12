@@ -11,6 +11,7 @@ import type {
   IGraphic
 } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
+import type { CustomTicksFunc } from '@visactor/vscale';
 import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
@@ -463,6 +464,7 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  customTicks?: CustomTicksFunc;
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {

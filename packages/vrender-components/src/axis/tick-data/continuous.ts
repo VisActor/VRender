@@ -28,7 +28,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     return convertDomainToTickData([scale.domain()[0]]);
   }
 
-  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle } = op;
+  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle, customTicks } = op;
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
@@ -40,7 +40,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     scaleTicks = (scale as LinearScale).d3Ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
   } else {
     const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
-    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
+    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals, customTicks });
   }
 
   if (op.sampling) {

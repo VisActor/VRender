@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix edge and corner stroke in createRectPath()",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

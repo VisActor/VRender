@@ -1,7 +1,7 @@
 {
   "changes": [
     {
-      "packageName": "@visactor/vrender",
+      "packageName": "@visactor/vrender-core",
       "comment": "fix: fix richtext icon pick range #1362",
       "type": "none"
     }

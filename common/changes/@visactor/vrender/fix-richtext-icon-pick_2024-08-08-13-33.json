@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "fix: fix richtext icon pick range #1362",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

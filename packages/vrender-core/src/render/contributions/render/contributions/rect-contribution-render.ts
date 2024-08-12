@@ -251,9 +251,13 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
             lastStrokeI = i;
             context.lineTo(x2, y2);
             context.stroke();
+            if (i === 3) {
+              context.beginPath();
+            }
           }
         })
       );
+      context.stroke();
       return;
     }
 

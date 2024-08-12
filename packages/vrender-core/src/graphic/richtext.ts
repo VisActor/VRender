@@ -38,6 +38,9 @@ const RICHTEXT_UPDATE_TAG_KEY = [
   'textBaseline',
   'textConfig',
   'layoutDirection',
+  'fill',
+  'stroke',
+  'fontSize',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 

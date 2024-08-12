@@ -241,7 +241,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     if (!data) {
       return;
     }
-    const { doFill, doStroke } = data;
+    const { doFill } = data;
+    const doStroke = data.doStroke && data.sVisible;
 
     const { clipRange = areaAttribute.clipRange, closePath, points, segments } = area.attribute;
     let { curveType = areaAttribute.curveType } = area.attribute;

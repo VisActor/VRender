@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with richtext attribute update",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -2,6 +2,42 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.24",
+      "tag": "@visactor/vrender-core_v0.19.24",
+      "date": "Tue, 13 Aug 2024 07:47:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support polygon of circle-axis\n\n"
+          },
+          {
+            "comment": "feat: support rect corner array with array stroke"
+          },
+          {
+            "comment": "fix: fix wrong stroke style is applied to area\n\n"
+          },
+          {
+            "comment": "fix: fix issue with baseOpacity equal to 0"
+          },
+          {
+            "comment": "fix: fix edge and corner stroke in createRectPath()"
+          },
+          {
+            "comment": "fix: fix issue with shadow group matrix"
+          },
+          {
+            "comment": "fix: fix issue with disableAutoWrapLine"
+          },
+          {
+            "comment": "fix: fix richtext icon pick range #1362"
+          },
+          {
+            "comment": "fix: fix issue with richtext attribute update"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.23",
       "tag": "@visactor/vrender-core_v0.19.23",
       "date": "Tue, 06 Aug 2024 05:17:39 GMT",

@@ -38,6 +38,9 @@ const RICHTEXT_UPDATE_TAG_KEY = [
   'textBaseline',
   'textConfig',
   'layoutDirection',
+  'fill',
+  'stroke',
+  'fontSize',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -339,7 +342,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       this._frameCache?.icons
     );
     const wrapper = new Wrapper(frame);
-    // debugger;
     if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
@@ -351,7 +353,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           (p as Paragraph).top = Infinity;
           !(p as Paragraph).newLine && frame.lines[frame.lines.length - 1].paragraphs.push(p);
         } else {
-          wrapper.deal(p);
+          wrapper.deal(p, true);
         }
         if (frame.lines.length !== lineCount) {
           lineCount = frame.lines.length;
@@ -366,6 +368,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           skip = false;
           wrapper.lineWidth = 0;
         }
+        wrapper.send();
       }
     } else {
       for (let i = 0; i < paragraphs.length; i++) {
@@ -461,11 +464,13 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     // }
     let pickIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach(icon => {
-      if (icon.AABBBounds.containsPoint({ x: point.x - x, y: point.y - y })) {
+      const bounds = icon.AABBBounds.clone();
+      bounds.translate(icon._marginArray[3], icon._marginArray[0]);
+      if (bounds.containsPoint({ x: point.x - x, y: point.y - y })) {
         pickIcon = icon;
 
-        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x;
-        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y;
+        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x + icon._marginArray[3];
+        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y + icon._marginArray[0];
       }
     });
 

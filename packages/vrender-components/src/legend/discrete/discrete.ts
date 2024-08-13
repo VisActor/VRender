@@ -682,10 +682,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _createPager(compStyle: LegendPagerAttributes | LegendScrollbarAttributes) {
     const { disableTriggerEvent, maxRow } = this.attribute;
+    const estimateTotal = (num: number) => {
+      if (num <= 99) {
+        return 99;
+      } else if (num <= 999) {
+        return 999;
+      }
+      return 9999;
+    };
     return this._itemContext.isHorizontal
       ? new Pager({
           layout: maxRow === 1 ? 'horizontal' : 'vertical',
-          total: 99,
+          total: estimateTotal(this._itemContext.pages),
           ...merge(
             {
               handler: {
@@ -700,7 +708,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         })
       : new Pager({
           layout: 'horizontal',
-          total: 99, // 用于估算,
+          total: estimateTotal(this._itemContext.pages), // 用于估算,
           disableTriggerEvent,
           defaultCurrent: this.attribute.pager?.defaultCurrent,
           ...(compStyle as LegendPagerAttributes)
@@ -868,7 +876,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._pagerComponent = comp;
       this._innerView.add(comp as unknown as INode);
       contentWidth = (maxWidth as number) - comp.AABBBounds.width() - pagerSpace;
-
       if (contentWidth <= 0) {
         // 布局空间不够则不进行分页器渲染
         this._innerView.removeChild(comp as unknown as INode);

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.19.24",
+      "tag": "@visactor/vrender-kits_v0.19.24",
+      "date": "Tue, 13 Aug 2024 07:47:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix wrong stroke style is applied to area\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.23",
       "tag": "@visactor/vrender-kits_v0.19.23",
       "date": "Tue, 06 Aug 2024 05:17:39 GMT",

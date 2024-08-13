@@ -124,8 +124,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
+  protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
+    return connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+  }
+
   protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
-    const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    const points = this._getLabelLinePoints(text, baseMark);
     if (points) {
       const line = graphicCreator.line({
         points

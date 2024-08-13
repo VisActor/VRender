@@ -940,27 +940,26 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
+  protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
+    return (text.attribute as ArcLabelAttrs).points;
+  }
+
   protected _createLabelLine(text: IText, baseMark?: IGraphic) {
-    const { points, line = {}, visible, fill } = text.attribute as ArcLabelAttrs;
-    const labelLine: ILine = (text.attribute as ArcLabelAttrs).points
-      ? graphicCreator.line({
-          visible: (line.visible && visible) ?? text.attribute?.visible ?? true,
-          stroke: line.style?.stroke ?? fill,
-          lineWidth: line.style?.lineWidth ?? 1,
-          points: points,
-          curveType: line.smooth ? 'basis' : null
-        })
-      : undefined;
-    if (labelLine) {
-      if (line?.customShape) {
-        const customShape = line.customShape;
-        labelLine.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(text.attribute, attrs, new CustomPath2D());
-        };
+    const { line = {}, visible } = text.attribute as ArcLabelAttrs;
+    const lineGraphic = super._createLabelLine(text, baseMark);
+    if (lineGraphic) {
+      lineGraphic.setAttributes({
+        visible: (line.visible && visible) ?? text.attribute?.visible ?? true,
+        lineWidth: line.style?.lineWidth ?? 1
+      });
+      if (line.smooth) {
+        lineGraphic.setAttributes({
+          curveType: 'basis'
+        });
       }
-      this._setStatesOfLabelLine(labelLine);
     }
-    return labelLine;
+
+    return lineGraphic;
   }
 
   protected computeRadius(r: number, width?: number, height?: number, k?: number): number {

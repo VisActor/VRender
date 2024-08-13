@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix issue with timeline animate duration compute",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

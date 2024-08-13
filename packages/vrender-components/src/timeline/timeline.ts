@@ -285,12 +285,13 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       }
     }
 
-    const nextClipRange = flag > 0 ? this._timesPercent[i] : this._timesPercent[i - 1] || 0;
+    const nextClipRange = flag > 0 ? this._timesPercent[i] || 1 : this._timesPercent[i - 1] || 0;
     if (animation) {
       const { duration = 1000, easing = 'quadOut' } = animateConfig;
-      const actDuration =
-        (Math.abs(nextClipRange - clipRange) / (this._timesPercent[i] - (this._timesPercent[i - 1] ?? 0))) * duration;
-      this.animate().to({ clipRange: nextClipRange }, actDuration, easing as any);
+      // const actDuration =
+      //   (Math.abs(nextClipRange - clipRange) / ((this._timesPercent[i] ?? 1) - (this._timesPercent[i - 1] ?? 0))) *
+      //   duration;
+      this.animate().to({ clipRange: nextClipRange }, duration, easing as any);
     } else {
       this.setAttributes({ clipRange: nextClipRange });
     }

@@ -130,7 +130,8 @@ export default class Wrapper {
   }
 
   // 处理paragraph
-  deal(paragraph: Paragraph | RichTextIcon) {
+  // singleLine表示是否将这个作为单行处理，也就是不拆多行了
+  deal(paragraph: Paragraph | RichTextIcon, singleLine: boolean = false) {
     if (paragraph instanceof RichTextIcon) {
       if (
         (this.direction === 'horizontal' && this.width === 0) ||
@@ -187,13 +188,14 @@ export default class Wrapper {
         this.send();
         this.deal(paragraph);
       } else {
-        this.cut(paragraph);
+        this.cut(paragraph, singleLine);
       }
     }
   }
 
   // 文字超长，按需截断
-  cut(paragraph: Paragraph) {
+  // 如果singleLine的话，最多就拆两行
+  cut(paragraph: Paragraph, singleLine?: boolean) {
     // if (this.direction === 'vertical' && this.lineBuffer.length) {
     //     // 纵排不做paragraph内截断
     //     this.send();
@@ -218,7 +220,11 @@ export default class Wrapper {
     if (index !== 0) {
       const [p1, p2] = seperateParagraph(paragraph, index);
       this.store(p1);
-      this.deal(p2);
+      if (singleLine) {
+        this.send();
+      } else {
+        this.deal(p2);
+      }
     } else if (this.lineBuffer.length !== 0) {
       // 当前行无法容纳，转下一行处理
       this.send();

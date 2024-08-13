@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: set container pick false to allow tooltip interactive",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

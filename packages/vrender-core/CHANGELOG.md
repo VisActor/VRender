@@ -1,6 +1,25 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 06 Aug 2024 05:17:39 GMT and should not be manually modified.
+This log was last generated on Tue, 13 Aug 2024 07:47:29 GMT and should not be manually modified.
+
+## 0.19.24
+Tue, 13 Aug 2024 07:47:29 GMT
+
+### Updates
+
+- feat: support polygon of circle-axis
+
+
+- feat: support rect corner array with array stroke
+- fix: fix wrong stroke style is applied to area
+
+
+- fix: fix issue with baseOpacity equal to 0
+- fix: fix edge and corner stroke in createRectPath()
+- fix: fix issue with shadow group matrix
+- fix: fix issue with disableAutoWrapLine
+- fix: fix richtext icon pick range #1362
+- fix: fix issue with richtext attribute update
 
 ## 0.19.23
 Tue, 06 Aug 2024 05:17:39 GMT

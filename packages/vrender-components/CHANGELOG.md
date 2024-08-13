@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 06 Aug 2024 05:17:39 GMT and should not be manually modified.
+This log was last generated on Tue, 13 Aug 2024 07:47:29 GMT and should not be manually modified.
+
+## 0.19.24
+Tue, 13 Aug 2024 07:47:29 GMT
+
+### Updates
+
+- feat: support polygon of circle-axis
+
+
+- fix: fix wrong stroke style is applied to area
+
+
+- fix: improve slightly the accuracy of the pager size calculation, related #3045
+- fix: fix issue with timeline appearAnimate opacity attr prevented by next animate
 
 ## 0.19.23
 Tue, 06 Aug 2024 05:17:39 GMT

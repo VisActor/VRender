@@ -984,6 +984,53 @@ export const page = () => {
   //     .replaceAll('"', '\\"')}; width: 30; height: 30; id: circle-0" />`
   // );
 
+  shapes.length = 0;
+
+  shapes.push(
+    createRichText({
+      fontSize: 14,
+      fill: '#FF8A00',
+      fontFamily:
+        'PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol',
+      textAlign: 'center',
+      textBaseline: 'middle',
+      boundsPadding: [-1, 0, -1, 0],
+      visible: true,
+      fontWeight: 'normal',
+      fillOpacity: 1,
+      pickable: false,
+      lineJoin: 'bevel',
+      stroke: '#ffffff',
+      width: 50,
+      height: 40,
+      ellipsis: true,
+      disableAutoWrapLine: true,
+      x: 446.334013251786,
+      y: 198.39408125844088,
+      angle: 0,
+      lineWidth: 0,
+      textConfig: [
+        {
+          text: 'aluminum1111111111111\n',
+          fontSize: 14,
+          fontWeight: 'bold',
+          fill: 'red'
+        },
+        {
+          text: '1.13%',
+          fontSize: 14,
+          lineThrough: true,
+          underline: true,
+          fill: 'green'
+        }
+      ],
+      z: 0,
+      id: 'vrender-component-arc-label-2',
+      opacity: 1,
+      strokeOpacity: 1
+    })
+  );
+
   addShapesToStage(stage, shapes as any, true);
   stage.render();
 

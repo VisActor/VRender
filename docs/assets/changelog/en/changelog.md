@@ -1,3 +1,34 @@
+# v0.19.24
+
+2024-08-14
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support polygon of circle-axis
+- **@visactor/vrender-core**: support polygon of circle-axis
+- **@visactor/vrender-core**: support rect corner array with array stroke
+- **@visactor/vrender**: support polygon of circle-axis
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix wrong stroke style is applied to area
+- **@visactor/vrender-components**: improve slightly the accuracy of the pager size calculation, related [#3045](https://github.com/VisActor/VRender/issues/3045)
+- **@visactor/vrender-components**: fix issue with timeline appearAnimate opacity attr prevented by next animate
+- **@visactor/vrender-kits**: fix wrong stroke style is applied to area
+- **@visactor/vrender-core**: fix wrong stroke style is applied to area
+- **@visactor/vrender-core**: fix issue with baseOpacity equal to 0
+- **@visactor/vrender-core**: fix edge and corner stroke in createRectPath()
+- **@visactor/vrender-core**: fix issue with shadow group matrix
+- **@visactor/vrender-core**: fix issue with disableAutoWrapLine
+- **@visactor/vrender-core**: fix richtext icon pick range [#1362](https://github.com/VisActor/VRender/issues/1362)
+- **@visactor/vrender-core**: fix issue with richtext attribute update
+- **@visactor/vrender**: fix wrong stroke style is applied to area
+
+
+
+[more detail about v0.19.24](https://github.com/VisActor/VRender/releases/tag/v0.19.24)
+
 
 # v0.19.23
 

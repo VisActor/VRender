@@ -3,7 +3,7 @@ import { AbstractComponent } from '../core/base';
 import { loadTimelineComponent } from './register';
 import type { TimelineAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import type { IGraphicAttribute, IGroup, ILine, IText } from '@visactor/vrender-core';
+import { getTheme, type IGraphicAttribute, type IGroup, type ILine, type IText } from '@visactor/vrender-core';
 import type { ISymbol } from '@visactor/vrender-core';
 
 loadTimelineComponent();
@@ -27,7 +27,8 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       symbolType: 'circle'
     },
     activeSymbolStyle: {
-      fill: 'orange'
+      fill: 'orange',
+      size: 16
     },
     lineStyle: {
       lineDash: [2, 2],
@@ -214,7 +215,11 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
       const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
       this._symbolGroup.forEachChildren((symbol: ISymbol, i) => {
-        const originAttrs = { ...symbol.attribute };
+        const originAttrs: Record<string, any> = {};
+        Object.keys(activeSymbolStyle).forEach(k => {
+          originAttrs[k] = (symbol.attribute as any)[k];
+        });
+
         symbol.setAttributes({ opacity: 0 });
         symbol
           .animate()
@@ -223,8 +228,8 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
         symbol
           .animate()
           .wait(symbolNormalDelay + delayNormal * i)
-          .to({ scaleX: 1.8, scaleY: 1.8, ...activeSymbolStyle }, perSymbolNormalDuration, easing as any)
-          .to({ scaleX: 1, scaleY: 1, ...originAttrs }, perSymbolNormalDuration, easing as any);
+          .to({ ...activeSymbolStyle }, perSymbolNormalDuration, easing as any)
+          .to({ ...originAttrs }, perSymbolNormalDuration, easing as any);
       });
     }
     if (this._labelGroup) {
@@ -232,7 +237,10 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       const delay = percent * (size === 1 ? 0 : (500 - 100) / (size - 1));
       const delayNormal = percent * (size === 1 ? 0 : (400 - 160) / (size - 1));
       this._labelGroup.forEachChildren((label: IText, i) => {
-        const originAttrs = { ...label.attribute };
+        const originAttrs: Record<string, any> = {};
+        Object.keys(activeLabelStyle).forEach(k => {
+          originAttrs[k] = (label.attribute as any)[k];
+        });
         label.setAttributes({ opacity: 0 });
         label
           .animate()
@@ -278,12 +286,13 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       }
     }
 
-    const nextClipRange = flag > 0 ? this._timesPercent[i] : this._timesPercent[i - 1] || 0;
+    const nextClipRange = flag > 0 ? this._timesPercent[i] || 1 : this._timesPercent[i - 1] || 0;
     if (animation) {
       const { duration = 1000, easing = 'quadOut' } = animateConfig;
-      const actDuration =
-        (Math.abs(nextClipRange - clipRange) / (this._timesPercent[i] - (this._timesPercent[i - 1] ?? 0))) * duration;
-      this.animate().to({ clipRange: nextClipRange }, actDuration, easing as any);
+      // const actDuration =
+      //   (Math.abs(nextClipRange - clipRange) / ((this._timesPercent[i] ?? 1) - (this._timesPercent[i - 1] ?? 0))) *
+      //   duration;
+      this.animate().to({ clipRange: nextClipRange }, duration, easing as any);
     } else {
       this.setAttributes({ clipRange: nextClipRange });
     }

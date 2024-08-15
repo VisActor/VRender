@@ -994,12 +994,11 @@ export class BrowserContext2d implements IContext2d {
       opacity = defaultParams.opacity,
       fill = defaultParams.fill
     } = attribute;
+    _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
+
     if (fillOpacity > 1e-12 && opacity > 1e-12) {
-      _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
       _context.fillStyle = createColor(this, fill, params, offsetX, offsetY);
       // todo 小程序
-    } else {
-      _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
     }
   }
 
@@ -1120,6 +1119,9 @@ export class BrowserContext2d implements IContext2d {
       defaultParams = this.strokeAttributes;
     }
     const { strokeOpacity = defaultParams.strokeOpacity, opacity = defaultParams.opacity } = attribute;
+
+    _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
+
     if (strokeOpacity > 1e-12 && opacity > 1e-12) {
       const {
         lineWidth = defaultParams.lineWidth,
@@ -1129,7 +1131,6 @@ export class BrowserContext2d implements IContext2d {
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit
       } = attribute;
-      _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;

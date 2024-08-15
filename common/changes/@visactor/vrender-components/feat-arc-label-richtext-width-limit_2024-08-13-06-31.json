@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: arc label line color should follow arc mark by default, related #3067",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -27,6 +27,11 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
 
   private _bgRect!: IRect;
   private _textShape!: IText | IRichText;
+  private _symbol!: ISymbol;
+  private _tagStates: string[] = [];
+  private _rectStates: string[] = [];
+  private _symbolStates: string[] = [];
+  private _textStates: string[] = [];
 
   getBgRect() {
     return this._bgRect;
@@ -57,6 +62,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
   }
 
   protected render() {
+    this.cacheStates();
     const {
       text = '',
       textStyle = {} as ITextGraphicAttribute | IRichTextGraphicAttribute,
@@ -327,5 +333,57 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
     }
     this._textShape = textShape;
+    this._symbol = symbol;
+
+    this.resetStates();
+  }
+
+  initAttributes(params: TagAttributes, options?: ComponentOptions) {
+    params = options?.skipDefault ? params : merge({}, Tag.defaultAttributes, params);
+    super.initAttributes(params);
+    this.render();
+  }
+
+  addState(stateName: string, keepCurrentStates?: boolean, hasAnimation?: boolean): void {
+    super.addState(stateName, keepCurrentStates, hasAnimation);
+    if (this._textShape) {
+      this._textShape.addState(stateName, keepCurrentStates, hasAnimation);
+    }
+    if (this._bgRect) {
+      this._bgRect.addState(stateName, keepCurrentStates, hasAnimation);
+    }
+    if (this._symbol) {
+      this._symbol.addState(stateName, keepCurrentStates, hasAnimation);
+    }
+  }
+
+  removeState(stateName: string, hasAnimation?: boolean): void {
+    super.removeState(stateName, hasAnimation);
+    if (this._textShape) {
+      this._textShape.removeState(stateName, hasAnimation);
+    }
+    if (this._bgRect) {
+      this._bgRect.removeState(stateName, hasAnimation);
+    }
+    if (this._symbol) {
+      this._symbol.removeState(stateName, hasAnimation);
+    }
+  }
+
+  cacheStates() {
+    this._tagStates = this.currentStates?.slice() ?? [];
+    this._rectStates = this._bgRect?.currentStates?.slice() ?? [];
+    this._symbolStates = this._symbol?.currentStates?.slice() ?? [];
+    this._textStates = this._textShape?.currentStates?.slice() ?? [];
+    this.clearStates();
+    this._bgRect?.clearStates();
+    this._symbol?.clearStates();
+    this._textShape?.clearStates();
+  }
+  resetStates() {
+    this._tagStates.length && this.useStates(this._tagStates);
+    this._rectStates.length && this._bgRect?.useStates(this._rectStates);
+    this._symbolStates.length && this._symbol?.useStates(this._symbolStates);
+    this._textStates.length && this._textShape?.useStates(this._textStates);
   }
 }

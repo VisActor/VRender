@@ -26,15 +26,15 @@
   "dependencies": {
     "@visactor/vrender-core": "workspace:0.19.23",
     "@visactor/vrender-kits": "workspace:0.19.23",
-    "@visactor/vutils": "~0.18.13",
-    "@visactor/vscale": "~0.18.9"
+    "@visactor/vutils": "~0.18.14",
+    "@visactor/vscale": "~0.18.14"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~0.18.9",
+    "@visactor/vscale": "~0.18.14",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

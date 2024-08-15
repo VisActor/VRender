@@ -13,7 +13,7 @@ import type {
   ILayer,
   IRenderService
 } from '../../../interface';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
+import { mat4Allocate, matrixAllocate } from '../../../allocator/matrix-allocate';
 import { draw3dItem } from '../../../common/3d-interceptor';
 
 // 拦截器
@@ -106,7 +106,7 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     }
 
     // 设置context的transform到上一个节点
-    drawContribution.renderGroup(graphic.shadowRoot, drawContext, graphic.parent.globalTransMatrix);
+    drawContribution.renderGroup(graphic.shadowRoot, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0));
 
     context.highPerformanceRestore();
 

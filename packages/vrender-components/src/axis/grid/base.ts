@@ -9,26 +9,7 @@ import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
 import type { AxisItem, TransformedAxisItem } from '../type';
 import { AXIS_ELEMENT_NAME } from '../constant';
-import { getElMap, getVerticalCoord } from '../util';
-
-function getLinePath(points: Point[], closed: boolean) {
-  let path = '';
-  if (points.length === 0) {
-    return path;
-  }
-  points.forEach((point, index) => {
-    if (index === 0) {
-      path = `M${point.x},${point.y}`;
-    } else {
-      path += `L${point.x},${point.y}`;
-    }
-  });
-  if (closed) {
-    path += 'Z';
-  }
-
-  return path;
-}
+import { getElMap, getPolygonPath, getVerticalCoord } from '../util';
 
 function getArcPath(center: Point, points: Point[], reverse: boolean, closed: boolean) {
   let path = '';
@@ -68,8 +49,8 @@ function getRegionPath(from: Point[], to: Point[], attribute: GridAttributes) {
     const toEnd = reversePoints[0];
     const center = (attribute as LineGridAttributes).center as Point;
 
-    regionPath = getLinePath(from, !!closed);
-    nextPath = getLinePath(reversePoints, !!closed);
+    regionPath = getPolygonPath(from, !!closed);
+    nextPath = getPolygonPath(reversePoints, !!closed);
     const toEndRadius = PointService.distancePP(toEnd, center);
     const fromStartRadius = PointService.distancePP(fromStart, center);
     regionPath += `A${toEndRadius},${toEndRadius},0,0,1,${toEnd.x},${toEnd.y}L${toEnd.x},${toEnd.y}`;
@@ -79,8 +60,8 @@ function getRegionPath(from: Point[], to: Point[], attribute: GridAttributes) {
     regionPath = getArcPath(center, from, false, !!closed);
     nextPath = getArcPath(center, reversePoints, true, !!closed);
   } else if (type === 'line' || type === 'polygon') {
-    regionPath = getLinePath(from, !!closed);
-    nextPath = getLinePath(reversePoints, !!closed);
+    regionPath = getPolygonPath(from, !!closed);
+    nextPath = getPolygonPath(reversePoints, !!closed);
   }
 
   if (closed) {
@@ -186,7 +167,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
       const { id, points } = item;
       let path = '';
       if (type === 'line' || type === 'polygon') {
-        path = getLinePath(points, !!closed);
+        path = getPolygonPath(points, !!closed);
       } else if (type === 'circle') {
         const { center } = this.attribute as unknown as CircleGridAttributes;
         path = getArcPath(center, points, false, !!closed);
@@ -214,7 +195,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         const dirLen = Math.sqrt(dir.x * dir.x + dir.y * dir.y);
         const ratio = depth / dirLen;
         nextPoints.push({ x: points[0].x + dir.x * ratio, y: points[0].y + dir.y * ratio });
-        const path = getLinePath(nextPoints, !!closed);
+        const path = getPolygonPath(nextPoints, !!closed);
         const deltaX = abs(nextPoints[0].x - nextPoints[1].x);
         const deltaY = abs(nextPoints[0].y - nextPoints[1].y);
         const shape = graphicCreator.path({

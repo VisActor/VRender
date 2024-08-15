@@ -70,34 +70,35 @@ export class GroupTransition extends ACustomAnimate<any> {
     let easing = this.easing;
 
     // 新的场景树
-    Object.keys(this._newElementAttrMap).forEach(id => {
-      const { node, attrs, state } = this._newElementAttrMap[id];
-      if (state === 'enter') {
-        const { enter = {} } = this.params ?? {};
-        duration = isValidNumber(enter.duration) ? enter.duration : duration;
-        easing = enter.easing ? enter.easing : easing;
-      }
-      if ((node as IGraphic).type === 'path') {
-        (node as IGraphic)
-          .animate({
-            interpolate(key: string, ratio: number, from: any, to: any, nextAttributes: any) {
-              if (key === 'path') {
-                nextAttributes.path = interpolateString(from, to)(ratio);
-                return true;
-              }
+    this._newElementAttrMap &&
+      Object.keys(this._newElementAttrMap).forEach(id => {
+        const { node, attrs, state } = this._newElementAttrMap[id];
+        if (state === 'enter') {
+          const { enter = {} } = this.params ?? {};
+          duration = isValidNumber(enter.duration) ? enter.duration : duration;
+          easing = enter.easing ? enter.easing : easing;
+        }
+        if ((node as IGraphic).type === 'path') {
+          (node as IGraphic)
+            .animate({
+              interpolate(key: string, ratio: number, from: any, to: any, nextAttributes: any) {
+                if (key === 'path') {
+                  nextAttributes.path = interpolateString(from, to)(ratio);
+                  return true;
+                }
 
-              return false;
-            }
-          })
-          // .wait(delay)
-          .to(attrs, duration, easing as EasingType);
-      } else {
-        (node as IGraphic)
-          .animate()
-          // .wait(delay)
-          .to(attrs, duration, easing as EasingType);
-      }
-    });
+                return false;
+              }
+            })
+            // .wait(delay)
+            .to(attrs, duration, easing as EasingType);
+        } else {
+          (node as IGraphic)
+            .animate()
+            // .wait(delay)
+            .to(attrs, duration, easing as EasingType);
+        }
+      });
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {

@@ -197,6 +197,11 @@ export interface CircleAxisAttributes extends AxisBaseAttributes {
   radius: number;
   /** 内半径 */
   innerRadius?: number;
+  /**
+   * 边数
+   * @since 0.19.24
+   */
+  sides?: number;
 }
 
 // 坐标轴标题配置

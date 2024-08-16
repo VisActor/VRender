@@ -1,103 +1,10 @@
 import { Logger } from '@visactor/vutils';
 import type { ITickHandler, ITickerHandlerStatic, ITimeline, ITicker } from '../../interface';
 import { application } from '../../application';
-export class ManualTickHandler implements ITickHandler {
-  protected timerId: number;
-  protected time: number = 0;
-
-  static Avaliable(): boolean {
-    return true;
-  }
-
-  avaliable(): boolean {
-    return ManualTickHandler.Avaliable();
-  }
-
-  tick(interval: number, cb: (handler: ITickHandler, params?: { once: boolean }) => void): void {
-    this.time = Math.max(0, interval + this.time);
-    cb(this, { once: true });
-  }
-
-  tickTo(t: number, cb: (handler: ITickHandler, params?: { once: boolean }) => void): void {
-    this.time = Math.max(0, t);
-    cb(this, { once: true });
-  }
-
-  release() {
-    if (this.timerId > 0) {
-      // clearTimeout(this.timerId);
-      this.timerId = -1;
-    }
-  }
-
-  getTime() {
-    return this.time;
-  }
-}
-
-export class TimeOutTickHandler implements ITickHandler {
-  protected timerId: number;
-
-  static Avaliable(): boolean {
-    return true;
-  }
-
-  avaliable(): boolean {
-    return TimeOutTickHandler.Avaliable();
-  }
-
-  tick(interval: number, cb: (handler: ITickHandler) => void): void {
-    this.timerId = setTimeout(() => {
-      cb(this);
-    }, interval) as unknown as number;
-  }
-
-  release() {
-    if (this.timerId > 0) {
-      clearTimeout(this.timerId);
-      this.timerId = -1;
-    }
-  }
-  getTime() {
-    return Date.now();
-  }
-}
-
-export class RAFTickHandler implements ITickHandler {
-  protected released: boolean;
-
-  static Avaliable(): boolean {
-    return !!application.global.getRequestAnimationFrame();
-  }
-  avaliable(): boolean {
-    return RAFTickHandler.Avaliable();
-  }
-
-  tick(interval: number, cb: (handler: ITickHandler) => void): void {
-    const raf = application.global.getRequestAnimationFrame();
-    raf(() => {
-      if (this.released) {
-        return;
-      }
-      cb(this);
-    });
-  }
-
-  release() {
-    this.released = true;
-  }
-  getTime() {
-    return Date.now();
-  }
-}
-
-type TickerMode = 'raf' | 'timeout' | 'manual';
-
-enum STATUS {
-  INITIAL = 0, // initial表示初始状态
-  RUNNING = 1, // running表示正在执行
-  PAUSE = 2 // PULSE表示tick还是继续，只是不执行函数了
-}
+import type { TickerMode } from './type';
+import { STATUS } from './type';
+import { RAFTickHandler } from './raf-tick-handler';
+import { TimeOutTickHandler } from './timeout-tick-handler';
 
 export class DefaultTicker implements ITicker {
   protected interval: number;
@@ -152,8 +59,7 @@ export class DefaultTicker implements ITicker {
     }
     const ticks: { mode: TickerMode; cons: ITickerHandlerStatic }[] = [
       { mode: 'raf', cons: RAFTickHandler },
-      { mode: 'timeout', cons: TimeOutTickHandler },
-      { mode: 'manual', cons: ManualTickHandler }
+      { mode: 'timeout', cons: TimeOutTickHandler }
     ];
     for (let i = 0; i < ticks.length; i++) {
       if (ticks[i].cons.Avaliable()) {
@@ -178,9 +84,9 @@ export class DefaultTicker implements ITicker {
       case 'timeout':
         handler = new TimeOutTickHandler();
         break;
-      case 'manual':
-        handler = new ManualTickHandler();
-        break;
+      // case 'manual':
+      //   handler = new ManualTickHandler();
+      // break;
       default:
         Logger.getInstance().warn('非法的计时器模式');
         handler = new RAFTickHandler();
@@ -315,54 +221,4 @@ export class DefaultTicker implements ITicker {
       t.tick(delta);
     });
   };
-}
-
-export class ManualTicker extends DefaultTicker implements ITicker {
-  protected declare interval: number;
-  protected declare tickerHandler: ITickHandler;
-  protected declare _mode: TickerMode;
-  protected declare status: STATUS;
-  protected declare lastFrameTime: number;
-  protected declare tickCounts: number;
-  protected declare timelines: ITimeline[];
-  declare autoStop: boolean;
-
-  set mode(m: TickerMode) {
-    m = 'manual';
-    this.setupTickHandler();
-  }
-  get mode(): TickerMode {
-    return this._mode;
-  }
-
-  protected initHandler(): ITickHandler | null {
-    this.mode = 'manual';
-    return null;
-  }
-
-  /**
-   * 设置tickHandler
-   * @returns 返回true表示设置成功，false表示设置失败
-   */
-  protected setupTickHandler(): boolean {
-    const handler: ITickHandler = new ManualTickHandler();
-    this._mode = 'manual';
-
-    // 销毁上一个tickerHandler
-    if (this.tickerHandler) {
-      this.tickerHandler.release();
-    }
-    this.tickerHandler = handler;
-    return true;
-  }
-
-  tickAt(time: number) {
-    this.tickerHandler.tick(time - this.lastFrameTime, (handler: ITickHandler) => {
-      this.handleTick(handler, { once: true });
-    });
-  }
-
-  ifCanStop(): boolean {
-    return false;
-  }
 }

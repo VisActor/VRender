@@ -245,6 +245,40 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
     return `${this.id}-${id}`;
   }
 
+  protected _parseTickSegment() {
+    let tickSegment = 1;
+    const count = this.data.length;
+    if (count >= 2) {
+      tickSegment = this.data[1].value - this.data[0].value;
+    }
+
+    return tickSegment;
+  }
+
+  protected _getPointsOfSubGrid(tickSegment: number, alignWithLabel: boolean) {
+    const tickLineCount = this.data.length;
+    // 刻度线的数量大于 2 时，才绘制子刻度
+    const points: { value: number }[] = [];
+    if (tickLineCount >= 2) {
+      this.data.forEach((item: TransformedAxisItem) => {
+        let tickValue = item.value;
+        if (!alignWithLabel) {
+          // tickLine 不同 tick 对齐时需要调整 point
+          const value = item.value - tickSegment / 2;
+          if (this.isInValidValue(value)) {
+            return;
+          }
+          tickValue = value;
+        }
+        points.push({
+          value: tickValue
+        });
+      });
+    }
+
+    return points;
+  }
+
   release(): void {
     super.release();
     this._prevInnerView = null;

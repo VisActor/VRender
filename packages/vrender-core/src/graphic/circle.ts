@@ -1,12 +1,12 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { transformBounds } from '@visactor/vutils';
+import { epsilon, pi2, type IAABBBounds } from '@visactor/vutils';
 import type { ICircle, ICircleGraphicAttribute } from '../interface/graphic/circle';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
-import { parsePadding } from '../common/utils';
+import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CIRCLE_NUMBER_TYPE } from './constants';
+import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
 const CIRCLE_UPDATE_TAG_KEY = ['radius', 'startAngle', 'endAngle', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -32,35 +32,64 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     return this._validNumber(startAngle) && this._validNumber(endAngle) && this._validNumber(radius);
   }
 
-  protected doUpdateAABBBounds(full?: boolean): AABBBounds {
-    const circleTheme = getTheme(this).circle;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateCircleAABBBounds(
-      attribute,
-      getTheme(this).circle,
-      this._AABBBounds,
-      full,
-      this
-    );
+  getGraphicTheme(): Required<ICircleGraphicAttribute> {
+    return getTheme(this).circle;
+  }
 
-    const { boundsPadding = circleTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      (bounds as AABBBounds).expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: ICircleGraphicAttribute,
+    circleTheme: Required<ICircleGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    full?: boolean
+  ) {
+    if (!application.graphicService.validCheck(attribute, circleTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      full
+        ? this.updateCircleAABBBoundsImprecise(attribute, circleTheme, aabbBounds)
+        : this.updateCircleAABBBoundsAccurate(attribute, circleTheme, aabbBounds);
     }
 
-    this.clearUpdateBoundTag();
-    return bounds as AABBBounds;
+    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    updateBoundsOfCommonOuterBorder(attribute, circleTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, circleTheme, false, this);
+
+    return aabbBounds;
   }
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
-  }
+  protected updateCircleAABBBoundsImprecise(
+    attribute: ICircleGraphicAttribute,
+    circleTheme: Required<ICircleGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    const { radius = circleTheme.radius } = attribute;
+    aabbBounds.set(-radius, -radius, radius, radius);
 
-  getDefaultAttribute(name: string) {
-    const circleTheme = getTheme(this).circle;
-    return circleTheme[name];
+    return aabbBounds;
+  }
+  protected updateCircleAABBBoundsAccurate(
+    attribute: ICircleGraphicAttribute,
+    circleTheme: Required<ICircleGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    const {
+      startAngle = circleTheme.startAngle,
+      endAngle = circleTheme.endAngle,
+      radius = circleTheme.radius
+    } = attribute;
+
+    if (endAngle - startAngle > pi2 - epsilon) {
+      aabbBounds.set(-radius, -radius, radius, radius);
+    } else {
+      circleBounds(startAngle, endAngle, radius, aabbBounds);
+    }
+
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {

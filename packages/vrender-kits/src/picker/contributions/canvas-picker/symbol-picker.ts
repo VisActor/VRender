@@ -1,7 +1,6 @@
 import {
   inject,
   injectable,
-  getTheme,
   SymbolRender,
   mat4Allocate,
   getScaledStroke,
@@ -18,10 +17,10 @@ import type {
   IGraphicRender,
   IPickParams
 } from '@visactor/vrender-core';
-import { BasePicker } from './base-picker';
+import { Base3dPicker } from '../common/base-3d-picker';
 
 @injectable()
-export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IGraphicPicker {
+export class DefaultCanvasSymbolPicker extends Base3dPicker<ISymbol> implements IGraphicPicker {
   type: string = 'symbol';
   numberType: number = SYMBOL_NUMBER_TYPE;
 
@@ -47,7 +46,7 @@ export class DefaultCanvasSymbolPicker extends BasePicker<ISymbol> implements IG
 
     pickContext.highPerformanceSave();
     // const symbolAttribute = graphicService.themeService.getCurrentTheme().symbolAttribute;
-    const symbolAttribute = getTheme(symbol).symbol;
+    const symbolAttribute = symbol.getGraphicTheme();
 
     const data = this.transform(symbol, symbolAttribute, pickContext);
     const { x, y, z, lastModelMatrix } = data;

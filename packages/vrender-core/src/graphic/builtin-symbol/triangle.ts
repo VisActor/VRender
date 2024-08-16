@@ -1,6 +1,6 @@
 // import { IBounds, sqrt } from '@visactor/vutils';
 import type { SymbolType, ISymbolClass } from '../../interface';
-import { trianglUp, TriangleUpSymbol } from './triangle-up';
+import { TriangleUpSymbol } from './triangle-up';
 
 /**
  * 
@@ -32,29 +32,9 @@ import { trianglUp, TriangleUpSymbol } from './triangle-up';
 //   return true;
 // }
 
-export const triangle = trianglUp;
-
 // 以中心为锚点，size为circle外接正方形的面积
 export class TriangleSymbol extends TriangleUpSymbol implements ISymbolClass {
   type: SymbolType = 'triangle';
 }
-
-// export class TriangleSymbol extends TriangleUpSymbol implements ISymbolClass {
-//   type: SymbolType = 'triangle';
-//   pathStr: string = 'M0,-0.5773502691896257L-0.5,0.28867513459481287L0.5,0.28867513459481287Z';
-
-//   draw(ctx: IContext2d, size: number, x: number, y: number) {
-//     const r = size / 2 / sqrt3;
-//     return triangle(ctx, r, x, y);
-//   }
-
-//   bounds(size: number, bounds: IBounds) {
-//     const r = size / 2;
-//     bounds.x1 = -r;
-//     bounds.x2 = r;
-//     bounds.y1 = -r;
-//     bounds.y2 = r;
-//   }
-// }
 
 export default new TriangleSymbol();

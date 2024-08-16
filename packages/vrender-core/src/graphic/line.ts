@@ -1,9 +1,9 @@
-import type { AABBBounds, OBBBounds, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import type { ILine, ILineGraphicAttribute } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { application } from '../application';
-import { parsePadding, pointsInterpolation } from '../common/utils';
+import { pointsInterpolation } from '../common/utils';
 import { CustomPath2D } from '../common/custom-path2d';
 import { LINE_NUMBER_TYPE } from './constants';
 
@@ -51,34 +51,62 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     }
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const lineTheme = getTheme(this).line;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateLineAABBBounds(
-      attribute,
-      getTheme(this).line,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme(): Required<ILineGraphicAttribute> {
+    return getTheme(this).line;
+  }
 
-    const { boundsPadding = lineTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: ILineGraphicAttribute,
+    lineTheme: Required<ILineGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, lineTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      attribute.segments
+        ? this.updateLineAABBBoundsBySegments(attribute, lineTheme, aabbBounds)
+        : this.updateLineAABBBoundsByPoints(attribute, lineTheme, aabbBounds);
     }
 
-    this.clearUpdateBoundTag();
-    return bounds;
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    const { lineJoin = lineTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, lineTheme, lineJoin === 'miter', this);
+    return aabbBounds;
   }
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
+  protected updateLineAABBBoundsByPoints(
+    attribute: ILineGraphicAttribute,
+    lineTheme: Required<ILineGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: ILine
+  ): IAABBBounds {
+    const { points = lineTheme.points, connectedType } = attribute;
+    const b = aabbBounds;
+    points.forEach(p => {
+      if (p.defined !== false || connectedType === 'zero') {
+        b.add(p.x, p.y);
+      }
+    });
+    return b;
   }
-
-  getDefaultAttribute(name: string) {
-    const lineTheme = getTheme(this).line;
-    return lineTheme[name];
+  protected updateLineAABBBoundsBySegments(
+    attribute: ILineGraphicAttribute,
+    lineTheme: Required<ILineGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    graphic?: ILine
+  ): IAABBBounds {
+    const { segments = lineTheme.segments, connectedType } = attribute;
+    const b = aabbBounds;
+    segments.forEach(s => {
+      s.points.forEach(p => {
+        if (p.defined !== false || connectedType === 'zero') {
+          b.add(p.x, p.y);
+        }
+      });
+    });
+    return b;
   }
 
   protected needUpdateTags(keys: string[]): boolean {

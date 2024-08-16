@@ -1,6 +1,21 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Tue, 13 Aug 2024 07:47:29 GMT and should not be manually modified.
+This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+
+## 0.20.0
+Thu, 15 Aug 2024 07:26:54 GMT
+
+### Updates
+
+- fix: fix bug of auto-render when remove some graphics
+
+
+- fix: optimize triangle symbols
+
+
+- refactor: optimize cornerRadius parse of arc
+
+
 
 ## 0.19.24
 Tue, 13 Aug 2024 07:47:29 GMT

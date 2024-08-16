@@ -1,4 +1,4 @@
-import type { AABBBounds, IPointLike, OBBBounds } from '@visactor/vutils';
+import type { AABBBounds, IAABBBounds, IPointLike } from '@visactor/vutils';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import type {
   GraphicType,
@@ -156,20 +156,33 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     return this;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    this._AABBBounds.clear();
-    const bounds = application.graphicService.updateGlyphAABBBounds(
-      this.attribute,
-      getTheme(this).glyph,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-    this.clearUpdateBoundTag();
-    return bounds;
+  getGraphicTheme(): Required<IGlyphGraphicAttribute> {
+    return getTheme(this as IGraphic).glyph;
   }
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
+  protected updateAABBBounds(
+    attribute: IGlyphGraphicAttribute,
+    theme: Required<IGlyphGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, theme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    // 添加子节点
+    this.getSubGraphic().forEach((node: IGraphic) => {
+      aabbBounds.union(node.AABBBounds);
+    });
+
+    // glyph不需要计算AABBBounds
+    // this.transformAABBBounds(attribute, aabbBounds, theme, graphic);
+    return aabbBounds;
+  }
+
+  protected doUpdateAABBBounds(): AABBBounds {
+    this._AABBBounds.clear();
+    const bounds = this.updateAABBBounds(this.attribute, this.getGraphicTheme(), this._AABBBounds) as AABBBounds;
+    this.clearUpdateBoundTag();
+    return bounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {
@@ -235,7 +248,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     this.normalAttrs = null;
   }
 
-  clone(): Graphic<Partial<IGlyphGraphicAttribute>> {
+  clone(): IGraphic<Partial<IGlyphGraphicAttribute>> {
     const glyph = new Glyph({ ...this.attribute });
     glyph.setSubGraphic(this.subGraphic.map(g => g.clone()));
     return glyph;

@@ -7,34 +7,23 @@ import type {
   IAreaGraphicAttribute,
   IGraphicAttribute,
   IContext2d,
-  ICurveType,
   IMarkAttribute,
   IThemeAttribute,
   ISegPath2D,
-  IDirection,
   IAreaRenderContribution,
   IDrawContext,
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider,
-  IStrokeType
+  IContributionProvider
 } from '../../../interface';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import {
-  genLinearSegments,
-  genBasisSegments,
-  genMonotoneXSegments,
-  genMonotoneYSegments,
-  genStepSegments,
-  genLinearClosedSegments
-} from '../../../common/segment';
+import { calcLineCache } from '../../../common/segment';
 
 import { getTheme } from '../../../graphic/theme';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime, Direction } from '../../../common/enums';
+import { Direction } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawSegments } from '../../../common/render-curve';
@@ -43,40 +32,6 @@ import {
   defaultAreaBackgroundRenderContribution,
   defaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
-import { segments } from '../../../common/shape/arc';
-import { genCatmullRomSegments } from '../../../common/segment/catmull-rom';
-import { genCatmullRomClosedSegments } from '../../../common/segment/catmull-rom-close';
-
-function calcLineCache(
-  points: IPointLike[],
-  curveType: ICurveType,
-  params?: { direction?: IDirection; startPoint?: IPointLike; curveTension?: number }
-): ISegPath2D | null {
-  switch (curveType) {
-    case 'linear':
-      return genLinearSegments(points, params);
-    case 'basis':
-      return genBasisSegments(points, params);
-    case 'monotoneX':
-      return genMonotoneXSegments(points, params);
-    case 'monotoneY':
-      return genMonotoneYSegments(points, params);
-    case 'step':
-      return genStepSegments(points, 0.5, params);
-    case 'stepBefore':
-      return genStepSegments(points, 0, params);
-    case 'stepAfter':
-      return genStepSegments(points, 1, params);
-    case 'catmullRom':
-      return genCatmullRomSegments(points, params?.curveTension ?? 0.5, params);
-    case 'catmullRomClosed':
-      return genCatmullRomClosedSegments(points, params?.curveTension ?? 0.5, params);
-    case 'linearClosed':
-      return genLinearClosedSegments(points, params);
-    default:
-      return genLinearSegments(points, params);
-  }
-}
 
 @injectable()
 export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraphicRender {

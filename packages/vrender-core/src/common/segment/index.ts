@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { ICurveType, ISegPath2D } from '../../interface';
+import type { ICurveType, IGenSegmentParams, ISegPath2D } from '../../interface';
 import { genLinearSegments } from './linear';
 import { genBasisSegments } from './basis';
 import { genMonotoneXSegments, genMonotoneYSegments } from './monotone';

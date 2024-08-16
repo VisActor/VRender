@@ -1,4 +1,4 @@
-import type { IAABBBounds, IAABBBoundsLike } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import type { Releaseable, IAllocate } from '../interface';
 

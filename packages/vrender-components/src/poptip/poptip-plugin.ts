@@ -3,13 +3,10 @@ import { Generator, injectable } from '@visactor/vrender-core';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 
-@injectable()
-export class PopTipPlugin implements IPlugin {
-  name: 'poptip' = 'poptip';
+export abstract class PopTipPluginBase {
   activeEvent: 'onRegister' = 'onRegister';
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
-  key: string = this.name + this._uid;
   activeGraphic: IGraphic;
 
   activate(context: IPluginService): void {
@@ -18,9 +15,18 @@ export class PopTipPlugin implements IPlugin {
 
     stage.addEventListener('pointerover', this.poptip);
   }
+
+  needHide(graphic: IGraphic) {
+    return graphic.isContainer || !graphic.attribute;
+  }
+
+  needShow(graphic: IGraphic) {
+    return !!(graphic.attribute as any).poptip;
+  }
+
   poptip = (e: FederatedPointerEvent) => {
     const graphic = e.target as any;
-    if (graphic.isContainer || !graphic.attribute) {
+    if (this.needHide(graphic)) {
       this.unpoptip(e);
       return;
     }
@@ -28,8 +34,7 @@ export class PopTipPlugin implements IPlugin {
     if (graphic === this.activeGraphic) {
       return;
     }
-    const { poptip } = graphic.attribute;
-    if (poptip) {
+    if (this.needShow(graphic)) {
       graphic.setAttributes({});
       graphic._showPoptip = 1;
     }
@@ -64,19 +69,21 @@ export class PopTipPlugin implements IPlugin {
 }
 
 @injectable()
-export class PopTipForClipedTextPlugin implements IPlugin {
-  name: 'poptipForText' = 'poptipForText';
-  activeEvent: 'onRegister' = 'onRegister';
-  pluginService: IPluginService;
-  _uid: number = Generator.GenAutoIncrementId();
+export class PopTipPlugin extends PopTipPluginBase implements IPlugin {
+  name: 'poptip' = 'poptip';
   key: string = this.name + this._uid;
-  activeGraphic: IGraphic;
+}
+
+@injectable()
+export class PopTipForClipedTextPlugin extends PopTipPluginBase implements IPlugin {
+  name: 'poptipForText' = 'poptipForText';
+  key: string = this.name + this._uid;
 
   activate(context: IPluginService): void {
-    this.pluginService = context;
+    super.activate(context);
+
     const { stage } = this.pluginService;
 
-    stage.addEventListener('pointerover', this.poptip);
     stage.addEventListener('pointerleave', this.pointerlave);
   }
   pointerlave = (e: any) => {
@@ -85,54 +92,23 @@ export class PopTipForClipedTextPlugin implements IPlugin {
       this.unpoptip(e);
     }
   };
-  poptip = (e: FederatedPointerEvent) => {
-    const graphic = e.target as any;
-    if (
+
+  needHide(graphic: IGraphic) {
+    return (
       graphic.type !== 'text' ||
       !graphic.cliped ||
       graphic.isContainer ||
       !graphic.attribute ||
-      graphic.attribute.disableAutoClipedPoptip
-    ) {
-      this.unpoptip(e);
-      return;
-    }
-    // 触发graphic重绘
-    if (graphic === this.activeGraphic) {
-      return;
-    }
-    const { poptip = {} } = graphic.attribute;
-    if (poptip) {
-      graphic.setAttributes({});
-      graphic._showPoptip = 1;
-    }
-    // 添加默认poptip
-    if (this.activeGraphic) {
-      this.activeGraphic.setAttributes({});
-      this.activeGraphic._showPoptip = 2;
-    }
-    // console.log(graphic)
-    this.setActiveGraphic(graphic, true);
-  };
-
-  unpoptip = (e: FederatedPointerEvent) => {
-    if (!this.activeGraphic) {
-      return;
-    }
-    this.activeGraphic.setAttributes({});
-    this.activeGraphic._showPoptip = 2;
-    this.setActiveGraphic(null, true);
-  };
-
-  setActiveGraphic(graphic: any | null, rerender?: boolean) {
-    this.activeGraphic = graphic;
-    // 触发重绘
-    this.pluginService.stage.renderNextFrame();
+      (graphic as any).attribute.disableAutoClipedPoptip
+    );
+  }
+  needShow(graphic: IGraphic): boolean {
+    return true;
   }
 
   deactivate(context: IPluginService): void {
     const { stage } = this.pluginService;
-    stage.removeEventListener('pointerover', this.poptip);
+    super.deactivate(context);
     stage.removeEventListener('pointerleave', this.pointerlave);
   }
 }

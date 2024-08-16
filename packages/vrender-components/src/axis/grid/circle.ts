@@ -6,7 +6,6 @@ import { merge, mixin } from '@visactor/vutils';
 import { BaseGrid } from './base';
 import type { CircleAxisGridAttributes, GridItem } from './type';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../../constant';
-import type { TransformedAxisItem } from '../type';
 import { CircleAxisMixin } from '../mixin/circle';
 import type { ComponentOptions } from '../../interface';
 import { loadCircleAxisGridComponent } from '../register';
@@ -36,11 +35,7 @@ export class CircleAxisGrid extends BaseGrid<CircleAxisGridAttributes> {
     const { alignWithLabel = true } = grid || {};
 
     const length = radius - innerRadius;
-    let tickSegment = 1;
-    const count = this.data.length;
-    if (count >= 2) {
-      tickSegment = this.data[1].value - this.data[0].value;
-    }
+    const tickSegment = this._parseTickSegment();
     if (!isSubGrid) {
       gridAttribute = grid as CircleAxisGridAttributes;
       // 计算 grid Items
@@ -79,21 +74,7 @@ export class CircleAxisGrid extends BaseGrid<CircleAxisGridAttributes> {
       const tickLineCount = this.data.length;
       // 刻度线的数量大于 2 时，才绘制子刻度
       if (tickLineCount >= 2) {
-        const points: { value: number }[] = [];
-        this.data.forEach((item: TransformedAxisItem) => {
-          let tickValue = item.value;
-          if (!alignWithLabel) {
-            // tickLine 不同 tick 对齐时需要调整 point
-            const value = item.value - tickSegment / 2;
-            if (this.isInValidValue(value)) {
-              return;
-            }
-            tickValue = value;
-          }
-          points.push({
-            value: tickValue
-          });
-        });
+        const points = this._getPointsOfSubGrid(tickSegment, alignWithLabel);
 
         for (let i = 0; i < tickLineCount; i++) {
           const pre = points[i];

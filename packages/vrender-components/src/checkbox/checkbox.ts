@@ -198,6 +198,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   initAttributes(params: CheckboxAttributes, options?: ComponentOptions) {
     params = options?.skipDefault ? params : merge({}, CheckBox.defaultAttributes, params);
     super.initAttributes(params);
+    this.renderGroup();
     this.render();
   }
 }

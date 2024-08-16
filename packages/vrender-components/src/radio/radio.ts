@@ -142,6 +142,7 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   initAttributes(params: RadioAttributes, options?: ComponentOptions) {
     params = options?.skipDefault ? params : merge({}, Radio.defaultAttributes, params);
     super.initAttributes(params);
+    this.renderGroup();
     this.render();
   }
 }

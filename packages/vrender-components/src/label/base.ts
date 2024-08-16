@@ -124,28 +124,35 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return;
   }
 
+  protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
+    return connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+  }
+
   protected _createLabelLine(text: IText | IRichText, baseMark?: IGraphic): ILine | undefined {
-    const points = connectLineBetweenBounds(text.AABBBounds, baseMark?.AABBBounds);
+    const points = this._getLabelLinePoints(text, baseMark);
     if (points) {
-      const line = graphicCreator.line({
+      const lineGraphic = graphicCreator.line({
         points
       });
-      if (line?.customShape) {
+
+      const { line = {} } = text.attribute as any;
+
+      if (line.customShape) {
         const customShape = line.customShape;
-        line.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
+        lineGraphic.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
           return customShape(text.attribute, attrs, new CustomPath2D());
         };
       }
 
       if (baseMark && baseMark.attribute.fill) {
-        line.setAttribute('stroke', baseMark.attribute.fill);
+        lineGraphic.setAttribute('stroke', baseMark.attribute.fill);
       }
 
       if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
-        line.setAttributes(this.attribute.line.style);
+        lineGraphic.setAttributes(this.attribute.line.style);
       }
-      this._setStatesOfLabelLine(line);
-      return line;
+      this._setStatesOfLabelLine(lineGraphic);
+      return lineGraphic;
     }
   }
 

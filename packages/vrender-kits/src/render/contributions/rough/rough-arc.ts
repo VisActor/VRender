@@ -21,9 +21,10 @@ import {
 } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
+import { RoughBaseRender } from './base-render';
 
 @injectable()
-export class RoughCanvasArcRender implements IGraphicRender {
+export class RoughCanvasArcRender extends RoughBaseRender implements IGraphicRender {
   type: 'arc';
   numberType: number;
   style: 'rough' = 'rough';
@@ -32,6 +33,7 @@ export class RoughCanvasArcRender implements IGraphicRender {
     @inject(DefaultCanvasArcRender)
     public readonly canvasRenderer: IGraphicRender
   ) {
+    super();
     this.type = 'arc';
     this.numberType = ARC_NUMBER_TYPE;
   }
@@ -48,7 +50,7 @@ export class RoughCanvasArcRender implements IGraphicRender {
     context.highPerformanceSave();
 
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
-    const arcAttribute = getTheme(arc).arc;
+    const arcAttribute = arc.getGraphicTheme();
     let { x = arcAttribute.x, y = arcAttribute.y } = arc.attribute;
     if (!arc.transMatrix.onlyTranslate()) {
       // 性能较差
@@ -124,28 +126,5 @@ export class RoughCanvasArcRender implements IGraphicRender {
     });
 
     context.highPerformanceRestore();
-  }
-
-  drawShape(
-    graphic: IGraphic,
-    ctx: IContext2d,
-    x: number,
-    y: number,
-    drawContext: IDrawContext,
-    params?: IGraphicRenderDrawParams,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ): void {
-    if (this.canvasRenderer.drawShape) {
-      return this.canvasRenderer.drawShape(graphic, ctx, x, y, drawContext, params, fillCb, strokeCb);
-    }
   }
 }

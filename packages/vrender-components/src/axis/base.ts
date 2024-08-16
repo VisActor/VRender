@@ -21,8 +21,8 @@ import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } fr
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
-import { createTextGraphicByType, traverseGroup } from '../util';
-import { DEFAULT_STATES, StateValue } from '../constant';
+import { createTextGraphicByType } from '../util';
+import { DEFAULT_STATES } from '../constant';
 import { AXIS_ELEMENT_NAME } from './constant';
 import { DEFAULT_AXIS_THEME } from './config';
 import type {
@@ -164,7 +164,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected _renderInner(container: IGroup) {
     const { title, label, tick, line, items } = this.attribute;
 
-    const axisContainer = graphicCreator.group({ x: 0, y: 0, zIndex: 1 });
+    const axisContainer = graphicCreator.group({ x: 0, y: 0, zIndex: 1, pickable: false });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
     axisContainer.id = this._getNodeId('container');
     axisContainer.setMode(this.mode);

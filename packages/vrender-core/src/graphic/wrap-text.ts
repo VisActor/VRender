@@ -34,7 +34,7 @@ export class WrapText extends Text {
    * @param text
    */
   updateMultilineAABBBounds(text: (number | string)[]) {
-    const textTheme = getTheme(this).text;
+    const textTheme = this.getGraphicTheme();
     const {
       fontFamily = textTheme.fontFamily,
       textAlign = textTheme.textAlign,

@@ -6,7 +6,8 @@ import type {
   IArcGraphicAttribute,
   IThemeAttribute,
   IArcRenderContribution,
-  IDrawContext
+  IDrawContext,
+  IBorderStyle
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
@@ -60,77 +61,45 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
     let { innerRadius = arcAttribute.innerRadius, outerRadius = arcAttribute.outerRadius } = arc.attribute;
     outerRadius += outerPadding;
     innerRadius -= innerPadding;
-    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
-    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
 
-    if (doOuterBorder) {
-      const { distance = arcAttribute.outerBorder.distance } = outerBorder;
+    const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
+      const doStroke = !!(borderStyle && borderStyle.stroke);
+
+      const { distance = arcAttribute[key].distance } = borderStyle;
       const d = getScaledStroke(context, distance as number, context.dpr);
       const deltaAngle = (distance as number) / outerRadius;
+      const sign = key === 'outerBorder' ? 1 : -1;
       arc.setAttributes({
-        outerRadius: outerRadius + d,
-        innerRadius: innerRadius - d,
-        startAngle: startAngle - deltaAngle,
-        endAngle: endAngle + deltaAngle
+        outerRadius: outerRadius + sign * d,
+        innerRadius: innerRadius - sign * d,
+        startAngle: startAngle - sign * deltaAngle,
+        endAngle: endAngle + sign * deltaAngle
       } as any);
       context.beginPath();
-      drawArcPath(arc, context, x, y, outerRadius + d, innerRadius - d);
+      drawArcPath(arc, context, x, y, outerRadius + sign * d, innerRadius - sign * d);
       // shadow
       context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
 
       if (strokeCb) {
-        strokeCb(context, outerBorder, arcAttribute.outerBorder);
-      } else if (doStrokeOuter) {
+        strokeCb(context, borderStyle, arcAttribute[key]);
+      } else if (doStroke) {
         // 存在stroke
-        const lastOpacity = (arcAttribute.outerBorder as any).opacity;
-        (arcAttribute.outerBorder as any).opacity = opacity;
+        const lastOpacity = (arcAttribute[key] as any).opacity;
+        (arcAttribute[key] as any).opacity = opacity;
         context.setStrokeStyle(
           arc,
-          outerBorder,
+          borderStyle,
           (originX - x) / scaleX,
           (originY - y) / scaleY,
-          arcAttribute.outerBorder as any
+          arcAttribute[key] as any
         );
-        (arcAttribute.outerBorder as any).opacity = lastOpacity;
+        (arcAttribute[key] as any).opacity = lastOpacity;
         context.stroke();
       }
-    }
+    };
 
-    if (doInnerBorder) {
-      const { distance = arcAttribute.innerBorder.distance } = innerBorder;
-      const d = getScaledStroke(context, distance as number, context.dpr);
-      const deltaAngle = (distance as number) / outerRadius;
-      arc.setAttributes({
-        outerRadius: outerRadius - d,
-        innerRadius: innerRadius + d,
-        startAngle: startAngle + deltaAngle,
-        endAngle: endAngle - deltaAngle
-      } as any);
-      context.beginPath();
-      drawArcPath(arc, context, x, y, outerRadius - d, innerRadius + d);
-      // arc.setAttributes({ outerRadius: outerRadius, innerRadius: innerRadius });
-
-      // shadow
-      context.setShadowBlendStyle && context.setShadowBlendStyle(arc, arc.attribute, arcAttribute);
-
-      if (strokeCb) {
-        strokeCb(context, innerBorder, arcAttribute.innerBorder);
-      } else if (doStrokeInner) {
-        // 存在stroke
-        const lastOpacity = (arcAttribute.innerBorder as any).opacity;
-        (arcAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(
-          arc,
-          innerBorder,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          arcAttribute.innerBorder as any
-        );
-        (arcAttribute.innerBorder as any).opacity = lastOpacity;
-        context.stroke();
-      }
-    }
-
+    doOuterBorder && renderBorder(outerBorder, 'outerBorder');
+    doInnerBorder && renderBorder(innerBorder, 'innerBorder');
     arc.setAttributes({ outerRadius: outerRadius, innerRadius: innerRadius, startAngle, endAngle } as any);
   }
 }

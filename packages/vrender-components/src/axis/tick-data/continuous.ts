@@ -40,7 +40,8 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     scaleTicks = (scale as LinearScale).d3Ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
   } else {
     const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
-    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
+    const customTicks = isFunction(op.tickMode) ? op.tickMode : undefined;
+    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals, customTicks });
   }
 
   if (op.sampling) {

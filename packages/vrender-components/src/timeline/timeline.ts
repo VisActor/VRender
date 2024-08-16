@@ -27,7 +27,8 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       symbolType: 'circle'
     },
     activeSymbolStyle: {
-      fill: 'orange'
+      fill: 'orange',
+      size: 16
     },
     lineStyle: {
       lineDash: [2, 2],
@@ -227,8 +228,8 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
         symbol
           .animate()
           .wait(symbolNormalDelay + delayNormal * i)
-          .to({ scaleX: 1.8, scaleY: 1.8, ...activeSymbolStyle }, perSymbolNormalDuration, easing as any)
-          .to({ scaleX: 1, scaleY: 1, ...originAttrs }, perSymbolNormalDuration, easing as any);
+          .to({ ...activeSymbolStyle }, perSymbolNormalDuration, easing as any)
+          .to({ ...originAttrs }, perSymbolNormalDuration, easing as any);
       });
     }
     if (this._labelGroup) {
@@ -285,12 +286,13 @@ export class Timeline extends AbstractComponent<Required<TimelineAttrs>> {
       }
     }
 
-    const nextClipRange = flag > 0 ? this._timesPercent[i] : this._timesPercent[i - 1] || 0;
+    const nextClipRange = flag > 0 ? this._timesPercent[i] || 1 : this._timesPercent[i - 1] || 0;
     if (animation) {
       const { duration = 1000, easing = 'quadOut' } = animateConfig;
-      const actDuration =
-        (Math.abs(nextClipRange - clipRange) / (this._timesPercent[i] - (this._timesPercent[i - 1] ?? 0))) * duration;
-      this.animate().to({ clipRange: nextClipRange }, actDuration, easing as any);
+      // const actDuration =
+      //   (Math.abs(nextClipRange - clipRange) / ((this._timesPercent[i] ?? 1) - (this._timesPercent[i - 1] ?? 0))) *
+      //   duration;
+      this.animate().to({ clipRange: nextClipRange }, duration, easing as any);
     } else {
       this.setAttributes({ clipRange: nextClipRange });
     }

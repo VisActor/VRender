@@ -1,6 +1,7 @@
 import type { IMatrix, IMatrixLike } from '@visactor/vutils';
 import { Matrix } from '@visactor/vutils';
 import type { mat4, Releaseable, IAllocate } from '../interface';
+import { identityMat4 } from '../common/matrix';
 
 export const MatrixAllocate = Symbol.for('MatrixAllocate');
 export const Mat4Allocate = Symbol.for('Mat4Allocate');
@@ -52,23 +53,7 @@ export class DefaultMat4Allocate implements IAllocate<mat4>, Releaseable {
   protected pools: mat4[] = [];
 
   static identity(out: mat4) {
-    out[0] = 1;
-    out[1] = 0;
-    out[2] = 0;
-    out[3] = 0;
-    out[4] = 0;
-    out[5] = 1;
-    out[6] = 0;
-    out[7] = 0;
-    out[8] = 0;
-    out[9] = 0;
-    out[10] = 1;
-    out[11] = 0;
-    out[12] = 0;
-    out[13] = 0;
-    out[14] = 0;
-    out[15] = 1;
-    return out;
+    return identityMat4(out);
   }
 
   allocate(): mat4 {

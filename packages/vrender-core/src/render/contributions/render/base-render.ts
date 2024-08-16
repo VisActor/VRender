@@ -1,24 +1,23 @@
 import type { IPointLike } from '@visactor/vutils';
-import { injectable } from '../../../common/inversify-lite';
 import type {
   IGraphicAttribute,
   ICamera,
   IContext2d,
   IGraphic,
   mat4,
-  IRenderService,
   IDrawContext,
   IGraphicRenderDrawParams,
   IMarkAttribute,
   IThemeAttribute,
   IContributionProvider,
-  ICircleRenderContribution,
-  IBaseRenderContribution
+  IBaseRenderContribution,
+  ITransform
 } from '../../../interface';
-import { getModelMatrix, multiplyMat4Mat4, shouldUseMat4 } from '../../../graphic';
+import { getModelMatrix, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
+import { multiplyMat4Mat4 } from '../../../common/matrix';
 
 const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
 
@@ -210,7 +209,7 @@ export abstract class BaseRender<T extends IGraphic> {
    */
   transform(
     graphic: IGraphic,
-    graphicAttribute: IGraphicAttribute,
+    graphicAttribute: Partial<IGraphicAttribute>,
     context: IContext2d,
     use3dMatrixIn3dMode: boolean = false
   ): IPointLike & { z: number; lastModelMatrix: mat4 } {
@@ -247,7 +246,7 @@ export abstract class BaseRender<T extends IGraphic> {
       const nextModelMatrix = mat4Allocate.allocate();
       // 计算模型矩阵
       const modelMatrix = mat4Allocate.allocate();
-      getModelMatrix(modelMatrix, graphic, graphicAttribute);
+      getModelMatrix(modelMatrix, graphic, graphicAttribute as ITransform);
       // 合并模型矩阵
       if (lastModelMatrix) {
         multiplyMat4Mat4(nextModelMatrix, lastModelMatrix, modelMatrix);
@@ -266,7 +265,7 @@ export abstract class BaseRender<T extends IGraphic> {
 
     // 如果只有位移，且没计算3d变换矩阵，那么不设置context的2d矩阵
     if (onlyTranslate && !lastModelMatrix) {
-      const point = graphic.getOffsetXY(graphicAttribute);
+      const point = graphic.getOffsetXY(graphicAttribute as ITransform);
       result.x += point.x;
       result.y += point.y;
       result.z = z;
@@ -280,7 +279,7 @@ export abstract class BaseRender<T extends IGraphic> {
       context.setTransform(1, 0, 0, 1, 0, 0, true);
     } else {
       if (camera && context.project) {
-        const point = graphic.getOffsetXY(graphicAttribute);
+        const point = graphic.getOffsetXY(graphicAttribute as ITransform);
         result.x += point.x;
         result.y += point.y;
         // result.x = 0;

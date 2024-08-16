@@ -8,7 +8,8 @@ import type {
   IRectGraphicAttribute,
   IThemeAttribute,
   IRectRenderContribution,
-  IDrawContext
+  IDrawContext,
+  IBorderStyle
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
@@ -64,84 +65,49 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
     width = (width ?? x1 - x) || 0;
     height = (height ?? y1 - y) || 0;
 
-    const doStrokeOuter = !!(outerBorder && outerBorder.stroke);
-    const doStrokeInner = !!(innerBorder && innerBorder.stroke);
+    const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
+      const doStroke = !!(borderStyle && borderStyle.stroke);
 
-    if (doOuterBorder) {
-      const { distance = rectAttribute.outerBorder.distance } = outerBorder;
+      const sign = key === 'outerBorder' ? -1 : 1;
+      const { distance = rectAttribute[key].distance } = borderStyle;
       const d = getScaledStroke(context, distance as number, context.dpr);
-      const nextX = x - d;
-      const nextY = y - d;
+      const nextX = x + sign * d;
+      const nextY = y + sign * d;
       const dw = d * 2;
       if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
         // 不需要处理圆角
         context.beginPath();
-        context.rect(nextX, nextY, width + dw, height + dw);
+        context.rect(nextX, nextY, width - sign * dw, height - sign * dw);
       } else {
         context.beginPath();
 
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, nextX, nextY, width + dw, height + dw, cornerRadius);
+        createRectPath(context, nextX, nextY, width - sign * dw, height - sign * dw, cornerRadius);
       }
 
       // shadow
       context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
 
       if (strokeCb) {
-        strokeCb(context, outerBorder, rectAttribute.outerBorder);
-      } else if (doStrokeOuter) {
+        strokeCb(context, borderStyle, rectAttribute[key]);
+      } else if (doStroke) {
         // 存在stroke
-        const lastOpacity = (rectAttribute.outerBorder as any).opacity;
-        (rectAttribute.outerBorder as any).opacity = opacity;
+        const lastOpacity = (rectAttribute[key] as any).opacity;
+        (rectAttribute[key] as any).opacity = opacity;
         context.setStrokeStyle(
           rect,
-          outerBorder,
+          borderStyle,
           (originX - x) / scaleX,
           (originY - y) / scaleY,
-          rectAttribute.outerBorder as any
+          rectAttribute[key] as any
         );
-        (rectAttribute.outerBorder as any).opacity = lastOpacity;
+        (rectAttribute[key] as any).opacity = lastOpacity;
         context.stroke();
       }
-    }
+    };
 
-    if (doInnerBorder) {
-      const { distance = rectAttribute.innerBorder.distance } = innerBorder;
-      const d = getScaledStroke(context, distance as number, context.dpr);
-      const nextX = x + d;
-      const nextY = y + d;
-      const dw = d * 2;
-      if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
-        // 不需要处理圆角
-        context.beginPath();
-        context.rect(nextX, nextY, width - dw, height - dw);
-      } else {
-        context.beginPath();
-
-        // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, nextX, nextY, width - dw, height - dw, cornerRadius);
-      }
-
-      // shadow
-      context.setShadowBlendStyle && context.setShadowBlendStyle(rect, rect.attribute, rectAttribute);
-
-      if (strokeCb) {
-        strokeCb(context, innerBorder, rectAttribute.innerBorder);
-      } else if (doStrokeInner) {
-        // 存在stroke
-        const lastOpacity = (rectAttribute.innerBorder as any).opacity;
-        (rectAttribute.innerBorder as any).opacity = opacity;
-        context.setStrokeStyle(
-          rect,
-          innerBorder,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          rectAttribute.innerBorder as any
-        );
-        (rectAttribute.innerBorder as any).opacity = lastOpacity;
-        context.stroke();
-      }
-    }
+    doOuterBorder && renderBorder(outerBorder, 'outerBorder');
+    doInnerBorder && renderBorder(innerBorder, 'innerBorder');
   }
 }
 

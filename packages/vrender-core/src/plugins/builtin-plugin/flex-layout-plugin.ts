@@ -1,12 +1,11 @@
 import type { IGraphic, IGroup, IGroupAttribute, IStage } from '../../interface';
-import { getTheme } from '../../graphic';
+import { getTheme } from '../../graphic/theme';
 import type { IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
-import { isNumber } from '../../canvas/util';
-import { parsePadding } from '../../common/utils';
 import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds, isArray } from '@visactor/vutils';
+import { AABBBounds } from '@visactor/vutils';
 import { application } from '../../application';
+import { Factory } from '../../factory';
 
 const _tempBounds = new AABBBounds();
 
@@ -546,3 +545,7 @@ function getPadding(graphic: IGraphic, field: string): number {
   // }
   return 0;
 }
+
+export const registerFlexLayoutPlugin = () => {
+  Factory.registerPlugin('FlexLayoutPlugin', FlexLayoutPlugin);
+};

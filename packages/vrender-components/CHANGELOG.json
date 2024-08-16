@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.0",
+      "tag": "@visactor/vrender-components_v0.20.0",
+      "date": "Thu, 15 Aug 2024 07:26:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: arc label line color should follow arc mark by default, related #3067"
+          },
+          {
+            "comment": "fix: fix bug of auto-render when remove some graphics\n\n"
+          },
+          {
+            "comment": "fix: set container pick false to allow tooltip interactive"
+          },
+          {
+            "comment": "fix: fix issue with timeline animate duration compute"
+          },
+          {
+            "comment": "fix: optimize triangle symbols\n\n"
+          },
+          {
+            "comment": "refactor: optimize cornerRadius parse of arc\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.24",
       "tag": "@visactor/vrender-components_v0.19.24",
       "date": "Tue, 13 Aug 2024 07:47:29 GMT",

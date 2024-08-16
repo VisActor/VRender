@@ -1,15 +1,8 @@
-/**
- * TODO: 待 vrender 修复后可删除
- */
-import type { EasingType, IGroup } from '@visactor/vrender-core';
-import { ACustomAnimate } from '@visactor/vrender-core';
+import type { IGroup } from '../interface/graphic/group';
+import { ACustomAnimate } from './animate';
 
 export class GroupFadeIn extends ACustomAnimate<any> {
   declare target: IGroup;
-
-  constructor(from: any, to: any, duration: number, easing: EasingType) {
-    super(null, null, duration, easing);
-  }
 
   getEndProps(): Record<string, any> {
     return {};
@@ -44,10 +37,6 @@ export class GroupFadeIn extends ACustomAnimate<any> {
 
 export class GroupFadeOut extends ACustomAnimate<any> {
   declare target: IGroup;
-
-  constructor(from: any, to: any, duration: number, easing: EasingType) {
-    super(null, null, duration, easing);
-  }
 
   getEndProps(): Record<string, any> {
     return {};

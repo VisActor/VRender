@@ -6,15 +6,8 @@ import { PlayerEventEnum } from './type';
 import { ControllerEventEnum } from './controller/constant';
 import { loadContinuousPlayerComponent } from './register';
 
-export interface IContinuousPlayer {
-  play: () => Promise<void>;
-  pause: () => void;
-  forward: () => void;
-  backward: () => void;
-}
-
 loadContinuousPlayerComponent();
-export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> implements IContinuousPlayer {
+export class ContinuousPlayer extends BasePlayer<ContinuousPlayerAttributes> {
   declare attribute: ContinuousPlayerAttributes;
 
   private _activeIndex: number;

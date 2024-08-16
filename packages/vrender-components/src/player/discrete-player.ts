@@ -9,15 +9,8 @@ import { ControllerEventEnum } from './controller/constant';
 import type { ComponentOptions } from '../interface';
 import { loadDiscretePlayerComponent } from './register';
 
-export interface IDiscretePlayer {
-  play: () => void;
-  pause: () => void;
-  backward: () => void;
-  forward: () => void;
-}
-
 loadDiscretePlayerComponent();
-export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> implements IDiscretePlayer {
+export class DiscretePlayer extends BasePlayer<DiscretePlayerAttributes> {
   declare attribute: DiscretePlayerAttributes;
 
   private _activeIndex = -1;

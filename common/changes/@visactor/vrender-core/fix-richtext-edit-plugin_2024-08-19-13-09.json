@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with richtext edit plugin while defucus out of text",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

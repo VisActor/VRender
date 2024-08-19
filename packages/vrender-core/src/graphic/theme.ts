@@ -132,7 +132,7 @@ export class Theme implements ITheme {
   initTheme() {
     this._defaultTheme = {} as any;
     themeKeys.forEach(key => {
-      this._defaultTheme[key] = Object.create(globalThemeObj[key]);
+      (this._defaultTheme as any)[key] = Object.create((globalThemeObj as any)[key]);
     });
     this.combinedTheme = this._defaultTheme;
   }
@@ -209,24 +209,24 @@ export class Theme implements ITheme {
     // 4. defaultTheme
     themeKeys.forEach(k => {
       // init defaultTheme
-      const obj = Object.create(globalThemeObj[k]);
+      const obj = Object.create((globalThemeObj as any)[k]);
       // merge parentCombinedTheme
-      if (parentCombinedTheme && parentCombinedTheme[k]) {
-        combine(obj, parentCombinedTheme[k]);
+      if (parentCombinedTheme && (parentCombinedTheme as any)[k]) {
+        combine(obj, (parentCombinedTheme as any)[k]);
       }
       // merge combinedTheme
-      if (combinedTheme[k]) {
-        combine(obj, combinedTheme[k]);
+      if ((combinedTheme as any)[k]) {
+        combine(obj, (combinedTheme as any)[k]);
       }
       // merge userTheme
-      if (userTheme[k]) {
-        combine(obj, userTheme[k]);
+      if ((userTheme as any)[k]) {
+        combine(obj, (userTheme as any)[k]);
       }
-      this.combinedTheme[k] = obj;
+      (this.combinedTheme as any)[k] = obj;
     });
     if (userTheme.common) {
       themeKeys.forEach(k => {
-        combine(this.combinedTheme[k], userTheme.common);
+        combine((this.combinedTheme as any)[k], userTheme.common);
       });
     }
     this.dirty = false;
@@ -237,11 +237,11 @@ export class Theme implements ITheme {
     let userTheme = this.userTheme;
     if (userTheme) {
       Object.keys(t).forEach(k => {
-        if (userTheme[k]) {
-          Object.assign(userTheme[k], t[k]);
+        if ((userTheme as any)[k]) {
+          Object.assign((userTheme as any)[k], (t as any)[k]);
         } else {
           // todo，这里调用次数不多，应该问题不大
-          userTheme[k] = Object.assign({}, t[k]);
+          (userTheme as any)[k] = Object.assign({}, (t as any)[k]);
         }
       });
     } else {
@@ -288,7 +288,7 @@ export function getTheme(graphic: IGraphic, theme?: IFullThemeSpec): IFullThemeS
 
   return (
     getThemeFromGroup(graphic) ||
-    (graphic.attachedThemeGraphic && getTheme(graphic.attachedThemeGraphic)) ||
+    (graphic.attachedThemeGraphic && getTheme(graphic.attachedThemeGraphic as IGraphic)) ||
     globalTheme.getTheme()
   );
 }

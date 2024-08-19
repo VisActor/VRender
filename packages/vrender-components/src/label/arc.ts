@@ -1,6 +1,14 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
-// eslint-disable-next-line no-duplicate-imports
-import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
+import {
+  merge,
+  isValidNumber,
+  isNil,
+  isLess,
+  isGreater,
+  isNumberClose as isClose,
+  polarToCartesian,
+  computeQuadrant
+} from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
 import type { ILineGraphicAttribute, IRichTextAttribute } from '@visactor/vrender-core';
@@ -14,16 +22,9 @@ import {
   graphicCreator,
   CustomPath2D
 } from '@visactor/vrender-core';
-import {
-  circlePoint,
-  isQuadrantRight,
-  isQuadrantLeft,
-  lineCirclePoints,
-  connectLineRadian,
-  checkBoundsOverlap,
-  computeQuadrant
-} from './util';
+import { isQuadrantRight, isQuadrantLeft, lineCirclePoints, connectLineRadian, checkBoundsOverlap } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class ArcInfo {
   key!: string;
@@ -244,13 +245,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;
         const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
 
-        const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
-        const outerArcMiddle = circlePoint(
-          center.x,
-          center.y,
-          maxRadius + attribute.line.line1MinLength,
-          arcMiddleAngle
-        );
+        const arcMiddle = polarToCartesian(center, graphicAttribute.outerRadius, arcMiddleAngle);
+        const outerArcMiddle = polarToCartesian(center, maxRadius + attribute.line.line1MinLength, arcMiddleAngle);
         const arc = new ArcInfo(
           item,
           arcMiddle,
@@ -263,9 +259,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           center
         );
 
-        arc.pointA = circlePoint(
-          (center as IPoint).x,
-          (center as IPoint).y,
+        arc.pointA = polarToCartesian(
+          center as IPoint,
           this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
           arc.middleAngle
         );
@@ -347,7 +342,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       } else {
         labelRadius = outerRadius + offsetRadius - alignOffset;
       }
-      arc.labelPosition = circlePoint(arc.circleCenter.x, arc.circleCenter.y, labelRadius, arc.middleAngle);
+      arc.labelPosition = polarToCartesian(arc.circleCenter, labelRadius, arc.middleAngle);
       arc.labelLimit = labelWidth;
       if (!isGreater(labelWidth, 0)) {
         arc.labelVisible = false;
@@ -983,3 +978,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio;
   }
 }
+
+export const registerArcDataLabel = () => {
+  registerLabelComponent('arc', ArcLabel);
+};

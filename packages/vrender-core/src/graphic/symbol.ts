@@ -1,16 +1,16 @@
-import type { OBBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import { AABBBounds } from '@visactor/vutils';
 import { isArray, max } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
 import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
-import { parsePadding } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TYPE } from './constants';
 import { XMLParser } from '../common/xml';
 import { isSvg } from '../common/xml/parser';
+import { updateBoundsOfSymbolOuterBorder } from './graphic-service/symbol-outer-border-bounds';
 
 const _tempBounds = new AABBBounds();
 
@@ -53,7 +53,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
   }
 
   protected doUpdateParsedPath(): ISymbolClass {
-    const symbolTheme = getTheme(this).symbol;
+    const symbolTheme = this.getGraphicTheme();
     // 查找内置symbol
     let { symbolType = symbolTheme.symbolType } = this.attribute;
     let path = builtinSymbolsMap[symbolType];
@@ -85,7 +85,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
         const attribute: any = {};
         SVG_PARSE_ATTRIBUTE_MAP_KEYS.forEach(k => {
           if (item[k]) {
-            attribute[SVG_PARSE_ATTRIBUTE_MAP[k]] = item[k];
+            (attribute as any)[(SVG_PARSE_ATTRIBUTE_MAP as any)[k]] = item[k];
           }
         });
         // 查找
@@ -119,35 +119,66 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     return this._parsedPath;
   }
 
-  protected doUpdateAABBBounds(full?: boolean): AABBBounds {
-    const symbolTheme = getTheme(this).symbol;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateSymbolAABBBounds(
-      attribute,
-      getTheme(this).symbol,
-      this._AABBBounds,
-      full,
-      this
-    );
+  getGraphicTheme(): Required<ISymbolGraphicAttribute> {
+    return getTheme(this).symbol;
+  }
 
-    const { boundsPadding = symbolTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      (bounds as AABBBounds).expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: ISymbolGraphicAttribute,
+    symbolTheme: Required<ISymbolGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    full?: boolean
+  ) {
+    if (!application.graphicService.validCheck(attribute, symbolTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      full
+        ? this.updateSymbolAABBBoundsImprecise(attribute, symbolTheme, aabbBounds)
+        : this.updateSymbolAABBBoundsAccurate(attribute, symbolTheme, aabbBounds);
     }
 
-    this.clearUpdateBoundTag();
-    return bounds as AABBBounds;
+    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    updateBoundsOfSymbolOuterBorder(attribute, symbolTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+
+    const { lineJoin = symbolTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, symbolTheme, lineJoin === 'miter', this);
+    return aabbBounds;
   }
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
+  protected updateSymbolAABBBoundsImprecise(
+    attribute: ISymbolGraphicAttribute,
+    symbolTheme: Required<ISymbolGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    // 当做正方形计算
+    const { size = symbolTheme.size } = attribute;
+
+    if (isArray(size)) {
+      aabbBounds.set(-size[0] / 2, -size[1] / 2, size[0] / 2, size[1] / 2);
+    } else {
+      const halfWH = size / 2;
+
+      aabbBounds.set(-halfWH, -halfWH, halfWH, halfWH);
+    }
+
+    return aabbBounds;
   }
 
-  getDefaultAttribute(name: string) {
-    const symbolTheme = getTheme(this).symbol;
-    return symbolTheme[name];
+  protected updateSymbolAABBBoundsAccurate(
+    attribute: ISymbolGraphicAttribute,
+    symbolTheme: Required<ISymbolGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    const { size = symbolTheme.size } = attribute;
+
+    const symbolClass = this.getParsedPath();
+    symbolClass.bounds(size, aabbBounds);
+
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {

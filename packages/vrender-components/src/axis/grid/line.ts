@@ -14,7 +14,6 @@ import type {
 } from './type';
 import type { Point } from '../../core/type';
 import { POLAR_START_ANGLE, POLAR_END_ANGLE } from '../../constant';
-import type { TransformedAxisItem } from '../type';
 import { LineAxisMixin } from '../mixin/line';
 import type { ComponentOptions } from '../../interface';
 import { loadLineAxisGridComponent } from '../register';
@@ -54,11 +53,8 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
   protected getGridAttribute(isSubGrid: boolean) {
     const { type: gridType, alignWithLabel = true } = this.attribute;
 
-    let tickSegment = 1;
-    const count = this.data.length;
-    if (count >= 2) {
-      tickSegment = this.data[1].value - this.data[0].value;
-    }
+    const tickSegment = this._parseTickSegment();
+
     let gridAttribute;
     let items: GridItem[] = [];
     if (!isSubGrid) {
@@ -93,21 +89,7 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
       const tickLineCount = this.data.length;
       // 刻度线的数量大于 2 时，才绘制子刻度
       if (tickLineCount >= 2) {
-        const points: { value: number }[] = [];
-        this.data.forEach((item: TransformedAxisItem) => {
-          let tickValue = item.value;
-          if (!alignWithLabel) {
-            // tickLine 不同 tick 对齐时需要调整 point
-            const value = item.value - tickSegment / 2;
-            if (this.isInValidValue(value)) {
-              return;
-            }
-            tickValue = value;
-          }
-          points.push({
-            value: tickValue
-          });
-        });
+        const points = this._getPointsOfSubGrid(tickSegment, alignWithLabel);
 
         for (let i = 0; i < points.length - 1; i++) {
           const pre = points[i];

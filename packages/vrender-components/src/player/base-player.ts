@@ -22,7 +22,7 @@ import { isHorizontal } from './utils';
  * 基本播放器组件
  * 提供最基本的布局能力,
  */
-export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>> {
+export abstract class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>> {
   static defaultAttributes = {
     visible: true,
     data: [] as Datum[],
@@ -60,7 +60,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   // 数据属性
   protected _data = [] as Datum[];
   protected _minIndex: number;
+  getMinIndex() {
+    return this._minIndex;
+  }
   protected _maxIndex: number;
+  getMaxIndex() {
+    return this._maxIndex;
+  }
 
   // 滑轨属性
   private _sliderVisible: boolean;
@@ -81,6 +87,9 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
 
   // dataIndex, 代表slider的value
   protected _dataIndex: number = 0;
+  getDataIndex() {
+    return this._dataIndex;
+  }
 
   private _layoutInfo: {
     // 滚动条位置
@@ -92,6 +101,11 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     backward?: { x: number; y: number; size: number };
     forward?: { x: number; y: number; size: number };
   } = {};
+
+  abstract play(): void;
+  abstract pause(): void;
+  abstract backward(): void;
+  abstract forward(): void;
 
   constructor(attributes: T, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, BasePlayer.defaultAttributes, attributes));
@@ -294,79 +308,40 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       disableTriggerEvent: this.attribute.disableTriggerEvent
     };
     // 横向布局
-    if (isHorizontal(this._orient)) {
-      attrs.layout = 'horizontal';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        // 暂停按钮, 复用开始按钮的布局
-        style: {
-          ...attrs.pause.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
-    // 纵向布局
-    else {
-      attrs.layout = 'vertical';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        style: {
-          ...attrs.pause.style,
-          // 暂停按钮, 复用开始按钮的布局
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
+    attrs.layout = isHorizontal(this._orient) ? 'horizontal' : 'vertical';
+    attrs.start = {
+      ...attrs.start,
+      style: {
+        ...attrs.start.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.pause = {
+      ...attrs.pause,
+      // 暂停按钮, 复用开始按钮的布局
+      style: {
+        ...attrs.pause.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.backward = {
+      ...attrs.backward,
+      style: {
+        ...attrs.backward.style,
+        x: this._layoutInfo.backward.x,
+        y: this._layoutInfo.backward.y
+      }
+    };
+    attrs.forward = {
+      ...attrs.forward,
+      style: {
+        ...attrs.forward.style,
+        x: this._layoutInfo.forward.x,
+        y: this._layoutInfo.forward.y
+      }
+    };
     return attrs;
   };
 

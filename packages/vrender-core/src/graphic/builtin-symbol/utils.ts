@@ -56,19 +56,7 @@ export class CustomSymbolClass implements ISymbolClass {
     z?: number,
     cb?: (path: ICustomPath2D, attribute?: Record<string, any>) => void
   ) {
-    if (this.isSvg) {
-      if (!this.svgCache) {
-        return false;
-      }
-      this.svgCache.forEach(item => {
-        ctx.beginPath();
-        renderCommandList(item.path.commandList, ctx, x, y, size, size);
-        cb && cb(item.path, item.attribute);
-      });
-      return false;
-    }
-    renderCommandList(this.path.commandList, ctx, x, y, size, size);
-    return false;
+    return this.drawOffset(ctx, size, x, y, 0, z, cb);
   }
 
   bounds(size: number, bounds: IBounds) {

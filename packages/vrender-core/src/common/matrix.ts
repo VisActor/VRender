@@ -2,326 +2,414 @@
 // import { IMatrix } from '../interface/matrix';
 // import { IBounds, IPoint } from '../interface/util';
 
-import type { mat4, vec3 } from '@visactor/vutils';
+import type { IMatrix, mat4, vec3 } from '@visactor/vutils';
 import { epsilon } from '@visactor/vutils';
-import { DefaultMat4Allocate } from '../allocator/matrix-allocate';
 
-// export type vec2 = [number, number] | Float32Array;
-// export type vec3 = [number, number, number] | Float32Array;
-// export type vec4 = [number, number, number, number] | Float32Array;
-// export type mat4 =
-//   | [
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number,
-//       number
-//     ]
-//   | Float32Array;
+/**
+ * 部分代码参考 https://github.com/toji/gl-matrix
+ * Copyright (c) 2015-2021, Brandon Jones, Colin MacKenzie IV.
 
-// export class Matrix implements IMatrix {
-//   /**
-//    * scale x
-//    */
-//   a: number;
-//   /**
-//    * skew y
-//    */
-//   b: number;
-//   /**
-//    * skewx
-//    */
-//   c: number;
-//   /**
-//    * scale y
-//    */
-//   d: number;
-//   /**
-//    * translate x
-//    */
-//   e: number;
-//   /**
-//    * translate y
-//    */
-//   f: number;
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
 
-//   // todo setScale需要sx,sy初始值为1
-//   constructor(a?: number, b?: number, c?: number, d?: number, e?: number, f?: number) {
-//     // 暂时不需要初始化
-//     this.a = a ?? 1;
-//     this.b = b ?? 0;
-//     this.c = c ?? 0;
-//     this.d = d ?? 1;
-//     this.e = e ?? 0;
-//     this.f = f ?? 0;
-//   }
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
 
-//   setValue(a: number, b: number, c: number, d: number, e: number, f: number) {
-//     this.a = a;
-//     this.b = b;
-//     this.c = c;
-//     this.d = d;
-//     this.e = e;
-//     this.f = f;
-//     return this;
-//   }
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+ */
 
-//   reset(): this {
-//     this.a = 1;
-//     this.b = 0;
-//     this.c = 0;
-//     this.d = 1;
-//     this.e = 0;
-//     this.f = 0;
-//     return this;
-//   }
+// 代码来自gl-matrix https://github.com/toji/gl-matrix
+export function identityMat4(out: mat4) {
+  out[0] = 1;
+  out[1] = 0;
+  out[2] = 0;
+  out[3] = 0;
+  out[4] = 0;
+  out[5] = 1;
+  out[6] = 0;
+  out[7] = 0;
+  out[8] = 0;
+  out[9] = 0;
+  out[10] = 1;
+  out[11] = 0;
+  out[12] = 0;
+  out[13] = 0;
+  out[14] = 0;
+  out[15] = 1;
+  return out;
+}
 
-//   /**
-//    * 获取当前矩阵的逆矩阵
-//    */
-//   getInverse() {
-//     const a = this.a;
-//     const b = this.b;
-//     const c = this.c;
-//     const d = this.d;
-//     const e = this.e;
-//     const f = this.f;
-//     const m = new Matrix();
-//     const dt = a * d - b * c;
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Rotates a matrix by the given angle around the X axis
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the matrix to rotate
+ * @param {Number} rad the angle to rotate the matrix by
+ * @returns {mat4} out
+ */
+export function rotateX(out: mat4, a: mat4, rad: number) {
+  const s = Math.sin(rad);
+  const c = Math.cos(rad);
+  const a10 = a[4];
+  const a11 = a[5];
+  const a12 = a[6];
+  const a13 = a[7];
+  const a20 = a[8];
+  const a21 = a[9];
+  const a22 = a[10];
+  const a23 = a[11];
+  if (a !== out) {
+    // If the source and destination differ, copy the unchanged rows
+    out[0] = a[0];
+    out[1] = a[1];
+    out[2] = a[2];
+    out[3] = a[3];
+    out[12] = a[12];
+    out[13] = a[13];
+    out[14] = a[14];
+    out[15] = a[15];
+  }
+  // Perform axis-specific matrix multiplication
+  out[4] = a10 * c + a20 * s;
+  out[5] = a11 * c + a21 * s;
+  out[6] = a12 * c + a22 * s;
+  out[7] = a13 * c + a23 * s;
+  out[8] = a20 * c - a10 * s;
+  out[9] = a21 * c - a11 * s;
+  out[10] = a22 * c - a12 * s;
+  out[11] = a23 * c - a13 * s;
+  return out;
+}
 
-//     m.a = d / dt;
-//     m.b = -b / dt;
-//     m.c = -c / dt;
-//     m.d = a / dt;
-//     m.e = (c * f - d * e) / dt;
-//     m.f = -(a * f - b * e) / dt;
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Rotates a matrix by the given angle around the Y axis
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the matrix to rotate
+ * @param {Number} rad the angle to rotate the matrix by
+ * @returns {mat4} out
+ */
+export function rotateY(out: mat4, a: mat4, rad: number) {
+  const s = Math.sin(rad);
+  const c = Math.cos(rad);
+  const a00 = a[0];
+  const a01 = a[1];
+  const a02 = a[2];
+  const a03 = a[3];
+  const a20 = a[8];
+  const a21 = a[9];
+  const a22 = a[10];
+  const a23 = a[11];
+  if (a !== out) {
+    // If the source and destination differ, copy the unchanged rows
+    out[4] = a[4];
+    out[5] = a[5];
+    out[6] = a[6];
+    out[7] = a[7];
+    out[12] = a[12];
+    out[13] = a[13];
+    out[14] = a[14];
+    out[15] = a[15];
+  }
+  // Perform axis-specific matrix multiplication
+  out[0] = a00 * c - a20 * s;
+  out[1] = a01 * c - a21 * s;
+  out[2] = a02 * c - a22 * s;
+  out[3] = a03 * c - a23 * s;
+  out[8] = a00 * s + a20 * c;
+  out[9] = a01 * s + a21 * c;
+  out[10] = a02 * s + a22 * c;
+  out[11] = a03 * s + a23 * c;
+  return out;
+}
 
-//     return m;
-//   }
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Rotates a matrix by the given angle around the Z axis
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the matrix to rotate
+ * @param {Number} rad the angle to rotate the matrix by
+ * @returns {mat4} out
+ */
+export function rotateZ(out: mat4, a: mat4, rad: number) {
+  const s = Math.sin(rad);
+  const c = Math.cos(rad);
+  const a00 = a[0];
+  const a01 = a[1];
+  const a02 = a[2];
+  const a03 = a[3];
+  const a10 = a[4];
+  const a11 = a[5];
+  const a12 = a[6];
+  const a13 = a[7];
 
-//   rotate(rad: number) {
-//     const c = Math.cos(rad);
-//     const s = Math.sin(rad);
-//     const m11 = this.a * c + this.c * s;
-//     const m12 = this.b * c + this.d * s;
-//     const m21 = this.a * -s + this.c * c;
-//     const m22 = this.b * -s + this.d * c;
-//     this.a = m11;
-//     this.b = m12;
-//     this.c = m21;
-//     this.d = m22;
-//     return this;
-//   }
+  if (a !== out) {
+    // If the source and destination differ, copy the unchanged last row
+    out[8] = a[8];
+    out[9] = a[9];
+    out[10] = a[10];
+    out[11] = a[11];
+    out[12] = a[12];
+    out[13] = a[13];
+    out[14] = a[14];
+    out[15] = a[15];
+  } // Perform axis-specific matrix multiplication
 
-//   scale(sx: number, sy: number) {
-//     this.a *= sx;
-//     this.b *= sx;
-//     this.c *= sy;
-//     this.d *= sy;
-//     return this;
-//   }
+  out[0] = a00 * c + a10 * s;
+  out[1] = a01 * c + a11 * s;
+  out[2] = a02 * c + a12 * s;
+  out[3] = a03 * c + a13 * s;
+  out[4] = a10 * c - a00 * s;
+  out[5] = a11 * c - a01 * s;
+  out[6] = a12 * c - a02 * s;
+  out[7] = a13 * c - a03 * s;
+  return out;
+}
 
-//   setScale(sx: number, sy: number) {
-//     this.b = (this.b / this.a) * sx;
-//     this.c = (this.c / this.d) * sy;
-//     this.a = sx;
-//     this.d = sy;
-//     return this;
-//   }
+// 代码来自gl-matrix https://github.com/toji/gl-matrix
+export function translate(out: mat4, a: mat4, v: vec3) {
+  const x = v[0];
+  const y = v[1];
+  const z = v[2];
+  let a00;
+  let a01;
+  let a02;
+  let a03;
+  let a10;
+  let a11;
+  let a12;
+  let a13;
+  let a20;
+  let a21;
+  let a22;
+  let a23;
+  if (a === out) {
+    out[12] = a[0] * x + a[4] * y + a[8] * z + a[12];
+    out[13] = a[1] * x + a[5] * y + a[9] * z + a[13];
+    out[14] = a[2] * x + a[6] * y + a[10] * z + a[14];
+    out[15] = a[3] * x + a[7] * y + a[11] * z + a[15];
+  } else {
+    a00 = a[0];
+    a01 = a[1];
+    a02 = a[2];
+    a03 = a[3];
+    a10 = a[4];
+    a11 = a[5];
+    a12 = a[6];
+    a13 = a[7];
+    a20 = a[8];
+    a21 = a[9];
+    a22 = a[10];
+    a23 = a[11];
+    out[0] = a00;
+    out[1] = a01;
+    out[2] = a02;
+    out[3] = a03;
+    out[4] = a10;
+    out[5] = a11;
+    out[6] = a12;
+    out[7] = a13;
+    out[8] = a20;
+    out[9] = a21;
+    out[10] = a22;
+    out[11] = a23;
+    out[12] = a00 * x + a10 * y + a20 * z + a[12];
+    out[13] = a01 * x + a11 * y + a21 * z + a[13];
+    out[14] = a02 * x + a12 * y + a22 * z + a[14];
+    out[15] = a03 * x + a13 * y + a23 * z + a[15];
+  }
+  return out;
+}
 
-//   transform(a: number, b: number, c: number, d: number, e: number, f: number) {
-//     this.multiply(a, b, c, d, e, f);
-//     return this;
-//   }
-//   translate(x: number, y: number) {
-//     this.e += this.a * x + this.c * y;
-//     this.f += this.b * x + this.d * y;
-//     return this;
-//   }
-//   /**
-//    * 矩阵相乘
-//    * @param matrix
-//    */
-//   multiply(a2: number, b2: number, c2: number, d2: number, e2: number, f2: number) {
-//     const a1 = this.a;
-//     const b1 = this.b;
-//     const c1 = this.c;
-//     const d1 = this.d;
-//     const e1 = this.e;
-//     const f1 = this.f;
+export function mat3Tomat4(out: mat4, b: IMatrix) {
+  out[0] = b.a;
+  out[1] = b.b;
+  out[2] = 0;
+  out[3] = 0;
+  out[4] = b.c;
+  out[5] = b.d;
+  out[6] = 0;
+  out[7] = 0;
+  out[8] = 0;
+  out[9] = 0;
+  out[10] = 1;
+  out[11] = 0;
+  out[12] = b.e;
+  out[13] = b.f;
+  out[14] = 0;
+  out[15] = 1;
+}
 
-//     const m11 = a1 * a2 + c1 * b2;
-//     const m12 = b1 * a2 + d1 * b2;
-//     const m21 = a1 * c2 + c1 * d2;
-//     const m22 = b1 * c2 + d1 * d2;
-//     const dx = a1 * e2 + c1 * f2 + e1;
-//     const dy = b1 * e2 + d1 * f2 + f1;
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Multiplies two mat4s
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the first operand
+ * @param {ReadonlyMat4} b the second operand
+ * @returns {mat4} out
+ */
 
-//     this.a = m11;
-//     this.b = m12;
-//     this.c = m21;
-//     this.d = m22;
-//     this.e = dx;
-//     this.f = dy;
-//     return this;
-//   }
-//   /**
-//    * 插值计算
-//    * @param m2
-//    * @param t
-//    */
-//   interpolate(m2: Matrix, t: number) {
-//     const m = new Matrix();
+export function multiplyMat4Mat3(out: mat4, a: mat4, b: IMatrix) {
+  const a00 = a[0];
+  const a01 = a[1];
+  const a02 = a[2];
+  const a03 = a[3];
+  const a10 = a[4];
+  const a11 = a[5];
+  const a12 = a[6];
+  const a13 = a[7];
+  const a20 = a[8];
+  const a21 = a[9];
+  const a22 = a[10];
+  const a23 = a[11];
+  const a30 = a[12];
+  const a31 = a[13];
+  const a32 = a[14];
+  const a33 = a[15]; // Cache only the current line of the second matrix
 
-//     m.a = this.a + (m2.a - this.a) * t;
-//     m.b = this.b + (m2.b - this.b) * t;
-//     m.c = this.c + (m2.c - this.c) * t;
-//     m.d = this.d + (m2.d - this.d) * t;
-//     m.e = this.e + (m2.e - this.e) * t;
-//     m.f = this.f + (m2.f - this.f) * t;
+  let b0 = b.a;
+  let b1 = b.b;
+  let b2 = 0;
+  let b3 = 0;
+  out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = b.c;
+  b1 = b.d;
+  b2 = 0;
+  b3 = 0;
+  out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = 0;
+  b1 = 0;
+  b2 = 1;
+  b3 = 0;
+  out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = b.e;
+  b1 = b.f;
+  b2 = 0;
+  b3 = 1;
+  out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  return out;
+}
 
-//     return m;
-//   }
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Scales the mat4 by the dimensions in the given vec3 not using vectorization
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the matrix to scale
+ * @param {ReadonlyVec3} v the vec3 to scale the matrix by
+ * @returns {mat4} out
+ **/
+export function scaleMat4(out: mat4, a: mat4, v: vec3) {
+  const x = v[0];
+  const y = v[1];
+  const z = v[2];
+  out[0] = a[0] * x;
+  out[1] = a[1] * x;
+  out[2] = a[2] * x;
+  out[3] = a[3] * x;
+  out[4] = a[4] * y;
+  out[5] = a[5] * y;
+  out[6] = a[6] * y;
+  out[7] = a[7] * y;
+  out[8] = a[8] * z;
+  out[9] = a[9] * z;
+  out[10] = a[10] * z;
+  out[11] = a[11] * z;
+  out[12] = a[12];
+  out[13] = a[13];
+  out[14] = a[14];
+  out[15] = a[15];
+  return out;
+}
 
-//   /**
-//    * 将point转到当前矩阵的坐标空间中
-//    * @param source
-//    * @param target
-//    */
-//   transformPoint(source: IPoint, target: IPoint) {
-//     const { a, b, c, d, e, f } = this;
-//     const dt = a * d - b * c;
+/**
+ * 代码来自gl-matrix https://github.com/toji/gl-matrix
+ * Multiplies two mat4s
+ *
+ * @param {mat4} out the receiving matrix
+ * @param {ReadonlyMat4} a the first operand
+ * @param {ReadonlyMat4} b the second operand
+ * @returns {mat4} out
+ */
+export function multiplyMat4Mat4(out: mat4, a: mat4, b: mat4) {
+  const a00 = a[0];
+  const a01 = a[1];
+  const a02 = a[2];
+  const a03 = a[3];
+  const a10 = a[4];
+  const a11 = a[5];
+  const a12 = a[6];
+  const a13 = a[7];
+  const a20 = a[8];
+  const a21 = a[9];
+  const a22 = a[10];
+  const a23 = a[11];
+  const a30 = a[12];
+  const a31 = a[13];
+  const a32 = a[14];
+  const a33 = a[15]; // Cache only the current line of the second matrix
 
-//     const nextA = d / dt;
-//     const nextB = -b / dt;
-//     const nextC = -c / dt;
-//     const nextD = a / dt;
-//     const nextE = (c * f - d * e) / dt;
-//     const nextF = -(a * f - b * e) / dt;
+  let b0 = b[0];
+  let b1 = b[1];
+  let b2 = b[2];
+  let b3 = b[3];
+  out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = b[4];
+  b1 = b[5];
+  b2 = b[6];
+  b3 = b[7];
+  out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = b[8];
+  b1 = b[9];
+  b2 = b[10];
+  b3 = b[11];
+  out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  b0 = b[12];
+  b1 = b[13];
+  b2 = b[14];
+  b3 = b[15];
+  out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
+  out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
+  out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
+  out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
+  return out;
+}
 
-//     const { x, y } = source;
-//     target.x = x * nextA + y * nextC + nextE;
-//     target.y = x * nextB + y * nextD + nextF;
-//   }
-
-//   // 只有translate
-//   onlyTranslate(): boolean {
-//     return this.a === 1 && this.b === 0 && this.c === 0 && this.d === 1;
-//   }
-
-//   clone(): Matrix {
-//     return new Matrix(this.a, this.b, this.c, this.d, this.e, this.f);
-//   }
-// }
-
-// /**
-//  * 依据graphic的属性对bounds进行变换
-//  * @param bounds
-//  * @param x
-//  * @param y
-//  * @param scaleX
-//  * @param scaleY
-//  * @param angle
-//  * @param rotateCenter
-//  */
-// export function transformBounds(
-//   bounds: IBounds,
-//   x: number,
-//   y: number,
-//   scaleX: number,
-//   scaleY: number,
-//   angle: number,
-//   rotateCenter?: [number, number]
-// ) {
-//   if (abs(scaleX) <= epsilon || abs(scaleY) <= epsilon) {
-//     return;
-//   }
-
-//   scaleX !== 1 && bounds.scaleX(scaleX);
-//   scaleY !== 1 && bounds.scaleY(scaleY);
-
-//   if (isFinite(angle) && Math.abs(angle) > epsilon) {
-//     let rx = 0;
-//     let ry = 0;
-//     if (rotateCenter !== undefined) {
-//       rx = rotateCenter[0];
-//       ry = rotateCenter[1];
-//     }
-//     bounds.rotate(angle, rx, ry);
-//   }
-
-//   bounds.translate(x, y);
-// }
-// export function transformBoundsWithMatrix(bounds: IBounds, matrix: IMatrix): IBounds {
-//   const { x1, y1, x2, y2 } = bounds;
-//   // 如果没有旋转和缩放，那就直接translate
-//   if (matrix.onlyTranslate()) {
-//     bounds.translate(matrix.e, matrix.f);
-//     return bounds;
-//   }
-//   bounds.x1 = matrix.a * x1 + matrix.c * y1 + matrix.e;
-//   bounds.y1 = matrix.b * x1 + matrix.d * y1 + matrix.f;
-//   bounds.x2 = matrix.a * x2 + matrix.c * y2 + matrix.e;
-//   bounds.y2 = matrix.b * x2 + matrix.d * y2 + matrix.f;
-//   bounds.clear();
-//   bounds.add(x1, y1);
-//   bounds.add(x2, y2);
-//   return bounds;
-// }
-
-// export function normalTransform(
-//   out: Matrix,
-//   origin: Matrix,
-//   x: number,
-//   y: number,
-//   scaleX: number,
-//   scaleY: number,
-//   angle: number,
-//   rotateCenter?: vec2
-// ) {
-//   const oa = origin.a;
-//   const ob = origin.b;
-//   const oc = origin.c;
-//   const od = origin.d;
-//   const oe = origin.e;
-//   const of = origin.f;
-//   const cosTheta = cos(angle);
-//   const sinTheta = sin(angle);
-//   let rotateCenterX: number;
-//   let rotateCenterY: number;
-//   if (rotateCenter) {
-//     rotateCenterX = rotateCenter[0];
-//     rotateCenterY = rotateCenter[1];
-//   } else {
-//     rotateCenterX = x;
-//     rotateCenterY = y;
-//   }
-//   const offsetX = rotateCenterX - x;
-//   const offsetY = rotateCenterY - y;
-
-//   const a1 = oa * cosTheta + oc * sinTheta;
-//   const b1 = ob * cosTheta + od * sinTheta;
-//   const c1 = oc * cosTheta - oa * sinTheta;
-//   const d1 = od * cosTheta - ob * sinTheta;
-//   out.a = scaleX * a1;
-//   out.b = scaleX * b1;
-//   out.c = scaleY * c1;
-//   out.d = scaleY * d1;
-
-//   out.e = oe + oa * rotateCenterX + oc * rotateCenterY - a1 * offsetX - c1 * offsetY;
-//   out.f = of + ob * rotateCenterX + od * rotateCenterY - b1 * offsetX - d1 * offsetY;
-// }
 // 代码来自gl-matrix https://github.com/toji/gl-matrix
 export function lookAt(out: mat4, eye: vec3, center: vec3, up: vec3) {
   let x0;
@@ -345,7 +433,7 @@ export function lookAt(out: mat4, eye: vec3, center: vec3, up: vec3) {
   const centerz = center[2];
 
   if (Math.abs(eyex - centerx) < epsilon && Math.abs(eyey - centery) < epsilon && Math.abs(eyez - centerz) < epsilon) {
-    return DefaultMat4Allocate.identity(out);
+    return identityMat4(out);
   }
 
   z0 = eyex - centerx;
@@ -442,70 +530,6 @@ export function ortho(out: mat4, left: number, right: number, bottom: number, to
   out[15] = 1;
   return out;
 }
-
-/**
- * 代码来自gl-matrix https://github.com/toji/gl-matrix
- * Multiplies two mat4s
- *
- * @param {mat4} out the receiving matrix
- * @param {ReadonlyMat4} a the first operand
- * @param {ReadonlyMat4} b the second operand
- * @returns {mat4} out
- */
-
-export function multiply(out: mat4, a: mat4, b: mat4) {
-  const a00 = a[0];
-  const a01 = a[1];
-  const a02 = a[2];
-  const a03 = a[3];
-  const a10 = a[4];
-  const a11 = a[5];
-  const a12 = a[6];
-  const a13 = a[7];
-  const a20 = a[8];
-  const a21 = a[9];
-  const a22 = a[10];
-  const a23 = a[11];
-  const a30 = a[12];
-  const a31 = a[13];
-  const a32 = a[14];
-  const a33 = a[15]; // Cache only the current line of the second matrix
-
-  let b0 = b[0];
-  let b1 = b[1];
-  let b2 = b[2];
-  let b3 = b[3];
-  out[0] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-  out[1] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-  out[2] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-  out[3] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-  b0 = b[4];
-  b1 = b[5];
-  b2 = b[6];
-  b3 = b[7];
-  out[4] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-  out[5] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-  out[6] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-  out[7] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-  b0 = b[8];
-  b1 = b[9];
-  b2 = b[10];
-  b3 = b[11];
-  out[8] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-  out[9] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-  out[10] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-  out[11] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-  b0 = b[12];
-  b1 = b[13];
-  b2 = b[14];
-  b3 = b[15];
-  out[12] = b0 * a00 + b1 * a10 + b2 * a20 + b3 * a30;
-  out[13] = b0 * a01 + b1 * a11 + b2 * a21 + b3 * a31;
-  out[14] = b0 * a02 + b1 * a12 + b2 * a22 + b3 * a32;
-  out[15] = b0 * a03 + b1 * a13 + b2 * a23 + b3 * a33;
-  return out;
-}
-
 /**
  * 代码来自gl-matrix https://github.com/toji/gl-matrix
  * Transforms the vec3 with a mat4.

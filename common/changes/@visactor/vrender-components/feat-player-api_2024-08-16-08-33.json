@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-components",
-      "comment": "fix: fix issue with timeline animate duration compute",
+      "comment": "feat: add necessary APIs to player component",
       "type": "none"
     }
   ],

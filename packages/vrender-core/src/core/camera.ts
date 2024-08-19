@@ -1,9 +1,9 @@
 import type { IPointLike } from '@visactor/vutils';
-import { epsilon, IPoint } from '@visactor/vutils';
-import { DefaultMat4Allocate } from '../allocator/matrix-allocate';
 import type { ICamera, mat4, OrthoParameters, vec3 } from '../interface';
 import { mat4Allocate } from '../allocator/matrix-allocate';
-import { lookAt, multiply, ortho, transformMat4 } from '../common/matrix';
+import { lookAt, ortho, transformMat4 } from '../common/matrix';
+import { Factory } from '../factory';
+import { multiplyMat4Mat4 } from '../common/matrix';
 
 /**
  * 部分代码参考 https://github.com/toji/gl-matrix
@@ -132,7 +132,7 @@ export class OrthoCamera implements ICamera {
     if (!this._vp) {
       this._vp = mat4Allocate.allocate();
     }
-    this._vp = multiply(this._vp, this.getProjectionMatrix(), this.getViewMatrix());
+    this._vp = multiplyMat4Mat4(this._vp, this.getProjectionMatrix(), this.getViewMatrix());
     return this._viewMatrixCached;
   }
 
@@ -156,7 +156,7 @@ export class OrthoCamera implements ICamera {
     if (!this._vp) {
       this._vp = mat4Allocate.allocate();
     }
-    this._vp = multiply(this._vp, this.getProjectionMatrix(), this.getViewMatrix());
+    this._vp = multiplyMat4Mat4(this._vp, this.getProjectionMatrix(), this.getViewMatrix());
     return this._projectionMatrixCached;
   }
 
@@ -194,3 +194,7 @@ export class OrthoCamera implements ICamera {
     };
   }
 }
+
+export const registerOrthoCamera = () => {
+  Factory.registerPlugin('OrthoCamera', OrthoCamera);
+};

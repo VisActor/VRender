@@ -2,20 +2,17 @@ import { injectable, inject, named, multiInject } from '../../../common/inversif
 import type {
   IGraphic,
   IGroup,
-  IGlobal,
   IRenderService,
   IDrawContext,
   IDrawContribution,
   IGraphicRender,
-  IRenderSelector,
   IDrawItemInterceptorContribution,
   IContributionProvider
 } from '../../../interface';
-import { DefaultAttribute } from '../../../graphic';
-import { LayerService } from '../../../core/constants';
+import { DefaultAttribute } from '../../../graphic/config';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
-import { GraphicRender, RenderSelector } from './symbol';
+import { GraphicRender } from './symbol';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { DrawItemInterceptor } from './draw-interceptor';

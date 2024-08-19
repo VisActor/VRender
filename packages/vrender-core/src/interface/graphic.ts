@@ -1,4 +1,4 @@
-import type { IAABBBounds, IOBBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
 import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
@@ -414,7 +414,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   // get
   readonly AABBBounds: IAABBBounds; // 用于获取当前节点的AABB包围盒
-  readonly OBBBounds: IOBBBounds; // 获取OBB包围盒，旋转防重叠需要用
+  // readonly OBBBounds: IOBBBounds; // 获取OBB包围盒，旋转防重叠需要用
   readonly globalAABBBounds: IAABBBounds; // 全局AABB包围盒
   readonly transMatrix: IMatrix; // 变换矩阵，动态计算
   readonly globalTransMatrix: IMatrix; // 变换矩阵，动态计算
@@ -495,6 +495,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   clone: () => IGraphic;
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
+  getGraphicTheme: () => T;
 }
 
 export interface IRoot extends IGraphic {

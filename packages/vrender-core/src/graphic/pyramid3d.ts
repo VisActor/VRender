@@ -1,11 +1,9 @@
-import type { AABBBounds, IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import { max, PointService } from '@visactor/vutils';
-import { parsePadding } from '../common/utils';
 import type { GraphicType, IPyramid3d, IPyramid3dGraphicAttribute } from '../interface';
 import type { IFace3d } from '../interface/graphic/face3d';
 import { application } from '../application';
 import { Polygon } from './polygon';
-import { getTheme } from './theme';
 import { PYRAMID3D_NUMBER_TYPE } from './constants';
 import { NOWORK_ANIMATE_ATTR } from './graphic';
 
@@ -20,27 +18,26 @@ export class Pyramid3d extends Polygon implements IPyramid3d {
     this.numberType = PYRAMID3D_NUMBER_TYPE;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const polygonTheme = getTheme(this).polygon;
-    this._AABBBounds.clear();
-
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updatePyramid3dAABBBounds(
-      attribute,
-      getTheme(this).polygon as any,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = polygonTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IPyramid3dGraphicAttribute,
+    polygonTheme: Required<IPyramid3dGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    const stage = this.stage;
+    if (!stage || !stage.camera) {
+      return aabbBounds;
     }
 
-    this.clearUpdateBoundTag();
-
-    return this._AABBBounds;
+    const faces = this.findFace();
+    // const outP = [0, 0, 0];
+    faces.vertices.forEach(v => {
+      const x = v[0];
+      const y = v[1];
+      aabbBounds.add(x, y);
+    });
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, false, this);
+    return aabbBounds;
   }
 
   findFace(): IFace3d {

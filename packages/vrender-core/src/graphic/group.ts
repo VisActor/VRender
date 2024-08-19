@@ -1,4 +1,4 @@
-import type { AABBBounds, Matrix, OBBBounds } from '@visactor/vutils';
+import type { IAABBBounds, Matrix } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Point } from '@visactor/vutils';
 import { application } from '../application';
@@ -15,7 +15,6 @@ import type {
 import type { IGroup, IGroupGraphicAttribute } from '../interface/graphic/group';
 import { Graphic, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme, Theme } from './theme';
-import { parsePadding } from '../common/utils';
 import { UpdateTag, IContainPointMode } from '../common/enums';
 import { GROUP_NUMBER_TYPE } from './constants';
 import { DefaultTransform } from './config';
@@ -76,26 +75,23 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     }
   }
 
-  hideAll() {
-    this.setAttribute('visible', false);
+  visibleAll(visible: boolean) {
+    this.setAttribute('visible', visible);
     this.forEachChildren((item: IGraphic) => {
-      if (item.isContainer && (item as any).hideAll) {
-        (item as any).hideAll();
+      if (item.isContainer && (item as any).visibleAll) {
+        (item as any).visibleAll(visible);
       } else {
-        item.setAttribute('visible', false);
+        item.setAttribute('visible', visible);
       }
     });
   }
 
+  hideAll() {
+    this.visibleAll(false);
+  }
+
   showAll() {
-    this.setAttribute('visible', true);
-    this.forEachChildren((item: IGraphic) => {
-      if (item.isContainer && (item as any).showAll) {
-        (item as any).showAll();
-      } else {
-        item.setAttribute('visible', true);
-      }
-    });
+    this.visibleAll(true);
   }
 
   /**
@@ -142,7 +138,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     // return needUpdate;
   }
 
-  protected tryUpdateAABBBounds(): AABBBounds {
+  protected tryUpdateAABBBounds(): IAABBBounds {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -176,38 +172,54 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return super.doUpdateLocalMatrix();
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const attribute = this.attribute;
-    const groupTheme = getTheme(this).group;
-    // debugger;
-    this._AABBBounds.clear();
-    const bounds = application.graphicService.updateGroupAABBBounds(
-      attribute,
-      groupTheme,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme(): Required<IGroupGraphicAttribute> {
+    return getTheme(this).group;
+  }
 
-    const { boundsPadding = groupTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IGroupGraphicAttribute,
+    groupTheme: Required<IGroupGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    const originalAABBBounds = aabbBounds; // fix aabbbounds update error in flex layout
+    aabbBounds = aabbBounds.clone();
+
+    const { width, height, path, clip = groupTheme.clip, display } = attribute;
+    // 添加自身的fill或者clip
+    if (path && path.length) {
+      path.forEach(g => {
+        aabbBounds.union(g.AABBBounds);
+      });
+    } else if (width != null && height != null) {
+      aabbBounds.set(0, 0, Math.max(0, width), Math.max(0, height)); // fix bounds set when auto size in vtable
     }
+    if (!clip) {
+      // 添加子节点
+      this.forEachChildren((node: IGraphic) => {
+        aabbBounds.union(node.AABBBounds);
+      });
+    }
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, groupTheme, false, this);
+
+    originalAABBBounds.copy(aabbBounds);
+    return originalAABBBounds;
+  }
+
+  protected doUpdateAABBBounds(): IAABBBounds {
+    const bounds = super.doUpdateAABBBounds();
+
     // 更新bounds之后需要设置父节点，否则tag丢失
     this.parent && this.parent.addChildUpdateBoundTag();
-    this.clearUpdateBoundTag();
-
     this._emitCustomEvent('AAABBBoundsChange');
+
     return bounds;
   }
 
   protected clearUpdateBoundTag() {
     this._updateTag &= UpdateTag.CLEAR_BOUNDS;
     this._childUpdateTag &= UpdateTag.CLEAR_BOUNDS;
-  }
-
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
   }
 
   addUpdateBoundTag() {
@@ -231,10 +243,6 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return this.theme.getTheme(this);
   }
 
-  // getDefaultAttribute(name: string) {
-  //   return DefaultGroupAttribute[name];
-  // }
-
   /* 场景树结构 */
   incrementalAppendChild(node: INode): INode | null {
     const data = super.appendChild(node);
@@ -253,6 +261,14 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return;
   }
 
+  protected _updateChildToStage(child: IGraphic) {
+    if (this.stage && child) {
+      child.setStage(this.stage, this.layer);
+    }
+    this.addUpdateBoundTag();
+    return child;
+  }
+  // TODO 代码优化
   appendChild(node: INode, addStage: boolean = true): INode | null {
     const data = super.appendChild(node);
     if (addStage && this.stage && data) {
@@ -262,28 +278,13 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     return data;
   }
   insertBefore(newNode: INode, referenceNode: INode): INode | null {
-    const data = super.insertBefore(newNode, referenceNode);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertBefore(newNode, referenceNode) as undefined as IGraphic);
   }
   insertAfter(newNode: INode, referenceNode: INode): INode | null {
-    const data = super.insertAfter(newNode, referenceNode);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertAfter(newNode, referenceNode) as undefined as IGraphic);
   }
   insertInto(newNode: INode, idx: number): INode | null {
-    const data = super.insertInto(newNode, idx);
-    if (this.stage && data) {
-      (data as unknown as this).setStage(this.stage, this.layer);
-    }
-    this.addUpdateBoundTag();
-    return data;
+    return this._updateChildToStage(super.insertInto(newNode, idx) as undefined as IGraphic);
   }
 
   removeChild(child: IGraphic): IGraphic {

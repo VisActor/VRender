@@ -1,4 +1,4 @@
-import type { AABBBounds, Matrix } from '@visactor/vutils';
+import type { IAABBBounds, Matrix } from '@visactor/vutils';
 import type { GraphicType, IGraphic, IGroup } from '../interface';
 import { Group } from './group';
 
@@ -56,7 +56,7 @@ export class ShadowRoot extends Group {
   }
   // 计算AABBBounds不受影响
   // 计算globalAABBBounds
-  protected tryUpdateGlobalAABBBounds(): AABBBounds {
+  protected tryUpdateGlobalAABBBounds(): IAABBBounds {
     if (!this._globalAABBBounds) {
       this._globalAABBBounds = this._AABBBounds.clone();
     } else {

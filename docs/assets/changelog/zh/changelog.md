@@ -1,3 +1,40 @@
+# v0.20.0
+
+2024-08-16
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: arc label line color should follow arc mark by default, related [#3067](https://github.com/VisActor/VRender/issues/3067)
+- **@visactor/vrender-components**: fix bug of auto-render when remove some graphics
+- **@visactor/vrender-components**: set container pick false to allow tooltip interactive
+- **@visactor/vrender-components**: fix issue with timeline animate duration compute
+- **@visactor/vrender-components**: optimize triangle symbols
+- **@visactor/react-vrender-utils**: fix bug of auto-render when remove some graphics
+- **@visactor/react-vrender-utils**: optimize triangle symbols
+- **@visactor/react-vrender**: fix bug of auto-render when remove some graphics
+- **@visactor/react-vrender**: optimize triangle symbols
+- **@visactor/vrender-kits**: fix bug of auto-render when remove some graphics
+- **@visactor/vrender-kits**: optimize triangle symbols
+- **@visactor/vrender-core**: fix bug of auto-render when remove some graphics
+- **@visactor/vrender-core**: optimize triangle symbols
+- **@visactor/vrender**: fix bug of auto-render when remove some graphics
+- **@visactor/vrender**: optimize triangle symbols
+
+**🔨 功能重构**
+
+- **@visactor/vrender-components**: optimize cornerRadius parse of arc
+- **@visactor/react-vrender-utils**: optimize cornerRadius parse of arc
+- **@visactor/react-vrender**: optimize cornerRadius parse of arc
+- **@visactor/vrender-kits**: optimize cornerRadius parse of arc
+- **@visactor/vrender-core**: optimize cornerRadius parse of arc
+- **@visactor/vrender-core**: remove polyfill from reflect-metadata
+- **@visactor/vrender**: optimize cornerRadius parse of arc
+
+
+
+[更多详情请查看 v0.20.0](https://github.com/VisActor/VRender/releases/tag/v0.20.0)
+
 # v0.19.24
 
 2024-08-14

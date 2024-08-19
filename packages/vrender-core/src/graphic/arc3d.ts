@@ -1,9 +1,7 @@
-import type { AABBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
 import type { GraphicType, IArc3d, IArc3dGraphicAttribute } from '../interface';
 import { Arc } from './arc';
-import { getTheme } from './theme';
 import { application } from '../application';
-import { parsePadding } from '../common/utils';
 import { ARC3D_NUMBER_TYPE } from './constants';
 import { NOWORK_ANIMATE_ATTR } from './graphic';
 
@@ -21,27 +19,47 @@ export class Arc3d extends Arc implements IArc3d {
     this.numberType = ARC3D_NUMBER_TYPE;
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const polygonTheme = getTheme(this).arc;
-    this._AABBBounds.clear();
-
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateArc3dAABBBounds(
-      attribute,
-      getTheme(this).polygon as any,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = polygonTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IArc3dGraphicAttribute,
+    arcTheme: Required<IArc3dGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    const stage = this.stage;
+    if (!stage || !stage.camera) {
+      return aabbBounds;
     }
 
-    this.clearUpdateBoundTag();
-
-    return this._AABBBounds;
+    // 当做一个立方体计算
+    const { outerRadius = arcTheme.outerRadius, height = 0 } = attribute;
+    const r = outerRadius + height;
+    aabbBounds.setValue(-r, -r, r, r);
+    // const matrix = getExtraModelMatrix(graphic.globalTransMatrix, 1, graphic);
+    // const { outerRadius=arcTheme.outerRadius, height=0 } = attribute;
+    // const points = [
+    //   {x: -outerRadius, y: -outerRadius, z: 0 },
+    //   {x: outerRadius, y: -outerRadius, z: 0 },
+    //   {x: outerRadius, y: outerRadius, z: 0 },
+    //   {x: -outerRadius, y: outerRadius, z: 0 },
+    //   {x: -outerRadius, y: -outerRadius, z: height },
+    //   {x: outerRadius, y: -outerRadius, z: height },
+    //   {x: outerRadius, y: outerRadius, z: height },
+    //   {x: -outerRadius, y: outerRadius, z: height },
+    // ]
+    // const outP: vec3 = [0, 0, 0];
+    // points.forEach(item => {
+    //   let x = item.x;
+    //   let y = item.y;
+    //   if (stage.camera) {
+    //     transformMat4(outP, [item.x, item.y, item.z], matrix);
+    //     const data = stage.camera.vp(outP[0], outP[1], outP[2]);
+    //     x = data.x;
+    //     y = data.y;
+    //   }
+    //   aabbBounds.add(x, y);
+    // });
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, false, this);
+    return aabbBounds;
   }
 
   getNoWorkAnimateAttr(): Record<string, number> {

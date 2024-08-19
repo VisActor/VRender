@@ -1,5 +1,6 @@
 import type { IOption3D, IPlugin, IPluginService } from '../../interface';
 import { Generator } from '../../common/generator';
+import { Factory } from '../../factory';
 
 export class ViewTransform3dPlugin implements IPlugin {
   name: 'ViewTransform3dPlugin' = 'ViewTransform3dPlugin';
@@ -75,3 +76,7 @@ export class ViewTransform3dPlugin implements IPlugin {
     stage.removeEventListener('mousemove', this.onMouseMove);
   }
 }
+
+export const registerViewTransform3dPlugin = () => {
+  Factory.registerPlugin('ViewTransform3dPlugin', ViewTransform3dPlugin);
+};

@@ -19,10 +19,10 @@ import type {
   IGraphicRender,
   IPickParams
 } from '@visactor/vrender-core';
-import { BasePicker } from './base-picker';
+import { Base3dPicker } from '../common/base-3d-picker';
 
 @injectable()
-export class DefaultCanvasTextPicker extends BasePicker<IText> implements IGraphicPicker {
+export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGraphicPicker {
   type: string = 'text';
   numberType: number = TEXT_NUMBER_TYPE;
 
@@ -52,7 +52,7 @@ export class DefaultCanvasTextPicker extends BasePicker<IText> implements IGraph
 
     // const symbolAttribute = graphicService.themeService.getCurrentTheme().symbolAttribute;
     pickContext.highPerformanceSave();
-    const textAttribute = getTheme(text).text;
+    const textAttribute = text.getGraphicTheme();
 
     const { keepDirIn3d = textAttribute.keepDirIn3d } = text.attribute;
     // 文字如果需要变换，那就一定要计算3d矩阵

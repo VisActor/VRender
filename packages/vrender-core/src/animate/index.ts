@@ -4,3 +4,4 @@ export * from './config';
 export * from './custom-animate';
 export * from './morphing';
 export * from './timeline';
+export * from './group-fade';

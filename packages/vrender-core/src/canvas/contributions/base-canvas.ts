@@ -1,4 +1,3 @@
-import { injectable } from '../../common/inversify-lite';
 import type { CanvasConfigType, ICanvas, IContext2d, EnvType } from '../../interface';
 
 const DefaultConfig = {
@@ -7,7 +6,6 @@ const DefaultConfig = {
   DPR: 1
 };
 
-@injectable()
 export abstract class BaseCanvas implements ICanvas {
   static env: EnvType = 'browser';
   // 显示的宽高，如果是离屏canvas，就是pixelWidth / pixelRatio
@@ -35,7 +33,10 @@ export abstract class BaseCanvas implements ICanvas {
   get displayHeight(): number {
     return this._pixelHeight / this._dpr;
   }
-
+  /**
+   * TODO
+   *  get\set 方法看看是否可以删掉
+   */
   get id(): number | string {
     return this._id;
   }

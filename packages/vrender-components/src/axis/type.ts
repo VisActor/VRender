@@ -11,6 +11,7 @@ import type {
   IGraphic
 } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
+import type { ContinuousScale, CustomTicksFunc } from '@visactor/vscale';
 import type { Point, TextContent } from '../core/type';
 import type { SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
@@ -458,7 +459,7 @@ export interface ITickDataOpt {
   tickCount?: number | ((option: ITickCallbackOption) => number);
   forceTickCount?: number;
   tickStep?: number;
-  tickMode?: 'average' | 'd3' | string;
+  tickMode?: 'average' | 'd3' | string | CustomTicksFunc<ContinuousScale>;
   noDecimals?: boolean;
 
   coordinateType: CoordinateType;

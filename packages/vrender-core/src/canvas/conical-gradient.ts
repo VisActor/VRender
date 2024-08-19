@@ -204,6 +204,7 @@ class ConicalPatternStore {
 export function getConicGradientAt(x: number, y: number, angle: number, color: IConicalGradient) {
   const { stops, startAngle, endAngle } = color;
 
+  // TODO 格式化angle
   while (angle < 0) {
     angle += pi2;
   }

@@ -1,20 +1,16 @@
 import type {
   IGraphicRender,
   IRenderService,
-  IGraphic,
   ICircle,
-  IContext2d,
-  IMarkAttribute,
-  IThemeAttribute,
-  IGraphicAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';
 import { CIRCLE_NUMBER_TYPE, DefaultCanvasCircleRender, getTheme, inject, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
+import { RoughBaseRender } from './base-render';
 
 @injectable()
-export class RoughCanvasCircleRender implements IGraphicRender {
+export class RoughCanvasCircleRender extends RoughBaseRender implements IGraphicRender {
   declare type: 'circle';
   declare numberType: number;
   style: 'rough' = 'rough';
@@ -23,6 +19,7 @@ export class RoughCanvasCircleRender implements IGraphicRender {
     @inject(DefaultCanvasCircleRender)
     public readonly canvasRenderer: IGraphicRender
   ) {
+    super();
     this.type = 'circle';
     this.numberType = CIRCLE_NUMBER_TYPE;
   }
@@ -38,7 +35,7 @@ export class RoughCanvasCircleRender implements IGraphicRender {
     const rc = rough.canvas(canvas, {});
 
     // const circleAttribute = graphicService.themeService.getCurrentTheme().circleAttribute;
-    const circleAttribute = getTheme(circle).circle;
+    const circleAttribute = circle.getGraphicTheme();
     let { x = circleAttribute.x, y = circleAttribute.y } = circle.attribute;
     if (!circle.transMatrix.onlyTranslate()) {
       // 性能较差
@@ -63,27 +60,5 @@ export class RoughCanvasCircleRender implements IGraphicRender {
       fillStyle: 'zigzag',
       roughness: 0.5
     });
-  }
-  drawShape(
-    graphic: IGraphic,
-    ctx: IContext2d,
-    x: number,
-    y: number,
-    drawContext: IDrawContext,
-    params?: IGraphicRenderDrawParams,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ): void {
-    if (this.canvasRenderer.drawShape) {
-      return this.canvasRenderer.drawShape(graphic, ctx, x, y, drawContext, params, fillCb, strokeCb);
-    }
   }
 }

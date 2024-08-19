@@ -3,6 +3,7 @@ import type { IGraphic, IPlugin, IPluginService } from '../../interface';
 import { application } from '../../application';
 import { HtmlAttributePlugin } from './html-attribute-plugin';
 import { isNil } from '@visactor/vutils';
+import { Factory } from '../../factory';
 
 export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin {
   name: 'ReactAttributePlugin' = 'ReactAttributePlugin';
@@ -110,3 +111,7 @@ export class ReactAttributePlugin extends HtmlAttributePlugin implements IPlugin
     this.htmlMap[id].renderId = this.renderId;
   }
 }
+
+export const registerReactAttributePlugin = () => {
+  Factory.registerPlugin('ReactAttributePlugin', ReactAttributePlugin);
+};

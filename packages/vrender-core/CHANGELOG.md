@@ -1,6 +1,413 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 02 Feb 2024 07:17:07 GMT and should not be manually modified.
+This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+
+## 0.20.0
+Thu, 15 Aug 2024 07:26:54 GMT
+
+### Updates
+
+- fix: fix bug of auto-render when remove some graphics
+
+
+- fix: optimize triangle symbols
+
+
+- refactor: optimize cornerRadius parse of arc
+
+
+- refactor: remove polyfill from reflect-metadata
+
+## 0.19.24
+Tue, 13 Aug 2024 07:47:29 GMT
+
+### Updates
+
+- feat: support polygon of circle-axis
+
+
+- feat: support rect corner array with array stroke
+- fix: fix wrong stroke style is applied to area
+
+
+- fix: fix issue with baseOpacity equal to 0
+- fix: fix edge and corner stroke in createRectPath()
+- fix: fix issue with shadow group matrix
+- fix: fix issue with disableAutoWrapLine
+- fix: fix richtext icon pick range #1362
+- fix: fix issue with richtext attribute update
+
+## 0.19.23
+Tue, 06 Aug 2024 05:17:39 GMT
+
+### Updates
+
+- fix: fix picker of shadow root group
+
+
+
+## 0.19.22
+Mon, 05 Aug 2024 09:08:30 GMT
+
+### Updates
+
+- feat: shadow graphic support pick group
+- fix: fix issue with Event class in harmony event
+
+## 0.19.21
+Mon, 05 Aug 2024 01:39:45 GMT
+
+_Version update only_
+
+## 0.19.20
+Wed, 31 Jul 2024 09:48:37 GMT
+
+### Updates
+
+- feat: support array cornerRadius, closed #1322
+- feat: support catmull-rom and catmull-rom-closed curve, closed #1320
+
+## 0.19.19
+Tue, 23 Jul 2024 11:56:39 GMT
+
+### Updates
+
+- feat: marker label support custom shape. close @Visactor/VChart#2959
+- fix: fixed the problem that the bounds calculation of line mark is wrong when the defiend of some points is false
+
+
+
+## 0.19.18
+Fri, 12 Jul 2024 07:18:10 GMT
+
+### Updates
+
+- fix: support react 17 in react attributes
+
+
+
+## 0.19.17
+Fri, 05 Jul 2024 17:26:17 GMT
+
+_Version update only_
+
+## 0.19.16
+Fri, 05 Jul 2024 14:29:15 GMT
+
+### Updates
+
+- fix: fix syncState of label when re-render stage
+
+
+- fix: fix issue with setAttribute while play with startAt
+
+## 0.19.15
+Fri, 28 Jun 2024 10:32:37 GMT
+
+### Updates
+
+- fix: fix issue with area clip direction
+- feat: support `clip` effect for new points in tagPointsUpdate animation
+- fix: get default end props
+
+## 0.19.14
+Wed, 26 Jun 2024 09:16:23 GMT
+
+### Updates
+
+- feat: support richtext editor
+- feat: upgrade @visactor/vutils
+- fix: fix issue with rect bounds while the wh is not setted
+
+## 0.19.13
+Tue, 25 Jun 2024 11:17:14 GMT
+
+### Updates
+
+- fix: fix issue with stage while it is released
+
+## 0.19.12
+Fri, 21 Jun 2024 06:52:50 GMT
+
+_Version update only_
+
+## 0.19.11
+Fri, 14 Jun 2024 09:50:59 GMT
+
+_Version update only_
+
+## 0.19.10
+Thu, 13 Jun 2024 09:52:46 GMT
+
+### Updates
+
+- feat(streamLight): streamLight support direction and  parent support x1y1 attribute. close@Visactor/VChart#2734
+- fix: fix issue with interploate while color is array
+- fix: only clear animation when has no state animation
+
+## 0.19.9
+Wed, 05 Jun 2024 12:25:00 GMT
+
+_Version update only_
+
+## 0.19.8
+Wed, 05 Jun 2024 08:24:28 GMT
+
+_Version update only_
+
+## 0.19.7
+Tue, 04 Jun 2024 11:10:08 GMT
+
+### Updates
+
+- fix: fix `useStates` of glyph
+
+
+- feat: image support stroke and border, closed #1242
+- fix: fix env check in micro frontend env
+
+## 0.19.6
+Wed, 29 May 2024 06:57:11 GMT
+
+### Updates
+
+- fix: fix issue with color array interpolate
+- fix: fix issue with detailPath that list will not be cleard
+- fix: fix issue with _nodeList while removeAllChild
+- fix: fix issue with unTap
+- fix: fix animation of state change
+
+
+
+## 0.19.5
+Fri, 24 May 2024 09:21:23 GMT
+
+_Version update only_
+
+## 0.19.4
+Fri, 17 May 2024 06:46:41 GMT
+
+### Updates
+
+- feat: support harmony env
+
+## 0.19.3
+Fri, 10 May 2024 09:24:39 GMT
+
+### Updates
+
+- feat: support baseOpacity for group
+
+## 0.19.2
+Thu, 09 May 2024 12:26:00 GMT
+
+### Updates
+
+- feat: event support detailPath
+- feat: support pauseTriggerEvent to pause stage event trigger
+
+## 0.19.1
+Wed, 08 May 2024 08:47:35 GMT
+
+### Updates
+
+- feat: rename forceBreakLine to disableAutoWrapLine
+- fix: fix issue with disableAutoWrapLine ellipsis
+- fix: fix issue with interactive graphic while base graphic is removed
+
+## 0.19.0
+Tue, 30 Apr 2024 08:40:53 GMT
+
+### Updates
+
+- fix: fix point of event when stage has transform
+
+
+- feat: draw-contribution support check appName, closed #1122
+- feat: set renderService to multi-instance
+- feat: support `opacity`/`fillOpacity`/`strokeOpacity` in richtext
+- feat: support style callback in html and react, fix 1102
+
+
+
+## 0.18.17
+Tue, 30 Apr 2024 07:48:41 GMT
+
+### Updates
+
+- fix: fix issue with setLineDash crash, closed #1047
+- fix: fix error of label when all the labels are cleared
+
+
+- fix: fix flex-end layout order
+- fix: fix issue with rect stroke array while defined by x1y1, closed #1169
+
+## 0.18.16
+Mon, 29 Apr 2024 07:40:31 GMT
+
+### Updates
+
+- fix: theme should not support 3d graphics
+
+
+
+## 0.18.15
+Fri, 26 Apr 2024 10:37:19 GMT
+
+### Updates
+
+- feat: support forceBoundsWH, closed #1128
+- feat: support renderable attribute, closed #1128
+
+## 0.18.14
+Wed, 24 Apr 2024 08:07:48 GMT
+
+### Updates
+
+- feat: richtext support forceBreakLine, closed #1055
+- fix: fix flex layout crossLen problem
+- fix: pointerenter should not bubble when inside the same group, and revert previous wrong fix, fixed #1132
+- fix: fix issue with feishu program, closed #2567
+
+## 0.18.13
+Fri, 19 Apr 2024 08:46:08 GMT
+
+_Version update only_
+
+## 0.18.12
+Fri, 19 Apr 2024 07:48:17 GMT
+
+### Updates
+
+- fix: when clear states, the animations of state should clear
+
+
+- fix: fix issue with render html
+- fix: fix issue with richtext background
+- fix: fix the issue of update selected value of slider
+
+
+- docs: update changlog of rush
+
+
+- fix: add ellipsis in height limit
+
+## 0.18.11
+Wed, 17 Apr 2024 03:02:22 GMT
+
+### Updates
+
+- feat: 支持background-opacity配置
+- fix: fix issue with wh changed by flex layout, closed #1088
+- fix: pointerenter and pointerleave do not bubble, fixed #1132
+- fix: fix for dragenter triggering error in drag event
+- fix: fix memory issue with stage timeline and DefaultRenderService
+
+## 0.18.10
+Fri, 29 Mar 2024 08:02:16 GMT
+
+_Version update only_
+
+## 0.18.9
+Thu, 28 Mar 2024 10:13:24 GMT
+
+### Updates
+
+- fix: fix issue with empty global bounds
+
+## 0.18.8
+Wed, 27 Mar 2024 11:33:58 GMT
+
+### Updates
+
+- fix: fix issue with pointer tap event point map
+- fix: fix issue for multi line text with underline, closed #1100
+
+## 0.18.7
+Fri, 22 Mar 2024 08:46:19 GMT
+
+### Updates
+
+- fix: fix issue with offscreen style
+- fix: fix issue with area animate
+
+## 0.18.6
+Tue, 19 Mar 2024 10:10:17 GMT
+
+### Updates
+
+- feat: richtext support combine linewidth style
+- fix: html-plugin support release
+- feat: support native render for react, closed #400
+
+## 0.18.5
+Tue, 12 Mar 2024 15:16:46 GMT
+
+_Version update only_
+
+## 0.18.4
+Tue, 12 Mar 2024 09:40:06 GMT
+
+_Version update only_
+
+## 0.18.3
+Mon, 11 Mar 2024 08:24:00 GMT
+
+_Version update only_
+
+## 0.18.2
+Fri, 08 Mar 2024 03:19:08 GMT
+
+_Version update only_
+
+## 0.18.1
+Mon, 04 Mar 2024 08:29:15 GMT
+
+_Version update only_
+
+## 0.18.0
+Wed, 28 Feb 2024 10:09:04 GMT
+
+### Updates
+
+- feat: support flatten_simplify
+- feat: support innerpadding and outerpadding
+- feat: richtext support inherit attribute, closed #946
+- fix: multiline text underline bugfix, closed #1029
+
+## 0.17.26
+Wed, 28 Feb 2024 08:06:31 GMT
+
+### Updates
+
+- feat: animate with stage timeline
+- feat: support underline Dash and undeline offset, closed #1025
+- fix: fix issue with load svg sync, fix issue with decode react dom
+
+## 0.17.25
+Fri, 23 Feb 2024 04:29:58 GMT
+
+### Updates
+
+- feat: support flatten_simplify
+- feat: jsx attribute support name and id
+- fix: fix issue with check gradient str color, closed #984
+- fix: globalZIndex attribute should not do animation
+- fix: fix issue with string star path
+- fix: fix issue with text background while angle attr configed, closed #1002
+
+## 0.17.24
+Tue, 06 Feb 2024 09:48:26 GMT
+
+_Version update only_
+
+## 0.17.23
+Sun, 04 Feb 2024 12:41:45 GMT
+
+### Updates
+
+- feat: support renderStyle config
+- fix: fix issue with single point in area graphic
 
 ## 0.17.22
 Fri, 02 Feb 2024 07:17:07 GMT

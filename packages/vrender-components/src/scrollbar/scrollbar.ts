@@ -10,6 +10,7 @@ import { AbstractComponent } from '../core/base';
 import type { ScrollBarAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadScrollbarComponent } from './register';
+import { SCROLLBAR_EVENT } from '../constant';
 
 type ComponentBounds = {
   x1: number;
@@ -108,13 +109,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     (this.attribute as ScrollBarAttributes).range = currScrollRange;
     // 发射 change 事件
     if (realTime) {
-      // FIXME: for vchart, 下个中版本删除
-      this._dispatchEvent('scroll', {
-        pre: preRange,
-        value: currScrollRange
-      });
-      // FIXME: for vtable, 下个中版本保留
-      this._dispatchEvent('scrollDrag', {
+      this._dispatchEvent(SCROLLBAR_EVENT, {
         pre: preRange,
         value: currScrollRange
       });
@@ -311,18 +306,22 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
+    const { stopSliderDownPropagation = true } = this.attribute as ScrollBarAttributes;
+    if (stopSliderDownPropagation) {
+      e.stopPropagation();
+    }
     const { direction } = this.attribute as ScrollBarAttributes;
-    this._prePos = direction === 'horizontal' ? e.clientX : e.clientY;
+    const { x, y } = this.stage.eventPointTransform(e);
+    this._prePos = direction === 'horizontal' ? x : y;
     this._dispatchEvent('scrollDown', {
       pos: this._prePos,
       event: e
     });
     if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      vglobal.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       vglobal.addEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this.stage.addEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      this.stage.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       this.stage.addEventListener('pointerup', this._onSliderPointerUp);
       this.stage.addEventListener('pointerupoutside', this._onSliderPointerUp);
     }
@@ -330,30 +329,40 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _computeScrollValue = (e: any) => {
     const { direction } = this.attribute as ScrollBarAttributes;
+    const { x, y } = this.stage.eventPointTransform(e);
+
     let currentScrollValue;
     let currentPos;
     let delta = 0;
 
     const { width, height } = this._getSliderRenderBounds();
     if (direction === 'vertical') {
-      currentPos = e.clientY;
+      currentPos = y;
       delta = currentPos - this._prePos;
       currentScrollValue = delta / height;
     } else {
-      currentPos = e.clientX;
+      currentPos = x;
       delta = currentPos - this._prePos;
       currentScrollValue = delta / width;
     }
     return [currentPos, currentScrollValue];
   };
 
-  private _onSliderPointerMove = delayMap[this.attribute.delayType]((e: any) => {
-    e.stopPropagation();
+  private _onSliderPointerMove = (e: any) => {
+    const { stopSliderMovePropagation = true } = this.attribute as ScrollBarAttributes;
+    if (stopSliderMovePropagation) {
+      e.stopPropagation();
+    }
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     this.setScrollRange([preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue], true);
     this._prePos = currentPos;
-  }, this.attribute.delayTime);
+  };
+
+  private _onSliderPointerMoveWithDelay =
+    this.attribute.delayTime === 0
+      ? this._onSliderPointerMove
+      : delayMap[this.attribute.delayType](this._onSliderPointerMove, this.attribute.delayTime);
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
@@ -363,23 +372,15 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
 
-    // FIXME: for vchart, 下个中版本删除
-    if (!realTime) {
-      this._dispatchEvent('scroll', {
-        pre: preRange,
-        value: clampRange(range, limitRange[0], limitRange[1])
-      });
-    }
-    // FIXME: for vtable, 下个中版本保留
     this._dispatchEvent('scrollUp', {
       pre: preRange,
       value: clampRange(range, limitRange[0], limitRange[1])
     });
     if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      vglobal.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       vglobal.removeEventListener('pointerup', this._onSliderPointerUp);
     } else {
-      this.stage.removeEventListener('pointermove', this._onSliderPointerMove, { capture: true });
+      this.stage.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
       this.stage.removeEventListener('pointerup', this._onSliderPointerUp);
       this.stage.removeEventListener('pointerupoutside', this._onSliderPointerUp);
     }

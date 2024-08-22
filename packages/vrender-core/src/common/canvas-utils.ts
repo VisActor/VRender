@@ -1,8 +1,7 @@
 import type { IColor, IConicalGradient, ILinearGradient, IRadialGradient } from '../interface/color';
 import type { IContext2d, ITransform } from '../interface';
-import { ICommonStyleParams } from '../interface';
 import type { IBoundsLike } from '@visactor/vutils';
-import { IMatrix, isArray } from '@visactor/vutils';
+import { isArray } from '@visactor/vutils';
 import { GradientParser } from './color-utils';
 
 export function getScaledStroke(context: IContext2d, width: number, dpr: number) {
@@ -22,8 +21,8 @@ export function createColor(
   context: IContext2d,
   c: string | IColor | Array<string | IColor> | boolean,
   params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
-  offsetX: number,
-  offsetY: number
+  offsetX: number = 0,
+  offsetY: number = 0
 ): string | CanvasGradient {
   if (!c || c === true) {
     return 'black';
@@ -44,43 +43,32 @@ export function createColor(
   if (typeof color === 'string') {
     return color;
   }
-  // TODO 不同scaleCenter有问题
-  if (color.gradient === 'linear') {
-    result = createLinearGradient(context, color, params, offsetX, offsetY);
-  } else if (color.gradient === 'conical') {
-    result = createConicGradient(context, color, params, offsetX, offsetY);
-  } else if (color.gradient === 'radial') {
-    result = createRadialGradient(context, color, params, offsetX, offsetY);
+  if (params.AABBBounds && (!params.attribute || params.attribute.scaleX !== 0 || params.attribute.scaleY !== 0)) {
+    const bounds = params.AABBBounds;
+    let w = bounds.x2 - bounds.x1;
+    let h = bounds.y2 - bounds.y1;
+    let x = bounds.x1 - offsetX;
+    let y = bounds.y1 - offsetY;
+    if (params.attribute) {
+      const { scaleX = 1, scaleY = 1 } = params.attribute;
+      w /= scaleX;
+      h /= scaleY;
+      x /= scaleX;
+      y /= scaleY;
+    }
+    // TODO 不同scaleCenter有问题
+    if (color.gradient === 'linear') {
+      result = createLinearGradient(context, color, x, y, w, h);
+    } else if (color.gradient === 'conical') {
+      result = createConicGradient(context, color, x, y, w, h);
+    } else if (color.gradient === 'radial') {
+      result = createRadialGradient(context, color, x, y, w, h);
+    }
   }
   return result || 'orange';
 }
 
-function createLinearGradient(
-  context: IContext2d,
-  color: ILinearGradient,
-  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
-  offsetX: number = 0,
-  offsetY: number = 0
-) {
-  const bounds = params.AABBBounds;
-  if (!bounds) {
-    return;
-  }
-  let w = bounds.x2 - bounds.x1;
-  let h = bounds.y2 - bounds.y1;
-  let x = bounds.x1 - offsetX;
-  let y = bounds.y1 - offsetY;
-  if (params.attribute) {
-    const { scaleX = 1, scaleY = 1 } = params.attribute;
-    if (scaleX * scaleY === 0) {
-      return;
-    }
-    w /= scaleX;
-    h /= scaleY;
-    x /= scaleX;
-    y /= scaleY;
-  }
-
+function createLinearGradient(context: IContext2d, color: ILinearGradient, x: number, y: number, w: number, h: number) {
   const canvasGradient = context.createLinearGradient(
     x + (color.x0 ?? 0) * w,
     y + (color.y0 ?? 0) * h,
@@ -93,31 +81,7 @@ function createLinearGradient(
   return canvasGradient;
 }
 
-function createRadialGradient(
-  context: IContext2d,
-  color: IRadialGradient,
-  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
-  offsetX: number = 0,
-  offsetY: number = 0
-) {
-  const bounds = params.AABBBounds;
-  if (!bounds) {
-    return;
-  }
-  let w = bounds.x2 - bounds.x1;
-  let h = bounds.y2 - bounds.y1;
-  let x = bounds.x1 - offsetX;
-  let y = bounds.y1 - offsetY;
-  if (params.attribute) {
-    const { scaleX = 1, scaleY = 1 } = params.attribute;
-    if (scaleX * scaleY === 0) {
-      return;
-    }
-    x /= scaleX;
-    y /= scaleY;
-    w /= scaleX;
-    h /= scaleY;
-  }
+function createRadialGradient(context: IContext2d, color: IRadialGradient, x: number, y: number, w: number, h: number) {
   const canvasGradient = context.createRadialGradient(
     x + (color.x0 ?? 0.5) * w,
     y + (color.y0 ?? 0.5) * h,
@@ -132,32 +96,7 @@ function createRadialGradient(
   return canvasGradient;
 }
 
-function createConicGradient(
-  context: IContext2d,
-  color: IConicalGradient,
-  params: { AABBBounds?: IBoundsLike; attribute?: Partial<ITransform> },
-  offsetX: number = 0,
-  offsetY: number = 0
-) {
-  const bounds = params.AABBBounds;
-  if (!bounds) {
-    return;
-  }
-  let w = bounds.x2 - bounds.x1;
-  let h = bounds.y2 - bounds.y1;
-  let x = bounds.x1 - offsetX;
-  let y = bounds.y1 - offsetY;
-  if (params.attribute) {
-    const { scaleX = 1, scaleY = 1 } = params.attribute;
-    if (scaleX * scaleY === 0) {
-      return;
-    }
-    w /= scaleX;
-    h /= scaleY;
-    x /= scaleX;
-    y /= scaleY;
-  }
-
+function createConicGradient(context: IContext2d, color: IConicalGradient, x: number, y: number, w: number, h: number) {
   const canvasGradient = context.createConicGradient(
     x + (color.x ?? 0) * w,
     y + (color.y ?? 0) * h,

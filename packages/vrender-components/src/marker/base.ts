@@ -1,27 +1,108 @@
-import type { IGroup } from '@visactor/vrender-core';
+import type { FederatedPointerEvent, IGraphic, IGroup, IImage, IRichText, ISymbol } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { Tag } from '../tag';
-import type { MarkerAttrs } from './type';
+import type { MarkerAnimationState, MarkerAttrs, MarkerExitAnimation, MarkerUpdateAnimation } from './type';
+import { dispatchClickState, dispatchHoverState, dispatchUnHoverState } from '../util/interaction';
+import { isObject, merge } from '@visactor/vutils';
 
-export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Required<T>> {
+export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr> extends AbstractComponent<
+  Required<T>
+> {
   name = 'marker';
+
   private _containerClip!: IGroup;
-  private _container!: IGroup;
+  protected _container!: IGroup;
 
   protected _label!: Tag;
+
+  /** animate */
+  static _animate?: (
+    marker: any,
+    label: Tag | IRichText | ISymbol | IImage,
+    animationConfig: any,
+    state: MarkerAnimationState
+  ) => void;
+
+  defaultUpdateAnimation!: MarkerUpdateAnimation<AnimationAttr>;
+  defaultExitAnimation!: MarkerExitAnimation;
+
+  protected _animationConfig?: {
+    enter: MarkerUpdateAnimation<AnimationAttr>;
+    exit: MarkerExitAnimation;
+    update: MarkerUpdateAnimation<AnimationAttr>;
+  };
+
+  private _lastHover: IGraphic;
+  private _lastSelect: IGraphic;
 
   protected abstract setLabelPos(): any;
   protected abstract initMarker(container: IGroup): any;
   protected abstract updateMarker(): any;
   protected abstract isValidPoints(): any;
+  protected abstract markerAnimate(state: MarkerAnimationState): void;
 
-  setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
+  private transAnimationConfig(): void {
+    if (this.attribute.animation !== false) {
+      const animation = isObject(this.attribute.animation) ? this.attribute.animation : {};
+      this._animationConfig = {
+        enter: merge(
+          {},
+          this.defaultUpdateAnimation,
+          animation,
+          this.attribute.animationEnter ?? {}
+        ) as MarkerUpdateAnimation<AnimationAttr>,
+        exit: merge({}, this.defaultExitAnimation, animation, this.attribute.animationExit ?? {}),
+        update: merge(
+          {},
+          this.defaultUpdateAnimation,
+          animation,
+          this.attribute.animationUpdate ?? {}
+        ) as MarkerUpdateAnimation<AnimationAttr>
+      };
+    }
+  }
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined): void {
     super.setAttribute(key, value, forceUpdateTag);
     if (key === 'visible') {
       this.render();
     }
   }
+
+  private _bindEvent() {
+    if (!this.attribute.interactive) {
+      return;
+    }
+    const { hover, select } = this.attribute;
+
+    if (hover) {
+      this._container?.addEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
+      this._container?.addEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
+    }
+
+    if (select) {
+      this._container?.addEventListener('pointerdown', this._onClick as EventListenerOrEventListenerObject);
+    }
+  }
+
+  private _releaseEvent() {
+    this._container?.removeEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
+    this._container?.removeEventListener('pointerout', this._onUnHover as EventListenerOrEventListenerObject);
+    this._container?.removeEventListener('pointerdown', this._onClick as EventListenerOrEventListenerObject);
+  }
+
+  private _onHover = (e: FederatedPointerEvent) => {
+    this._lastHover = dispatchHoverState(e, this._container, this._lastHover);
+  };
+
+  private _onUnHover = (e: FederatedPointerEvent) => {
+    this._lastHover = dispatchUnHoverState(e, this._container, this._lastHover);
+  };
+
+  private _onClick = (e: FederatedPointerEvent) => {
+    this._lastSelect = dispatchClickState(e, this._container, this._lastSelect);
+  };
 
   private _initContainer() {
     const { limitRect = {} as T['limitRect'], clipInRange } = this.attribute;
@@ -68,6 +149,8 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
   }
 
   protected render() {
+    this.transAnimationConfig();
+
     // 因为标注本身不规则，所以默认将组件的 group 设置为不可拾取
     this.setAttribute('pickable', false);
 
@@ -80,13 +163,27 @@ export abstract class Marker<T extends MarkerAttrs> extends AbstractComponent<Re
       if (!this._container) {
         this._initContainer();
         this.initMarker(this._container);
+        this.markerAnimate('enter');
       } else {
         this._updateContainer();
         this.updateMarker();
+        this.markerAnimate('update');
       }
     } else {
+      this.markerAnimate('exit');
       this._container = null;
       this.removeAllChild(true);
     }
+
+    // 先把之前的event都release掉，否则会重复触发
+    this._releaseEvent();
+    this._bindEvent();
+  }
+
+  release(): void {
+    this.markerAnimate('exit');
+    super.release();
+    this._releaseEvent();
+    this._container = null;
   }
 }

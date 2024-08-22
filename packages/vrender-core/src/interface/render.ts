@@ -1,4 +1,4 @@
-import type { IAABBBounds, IBounds, IMatrixLike } from '@visactor/vutils';
+import type { IAABBBounds, IBounds, IMatrix, IMatrixLike } from '@visactor/vutils';
 import type { IColor } from './color';
 import type { IContext2d } from './context';
 import type { IGraphic, IGraphicAttribute } from './graphic';
@@ -17,12 +17,8 @@ export interface IRenderServiceDrawParams {
 
   // 绘制的区域以及是否需要清屏
   clear?: string | IColor | boolean;
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-  // 是否使用当前的Matrix，不用重新初始化matrix
-  keepMatrix?: boolean;
+  viewBox: IBounds;
+  transMatrix?: IMatrixLike;
   stage: IStage;
   layer: ILayer;
   renderService: IRenderService;

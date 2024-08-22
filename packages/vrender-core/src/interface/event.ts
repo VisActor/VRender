@@ -4,6 +4,7 @@ import type { Cursor, IGraphicAttribute } from './graphic';
 import type { IDomRectLike, IEventElement } from './common';
 import type { ICanvas } from './canvas';
 import type { IGlobal } from './global';
+import type { IWindow } from './window';
 
 export type EventPoint = {
   x: number;
@@ -166,18 +167,11 @@ export interface IFederatedPointerEvent extends IFederatedMouseEvent {
  */
 
 export interface IEventTarget extends INode {
-  /** Whether this event target should fire UI events. */
-  pickable: boolean;
   /** The parent of this event target. */
   parent: IEventTarget | null;
-  /** Whether this event target should be visible. */
-  visible: boolean;
 
   /** The children of this event target. */
   children?: IEventTarget[];
-
-  /** Whether this event target has any children that need UI events. This can be used optimize event propagation. */
-  childrenPickable?: boolean;
 
   attribute?: Partial<IGraphicAttribute>;
 
@@ -221,9 +215,9 @@ export type IElementLike = Omit<IEventElement, 'on' | 'off' | 'once' | 'emit' | 
 
 export type RenderConfig = {
   /**
-   * 事件绑定的 canvas 元素
+   * 事件绑定的元素
    */
-  targetElement: IElementLike;
+  targetElement: IWindow;
   /**
    * 环境分辨率
    */
@@ -235,14 +229,6 @@ export type RenderConfig = {
   global: IGlobal;
   /** 是否自动阻止事件 */
   autoPreventDefault?: boolean;
-  /** 绘图视口 */
-  viewport: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    viewBox?: IBounds;
-  };
   /**
    * 多次点击之间的最大时间，默认为 200 ms
    * @default 200

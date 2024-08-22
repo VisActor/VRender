@@ -1,15 +1,17 @@
 /**
  * @description 标签组件
  */
-import type {
-  IGroup,
-  IRect,
-  ISymbol,
-  IText,
-  ITextAttribute,
-  ITextGraphicAttribute,
-  IRichTextGraphicAttribute,
-  IRichText
+import {
+  type IGroup,
+  type IRect,
+  type ISymbol,
+  type IText,
+  type ITextAttribute,
+  type ITextGraphicAttribute,
+  type IRichTextGraphicAttribute,
+  type IRichText,
+  type IGraphicAttribute,
+  CustomPath2D
 } from '@visactor/vrender-core';
 import { isBoolean, isEmpty, isNil, isNumber, isObject, isValid, merge, normalizePadding } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
@@ -22,6 +24,17 @@ import type { TextContent } from '../core/type';
 loadTagComponent();
 export class Tag extends AbstractComponent<Required<TagAttributes>> {
   name = 'tag';
+
+  private _bgRect!: IRect;
+  private _textShape!: IText | IRichText;
+
+  getBgRect() {
+    return this._bgRect;
+  }
+
+  getTextShape() {
+    return this._textShape;
+  }
 
   static defaultAttributes: Partial<TagAttributes> = {
     visible: true,
@@ -56,7 +69,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       visible,
       state,
       type,
-      textAlwaysCenter
+      textAlwaysCenter,
+      containerTextAlign
     } = this.attribute as TagAttributes;
     const parsedPadding = normalizePadding(padding);
 
@@ -70,7 +84,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     const { visible: shapeVisible, ...shapeStyle } = shape;
     if (isBoolean(shapeVisible)) {
       const size = shapeStyle?.size || 10;
-      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      const maxSize = (isNumber(size) ? size : Math.max(size[0], size[1])) as number;
 
       symbol = group.createOrUpdateChild(
         'tag-shape',
@@ -97,7 +111,7 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     tagWidth += symbolPlaceWidth;
     textX += symbolPlaceWidth;
 
-    let textShape;
+    let textShape: IRichText | IText;
     const isRich = isRichText({ text } as TextContent) || type === 'rich';
     if (isRich) {
       const richTextAttrs = {
@@ -127,6 +141,13 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
         }
+        if (backgroundStyle.customShape) {
+          const customShape = backgroundStyle.customShape;
+          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
+            return customShape(textShape.attribute, attrs, new CustomPath2D());
+          };
+        }
+        this._bgRect = bgRect;
       }
     } else {
       const textAttrs = {
@@ -146,12 +167,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
 
       // 因为文本可能发生旋转，所以需要使用 measureTextSize 方法
-      const textBounds = measureTextSize(textAttrs.text as string, textStyle, this.stage?.getTheme().text.fontFamily);
+      const textBounds = measureTextSize(textAttrs.text as string, textStyle, this.stage?.getTheme()?.text);
       const textWidth = textBounds.width;
       const textHeight = textBounds.height;
       tagWidth += textWidth;
       const size = shape.size ?? 10;
-      const maxSize = isNumber(size) ? size : Math.max(size[0], size[1]);
+      const maxSize = (isNumber(size) ? size : Math.max(size[0], size[1])) as number;
       tagHeight += Math.max(textHeight, shape.visible ? maxSize : 0);
 
       const { textAlign, textBaseline } = textStyle as ITextAttribute;
@@ -194,20 +215,69 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         group.setAttribute('x', parsedPadding[3]);
       }
 
-      if (textAlwaysCenter && flag) {
+      const shouldCenter = containerTextAlign ? containerTextAlign === 'center' : textAlwaysCenter;
+      const shouldRight = containerTextAlign === 'right' || containerTextAlign === 'end';
+      const shouldLeft = containerTextAlign === 'left' || containerTextAlign === 'start';
+
+      if (shouldCenter && flag) {
+        // 文本容器内居中
         // 剔除padding后的内宽度
         const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
         const tsWidth = textWidth + symbolPlaceWidth;
-        const textX = (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2;
-        const symbolX = (containerWidth - tsWidth) / 2 + maxSize / 2;
+        const textX =
+          flag === 1
+            ? (containerWidth - tsWidth) / 2 + symbolPlaceWidth + textWidth / 2
+            : parsedPadding[0] + symbolPlaceWidth - (tagWidth / 2 + tsWidth / 2 - symbolPlaceWidth) + textWidth / 2;
+
         textShape.setAttributes({
-          x: textX * flag,
+          x: textX,
           textAlign: 'center'
         });
-        symbol?.setAttributes({
-          x: symbolX * flag
+        if (symbol) {
+          const symbolX = textX - textWidth / 2 - symbolPlaceWidth + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
+      }
+
+      if (shouldLeft && flag !== 1) {
+        // 文本容器内朝左展示
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const offset =
+          flag === 0
+            ? -containerWidth / 2 + symbolPlaceWidth / 2
+            : -tagWidth + parsedPadding[3] + parsedPadding[1] + symbolPlaceWidth;
+        const textX = offset + symbolPlaceWidth;
+
+        textShape.setAttributes({
+          x: textX,
+          textAlign: 'left'
         });
-        group.setAttribute('x', parsedPadding[2 + flag] * flag);
+
+        if (symbol) {
+          const symbolX = offset + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
+      }
+
+      if (shouldRight && flag !== -1) {
+        // 文本容器内朝右展示
+        const containerWidth = tagWidth - parsedPadding[1] - parsedPadding[3];
+        const textX = flag === 0 ? containerWidth / 2 + symbolPlaceWidth / 2 : containerWidth;
+
+        textShape.setAttributes({
+          x: textX,
+          textAlign: 'right'
+        });
+        if (symbol) {
+          const symbolX = textX - textWidth - symbolPlaceWidth + maxSize / 2;
+          symbol.setAttributes({
+            x: symbolX
+          });
+        }
       }
 
       if (textBaseline === 'middle') {
@@ -247,7 +317,15 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
         }
+        if (backgroundStyle.customShape) {
+          const customShape = backgroundStyle.customShape;
+          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
+            return customShape(textShape.attribute, attrs, new CustomPath2D());
+          };
+        }
+        this._bgRect = bgRect;
       }
     }
+    this._textShape = textShape;
   }
 }

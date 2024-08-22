@@ -1,7 +1,7 @@
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { CheckboxAttributes } from './type';
-import { Image, Rect, WrapText } from '@visactor/vrender-core';
+import { Image, Rect, Text } from '@visactor/vrender-core';
 import type { ComponentOptions } from '../interface';
 import { loadCheckBoxComponent } from './register';
 
@@ -53,7 +53,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   _box: Rect;
   _checkIcon: Image;
   _indeterminateIcon: Image;
-  _text: WrapText;
+  _text: Text;
 
   constructor(attributes: CheckboxAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, CheckBox.defaultAttributes, attributes));
@@ -69,7 +69,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       return undefined;
     };
 
-    this.addEventListener('click', this.handleClick);
+    this.addEventListener('pointerup', this._handlePointerUp);
   }
 
   render() {
@@ -124,7 +124,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   }
 
   renderText() {
-    this._text = new WrapText(merge({}, this.attribute.text));
+    this._text = new Text(merge({ wrap: true }, this.attribute.text));
     if (this.attribute.disabled) {
       this._text.setAttribute('fill', this.attribute.text.disableFill);
     }
@@ -174,7 +174,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
     });
   }
 
-  handleClick() {
+  private _handlePointerUp = () => {
     if (this.attribute.disabled) {
       return;
     } else if (this.attribute.checked) {
@@ -189,5 +189,7 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       eventType: 'checkbox_state_change',
       checked: this.attribute.checked
     });
-  }
+
+    this.stage.renderNextFrame();
+  };
 }

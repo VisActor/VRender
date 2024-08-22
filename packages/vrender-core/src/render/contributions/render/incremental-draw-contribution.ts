@@ -2,20 +2,17 @@ import { injectable, inject, named, multiInject } from '../../../common/inversif
 import type {
   IGraphic,
   IGroup,
-  IGlobal,
   IRenderService,
   IDrawContext,
   IDrawContribution,
   IGraphicRender,
-  IRenderSelector,
   IDrawItemInterceptorContribution,
   IContributionProvider
 } from '../../../interface';
-import { DefaultAttribute } from '../../../graphic';
-import { LayerService } from '../../../core/constants';
+import { DefaultAttribute } from '../../../graphic/config';
 import { DefaultDrawContribution } from './draw-contribution';
 import { SyncHook } from '../../../tapable';
-import { GraphicRender, RenderSelector } from './symbol';
+import { GraphicRender } from './symbol';
 import { DefaultIncrementalCanvasLineRender } from './incremental-line-render';
 import { DefaultIncrementalCanvasAreaRender } from './incremental-area-render';
 import { DrawItemInterceptor } from './draw-interceptor';
@@ -86,7 +83,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     }
 
     this.currentRenderService = renderService;
-    const { context, x = 0, y = 0 } = drawContext;
+    const { context, viewBox } = drawContext;
 
     if (!context) {
       return;
@@ -100,16 +97,9 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     //   dirtyBounds.x2 = Math.ceil(b.x2);
     //   dirtyBounds.y2 = Math.ceil(b.y2);
     // }
-    if (drawContext.keepMatrix) {
-      if (context.nativeContext && context.nativeContext.getTransform) {
-        const t = context.nativeContext.getTransform();
-        context.setTransformFromMatrix(t, true, 1);
-      }
-    } else {
-      context.inuse = true;
-      // 初始化context
-      context.clearMatrix();
-    }
+    context.inuse = true;
+    // 初始化context
+    context.clearMatrix();
     context.setTransformForCurrent(true);
 
     // const drawInArea =
@@ -128,7 +118,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
     // 绘制之前需要清空画布
     drawContext.restartIncremental && this.clearScreen(this.currentRenderService, context, drawContext);
     // 设置translate
-    context.translate(x, y, true);
+    context.translate(viewBox.x1, viewBox.y1, true);
 
     context.save();
     renderService.renderTreeRoots
@@ -143,9 +133,7 @@ export class DefaultIncrementalDrawContribution extends DefaultDrawContribution 
       context.restore();
       context.restore();
       context.draw();
-      if (!drawContext.keepMatrix) {
-        context.inuse = false;
-      }
+      context.inuse = false;
       this.rendering = false;
     });
   }

@@ -1,3 +1,5 @@
+import { isFunction } from '@visactor/vutils';
+import type { IPickEventParams } from '../../interface';
 import type { EventPoint, IEventTarget } from '../../interface/event';
 import type { EventManager } from '../event-manager';
 
@@ -35,6 +37,8 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   bubbles = true;
 
   cancelBubble = true;
+
+  declare pickParams?: IPickEventParams;
 
   /**
    * Flags whether this event can be canceled using `FederatedEvent.preventDefault`. This is always
@@ -89,6 +93,7 @@ export class FederatedEvent<N extends Event = Event> implements Event {
 
   /** The composed path of the event's propagation. */
   path: IEventTarget[];
+  detailPath?: Array<IEventTarget[] | IEventTarget | IEventTarget[][]>;
 
   /** The EventManager that manages this event. Null for root events. */
   readonly manager?: EventManager;
@@ -169,13 +174,41 @@ export class FederatedEvent<N extends Event = Event> implements Event {
     if (this.manager && (!this.path || this.path[this.path.length - 1] !== this.target)) {
       this.path = this.target ? this.manager.propagationPath(this.target) : [];
     }
-
+    this.composedDetailPath();
     return this.path;
   }
 
+  composedDetailPath() {
+    if (this.pickParams && (this.pickParams as any).graphic) {
+      this.detailPath = this.path.slice();
+      this._composedDetailPath(this.pickParams);
+    } else {
+      this.detailPath = this.path.slice();
+    }
+    return this.detailPath;
+  }
+
+  _composedDetailPath(params: any) {
+    if (params && params.graphic) {
+      // 被包装的节点一定是最终的节点
+      const g = (this.pickParams as any).graphic;
+      if (g.stage) {
+        const path = g.stage.eventSystem.manager.propagationPath(g);
+        this.detailPath.push(path);
+        this._composedDetailPath(params.params);
+      }
+    }
+  }
+
   preventDefault(): void {
-    if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
-      this.nativeEvent.preventDefault();
+    try {
+      if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
+        this.nativeEvent.preventDefault();
+      }
+    } catch (err) {
+      this.nativeEvent.preventDefault &&
+        isFunction(this.nativeEvent.preventDefault) &&
+        this.nativeEvent.preventDefault();
     }
 
     this.defaultPrevented = true;
@@ -186,8 +219,14 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   }
 
   stopPropagation(): void {
-    if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
-      this.nativeEvent.stopPropagation();
+    try {
+      if (this.nativeEvent instanceof Event && this.nativeEvent.cancelable) {
+        this.nativeEvent.stopPropagation();
+      }
+    } catch (err) {
+      this.nativeEvent.stopPropagation &&
+        isFunction(this.nativeEvent.stopPropagation) &&
+        this.nativeEvent.stopPropagation();
     }
 
     this.propagationStopped = true;

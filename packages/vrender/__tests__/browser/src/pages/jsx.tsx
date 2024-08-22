@@ -1,10 +1,280 @@
 import { createStage, VGroup, VSymbol, VText, VImage, VRichText, Fragment, jsx } from '@visactor/vrender';
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { VTag } from '@visactor/vrender-components';
-import { roughModule } from '@visactor/vrender-kits';
+import { decodeReactDom, roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 import { Group } from 'zrender';
 import { IGroup } from '@visactor/vrender';
 import { IFederatedEvent } from '@visactor/vrender';
+import { createText } from '@visactor/vrender-core';
+
+const background = `<svg width="346" height="221" viewBox="0 0 346 221" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_63_45558)">
+<g filter="url(#filter0_i_63_45558)">
+<rect width="200" height="200" rx="16" transform="matrix(0.866025 -0.5 0.866025 0.5 0 123)" fill="white"/>
+</g>
+<rect x="1.73205" width="198" height="198" rx="15" transform="matrix(0.866025 -0.5 0.866025 0.5 0.232051 123.866)" stroke="url(#paint0_linear_63_45558)" stroke-width="2"/>
+<g clip-path="url(#clip1_63_45558)">
+<path d="M172.35 46.5023L304.834 123.464L172.35 200.425L39.8648 123.464L172.35 46.5023Z" fill="#2E3238" fill-opacity="0.05" stroke="url(#paint1_linear_63_45558)" stroke-linejoin="round"/>
+<rect width="23.0971" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 167.36 34)" fill="#F8F8F8"/>
+<rect width="22.9439" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 126.375 57.6204)" fill="#D2D2D2"/>
+<rect width="4.14332" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 183.788 43.4875)" fill="#F8F8F8"/>
+<rect width="4.19453" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 142.803 67.1079)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 187.341 45.5732)" fill="#E3E3E3"/>
+<rect width="48.4536" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 160.611 77.3867)" fill="#D2D2D2"/>
+<rect width="48.1906" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 201.596 53.7664)" fill="#F8F8F8"/>
+<rect width="12.9041" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 232.352 71.5242)" fill="#F8F8F8"/>
+<rect width="12.9113" height="27.2953" transform="matrix(0.86601 0.500027 3.18351e-05 1 191.402 95.1511)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 243.485 77.9907)" fill="#E3E3E3"/>
+<rect width="23.0971" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 256.917 85.4475)" fill="#F8F8F8"/>
+<rect width="22.9439" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 215.932 109.067)" fill="#D2D2D2"/>
+<rect width="4.14332" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 273.345 94.9351)" fill="#F8F8F8"/>
+<rect width="4.19453" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 232.36 118.555)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 276.898 97.0208)" fill="#E3E3E3"/>
+<rect width="23.0971" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 109.985 67.6426)" fill="#F8F8F8"/>
+<rect width="22.9439" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 69 91.2629)" fill="#D2D2D2"/>
+<rect width="4.14332" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 126.416 77.1306)" fill="#F8F8F8"/>
+<rect width="4.19453" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 85.4312 100.751)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 129.969 79.2163)" fill="#E3E3E3"/>
+<rect width="48.4536" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 103.238 111.03)" fill="#D2D2D2"/>
+<rect width="48.1906" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 144.223 87.4097)" fill="#F8F8F8"/>
+<rect width="12.9041" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 174.986 105.167)" fill="#F8F8F8"/>
+<rect width="12.9113" height="27.2953" transform="matrix(0.86601 0.500027 3.18351e-05 1 134.036 128.794)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 186.119 111.634)" fill="#E3E3E3"/>
+<rect width="23.0971" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 199.542 119.091)" fill="#F8F8F8"/>
+<rect width="22.9439" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 158.557 142.711)" fill="#D2D2D2"/>
+<rect width="4.14332" height="47.2828" transform="matrix(0.866041 0.499972 -0.866041 0.499972 215.972 128.579)" fill="#F8F8F8"/>
+<rect width="4.19453" height="27.2798" transform="matrix(0.86601 0.500027 3.18351e-05 1 174.987 152.199)" fill="#D2D2D2"/>
+<rect width="47.2488" height="27.2966" transform="matrix(-0.86601 0.500027 -3.18351e-05 1 219.525 130.664)" fill="#E3E3E3"/>
+</g>
+</g>
+<defs>
+<filter id="filter0_i_63_45558" x="8.11694" y="27.6863" width="330.176" height="193.627" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="3" operator="erode" in="SourceAlpha" result="effect1_innerShadow_63_45558"/>
+<feOffset dy="3"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.827451 0 0 0 0 0.827451 0 0 0 0 0.858824 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_63_45558"/>
+</filter>
+<filter id="filter1_d_63_45558" x="165.527" y="73.1716" width="13.7981" height="9.65674" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="2" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_63_45558"/>
+<feOffset/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.329412 0 0 0 0 0.254902 0 0 0 0.4 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<filter id="filter2_d_63_45558" x="149.43" y="34.2" width="45.6" height="45.6" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="5.4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_63_45558" x1="6.88162" y1="192.882" x2="221.137" y2="200.133" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_63_45558" x1="172" y1="201" x2="105.3" y2="84.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_63_45558" x1="-0.00110471" y1="30.0006" x2="76.6381" y2="102.884" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_63_45558" x1="153.817" y1="26.7283" x2="77.2692" y2="-50.7962" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint4_linear_63_45558" x1="0.399061" y1="20.7995" x2="76.9407" y2="97.3225" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint5_linear_63_45558" x1="154.217" y1="13.0272" x2="77.6688" y2="-62.5074" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint6_linear_63_45558" x1="200.861" y1="7.76201" x2="208.149" y2="148.611" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2" stop-opacity="0"/>
+<stop offset="1" stop-color="white" stop-opacity="0.8"/>
+</linearGradient>
+<linearGradient id="paint7_linear_63_45558" x1="172" y1="157" x2="105.3" y2="40.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_63_45558">
+<rect width="346" height="221" fill="white"/>
+</clipPath>
+<clipPath id="clip1_63_45558">
+<rect width="266.699" height="199.29" fill="white" transform="translate(39 2)"/>
+</clipPath>
+</defs>
+</svg>
+`;
+
+const mask = `<svg width="346" height="221" viewBox="0 0 346 221" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.432345" y="0.75118" width="153.217" height="43.0927" transform="matrix(0.864658 0.502361 3.16377e-05 1 39.0585 78.7828)" fill="url(#paint2_linear_63_45558)" fill-opacity="0.3" stroke="url(#paint3_linear_63_45558)" stroke-linejoin="round"/>
+<rect x="-0.432345" y="0.75118" width="153.217" height="43.8177" transform="matrix(-0.864658 0.502361 -3.16377e-05 1 304.54 79.2172)" fill="url(#paint4_linear_63_45558)" fill-opacity="0.3" stroke="url(#paint5_linear_63_45558)" stroke-linejoin="round"/>
+<path d="M172.35 2.50231L304.834 79.4639L172.35 156.425L39.8648 79.4639L172.35 2.50231Z" fill="url(#paint6_linear_63_45558)" fill-opacity="0.6" stroke="url(#paint7_linear_63_45558)" stroke-linejoin="round"/>
+<defs>
+<filter id="filter0_i_63_45558" x="8.11694" y="27.6863" width="330.176" height="193.627" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="3" operator="erode" in="SourceAlpha" result="effect1_innerShadow_63_45558"/>
+<feOffset dy="3"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.827451 0 0 0 0 0.827451 0 0 0 0 0.858824 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_63_45558"/>
+</filter>
+<filter id="filter1_d_63_45558" x="165.527" y="73.1716" width="13.7981" height="9.65674" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="2" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_63_45558"/>
+<feOffset/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.329412 0 0 0 0 0.254902 0 0 0 0.4 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<filter id="filter2_d_63_45558" x="149.43" y="34.2" width="45.6" height="45.6" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="5.4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_63_45558" x1="6.88162" y1="192.882" x2="221.137" y2="200.133" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_63_45558" x1="172" y1="201" x2="105.3" y2="84.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_63_45558" x1="-0.00110471" y1="30.0006" x2="76.6381" y2="102.884" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_63_45558" x1="153.817" y1="26.7283" x2="77.2692" y2="-50.7962" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint4_linear_63_45558" x1="0.399061" y1="20.7995" x2="76.9407" y2="97.3225" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint5_linear_63_45558" x1="154.217" y1="13.0272" x2="77.6688" y2="-62.5074" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint6_linear_63_45558" x1="200.861" y1="7.76201" x2="208.149" y2="148.611" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2" stop-opacity="0"/>
+<stop offset="1" stop-color="white" stop-opacity="0.8"/>
+</linearGradient>
+<linearGradient id="paint7_linear_63_45558" x1="172" y1="157" x2="105.3" y2="40.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_63_45558">
+<rect width="346" height="221" fill="white"/>
+</clipPath>
+<clipPath id="clip1_63_45558">
+<rect width="266.699" height="199.29" fill="white" transform="translate(39 2)"/>
+</clipPath>
+</defs>
+</svg>
+`;
+
+const greenMask = `<svg width="346" height="221" viewBox="0 0 346 221" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.432345" y="0.75118" width="153.217" height="43.0927" transform="matrix(0.864658 0.502361 3.16377e-05 1 39.0585 78.7828)" fill="url(#paint2_linear_63_45558)" fill-opacity="0.3" stroke="url(#paint3_linear_63_45558)" stroke-linejoin="round"/>
+<rect x="-0.432345" y="0.75118" width="153.217" height="43.8177" transform="matrix(-0.864658 0.502361 -3.16377e-05 1 304.54 79.2172)" fill="url(#paint4_linear_63_45558)" fill-opacity="0.3" stroke="url(#paint5_linear_63_45558)" stroke-linejoin="round"/>
+<path d="M172.35 2.50231L304.834 79.4639L172.35 156.425L39.8648 79.4639L172.35 2.50231Z" fill="url(#paint6_linear_63_45558)" fill-opacity="0.6" stroke="url(#paint7_linear_63_45558)" stroke-linejoin="round"/>
+<defs>
+<filter id="filter0_i_63_45558" x="8.11694" y="27.6863" width="330.176" height="193.627" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="3" operator="erode" in="SourceAlpha" result="effect1_innerShadow_63_45558"/>
+<feOffset dy="3"/>
+<feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.827451 0 0 0 0 0.827451 0 0 0 0 0.858824 0 0 0 0.2 0"/>
+<feBlend mode="normal" in2="shape" result="effect1_innerShadow_63_45558"/>
+</filter>
+<filter id="filter1_d_63_45558" x="165.527" y="73.1716" width="13.7981" height="9.65674" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="2" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_63_45558"/>
+<feOffset/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 0.329412 0 0 0 0 0.254902 0 0 0 0.4 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<filter id="filter2_d_63_45558" x="149.43" y="34.2" width="45.6" height="45.6" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feOffset dy="4"/>
+<feGaussianBlur stdDeviation="5.4"/>
+<feComposite in2="hardAlpha" operator="out"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.02 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_63_45558"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_63_45558" result="shape"/>
+</filter>
+<linearGradient id="paint0_linear_63_45558" x1="6.88162" y1="192.882" x2="221.137" y2="200.133" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_63_45558" x1="172" y1="201" x2="105.3" y2="84.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_63_45558" x1="-0.00110471" y1="30.0006" x2="76.6381" y2="102.884" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint3_linear_63_45558" x1="153.817" y1="26.7283" x2="77.2692" y2="-50.7962" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint4_linear_63_45558" x1="0.399061" y1="20.7995" x2="76.9407" y2="97.3225" gradientUnits="userSpaceOnUse">
+<stop stop-color="#D2D2D2"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint5_linear_63_45558" x1="154.217" y1="13.0272" x2="77.6688" y2="-62.5074" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="white" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint6_linear_63_45558" x1="200.861" y1="7.76201" x2="208.149" y2="148.611" gradientUnits="userSpaceOnUse">
+<stop stop-color="green" stop-opacity="0"/>
+<stop offset="1" stop-color="green" stop-opacity="0.8"/>
+</linearGradient>
+<linearGradient id="paint7_linear_63_45558" x1="172" y1="157" x2="105.3" y2="40.0369" gradientUnits="userSpaceOnUse">
+<stop stop-color="green"/>
+<stop offset="1" stop-color="green" stop-opacity="0"/>
+</linearGradient>
+<clipPath id="clip0_63_45558">
+<rect width="346" height="221" fill="white"/>
+</clipPath>
+<clipPath id="clip1_63_45558">
+<rect width="266.699" height="199.29" fill="white" transform="translate(39 2)"/>
+</clipPath>
+</defs>
+</svg>
+`;
 
 // container.load(roughModule);
 const base64 =
@@ -39,7 +309,8 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
-    enableLayout: true
+    enableLayout: true,
+    ReactDOM
   });
 
   const paths = {
@@ -628,156 +899,222 @@ export const page = () => {
   // );
 
   stage.defaultLayer.add(
-    // <>
-    //   <VText attribute={{ text: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', x: 200, y: 200, fill: 'blue' }}></VText>
-    // </>
-    <VGroup attribute={{ x: 100, y: 100, width: 260, height: 80, background: '#cecece', display: 'flex' }}>
-      {/* <VGroup
-        attribute={{
-          display: 'flex',
-          background: 'green',
-          width: 60,
-          height: 80,
-          direction: 'column',
-          alignItems: 'center',
-          justifyContent: 'space-around'
-        }}
-      >
-        <VImage
-          attribute={{
-            image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
-            width: 50,
-            height: 50
-          }}
-        ></VImage>
-      </VGroup> */}
-      <VGroup
-        attribute={{
-          display: 'flex',
-          background: 'red',
-          width: 200,
-          height: 80,
-          direction: 'column'
-        }}
-      >
+    decodeReactDom(
+      <VGroup attribute={{ x: 100, y: 100, width: 260, height: 80, background: '#cecece', display: 'flex' }}>
         <VGroup
           attribute={{
             display: 'flex',
-            background: 'orange',
-            width: 200,
-            height: 40,
+            background: 'green',
+            width: 60,
+            height: 80,
             direction: 'column',
-            alignItems: 'flex-end',
-            justifyContent: 'center'
+            alignItems: 'center',
+            justifyContent: 'space-around'
           }}
         >
-          <VText attribute={{ text: '虚拟主播小花', fontSize: 13, fontFamily: 'sans-serif', fill: 'black' }}></VText>
           <VImage
             attribute={{
-              name: 'aaa',
-              image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
-              width: 15,
-              height: 15,
-              boundsPadding: [0, 0, 0, 10]
+              image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/custom-render/flower.jpg',
+              width: 50,
+              height: 50
             }}
           ></VImage>
-          <VText attribute={{ text: '梦幻之都', fontSize: 11, fontFamily: 'sans-serif', fill: '#6f7070' }}></VText>
         </VGroup>
         <VGroup
           attribute={{
             display: 'flex',
-            background: 'pink',
+            background: 'red',
             width: 200,
-            height: 40,
-            direction: 'column',
-            alignItems: 'center'
+            height: 80,
+            direction: 'column'
           }}
         >
-          <VTag
+          <VGroup
             attribute={{
-              visible: true,
-              textStyle: {
-                fontSize: 10,
-                fill: 'rgb(51, 101, 238)',
-                textAlign: 'left',
-                textBaseline: 'top',
-                fontFamily: 'sans-serif'
-              },
-              space: 4,
-              padding: 5,
-              shape: {
-                fill: '#000'
-              },
-              text: '游戏',
-              panel: {
-                visible: true,
-                fill: '#f4f4f2',
-                cornerRadius: 5
-              },
-              marginLeft: 10,
-              boundsPadding: [0, 0, 0, 10],
-              x: 20,
-              y: 10
+              display: 'flex',
+              background: 'orange',
+              width: 200,
+              height: 40,
+              direction: 'column',
+              alignItems: 'flex-end',
+              justifyContent: 'center'
             }}
-          ></VTag>
-          <VTag
+          >
+            <VText attribute={{ text: '虚拟主播小花', fontSize: 13, fontFamily: 'sans-serif', fill: 'black' }}></VText>
+            <VImage
+              attribute={{
+                name: 'aaa',
+                image: 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/VTable/location.svg',
+                width: 15,
+                height: 15,
+                boundsPadding: [0, 0, 0, 10]
+              }}
+            ></VImage>
+            <VText attribute={{ text: '梦幻之都', fontSize: 11, fontFamily: 'sans-serif', fill: '#6f7070' }}></VText>
+          </VGroup>
+          <VGroup
             attribute={{
-              visible: true,
-              textStyle: {
-                fontSize: 10,
-                fill: 'rgb(51, 101, 238)',
-                textAlign: 'left',
-                textBaseline: 'top',
-                fontFamily: 'sans-serif'
-              },
-              space: 4,
-              padding: 5,
-              shape: {
-                fill: '#000'
-              },
-              text: '动漫',
-              panel: {
-                visible: true,
-                fill: '#f4f4f2',
-                cornerRadius: 5
-              },
-              marginLeft: 10,
-              boundsPadding: [0, 0, 0, 10],
-              x: 60,
-              y: 10
+              display: 'flex',
+              background: 'pink',
+              width: 200,
+              height: 40,
+              direction: 'column',
+              alignItems: 'center'
             }}
-          ></VTag>
-          <VTag
-            attribute={{
-              visible: true,
-              textStyle: {
-                fontSize: 10,
-                fill: 'rgb(51, 101, 238)',
-                textAlign: 'left',
-                textBaseline: 'top',
-                fontFamily: 'sans-serif'
-              },
-              space: 4,
-              padding: 5,
-              shape: {
-                fill: '#000'
-              },
-              text: '美食',
-              panel: {
+          >
+            <VTag
+              attribute={{
                 visible: true,
-                fill: '#f4f4f2',
-                cornerRadius: 5
-              },
-              marginLeft: 10,
-              boundsPadding: [0, 0, 0, 10],
-              x: 100,
-              y: 10
-            }}
-          ></VTag>
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '游戏',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 20,
+                y: 10
+              }}
+            ></VTag>
+            <VTag
+              attribute={{
+                visible: true,
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '动漫',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 60,
+                y: 10
+              }}
+            ></VTag>
+            <VTag
+              attribute={{
+                visible: true,
+                textStyle: {
+                  fontSize: 10,
+                  fill: 'rgb(51, 101, 238)',
+                  textAlign: 'left',
+                  textBaseline: 'top',
+                  fontFamily: 'sans-serif'
+                },
+                space: 4,
+                padding: 5,
+                shape: {
+                  fill: '#000'
+                },
+                text: '美食',
+                panel: {
+                  visible: true,
+                  fill: '#f4f4f2',
+                  cornerRadius: 5
+                },
+                marginLeft: 10,
+                boundsPadding: [0, 0, 0, 10],
+                x: 100,
+                y: 10
+              }}
+            ></VTag>
+          </VGroup>
         </VGroup>
       </VGroup>
-    </VGroup>
+    )
   );
+
+  const text = createText({
+    x: 200,
+    y: 300,
+    text: '这是一段文字',
+    fill: 'red',
+    shadowGraphic: decodeReactDom(
+      <VGroup>
+        <VSymbol attribute={{ symbolType: 'star', x: 100, y: 100, fill: 'green' }}></VSymbol>
+      </VGroup>
+    )
+  });
+
+  stage.defaultLayer.add(text);
+  // console.log(ReactDOM);
+  // stage.defaultLayer.add(
+  //   decodeReactDom(
+  //     <VGroup attribute={{ x: 100, y: 100 }}>
+  //       {new Array(1).fill(0).map(() => (
+  //         <VGroup attribute={{ x: 100, y: 100 }}>
+  //           <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+  //           <VSymbol
+  //             onPointerEnter={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: greenMask
+  //               });
+  //             }}
+  //             onPointerLeave={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: mask
+  //               });
+  //             }}
+  //             attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+  //           />
+  //         </VGroup>
+  //       ))}
+  //       {new Array(1).fill(0).map(() => (
+  //         <VGroup attribute={{ x: 200, y: 100 }}>
+  //           <VSymbol attribute={{ symbolType: 'rect', size: [130, 100], background }} />
+  //           <VSymbol
+  //             name="abc"
+  //             onPointerEnter={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: greenMask
+  //               });
+  //             }}
+  //             onPointerLeave={(e, g) => {
+  //               e.target.setAttributes({
+  //                 background: mask
+  //               });
+  //             }}
+  //             attribute={{ symbolType: 'rect', size: [130, 100], background: mask }}
+  //           />
+  //         </VGroup>
+  //       ))}
+  //     </VGroup>
+  //   )
+  // );
+  // const symbol = stage.getElementsByName('abc')[0];
+  // symbol.setAttributes({
+  //   react: {
+  //     // pointerEvents: true,
+  //     element: <button>abc</button>,
+  //     width: 60,
+  //     height: 60
+  //   }
+  // });
   console.log();
 
   // const graphics: IGraphic[] = [];

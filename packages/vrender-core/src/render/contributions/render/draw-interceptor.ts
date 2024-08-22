@@ -1,21 +1,20 @@
 import { injectable } from '../../../common/inversify-lite';
-import { AABBBounds, pi2 } from '@visactor/vutils';
-import { graphicCreator, mat3Tomat4, multiplyMat4Mat4 } from '../../../graphic';
+import { AABBBounds } from '@visactor/vutils';
+import { mat3Tomat4, multiplyMat4Mat4 } from '../../../common/matrix';
+import { graphicCreator } from '../../../graphic/graphic-creator';
 import type {
-  IArc,
   IContext2d,
   IDrawContext,
   IDrawContribution,
   IDrawItemInterceptorContribution,
   IGraphic,
-  IGraphicAttribute,
   IGraphicRenderDrawParams,
   IGroup,
   ILayer,
   IRenderService
 } from '../../../interface';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
-import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
+import { mat4Allocate, matrixAllocate } from '../../../allocator/matrix-allocate';
+import { draw3dItem } from '../../../common/3d-interceptor';
 
 // 拦截器
 export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
@@ -28,6 +27,7 @@ export const DrawItemInterceptor = Symbol.for('DrawItemInterceptor');
 // }
 
 const tempDirtyBounds = new AABBBounds();
+const tempBackupDirtyBounds = new AABBBounds();
 /**
  * 影子节点拦截器，用于渲染影子节点
  */
@@ -41,7 +41,19 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    if (graphic.attribute.shadowRootIdx > 0 || !graphic.attribute.shadowRootIdx) {
+    // 如果graphic没设置shadowRootIdx，shadowRoot设置了，那就使用shadowRoot的shadowRootIdx
+    if (
+      graphic.attribute.shadowRootIdx == null &&
+      graphic.shadowRoot &&
+      graphic.shadowRoot.attribute.shadowRootIdx < 0
+    ) {
+      return false;
+    }
+    if (
+      graphic.attribute.shadowRootIdx > 0 ||
+      !graphic.attribute.shadowRootIdx ||
+      (graphic.shadowRoot && graphic.shadowRoot.attribute.shadowRootIdx > 0)
+    ) {
       this.drawItem(graphic, renderService, drawContext, drawContribution, params);
     }
     return false;
@@ -54,7 +66,15 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
-    if (graphic.attribute.shadowRootIdx < 0) {
+    // 如果graphic没设置shadowRootIdx，shadowRoot设置了，那就使用shadowRoot的shadowRootIdx
+    if (
+      graphic.attribute.shadowRootIdx == null &&
+      graphic.shadowRoot &&
+      graphic.shadowRoot.attribute.shadowRootIdx > 0
+    ) {
+      return false;
+    }
+    if (graphic.attribute.shadowRootIdx < 0 || (graphic.shadowRoot && graphic.shadowRoot.attribute.shadowRootIdx < 0)) {
       this.drawItem(graphic, renderService, drawContext, drawContribution, params);
     }
     return false;
@@ -79,17 +99,20 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     // 变换dirtyBounds
     if (drawContribution.dirtyBounds && drawContribution.backupDirtyBounds) {
       tempDirtyBounds.copy(drawContribution.dirtyBounds);
+      tempBackupDirtyBounds.copy(drawContribution.backupDirtyBounds);
       const m = graphic.globalTransMatrix.getInverse();
       drawContribution.dirtyBounds.copy(drawContribution.backupDirtyBounds).transformWithMatrix(m);
+      drawContribution.backupDirtyBounds.copy(drawContribution.dirtyBounds);
     }
 
     // 设置context的transform到上一个节点
-    drawContribution.renderGroup(graphic.shadowRoot, drawContext, graphic.parent.globalTransMatrix);
+    drawContribution.renderGroup(graphic.shadowRoot, drawContext, matrixAllocate.allocate(1, 0, 0, 1, 0, 0));
 
     context.highPerformanceRestore();
 
     if (drawContribution.dirtyBounds && drawContribution.backupDirtyBounds) {
       drawContribution.dirtyBounds.copy(tempDirtyBounds);
+      drawContribution.backupDirtyBounds.copy(tempBackupDirtyBounds);
     }
 
     return true;
@@ -312,6 +335,15 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
   ): boolean {
     // 默认使用原始的图元
     const baseGraphic = graphic.baseGraphic as IGraphic;
+    // 如果主图元被删除了，那把交互图元这个也删除
+    if (!baseGraphic.stage) {
+      const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');
+      if (interactiveLayer) {
+        const shadowRoot = this.getShadowRoot(interactiveLayer);
+        shadowRoot.removeChild(graphic);
+      }
+      return true;
+    }
     if (baseGraphic) {
       this.processing = true;
       const { context } = drawContext;
@@ -394,106 +426,19 @@ export class Canvas3DDrawItemInterceptor implements IDrawItemInterceptorContribu
 
     // 设置context的transform到上一个节点
     if (graphic.isContainer) {
-      // hack逻辑，如果是饼图的话，需要依次绘制不同的边
-      let isPie: boolean = false;
-      let is3d: boolean = false;
-      graphic.forEachChildren((c: IGraphic) => {
-        isPie = c.numberType === ARC3D_NUMBER_TYPE;
-        return !isPie;
-      });
-      graphic.forEachChildren((c: IGraphic) => {
-        is3d = !!c.findFace;
-        return !is3d;
-      });
-      if (isPie) {
-        const children = graphic.getChildren() as IArc[];
-        // 绘制内层
-        // drawContext.hack_pieFace = 'inside';
-        // drawContribution.renderGroup(graphic as IGroup, drawContext);
-        // 绘制底部
-        // drawContext.hack_pieFace = 'bottom';
-        // drawContribution.renderGroup(graphic as IGroup, drawContext);
-        // 绘制外部
-        // 排序一下
-        const sortedChildren = [...children];
-        sortedChildren.sort((a, b) => {
-          let angle1 = ((a.attribute.startAngle ?? 0) + (a.attribute.endAngle ?? 0)) / 2;
-          let angle2 = ((b.attribute.startAngle ?? 0) + (b.attribute.endAngle ?? 0)) / 2;
-          while (angle1 < 0) {
-            angle1 += pi2;
-          }
-          while (angle2 < 0) {
-            angle2 += pi2;
-          }
-          return angle2 - angle1;
-        });
-        sortedChildren.forEach(c => {
-          c._next = null;
-          c._prev = null;
-        });
-        graphic.removeAllChild();
-        graphic.update();
-        sortedChildren.forEach(c => {
-          graphic.appendChild(c);
-        });
-        const m = graphic.parent.globalTransMatrix;
-        drawContext.hack_pieFace = 'outside';
-        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
-        // 绘制内部
-        drawContext.hack_pieFace = 'inside';
-        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
-        // 绘制顶部
-        drawContext.hack_pieFace = 'top';
-        drawContribution.renderGroup(graphic as IGroup, drawContext, m);
-        graphic.removeAllChild();
-        children.forEach(c => {
-          c._next = null;
-          c._prev = null;
-        });
-        children.forEach(c => {
-          graphic.appendChild(c);
-        });
-      } else if (is3d) {
-        // 排序这些图元
-        const children = graphic.getChildren() as IGraphic[];
-        const zChildren = children.map(g => {
-          const face3d = g.findFace();
-          const vertices = face3d.vertices;
-          // 计算每个顶点的view
-          const viewdVerticesZ = vertices.map(v => {
-            return context.view(v[0], v[1], v[2] + g.attribute.z ?? 0)[2];
-          });
-          const ave_z = viewdVerticesZ.reduce((a, b) => a + b, 0);
-          return {
-            ave_z,
-            g
-          };
-        });
-        zChildren.sort((a, b) => b.ave_z - a.ave_z);
-        graphic.removeAllChild();
-        zChildren.forEach(i => {
-          i.g._next = null;
-          i.g._prev = null;
-        });
-        graphic.update();
-        zChildren.forEach(i => {
-          graphic.add(i.g);
-        });
-
-        drawContribution.renderGroup(graphic as IGroup, drawContext, graphic.parent.globalTransMatrix, true);
-
-        graphic.removeAllChild();
-        children.forEach(g => {
-          g._next = null;
-          g._prev = null;
-        });
-        graphic.update();
-        children.forEach(g => {
-          graphic.add(g);
-        });
-      } else {
-        drawContribution.renderGroup(graphic as IGroup, drawContext, graphic.parent.globalTransMatrix);
-      }
+      draw3dItem(
+        context,
+        graphic,
+        (isPie: boolean, is3d: boolean) => {
+          return drawContribution.renderGroup(
+            graphic as IGroup,
+            drawContext,
+            graphic.parent.globalTransMatrix,
+            !isPie && is3d
+          );
+        },
+        drawContext
+      );
     } else {
       drawContribution.renderItem(graphic, drawContext);
     }

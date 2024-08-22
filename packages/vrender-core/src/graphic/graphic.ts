@@ -1,5 +1,5 @@
 import type { ICustomPath2D } from './../interface/path';
-import type { OBBBounds, Dict, IPointLike, IAABBBounds } from '@visactor/vutils';
+import type { Dict, IPointLike, IAABBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -27,7 +27,6 @@ import { Node } from './node-tree';
 import type {
   IAnimate,
   IAnimateTarget,
-  IFullThemeSpec,
   IGlyphGraphicAttribute,
   IGroup,
   ILayer,
@@ -35,8 +34,7 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate,
-  ITheme
+  ISubAnimate
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
@@ -44,9 +42,11 @@ import { application } from '../application';
 import { Animate, DefaultStateAnimateConfig } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
-import { getTheme } from './theme';
 import { ResourceLoader } from '../resource-loader/loader';
 import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enums';
+import { BoundsContext } from '../common/bounds-context';
+import { renderCommandList } from '../common/render-command-list';
+import { parsePadding } from '../common/utils';
 
 /**
  * pathProxy参考自zrender
@@ -127,6 +127,7 @@ export const NOWORK_ANIMATE_ATTR = {
   zIndex: 1,
   layout: 1,
   keepDirIn3d: 1,
+  globalZIndex: 1,
 
   outerBorder: 1,
   innerBorder: 1,
@@ -214,18 +215,18 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare in3dMode?: boolean;
 
   // aabbBounds，所有图形都需要有，所以初始化即赋值
-  protected declare _AABBBounds: AABBBounds;
-  get AABBBounds(): AABBBounds {
+  protected declare _AABBBounds: IAABBBounds;
+  get AABBBounds(): IAABBBounds {
     return this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  protected declare _OBBBounds?: OBBBounds;
-  get OBBBounds(): OBBBounds {
-    return this.tryUpdateOBBBounds();
-  }
-  protected declare _globalAABBBounds: AABBBounds;
+  // protected declare _OBBBounds?: OBBBounds;
+  // get OBBBounds(): OBBBounds {
+  //   return this.tryUpdateOBBBounds();
+  // }
+  protected declare _globalAABBBounds: IAABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
-  get globalAABBBounds(): AABBBounds {
+  get globalAABBBounds(): IAABBBounds {
     return this.tryUpdateGlobalAABBBounds();
   }
   protected declare _transMatrix: Matrix;
@@ -275,6 +276,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.valid = this.isValid();
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
   }
 
@@ -306,7 +309,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._emitCustomEvent('animate-bind', animate);
   }
 
-  protected tryUpdateAABBBounds(full?: boolean): AABBBounds {
+  protected tryUpdateAABBBounds(full?: boolean): IAABBBounds {
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -330,16 +333,50 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
-  protected abstract doUpdateAABBBounds(full?: boolean): AABBBounds;
+  abstract getGraphicTheme(): T;
 
-  protected abstract tryUpdateOBBBounds(): OBBBounds;
+  protected abstract updateAABBBounds(
+    attribute: T,
+    symbolTheme: Required<T>,
+    aabbBounds: IAABBBounds,
+    full?: boolean
+  ): IAABBBounds;
 
-  protected tryUpdateGlobalAABBBounds(): AABBBounds {
+  protected doUpdateAABBBounds(full?: boolean): IAABBBounds {
+    const graphicTheme = this.getGraphicTheme();
+    this._AABBBounds.clear();
+    const attribute = this.attribute;
+    const bounds = this.updateAABBBounds(attribute, graphicTheme as Required<T>, this._AABBBounds, full) as AABBBounds;
+
+    const { boundsPadding = graphicTheme.boundsPadding } = attribute;
+    const paddingArray = parsePadding(boundsPadding);
+    if (paddingArray) {
+      bounds.expand(paddingArray);
+    }
+
+    this.clearUpdateBoundTag();
+    return bounds;
+  }
+
+  updatePathProxyAABBBounds(aabbBounds: IAABBBounds): boolean {
+    const path = typeof this.pathProxy === 'function' ? (this.pathProxy as any)(this.attribute) : this.pathProxy;
+    if (!path) {
+      return false;
+    }
+    const boundsContext = new BoundsContext(aabbBounds);
+    renderCommandList(path.commandList, boundsContext, 0, 0);
+    return true;
+  }
+
+  protected tryUpdateGlobalAABBBounds(): IAABBBounds {
     const b = this.AABBBounds;
     if (!this._globalAABBBounds) {
       this._globalAABBBounds = b.clone();
     } else {
       this._globalAABBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
+    }
+    if (this._globalAABBBounds.empty()) {
+      return this._globalAABBBounds;
     }
     // 使用parent的grloalAABBBounds
     // todo: 考虑是否需要性能优化
@@ -450,8 +487,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
     if (params.background) {
       this.loadImage(params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
-
     this._setAttributes(params, forceUpdateTag, context);
   }
 
@@ -460,7 +498,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i];
 
-      this.attribute[key] = params[key];
+      (this.attribute as any)[key] = (params as any)[key];
     }
     this.valid = this.isValid();
     // 没有设置shape&bounds的tag
@@ -478,10 +516,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const params =
       this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate({ [key]: value }, this.attribute, key, context);
     if (!params) {
-      if (!isNil(this.normalAttrs?.[key])) {
-        this.normalAttrs[key] = value;
+      if (!isNil((this.normalAttrs as any)?.[key])) {
+        (this.normalAttrs as any)[key] = value;
       } else {
-        this.attribute[key] = value;
+        (this.attribute as any)[key] = value;
         this.valid = this.isValid();
         if (!this.updateShapeAndBoundsTagSetted() && (forceUpdateTag || this.needUpdateTag(key))) {
           this.addUpdateShapeAndBoundsTag();
@@ -497,6 +535,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     if (key === 'background') {
       this.loadImage(value, true);
+    } else if (key === 'shadowGraphic') {
+      this.setShadowGraphic(value);
     }
   }
 
@@ -528,6 +568,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.attribute = params;
     if (params.background) {
       this.loadImage(params.background, true);
+    } else if (params.shadowGraphic) {
+      this.setShadowGraphic(params.shadowGraphic);
     }
     this._updateTag = UpdateTag.INIT;
     this.valid = this.isValid();
@@ -713,7 +755,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id).bind(this);
+    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline()).bind(this);
     if (params) {
       const { onStart, onFrame, onEnd, onRemove } = params;
       onStart != null && animate.onStart(onStart);
@@ -772,32 +814,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
     if (hasAnimation) {
       const keys = Object.keys(attrs);
-      const noWorkAAttr = this.getNoWorkAnimateAttr();
+      const noWorkAttrs = this.getNoWorkAnimateAttr();
       const animateAttrs: Partial<T> = {};
       let noAnimateAttrs: Partial<T> | undefined;
-      if (isClear) {
-        keys.forEach(key => {
-          if (!noWorkAAttr[key]) {
-            animateAttrs[key] = attrs[key] === undefined ? this.getDefaultAttribute(key) : attrs[key];
-          } else {
-            if (!noAnimateAttrs) {
-              noAnimateAttrs = {};
-            }
-            noAnimateAttrs[key] = attrs[key];
+
+      keys.forEach(key => {
+        if (!noWorkAttrs[key]) {
+          (animateAttrs as any)[key] =
+            isClear && (attrs as any)[key] === undefined ? this.getDefaultAttribute(key) : (attrs as any)[key];
+        } else {
+          if (!noAnimateAttrs) {
+            noAnimateAttrs = {};
           }
-        });
-      } else {
-        keys.forEach(key => {
-          if (!noWorkAAttr[key]) {
-            animateAttrs[key] = attrs[key];
-          } else {
-            if (!noAnimateAttrs) {
-              noAnimateAttrs = {};
-            }
-            noAnimateAttrs[key] = attrs[key];
-          }
-        });
-      }
+          (noAnimateAttrs as any)[key] = (attrs as any)[key];
+        }
+      });
 
       const animate = this.animate();
       (animate as any).stateNames = stateNames;
@@ -808,6 +839,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       );
       noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
+      this.stopStateAnimates();
       this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
     }
   }
@@ -817,32 +849,42 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (this.normalAttrs) {
       Object.keys(stateAttrs).forEach(key => {
         if (key in this.normalAttrs) {
-          newNormalAttrs[key] = this.normalAttrs[key];
-          delete this.normalAttrs[key];
+          (newNormalAttrs as any)[key] = (this.normalAttrs as any)[key];
+          delete (this.normalAttrs as any)[key];
         } else {
-          newNormalAttrs[key] = this.getNormalAttribute(key);
+          (newNormalAttrs as any)[key] = this.getNormalAttribute(key);
         }
       });
       Object.keys(this.normalAttrs).forEach(key => {
-        stateAttrs[key] = this.normalAttrs[key];
+        (stateAttrs as any)[key] = (this.normalAttrs as any)[key];
       });
     } else {
       Object.keys(stateAttrs).forEach(key => {
-        newNormalAttrs[key] = this.getNormalAttribute(key);
+        (newNormalAttrs as any)[key] = this.getNormalAttribute(key);
       });
     }
 
     this.normalAttrs = newNormalAttrs;
   }
 
+  protected stopStateAnimates(type: 'start' | 'end' = 'end') {
+    if (this.animates) {
+      this.animates.forEach(animate => {
+        if ((animate as any).stateNames) {
+          animate.stop(type);
+          this.animates.delete(animate.id);
+        }
+      });
+    }
+  }
+
   private getNormalAttribute(key: string) {
-    let value = this.attribute[key];
+    let value = (this.attribute as any)[key];
 
     if (this.animates) {
       this.animates.forEach(animate => {
         if ((animate as any).stateNames) {
           const endProps = animate.getEndProps();
-
           if (has(endProps, key)) {
             value = endProps[key];
           }
@@ -1289,12 +1331,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   getDefaultAttribute(name: string) {
-    return getTheme(this as any)[this.type][name];
+    return (this.getGraphicTheme() as any)[name];
   }
 
   // 获取属性
   getComputedAttribute(name: string) {
-    return this.attribute[name] ?? this.getDefaultAttribute(name);
+    return (this.attribute as any)[name] ?? this.getDefaultAttribute(name);
   }
   /**
    * 添加onSetStage钩子
@@ -1381,6 +1423,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
   }
 
+  setShadowGraphic(graphic: IGraphic) {
+    if (!graphic) {
+      this.detachShadow();
+    } else {
+      const root = this.attachShadow();
+      root.add(graphic);
+    }
+  }
+
   imageLoadSuccess(url: string, image: HTMLImageElement, cb?: () => void) {
     // 更新属性
     // this.resourceState = 'success';
@@ -1457,7 +1508,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   abstract getNoWorkAnimateAttr(): Record<string, number>;
 
-  abstract clone(): Graphic<any>;
+  abstract clone(): IGraphic<any>;
 }
 
 Graphic.mixin(EventTarget);

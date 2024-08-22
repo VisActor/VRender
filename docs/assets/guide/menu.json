@@ -79,6 +79,13 @@
                 "zh": "扩展和插件",
                 "en": "Extensions and Plugins"
               }
+            },
+            {
+              "path": "Jsx",
+              "title": {
+                "zh": "Jsx配置",
+                "en": "jsx config"
+              }
             }
           ]
         }

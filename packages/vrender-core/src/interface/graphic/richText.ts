@@ -2,10 +2,12 @@ import type { IColor } from '../color';
 import type { IContext2d } from '../context';
 import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { IImage, IImageGraphicAttribute } from './image';
+import type { ITextGraphicAttribute } from './text';
 
 export type IRichTextAttribute = {
   width: number;
   height: number;
+  editable: boolean;
   ellipsis: boolean | string;
   wordBreak: RichTextWordBreak;
   verticalDirection: RichTextVerticalDirection;
@@ -15,10 +17,13 @@ export type IRichTextAttribute = {
   textBaseline: RichTextGlobalBaselineType;
   layoutDirection: RichTextLayoutDirectionType;
   textConfig: IRichTextCharacter[];
+  // 是否不自动每行截断
+  disableAutoWrapLine: boolean;
   singleLine: boolean;
 };
 
-export type IRichTextGraphicAttribute = Partial<IGraphicAttribute> & Partial<IRichTextAttribute>;
+export type IRichTextGraphicAttribute = Partial<IGraphicAttribute & ITextGraphicAttribute> &
+  Partial<IRichTextAttribute>;
 
 export type RichTextWordBreak = 'break-word' | 'break-all';
 export type RichTextVerticalDirection = 'top' | 'middle' | 'bottom';
@@ -44,6 +49,7 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   fill?: IColor | boolean;
   stroke?: IColor | boolean;
   fontWeight?: string;
+  lineWidth?: number;
   // lineHeight?: number;
   fontStyle?: RichTextFontStyle; // normal, italic, oblique
   textDecoration?: RichTextTextDecoration; // none, underline, line-through
@@ -51,6 +57,9 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   script?: RichTextScript; // normal, sub, super
   underline?: boolean;
   lineThrough?: boolean;
+  opacity?: number;
+  fillOpacity?: number;
+  strokeOpacity?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 
@@ -158,9 +167,10 @@ export interface IRichTextLine {
     lastLine: boolean,
     x: number,
     y: number,
+    drawEllipsis: boolean | string,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) => void;
-  getWidthWithEllips: () => number;
+  getWidthWithEllips: (ellipsis: string) => number;
 }
 
 export interface IRichTextFrame {

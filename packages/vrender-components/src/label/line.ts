@@ -6,21 +6,17 @@ import type { LineLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingLineOrArea } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class LineLabel extends LabelBase<LineLabelAttrs> {
   name = 'line-label';
 
   static defaultAttributes: Partial<LineLabelAttrs> = {
     textStyle: {
-      fontSize: 12,
-      fill: '#000',
-      textAlign: 'center',
-      textBaseline: 'middle',
-      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+      fill: '#000'
     },
     position: 'end',
-    offset: 6,
-    pickable: false
+    offset: 6
   };
 
   constructor(attributes: LineLabelAttrs, options?: ComponentOptions) {
@@ -28,7 +24,7 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
   }
 
   protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}, position = 'end') {
-    if (!graphic || graphic.type !== 'line') {
+    if (!graphic || (graphic.type !== 'line' && graphic.type !== 'area')) {
       return super.getGraphicBounds(graphic, point);
     }
     const points = graphic.attribute.points || [point];
@@ -48,3 +44,8 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     return labelingLineOrArea(textBounds, graphicBounds, position, offset);
   }
 }
+
+export const registerLineDataLabel = () => {
+  registerLabelComponent('line', LineLabel);
+  registerLabelComponent('area', LineLabel);
+};

@@ -65,8 +65,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
    * @param value
    * @param forceUpdateTag
    */
-  // @ts-ignore
-  setAttribute(key: keyof T, value: any, forceUpdateTag?: boolean | undefined): void {
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined): void {
     // overwrite when previous or next attribute is function
     if (
       isPlainObject(this.attribute[key]) &&
@@ -138,7 +137,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
 
   // 图形元素 id
   protected _getNodeId(id: string) {
-    return `${this.id}-${this.name}-${id}`;
+    return `${this.id ?? this._uid}-${this.name}-${id}`;
   }
 
   // 用于 emit 组件自己的事件

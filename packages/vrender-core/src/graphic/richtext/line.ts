@@ -138,13 +138,17 @@ export default class Line {
     lastLine: boolean,
     x: number,
     y: number,
+    drawEllipsis: boolean | string,
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) {
-    if (lastLine) {
+    if (drawEllipsis && (lastLine || this.paragraphs.some(p => (p as Paragraph).overflow))) {
       // 处理省略号
       let otherParagraphWidth = 0;
       for (let i = this.paragraphs.length - 1; i >= 0; i--) {
         const paragraph = this.paragraphs[i];
+        if ((paragraph as Paragraph).overflow) {
+          continue;
+        }
         if (paragraph instanceof RichTextIcon) {
           break; // todo: 处理最后为图标，显示省略号的情况
         }
@@ -152,12 +156,14 @@ export default class Line {
           paragraph.verticalEllipsis = true;
           break;
         }
+        const ellipsis = drawEllipsis === true ? '...' : drawEllipsis || '';
+        paragraph.ellipsisStr = ellipsis;
         // const { width } = measureText('...', paragraph.style);
-        const { width } = measureTextCanvas('...', paragraph.character);
+        const { width } = measureTextCanvas(ellipsis, paragraph.character);
         const ellipsisWidth = width || 0;
         if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
           // 省略号可以直接接在后面paragraph
-          paragraph.ellipsis = 'add';
+          lastLine && (paragraph.ellipsis = 'add');
 
           break;
         } else if (ellipsisWidth <= this.blankWidth + otherParagraphWidth + paragraph.width) {
@@ -192,7 +198,7 @@ export default class Line {
     });
   }
 
-  getWidthWithEllips() {
+  getWidthWithEllips(ellipsis: string) {
     // 处理省略号
     let otherParagraphWidth = 0;
     for (let i = this.paragraphs.length - 1; i >= 0; i--) {
@@ -201,7 +207,7 @@ export default class Line {
         break; // todo: 处理最后为图标，显示省略号的情况
       }
 
-      const { width } = measureTextCanvas('...', paragraph.character);
+      const { width } = measureTextCanvas(ellipsis, paragraph.character);
       const ellipsisWidth = width || 0;
       if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
         // 省略号可以直接接在后面paragraph

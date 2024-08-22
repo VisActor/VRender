@@ -69,6 +69,13 @@ export interface IndicatorItemSpec {
    */
   fitStrategy?: 'default' | 'inscribed';
   /**
+   * 格式化方法
+   * @since 0.20.0
+   * @param text 文本
+   * @returns
+   */
+  formatMethod?: (text: string | number, textStyle: ITextGraphicAttribute) => TextContent;
+  /**
    * 文字样式
    */
   style?: Omit<ITextGraphicAttribute, 'text'> & TextContent;

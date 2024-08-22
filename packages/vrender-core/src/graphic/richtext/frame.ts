@@ -165,6 +165,7 @@ export default class Frame {
             lastLine,
             this.lines[i][this.directionKey.left] + deltaX,
             this.lines[i][this.directionKey.top] + deltaY,
+            this.ellipsis,
             drawIcon
           );
         }
@@ -181,6 +182,7 @@ export default class Frame {
             false,
             this.lines[i][this.directionKey.left] + deltaX,
             this.lines[i][this.directionKey.top] + deltaY,
+            this.ellipsis,
             drawIcon
           );
         }
@@ -193,7 +195,7 @@ export default class Frame {
         const y = frameHeight - this.lines[i].top - this.lines[i].height;
         // if (y + height < this.top || y + height > this.bottom) {
         if (frameHeight === 0) {
-          this.lines[i].draw(ctx, false, deltaX, y + deltaY, drawIcon);
+          this.lines[i].draw(ctx, false, deltaX, y + deltaY, this.ellipsis, drawIcon);
         } else if (y + height > this[this.directionKey.top] + frameHeight || y < this[this.directionKey.top]) {
           return lastLineTag; // 不在展示范围内的line不绘制
         } else {
@@ -203,7 +205,7 @@ export default class Frame {
             lastLine = true;
             lastLineTag = true;
           }
-          this.lines[i].draw(ctx, lastLine, deltaX, y + deltaY, drawIcon);
+          this.lines[i].draw(ctx, lastLine, deltaX, y + deltaY, this.ellipsis, drawIcon);
         }
       }
     } else {
@@ -226,6 +228,7 @@ export default class Frame {
             false,
             this.lines[i][this.directionKey.left] + deltaX,
             this.lines[i][this.directionKey.top] + deltaY,
+            this.ellipsis,
             drawIcon
           );
         } else if (
@@ -249,6 +252,7 @@ export default class Frame {
             lastLine,
             this.lines[i][this.directionKey.left] + deltaX,
             this.lines[i][this.directionKey.top] + deltaY,
+            this.ellipsis,
             drawIcon
           );
         }
@@ -318,7 +322,8 @@ export default class Frame {
               this.lines[i + 1] &&
               this.lines[i + 1].top + this.lines[i + 1].height > this[this.directionKey.top] + frameHeight
             ) {
-              const lineWidth = this.lines[i].getWidthWithEllips();
+              const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+              const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
               if (lineWidth > widthBound) {
                 widthBound = lineWidth;
               }
@@ -359,7 +364,8 @@ export default class Frame {
           // 判断需要显示省略号且是展示范围内的最后一行
           const lastLine = false;
           if (this.ellipsis && this.lines[i + 1] && y - this.lines[i + 1].height < this[this.directionKey.top]) {
-            const lineWidth = this.lines[i].getWidthWithEllips();
+            const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+            const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
             if (lineWidth > widthBound) {
               widthBound = lineWidth;
             }
@@ -393,7 +399,8 @@ export default class Frame {
             this.lines[i + 1] &&
             this.lines[i + 1].top + this.lines[i + 1].height > this[this.directionKey.top] + frameHeight
           ) {
-            const lineWidth = this.lines[i].getWidthWithEllips();
+            const ellipsis = this.ellipsis === true ? '...' : this.ellipsis || '';
+            const lineWidth = this.lines[i].getWidthWithEllips(ellipsis);
             if (lineWidth > widthBound) {
               widthBound = lineWidth;
             }

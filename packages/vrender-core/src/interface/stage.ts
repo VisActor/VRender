@@ -16,6 +16,9 @@ import type { IFullThemeSpec } from './graphic/theme';
 
 export type IExportType = 'canvas' | 'imageData';
 
+export type IStageCreateContext = {
+  appName?: 'vchart' | 'vgrammar' | 'vtable' | string;
+};
 export interface IStageParams {
   // x: number;
   // y: number;
@@ -48,6 +51,8 @@ export interface IStageParams {
   interactiveLayer: boolean;
   // 是否支持HTML属性
   enableHtmlAttribute: string | boolean | HTMLElement;
+  // 是否支持react-dom(传入ReactDOM)
+  ReactDOM: any;
   // 是否支持滚动条
   enableScroll: boolean;
   poptip: boolean;
@@ -76,10 +81,8 @@ export interface IStageParams {
    * 是否支持pointer事件，不支持就监听mouse事件
    */
   supportsPointerEvents?: boolean;
-  /**
-   * Render的时候使用原来的矩阵，不清除
-   */
-  renderKeepMatrix?: boolean;
+
+  context?: IStageCreateContext;
 }
 
 export type EventConfig = {
@@ -224,9 +227,15 @@ export interface IStage extends INode {
   release: () => void;
   setStage: (stage?: IStage) => void;
 
+  pauseRender: () => void;
+  resumeRender: () => void;
+
   setCursor: (mode?: string) => void;
 
   getTheme: () => IFullThemeSpec;
+  eventPointTransform: (e: PointerEvent | WheelEvent | TouchEvent) => { x: number; y: number };
+  pauseTriggerEvent: () => void;
+  resumeTriggerEvent: () => void;
 }
 
 export declare function combineStage(srages: IStage[], params: { canvas: string | HTMLCanvasElement }): IStage;

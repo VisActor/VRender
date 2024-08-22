@@ -159,7 +159,7 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
     return null;
   }
 
-  clearViewBox(vb: IBoundsLike, color?: string): void {
+  clearViewBox(color?: string): void {
     return;
   }
 }

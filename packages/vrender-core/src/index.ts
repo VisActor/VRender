@@ -12,10 +12,13 @@ export * from './render';
 export * from './render/contributions/render/base-render';
 export * from './canvas';
 export * from './core';
+export * from './core/light';
+export * from './core/camera';
 export * from './picker';
 export * from './animate';
 export * from './resource-loader/loader';
 export * from './color-string';
+export * from './factory';
 
 /* export common */
 export * from './common/text';
@@ -31,6 +34,7 @@ export * from './common/utils';
 export * from './common/shape/arc';
 export * from './common/shape/rect';
 export * from './common/matrix';
+export * from './common/simplify';
 
 export * from './common/path-svg';
 export * from './common/render-curve';
@@ -42,6 +46,7 @@ export * from './common/split-path';
 export * from './common/enums';
 export * from './common/generator';
 export * from './plugins/constants';
+export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
@@ -88,3 +93,9 @@ export * from './register/register-symbol';
 export * from './register/register-text';
 export * from './register/register-shadowRoot';
 export * from './register/register-wraptext';
+
+// plugin
+export * from './plugins/builtin-plugin/html-attribute-plugin';
+export * from './plugins/builtin-plugin/react-attribute-plugin';
+export * from './plugins/builtin-plugin/3dview-transform-plugin';
+export * from './plugins/builtin-plugin/flex-layout-plugin';

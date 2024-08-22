@@ -4,7 +4,8 @@
     "baseUrl": ".",
     "outDir": "./es",
     "rootDir": "./src",
-    "composite": true
+    "composite": true,
+    "target": "ES2016"
   },
   "include": ["src"],
   "references": [

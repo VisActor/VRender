@@ -1,6 +1,10 @@
-import { createStage, createRect, IGraphic, createPath } from '@visactor/vrender';
+import { createStage, createRect, IGraphic, createPath, vglobal, loadHarmonyEnv, container } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
+
+loadHarmonyEnv(container);
+
+vglobal.setEnv('harmony');
 
 // container.load(roughModule);
 export const page = () => {

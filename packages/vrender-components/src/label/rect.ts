@@ -1,23 +1,19 @@
 import type { IBoundsLike } from '@visactor/vutils';
-import { merge } from '@visactor/vutils';
+import { calculateAnchorOfBounds, merge } from '@visactor/vutils';
 import type { RectLabelAttrs } from './type';
 import { LabelBase } from './base';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class RectLabel extends LabelBase<RectLabelAttrs> {
   static tag = 'rect-label';
 
   static defaultAttributes: Partial<RectLabelAttrs> = {
     textStyle: {
-      fontSize: 12,
-      fill: '#000',
-      textAlign: 'center',
-      textBaseline: 'middle',
-      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+      fill: '#000'
     },
     position: 'top',
-    offset: 5,
-    pickable: false
+    offset: 5
   };
 
   constructor(attributes: RectLabelAttrs, options?: ComponentOptions) {
@@ -33,50 +29,7 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     const width = Math.abs(x2 - x1);
     const height = Math.abs(y2 - y1);
 
-    const rectWidth = Math.abs(graphicBounds.x2 - graphicBounds.x1);
-    const rectHeight = Math.abs(graphicBounds.y2 - graphicBounds.y1);
-    let anchorX = (graphicBounds.x1 + graphicBounds.x2) / 2;
-    let anchorY = (graphicBounds.y1 + graphicBounds.y2) / 2;
-
-    let sx = 0;
-    let sy = 0;
-
-    switch (position) {
-      case 'top':
-      case 'inside-top':
-        sy = -0.5;
-        break;
-      case 'bottom':
-      case 'inside-bottom':
-        sy = 0.5;
-        break;
-      case 'left':
-      case 'inside-left':
-        sx = -0.5;
-        break;
-      case 'right':
-      case 'inside-right':
-        sx = 0.5;
-        break;
-      case 'top-right':
-        sx = 0.5;
-        sy = -0.5;
-        break;
-      case 'top-left':
-        sx = -0.5;
-        sy = -0.5;
-        break;
-      case 'bottom-right':
-        sx = 0.5;
-        sy = 0.5;
-        break;
-      case 'bottom-left':
-        sx = -0.5;
-        sy = 0.5;
-    }
-
-    anchorX += sx * rectWidth;
-    anchorY += sy * rectHeight;
+    const { x: anchorX, y: anchorY } = calculateAnchorOfBounds(graphicBounds, position);
 
     let vx = 0;
     let vy = 0;
@@ -112,3 +65,7 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
     return { x, y };
   }
 }
+
+export const registerRectDataLabel = () => {
+  registerLabelComponent('rect', RectLabel);
+};

@@ -119,17 +119,26 @@ const axis = new LineAxis({
   pickable: true,
   orient: 'left',
   hover: true,
+  select: true,
   panel: {
     visible: true,
     state: {
-      hover: {
+      // hover: {
+      //   fillOpacity: 0.08,
+      //   fill: 'red'
+      // },
+      selected: {
         fillOpacity: 0.08,
-        fill: '#141414'
+        fill: 'blue'
       },
-      hover_reverse: {
+      selected_reverse: {
         fillOpacity: 0.08,
-        fill: '#141414'
+        fill: 'red'
       }
+      // hover_reverse: {
+      //   fillOpacity: 0.08,
+      //   fill: '#141414'
+      // }
     }
   },
   verticalFactor: 1,

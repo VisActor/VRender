@@ -3,6 +3,7 @@ import '@visactor/vrender';
 import { createGroup, Stage, createArc } from '@visactor/vrender';
 import { createRenderer } from '../../util/render';
 import { ArcLabel } from '../../../src';
+import { IPointLike } from '@visactor/vutils';
 
 const pieGenerator = () => {
   const spec: any = {
@@ -1266,7 +1267,8 @@ function createContent(stage: Stage) {
     baseMarkGroupName: pieSpec.name,
     data: pieSpec.children.map((c, index) => {
       return {
-        // // text: 'test122344556778891234550987665544'
+        text: 'xx'
+        // text: 'test122344556778891234550987665544',
         // text: latestData[index] ? latestData[index]?.type : undefined
         // // text: originData[index].id
         // // fill: c.attribute.fill,
@@ -1276,30 +1278,30 @@ function createContent(stage: Stage) {
         // // lineWidth: 0
         // // ...latestData[index]
 
-        textType: 'rich',
-        text: [
-          // {
-          //   text: `NO.${index}🐾`,
-          //   fontSize: 15,
-          //   textAlign: 'right',
-          //   textDecoration: 'underline',
-          //   stroke: '#0f51b5'
-          // }
+        // textType: 'rich',
+        // text: [
+        //   // {
+        //   //   text: `NO.${index}🐾`,
+        //   //   fontSize: 15,
+        //   //   textAlign: 'right',
+        //   //   textDecoration: 'underline',
+        //   //   stroke: '#0f51b5'
+        //   // }
 
-          {
-            text: 'Mapbox',
-            fontWeight: 'bold',
-            fontSize: 25,
-            fill: '#3f51b5'
-          },
+        //   {
+        //     text: 'Mapbox',
+        //     fontWeight: 'bold',
+        //     fontSize: 25,
+        //     fill: '#3f51b5'
+        //   },
 
-          {
-            text: '替代方案',
-            fontStyle: 'italic',
-            textDecoration: 'underline',
-            fill: '#3f51b5'
-          }
-        ]
+        //   {
+        //     text: '替代方案',
+        //     fontStyle: 'italic',
+        //     textDecoration: 'underline',
+        //     fill: '#3f51b5'
+        //   }
+        // ]
 
         // type: 'html',
         // text: '<p>这是一个html字符串</p>'
@@ -1315,7 +1317,7 @@ function createContent(stage: Stage) {
     },
     width: 800,
     height: 500,
-    position: 'inside',
+    position: 'outside',
 
     // position: 'inside-outer',
 
@@ -1323,14 +1325,44 @@ function createContent(stage: Stage) {
     //   // angle: 0
     //   fontSize: 16
     // },
-    // line: {
-    //   line1MinLength: 30,
-    //   smooth: true,
-    //   style: {
-    //     lineWidth: 2,
-    //     stroke: 'red'
-    //   }
-    // },
+    line: {
+      line1MinLength: 40,
+      line2MinLength: 60,
+      // smooth: true,
+      customShape: (text, attrs, path) => {
+        console.log('attrs', text, attrs, path);
+        let points = attrs.points as IPointLike[];
+        // 绘制带圆角的折线(暂时用小转折拟合)
+        const direction = points[points.length - 1].x - points[0].x > 0 ? -1 : 1;
+        path.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length - 1; i++) {
+          const p1 = points[i - 1];
+          const p2 = points[i % points.length];
+          const p3 = points[(i + 1) % points.length];
+          const { x: x1, y: y1 } = p1;
+          const { x: x2, y: y2 } = p2;
+          const { x: x3, y: y3 } = p3;
+
+          const k1 = (y2 - y1) / (x2 - x1);
+          const k2 = (y3 - y2) / (x3 - x2);
+          const deltaX = 3;
+          const deltaY1 = k1 * deltaX;
+          const deltaY2 = k2 * deltaX;
+
+          path.lineTo(p2.x + direction * deltaX, p2.y + direction * deltaY1); // 到点p1的上方
+          path.lineTo(p2.x - direction * deltaX, p2.y - direction * deltaY2); // 绘制圆弧
+          // path.quadraticCurveTo(p2.x - deltaX, p2.y - deltaY1, p2.x + deltaX, p2.y + deltaY2)
+          // path.quadraticCurveTo(p2.x - deltaX, p2.y - deltaY1, p2.x + deltaX, p2.y + deltaY2, 2)
+        }
+
+        path.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+        return path;
+      },
+      style: {
+        lineWidth: 1,
+        stroke: 'red'
+      }
+    },
     layout: {
       // align: 'edge'
       tangentConstraint: false

@@ -1,11 +1,6 @@
 import type {
   IGraphicRender,
   IRenderService,
-  IGraphic,
-  IContext2d,
-  IMarkAttribute,
-  IThemeAttribute,
-  IGraphicAttribute,
   IPath,
   IDrawContext,
   IGraphicRenderDrawParams
@@ -13,9 +8,10 @@ import type {
 import { PATH_NUMBER_TYPE, DefaultCanvasPathRender, getTheme, inject, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
+import { RoughBaseRender } from './base-render';
 
 @injectable()
-export class RoughCanvasPathRender implements IGraphicRender {
+export class RoughCanvasPathRender extends RoughBaseRender implements IGraphicRender {
   type: 'path';
   numberType: number;
   style: 'rough' = 'rough';
@@ -24,6 +20,7 @@ export class RoughCanvasPathRender implements IGraphicRender {
     @inject(DefaultCanvasPathRender)
     public readonly canvasRenderer: IGraphicRender
   ) {
+    super();
     this.type = 'path';
     this.numberType = PATH_NUMBER_TYPE;
   }
@@ -40,7 +37,7 @@ export class RoughCanvasPathRender implements IGraphicRender {
 
     context.highPerformanceSave();
 
-    const pathAttribute = getTheme(path).path;
+    const pathAttribute = path.getGraphicTheme();
     context.transformFromMatrix(path.transMatrix, true);
 
     const {
@@ -100,27 +97,5 @@ export class RoughCanvasPathRender implements IGraphicRender {
     }
 
     context.highPerformanceRestore();
-  }
-  drawShape(
-    graphic: IGraphic,
-    ctx: IContext2d,
-    x: number,
-    y: number,
-    drawContext: IDrawContext,
-    params?: IGraphicRenderDrawParams,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ): void {
-    if (this.canvasRenderer.drawShape) {
-      return this.canvasRenderer.drawShape(graphic, ctx, x, y, drawContext, params, fillCb, strokeCb);
-    }
   }
 }

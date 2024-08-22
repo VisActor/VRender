@@ -23,7 +23,6 @@ import { canvasAllocate } from '../allocator/canvas-allocate';
 import { application } from '../application';
 import { container } from '../container';
 import { VWindow } from './window';
-import { graphicCreator } from '../graphic';
 
 @injectable()
 export class DefaultGraphicUtil implements IGraphicUtil {
@@ -132,7 +131,10 @@ export class DefaultGraphicUtil implements IGraphicUtil {
     const bounds = graphic.AABBBounds;
     const width = bounds.width();
     const height = bounds.height();
+    const x1 = -bounds.x1;
+    const y1 = -bounds.y1;
     window.create({
+      viewBox: { x1, y1, x2: bounds.x2, y2: bounds.y2 },
       width,
       height,
       canvas,
@@ -142,16 +144,12 @@ export class DefaultGraphicUtil implements IGraphicUtil {
       title: ''
     });
 
-    const x = -bounds.x1;
-    const y = -bounds.y1;
     const disableCheckGraphicWidthOutRange = stage.params.optimize.disableCheckGraphicWidthOutRange;
     // 关掉dirtyBounds检测
     stage.params.optimize.disableCheckGraphicWidthOutRange = true;
     stage.defaultLayer.getNativeHandler().drawTo(window, [graphic as any], {
-      x,
-      y,
-      width,
-      height,
+      transMatrix: window.getViewBoxTransform(),
+      viewBox: window.getViewBox(),
       stage,
       layer: stage.defaultLayer,
       renderService: stage.renderService,

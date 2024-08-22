@@ -1,5 +1,5 @@
 import type { IPointLike, vec2 } from '@visactor/vutils';
-import { pi, pi2 } from '@visactor/vutils';
+import { isPointInLine, pi, pi2 } from '@visactor/vutils';
 import { enumCommandMap as CMD } from '../common/path-svg';
 import type { CommandType, IContext2d } from '../interface';
 import { container } from '../container';
@@ -317,30 +317,6 @@ export function normalizeRadian(angle: number): number {
     angle += pi2;
   }
   return angle;
-}
-
-// 基于zrender
-// https://github.com/ecomfe/zrender/blob/master/src/contain/windingLine.ts
-export default function windingLine(x0: number, y0: number, x1: number, y1: number, x: number, y: number): number {
-  if ((y > y0 && y > y1) || (y < y0 && y < y1)) {
-    return 0;
-  }
-  // Ignore horizontal line
-  if (y1 === y0) {
-    return 0;
-  }
-  const t = (y - y0) / (y1 - y0);
-
-  let dir = y1 < y0 ? 1 : -1;
-  // Avoid winding error when intersection point is the connect point of two line of polygon
-  if (t === 1 || t === 0) {
-    dir = y1 < y0 ? 0.5 : -0.5;
-  }
-
-  const x_ = t * (x1 - x0) + x0;
-
-  // If (x, y) on the line, considered as "contain".
-  return x_ === x ? Infinity : x_ > x ? dir : 0;
 }
 
 // 基于zrender
@@ -897,7 +873,7 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
     if (command[0] === CMD.M && i > 1) {
       // Close previous subpath
       if (!isStroke) {
-        w += windingLine(xi, yi, x0, y0, x, y);
+        w += isPointInLine(xi, yi, x0, y0, x, y);
       }
     }
     if (isFirst) {
@@ -948,7 +924,7 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
           }
         } else {
           // NOTE 在第一个命令为 L, C, Q 的时候会计算出 NaN
-          w += windingLine(xi, yi, c1, c2, x, y) || 0;
+          w += isPointInLine(xi, yi, c1, c2, x, y) || 0;
         }
         xi = c1;
         yi = c2;
@@ -981,7 +957,7 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
         y1 = Math.sin(theta) * c3 + c2;
         // 不是直接使用 arc 命令
         if (!isFirst) {
-          w += windingLine(xi, yi, x1, y1, x, y);
+          w += isPointInLine(xi, yi, x1, y1, x, y);
         } else {
           // 第一个命令起点还未定义
           x0 = x1;
@@ -1014,8 +990,8 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
           }
         } else {
           // FIXME Clockwise ?
-          w += windingLine(x1, y0, x1, y1, x, y);
-          w += windingLine(x0, y1, x0, y0, x, y);
+          w += isPointInLine(x1, y0, x1, y1, x, y);
+          w += isPointInLine(x0, y1, x0, y0, x, y);
         }
         break;
       case CMD.Z:
@@ -1025,7 +1001,7 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
           }
         } else {
           // Close a subpath
-          w += windingLine(xi, yi, x0, y0, x, y);
+          w += isPointInLine(xi, yi, x0, y0, x, y);
           // 如果被任何一个 subpath 包含
           // FIXME subpaths may overlap
           // if (w !== 0) {
@@ -1038,7 +1014,7 @@ function containPath(commands: CommandType[], lineWidth: number, isStroke: boole
     }
   }
   if (!isStroke && !isAroundEqual(yi, y0)) {
-    w += windingLine(xi, yi, x0, y0, x, y) || 0;
+    w += isPointInLine(xi, yi, x0, y0, x, y) || 0;
   }
   return w !== 0;
 }

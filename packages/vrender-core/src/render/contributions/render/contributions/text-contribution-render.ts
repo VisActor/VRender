@@ -1,4 +1,4 @@
-import type { IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix } from '@visactor/vutils';
 import { isObject } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import type {
@@ -11,7 +11,7 @@ import type {
 } from '../../../../interface';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { boundsAllocate } from '../../../../allocator/bounds-allocate';
-import { getTextBounds } from '../../../../graphic';
+import { getTextBounds } from '../../../../graphic/bounds';
 import { createRectPath } from '../../../../common/shape/rect';
 
 export class DefaultTextBackgroundRenderContribution
@@ -40,6 +40,23 @@ export class DefaultTextBackgroundRenderContribution
     if (!background) {
       return;
     }
+    let matrix: IMatrix;
+    const save = () => {
+      if (graphic.type === 'richtext') {
+        matrix = context.currentMatrix.clone();
+        context.restore();
+        context.save();
+        context.setTransformForCurrent();
+      }
+    };
+    const restore = () => {
+      if (graphic.type === 'richtext') {
+        context.restore();
+        context.save();
+        matrix && context.setTransformFromMatrix(matrix, true, 1);
+      }
+    };
+    save();
     let b: IAABBBounds;
     const shouldReCalBounds = isObject(background) && (background as any).background;
     const onlyTranslate = graphic.transMatrix.onlyTranslate();
@@ -64,13 +81,14 @@ export class DefaultTextBackgroundRenderContribution
     } else {
       b = graphic.AABBBounds;
       if (!onlyTranslate) {
-        b.set(0, 0, b.width(), b.height());
+        b = getTextBounds({ ...graphic.attribute, angle: 0, scaleX: 1, scaleY: 1, x: 0, y: 0, dx: 0, dy: 0 }).clone();
       }
     }
 
     if (graphic.backgroundImg && graphic.resources) {
       const res = graphic.resources.get(background as any);
       if (res.state !== 'success' || !res.data) {
+        restore();
         return;
       }
 
@@ -106,6 +124,7 @@ export class DefaultTextBackgroundRenderContribution
     if (shouldReCalBounds) {
       boundsAllocate.free(b);
     }
+    restore();
   }
 }
 

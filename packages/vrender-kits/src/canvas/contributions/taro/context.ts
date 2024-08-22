@@ -1,5 +1,5 @@
 // 参考konva
-import { injectable, createColor, getScaledStroke, getContextFont } from '@visactor/vrender-core';
+import { injectable, createColor, getScaledStroke } from '@visactor/vrender-core';
 import type {
   ICommonStyleParams,
   IContext2d,
@@ -11,6 +11,7 @@ import type {
   EnvType
 } from '@visactor/vrender-core';
 import { BrowserContext2d } from '../browser';
+import { getContextFont } from '@visactor/vutils';
 
 // 考虑taro-feishu等环境
 interface ITTContext {
@@ -106,7 +107,7 @@ export class TaroContext2d extends BrowserContext2d implements IContext2d {
       _context.setLineWidth(getScaledStroke(this, lineWidth, this.dpr));
       _context.setStrokeStyle(createColor(this, stroke as any, params, offsetX, offsetY));
       _context.setLineJoin(lineJoin);
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
       _context.setLineCap(lineCap);
       _context.setMiterLimit(miterLimit);
     }

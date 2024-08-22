@@ -1,5 +1,6 @@
+import type { IPointLike } from '@visactor/vutils';
 import { isUndefined, has, isString } from '@visactor/vutils';
-import type { IGlobal } from '../interface';
+import type { IGlobal, IWindow } from '../interface';
 import { EventManager } from './event-manager';
 import { FederatedPointerEvent, FederatedWheelEvent } from './federated-event';
 import type { FederatedMouseEvent } from './federated-event/mouse-event';
@@ -59,8 +60,6 @@ export class EventSystem {
 
   readonly applyStyles: boolean;
 
-  readonly viewport: RenderConfig['viewport'];
-
   /**
    * Should default browser actions automatically be prevented.
    * Does not apply to pointer events for backwards compatibility
@@ -82,7 +81,7 @@ export class EventSystem {
   /**
    * The DOM element to which the root event listeners are bound. This is automatically set to
    */
-  domElement: IElementLike | null;
+  domElement: IElementLike | IWindow | null;
 
   /** The resolution used to convert between the DOM client space into world space. */
   resolution = 1;
@@ -94,11 +93,10 @@ export class EventSystem {
 
   constructor(params: RenderConfig) {
     const {
-      targetElement,
+      targetElement, // 别名，避免和浏览器window重名
       resolution,
       rootNode,
       global,
-      viewport,
       autoPreventDefault = false,
       clickInterval,
       supportsTouchEvents = global.supportsTouchEvents,
@@ -116,7 +114,6 @@ export class EventSystem {
 
     this.autoPreventDefault = autoPreventDefault;
     this.eventsAdded = false;
-    this.viewport = viewport;
 
     this.rootPointerEvent = new FederatedPointerEvent();
     this.rootWheelEvent = new FederatedWheelEvent();
@@ -131,7 +128,11 @@ export class EventSystem {
   }
 
   release(): void {
-    this.setTargetElement(null);
+    this.removeEvents();
+    this.manager && this.manager.release();
+    this.domElement = null;
+    (this as any).manager = null;
+    (this as any).globalObj = null;
   }
 
   setCursor(mode: string, target: IEventTarget | null | 'ignore'): void {
@@ -211,7 +212,7 @@ export class EventSystem {
       return;
     }
 
-    const outside = this.isEventOutsideOfTargetElement(nativeEvent) ? 'outside' : '';
+    const outside = this.isEventOutsideOfTargetViewPort(nativeEvent) ? 'outside' : '';
     const normalizedEvents = this.normalizeToPointerData(nativeEvent);
 
     for (let i = 0, j = normalizedEvents.length; i < j; i++) {
@@ -338,23 +339,30 @@ export class EventSystem {
     this.eventsAdded = false;
   }
 
-  private mapToViewportPoint(event: FederatedMouseEvent): EventPoint {
-    const viewport = this.viewport;
-    const { x, y } = event;
-    return {
-      x: x - viewport.x,
-      y: y - viewport.y
-    };
+  private mapToViewportPoint(event: IPointLike): EventPoint {
+    if ((this.domElement as IWindow).pointTransform) {
+      return (this.domElement as IWindow).pointTransform(event.x, event.y);
+    }
+    return event;
   }
 
-  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent): EventPoint {
+  private mapToCanvasPoint(nativeEvent: PointerEvent | WheelEvent | TouchEvent): EventPoint {
     const point = this.globalObj?.mapToCanvasPoint(nativeEvent, this.domElement);
 
     if (point) {
       return point;
     }
 
-    const { clientX: x, clientY: y } = nativeEvent;
+    let x: number = 0;
+    let y: number = 0;
+    if ((nativeEvent as TouchEvent).changedTouches) {
+      const data = (nativeEvent as TouchEvent).changedTouches[0] ?? ({} as any);
+      x = data.clientX || 0;
+      y = data.clientY || 0;
+    } else {
+      x = (nativeEvent as PointerEvent | WheelEvent).clientX || 0;
+      y = (nativeEvent as PointerEvent | WheelEvent).clientY || 0;
+    }
     const rect = this.domElement.getBoundingClientRect();
     return {
       x: x - rect.left,
@@ -576,6 +584,23 @@ export class EventSystem {
     event.relatedTarget = null;
   }
 
+  private isEventOutsideOfTargetViewPort(nativeEvent: NativeEvent) {
+    if (this.isEventOutsideOfTargetElement(nativeEvent)) {
+      return true;
+    }
+
+    // 判断点是否在区间内
+    if ((this.domElement as IWindow).getViewBox) {
+      const p = this.mapToViewportPoint(this.mapToCanvasPoint(nativeEvent as any));
+      const b = (this.domElement as IWindow).getViewBox();
+      const w = b.width();
+      const h = b.height();
+      const contain = p.x < w && p.y < h && p.x > 0 && p.y > 0;
+      return !contain;
+    }
+    return false;
+  }
+
   private isEventOutsideOfTargetElement(nativeEvent: NativeEvent) {
     let target = nativeEvent.target;
 
@@ -588,6 +613,13 @@ export class EventSystem {
       : this.domElement;
 
     return target !== nativeElement;
+  }
+
+  pauseTriggerEvent() {
+    this.manager.pauseNotify = true;
+  }
+  resumeTriggerEvent() {
+    this.manager.pauseNotify = false;
   }
 }
 

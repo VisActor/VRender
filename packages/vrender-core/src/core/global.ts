@@ -391,6 +391,13 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.createDom(params);
   }
 
+  updateDom(dom: HTMLElement, params: CreateDOMParamsType): boolean {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.updateDom(dom, params);
+  }
+
   getElementTop(dom: any, baseWindow: boolean = false): number {
     if (!this._env) {
       this.setEnv('browser');

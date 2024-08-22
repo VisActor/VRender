@@ -3,6 +3,10 @@ import '@visactor/vrender';
 import { degreeToRadian } from '@visactor/vutils';
 import render from '../../util/render';
 import { MarkLine } from '../../../src';
+import { registerMarkLineAnimate } from '../../../src/marker';
+import { truncate } from 'fs';
+
+registerMarkLineAnimate();
 
 export function run() {
   console.log('MarkLine');
@@ -17,34 +21,110 @@ export function run() {
   };
 
   const styleAttr = {
+    select: true,
+    hover: true,
+    // animation: false,
+    state: {
+      line: {
+        hover: {
+          stroke: 'red'
+        },
+        selected: {
+          stroke: 'blue'
+        }
+      },
+      lineStartSymbol: {
+        // hover: {
+        //   fill: 'red'
+        // },
+        selected: {
+          fill: 'blue'
+        }
+      }
+      // endSymbol: {
+      //   hover: {
+      //     fill: 'red'
+      //   },
+      //   selected: {
+      //     fill: 'green'
+      //   }
+      // }
+    },
+    lineStyle: {
+      // curveType: 'monotoneX',
+      state: {
+        hover: {
+          stroke: 'red'
+        },
+        selected: {
+          stroke: 'blue'
+        }
+      }
+    },
+    startSymbol: {
+      visible: true,
+      state: {
+        hover: {
+          fill: 'red'
+        },
+        selected: {
+          fill: 'blue'
+        }
+      }
+    },
     endSymbol: {
+      visible: true,
       //  symbolType: 'triangleLeft',
       // symbolType: 'M0 0l-2 1 0.7289-1-0.7289-1z',
-      size: 10,
-      autoRotate: false
+      size: 20,
+      autoRotate: true,
       // refAngle: degreeToRadian(-90)
+      state: {
+        hover: {
+          fill: 'red'
+        },
+        selected: {
+          fill: 'green'
+        }
+      }
     },
     label: {
-      // text: '平均值: 17.7',
-      type: 'rich',
-      text: [
-        {
-          text: 'Mapbox',
-          fontWeight: 'bold',
-          fontSize: 25,
-          fill: '#3f51b5',
-          height: 25
-        },
-        {
-          text: '替代方案',
-          fontStyle: 'italic',
-          textDecoration: 'underline',
-          fill: '#3f51b5',
-          height: 25
+      text: 'aaaaaa',
+      // visible: false,
+      textStyle: {
+        fill: 'red',
+        fontSize: 20,
+        state: {
+          hover: {
+            fill: 'green'
+          },
+          selected: {
+            fill: 'blue'
+          }
         }
-      ],
+      },
       panel: {
-        visible: false
+        visible: true,
+        customShape: (data, attrs, path) => {
+          console.log('data', data, attrs, path);
+          const width = attrs.width;
+          const deltaY = attrs.height == null ? attrs.y1 - attrs.y : attrs.height;
+
+          path.moveTo(0, deltaY);
+          path.quadraticCurveTo(0.45 * width, 0.67 * deltaY, 0.5 * width, 0);
+          path.quadraticCurveTo(0.55 * width, 0.67 * deltaY, width, deltaY);
+          path.lineTo(0, deltaY);
+          path.closePath();
+          return path;
+        },
+        state: {
+          hover: {
+            fill: 'red'
+          },
+          selected: {
+            fill: 'blue'
+          }
+        }
       },
       position: guiObject.labelPos,
       autoRotate: guiObject.labelAutoRotate,
@@ -52,7 +132,14 @@ export function run() {
       refY: guiObject.labelRefY,
       refAngle: degreeToRadian(guiObject.labelRefAngle)
     },
-    clipInRange: false
+    limitRect: {
+      x: 180,
+      y: 250,
+      width: 30,
+      height: 3000
+    },
+    clipInRange: false,
+    interactive: true
     // limitRect: {
     //   x: 50,
     //   y: 50,
@@ -61,7 +148,16 @@ export function run() {
     // }
   };
   const markLine = new MarkLine({
-    points: [],
+    points: [
+      {
+        x: 200,
+        y: 350
+      },
+      {
+        x: 300,
+        y: 250
+      }
+    ],
     ...(styleAttr as any)
   });
 
@@ -94,20 +190,31 @@ export function run() {
   });
 
   const markLines = [markLine];
+  console.log('markline', markLine);
 
   const stage = render(markLines, 'main');
-  markLine.setAttributes({
-    points: [
-      {
-        x: 100,
-        y: 250
-      },
-      {
-        x: 400,
-        y: 150
-      }
-    ]
-  });
+
+  setTimeout(() => {
+    // markLine.release();
+  }, 500);
+
+  // markLine.setAttributes({
+  //   points: [
+  //     {
+  //       x: 100,
+  //       y: 250
+  //     },
+  //     {
+  //       x: 300,
+  //       y: 150
+  //     }
+  //     // {
+  //     //   x: 500,
+  //     //   y: 350
+  //     // }
+  //   ]
+  // });
+  console.log('markLine', markLine);
 
   // gui
   const gui = new GUI();
@@ -115,12 +222,20 @@ export function run() {
   gui
     .add(guiObject, 'labelPos', [
       'start',
-      'middle',
-      'end',
+      'startTop',
+      'startBottom',
+      'insideStart',
       'insideStartTop',
       'insideStartBottom',
+
+      'middle',
       'insideMiddleTop',
       'insideMiddleBottom',
+
+      'end',
+      'endTop',
+      'endBottom',
+      'insideEnd',
       'insideEndTop',
       'insideEndBottom'
     ])

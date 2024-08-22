@@ -3,6 +3,13 @@ import * as VRenderKits from '@visactor/vrender-kits';
 import * as VRenderCore from '@visactor/vrender-core';
 import * as VRenderComponents from '@visactor/vrender-components';
 
+import {
+  registerArcDataLabel,
+  registerLineDataLabel,
+  registerRectDataLabel,
+  registerSymbolDataLabel
+} from '@visactor/vrender-components';
+
 // @ts-ignore
 window.VRender = VRender;
 // @ts-ignore
@@ -11,6 +18,11 @@ window.VRenderComponents = VRenderComponents;
 window.VRenderCore = VRenderCore;
 // @ts-ignore
 window.VRenderKits = VRenderKits;
+
+registerSymbolDataLabel();
+registerRectDataLabel();
+registerLineDataLabel();
+registerArcDataLabel();
 
 export default {
   VRender,

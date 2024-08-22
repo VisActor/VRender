@@ -147,6 +147,10 @@ const specs = [
     name: '两端可带 symbol 的线'
   },
   {
+    path: 'arc-segment',
+    name: '两端可带 symbol 的弧线'
+  },
+  {
     path: 'line-axis',
     name: '笛卡尔坐标轴'
   },
@@ -165,6 +169,10 @@ const specs = [
   {
     path: 'data-zoom',
     name: '水平 dataZoom'
+  },
+  {
+    path: 'data-zoom-big-data',
+    name: '水平 dataZoom 大数据量采样'
   },
   {
     path: 'data-zoom-preview-v',
@@ -216,11 +224,19 @@ const specs = [
   },
   {
     path: 'mark-line',
-    name: 'markLine'
+    name: '直角坐标系markLine'
+  },
+  {
+    path: 'mark-arc-line',
+    name: '极坐标系markArcLine'
   },
   {
     path: 'mark-area',
-    name: 'markArea'
+    name: '直角坐标系markArea'
+  },
+  {
+    path: 'mark-arc-area',
+    name: '极坐标系markArea'
   },
   {
     path: 'mark-point',
@@ -231,12 +247,28 @@ const specs = [
     name: '指标卡'
   },
   {
+    path: 'indicator-html',
+    name: '指标卡使用html展示'
+  },
+  {
     path: 'brush',
     name: 'brush'
   },
   {
     path: 'checkbox',
     name: 'checkbox'
+  },
+  {
+    path: 'radio',
+    name: 'radio'
+  },
+  {
+    path: 'empty-tip',
+    name: 'empty-tip'
+  },
+  {
+    path: 'timeline',
+    name: 'timeline'
   }
 ];
 

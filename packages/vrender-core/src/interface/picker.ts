@@ -5,27 +5,41 @@ import type { EnvType, IGlobal } from './global';
 import type { IGroup } from './graphic/group';
 import type { IDrawContribution } from './render';
 
+type ISubPickEventParams =
+  | boolean
+  | {
+      graphic?: any;
+      group?: any;
+      params: ISubPickEventParams;
+    };
+
+export type IPickEventParams =
+  | {
+      shadowTarget?: IGraphic;
+    }
+  | ISubPickEventParams;
+
 export type PickResult = {
   graphic?: IGraphic | null;
   group?: IGroup | null;
-  params?: {
-    shadowTarget?: IGraphic;
-  };
+  params?:
+    | {
+        shadowTarget?: IGraphic;
+      }
+    | ISubPickEventParams;
 };
 
 export interface IGraphicPicker {
   type: string;
   numberType: number;
 
-  contains: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean;
+  contains: (graphic: IGraphic, point: IPointLike, params?: IPickParams) => boolean | any;
 }
 
 export interface IPickParams {
   group?: boolean;
   graphic?: boolean;
   bounds?: IBounds;
-  // 是否使用当前的Matrix，不用重新初始化matrix
-  keepMatrix?: boolean;
   pickContext?: IContext2d;
   pickerService?: IPickerService;
   // 内部设置

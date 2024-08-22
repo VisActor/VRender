@@ -9,6 +9,10 @@ export type IArcAttribute = {
   innerRadius: number;
   /** 外半径 */
   outerRadius: number;
+  /* 内边距 */
+  innerPadding: number;
+  /* 外边距 */
+  outerPadding: number;
   /**
    * 起始角度；
    * 以弧度的形式指定，0 表示 12 点钟方向并且顺时针方向为正。
@@ -36,7 +40,7 @@ export type IArcAttribute = {
    * cornerRadius: [5, '10%', '20%', 10]
    * TODO: 暂不支持
    */
-  cornerRadius: number | string;
+  cornerRadius: number | string | Array<number | string>;
   /**
    * 间隙角度；间隔角度会转换为一个在两个相邻的弧之间的确定的线性距离，定义为 padRadius * | padAngle |
    * 这个距离在弧的开始和结束处都是相等的；
@@ -70,7 +74,7 @@ export type IArcGraphicAttribute = Partial<IGraphicAttribute> & Partial<IArcAttr
 export interface IArc extends IGraphic<IArcGraphicAttribute> {
   cache?: ICustomPath2D;
 
-  getParsedCornerRadius: () => number;
+  getParsedCornerRadius: () => number | number[];
   getParsedAngle: () => { startAngle: number; endAngle: number; sc?: number; ec?: number };
   getParsePadAngle: (
     startAngle: number,

@@ -1,19 +1,26 @@
 /**
  * @description 圆弧型坐标轴
  */
-import type { IGroup, IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
+import type {
+  IGraphic,
+  IGroup,
+  IText,
+  ITextGraphicAttribute,
+  TextAlignType,
+  TextBaselineType
+} from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
-import { isNil, get, merge, isNumberClose, isEmpty, mixin } from '@visactor/vutils';
+import { isNil, get, merge, isNumberClose, isEmpty, mixin, isValidNumber } from '@visactor/vutils';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import type { CircleAxisAttributes, TitleAttributes, SubTickAttributes, TickLineItem, AxisItem } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
-import { getLabelPosition } from './util';
+import { getCircleLabelPosition, getCirclePoints, getPolygonPath } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
 
@@ -37,7 +44,8 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       center,
       innerRadius = 0,
       line = {},
-      inside = false
+      inside = false,
+      sides
     } = this.attribute as CircleAxisAttributes;
 
     let arcRadius = radius;
@@ -47,22 +55,33 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       arcInnerRadius = 0;
     }
 
-    const arcAttrs = {
-      ...center,
-      startAngle,
-      endAngle,
-      radius: arcRadius,
-      innerRadius: arcInnerRadius,
-      ...line.style
-    };
-    const axisLine = graphicCreator.circle(arcAttrs);
-    axisLine.name = AXIS_ELEMENT_NAME.line;
-    axisLine.id = this._getNodeId('line');
+    let lineGraphic: IGraphic;
+    if (isValidNumber(sides) && sides >= 3) {
+      const gridPoints = getCirclePoints(center as Point, sides as number, arcRadius, startAngle, endAngle);
+
+      lineGraphic = graphicCreator.path({
+        ...line.style,
+        path: getPolygonPath(gridPoints, true)
+      });
+    } else {
+      const arcAttrs = {
+        ...center,
+        startAngle,
+        endAngle,
+        radius: arcRadius,
+        innerRadius: arcInnerRadius,
+        ...line.style
+      };
+      lineGraphic = graphicCreator.circle(arcAttrs);
+    }
+
+    lineGraphic.name = AXIS_ELEMENT_NAME.line;
+    lineGraphic.id = this._getNodeId('line');
 
     if (!isEmpty(line.state)) {
-      axisLine.states = merge({}, DEFAULT_STATES, line.state);
+      lineGraphic.states = merge({}, DEFAULT_STATES, line.state);
     }
-    container.add(axisLine);
+    container.add(lineGraphic);
   }
 
   protected getTitleAttribute() {
@@ -234,7 +253,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     text: string | number,
     style: Partial<ITextGraphicAttribute>
   ) {
-    return getLabelPosition(point, vector, text, style);
+    return getCircleLabelPosition(point, vector, text, style);
   }
 }
 

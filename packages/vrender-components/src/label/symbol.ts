@@ -4,21 +4,17 @@ import type { SymbolLabelAttrs } from './type';
 import { LabelBase } from './base';
 import { labelingPoint } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
   name = 'symbol-label';
 
   static defaultAttributes: Partial<SymbolLabelAttrs> = {
     textStyle: {
-      fontSize: 12,
-      fill: '#000',
-      textAlign: 'center',
-      textBaseline: 'middle',
-      boundsPadding: [-1, 0, -1, 0] // to ignore the textBound buf
+      fill: '#000'
     },
     position: 'top',
-    offset: 5,
-    pickable: false
+    offset: 5
   };
 
   constructor(attributes: SymbolLabelAttrs, options?: ComponentOptions) {
@@ -29,3 +25,8 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
     return labelingPoint(textBounds, graphicBounds, position, offset);
   }
 }
+
+export const registerSymbolDataLabel = () => {
+  registerLabelComponent('symbol', SymbolLabel);
+  registerLabelComponent('line-data', SymbolLabel);
+};

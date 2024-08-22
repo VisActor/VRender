@@ -214,6 +214,7 @@ export function pointEqual(pointA: IPointLike, pointB: IPointLike): boolean {
 export function pointInterpolation(pointA: IPointLike, pointB: IPointLike, ratio: number): IPointLike {
   const { x, y } = pointAt(pointA.x, pointA.y, pointB.x, pointB.y, ratio);
   const { x: x1, y: y1 } = pointAt(pointA.x1, pointA.y1, pointB.x1, pointB.y1, ratio);
+
   const point = new Point(x as number, y as number, x1, y1);
   point.defined = pointB.defined;
   return point;
@@ -323,9 +324,9 @@ export class RafBasedSTO {
   lastDate: number;
   durationsListThreshold: number;
 
-  constructor() {
+  constructor(timeout: number = RafBasedSTO.TimeOut) {
     this.durations = [];
-    this.timeout = RafBasedSTO.TimeOut;
+    this.timeout = timeout;
     this.lastDate = 0;
     this.durationsListThreshold = 30;
   }

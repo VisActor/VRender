@@ -344,11 +344,11 @@ const parse = (function () {
 
 export class GradientParser {
   static IsGradient(c: IColor) {
-    return !(typeof c === 'string' && c.length < 10);
+    return !(typeof c === 'string' && !c.includes('gradient'));
   }
 
   static IsGradientStr(c: IColor) {
-    return typeof c === 'string' && c.length > 10;
+    return typeof c === 'string' && c.includes('gradient');
   }
 
   static Parse(c: IColor): IColor {

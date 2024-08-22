@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender",
-  "version": "0.17.22",
+  "version": "0.20.0",
   "description": "",
   "sideEffects": true,
   "main": "cjs/index.js",
@@ -14,25 +14,25 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle --clean",
-    "build-umd": "bundle --clean -f umd",
-    "dev": "bundle --clean -f es -w",
+    "build": "cross-env DEBUG='Bundler*' bundle --clean",
+    "build-umd": "cross-env DEBUG='Bundler*' bundle --clean -f umd",
+    "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./__tests__/browser --host",
     "test": "jest",
     "test-cov": "jest -w 16 --coverage",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
-    "test-watch": "DEBUG_MODE=1 jest --watch"
+    "test-watch": "cross-env DEBUG_MODE=1 jest --watch"
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.17.22",
-    "@visactor/vrender-kits": "workspace:0.17.22"
+    "@visactor/vrender-core": "workspace:0.20.0",
+    "@visactor/vrender-kits": "workspace:0.20.0"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vutils": "~0.17.3",
+    "@visactor/vutils": "~0.18.14",
     "canvas": "2.11.2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
@@ -46,7 +46,8 @@
     "ts-jest": "^26.0.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "cross-env": "^7.0.3"
   },
   "keywords": [
     "VisActor",

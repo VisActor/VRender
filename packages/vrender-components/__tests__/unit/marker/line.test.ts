@@ -60,7 +60,7 @@ describe('Marker', () => {
     expect((markLineContainer.children[0] as unknown as Segment).endSymbol?.attribute.angle).toBe(3.141592653589793);
 
     // tag构造的label
-    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBe(410);
+    expect((markLineContainer.children[1] as unknown as Tag).attribute.x).toBeCloseTo(410);
     expect((markLineContainer.children[1] as unknown as Tag).attribute.y).toBe(50);
     expect(
       ((markLineContainer.children[1] as unknown as Tag).getChildByName('tag-content') as any).children[0].attribute
@@ -84,7 +84,7 @@ describe('Marker', () => {
         visible: true,
         refAngle: degreeToRadian(90)
       }
-    });
+    } as any);
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
     expect(markLine.childrenCount).toBe(0);
@@ -110,12 +110,12 @@ describe('Marker', () => {
         visible: true,
         refAngle: degreeToRadian(90)
       }
-    });
+    } as any);
     stage.defaultLayer.add(markLine as unknown as IGraphic);
     stage.render();
     markLine.setAttributes({
       points: []
-    });
+    } as any);
     expect(markLine.childrenCount).toBe(0);
   });
 
@@ -144,7 +144,7 @@ describe('Marker', () => {
           y: 50
         }
       ]
-    });
+    } as any);
     const markAreaContainer = markLine.children[0] as unknown as Group;
     expect(markAreaContainer.childrenCount).toBe(2);
   });

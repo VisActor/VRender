@@ -48,7 +48,7 @@ export class RoughCanvasSymbolRender extends BaseRender<ISymbol> implements IGra
     const rc = rough.canvas(canvas);
 
     context.highPerformanceSave();
-    const symbolAttribute = getTheme(symbol).symbol;
+    const symbolAttribute = symbol.getGraphicTheme();
     const data = this.transform(symbol, symbolAttribute, context);
     const { x, y, z, lastModelMatrix } = data;
 

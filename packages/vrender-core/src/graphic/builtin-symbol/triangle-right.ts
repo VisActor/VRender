@@ -21,15 +21,7 @@ import { BaseSymbol } from './base';
 // 借鉴自d3
 // https://github.com/d3/d3-shape/blob/main/src/symbol/triangle.js
 
-export function trianglRight(ctx: IContext2d, r: number, x: number, y: number) {
-  ctx.moveTo(x - r, r + y);
-  ctx.lineTo(r + x, y);
-  ctx.lineTo(x - r, y - r);
-  ctx.closePath();
-  return true;
-}
-
-export function trianglRightOffset(ctx: IContext2d, r: number, x: number, y: number, offset: number) {
+export function trianglRightOffset(ctx: IContext2d, r: number, x: number, y: number, offset: number = 0) {
   ctx.moveTo(x - r - offset, r + y + 2 * offset);
   ctx.lineTo(r + x + 2 * offset, y);
   ctx.lineTo(x - r - offset, y - r - 2 * offset);
@@ -44,7 +36,7 @@ export class TriangleRightSymbol extends BaseSymbol implements ISymbolClass {
 
   draw(ctx: IContext2d, size: number, x: number, y: number) {
     const r = size / 2;
-    return trianglRight(ctx, r, x, y);
+    return trianglRightOffset(ctx, r, x, y);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {

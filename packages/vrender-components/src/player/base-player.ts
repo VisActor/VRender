@@ -22,7 +22,7 @@ import { isHorizontal } from './utils';
  * 基本播放器组件
  * 提供最基本的布局能力,
  */
-export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>> {
+export abstract class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>> {
   static defaultAttributes = {
     visible: true,
     data: [] as Datum[],
@@ -60,7 +60,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   // 数据属性
   protected _data = [] as Datum[];
   protected _minIndex: number;
+  getMinIndex() {
+    return this._minIndex;
+  }
   protected _maxIndex: number;
+  getMaxIndex() {
+    return this._maxIndex;
+  }
 
   // 滑轨属性
   private _sliderVisible: boolean;
@@ -79,6 +85,12 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
   private _size: { width: number; height: number };
   private _orient: OrientType;
 
+  // dataIndex, 代表slider的value
+  protected _dataIndex: number = 0;
+  getDataIndex() {
+    return this._dataIndex;
+  }
+
   private _layoutInfo: {
     // 滚动条位置
     slider?: { x: number; y: number; size: number };
@@ -90,10 +102,16 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     forward?: { x: number; y: number; size: number };
   } = {};
 
+  abstract play(): void;
+  abstract pause(): void;
+  abstract backward(): void;
+  abstract forward(): void;
+
   constructor(attributes: T, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, BasePlayer.defaultAttributes, attributes));
     // 先初始化属性, 再初始化Slider、Controller, 最后初始化事件.
     this._initAttributes();
+    this._initDataIndex();
     this._initLayoutInfo();
     this._initController();
     this._initSlider();
@@ -125,6 +143,13 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
     this._pause = { ...controller.pause };
     this._forward = { ...controller.forward };
     this._backward = { ...controller.backward };
+  }
+
+  /**
+   * 初始化dataIndex
+   */
+  _initDataIndex() {
+    this._dataIndex = this.attribute.dataIndex ?? 0;
   }
 
   private _initLayoutInfo() {
@@ -216,7 +241,7 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       // 重要参数
       min: this._minIndex,
       max: this._maxIndex,
-      value: this.attribute.dataIndex ?? 0,
+      value: this._dataIndex,
       railWidth: this._railStyle.width,
       railHeight: this._railStyle.height,
       railStyle: this._railStyle,
@@ -283,79 +308,40 @@ export class BasePlayer<T> extends AbstractComponent<Required<PlayerAttributes>>
       disableTriggerEvent: this.attribute.disableTriggerEvent
     };
     // 横向布局
-    if (isHorizontal(this._orient)) {
-      attrs.layout = 'horizontal';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        // 暂停按钮, 复用开始按钮的布局
-        style: {
-          ...attrs.pause.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
-    // 纵向布局
-    else {
-      attrs.layout = 'vertical';
-      attrs.start = {
-        ...attrs.start,
-        style: {
-          ...attrs.start.style,
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.pause = {
-        ...attrs.pause,
-        style: {
-          ...attrs.pause.style,
-          // 暂停按钮, 复用开始按钮的布局
-          x: this._layoutInfo.start.x,
-          y: this._layoutInfo.start.y
-        }
-      };
-      attrs.backward = {
-        ...attrs.backward,
-        style: {
-          ...attrs.backward.style,
-          x: this._layoutInfo.backward.x,
-          y: this._layoutInfo.backward.y
-        }
-      };
-      attrs.forward = {
-        ...attrs.forward,
-        style: {
-          ...attrs.forward.style,
-          x: this._layoutInfo.forward.x,
-          y: this._layoutInfo.forward.y
-        }
-      };
-    }
+    attrs.layout = isHorizontal(this._orient) ? 'horizontal' : 'vertical';
+    attrs.start = {
+      ...attrs.start,
+      style: {
+        ...attrs.start.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.pause = {
+      ...attrs.pause,
+      // 暂停按钮, 复用开始按钮的布局
+      style: {
+        ...attrs.pause.style,
+        x: this._layoutInfo.start.x,
+        y: this._layoutInfo.start.y
+      }
+    };
+    attrs.backward = {
+      ...attrs.backward,
+      style: {
+        ...attrs.backward.style,
+        x: this._layoutInfo.backward.x,
+        y: this._layoutInfo.backward.y
+      }
+    };
+    attrs.forward = {
+      ...attrs.forward,
+      style: {
+        ...attrs.forward.style,
+        x: this._layoutInfo.forward.x,
+        y: this._layoutInfo.forward.y
+      }
+    };
     return attrs;
   };
 

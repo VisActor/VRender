@@ -1,13 +1,14 @@
-import type { AABBBounds, OBBBounds } from '@visactor/vutils';
-import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { pi2, sin, epsilon, abs, asin, clampAngleByRadian, isNumber, cos, sqrt, isArray } from '@visactor/vutils';
 import type { IArc, IArcGraphicAttribute } from '../interface/graphic/arc';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { CustomPath2D } from '../common/custom-path2d';
-import { parsePadding } from '../common/utils';
+import { circleBounds } from '../common/utils';
 import { getTheme } from './theme';
 import { application } from '../application';
 import type { GraphicType } from '../interface';
 import { ARC_NUMBER_TYPE } from './constants';
+import { updateBoundsOfCommonOuterBorder } from './graphic-service/common-outer-boder-bounds';
 
 /**
  * 部分代码参考 https://github.com/d3/d3-shape/
@@ -107,26 +108,43 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
   }
 
   getParsedCornerRadius() {
-    const arcTheme = getTheme(this).arc;
+    const arcTheme = this.getGraphicTheme();
     const {
       cornerRadius = arcTheme.cornerRadius,
-      outerRadius = arcTheme.outerRadius,
-      innerRadius = arcTheme.innerRadius
+      innerPadding = arcTheme.innerPadding,
+      outerPadding = arcTheme.outerPadding
     } = this.attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     if (cornerRadius === 0 || cornerRadius === '0%') {
       return 0;
     }
     const deltaRadius = Math.abs(outerRadius - innerRadius);
-    return Math.min(
-      isNumber(cornerRadius, true)
-        ? (cornerRadius as number)
-        : (deltaRadius * parseFloat(cornerRadius as string)) / 100,
-      deltaRadius / 2
-    );
+    const parseCR = (cornerRadius: number | string) => {
+      return Math.min(
+        isNumber(cornerRadius, true)
+          ? (cornerRadius as number)
+          : (deltaRadius * parseFloat(cornerRadius as string)) / 100,
+        deltaRadius / 2
+      );
+    };
+    if (isArray(cornerRadius)) {
+      const crList = cornerRadius.map(cr => parseCR(cr) || 0);
+      if (crList.length === 0) {
+        return [crList[0], crList[0], crList[0], crList[0]];
+      } else if (crList.length === 2) {
+        return [crList[0], crList[1], crList[0], crList[1]];
+      } else if (crList.length === 3) {
+        crList.push(0);
+      }
+      return crList;
+    }
+    return parseCR(cornerRadius);
   }
 
   getParsedAngle() {
-    const arcTheme = getTheme(this).arc;
+    const arcTheme = this.getGraphicTheme();
     let { startAngle = arcTheme.startAngle, endAngle = arcTheme.endAngle } = this.attribute;
     const { cap = arcTheme.cap } = this.attribute;
 
@@ -140,10 +158,13 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       let startCap = 1;
       let endCap = 1;
       if ((cap as boolean[]).length) {
-        startCap = Number(cap[0]);
-        endCap = Number(cap[1]);
+        startCap = Number((cap as boolean[])[0]);
+        endCap = Number((cap as boolean[])[1]);
       }
-      const { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+      let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+      const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = this.attribute;
+      outerRadius += outerPadding;
+      innerRadius -= innerPadding;
       const capWidth = Math.abs(outerRadius - innerRadius) / 2;
       // 以外边界长度为准
       const capAngle = capWidth / outerRadius;
@@ -166,12 +187,15 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
   // 参考 https://github.com/d3/d3-shape/blob/main/src/arc.js
   getParsePadAngle(startAngle: number, endAngle: number) {
-    const arcTheme = getTheme(this).arc;
+    const arcTheme = this.getGraphicTheme();
     const {
-      outerRadius = arcTheme.outerRadius,
-      innerRadius = arcTheme.innerRadius,
+      innerPadding = arcTheme.innerPadding,
+      outerPadding = arcTheme.outerPadding,
       padAngle = arcTheme.padAngle
     } = this.attribute;
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = this.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
 
     const { padRadius = sqrt(outerRadius * outerRadius + innerRadius * innerRadius) } = this.attribute;
     const deltaAngle = abs(endAngle - startAngle);
@@ -228,29 +252,88 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     };
   }
 
-  protected doUpdateAABBBounds(full?: boolean): AABBBounds {
-    const arcTheme = getTheme(this).arc;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateArcAABBBounds(
-      attribute,
-      getTheme(this).arc,
-      this._AABBBounds,
-      full,
-      this
-    ) as AABBBounds;
-
-    const { boundsPadding = arcTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
-    }
-    this.clearUpdateBoundTag();
-    return bounds;
+  getGraphicTheme(): Required<IArcGraphicAttribute> {
+    return getTheme(this).arc;
   }
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
+  protected updateAABBBounds(
+    attribute: IArcGraphicAttribute,
+    arcTheme: Required<IArcGraphicAttribute>,
+    aabbBounds: IAABBBounds,
+    full?: boolean
+  ) {
+    if (!application.graphicService.validCheck(attribute, arcTheme, aabbBounds, this)) {
+      return aabbBounds;
+    }
+    if (!this.updatePathProxyAABBBounds(aabbBounds)) {
+      full
+        ? this.updateArcAABBBoundsImprecise(attribute, arcTheme, aabbBounds)
+        : this.updateArcAABBBoundsAccurate(attribute, arcTheme, aabbBounds);
+    }
+
+    const { tb1, tb2 } = application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    updateBoundsOfCommonOuterBorder(attribute, arcTheme, tb1);
+    aabbBounds.union(tb1);
+    tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
+
+    const { lineJoin = arcTheme.lineJoin } = attribute;
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, lineJoin === 'miter', this);
+
+    return aabbBounds;
+  }
+
+  protected updateArcAABBBoundsImprecise(
+    attribute: IArcGraphicAttribute,
+    arcTheme: Required<IArcGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
+    if (outerRadius < innerRadius) {
+      outerRadius = innerRadius;
+    }
+
+    aabbBounds.set(-outerRadius, -outerRadius, outerRadius, outerRadius);
+
+    return aabbBounds;
+  }
+  protected updateArcAABBBoundsAccurate(
+    attribute: IArcGraphicAttribute,
+    arcTheme: Required<IArcGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ): IAABBBounds {
+    let { outerRadius = arcTheme.outerRadius, innerRadius = arcTheme.innerRadius } = attribute;
+    const { outerPadding = arcTheme.outerPadding, innerPadding = arcTheme.innerPadding } = attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
+    if (outerRadius < innerRadius) {
+      // 不用解构，避免性能问题
+      const temp = outerRadius;
+      outerRadius = innerRadius;
+      innerRadius = temp;
+    }
+    let { endAngle = arcTheme.endAngle, startAngle = arcTheme.startAngle } = attribute;
+
+    if (startAngle > endAngle) {
+      const temp = startAngle;
+      startAngle = endAngle;
+      endAngle = temp;
+    }
+
+    if (outerRadius <= epsilon) {
+      aabbBounds.set(0, 0, 0, 0);
+    } else if (Math.abs(endAngle - startAngle) > pi2 - epsilon) {
+      aabbBounds.set(-outerRadius, -outerRadius, outerRadius, outerRadius);
+    } else {
+      // 直接内外两个radius叠加即可，不需要更精确
+      circleBounds(startAngle, endAngle, outerRadius, aabbBounds);
+      circleBounds(startAngle, endAngle, innerRadius, aabbBounds);
+    }
+
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {
@@ -260,19 +343,14 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     return super.needUpdateTag(key, ARC_UPDATE_TAG_KEY);
   }
 
-  getDefaultAttribute(name: string) {
-    const arcTheme = getTheme(this).arc;
-    return arcTheme[name];
-  }
-
   toCustomPath() {
     const x = 0;
     const y = 0;
 
     const attribute = this.attribute;
     const { startAngle, endAngle } = this.getParsedAngle();
-    let innerRadius = attribute.innerRadius;
-    let outerRadius = attribute.outerRadius;
+    let innerRadius = attribute.innerRadius - (attribute.innerPadding || 0);
+    let outerRadius = attribute.outerRadius - (attribute.outerPadding || 0);
     const deltaAngle = abs(endAngle - startAngle);
     const clockwise: boolean = endAngle > startAngle;
 

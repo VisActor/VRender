@@ -15,8 +15,8 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
     return this._globalAlpha;
   }
   set globalAlpha(ga: number) {
-    this.nativeContext.globalAlpha = ga;
-    this._globalAlpha = ga;
+    this.nativeContext.globalAlpha = ga * this.baseGlobalAlpha;
+    this._globalAlpha = ga * this.baseGlobalAlpha;
   }
 
   setLineDash(segments: number[]) {
@@ -29,7 +29,7 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
       if (lineDash[0] === 0 && lineDash[1] === 0) {
         return;
       }
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
     }
   }
 
@@ -55,13 +55,13 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit
       } = attribute;
-      _context.globalAlpha = strokeOpacity * opacity;
+      _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
       // lynx环境中lineDash不能为[0, 0]
       if (!(lineDash[0] === 0 && lineDash[1] === 0)) {
-        _context.setLineDash(lineDash);
+        lineDash && _context.setLineDash(lineDash);
       }
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;

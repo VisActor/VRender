@@ -118,10 +118,23 @@ export type LegendItem = {
     /** shape 同后面 label 的间距 */
     space?: number;
   } & BaseGraphicAttributes<Partial<ISymbolGraphicAttribute> | StyleCallback<Partial<ISymbolGraphicAttribute>>>;
+
+  /**
+   * 当label+ value同时存在的时候，自动省略的策略
+   * 'labelFirst' - 尽量保证完整展示`label`
+   * 'valueFirst' - 尽量保证完整展示`value`
+   * 'none' - 按照`widthRatio`展示label 和 value
+   */
+  autoEllipsisStrategy?: 'labelFirst' | 'valueFirst' | 'none';
+
   /**
    * 图例项的 label 文本配置
    */
   label?: {
+    /**
+     * 当 label + value 同时展示，切超长的时候，label的宽度占比
+     */
+    widthRatio?: number;
     /**
      * 图例项 label 同后面 value 的间距
      */
@@ -135,6 +148,10 @@ export type LegendItem = {
    * 图例项 value 配置
    */
   value?: {
+    /**
+     * 当 label + value 同时展示，切超长的时候，label的宽度占比
+     */
+    widthRatio?: number;
     /** value 同后面元素的间距 */
     space?: number;
     /**
@@ -184,8 +201,9 @@ export type DiscreteLegendAttrs = {
    * 单选/多选模式配置，默认 'multiple'。
    * - `single` 表示单选
    * - `multiple` 表示多选
+   * - `focus` 表示聚焦模式 （自 0.19.2版本开始支持）
    */
-  selectMode?: 'single' | 'multiple';
+  selectMode?: 'single' | 'multiple' | 'focus';
   /**
    * 是否允许图例全部取消，多选模式下生效
    */

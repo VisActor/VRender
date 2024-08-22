@@ -77,10 +77,12 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
     if (!picker) {
       return null;
     }
-    const g = picker.contains(graphic, point, params) ? graphic : null;
+    const pd = picker.contains(graphic, point, params);
+    const g = pd ? graphic : null;
     if (g) {
       return {
-        graphic: g
+        graphic: g,
+        params: pd
       };
     }
     return null;

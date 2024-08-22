@@ -2,38 +2,42 @@
  * @description 标签组件
  */
 import { array, flattenArray, isArray, isEmpty, isValidNumber, merge } from '@visactor/vutils';
-import type { ISymbol } from '@visactor/vrender-core';
+import type { ILine, ISymbol } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
-import type { SegmentAttributes, SymbolAttributes } from './type';
+import type { ILineGraphicWithCornerRadius, SegmentAttributes, SymbolAttributes } from './type';
 import type { Point } from '../core/type';
 import type { ComponentOptions } from '../interface';
 import { loadSegmentComponent } from './register';
+import { normalizeAngle } from '@visactor/vutils';
 
 loadSegmentComponent();
 export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
   name = 'segment';
-
+  key = 'segment';
   startSymbol?: ISymbol;
   endSymbol?: ISymbol;
+  lines?: ILine[] = [];
+  // animate?: (startSymbol, endSymbol, lines) => void;
 
-  private _startAngle!: number;
+  protected _startAngle!: number;
   /**
    * 外部获取segment起点正方向
    */
   getStartAngle() {
-    return this._startAngle;
+    return normalizeAngle(this._startAngle);
   }
 
-  private _endAngle!: number;
+  protected _endAngle!: number;
   /**
    * 外部获取segment终点正方向
    */
   getEndAngle() {
-    return this._endAngle;
+    return normalizeAngle(this._endAngle);
   }
 
-  private _mainSegmentPoints: Point[]; // 组成主线段的点
+  protected _mainSegmentPoints: Point[]; // 组成主线段的点
   getMainSegmentPoints() {
     return this._mainSegmentPoints;
   }
@@ -101,8 +105,9 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     this._computeLineAngle();
 
     // 绘制start和end symbol
-    const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, 'start');
-    const endSymbolShape = this._renderSymbol(endSymbol as SymbolAttributes, 'end');
+    const points = this._getMainSegmentPoints();
+    const startSymbolShape = this._renderSymbol(startSymbol as SymbolAttributes, points, 'start');
+    const endSymbolShape = this._renderSymbol(endSymbol as SymbolAttributes, points, 'end');
 
     this.startSymbol = startSymbolShape;
     this.endSymbol = endSymbolShape;
@@ -130,9 +135,15 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
           line.states = isArray(state.line) ? state.line[index] ?? state.line[state.line.length - 1] : state.line;
         }
         this.add(line);
+        this.lines.push(line);
       });
     } else {
-      const line = graphicCreator.polygon({
+      // 如果配置了cornerRadius, 则绘制polygon, 否则绘制line
+      let lineCreator = graphicCreator.line;
+      if ((array(lineStyle)[0] as ILineGraphicWithCornerRadius).cornerRadius) {
+        lineCreator = graphicCreator.polygon;
+      }
+      const line = lineCreator({
         points: this._clipPoints(this.attribute.points as Point[]),
         ...array(lineStyle)[0],
         fill: false,
@@ -145,20 +156,27 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
         line.states = [].concat(state.line)[0];
       }
       this.add(line);
+      this.lines.push(line);
     }
   }
 
-  private _renderSymbol(attribute: SymbolAttributes, dim: string): ISymbol | undefined {
-    const points = this._getMainSegmentPoints();
+  protected _computeStartRotate(angle: number) {
+    return angle + Math.PI / 2;
+  }
+
+  protected _computeEndRotate(angle: number) {
+    return angle + Math.PI / 2;
+  }
+
+  protected _renderSymbol(attribute: SymbolAttributes, points: Point[], dim: string): ISymbol | undefined {
     if (!points.length) {
       return;
     }
-
     const { autoRotate = true } = attribute;
     let symbol;
     if (attribute && attribute.visible) {
-      const startAngle = this._startAngle;
-      const endAngle = this._endAngle;
+      const startAngle = this.getStartAngle();
+      const endAngle = this.getEndAngle();
       const { state } = this.attribute as SegmentAttributes;
       const start = points[0];
       const end = points[points.length - 1];
@@ -174,14 +192,14 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
             start.y +
             (isValidNumber(startAngle) ? refX * Math.sin(startAngle) + refY * Math.sin(startAngle - Math.PI / 2) : 0)
         };
-        rotate = startAngle + Math.PI / 2; // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
+        rotate = this._computeStartRotate(this._startAngle); // @chensiji - 加Math.PI / 2是因为：默认symbol的包围盒垂直于line，所以在做自动旋转时需要在line正方向基础上做90度偏移
       } else {
         position = {
           x:
             end.x + (isValidNumber(endAngle) ? refX * Math.cos(endAngle) + refY * Math.cos(endAngle - Math.PI / 2) : 0),
           y: end.y + (isValidNumber(endAngle) ? refX * Math.sin(endAngle) + refY * Math.sin(endAngle - Math.PI / 2) : 0)
         };
-        rotate = endAngle + Math.PI / 2;
+        rotate = this._computeEndRotate(this._endAngle);
       }
 
       symbol = graphicCreator.symbol({
@@ -195,8 +213,20 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       symbol.name = `${this.name}-${dim}-symbol`;
       symbol.id = this._getNodeId(`${dim}-symbol`);
 
+      // 兼容旧逻辑, state.symbol同时应用到startSymbol和endSymbol
       if (!isEmpty(state?.symbol)) {
         symbol.states = state.symbol;
+      }
+
+      // 新逻辑, state.startSymbol和state.endSymbol做不同匹配
+      if (dim === 'start') {
+        if (!isEmpty(state?.startSymbol)) {
+          symbol.states = state.startSymbol;
+        }
+      } else {
+        if (!isEmpty(state?.endSymbol)) {
+          symbol.states = state.endSymbol;
+        }
       }
 
       this.add(symbol);
@@ -222,6 +252,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
       points = originPoints as Point[];
     }
     this._mainSegmentPoints = points;
+    // 去除重复的点, 目前发现计算startAngle和endAngle时会有问题
 
     return points;
   }
@@ -269,7 +300,7 @@ export class Segment extends AbstractComponent<Required<SegmentAttributes>> {
     this._endAngle = endAngle;
   }
 
-  private _reset() {
+  protected _reset() {
     this.startSymbol = null;
     this.endSymbol = null;
     this._startAngle = null;

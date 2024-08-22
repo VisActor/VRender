@@ -1,4 +1,5 @@
-import { isNumber, type AABBBounds, type OBBBounds } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { isNumber } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -23,7 +24,6 @@ import { getTheme } from './theme';
 import { RichTextIcon } from './richtext/icon';
 import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
-import { parsePadding } from '../common/utils';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
 const RICHTEXT_UPDATE_TAG_KEY = [
@@ -38,6 +38,9 @@ const RICHTEXT_UPDATE_TAG_KEY = [
   'textBaseline',
   'textConfig',
   'layoutDirection',
+  'fill',
+  'stroke',
+  'fontSize',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -161,33 +164,82 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     this.addUpdateShapeAndBoundsTag();
   }
 
-  protected doUpdateAABBBounds(): AABBBounds {
-    const richTextTheme = getTheme(this).richtext;
-    this._AABBBounds.clear();
-    const attribute = this.attribute;
-    const bounds = application.graphicService.updateRichTextAABBBounds(
-      attribute,
-      getTheme(this).richtext,
-      this._AABBBounds,
-      this
-    ) as AABBBounds;
+  getGraphicTheme(): Required<IRichTextGraphicAttribute> {
+    return getTheme(this).richtext;
+  }
 
-    const { boundsPadding = richTextTheme.boundsPadding } = attribute;
-    const paddingArray = parsePadding(boundsPadding);
-    if (paddingArray) {
-      bounds.expand(paddingArray);
+  protected updateAABBBounds(
+    attribute: IRichTextGraphicAttribute,
+    richtextTheme: Required<IRichTextGraphicAttribute>,
+    aabbBounds: IAABBBounds
+  ) {
+    if (!application.graphicService.validCheck(attribute, richtextTheme, aabbBounds, this)) {
+      return aabbBounds;
     }
 
-    this.clearUpdateBoundTag();
-    return bounds;
-  }
+    const {
+      width = richtextTheme.width,
+      height = richtextTheme.height,
+      maxWidth = richtextTheme.maxWidth,
+      maxHeight = richtextTheme.maxHeight,
+      textAlign = richtextTheme.textAlign,
+      textBaseline = richtextTheme.textBaseline
+    } = attribute;
 
-  protected tryUpdateOBBBounds(): OBBBounds {
-    throw new Error('暂不支持');
-  }
+    if (width > 0 && height > 0) {
+      // 外部设置宽高
+      aabbBounds.set(0, 0, width, height);
+    } else {
+      // 获取内容宽高
+      const frameCache = this.getFrameCache();
+      const { width: actualWidth, height: actualHeight } = frameCache.getActualSize();
+      let contentWidth = width || actualWidth || 0;
+      let contentHeight = height || actualHeight || 0;
 
-  getDefaultAttribute(name: string) {
-    return DefaultRichTextAttribute[name];
+      contentHeight = typeof maxHeight === 'number' && contentHeight > maxHeight ? maxHeight : contentHeight || 0;
+      contentWidth = typeof maxWidth === 'number' && contentWidth > maxWidth ? maxWidth : contentWidth || 0;
+
+      aabbBounds.set(0, 0, contentWidth, contentHeight);
+    }
+
+    // 调整对齐方式
+    let deltaY = 0;
+    switch (textBaseline) {
+      case 'top':
+        deltaY = 0;
+        break;
+      case 'middle':
+        deltaY = -aabbBounds.height() / 2;
+        break;
+      case 'bottom':
+        deltaY = -aabbBounds.height();
+        break;
+      default:
+        break;
+    }
+    let deltaX = 0;
+    switch (textAlign) {
+      case 'left':
+        deltaX = 0;
+        break;
+      case 'center':
+        deltaX = -aabbBounds.width() / 2;
+        break;
+      case 'right':
+        deltaX = -aabbBounds.width();
+        break;
+      default:
+        break;
+    }
+    aabbBounds.translate(deltaX, deltaY);
+
+    application.graphicService.updateTempAABBBounds(aabbBounds);
+
+    if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
+      application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
+    }
+    application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
+    return aabbBounds;
   }
 
   protected needUpdateTags(keys: string[]): boolean {
@@ -203,10 +255,37 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     return this._frameCache;
   }
-  doUpdateFrameCache() {
+  combinedStyleToCharacter(config: IRichTextImageCharacter | IRichTextParagraphCharacter) {
+    const {
+      fill,
+      stroke,
+      fontSize,
+      fontFamily,
+      fontStyle,
+      fontWeight,
+      lineWidth,
+      opacity,
+      fillOpacity,
+      strokeOpacity
+    } = this.attribute;
+    return {
+      fill,
+      stroke,
+      fontSize,
+      fontFamily,
+      fontStyle,
+      fontWeight,
+      lineWidth,
+      opacity,
+      fillOpacity,
+      strokeOpacity,
+      ...config
+    };
+  }
+  doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
     const {
-      textConfig = [],
+      textConfig: _tc = [],
       maxWidth,
       maxHeight,
       width,
@@ -217,13 +296,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textAlign,
       textBaseline,
       layoutDirection,
-      singleLine
+      singleLine,
+      disableAutoWrapLine
     } = this.attribute;
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
 
+    const textConfig = tc ?? _tc;
+
     for (let i = 0; i < textConfig.length; i++) {
       if ('image' in textConfig[i]) {
-        const config = textConfig[i] as IRichTextImageCharacter;
+        const config = this.combinedStyleToCharacter(
+          textConfig[i] as IRichTextImageCharacter
+        ) as IRichTextImageCharacter;
         // 直接创建icon Mark
         const iconCache =
           config.id && this._frameCache && this._frameCache.icons && this._frameCache.icons.get(config.id);
@@ -239,7 +323,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           paragraphs.push(icon);
         }
       } else {
-        const richTextConfig = textConfig[i] as IRichTextParagraphCharacter;
+        const richTextConfig = this.combinedStyleToCharacter(
+          textConfig[i] as IRichTextParagraphCharacter
+        ) as IRichTextParagraphCharacter;
         if (isNumber(richTextConfig.text)) {
           richTextConfig.text = `${richTextConfig.text}`;
         }
@@ -305,8 +391,38 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       this._frameCache?.icons
     );
     const wrapper = new Wrapper(frame);
-    for (let i = 0; i < paragraphs.length; i++) {
-      wrapper.deal(paragraphs[i]);
+    if (disableAutoWrapLine) {
+      let lineCount = 0;
+      let skip = false;
+      for (let i = 0; i < paragraphs.length; i++) {
+        const p = paragraphs[i];
+        if (skip) {
+          (p as Paragraph).overflow = true;
+          (p as Paragraph).left = Infinity;
+          (p as Paragraph).top = Infinity;
+          !(p as Paragraph).newLine && frame.lines[frame.lines.length - 1].paragraphs.push(p);
+        } else {
+          wrapper.deal(p, true);
+        }
+        if (frame.lines.length !== lineCount) {
+          lineCount = frame.lines.length;
+          wrapper.lineBuffer.length = 0;
+          (p as Paragraph).overflow = true;
+          (p as Paragraph).left = 1000;
+          (p as Paragraph).top = 1000;
+          frame.lines[frame.lines.length - 1].paragraphs.push(p);
+          skip = true;
+        }
+        if ((p as Paragraph).newLine) {
+          skip = false;
+          wrapper.lineWidth = 0;
+        }
+        wrapper.send();
+      }
+    } else {
+      for (let i = 0; i < paragraphs.length; i++) {
+        wrapper.deal(paragraphs[i]);
+      }
     }
 
     wrapper.send(); // 最后一行手动输出
@@ -397,11 +513,13 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     // }
     let pickIcon: IRichTextIcon | undefined;
     frameCache.icons.forEach(icon => {
-      if (icon.AABBBounds.containsPoint({ x: point.x - x, y: point.y - y })) {
+      const bounds = icon.AABBBounds.clone();
+      bounds.translate(icon._marginArray[3], icon._marginArray[0]);
+      if (bounds.containsPoint({ x: point.x - x, y: point.y - y })) {
         pickIcon = icon;
 
-        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x;
-        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y;
+        pickIcon.globalX = (pickIcon.attribute.x ?? 0) + x + icon._marginArray[3];
+        pickIcon.globalY = (pickIcon.attribute.y ?? 0) + y + icon._marginArray[0];
       }
     });
 

@@ -13,13 +13,13 @@ import type {
   ITextRenderContribution,
   IContributionProvider
 } from '../../../interface';
-import { textDrawOffsetX, textLayoutOffsetY } from '../../../common/text';
+import { textDrawOffsetX, textDrawOffsetY, textLayoutOffsetY } from '../../../common/text';
 import type { IText, ITextGraphicAttribute } from '../../../interface/graphic/text';
 import { BaseRender } from './base-render';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { TextRenderContribution } from './contributions/constants';
 import { matrixAllocate } from '../../../allocator/matrix-allocate';
-import { max } from '@visactor/vutils';
+import { isNil, max } from '@visactor/vutils';
 import { calculateLineHeight } from '../../../common/utils';
 import { defaultTextBackgroundRenderContribution } from './contributions/text-contribution-render';
 
@@ -64,7 +64,7 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       keepDirIn3d = textAttribute.keepDirIn3d,
       direction = textAttribute.direction,
       // lineHeight = textAttribute.lineHeight,
-      whiteSpace = textAttribute.whiteSpace,
+      // whiteSpace = textAttribute.whiteSpace,
       fontSize = textAttribute.fontSize,
       verticalMode = textAttribute.verticalMode,
       x: originX = textAttribute.x,
@@ -179,16 +179,19 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
             context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
             multilineLayout.lines.forEach(line => {
               context.fillText(line.str, (line.leftOffset || 0) + xOffset + x, (line.topOffset || 0) + yOffset + y, z);
-              this.drawMultiUnderLine(
+              this.drawUnderLine(
                 underline,
                 lineThrough,
                 text,
-                (line.leftOffset || 0) + x, // 中下划线都是从文字左侧开始，因此不需要+xOffset
-                (line.topOffset || 0) + yOffset + y,
+                (line.leftOffset || 0) + xOffset + x,
+                // y是基于alphabetic对齐的，这里-0.05是为了和不换行的文字保持效果一致
+                (line.topOffset || 0) + yOffset + y - textDrawOffsetY('bottom', fontSize) - 0.05 * fontSize,
                 z,
-                line.width,
                 textAttribute,
-                context
+                context,
+                {
+                  width: line.width
+                }
               );
             });
           }
@@ -314,7 +317,10 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     y: number,
     z: number,
     textAttribute: Required<ITextGraphicAttribute>,
-    context: IContext2d
+    context: IContext2d,
+    multiOption?: {
+      width: number;
+    }
   ) {
     if (lineThrough + underline <= 0) {
       return;
@@ -326,69 +332,29 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
+      underlineOffset = textAttribute.underlineOffset,
+      underlineDash = textAttribute.underlineDash,
       fillOpacity = textAttribute.fillOpacity
     } = text.attribute;
-    const w = text.clipedWidth;
-    const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY(textBaseline, fontSize, fontSize);
+    const isMulti = !isNil(multiOption);
+    const w = isMulti ? multiOption!.width : text.clipedWidth;
+    const offsetX = isMulti ? 0 : textDrawOffsetX(textAlign, w);
+    const offsetY = textLayoutOffsetY(isMulti ? 'alphabetic' : textBaseline, fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
+    let deltaY = isMulti ? -3 : 0;
     if (underline) {
       attribute.lineWidth = underline;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      underlineDash && context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize;
+      const dy = y + offsetY + fontSize + underlineOffset + deltaY;
       context.moveTo(x + offsetX, dy, z);
       context.lineTo(x + offsetX + w, dy, z);
       context.stroke();
     }
-    if (lineThrough) {
-      attribute.lineWidth = lineThrough;
-      context.setStrokeStyle(text, attribute, x, y, textAttribute);
-      context.beginPath();
-      const dy = y + offsetY + fontSize / 2;
-      context.moveTo(x + offsetX, dy, z);
-      context.lineTo(x + offsetX + w, dy, z);
-      context.stroke();
+    if (isMulti) {
+      deltaY = -1;
     }
-  }
-
-  drawMultiUnderLine(
-    underline: number,
-    lineThrough: number,
-    text: IText,
-    x: number,
-    y: number,
-    z: number,
-    w: number,
-    textAttribute: Required<ITextGraphicAttribute>,
-    context: IContext2d
-  ) {
-    if (lineThrough + underline <= 0) {
-      return;
-    }
-
-    const {
-      textAlign = textAttribute.textAlign,
-      fontSize = textAttribute.fontSize,
-      fill = textAttribute.fill,
-      opacity = textAttribute.opacity,
-      fillOpacity = textAttribute.fillOpacity
-    } = text.attribute;
-
-    const offsetX = textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY('alphabetic', fontSize, fontSize);
-    const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
-    let deltaY = -3;
-    if (underline) {
-      attribute.lineWidth = underline;
-      context.setStrokeStyle(text, attribute, x, y, textAttribute);
-      context.beginPath();
-      const dy = y + offsetY + fontSize + deltaY;
-      context.moveTo(x + offsetX, dy, z);
-      context.lineTo(x + offsetX + w, dy, z);
-      context.stroke();
-    }
-    deltaY = -1;
     if (lineThrough) {
       attribute.lineWidth = lineThrough;
       context.setStrokeStyle(text, attribute, x, y, textAttribute);

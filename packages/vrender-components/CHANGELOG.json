@@ -2,6 +2,609 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.0",
+      "tag": "@visactor/vrender-components_v0.20.0",
+      "date": "Thu, 15 Aug 2024 07:26:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: arc label line color should follow arc mark by default, related #3067"
+          },
+          {
+            "comment": "fix: fix bug of auto-render when remove some graphics\n\n"
+          },
+          {
+            "comment": "fix: set container pick false to allow tooltip interactive"
+          },
+          {
+            "comment": "fix: fix issue with timeline animate duration compute"
+          },
+          {
+            "comment": "fix: optimize triangle symbols\n\n"
+          },
+          {
+            "comment": "refactor: optimize cornerRadius parse of arc\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.24",
+      "tag": "@visactor/vrender-components_v0.19.24",
+      "date": "Tue, 13 Aug 2024 07:47:29 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support polygon of circle-axis\n\n"
+          },
+          {
+            "comment": "fix: fix wrong stroke style is applied to area\n\n"
+          },
+          {
+            "comment": "fix: improve slightly the accuracy of the pager size calculation, related #3045"
+          },
+          {
+            "comment": "fix: fix issue with timeline appearAnimate opacity attr prevented by next animate"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.23",
+      "tag": "@visactor/vrender-components_v0.19.23",
+      "date": "Tue, 06 Aug 2024 05:17:39 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.22",
+      "tag": "@visactor/vrender-components_v0.19.22",
+      "date": "Mon, 05 Aug 2024 09:08:30 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support react and html of indicator\n\n"
+          },
+          {
+            "comment": "feat: support timeline component"
+          },
+          {
+            "comment": "fix: fix issue with indicator autolimit"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.21",
+      "tag": "@visactor/vrender-components_v0.19.21",
+      "date": "Mon, 05 Aug 2024 01:39:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: label line support custom path. feat @VisActor/VChart#3000"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.20",
+      "tag": "@visactor/vrender-components_v0.19.20",
+      "date": "Wed, 31 Jul 2024 09:48:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.19",
+      "tag": "@visactor/vrender-components_v0.19.19",
+      "date": "Tue, 23 Jul 2024 11:56:39 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: marker label support custom shape. close @Visactor/VChart#2959"
+          },
+          {
+            "comment": "fix: in vertical layout, if only one line can be displayed, the layout will be directly based on the width of the legend item itself"
+          },
+          {
+            "comment": "fix: markpoint target size compute error. fix@Visactor/VChart#2766"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.18",
+      "tag": "@visactor/vrender-components_v0.19.18",
+      "date": "Fri, 12 Jul 2024 07:18:10 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.17",
+      "tag": "@visactor/vrender-components_v0.19.17",
+      "date": "Fri, 05 Jul 2024 17:26:17 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.16",
+      "tag": "@visactor/vrender-components_v0.19.16",
+      "date": "Fri, 05 Jul 2024 14:29:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue where the arc label is still truncated despite setting `ellipsis: false`"
+          },
+          {
+            "comment": "fix: fix syncState of label when re-render stage\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.15",
+      "tag": "@visactor/vrender-components_v0.19.15",
+      "date": "Fri, 28 Jun 2024 10:32:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.14",
+      "tag": "@visactor/vrender-components_v0.19.14",
+      "date": "Wed, 26 Jun 2024 09:16:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: upgrade @visactor/vutils"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.13",
+      "tag": "@visactor/vrender-components_v0.19.13",
+      "date": "Tue, 25 Jun 2024 11:17:14 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.12",
+      "tag": "@visactor/vrender-components_v0.19.12",
+      "date": "Fri, 21 Jun 2024 06:52:50 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.11",
+      "tag": "@visactor/vrender-components_v0.19.11",
+      "date": "Fri, 14 Jun 2024 09:50:59 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix position of canvas tooltip shape\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.10",
+      "tag": "@visactor/vrender-components_v0.19.10",
+      "date": "Thu, 13 Jun 2024 09:52:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `align` right of canvas tooltip\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.9",
+      "tag": "@visactor/vrender-components_v0.19.9",
+      "date": "Wed, 05 Jun 2024 12:25:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: colorLegend handler cannot customize fill color"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.8",
+      "tag": "@visactor/vrender-components_v0.19.8",
+      "date": "Wed, 05 Jun 2024 08:24:28 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.7",
+      "tag": "@visactor/vrender-components_v0.19.7",
+      "date": "Tue, 04 Jun 2024 11:10:08 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix useless re-render of datazoom and brush\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.6",
+      "tag": "@visactor/vrender-components_v0.19.6",
+      "date": "Wed, 29 May 2024 06:57:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add empty-tip component\n\n"
+          },
+          {
+            "comment": "fix(marker): fix marker position and ref bad case. fix@visactor/vchart#2721"
+          },
+          {
+            "comment": "fix: fix animation of state change\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.5",
+      "tag": "@visactor/vrender-components_v0.19.5",
+      "date": "Fri, 24 May 2024 09:21:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add \\`containerTextAlign\\` for tag component"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.4",
+      "tag": "@visactor/vrender-components_v0.19.4",
+      "date": "Fri, 17 May 2024 06:46:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add  scrollbar propagation spec to allow close stop propagation"
+          },
+          {
+            "comment": "feat: support harmony env"
+          },
+          {
+            "comment": "feat(marker): mark point support arc and target item. close@VisActor/VChart#2590"
+          },
+          {
+            "comment": "feat(player): index can be looped when set backward or forward button in player if user config loop. close@Vi"
+          },
+          {
+            "comment": "fix: fix error of arc label\n\n"
+          },
+          {
+            "comment": "fix: fix error of tooltip when rich text is empty\n\n"
+          },
+          {
+            "comment": "fix(legend): active item error when rerender legend. fix@VisActor/VChart#2690"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.3",
+      "tag": "@visactor/vrender-components_v0.19.3",
+      "date": "Fri, 10 May 2024 09:24:38 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.2",
+      "tag": "@visactor/vrender-components_v0.19.2",
+      "date": "Thu, 09 May 2024 12:26:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `focus` mode in discrete legend\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.19.1",
+      "tag": "@visactor/vrender-components_v0.19.1",
+      "date": "Wed, 08 May 2024 08:47:35 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.19.0",
+      "tag": "@visactor/vrender-components_v0.19.0",
+      "date": "Tue, 30 Apr 2024 08:40:53 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix point of event when stage has transform\n\n"
+          },
+          {
+            "comment": "feat: support style callback in html and react, fix 1102\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.17",
+      "tag": "@visactor/vrender-components_v0.18.17",
+      "date": "Tue, 30 Apr 2024 07:48:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix error of label when all the labels are cleared\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.16",
+      "tag": "@visactor/vrender-components_v0.18.16",
+      "date": "Mon, 29 Apr 2024 07:40:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: theme should not support 3d graphics\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.15",
+      "tag": "@visactor/vrender-components_v0.18.15",
+      "date": "Fri, 26 Apr 2024 10:37:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: `label.rotate: false` not work in inside arc label "
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.14",
+      "tag": "@visactor/vrender-components_v0.18.14",
+      "date": "Wed, 24 Apr 2024 08:07:48 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.13",
+      "tag": "@visactor/vrender-components_v0.18.13",
+      "date": "Fri, 19 Apr 2024 08:46:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.12",
+      "tag": "@visactor/vrender-components_v0.18.12",
+      "date": "Fri, 19 Apr 2024 07:48:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: add radio component"
+          },
+          {
+            "comment": "fix(brush): state not correctly when operating mask bounds is not right. fix@VisActor/VChart#2555"
+          },
+          {
+            "comment": "fix: when clear states, the animations of state should clear\n\n"
+          },
+          {
+            "comment": "fix(event): event pos error when scale"
+          },
+          {
+            "comment": "fix: fix the issue of update selected value of slider\n\n"
+          },
+          {
+            "comment": "docs: update changlog of rush\n\n"
+          },
+          {
+            "comment": "refactor: replace wrapText with text"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.11",
+      "tag": "@visactor/vrender-components_v0.18.11",
+      "date": "Wed, 17 Apr 2024 03:02:22 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: change click into pointup in checkbox"
+          },
+          {
+            "comment": "fix: player click event not working"
+          },
+          {
+            "comment": "fix: player slider value error after resize"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.10",
+      "tag": "@visactor/vrender-components_v0.18.10",
+      "date": "Fri, 29 Mar 2024 08:02:16 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445"
+          },
+          {
+            "comment": "fix: when user set `defaultSelected` value to be [], all legend's items should be unselected, fixed https://github.com/VisActor/VChart/issues/2445"
+          },
+          {
+            "comment": "fix: fix alignment calculation for line axis axis text, fixed https://github.com/VisActor/VChart/issues/2449"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.9",
+      "tag": "@visactor/vrender-components_v0.18.9",
+      "date": "Thu, 28 Mar 2024 10:13:24 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.8",
+      "tag": "@visactor/vrender-components_v0.18.8",
+      "date": "Wed, 27 Mar 2024 11:33:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `inverse` in slider and size-lengend, color-legend\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.7",
+      "tag": "@visactor/vrender-components_v0.18.7",
+      "date": "Fri, 22 Mar 2024 08:46:19 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(segment): support curve type. feat VisActor/VChart#2417"
+          },
+          {
+            "comment": "fix: fix auto-limit of horizontal and vertical text\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.6",
+      "tag": "@visactor/vrender-components_v0.18.6",
+      "date": "Tue, 19 Mar 2024 10:10:17 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the issue of axis's update transition animation not work"
+          },
+          {
+            "comment": "fix: fix the direction of legend scrollbar"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.5",
+      "tag": "@visactor/vrender-components_v0.18.5",
+      "date": "Tue, 12 Mar 2024 15:16:46 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(debounce): dataZoom and scrollbar and brush debounce leads to remove event fail"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.4",
+      "tag": "@visactor/vrender-components_v0.18.4",
+      "date": "Tue, 12 Mar 2024 09:40:06 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.3",
+      "tag": "@visactor/vrender-components_v0.18.3",
+      "date": "Mon, 11 Mar 2024 08:24:00 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(dataZoom): fix datazoom realtime error and export scrollbar event name "
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.2",
+      "tag": "@visactor/vrender-components_v0.18.2",
+      "date": "Fri, 08 Mar 2024 03:19:08 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.18.1",
+      "tag": "@visactor/vrender-components_v0.18.1",
+      "date": "Mon, 04 Mar 2024 08:29:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "    feat: support `autoEllipsisStrategy` of legend item"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.18.0",
+      "tag": "@visactor/vrender-components_v0.18.0",
+      "date": "Wed, 28 Feb 2024 10:09:04 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat(scrollbar): reconfig scrollbar api of scrollDrag and scrollDown"
+          },
+          {
+            "comment": "feat: support oriented padding in label overlap bitmap"
+          },
+          {
+            "comment": "feat: support item align of discrete legend"
+          },
+          {
+            "comment": "feat: support scrollbar in legend"
+          },
+          {
+            "comment": "feat: support tooltip in SizeLegend and ColorLegend"
+          },
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          },
+          {
+            "comment": "fix(dataZoom): compute line width when compute bounds"
+          },
+          {
+            "comment": "feat: support lazyload of Legend, and pageFormatter of Pager\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.26",
+      "tag": "@visactor/vrender-components_v0.17.26",
+      "date": "Wed, 28 Feb 2024 08:06:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.17.25",
+      "tag": "@visactor/vrender-components_v0.17.25",
+      "date": "Fri, 23 Feb 2024 04:29:58 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": " feat: export more basic type defination in vrender-components"
+          },
+          {
+            "comment": "fix: fix auto-limit of top/bottom axis when no rotate\n\n"
+          },
+          {
+            "comment": "fix: legend disappear when label is empty string in focus mode"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.24",
+      "tag": "@visactor/vrender-components_v0.17.24",
+      "date": "Tue, 06 Feb 2024 09:48:26 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix(datazoom): realtime & pickable not work"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.17.23",
+      "tag": "@visactor/vrender-components_v0.17.23",
+      "date": "Sun, 04 Feb 2024 12:41:45 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.17.22",
       "tag": "@visactor/vrender-components_v0.17.22",
       "date": "Fri, 02 Feb 2024 07:17:07 GMT",

@@ -1,25 +1,30 @@
 import type { IAABBBounds, IBoundsLike } from '@visactor/vutils';
-import { merge, isValidNumber, isNil, isLess, isGreater, isNumberClose as isClose } from '@visactor/vutils';
+import {
+  merge,
+  isValidNumber,
+  isNil,
+  isLess,
+  isGreater,
+  isNumberClose as isClose,
+  polarToCartesian,
+  computeQuadrant
+} from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
+import type { ILineGraphicAttribute, IRichTextAttribute } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import {
   type IRichText,
   type IText,
   type IArcGraphicAttribute,
   type IGraphic,
   type ILine,
-  graphicCreator
+  graphicCreator,
+  CustomPath2D
 } from '@visactor/vrender-core';
-import {
-  circlePoint,
-  isQuadrantRight,
-  isQuadrantLeft,
-  lineCirclePoints,
-  connectLineRadian,
-  checkBoundsOverlap,
-  computeQuadrant
-} from './util';
+import { isQuadrantRight, isQuadrantLeft, lineCirclePoints, connectLineRadian, checkBoundsOverlap } from './util';
 import type { ComponentOptions } from '../interface';
+import { registerLabelComponent } from './data-label-register';
 
 export class ArcInfo {
   key!: string;
@@ -114,11 +119,11 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       fontSize: 14,
       fontWeight: 'normal',
       fillOpacity: 1,
-      textAlign: 'center',
-      textBaseline: 'middle'
+      // arc boundsPadding 宽度设大会家加剧旋转时，AABBbounds.width 大于无旋转角度的情况，导致 arc 内部标签被缩略的问题
+      boundsPadding: [-1, 0, -1, 0],
+      ellipsis: true
     },
     position: 'outside',
-    offset: 0,
     line: {
       visible: true,
       line1MinLength: 20,
@@ -128,8 +133,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       align: 'arc',
       strategy: 'priority',
       tangentConstraint: true
-    },
-    pickable: false
+    }
   };
 
   private _ellipsisWidth: number = 0;
@@ -158,15 +162,22 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   protected _layout(texts: (IText | IRichText)[]) {
+    if (!texts || !texts.length) {
+      return;
+    }
+
     const labels = super._layout(texts);
     const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,
       text: '…'
     };
-    const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
-    const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
-    const ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    let ellipsisWidth = Infinity;
+    if (ellipsisLabelAttribute.ellipsis !== false) {
+      const ellipsisText = this._createLabelText(ellipsisLabelAttribute);
+      const ellipsisTextBounds = this.getGraphicBounds(ellipsisText);
+      ellipsisWidth = ellipsisTextBounds.x2 - ellipsisTextBounds.x1;
+    }
     const data = labels.map(label => label.attribute as LabelItem);
 
     const arcs: ArcInfo[] = this.layoutArcLabels(
@@ -193,6 +204,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
               : undefined,
           line: basedArc.labelLine
         };
+        if (labels[i].type === 'richtext') {
+          (labelAttribute as unknown as IRichTextAttribute).width = basedArc.labelLimit;
+        }
         labels[i].setAttributes(labelAttribute);
       }
     }
@@ -231,13 +245,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         const intervalAngle = graphicAttribute.endAngle - graphicAttribute.startAngle;
         const arcQuadrant = computeQuadrant(graphicAttribute.endAngle - intervalAngle / 2);
 
-        const arcMiddle = circlePoint(center.x, center.y, graphicAttribute.outerRadius, arcMiddleAngle);
-        const outerArcMiddle = circlePoint(
-          center.x,
-          center.y,
-          maxRadius + attribute.line.line1MinLength,
-          arcMiddleAngle
-        );
+        const arcMiddle = polarToCartesian(center, graphicAttribute.outerRadius, arcMiddleAngle);
+        const outerArcMiddle = polarToCartesian(center, maxRadius + attribute.line.line1MinLength, arcMiddleAngle);
         const arc = new ArcInfo(
           item,
           arcMiddle,
@@ -250,9 +259,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           center
         );
 
-        arc.pointA = circlePoint(
-          (center as IPoint).x,
-          (center as IPoint).y,
+        arc.pointA = polarToCartesian(
+          center as IPoint,
           this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
           arc.middleAngle
         );
@@ -334,18 +342,20 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       } else {
         labelRadius = outerRadius + offsetRadius - alignOffset;
       }
-      arc.labelPosition = circlePoint(arc.circleCenter.x, arc.circleCenter.y, labelRadius, arc.middleAngle);
+      arc.labelPosition = polarToCartesian(arc.circleCenter, labelRadius, arc.middleAngle);
       arc.labelLimit = labelWidth;
       if (!isGreater(labelWidth, 0)) {
         arc.labelVisible = false;
       }
 
-      arc.angle = attribute.textStyle?.angle ?? arc.middleAngle;
-      let offsetAngle = labelConfig.offsetAngle ?? 0;
-      if (['inside-inner', 'inside-outer'].includes(position as string)) {
-        offsetAngle += Math.PI / 2;
+      if (labelConfig.rotate !== false) {
+        arc.angle = attribute.textStyle?.angle ?? arc.middleAngle;
+        let offsetAngle = labelConfig.offsetAngle ?? 0;
+        if (['inside-inner', 'inside-outer'].includes(position as string)) {
+          offsetAngle += Math.PI / 2;
+        }
+        arc.angle += offsetAngle;
       }
-      arc.angle += offsetAngle;
     });
     return arcs;
   }
@@ -925,21 +935,26 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
   }
 
+  protected _getLabelLinePoints(text: IText | IRichText, baseMark?: IGraphic) {
+    return (text.attribute as ArcLabelAttrs).points;
+  }
+
   protected _createLabelLine(text: IText, baseMark?: IGraphic) {
-    const { points, line = {}, visible, fill } = text.attribute as ArcLabelAttrs;
-    const labelLine: ILine = (text.attribute as ArcLabelAttrs).points
-      ? graphicCreator.line({
-          visible: (line.visible && visible) ?? text.attribute?.visible ?? true,
-          stroke: line.style?.stroke ?? fill,
-          lineWidth: line.style?.lineWidth ?? 1,
-          points: points,
-          curveType: line.smooth ? 'basis' : null
-        })
-      : undefined;
-    if (labelLine) {
-      this._setStatesOfLabelLine(labelLine);
+    const { line = {}, visible } = text.attribute as ArcLabelAttrs;
+    const lineGraphic = super._createLabelLine(text, baseMark);
+    if (lineGraphic) {
+      lineGraphic.setAttributes({
+        visible: (line.visible && visible) ?? text.attribute?.visible ?? true,
+        lineWidth: line.style?.lineWidth ?? 1
+      });
+      if (line.smooth) {
+        lineGraphic.setAttributes({
+          curveType: 'basis'
+        });
+      }
     }
-    return labelLine;
+
+    return lineGraphic;
   }
 
   protected computeRadius(r: number, width?: number, height?: number, k?: number): number {
@@ -963,3 +978,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     return this.computeLayoutRadius(width ? width : 0, height ? height : 0) * outerRadiusRatio;
   }
 }
+
+export const registerArcDataLabel = () => {
+  registerLabelComponent('arc', ArcLabel);
+};

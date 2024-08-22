@@ -72,6 +72,7 @@ export class EventManager {
 
   cursor: Cursor | string;
   cursorTarget: IEventTarget | null = null;
+  pauseNotify: boolean = false;
 
   protected mappingTable: Record<
     string,
@@ -145,7 +146,7 @@ export class EventManager {
     ) {
       target = this._prePointTargetCache[cacheKey];
     } else {
-      target = this.pickTarget(e.canvasX, e.canvasY, e);
+      target = this.pickTarget(e.viewX, e.viewY, e);
       // 缓存上一个坐标点的拾取结果，减少拾取的次数，如 pointermove pointerdown 和 pointerup 在同一个点触发
       // 如果存在params，那么就不缓存
       if (!(e as any).pickParams) {
@@ -224,6 +225,9 @@ export class EventManager {
   }
 
   protected notifyTarget(e: FederatedEvent, type?: string): void {
+    if (this.pauseNotify) {
+      return;
+    }
     type = type ?? e.type;
     const key = e.eventPhase === e.CAPTURING_PHASE || e.eventPhase === e.AT_TARGET ? `${type}capture` : type;
 
@@ -328,15 +332,27 @@ export class EventManager {
 
         enterEvent.eventPhase = enterEvent.AT_TARGET;
 
-        while (enterEvent.target && enterEvent.target !== outTarget && enterEvent.target !== this.rootTarget.parent) {
-          enterEvent.currentTarget = enterEvent.target;
+        let currentTarget = enterEvent.target;
+        // 预先计算 outTarget 的所有祖先
+        const outTargetAncestors = new Set<IEventTarget>();
+        let ancestor = outTarget;
+        while (ancestor && ancestor !== this.rootTarget) {
+          outTargetAncestors.add(ancestor);
+          ancestor = ancestor.parent;
+        }
 
-          this.notifyTarget(enterEvent);
-          if (isMouse) {
-            this.notifyTarget(enterEvent, 'mouseenter');
+        while (currentTarget && currentTarget !== outTarget && currentTarget !== this.rootTarget.parent) {
+          // 检查 currentTarget 是否是 outTarget 的祖先
+          if (!outTargetAncestors.has(currentTarget)) {
+            enterEvent.currentTarget = currentTarget;
+
+            this.notifyTarget(enterEvent);
+            if (isMouse) {
+              this.notifyTarget(enterEvent, 'mouseenter');
+            }
           }
 
-          enterEvent.target = enterEvent.target.parent as IEventTarget;
+          currentTarget = currentTarget.parent as IEventTarget;
         }
 
         this.freeEvent(enterEvent);
@@ -504,6 +520,7 @@ export class EventManager {
 
       clickEvent.target = clickTarget;
       clickEvent.path = [];
+      clickEvent.detailPath = [];
 
       if (!trackingData.clicksByButton[from.button]) {
         trackingData.clicksByButton[from.button] = {
@@ -633,7 +650,7 @@ export class EventManager {
     if (target) {
       event.target = target;
     } else {
-      event.target = this.pickTarget(event.global.x, event.global.y, event);
+      event.target = this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
     }
 
     if (typeof type === 'string') {
@@ -652,7 +669,7 @@ export class EventManager {
 
     event.nativeEvent = from.nativeEvent;
     event.originalEvent = from;
-    event.target = target || this.pickTarget(event.global.x, event.global.y, event);
+    event.target = target || this.pickTarget(event.viewX ?? event.global.x, event.viewY ?? event.global.y, event);
 
     return event;
   }
@@ -669,6 +686,8 @@ export class EventManager {
 
     event.target = from.target;
     event.path = from.composedPath().slice();
+    const p = from.composedDetailPath();
+    event.detailPath = p && p.slice();
     event.type = type ?? event.type;
 
     return event;
@@ -756,6 +775,7 @@ export class EventManager {
     event.eventPhase = event.NONE;
     event.currentTarget = null;
     event.path = [];
+    event.detailPath = [];
     event.target = null;
 
     return event;
@@ -831,5 +851,14 @@ export class EventManager {
       e.pickParams = pickResult.params;
     }
     return target;
+  }
+
+  release() {
+    this.dispatch.removeAllListeners();
+    this.eventPool.clear();
+    this.rootTarget = null;
+    this.mappingTable = null;
+    this.mappingState = null;
+    this.cursorTarget = null;
   }
 }

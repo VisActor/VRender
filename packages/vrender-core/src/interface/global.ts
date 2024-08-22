@@ -10,7 +10,7 @@ export interface ILoader {
 }
 
 // 环境定义
-export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx';
+export type EnvType = 'browser' | 'feishu' | 'tt' | 'taro' | 'node' | 'native' | 'lynx' | 'wx' | 'harmony';
 
 // 创建canvas需要的参数
 export interface ICreateCanvasParams {
@@ -48,6 +48,7 @@ export interface IEnvContribution
   getNativeAABBBounds: (dom: string | HTMLElement | any) => IAABBBoundsLike;
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+  updateDom: (dom: HTMLElement, params: CreateDOMParamsType) => boolean;
   getElementTop: (dom: any, baseWindow?: boolean) => number;
   getElementLeft: (dom: any, baseWindow?: boolean) => number;
   getElementTopLeft: (dom: any, baseWindow?: boolean) => { top: number; left: number };
@@ -150,6 +151,7 @@ export interface IEnvParamsMap {
   readonly native: any;
   readonly lynx: any;
   readonly wx: any;
+  readonly harmony: any;
 }
 
 export type CreateDOMParamsType = {
@@ -261,6 +263,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   removeDom: (dom: HTMLElement) => boolean;
   createDom: (params: CreateDOMParamsType) => HTMLElement | null;
+  updateDom: (dom: HTMLElement, params: CreateDOMParamsType) => boolean;
 
   getElementTop: (dom: any, baseWindow?: boolean) => number;
   getElementLeft: (dom: any, baseWindow?: boolean) => number;

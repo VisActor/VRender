@@ -1,11 +1,12 @@
 import { ColorStore, ColorType } from './store';
 import type { IGradientColor, ILinearGradient, IRadialGradient, IConicalGradient } from '../interface';
+import { isArray, isNumber } from '@visactor/vutils';
 
 function colorArrayToString(
   color: string | IGradientColor | [number, number, number, number],
   alphaChannel: boolean = false
 ) {
-  if (Array.isArray(color)) {
+  if (Array.isArray(color) && isNumber(color[0])) {
     return alphaChannel
       ? `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])},${color[3].toFixed(2)})`
       : `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])})`;
@@ -14,14 +15,36 @@ function colorArrayToString(
 }
 
 export function interpolateColor(
+  from: [number, number, number, number] | [string, string, string, string] | string | IGradientColor,
+  to: [number, number, number, number] | [string, string, string, string] | string | IGradientColor,
+  ratio: number,
+  alphaChannel: boolean,
+  cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
+): false | string | IGradientColor | string[] {
+  if ((Array.isArray(from) && !isNumber(from[0])) || (Array.isArray(to) && !isNumber(to[0]))) {
+    const out: string[] = new Array(4).fill(0).map((_, index) => {
+      return _interpolateColor(
+        isArray(from) ? (from[index] as string) : from,
+        isArray(to) ? (to[index] as string) : to,
+        ratio,
+        alphaChannel
+      ) as string;
+    });
+    return out;
+    // cb && cb(from!, to!);
+  }
+  return _interpolateColor(from as any, to as any, ratio, alphaChannel, cb);
+}
+
+export function _interpolateColor(
   from: [number, number, number, number] | string | IGradientColor,
   to: [number, number, number, number] | string | IGradientColor,
   ratio: number,
   alphaChannel: boolean,
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
-): false | string | IGradientColor {
+): false | string | IGradientColor | string[] {
   if (!(from && to)) {
-    return (from && colorArrayToString(from)) || (to && colorArrayToString(to)) || false;
+    return (from && colorArrayToString(from)) || (to && colorArrayToString(to)) || (false as any);
   }
   let fromArray: [number, number, number, number];
   let toArray: [number, number, number, number];
@@ -74,9 +97,9 @@ export function interpolateColor(
     }
     return false;
   }
-  cb && cb(fromArray, toArray);
-  const result = interpolatePureColorArray(fromArray, toArray, ratio);
-  return colorArrayToString(result, alphaChannel);
+  cb && cb(fromArray!, toArray!);
+  const result = interpolatePureColorArray(fromArray!, toArray!, ratio);
+  return colorArrayToString(result, alphaChannel) as any;
 }
 
 export function interpolateGradientLinearColor(

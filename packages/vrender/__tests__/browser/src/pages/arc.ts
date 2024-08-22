@@ -24,6 +24,10 @@ export const page = () => {
   const x = 300;
   const y = 300;
 
+  const group = createGroup({});
+  group.add(createRect({ fill: 'red' }));
+  console.log('aaa', group.AABBBounds);
+
   const rectW = 5;
   const _startAngle = startAngle + (rectW / (2 * pi * outerRadius)) * pi * 2;
   const _endAngle = endAngle - (rectW / (2 * pi * outerRadius)) * pi * 2 * 2;
@@ -141,7 +145,7 @@ export const page = () => {
   });
   graphics.push(arc);
 
-  arc.animate().from({ endAngle: 0 }, 10000, 'linear');
+  arc.animate().from({ endAngle: 0 }, 10000, 'linear').loop(Infinity);
 
   graphics.push(
     createArc({
@@ -157,6 +161,7 @@ export const page = () => {
       forceShowCap: true,
       x: 105,
       y: 92.5,
+      cornerRadius: [10, 10, 0, 0],
       startAngle: -1.5707963267948966,
       endAngle: -0.3141592653589793,
       outerRadius: 54.75,

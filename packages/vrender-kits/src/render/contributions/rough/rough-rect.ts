@@ -2,20 +2,16 @@ import type {
   IGraphicRender,
   IRenderService,
   IRect,
-  IGraphicAttribute,
-  IContext2d,
-  IGraphic,
-  IMarkAttribute,
-  IThemeAttribute,
   IDrawContext,
   IGraphicRenderDrawParams
 } from '@visactor/vrender-core';
 import { RECT_NUMBER_TYPE, DefaultCanvasRectRender, getTheme, inject, injectable } from '@visactor/vrender-core';
 import rough from 'roughjs';
 import { defaultRouthThemeSpec } from './config';
+import { RoughBaseRender } from './base-render';
 
 @injectable()
-export class RoughCanvasRectRender implements IGraphicRender {
+export class RoughCanvasRectRender extends RoughBaseRender implements IGraphicRender {
   type: 'rect';
   numberType: number;
   style: 'rough' = 'rough';
@@ -24,6 +20,7 @@ export class RoughCanvasRectRender implements IGraphicRender {
     @inject(DefaultCanvasRectRender)
     public readonly canvasRenderer: IGraphicRender
   ) {
+    super();
     this.type = 'rect';
     this.numberType = RECT_NUMBER_TYPE;
   }
@@ -40,7 +37,7 @@ export class RoughCanvasRectRender implements IGraphicRender {
     context.highPerformanceSave();
 
     // const rectAttribute = graphicService.themeService.getCurrentTheme().rectAttribute;
-    const rectAttribute = getTheme(rect).rect;
+    const rectAttribute = rect.getGraphicTheme();
     let { x = rectAttribute.x, y = rectAttribute.y } = rect.attribute;
     if (!rect.transMatrix.onlyTranslate()) {
       // 性能较差
@@ -119,28 +116,5 @@ export class RoughCanvasRectRender implements IGraphicRender {
     });
 
     context.highPerformanceRestore();
-  }
-
-  drawShape(
-    graphic: IGraphic,
-    ctx: IContext2d,
-    x: number,
-    y: number,
-    drawContext: IDrawContext,
-    params?: IGraphicRenderDrawParams,
-    fillCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean,
-    strokeCb?: (
-      ctx: IContext2d,
-      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-      themeAttribute: IThemeAttribute
-    ) => boolean
-  ): void {
-    if (this.canvasRenderer.drawShape) {
-      return this.canvasRenderer.drawShape(graphic, ctx, x, y, drawContext, params, fillCb, strokeCb);
-    }
   }
 }

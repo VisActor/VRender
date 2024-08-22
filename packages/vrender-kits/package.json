@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.17.22",
+  "version": "0.20.0",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -14,14 +14,14 @@
   "scripts": {
     "compile": "tsc --noEmit",
     "eslint": "eslint --debug --fix src/",
-    "build": "bundle",
-    "dev": "bundle --clean -f es -w",
+    "build": "cross-env DEBUG='Bundler*' bundle",
+    "dev": "cross-env DEBUG='Bundler*' bundle --clean -f es -w",
     "start": "vite ./vite",
     "test": ""
   },
   "dependencies": {
-    "@visactor/vrender-core": "workspace:0.17.22",
-    "@visactor/vutils": "~0.17.3",
+    "@visactor/vrender-core": "workspace:0.20.0",
+    "@visactor/vutils": "~0.18.14",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.5.2"
   },
@@ -40,7 +40,8 @@
     "@vitejs/plugin-react": "3.1.0",
     "eslint": "~8.18.0",
     "vite": "3.2.6",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "cross-env": "^7.0.3"
   },
   "keywords": [
     "VisActor",

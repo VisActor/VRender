@@ -11,18 +11,16 @@ import type {
   IContributionProvider,
   IDrawItemInterceptorContribution,
   IDrawContribution,
-  IRenderSelector,
   IGlobal
 } from '../../../interface';
 import { findNextGraphic, foreach } from '../../../common/sort';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { DefaultAttribute } from '../../../graphic';
-import type { IAABBBounds, IBounds, IBoundsLike, IMatrix, IMatrixLike } from '@visactor/vutils';
-import { Bounds, Logger, getRectIntersect, isRectIntersect, last } from '@visactor/vutils';
-import { LayerService } from '../../../core/constants';
+import { DefaultAttribute } from '../../../graphic/config';
+import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
+import { Bounds, Logger, getRectIntersect, isRectIntersect } from '@visactor/vutils';
 import { container } from '../../../container';
-import { GraphicRender, IncrementalDrawContribution, RenderSelector } from './symbol';
+import { GraphicRender, IncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
 import { createColor } from '../../../common/canvas-utils';
 import type { ILayerService } from '../../../interface/core';
@@ -101,25 +99,15 @@ export class DefaultDrawContribution implements IDrawContribution {
     // this.startAtId = drawParams.startAtId;
     this.currentRenderService = renderService;
     // this.drawParams = drawParams;
-    const { context, stage, x = 0, y = 0, width, height } = drawContext;
+    const { context, stage, viewBox, transMatrix } = drawContext;
 
     if (!context) {
       return;
     }
-    // 设置context的transform
-    if (drawContext.keepMatrix) {
-      if (context.nativeContext && context.nativeContext.getTransform) {
-        const t = context.nativeContext.getTransform();
-        context.setTransformFromMatrix(t, true, 1);
-      }
-    } else {
-      context.inuse = true;
-      // 初始化context
-      context.clearMatrix();
-      context.setTransformForCurrent(true);
-    }
-
-    const dirtyBounds: IBounds | undefined = this.dirtyBounds.setValue(0, 0, width, height);
+    // if (context.drawPromise) {
+    //   return;
+    // }
+    const dirtyBounds: IBounds | undefined = this.dirtyBounds.setValue(0, 0, viewBox.width(), viewBox.height());
     if (stage.dirtyBounds && !stage.dirtyBounds.empty()) {
       const b = getRectIntersect(dirtyBounds, stage.dirtyBounds, false);
       dirtyBounds.x1 = Math.floor(b.x1);
@@ -136,19 +124,22 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
     }
     this.backupDirtyBounds.copy(dirtyBounds);
+    context.inuse = true;
+    context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
+    // 初始化context
+    context.clearMatrix();
+    context.setTransformForCurrent(true);
 
-    const drawInArea =
-      dirtyBounds.width() * context.dpr < context.canvas.width ||
-      dirtyBounds.height() * context.dpr < context.canvas.height;
-    context.save();
+    // const drawInArea =
+    //   dirtyBounds.width() * context.dpr < context.canvas.width ||
+    //   dirtyBounds.height() * context.dpr < context.canvas.height;
+    // context.save();
 
     // 设置translate
-    context.translate(x, y, true);
-    if (drawInArea) {
-      context.beginPath();
-      context.rect(dirtyBounds.x1, dirtyBounds.y1, dirtyBounds.width(), dirtyBounds.height());
-      context.clip();
-    }
+    context.translate(viewBox.x1, viewBox.y1, true);
+    context.beginPath();
+    context.rect(dirtyBounds.x1, dirtyBounds.y1, dirtyBounds.width(), dirtyBounds.height());
+    context.clip();
 
     // 如果存在3d视角，那么不使用dirtyBounds
     if (stage.camera) {
@@ -175,13 +166,12 @@ export class DefaultDrawContribution implements IDrawContribution {
           : this.renderItem(group as IGraphic, drawContext);
       });
 
+    // context.restore();
     context.restore();
-    context.restore();
-    context.draw();
+    context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
-    if (!drawContext.keepMatrix) {
-      context.inuse = false;
-    }
+    context.inuse = false;
+    context.draw();
   }
 
   doRegister() {
@@ -328,10 +318,9 @@ export class DefaultDrawContribution implements IDrawContribution {
   }
 
   getRenderContribution(graphic: IGraphic): IGraphicRender | null {
-    // let renderer = this.renderSelector.selector(graphic);
     let renderer;
     if (!renderer) {
-      renderer = this.selectRenderByNumberType(graphic.numberType);
+      renderer = this.selectRenderByNumberType(graphic.numberType, graphic);
     }
     if (!renderer) {
       renderer = this.selectRenderByType(graphic.type);
@@ -409,17 +398,23 @@ export class DefaultDrawContribution implements IDrawContribution {
     return null;
   }
   // 根据type选择对应的render
-  protected selectRenderByNumberType(type?: number): IGraphicRender | null {
-    return this.currentRenderMap.get(type) || this.defaultRenderMap.get(type);
+  protected selectRenderByNumberType(type: number, graphic: IGraphic): IGraphicRender | null {
+    let data;
+    if (graphic.attribute.renderStyle) {
+      const currentRenderMap = this.styleRenderMap.get(graphic.attribute.renderStyle);
+      data = currentRenderMap && currentRenderMap.get(type);
+    }
+    return data || this.currentRenderMap.get(type) || this.defaultRenderMap.get(type);
   }
 
   protected clearScreen(renderService: IRenderService, context: IContext2d, drawContext: IDrawContext) {
-    const { clear } = drawContext;
+    const { clear, viewBox } = drawContext;
+    // 已经translate过了
+    const x = 0;
+    const y = 0;
+    const width = viewBox.width();
+    const height = viewBox.height();
     if (clear) {
-      const canvas = context.getCanvas();
-      const { width = canvas.width, height = canvas.height } = drawContext;
-      const x = 0;
-      const y = 0;
       context.clearRect(x, y, width, height);
       const stage = renderService.drawParams?.stage;
       stage && (context.globalAlpha = (stage as any).attribute.opacity ?? 1);

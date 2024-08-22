@@ -50,8 +50,6 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       return;
     }
     const {
-      delayType = 'throttle',
-      delayTime = 0,
       trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger,
       updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
@@ -60,7 +58,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     // 拖拽绘制开始
     this.stage.addEventListener(trigger, this._onBrushStart as EventListener);
     // 拖拽绘制时
-    this.stage.addEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.addEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
     // 拖拽绘制结束
     this.stage.addEventListener(endTrigger, this._onBrushEnd as EventListener);
     this.stage.addEventListener(resetTrigger, this._onBrushEnd as EventListener);
@@ -127,21 +125,36 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeMoveState && this._moving(e);
   };
 
+  private _onBrushingWithDelay =
+    this.attribute.delayTime === 0
+      ? this._onBrushing
+      : delayMap[this.attribute.delayType](this._onBrushing, this.attribute.delayTime);
+
   /**
    * 结束绘制 和 移动
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
+    if (!this._activeDrawState && !this._activeMoveState) {
+      return;
+    }
+
     e.preventDefault();
     const { removeOnClick = true } = this.attribute as BrushAttributes;
     if (this._activeDrawState && !this._isDrawedBeforeEnd && removeOnClick) {
+      // _isDrawedBeforeEnd有两种情况:
+      // 1. 没有绘制mask
+      // 2. 绘制了mask但没有超过阈值
+      // 只有第2种情况才会触发clear, 可以理解为双击才触发clear
+      if (this._operatingMask?._AABBBounds.empty()) {
+        this._dispatchEvent(IOperateType.brushClear, {
+          operateMask: this._operatingMask as any,
+          operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+          event: e
+        });
+      }
       this._container.incrementalClearChild();
       this._brushMaskAABBBoundsDict = {};
-      this._dispatchEvent(IOperateType.brushClear, {
-        operateMask: this._operatingMask as any,
-        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
-        event: e
-      });
     } else {
       if (this._activeDrawState) {
         this._dispatchEvent(IOperateType.drawEnd, {
@@ -226,11 +239,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _drawing(e: FederatedPointerEvent) {
     const pos = this.eventPosToStagePos(e);
-    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
     const { sizeThreshold = DEFAULT_SIZE_THRESHOLD, brushType } = this.attribute as BrushAttributes;
 
     const cacheLength = this._cacheDrawPoints.length;
-    this._isDrawedBeforeEnd = !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
 
     // 如果当前点的位置和上一次点的位置一致，则无需更新
     if (cacheLength > 0) {
@@ -248,12 +259,22 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     // 更新mask形状
     const maskPoints = this._computeMaskPoints();
     this._operatingMask.setAttribute('points', maskPoints);
-    this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
-    this._dispatchEvent(IOperateType.drawing, {
-      operateMask: this._operatingMask as any,
-      operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
-      event: e
-    });
+
+    // 更新形状之后再判断是否需要正在绘制
+    // if not, 则_isDrawedBeforeEnd false
+    // then: 1. 不暴露drawing状态    2. 在brushEnd时该形状会被清空
+    const { x1 = 0, x2 = 0, y1 = 0, y2 = 0 } = this._operatingMask?._AABBBounds;
+    this._isDrawedBeforeEnd =
+      !this._operatingMask._AABBBounds.empty() &&
+      !!(Math.abs(x2 - x1) > sizeThreshold || Math.abs(y1 - y2) > sizeThreshold);
+    if (this._isDrawedBeforeEnd) {
+      this._brushMaskAABBBoundsDict[this._operatingMask.name] = this._operatingMask.AABBBounds;
+      this._dispatchEvent(IOperateType.drawing, {
+        operateMask: this._operatingMask as any,
+        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+        event: e
+      });
+    }
   }
 
   /**
@@ -388,11 +409,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
-    return {
-      x: x - (this.stage?.x || 0),
-      y: y - (this.stage?.y || 0)
-    };
+    return this.stage.eventPointTransform(e);
   }
 
   protected render() {
@@ -411,7 +428,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
     } = this.attribute as BrushAttributes;
     this.stage.removeEventListener(trigger, this._onBrushStart as EventListener);
-    this.stage.removeEventListener(updateTrigger, delayMap[delayType](this._onBrushing, delayTime) as EventListener);
+    this.stage.removeEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
     this.stage.removeEventListener(endTrigger, this._onBrushEnd as EventListener);
     this.stage.removeEventListener(resetTrigger, this._onBrushEnd as EventListener);
   }

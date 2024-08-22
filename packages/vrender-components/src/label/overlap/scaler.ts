@@ -1,4 +1,5 @@
-import { IBoundsLike, clamp as clampRange } from '@visactor/vutils';
+import type { IBoundsLike } from '@visactor/vutils';
+import { clamp as clampRange } from '@visactor/vutils';
 import { bitmap } from './bitmap';
 
 /**
@@ -32,14 +33,21 @@ import { bitmap } from './bitmap';
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export function bitmapTool(width: number, height: number, padding = 0) {
+export function bitmapTool(
+  width: number,
+  height: number,
+  padding: { top?: number; left?: number; right?: number; bottom?: number } = { top: 0, left: 0, right: 0, bottom: 0 }
+) {
+  const { top = 0, left = 0, right = 0, bottom = 0 } = padding;
   const ratio = Math.max(1, Math.sqrt((width * height) / 1e6));
-  const w = ~~((width + 2 * padding + ratio) / ratio);
-  const h = ~~((height + 2 * padding + ratio) / ratio);
-  const scale = (_: number) => ~~((_ + padding) / ratio);
+  const w = ~~((width + left + right + ratio) / ratio);
+  const h = ~~((height + top + bottom + ratio) / ratio);
+  const scale = (_: number) => ~~(_ / ratio);
 
-  scale.invert = (_: number) => _ * ratio - padding;
   scale.bitmap = () => bitmap(w, h);
+  scale.x = (_: number) => ~~((_ + left) / ratio);
+  scale.y = (_: number) => ~~((_ + top) / ratio);
+
   scale.ratio = ratio;
   scale.padding = padding;
   scale.width = width;
@@ -56,18 +64,18 @@ export function boundToRange($: BitmapTool, bound: IBoundsLike, clamp: boolean =
     const _y1 = clampRange(y1, 0, $.height);
     const _y2 = clampRange(y2, 0, $.height);
     return {
-      x1: $(_x1),
-      x2: $(_x2),
-      y1: $(_y1),
-      y2: $(_y2)
+      x1: $.x(_x1),
+      x2: $.x(_x2),
+      y1: $.y(_y1),
+      y2: $.y(_y2)
     };
   }
 
   return {
-    x1: $(bound.x1),
-    x2: $(bound.x2),
-    y1: $(bound.y1),
-    y2: $(bound.y2)
+    x1: $.x(bound.x1),
+    x2: $.x(bound.x2),
+    y1: $.y(bound.y1),
+    y2: $.y(bound.y2)
   };
 }
 

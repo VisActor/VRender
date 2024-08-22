@@ -2,6 +2,7 @@
 export const version = __VERSION__;
 
 export * from './core/base';
+export * from './core/type';
 export * from './scrollbar';
 export * from './tag';
 export * from './poptip';
@@ -21,7 +22,10 @@ export * from './link-path';
 export * from './player';
 export * from './brush';
 export * from './tooltip';
+export * from './timeline';
 export * from './interface';
 export * from './jsx';
 export * from './checkbox';
+export * from './radio';
+export * from './empty-tip';
 export * from './util';

@@ -1,3 +1,4 @@
+import type { IMatrix } from '@visactor/vutils';
 import { Matrix } from '@visactor/vutils';
 import { injectable } from '../common/inversify-lite';
 import type {
@@ -46,31 +47,32 @@ const globalPoint = { x: 0, y: 0 };
 
 @injectable()
 export class EmptyContext2d implements IContext2d {
-  path: CustomPath2D;
-  canvas: null;
-  stack: Matrix[];
-  protected matrix: Matrix;
-  protected applyedMatrix?: Matrix; // 被应用的matrix
+  declare path: CustomPath2D;
+  declare canvas: null;
+  declare stack: Matrix[];
+  protected declare matrix: Matrix;
+  protected declare applyedMatrix?: Matrix; // 被应用的matrix
   // 属性代理
-  fillStyle: string | CanvasGradient | CanvasPattern;
+  declare fillStyle: string | CanvasGradient | CanvasPattern;
   /**
    * @deprecated font方法不建议使用，请使用setTextStyle
    */
-  font: string;
-  globalAlpha: number;
-  lineCap: string;
-  lineDashOffset: number;
-  lineJoin: string;
-  lineWidth: number;
-  miterLimit: number;
-  shadowBlur: number;
-  shadowColor: string;
-  shadowOffsetX: number;
-  shadowOffsetY: number;
-  strokeStyle: string | CanvasGradient | CanvasPattern;
-  textAlign: string;
-  textBaseline: string;
-  dpr: number;
+  declare font: string;
+  declare globalAlpha: number;
+  declare lineCap: string;
+  declare lineDashOffset: number;
+  declare lineJoin: string;
+  declare lineWidth: number;
+  declare miterLimit: number;
+  declare shadowBlur: number;
+  declare shadowColor: string;
+  declare shadowOffsetX: number;
+  declare shadowOffsetY: number;
+  declare strokeStyle: string | CanvasGradient | CanvasPattern;
+  declare textAlign: string;
+  declare textBaseline: string;
+  declare dpr: number;
+  declare _clearMatrix: IMatrix;
 
   get nativeContext(): any {
     return this.path;
@@ -82,6 +84,7 @@ export class EmptyContext2d implements IContext2d {
     this.dpr = dpr;
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
     this.path = new CustomPath2D();
+    this._clearMatrix = new Matrix(1, 0, 0, 1, 0, 0);
   }
 
   getCanvas(): ICanvas {
@@ -540,6 +543,10 @@ export class EmptyContext2d implements IContext2d {
 
   clearMatrix(setTransform: boolean = true, dpr: number = this.dpr) {
     this.setTransformFromMatrix(initMatrix, setTransform, dpr);
+  }
+
+  setClearMatrix(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this._clearMatrix.setValue(a, b, c, d, e, f);
   }
 
   onlyTranslate(dpr: number = this.dpr): boolean {

@@ -1,6 +1,6 @@
 import type { FederatedPointerEvent, IArea, IGroup, ILine, IRect, ISymbol, INode } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { vglobal } from '@visactor/vrender-core';
+import { flatten_simplify, vglobal } from '@visactor/vrender-core';
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { Bounds, array, clamp, debounce, isFunction, isValid, merge, throttle } from '@visactor/vutils';
@@ -129,6 +129,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   protected bindEvents(): void {
     if (this.attribute.disableTriggerEvent) {
+      this.setAttribute('childrenPickable', false);
       return;
     }
     const { showDetail, brushSelect } = this.attribute as DataZoomAttributes;
@@ -184,8 +185,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       );
     }
     // 拖拽结束
-    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp as EventListener);
-    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListener);
+    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp);
+    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp);
     // hover
     if (showDetail === 'auto') {
       (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
@@ -220,11 +221,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    const { x, y } = vglobal.mapToCanvasPoint(e, this.stage.window.getContext().canvas.nativeCanvas);
-    return {
-      x: x - (this.stage?.x || 0),
-      y: y - (this.stage?.y || 0)
-    };
+    return this.stage.eventPointTransform(e);
   }
 
   /**
@@ -258,7 +255,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // 拖拽时
       vglobal.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
       // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+      vglobal.addEventListener('pointerup', this._onHandlerPointerUp);
     }
     // 拖拽时
     (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
@@ -272,7 +269,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 3. 在startHandler上拖拽 (activeTag === 'startHandler'): 改变lastPos、start & end + 边界处理: startHandler和endHandler交换 => 所有handler的位置被改变
    * 4. 在endHandler上拖拽，同上
    */
-  private _onHandlerPointerMove = delayMap[this.attribute.delayType]((e: FederatedPointerEvent) => {
+  private _pointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
     const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
@@ -312,19 +309,26 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-      this._dispatchEvent('change', {
-        start,
-        end,
-        tag: this._activeTag
-      });
+
+      if (realTime) {
+        this._dispatchEvent('change', {
+          start,
+          end,
+          tag: this._activeTag
+        });
+      }
     }
-  }, this.attribute.delayTime);
+  };
+  private _onHandlerPointerMove =
+    this.attribute.delayTime === 0
+      ? this._pointerMove
+      : delayMap[this.attribute.delayType](this._pointerMove, this.attribute.delayTime);
 
   /**
    * 拖拽结束事件
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
-  private _onHandlerPointerUp(e: FederatedPointerEvent) {
+  private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     const { start, end, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     if (this._activeState) {
@@ -339,8 +343,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     brushSelect && this.renderDragMask();
 
     // 避免attributes相同时, 重复渲染
-    if (!realTime || start !== this.state.start || end !== this.state.end) {
+    if (start !== this.state.start || end !== this.state.end) {
       this.setStateAttr(this.state.start, this.state.end, true);
+
       this._dispatchEvent('change', {
         start: this.state.start,
         end: this.state.end,
@@ -353,11 +358,12 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       // 拖拽时
       vglobal.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
       // 拖拽结束
-      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp.bind(this) as EventListener);
+      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp);
     }
     // 拖拽时
     (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-  }
+    (this as unknown as IGroup).removeEventListener('pointerup', this._onHandlerPointerUp);
+  };
 
   /**
    * 鼠标进入事件
@@ -619,7 +625,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       orient,
       middleHandlerStyle = {},
       startHandlerStyle = {},
-      endHandlerStyle = {}
+      endHandlerStyle = {},
+      backgroundStyle = {}
     } = this.attribute as DataZoomAttributes;
     const { width: widthConfig, height: heightConfig } = size;
     const middleHandlerSize = middleHandlerStyle.background?.size ?? 10;
@@ -664,10 +671,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         height -= (startHandlerSize + endHandlerSize) / 2;
         position = {
           x: position.x,
-          y: position.y + startHandlerSize
+          y: position.y + startHandlerSize / 2
         };
       }
     }
+
+    // stroke 需计入宽高, 否则dataZoom在画布边缘会被裁剪lineWidth / 2
+    height += backgroundStyle.lineWidth / 2 ?? 1;
+    width += backgroundStyle.lineWidth / 2 ?? 1;
 
     this._layoutAttrFromConfig = {
       position,
@@ -694,6 +705,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       zoomLock
     } = this.attribute as DataZoomAttributes;
     const { start, end } = this.state;
+
     const { position, width, height } = this.getLayoutAttrFromConfig();
     const startHandlerMinSize = startHandlerStyle.triggerMinSize ?? 40;
     const endHandlerMinSize = endHandlerStyle.triggerMinSize ?? 40;
@@ -708,7 +720,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         height,
         cursor: brushSelect ? 'crosshair' : 'auto',
         ...backgroundStyle,
-        pickable: !zoomLock
+        pickable: zoomLock ? false : backgroundStyle.pickable ?? true
       },
       'rect'
     ) as IRect;
@@ -732,7 +744,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : (selectedBackgroundChartStyle as any).pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -747,7 +759,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           height: (end - start) * height,
           cursor: brushSelect ? 'crosshair' : 'move',
           ...selectedBackgroundStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : selectedBackgroundStyle.pickable ?? true
         },
         'rect'
       ) as IRect;
@@ -769,7 +781,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             width: (end - start) * width,
             height: middleHandlerBackgroundSize,
             ...middleHandlerStyle.background?.style,
-            pickable: !zoomLock
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -782,7 +794,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             angle: 0,
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             ...middleHandlerStyle.icon,
-            pickable: !zoomLock
+            pickable: zoomLock ? false : middleHandlerStyle.icon.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -796,7 +808,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...startHandlerStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -809,7 +821,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.horizontal as any),
           ...endHandlerStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -862,7 +874,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             width: middleHandlerBackgroundSize,
             height: (end - start) * height,
             ...middleHandlerStyle.background?.style,
-            pickable: !zoomLock
+            pickable: zoomLock ? false : middleHandlerStyle.background?.style?.pickable ?? true
           },
           'rect'
         ) as IRect;
@@ -879,7 +891,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
             symbolType: middleHandlerStyle.icon?.symbolType ?? 'square',
             strokeBoundsBuffer: 0,
             ...middleHandlerStyle.icon,
-            pickable: !zoomLock
+            pickable: zoomLock ? false : middleHandlerStyle.icon?.pickable ?? true
           },
           'symbol'
         ) as ISymbol;
@@ -893,7 +905,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: startHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...startHandlerStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : startHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -907,7 +919,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           symbolType: endHandlerStyle.symbolType ?? 'square',
           ...(DEFAULT_HANDLER_ATTR_MAP.vertical as any),
           ...endHandlerStyle,
-          pickable: !zoomLock
+          pickable: zoomLock ? false : endHandlerStyle.pickable ?? true
         },
         'symbol'
       ) as ISymbol;
@@ -1007,8 +1019,18 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     };
   }
 
+  protected simplifyPoints(points: IPointLike[]) {
+    // 采样压缩率策略: 如果没做任何配置, 那么限制在niceCount内, 如果做了配置, 则按照配置计算
+    const niceCount = 10000; // 经验值
+    if (points.length > niceCount) {
+      const tolerance = this.attribute.tolerance ?? this._previewData.length / niceCount;
+      return flatten_simplify(points, tolerance, false);
+    }
+    return points;
+  }
+
   protected getPreviewLinePoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d)
@@ -1018,12 +1040,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样
+    previewPoints = this.simplifyPoints(previewPoints);
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }
 
   protected getPreviewAreaPoints() {
-    const previewPoints = this._previewData.map(d => {
+    let previewPoints: IPointLike[] = this._previewData.map(d => {
       return {
         x: this._previewPointsX && this._previewPointsX(d),
         y: this._previewPointsY && this._previewPointsY(d),
@@ -1035,6 +1061,10 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     if (previewPoints.length === 0) {
       return previewPoints;
     }
+
+    // 采样
+    previewPoints = this.simplifyPoints(previewPoints);
+
     const { basePointStart, basePointEnd } = this.computeBasePoints();
     return basePointStart.concat(previewPoints).concat(basePointEnd);
   }

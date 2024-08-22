@@ -173,6 +173,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       shape,
       background,
       state = {},
+      maxWidth,
       ...restAttrs
     } = this.attribute.title as TitleAttributes;
     let percent = 0.5;
@@ -287,9 +288,35 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       textBaseline = this.getTextBaseline(vector as number[], false);
     }
 
+    // 计算标题缩略
+    let maxTagWidth = maxWidth;
+    if (isNil(maxTagWidth)) {
+      const { verticalLimitSize, verticalMinSize, orient } = this.attribute;
+      const limitSize = Math.min(verticalLimitSize || Infinity, verticalMinSize || Infinity);
+      if (isValidNumber(limitSize)) {
+        const isX = orient === 'bottom' || orient === 'top';
+        if (isX) {
+          if (angle !== Math.PI / 2) {
+            const cosValue = Math.abs(Math.cos(angle ?? 0));
+            maxTagWidth = cosValue < 1e-6 ? Infinity : this.attribute.end.x / cosValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        } else {
+          if (angle && angle !== 0) {
+            const sinValue = Math.abs(Math.sin(angle));
+            maxTagWidth = sinValue < 1e-6 ? Infinity : this.attribute.end.y / sinValue;
+          } else {
+            maxTagWidth = limitSize - offset;
+          }
+        }
+      }
+    }
+
     const attrs: TagAttributes = {
       ...titlePoint,
       ...restAttrs,
+      maxWidth: maxTagWidth,
       textStyle: {
         // @ts-ignore
         textAlign,
@@ -349,12 +376,14 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
     const orient = this.attribute.orient;
-    if (isValidNumber(angle) || (vector[0] === 0 && vector[1] === 0)) {
+    const isCartesian = ['top', 'bottom', 'right', 'left'].includes(orient);
+    // 目前的向量方法暂无法返回正确的笛卡尔坐标轴下文本旋转后的问题，所以通过这种方法判断，保证旋转后 textAlign 和 textBaseline 也正确
+    if (isCartesian || (vector[0] === 0 && vector[1] === 0)) {
       if (orient === 'top' || orient === 'bottom') {
-        return getXAxisLabelAlign(orient, angle);
+        return getXAxisLabelAlign(inside ? (orient === 'bottom' ? 'top' : 'bottom') : orient, angle);
       }
       if (orient === 'left' || orient === 'right') {
-        return getYAxisLabelAlign(orient, angle);
+        return getYAxisLabelAlign(inside ? (orient === 'left' ? 'right' : 'left') : orient, angle);
       }
     }
 
@@ -493,16 +522,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         });
       }
       if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
-        const verticalLimitLength =
-          (orient === 'left' || orient === 'right') &&
-          labelShapes.some(label => label.attribute.direction === 'vertical')
-            ? Math.abs(this.attribute.start.y - this.attribute.end.y) / labelShapes.length
-            : Infinity;
+        const isVertical = orient === 'left' || orient === 'right';
+        const axisLength = isVertical
+          ? Math.abs(this.attribute.start.y - this.attribute.end.y)
+          : Math.abs(this.attribute.start.x - this.attribute.end.x);
+
+        const verticalLimitLength = isVertical
+          ? axisLength / labelShapes.length
+          : !autoHide && !autoRotate
+          ? axisLength / labelShapes.length
+          : Infinity;
+
         autoLimitFunc(labelShapes, {
           limitLength,
           verticalLimitLength,
           ellipsis: limitEllipsis,
-          orient
+          orient,
+          axisLength
         });
       }
       if (autoHide) {
@@ -589,7 +625,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     const axisLineWidth = line && line.visible ? line.style.lineWidth ?? 1 : 0;
     const tickLength = tick && tick.visible ? tick.length ?? 4 : 0;
     if (title && title.visible && typeof title.text === 'string') {
-      titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme().text.fontFamily).height;
+      titleHeight = measureTextSize(title.text, title.textStyle, this.stage?.getTheme()?.text).height;
       const padding = normalizePadding(title.padding);
       titleSpacing = title.space + padding[0] + padding[2];
     }

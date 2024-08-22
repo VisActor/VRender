@@ -342,4 +342,5 @@ export interface ITicker {
   start: (force?: boolean) => boolean;
   stop: () => void;
   addTimeline: (timeline: ITimeline) => void;
+  remTimeline: (timeline: ITimeline) => void;
 }

@@ -51,9 +51,11 @@ export default class Paragraph {
   textBaseline?: CanvasTextBaseline;
 
   ellipsis: 'normal' | 'add' | 'replace' | 'hide';
+  ellipsisStr: string;
   ellipsisWidth: number;
   ellipsisOtherParagraphWidth: number;
   verticalEllipsis?: boolean;
+  overflow?: boolean;
 
   constructor(text: string, newLine: boolean, character: IRichTextParagraphCharacter) {
     // 测量文字
@@ -127,6 +129,7 @@ export default class Paragraph {
       this.height = this.widthOrigin;
       this.lineHeight = this.height;
     }
+    this.ellipsisStr = '...';
   }
 
   updateWidth() {
@@ -146,13 +149,13 @@ export default class Paragraph {
     let direction = this.direction;
 
     if (this.verticalEllipsis) {
-      text = '...';
+      text = this.ellipsisStr;
       direction = 'vertical';
       baseline -= this.ellipsisWidth / 2;
     } else if (this.ellipsis === 'hide') {
       return;
     } else if (this.ellipsis === 'add') {
-      text += '...';
+      text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
         left -= this.ellipsisWidth;
@@ -167,7 +170,7 @@ export default class Paragraph {
         text.length - 1
       );
       text = text.slice(0, index);
-      text += '...';
+      text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
         const { width } = measureTextCanvas(this.text.slice(index), this.character);
@@ -278,7 +281,7 @@ export default class Paragraph {
         text.length - 1
       );
       text = text.slice(0, index);
-      text += '...';
+      text += this.ellipsisStr;
 
       const { width: measureWidth } = measureTextCanvas(this.text.slice(index), this.character);
       return width + this.ellipsisWidth - measureWidth;

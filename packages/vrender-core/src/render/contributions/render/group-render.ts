@@ -12,7 +12,8 @@ import type {
   IGraphicRenderDrawParams,
   IContributionProvider
 } from '../../../interface';
-import { getModelMatrix, getTheme, multiplyMat4Mat4 } from '../../../graphic';
+import { getTheme } from '../../../graphic/theme';
+import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
 import { isArray } from '@visactor/vutils';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
@@ -23,6 +24,7 @@ import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
+import { multiplyMat4Mat4 } from '../../../common/matrix';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -202,12 +204,14 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       return;
     }
     // debugger;
-    const { clip } = group.attribute;
+    const { clip, baseOpacity = 1 } = group.attribute;
     if (clip) {
       context.save();
     } else {
       context.highPerformanceSave();
     }
+    const baseGlobalAlpha = context.baseGlobalAlpha;
+    context.baseGlobalAlpha *= baseOpacity;
 
     const groupAttribute = getTheme(group, params?.theme).group;
 
@@ -280,6 +284,8 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       mat4Allocate.free(context.modelMatrix);
     }
     context.modelMatrix = lastModelMatrix;
+
+    context.baseGlobalAlpha = baseGlobalAlpha;
 
     if (p && p.then) {
       p.then(() => {

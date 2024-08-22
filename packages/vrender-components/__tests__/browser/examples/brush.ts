@@ -7,8 +7,8 @@ export function run() {
 
   const guiObject = {
     name: 'Brush',
-    brushMode: 'multiple',
-    brushType: 'x',
+    brushMode: 'single',
+    brushType: 'rect',
     brushMoved: true,
     removeOnClick: true,
     xRange0: 0,
@@ -16,7 +16,7 @@ export function run() {
     yRange0: 0,
     yRange1: 500,
     delayType: 'throttle',
-    delayTime: 10,
+    delayTime: 0,
     interactiveRangeY1: 0,
     interactiveRangeY2: 5000,
     interactiveRangeX1: 0,
@@ -43,25 +43,22 @@ export function run() {
 
   const brush = new Brush({
     ...attr,
-    hasMask: false,
+    hasMask: true,
     interactiveRange: {
       minX: 0,
       minY: 0,
-      maxX: 250,
-      maxY: 250
+      maxX: 500,
+      maxY: 500
     },
-    xRange: [0, 250],
-    yRange: [0, 250],
+    xRange: [0, 500],
+    yRange: [0, 500],
     brushStyle: {
       fill: 'red',
-      fillOpacity: 0.2,
+      fillOpacity: 1,
       stroke: '#B0C8F9',
       strokeWidth: 2
-    }
-  });
-
-  brush.setUpdateDragMaskCallback(a => {
-    console.log(a);
+    },
+    delayTime: 0
   });
 
   const brush2 = new Brush({
@@ -76,8 +73,29 @@ export function run() {
     }
   });
   // brush.setUpdateDragMaskCallback((...parmas) => console.log('parmas', parmas));
+  brush.addEventListener('drawStart', () => {
+    console.log('drawStart');
+  });
+  brush.addEventListener('moveStart', () => {
+    console.log('moveStart');
+  });
+  brush.addEventListener('moveEnd', () => {
+    console.log('moveEnd');
+  });
+  brush.addEventListener('drawEnd', () => {
+    console.log('drawEnd');
+  });
+  brush.addEventListener('drawing', () => {
+    console.log('drawing');
+  });
+  brush.addEventListener('moving', () => {
+    console.log('moving');
+  });
+  brush.addEventListener('brushClear', () => {
+    console.log('brushClear');
+  });
 
-  const stage = render([brush, brush2], 'main');
+  const stage = render([brush], 'main');
 
   const gui = new GUI();
   gui.add(guiObject, 'name');

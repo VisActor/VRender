@@ -10,12 +10,14 @@ export type IGroupAttribute = {
   cornerRadius: number | number[];
   clip: boolean;
   visibleAll: boolean;
-  display?: 'relative' | 'flex';
+  display?: 'relative' | 'inner-block' | 'flex';
   flexDirection?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
   flexWrap?: 'nowrap' | 'wrap';
   justifyContent?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
   alignItems?: 'flex-start' | 'flex-end' | 'center';
   alignContent?: 'flex-start' | 'center' | 'space-between' | 'space-around';
+  // 基准的透明度，用于控制group下面整体图元的透明度
+  baseOpacity?: number;
 };
 
 export type IGroupGraphicAttribute = Partial<IGraphicAttribute> & Partial<IGroupAttribute>;

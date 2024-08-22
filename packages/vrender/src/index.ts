@@ -1,5 +1,16 @@
 import '@visactor/vrender-core';
-import { container, isBrowserEnv, isNodeEnv, preLoadAllModule } from '@visactor/vrender-core';
+import {
+  container,
+  isBrowserEnv,
+  isNodeEnv,
+  preLoadAllModule,
+  registerFlexLayoutPlugin,
+  registerViewTransform3dPlugin,
+  registerHtmlAttributePlugin,
+  registerReactAttributePlugin,
+  registerDirectionalLight,
+  registerOrthoCamera
+} from '@visactor/vrender-core';
 import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
 import {
   registerArc,
@@ -49,5 +60,12 @@ registerShadowRoot();
 registerSymbol();
 registerText();
 registerWrapText();
+
+registerFlexLayoutPlugin();
+registerViewTransform3dPlugin();
+registerHtmlAttributePlugin();
+registerReactAttributePlugin();
+registerDirectionalLight();
+registerOrthoCamera();
 export * from '@visactor/vrender-core';
 export * from '@visactor/vrender-kits';

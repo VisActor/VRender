@@ -111,6 +111,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   heightLimit: Infinity,
   lineClamp: Infinity,
   suffixPosition: 'end',
+  underlineDash: [],
+  underlineOffset: 0,
   disableAutoClipedPoptip: undefined
 };
 
@@ -119,8 +121,11 @@ export const DefaultPickStyle: IPickStyle = {
 };
 
 export const DefaultStyle: IGraphicStyle = {
+  forceBoundsWidth: undefined,
+  forceBoundsHeight: undefined,
   opacity: 1,
   background: null,
+  backgroundOpacity: 1,
   backgroundCornerRadius: 0,
   texture: null,
   textureColor: 'black',
@@ -131,6 +136,7 @@ export const DefaultStyle: IGraphicStyle = {
   blur: 0,
   cursor: null,
   html: null,
+  react: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
   ...DefaultLayout,
@@ -161,7 +167,9 @@ export const DefaultDebugAttribute: Required<IDebugType> = {
 
 export const DefaultAttribute: Required<IGraphicAttribute> = {
   strokeSeg: null,
+  renderable: true,
   pickable: true,
+  shadowGraphic: undefined,
   childrenPickable: true,
   fillPickable: true,
   strokePickable: true,
@@ -169,6 +177,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   zIndex: 0,
   layout: null,
   boundsPadding: 0,
+  renderStyle: 'default',
   pickMode: 'accurate',
   customPickShape: null,
   boundsMode: 'accurate',
@@ -177,6 +186,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   globalZIndex: 1,
   globalCompositeOperation: '',
   overflow: 'hidden',
+  shadowPickMode: 'graphic',
   ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform
@@ -197,6 +207,8 @@ export const DefaultArcAttribute: Required<IArcGraphicAttribute> = {
   endAngle: pi2,
   innerRadius: 0,
   outerRadius: 1,
+  innerPadding: 0,
+  outerPadding: 0,
   cornerRadius: 0,
   padRadius: 0,
   padAngle: 0,
@@ -211,7 +223,8 @@ export const DefaultAreaAttribute: Required<IAreaGraphicAttribute> = {
   segments: [],
   curveType: 'linear',
   clipRange: 1,
-  closePath: false
+  closePath: false,
+  curveTension: 1
 };
 
 export const DefaultCircleAttribute: Required<ICircleGraphicAttribute> = {
@@ -234,7 +247,8 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   flexWrap: 'wrap',
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
-  alignContent: 'flex-start'
+  alignContent: 'flex-start',
+  baseOpacity: 1
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
@@ -254,7 +268,8 @@ export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
   curveType: 'linear',
   clipRange: 1,
   clipRangeByDimension: 'default',
-  closePath: false
+  closePath: false,
+  curveTension: 1
 };
 
 export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
@@ -308,6 +323,8 @@ export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
 
 export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultAttribute,
+  ...DefaultTextStyle,
+  editable: false,
   width: 300,
   height: 300,
   ellipsis: true,
@@ -317,6 +334,7 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   textBaseline: 'top' as RichTextGlobalBaselineType,
   layoutDirection: 'horizontal',
   textConfig: [],
+  disableAutoWrapLine: false,
   maxHeight: undefined,
   maxWidth: undefined,
   singleLine: false

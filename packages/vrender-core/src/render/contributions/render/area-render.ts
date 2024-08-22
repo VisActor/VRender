@@ -7,34 +7,23 @@ import type {
   IAreaGraphicAttribute,
   IGraphicAttribute,
   IContext2d,
-  ICurveType,
   IMarkAttribute,
   IThemeAttribute,
   ISegPath2D,
-  IDirection,
   IAreaRenderContribution,
   IDrawContext,
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider,
-  IStrokeType
+  IContributionProvider
 } from '../../../interface';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import {
-  genLinearSegments,
-  genBasisSegments,
-  genMonotoneXSegments,
-  genMonotoneYSegments,
-  genStepSegments,
-  genLinearClosedSegments
-} from '../../../common/segment';
+import { calcLineCache } from '../../../common/segment';
 
 import { getTheme } from '../../../graphic/theme';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { AreaRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime, Direction } from '../../../common/enums';
+import { Direction } from '../../../common/enums';
 import { drawAreaSegments } from '../../../common/render-area';
 import { AREA_NUMBER_TYPE } from '../../../graphic/constants';
 import { drawSegments } from '../../../common/render-curve';
@@ -43,34 +32,6 @@ import {
   defaultAreaBackgroundRenderContribution,
   defaultAreaTextureRenderContribution
 } from './contributions/area-contribution-render';
-import { segments } from '../../../common/shape/arc';
-
-function calcLineCache(
-  points: IPointLike[],
-  curveType: ICurveType,
-  params?: { direction?: IDirection; startPoint?: IPointLike }
-): ISegPath2D | null {
-  switch (curveType) {
-    case 'linear':
-      return genLinearSegments(points, params);
-    case 'basis':
-      return genBasisSegments(points, params);
-    case 'monotoneX':
-      return genMonotoneXSegments(points, params);
-    case 'monotoneY':
-      return genMonotoneYSegments(points, params);
-    case 'step':
-      return genStepSegments(points, 0.5, params);
-    case 'stepBefore':
-      return genStepSegments(points, 0, params);
-    case 'stepAfter':
-      return genStepSegments(points, 1, params);
-    case 'linearClosed':
-      return genLinearClosedSegments(points, params);
-    default:
-      return genLinearSegments(points, params);
-  }
-}
 
 @injectable()
 export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraphicRender {
@@ -110,10 +71,13 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
+    const { points } = area.attribute;
+    if (points.length < 2) {
+      return;
+    }
     context.beginPath();
 
     const z = this.z ?? 0;
-    const { points } = area.attribute;
     const startP = points[0];
 
     context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
@@ -224,14 +188,16 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       stroke = areaAttribute.stroke,
       fillOpacity = areaAttribute.fillOpacity,
       z = areaAttribute.z,
-      strokeOpacity = areaAttribute.strokeOpacity
+      strokeOpacity = areaAttribute.strokeOpacity,
+      curveTension = areaAttribute.curveTension
     } = area.attribute;
 
     const data = this.valid(area, areaAttribute, fillCb, strokeCb);
     if (!data) {
       return;
     }
-    const { doFill, doStroke } = data;
+    const { doFill } = data;
+    const doStroke = data.doStroke && data.sVisible;
 
     const { clipRange = areaAttribute.clipRange, closePath, points, segments } = area.attribute;
     let { curveType = areaAttribute.curveType } = area.attribute;
@@ -279,7 +245,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               startPoint.y = lastTopSeg.endY;
             }
             const data = calcLineCache(seg.points, curveType, {
-              startPoint
+              startPoint,
+              curveTension
             });
             lastTopSeg = data;
             return data;
@@ -309,7 +276,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           if (bottomPoints.length > 1) {
             lastBottomSeg = calcLineCache(
               bottomPoints,
-              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+              curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+              { curveTension }
             );
             bottomCaches.unshift(lastBottomSeg);
           }
@@ -328,10 +296,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
             y: points[i].y1 ?? points[i].y
           });
         }
-        const topCache = calcLineCache(topPoints, curveType);
+        const topCache = calcLineCache(topPoints, curveType, { curveTension });
         const bottomCache = calcLineCache(
           bottomPoints,
-          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType
+          curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
+          { curveTension }
         );
 
         area.cacheArea = { top: topCache, bottom: bottomCache };
@@ -554,6 +523,19 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ) {
+    if (
+      !(
+        cache &&
+        cache.top &&
+        cache.bottom &&
+        cache.top.curves &&
+        cache.top.curves.length &&
+        cache.bottom.curves &&
+        cache.bottom.curves.length
+      )
+    ) {
+      return;
+    }
     // 绘制connect区域
     let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
     const da = [];
@@ -587,9 +569,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       return false;
     }
 
-    if (!cache) {
-      return;
-    }
     context.beginPath();
 
     const ret: boolean = false;
@@ -608,7 +587,15 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     const xTotalLength = abs(endP.x - startP.x);
     const yTotalLength = abs(endP.y - startP.y);
-    direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
+    if (endP.x1 == null) {
+      direction = Direction.ROW;
+    } else if (endP.y1 == null) {
+      direction = Direction.COLUMN;
+    } else if (!Number.isFinite(xTotalLength + yTotalLength)) {
+      direction = Direction.ROW;
+    } else {
+      direction = xTotalLength > yTotalLength ? Direction.ROW : Direction.COLUMN;
+    }
     drawAreaSegments(context.camera ? context : context.nativeContext, cache, clipRange, {
       offsetX,
       offsetY,

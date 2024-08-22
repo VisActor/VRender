@@ -9,6 +9,7 @@ export type IAreaAttribute = {
   curveType: ICurveType;
   clipRange: number;
   closePath: boolean;
+  curveTension: number;
 };
 
 export type IAreaCacheItem = {

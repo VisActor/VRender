@@ -18,7 +18,8 @@ export function run() {
       width: 400,
       height: 30
     },
-    showDetail: true,
+    showDetail: false,
+    delayTime: 1000,
     // brushSelect: false,
     backgroundChartStyle: {
       line: {
@@ -36,6 +37,7 @@ export function run() {
   const dataZoomdisableTriggerEvent = new DataZoom({
     start: 0.2,
     end: 0.5,
+    // maxSpan: 0.4,
     position: {
       x: 50,
       y: 75
@@ -56,12 +58,14 @@ export function run() {
     middleHandlerStyle: {
       visible: true
     },
-    disableTriggerEvent: true
+    disableTriggerEvent: false
   });
 
   vglobal.supportsPointerEvents = false;
 
   const stage = render([dataZoom, dataZoomdisableTriggerEvent], 'main');
+  stage.defaultLayer.scale(1.5, 1.5);
+  stage.x = 10;
 
   // stage.addEventListener('pointermove', e => {
   //   dataZoom.setLocation({

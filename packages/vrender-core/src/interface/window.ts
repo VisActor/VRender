@@ -1,6 +1,6 @@
 // window为内部对象，属性均为stage传入
 
-import type { IBoundsLike } from '@visactor/vutils';
+import type { IBounds, IBoundsLike, IMatrix, IPointLike } from '@visactor/vutils';
 import type { ICanvas } from './canvas';
 import type { IContext2d } from './context';
 import type { IDomRectLike, IEventElement, Releaseable } from './common';
@@ -14,6 +14,7 @@ export interface IWindowParams {
   offscreen?: boolean;
   width?: number;
   height?: number;
+  viewBox?: IBoundsLike;
   x?: number;
   y?: number;
   dpr: number;
@@ -58,7 +59,13 @@ export interface IWindow
   getContainer: () => HTMLElement | any;
   getImageBuffer: (type?: string) => any;
 
-  clearViewBox: (viewBox: IBoundsLike, color?: string) => void;
+  clearViewBox: (color?: string) => void;
+  setViewBox: (vb: IBoundsLike) => void;
+  getViewBox: () => IBounds;
+  setViewBoxTransform: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  getViewBoxTransform: () => IMatrix;
+  hasSubView: () => boolean;
+  pointTransform: (x: number, y: number) => IPointLike;
 
   getBoundingClientRect: () => IDomRectLike;
 
@@ -94,7 +101,11 @@ export interface IWindowHandlerContribution
   setStyle: (s: CSSStyleDeclaration | Record<string, any>) => void;
 
   getBoundingClientRect: () => IDomRectLike;
-  clearViewBox: (vb: IBoundsLike, color?: string) => void;
+  clearViewBox: (color?: string) => void;
+  setViewBox: (vb: IBoundsLike) => void;
+  getViewBox: () => IBounds;
+  setViewBoxTransform: (a: number, b: number, c: number, d: number, e: number, f: number) => void;
+  getViewBoxTransform: () => IMatrix;
   isVisible: (bbox?: IBoundsLike) => boolean;
 
   onVisibleChange: (cb: (currentVisible: boolean) => void) => void;

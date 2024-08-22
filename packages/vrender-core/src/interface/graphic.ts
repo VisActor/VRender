@@ -1,4 +1,4 @@
-import type { IAABBBounds, IOBBBounds, IMatrix, IPointLike, IPoint } from '@visactor/vutils';
+import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType } from '@visactor/vutils';
 import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
@@ -11,7 +11,6 @@ import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
-import { ITheme } from './graphic/theme';
 
 type IStrokeSeg = {
   start: number; // 百分比
@@ -185,14 +184,39 @@ export type IBackgroundConfig = {
 
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
+export interface SimpleDomStyleOptions {
+  width: number; // 容器的宽度
+  height: number; // 容器的高度
+  style?:
+    | string
+    | Record<string, any>
+    | ((
+        pos: { top: number; left: number; width: number; height: number },
+        graphic: IGraphic,
+        wrapContainer: HTMLElement
+      ) => Record<string, any>); // 容器的样式
+}
+
+export interface CommonDomOptions {
+  id?: string;
+  container: string | HTMLElement | null; // id或者dom
+  visible?: boolean;
+  pointerEvents?: boolean | string;
+  anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
+}
+
 export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
   IPickStyle & {
+    forceBoundsWidth: number | (() => number) | undefined;
+    forceBoundsHeight: number | (() => number) | undefined;
     opacity: number;
+    shadowGraphic?: IGraphic | undefined;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
     backgroundCornerRadius: number | number[];
+    backgroundOpacity: number;
     background:
       | IBackgroundType
       | {
@@ -211,16 +235,20 @@ export type IGraphicStyle = ILayout &
     texturePadding: number; // 纹理间隙
     blur: number;
     cursor: Cursor | null; // 鼠标样式
+    renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string
-    html: {
-      dom: string | HTMLElement; // dom字符串或者dom
-      container: string | HTMLElement | null; // id或者dom
-      width: number; // 容器的宽度
-      height: number; // 容器的高度
-      style: string | Record<string, any>; // 容器的样式
-      visible?: boolean;
-      anchorType?: 'position' | 'boundsLeftTop';
-    } | null;
+    html:
+      | ({
+          dom: string | HTMLElement; // dom字符串或者dom
+        } & SimpleDomStyleOptions &
+          CommonDomOptions)
+      | null;
+    react:
+      | ({
+          element: any; // react场景节点
+        } & SimpleDomStyleOptions &
+          CommonDomOptions)
+      | null;
   };
 
 export type IPickStyle = {
@@ -277,12 +305,17 @@ export type IGraphicAttribute = IDebugType &
     zIndex: number;
     layout: any;
     /**
+     * 是否隐藏元素（只是绘制的时候不绘制）
+     */
+    renderable: boolean;
+    /**
      * 是否在3d中控制方向
      * false: 不控制方向
      * true: 始终控制方向朝摄像机
      */
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
+    shadowPickMode?: 'full' | 'graphic';
     globalZIndex: number;
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
     // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
@@ -333,7 +366,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   backgroundImg?: boolean;
   attachedThemeGraphic?: IGraphic<any>;
 
-  bindDom?: Map<string | HTMLElement, { container: HTMLElement | string; dom: HTMLElement; wrapGroup: HTMLDivElement }>;
+  bindDom?: Map<
+    string | HTMLElement,
+    { container: HTMLElement | string; dom: HTMLElement | any; wrapGroup: HTMLDivElement | any; root?: any }
+  >;
 
   valid: boolean;
   parent: IGroup | null;
@@ -378,7 +414,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   // get
   readonly AABBBounds: IAABBBounds; // 用于获取当前节点的AABB包围盒
-  readonly OBBBounds: IOBBBounds; // 获取OBB包围盒，旋转防重叠需要用
+  // readonly OBBBounds: IOBBBounds; // 获取OBB包围盒，旋转防重叠需要用
   readonly globalAABBBounds: IAABBBounds; // 全局AABB包围盒
   readonly transMatrix: IMatrix; // 变换矩阵，动态计算
   readonly globalTransMatrix: IMatrix; // 变换矩阵，动态计算
@@ -459,6 +495,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   clone: () => IGraphic;
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
+  getGraphicTheme: () => T;
 }
 
 export interface IRoot extends IGraphic {

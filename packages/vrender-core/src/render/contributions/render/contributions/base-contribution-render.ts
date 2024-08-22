@@ -2,7 +2,6 @@ import type {
   IGraphicAttribute,
   IContext2d,
   IGraphic,
-  IStage,
   IThemeAttribute,
   IBaseRenderContribution,
   IContributionProvider,
@@ -10,9 +9,8 @@ import type {
 } from '../../../../interface';
 import type { IBounds } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../../common/inversify-lite';
-import { getTheme } from '../../../../graphic';
+import { getTheme } from '../../../../graphic/theme';
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
-import { pi2 } from '@visactor/vutils';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import { ContributionProvider } from '../../../../common/contribution-provider';
 import { InteractiveSubRenderContribution } from './constants';
@@ -38,6 +36,8 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
   ) {
     const {
       background,
+      backgroundOpacity = graphic.attribute.fillOpacity ?? graphicAttribute.backgroundOpacity,
+      opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit
     } = graphic.attribute;
@@ -62,6 +62,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       context.clip();
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.globalAlpha = backgroundOpacity * opacity;
       this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
@@ -70,6 +71,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     } else {
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.globalAlpha = backgroundOpacity * opacity;
       context.fillStyle = background as string;
       context.fill();
       context.highPerformanceRestore();

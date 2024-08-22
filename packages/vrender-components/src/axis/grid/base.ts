@@ -2,32 +2,14 @@
  * @description 网格线
  */
 import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
-import type { IGroup, Path } from '@visactor/vrender-core';
+import type { IGraphic, IGroup, Path } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
 import type { Point } from '../../core/type';
 import type { GridItem, CircleGridAttributes, GridBaseAttributes, GridAttributes, LineGridAttributes } from './type';
 import type { AxisItem, TransformedAxisItem } from '../type';
 import { AXIS_ELEMENT_NAME } from '../constant';
-
-function getLinePath(points: Point[], closed: boolean) {
-  let path = '';
-  if (points.length === 0) {
-    return path;
-  }
-  points.forEach((point, index) => {
-    if (index === 0) {
-      path = `M${point.x},${point.y}`;
-    } else {
-      path += `L${point.x},${point.y}`;
-    }
-  });
-  if (closed) {
-    path += 'Z';
-  }
-
-  return path;
-}
+import { getElMap, getPolygonPath, getVerticalCoord } from '../util';
 
 function getArcPath(center: Point, points: Point[], reverse: boolean, closed: boolean) {
   let path = '';
@@ -67,8 +49,8 @@ function getRegionPath(from: Point[], to: Point[], attribute: GridAttributes) {
     const toEnd = reversePoints[0];
     const center = (attribute as LineGridAttributes).center as Point;
 
-    regionPath = getLinePath(from, !!closed);
-    nextPath = getLinePath(reversePoints, !!closed);
+    regionPath = getPolygonPath(from, !!closed);
+    nextPath = getPolygonPath(reversePoints, !!closed);
     const toEndRadius = PointService.distancePP(toEnd, center);
     const fromStartRadius = PointService.distancePP(fromStart, center);
     regionPath += `A${toEndRadius},${toEndRadius},0,0,1,${toEnd.x},${toEnd.y}L${toEnd.x},${toEnd.y}`;
@@ -78,8 +60,8 @@ function getRegionPath(from: Point[], to: Point[], attribute: GridAttributes) {
     regionPath = getArcPath(center, from, false, !!closed);
     nextPath = getArcPath(center, reversePoints, true, !!closed);
   } else if (type === 'line' || type === 'polygon') {
-    regionPath = getLinePath(from, !!closed);
-    nextPath = getLinePath(reversePoints, !!closed);
+    regionPath = getPolygonPath(from, !!closed);
+    nextPath = getPolygonPath(reversePoints, !!closed);
   }
 
   if (closed) {
@@ -118,7 +100,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
     return this._innerView;
   }
 
-  protected _prevInnerView: IGroup; // 缓存旧场景树，用于自定义动画
+  protected _prevInnerView: { [key: string]: IGraphic }; // 缓存旧场景树，用于自定义动画
   /**
    * 获取更新前的旧场景树
    * @returns 返回更新前的旧场景树
@@ -135,8 +117,9 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   protected abstract getGridAttribute(isSubGrid: boolean): T;
 
   protected render(): void {
+    this._prevInnerView = this._innerView && getElMap(this._innerView);
+
     this.removeAllChild(true);
-    this._prevInnerView = this._innerView;
     this._innerView = graphicCreator.group({ x: 0, y: 0, pickable: false });
     this.add(this._innerView);
 
@@ -148,11 +131,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   }
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
-    const vector = this.getVerticalVector(offset, inside, point);
-    return {
-      x: point.x + vector[0],
-      y: point.y + vector[1]
-    };
+    return getVerticalCoord(point, this.getVerticalVector(offset, inside, point));
   }
 
   private _transformItems(items: AxisItem[]) {
@@ -188,7 +167,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
       const { id, points } = item;
       let path = '';
       if (type === 'line' || type === 'polygon') {
-        path = getLinePath(points, !!closed);
+        path = getPolygonPath(points, !!closed);
       } else if (type === 'circle') {
         const { center } = this.attribute as unknown as CircleGridAttributes;
         path = getArcPath(center, points, false, !!closed);
@@ -216,7 +195,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         const dirLen = Math.sqrt(dir.x * dir.x + dir.y * dir.y);
         const ratio = depth / dirLen;
         nextPoints.push({ x: points[0].x + dir.x * ratio, y: points[0].y + dir.y * ratio });
-        const path = getLinePath(nextPoints, !!closed);
+        const path = getPolygonPath(nextPoints, !!closed);
         const deltaX = abs(nextPoints[0].x - nextPoints[1].x);
         const deltaY = abs(nextPoints[0].y - nextPoints[1].y);
         const shape = graphicCreator.path({
@@ -264,5 +243,45 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
    */
   protected _getNodeId(id: string) {
     return `${this.id}-${id}`;
+  }
+
+  protected _parseTickSegment() {
+    let tickSegment = 1;
+    const count = this.data.length;
+    if (count >= 2) {
+      tickSegment = this.data[1].value - this.data[0].value;
+    }
+
+    return tickSegment;
+  }
+
+  protected _getPointsOfSubGrid(tickSegment: number, alignWithLabel: boolean) {
+    const tickLineCount = this.data.length;
+    // 刻度线的数量大于 2 时，才绘制子刻度
+    const points: { value: number }[] = [];
+    if (tickLineCount >= 2) {
+      this.data.forEach((item: TransformedAxisItem) => {
+        let tickValue = item.value;
+        if (!alignWithLabel) {
+          // tickLine 不同 tick 对齐时需要调整 point
+          const value = item.value - tickSegment / 2;
+          if (this.isInValidValue(value)) {
+            return;
+          }
+          tickValue = value;
+        }
+        points.push({
+          value: tickValue
+        });
+      });
+    }
+
+    return points;
+  }
+
+  release(): void {
+    super.release();
+    this._prevInnerView = null;
+    this._innerView = null;
   }
 }

@@ -1,9 +1,10 @@
-import { abs, acos, atan2, cos, epsilon, min, pi, sin, sqrt, pi2, isBoolean } from '@visactor/vutils';
+import { abs, atan2, cos, epsilon, min, sin, pi2, isBoolean } from '@visactor/vutils';
 import { inject, injectable, named } from '../../../common/inversify-lite';
 import { getTheme } from '../../../graphic/theme';
 import { parseStroke } from '../../../common/utils';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
+import { calculateArcCornerRadius } from '../render/utils';
 import type {
   IContext2d,
   IArc,
@@ -20,19 +21,9 @@ import type {
   IContributionProvider,
   IConicalGradient
 } from '../../../interface';
-import {
-  cornerTangents,
-  drawArcPath,
-  drawPathProxy,
-  fillVisible,
-  intersect,
-  runFill,
-  runStroke,
-  strokeVisible
-} from './utils';
+import { cornerTangents, drawArcPath, fillVisible } from './utils';
 import { getConicGradientAt } from '../../../canvas/conical-gradient';
 import { ArcRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { ARC_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRender } from './base-render';
 import {
@@ -92,6 +83,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     const startAngle = data.startAngle;
     let endAngle = data.endAngle;
     endAngle = _ea;
+
     const deltaAngle = abs(endAngle - startAngle);
     const clockwise: boolean = endAngle > startAngle;
     let collapsedToLine: boolean = false;
@@ -102,54 +94,27 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       innerRadius = temp;
     }
 
-    const cornerRadius = arc.getParsedCornerRadius();
-    // Or is it a circular or annular sector?
-    const { outerDeltaAngle, innerDeltaAngle, outerStartAngle, outerEndAngle, innerEndAngle, innerStartAngle } =
-      arc.getParsePadAngle(startAngle, endAngle);
-
-    const outerCornerRadiusStart = cornerRadius;
-    const outerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusEnd = cornerRadius;
-    const innerCornerRadiusStart = cornerRadius;
-    const maxOuterCornerRadius = Math.max(outerCornerRadiusEnd, outerCornerRadiusStart);
-    const maxInnerCornerRadius = Math.max(innerCornerRadiusEnd, innerCornerRadiusStart);
-    let limitedOcr = maxOuterCornerRadius;
-    let limitedIcr = maxInnerCornerRadius;
-
-    const xors = outerRadius * cos(outerStartAngle);
-    const yors = outerRadius * sin(outerStartAngle);
-    const xire = innerRadius * cos(innerEndAngle);
-    const yire = innerRadius * sin(innerEndAngle);
-
-    // Apply rounded corners?
-    let xore: number;
-    let yore: number;
-    let xirs: number;
-    let yirs: number;
-
-    if (maxInnerCornerRadius > epsilon || maxOuterCornerRadius > epsilon) {
-      xore = outerRadius * cos(outerEndAngle);
-      yore = outerRadius * sin(outerEndAngle);
-      xirs = innerRadius * cos(innerStartAngle);
-      yirs = innerRadius * sin(innerStartAngle);
-
-      // Restrict the corner radius according to the sector angle.
-      if (deltaAngle < pi) {
-        const oc = intersect(xors, yors, xirs, yirs, xore, yore, xire, yire);
-
-        if (oc) {
-          const ax = xors - oc[0];
-          const ay = yors - oc[1];
-          const bx = xore - oc[0];
-          const by = yore - oc[1];
-          const kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2);
-          const lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-
-          limitedIcr = min(maxInnerCornerRadius, (innerRadius - lc) / (kc - 1));
-          limitedOcr = min(maxOuterCornerRadius, (outerRadius - lc) / (kc + 1));
-        }
-      }
-    }
+    const {
+      outerDeltaAngle,
+      xors,
+      yors,
+      xirs,
+      yirs,
+      limitedOcr,
+      outerCornerRadiusStart,
+      outerCornerRadiusEnd,
+      maxOuterCornerRadius,
+      xore,
+      yore,
+      xire,
+      yire,
+      limitedIcr,
+      innerDeltaAngle,
+      innerStartAngle,
+      innerCornerRadiusStart,
+      innerCornerRadiusEnd,
+      maxInnerCornerRadius
+    } = calculateArcCornerRadius(arc, startAngle, endAngle, innerRadius, outerRadius);
 
     if (limitedOcr > epsilon) {
       const cornerRadiusStart = min(outerCornerRadiusStart, limitedOcr);
@@ -260,15 +225,18 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     const { fVisible, sVisible, doFill, doStroke } = data;
 
     const {
-      outerRadius = arcAttribute.outerRadius,
-      innerRadius = arcAttribute.innerRadius,
+      outerPadding = arcAttribute.outerPadding,
+      innerPadding = arcAttribute.innerPadding,
       cap = arcAttribute.cap,
       forceShowCap = arcAttribute.forceShowCap
     } = arc.attribute;
+    let { outerRadius = arcAttribute.outerRadius, innerRadius = arcAttribute.innerRadius } = arc.attribute;
+    outerRadius += outerPadding;
+    innerRadius -= innerPadding;
     // 判断是否是环形渐变，且有头部cap，那就偏移渐变色角度
     let conicalOffset = 0;
     const tempChangeConicalColor =
-      ((isBoolean(cap) && cap) || cap[0]) && (fill as IGradientColor).gradient === 'conical';
+      ((isBoolean(cap) && cap) || (cap as boolean[])[0]) && (fill as IGradientColor).gradient === 'conical';
     if (tempChangeConicalColor) {
       const { sc, startAngle, endAngle } = arc.getParsedAngle();
       if (abs(endAngle - startAngle) < pi2 - epsilon) {
@@ -363,7 +331,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     }
 
     // 绘制cap
-    if (((isBoolean(cap) && cap) || cap[1]) && forceShowCap) {
+    if (((isBoolean(cap) && cap) || (cap as boolean[])[1]) && forceShowCap) {
       const { startAngle: sa, endAngle: ea } = arc.getParsedAngle();
       const deltaAngle = abs(ea - sa);
       if (deltaAngle >= pi2 - epsilon) {

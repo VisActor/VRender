@@ -23,8 +23,8 @@
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
  */
-import type { IPointLike, TextMeasure, ITextMeasureSpec } from '@visactor/vutils';
-import { Matrix, pi, pi2, Logger } from '@visactor/vutils';
+import type { IPointLike, TextMeasure, ITextMeasureSpec, IMatrix } from '@visactor/vutils';
+import { Matrix, pi, pi2, Logger, getContextFont } from '@visactor/vutils';
 import {
   injectable,
   DefaultFillStyle,
@@ -35,7 +35,6 @@ import {
   application,
   matrixAllocate,
   transformMat4,
-  getContextFont,
   createConicalGradient
 } from '@visactor/vrender-core';
 import type {
@@ -56,7 +55,6 @@ import type {
 const outP: [number, number, number] = [0, 0, 0];
 
 // https://github.com/konvajs/konva/blob/master/src/Context.ts
-const initMatrix = new Matrix(1, 0, 0, 1, 0, 0);
 
 const addArcToBezierPath = (
   bezierPath: Array<number[]>,
@@ -109,6 +107,7 @@ const addArcToBezierPath = (
 @injectable()
 export class BrowserContext2d implements IContext2d {
   static env: EnvType = 'browser';
+  baseGlobalAlpha: number;
   drawPromise?: Promise<any>;
   declare mathTextMeasure: TextMeasure<ITextMeasureSpec>;
 
@@ -125,6 +124,7 @@ export class BrowserContext2d implements IContext2d {
   protected applyedMatrix?: Matrix; // 被应用的matrix
   declare fontFamily: string;
   declare fontSize: number;
+  declare _clearMatrix: IMatrix;
   // 属性代理
   set fillStyle(d: string | CanvasGradient | CanvasPattern) {
     this.nativeContext.fillStyle = d;
@@ -139,7 +139,7 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.font;
   }
   set globalAlpha(d: number) {
-    this.nativeContext.globalAlpha = d;
+    this.nativeContext.globalAlpha = d * this.baseGlobalAlpha;
   }
   get globalAlpha(): number {
     return this.nativeContext.globalAlpha;
@@ -247,6 +247,8 @@ export class BrowserContext2d implements IContext2d {
     this.stack = [];
     this.dpr = dpr;
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this._clearMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this.baseGlobalAlpha = 1;
   }
 
   reset() {
@@ -870,7 +872,7 @@ export class BrowserContext2d implements IContext2d {
 
     // works for Chrome and IE11
     if (!!this.nativeContext.setLineDash) {
-      _context.setLineDash(a[0]);
+      a[0] && _context.setLineDash(a[0]);
     } else if ('mozDash' in _context) {
       // verified that this works in firefox
       (_context as any).mozDash = a[0];
@@ -992,12 +994,11 @@ export class BrowserContext2d implements IContext2d {
       opacity = defaultParams.opacity,
       fill = defaultParams.fill
     } = attribute;
+    _context.globalAlpha = fillOpacity * opacity * this.baseGlobalAlpha;
+
     if (fillOpacity > 1e-12 && opacity > 1e-12) {
-      _context.globalAlpha = fillOpacity * opacity;
       _context.fillStyle = createColor(this, fill, params, offsetX, offsetY);
       // todo 小程序
-    } else {
-      _context.globalAlpha = fillOpacity * opacity;
     }
   }
 
@@ -1118,6 +1119,9 @@ export class BrowserContext2d implements IContext2d {
       defaultParams = this.strokeAttributes;
     }
     const { strokeOpacity = defaultParams.strokeOpacity, opacity = defaultParams.opacity } = attribute;
+
+    _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
+
     if (strokeOpacity > 1e-12 && opacity > 1e-12) {
       const {
         lineWidth = defaultParams.lineWidth,
@@ -1127,11 +1131,10 @@ export class BrowserContext2d implements IContext2d {
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit
       } = attribute;
-      _context.globalAlpha = strokeOpacity * opacity;
       _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
-      _context.setLineDash(lineDash);
+      lineDash && _context.setLineDash(lineDash);
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;
     }
@@ -1182,7 +1185,11 @@ export class BrowserContext2d implements IContext2d {
   }
 
   clearMatrix(setTransform: boolean = true, dpr: number = this.dpr) {
-    this.setTransformFromMatrix(initMatrix, setTransform, dpr);
+    this.setTransformFromMatrix(this._clearMatrix, setTransform, dpr);
+  }
+
+  setClearMatrix(a: number, b: number, c: number, d: number, e: number, f: number) {
+    this._clearMatrix.setValue(a, b, c, d, e, f);
   }
 
   onlyTranslate(dpr: number = this.dpr): boolean {

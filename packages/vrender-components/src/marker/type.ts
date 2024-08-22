@@ -1,23 +1,38 @@
 import type {
+  EasingType,
+  IArcGraphicAttribute,
   IGroup,
   IGroupGraphicAttribute,
   IImageGraphicAttribute,
+  ILineGraphicAttribute,
   IPolygonAttribute,
+  IPolygonGraphicAttribute,
+  IRectGraphicAttribute,
   IRichTextGraphicAttribute,
-  ISymbolGraphicAttribute
+  ISymbol,
+  ISymbolGraphicAttribute,
+  ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { SegmentAttributes, SymbolAttributes } from '../segment';
+import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment';
 import type { TagAttributes } from '../tag';
-import type { Point } from '../core/type';
+import type { Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
   start = 'start',
-  middle = 'middle',
-  end = 'end',
+  startTop = 'startTop',
+  startBottom = 'startBottom',
+  insideStart = 'insideStart',
   insideStartTop = 'insideStartTop',
   insideStartBottom = 'insideStartBottom',
+
+  middle = 'middle',
   insideMiddleTop = 'insideMiddleTop',
   insideMiddleBottom = 'insideMiddleBottom',
+
+  end = 'end',
+  endTop = 'endTop',
+  endBottom = 'endBottom',
+  insideEnd = 'insideEnd',
   insideEndTop = 'insideEndTop',
   insideEndBottom = 'insideEndBottom'
 }
@@ -32,6 +47,16 @@ export enum IMarkAreaLabelPosition {
   insideRight = 'insideRight',
   insideTop = 'insideTop',
   insideBottom = 'insideBottom'
+}
+
+export enum IMarkCommonArcLabelPosition {
+  arcInnerStart = 'arcInnerStart',
+  arcInnerEnd = 'arcInnerEnd',
+  arcInnerMiddle = 'arcInnerMiddle',
+  arcOuterStart = 'arcOuterStart',
+  arcOuterEnd = 'arcOuterEnd',
+  arcOuterMiddle = 'arcOuterMiddle',
+  center = 'center'
 }
 
 export enum IMarkPointItemPosition {
@@ -56,7 +81,7 @@ export type IMarkBackgroundAttributes = {
    * TODO: 根据文高度度进行背景 panel size自适应
    */
   autoWidth?: boolean;
-} & Partial<SymbolAttributes>;
+} & Partial<IRectGraphicAttribute>;
 
 export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
   /**
@@ -67,7 +92,11 @@ export type IMarkLabel = Omit<TagAttributes, 'x' | 'y' | 'panel'> & {
 
 export type IMarkRef = {
   /**
-   * 自动旋转，沿着线的方向，默认 true
+   * 自动旋转，沿着线的方向
+   * @default
+   * mark-line/mark-area/mark-point: false - 旧逻辑里autoRotate是false, 保持不变
+   * mark-arc-line/mark-arc-area: true - 新增逻辑, 如果不开启的话, 效果不太好, 所以默认true
+   * mark-point - 旧逻辑里autoRotate是true, 保持不变
    */
   autoRotate?: boolean;
   /**
@@ -84,13 +113,23 @@ export type IMarkRef = {
   refAngle?: number;
 };
 
-export type MarkerAttrs = IGroupGraphicAttribute & {
-  type?: 'line' | 'area' | 'point';
+export type MarkerAttrs<AnimationType> = IGroupGraphicAttribute & {
+  type?: 'line' | 'arc-line' | 'area' | 'arc-area' | 'point';
   /**
    * 是否支持交互
-   * @default false
+   * @default true
    */
   interactive?: boolean;
+  /**
+   * 是否开启选中交互
+   * @default false
+   */
+  select?: boolean;
+  /**
+   * 是否开启 hover 交互
+   * @default false
+   */
+  hover?: boolean;
   /**
    * 是否显示marker组件
    * @default true
@@ -110,34 +149,137 @@ export type MarkerAttrs = IGroupGraphicAttribute & {
     width: number;
     height: number;
   };
+} & BaseMarkerAnimation<AnimationType>;
+
+/** animation type */
+export type BaseMarkerAnimation<T> = {
+  animation?: MarkerAnimation<T> | boolean;
+  animationEnter?: MarkerUpdateAnimation<T>;
+  animationUpdate?: MarkerUpdateAnimation<T>;
+  animationExit?: MarkerExitAnimation;
+};
+export type MarkerAnimation<T> = MarkerUpdateAnimation<T> | MarkerUpdateAnimation<T>;
+
+export type MarkerUpdateAnimation<T> = {
+  type: T;
+} & MarkerExitAnimation;
+
+export type MarkCommonLineAnimationType = 'clipIn' | 'fadeIn';
+
+export type CommonMarkAreaAnimationType = 'fadeIn';
+
+export type MarkPointAnimationType = 'callIn' | 'fadeIn';
+
+export type MarkerExitAnimation = {
+  type: 'fadeOut';
+  duration?: number;
+  delay?: number;
+  easing?: EasingType;
 };
 
-export type MarkLineAttrs = MarkerAttrs &
-  SegmentAttributes & {
-    type?: 'line';
-    /**
-     * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
-     */
-    points: Point[] | Point[][];
+export type MarkerAnimationState = 'enter' | 'update' | 'exit';
 
-    /**
-     * 标签
-     */
-    label?: {
+/** state type */
+export type MarkCommonLineState<LineAttr> = {
+  line?: State<LineAttr>;
+  lineStartSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  label?: State<Partial<ITextGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+};
+
+export type CommonMarkAreaState<AreaAttr> = {
+  area?: State<Partial<AreaAttr>>;
+  label?: State<Partial<ITextGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+};
+
+export type MarkPointState = {
+  line?: State<ILineGraphicWithCornerRadius | Partial<ILineGraphicAttribute>[]>;
+  lineStartSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
+  symbol?: State<Partial<ISymbolGraphicAttribute>>;
+  image?: State<Partial<IImageGraphicAttribute>>;
+  text?: State<Partial<ITextGraphicAttribute>>;
+  textBackground?: State<Partial<IRectGraphicAttribute>>;
+  richText?: State<Partial<IRichTextGraphicAttribute>>;
+  customMark?: State<Partial<IGroupGraphicAttribute>>;
+  targetItem?: State<Partial<ISymbolGraphicAttribute>>;
+};
+
+export type MarkCommonLineAttrs<LineAttr, LineLabelPosition, MarkCommonLineAnimationType> =
+  MarkerAttrs<MarkCommonLineAnimationType> &
+    Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
       /**
-       * label 相对line的位置
+       * 标签
        */
-      position?: keyof typeof IMarkLineLabelPosition;
-      /**
-       * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
-       * @default false
-       */
-      confine?: boolean;
-    } & IMarkRef &
-      IMarkLabel;
+      label?: {
+        /**
+         * label 相对line的位置
+         */
+        position?: LineLabelPosition;
+        /**
+         * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+         * @default false
+         */
+        confine?: boolean;
+      } & IMarkRef &
+        IMarkLabel;
+      state?: MarkCommonLineState<LineAttr>;
+    };
+
+export type MarkLineAttrs = MarkCommonLineAttrs<
+  ILineGraphicWithCornerRadius | ILineGraphicAttribute[],
+  keyof typeof IMarkLineLabelPosition,
+  MarkCommonLineAnimationType
+> & {
+  type?: 'line';
+  /**
+   * 是否对 points 进行多段处理，默认为 false，即直接将所有的点连接成线。
+   * 如果需要进行多段处理，需要将 points 属性配置为 Point[][] 类型
+   * @default false
+   */
+  multiSegment?: boolean;
+  /**
+   * 在 `multiSegment` 属性开启的前提下，用于声明那一段线段用来作为主线段，如果不声明，默认全段为主线段
+   */
+  mainSegmentIndex?: number;
+  /**
+   * 构成line的点: 如果是两个点，则为直线；多个点则为曲线
+   */
+  points: Point[] | Point[][];
+  lineStyle?: ILineGraphicAttribute;
+};
+
+export type MarkArcLineAttrs = MarkCommonLineAttrs<
+  IArcGraphicAttribute,
+  keyof typeof IMarkCommonArcLabelPosition,
+  MarkCommonLineAnimationType
+> & {
+  type?: 'arc-line';
+  /**
+   * 弧线中心位置
+   */
+  center: {
+    x: number;
+    y: number;
   };
+  /**
+   * 弧线半径
+   */
+  radius: number;
+  /**
+   * 弧线起始角度（弧度）
+   */
+  startAngle: number;
+  /**
+   * 弧线终点角度（弧度）
+   */
+  endAngle: number;
+  lineStyle?: IArcGraphicAttribute;
+};
 
-export type MarkAreaAttrs = MarkerAttrs & {
+export type MarkAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   type?: 'area';
   /**
    * 构成area的点
@@ -158,6 +300,53 @@ export type MarkAreaAttrs = MarkerAttrs & {
    * area的样式
    */
   areaStyle?: IPolygonAttribute;
+
+  state?: CommonMarkAreaState<IPolygonGraphicAttribute>;
+};
+
+export type MarkArcAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
+  type?: 'arc-area';
+  /**
+   * 扇区中心位置
+   */
+  center: {
+    x: number;
+    y: number;
+  };
+  /**
+   * 扇区内半径
+   */
+  innerRadius: number;
+  /**
+   * 扇区外半径
+   */
+  outerRadius: number;
+  /**
+   * 扇区起始角度（弧度）
+   */
+  startAngle: number;
+  /**
+   * 扇区终点角度（弧度）
+   */
+  endAngle: number;
+  /**
+   * 标签
+   */
+  label?: {
+    position?: keyof typeof IMarkCommonArcLabelPosition;
+    /**
+     * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+     * @default false
+     */
+    confine?: boolean;
+  } & IMarkRef &
+    IMarkLabel;
+  /**
+   * area的样式
+   */
+  areaStyle?: IArcGraphicAttribute;
+
+  state?: CommonMarkAreaState<IArcGraphicAttribute>;
 };
 
 export type IItemContent = IMarkRef & {
@@ -205,8 +394,13 @@ export type IItemContent = IMarkRef & {
 
 export type IItemLine = {
   /** TODO：'type-opo' */
-  type?: 'type-s' | 'type-do' | 'type-po' | 'type-op';
+  type?: 'type-s' | 'type-do' | 'type-po' | 'type-op' | 'type-arc';
   visible?: boolean;
+  /**
+   * 当type为type-arc时生效, 数值决定曲率, 符号决定法向, 不能等于0
+   * @default 0.8
+   */
+  arcRatio?: number;
   /**
    * 垂直于引导线的装饰线，参考案例: https://observablehq.com/@mikelotis/edmonton-population-history-line-chart
    */
@@ -216,7 +410,7 @@ export type IItemLine = {
   };
 } & Omit<SegmentAttributes, 'points'>;
 
-export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
+export type MarkPointAttrs = Omit<MarkerAttrs<MarkPointAnimationType>, 'labelStyle'> & {
   /**
    * markPoint的位置（也是path的起点）
    */
@@ -230,4 +424,28 @@ export type MarkPointAttrs = Omit<MarkerAttrs, 'labelStyle'> & {
    * 标注内容
    */
   itemContent?: IItemContent;
-};
+
+  /**
+   * 被标注的内容
+   */
+  targetSymbol?: {
+    /**
+     * 被标注内容与标记线间的间隙
+     * @default 0
+     */
+    offset?: number;
+    /**
+     * 是否显示
+     * @default false
+     */
+    visible?: boolean;
+    /**
+     * 大小
+     * @default 20
+     */
+    size?: number;
+    style?: ISymbol;
+  };
+
+  state?: MarkPointState;
+} & BaseMarkerAnimation<MarkPointAnimationType>;

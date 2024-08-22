@@ -1,10 +1,12 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { ICurveType, ISegPath2D } from '../../interface';
+import type { ICurveType, IGenSegmentParams, ISegPath2D } from '../../interface';
 import { genLinearSegments } from './linear';
 import { genBasisSegments } from './basis';
 import { genMonotoneXSegments, genMonotoneYSegments } from './monotone';
 import { genStepSegments } from './step';
 import { genLinearClosedSegments } from './linear-closed';
+import { genCatmullRomSegments } from './catmull-rom';
+import { genCatmullRomClosedSegments } from './catmull-rom-close';
 
 export * from './linear';
 export * from './linear-closed';
@@ -16,7 +18,7 @@ export * from './curve/curve-context';
 export function calcLineCache(
   points: IPointLike[],
   curveType: ICurveType,
-  params?: { startPoint: IPointLike }
+  params?: { startPoint?: IPointLike; curveTension?: number }
 ): ISegPath2D | null {
   switch (curveType) {
     case 'linear':
@@ -33,6 +35,10 @@ export function calcLineCache(
       return genStepSegments(points, 0, params);
     case 'stepAfter':
       return genStepSegments(points, 1, params);
+    case 'catmullRom':
+      return genCatmullRomSegments(points, params?.curveTension ?? 0.5, params);
+    case 'catmullRomClosed':
+      return genCatmullRomClosedSegments(points, params?.curveTension ?? 0.5, params);
     case 'linearClosed':
       return genLinearClosedSegments(points, params);
     default:

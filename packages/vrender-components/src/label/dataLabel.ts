@@ -3,25 +3,11 @@ import type { IGraphic, INode } from '@visactor/vrender-core';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
 import { bitmapTool } from './overlap';
-import { RectLabel } from './rect';
-import { SymbolLabel } from './symbol';
-import { ArcLabel } from './arc';
 import type { DataLabelAttrs } from './type';
 import type { LabelBase } from './base';
 import { LabelBase as PointLabel } from './base';
-import { LineDataLabel } from './line-data';
-import { LineLabel } from './line';
-import { AreaLabel } from './area';
 import type { ComponentOptions } from '../interface';
-
-const labelComponentMap = {
-  rect: RectLabel,
-  symbol: SymbolLabel,
-  arc: ArcLabel,
-  line: LineLabel,
-  area: AreaLabel,
-  'line-data': LineDataLabel
-};
+import { getLabelComponent } from './data-label-register';
 
 export class DataLabel extends AbstractComponent<DataLabelAttrs> {
   name = 'data-label';
@@ -41,7 +27,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     if (!dataLabels || dataLabels.length === 0) {
       return;
     }
-    const { width = 0, height = 0 } = size || {};
+    const { width = 0, height = 0, padding } = size || {};
 
     if (!width || !height || !isValidNumber(height * width)) {
       return;
@@ -50,7 +36,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
     if (!this._componentMap) {
       this._componentMap = new Map();
     }
-    const tool = bitmapTool(width, height);
+    const tool = bitmapTool(width, height, padding);
     const bitmap = tool.bitmap();
 
     const currentComponentMap = new Map();
@@ -58,7 +44,7 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
 
     for (let i = 0; i < dataLabels.length; i++) {
       const dataLabel = dataLabels[i];
-      const labelComponent = labelComponentMap[dataLabel.type] || PointLabel;
+      const labelComponent = getLabelComponent(dataLabel.type) || PointLabel;
       if (labelComponent) {
         const { baseMarkGroupName, type } = dataLabel;
         const id = dataLabel.id ?? `${baseMarkGroupName}-${type}-${i}`;

@@ -28,7 +28,7 @@ import { FederatedMouseEvent } from './mouse-event';
  * A FederatedEvent for pointer events.
  */
 export class FederatedPointerEvent extends FederatedMouseEvent implements PointerEvent {
-  pickParams?: any;
+  declare pickParams?: any;
   /**
    * The unique identifier of the pointer.
    */
@@ -113,6 +113,7 @@ export class FederatedPointerEvent extends FederatedMouseEvent implements Pointe
     event.eventPhase = event.NONE;
     event.currentTarget = null;
     event.path = [];
+    event.detailPath = [];
     event.target = null;
 
     event.nativeEvent = this.nativeEvent;
@@ -125,6 +126,8 @@ export class FederatedPointerEvent extends FederatedMouseEvent implements Pointe
     // copy propagation path for perf
     event.target = this.target;
     event.path = this.composedPath().slice();
+    const p = this.composedDetailPath();
+    event.detailPath = p && p.slice();
     event.type = this.type;
 
     return event;

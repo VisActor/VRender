@@ -6,14 +6,16 @@ import type {
   IImageRenderContribution,
   IDrawContext,
   IBackgroundConfig,
-  IGraphic
+  IGraphic,
+  IMarkAttribute
 } from '../../../../interface';
-import { getTheme } from '../../../../graphic';
+import { getTheme } from '../../../../graphic/theme';
 import { DefaultBaseBackgroundRenderContribution } from './base-contribution-render';
 import { BaseRenderContributionTime } from '../../../../common/enums';
 import { isNumber, isObject } from '@visactor/vutils';
 import { parsePadding } from '../../../../common/utils';
 import { createRectPath } from '../../../../common/shape/rect';
+import { DefaultRectRenderContribution } from './rect-contribution-render';
 
 export class DefaultImageBackgroundRenderContribution
   extends DefaultBaseBackgroundRenderContribution
@@ -137,4 +139,48 @@ function getActualPosition(graphic: IGraphic) {
   };
 }
 
+export class DefaultImageRenderContribution extends DefaultRectRenderContribution implements IImageRenderContribution {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+  drawShape(
+    rect: any,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    rectAttribute: any,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    return super.drawShape(
+      rect,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      rectAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
+  }
+}
+
+export const defaultImageRenderContribution = new DefaultImageRenderContribution();
 export const defaultImageBackgroundRenderContribution = new DefaultImageBackgroundRenderContribution();

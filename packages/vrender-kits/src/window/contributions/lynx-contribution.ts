@@ -64,7 +64,7 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
   }
 
   getTitle(): string {
-    return this.canvas.id.toString();
+    return this.canvas.id && this.canvas.id.toString();
   }
 
   getWH(): { width: number; height: number } {
@@ -223,7 +223,8 @@ export class LynxWindowHandlerContribution extends BaseWindowHandlerContribution
     };
   }
 
-  clearViewBox(vb: IBoundsLike, color?: string): void {
+  clearViewBox(color?: string): void {
+    const vb = this.viewBox;
     const context = this.getContext();
     const dpr = this.getDpr();
     context.nativeContext.save();

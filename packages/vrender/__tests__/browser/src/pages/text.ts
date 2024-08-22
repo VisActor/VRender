@@ -49,60 +49,110 @@ function performance(stage: any) {
 export const page = () => {
   const graphics: IGraphic[] = [];
   const t = createText({
-    autoWrapText: false,
-    dx: 0,
+    text: ['2022年世界国家和地区GDP总量 🚀'],
     ellipsis: '...',
-    direction: 'vertical',
-    fill: '#000',
-    fontFamily: 'Arial,sans-serif',
-    fontSize: 16,
-    fontWeight: null,
-    heightLimit: 52,
-    lineClamp: undefined,
-    lineHeight: 16,
-    lineThrough: undefined,
-    maxLineWidth: 60,
-    text: '你在唱什么，什么都觉得',
-    textAlign: 'left',
+    fill: 'linear-gradient(90deg, #215F97 0%, #FF948F 100%)',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textAlign: 'center',
     textBaseline: 'top',
-    angle: 0.6,
-    background: {
-      background:
-        '<svg t="1683876749384" class="icon" viewBox="0 0 1059 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="5625" width="200" height="200"><path d="M928.662069 17.655172h-812.137931v208.331035h812.137931z" fill="#F1543F" p-id="5626"></path><path d="M1020.468966 275.42069l-236.579311 367.227586c0-17.655172-3.531034-35.310345-14.124138-49.434483-17.655172-24.717241-56.496552-28.248276-81.213793-45.903448-21.186207-14.124138-35.310345-42.372414-60.027586-56.496552L928.662069 17.655172l24.717241 14.124138c88.275862 49.434483 116.524138 158.896552 67.089656 243.64138M416.662069 490.813793c-21.186207 14.124138-38.841379 42.372414-60.027586 56.496552-24.717241 17.655172-63.558621 24.717241-81.213793 45.903448-10.593103 14.124138-10.593103 31.77931-14.124138 49.434483L24.717241 275.42069C-24.717241 190.675862 3.531034 81.213793 91.806897 31.77931l24.717241-14.124138 300.137931 473.158621z" fill="#FF7058" p-id="5627"></path><path d="M893.351724 656.772414c0 38.841379-35.310345 70.62069-45.903448 102.4-10.593103 35.310345-3.531034 81.213793-24.717242 109.462069-21.186207 28.248276-67.089655 35.310345-98.868965 56.496551-31.77931 28.248276-52.965517 70.62069-88.275862 81.213794-35.310345 10.593103-77.682759-10.593103-112.993104-10.593104-38.841379 0-81.213793 21.186207-116.524137 10.593104S349.572414 953.37931 317.793103 932.193103c-31.77931-21.186207-77.682759-28.248276-98.868965-56.496551-21.186207-28.248276-14.124138-74.151724-24.717241-109.462069-10.593103-35.310345-45.903448-67.089655-45.903449-102.4 0-38.841379 35.310345-70.62069 45.903449-105.931035 10.593103-35.310345 3.531034-81.213793 24.717241-109.462069 21.186207-28.248276 67.089655-35.310345 98.868965-56.496551 28.248276-21.186207 49.434483-63.558621 88.275863-74.151725 35.310345-10.593103 77.682759 10.593103 116.524137 10.593104 38.841379 0 81.213793-21.186207 112.993104-10.593104 35.310345 10.593103 56.496552 52.965517 88.275862 74.151725 31.77931 21.186207 77.682759 28.248276 98.868965 56.496551 21.186207 28.248276 14.124138 74.151724 24.717242 109.462069 10.593103 31.77931 45.903448 63.558621 45.903448 98.868966" fill="#F8B64C" p-id="5628"></path><path d="M790.951724 656.772414c0 144.772414-120.055172 264.827586-268.358621 264.827586-148.303448 0-268.358621-120.055172-268.35862-264.827586s120.055172-264.827586 268.35862-264.827586c148.303448 0 268.358621 120.055172 268.358621 264.827586" fill="#FFD15C" p-id="5629"></path><path d="M706.206897 589.682759h-123.586207c-7.062069 0-10.593103-3.531034-14.124138-10.593104L529.655172 466.096552c-3.531034-14.124138-21.186207-14.124138-28.248275 0l-38.84138 112.993103c-3.531034 7.062069-7.062069 10.593103-14.124138 10.593104H335.448276c-14.124138 0-21.186207 17.655172-7.062069 24.717241l98.868965 70.62069c3.531034 3.531034 7.062069 10.593103 3.531035 14.124138L391.944828 812.137931c-3.531034 14.124138 10.593103 24.717241 21.186206 14.124138l98.868966-70.62069c3.531034-3.531034 10.593103-3.531034 17.655172 0l98.868966 70.62069c10.593103 7.062069 24.717241-3.531034 21.186207-14.124138l-38.841379-112.993103c-3.531034-7.062069 0-10.593103 3.531034-14.124138l98.868966-70.62069c14.124138-7.062069 7.062069-24.717241-7.062069-24.717241" fill="#F8B64C" p-id="5630"></path></svg>',
-      width: 30,
-      height: 30
-    },
-    underline: undefined,
-    // whiteSpace: 'no-wrap',
-    wordBreak: 'break-word',
-    x: 16,
-    y: 28
+    width: 308,
+    lineHeight: '150%',
+    fontStyle: 'normal',
+    underline: 1,
+    stroke: 'transparent',
+    fontFamily: '',
+    wrap: true,
+    whiteSpace: 'no-wrap',
+    maxLineWidth: 308,
+    x: 154,
+    y: 0
   });
   console.log(t, t.cliped);
   graphics.push(t);
   // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
+  const tt = createText({
+    x: 971.9754981994629,
+    y: -213.8625716268361,
+    textAlign: 'center',
+    _debug_bounds: true,
+    textBaseline: 'middle',
+    text: ['细分'],
+    underline: 1,
+    underlineOffset: 0,
+    underlineDash: [2, 2],
+    fontSize: 16,
+    whiteSpace: 'normal',
+    graphicAlign: 'center',
+    graphicBaseline: 'middle',
+    fill: '#000',
+    ignoreBuf: true,
+    fontFamily: 'D-Din',
+    maxLineWidth: 120,
+    heightLimit: 999999,
+    // angle: 0.6,
+    // anchor: [971.9754981994629, -213.8625716268361],
+    visible: true,
+    background: '#F54A45'
+  });
+  console.log(tt);
+  const g = createGroup({
+    // angle: 0.6
+    x: -600,
+    y: 600
+  });
+  g.add(tt);
+
+  graphics.push(g);
+
   graphics.push(
     createText({
       x: 300,
       y: 200,
-      fill: {
-        gradient: 'linear',
-        x0: 0,
-        y0: 0,
-        x1: 1,
-        y1: 1,
-        stops: [
-          { offset: 0, color: 'green' },
-          { offset: 0.5, color: 'orange' },
-          { offset: 1, color: 'red' }
-        ]
-      },
-      background: 'red',
-      backgroundCornerRadius: 10,
-      text: ['这是一行文字'],
+      // fill: {
+      //   gradient: 'linear',
+      //   x0: 0,
+      //   y0: 0,
+      //   x1: 1,
+      //   y1: 1,
+      //   stops: [
+      //     { offset: 0, color: 'green' },
+      //     { offset: 0.5, color: 'orange' },
+      //     { offset: 1, color: 'red' }
+      //   ]
+      // },
+      // background: 'red',
+      // backgroundCornerRadius: 10,
+      text: '这是一行文字',
+      fill: 'red',
       fontSize: 36,
       textBaseline: 'top'
+    })
+  );
+  graphics.push(
+    createLine({
+      x: 300,
+      y: 200,
+      // fill: {
+      //   gradient: 'linear',
+      //   x0: 0,
+      //   y0: 0,
+      //   x1: 1,
+      //   y1: 1,
+      //   stops: [
+      //     { offset: 0, color: 'green' },
+      //     { offset: 0.5, color: 'orange' },
+      //     { offset: 1, color: 'red' }
+      //   ]
+      // },
+      // background: 'red',
+      // backgroundCornerRadius: 10,
+      stroke: 'green',
+      points: [
+        { x: -100, y: 0 },
+        { x: 300, y: 0 }
+      ]
     })
   );
 
@@ -151,6 +201,24 @@ export const page = () => {
     lineWidth: 1
   });
   graphics.push(rect);
+
+  const textLimit = createText({
+    x: 800,
+    y: 500,
+    fill: colorPools[5],
+    // text: ['Tffg'],
+    text: ['这是textabc这aaaaa是什么', '这是阿萨姆abcaaaaabcdef', '这是textabc这aaaaa是什么', '这是阿萨姆abcaaaaa'],
+    // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+    heightLimit: 40,
+    wordBreak: 'break-word',
+    maxLineWidth: 200,
+    stroke: 'green',
+    textAlign: 'left',
+    textBaseline: 'middle',
+    whiteSpace: 'normal'
+    // wrap: true
+  });
+  graphics.push(textLimit);
 
   const stage = createStage({
     canvas: 'main',

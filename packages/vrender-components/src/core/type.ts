@@ -1,4 +1,4 @@
-import type { IRichTextCharacter } from '@visactor/vrender-core';
+import type { IGraphicStyle, IRichTextCharacter } from '@visactor/vrender-core';
 
 export type Point = {
   x: number;
@@ -70,14 +70,36 @@ type CommonTextContent = {
       };
 };
 
-type RichTextContent = {
+export type RichTextContent = {
   text?: {
     type: 'rich';
     text: IRichTextCharacter[];
   };
 };
 
-export type TextContent = (CommonTextContent | RichTextContent) & {
+/**
+ * html supported @since 0.19.0
+ */
+export type HTMLTextContent = {
+  text: {
+    type: 'html';
+    text: IGraphicStyle['html'];
+  };
+  _originText: string; // 原始 text，用于预估 bounds
+};
+
+/**
+ * react supported @since 0.19.0
+ */
+export type ReactTextContent = {
+  text: {
+    type: 'react';
+    text: IGraphicStyle['react'];
+  };
+  _originText: string; // 原始 text，用于预估 bounds
+};
+
+export type TextContent = (CommonTextContent | RichTextContent | HTMLTextContent | ReactTextContent) & {
   /** @deprecated */
   type?: 'text' | 'rich';
 };

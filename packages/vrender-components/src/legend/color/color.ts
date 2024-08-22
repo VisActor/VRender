@@ -32,6 +32,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     },
     handlerSize: 10,
     handlerStyle: {
+      fill: null as any,
       lineWidth: 4,
       stroke: '#fff',
       outerBorder: {
@@ -90,6 +91,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
+      inverse,
       disableTriggerEvent
     } = this.attribute as ColorLegendAttributes;
 
@@ -99,6 +101,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
     for (let i = 0; i < colors.length; i++) {
       domain.push(min + step * i);
     }
+
     this._colorScale = new LinearScale().domain(domain, true).range(colors);
     this._color = this._getTrackColor();
 
@@ -129,7 +132,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       handlerText,
       showTooltip,
       tooltip,
-      disableTriggerEvent
+      disableTriggerEvent,
+      inverse
     });
     this._innerView.add(slider as unknown as INode);
     this._slider = slider;
@@ -153,7 +157,7 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
   }
 
   private _getTrackColor(): IColor | undefined {
-    const { colors, layout } = this.attribute as ColorLegendAttributes;
+    const { colors, layout, inverse } = this.attribute as ColorLegendAttributes;
 
     if (isEmpty(colors)) {
       return undefined;
@@ -172,7 +176,8 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       });
     }
     const isHorizontal = layout === 'horizontal';
-    return {
+
+    const res: IColor = {
       gradient: 'linear',
       stops,
       x0: 0,
@@ -180,6 +185,18 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
       x1: isHorizontal ? 1 : 0,
       y1: isHorizontal ? 0 : 1
     };
+
+    if (inverse) {
+      if (isHorizontal) {
+        res.x0 = 1;
+        res.x1 = 0;
+      } else {
+        res.y0 = 1;
+        res.y1 = 0;
+      }
+    }
+
+    return res;
   }
 
   private _onSliderToolipChange = (e: FederatedEvent) => {
@@ -202,14 +219,19 @@ export class ColorContinuousLegend extends LegendBase<ColorLegendAttributes> {
 
   private _updateColor() {
     const { layout = 'horizontal', colors, railWidth, railHeight } = this.attribute as ColorLegendAttributes;
-    const { startHandler, endHandler, track } = this._slider;
+    const { startHandler, endHandler, track, attribute } = this._slider;
     const { startValue, endValue, startPos, endPos } = this._slider.currentValue;
-
+    const handlerColor = attribute.handlerStyle?.fill;
     // 计算颜色
-    const startHandlerColor = this._colorScale.scale(startValue);
-    const endHandlerColor = this._colorScale.scale(endValue);
-    startHandler?.setAttribute('fill', startHandlerColor);
-    endHandler?.setAttribute('fill', endHandlerColor);
+    if (startHandler && !handlerColor) {
+      const startHandlerColor = this._colorScale.scale(startValue);
+      startHandler.setAttribute('fill', startHandlerColor);
+    }
+
+    if (endHandler && !handlerColor) {
+      const endHandlerColor = this._colorScale.scale(endValue);
+      endHandler.setAttribute('fill', endHandlerColor);
+    }
 
     const isHorizontal = layout === 'horizontal';
     const railLen = isHorizontal ? railWidth : railHeight;

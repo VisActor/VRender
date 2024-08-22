@@ -726,7 +726,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     this.clipRangeByDimension = params?.clipRangeByDimension ?? 'x';
   }
 
-  private getPoints(attribute: typeof this.from): IPointLike[] {
+  private getPoints(attribute: typeof this.from, cache = false): IPointLike[] {
     if (attribute.points) {
       return attribute.points;
     }
@@ -740,7 +740,9 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
         if (segment.points) {
           points.push(...segment.points);
         }
-        this.segmentsCache.push(segment.points?.length ?? 0);
+        if (cache) {
+          this.segmentsCache.push(segment.points?.length ?? 0);
+        }
       });
       return points;
     }
@@ -749,7 +751,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
 
   onBind(): void {
     const originFromPoints = this.getPoints(this.from);
-    const originToPoints = this.getPoints(this.to);
+    const originToPoints = this.getPoints(this.to, true);
     this.fromPoints = !originFromPoints ? [] : !Array.isArray(originFromPoints) ? [originFromPoints] : originFromPoints;
     this.toPoints = !originToPoints ? [] : !Array.isArray(originToPoints) ? [originToPoints] : originToPoints;
 

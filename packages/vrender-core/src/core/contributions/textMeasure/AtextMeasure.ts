@@ -17,22 +17,43 @@ export class ATextMeasure implements ITextMeasure {
     service.bindTextMeasure(this);
   }
 
-  /**
-   * 获取text宽度，measureText.width
-   * @param text
-   * @param options
-   */
-  measureTextWidth(text: string, options: TextOptionsType): number {
-    if (!this.context) {
-      return this.estimate(text, options).width;
-    }
+  protected _measureTextWithoutAlignBaseline(text: string, options: TextOptionsType, compatible?: boolean) {
     this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
-    return textMeasure.width;
+    const metrics = this.context.measureText(text);
+
+    return compatible ? this.compatibleMetrics(metrics, options) : metrics;
+  }
+
+  protected _measureTextWithAlignBaseline(text: string, options: TextOptionsType, compatible?: boolean) {
+    this.context.setTextStyle(options);
+    const metrics = this.context.measureText(text);
+
+    return compatible ? this.compatibleMetrics(metrics, options) : metrics;
+  }
+
+  protected compatibleMetrics(metrics: TextMetrics | { width: number }, options: TextOptionsType) {
+    if (
+      (metrics as any).actualBoundingBoxAscent == null ||
+      (metrics as any).actualBoundingBoxDescent == null ||
+      (metrics as any).fontBoundingBoxAscent == null ||
+      (metrics as any).fontBoundingBoxDescent == null
+    ) {
+      const { ascent, descent } = this.measureTextBoundADscentEstimate(options);
+      (metrics as any).actualBoundingBoxAscent = ascent;
+      (metrics as any).actualBoundingBoxDescent = descent;
+      (metrics as any).fontBoundingBoxAscent = ascent;
+      (metrics as any).fontBoundingBoxDescent = descent;
+    }
+    if ((metrics as any).actualBoundingBoxLeft == null || (metrics as any).actualBoundingBoxRight == null) {
+      const { left, right } = this.measureTextBoundLeftRightEstimate(options);
+      (metrics as any).actualBoundingBoxLeft = left;
+      (metrics as any).actualBoundingBoxRight = right;
+    }
+    return metrics;
   }
 
   // 估算文字长度
-  estimate(
+  protected estimate(
     text: string,
     { fontSize = DefaultTextAttribute.fontSize }: TextOptionsType
   ): { width: number; height: number } {
@@ -50,17 +71,71 @@ export class ATextMeasure implements ITextMeasure {
   }
 
   /**
+   * 获取text宽度，measureText.width
+   * @param text
+   * @param options
+   */
+  measureTextWidth(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }): number {
+    if (!this.context) {
+      return this.estimate(text, options).width;
+    }
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options);
+    return textMeasure.width;
+  }
+  /**
+   * 获取text宽度，measureText.width
+   * @param text
+   * @param options
+   */
+  measureTextBoundsWidth(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
+    if (!this.context) {
+      return this.estimate(text, options).width;
+    }
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options);
+    return textMeasure.width;
+  }
+
+  measureTextBoundsLeftRight(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundLeftRightEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      left: (textMeasure as any).actualBoundingBoxLeft,
+      right: (textMeasure as any).actualBoundingBoxRight
+    };
+  }
+
+  /**
    * 获取text像素高度，基于actualBoundingBoxAscent和actualBoundingBoxDescent
    * @param text
    * @param options
    */
-  measureTextPixelHeight(text: string, options: TextOptionsType): number {
+  measureTextPixelHeight(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
     if (!this.context) {
       return options.fontSize ?? DefaultTextStyle.fontSize;
     }
-    this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options, true);
     return Math.abs((textMeasure as any).actualBoundingBoxAscent - (textMeasure as any).actualBoundingBoxDescent);
+  }
+
+  measureTextPixelADscent(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundADscentEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      ascent: (textMeasure as any).actualBoundingBoxAscent,
+      descent: (textMeasure as any).actualBoundingBoxDescent
+    };
   }
 
   /**
@@ -68,13 +143,74 @@ export class ATextMeasure implements ITextMeasure {
    * @param text
    * @param options
    */
-  measureTextBoundHieght(text: string, options: TextOptionsType): number {
+  measureTextBoundHieght(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
     if (!this.context) {
       return options.fontSize ?? DefaultTextStyle.fontSize;
     }
-    this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options, true);
     return Math.abs((textMeasure as any).fontBoundingBoxAscent - (textMeasure as any).fontBoundingBoxDescent);
+  }
+
+  measureTextBoundADscent(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundADscentEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      ascent: (textMeasure as any).fontBoundingBoxAscent,
+      descent: (textMeasure as any).fontBoundingBoxDescent
+    };
+  }
+
+  protected measureTextBoundADscentEstimate(options: TextOptionsType) {
+    const fontSize = options.fontSize ?? DefaultTextStyle.fontSize;
+    const { textBaseline } = options;
+    if (textBaseline === 'bottom') {
+      return {
+        ascent: fontSize,
+        descent: 0
+      };
+    } else if (textBaseline === 'middle') {
+      return {
+        ascent: fontSize / 2,
+        descent: fontSize / 2
+      };
+    } else if (textBaseline === 'alphabetic') {
+      return {
+        ascent: 0.79 * fontSize,
+        descent: 0.21 * fontSize
+      };
+    }
+
+    return {
+      ascent: 0,
+      descent: fontSize
+    };
+  }
+
+  protected measureTextBoundLeftRightEstimate(options: TextOptionsType) {
+    const fontSize = options.fontSize ?? DefaultTextStyle.fontSize;
+    const { textAlign } = options;
+
+    if (textAlign === 'center') {
+      return {
+        left: fontSize / 2,
+        right: fontSize / 2
+      };
+    } else if (textAlign === 'right' || textAlign === 'end') {
+      return {
+        left: fontSize,
+        right: 0
+      };
+    }
+    return {
+      left: 0,
+      right: fontSize
+    };
   }
 
   /**

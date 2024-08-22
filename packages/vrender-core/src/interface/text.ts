@@ -7,6 +7,8 @@ export interface TextOptionsType {
   fontFamily?: string;
   fontStyle?: string;
   fontVariant?: string;
+  textBaseline?: 'alphabetic' | 'top' | 'middle' | 'bottom';
+  textAlign?: 'left' | 'center' | 'right' | 'start' | 'end';
 }
 
 export interface ITextMeasure extends IContribution<IGraphicUtil> {

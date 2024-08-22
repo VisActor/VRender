@@ -186,6 +186,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    this.rootPointerEvent.nativeEvent = null;
   };
 
   private onPointerMove = (nativeEvent: NativeEvent): void => {
@@ -205,6 +206,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    this.rootPointerEvent.nativeEvent = null;
   };
 
   private onPointerUp = (nativeEvent: NativeEvent): void => {
@@ -224,6 +226,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    this.rootPointerEvent.nativeEvent = null;
   };
 
   private onPointerOverOut = (nativeEvent: NativeEvent): void => {
@@ -240,6 +243,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    this.rootPointerEvent.nativeEvent = null;
   };
 
   protected onWheel = (nativeEvent: WheelEvent): void => {

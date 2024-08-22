@@ -1,4 +1,4 @@
-import { createStage, createRect, IGraphic } from '@visactor/vrender';
+import { createStage, createRect, IGraphic, createSymbol } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 
@@ -73,4 +73,73 @@ export const page = () => {
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });
+
+  const stage2 = createStage({
+    canvas: 'main',
+    autoRender: true,
+    canvasControled: false
+    // viewBox: {
+    //   x1: 500,
+    //   y1: 500,
+    //   x2: 800,
+    //   y2: 800
+    // }
+  });
+
+  const symbol = createSymbol({
+    x: 100,
+    y: 100,
+    symbolType: 'circle',
+    size: 30,
+    fill: 'pink'
+  });
+
+  stage2.defaultLayer.add(symbol);
+
+  document.getElementById('main')?.addEventListener(
+    'wheel',
+    e => {
+      console.log('stage1', e);
+      e.stopPropagation();
+    },
+    {
+      capture: true
+    }
+  );
+  document.getElementById('main')?.addEventListener(
+    'wheel',
+    e => {
+      console.log('stage2', e);
+      e.stopPropagation();
+    },
+    {
+      capture: true
+    }
+  );
+  // stage.on('wheel', e => {
+  //   console.log('stage1', e);
+  //   e.nativeEvent.stopPropagation();
+  // });
+  // stage2.on('wheel', e => {
+  //   console.log('stage2', e);
+  //   e.nativeEvent.stopPropagation();
+  // });
+
+  stage2.on('wheel', e => {
+    console.log('stage2222222222222222222222', e);
+    // e.stopPropagation();
+  });
+
+  setTimeout(() => {
+    console.log('监听');
+    document.getElementById('main')?.addEventListener(
+      'wheel',
+      e => {
+        console.log('mainaaaaaaaaaaaaaaaa', e);
+      },
+      {
+        capture: true
+      }
+    );
+  }, 3000);
 };

@@ -1,5 +1,5 @@
 import type { IBoundsLike, IPointLike } from '@visactor/vutils';
-import { last, merge } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
 import type { ILine } from '@visactor/vrender-core';
 import type { PointLocationCfg } from '../core/type';
 import type { LineLabelAttrs } from './type';

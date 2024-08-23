@@ -39,10 +39,11 @@ const axies: any[] = [];
         },
         label: {
           visible: true,
-          containerAlign: 'left',
+          // containerAlign: 'left',
           inside,
           space: 12,
           style: {
+            // textAlign: 'right',
             angle: (index * Math.PI) / 4,
             fontSize: 10,
             fill: '#000000',

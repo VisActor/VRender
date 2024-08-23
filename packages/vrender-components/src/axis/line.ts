@@ -136,9 +136,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         }
       } else {
         if (axisVector[0] === 0) {
-          const boundsWidth = this.axisLabelsContainer ? this.axisLabelsContainer.AABBBounds.width() : 0;
-          if (isFinite(boundsWidth)) {
-            labelLength += boundsWidth + (layerCount - 1) * space;
+          if (
+            this.axisLabelsContainer &&
+            this.axisLabelsContainer.AABBBounds &&
+            !this.axisLabelsContainer.AABBBounds.empty()
+          ) {
+            const baseX = this.axisLabelLayerSize[0].labelPos;
+            const bounds = this.axisLabelsContainer.AABBBounds;
+
+            labelLength +=
+              (factor === 1
+                ? bounds.x2 > baseX
+                  ? Math.min(bounds.x2 - baseX, bounds.width())
+                  : 0
+                : bounds.x1 < baseX
+                ? Math.min(baseX - bounds.x1, bounds.width())
+                : 0) +
+              (layerCount - 1) * space;
           } else {
             labelLength = 0;
           }

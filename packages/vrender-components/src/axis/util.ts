@@ -80,15 +80,14 @@ export function getCircleLabelPosition(
 }
 
 export function getAxisBreakSymbolAttrs(props: BreakSymbol = {}) {
-  const { shape, style = {} } = props;
+  const { style = {} } = props;
   const symbolStyle = merge({}, DEFAULT_AXIS_BREAK_SYMBOL_STYLE, style);
   const symbolSize = symbolStyle.size ?? DEFAULT_AXIS_BREAK_SYMBOL_STYLE.size;
   return {
+    ...symbolStyle,
     symbolType:
-      shape ??
-      symbolStyle.symbolType ??
-      `M ${-symbolSize / 2} ${symbolSize / 2} L ${symbolSize / 2} ${-symbolSize / 2}`,
-    ...symbolStyle
+      symbolStyle.symbolType ?? `M ${-symbolSize / 2} ${symbolSize / 6} L ${symbolSize / 2} ${-symbolSize / 6}`,
+    symbolSize
   };
 }
 export function getElMap(g: IGroup) {

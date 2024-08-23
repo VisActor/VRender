@@ -148,36 +148,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
           });
         }
-
-        const textAlign = this.axisLabelLayerSize[0].textAlign;
-        const isTextAlignStart = textAlign === 'start' || textAlign === 'left';
-        const isTextCenter = textAlign === 'center';
-        const isReverse = axisVector[1] > 0;
-        if (factor === 1) {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? labelLength
-              : isTextCenter
-              ? labelLength / 2
-              : space
-            : isTextAlignStart
-            ? space
-            : isTextCenter
-            ? labelLength / 2
-            : labelLength;
-        } else {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? space
-              : isTextCenter
-              ? labelLength / 2
-              : labelLength
-            : isTextAlignStart
-            ? labelLength
-            : isTextCenter
-            ? labelLength / 2
-            : space;
-        }
       }
     }
 

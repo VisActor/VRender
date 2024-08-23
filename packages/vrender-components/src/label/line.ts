@@ -7,6 +7,7 @@ import { LabelBase } from './base';
 import { labelingLineOrArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { registerLabelComponent } from './data-label-register';
+import type { ISegment } from '@visactor/vrender-core';
 
 export class LineLabel extends LabelBase<LineLabelAttrs> {
   name = 'line-label';
@@ -29,10 +30,15 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     }
 
     let points = graphic.attribute.points;
-    if (!points && graphic.attribute.segments) {
-      points = last(graphic.attribute.segments)?.points;
+    const segments = graphic.attribute.segments;
+
+    if (!points && segments && segments.length) {
+      points = segments.reduce((res: IPointLike[], seg: ISegment) => {
+        return res.concat(seg.points ?? []);
+      }, []);
     }
-    if (!points) {
+
+    if (!points || points.length === 0) {
       points = [point as IPointLike];
     }
 

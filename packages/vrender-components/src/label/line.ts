@@ -1,5 +1,5 @@
-import type { IBoundsLike } from '@visactor/vutils';
-import { merge } from '@visactor/vutils';
+import type { IBoundsLike, IPointLike } from '@visactor/vutils';
+import { last, merge } from '@visactor/vutils';
 import type { ILine } from '@visactor/vrender-core';
 import type { PointLocationCfg } from '../core/type';
 import type { LineLabelAttrs } from './type';
@@ -27,7 +27,15 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
     if (!graphic || (graphic.type !== 'line' && graphic.type !== 'area')) {
       return super.getGraphicBounds(graphic, point);
     }
-    const points = graphic.attribute.points || [point];
+
+    let points = graphic.attribute.points;
+    if (!points && graphic.attribute.segments) {
+      points = last(graphic.attribute.segments)?.points;
+    }
+    if (!points) {
+      points = [point as IPointLike];
+    }
+
     const index = position === 'start' ? 0 : points.length - 1;
     if (!points[index]) {
       return;

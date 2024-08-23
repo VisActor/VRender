@@ -1,10 +1,47 @@
 import type { LinearScale, ContinuousScale } from '@visactor/vscale';
 // eslint-disable-next-line no-duplicate-imports
 import { isContinuous } from '@visactor/vscale';
-import { isFunction, isValid, last } from '@visactor/vutils';
+import { Dict, isFunction, isValid, last } from '@visactor/vutils';
 import type { ICartesianTickDataOpt, ILabelItem, ITickData, ITickDataOpt } from '../type';
 // eslint-disable-next-line no-duplicate-imports
 import { convertDomainToTickData, getCartesianLabelBounds, hasOverlap, intersect } from './util';
+
+function getScaleTicks(
+  op: ITickDataOpt,
+  scale: ContinuousScale,
+  count: number,
+  getTicks: (count: number, range?: [number, number]) => number[]
+) {
+  let scaleTicks: number[];
+  const { breakData } = op;
+
+  if (breakData) {
+    const { scope, range: breakRanges } = breakData();
+    const domain = scale.domain();
+    scaleTicks = [];
+    for (let i = 0; i < domain.length; i++) {
+      if (i < domain.length - 1) {
+        const range: [number, number] = [domain[i], domain[i + 1]];
+        const [start, end] = scope[i];
+        const subCount = (end - start) * count;
+        if (subCount > 0) {
+          const ticks = getTicks(subCount > 1 ? Math.floor(subCount) : 1, range);
+          ticks.forEach(tick => {
+            if (!breakRanges.some((breakRange: [number, number]) => tick >= breakRange[0] && tick <= breakRange[1])) {
+              scaleTicks.push(tick);
+            }
+          });
+        }
+      }
+    }
+    // reset
+    (scale as LinearScale).domain(domain);
+  } else {
+    scaleTicks = getTicks(count);
+  }
+
+  return scaleTicks;
+}
 
 /** 连续轴默认 tick 数量 */
 export const DEFAULT_CONTINUOUS_TICK_COUNT = 5;
@@ -28,20 +65,41 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     return convertDomainToTickData([scale.domain()[0]]);
   }
 
-  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle } = op;
+  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle, breakData } = op;
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
     scaleTicks = (scale as LinearScale).stepTicks(tickStep);
   } else if (isValid(forceTickCount)) {
-    scaleTicks = (scale as LinearScale).forceTicks(forceTickCount);
+    scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, range?: [number, number]) => {
+      if (range && range.length) {
+        return (scale as LinearScale).domain(range).forceTicks(count);
+      }
+      return (scale as LinearScale).forceTicks(count);
+    });
   } else if (op.tickMode === 'd3') {
-    const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
-    scaleTicks = (scale as LinearScale).d3Ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
+    const count =
+      (isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount) ??
+      DEFAULT_CONTINUOUS_TICK_COUNT;
+
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, range?: [number, number]) => {
+      if (range && range.length) {
+        return (scale as LinearScale).domain(range).d3Ticks(count, { noDecimals });
+      }
+      return (scale as LinearScale).d3Ticks(count, { noDecimals });
+    });
   } else {
-    const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
+    const count =
+      (isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount) ??
+      DEFAULT_CONTINUOUS_TICK_COUNT;
     const customTicks = isFunction(op.tickMode) ? op.tickMode : undefined;
-    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals, customTicks });
+
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, range?: [number, number]) => {
+      if (range && range.length) {
+        return (scale as LinearScale).domain(range).ticks(count, { noDecimals, customTicks });
+      }
+      return (scale as LinearScale).ticks(count, { noDecimals, customTicks });
+    });
   }
 
   if (op.sampling) {

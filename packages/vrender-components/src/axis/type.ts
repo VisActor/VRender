@@ -112,10 +112,7 @@ export interface BreakSymbol {
    * 是否显示
    */
   visible?: boolean;
-  /**
-   * 截断区域的形状
-   */
-  shape?: SymbolType;
+
   /**
    * 样式配置
    */
@@ -494,12 +491,28 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => {
+    domain: [number, number][];
+    scope: [number, number][];
+    range: [number, number][];
+  };
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
   axisOrientType: IOrientType;
   labelLastVisible: boolean;
   labelFlush: boolean;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => {
+    domain: [number, number][];
+    scope: [number, number][];
+    range: [number, number][];
+  };
 }
 
 export interface IPolarTickDataOpt extends ITickDataOpt {

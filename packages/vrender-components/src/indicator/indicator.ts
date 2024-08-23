@@ -64,8 +64,11 @@ export class Indicator extends AbstractComponent<Required<IndicatorAttributes>> 
 
     const limit = Math.min(size.width, size.height) * limitRatio;
 
-    const group = this.createOrUpdateChild('indicator-container', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
-
+    const group = this.createOrUpdateChild(
+      'indicator-container',
+      { x: 0, y: 0, zIndex: 1, pickable: this.attribute.pickable ?? true },
+      'group'
+    ) as IGroup;
     if (isValid(title)) {
       this._title = this._renderText(group, title, limit, limitRatio, 'title.style', 'indicator-title');
     }

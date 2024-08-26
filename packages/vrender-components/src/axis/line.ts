@@ -522,11 +522,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (isValid(this.attribute.label.containerAlign)) {
       let start;
       if (orient === 'left') {
-        start = axisLabelContainerBounds.x2;
+        start = axisLabelContainerBounds.x2 - axisLabelContainerSize;
       } else if (orient === 'right') {
         start = axisLabelContainerBounds.x1;
       } else if (orient === 'top') {
-        start = axisLabelContainerBounds.y2;
+        start = axisLabelContainerBounds.y2 - axisLabelContainerSize;
       } else if (orient === 'bottom') {
         start = axisLabelContainerBounds.y1;
       }

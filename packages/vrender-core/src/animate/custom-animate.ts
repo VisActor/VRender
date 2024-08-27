@@ -5,7 +5,6 @@ import {
   isArray,
   isNumber,
   isValidNumber,
-  max,
   pi,
   pi2,
   Point,
@@ -19,7 +18,6 @@ import type {
   IArcGraphicAttribute,
   IArea,
   IAreaCacheItem,
-  IClipRangeByDimensionType,
   ICubicBezierCurve,
   ICurve,
   ICustomPath2D,
@@ -711,6 +709,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   protected interpolatePoints: [IPointLike, IPointLike][];
   protected newPointAnimateType: 'grow' | 'appear' | 'clip';
   protected clipRange: number;
+  protected shrinkClipRange: number;
   protected clipRangeByDimension: 'x' | 'y';
   protected segmentsCache: number[];
 
@@ -786,7 +785,11 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
           this.clipRange =
             this.toPoints[lastMatchedIndex][this.clipRangeByDimension] /
             this.toPoints[this.toPoints.length - 1][this.clipRangeByDimension];
-
+          if (this.clipRange === 1) {
+            this.shrinkClipRange =
+              this.toPoints[lastMatchedIndex][this.clipRangeByDimension] /
+              this.fromPoints[this.fromPoints.length - 1][this.clipRangeByDimension];
+          }
           if (!isValidNumber(this.clipRange)) {
             this.clipRange = 0;
           } else {
@@ -828,6 +831,13 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     });
   }
 
+  onFirstRun(): void {
+    const lastClipRange = this.target.attribute.clipRange;
+    if (isValidNumber(lastClipRange * this.clipRange)) {
+      this.clipRange *= lastClipRange;
+    }
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     // if not create new points, multi points animation might not work well.
     this.points = this.points.map((point, index) => {
@@ -836,6 +846,17 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
       return newPoint;
     });
     if (this.clipRange) {
+      if (this.shrinkClipRange) {
+        // 折线变短
+        if (!end) {
+          out.points = this.fromPoints;
+          out.clipRange = this.clipRange - (this.clipRange - this.shrinkClipRange) * ratio;
+        } else {
+          out.points = this.toPoints;
+          out.clipRange = 1;
+        }
+        return;
+      }
       out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
     }
     if (this.segmentsCache && this.to.segments) {

@@ -60,7 +60,13 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected data: TransformedAxisItem[] = [];
   protected tickLineItems: TickLineItem[] = [];
   protected subTickLineItems: TickLineItem[] = [];
-  protected axisLabelLayerSize: Dict<{ width: number; height: number; textAlign: string; textBaseline: string }> = {};
+  protected axisLabelLayerSize: Dict<{
+    width: number;
+    height: number;
+    textAlign: string;
+    textBaseline: string;
+    labelPos: number;
+  }> = {};
   protected axisLabelsContainer: IGroup | null = null;
   protected axisContainer: IGroup;
 
@@ -203,8 +209,10 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
           let maxTextHeight = 0;
           let textAlign = 'center';
           let textBaseline = 'middle';
-          labels.forEach((label: IText) => {
+          let labelPos: number = 0;
+          labels.forEach((label: IText, index) => {
             const labelStyle = label.attribute;
+
             const angle = labelStyle.angle ?? 0;
             const textBounds = label.AABBBounds;
             let textWidth = textBounds.width();
@@ -218,11 +226,15 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
             textAlign = labelStyle.textAlign as string;
             textBaseline = labelStyle.textBaseline as string;
+            if (index === 0) {
+              labelPos = labelStyle.x;
+            }
           });
           this.axisLabelLayerSize[layer] = {
             width: maxTextWidth,
             height: maxTextHeight,
 
+            labelPos,
             textAlign,
             textBaseline
           };

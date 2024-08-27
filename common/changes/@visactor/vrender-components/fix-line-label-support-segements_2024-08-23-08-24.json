@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: segment line will cause incorrect label position",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

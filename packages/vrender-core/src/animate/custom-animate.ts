@@ -5,7 +5,6 @@ import {
   isArray,
   isNumber,
   isValidNumber,
-  max,
   pi,
   pi2,
   Point,
@@ -19,7 +18,6 @@ import type {
   IArcGraphicAttribute,
   IArea,
   IAreaCacheItem,
-  IClipRangeByDimensionType,
   ICubicBezierCurve,
   ICurve,
   ICustomPath2D,
@@ -715,6 +713,10 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   protected clipRange: number;
   protected clipRangeByDimension: 'x' | 'y';
   protected segmentsCache: number[];
+  protected curClipRange: number;
+  getCurrentClipRange() {
+    return this.curClipRange;
+  }
 
   constructor(
     from: any,
@@ -830,6 +832,13 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     });
   }
 
+  onFirstRun(): void {
+    const lastClipRange = this.target.attribute.clipRange;
+    if (isValidNumber(lastClipRange)) {
+      this.clipRange *= lastClipRange;
+    }
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     // if not create new points, multi points animation might not work well.
     this.points = this.points.map((point, index) => {
@@ -839,6 +848,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     });
     if (this.clipRange) {
       out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
+      this.curClipRange = out.clipRange;
     }
     if (this.segmentsCache && this.to.segments) {
       let start = 0;

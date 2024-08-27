@@ -11,17 +11,9 @@ import {
 } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
-import type { ILineGraphicAttribute, IRichTextAttribute } from '@visactor/vrender-core';
+import type { IRichTextAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import {
-  type IRichText,
-  type IText,
-  type IArcGraphicAttribute,
-  type IGraphic,
-  type ILine,
-  graphicCreator,
-  CustomPath2D
-} from '@visactor/vrender-core';
+import { type IRichText, type IText, type IArcGraphicAttribute, type IGraphic } from '@visactor/vrender-core';
 import { isQuadrantRight, isQuadrantLeft, lineCirclePoints, connectLineRadian, checkBoundsOverlap } from './util';
 import type { ComponentOptions } from '../interface';
 import { registerLabelComponent } from './data-label-register';
@@ -286,6 +278,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       case 'inside':
       case 'inside-inner':
       case 'inside-outer':
+      case 'inside-center':
         arcs.push(...this._layoutInsideLabels(rightArcs, attribute, currentMarks));
         arcs.push(...this._layoutInsideLabels(leftArcs, attribute, currentMarks));
         break;
@@ -339,6 +332,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       let labelRadius;
       if (position === 'inside-inner') {
         labelRadius = innerRadius - offsetRadius + alignOffset;
+      } else if (position === 'inside-center') {
+        labelRadius = innerRadius + (outerRadius - innerRadius) / 2;
       } else {
         labelRadius = outerRadius + offsetRadius - alignOffset;
       }
@@ -966,7 +961,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   protected _canPlaceInside(textBound: IBoundsLike, shapeBound: IAABBBounds) {
-    return this.attribute.position === 'inside';
+    return this.attribute.position === 'inside' || this.attribute.position === 'inside-center';
   }
 
   private computeLayoutOuterRadius(r: number, width: number, height: number) {

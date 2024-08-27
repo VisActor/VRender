@@ -356,6 +356,7 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签位置
    * @default 'outside'
+   * @since 0.20.1 support 'inside-center'
    */
   position?: 'inside' | 'outside' | 'inside-inner' | 'inside-outer' | 'inside-center';
 

@@ -709,12 +709,9 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   protected interpolatePoints: [IPointLike, IPointLike][];
   protected newPointAnimateType: 'grow' | 'appear' | 'clip';
   protected clipRange: number;
+  protected shrinkClipRange: number;
   protected clipRangeByDimension: 'x' | 'y';
   protected segmentsCache: number[];
-  protected curClipRange: number;
-  getCurrentClipRange() {
-    return this.curClipRange;
-  }
 
   constructor(
     from: any,
@@ -788,7 +785,11 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
           this.clipRange =
             this.toPoints[lastMatchedIndex][this.clipRangeByDimension] /
             this.toPoints[this.toPoints.length - 1][this.clipRangeByDimension];
-
+          if (this.clipRange === 1) {
+            this.shrinkClipRange =
+              this.toPoints[lastMatchedIndex][this.clipRangeByDimension] /
+              this.fromPoints[this.fromPoints.length - 1][this.clipRangeByDimension];
+          }
           if (!isValidNumber(this.clipRange)) {
             this.clipRange = 0;
           } else {
@@ -832,7 +833,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
 
   onFirstRun(): void {
     const lastClipRange = this.target.attribute.clipRange;
-    if (isValidNumber(lastClipRange)) {
+    if (isValidNumber(lastClipRange * this.clipRange)) {
       this.clipRange *= lastClipRange;
     }
   }
@@ -845,8 +846,18 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
       return newPoint;
     });
     if (this.clipRange) {
+      if (this.shrinkClipRange) {
+        // 折线变短
+        if (!end) {
+          out.points = this.fromPoints;
+          out.clipRange = this.clipRange - (this.clipRange - this.shrinkClipRange) * ratio;
+        } else {
+          out.points = this.toPoints;
+          out.clipRange = 1;
+        }
+        return;
+      }
       out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
-      this.curClipRange = out.clipRange;
     }
     if (this.segmentsCache && this.to.segments) {
       let start = 0;

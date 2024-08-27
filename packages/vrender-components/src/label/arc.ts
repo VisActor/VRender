@@ -146,6 +146,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   }
 
   protected _overlapping(labels: (IText | IRichText)[]) {
+    if (['inside', 'inside-center'].includes(this.attribute.position as string)) {
+      return super._overlapping(labels);
+    }
     return labels;
   }
 

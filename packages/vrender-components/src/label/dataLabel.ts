@@ -19,7 +19,10 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
   };
 
   constructor(attributes: DataLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, DataLabel.defaultAttributes, attributes));
+    const { dataLabels, ...restAttributes } = attributes;
+    super(
+      options?.skipDefault ? attributes : { dataLabels, ...merge({}, DataLabel.defaultAttributes, restAttributes) }
+    );
   }
 
   protected render(): void {

@@ -127,6 +127,10 @@ export interface AxisBreakProps {
    * 截断图形配置
    */
   breakSymbol?: BreakSymbol;
+  /**
+   * 轴截断原始的数据范围
+   */
+  rawRange?: [number, number];
 }
 
 export interface TransformedAxisBreak extends AxisBreakProps {

@@ -60,27 +60,34 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
 
   protected _renderInner(container: IGroup) {
     if (this.attribute.breaks && this.attribute.breaks.length) {
-      this._breaks = this.attribute.breaks
-        .sort((preBreak, currBreak) => preBreak.range[0] - currBreak.range[1])
-        .map(breakProps => {
-          const { range, breakSymbol } = breakProps;
-
-          return {
-            startPoint: this.getTickCoord(range[0]),
-            endPoint: this.getTickCoord(range[1]),
-            range,
-            breakSymbol
-          };
+      const transformedBreaks = [];
+      for (let index = 0; index < this.attribute.breaks.length; index++) {
+        const aBreak = this.attribute.breaks[index];
+        const { range, breakSymbol, rawRange } = aBreak;
+        transformedBreaks.push({
+          startPoint: this.getTickCoord(range[0]),
+          endPoint: this.getTickCoord(range[1]),
+          range,
+          breakSymbol,
+          rawRange
         });
+      }
+      this._breaks = transformedBreaks;
     }
     super._renderInner(container);
 
     // 渲染 break symbol
     if (this._breaks && this._breaks.length) {
-      this._breaks.forEach(b => {
-        const { startPoint, endPoint, breakSymbol } = b;
+      this._breaks.forEach((b, index) => {
+        const { startPoint, endPoint, breakSymbol, rawRange } = b;
 
         if (breakSymbol?.visible !== false) {
+          const axisBreakGroup = graphicCreator.group({
+            zIndex: 99 // 层级需要高于轴线
+          });
+          axisBreakGroup.name = AXIS_ELEMENT_NAME.axisBreak;
+          axisBreakGroup.id = this._getNodeId(`${AXIS_ELEMENT_NAME.axisBreak}-${index}`);
+          axisBreakGroup.data = rawRange;
           const symbolStyle = getAxisBreakSymbolAttrs(breakSymbol);
           const shape1 = graphicCreator.symbol({
             x: startPoint.x,
@@ -95,8 +102,10 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           });
           shape2.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
 
-          container.add(shape1);
-          container.add(shape2);
+          axisBreakGroup.add(shape1);
+          axisBreakGroup.add(shape2);
+
+          container.add(axisBreakGroup);
         }
       });
     }

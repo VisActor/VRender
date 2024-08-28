@@ -1,7 +1,7 @@
 import type { LinearScale, ContinuousScale } from '@visactor/vscale';
 // eslint-disable-next-line no-duplicate-imports
 import { isContinuous } from '@visactor/vscale';
-import { Dict, isFunction, isValid, last } from '@visactor/vutils';
+import { isFunction, isValid, last } from '@visactor/vutils';
 import type { ICartesianTickDataOpt, ILabelItem, ITickData, ITickDataOpt } from '../type';
 // eslint-disable-next-line no-duplicate-imports
 import { convertDomainToTickData, getCartesianLabelBounds, hasOverlap, intersect } from './util';
@@ -16,22 +16,18 @@ function getScaleTicks(
   const { breakData } = op;
 
   if (breakData) {
-    const { scope, range: breakRanges } = breakData();
+    const { range: breakRanges } = breakData();
     const domain = scale.domain();
     scaleTicks = [];
     for (let i = 0; i < domain.length; i++) {
       if (i < domain.length - 1) {
         const range: [number, number] = [domain[i], domain[i + 1]];
-        const [start, end] = scope[i];
-        const subCount = (end - start) * count;
-        if (subCount > 0) {
-          const ticks = getTicks(subCount > 1 ? Math.floor(subCount) : 1, range);
-          ticks.forEach(tick => {
-            if (!breakRanges.some((breakRange: [number, number]) => tick >= breakRange[0] && tick <= breakRange[1])) {
-              scaleTicks.push(tick);
-            }
-          });
-        }
+        const ticks = getTicks(count, range);
+        ticks.forEach(tick => {
+          if (!breakRanges.some((breakRange: [number, number]) => tick >= breakRange[0] && tick <= breakRange[1])) {
+            scaleTicks.push(tick);
+          }
+        });
       }
     }
     // reset

@@ -13,6 +13,7 @@ export enum AXIS_ELEMENT_NAME {
   line = 'axis-line',
   background = 'axis-background',
   axisLabelBackground = 'axis-label-background',
+  axisBreak = 'axis-break',
   axisBreakSymbol = 'axis-break-symbol'
 }
 

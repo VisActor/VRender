@@ -109,8 +109,9 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             value: scaleTicks[i]
           } as ILabelItem<number>)
       );
+      const samplingMethod = breakData ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
       while (items.length >= 3 && hasOverlap(items, labelGap)) {
-        items = methods.parity(items);
+        items = samplingMethod(items, labelGap);
       }
       const ticks = items.map(item => item.value);
 

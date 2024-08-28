@@ -43,6 +43,10 @@ const specs = [
     name: '带交互的坐标轴'
   },
   {
+    path: 'axis-labels',
+    name: '轴标签各种角度'
+  },
+  {
     path: 'size-legend',
     name: '连续尺寸图例'
   },

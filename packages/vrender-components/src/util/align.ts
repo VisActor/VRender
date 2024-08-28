@@ -1,55 +1,43 @@
 import type { IText } from '@visactor/vrender-core';
 
 export function alignAxisLabels(labels: IText[], start: number, containerSize: number, orient: string, align: string) {
-  if (orient === 'right' || orient === 'left') {
+  if (orient === 'left' || orient === 'right') {
     if (align === 'left') {
-      const flag = orient === 'right' ? 0 : -1;
       labels.forEach(label => {
         label.setAttributes({
-          x: start + containerSize * flag,
-          textAlign: 'left'
+          dx: (label.attribute.dx ?? 0) + start - label.AABBBounds.x1
         });
       });
     } else if (align === 'right') {
-      const flag = orient === 'right' ? 1 : 0;
       labels.forEach(label => {
         label.setAttributes({
-          x: start + containerSize * flag,
-          textAlign: 'right'
+          dx: (label.attribute.dx ?? 0) + start + containerSize - label.AABBBounds.x2
         });
       });
     } else if (align === 'center') {
-      const flag = orient === 'right' ? 1 : -1;
       labels.forEach(label => {
         label.setAttributes({
-          x: start + containerSize * 0.5 * flag,
-          textAlign: 'center'
+          dx: (label.attribute.dx ?? 0) + start + containerSize / 2 - (label.AABBBounds.x1 + label.AABBBounds.x2) / 2
         });
       });
     }
   } else if (orient === 'bottom' || orient === 'top') {
     if (align === 'top') {
-      const flag = orient === 'bottom' ? 0 : -1;
       labels.forEach(label => {
         label.setAttributes({
-          y: start + containerSize * flag,
-          textBaseline: 'top'
+          dy: (label.attribute.dy ?? 0) + start - label.AABBBounds.y1
         });
       });
     } else if (align === 'bottom') {
-      const flag = orient === 'bottom' ? 1 : 0;
       labels.forEach(label => {
         label.setAttributes({
-          y: start + containerSize * flag,
-          textBaseline: 'bottom'
+          dy: (label.attribute.dy ?? 0) + start + containerSize - label.AABBBounds.y2
         });
       });
     } else if (align === 'middle') {
-      const flag = orient === 'bottom' ? 1 : -1;
       labels.forEach(label => {
         label.setAttributes({
-          y: start + containerSize * 0.5 * flag,
-          textBaseline: 'middle'
+          dy: (label.attribute.dy ?? 0) + start + containerSize / 2 - (label.AABBBounds.y1 + label.AABBBounds.y2) / 2
         });
       });
     }

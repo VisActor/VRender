@@ -895,14 +895,18 @@ describe('Line Axis', () => {
       });
       stage.defaultLayer.add(axis as unknown as IGraphic);
       stage.render();
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
       expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
+        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
       );
 
       axis.setAttribute('label', { containerAlign: 'center' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect(
+        (axis.getElementsByName('axis-label')[0] as IText).attribute.x +
+          (axis.getElementsByName('axis-label')[0] as IText).attribute.dx -
+          (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width() / 2
+      ).toBeCloseTo(
         ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
           (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
           0.5
@@ -921,10 +925,12 @@ describe('Line Axis', () => {
         },
         verticalMinSize: null
       });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1
-      );
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
+      expect(
+        (axis.getElementsByName('axis-label')[0] as IText).attribute.x +
+          (axis.getElementsByName('axis-label')[0] as IText).attribute.dx -
+          (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width()
+      ).toBeCloseTo((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1);
       expect((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()).toBeCloseTo(
         11.16
       );
@@ -983,18 +989,24 @@ describe('Line Axis', () => {
       );
 
       axis.setAttribute('label', { containerAlign: 'center' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('center');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect(
+        (axis.getElementsByName('axis-label')[0] as IText).attribute.x +
+          (axis.getElementsByName('axis-label')[0] as IText).attribute.dx +
+          (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width() / 2
+      ).toBe(
         ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1 +
           (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2) *
           0.5
       );
 
       axis.setAttribute('label', { containerAlign: 'right' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('right');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.x).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2
-      );
+      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textAlign).toBe('left');
+      expect(
+        (axis.getElementsByName('axis-label')[0] as IText).attribute.x +
+          (axis.getElementsByName('axis-label')[0] as IText).attribute.dx +
+          (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width()
+      ).toBeCloseTo((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x2);
 
       axis.setAttribute('verticalMinSize', 400);
       expect(axis.AABBBounds.width()).toBeLessThan(400);
@@ -1035,23 +1047,26 @@ describe('Line Axis', () => {
       stage.defaultLayer.add(axis as unknown as IGraphic);
       stage.render();
 
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2 - 2
-      );
+      let firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      let firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('bottom');
+      expect(firstLabel.attribute.y).toBe(firstLayer.AABBBounds.y2 - 2);
 
       axis.setAttribute('label', { containerAlign: 'middle' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
-          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
-          0.5
+      firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('bottom');
+      expect((firstLabel.AABBBounds.y1 + firstLabel.AABBBounds.y2) / 2).toBeCloseTo(
+        (firstLayer.AABBBounds.y1 + firstLayer.AABBBounds.y2) * 0.5 - 2
       );
 
       axis.setAttribute('label', { containerAlign: 'top' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
+
+      firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('bottom');
+      expect(firstLabel.attribute.y + firstLabel.attribute.dy - firstLabel.AABBBounds.height()).toBeCloseTo(
+        firstLayer.AABBBounds.y1
       );
     });
 
@@ -1089,24 +1104,26 @@ describe('Line Axis', () => {
       stage.defaultLayer.add(axis as unknown as IGraphic);
       stage.render();
 
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('bottom');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2 - 2
+      let firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      let firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('top');
+      expect(firstLabel.attribute.y + firstLabel.attribute.dy + firstLabel.AABBBounds.height()).toBe(
+        firstLayer.AABBBounds.y2
       );
 
       axis.setAttribute('label', { containerAlign: 'middle' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('middle');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        ((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1 +
-          (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y2) *
-          0.5
+      firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('top');
+      expect(firstLabel.attribute.y + firstLabel.attribute.dy + firstLabel.AABBBounds.height() / 2).toBe(
+        (firstLayer.AABBBounds.y1 + firstLayer.AABBBounds.y2) * 0.5
       );
 
       axis.setAttribute('label', { containerAlign: 'top' });
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.textBaseline).toBe('top');
-      expect((axis.getElementsByName('axis-label')[0] as IText).attribute.y).toBe(
-        (axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.y1
-      );
+      firstLabel = axis.getElementsByName('axis-label')[0] as IText;
+      firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
+      expect(firstLabel.attribute.textBaseline).toBe('top');
+      expect(firstLabel.attribute.y + firstLabel.attribute.dy).toBe(firstLayer.AABBBounds.y1);
     });
   });
 });

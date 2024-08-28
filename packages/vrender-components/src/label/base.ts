@@ -103,7 +103,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   private _enableAnimation: boolean;
 
   constructor(attributes: BaseLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, LabelBase.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, LabelBase.defaultAttributes, restAttributes) });
   }
 
   /**

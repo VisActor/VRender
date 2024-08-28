@@ -142,7 +142,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
   private _arcRight: Map<any, ArcInfo> = new Map();
 
   constructor(attributes: ArcLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, ArcLabel.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, ArcLabel.defaultAttributes, restAttributes) });
   }
 
   protected _overlapping(labels: (IText | IRichText)[]) {

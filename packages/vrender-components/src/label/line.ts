@@ -21,7 +21,8 @@ export class LineLabel extends LabelBase<LineLabelAttrs> {
   };
 
   constructor(attributes: LineLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, LineLabel.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, LineLabel.defaultAttributes, restAttributes) });
   }
 
   protected getGraphicBounds(graphic: ILine, point: Partial<PointLocationCfg> = {}, position = 'end') {

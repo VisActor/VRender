@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "perf: optimize the performance of label component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

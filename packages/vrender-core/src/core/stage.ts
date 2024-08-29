@@ -934,7 +934,11 @@ export class Stage extends Group implements IStage {
     this.forEach(layer => {
       layer.release();
     });
-    this.interactiveLayer && this.interactiveLayer.release();
+    // 额外删除掉interactiveLayer的节点
+    if (this.interactiveLayer) {
+      this.interactiveLayer.release();
+      this.interactiveLayer.removeAllChild();
+    }
     this.window.release();
     this.ticker.remTimeline(this.timeline);
     this.renderService.renderTreeRoots = [];

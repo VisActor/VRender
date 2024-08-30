@@ -99,6 +99,8 @@ export class ResourceLoader {
             }
           });
         });
+
+        data.waitingMark && (data.waitingMark = []);
       }
     }
   }
@@ -165,6 +167,8 @@ export class ResourceLoader {
                   mark.imageLoadFail(url);
                 }
               });
+
+              data.waitingMark && (data.waitingMark = []);
             });
 
             promises.push(end);

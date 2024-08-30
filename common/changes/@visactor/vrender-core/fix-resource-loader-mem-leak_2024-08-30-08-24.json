@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix memory leak problem in ResourceLoader",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

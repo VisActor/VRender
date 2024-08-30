@@ -98,9 +98,8 @@ export class ResourceLoader {
               mark.imageLoadFail(svgStr);
             }
           });
+          data.waitingMark && (data.waitingMark = []);
         });
-
-        data.waitingMark && (data.waitingMark = []);
       }
     }
   }

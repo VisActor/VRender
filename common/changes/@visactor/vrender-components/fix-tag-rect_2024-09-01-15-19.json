@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: tag padding not work when label is rich text. fix@VisActor/VChart#3151",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

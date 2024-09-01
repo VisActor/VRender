@@ -131,10 +131,10 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
           {
             ...backgroundStyle,
             visible: bgVisible && !!text,
-            x: textShape.AABBBounds.x1,
-            y: textShape.AABBBounds.y1,
-            width: textShape.AABBBounds.width(),
-            height: textShape.AABBBounds.height()
+            x: textShape.AABBBounds.x1 - parsedPadding[1],
+            y: textShape.AABBBounds.y1 - parsedPadding[0],
+            width: textShape.AABBBounds.width() + (parsedPadding[1] + parsedPadding[3]),
+            height: textShape.AABBBounds.height() + (parsedPadding[0] + parsedPadding[2])
           },
           'rect'
         ) as IRect;

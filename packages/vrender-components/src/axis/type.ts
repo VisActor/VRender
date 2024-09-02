@@ -112,6 +112,10 @@ export interface BreakSymbol {
    * 是否显示
    */
   visible?: boolean;
+  /**
+   * 截断图形旋转的弧度。
+   */
+  angle?: number;
 
   /**
    * 样式配置

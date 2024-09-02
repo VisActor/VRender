@@ -15,8 +15,8 @@ function getScaleTicks(
   let scaleTicks: number[];
   const { breakData } = op;
 
-  if (breakData) {
-    const { range: breakRanges } = breakData();
+  if (breakData && breakData()) {
+    const { range: breakRanges, scope } = breakData();
     const domain = scale.domain();
     scaleTicks = [];
     for (let i = 0; i < domain.length; i++) {
@@ -24,7 +24,7 @@ function getScaleTicks(
         const range: [number, number] = [domain[i], domain[i + 1]];
         const ticks = getTicks(count, range);
         ticks.forEach(tick => {
-          if (!breakRanges.some((breakRange: [number, number]) => tick >= breakRange[0] && tick <= breakRange[1])) {
+          if (!breakRanges.some(breakRange => tick >= breakRange[0] && tick <= breakRange[1])) {
             scaleTicks.push(tick);
           }
         });

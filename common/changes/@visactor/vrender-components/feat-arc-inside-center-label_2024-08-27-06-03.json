@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support position `inside-center` of arc label",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

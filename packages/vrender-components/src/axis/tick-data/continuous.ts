@@ -19,16 +19,14 @@ function getScaleTicks(
     const { range: breakRanges, scope } = breakData();
     const domain = scale.domain();
     scaleTicks = [];
-    for (let i = 0; i < domain.length; i++) {
-      if (i < domain.length - 1) {
-        const range: [number, number] = [domain[i], domain[i + 1]];
-        const ticks = getTicks(count, range);
-        ticks.forEach(tick => {
-          if (!breakRanges.some(breakRange => tick >= breakRange[0] && tick <= breakRange[1])) {
-            scaleTicks.push(tick);
-          }
-        });
-      }
+    for (let i = 0; i < domain.length - 1; i++) {
+      const range: [number, number] = [domain[i], domain[i + 1]];
+      const ticks = getTicks(count, range); // 暂时不对个数进行分段
+      ticks.forEach(tick => {
+        if (!breakRanges.some(breakRange => tick >= breakRange[0] && tick <= breakRange[1])) {
+          scaleTicks.push(tick);
+        }
+      });
     }
     // reset
     (scale as LinearScale).domain(domain);
@@ -109,7 +107,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             value: scaleTicks[i]
           } as ILabelItem<number>)
       );
-      const samplingMethod = breakData ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
+      const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
       while (items.length >= 3 && hasOverlap(items, labelGap)) {
         items = samplingMethod(items, labelGap);
       }

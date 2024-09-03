@@ -31,6 +31,8 @@ import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
+import { autoWrap as autoWrapFunc } from './overlap/auto-wrap';
+
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
@@ -426,21 +428,31 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       autoHide,
       autoHideMethod,
       autoHideSeparation,
-      lastVisible
+      lastVisible,
+      autoWrap
     } = label;
 
     if (isFunction(layoutFunc)) {
       // 自定义布局
       layoutFunc(labelShapes, labelData, layer, this);
     } else {
-      // order: autoRotate -> autoLimit -> autoHide
+      // order: autoRotate Or autoRotate -> autoLimit -> autoHide
+      // priority: autoRotate > autoWrap
       if (autoRotate) {
         autoRotateFunc(labelShapes, {
           labelRotateAngle: autoRotateAngle,
           orient
         });
+      } else if (autoWrap) {
+        const isVertical = orient === 'left' || orient === 'right';
+        const axisLength = isVertical
+          ? Math.abs(this.attribute.start.y - this.attribute.end.y)
+          : Math.abs(this.attribute.start.x - this.attribute.end.x);
+        autoWrapFunc(labelShapes, { orient, limitLength, axisLength, ellipsis: limitEllipsis });
       }
-      if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
+
+      // autoWrap has computed width & height limit
+      if (!autoWrap && autoLimit && isValidNumber(limitLength) && limitLength > 0) {
         const isVertical = orient === 'left' || orient === 'right';
         const axisLength = isVertical
           ? Math.abs(this.attribute.start.y - this.attribute.end.y)

@@ -406,6 +406,19 @@ export interface AxisLabelOverlap {
    * @returns void
    */
   layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
+
+  /**
+   * 标签自动换行
+   * @since 0.20.2
+   * @default false
+   */
+  autoWrap?: boolean;
+
+  /**
+   * 自动换行的行数限制。
+   * @since 0.20.2
+   */
+  lineClamp?: boolean;
 }
 
 export type LabelAttributes = Omit<AxisLabelOverlap, 'text'> &

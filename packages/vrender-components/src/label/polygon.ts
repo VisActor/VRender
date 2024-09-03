@@ -16,7 +16,8 @@ export class PolygonLabel extends LabelBase<PolygonLabelAttrs> {
   };
 
   constructor(attributes: PolygonLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, PolygonLabel.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, PolygonLabel.defaultAttributes, restAttributes) });
   }
 
   protected labeling(

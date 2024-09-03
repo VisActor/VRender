@@ -1,6 +1,22 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+This log was last generated on Fri, 30 Aug 2024 09:55:07 GMT and should not be manually modified.
+
+## 0.20.1
+Fri, 30 Aug 2024 09:55:07 GMT
+
+### Updates
+
+- feat: support position `inside-center` of arc label
+- feat: add necessary APIs to player component
+- fix: fix textAlign of label when set different angle
+
+
+- fix: indicator stop tooltip interaction. fix@VisActor/VChart#3123
+- fix: segment line will cause incorrect label position
+- fix: fix issue with poptip memory while stage is released
+- feat: support line segments update animation in TagPointsUpdate custom animation
+- perf: optimize the performance of label component
 
 ## 0.20.0
 Thu, 15 Aug 2024 07:26:54 GMT

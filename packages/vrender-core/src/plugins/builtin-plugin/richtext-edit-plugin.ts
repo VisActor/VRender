@@ -327,11 +327,13 @@ export class RichTextEditPlugin implements IPlugin {
     this.pointerDown = false;
   };
 
+  // 鼠标进入
   handleEnter = (e: PointerEvent) => {
     this.editing = true;
     this.pluginService.stage.setCursor('text');
   };
 
+  // 鼠标离开
   handleLeave = (e: PointerEvent) => {
     this.editing = false;
     this.pluginService.stage.setCursor('default');
@@ -510,7 +512,10 @@ export class RichTextEditPlugin implements IPlugin {
     this.pluginService.stage.renderNextFrame();
   }
   deFocus(e: PointerEvent) {
-    const target = e.target as IRichText;
+    const target = this.currRt as IRichText;
+    if (!target) {
+      return;
+    }
     target.detachShadow();
     this.currRt = null;
     if (this.editLine) {

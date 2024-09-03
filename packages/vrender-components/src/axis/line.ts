@@ -136,9 +136,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         }
       } else {
         if (axisVector[0] === 0) {
-          const boundsWidth = this.axisLabelsContainer ? this.axisLabelsContainer.AABBBounds.width() : 0;
-          if (isFinite(boundsWidth)) {
-            labelLength += boundsWidth + (layerCount - 1) * space;
+          if (
+            this.axisLabelsContainer &&
+            this.axisLabelsContainer.AABBBounds &&
+            !this.axisLabelsContainer.AABBBounds.empty()
+          ) {
+            const baseX = this.axisLabelLayerSize[0].labelPos;
+            const bounds = this.axisLabelsContainer.AABBBounds;
+
+            labelLength +=
+              (factor === 1
+                ? bounds.x2 > baseX
+                  ? Math.min(bounds.x2 - baseX, bounds.width())
+                  : 0
+                : bounds.x1 < baseX
+                ? Math.min(baseX - bounds.x1, bounds.width())
+                : 0) +
+              (layerCount - 1) * space;
           } else {
             labelLength = 0;
           }
@@ -147,36 +161,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
             labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
           });
-        }
-
-        const textAlign = this.axisLabelLayerSize[0].textAlign;
-        const isTextAlignStart = textAlign === 'start' || textAlign === 'left';
-        const isTextCenter = textAlign === 'center';
-        const isReverse = axisVector[1] > 0;
-        if (factor === 1) {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? labelLength
-              : isTextCenter
-              ? labelLength / 2
-              : space
-            : isTextAlignStart
-            ? space
-            : isTextCenter
-            ? labelLength / 2
-            : labelLength;
-        } else {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? space
-              : isTextCenter
-              ? labelLength / 2
-              : labelLength
-            : isTextAlignStart
-            ? labelLength
-            : isTextCenter
-            ? labelLength / 2
-            : space;
         }
       }
     }
@@ -538,11 +522,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (isValid(this.attribute.label.containerAlign)) {
       let start;
       if (orient === 'left') {
-        start = axisLabelContainerBounds.x2;
+        start = axisLabelContainerBounds.x2 - axisLabelContainerSize;
       } else if (orient === 'right') {
         start = axisLabelContainerBounds.x1;
       } else if (orient === 'top') {
-        start = axisLabelContainerBounds.y2;
+        start = axisLabelContainerBounds.y2 - axisLabelContainerSize;
       } else if (orient === 'bottom') {
         start = axisLabelContainerBounds.y1;
       }

@@ -23,8 +23,9 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     const angle = label.attribute.angle;
 
     const hasAngle = !isNil(angle);
-    const cos = hasAngle ? Math.cos(angle) : 1;
-    const sin = hasAngle ? Math.sin(angle) : 0;
+    const standardAngle = angle - Math.PI / 2;
+    const cos = hasAngle ? Math.cos(standardAngle) : 1;
+    const sin = hasAngle ? Math.sin(standardAngle) : 0;
     const isHorizontal = !hasAngle || Math.abs(sin) <= DELTA;
     const isVertical = hasAngle && Math.abs(cos) <= DELTA;
     const isX = orient === 'top' || orient === 'bottom';

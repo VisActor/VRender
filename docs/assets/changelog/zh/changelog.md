@@ -1,3 +1,34 @@
+# v0.20.1
+
+2024-09-03
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support position `inside-center` of arc label
+- **@visactor/vrender-components**: add necessary APIs to player component
+- **@visactor/vrender-components**: support line segments update animation in TagPointsUpdate custom animation
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix textAlign of label when set different angle
+- **@visactor/vrender-components**: indicator stop tooltip interaction. fix@VisActor/VChart[#3123](https://github.com/VisActor/VRender/issues/3123)
+- **@visactor/vrender-components**: segment line will cause incorrect label position
+- **@visactor/vrender-components**: fix issue with poptip memory while stage is released
+- **@visactor/vrender-core**: fix issue with poptip release
+- **@visactor/vrender-core**: fix issue with animate zero duration
+- **@visactor/vrender-core**: fix textAlign of label when set different angle
+- **@visactor/vrender-core**: fix memory leak problem in ResourceLoader
+- **@visactor/vrender-core**: fix issue with richtext edit plugin while defucus out of text
+
+**⚡ 性能优化**
+
+- **@visactor/vrender-components**: optimize the performance of label component
+
+
+
+[更多详情请查看 v0.20.1](https://github.com/VisActor/VRender/releases/tag/v0.20.1)
+
 # v0.20.0
 
 2024-08-16

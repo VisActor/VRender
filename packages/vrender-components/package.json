@@ -24,17 +24,17 @@
     "analysis-core": "cross-env DEBUG='Bundler*' bundle -f umd -a -i core.ts"
   },
   "dependencies": {
+    "@visactor/vutils": "~0.18.15",
+    "@visactor/vscale": "~0.18.15",
     "@visactor/vrender-core": "workspace:0.20.1",
-    "@visactor/vrender-kits": "workspace:0.20.1",
-    "@visactor/vutils": "~0.18.14",
-    "@visactor/vscale": "~0.18.14"
+    "@visactor/vrender-kits": "workspace:0.20.1"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~0.18.14",
+    "@visactor/vscale": "~0.18.15",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

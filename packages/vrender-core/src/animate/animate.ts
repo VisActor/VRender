@@ -192,8 +192,13 @@ export class Animate implements IAnimate {
   declare _onRemove?: (() => void)[];
   declare _preventAttrs?: Set<string>;
   static interpolateMap: Map<string, InterpolateFunc> = new Map();
+  slience?: boolean;
 
-  constructor(id: string | number = Generator.GenAutoIncrementId(), timeline: ITimeline = defaultTimeline) {
+  constructor(
+    id: string | number = Generator.GenAutoIncrementId(),
+    timeline: ITimeline = defaultTimeline,
+    slience?: boolean
+  ) {
     this.id = id;
     this.timeline = timeline;
     this.status = AnimateStatus.INITIAL;
@@ -204,6 +209,7 @@ export class Animate implements IAnimate {
     this._startTime = 0;
     this._duringTime = 0;
     this.timeline.addAnimate(this);
+    this.slience = slience;
   }
 
   setTimeline(timeline: ITimeline) {
@@ -420,7 +426,7 @@ export class Animate implements IAnimate {
   bind(target: IAnimateTarget) {
     this.target = target;
 
-    if (this.target.onAnimateBind) {
+    if (this.target.onAnimateBind && !this.slience) {
       this.target.onAnimateBind(this);
     }
 

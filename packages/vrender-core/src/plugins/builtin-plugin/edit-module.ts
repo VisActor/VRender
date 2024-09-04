@@ -56,7 +56,7 @@ export class EditModule {
   applyStyle(textAreaDom: HTMLTextAreaElement) {
     textAreaDom.setAttribute(
       'style',
-      `width: 100px; height: 30px; left: 0; position: absolute; z-index: -1; outline: none; resize: none; border: none; overflow: hidden; color: transparent; user-select: none; caret-color: transparent;background-color: transparent;`
+      `width: 100px; height: 30px; left: 0; top: 0; position: absolute; z-index: -1; outline: none; resize: none; border: none; overflow: hidden; color: transparent; user-select: none; caret-color: transparent;background-color: transparent;`
     );
 
     textAreaDom.addEventListener('input', this.handleInput);

@@ -62,6 +62,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _bitmap?: Bitmap;
 
+  // parsed animation config
   protected _animationConfig?: {
     enter: ILabelEnterAnimation | false;
     exit: ILabelExitAnimation | false;
@@ -406,6 +407,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               ? animationUpdate
               : merge({}, DefaultLabelAnimation, animationCfg, animationUpdate ?? {})
             : false
+      };
+    } else {
+      this._animationConfig = {
+        enter: false,
+        exit: false,
+        update: false
       };
     }
   }

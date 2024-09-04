@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.2",
+      "tag": "@visactor/vrender-core_v0.20.2",
+      "date": "Wed, 04 Sep 2024 12:52:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix error of interpolate when use rgba color\n\n"
+          },
+          {
+            "comment": "fix: fix bug of label in radarchart triggered by aniamtion\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.1",
       "tag": "@visactor/vrender-core_v0.20.1",
       "date": "Fri, 30 Aug 2024 09:55:08 GMT",

@@ -937,7 +937,10 @@ export class Stage extends Group implements IStage {
     // 额外删除掉interactiveLayer的节点
     if (this.interactiveLayer) {
       this.interactiveLayer.release();
-      this.interactiveLayer.removeAllChild();
+      this.interactiveLayer.forEachChildren((item: IGraphic) => {
+        item.setStage && item.setStage(null, null);
+        this.interactiveLayer.removeChild(item);
+      });
     }
     this.window.release();
     this.ticker.remTimeline(this.timeline);

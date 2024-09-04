@@ -89,11 +89,28 @@ export function run() {
       }
     },
     label: {
-      text: 'aaaaaa',
+      // text: 'aaaaaa',
+      type: 'rich',
+      padding: 10,
+      text: [
+        {
+          text: 'aaaa\n',
+          lineWidth: 0,
+          visible: false
+        },
+        {
+          text: 'bbb',
+          lineWidth: 0,
+          visible: false
+        }
+      ],
       // visible: false,
       textStyle: {
+        // visible: false,
         fill: 'red',
         fontSize: 20,
+        // lineWidth: 5,
+        stroke: 'yellow',
         state: {
           hover: {
             fill: 'green'
@@ -103,29 +120,30 @@ export function run() {
           }
         }
       },
-      panel: {
-        visible: true,
-        customShape: (data, attrs, path) => {
-          console.log('data', data, attrs, path);
-          const width = attrs.width;
-          const deltaY = attrs.height == null ? attrs.y1 - attrs.y : attrs.height;
+      // panel: {
+      //   visible: true,
+      //   fill: 'red'
+      //   //   customShape: (data, attrs, path) => {
+      //   //     console.log('data', data, attrs, path);
+      //   //     const width = attrs.width;
+      //   //     const deltaY = attrs.height == null ? attrs.y1 - attrs.y : attrs.height;
 
-          path.moveTo(0, deltaY);
-          path.quadraticCurveTo(0.45 * width, 0.67 * deltaY, 0.5 * width, 0);
-          path.quadraticCurveTo(0.55 * width, 0.67 * deltaY, width, deltaY);
-          path.lineTo(0, deltaY);
-          path.closePath();
-          return path;
-        },
-        state: {
-          hover: {
-            fill: 'red'
-          },
-          selected: {
-            fill: 'blue'
-          }
-        }
-      },
+      //   //     path.moveTo(0, deltaY);
+      //   //     path.quadraticCurveTo(0.45 * width, 0.67 * deltaY, 0.5 * width, 0);
+      //   //     path.quadraticCurveTo(0.55 * width, 0.67 * deltaY, width, deltaY);
+      //   //     path.lineTo(0, deltaY);
+      //   //     path.closePath();
+      //   //     return path;
+      //   //   },
+      //   //   state: {
+      //   //     hover: {
+      //   //       fill: 'red'
+      //   //     },
+      //   //     selected: {
+      //   //       fill: 'blue'
+      //   //     }
+      //   //   }
+      // },
       position: guiObject.labelPos,
       autoRotate: guiObject.labelAutoRotate,
       refX: guiObject.labelRefX,

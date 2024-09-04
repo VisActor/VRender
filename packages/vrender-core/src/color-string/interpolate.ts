@@ -22,6 +22,7 @@ export function interpolateColor(
   cb?: (fromArray: [number, number, number, number], toArray: [number, number, number, number]) => void
 ): false | string | IGradientColor | string[] {
   if ((Array.isArray(from) && !isNumber(from[0])) || (Array.isArray(to) && !isNumber(to[0]))) {
+    // 待性能优化
     const out: string[] = new Array(4).fill(0).map((_, index) => {
       return _interpolateColor(
         isArray(from) ? (from[index] as string) : from,

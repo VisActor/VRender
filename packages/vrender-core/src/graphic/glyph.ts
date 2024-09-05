@@ -165,9 +165,6 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
     theme: Required<IGlyphGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, theme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     // 添加子节点
     this.getSubGraphic().forEach((node: IGraphic) => {
       aabbBounds.union(node.AABBBounds);

@@ -122,9 +122,6 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     imageTheme: Required<IImageGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, imageTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       const { width = imageTheme.width, height = imageTheme.height } = attribute;
       aabbBounds.set(0, 0, width, height);

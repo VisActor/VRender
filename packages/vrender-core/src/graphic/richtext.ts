@@ -173,10 +173,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     richtextTheme: Required<IRichTextGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, richtextTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
-
     const {
       width = richtextTheme.width,
       height = richtextTheme.height,

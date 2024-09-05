@@ -137,9 +137,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     textTheme: Required<ITextGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, textTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     const { text = textTheme.text } = this.attribute;
     if (Array.isArray(text)) {
       this.updateMultilineAABBBounds(text as (number | string)[]);

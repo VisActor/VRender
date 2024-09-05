@@ -409,7 +409,7 @@ export interface AxisLabelOverlap {
 
   /**
    * 标签自动换行。与 `autoRotate` 不能同时生效，若开启了 `autoRotate`，则优先使用自动旋转策略。
-   * @since 0.20.2
+   * @since 0.20.3
    * @default false
    */
   autoWrap?: boolean;

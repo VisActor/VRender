@@ -31,9 +31,7 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
       if (isHorizontal && Math.floor(label.AABBBounds.width()) <= verticalLimitLength) {
         return;
       }
-    }
-
-    if (!isX) {
+    } else {
       if (isVertical && Math.floor(label.AABBBounds.height()) <= verticalLimitLength) {
         return;
       }
@@ -41,6 +39,7 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
         return;
       }
     }
+
     let limitLabelLength = null;
     let heightLimit = null;
 

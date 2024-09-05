@@ -3,6 +3,7 @@
  */
 import type { IText } from '@visactor/vrender-core';
 import { isEmpty, isNil, isNumberClose, isValidNumber } from '@visactor/vutils';
+import { isAngleHorizontal, isAngleVertical } from './util';
 
 type LimitConfig = {
   orient: string;
@@ -25,8 +26,9 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
     const hasAngle = !isNil(angle);
     const cos = hasAngle ? Math.cos(angle) : 1;
     const sin = hasAngle ? Math.sin(angle) : 0;
-    const isHorizontal = !hasAngle || Math.abs(sin) <= DELTA;
-    const isVertical = hasAngle && Math.abs(cos) <= DELTA;
+    const isHorizontal = isAngleHorizontal(angle);
+    const isVertical = isAngleVertical(angle);
+
     const isX = orient === 'top' || orient === 'bottom';
 
     if (isX) {

@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 30 Aug 2024 09:55:08 GMT and should not be manually modified.
+This log was last generated on Wed, 04 Sep 2024 12:52:31 GMT and should not be manually modified.
+
+## 0.20.2
+Wed, 04 Sep 2024 12:52:31 GMT
+
+### Updates
+
+- fix: fix error of interpolate when use rgba color
+
+
+- fix: fix bug of label in radarchart triggered by aniamtion
+
+
 
 ## 0.20.1
 Fri, 30 Aug 2024 09:55:08 GMT

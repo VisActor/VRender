@@ -266,3 +266,27 @@ vglobal.setEnv('feishu', {
 ## 扩展
 
 VRender 支持通过扩展来增强功能，扩展的具体用法可以参考[扩展和插件](../Basic_Tutorial/Extensions_and_Plugins)。
+这里介绍一个内置的扩展（react-attribute-plugin），用于实现基于 React 的渲染，代码在`packages/vrender-core/src/plugins/builtin-plugin/react-attribute-plugin.ts`（如果不需要自己写插件，则不用看这个文件）。
+
+```tsx
+const rect = createRect({
+  x: 20,
+  y: 20,
+  width: 10,
+  height: 30,
+  fill: 'red',
+  // 这里配置React插件所需要的配置，element为React的dom，这个dom会被放入一个内置容器中
+  // 通过width和height可以配置容器的宽高
+  // 通过style配置容器的样式
+  // container配置容器的父节点，默认为渲染的canvas所在的容器
+  // anchorType配置容器的锚点，可以选择'position'（xy位置决定） | 'boundsLeftTop'（图元包围盒的左上角为锚点）
+  react: {
+    element: <button>abc</button>, // 这里传入React的dom
+    width: 60,
+    height: 60,
+    style: {}
+    // container: document.body
+    // anchorType: 'boundsLeftTop'
+  }
+});
+```

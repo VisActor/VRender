@@ -477,9 +477,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const center = arc.circleCenter;
     const plotLayout = {
       x1: 0,
-      x2: center.x * 2,
+      x2: this.attribute.width,
       y1: 0,
-      y2: center.y * 2
+      y2: this.attribute.height
     };
 
     let maxRadius = 0;

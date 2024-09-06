@@ -39,9 +39,6 @@ export class Rect extends Graphic<IRectGraphicAttribute> implements IRect {
     rectTheme: Required<IRectGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, rectTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       let { width, height } = attribute;
       const { x1, y1, x, y } = attribute;

@@ -262,9 +262,6 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     aabbBounds: IAABBBounds,
     full?: boolean
   ) {
-    if (!application.graphicService.validCheck(attribute, arcTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       full
         ? this.updateArcAABBBoundsImprecise(attribute, arcTheme, aabbBounds)

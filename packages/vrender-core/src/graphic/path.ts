@@ -67,9 +67,6 @@ export class Path extends Graphic<IPathGraphicAttribute> implements IPath {
     pathTheme: Required<IPathGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, pathTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       const pathShape = this.getParsedPathShape();
       aabbBounds.union(pathShape.getBounds());

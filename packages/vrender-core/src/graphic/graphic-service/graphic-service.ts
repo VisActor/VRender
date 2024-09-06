@@ -356,10 +356,16 @@ export class DefaultGraphicService implements IGraphicService {
     if (!graphic) {
       return true;
     }
+
     // 设置了强制wh，那就直接认为是合法的
     if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
       return true;
     }
+
+    // if (graphic.shadowRoot) {
+    //   return true;
+    // }
+
     if (!graphic.valid) {
       aabbBounds.clear();
       return false;

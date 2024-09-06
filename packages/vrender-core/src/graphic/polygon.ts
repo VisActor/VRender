@@ -37,9 +37,6 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     polygonTheme: Required<IPolygonGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, polygonTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       this.updatePolygonAABBBoundsImprecise(attribute, polygonTheme, aabbBounds);
     }

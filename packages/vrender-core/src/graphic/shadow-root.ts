@@ -11,8 +11,16 @@ export class ShadowRoot extends Group {
     this.shadowHost = graphic;
   }
 
+  protected override clearUpdateBoundTag(): void {
+    super.clearUpdateBoundTag();
+    if (this.shadowHost) {
+      this.shadowHost.clearUpdateBoundTag();
+    }
+  }
+
   override addUpdateBoundTag() {
     super.addUpdateBoundTag();
+
     if (this.shadowHost) {
       this.shadowHost.addUpdateBoundTag();
     }

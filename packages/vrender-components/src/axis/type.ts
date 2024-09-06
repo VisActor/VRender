@@ -489,6 +489,21 @@ export type CoordinateType = 'cartesian' | 'polar' | 'geo' | 'none';
 export type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
 export type IPolarOrientType = 'radius' | 'angle';
 
+type breakData = {
+  /**
+   * 截断后的值域范围
+   */
+  domain?: [number, number][];
+  /**
+   * 截断后的归一化范围
+   */
+  scope?: [number, number][];
+  /**
+   * 用户配置的截断范围
+   */
+  breakDomains: [number, number][];
+};
+
 export interface ITickDataOpt {
   /**
    * 是否进行轴采样
@@ -510,11 +525,7 @@ export interface ITickDataOpt {
   /**
    * 截断数据范围配置
    */
-  breakData?: () => {
-    domain: [number, number][];
-    scope: [number, number][];
-    range: [number, number][];
-  };
+  breakData?: () => breakData;
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
@@ -524,11 +535,7 @@ export interface ICartesianTickDataOpt extends ITickDataOpt {
   /**
    * 截断数据范围配置
    */
-  breakData?: () => {
-    domain: [number, number][];
-    scope: [number, number][];
-    range: [number, number][];
-  };
+  breakData?: () => breakData;
 }
 
 export interface IPolarTickDataOpt extends ITickDataOpt {

@@ -10,20 +10,21 @@ function getScaleTicks(
   op: ITickDataOpt,
   scale: ContinuousScale,
   count: number,
-  getTicks: (count: number, range?: [number, number]) => number[]
+  getTicks: (count: number, domain?: [number, number]) => number[]
 ) {
   let scaleTicks: number[];
   const { breakData } = op;
 
+  // Todo: @zwx 将截断的逻辑挪到 scale 中
   if (breakData && breakData()) {
-    const { range: breakRanges, scope } = breakData();
+    const { breakDomains } = breakData();
     const domain = scale.domain();
     scaleTicks = [];
     for (let i = 0; i < domain.length - 1; i++) {
-      const range: [number, number] = [domain[i], domain[i + 1]];
-      const ticks = getTicks(count, range); // 暂时不对个数进行分段
+      const subDomain: [number, number] = [domain[i], domain[i + 1]];
+      const ticks = getTicks(count, subDomain); // 暂时不对个数进行分段
       ticks.forEach(tick => {
-        if (!breakRanges.some(breakRange => tick >= breakRange[0] && tick <= breakRange[1])) {
+        if (!breakDomains.some(breakDomain => tick >= breakDomain[0] && tick <= breakDomain[1])) {
           scaleTicks.push(tick);
         }
       });
@@ -65,9 +66,9 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
   if (isValid(tickStep)) {
     scaleTicks = (scale as LinearScale).stepTicks(tickStep);
   } else if (isValid(forceTickCount)) {
-    scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, range?: [number, number]) => {
-      if (range && range.length) {
-        return (scale as LinearScale).domain(range).forceTicks(count);
+    scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).forceTicks(count);
       }
       return (scale as LinearScale).forceTicks(count);
     });
@@ -76,9 +77,9 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
       (isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount) ??
       DEFAULT_CONTINUOUS_TICK_COUNT;
 
-    scaleTicks = getScaleTicks(op, scale, count, (count: number, range?: [number, number]) => {
-      if (range && range.length) {
-        return (scale as LinearScale).domain(range).d3Ticks(count, { noDecimals });
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).d3Ticks(count, { noDecimals });
       }
       return (scale as LinearScale).d3Ticks(count, { noDecimals });
     });
@@ -88,9 +89,9 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
       DEFAULT_CONTINUOUS_TICK_COUNT;
     const customTicks = isFunction(op.tickMode) ? op.tickMode : undefined;
 
-    scaleTicks = getScaleTicks(op, scale, count, (count: number, range?: [number, number]) => {
-      if (range && range.length) {
-        return (scale as LinearScale).domain(range).ticks(count, { noDecimals, customTicks });
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).ticks(count, { noDecimals, customTicks });
       }
       return (scale as LinearScale).ticks(count, { noDecimals, customTicks });
     });

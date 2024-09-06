@@ -30,3 +30,5 @@ export const DEFAULT_STATES = {
   [AxisStateValue.hover]: {},
   [AxisStateValue.hoverReverse]: {}
 };
+
+export const TopZIndex = 999;

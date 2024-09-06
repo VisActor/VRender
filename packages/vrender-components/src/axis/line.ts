@@ -23,17 +23,10 @@ import type { SegmentAttributes } from '../segment';
 import { Segment } from '../segment';
 import { angleTo } from '../util/matrix';
 import type { TagAttributes } from '../tag';
-import type {
-  LineAttributes,
-  LineAxisAttributes,
-  TitleAttributes,
-  AxisItem,
-  AxisBreakProps,
-  TransformedAxisBreak
-} from './type';
+import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, TransformedAxisBreak } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
-import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
+import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
 import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
@@ -61,6 +54,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
   private _breaks: TransformedAxisBreak[];
 
   protected _renderInner(container: IGroup) {
+    this._breaks = null; // 置空，防止轴更新时缓存了旧值
     if (this.attribute.breaks && this.attribute.breaks.length) {
       const transformedBreaks = [];
       for (let index = 0; index < this.attribute.breaks.length; index++) {
@@ -85,7 +79,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
 
         if (breakSymbol?.visible !== false) {
           const axisBreakGroup = graphicCreator.group({
-            zIndex: 99 // 层级需要高于轴线
+            zIndex: TopZIndex // 层级需要高于轴线
           });
           axisBreakGroup.name = AXIS_ELEMENT_NAME.axisBreak;
           axisBreakGroup.id = this._getNodeId(`${AXIS_ELEMENT_NAME.axisBreak}-${index}`);
@@ -638,6 +632,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
     }
     return limitLength;
+  }
+
+  release(): void {
+    super.release();
+    this._breaks = null;
   }
 }
 

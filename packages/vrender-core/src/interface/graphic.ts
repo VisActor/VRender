@@ -346,6 +346,7 @@ export type ISetAttributeContext = {
 };
 
 export type IGraphicAnimateParams = {
+  slience?: boolean;
   id?: number | string;
   onStart?: () => void;
   onFrame?: (step: IStep, ratio: number) => void;

@@ -39,6 +39,10 @@ const specs = [
     name: '轴标签防重叠'
   },
   {
+    path: 'axis-autoWrap',
+    name: '轴标签自动换行'
+  },
+  {
     path: 'interactive-axis',
     name: '带交互的坐标轴'
   },

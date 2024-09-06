@@ -80,6 +80,7 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
           visibleAll: false
         });
         this.poptipComponent.parent?.removeChild(this.poptipComponent);
+        this.poptipComponent = null;
       }
     }
   }

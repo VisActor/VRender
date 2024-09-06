@@ -1,5 +1,5 @@
 import type { IText } from '@visactor/vrender-core';
-import { isRectIntersect, isRotateAABBIntersect } from '@visactor/vutils';
+import { isNil, isRectIntersect, isRotateAABBIntersect } from '@visactor/vutils';
 
 function rotate(x: number, y: number, deg: number, originX: number, originY: number) {
   return {
@@ -51,4 +51,17 @@ export function itemIntersect(item1: IText, item2: IText) {
       ? isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true)
       : true)
   );
+}
+
+const DELTA_ANGLE = Math.sin(Math.PI / 10);
+export function isAngleVertical(angle: number) {
+  const hasAngle = !isNil(angle) && angle !== 0;
+  const cos = hasAngle ? Math.cos(angle) : 1;
+  return hasAngle && Math.abs(cos) <= DELTA_ANGLE;
+}
+
+export function isAngleHorizontal(angle: number) {
+  const hasAngle = !isNil(angle) && angle !== 0;
+  const sin = hasAngle ? Math.sin(angle) : 0;
+  return !hasAngle || Math.abs(sin) <= DELTA_ANGLE;
 }

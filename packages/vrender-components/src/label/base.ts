@@ -142,7 +142,14 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (line.customShape) {
         const customShape = line.customShape;
         lineGraphic.pathProxy = (attrs: Partial<ILineGraphicAttribute>) => {
-          return customShape(text.attribute, attrs, new CustomPath2D());
+          return customShape(
+            {
+              text,
+              baseMark: baseMark
+            },
+            attrs,
+            new CustomPath2D()
+          );
         };
       }
 

@@ -429,7 +429,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       autoHideMethod,
       autoHideSeparation,
       lastVisible,
-      autoWrap
+      autoWrap,
+      overflowLimitLength
     } = label;
 
     if (isFunction(layoutFunc)) {
@@ -469,7 +470,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           verticalLimitLength,
           ellipsis: limitEllipsis,
           orient,
-          axisLength
+          axisLength,
+          overflowLimitLength
         });
       }
       if (autoHide) {

@@ -127,6 +127,7 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
    * 如果同时声明了 verticalLimitSize，请保证 verticalMinSize <= verticalLimitSize，否则会以 verticalLimitSize 为准。
    */
   verticalMinSize?: number;
+
   /**
    * 轴标签配置
    */
@@ -396,6 +397,21 @@ export interface AxisLabelOverlap {
    * @default '...'
    */
   limitEllipsis?: string;
+  /**
+   * 文字超出坐标轴范围时，两侧可以提供扩充的空间大小。
+   * 例如，x 轴坐标 135 度旋转时，左侧第一个标签可能超出坐标轴范围，导致文本被缩略，此时可以通过配置 `overflowLimitLength` 优化效果。
+   * 仅当 `autoLimit` 为 true 时生效。
+   * @default 0
+   * @since 0.20.3 支持 X 轴配置生效
+   */
+  overflowLimitLength?:
+    | number
+    | {
+        left?: number;
+        right?: number;
+        // top?: number;
+        // bottom?: number;
+      };
 
   /**
    * 自定义布局配置，如果声明了 `layoutFunc`，则默认提供的防重叠相关的配置（`autoHide`, `autoRotate`, `autoLimit`）均不生效

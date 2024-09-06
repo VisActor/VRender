@@ -9,3 +9,21 @@
 ## npm 使用
 
 我们通过  [npm](./How_to_Get_VRender#npm-%E8%8E%B7%E5%8F%96)  的方式将  `@visactor/vrender`  安装到项目之后，就可以通过如下方式进行使用了：
+
+```ts
+import { createStage, createCircle } from '@visactor/vrender';
+
+const stage = createStage({
+  canvas: 'main', // canvas 的 id
+  autoRender: true // 开启自动渲染
+});
+// 创建一个circle图元
+const circle = createCircle({
+  radius: 60,
+  x: 200,
+  y: 200,
+  fill: 'red'
+});
+// 添加到stage中
+stage.defaultLayer.add(circle);
+```

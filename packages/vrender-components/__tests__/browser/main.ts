@@ -47,6 +47,10 @@ const specs = [
     name: '轴标签各种角度'
   },
   {
+    path: 'axis-label-limit',
+    name: '轴标签长度限制'
+  },
+  {
     path: 'size-legend',
     name: '连续尺寸图例'
   },

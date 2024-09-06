@@ -257,3 +257,13 @@ function getIntersection(dx: number, dy: number, cx: number, cy: number, w: numb
   // Hit horizontal edge of box1
   return { x: cx + (dx * h) / Math.abs(dy), y: cy + (dy > 0 ? h : -h) };
 }
+
+export function getAlignOffset(align: 'left' | 'right' | 'center') {
+  if (align === 'left') {
+    return 0;
+  } else if (align === 'right') {
+    return 1;
+  }
+
+  return 0.5;
+}

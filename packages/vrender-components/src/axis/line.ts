@@ -23,10 +23,10 @@ import type { SegmentAttributes } from '../segment';
 import { Segment } from '../segment';
 import { angleTo } from '../util/matrix';
 import type { TagAttributes } from '../tag';
-import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem } from './type';
+import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, TransformedAxisBreak } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
-import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
+import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
 import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
@@ -37,6 +37,7 @@ import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
 import { loadLineAxisComponent } from './register';
+import { getAxisBreakSymbolAttrs } from './util';
 
 loadLineAxisComponent();
 export interface LineAxis
@@ -50,8 +51,61 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
 
+  private _breaks: TransformedAxisBreak[];
+
   protected _renderInner(container: IGroup) {
+    this._breaks = null; // 置空，防止轴更新时缓存了旧值
+    if (this.attribute.breaks && this.attribute.breaks.length) {
+      const transformedBreaks = [];
+      for (let index = 0; index < this.attribute.breaks.length; index++) {
+        const aBreak = this.attribute.breaks[index];
+        const { range, breakSymbol, rawRange } = aBreak;
+        transformedBreaks.push({
+          startPoint: this.getTickCoord(range[0]),
+          endPoint: this.getTickCoord(range[1]),
+          range,
+          breakSymbol,
+          rawRange
+        });
+      }
+      this._breaks = transformedBreaks;
+    }
     super._renderInner(container);
+
+    // 渲染 break symbol
+    if (this._breaks && this._breaks.length) {
+      this._breaks.forEach((b, index) => {
+        const { startPoint, endPoint, breakSymbol, rawRange } = b;
+
+        if (breakSymbol?.visible !== false) {
+          const axisBreakGroup = graphicCreator.group({
+            zIndex: TopZIndex // 层级需要高于轴线
+          });
+          axisBreakGroup.name = AXIS_ELEMENT_NAME.axisBreak;
+          axisBreakGroup.id = this._getNodeId(`${AXIS_ELEMENT_NAME.axisBreak}-${index}`);
+          axisBreakGroup.data = rawRange;
+          const symbolStyle = getAxisBreakSymbolAttrs(breakSymbol);
+          const shape1 = graphicCreator.symbol({
+            x: startPoint.x,
+            y: startPoint.y,
+            ...symbolStyle
+          });
+          shape1.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+          const shape2 = graphicCreator.symbol({
+            x: endPoint.x,
+            y: endPoint.y,
+            ...symbolStyle
+          });
+          shape2.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+
+          axisBreakGroup.add(shape1);
+          axisBreakGroup.add(shape2);
+
+          container.add(axisBreakGroup);
+        }
+      });
+    }
+
     const { panel } = this.attribute;
 
     // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
@@ -74,18 +128,32 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
   }
 
-  // TODO: break
   protected renderLine(container: IGroup): void {
     const { start, end, line } = this.attribute as LineAxisAttributes;
-    const { startSymbol, endSymbol, style, breakRange, breakShape, breakShapeStyle, state, ...restLineAttrs } =
-      line as LineAttributes;
+    const { startSymbol, endSymbol, style, state, ...restLineAttrs } = line as LineAttributes;
+
     const lineAttrs = {
-      points: [start, end],
       startSymbol,
       endSymbol,
       lineStyle: style,
       ...restLineAttrs
     } as SegmentAttributes;
+
+    if (this._breaks && this._breaks.length) {
+      // 配置了轴截断
+      const linePoints = [];
+      let lastStartPoint = start;
+      this._breaks.forEach(b => {
+        const { startPoint, endPoint } = b;
+        linePoints.push([lastStartPoint, startPoint]);
+        lastStartPoint = endPoint;
+      });
+      linePoints.push([lastStartPoint, end]);
+      lineAttrs.points = linePoints;
+      lineAttrs.multiSegment = true;
+    } else {
+      lineAttrs.points = [start, end];
+    }
 
     if (!isEmpty(state)) {
       lineAttrs.state = {
@@ -566,6 +634,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
     }
     return limitLength;
+  }
+
+  release(): void {
+    super.release();
+    this._breaks = null;
   }
 }
 

@@ -1,5 +1,4 @@
 import type {
-  IGraphicAttribute,
   ILineGraphicAttribute,
   SymbolType,
   ITextGraphicAttribute,
@@ -108,6 +107,47 @@ export interface ILine3dType {
   anchor3d?: [number, number];
 }
 
+export interface BreakSymbol {
+  /**
+   * 是否显示
+   */
+  visible?: boolean;
+  /**
+   * 截断图形旋转的弧度。
+   */
+  angle?: number;
+
+  /**
+   * 样式配置
+   */
+  style?: Partial<ISymbolGraphicAttribute>;
+}
+export interface AxisBreakProps {
+  /**
+   * 轴截断的范围，值为归一化后的数据
+   */
+  range: [number, number];
+  /**
+   * 截断图形配置
+   */
+  breakSymbol?: BreakSymbol;
+  /**
+   * 轴截断原始的数据范围
+   */
+  rawRange?: [number, number];
+}
+
+export interface TransformedAxisBreak extends AxisBreakProps {
+  /**
+   * 截断的起始点
+   */
+  startPoint: Point;
+  /**
+   * 截断的结束点
+   */
+  endPoint: Point;
+}
+
 export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
    * 起始点坐标
@@ -171,6 +211,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      */
     state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
+
+  /**
+   * 轴截断配置
+   * @since 0.20.2
+   */
+  breaks?: AxisBreakProps[];
 }
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {
@@ -272,21 +318,6 @@ export interface LineAttributes extends Pick<SegmentAttributes, 'startSymbol' | 
    * 是否展示轴线
    */
   visible?: boolean;
-  /**
-   * TODO: 待支持
-   * 坐标轴截断范围，当需要对坐标轴轴线截断时，可配置该属性
-   */
-  breakRange?: [number, number];
-  /**
-   * TODO: 待支持
-   * 截断区域的形状
-   */
-  breakShape?: SymbolType | [SymbolType, SymbolType];
-  /**
-   * TODO: 待支持
-   * 截断图形样式
-   */
-  breakShapeStyle?: Partial<IGraphicAttribute>;
   /**
    * 线的样式配置
    */
@@ -474,6 +505,21 @@ export type CoordinateType = 'cartesian' | 'polar' | 'geo' | 'none';
 export type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
 export type IPolarOrientType = 'radius' | 'angle';
 
+type breakData = {
+  /**
+   * 截断后的值域范围
+   */
+  domain?: [number, number][];
+  /**
+   * 截断后的归一化范围
+   */
+  scope?: [number, number][];
+  /**
+   * 用户配置的截断范围
+   */
+  breakDomains: [number, number][];
+};
+
 export interface ITickDataOpt {
   /**
    * 是否进行轴采样
@@ -492,12 +538,20 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => breakData;
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
   axisOrientType: IOrientType;
   labelLastVisible: boolean;
   labelFlush: boolean;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => breakData;
 }
 
 export interface IPolarTickDataOpt extends ITickDataOpt {

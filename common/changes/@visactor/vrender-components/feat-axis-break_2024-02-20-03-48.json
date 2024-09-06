@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support axis `breaks` for line axis",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

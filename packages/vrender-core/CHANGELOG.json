@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.19.26",
+      "tag": "@visactor/vrender-core_v0.19.26",
+      "date": "Sat, 07 Sep 2024 18:15:32 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: tag padding not work when label is rich text. fix@VisActor/VChart#3151"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.19.25",
       "tag": "@visactor/vrender-core_v0.19.25",
       "date": "Fri, 23 Aug 2024 10:15:28 GMT",

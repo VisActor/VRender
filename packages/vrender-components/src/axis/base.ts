@@ -164,6 +164,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   protected _renderInner(container: IGroup) {
     const { title, label, tick, line, items } = this.attribute;
 
+    // 设置轴pickable false, 防止阻断交互
     const axisContainer = graphicCreator.group({ x: 0, y: 0, zIndex: 1, pickable: false });
     axisContainer.name = AXIS_ELEMENT_NAME.axisContainer;
     axisContainer.id = this._getNodeId('container');

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 23 Aug 2024 10:15:28 GMT and should not be manually modified.
+This log was last generated on Sun, 08 Sep 2024 16:35:33 GMT and should not be manually modified.
+
+## 0.19.26
+Sun, 08 Sep 2024 16:35:33 GMT
+
+### Updates
+
+- fix: tag padding not work when label is rich text. fix@VisActor/VChart#3151
 
 ## 0.19.25
 Fri, 23 Aug 2024 10:15:28 GMT

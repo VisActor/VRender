@@ -1,4 +1,4 @@
-import { Logger } from '@visactor/vutils';
+import { EventEmitter, Logger } from '@visactor/vutils';
 import type { ITickHandler, ITickerHandlerStatic, ITimeline, ITicker } from '../../interface';
 import { application } from '../../application';
 import type { TickerMode } from './type';
@@ -6,7 +6,7 @@ import { STATUS } from './type';
 import { RAFTickHandler } from './raf-tick-handler';
 import { TimeOutTickHandler } from './timeout-tick-handler';
 
-export class DefaultTicker implements ITicker {
+export class DefaultTicker extends EventEmitter implements ITicker {
   protected interval: number;
   protected tickerHandler: ITickHandler;
   protected _mode: TickerMode;
@@ -28,6 +28,7 @@ export class DefaultTicker implements ITicker {
   }
 
   constructor(timelines: ITimeline[] = []) {
+    super();
     this.init();
     this.lastFrameTime = -1;
     this.tickCounts = 0;
@@ -195,13 +196,13 @@ export class DefaultTicker implements ITicker {
       this.stop();
       return;
     }
-    this._handlerTick(handler);
+    this._handlerTick();
     if (!once) {
       handler.tick(this.interval, this.handleTick);
     }
   };
 
-  protected _handlerTick = (handler: ITickHandler) => {
+  protected _handlerTick = () => {
     // 具体执行函数
     const tickerHandler = this.tickerHandler;
     const time = tickerHandler.getTime();
@@ -220,5 +221,16 @@ export class DefaultTicker implements ITicker {
     this.timelines.forEach(t => {
       t.tick(delta);
     });
+    this.emit('afterTick');
   };
+
+  /**
+   * 同步tick状态，需要手动触发tick执行，保证属性为走完动画的属性
+   * 【注】grammar会设置属性到最终值，然后调用render，这时候需要VRender手动触发tick，保证属性为走完动画的属性，而不是Grammar设置上的属性
+   */
+  trySyncTickStatus() {
+    if (this.status === STATUS.RUNNING) {
+      this._handlerTick();
+    }
+  }
 }

@@ -214,7 +214,7 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
 
   /**
    * 轴截断配置
-   * @since 0.20.2
+   * @since 0.20.3
    */
   breaks?: AxisBreakProps[];
 }

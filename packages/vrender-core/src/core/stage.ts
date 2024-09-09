@@ -290,8 +290,8 @@ export class Stage extends Group implements IStage {
     }
   }
 
-  pauseRender() {
-    this._skipRender = -1;
+  pauseRender(sr: number = -1) {
+    this._skipRender = sr;
   }
 
   resumeRender() {

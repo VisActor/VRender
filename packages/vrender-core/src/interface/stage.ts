@@ -227,7 +227,7 @@ export interface IStage extends INode {
   release: () => void;
   setStage: (stage?: IStage) => void;
 
-  pauseRender: () => void;
+  pauseRender: (sk?: number) => void;
   resumeRender: () => void;
 
   setCursor: (mode?: string) => void;

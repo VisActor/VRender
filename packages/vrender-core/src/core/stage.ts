@@ -794,6 +794,10 @@ export class Stage extends Group implements IStage {
       }
       layer.renderCount = this.renderCount + 1;
 
+      if (layer === this.interactiveLayer) {
+        // 交互层由于其特殊性，不使用dirtyBounds
+        this.dirtyBounds && this.dirtyBounds.clear();
+      }
       layer.render(
         {
           renderService: this.renderService,
@@ -808,6 +812,8 @@ export class Stage extends Group implements IStage {
 
     // 添加交互层渲染
     if (this.interactiveLayer && !layerList.includes(this.interactiveLayer)) {
+      // 交互层由于其特殊性，不使用dirtyBounds
+      this.dirtyBounds && this.dirtyBounds.clear();
       this.interactiveLayer.render(
         {
           renderService: this.renderService,

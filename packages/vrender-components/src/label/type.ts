@@ -11,7 +11,8 @@ import type {
   IRichTextCharacter,
   IRichText,
   ILine,
-  ICustomPath2D
+  ICustomPath2D,
+  IArc
 } from '@visactor/vrender-core';
 import type { BoundsAnchorType, IPointLike, InsideBoundsAnchorType } from '@visactor/vutils';
 
@@ -102,9 +103,9 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | boolean;
-  animationEnter?: ILabelUpdateAnimation;
-  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
-  animationExit?: ILabelExitAnimation;
+  animationEnter?: ILabelUpdateAnimation | boolean;
+  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[] | boolean;
+  animationExit?: ILabelExitAnimation | boolean;
 
   // 排序 or 删减
   dataFilter?: (data: LabelItem[]) => LabelItem[];
@@ -446,8 +447,9 @@ export interface IArcLabelLineSpec extends ILabelLineSpec {
   /**
    * 引导线 line2 部分最小长度
    * @default 10
+   * @since 0.20.3 支持函数回调
    */
-  line2MinLength?: number;
+  line2MinLength?: number | ((texts: IGraphic[], arcs: IArc[], attrs: Partial<ArcLabelAttrs>) => number);
   /**
    * 引导线是否光滑
    * @default false
@@ -467,6 +469,11 @@ export interface IArcLabelLayoutSpec {
   textAlign?: ArcLabelAlignType;
   /** @deprecate 建议统一使用textAlign，后续将废除 */
   align?: ArcLabelAlignType;
+  /**
+   * 标签对齐的偏移量
+   * @since 0.20.3
+   */
+  alignOffset?: number | ((texts: IGraphic[], arcs: IArc[], attrs: Partial<ArcLabelAttrs>) => number);
   /**
    * 标签布局策略
    * @default 'priority'

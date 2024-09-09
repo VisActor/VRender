@@ -456,6 +456,7 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
       [children[0].type]: childAttrs
     });
     children.forEach(element => {
+      element.setAttributes({ pickable: false });
       shadowRoot.appendChild(element);
     });
   } else {
@@ -471,7 +472,8 @@ const appendShadowChildrenToGraphic = (graphic: IGraphic, children: IGraphic[], 
         x: 0,
         y: 0,
         width,
-        height: height
+        height: height,
+        pickable: false
       });
       shadowRoot.appendChild(child);
       children.push(child);

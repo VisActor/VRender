@@ -52,6 +52,11 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
         const { baseMarkGroupName, type } = dataLabel;
         const id = dataLabel.id ?? `${baseMarkGroupName}-${type}-${i}`;
 
+        if (dataLabel.type === 'arc') {
+          dataLabel.width = size.width;
+          dataLabel.height = size.height;
+        }
+
         let component = this._componentMap.get(id);
         if (component) {
           component.setBitmapTool(tool);

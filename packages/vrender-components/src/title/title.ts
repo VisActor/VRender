@@ -67,16 +67,28 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     ) as IGroup;
 
     if (this.attribute.visible !== false && textStyle.visible !== false) {
+      const {
+        width: mainTitleWidth,
+        height: mainTitleHeight,
+        maxHeight: mainTitleMaxHeight,
+        maxWidth: mainTitleMaxWidth,
+        x = 0,
+        y = 0,
+        ellipsis = true,
+        wordBreak = 'break-word',
+        maxWidth,
+        lineClamp
+      } = textStyle;
       if (textType === 'rich' || isValid(textStyle.character)) {
         const attr = {
-          x: textStyle.x ?? 0,
-          y: textStyle.y ?? 0,
-          width: textStyle.width ?? width ?? 0,
-          height: textStyle.height ?? height ?? 0,
-          ellipsis: textStyle.ellipsis ?? true,
-          wordBreak: textStyle.wordBreak ?? 'break-word',
-          maxHeight: textStyle.maxHeight,
-          maxWidth: textStyle.maxWidth,
+          x,
+          y,
+          width: mainTitleWidth ?? width ?? 0,
+          height: mainTitleHeight ?? height ?? 0,
+          ellipsis: ellipsis ?? true,
+          wordBreak: wordBreak ?? 'break-word',
+          maxHeight: mainTitleMaxHeight ?? maxHeight,
+          maxWidth: mainTitleMaxWidth ?? maxWidth,
           // 兼容旧版富文本配置，如果未设置textType === 'rich'，text内容为string 易报错
           textConfig: textStyle.character ?? (text as IRichTextCharacter[]),
           ...textStyle
@@ -89,14 +101,14 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
             ...DEFAULT_HTML_TEXT_SPEC,
             ...textStyle
           },
-          x: textStyle.x ?? 0,
-          y: textStyle.y ?? 0,
-          width: textStyle.width ?? width ?? 0,
-          height: textStyle.height ?? height ?? 0,
-          ellipsis: textStyle.ellipsis ?? true,
-          wordBreak: textStyle.wordBreak ?? 'break-word',
-          maxHeight: textStyle.maxHeight,
-          maxWidth: textStyle.maxWidth,
+          x,
+          y,
+          width: mainTitleWidth ?? width ?? 0,
+          height: mainTitleHeight ?? height ?? 0,
+          ellipsis,
+          wordBreak,
+          maxHeight: mainTitleMaxHeight ?? maxHeight,
+          maxWidth: mainTitleMaxWidth ?? maxWidth,
           textConfig: [] as any[],
           ...textStyle
         };
@@ -106,14 +118,14 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           'mainTitle',
           {
             text: isArray(text) ? (text as any) : [text as string],
-            wrap: true,
+            whiteSpace: 'normal',
             ...textStyle,
-            maxLineWidth: textStyle.maxLineWidth ?? width,
-            heightLimit: textStyle.heightLimit,
-            lineClamp: textStyle.lineClamp,
-            ellipsis: textStyle.ellipsis ?? true,
-            x: 0,
-            y: 0
+            maxLineWidth: textStyle.maxLineWidth ?? mainTitleWidth ?? width,
+            heightLimit: mainTitleHeight ?? maxHeight,
+            lineClamp,
+            ellipsis,
+            x,
+            y
           },
           'text'
         ) as IText;
@@ -123,17 +135,32 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     const maintextHeight = this._mainTitle ? this._mainTitle.AABBBounds.height() : 0;
     const maintextWidth = this._mainTitle ? this._mainTitle.AABBBounds.width() : 0;
 
+    // 目前 height 限制等于 0 时，相当于 Infinity，无限制
+
     if (this.attribute.visible !== false && subtextStyle.visible !== false) {
+      const {
+        width: subTitleWidth,
+        height: subTitleHeight,
+        maxWidth: subTitleMaxWidth,
+        maxHeight: subTitleMaxHeight,
+        x = 0,
+        y = 0,
+        ellipsis = true,
+        wordBreak = 'break-word',
+        lineClamp
+      } = subtextStyle;
+      const maxSubTextHeight = Math.max(Number.MIN_VALUE, maxHeight - maintextHeight);
+
       if (subtextType === 'rich' || isValid(subtextStyle.character)) {
         const attr: any = {
-          x: subtextStyle.x ?? 0,
-          y: subtextStyle.y ?? 0,
-          width: subtextStyle.width ?? width ?? 0,
-          height: subtextStyle.height ?? height ?? 0,
-          ellipsis: subtextStyle.ellipsis ?? true,
-          wordBreak: subtextStyle.wordBreak ?? 'break-word',
-          maxHeight: subtextStyle.maxHeight,
-          maxWidth: subtextStyle.maxWidth,
+          x,
+          y,
+          width: subTitleWidth ?? width ?? 0,
+          height: subTitleHeight ?? height ?? 0,
+          ellipsis,
+          wordBreak,
+          maxHeight: subTitleMaxHeight ?? maxSubTextHeight,
+          maxWidth: subTitleMaxWidth ?? maxWidth,
           // 兼容旧版富文本配置，如果未设置textType === 'rich'，text内容为string 易报错
           textConfig: subtextStyle.character ?? (subtext as IRichTextCharacter[]),
           ...subtextStyle
@@ -146,14 +173,14 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
             ...DEFAULT_HTML_TEXT_SPEC,
             ...subtextStyle
           },
-          x: subtextStyle.x ?? 0,
-          y: subtextStyle.y ?? 0,
-          width: subtextStyle.width ?? width ?? 0,
-          height: subtextStyle.height ?? height ?? 0,
-          ellipsis: subtextStyle.ellipsis ?? true,
-          wordBreak: subtextStyle.wordBreak ?? 'break-word',
-          maxHeight: subtextStyle.maxHeight,
-          maxWidth: subtextStyle.maxWidth,
+          x,
+          y,
+          width: subTitleWidth ?? width ?? 0,
+          height: subTitleHeight ?? height ?? 0,
+          ellipsis,
+          wordBreak,
+          maxHeight: subTitleMaxHeight ?? maxSubTextHeight,
+          maxWidth: subTitleMaxWidth ?? maxWidth,
           textConfig: [] as any[],
           ...subtextStyle
         };
@@ -163,12 +190,12 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           'subTitle',
           {
             text: isArray(subtext) ? (subtext as any) : [subtext as string],
-            wrap: true,
+            whiteSpace: 'normal',
             ...subtextStyle,
             maxLineWidth: subtextStyle.maxLineWidth ?? width,
-            heightLimit: subtextStyle.heightLimit,
-            lineClamp: subtextStyle.lineClamp,
-            ellipsis: subtextStyle.ellipsis ?? true,
+            heightLimit: subtextStyle.heightLimit ?? maxSubTextHeight,
+            lineClamp,
+            ellipsis,
             x: 0,
             y: maintextHeight
           },
@@ -186,8 +213,6 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
     if (isValid(width)) {
       titleWidth = width;
-      this._mainTitle && this._mainTitle.setAttribute('maxLineWidth', width);
-      this._subTitle && this._subTitle.setAttribute('maxLineWidth', width);
     }
 
     if (isValid(height)) {
@@ -198,10 +223,6 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
       titleWidth = minWidth;
     }
     if (isValid(maxWidth)) {
-      this._mainTitle && this._mainTitle.setAttribute('maxLineWidth', maxWidth);
-      this._subTitle && this._subTitle.setAttribute('maxLineWidth', maxWidth);
-      this._mainTitle && this._mainTitle.setAttribute('maxWidth', maxWidth);
-      this._subTitle && this._subTitle.setAttribute('maxWidth', maxWidth);
       if (titleWidth > maxWidth) {
         titleWidth = maxWidth;
       }
@@ -210,14 +231,12 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
     if (isValid(minHeight) && titleHeight < minHeight) {
       titleHeight = minHeight;
     }
+
     if (isValid(maxHeight)) {
-      this._mainTitle && this._mainTitle.setAttribute('maxHeight', maxHeight);
-      this._subTitle && this._subTitle.setAttribute('maxHeight', maxHeight - maintextHeight);
       if (titleHeight > maxHeight) {
         titleHeight = maxHeight;
       }
     }
-
     group.attribute.width = titleWidth;
     group.attribute.height = titleHeight;
     group.attribute.boundsPadding = parsedPadding;

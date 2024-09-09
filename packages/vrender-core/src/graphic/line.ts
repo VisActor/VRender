@@ -60,9 +60,6 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     lineTheme: Required<ILineGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, lineTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       attribute.segments
         ? this.updateLineAABBBoundsBySegments(attribute, lineTheme, aabbBounds)

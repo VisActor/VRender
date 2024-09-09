@@ -424,9 +424,25 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   shouldUpdateAABBBounds(): boolean {
     // 如果存在shadowRoot，那么判断shadowRoot是否需要更新
     if (this.shadowRoot) {
-      return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds();
+      return (
+        (!!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds()) &&
+        application.graphicService.validCheck(
+          this.attribute,
+          this.getGraphicTheme() as Required<T>,
+          this._AABBBounds,
+          this
+        )
+      );
     }
-    return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS);
+    return (
+      !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) &&
+      application.graphicService.validCheck(
+        this.attribute,
+        this.getGraphicTheme() as Required<T>,
+        this._AABBBounds,
+        this
+      )
+    );
   }
 
   // 自身变化导致的AABBBounds的变化

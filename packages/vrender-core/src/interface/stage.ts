@@ -103,6 +103,8 @@ export type IOptimizeType = {
   // 不存在dirtyBounds的时候，根据该配置判断是否关闭图元的超出边界判定
   // 如果有dirtyBounds那么该配置不生效
   disableCheckGraphicWidthOutRange?: boolean;
+  // tick渲染模式，effect会在tick之后立刻执行render，保证动画效果正常。performance模式中tick和render均是RAF，属性可能会被篡改
+  tickRenderMode?: 'effect' | 'performance';
 };
 
 export interface IOption3D {

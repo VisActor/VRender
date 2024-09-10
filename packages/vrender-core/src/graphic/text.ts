@@ -1039,13 +1039,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       maxLineWidth,
       stroke = textTheme.stroke,
       wrap = textTheme.wrap,
-      // ignoreBuf = textTheme.ignoreBuf,
+      ignoreBuf = textTheme.ignoreBuf,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
       suffixPosition = textTheme.suffixPosition
     } = attribute;
 
-    const lineHeight = this.getLineHeight(attribute, textTheme);
+    const buf = ignoreBuf ? 0 : 2;
+    const lineHeight = this.getLineHeight(attribute, textTheme) + buf;
 
     if (whiteSpace === 'normal' || wrap) {
       return this.updateWrapAABBBounds(text);
@@ -1102,12 +1103,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       wordBreak = textTheme.wordBreak,
       fontWeight = textTheme.fontWeight,
       // widthLimit,
+      ignoreBuf = textTheme.ignoreBuf,
       suffixPosition = textTheme.suffixPosition,
       heightLimit = 0,
       lineClamp
     } = this.attribute;
 
-    const lineHeight = this.getLineHeight(this.attribute, textTheme);
+    const buf = ignoreBuf ? 0 : 2;
+    const lineHeight = this.getLineHeight(this.attribute, textTheme) + buf;
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;

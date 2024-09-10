@@ -137,15 +137,17 @@ export const page = () => {
   );
   graphics.push(
     createText({
-      text: '测试顶行',
+      fontFamily: 'Arial',
+      text: ['aaa这是aaa', 'aa这是aa'],
+      fontSize: 16,
       ellipsis: '...',
       textBaseline: 'top',
       x: 200,
       y: 130,
       fill: 'red',
       fillOpacity: 0.5,
-      fontSize: 20
-      // _debug_bounds: true
+      // fontSize: 60,
+      _debug_bounds: true
     })
   );
 

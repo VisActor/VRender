@@ -290,8 +290,8 @@ export class Stage extends Group implements IStage {
     }
   }
 
-  pauseRender() {
-    this._skipRender = -1;
+  pauseRender(sr: number = -1) {
+    this._skipRender = sr;
   }
 
   resumeRender() {
@@ -794,6 +794,10 @@ export class Stage extends Group implements IStage {
       }
       layer.renderCount = this.renderCount + 1;
 
+      if (layer === this.interactiveLayer) {
+        // 交互层由于其特殊性，不使用dirtyBounds
+        this.dirtyBounds && this.dirtyBounds.clear();
+      }
       layer.render(
         {
           renderService: this.renderService,
@@ -808,6 +812,8 @@ export class Stage extends Group implements IStage {
 
     // 添加交互层渲染
     if (this.interactiveLayer && !layerList.includes(this.interactiveLayer)) {
+      // 交互层由于其特殊性，不使用dirtyBounds
+      this.dirtyBounds && this.dirtyBounds.clear();
       this.interactiveLayer.render(
         {
           renderService: this.renderService,
@@ -934,7 +940,14 @@ export class Stage extends Group implements IStage {
     this.forEach(layer => {
       layer.release();
     });
-    this.interactiveLayer && this.interactiveLayer.release();
+    // 额外删除掉interactiveLayer的节点
+    if (this.interactiveLayer) {
+      this.interactiveLayer.forEachChildren((item: IGraphic) => {
+        item.setStage && item.setStage(null, null);
+        this.interactiveLayer.removeChild(item);
+      });
+      this.interactiveLayer.release();
+    }
     this.window.release();
     this.ticker.remTimeline(this.timeline);
     this.renderService.renderTreeRoots = [];

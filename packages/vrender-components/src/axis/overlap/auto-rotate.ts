@@ -128,14 +128,14 @@ export function getXAxisLabelAlign(orient: string, angle: number = 0) {
 }
 
 export function getYAxisLabelAlign(orient: string, angle: number = 0) {
-  //                0,      0-90,       90,     90-180,   180,    180-270, 270,     270-360,   360
-  let align = ['right', 'right', 'center', 'left', 'center', 'left', 'center', 'right', 'right'];
+  //           0,      0-90,       90,     90-180,   180,    180-270, 270,     270-360,   360
+  let align = ['right', 'right', 'center', 'left', 'left', 'left', 'center', 'right', 'right'];
   let baseline = ['middle', 'middle', 'top', 'top', 'middle', 'middle', 'bottom', 'bottom', 'middle'];
 
   if (orient === 'right') {
-    //            0,      0-90,   90,     90-180,   180,    180-270, 270,     270-360,   360
-    align = ['left', 'right', 'right', 'right', 'left', 'left', 'left', 'left', 'right'];
-    baseline = ['middle', 'bottom', 'middle', 'top', 'top', 'top', 'middle', 'bottom', 'bottom'];
+    //        0,      0-90,   90,     90-180,   180,   180-270, 270,  270-360,   360
+    align = ['left', 'left', 'center', 'right', 'right', 'right', 'center', 'left', 'left'];
+    baseline = ['middle', 'middle', 'bottom', 'bottom', 'middle', 'middle', 'top', 'middle', 'middle'];
   }
 
   angle = clampAngle(angle);

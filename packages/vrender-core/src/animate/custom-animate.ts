@@ -31,6 +31,7 @@ import type {
   IRect,
   IRectAttribute,
   IRectGraphicAttribute,
+  ISegment,
   IShadowRoot
 } from '../interface';
 import { ACustomAnimate } from './animate';
@@ -703,7 +704,7 @@ export class MotionPath extends ACustomAnimate<any> {
   }
 }
 
-export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
+export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; segments?: ISegment[] }> {
   protected fromPoints: IPointLike[];
   protected toPoints: IPointLike[];
   protected points: IPointLike[];
@@ -711,6 +712,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
   protected newPointAnimateType: 'grow' | 'appear' | 'clip';
   protected clipRange: number;
   protected clipRangeByDimension: 'x' | 'y';
+  protected segmentsCache: number[];
 
   constructor(
     from: any,
@@ -724,9 +726,32 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
     this.clipRangeByDimension = params?.clipRangeByDimension ?? 'x';
   }
 
+  private getPoints(attribute: typeof this.from, cache = false): IPointLike[] {
+    if (attribute.points) {
+      return attribute.points;
+    }
+
+    if (attribute.segments) {
+      const points = [] as IPointLike[];
+      if (!this.segmentsCache) {
+        this.segmentsCache = [];
+      }
+      attribute.segments.map(segment => {
+        if (segment.points) {
+          points.push(...segment.points);
+        }
+        if (cache) {
+          this.segmentsCache.push(segment.points?.length ?? 0);
+        }
+      });
+      return points;
+    }
+    return [];
+  }
+
   onBind(): void {
-    const originFromPoints = this.from?.points;
-    const originToPoints = this.to?.points;
+    const originFromPoints = this.getPoints(this.from);
+    const originToPoints = this.getPoints(this.to, true);
     this.fromPoints = !originFromPoints ? [] : !Array.isArray(originFromPoints) ? [originFromPoints] : originFromPoints;
     this.toPoints = !originToPoints ? [] : !Array.isArray(originToPoints) ? [originToPoints] : originToPoints;
 
@@ -813,7 +838,19 @@ export class TagPointsUpdate extends ACustomAnimate<{ points: IPointLike[] }> {
     if (this.clipRange) {
       out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
     }
-    out.points = this.points;
+    if (this.segmentsCache && this.to.segments) {
+      let start = 0;
+      out.segments = this.to.segments.map((segment, index) => {
+        const points = this.points.slice(start, this.segmentsCache[start]);
+        start += this.segmentsCache[start];
+        return {
+          ...segment,
+          points
+        };
+      });
+    } else {
+      out.points = this.points;
+    }
   }
 }
 

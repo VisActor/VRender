@@ -56,9 +56,6 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     areaTheme: Required<IAreaGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, areaTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       attribute.segments
         ? this.updateAreaAABBBoundsBySegments(attribute, areaTheme, aabbBounds)

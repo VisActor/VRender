@@ -41,6 +41,8 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   _circle: Arc;
   _text: WrapText;
 
+  name: 'radio';
+
   constructor(attributes: RadioAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, Radio.defaultAttributes, attributes));
     this.renderGroup();
@@ -136,4 +138,11 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
 
     this.stage.renderNextFrame();
   };
+
+  initAttributes(params: RadioAttributes, options?: ComponentOptions) {
+    params = options?.skipDefault ? params : merge({}, Radio.defaultAttributes, params);
+    super.initAttributes(params);
+    this.renderGroup();
+    this.render();
+  }
 }

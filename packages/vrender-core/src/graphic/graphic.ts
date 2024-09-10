@@ -424,9 +424,25 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   shouldUpdateAABBBounds(): boolean {
     // 如果存在shadowRoot，那么判断shadowRoot是否需要更新
     if (this.shadowRoot) {
-      return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds();
+      return (
+        (!!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds()) &&
+        application.graphicService.validCheck(
+          this.attribute,
+          this.getGraphicTheme() as Required<T>,
+          this._AABBBounds,
+          this
+        )
+      );
     }
-    return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS);
+    return (
+      !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) &&
+      application.graphicService.validCheck(
+        this.attribute,
+        this.getGraphicTheme() as Required<T>,
+        this._AABBBounds,
+        this
+      )
+    );
   }
 
   // 自身变化导致的AABBBounds的变化
@@ -755,7 +771,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline()).bind(this);
+    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline(), params?.slience);
+
+    animate.bind(this);
     if (params) {
       const { onStart, onFrame, onEnd, onRemove } = params;
       onStart != null && animate.onStart(onStart);
@@ -830,7 +848,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
       });
 
-      const animate = this.animate();
+      const animate = this.animate({ slience: true });
       (animate as any).stateNames = stateNames;
       animate.to(
         animateAttrs,
@@ -1246,7 +1264,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
         const nextStepVal = nextProps[key];
         const lastStepVal = (lastProps && lastProps[key]) ?? subAnimate.getLastPropByName(key, step);
-        if (nextStepVal == null || lastStepVal == null) {
+        if (nextStepVal == null || lastStepVal == null || nextStepVal === lastStepVal) {
           // 用户直接调用stepInterpolate可能会走进来，如果传入的参数出现null或者undefined，直接赋值最终的值
           nextAttributes[key] = nextStepVal;
           return;

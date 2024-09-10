@@ -12,3 +12,4 @@
 {{import: graphic-richtext}}
 {{import: graphic-symbol}}
 {{import: graphic-text}}
+{{import: graphic-tag}}

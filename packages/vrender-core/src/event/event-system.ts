@@ -186,6 +186,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    // 避免内存泄露
     this.rootPointerEvent.nativeEvent = null;
   };
 
@@ -206,6 +207,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    // 避免内存泄露
     this.rootPointerEvent.nativeEvent = null;
   };
 
@@ -226,6 +228,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    // 避免内存泄露
     this.rootPointerEvent.nativeEvent = null;
   };
 
@@ -243,6 +246,7 @@ export class EventSystem {
     }
 
     this.setCursor(this.manager.cursor, this.manager.cursorTarget);
+    // 避免内存泄露
     this.rootPointerEvent.nativeEvent = null;
   };
 

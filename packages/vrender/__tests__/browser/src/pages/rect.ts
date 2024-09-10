@@ -31,6 +31,22 @@ export const page = () => {
     boundsPadding: [2, 2, 2, 2],
     pickMode: 'imprecise'
   });
+
+  rect.states = {
+    a: {
+      height: 100
+    },
+    b: {
+      cornerRadius: 100
+    }
+  };
+
+  rect.on('click', () => {
+    rect.useStates(['a', 'b']);
+  });
+  rect.on('dblclick', () => {
+    rect.clearStates();
+  });
   graphics.push(rect);
 
   const r = createRect({

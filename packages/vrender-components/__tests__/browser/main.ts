@@ -3,6 +3,10 @@ import './style.css';
 const LOCAL_STORAGE_KEY = 'VRENDER_COMPONENTS_DEMOS';
 const specs = [
   {
+    path: 'axis-break',
+    name: '轴截断'
+  },
+  {
     path: 'draggable-mark-line',
     name: '可拖拽的均值线'
   },
@@ -35,8 +39,20 @@ const specs = [
     name: '轴标签防重叠'
   },
   {
+    path: 'axis-autoWrap',
+    name: '轴标签自动换行'
+  },
+  {
     path: 'interactive-axis',
     name: '带交互的坐标轴'
+  },
+  {
+    path: 'axis-labels',
+    name: '轴标签各种角度'
+  },
+  {
+    path: 'axis-label-limit',
+    name: '轴标签长度限制'
   },
   {
     path: 'size-legend',

@@ -17,7 +17,8 @@ export class RectLabel extends LabelBase<RectLabelAttrs> {
   };
 
   constructor(attributes: RectLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, RectLabel.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, RectLabel.defaultAttributes, restAttributes) });
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {

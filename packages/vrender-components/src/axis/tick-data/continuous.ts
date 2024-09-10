@@ -6,6 +6,38 @@ import type { ICartesianTickDataOpt, ILabelItem, ITickData, ITickDataOpt } from 
 // eslint-disable-next-line no-duplicate-imports
 import { convertDomainToTickData, getCartesianLabelBounds, hasOverlap, intersect } from './util';
 
+function getScaleTicks(
+  op: ITickDataOpt,
+  scale: ContinuousScale,
+  count: number,
+  getTicks: (count: number, domain?: [number, number]) => number[]
+) {
+  let scaleTicks: number[];
+  const { breakData } = op;
+
+  // Todo: @zwx 将截断的逻辑挪到 scale 中
+  if (breakData && breakData()) {
+    const { breakDomains } = breakData();
+    const domain = scale.domain();
+    scaleTicks = [];
+    for (let i = 0; i < domain.length - 1; i++) {
+      const subDomain: [number, number] = [domain[i], domain[i + 1]];
+      const ticks = getTicks(count, subDomain); // 暂时不对个数进行分段
+      ticks.forEach(tick => {
+        if (!breakDomains.some(breakDomain => tick >= breakDomain[0] && tick <= breakDomain[1])) {
+          scaleTicks.push(tick);
+        }
+      });
+    }
+    // reset
+    (scale as LinearScale).domain(domain);
+  } else {
+    scaleTicks = getTicks(count);
+  }
+
+  return scaleTicks;
+}
+
 /** 连续轴默认 tick 数量 */
 export const DEFAULT_CONTINUOUS_TICK_COUNT = 5;
 /**
@@ -28,20 +60,41 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     return convertDomainToTickData([scale.domain()[0]]);
   }
 
-  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle } = op;
+  const { tickCount, forceTickCount, tickStep, noDecimals = false, labelStyle, breakData } = op;
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
     scaleTicks = (scale as LinearScale).stepTicks(tickStep);
   } else if (isValid(forceTickCount)) {
-    scaleTicks = (scale as LinearScale).forceTicks(forceTickCount);
+    scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).forceTicks(count);
+      }
+      return (scale as LinearScale).forceTicks(count);
+    });
   } else if (op.tickMode === 'd3') {
-    const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
-    scaleTicks = (scale as LinearScale).d3Ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals });
+    const count =
+      (isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount) ??
+      DEFAULT_CONTINUOUS_TICK_COUNT;
+
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).d3Ticks(count, { noDecimals });
+      }
+      return (scale as LinearScale).d3Ticks(count, { noDecimals });
+    });
   } else {
-    const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
+    const count =
+      (isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount) ??
+      DEFAULT_CONTINUOUS_TICK_COUNT;
     const customTicks = isFunction(op.tickMode) ? op.tickMode : undefined;
-    scaleTicks = (scale as LinearScale).ticks(count ?? DEFAULT_CONTINUOUS_TICK_COUNT, { noDecimals, customTicks });
+
+    scaleTicks = getScaleTicks(op, scale, count, (count: number, subDomain?: [number, number]) => {
+      if (subDomain && subDomain.length) {
+        return (scale as LinearScale).domain(subDomain, true).ticks(count, { noDecimals, customTicks });
+      }
+      return (scale as LinearScale).ticks(count, { noDecimals, customTicks });
+    });
   }
 
   if (op.sampling) {
@@ -55,8 +108,9 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
             value: scaleTicks[i]
           } as ILabelItem<number>)
       );
+      const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
       while (items.length >= 3 && hasOverlap(items, labelGap)) {
-        items = methods.parity(items);
+        items = samplingMethod(items, labelGap);
       }
       const ticks = items.map(item => item.value);
 

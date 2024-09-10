@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: add updateHoverIconState in richtext",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

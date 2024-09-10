@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: fix issue with richtext edit plugin while defucus out of text",
+      "comment": "feat: pauseRender support pass count",
       "type": "none"
     }
   ],

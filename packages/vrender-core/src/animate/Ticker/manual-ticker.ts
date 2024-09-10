@@ -43,7 +43,7 @@ export class ManualTicker extends DefaultTicker implements ITicker {
   }
 
   tickAt(time: number) {
-    this.tickerHandler.tick(time - this.lastFrameTime, (handler: ITickHandler) => {
+    this.tickerHandler.tick(time - Math.max(this.lastFrameTime, 0), (handler: ITickHandler) => {
       this.handleTick(handler, { once: true });
     });
   }

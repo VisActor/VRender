@@ -3,11 +3,13 @@ import { getTextBounds } from '@visactor/vrender-core';
 import type { IGraphic, IGroup, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { isGreater, isLess, tau, normalizeAngle, polarToCartesian } from '@visactor/vutils';
+import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge } from '@visactor/vutils';
 import { traverseGroup } from '../util/common';
 import type { Vector2 } from '../util';
 // eslint-disable-next-line no-duplicate-imports
 import { scale, length } from '../util';
+import type { BreakSymbol } from './type';
+import { DEFAULT_AXIS_BREAK_SYMBOL_STYLE } from './config';
 import type { Point } from '../core/type';
 
 // 和 vutils 版本不同
@@ -77,6 +79,18 @@ export function getCircleLabelPosition(
   return { x, y };
 }
 
+export function getAxisBreakSymbolAttrs(props: BreakSymbol = {}) {
+  const { style = {}, angle = Math.PI * 0.5 } = props;
+  const symbolStyle = merge({}, DEFAULT_AXIS_BREAK_SYMBOL_STYLE, style);
+  const symbolSize = symbolStyle.size ?? DEFAULT_AXIS_BREAK_SYMBOL_STYLE.size;
+  return {
+    ...symbolStyle,
+    symbolType:
+      symbolStyle.symbolType ??
+      `M ${-symbolSize / 2} ${symbolSize * Math.sin(angle)} L ${symbolSize / 2} ${-symbolSize * Math.sin(angle)}`,
+    symbolSize
+  };
+}
 export function getElMap(g: IGroup) {
   const elMap: Dict<IGraphic> = {};
   traverseGroup(g, (el: IGraphic) => {

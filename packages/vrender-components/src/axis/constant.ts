@@ -12,7 +12,9 @@ export enum AXIS_ELEMENT_NAME {
   gridRegion = 'axis-grid-region',
   line = 'axis-line',
   background = 'axis-background',
-  axisLabelBackground = 'axis-label-background'
+  axisLabelBackground = 'axis-label-background',
+  axisBreak = 'axis-break',
+  axisBreakSymbol = 'axis-break-symbol'
 }
 
 export enum AxisStateValue {
@@ -28,3 +30,5 @@ export const DEFAULT_STATES = {
   [AxisStateValue.hover]: {},
   [AxisStateValue.hoverReverse]: {}
 };
+
+export const TopZIndex = 999;

@@ -96,6 +96,11 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
         fill: this.attribute.box.checkedFill,
         stroke: this.attribute.box.checkedStroke
       });
+    } else if (this.attribute.disabled) {
+      this._box.setAttributes({
+        fill: this.attribute.box.disableFill
+        // stroke: this.attribute.box.disableFill
+      });
     }
     this.appendChild(this._box);
   }

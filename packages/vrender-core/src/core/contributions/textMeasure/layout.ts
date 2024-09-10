@@ -13,6 +13,13 @@ export class CanvasTextLayout {
     this.textMeasure = textMeasure;
   }
 
+  /**
+   * 布局外部的盒子，盒子的alphabetic属性模拟文字的效果
+   * @param bbox
+   * @param textAlign
+   * @param textBaseline
+   * @returns
+   */
   LayoutBBox(bbox: TextLayoutBBox, textAlign: TextAlignType, textBaseline: TextBaselineType): TextLayoutBBox {
     if (textAlign === 'left' || textAlign === 'start') {
       bbox.xOffset = 0;
@@ -37,64 +44,64 @@ export class CanvasTextLayout {
     return bbox;
   }
 
-  GetLayout(
-    str: string,
-    width: number,
-    height: number,
-    textAlign: TextAlignType,
-    textBaseline: TextBaselineType,
-    lineHeight: number,
-    suffix: string,
-    wordBreak: boolean,
-    suffixPosition: 'start' | 'end' | 'middle'
-  ): LayoutType {
-    // 拆分str
-    const linesLayout: LayoutItemType[] = [];
-    // bbox高度可能大于totalHeight
-    const bboxWH: vec2 = [width, height];
-    const bboxOffset: vec2 = [0, 0];
+  // GetLayout(
+  //   str: string,
+  //   width: number,
+  //   height: number,
+  //   textAlign: TextAlignType,
+  //   textBaseline: TextBaselineType,
+  //   lineHeight: number,
+  //   suffix: string,
+  //   wordBreak: boolean,
+  //   suffixPosition: 'start' | 'end' | 'middle'
+  // ): LayoutType {
+  //   // 拆分str
+  //   const linesLayout: LayoutItemType[] = [];
+  //   // bbox高度可能大于totalHeight
+  //   const bboxWH: vec2 = [width, height];
+  //   const bboxOffset: vec2 = [0, 0];
 
-    while (str.length > 0) {
-      const { str: clipText } = this.textMeasure.clipTextWithSuffix(
-        str,
-        this.textOptions,
-        width,
-        suffix,
-        wordBreak,
-        suffixPosition
-      );
-      linesLayout.push({
-        str: clipText,
-        width: this.textMeasure.measureTextWidth(clipText, this.textOptions)
-      });
-      str = str.substring(clipText.length);
-    }
+  //   while (str.length > 0) {
+  //     const { str: clipText } = this.textMeasure.clipTextWithSuffix(
+  //       str,
+  //       this.textOptions,
+  //       width,
+  //       suffix,
+  //       wordBreak,
+  //       suffixPosition
+  //     );
+  //     linesLayout.push({
+  //       str: clipText,
+  //       width: this.textMeasure.measureTextWidth(clipText, this.textOptions)
+  //     });
+  //     str = str.substring(clipText.length);
+  //   }
 
-    if (textAlign === 'left' || textAlign === 'start') {
-      // origin[0] = 0;
-    } else if (textAlign === 'center') {
-      bboxOffset[0] = bboxWH[0] / -2;
-    } else if (textAlign === 'right' || textAlign === 'end') {
-      bboxOffset[0] = -bboxWH[0];
-    }
+  //   if (textAlign === 'left' || textAlign === 'start') {
+  //     // origin[0] = 0;
+  //   } else if (textAlign === 'center') {
+  //     bboxOffset[0] = bboxWH[0] / -2;
+  //   } else if (textAlign === 'right' || textAlign === 'end') {
+  //     bboxOffset[0] = -bboxWH[0];
+  //   }
 
-    if (textBaseline === 'top') {
-      // origin[1] = 0;
-    } else if (textBaseline === 'middle') {
-      bboxOffset[1] = bboxWH[1] / -2;
-    } else if (textBaseline === 'bottom') {
-      bboxOffset[1] = -bboxWH[1];
-    }
+  //   if (textBaseline === 'top') {
+  //     // origin[1] = 0;
+  //   } else if (textBaseline === 'middle') {
+  //     bboxOffset[1] = bboxWH[1] / -2;
+  //   } else if (textBaseline === 'bottom') {
+  //     bboxOffset[1] = -bboxWH[1];
+  //   }
 
-    const bbox: TextLayoutBBox = {
-      xOffset: bboxOffset[0],
-      yOffset: bboxOffset[1],
-      width: bboxWH[0],
-      height: bboxWH[1]
-    };
+  //   const bbox: TextLayoutBBox = {
+  //     xOffset: bboxOffset[0],
+  //     yOffset: bboxOffset[1],
+  //     width: bboxWH[0],
+  //     height: bboxWH[1]
+  //   };
 
-    return this.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline, lineHeight);
-  }
+  //   return this.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline, lineHeight);
+  // }
 
   /**
    * 给定拆分好的每行字符串进行布局，如果传入lineWidth，那么后面的字符就拆分
@@ -119,7 +126,8 @@ export class CanvasTextLayout {
       // 直接使用lineWidth，并拆分字符串
       let width: number;
       for (let i = 0, len = lines.length; i < len; i++) {
-        width = Math.min(this.textMeasure.measureTextWidth(lines[i] as string, this.textOptions), lineWidth);
+        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(lines[i] as string, this.textOptions);
+        width = Math.min(metrics.width, lineWidth);
         linesLayout.push({
           str: this.textMeasure.clipTextWithSuffix(
             lines[i] as string,
@@ -129,7 +137,9 @@ export class CanvasTextLayout {
             wordBreak,
             suffixPosition
           ).str,
-          width
+          width,
+          ascent: metrics.ascent,
+          descent: metrics.descent
         });
       }
       bboxWH[0] = lineWidth;
@@ -140,9 +150,10 @@ export class CanvasTextLayout {
       let text: string;
       for (let i = 0, len = lines.length; i < len; i++) {
         text = lines[i] as string;
-        width = this.textMeasure.measureTextWidth(text, this.textOptions);
+        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(lines[i] as string, this.textOptions);
+        width = metrics.width;
         lineWidth = Math.max(lineWidth, width);
-        linesLayout.push({ str: text, width });
+        linesLayout.push({ str: text, width, ascent: metrics.ascent, descent: metrics.descent });
       }
       bboxWH[0] = lineWidth;
     }
@@ -162,6 +173,15 @@ export class CanvasTextLayout {
     return this.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline, lineHeight);
   }
 
+  /**
+   * 给定了bbox，使用拆分好的每行字符串进行布局
+   * @param bbox
+   * @param lines
+   * @param textAlign
+   * @param textBaseline
+   * @param lineHeight
+   * @returns
+   */
   layoutWithBBox(
     bbox: TextLayoutBBox,
     lines: LayoutItemType[],
@@ -221,8 +241,7 @@ export class CanvasTextLayout {
       line.leftOffset = bbox.width - line.width;
     }
 
-    // line.topOffset = lineHeight * 0.79 + origin[1]; // 渲染默认使用alphabetic
-    line.topOffset = (lineHeight - this.textOptions.fontSize) / 2 + this.textOptions.fontSize * 0.79 + origin[1];
+    line.topOffset = lineHeight / 2 + (line.ascent - line.descent) / 2 + origin[1];
     origin[1] += lineHeight;
 
     return line;

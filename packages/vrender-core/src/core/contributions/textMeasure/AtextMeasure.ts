@@ -213,6 +213,24 @@ export class ATextMeasure implements ITextMeasure {
     };
   }
 
+  measureTextPixelADscentAndWidth(
+    text: string,
+    options: TextOptionsType
+  ): { width: number; ascent: number; descent: number } {
+    if (!this.context) {
+      return {
+        ...this.measureTextBoundADscentEstimate(options),
+        width: this.estimate(text, options).width
+      };
+    }
+    const out = this._measureTextWithoutAlignBaseline(text, options, true);
+    return {
+      ascent: (out as any).actualBoundingBoxAscent,
+      descent: (out as any).actualBoundingBoxDescent,
+      width: (out as any).width
+    };
+  }
+
   /**
    * 获取text测量对象
    * @param text

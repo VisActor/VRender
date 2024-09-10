@@ -97,9 +97,9 @@ export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGra
         const bounds = text.AABBBounds;
         const height = bounds.height();
         const width = bounds.width();
-        const offsetY = textLayoutOffsetY(textBaseline, height, fontSize);
-        const offsetX = textDrawOffsetX(textAlign, width);
-        context.rect(offsetX + x, offsetY + y, width, height, z);
+        // const offsetY = textLayoutOffsetY(textBaseline, height, fontSize);
+        // const offsetX = textDrawOffsetX(textAlign, width);
+        context.rect(bounds.x1, bounds.y1, width, height, z);
         picked = context.isPointInPath(pickPoint.x, pickPoint.y);
         return picked;
       },
@@ -108,13 +108,6 @@ export class DefaultCanvasTextPicker extends Base3dPicker<IText> implements IGra
         symbolAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
         themeAttribute: IThemeAttribute
       ) => {
-        // 选中后面就不需要再走逻辑了
-        // if (picked) {
-        //   return true;
-        // }
-        // const lineWidth = symbolAttribute.lineWidth || themeAttribute.lineWidth;
-        // pickContext.lineWidth = getScaledStroke(pickContext, lineWidth, pickContext.dpr);
-        // picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }
     );

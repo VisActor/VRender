@@ -13,6 +13,8 @@ export interface LayoutItemType {
   leftOffset?: number; // 该行距离左侧的偏移
   topOffset?: number; // 该行距离右侧的偏移
   width: number;
+  ascent: number;
+  descent: number;
 }
 
 export interface SimplifyLayoutType {
@@ -33,6 +35,7 @@ export interface LayoutType {
 export type ITextAttribute = {
   text: string | number | string[] | number[];
   maxLineWidth: number;
+  maxWidth: number;
   textAlign: TextAlignType;
   textBaseline: TextBaselineType;
   fontSize: number;
@@ -62,11 +65,12 @@ export type ITextAttribute = {
   disableAutoClipedPoptip?: boolean;
 };
 export type ITextCache = {
-  // 单行文本的时候缓存用
+  // 单行文本的时候缓存（多行文本没有）
   clipedText?: string;
   clipedWidth?: number;
-  // 多行文本的布局缓存
+  // 文本的布局缓存（单行文本也有）
   layoutData?: LayoutType;
+  // 垂直布局的列表
   verticalList?: { text: string; width?: number; direction: number }[][];
 };
 
@@ -90,8 +94,8 @@ export interface IText extends IGraphic<ITextGraphicAttribute> {
   getBaselineMapAlign: () => Record<string, string>;
   getAlignMapBaseline: () => Record<string, string>;
 
-  updateMultilineAABBBounds: (text: (number | string)[]) => IAABBBounds;
-  updateSingallineAABBBounds: (text: number | string) => IAABBBounds;
+  // updateMultilineAABBBounds: (text: (number | string)[]) => IAABBBounds;
+  // updateSingallineAABBBounds: (text: number | string) => IAABBBounds;
 }
 
 export type TextAlignType = 'left' | 'right' | 'center' | 'start' | 'end';

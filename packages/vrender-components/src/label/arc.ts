@@ -11,7 +11,7 @@ import {
 } from '@visactor/vutils';
 import { LabelBase } from './base';
 import type { ArcLabelAttrs, IPoint, Quadrant, BaseLabelAttrs, LabelItem, IArcLabelLineSpec } from './type';
-import type { IArc, IRichTextAttribute } from '@visactor/vrender-core';
+import type { IArc, IRichTextAttribute, ITextAttribute } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { type IRichText, type IText, type IArcGraphicAttribute, type IGraphic } from '@visactor/vrender-core';
 import {
@@ -82,7 +82,6 @@ export class ArcInfo {
     this.outerRadius = outerRadius;
     this.circleCenter = circleCenter;
     this.labelVisible = true;
-    this.labelLimit = 0;
   }
 
   getLabelBounds(): IBoundsLike {
@@ -170,7 +169,9 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     }
 
     const labels = super._layout(texts);
-    const textBoundsArray = labels.map(label => this.getGraphicBounds(label as any));
+    const textBoundsArray = labels.map(label => {
+      return this.getGraphicBounds(label as any);
+    });
     const ellipsisLabelAttribute = {
       ...this.attribute.textStyle,
       text: '…'
@@ -220,16 +221,21 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           x: basedArc.labelPosition.x,
           y: basedArc.labelPosition.y,
           angle: basedArc.angle,
-          maxLineWidth: basedArc.labelLimit,
           points:
             basedArc.pointA && basedArc.pointB && basedArc.pointC
               ? [basedArc.pointA, basedArc.pointB, basedArc.pointC]
               : undefined,
           line: basedArc.labelLine
         };
-        if (labels[i].type === 'richtext') {
-          (labelAttribute as unknown as IRichTextAttribute).width = basedArc.labelLimit;
+
+        if (basedArc.labelLimit) {
+          if (labels[i].type === 'richtext') {
+            (labelAttribute as unknown as IRichTextAttribute).width = basedArc.labelLimit;
+          } else {
+            (labelAttribute as unknown as ITextAttribute).maxLineWidth = basedArc.labelLimit;
+          }
         }
+
         labels[i].setAttributes(labelAttribute);
       }
     }
@@ -526,12 +532,18 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         break;
     }
     labelWidth = Math.max(this._ellipsisWidth, labelWidth);
-    arc.labelLimit = labelWidth;
+    const needAdjustLimit = labelWidth < arc.labelSize.width - 1;
+
+    if (needAdjustLimit) {
+      arc.labelLimit = labelWidth;
+    } else {
+      arc.labelLimit = null;
+    }
+
     arc.pointC = { x: cx, y: labelPosition.y };
 
     const align = this._computeAlign(arc, attribute);
-    const targetCenterOffset =
-      getAlignOffset(align) * (arc.labelLimit < arc.labelSize.width ? arc.labelLimit : arc.labelSize.width);
+    const targetCenterOffset = getAlignOffset(align) * (needAdjustLimit ? labelWidth : arc.labelSize.width);
 
     if (labelLayoutAlign === 'edge') {
       // edge 模式下的多行文本对齐方向与其他模式相反

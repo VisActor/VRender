@@ -1,3 +1,25 @@
+# v0.20.3
+
+2024-09-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add `alignOffset` in arc-label, `line2MinLength` support customized callback
+- **@visactor/vrender-components**: support axis `breaks` for line axis
+- **@visactor/vrender-components**: support `autoWrap` in line axis label
+- **@visactor/vrender-components**: label component supports disable specific state animation
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: tag padding not work when label is rich text. fix@VisActor/VChart[#3151](https://github.com/VisActor/VRender/issues/3151)
+- **@visactor/vrender-core**: fix error of updateAABBbounds when morphing
+- **@visactor/vrender-core**: tag padding not work when label is rich text. fix@VisActor/VChart[#3151](https://github.com/VisActor/VRender/issues/3151)
+
+
+
+[更多详情请查看 v0.20.3](https://github.com/VisActor/VRender/releases/tag/v0.20.3)
+
 # v0.20.1
 
 2024-09-03

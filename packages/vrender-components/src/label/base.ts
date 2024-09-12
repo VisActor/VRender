@@ -876,7 +876,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             if (
               point &&
               (!text.animates || !text.animates.has('label-animate')) &&
-              relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.pickerService)
+              relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.getPickerService())
             ) {
               text.animate({ onStart }).wait(delay).to(to, duration, easing);
               labelLine && labelLine.animate().wait(delay).to(to, duration, easing);

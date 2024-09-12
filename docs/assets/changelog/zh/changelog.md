@@ -1,3 +1,21 @@
+# v0.20.4
+
+2024-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: pauseRender support pass count
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the issue where labels are not drawn when the linelabel animation is enabled.
+- **@visactor/vrender-core**: add updateHoverIconState in richtext
+
+
+
+[更多详情请查看 v0.20.4](https://github.com/VisActor/VRender/releases/tag/v0.20.4)
+
 # v0.20.3
 
 2024-09-09

@@ -1,3 +1,21 @@
+# v0.20.4
+
+2024-09-12
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: pauseRender support pass count
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix the issue where labels are not drawn when the linelabel animation is enabled.
+- **@visactor/vrender-core**: add updateHoverIconState in richtext
+
+
+
+[more detail about v0.20.4](https://github.com/VisActor/VRender/releases/tag/v0.20.4)
+
 # v0.20.3
 
 2024-09-09

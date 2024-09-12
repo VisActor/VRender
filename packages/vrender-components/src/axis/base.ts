@@ -32,7 +32,8 @@ import type {
   TickAttributes,
   TransformedAxisItem,
   SubTickAttributes,
-  TickLineItem
+  TickLineItem,
+  callbackFunc
 } from './type';
 import { Tag } from '../tag/tag';
 import { getElMap, getVerticalCoord } from './util';
@@ -79,7 +80,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
   abstract getRelativeVector(point?: Point): [number, number];
   protected abstract getTitleAttribute(): TagAttributes;
-  protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
   protected abstract beforeLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
@@ -524,7 +524,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       : tickDatum.label;
     let { style: textStyle } = this.attribute.label as LabelAttributes;
     textStyle = isFunction(textStyle)
-      ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
+      ? merge(
+          {},
+          DEFAULT_AXIS_THEME.label.style,
+          (textStyle as callbackFunc<Partial<ITextGraphicAttribute> | undefined>)(tickDatum, index, tickData, layer)
+        )
       : textStyle;
 
     const labelAlign = this.getLabelAlign(vector, inside, (textStyle as ITextGraphicAttribute).angle);

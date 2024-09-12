@@ -10,10 +10,10 @@ import type {
   TextBaselineType
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { graphicCreator } from '@visactor/vrender-core';
+import { createSymbol, graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
-import { isNil, get, merge, isNumberClose, isEmpty, mixin, isValidNumber } from '@visactor/vutils';
+import { isNil, get, merge, isNumberClose, isEmpty, mixin, isValidNumber, isFunction } from '@visactor/vutils';
 import { POLAR_END_ANGLE, POLAR_START_ANGLE } from '../constant';
 import type { CircleAxisAttributes, TitleAttributes, SubTickAttributes, TickLineItem, AxisItem } from './type';
 import { AxisBase } from './base';
@@ -23,6 +23,9 @@ import { CircleAxisMixin } from './mixin/circle';
 import { getCircleLabelPosition, getCirclePoints, getPolygonPath } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
+import { autoHide as autoHideFunc } from './overlap/auto-hide';
+import { circleAutoWrap } from './overlap/circle-auto-wrap';
+import { circleAutoLimit } from './overlap/circle-auto-limit';
 
 loadCircleAxisComponent();
 export interface CircleAxis
@@ -194,19 +197,6 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
 
     return subTickLineItems;
   }
-
-  protected getTextBaseline(vector: number[]): TextBaselineType {
-    let base: TextBaselineType = 'middle';
-    if (isNumberClose(vector[1], 0)) {
-      base = 'middle';
-    } else if (vector[1] > 0 && vector[1] > Math.abs(vector[0])) {
-      base = 'top';
-    } else if (vector[1] < 0 && Math.abs(vector[1]) > Math.abs(vector[0])) {
-      base = 'bottom';
-    }
-    return base;
-  }
-
   protected beforeLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
@@ -223,8 +213,48 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     layer: number,
     layerCount: number
   ): void {
-    // 暂不支持
-    return;
+    if (isEmpty(labelShapes)) {
+      return;
+    }
+
+    const { inside, radius, center, width, height, label, orient } = this.attribute;
+    const bounds =
+      isValidNumber(width) && isValidNumber(height)
+        ? {
+            x1: 0,
+            y1: 0,
+            x2: width,
+            y2: height
+          }
+        : {
+            x1: center.x - radius,
+            y1: center.y - radius,
+            x2: center.x + radius,
+            y2: center.y + radius
+          };
+    const labelPoints = labelData.map(item => this.getTickCoord(item.value));
+    const { layoutFunc, autoLimit, limitEllipsis, autoHide, autoHideMethod, autoHideSeparation, autoWrap } = label;
+
+    if (isFunction(layoutFunc)) {
+      // 自定义布局
+      layoutFunc(labelShapes, labelData, layer, this);
+    } else {
+      if (autoWrap) {
+        circleAutoWrap(labelShapes, labelPoints, { inside, center, bounds, ellipsis: limitEllipsis });
+      }
+
+      // autoWrap has computed width & height limit
+      if (!autoWrap && autoLimit) {
+        circleAutoLimit(labelShapes, labelPoints, { inside, center, bounds, ellipsis: limitEllipsis });
+      }
+      if (autoHide) {
+        autoHideFunc(labelShapes, {
+          orient,
+          method: autoHideMethod,
+          separation: autoHideSeparation
+        });
+      }
+    }
   }
   protected afterLabelsOverlap(
     labelShapes: IText[],
@@ -241,6 +271,23 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     inside?: boolean,
     angle?: number
   ): { textAlign: TextAlignType; textBaseline: TextBaselineType } {
+    if (isNumberClose(vector[0], 0)) {
+      return {
+        textAlign: 'center',
+        textBaseline: vector[0] > 0 ? 'top' : 'bottom'
+      };
+    } else if (vector[0] < 0) {
+      return {
+        textAlign: 'right',
+        textBaseline: 'middle'
+      };
+    } else if (vector[0] > 0) {
+      return {
+        textAlign: 'left',
+        textBaseline: 'middle'
+      };
+    }
+
     return {
       textAlign: 'center', //'left',
       textBaseline: 'middle' //'top'
@@ -253,7 +300,18 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     text: string | number,
     style: Partial<ITextGraphicAttribute>
   ) {
-    return getCircleLabelPosition(point, vector, text, style);
+    const pos = getCircleLabelPosition(point, vector, text, style);
+
+    this.axisContainer.add(
+      createSymbol({
+        ...pos,
+        size: 10,
+        fill: 'red',
+        fillOpacity: 0.5
+      })
+    );
+
+    return pos;
   }
 }
 

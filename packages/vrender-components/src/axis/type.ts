@@ -567,7 +567,7 @@ export interface ITickData {
   // label: string;
 }
 
-type ITickCallbackOption = {
+export type ITickCallbackOption = {
   /**
    * 坐标轴占据的画布大小。
    * 直角坐标系中为轴的宽度或高度。

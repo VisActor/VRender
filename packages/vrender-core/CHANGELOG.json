@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.4",
+      "tag": "@visactor/vrender-core_v0.20.4",
+      "date": "Thu, 12 Sep 2024 07:33:20 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: pauseRender support pass count"
+          },
+          {
+            "comment": "fix: add updateHoverIconState in richtext"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.3",
       "tag": "@visactor/vrender-core_v0.20.3",
       "date": "Sat, 07 Sep 2024 09:16:33 GMT",

@@ -10,7 +10,7 @@ import type {
   TextBaselineType
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import { createSymbol, graphicCreator } from '@visactor/vrender-core';
+import { graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { Point } from '@visactor/vutils';
 import { isNil, get, merge, isNumberClose, isEmpty, mixin, isValidNumber, isFunction } from '@visactor/vutils';
@@ -24,7 +24,6 @@ import { getCircleLabelPosition, getCirclePoints, getPolygonPath } from './util'
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
-import { circleAutoWrap } from './overlap/circle-auto-wrap';
 import { circleAutoLimit } from './overlap/circle-auto-limit';
 
 loadCircleAxisComponent();

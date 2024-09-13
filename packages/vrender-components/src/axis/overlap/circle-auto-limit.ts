@@ -1,4 +1,4 @@
-import type { IText, ITextGraphicAttribute } from '@visactor/vrender-core';
+import type { IText } from '@visactor/vrender-core';
 import { isNumberClose } from '@visactor/vutils';
 import type { Point } from '../../core/type';
 
@@ -19,19 +19,10 @@ function findSiblingLabels(labels: IText[], selfIndex: number) {
 }
 
 function adjustMaxLineWidth(label: IText, maxLineWidth: number, ellipsis: string) {
-  const { x = 0, textAlign } = label.attribute;
-  const newAttrs: ITextGraphicAttribute = {
+  label.setAttributes({
     maxLineWidth,
     ellipsis: label.attribute.ellipsis ?? ellipsis
-  };
-
-  // if (textAlign === 'right') {
-  //   newAttrs.x = x - delta;
-  // } else if (textAlign === 'center') {
-  //   newAttrs.x = x - delta / 2;
-  // }
-
-  label.setAttributes(newAttrs);
+  });
 }
 
 function adjustMaxHeight(
@@ -67,10 +58,15 @@ export function circleAutoLimit(labels: IText[], config: WrapConfig) {
   if (!inside) {
     // TODO inside label暂不处理，现在应该没有类似的需求
     labels.forEach((label, index) => {
-      const { x } = label.attribute;
+      const { x, y } = label.attribute;
       const b = label.AABBBounds;
 
       if (isNumberClose(x, center.x)) {
+        if (y > bounds.y2 || y < bounds.y1) {
+          adjustMaxLineWidth(label, 0, ellipsis);
+          return;
+        }
+
         const boxWidth = bounds.x2 - bounds.x1;
         // 12点和6点钟方向对应的label
         if (labels.length >= 3) {

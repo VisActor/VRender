@@ -269,7 +269,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     if (isNumberClose(vector[0], 0)) {
       return {
         textAlign: 'center',
-        textBaseline: vector[0] > 0 ? 'top' : 'bottom'
+        textBaseline: vector[1] > 0 ? 'top' : 'bottom'
       };
     } else if (vector[0] < 0) {
       return {
@@ -297,7 +297,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
   ) {
     const pos = getCircleLabelPosition(point, vector);
 
-    return pos;
+    return point;
   }
 }
 

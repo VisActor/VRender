@@ -30,7 +30,7 @@ export const getPolarAngleLabelBounds = (scale: IBaseScale, domain: any[], op: I
       baseline: labelStyle.textBaseline
     };
 
-    const { x, y } = getPolarAngleLabelPosition(angle, center, radius, labelOffset, inside, str, labelStyle);
+    const { x, y } = getPolarAngleLabelPosition(angle, center, radius, labelOffset, inside);
 
     if (!orient.align) {
       if (isNumberClose(x, center.x)) {

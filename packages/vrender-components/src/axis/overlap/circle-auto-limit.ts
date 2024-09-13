@@ -3,6 +3,7 @@ import { isNumberClose } from '@visactor/vutils';
 import type { Point } from '../../core/type';
 
 type WrapConfig = {
+  center: Point;
   inside?: boolean;
   ellipsis?: string;
   bounds: { x1: number; x2: number; y1: number; y2: number };
@@ -17,19 +18,18 @@ function findSiblingLabels(labels: IText[], selfIndex: number) {
   return { prevLabel, nextLabel };
 }
 
-function adjustMaxLineWidth(label: IText, delta: number, ellipsis: string) {
-  const maxLineWidth = label.AABBBounds.width() - delta;
+function adjustMaxLineWidth(label: IText, maxLineWidth: number, ellipsis: string) {
   const { x = 0, textAlign } = label.attribute;
   const newAttrs: ITextGraphicAttribute = {
     maxLineWidth,
     ellipsis: label.attribute.ellipsis ?? ellipsis
   };
 
-  if (textAlign === 'right') {
-    newAttrs.x = x - delta;
-  } else if (textAlign === 'center') {
-    newAttrs.x = x - delta / 2;
-  }
+  // if (textAlign === 'right') {
+  //   newAttrs.x = x - delta;
+  // } else if (textAlign === 'center') {
+  //   newAttrs.x = x - delta / 2;
+  // }
 
   label.setAttributes(newAttrs);
 }
@@ -61,38 +61,46 @@ function adjustMaxHeight(
  * @param labelPoints
  * @param config
  */
-export function circleAutoLimit(labels: IText[], labelPoints: Point[], config: WrapConfig) {
-  const { ellipsis, inside, bounds, autoWrap } = config;
+export function circleAutoLimit(labels: IText[], config: WrapConfig) {
+  const { ellipsis, inside, bounds, autoWrap, center } = config;
 
   if (!inside) {
     // TODO inside label暂不处理，现在应该没有类似的需求
     labels.forEach((label, index) => {
+      const { x } = label.attribute;
       const b = label.AABBBounds;
-      const point = labelPoints[index];
 
-      if (isNumberClose(point.x, 0)) {
+      if (isNumberClose(x, center.x)) {
         const boxWidth = bounds.x2 - bounds.x1;
         // 12点和6点钟方向对应的label
         if (labels.length >= 3) {
           // 这里其实有一个前提：所有的label都是按照顺时针或者逆时针排序好的
           const { prevLabel, nextLabel } = findSiblingLabels(labels, index);
+          let leftX = prevLabel.attribute.x;
+          let rightX = nextLabel.attribute.x;
+
+          if (leftX > rightX) {
+            leftX = nextLabel.attribute.x;
+            rightX = prevLabel.attribute.x;
+          }
+
           const maxWidth =
-            nextLabel.AABBBounds.x1 > prevLabel.AABBBounds.x2
-              ? nextLabel.AABBBounds.x1 - prevLabel.AABBBounds.x2
-              : nextLabel.AABBBounds.x2 < prevLabel.AABBBounds.x1
-              ? prevLabel.AABBBounds.x1 - nextLabel.AABBBounds.x2
-              : boxWidth;
+            leftX === rightX
+              ? boxWidth
+              : x >= leftX && x <= rightX
+              ? rightX - leftX
+              : Math.min(Math.abs(leftX - x), Math.abs(rightX - x));
           if (label.AABBBounds.width() > maxWidth) {
-            adjustMaxLineWidth(label, label.AABBBounds.width() - maxWidth, ellipsis);
+            adjustMaxLineWidth(label, maxWidth, ellipsis);
           }
         } else if (label.AABBBounds.width() > boxWidth) {
-          adjustMaxLineWidth(label, label.AABBBounds.width() - boxWidth, ellipsis);
+          adjustMaxLineWidth(label, boxWidth, ellipsis);
         }
-      } else if (b.x2 > bounds.x2) {
-        adjustMaxLineWidth(label, b.x2 - bounds.x2, ellipsis);
+      } else if (x > center.x && b.x2 > bounds.x2) {
+        adjustMaxLineWidth(label, bounds.x2 - x, ellipsis);
         autoWrap && adjustMaxHeight(labels, index, bounds);
-      } else if (b.x1 < bounds.x1) {
-        adjustMaxLineWidth(label, bounds.x1 - b.x1, ellipsis);
+      } else if (x < center.x && b.x1 < bounds.x1) {
+        adjustMaxLineWidth(label, x - bounds.x1, ellipsis);
         autoWrap && adjustMaxHeight(labels, index, bounds);
       }
     });

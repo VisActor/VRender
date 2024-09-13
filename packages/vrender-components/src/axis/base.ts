@@ -17,7 +17,7 @@ import type {
 import { graphicCreator } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
+import { abs, cloneDeep, get, isEmpty, isFunction, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
@@ -359,27 +359,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
 
   protected getVerticalCoord(point: Point, offset: number, inside: boolean): Point {
     return getVerticalCoord(point, this.getVerticalVector(offset, inside, point));
-  }
-
-  protected getTextAlign(vector: number[]): TextAlignType {
-    let align: TextAlignType = 'center';
-
-    if (isNumberClose(vector[0], 0)) {
-      if (isNumberClose(vector[1], 0)) {
-        if (Object.is(vector[1], -0)) {
-          align = 'start';
-        } else if (Object.is(vector[0], -0)) {
-          align = 'end';
-        }
-      } else {
-        align = 'center';
-      }
-    } else if (vector[0] > 0) {
-      align = 'start';
-    } else if (vector[0] < 0) {
-      align = 'end';
-    }
-    return align;
   }
 
   protected getTickLineItems() {

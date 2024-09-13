@@ -233,7 +233,6 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
             x2: center.x + radius,
             y2: center.y + radius
           };
-    const labelPoints = labelData.map(item => this.getTickCoord(item.value));
     const { layoutFunc, autoLimit, limitEllipsis, autoHide, autoHideMethod, autoHideSeparation, autoWrap } = label;
 
     if (isFunction(layoutFunc)) {
@@ -242,7 +241,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     } else {
       // autoWrap has computed width & height limit
       if (autoLimit || autoWrap) {
-        circleAutoLimit(labelShapes, labelPoints, { inside, autoWrap, bounds, ellipsis: limitEllipsis });
+        circleAutoLimit(labelShapes, { inside, autoWrap, bounds, ellipsis: limitEllipsis, center });
       }
       if (autoHide) {
         autoHideFunc(labelShapes, {
@@ -297,16 +296,7 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     text: string | number,
     style: Partial<ITextGraphicAttribute>
   ) {
-    const pos = getCircleLabelPosition(point, vector, text, style);
-
-    this.axisContainer.add(
-      createSymbol({
-        ...pos,
-        size: 10,
-        fill: 'red',
-        fillOpacity: 0.5
-      })
-    );
+    const pos = getCircleLabelPosition(point, vector);
 
     return pos;
   }

@@ -1,4 +1,3 @@
-import { getTextBounds } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import type { IGraphic, IGroup, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
@@ -31,12 +30,7 @@ export function isInRange(a: number, min: number, max: number) {
   return !isLess(a, min, 0, 1e-6) && !isGreater(a, max, 0, 1e-6);
 }
 
-export function getCircleLabelPosition(
-  tickPosition: Point,
-  tickVector: [number, number],
-  text: string | number,
-  style: Partial<ITextGraphicAttribute>
-) {
+export function getCircleLabelPosition(tickPosition: Point, tickVector: [number, number]) {
   return {
     x: tickPosition.x + tickVector[0],
     y: tickPosition.y + tickVector[1]
@@ -120,14 +114,12 @@ export function getPolarAngleLabelPosition(
   center: { x: number; y: number },
   radius: number,
   labelOffset: number,
-  inside: boolean,
-  text: string | number,
-  style: Partial<ITextGraphicAttribute>
+  inside: boolean
 ) {
   const point = polarToCartesian({ x: 0, y: 0 }, radius, angle);
   const labelPoint = getVerticalCoord(point, getCircleVerticalVector(labelOffset, point, center, inside));
   const vector = getCircleVerticalVector(labelOffset || 1, labelPoint, center, inside);
-  return getCircleLabelPosition(labelPoint, vector, text, style);
+  return getCircleLabelPosition(labelPoint, vector);
 }
 
 export function getCirclePoints(center: Point, count: number, radius: number, startAngle: number, endAngle: number) {

@@ -34,12 +34,13 @@ function adjustMaxHeight(
   } else {
     const { prevLabel, nextLabel } = findSiblingLabels(labels, selfIndex);
     const label = labels[selfIndex];
-    const heightLimit =
-      nextLabel.AABBBounds.y1 > label.AABBBounds.y1
-        ? Math.min(nextLabel.AABBBounds.y1 - label.AABBBounds.y1, bounds.y2 - label.AABBBounds.y1)
-        : prevLabel.AABBBounds.y1 > label.AABBBounds.y1
-        ? Math.min(prevLabel.AABBBounds.y1 - label.AABBBounds.y1, bounds.y2 - label.AABBBounds.y1)
-        : bounds.y2 - label.AABBBounds.y1;
+
+    const heightLimit = Math.min(
+      Math.abs(prevLabel.attribute.y - label.attribute.y),
+      Math.abs(nextLabel.attribute.y - label.attribute.y),
+      Math.abs(label.attribute.y - bounds.y1),
+      Math.abs(label.attribute.y - bounds.y2)
+    );
 
     if (heightLimit > 0) {
       label.setAttributes({ whiteSpace: 'normal', heightLimit });

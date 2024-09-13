@@ -261,6 +261,18 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     return;
   }
 
+  protected getTextBaseline(vector: [number, number]) {
+    if (Math.abs(vector[1] / vector[0]) < 0.3) {
+      return 'middle';
+    } else if (vector[1] < 0) {
+      return 'bottom';
+    } else if (vector[1] > 0) {
+      return 'top';
+    }
+
+    return 'middle';
+  }
+
   protected getLabelAlign(
     vector: [number, number],
     inside?: boolean,
@@ -274,12 +286,12 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     } else if (vector[0] < 0) {
       return {
         textAlign: 'right',
-        textBaseline: 'middle'
+        textBaseline: this.getTextBaseline(vector)
       };
     } else if (vector[0] > 0) {
       return {
         textAlign: 'left',
-        textBaseline: 'middle'
+        textBaseline: this.getTextBaseline(vector)
       };
     }
 

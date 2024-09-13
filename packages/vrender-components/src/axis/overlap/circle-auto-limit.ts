@@ -16,6 +16,45 @@ function findSiblingLabels(labels: IText[], selfIndex: number) {
 
   return { prevLabel, nextLabel };
 }
+
+function adjustMaxLineWidth(label: IText, delta: number, ellipsis: string) {
+  const maxLineWidth = label.AABBBounds.width() - delta;
+  const { x = 0, textAlign } = label.attribute;
+  const newAttrs: ITextGraphicAttribute = {
+    maxLineWidth,
+    ellipsis: label.attribute.ellipsis ?? ellipsis
+  };
+
+  if (textAlign === 'right') {
+    newAttrs.x = x - delta;
+  } else if (textAlign === 'center') {
+    newAttrs.x = x - delta / 2;
+  }
+
+  label.setAttributes(newAttrs);
+}
+
+function adjustMaxHeight(
+  labels: IText[],
+  selfIndex: number,
+  bounds: { x1: number; x2: number; y1: number; y2: number }
+) {
+  if (labels.length < 3) {
+  } else {
+    const { prevLabel, nextLabel } = findSiblingLabels(labels, selfIndex);
+    const label = labels[selfIndex];
+    const heightLimit =
+      nextLabel.AABBBounds.y1 > label.AABBBounds.y1
+        ? Math.min(nextLabel.AABBBounds.y1 - label.AABBBounds.y1, bounds.y2 - label.AABBBounds.y1)
+        : prevLabel.AABBBounds.y1 > label.AABBBounds.y1
+        ? Math.min(prevLabel.AABBBounds.y1 - label.AABBBounds.y1, bounds.y2 - label.AABBBounds.y1)
+        : bounds.y2 - label.AABBBounds.y1;
+
+    if (heightLimit > 0) {
+      label.setAttributes({ whiteSpace: 'normal', heightLimit });
+    }
+  }
+}
 /**
  * 基于所有的标签初始化未知已经布局在圆的边缘
  * @param labels
@@ -36,8 +75,7 @@ export function circleAutoLimit(labels: IText[], labelPoints: Point[], config: W
         // 12点和6点钟方向对应的label
         if (labels.length >= 3) {
           // 这里其实有一个前提：所有的label都是按照顺时针或者逆时针排序好的
-          const prevLabel = index >= 1 ? labels[index - 1] : labels[labels.length - 1];
-          const nextLabel = index < labels.length - 1 ? labels[index + 1] : labels[0];
+          const { prevLabel, nextLabel } = findSiblingLabels(labels, index);
           const maxWidth =
             nextLabel.AABBBounds.x1 > prevLabel.AABBBounds.x2
               ? nextLabel.AABBBounds.x1 - prevLabel.AABBBounds.x2
@@ -51,30 +89,12 @@ export function circleAutoLimit(labels: IText[], labelPoints: Point[], config: W
           adjustMaxLineWidth(label, label.AABBBounds.width() - boxWidth, ellipsis);
         }
       } else if (b.x2 > bounds.x2) {
-        if (autoWrap) {
-          //  const heightLimit =
-        }
         adjustMaxLineWidth(label, b.x2 - bounds.x2, ellipsis);
+        autoWrap && adjustMaxHeight(labels, index, bounds);
       } else if (b.x1 < bounds.x1) {
         adjustMaxLineWidth(label, bounds.x1 - b.x1, ellipsis);
+        autoWrap && adjustMaxHeight(labels, index, bounds);
       }
     });
   }
-}
-
-export function adjustMaxLineWidth(label: IText, delta: number, ellipsis: string) {
-  const maxLineWidth = label.AABBBounds.width() - delta;
-  const { x = 0, textAlign } = label.attribute;
-  const newAttrs: ITextGraphicAttribute = {
-    maxLineWidth,
-    ellipsis: label.attribute.ellipsis ?? ellipsis
-  };
-
-  if (textAlign === 'right') {
-    newAttrs.x = x - delta;
-  } else if (textAlign === 'center') {
-    newAttrs.x = x - delta / 2;
-  }
-
-  label.setAttributes(newAttrs);
 }

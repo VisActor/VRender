@@ -218,8 +218,9 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     }
 
     const { inside, radius, center, width, height, label, orient } = this.attribute;
+    // 宽高为0的异常情况，还是以圆心进行布局
     const bounds =
-      isValidNumber(width) && isValidNumber(height)
+      width && height
         ? {
             x1: 0,
             y1: 0,
@@ -239,13 +240,9 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       // 自定义布局
       layoutFunc(labelShapes, labelData, layer, this);
     } else {
-      if (autoWrap) {
-        circleAutoWrap(labelShapes, labelPoints, { inside, center, bounds, ellipsis: limitEllipsis });
-      }
-
       // autoWrap has computed width & height limit
-      if (!autoWrap && autoLimit) {
-        circleAutoLimit(labelShapes, labelPoints, { inside, center, bounds, ellipsis: limitEllipsis });
+      if (autoLimit || autoWrap) {
+        circleAutoLimit(labelShapes, labelPoints, { inside, autoWrap, bounds, ellipsis: limitEllipsis });
       }
       if (autoHide) {
         autoHideFunc(labelShapes, {

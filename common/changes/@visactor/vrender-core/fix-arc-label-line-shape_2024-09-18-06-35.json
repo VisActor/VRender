@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix error of `bounds-contex` when use `arcTo` in customShape",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

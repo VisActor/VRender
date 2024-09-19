@@ -307,8 +307,6 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
     text: string | number,
     style: Partial<ITextGraphicAttribute>
   ) {
-    const pos = getCircleLabelPosition(point, vector);
-
     return point;
   }
 }

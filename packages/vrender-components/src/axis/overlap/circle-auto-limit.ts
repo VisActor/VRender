@@ -30,21 +30,24 @@ function adjustMaxHeight(
   selfIndex: number,
   bounds: { x1: number; x2: number; y1: number; y2: number }
 ) {
-  if (labels.length < 3) {
-  } else {
+  const siblings = [];
+  if (labels.length >= 3) {
     const { prevLabel, nextLabel } = findSiblingLabels(labels, selfIndex);
-    const label = labels[selfIndex];
 
-    const heightLimit = Math.min(
-      Math.abs(prevLabel.attribute.y - label.attribute.y),
-      Math.abs(nextLabel.attribute.y - label.attribute.y),
-      Math.abs(label.attribute.y - bounds.y1),
-      Math.abs(label.attribute.y - bounds.y2)
-    );
+    siblings.push(prevLabel, nextLabel);
+  } else if (labels.length === 2) {
+    siblings.push(labels[selfIndex === 0 ? 1 : 0]);
+  }
+  const label = labels[selfIndex];
 
-    if (heightLimit > 0) {
-      label.setAttributes({ whiteSpace: 'normal', heightLimit });
-    }
+  let heightLimit = Math.min(Math.abs(label.attribute.y - bounds.y1), Math.abs(label.attribute.y - bounds.y2));
+
+  siblings.forEach(sibling => {
+    heightLimit = Math.min(heightLimit, Math.abs(sibling.attribute.y - label.attribute.y));
+  });
+
+  if (heightLimit > 0) {
+    label.setAttributes({ whiteSpace: 'normal', heightLimit });
   }
 }
 /**

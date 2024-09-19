@@ -128,8 +128,10 @@ export const page = () => {
       // },
       // background: 'red',
       // backgroundCornerRadius: 10,
-      text: '这是一行文字',
+      text: ['这是一行文字', '这是第二哈那个'],
       fill: 'red',
+      maxLineWidth: 100,
+      whiteSpace: 'normal',
       fontSize: 36,
       textBaseline: 'top'
     })

@@ -263,6 +263,27 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     return this._frameCache;
   }
+
+  get cliped() {
+    const frameCache = this.getFrameCache();
+    if (frameCache.actualHeight > frameCache.height) {
+      return true;
+    }
+    const { disableAutoWrapLine } = this.attribute;
+    if (disableAutoWrapLine) {
+      for (let i = 0; i < frameCache.lines.length; i++) {
+        const l = frameCache.lines[i];
+        for (let j = 0; j < l.paragraphs.length; j++) {
+          const p = l.paragraphs[j];
+          if ((p as any).overflow && (p as any).text !== '') {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+    // if (height < this.attribute.height || )
+  }
   combinedStyleToCharacter(config: IRichTextImageCharacter | IRichTextParagraphCharacter) {
     const {
       fill,

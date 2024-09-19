@@ -1,9 +1,10 @@
 import type {
   ICustomPath2D,
   IGraphicAttribute,
+  IGroup,
   IRectGraphicAttribute,
-  IRichTextAttribute,
-  ITextGraphicAttribute
+  IRichText,
+  IText
 } from '@visactor/vrender-core';
 import type { TextContent } from './core/type';
 
@@ -20,11 +21,7 @@ export type BackgroundAttributes = {
    * 自定义路径
    * @since 0.19.19
    */
-  customShape?: (
-    text: ITextGraphicAttribute | IRichTextAttribute,
-    attrs: Partial<IGraphicAttribute>,
-    path: ICustomPath2D
-  ) => ICustomPath2D;
+  customShape?: (container: IGroup, attrs: Partial<IGraphicAttribute>, path: ICustomPath2D) => ICustomPath2D;
 } & Partial<IRectGraphicAttribute>;
 
 export type IDelayType = 'debounce' | 'throttle';

@@ -78,14 +78,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = this.getGraphicTheme();
     const attribute = this.attribute;
-    if (this.isMultiLine) {
-      return undefined;
-    }
-    const { maxLineWidth = textTheme.maxLineWidth } = attribute;
+    const { maxLineWidth = textTheme.maxLineWidth, text, whiteSpace = textTheme.whiteSpace } = attribute;
     if (!Number.isFinite(maxLineWidth)) {
       return false;
     }
     this.tryUpdateAABBBounds();
+    if (Array.isArray(text) && whiteSpace !== 'normal') {
+      return !this.cache.layoutData.lines.every((item, idx) => item.str === attribute.text);
+    }
     if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
     }

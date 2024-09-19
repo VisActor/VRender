@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: poptip suppport multiline text, closed #1444",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

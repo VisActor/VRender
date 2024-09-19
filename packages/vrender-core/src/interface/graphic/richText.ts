@@ -219,6 +219,7 @@ export interface IRichTextFrame {
 
 export interface IRichText extends IGraphic<IRichTextGraphicAttribute> {
   getFrameCache: () => IRichTextFrame;
+  cliped?: boolean;
 }
 
 export interface IRichTextIcon extends IImage {

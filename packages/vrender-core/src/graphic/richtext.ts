@@ -264,7 +264,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return this._frameCache;
   }
 
-  get clip() {
+  get cliped() {
     const frameCache = this.getFrameCache();
     if (frameCache.actualHeight > frameCache.height) {
       return true;

@@ -12,7 +12,8 @@ import type {
   IRichText,
   ILine,
   ICustomPath2D,
-  IArc
+  IArc,
+  IGroup
 } from '@visactor/vrender-core';
 import type { BoundsAnchorType, IPointLike, InsideBoundsAnchorType } from '@visactor/vutils';
 
@@ -427,11 +428,7 @@ export interface ILabelLineSpec {
    * 自定义路径
    * @since 0.19.21
    */
-  customShape?: (
-    text: ITextGraphicAttribute,
-    attrs: Partial<ILineGraphicAttribute>,
-    path: ICustomPath2D
-  ) => ICustomPath2D;
+  customShape?: (container: IGroup, attrs: Partial<ILineGraphicAttribute>, path: ICustomPath2D) => ICustomPath2D;
   /**
    * 引导线样式
    */

@@ -83,6 +83,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
     const group = this.createOrUpdateChild('tag-content', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
 
     let symbol;
+    let tagX = -parsedPadding[3];
+    let tagY = -parsedPadding[0];
     let tagWidth = parsedPadding[1] + parsedPadding[3];
     let tagHeight = parsedPadding[0] + parsedPadding[2];
     let textX = 0;
@@ -128,33 +130,10 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         y: 0
       };
       textShape = group.createOrUpdateChild('tag-text', richTextAttrs, 'richtext') as IRichText;
-
-      // 绘制背景层
-      const { visible: bgVisible, ...backgroundStyle } = panel;
-      if (visible && isBoolean(bgVisible)) {
-        const bgRect = this.createOrUpdateChild(
-          'tag-panel',
-          {
-            ...backgroundStyle,
-            visible: bgVisible && !!text,
-            x: textShape.AABBBounds.x1 - parsedPadding[1],
-            y: textShape.AABBBounds.y1 - parsedPadding[0],
-            width: textShape.AABBBounds.width() + (parsedPadding[1] + parsedPadding[3]),
-            height: textShape.AABBBounds.height() + (parsedPadding[0] + parsedPadding[2])
-          },
-          'rect'
-        ) as IRect;
-        if (!isEmpty(state?.panel)) {
-          bgRect.states = state.panel;
-        }
-        if (backgroundStyle.customShape) {
-          const customShape = backgroundStyle.customShape;
-          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
-            return customShape(textShape.attribute, attrs, new CustomPath2D());
-          };
-        }
-        this._bgRect = bgRect;
-      }
+      tagWidth += textShape.AABBBounds.width();
+      tagHeight += textShape.AABBBounds.height();
+      tagX += textShape.AABBBounds.x1;
+      tagY += textShape.AABBBounds.y1;
     } else {
       const textAttrs = {
         text: isObject(text) && 'type' in text && text.type === 'text' ? text.text : text,
@@ -193,8 +172,8 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         }
       }
 
-      let x = 0;
-      let y = 0;
+      tagX = 0;
+      tagY = 0;
       let flag = 0;
       if (textAlign === 'left' || textAlign === 'start') {
         flag = 1;
@@ -204,14 +183,14 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
         flag = 0;
       }
       if (!flag) {
-        x -= tagWidth / 2;
+        tagX -= tagWidth / 2;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth / 2);
         }
 
         group.setAttribute('x', -symbolPlaceWidth / 2);
       } else if (flag < 0) {
-        x -= tagWidth;
+        tagX -= tagWidth;
         if (symbol) {
           symbol.setAttribute('x', (symbol.attribute.x || 0) - textWidth);
         }
@@ -287,12 +266,12 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
       }
 
       if (textBaseline === 'middle') {
-        y -= tagHeight / 2;
+        tagY -= tagHeight / 2;
         if (symbol) {
           symbol.setAttribute('y', 0);
         }
       } else if (textBaseline === 'bottom') {
-        y -= tagHeight;
+        tagY -= tagHeight;
         if (symbol) {
           symbol.setAttribute('y', -textHeight / 2);
         }
@@ -304,33 +283,32 @@ export class Tag extends AbstractComponent<Required<TagAttributes>> {
           symbol.setAttribute('y', textHeight / 2);
         }
       }
-
-      // 绘制背景层
-      const { visible: bgVisible, ...backgroundStyle } = panel;
-      if (visible && isBoolean(bgVisible)) {
-        const bgRect = this.createOrUpdateChild(
-          'tag-panel',
-          {
-            ...backgroundStyle,
-            visible: bgVisible && !!text,
-            x,
-            y,
-            width: tagWidth,
-            height: tagHeight
-          },
-          'rect'
-        ) as IRect;
-        if (!isEmpty(state?.panel)) {
-          bgRect.states = state.panel;
-        }
-        if (backgroundStyle.customShape) {
-          const customShape = backgroundStyle.customShape;
-          bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
-            return customShape(textShape.attribute, attrs, new CustomPath2D());
-          };
-        }
-        this._bgRect = bgRect;
+    }
+    // 绘制背景层
+    const { visible: bgVisible, ...backgroundStyle } = panel;
+    if (visible && isBoolean(bgVisible)) {
+      const bgRect = this.createOrUpdateChild(
+        'tag-panel',
+        {
+          ...backgroundStyle,
+          visible: bgVisible && !!text,
+          width: tagWidth,
+          height: tagHeight,
+          x: tagX,
+          y: tagY
+        },
+        'rect'
+      ) as IRect;
+      if (!isEmpty(state?.panel)) {
+        bgRect.states = state.panel;
       }
+      if (backgroundStyle.customShape) {
+        const customShape = backgroundStyle.customShape;
+        bgRect.pathProxy = (attrs: Partial<IGraphicAttribute>) => {
+          return customShape(this, attrs, new CustomPath2D());
+        };
+      }
+      this._bgRect = bgRect;
     }
     this._textShape = textShape;
     this._symbol = symbol;

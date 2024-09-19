@@ -1,6 +1,6 @@
 import type { BandScale, IBaseScale } from '@visactor/vscale';
-import { isFunction, isValid, maxInArray, minInArray } from '@visactor/vutils';
-import type { IPolarTickDataOpt, ITickData } from '../../type';
+import { isFunction, isValid, maxInArray, minInArray, isNumberClose } from '@visactor/vutils';
+import type { IPolarTickDataOpt, ITickCallbackOption, ITickData } from '../../type';
 import { MIN_TICK_GAP, convertDomainToTickData, labelOverlap } from '../util';
 import { AABBBounds } from '@visactor/vutils';
 import { initTextMeasure } from '../../../util/text';
@@ -22,16 +22,34 @@ export const getPolarAngleLabelBounds = (scale: IBaseScale, domain: any[], op: I
 
     // 估算文本位置
     const angle = scale.scale(v);
+    const center = { x: 0, y: 0 };
     let textX = 0;
     let textY = 0;
     const orient = {
-      align: labelStyle.textAlign ?? 'center',
-      baseline: labelStyle.textBaseline ?? 'middle'
+      align: labelStyle.textAlign,
+      baseline: labelStyle.textBaseline
     };
 
-    const { x, y } = getPolarAngleLabelPosition(angle, { x: 0, y: 0 }, radius, labelOffset, inside, str, labelStyle);
-    textX = x + (orient.align === 'right' ? -textWidth : orient.align === 'center' ? -textWidth / 2 : 0);
-    textY = y + (orient.baseline === 'bottom' ? -textHeight : orient.baseline === 'middle' ? -textHeight / 2 : 0);
+    const { x, y } = getPolarAngleLabelPosition(angle, center, radius, labelOffset, inside);
+
+    if (!orient.align) {
+      if (isNumberClose(x, center.x)) {
+        if (!orient.baseline) {
+          if (y > center.y) {
+            orient.baseline = 'top';
+          } else {
+            orient.baseline = 'bottom';
+          }
+        }
+      } else if (x > center.x) {
+        orient.align = 'left';
+      } else if (x < center.x) {
+        orient.align = 'right';
+      }
+    }
+
+    textX = x + (orient.align === 'right' ? -textWidth : orient.align === 'left' ? 0 : -textWidth / 2);
+    textY = y + (orient.baseline === 'bottom' ? -textHeight : orient.baseline === 'top' ? 0 : -textHeight / 2);
 
     // 计算 label 包围盒
     const bounds = new AABBBounds()
@@ -67,7 +85,9 @@ export const polarAngleAxisDiscreteTicks = (scale: BandScale, op: IPolarTickData
   } else if (isValid(tickCount)) {
     const range = scale.range();
     const rangeSize = Math.abs(range[range.length - 1] - range[0]);
-    const count = isFunction(tickCount) ? tickCount({ axisLength: rangeSize, labelStyle }) : tickCount;
+    const count = isFunction(tickCount)
+      ? (tickCount as (option: ITickCallbackOption) => number)({ axisLength: rangeSize, labelStyle })
+      : tickCount;
     scaleTicks = scale.ticks(count);
   } else if (op.sampling) {
     const domain = scale.domain();

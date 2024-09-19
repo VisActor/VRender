@@ -9,7 +9,8 @@ import {
   createGlyph,
   createSymbol,
   createText,
-  createGroup
+  createGroup,
+  CustomPath2D
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { pi, pi2 } from '@visactor/vutils';

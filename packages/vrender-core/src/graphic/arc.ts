@@ -359,16 +359,43 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
     const path = new CustomPath2D();
 
+    const arc = (
+      x: number,
+      y: number,
+      radius: number,
+      startAngle: number,
+      endAngle: number,
+      anticlockwise?: boolean
+    ) => {
+      let sa = clampAngleByRadian(startAngle);
+      let ea = clampAngleByRadian(endAngle);
+
+      if (anticlockwise) {
+        [sa, ea] = [ea, sa];
+      }
+      while (ea < sa) {
+        ea += Math.PI * 2;
+      }
+      const largeArcFlag = (ea - sa) % (2 * Math.PI) > Math.PI ? 1 : 0;
+      const sweepFlag = anticlockwise ? 0 : 1;
+
+      const endX = x + radius * Math.cos(endAngle);
+      const endY = y + radius * Math.sin(endAngle);
+      path.pathArc(radius, radius, startAngle, largeArcFlag, sweepFlag, endX, endY);
+    };
+
     if (outerRadius <= epsilon) {
       path.moveTo(x, y);
     } else if (deltaAngle >= pi2 - epsilon) {
       // 是个完整的圆环
       // Or is it a circle or annulus?
       path.moveTo(x + outerRadius * cos(startAngle), y + outerRadius * sin(startAngle));
-      path.arc(x, y, outerRadius, startAngle, endAngle, !clockwise);
+      arc(x, y, outerRadius, startAngle, (startAngle + endAngle) / 2, !clockwise);
+      arc(x, y, outerRadius, (startAngle + endAngle) / 2, endAngle, !clockwise);
       if (innerRadius > epsilon) {
         path.moveTo(x + innerRadius * cos(endAngle), y + innerRadius * sin(endAngle));
-        path.arc(x, y, innerRadius, endAngle, startAngle, clockwise);
+        arc(x, y, innerRadius, endAngle, (startAngle + endAngle) / 2, clockwise);
+        arc(x, y, innerRadius, (startAngle + endAngle) / 2, startAngle, clockwise);
       }
     } else {
       const xors = outerRadius * cos(startAngle);
@@ -377,9 +404,9 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       const yire = innerRadius * sin(endAngle);
 
       path.moveTo(x + xors, y + yors);
-      path.arc(x, y, outerRadius, startAngle, endAngle, !clockwise);
+      arc(x, y, outerRadius, startAngle, endAngle, !clockwise);
       path.lineTo(x + xire, y + yire);
-      path.arc(x, y, innerRadius, endAngle, startAngle, clockwise);
+      arc(x, y, innerRadius, endAngle, startAngle, clockwise);
       path.closePath();
     }
 

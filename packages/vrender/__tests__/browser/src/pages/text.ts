@@ -9,7 +9,9 @@ import {
   IGraphic,
   createGroup,
   vglobal,
-  createWrapText
+  createWrapText,
+  CustomPath2D,
+  createArc
 } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 import { loadPoptip } from '@visactor/vrender-components';
@@ -132,6 +134,21 @@ export const page = () => {
       textBaseline: 'top'
     })
   );
+  const path = new CustomPath2D();
+  const arc = createArc({
+    x: 200,
+    y: 100,
+    outerRadius: 200,
+    innerRadius: 180,
+    startAngle: 0,
+    endAngle: Math.PI * 2,
+    fill: 'red'
+  });
+  // path.arc(0, 0, 100, 0, Math.PI / 2, true);
+  arc.toCustomPath().toString();
+  graphics.push(arc);
+  console.log(arc.toCustomPath().toString());
+  console.log('aaa', graphics[graphics.length - 1]);
   graphics.push(
     createLine({
       x: 300,

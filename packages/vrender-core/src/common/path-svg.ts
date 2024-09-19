@@ -48,7 +48,8 @@ export const enumCommandMap = {
   L: 5,
   M: 6,
   Q: 7,
-  R: 8
+  R: 8,
+  PA: 9 // 用于path的arc，不会转成贝塞尔
 };
 
 type char = string;

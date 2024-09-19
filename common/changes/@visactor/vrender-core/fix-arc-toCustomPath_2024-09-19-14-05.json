@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue while export arc string, closed #1434",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

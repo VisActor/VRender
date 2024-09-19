@@ -97,6 +97,19 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
     this._ctx && this._ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise);
     return this;
   }
+  pathArc(
+    rx: number,
+    ry: number,
+    xAxisRotation: number,
+    largeArcFlag: number,
+    sweepFlag: number,
+    x: number,
+    y: number
+  ) {
+    this.commandList.push([enumCommandMap.PA, rx, ry, xAxisRotation, largeArcFlag, sweepFlag, x, y]);
+    // this._ctx && this._ctx.arc(x, y, radius, startAngle, endAngle, counterclockwise);
+    return this;
+  }
   closePath() {
     this.commandList.push([enumCommandMap.Z]);
     this._ctx && this._ctx.closePath();
@@ -148,6 +161,8 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
       list[enumCommandMap.R] = (cmd: CommandType) => `M${cmd[1]} ${cmd[2]} h${cmd[3]} v${cmd[4]} H${cmd[1]}Z`;
       // list[enumCommandMap.A] = this.arcTransform;
       list[enumCommandMap.Z] = (cmd: CommandType) => `Z`;
+      list[enumCommandMap.PA] = (cmd: CommandType) =>
+        `A${cmd[1]} ${cmd[2]} ${cmd[3]} ${cmd[4]} ${cmd[5]} ${cmd[6]} ${cmd[7]}`;
       this.toStringCbList = list;
     }
 

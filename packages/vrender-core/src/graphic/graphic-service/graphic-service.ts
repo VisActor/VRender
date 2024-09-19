@@ -362,9 +362,9 @@ export class DefaultGraphicService implements IGraphicService {
       return true;
     }
 
-    // if (graphic.shadowRoot) {
-    //   return true;
-    // }
+    if (graphic.shadowRoot) {
+      return true;
+    }
 
     if (!graphic.valid) {
       aabbBounds.clear();

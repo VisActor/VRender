@@ -1,6 +1,15 @@
 # Change Log - @visactor/react-vrender-utils
 
-This log was last generated on Thu, 12 Sep 2024 07:33:20 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Sep 2024 06:37:57 GMT and should not be manually modified.
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- fix: fix path string of arc, fix #1434
+
+
 
 ## 0.20.4
 Thu, 12 Sep 2024 07:33:20 GMT

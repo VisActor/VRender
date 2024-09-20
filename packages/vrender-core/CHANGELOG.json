@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.5",
+      "tag": "@visactor/vrender-core_v0.20.5",
+      "date": "Fri, 20 Sep 2024 06:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: poptip suppport multiline text, closed #1444"
+          },
+          {
+            "comment": "feat: fix issue with richtext width on disableAutoWrapLine mode, support clip attr"
+          },
+          {
+            "comment": "fix: fix error of `bounds-contex` when use `arcTo` in customShape"
+          },
+          {
+            "comment": "fix: fix maxLineWidth of arc label\n\n"
+          },
+          {
+            "comment": "fix: fix path string of arc, fix #1434\n\n"
+          },
+          {
+            "comment": "fix: fix error of morphing animation in `multiToOneMorph`, fix #1439\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.4",
       "tag": "@visactor/vrender-core_v0.20.4",
       "date": "Thu, 12 Sep 2024 07:33:20 GMT",

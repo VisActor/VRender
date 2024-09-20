@@ -340,7 +340,7 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     return super.needUpdateTag(key, ARC_UPDATE_TAG_KEY);
   }
 
-  toCustomPath() {
+  toCustomPath(accurate: boolean = false) {
     const x = 0;
     const y = 0;
 
@@ -359,30 +359,25 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
     const path = new CustomPath2D();
 
-    const arc = (
-      x: number,
-      y: number,
-      radius: number,
-      startAngle: number,
-      endAngle: number,
-      anticlockwise?: boolean
-    ) => {
-      let sa = clampAngleByRadian(startAngle);
-      let ea = clampAngleByRadian(endAngle);
+    const arc = accurate
+      ? (x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) => {
+          let sa = clampAngleByRadian(startAngle);
+          let ea = clampAngleByRadian(endAngle);
 
-      if (anticlockwise) {
-        [sa, ea] = [ea, sa];
-      }
-      while (ea < sa) {
-        ea += Math.PI * 2;
-      }
-      const largeArcFlag = (ea - sa) % (2 * Math.PI) > Math.PI ? 1 : 0;
-      const sweepFlag = anticlockwise ? 0 : 1;
+          if (anticlockwise) {
+            [sa, ea] = [ea, sa];
+          }
+          while (ea < sa) {
+            ea += Math.PI * 2;
+          }
+          const largeArcFlag = (ea - sa) % (2 * Math.PI) > Math.PI ? 1 : 0;
+          const sweepFlag = anticlockwise ? 0 : 1;
 
-      const endX = x + radius * Math.cos(endAngle);
-      const endY = y + radius * Math.sin(endAngle);
-      path.pathArc(radius, radius, startAngle, largeArcFlag, sweepFlag, endX, endY);
-    };
+          const endX = x + radius * Math.cos(endAngle);
+          const endY = y + radius * Math.sin(endAngle);
+          path.pathArc(radius, radius, startAngle, largeArcFlag, sweepFlag, endX, endY);
+        }
+      : path.arc.bind(path);
 
     if (outerRadius <= epsilon) {
       path.moveTo(x, y);
@@ -408,6 +403,11 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
       path.lineTo(x + xire, y + yire);
       arc(x, y, innerRadius, endAngle, startAngle, clockwise);
       path.closePath();
+    }
+
+    if (accurate) {
+      // TODO 性能优化，目前仅figma环境导出时有用到，后续考虑优化
+      return new CustomPath2D().fromString(path.toString());
     }
 
     return path;

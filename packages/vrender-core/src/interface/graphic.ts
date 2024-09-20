@@ -484,7 +484,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   /** 创建pathProxy */
   createPathProxy: (path?: string) => void;
   /** 将图形转换成CustomPath2D */
-  toCustomPath?: () => ICustomPath2D;
+  toCustomPath?: (accurate?: boolean) => ICustomPath2D;
 
   resources?: Map<
     string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig,

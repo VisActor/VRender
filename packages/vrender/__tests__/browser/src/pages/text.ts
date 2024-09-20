@@ -128,10 +128,8 @@ export const page = () => {
       // },
       // background: 'red',
       // backgroundCornerRadius: 10,
-      text: ['这是一行文字', '这是第二哈那个'],
+      text: '这是一行文字',
       fill: 'red',
-      maxLineWidth: 100,
-      whiteSpace: 'normal',
       fontSize: 36,
       textBaseline: 'top'
     })
@@ -143,13 +141,13 @@ export const page = () => {
     outerRadius: 200,
     innerRadius: 180,
     startAngle: 0,
-    endAngle: Math.PI * 2,
+    endAngle: (Math.PI / 2) * 3,
     fill: 'red'
   });
   // path.arc(0, 0, 100, 0, Math.PI / 2, true);
   arc.toCustomPath().toString();
   graphics.push(arc);
-  console.log(arc.toCustomPath().toString());
+  console.log(arc.toCustomPath(true).toString());
   console.log('aaa', graphics[graphics.length - 1]);
   graphics.push(
     createLine({

@@ -228,12 +228,12 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           line: basedArc.labelLine
         };
 
-        if (basedArc.labelLimit) {
-          if (labels[i].type === 'richtext') {
-            (labelAttribute as unknown as IRichTextAttribute).width = basedArc.labelLimit;
-          } else {
-            (labelAttribute as unknown as ITextAttribute).maxLineWidth = basedArc.labelLimit;
-          }
+        if (labels[i].type === 'richtext') {
+          (labelAttribute as unknown as IRichTextAttribute).width =
+            basedArc.labelLimit ?? (labels[i].attribute as IRichTextAttribute).width;
+        } else {
+          (labelAttribute as unknown as ITextAttribute).maxLineWidth =
+            basedArc.labelLimit ?? (labels[i].attribute as ITextAttribute).maxLineWidth;
         }
 
         labels[i].setAttributes(labelAttribute);

@@ -83,7 +83,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return false;
     }
     this.tryUpdateAABBBounds();
-    if (this.cache.layoutData.lines) {
+    if (this.cache?.layoutData?.lines) {
       let mergedText = '';
       this.cache.layoutData.lines.forEach(item => {
         mergedText += item.str;

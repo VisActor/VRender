@@ -81,6 +81,11 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
         fill: this.attribute.circle.checkedFill,
         stroke: this.attribute.circle.checkedStroke
       });
+    } else if (this.attribute.disabled) {
+      this._circle.setAttributes({
+        fill: this.attribute.circle.disableFill
+        // stroke: this.attribute.circle.disableFill
+      });
     }
     this.appendChild(this._circle);
   }

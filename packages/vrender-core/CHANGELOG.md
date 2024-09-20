@@ -1,6 +1,24 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 12 Sep 2024 07:33:20 GMT and should not be manually modified.
+This log was last generated on Fri, 20 Sep 2024 06:37:57 GMT and should not be manually modified.
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- feat: poptip suppport multiline text, closed #1444
+- feat: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+- fix: fix error of `bounds-contex` when use `arcTo` in customShape
+- fix: fix maxLineWidth of arc label
+
+
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
 
 ## 0.20.4
 Thu, 12 Sep 2024 07:33:20 GMT

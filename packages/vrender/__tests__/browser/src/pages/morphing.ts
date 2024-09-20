@@ -184,7 +184,7 @@ export const page = () => {
     const symbols = createSymbol({
       x: Math.random() * 500,
       y: Math.random() * 500,
-      symbolType: 'triangleLeft',
+      symbolType: 'arrow',
       size: 10,
       fill: colorPools[2],
       // angle: Math.PI / 4,
@@ -194,9 +194,9 @@ export const page = () => {
     stage.defaultLayer.appendChild(symbols);
   }
 
-  stage.defaultLayer.appendChild(arc);
+  // stage.defaultLayer.appendChild(arc);
 
-  oneToMultiMorph(arc, symbolList, { duration: 2000, splitPath: 'clone', easing: 'quadIn' });
+  // oneToMultiMorph(arc, symbolList, { duration: 2000, easing: 'quadIn' });
 
   const fromSymbolList = [];
   for (let i = 0; i < 23; i++) {

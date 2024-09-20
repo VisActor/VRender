@@ -2,6 +2,18 @@
   "name": "@visactor/react-vrender-utils",
   "entries": [
     {
+      "version": "0.20.5",
+      "tag": "@visactor/react-vrender-utils_v0.20.5",
+      "date": "Fri, 20 Sep 2024 06:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix path string of arc, fix #1434\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.4",
       "tag": "@visactor/react-vrender-utils_v0.20.4",
       "date": "Thu, 12 Sep 2024 07:33:20 GMT",

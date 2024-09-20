@@ -14,7 +14,10 @@ export function run() {
         text: 'checkbox'
       },
       checked: false,
-      disabled: true
+      disabled: true,
+      box: {
+        disableFill: 'red'
+      }
     })
   );
 

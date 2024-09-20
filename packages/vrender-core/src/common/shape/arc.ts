@@ -184,30 +184,37 @@ export const addArcToBezierPath = (
 ) => {
   // https://stackoverflow.com/questions/1734745/how-to-create-circle-with-b%C3%A9zier-curves
   const delta = Math.abs(endAngle - startAngle);
-  const len = (Math.tan(delta / 4) * 4) / 3;
-  const dir = endAngle < startAngle ? -1 : 1;
+  const count = delta > 0.5 * Math.PI ? Math.ceil((2 * delta) / Math.PI) : 1;
+  const stepAngle = (endAngle - startAngle) / count;
 
-  const c1 = Math.cos(startAngle);
-  const s1 = Math.sin(startAngle);
-  const c2 = Math.cos(endAngle);
-  const s2 = Math.sin(endAngle);
+  for (let i = 0; i < count; i++) {
+    const sa = startAngle + stepAngle * i;
+    const ea = startAngle + stepAngle * (i + 1);
+    const len = (Math.tan(Math.abs(stepAngle) / 4) * 4) / 3;
+    const dir = ea < sa ? -1 : 1;
 
-  const x1 = c1 * rx + cx;
-  const y1 = s1 * ry + cy;
+    const c1 = Math.cos(sa);
+    const s1 = Math.sin(sa);
+    const c2 = Math.cos(ea);
+    const s2 = Math.sin(ea);
 
-  const x4 = c2 * rx + cx;
-  const y4 = s2 * ry + cy;
+    const x1 = c1 * rx + cx;
+    const y1 = s1 * ry + cy;
 
-  const hx = rx * len * dir;
-  const hy = ry * len * dir;
+    const x4 = c2 * rx + cx;
+    const y4 = s2 * ry + cy;
 
-  bezierPath.push(
-    // Move control points on tangent.
-    x1 - hx * s1,
-    y1 + hy * c1,
-    x4 + hx * s2,
-    y4 - hy * c2,
-    x4,
-    y4
-  );
+    const hx = rx * len * dir;
+    const hy = ry * len * dir;
+
+    bezierPath.push(
+      // Move control points on tangent.
+      x1 - hx * s1,
+      y1 + hy * c1,
+      x4 + hx * s2,
+      y4 - hy * c2,
+      x4,
+      y4
+    );
+  }
 };

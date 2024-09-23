@@ -1,4 +1,4 @@
-import type { IAABBBounds } from '@visactor/vutils';
+import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
 import { max, isArray, getContextFont, transformBoundsWithMatrix } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
@@ -6,7 +6,7 @@ import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { calculateLineHeight } from '../common/utils';
+import { calculateLineHeight, rotatePoint } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { boundStroke, TextDirection, verticalLayout } from './tools';
 
@@ -46,6 +46,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   cache: ITextCache;
   _font: string;
+
+  protected declare obbText?: Text;
 
   get font(): string {
     const textTheme = this.getGraphicTheme();
@@ -136,6 +138,30 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   getGraphicTheme(): Required<ITextGraphicAttribute> {
     return getTheme(this).text;
+  }
+
+  protected doUpdateOBBBounds(): IOBBBounds {
+    const graphicTheme = this.getGraphicTheme();
+    this._OBBBounds.clear();
+    const attribute = this.attribute;
+    const { angle = graphicTheme.angle } = attribute;
+    if (!angle) {
+      const b = this.AABBBounds;
+      this._OBBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
+      return this._OBBBounds;
+    }
+    if (!this.obbText) {
+      this.obbText = new Text({});
+    }
+    this.obbText.setAttributes({ ...attribute, angle: 0 });
+    const bounds1 = this.obbText.AABBBounds;
+    const { x, y } = attribute;
+    const boundsCenter = { x: (bounds1.x1 + bounds1.x2) / 2, y: (bounds1.y1 + bounds1.y2) / 2 };
+    const center = rotatePoint({ x, y }, boundsCenter, angle);
+    this._OBBBounds.copy(bounds1);
+    this._OBBBounds.translate(center.x - boundsCenter.x, center.y - boundsCenter.y);
+    this._OBBBounds.angle = angle;
+    return this._OBBBounds;
   }
 
   protected updateAABBBounds(

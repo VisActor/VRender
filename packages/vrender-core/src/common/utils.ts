@@ -369,3 +369,22 @@ export const calculateLineHeight = (lineHeight: string | number, fontSize: numbe
   }
   return lineHeight as number;
 };
+
+export function rotatePoint(center: IPointLike, point: IPointLike, alpha: number) {
+  const cosAlpha = Math.cos(alpha);
+  const sinAlpha = Math.sin(alpha);
+
+  // 将点移到原点
+  const translatedX = point.x - center.x;
+  const translatedY = point.y - center.y;
+
+  // 进行旋转
+  const rotatedX = translatedX * cosAlpha - translatedY * sinAlpha;
+  const rotatedY = translatedX * sinAlpha + translatedY * cosAlpha;
+
+  // 移回原位置
+  return {
+    x: rotatedX + center.x,
+    y: rotatedY + center.y
+  };
+}

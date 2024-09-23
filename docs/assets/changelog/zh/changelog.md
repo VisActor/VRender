@@ -1,3 +1,25 @@
+# v0.20.5
+
+2024-09-20
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: poptip suppport multiline text, closed [#1444](https://github.com/VisActor/VRender/issues/1444)
+- **@visactor/vrender-core**: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: update parameters
+- **@visactor/vrender-components**: fix maxLineWidth of arc label
+- **@visactor/vrender-components**: fix `textStyle` of data-zoom
+- **@visactor/vrender-core**: fix error of `bounds-contex` when use `arcTo` in customShape
+- **@visactor/vrender-core**: fix path string of arc, fix [#1434](https://github.com/VisActor/VRender/issues/1434)
+- **@visactor/vrender-core**: fix error of morphing animation in `multiToOneMorph`, fix [#1439](https://github.com/VisActor/VRender/issues/1439)
+- **@visactor/vrender**: add disableFill box color in checkbox and radio [#1437](https://github.com/VisActor/VRender/issues/1437)
+
+[更多详情请查看 v0.20.5](https://github.com/VisActor/VRender/releases/tag/v0.20.5)
+
 # v0.20.4
 
 2024-09-12

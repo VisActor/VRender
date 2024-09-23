@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: line segment update animation result error",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -45,6 +45,9 @@ export function genRotateBounds(items: IText[]) {
 }
 
 export function itemIntersect(item1: IText, item2: IText) {
+  if (!item1.OBBBounds?.empty() && !item2.OBBBounds?.empty()) {
+    return item1.OBBBounds.intersects(item2.OBBBounds);
+  }
   return (
     isRectIntersect(item1.AABBBounds, item2.AABBBounds, false) &&
     (item1.rotatedBounds && item2.rotatedBounds

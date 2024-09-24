@@ -1,12 +1,12 @@
 import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { max, isArray, getContextFont, transformBoundsWithMatrix } from '@visactor/vutils';
+import { max, isArray, getContextFont, transformBoundsWithMatrix, rotatePoint } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
 import type { IText, ITextCache, ITextGraphicAttribute, LayoutItemType, LayoutType } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
-import { calculateLineHeight, rotatePoint } from '../common/utils';
+import { calculateLineHeight } from '../common/utils';
 import { TEXT_NUMBER_TYPE } from './constants';
 import { boundStroke, TextDirection, verticalLayout } from './tools';
 
@@ -157,7 +157,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const bounds1 = this.obbText.AABBBounds;
     const { x, y } = attribute;
     const boundsCenter = { x: (bounds1.x1 + bounds1.x2) / 2, y: (bounds1.y1 + bounds1.y2) / 2 };
-    const center = rotatePoint({ x, y }, boundsCenter, angle);
+    const center = rotatePoint({ x, y }, angle, boundsCenter);
     this._OBBBounds.copy(bounds1);
     this._OBBBounds.translate(center.x - boundsCenter.x, center.y - boundsCenter.y);
     this._OBBBounds.angle = angle;

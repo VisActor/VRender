@@ -23,7 +23,8 @@ import type {
   ITextGraphicAttribute,
   CustomEvent,
   IText,
-  IRichText
+  IRichText,
+  FederatedWheelEvent
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -52,6 +53,7 @@ import type {
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
 import { createTextGraphicByType } from '../../util';
+import type { ScrollBarAttributes } from '../../scrollbar';
 import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
@@ -816,6 +818,19 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           return e.detail.current;
         };
 
+    const onScroll = (e: FederatedWheelEvent) => {
+      e.preventDefault();
+      const scrollComponent = this._pagerComponent as ScrollBar;
+      const preScrollRange = scrollComponent.getScrollRange();
+      const { direction } = scrollComponent.attribute as ScrollBarAttributes;
+      const { width, height } = scrollComponent.getSliderRenderBounds();
+      const currentScrollValue = direction === 'vertical' ? e.deltaY / height : e.deltaX / width;
+      scrollComponent.setScrollRange(
+        [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue],
+        true
+      );
+    };
+
     const onPaging = (e: CustomEvent) => {
       const newPage = pageParser(e);
 
@@ -845,6 +860,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (this._itemContext.isScrollbar) {
       this._pagerComponent.addEventListener('scrollDrag', onPaging);
       this._pagerComponent.addEventListener('scrollUp', onPaging);
+      if (((this.attribute as DiscreteLegendAttrs).pager as LegendScrollbarAttributes).roamScroll) {
+        this.addEventListener('wheel', onScroll);
+      }
     } else {
       this._pagerComponent.addEventListener('toPrev', onPaging);
       this._pagerComponent.addEventListener('toNext', onPaging);

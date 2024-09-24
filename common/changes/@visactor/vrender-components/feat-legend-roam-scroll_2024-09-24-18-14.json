@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: legend support roam scroll. close@VisActor/VChart#3254",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

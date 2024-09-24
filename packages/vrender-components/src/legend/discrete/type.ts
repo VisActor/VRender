@@ -45,6 +45,11 @@ export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'lim
   LegendSwitchComponentAttributes & {
     type: 'scrollbar';
     scrollByPosition?: boolean;
+    /**
+     * 是否支持鼠标/触控板滚动
+     * @default false
+     */
+    roamScroll?: boolean;
   };
 
 export type LegendItemDatum = {

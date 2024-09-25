@@ -7,7 +7,6 @@ import type { IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { isEmpty, isFunction, last } from '@visactor/vutils';
 import type { CustomMethod } from '../type';
-import { genRotateBounds } from './util';
 
 const methods = {
   parity: function (items: IText[]) {
@@ -31,21 +30,9 @@ function intersect(textA: IText, textB: IText, sep: number) {
   if (a && b && !a.empty() && !b.empty()) {
     return a.intersects(b);
   }
-  genRotateBounds([textA, textB]);
   a = textA.AABBBounds;
   b = textB.AABBBounds;
-  return (
-    sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2) &&
-    (textA.rotatedBounds && textB.rotatedBounds
-      ? sep >
-        Math.max(
-          textB.rotatedBounds.x1 - textA.rotatedBounds.x2,
-          textA.rotatedBounds.x1 - textB.rotatedBounds.x2,
-          textB.rotatedBounds.y1 - textA.rotatedBounds.y2,
-          textA.rotatedBounds.y1 - textB.rotatedBounds.y2
-        )
-      : true)
-  );
+  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
 }
 
 function hasOverlap(items: IText[], pad: number) {

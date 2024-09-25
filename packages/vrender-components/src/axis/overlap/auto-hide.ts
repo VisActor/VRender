@@ -108,9 +108,6 @@ export function autoHide(labels: IText[], config: HideConfig) {
 
   items = reset(source);
 
-  // 计算旋转包围盒
-  genRotateBounds(items);
-
   const { method = 'parity', separation: sep = 0 } = config;
 
   const reduce = isFunction(method) ? method : methods[method] || methods.parity;

@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix limit width of arc label when has customized align offset\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "dingling112@gmail.com"
+}

@@ -230,14 +230,14 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
       const isDesc = firstItem.value > lastItem.value;
 
       if ((isDesc && noOne) || (!isDesc && noZero)) {
-        allPoints.push(this.getGridPointsByValue(noOne ? 1 : 0));
+        allPoints.push(this.getGridPointsByValue(isDesc ? 1 : 0));
       }
       items.forEach((item: any) => {
         allPoints.push(item.points as Point[]);
       });
 
       if ((isDesc && noZero) || (!isDesc && noOne)) {
-        allPoints.push(this.getGridPointsByValue(noOne ? 1 : 0));
+        allPoints.push(this.getGridPointsByValue(isDesc ? 0 : 1));
       }
 
       for (let index = 0; index < allPoints.length - 1; index++) {

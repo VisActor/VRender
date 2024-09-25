@@ -343,7 +343,7 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
       if ((_g as any).stage === _g) {
         break;
       }
-      intree = !!(_g.parent && _g.parent.stage);
+      intree = !!_g.stage;
       _g = _g.parent;
     }
     if (!intree) {

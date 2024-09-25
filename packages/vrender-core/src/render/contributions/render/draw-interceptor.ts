@@ -338,12 +338,13 @@ export class InteractiveDrawItemInterceptorContribution implements IDrawItemInte
     // 如果主图元被删除了，那把交互图元这个也删除
     // 一直往上找
     let intree = !!baseGraphic.stage;
-    const _g = baseGraphic.parent;
+    let _g = baseGraphic.parent;
     while (intree && _g) {
       if ((_g as any).stage === _g) {
         break;
       }
       intree = !!(_g.parent && _g.parent.stage);
+      _g = _g.parent;
     }
     if (!intree) {
       const interactiveLayer = drawContext.stage.getLayer('_builtin_interactive');

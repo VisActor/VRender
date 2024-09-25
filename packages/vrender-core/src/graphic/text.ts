@@ -157,7 +157,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     const bounds1 = this.obbText.AABBBounds;
     const { x, y } = attribute;
     const boundsCenter = { x: (bounds1.x1 + bounds1.x2) / 2, y: (bounds1.y1 + bounds1.y2) / 2 };
-    const center = rotatePoint({ x, y }, angle, boundsCenter);
+    const center = rotatePoint(boundsCenter, angle, { x, y });
     this._OBBBounds.copy(bounds1);
     this._OBBBounds.translate(center.x - boundsCenter.x, center.y - boundsCenter.y);
     this._OBBBounds.angle = angle;

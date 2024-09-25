@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with interactive graphic while parent was removed",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

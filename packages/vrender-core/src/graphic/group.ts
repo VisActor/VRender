@@ -208,6 +208,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   }
 
   protected doUpdateAABBBounds(): IAABBBounds {
+    this.updateAABBBoundsStamp++;
     const bounds = super.doUpdateAABBBounds();
 
     // 更新bounds之后需要设置父节点，否则tag丢失

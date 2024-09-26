@@ -1,3 +1,27 @@
+# v0.20.6
+
+2024-09-26
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support obb text bounds to enhance autoHide effect
+- **@visactor/vrender-core**: support obb bounds in text graphic
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix limit width of arc label when has customized align offset
+- **@visactor/vrender-components**: fix error of `alternateColor`
+- **@visactor/vrender-components**: outside label should not apply `smartInvert`
+- **@visactor/vrender-components**: fix `boundsPadding` of legend focus icon
+- **@visactor/vrender-core**: fix customPath of arc
+- **@visactor/vrender-core**: fix issue with interactive graphic while parent was removed
+- **@visactor/vrender-core**: line segment update animation result error
+
+
+
+[more detail about v0.20.6](https://github.com/VisActor/VRender/releases/tag/v0.20.6)
+
 # v0.20.5
 
 2024-09-20

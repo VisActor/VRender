@@ -127,14 +127,17 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
 
   const domain = scale.domain();
 
-  if (op.labelFirstVisible && domain[0] !== scaleTicks[0]) {
+  if (op.labelFirstVisible && domain[0] !== scaleTicks[0] && !scaleTicks.includes(domain[0])) {
     scaleTicks.unshift(domain[0]);
   }
 
-  if (op.labelLastVisible && domain[domain.length - 1] !== scaleTicks[scaleTicks.length - 1]) {
+  if (
+    op.labelLastVisible &&
+    domain[domain.length - 1] !== scaleTicks[scaleTicks.length - 1] &&
+    !scaleTicks.includes(domain[domain.length - 1])
+  ) {
     scaleTicks.push(domain[domain.length - 1]);
   }
-
   if (op.sampling) {
     // 判断重叠
     if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
@@ -161,9 +164,12 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
       let checkLast = shouldCheck(items.length, op.labelLastVisible);
 
       if (intersect(firstSourceItem as any, lastSourceItem as any, labelGap)) {
-        items.push(firstSourceItem);
-        checkLast = false;
+        if (items.includes(lastSourceItem) && items.length > 1) {
+          items.splice(items.indexOf(lastSourceItem), 1);
+          checkLast = false;
+        }
       }
+
       forceItemVisible(firstSourceItem, items, checkFirst, (item: ILabelItem<number>) =>
         intersect(item as any, firstSourceItem as any, labelGap)
       );
@@ -191,7 +197,6 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
       scaleTicks = ticks;
     }
   }
-
   return convertDomainToTickData(scaleTicks);
 };
 

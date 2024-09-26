@@ -518,6 +518,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       autoHideMethod,
       autoHideSeparation,
       lastVisible,
+      firstVisible,
       autoWrap,
       overflowLimitLength
     } = label;
@@ -568,7 +569,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           orient,
           method: autoHideMethod,
           separation: autoHideSeparation,
-          lastVisible
+          lastVisible,
+          firstVisible
         });
       }
     }

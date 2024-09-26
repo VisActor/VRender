@@ -1,10 +1,8 @@
 import type { IBaseScale } from '@visactor/vscale';
-import type { IBoundsLike } from '@visactor/vutils';
-// eslint-disable-next-line no-duplicate-imports
 import { AABBBounds, degreeToRadian } from '@visactor/vutils';
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { initTextMeasure } from '../../util/text';
-import type { ICartesianTickDataOpt, ILabelItem, IOrientType, ITickData } from '../type';
+import type { ICartesianTickDataOpt, IOrientType, ITickData } from '../type';
 
 export const convertDomainToTickData = (domain: any[]): ITickData[] => {
   const ticks = domain.map((t: number, index: number) => {
@@ -41,20 +39,6 @@ export const labelDistance = (prevLabel: AABBBounds, nextLabel: AABBBounds): [nu
 
   return [horizontal, vertical];
 };
-
-export function intersect(a: IBoundsLike, b: IBoundsLike, sep: number) {
-  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
-}
-
-export function hasOverlap<T>(items: ILabelItem<T>[], pad: number): boolean {
-  for (let i = 1, n = items.length, a = items[0], b; i < n; a = b, ++i) {
-    b = items[i];
-    if (intersect(a.AABBBounds, b.AABBBounds, pad)) {
-      return true;
-    }
-  }
-  return false;
-}
 
 export const MIN_TICK_GAP = 12;
 

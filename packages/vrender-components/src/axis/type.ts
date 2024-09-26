@@ -193,6 +193,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * @since 0.17.10
      */
     lastVisible?: boolean;
+    /**
+     * 保证第一个的label必须展示
+     * @default false
+     * @since 0.20.7
+     */
+    firstVisible?: boolean;
   };
   /**
    * 坐标轴背景配置
@@ -538,6 +544,8 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  labelFirstVisible?: boolean;
+  labelLastVisible?: boolean;
   /**
    * 截断数据范围配置
    */
@@ -546,7 +554,6 @@ export interface ITickDataOpt {
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
   axisOrientType: IOrientType;
-  labelLastVisible: boolean;
   labelFlush: boolean;
   /**
    * 截断数据范围配置

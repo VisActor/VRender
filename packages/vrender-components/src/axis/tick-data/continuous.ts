@@ -138,7 +138,7 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
   ) {
     scaleTicks.push(domain[domain.length - 1]);
   }
-  if (op.sampling) {
+  if (op.sampling && scaleTicks.length > 1) {
     // 判断重叠
     if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
       const { labelGap = 4, labelFlush } = op as ICartesianTickDataOpt;

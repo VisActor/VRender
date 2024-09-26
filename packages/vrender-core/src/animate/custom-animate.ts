@@ -841,8 +841,9 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
     if (this.segmentsCache && this.to.segments) {
       let start = 0;
       out.segments = this.to.segments.map((segment, index) => {
-        const points = this.points.slice(start, this.segmentsCache[start]);
-        start += this.segmentsCache[start];
+        const end = start + this.segmentsCache[index];
+        const points = this.points.slice(start, end);
+        start = end;
         return {
           ...segment,
           points

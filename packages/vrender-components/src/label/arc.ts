@@ -510,7 +510,10 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
     const radius = this.computeRadius(radiusRatio, attribute.width, attribute.height);
     const flag = isQuadrantLeft(quadrant) ? -1 : 1;
     let cx: number = 0;
-    let limit = (flag > 0 ? plotLayout.x2 - pointB.x : pointB.x - plotLayout.x1) - this._line2MinLength - spaceWidth;
+    let limit =
+      (flag > 0 ? plotLayout.x2 - pointB.x + this._alignOffset : pointB.x - plotLayout.x1 - this._alignOffset) -
+      this._line2MinLength -
+      spaceWidth;
 
     if (labelLayoutAlign === 'labelLine') {
       cx = (radius + line1MinLength + this._line2MinLength) * flag + (center as IPoint).x;

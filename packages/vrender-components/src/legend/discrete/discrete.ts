@@ -556,10 +556,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         x: 0,
         y: -focusSize / 2 - 1,
         strokeBoundsBuffer: 0,
+        boundsPadding: parsedPadding,
         ...focusIconStyle,
         visible: true,
-        pickMode: 'imprecise',
-        boundsPadding: parsedPadding
+        pickMode: 'imprecise'
       });
       this._appendDataToShape(focusShape, LEGEND_ELEMENT_NAME.focus, item, itemGroup);
 

@@ -170,7 +170,8 @@ export const page = () => {
     wordBreak: 'break-word',
     maxLineWidth: 200,
     // ellipsis: '',
-    direction: 'vertical',
+    direction: 'horizontal',
+    angle: 0.6,
     stroke: 'green',
     // wordBreak: 'break-word',
     // maxLineWidth: 200,
@@ -189,20 +190,23 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
+  const b = text.OBBBounds;
   const circle = createCircle({
-    x: 500,
-    y: 200,
+    x: (b.x1 + b.x2) / 2,
+    y: (b.y1 + b.y2) / 2,
     fill: 'black',
     radius: 2
   });
   graphics.push(circle);
 
   const rect = createRect({
-    x: t.AABBBounds.x1,
-    y: t.AABBBounds.y1,
-    width: t.AABBBounds.width(),
-    height: t.AABBBounds.height(),
+    x: b.x1,
+    y: b.y1,
+    width: b.width(),
+    height: b.height(),
     stroke: 'red',
+    anchor: [(b.x1 + b.x2) / 2, (b.y1 + b.y2) / 2],
+    angle: 0.6,
     lineWidth: 1
   });
   graphics.push(rect);

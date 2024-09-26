@@ -176,6 +176,7 @@ export class Glyph extends Graphic<IGlyphGraphicAttribute> implements IGlyph {
   }
 
   protected doUpdateAABBBounds(): AABBBounds {
+    this.updateAABBBoundsStamp++;
     this._AABBBounds.clear();
     const bounds = this.updateAABBBounds(this.attribute, this.getGraphicTheme(), this._AABBBounds) as AABBBounds;
     this.clearUpdateBoundTag();

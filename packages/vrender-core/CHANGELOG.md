@@ -1,6 +1,30 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 20 Sep 2024 06:37:57 GMT and should not be manually modified.
+This log was last generated on Thu, 26 Sep 2024 09:28:36 GMT and should not be manually modified.
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+### Updates
+
+- fix: fix customPath of arc
+
+
+- feat: support obb bounds in text graphic
+- fix: fix limit width of arc label when has customized align offset
+
+
+- fix: fix error of `alternateColor`
+
+
+- fix: fix issue with interactive graphic while parent was removed
+- fix: outside label should not apply `smartInvert`
+
+
+- fix: fix `boundsPadding` of legend focus icon
+
+
+- fix: line segment update animation result error
 
 ## 0.20.5
 Fri, 20 Sep 2024 06:37:57 GMT

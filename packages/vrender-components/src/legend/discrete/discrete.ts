@@ -11,7 +11,8 @@ import {
   isNil,
   isFunction,
   isArray,
-  minInArray
+  minInArray,
+  throttle
 } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
@@ -861,7 +862,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._pagerComponent.addEventListener('scrollDrag', onPaging);
       this._pagerComponent.addEventListener('scrollUp', onPaging);
       if (((this.attribute as DiscreteLegendAttrs).pager as LegendScrollbarAttributes).roamScroll) {
-        this.addEventListener('wheel', onScroll);
+        const THROTTLE_TIME = 50;
+        this.addEventListener('wheel', throttle(onScroll, THROTTLE_TIME));
       }
     } else {
       this._pagerComponent.addEventListener('toPrev', onPaging);

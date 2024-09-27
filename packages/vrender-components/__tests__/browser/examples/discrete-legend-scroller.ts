@@ -394,7 +394,8 @@ const disableTriggerEventLegend = new DiscreteLegend({
   allowAllCanceled: false,
   pager: {
     type: 'scrollbar',
-    scrollByPosition: false
+    scrollByPosition: false,
+    roamScroll: true
   }
 });
 

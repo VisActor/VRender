@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 26 Sep 2024 09:28:36 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Sep 2024 03:22:31 GMT and should not be manually modified.
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+### Updates
+
+- feat: legend support roam scroll. close@VisActor/VChart#3254
 
 ## 0.20.6
 Thu, 26 Sep 2024 09:28:36 GMT

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: legend scroll critical value leads last page not render. fix@VisActor/VChart#3172",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

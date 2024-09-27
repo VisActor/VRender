@@ -805,12 +805,24 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const pageParser = this._itemContext.isScrollbar
       ? (e: CustomEvent) => {
           const { value } = e.detail;
-          let newPage = value[0] * this._itemContext.totalPage;
-
-          if ((pager as LegendScrollbarAttributes).scrollByPosition) {
-            newPage = newPage + 1;
+          let newPage;
+          // 判断scrollbar在起点和终点的临界情况
+          // 原因:
+          // 假设totalPage为6, 则初始range=[0, 0.16666666666666666], 此时span=0.16666666666666666 = 1/6
+          // 随着scrollbar移动, 计算精度有所偏差, 在终点时range=[0.833333333333333, 1], 此时span=0.16666666666666696 > 1/6
+          // 导致在终点时无法触及最后一页的起点, 从而无法成功滚动到最后一页
+          if (value[0] === 0) {
+            newPage = 1;
+          } else if (value[1] === 1) {
+            newPage = this._itemContext.totalPage;
           } else {
-            newPage = Math.floor(newPage) + 1;
+            newPage = value[0] * this._itemContext.totalPage;
+
+            if ((pager as LegendScrollbarAttributes).scrollByPosition) {
+              newPage = newPage + 1;
+            } else {
+              newPage = Math.floor(newPage) + 1;
+            }
           }
 
           return newPage;

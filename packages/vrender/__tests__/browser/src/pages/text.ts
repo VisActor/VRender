@@ -190,6 +190,8 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
+  text.setAttributes({ visible: false });
+  console.log(text.AABBBounds);
   const b = text.OBBBounds;
   const circle = createCircle({
     x: (b.x1 + b.x2) / 2,

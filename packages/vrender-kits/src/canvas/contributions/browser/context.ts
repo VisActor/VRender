@@ -540,11 +540,7 @@ export class BrowserContext2d implements IContext2d {
         this.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5], z);
       }
     } else {
-      if (radius <= 0) {
-        this.nativeContext.arc(x, y, 0, startAngle, endAngle, anticlockwise);
-      } else {
-        this.nativeContext.arc(x, y, radius, startAngle, endAngle, anticlockwise);
-      }
+      this.nativeContext.arc(x, y, Math.max(0, radius), startAngle, endAngle, anticlockwise);
     }
   }
 

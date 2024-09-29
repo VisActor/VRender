@@ -496,7 +496,7 @@ export class StreamLight extends ACustomAnimate<any> {
         c.curves.forEach((ci: any) => curves.push(ci));
       });
       return this._updateCurves(customPath, curves, totalLen, ratio);
-    } else if (g.type === 'area') {
+    } else if (g.type === 'area' && g.cacheArea?.top?.curves) {
       const cache = g.cacheArea as IAreaCacheItem;
       const totalLen = cache.top.curves.reduce((a, b) => a + b.getLength(), 0);
       return this._updateCurves(customPath, cache.top.curves, totalLen, ratio);
@@ -509,44 +509,46 @@ export class StreamLight extends ACustomAnimate<any> {
     let lastLen = 0;
     let start = false;
     for (let i = 0; i < curves.length; i++) {
-      const curveItem = curves[i];
-      const len = curveItem.getLength();
-      const startPercent = 1 - (lastLen + len - startLen) / len;
-      let endPercent = 1 - (lastLen + len - endLen) / len;
-      let curveForStart: ICubicBezierCurve;
-      if (lastLen < startLen && lastLen + len > startLen) {
-        start = true;
-        if (curveItem.p2 && curveItem.p3) {
-          const [_, curve2] = divideCubic(curveItem as ICubicBezierCurve, startPercent);
-          customPath.moveTo(curve2.p0.x, curve2.p0.y);
-          curveForStart = curve2;
-          // console.log(curve2.p0.x, curve2.p0.y);
-        } else {
-          const p = curveItem.getPointAt(startPercent);
-          customPath.moveTo(p.x, p.y);
-        }
-      }
-      if (lastLen < endLen && lastLen + len > endLen) {
-        if (curveItem.p2 && curveItem.p3) {
-          if (curveForStart) {
-            endPercent = (endLen - startLen) / curveForStart.getLength();
+      if (curves[i].defined !== false) {
+        const curveItem = curves[i];
+        const len = curveItem.getLength();
+        const startPercent = 1 - (lastLen + len - startLen) / len;
+        let endPercent = 1 - (lastLen + len - endLen) / len;
+        let curveForStart: ICubicBezierCurve;
+        if (lastLen < startLen && lastLen + len > startLen) {
+          start = true;
+          if (curveItem.p2 && curveItem.p3) {
+            const [_, curve2] = divideCubic(curveItem as ICubicBezierCurve, startPercent);
+            customPath.moveTo(curve2.p0.x, curve2.p0.y);
+            curveForStart = curve2;
+            // console.log(curve2.p0.x, curve2.p0.y);
+          } else {
+            const p = curveItem.getPointAt(startPercent);
+            customPath.moveTo(p.x, p.y);
           }
-          const [curve1] = divideCubic(curveForStart || (curveItem as ICubicBezierCurve), endPercent);
-          customPath.bezierCurveTo(curve1.p1.x, curve1.p1.y, curve1.p2.x, curve1.p2.y, curve1.p3.x, curve1.p3.y);
-        } else {
-          const p = curveItem.getPointAt(endPercent);
-          customPath.lineTo(p.x, p.y);
         }
-        break;
-      } else if (start) {
-        if (curveItem.p2 && curveItem.p3) {
-          const curve = curveForStart || curveItem;
-          customPath.bezierCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y);
-        } else {
-          customPath.lineTo(curveItem.p1.x, curveItem.p1.y);
+        if (lastLen < endLen && lastLen + len > endLen) {
+          if (curveItem.p2 && curveItem.p3) {
+            if (curveForStart) {
+              endPercent = (endLen - startLen) / curveForStart.getLength();
+            }
+            const [curve1] = divideCubic(curveForStart || (curveItem as ICubicBezierCurve), endPercent);
+            customPath.bezierCurveTo(curve1.p1.x, curve1.p1.y, curve1.p2.x, curve1.p2.y, curve1.p3.x, curve1.p3.y);
+          } else {
+            const p = curveItem.getPointAt(endPercent);
+            customPath.lineTo(p.x, p.y);
+          }
+          break;
+        } else if (start) {
+          if (curveItem.p2 && curveItem.p3) {
+            const curve = curveForStart || curveItem;
+            customPath.bezierCurveTo(curve.p1.x, curve.p1.y, curve.p2.x, curve.p2.y, curve.p3.x, curve.p3.y);
+          } else {
+            customPath.lineTo(curveItem.p1.x, curveItem.p1.y);
+          }
         }
+        lastLen += len;
       }
-      lastLen += len;
     }
   }
 

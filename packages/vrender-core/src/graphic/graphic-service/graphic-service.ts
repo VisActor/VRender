@@ -176,6 +176,7 @@ export class DefaultGraphicService implements IGraphicService {
     onClearIncremental: ISyncHook<[IGroup, IStage]>;
     beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
     afterUpdateAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
+    clearAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds]>;
   };
 
   // 临时bounds，用作缓存
@@ -201,7 +202,8 @@ export class DefaultGraphicService implements IGraphicService {
         'aabbBounds',
         'globalAABBBounds',
         'selfChange'
-      ])
+      ]),
+      clearAABBBounds: new SyncHook<[IGraphic, IStage, IAABBBounds]>(['graphic', 'stage', 'aabbBounds'])
     };
     this.tempAABBBounds1 = new AABBBounds();
     this.tempAABBBounds2 = new AABBBounds();
@@ -250,6 +252,11 @@ export class DefaultGraphicService implements IGraphicService {
   ) {
     if (this.hooks.afterUpdateAABBBounds.taps.length) {
       this.hooks.afterUpdateAABBBounds.call(graphic, stage, bounds, params, selfChange);
+    }
+  }
+  clearAABBBounds(graphic: IGraphic, stage: IStage, b: IAABBBounds) {
+    if (this.hooks.clearAABBBounds.taps.length) {
+      this.hooks.clearAABBBounds.call(graphic, stage, b);
     }
   }
   // TODO delete
@@ -370,9 +377,11 @@ export class DefaultGraphicService implements IGraphicService {
     const { visible = theme.visible } = attribute;
 
     if (!(graphic.valid && visible)) {
-      application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
-      aabbBounds.clear();
-      application.graphicService.afterUpdateAABBBounds(graphic, graphic.stage, aabbBounds, graphic, true);
+      // application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
+      if (!aabbBounds.empty()) {
+        application.graphicService.clearAABBBounds(graphic, graphic.stage, aabbBounds);
+        aabbBounds.clear();
+      }
       return false;
     }
     return true;

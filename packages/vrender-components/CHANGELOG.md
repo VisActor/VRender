@@ -1,6 +1,58 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Sat, 07 Sep 2024 09:16:33 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Sep 2024 03:22:31 GMT and should not be manually modified.
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+### Updates
+
+- feat: legend support roam scroll. close@VisActor/VChart#3254
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+### Updates
+
+-  feat: support obb text bounds to enhance autoHide effect
+- fix: fix limit width of arc label when has customized align offset
+
+
+- fix: fix error of `alternateColor`
+
+
+- fix: outside label should not apply `smartInvert`
+
+
+- fix: fix `boundsPadding` of legend focus icon
+
+
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- fix: update parameters
+- fix: fix maxLineWidth of arc label
+
+
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix `textStyle` of data-zoom
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
+
+## 0.20.4
+Thu, 12 Sep 2024 07:33:20 GMT
+
+### Updates
+
+- fix: fix the issue where labels are not drawn when the linelabel animation is enabled.
 
 ## 0.20.3
 Sat, 07 Sep 2024 09:16:33 GMT

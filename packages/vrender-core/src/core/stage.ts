@@ -174,7 +174,7 @@ export class Stage extends Group implements IStage {
   readonly window: IWindow;
   private readonly global: IGlobal;
   readonly renderService: IRenderService;
-  pickerService?: IPickerService;
+  protected pickerService?: IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
   private _eventSystem?: EventSystem;
@@ -907,11 +907,8 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    if (!this.pickerService) {
-      this.pickerService = container.get<IPickerService>(PickerService);
-    }
     // 暂时不提供layer的pick
-    const result = this.pickerService.pick(this.children as unknown as IGraphic[], new Point(x, y), {
+    const result = this.getPickerService().pick(this.children as unknown as IGraphic[], new Point(x, y), {
       bounds: this.AABBBounds
     });
     if (result?.graphic || result?.group) {
@@ -1075,5 +1072,12 @@ export class Stage extends Group implements IStage {
   }
   resumeTriggerEvent() {
     this._eventSystem && this._eventSystem.resumeTriggerEvent();
+  }
+
+  getPickerService() {
+    if (!this.pickerService) {
+      this.pickerService = container.get<IPickerService>(PickerService);
+    }
+    return this.pickerService;
   }
 }

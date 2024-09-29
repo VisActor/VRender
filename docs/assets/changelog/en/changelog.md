@@ -1,3 +1,78 @@
+# v0.20.7
+
+2024-09-27
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: legend support roam scroll. close@VisActor/VChart[#3254](https://github.com/VisActor/VRender/issues/3254)
+
+[more detail about v0.20.7](https://github.com/VisActor/VRender/releases/tag/v0.20.7)
+
+# v0.20.6
+
+2024-09-26
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support obb text bounds to enhance autoHide effect
+- **@visactor/vrender-core**: support obb bounds in text graphic
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix limit width of arc label when has customized align offset
+- **@visactor/vrender-components**: fix error of `alternateColor`
+- **@visactor/vrender-components**: outside label should not apply `smartInvert`
+- **@visactor/vrender-components**: fix `boundsPadding` of legend focus icon
+- **@visactor/vrender-core**: fix customPath of arc
+- **@visactor/vrender-core**: fix issue with interactive graphic while parent was removed
+- **@visactor/vrender-core**: line segment update animation result error
+
+
+
+[more detail about v0.20.6](https://github.com/VisActor/VRender/releases/tag/v0.20.6)
+
+# v0.20.5
+
+2024-09-20
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: poptip suppport multiline text, closed [#1444](https://github.com/VisActor/VRender/issues/1444)
+- **@visactor/vrender-core**: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: update parameters
+- **@visactor/vrender-components**: fix maxLineWidth of arc label
+- **@visactor/vrender-components**: fix `textStyle` of data-zoom
+- **@visactor/vrender-core**: fix error of `bounds-contex` when use `arcTo` in customShape
+- **@visactor/vrender-core**: fix path string of arc, fix [#1434](https://github.com/VisActor/VRender/issues/1434)
+- **@visactor/vrender-core**: fix error of morphing animation in `multiToOneMorph`, fix [#1439](https://github.com/VisActor/VRender/issues/1439)
+- **@visactor/vrender**: add disableFill box color in checkbox and radio [#1437](https://github.com/VisActor/VRender/issues/1437)
+
+[more detail about v0.20.5](https://github.com/VisActor/VRender/releases/tag/v0.20.5)
+
+# v0.20.4
+
+2024-09-12
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: pauseRender support pass count
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix the issue where labels are not drawn when the linelabel animation is enabled.
+- **@visactor/vrender-core**: add updateHoverIconState in richtext
+
+
+
+[more detail about v0.20.4](https://github.com/VisActor/VRender/releases/tag/v0.20.4)
+
 # v0.20.3
 
 2024-09-09

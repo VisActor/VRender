@@ -17,7 +17,7 @@ import type {
 import { graphicCreator } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { abs, cloneDeep, get, isEmpty, isFunction, isNumberClose, merge, pi } from '@visactor/vutils';
+import { abs, cloneDeep, get, isEmpty, isFunction, merge, pi } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { Point } from '../core/type';
 import type { TagAttributes } from '../tag';
@@ -32,7 +32,8 @@ import type {
   TickAttributes,
   TransformedAxisItem,
   SubTickAttributes,
-  TickLineItem
+  TickLineItem,
+  callbackFunc
 } from './type';
 import { Tag } from '../tag/tag';
 import { getElMap, getVerticalCoord } from './util';
@@ -79,7 +80,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
   abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
   abstract getRelativeVector(point?: Point): [number, number];
   protected abstract getTitleAttribute(): TagAttributes;
-  protected abstract getTextBaseline(vector: [number, number], inside?: boolean): TextBaselineType;
   protected abstract beforeLabelsOverlap(
     labelShapes: IText[],
     labelData: AxisItem[],
@@ -361,27 +361,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     return getVerticalCoord(point, this.getVerticalVector(offset, inside, point));
   }
 
-  protected getTextAlign(vector: number[]): TextAlignType {
-    let align: TextAlignType = 'center';
-
-    if (isNumberClose(vector[0], 0)) {
-      if (isNumberClose(vector[1], 0)) {
-        if (Object.is(vector[1], -0)) {
-          align = 'start';
-        } else if (Object.is(vector[0], -0)) {
-          align = 'end';
-        }
-      } else {
-        align = 'center';
-      }
-    } else if (vector[0] > 0) {
-      align = 'start';
-    } else if (vector[0] < 0) {
-      align = 'end';
-    }
-    return align;
-  }
-
   protected getTickLineItems() {
     const { tick } = this.attribute;
     const data = this.data;
@@ -524,7 +503,11 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
       : tickDatum.label;
     let { style: textStyle } = this.attribute.label as LabelAttributes;
     textStyle = isFunction(textStyle)
-      ? merge({}, DEFAULT_AXIS_THEME.label.style, textStyle(tickDatum, index, tickData, layer))
+      ? merge(
+          {},
+          DEFAULT_AXIS_THEME.label.style,
+          (textStyle as callbackFunc<Partial<ITextGraphicAttribute> | undefined>)(tickDatum, index, tickData, layer)
+        )
       : textStyle;
 
     const labelAlign = this.getLabelAlign(vector, inside, (textStyle as ITextGraphicAttribute).angle);

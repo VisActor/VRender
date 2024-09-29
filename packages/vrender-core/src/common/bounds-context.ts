@@ -118,7 +118,9 @@ export class BoundsContext implements IPath2D {
   }
   // @ts-ignore
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void {
-    throw new Error('不支持arcTo');
+    // 主要用于绘制圆角的场景，暂时只算第一个控制点
+    this.bounds.add(x1, y1);
+    // this.bounds.add(x2, y2);
   }
   // @ts-ignore
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {

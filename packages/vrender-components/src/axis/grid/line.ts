@@ -4,7 +4,7 @@
  * - `type: 'circle'` 或者 `type: 'polygon'` 用于极坐标半径轴的网格线绘制
  */
 import type { IPointLike } from '@visactor/vutils';
-import { PointService, merge, polarToCartesian, mixin } from '@visactor/vutils';
+import { PointService, merge, mixin } from '@visactor/vutils';
 import { BaseGrid } from './base';
 import type {
   GridItem,
@@ -50,6 +50,12 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
     return gridPoints;
   }
 
+  protected getGridPointsByValue(value: number) {
+    const basePoint = this.getTickCoord(value);
+
+    return this._getGridPoint(this.attribute.type, basePoint);
+  }
+
   protected getGridAttribute(isSubGrid: boolean) {
     const { type: gridType, alignWithLabel = true } = this.attribute;
 
@@ -85,7 +91,7 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
       gridAttribute = merge({}, this.attribute, this.attribute.subGrid);
       // 计算 grid Items
       const subGridItems: GridItem[] = [];
-      const { count: subCount = 4 } = this.attribute.subGrid || {};
+      const { count: subCount = 4 } = gridAttribute;
       const tickLineCount = this.data.length;
       // 刻度线的数量大于 2 时，才绘制子刻度
       if (tickLineCount >= 2) {
@@ -96,17 +102,16 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
           const next = points[i + 1];
           subGridItems.push({
             id: `sub-${i}-0`,
-            points: this._getGridPoint(gridType, this.getTickCoord(pre.value)),
+            points: this.getGridPointsByValue(pre.value),
             // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
             datum: {}
           });
           for (let j = 0; j < subCount; j++) {
             const percent = (j + 1) / (subCount + 1);
             const value = (1 - percent) * pre.value + percent * next.value;
-            const point = this.getTickCoord(value);
             subGridItems.push({
               id: `sub-${i}-${j + 1}`,
-              points: this._getGridPoint(gridType, point),
+              points: this.getGridPointsByValue(value),
               // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
               datum: {}
             });
@@ -114,7 +119,7 @@ export class LineAxisGrid extends BaseGrid<LineAxisGridAttributes> {
           if (i === points.length - 2) {
             subGridItems.push({
               id: `sub-${i}-${subCount + 1}`,
-              points: this._getGridPoint(gridType, this.getTickCoord(next.value)),
+              points: this.getGridPointsByValue(next.value),
               // TODO: 其实这里也需要，后续需要考虑怎么挂上 data
               datum: {}
             });

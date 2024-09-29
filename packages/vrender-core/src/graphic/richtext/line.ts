@@ -142,41 +142,61 @@ export default class Line {
     drawIcon: (icon: IRichTextIcon, context: IContext2d, x: number, y: number, baseline: number) => void
   ) {
     if (drawEllipsis && (lastLine || this.paragraphs.some(p => (p as Paragraph).overflow))) {
-      // 处理省略号
-      let otherParagraphWidth = 0;
+      // 检测是否需要省略号，因为会有多行同时省略的情况
+      let emptyOverflow = true;
+      let skipEllipsis = false;
       for (let i = this.paragraphs.length - 1; i >= 0; i--) {
         const paragraph = this.paragraphs[i];
         if ((paragraph as Paragraph).overflow) {
-          continue;
-        }
-        if (paragraph instanceof RichTextIcon) {
-          break; // todo: 处理最后为图标，显示省略号的情况
-        }
-        if (this.direction === 'vertical' && paragraph.direction !== 'vertical') {
-          paragraph.verticalEllipsis = true;
-          break;
-        }
-        const ellipsis = drawEllipsis === true ? '...' : drawEllipsis || '';
-        paragraph.ellipsisStr = ellipsis;
-        // const { width } = measureText('...', paragraph.style);
-        const { width } = measureTextCanvas(ellipsis, paragraph.character);
-        const ellipsisWidth = width || 0;
-        if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
-          // 省略号可以直接接在后面paragraph
-          lastLine && (paragraph.ellipsis = 'add');
-
-          break;
-        } else if (ellipsisWidth <= this.blankWidth + otherParagraphWidth + paragraph.width) {
-          // 省略号需要替换paragraph中的字符
-          paragraph.ellipsis = 'replace';
-          paragraph.ellipsisWidth = ellipsisWidth;
-          paragraph.ellipsisOtherParagraphWidth = this.blankWidth + otherParagraphWidth;
-
-          break;
+          emptyOverflow = emptyOverflow && (paragraph as Paragraph).text === '';
         } else {
-          // 省略号需要的width大于paragraph的width，隐藏paragraph，向前搜索
-          paragraph.ellipsis = 'hide';
-          otherParagraphWidth += paragraph.width;
+          if (emptyOverflow) {
+            skipEllipsis = true;
+            break;
+          }
+        }
+      }
+
+      // 处理省略号
+      let otherParagraphWidth = 0;
+      if (!skipEllipsis) {
+        for (let i = this.paragraphs.length - 1; i >= 0; i--) {
+          const paragraph = this.paragraphs[i];
+          if ((paragraph as Paragraph).overflow) {
+            if ((paragraph as Paragraph).text === '') {
+              break;
+            }
+            continue;
+          }
+          if (paragraph instanceof RichTextIcon) {
+            break; // todo: 处理最后为图标，显示省略号的情况
+          }
+          if (this.direction === 'vertical' && paragraph.direction !== 'vertical') {
+            paragraph.verticalEllipsis = true;
+            break;
+          }
+          const ellipsis = drawEllipsis === true ? '...' : drawEllipsis || '';
+          paragraph.ellipsisStr = ellipsis;
+          // const { width } = measureText('...', paragraph.style);
+          const { width } = measureTextCanvas(ellipsis, paragraph.character);
+          const ellipsisWidth = width || 0;
+          if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
+            // 省略号可以直接接在后面paragraph
+            lastLine && (paragraph.ellipsis = 'add');
+
+            break;
+          } else if (ellipsisWidth <= this.blankWidth + otherParagraphWidth + paragraph.width) {
+            // 省略号需要替换paragraph中的字符
+            paragraph.ellipsis = 'replace';
+            paragraph.ellipsisWidth = ellipsisWidth;
+            paragraph.ellipsisOtherParagraphWidth = this.blankWidth + otherParagraphWidth;
+
+            break;
+          } else {
+            // 省略号需要的width大于paragraph的width，隐藏paragraph，向前搜索
+            paragraph.ellipsis = 'hide';
+            otherParagraphWidth += paragraph.width;
+          }
         }
       }
     }

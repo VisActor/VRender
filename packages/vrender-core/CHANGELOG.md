@@ -1,6 +1,61 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Sat, 07 Sep 2024 09:16:33 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Sep 2024 03:22:31 GMT and should not be manually modified.
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+_Version update only_
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+### Updates
+
+- fix: fix customPath of arc
+
+
+- feat: support obb bounds in text graphic
+- fix: fix limit width of arc label when has customized align offset
+
+
+- fix: fix error of `alternateColor`
+
+
+- fix: fix issue with interactive graphic while parent was removed
+- fix: outside label should not apply `smartInvert`
+
+
+- fix: fix `boundsPadding` of legend focus icon
+
+
+- fix: line segment update animation result error
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- feat: poptip suppport multiline text, closed #1444
+- feat: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+- fix: fix error of `bounds-contex` when use `arcTo` in customShape
+- fix: fix maxLineWidth of arc label
+
+
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
+
+## 0.20.4
+Thu, 12 Sep 2024 07:33:20 GMT
+
+### Updates
+
+- feat: pauseRender support pass count
+- fix: add updateHoverIconState in richtext
 
 ## 0.20.3
 Sat, 07 Sep 2024 09:16:33 GMT

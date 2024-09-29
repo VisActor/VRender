@@ -175,7 +175,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     this._rail = rail;
 
     // 滑块
-    const sliderRenderBounds = this._getSliderRenderBounds();
+    const sliderRenderBounds = this.getSliderRenderBounds();
     const sliderPos = this._getSliderPos(clampRange(range, limitRange[0], limitRange[1]));
     const sliderSize = sliderPos[1] - sliderPos[0];
     this._sliderSize = sliderSize;
@@ -220,7 +220,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   }
 
   // 获取滑块渲染的包围盒区域
-  private _getSliderRenderBounds() {
+  getSliderRenderBounds() {
     if (this._sliderRenderBounds) {
       return this._sliderRenderBounds;
     }
@@ -243,7 +243,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const { direction, round } = this.attribute as ScrollBarAttributes;
 
     if (round) {
-      const { width, height } = this._getSliderRenderBounds();
+      const { width, height } = this.getSliderRenderBounds();
       return direction === 'horizontal' ? height : width;
     }
 
@@ -253,7 +253,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   // 计算滑块在轨道的位置
   private _getSliderPos(range: [number, number]) {
     const { direction } = this.attribute as ScrollBarAttributes;
-    const { width, height, x1, y1 } = this._getSliderRenderBounds();
+    const { width, height, x1, y1 } = this.getSliderRenderBounds();
 
     if (direction === 'horizontal') {
       return [width * range[0] + x1, width * range[1] + x1];
@@ -267,7 +267,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     }
     const { limitRange = [0, 1], direction } = this.attribute as ScrollBarAttributes;
     const [min, max] = clampRange(limitRange, 0, 1);
-    const { width, height, x1, y1 } = this._getSliderRenderBounds();
+    const { width, height, x1, y1 } = this.getSliderRenderBounds();
     const sliderSize = this._sliderSize;
 
     return direction === 'horizontal'
@@ -335,7 +335,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     let currentPos;
     let delta = 0;
 
-    const { width, height } = this._getSliderRenderBounds();
+    const { width, height } = this.getSliderRenderBounds();
     if (direction === 'vertical') {
       currentPos = y;
       delta = currentPos - this._prePos;

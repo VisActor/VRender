@@ -1,7 +1,7 @@
 /**
  * @description 网格线
  */
-import { isFunction, isArray, merge, PointService, abs, pi } from '@visactor/vutils';
+import { isFunction, isArray, merge, PointService, abs, pi, isNumberClose } from '@visactor/vutils';
 import type { IGraphic, IGroup, Path } from '@visactor/vrender-core';
 import { graphicCreator } from '@visactor/vrender-core';
 import { AbstractComponent } from '../../core/base';
@@ -115,6 +115,7 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
   abstract isInValidValue(value: number): boolean;
   abstract getVerticalVector(offset: number, inside: boolean, point: Point): [number, number];
   protected abstract getGridAttribute(isSubGrid: boolean): T;
+  protected abstract getGridPointsByValue(value: number): Point[];
 
   protected render(): void {
     this._prevInnerView = this._innerView && getElMap(this._innerView);
@@ -220,10 +221,28 @@ export abstract class BaseGrid<T extends GridBaseAttributes> extends AbstractCom
         ? (alternateColor as string[])
         : [alternateColor as string, 'transparent'];
       const getColor = (index: number) => colors[index % colors.length];
+      const originalItems = this.attribute.items;
+      const firstItem = originalItems[0];
+      const lastItem = originalItems[originalItems.length - 1];
+      const noZero = !isNumberClose(firstItem.value, 0) && !isNumberClose(lastItem.value, 0);
+      const noOne = !isNumberClose(firstItem.value, 1) && !isNumberClose(lastItem.value, 1);
+      const allPoints = [];
+      const isDesc = firstItem.value > lastItem.value;
 
-      // const regions: any[] = [];
-      for (let index = 0; index < items.length - 1; index++) {
-        const [prev, curr] = [items[index].points, items[index + 1].points];
+      if ((isDesc && noOne) || (!isDesc && noZero)) {
+        allPoints.push(this.getGridPointsByValue(isDesc ? 1 : 0));
+      }
+      items.forEach((item: any) => {
+        allPoints.push(item.points as Point[]);
+      });
+
+      if ((isDesc && noZero) || (!isDesc && noOne)) {
+        allPoints.push(this.getGridPointsByValue(isDesc ? 0 : 1));
+      }
+
+      for (let index = 0; index < allPoints.length - 1; index++) {
+        const prev = allPoints[index];
+        const curr = allPoints[index + 1];
         const path = getRegionPath(prev, curr, gridAttrs);
         const shape = graphicCreator.path({
           path,

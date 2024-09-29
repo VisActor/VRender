@@ -64,6 +64,7 @@ export const page = () => {
       // _debug_bounds: true
     })
   );
+  console.log('aaa', graphics[graphics.length - 1]);
   graphics.push(
     createText({
       text: ['this is text这是文字', 'this is text这是第二行文字'],
@@ -150,6 +151,74 @@ export const page = () => {
       _debug_bounds: true
     })
   );
+  const text = createText({
+    x: 500,
+    y: 200,
+    fill: colorPools[5],
+    // text: ['Tffg'],
+    text: 'fkdalfffffffffffffffffjkllllll',
+    wordBreak: 'break-word',
+    maxLineWidth: 200,
+    // ellipsis: '',
+    direction: 'horizontal',
+    angle: 0.6,
+    stroke: 'green',
+    // wordBreak: 'break-word',
+    // maxLineWidth: 200,
+    // ellipsis: '',
+    // direction: 'vertical',
+    // fontSize: 120,
+    // stroke: 'green',
+    // lineWidth: 100,
+    // lineHeight: 30,
+    // lineThrough: 1,
+    // underline: 1,
+    textAlign: 'left',
+    textBaseline: 'middle'
+    // textBaseline: 'bottom'
+    // scaleX: 2,
+    // scaleY: 2
+  });
+  graphics.push(text);
+  const b = text.OBBBounds;
+  const circle = createCircle({
+    x: (b.x1 + b.x2) / 2,
+    y: (b.y1 + b.y2) / 2,
+    fill: 'black',
+    radius: 2
+  });
+  graphics.push(circle);
+
+  const rect = createRect({
+    x: b.x1,
+    y: b.y1,
+    width: b.width(),
+    height: b.height(),
+    stroke: 'red',
+    anchor: [(b.x1 + b.x2) / 2, (b.y1 + b.y2) / 2],
+    angle: 0.6,
+    lineWidth: 1
+  });
+  graphics.push(rect);
+
+  const textLimit = createText({
+    x: 800,
+    y: 500,
+    fill: colorPools[5],
+    // text: ['Tffg'],
+    text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+    // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+    // heightLimit: 40,
+    wordBreak: 'break-word',
+    maxLineWidth: 200,
+    stroke: 'green',
+    textAlign: 'left',
+    textBaseline: 'middle'
+    // whiteSpace: 'normal'
+    // wrap: true
+  });
+  console.log('textLimit', textLimit);
+  graphics.push(textLimit);
 
   const stage = createStage({
     canvas: 'main',

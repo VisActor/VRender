@@ -5,18 +5,8 @@
 import type { IText } from '@visactor/vrender-core';
 import type { IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { isEmpty, isFunction, isRectIntersect, isRotateAABBIntersect, last } from '@visactor/vutils';
+import { isEmpty, isFunction, last } from '@visactor/vutils';
 import type { CustomMethod } from '../type';
-import { genRotateBounds } from './util';
-
-function itemIntersect(item1: IText, item2: IText) {
-  return (
-    isRectIntersect(item1.AABBBounds, item2.AABBBounds, false) &&
-    (item1.rotatedBounds && item2.rotatedBounds
-      ? isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true)
-      : true)
-  );
-}
 
 const methods = {
   parity: function (items: IText[]) {
@@ -35,20 +25,14 @@ const methods = {
 };
 
 function intersect(textA: IText, textB: IText, sep: number) {
-  const a = textA.AABBBounds;
-  const b = textB.AABBBounds;
-  return (
-    sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2) &&
-    (textA.rotatedBounds && textB.rotatedBounds
-      ? sep >
-        Math.max(
-          textB.rotatedBounds.x1 - textA.rotatedBounds.x2,
-          textA.rotatedBounds.x1 - textB.rotatedBounds.x2,
-          textB.rotatedBounds.y1 - textA.rotatedBounds.y2,
-          textA.rotatedBounds.y1 - textB.rotatedBounds.y2
-        )
-      : true)
-  );
+  let a: IBounds = textA.OBBBounds;
+  let b: IBounds = textB.OBBBounds;
+  if (a && b && !a.empty() && !b.empty()) {
+    return a.intersects(b);
+  }
+  a = textA.AABBBounds;
+  b = textB.AABBBounds;
+  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
 }
 
 function hasOverlap(items: IText[], pad: number) {
@@ -60,8 +44,13 @@ function hasOverlap(items: IText[], pad: number) {
 }
 
 function hasBounds(item: IText) {
-  const b = item.AABBBounds;
-  return b.width() > 1 && b.height() > 1;
+  let bounds;
+  if (!item.OBBBounds.empty()) {
+    bounds = item.OBBBounds;
+  } else {
+    bounds = item.AABBBounds;
+  }
+  return bounds.width() > 1 && bounds.height() > 1;
 }
 
 // reset all items to be fully opaque
@@ -105,9 +94,6 @@ export function autoHide(labels: IText[], config: HideConfig) {
   let items;
 
   items = reset(source);
-
-  // 计算旋转包围盒
-  genRotateBounds(items);
 
   const { method = 'parity', separation: sep = 0 } = config;
 

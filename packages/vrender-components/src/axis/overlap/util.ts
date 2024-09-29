@@ -1,12 +1,5 @@
 import type { IText } from '@visactor/vrender-core';
-import { isNil, isRectIntersect, isRotateAABBIntersect } from '@visactor/vutils';
-
-function rotate(x: number, y: number, deg: number, originX: number, originY: number) {
-  return {
-    x: (x - originX) * Math.cos(deg) + (y - originY) * Math.sin(deg) + originX,
-    y: (x - originX) * Math.sin(deg) + (originY - y) * Math.cos(deg) + originY
-  };
-}
+import { isNil, isRectIntersect, isRotateAABBIntersect, rotatePoint } from '@visactor/vutils';
 
 // 计算水平情况下的包围盒
 function genNormalBounds(item: IText) {
@@ -30,8 +23,11 @@ export function genRotateBounds(items: IText[]) {
     }
     // 计算水平情况下的包围盒
     const bounds = genNormalBounds(item);
-    // 旋转
-    const rotatedCenter = rotate(bounds.centerX, bounds.centerY, bounds.angle, item.attribute.x, item.attribute.y);
+    const rotatedCenter = rotatePoint({ x: item.attribute.x, y: item.attribute.y }, bounds.angle, {
+      x: bounds.centerX,
+      y: bounds.centerY
+    });
+
     const deltaX = rotatedCenter.x - bounds.centerX;
     const deltaY = rotatedCenter.y - bounds.centerY;
     bounds.x1 += deltaX;
@@ -45,6 +41,9 @@ export function genRotateBounds(items: IText[]) {
 }
 
 export function itemIntersect(item1: IText, item2: IText) {
+  if (!item1.OBBBounds?.empty() && !item2.OBBBounds?.empty()) {
+    return item1.OBBBounds.intersects(item2.OBBBounds);
+  }
   return (
     isRectIntersect(item1.AABBBounds, item2.AABBBounds, false) &&
     (item1.rotatedBounds && item2.rotatedBounds

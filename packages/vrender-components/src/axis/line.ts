@@ -168,6 +168,27 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     container.add(axisLineGroup as unknown as INode);
   }
 
+  protected getTextAlign(vector: number[]): TextAlignType {
+    let align: TextAlignType = 'center';
+
+    if (isNumberClose(vector[0], 0)) {
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
+      } else {
+        align = 'center';
+      }
+    } else if (vector[0] > 0) {
+      align = 'start';
+    } else if (vector[0] < 0) {
+      align = 'end';
+    }
+    return align;
+  }
+
   // TODO: 太 hack 了，需要静心优化
   protected getTitleAttribute() {
     const {

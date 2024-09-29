@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix line bounds with defined false, closed #1463",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

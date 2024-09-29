@@ -539,7 +539,11 @@ export class BrowserContext2d implements IContext2d {
         this.bezierCurveTo(bez[0], bez[1], bez[2], bez[3], bez[4], bez[5], z);
       }
     } else {
-      this.nativeContext.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+      if (radius <= 0) {
+        this.nativeContext.arc(x, y, 0, startAngle, endAngle, anticlockwise);
+      } else {
+        this.nativeContext.arc(x, y, radius, startAngle, endAngle, anticlockwise);
+      }
     }
   }
 
@@ -684,6 +688,13 @@ export class BrowserContext2d implements IContext2d {
   }
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number) {
+    if (!isFinite(x0 + y0 + x1 + y1)) {
+      x0 = 0;
+      y0 = 0;
+      x1 = 0;
+      y1 = 0;
+    }
+
     return this.nativeContext.createLinearGradient(x0, y0, x1, y1);
   }
 

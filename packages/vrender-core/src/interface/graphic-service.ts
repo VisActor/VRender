@@ -51,6 +51,7 @@ export interface IGraphicService {
     onClearIncremental: ISyncHook<[IGroup, IStage]>;
     beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
     afterUpdateAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
+    clearAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds]>;
   };
   beforeUpdateAABBBounds: (graphic: IGraphic, stage: IStage, willUpdate: boolean, bounds: IAABBBounds) => void;
   afterUpdateAABBBounds: (
@@ -60,6 +61,7 @@ export interface IGraphicService {
     params: { globalAABBBounds: IAABBBounds },
     selfChange: boolean
   ) => void;
+  clearAABBBounds: (graphic: IGraphic, stage: IStage, b: IAABBBounds) => void;
 
   creator: IGraphicCreator;
   validCheck: (

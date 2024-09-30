@@ -379,7 +379,7 @@ export class DefaultGraphicService implements IGraphicService {
     if (!(graphic.valid && visible)) {
       // application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
       if (!aabbBounds.empty()) {
-        aabbBounds.transformWithMatrix((graphic.parent as IGroup).globalTransMatrix);
+        graphic.parent && aabbBounds.transformWithMatrix((graphic.parent as IGroup).globalTransMatrix);
         application.graphicService.clearAABBBounds(graphic, graphic.stage, aabbBounds);
         aabbBounds.clear();
       }

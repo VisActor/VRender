@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.8",
+      "tag": "@visactor/vrender-core_v0.20.8",
+      "date": "Sun, 29 Sep 2024 09:44:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix line bounds with defined false, closed #1463"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.7",
       "tag": "@visactor/vrender-core_v0.20.7",
       "date": "Fri, 27 Sep 2024 03:22:31 GMT",

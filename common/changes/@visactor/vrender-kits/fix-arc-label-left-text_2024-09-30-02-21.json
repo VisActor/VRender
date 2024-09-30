@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix max width of arc label in left\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-kits"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits",
+  "email": "dingling112@gmail.com"
+}

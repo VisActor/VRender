@@ -387,10 +387,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             });
             break; // 不处理后续行
           }
-
           // 测量截断位置
-          const clip = textMeasure.clipText(str, textOptions, maxLineWidth, wordBreak === 'break-word');
-          if (str !== '' && clip.str === '') {
+          const clip = textMeasure.clipText(
+            str,
+            textOptions,
+            maxLineWidth,
+            wordBreak !== 'break-all',
+            wordBreak === 'keep-all'
+          );
+          if ((str !== '' && clip.str === '') || clip.wordBreaked) {
             if (ellipsis) {
               const clipEllipsis = textMeasure.clipTextWithSuffix(
                 str,
@@ -416,10 +421,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             ascent: matrics.ascent,
             descent: matrics.descent
           });
+          let cutLength = clip.str.length;
+          if (clip.wordBreaked && !(str !== '' && clip.str === '')) {
+            needCut = true;
+            cutLength = clip.wordBreaked;
+          }
           if (clip.str.length === str.length) {
             // 不需要截断
           } else if (needCut) {
-            const newStr = str.substring(clip.str.length);
+            const newStr = str.substring(cutLength);
             lines.splice(i + 1, 0, newStr);
           }
         }

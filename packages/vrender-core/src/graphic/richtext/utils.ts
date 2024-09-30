@@ -203,7 +203,7 @@ export function getStrByWithCanvas(
   return index;
 }
 
-export function testLetter(string: string, index: number): number {
+export function testLetter(string: string, index: number, negativeWrongMatch: boolean = false): number {
   let i = index;
   // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
   while (
@@ -214,7 +214,23 @@ export function testLetter(string: string, index: number): number {
     i--;
     // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
     if (i <= 0) {
-      return index;
+      return negativeWrongMatch ? testLetter2(string, index) : index;
+    }
+  }
+  return i;
+}
+export function testLetter2(string: string, index: number) {
+  let i = index;
+  // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
+  while (
+    (regLetter.test(string[i - 1]) && regLetter.test(string[i])) ||
+    // 行首标点符号处理
+    regPunctuation.test(string[i])
+  ) {
+    i++;
+    // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
+    if (i >= string.length) {
+      return i;
     }
   }
   return i;

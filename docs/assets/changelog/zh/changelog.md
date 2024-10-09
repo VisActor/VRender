@@ -1,3 +1,27 @@
+# v0.20.8
+
+2024-09-30
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix line bounds with defined false, closed [#1463](https://github.com/VisActor/VRender/issues/1463)
+
+
+
+[更多详情请查看 v0.20.8](https://github.com/VisActor/VRender/releases/tag/v0.20.8)
+
+# v0.20.7
+
+2024-09-27
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: legend support roam scroll. close@VisActor/VChart[#3254](https://github.com/VisActor/VRender/issues/3254)
+
+[更多详情请查看 v0.20.7](https://github.com/VisActor/VRender/releases/tag/v0.20.7)
+
 # v0.20.6
 
 2024-09-26

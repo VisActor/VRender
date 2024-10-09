@@ -832,7 +832,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         };
 
     const onScroll = (e: FederatedWheelEvent) => {
-      e.preventDefault();
+      e.stopPropagation();
       const scrollComponent = this._pagerComponent as ScrollBar;
       const preScrollRange = scrollComponent.getScrollRange();
       const { direction } = scrollComponent.attribute as ScrollBarAttributes;

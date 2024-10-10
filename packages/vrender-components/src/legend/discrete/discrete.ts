@@ -832,7 +832,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         };
 
     const onScroll = (e: FederatedWheelEvent) => {
-      e.stopPropagation();
       const scrollComponent = this._pagerComponent as ScrollBar;
       const preScrollRange = scrollComponent.getScrollRange();
       const { direction } = scrollComponent.attribute as ScrollBarAttributes;
@@ -875,6 +874,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._pagerComponent.addEventListener('scrollUp', onPaging);
       if (((this.attribute as DiscreteLegendAttrs).pager as LegendScrollbarAttributes).roamScroll) {
         const THROTTLE_TIME = 50;
+        // preventDefault不能和throttle一起使用, 否则阻止默认事件失败
+        this.addEventListener('wheel', (e: FederatedWheelEvent) => e.nativeEvent.preventDefault());
         this.addEventListener('wheel', throttle(onScroll, THROTTLE_TIME));
       }
     } else {
@@ -1388,5 +1389,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
 
     return newConfig;
+  }
+
+  release(): void {
+    super.release();
+    this.removeAllEventListeners();
   }
 }

@@ -875,7 +875,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       this._pagerComponent.addEventListener('scrollUp', onPaging);
       if (((this.attribute as DiscreteLegendAttrs).pager as LegendScrollbarAttributes).roamScroll) {
         const THROTTLE_TIME = 50;
-        this.addEventListener('wheel', throttle(onScroll, THROTTLE_TIME));
+        this.addEventListener('wheel', onScroll);
       }
     } else {
       this._pagerComponent.addEventListener('toPrev', onPaging);

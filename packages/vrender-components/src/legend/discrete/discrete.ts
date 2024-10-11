@@ -740,14 +740,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         });
   }
 
-  private _updatePositionOfPager(
-    contentWidth: number,
-    contentHeight: number,
-    renderStartY: number,
-    compWidth: number,
-    compHeight: number
-  ) {
-    const { maxHeight, pager } = this.attribute;
+  private _updatePositionOfPager(renderStartY: number, compWidth: number, compHeight: number) {
+    const { pager } = this.attribute;
     const { totalPage, isHorizontal } = this._itemContext;
     const position = (pager && (pager as LegendPagerAttributes).position) || 'middle';
     (this._pagerComponent as Pager).setTotal(totalPage);
@@ -762,7 +756,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         y = renderStartY + compHeight / 2 - this._pagerComponent.AABBBounds.height() / 2;
       }
       this._pagerComponent.setAttributes({
-        x: contentWidth,
+        x: compWidth - this._pagerComponent.AABBBounds.width(),
         y
       });
     } else {
@@ -776,7 +770,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
       this._pagerComponent.setAttributes({
         x,
-        y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        y: compHeight - this._pagerComponent.AABBBounds.height()
       });
     }
   }
@@ -941,7 +935,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       this._itemContext.totalPage = total;
 
-      this._updatePositionOfPager(contentWidth, contentHeight, renderStartY, compWidth, compHeight);
+      this._updatePositionOfPager(renderStartY, compWidth, compHeight);
     } else {
       compWidth = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
       compHeight = maxHeight;
@@ -982,7 +976,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const total = Math.ceil(pages / maxCol);
 
       this._itemContext.totalPage = total;
-      this._updatePositionOfPager(contentWidth, contentHeight, renderStartY, compWidth, compHeight);
+      this._updatePositionOfPager(renderStartY, compWidth, compHeight);
     }
 
     // 初始化 defaultCurrent

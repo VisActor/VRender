@@ -50,117 +50,107 @@ function performance(stage: any) {
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  const t = createText({
-    text: ['2022年世界国家和地区GDP总量 🚀'],
-    ellipsis: '...',
-    fill: 'linear-gradient(90deg, #215F97 0%, #FF948F 100%)',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    textBaseline: 'top',
-    width: 308,
-    lineHeight: '150%',
-    fontStyle: 'normal',
-    underline: 1,
-    stroke: 'transparent',
-    fontFamily: '',
-    wrap: true,
-    whiteSpace: 'no-wrap',
-    maxLineWidth: 308,
-    x: 154,
-    y: 0
-  });
-  console.log(t, t.cliped);
-  graphics.push(t);
-  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
-
-  const tt = createText({
-    x: 971.9754981994629,
-    y: -213.8625716268361,
-    textAlign: 'center',
-    _debug_bounds: true,
-    textBaseline: 'middle',
-    text: ['细分'],
-    underline: 1,
-    underlineOffset: 0,
-    underlineDash: [2, 2],
-    fontSize: 16,
-    whiteSpace: 'normal',
-    graphicAlign: 'center',
-    graphicBaseline: 'middle',
-    fill: '#000',
-    ignoreBuf: true,
-    fontFamily: 'D-Din',
-    maxLineWidth: 120,
-    heightLimit: 999999,
-    // angle: 0.6,
-    // anchor: [971.9754981994629, -213.8625716268361],
-    visible: true,
-    background: '#F54A45'
-  });
-  console.log(tt);
-  const g = createGroup({
-    // angle: 0.6
-    x: -600,
-    y: 600
-  });
-  g.add(tt);
-
-  graphics.push(g);
-
   graphics.push(
     createText({
-      x: 300,
-      y: 200,
-      // fill: {
-      //   gradient: 'linear',
-      //   x0: 0,
-      //   y0: 0,
-      //   x1: 1,
-      //   y1: 1,
-      //   stops: [
-      //     { offset: 0, color: 'green' },
-      //     { offset: 0.5, color: 'orange' },
-      //     { offset: 1, color: 'red' }
-      //   ]
-      // },
-      // background: 'red',
-      // backgroundCornerRadius: 10,
-      text: ['这是一行文字', '这是第二哈那个'],
+      text: 'this is text这是文字',
+      ellipsis: '...',
+      x: 100,
+      y: 30,
       fill: 'red',
-      maxLineWidth: 100,
-      whiteSpace: 'normal',
-      fontSize: 36,
-      textBaseline: 'top'
+      textBaseline: 'top',
+      fillOpacity: 0.5,
+      fontSize: 20,
+      underline: 1
+      // _debug_bounds: true
     })
   );
   console.log('aaa', graphics[graphics.length - 1]);
   graphics.push(
-    createLine({
-      x: 300,
-      y: 200,
-      // fill: {
-      //   gradient: 'linear',
-      //   x0: 0,
-      //   y0: 0,
-      //   x1: 1,
-      //   y1: 1,
-      //   stops: [
-      //     { offset: 0, color: 'green' },
-      //     { offset: 0.5, color: 'orange' },
-      //     { offset: 1, color: 'red' }
-      //   ]
-      // },
-      // background: 'red',
-      // backgroundCornerRadius: 10,
-      stroke: 'green',
-      points: [
-        { x: -100, y: 0 },
-        { x: 300, y: 0 }
-      ]
+    createText({
+      text: ['this is text这是文字', 'this is text这是第二行文字'],
+      ellipsis: '...',
+      x: 100,
+      y: 30,
+      fill: 'green',
+      textBaseline: 'top',
+      fillOpacity: 0.5,
+      fontSize: 20,
+      underline: 1
+      // _debug_bounds: true
+    })
+  );
+  graphics.push(
+    createText({
+      text: 'this is text这是文字',
+      direction: 'vertical',
+      ellipsis: '...',
+      x: 500,
+      y: 30,
+      fill: 'red',
+      textBaseline: 'top',
+      fillOpacity: 0.5,
+      fontSize: 20,
+      underline: 1
+      // _debug_bounds: true
+    })
+  );
+  graphics.push(
+    createText({
+      text: ['this is text这是文字', 'this is text这是第二行文字'],
+      ellipsis: '...',
+      direction: 'vertical',
+      x: 500,
+      y: 30,
+      fill: 'green',
+      textBaseline: 'top',
+      fillOpacity: 0.5,
+      fontSize: 20,
+      underline: 1
+      // _debug_bounds: true
     })
   );
 
+  graphics.push(
+    createLine({
+      x: 0,
+      y: 130,
+      points: [
+        { x: 0, y: 0 },
+        { x: 300, y: 0 }
+      ],
+      stroke: 'black',
+      lineWidth: 1
+    })
+  );
+  graphics.push(
+    createText({
+      text: 'test top line',
+      ellipsis: '...',
+      textBaseline: 'top',
+      x: 70,
+      y: 130,
+      fill: 'red',
+      underline: 1,
+      fillOpacity: 0.5,
+      fontSize: 20
+      // _debug_bounds: true
+    })
+  );
+  graphics.push(
+    createText({
+      fontFamily: 'Arial',
+      text: ['aaa这是aaa', 'aa这是aa'],
+      fontSize: 16,
+      ellipsis: '...',
+      textBaseline: 'top',
+      x: 200,
+      y: 130,
+      fill: 'red',
+      fillOpacity: 0.5,
+      // fontSize: 60,
+      _debug_bounds: true
+    })
+  );
   const text = createText({
     x: 500,
     y: 200,
@@ -232,28 +222,10 @@ export const page = () => {
 
   const stage = createStage({
     canvas: 'main',
-    autoRender: true,
-    pluginList: ['poptipForText']
-  });
-
-  window.visualViewport.addEventListener('resize', e => {
-    console.log(e.currentTarget.scale);
-    stage.setDpr(e.currentTarget.scale * window.devicePixelRatio);
+    autoRender: true
   });
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });
-
-  const btn = document.createElement('button');
-  btn.innerHTML = '点击';
-  document.body.appendChild(btn);
-  btn.addEventListener('click', () => {
-    performance(stage);
-  });
-
-  setTimeout(() => {
-    console.log(stage.getLayer('_builtin_interactive').children);
-    stage.release();
-  }, 2000);
 };

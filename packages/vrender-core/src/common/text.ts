@@ -1,7 +1,7 @@
 // 存放一些公共方法，公共配置
 
 import { isNil, isString, isValid, lowerCamelCaseToMiddle } from '@visactor/vutils';
-import type { ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
+import type { IText, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '../interface';
 
 // TODO: 更好的方案
 /**
@@ -39,7 +39,7 @@ export function textDrawOffsetX(textAlign: TextAlignType, width: number): number
 }
 
 /**
- * 用于计算布局的偏移
+ * 用于计算布局的偏移，相对于xy的偏移
  * 经验值，来源于 https://github.com/vega/vega/blob/b45cf431cd6c0d0c0e1567f087f9b3b55bc236fa/packages/vega-scenegraph/src/util/text.js
  * @param baseline
  * @param lineHeight
@@ -78,15 +78,15 @@ export function textAttributesToStyle(attrs: ITextGraphicAttribute) {
   };
 
   stringTypes.forEach(key => {
-    if (attrs[key]) {
-      style[lowerCamelCaseToMiddle(key)] = attrs[key];
+    if ((attrs as any)[key]) {
+      style[lowerCamelCaseToMiddle(key)] = (attrs as any)[key];
     }
   });
 
   pxKeys.forEach(key => {
     const styleKey = lowerCamelCaseToMiddle(key);
-    if (!isNil(attrs[key])) {
-      style[styleKey] = parsePxValue(attrs[key]);
+    if (!isNil((attrs as any)[key])) {
+      style[styleKey] = parsePxValue((attrs as any)[key]);
     }
   });
 

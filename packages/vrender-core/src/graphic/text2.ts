@@ -1,5 +1,5 @@
-import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { max, isArray, getContextFont, transformBoundsWithMatrix, rotatePoint } from '@visactor/vutils';
+import type { IAABBBounds } from '@visactor/vutils';
+import { max, isArray, getContextFont, transformBoundsWithMatrix } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
@@ -48,8 +48,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   cache: ITextCache;
   _font: string;
 
-  protected declare obbText?: Text;
-
   /**
    * 获取font字符串
    */
@@ -64,6 +62,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get clipedText(): string | undefined {
     const attribute = this.attribute;
     const textTheme = this.getGraphicTheme();
+    if (!this.isSinglelineAndHorizontal()) {
+      return void 0;
+    }
     const maxWidth = this.getMaxWidth(textTheme);
     if (!Number.isFinite(maxWidth)) {
       return (attribute.text ?? textTheme.text).toString();
@@ -73,6 +74,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   }
 
   get clipedWidth(): number | undefined {
+    if (!this.isSinglelineAndHorizontal()) {
+      return void 0;
+    }
     this.tryUpdateAABBBounds();
     return this.cache.clipedWidth;
   }
@@ -84,21 +88,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = this.getGraphicTheme();
     const attribute = this.attribute;
+    if (this.isMultiLine) {
+      return void 0;
+    }
     const maxWidth = this.getMaxWidth(textTheme);
     if (!Number.isFinite(maxWidth)) {
       return false;
     }
-    const { text } = this.attribute;
     this.tryUpdateAABBBounds();
-    if (this.cache?.layoutData?.lines) {
-      let mergedText = '';
-      this.cache.layoutData.lines.forEach(item => {
-        mergedText += item.str;
-      });
-      const originText = Array.isArray(text) ? text.join('') : text;
-
-      return originText !== mergedText;
-    }
     if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
     }
@@ -113,6 +110,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this.cache.layoutData;
   }
   /**
+   * @deprecated 请勿使用，后续不再支持判定是否是单行还是多行，二者逻辑已经统一
    * 是否是多行文本
    */
   get isMultiLine(): boolean {
@@ -143,30 +141,6 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
 
   getGraphicTheme(): Required<ITextGraphicAttribute> {
     return getTheme(this).text;
-  }
-
-  protected doUpdateOBBBounds(): IOBBBounds {
-    const graphicTheme = this.getGraphicTheme();
-    this._OBBBounds.clear();
-    const attribute = this.attribute;
-    const { angle = graphicTheme.angle } = attribute;
-    if (!angle) {
-      const b = this.AABBBounds;
-      this._OBBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
-      return this._OBBBounds;
-    }
-    if (!this.obbText) {
-      this.obbText = new Text({});
-    }
-    this.obbText.setAttributes({ ...attribute, angle: 0 });
-    const bounds1 = this.obbText.AABBBounds;
-    const { x, y } = attribute;
-    const boundsCenter = { x: (bounds1.x1 + bounds1.x2) / 2, y: (bounds1.y1 + bounds1.y2) / 2 };
-    const center = rotatePoint(boundsCenter, angle, { x, y });
-    this._OBBBounds.copy(bounds1);
-    this._OBBBounds.translate(center.x - boundsCenter.x, center.y - boundsCenter.y);
-    this._OBBBounds.angle = angle;
-    return this._OBBBounds;
   }
 
   protected updateAABBBounds(
@@ -210,14 +184,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
    * @param text
    */
   updateSingallineAABBBounds(text: number | string): IAABBBounds {
-    this.updateMultilineAABBBounds([text]);
-    const layoutData = this.cache.layoutData;
-    if (layoutData) {
-      const line = layoutData.lines[0];
-      this.cache.clipedText = line.str;
-      this.cache.clipedWidth = line.width;
-    }
-    return this._AABBBounds;
+    return this.updateMultilineAABBBounds([text]);
   }
 
   /**
@@ -259,14 +226,13 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       maxLineWidth,
       stroke = textTheme.stroke,
       wrap = textTheme.wrap,
-      ignoreBuf = textTheme.ignoreBuf,
+      // ignoreBuf = textTheme.ignoreBuf,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
       suffixPosition = textTheme.suffixPosition
     } = attribute;
 
-    const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(attribute, textTheme) + buf;
+    const lineHeight = this.getLineHeight(attribute, textTheme);
 
     if (whiteSpace === 'normal' || wrap) {
       return this.updateWrapAABBBounds(text);
@@ -329,8 +295,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineClamp
     } = this.attribute;
 
-    const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(this.attribute, textTheme) + buf;
+    const lineHeight = this.getLineHeight(this.attribute, textTheme);
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
@@ -598,14 +563,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return this._AABBBounds;
   }
 
-  // /**
-  //  * 是否是简单文字
-  //  * 单行，横排
-  //  * @returns
-  //  */
-  // protected isSinglelineAndHorizontal(): boolean {
-  //   return !this.isMultiLine && this.attribute.direction !== 'vertical';
-  // }
+  /**
+   * 是否是简单文字
+   * 单行，横排
+   * @returns
+   */
+  protected isSinglelineAndHorizontal(): boolean {
+    return !this.isMultiLine && this.attribute.direction !== 'vertical';
+  }
 
   protected getMaxWidth(theme: ITextGraphicAttribute): number {
     // 传入了maxLineWidth就优先使用，否则使用maxWidth

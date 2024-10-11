@@ -944,7 +944,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });
 
-        if (label.attribute.lineWidth === 0) {
+        if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
         }
 
@@ -953,7 +953,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       } else if (label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds)) {
         // 存在相交的情况
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
-        if (label.attribute.lineWidth === 0) {
+        if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
         }
         /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */

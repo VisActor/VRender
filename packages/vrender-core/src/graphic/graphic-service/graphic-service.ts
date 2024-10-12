@@ -370,7 +370,8 @@ export class DefaultGraphicService implements IGraphicService {
       return true;
     }
 
-    if (graphic.shadowRoot) {
+    // 是Group或者有影子节点的话，就直接认为是合法的
+    if (graphic.shadowRoot || graphic.isContainer) {
       return true;
     }
 

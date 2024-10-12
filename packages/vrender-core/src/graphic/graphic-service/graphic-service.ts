@@ -23,6 +23,7 @@ import { BoundsContext } from '../../common/bounds-context';
 import { renderCommandList } from '../../common/render-command-list';
 import { GraphicCreator } from '../constants';
 import { identityMat4, multiplyMat4Mat4, rotateX, rotateY, rotateZ, scaleMat4, translate } from '../../common/matrix';
+import { application } from '../../application';
 
 export function getExtraModelMatrix(dx: number, dy: number, graphic: IGraphic): mat4 | null {
   const { alpha, beta } = graphic.attribute;
@@ -175,6 +176,7 @@ export class DefaultGraphicService implements IGraphicService {
     onClearIncremental: ISyncHook<[IGroup, IStage]>;
     beforeUpdateAABBBounds: ISyncHook<[IGraphic, IStage, boolean, IAABBBounds]>;
     afterUpdateAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds, { globalAABBBounds: IAABBBounds }, boolean]>;
+    clearAABBBounds: ISyncHook<[IGraphic, IStage, IAABBBounds]>;
   };
 
   // 临时bounds，用作缓存
@@ -200,7 +202,8 @@ export class DefaultGraphicService implements IGraphicService {
         'aabbBounds',
         'globalAABBBounds',
         'selfChange'
-      ])
+      ]),
+      clearAABBBounds: new SyncHook<[IGraphic, IStage, IAABBBounds]>(['graphic', 'stage', 'aabbBounds'])
     };
     this.tempAABBBounds1 = new AABBBounds();
     this.tempAABBBounds2 = new AABBBounds();
@@ -249,6 +252,11 @@ export class DefaultGraphicService implements IGraphicService {
   ) {
     if (this.hooks.afterUpdateAABBBounds.taps.length) {
       this.hooks.afterUpdateAABBBounds.call(graphic, stage, bounds, params, selfChange);
+    }
+  }
+  clearAABBBounds(graphic: IGraphic, stage: IStage, b: IAABBBounds) {
+    if (this.hooks.clearAABBBounds.taps.length) {
+      this.hooks.clearAABBBounds.call(graphic, stage, b);
     }
   }
   // TODO delete
@@ -366,13 +374,15 @@ export class DefaultGraphicService implements IGraphicService {
       return true;
     }
 
-    if (!graphic.valid) {
-      aabbBounds.clear();
-      return false;
-    }
     const { visible = theme.visible } = attribute;
-    if (!visible) {
-      aabbBounds.clear();
+
+    if (!(graphic.valid && visible)) {
+      // application.graphicService.beforeUpdateAABBBounds(graphic, graphic.stage, true, aabbBounds);
+      if (!aabbBounds.empty()) {
+        graphic.parent && aabbBounds.transformWithMatrix((graphic.parent as IGroup).globalTransMatrix);
+        application.graphicService.clearAABBBounds(graphic, graphic.stage, aabbBounds);
+        aabbBounds.clear();
+      }
       return false;
     }
     return true;

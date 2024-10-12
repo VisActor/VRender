@@ -14,9 +14,12 @@ import type {
   IRichTextIcon,
   IRichTextLine,
   IRichTextParagraph,
-  IRichTextParagraphCharacter
+  IRichTextParagraphCharacter,
+  ITicker,
+  ITimeline
 } from '../../interface';
 import { EditModule, findCursorIndexIgnoreLinebreak } from './edit-module';
+import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
 
 type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
 
@@ -41,6 +44,10 @@ class Selection {
     this.rt = rt;
   }
 
+  isEmpty(): boolean {
+    return this.selectionStartCursorIdx === this.curCursorIdx;
+  }
+
   hasFormat(key: string): boolean {
     return this.getFormat(key) != null;
   }
@@ -48,7 +55,7 @@ class Selection {
     if (!this.rt) {
       return null;
     }
-    const config = this.rt.attribute.textConfig;
+    const config = this.rt.attribute.textConfig as any;
     const val: any = config[this.selectionStartCursorIdx + 1][key];
     if (val == null) {
       return null;
@@ -67,13 +74,17 @@ class Selection {
     if (!this.rt) {
       return [];
     }
-    const config = this.rt.attribute.textConfig;
-    const val: any = config[this.selectionStartCursorIdx + 1][key];
+    const config = this.rt.attribute.textConfig as any;
+    const defaultV = (this.rt.attribute as any)[key];
+    if (this.isEmpty()) {
+      return [config[this.selectionStartCursorIdx][key] ?? defaultV];
+    }
+    const val: any = config[this.selectionStartCursorIdx + 1][key] ?? defaultV;
     const set = new Set();
     set.add(val);
     for (let i = this.selectionStartCursorIdx + 2; i <= this.curCursorIdx; i++) {
       const item = config[i];
-      set.add(item[key]);
+      set.add(item[key] ?? defaultV);
     }
     const list = Array.from(set.values());
     return list;
@@ -104,22 +115,48 @@ export class RichTextEditPlugin implements IPlugin {
   commandCbs: Map<string, Array<(payload: any, p: RichTextEditPlugin) => void>>;
   updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin) => void>;
 
+  ticker: ITicker;
+  timeline: ITimeline;
+
+  // 富文本有align或者baseline的时候，需要对光标做偏移
+  protected declare deltaX: number;
+  protected declare deltaY: number;
+
   constructor() {
     this.commandCbs = new Map();
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
     this.updateCbs = [];
+    this.timeline = new DefaultTimeline();
+    this.ticker = new DefaultTicker([this.timeline]);
+    this.deltaX = 0;
+    this.deltaY = 0;
   }
 
-  getSelection() {
+  /**
+   * 获取当前选择的区间范围
+   * @param defaultAll 如果force为true，又没有选择，则认为选择了所有然后进行匹配，如果为false，则认为什么都没有选择，返回null
+   * @returns
+   */
+  getSelection(defaultAll: boolean = false) {
+    if (!this.currRt) {
+      return null;
+    }
     if (
-      this.selectionStartCursorIdx &&
-      this.curCursorIdx &&
-      this.selectionStartCursorIdx !== this.curCursorIdx &&
-      this.currRt
+      this.selectionStartCursorIdx != null &&
+      this.curCursorIdx != null
+      // this.selectionStartCursorIdx !== this.curCursorIdx &&
     ) {
       return new Selection(
         this.selectionStartCursorIdx,
         this.curCursorIdx,
+        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.selectionStartCursorIdx),
+        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.curCursorIdx),
+        this.currRt
+      );
+    } else if (defaultAll) {
+      return new Selection(
+        -1,
+        this.currRt.attribute.textConfig.length - 1,
         findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.selectionStartCursorIdx),
         findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.curCursorIdx),
         this.currRt
@@ -221,6 +258,9 @@ export class RichTextEditPlugin implements IPlugin {
       // 计算p1在字符中的位置
       let p1 = this.getEventPosition(e);
       let line1Info = this.getLineByPoint(cache, p1);
+      if (!line1Info) {
+        return;
+      }
       const column1 = this.getColumnByLinePoint(line1Info, p1);
       const y1 = line1Info.top;
       const y2 = line1Info.top + line1Info.height;
@@ -327,6 +367,12 @@ export class RichTextEditPlugin implements IPlugin {
     this.pointerDown = false;
   };
 
+  forceFocus(e: PointerEvent) {
+    this.handleEnter(e);
+    this.handlePointerDown(e);
+    this.handlePointerUp(e);
+  }
+
   // 鼠标进入
   handleEnter = (e: PointerEvent) => {
     this.editing = true;
@@ -348,6 +394,8 @@ export class RichTextEditPlugin implements IPlugin {
 
     const p1 = { x: 0, y: 0 };
     (e.target as IRichText).globalTransMatrix.transformPoint(p, p1);
+    p1.x -= this.deltaX;
+    p1.y -= this.deltaY;
     return p1;
   }
 
@@ -376,26 +424,41 @@ export class RichTextEditPlugin implements IPlugin {
 
   onFocus(e: PointerEvent) {
     this.deFocus(e);
+    this.currRt = e.target as IRichText;
 
     // 添加shadowGraphic
     const target = e.target as IRichText;
-    this.tryUpdateRichtext(target);
+    RichTextEditPlugin.tryUpdateRichtext(target);
     const shadowRoot = target.attachShadow();
-    shadowRoot.setAttributes({ shadowRootIdx: -1 });
     const cache = target.getFrameCache();
     if (!cache) {
       return;
     }
+
+    this.deltaX = 0;
+    this.deltaY = 0;
+    const height = cache.actualHeight;
+    const width = cache.lines.reduce((w, item) => Math.max(w, item.actualWidth), 0);
+    if (cache.globalAlign === 'center') {
+      this.deltaX = -width / 2;
+    } else if (cache.globalAlign === 'right') {
+      this.deltaX = -width;
+    }
+    if (cache.globalBaseline === 'middle') {
+      this.deltaY = -height / 2;
+    } else if (cache.globalBaseline === 'bottom') {
+      this.deltaY = -height;
+    }
+
+    shadowRoot.setAttributes({ shadowRootIdx: -1, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
-      line
-        .animate()
-        .to({ opacity: 1 }, 10, 'linear')
-        .wait(700)
-        .to({ opacity: 0 }, 10, 'linear')
-        .wait(700)
-        .loop(Infinity);
+      // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
+      const animate = line.animate();
+      animate.setTimeline(this.timeline);
+      animate.to({ opacity: 1 }, 10, 'linear').wait(700).to({ opacity: 0 }, 10, 'linear').wait(700).loop(Infinity);
       this.editLine = line;
+      this.ticker.start(true);
 
       const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
@@ -529,21 +592,23 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
-  splitText(text: string) {
+  static splitText(text: string) {
     // 😁这种emoji长度算两个，所以得处理一下
     return Array.from(text);
   }
 
-  tryUpdateRichtext(richtext: IRichText) {
+  static tryUpdateRichtext(richtext: IRichText) {
     const cache = richtext.getFrameCache();
     if (
       !cache.lines.every(line =>
-        line.paragraphs.every(item => !(item.text && isString(item.text) && this.splitText(item.text).length > 1))
+        line.paragraphs.every(
+          item => !(item.text && isString(item.text) && RichTextEditPlugin.splitText(item.text).length > 1)
+        )
       )
     ) {
       const tc: IRichTextCharacter[] = [];
       richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
-        const textList = this.splitText(item.text.toString());
+        const textList = RichTextEditPlugin.splitText(item.text.toString());
         if (isString(item.text) && textList.length > 1) {
           // 拆分
           for (let i = 0; i < textList.length; i++) {

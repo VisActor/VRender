@@ -132,6 +132,20 @@ export class RichTextEditPlugin implements IPlugin {
     this.deltaY = 0;
   }
 
+  static CreateSelection(rt: IRichText) {
+    if (!rt) {
+      return null;
+    }
+    const { textConfig = [] } = rt.attribute;
+    return new Selection(
+      -1,
+      textConfig.length - 1,
+      findCursorIndexIgnoreLinebreak(textConfig, -1),
+      findCursorIndexIgnoreLinebreak(textConfig, textConfig.length - 1),
+      rt
+    );
+  }
+
   /**
    * 获取当前选择的区间范围
    * @param defaultAll 如果force为true，又没有选择，则认为选择了所有然后进行匹配，如果为false，则认为什么都没有选择，返回null
@@ -154,13 +168,7 @@ export class RichTextEditPlugin implements IPlugin {
         this.currRt
       );
     } else if (defaultAll) {
-      return new Selection(
-        -1,
-        this.currRt.attribute.textConfig.length - 1,
-        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.selectionStartCursorIdx),
-        findCursorIndexIgnoreLinebreak(this.currRt.attribute.textConfig, this.curCursorIdx),
-        this.currRt
-      );
+      return RichTextEditPlugin.CreateSelection(this.currRt);
     }
     return null;
   }

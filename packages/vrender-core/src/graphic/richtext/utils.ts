@@ -167,10 +167,10 @@ export function getStrByWithCanvas(
   // 测量从头到当前位置宽度以及从头到下一个字符位置宽度
   let index = guessIndex;
   let temp = desc.slice(0, index);
-  let tempWidth = Math.floor(textMeasure.measureText(temp, character).width);
+  let tempWidth = Math.floor(textMeasure.measureText(temp, character as any).width);
 
   let tempNext = desc.slice(0, index + 1);
-  let tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character).width);
+  let tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character as any).width);
 
   // 到当前位置宽度 < width && 到下一个字符位置宽度 > width时，认为找到准确阶段位置
   while (tempWidth > width || tempWidthNext <= width) {
@@ -189,10 +189,10 @@ export function getStrByWithCanvas(
     }
 
     temp = desc.slice(0, index);
-    tempWidth = Math.floor(textMeasure.measureText(temp, character).width);
+    tempWidth = Math.floor(textMeasure.measureText(temp, character as any).width);
 
     tempNext = desc.slice(0, index + 1);
-    tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character).width);
+    tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character as any).width);
   }
 
   // 处理特殊情况
@@ -291,7 +291,7 @@ export function measureTextCanvas(
   character: IRichTextParagraphCharacter
 ): { ascent: number; height: number; descent: number; width: number } {
   const textMeasure = application.graphicUtil.textMeasure;
-  const measurement = textMeasure.measureText(text, character) as TextMetrics;
+  const measurement = textMeasure.measureText(text, character as any) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
     ascent: 0,
     height: 0,

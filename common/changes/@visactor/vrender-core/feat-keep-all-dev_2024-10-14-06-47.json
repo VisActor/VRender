@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: text support keep-all, closed #1466",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

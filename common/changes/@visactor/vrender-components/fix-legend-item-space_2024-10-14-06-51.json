@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix `legend.item.label.space` when has value\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "dingling112@gmail.com"
+}

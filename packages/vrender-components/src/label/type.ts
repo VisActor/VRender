@@ -243,6 +243,14 @@ export interface SmartInvertAttrs {
    * label超出mark范围，也以mark作为背景色进行反色
    */
   outsideEnable?: boolean;
+  /**
+   * 当标签和mark相交，但是没有完全在mark内部的时候，支持三种处理方式：
+   *
+   * * none：不做任何处理
+   * * stroked：标签存在描边的时候，根据描边进行处理
+   * * inside: 和标签完全在mark内部一样处理
+   */
+  interactInvertType?: 'none' | 'stroked' | 'inside';
 }
 
 export type PositionStrategy = {

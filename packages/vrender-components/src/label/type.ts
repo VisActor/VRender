@@ -179,14 +179,23 @@ export interface OverlapAttrs {
 
   /**
    * 发生重叠后的躲避策略
+   * @since 0.20.9支持全局 Y 方向偏移策略 'shiftY'。当标签发生重叠时，会保相对位置并在 Y 方向上散开。由于 'shiftY' 是全局布局策略，不与其他策略同时生效。
    */
-  strategy?: Strategy[];
+  strategy?: Strategy[] | ShiftYStrategy;
 
   /**
    * 文字在防重叠计算中预留的边距。
    * @default 0
    */
   overlapPadding?: number;
+
+  /**
+   * 防重叠的顺序权重
+   * @since 0.20.9
+   * @param labelItem
+   * @returns number 数值越大，权重越高。权重越高的标签越优先被布局。
+   */
+  priority?: (labelItem: LabelItem) => number;
 }
 
 export interface SmartInvertAttrs {
@@ -253,6 +262,25 @@ export interface SmartInvertAttrs {
   interactInvertType?: 'none' | 'stroked' | 'inside';
 }
 
+export type ShiftYStrategy = {
+  type: 'shiftY';
+  /**
+   * 布局迭代次数
+   * @default 10
+   */
+  iteration?: number;
+  /**
+   * 布局容差
+   * @default 0.1
+   */
+  maxError?: number;
+  /**
+   * 散开后的间距
+   * @default 1
+   */
+  padding?: number;
+};
+
 export type PositionStrategy = {
   /**
    * 可选位置策略。
@@ -293,6 +321,17 @@ export type MoveXStrategy = {
    * X方向上的尝试的位置偏移量
    */
   offset: Functional<number[]>;
+};
+
+export type DodgeYStrategy = {
+  /**
+   * 整体布局，发生重叠后在 Y 方向上散开。
+   *
+   */
+  type: 'dodgeY';
+  padding?: number;
+  iteration?: number;
+  maxError?: number;
 };
 
 export type Strategy = PositionStrategy | BoundStrategy | MoveYStrategy | MoveXStrategy;
@@ -497,6 +536,8 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
    * 防重叠的区域大小
    */
   size: { width: number; height: number; padding?: { top?: number; left?: number; right?: number; bottom?: number } };
+
+  overlapStrategy?: 'default' | 'global';
 }
 
 export type Functional<T> = T | ((data: any) => T);

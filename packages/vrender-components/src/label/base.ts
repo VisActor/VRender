@@ -941,9 +941,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
       const isIntersect =
         !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
-      const isOutside = !isInside && !isIntersect;
 
-      if (isInside || (outsideEnable && isOutside) || (isIntersect && interactInvertType === 'inside')) {
+      if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
         const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });

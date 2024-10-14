@@ -532,7 +532,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       }
     }
-    result = shiftY(result, {
+    result = shiftY(result as any, {
       maxY: bmpTool.height,
       ...(strategy as ShiftYStrategy)
     }) as (IText | IRichText)[];

@@ -626,10 +626,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
         } else {
-          valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
+          valueShape.setAttribute('x', labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
         }
       } else {
-        valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
+        valueShape.setAttribute('x', labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
       }
       focusStartX = valueSpace + (valueShape.AABBBounds.empty() ? 0 : valueShape.AABBBounds.x2);
 

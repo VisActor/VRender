@@ -1,6 +1,32 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Sun, 29 Sep 2024 09:44:02 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- fix: fix smartInvert when `outsideEnable` is true
+
+
+- feat: support axis label `firstVisible` in autoHide and linear axis sampling
+- feat: add `interactInvertType` for smartInvert
+
+
+- fix: fix max width of arc label in left
+
+
+- fix: fix `pager.space` of discrete legend
+
+
+- fix: fix smart invert when only has intercet width base mark
+
+
+- fix: fix `legend.item.label.space` when has value
+
+
+- fix: legend scroll critical value leads last page not render. fix@VisActor/VChart#3172
 
 ## 0.20.8
 Sun, 29 Sep 2024 09:44:02 GMT

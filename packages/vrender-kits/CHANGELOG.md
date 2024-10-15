@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Sun, 29 Sep 2024 09:44:02 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- fix: fix max width of arc label in left
+
+
 
 ## 0.20.8
 Sun, 29 Sep 2024 09:44:02 GMT

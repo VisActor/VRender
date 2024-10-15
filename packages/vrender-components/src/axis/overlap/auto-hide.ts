@@ -110,18 +110,18 @@ export function autoHide(labels: IText[], config: HideConfig) {
       return checkLength ? length < 3 || visibility : visibility;
     };
 
-    let checkFirst = shouldCheck(items.length, config.firstVisible, false);
+    const checkFirst = shouldCheck(items.length, config.firstVisible, false);
     /**
      * 0.17.10 之前，当最后 label 个数小于 3 的时候，才做最后的label强制显示的策略
      */
-    const checkLast = shouldCheck(items.length, config.lastVisible);
+    let checkLast = shouldCheck(items.length, config.lastVisible);
 
     const firstSourceItem = source[0];
     const lastSourceItem = last(source);
 
     if (intersect(firstSourceItem, lastSourceItem, sep) && checkFirst && checkLast) {
       lastSourceItem.setAttribute('opacity', 0); // Or firstSourceItem, depending on preference
-      checkFirst = false;
+      checkLast = false;
     }
 
     forceItemVisible(firstSourceItem, items, checkFirst, (item: IText) => intersect(item, firstSourceItem, sep));

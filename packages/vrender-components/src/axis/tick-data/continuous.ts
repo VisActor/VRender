@@ -158,13 +158,15 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
         items = samplingMethod(items, labelGap);
       }
 
-      const shouldCheck = (length: number, visibility: boolean) => length < 3 || visibility;
+      const shouldCheck = (length: number, visibility: boolean, checkLength: boolean = true) => {
+        return checkLength ? length < 3 || visibility : visibility;
+      };
 
-      const checkFirst = shouldCheck(items.length, op.labelFirstVisible);
+      const checkFirst = shouldCheck(items.length, op.labelFirstVisible, false);
       let checkLast = shouldCheck(items.length, op.labelLastVisible);
 
       if (intersect(firstSourceItem as any, lastSourceItem as any, labelGap)) {
-        if (items.includes(lastSourceItem) && items.length > 1) {
+        if (items.includes(lastSourceItem) && items.length > 1 && checkFirst && checkLast) {
           items.splice(items.indexOf(lastSourceItem), 1);
           checkLast = false;
         }

@@ -2,6 +2,12 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.20.9",
+      "tag": "@visactor/react-vrender_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.8",
       "tag": "@visactor/react-vrender_v0.20.8",
       "date": "Sun, 29 Sep 2024 09:44:02 GMT",

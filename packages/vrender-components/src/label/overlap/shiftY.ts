@@ -1,12 +1,5 @@
 import type { IText } from '@visactor/vrender-core';
 
-function useMap<K, V>() {
-  const map = new Map<K, V>();
-  const get = (key: K) => map.get(key) as V;
-  const set = (key: K, value: V) => map.set(key, value);
-  return [get, set] as const;
-}
-
 export interface IShiftYOption {
   maxIterations?: number;
   maxError?: number;
@@ -26,42 +19,54 @@ export function shiftY(texts: IText[], option: IShiftYOption = {}) {
     return d > a && b > c;
   };
 
-  const [y0, setY0] = useMap<IText, number>();
-  const [y, setY] = useMap<IText, number>();
-  const [h, setH] = useMap<IText, number>();
-  const [xx, setXX] = useMap<IText, [number, number]>();
+  const textInformation = new Map<IText, { y0: number; y: number; height: number; x1: number; x2: number }>();
+
+  // y0      : 初始位置
+  // y       : 最终位置
+  // height  : 高度
+  // x1, x2  : 左右边界
+  const getY0 = (text: IText) => textInformation.get(text).y0;
+  const getY = (text: IText) => textInformation.get(text).y;
+  const getHeight = (text: IText) => textInformation.get(text).height;
+  const getX1 = (text: IText) => textInformation.get(text).x1;
+  const getX2 = (text: IText) => textInformation.get(text).x2;
+  const setY = (text: IText, y: number) => {
+    textInformation.get(text).y = y;
+  };
+
   for (const text of texts) {
     const { y1, y2, x1, x2 } = text.AABBBounds;
-    setY0(text, y1);
-    setY(text, y1);
-    setH(text, y2 - y1);
-    setXX(text, [x1, x2]);
+    textInformation.set(text, { y0: y1, y: y1, height: y2 - y1, x1, x2 });
   }
+
   for (let iter = 0; iter < maxIterations; iter++) {
-    texts.sort((a, b) => (y(a) as number) - (y(b) as number));
+    texts.sort((a, b) => getY(a) - getY(b));
     let error = 0;
     for (let i = 0; i < n - 1; i++) {
-      const l0 = texts[i];
+      const curText = texts[i];
       let j = i + 1;
-      let l1;
-      while ((l1 = texts[j]) && !isIntersect(xx(l0) as any, xx(l1) as any)) {
+      let nextText;
+      while (
+        (nextText = texts[j]) &&
+        !isIntersect([getX1(curText), getX2(curText)], [getX1(nextText), getX2(nextText)])
+      ) {
         j += 1;
       }
-      if (l1) {
-        const y0 = y(l0);
-        const h0 = h(l0);
-        const y1 = y(l1);
+      if (nextText) {
+        const y0 = getY(curText);
+        const h0 = getHeight(curText);
+        const y1 = getY(nextText);
         const delta = y1 - (y0 + h0);
         if (delta < padding) {
           const newDelta = (padding - delta) / 2;
           error = Math.max(error, newDelta);
-          if (y1 + newDelta + h(l1) > maxY) {
-            setY(l0, y0 - (padding - delta));
+          if (y1 + newDelta + getHeight(nextText) > maxY) {
+            setY(curText, y0 - (padding - delta));
           } else if (y0 - newDelta < 0) {
-            setY(l1, y1 + (padding - delta));
+            setY(nextText, y1 + (padding - delta));
           } else {
-            setY(l0, y0 - newDelta);
-            setY(l1, y1 + newDelta);
+            setY(curText, y0 - newDelta);
+            setY(nextText, y1 + newDelta);
           }
         }
       }
@@ -72,7 +77,7 @@ export function shiftY(texts: IText[], option: IShiftYOption = {}) {
   }
 
   for (const text of texts) {
-    const finalY = (text.attribute.y as number) + y(text) - y0(text);
+    const finalY = text.attribute.y + getY(text) - getY0(text);
     text.setAttribute('y', finalY);
   }
 

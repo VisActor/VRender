@@ -323,17 +323,6 @@ export type MoveXStrategy = {
   offset: Functional<number[]>;
 };
 
-export type DodgeYStrategy = {
-  /**
-   * 整体布局，发生重叠后在 Y 方向上散开。
-   *
-   */
-  type: 'dodgeY';
-  padding?: number;
-  iteration?: number;
-  maxError?: number;
-};
-
 export type Strategy = PositionStrategy | BoundStrategy | MoveYStrategy | MoveXStrategy;
 
 export type LabelPosition = SymbolLabelAttrs['position'] | RectLabelAttrs['position'];
@@ -536,8 +525,6 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
    * 防重叠的区域大小
    */
   size: { width: number; height: number; padding?: { top?: number; left?: number; right?: number; bottom?: number } };
-
-  overlapStrategy?: 'default' | 'global';
 }
 
 export type Functional<T> = T | ((data: any) => T);

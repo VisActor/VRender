@@ -525,22 +525,20 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const { clampForce = true, hideOnHit = true, overlapPadding, strategy } = option;
     if (clampForce) {
       for (let i = 0; i < result.length; i++) {
-        const text = labels[i] as IText | IRichText;
+        const text = labels[i];
         const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
         if (dx !== 0 || dy !== 0) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
         }
       }
     }
-    result = shiftY(result as any, {
-      maxY: bmpTool.height,
-      ...(strategy as ShiftYStrategy)
-    }) as (IText | IRichText)[];
+    result = shiftY(result as any, { maxY: bmpTool.height, ...(strategy as ShiftYStrategy) });
 
     for (let i = 0; i < result.length; i++) {
-      const text = result[i] as IText | IRichText;
-      const range = boundToRange(bmpTool, text.AABBBounds, true);
-      if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce, overlapPadding)) {
+      const text = result[i];
+      const bounds = text.AABBBounds;
+      const range = boundToRange(bmpTool, bounds, true);
+      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
         bitmap.setRange(range);
       } else {
         if (hideOnHit) {

@@ -158,12 +158,8 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
         items = samplingMethod(items, labelGap);
       }
 
-      const shouldCheck = (length: number, visibility: boolean, checkLength: boolean = true) => {
-        return checkLength ? length < 3 || visibility : visibility;
-      };
-
-      const checkFirst = shouldCheck(items.length, op.labelFirstVisible, false);
-      let checkLast = shouldCheck(items.length, op.labelLastVisible);
+      const checkFirst = op.labelFirstVisible;
+      let checkLast = op.labelLastVisible; // 这里和 auto-hide 里的逻辑有差异，不根据 length 自动强制显示最后一个（会引起 vtable 较多 badcase）。
 
       if (intersect(firstSourceItem as any, lastSourceItem as any, labelGap)) {
         if (items.includes(lastSourceItem) && items.length > 1 && checkFirst && checkLast) {

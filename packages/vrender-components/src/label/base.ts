@@ -901,7 +901,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
     const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors, mode } = option;
+    const { textType, contrastRatiosThreshold, alternativeColors, mode, interactInvertType } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
@@ -938,26 +938,30 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         mode
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+      const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
+      const isIntersect =
+        !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
 
-      if (outsideEnable || this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds)) {
+      if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
         const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });
 
-        if (label.attribute.lineWidth === 0) {
+        if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
         }
 
         const stroke = smartInvertStrategy(strokeStrategy, backgroundColor, invertColor, similarColor);
         stroke && label.setAttributes({ stroke });
-      } else if (label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds)) {
+      } else if (isIntersect && interactInvertType !== 'none') {
         // 存在相交的情况
         /** 当label无法设置stroke时，不进行反色计算（容易反色为白色与白色背景混合不可见） */
-        if (label.attribute.lineWidth === 0) {
+        if (label.attribute.lineWidth === 0 || label.attribute.strokeOpacity === 0) {
           continue;
         }
         /** 当label设置stroke时，保留stroke设置的颜色，根据stroke对fill做反色 */
         if (label.attribute.stroke) {
+          // stroke 作为背景色进行反色计算
           label.setAttributes({
             fill: labelSmartInvert(
               label.attribute.fill as IColor,

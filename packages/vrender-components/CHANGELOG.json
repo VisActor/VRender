@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.9",
+      "tag": "@visactor/vrender-components_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix smartInvert when `outsideEnable` is true\n\n"
+          },
+          {
+            "comment": "feat: support axis label `firstVisible` in autoHide and linear axis sampling"
+          },
+          {
+            "comment": "feat: add `interactInvertType` for smartInvert\n\n"
+          },
+          {
+            "comment": "fix: fix max width of arc label in left\n\n"
+          },
+          {
+            "comment": "fix: fix `pager.space` of discrete legend\n\n"
+          },
+          {
+            "comment": "fix: fix smart invert when only has intercet width base mark\n\n"
+          },
+          {
+            "comment": "fix: fix `legend.item.label.space` when has value\n\n"
+          },
+          {
+            "comment": "fix: legend scroll critical value leads last page not render. fix@VisActor/VChart#3172"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.8",
       "tag": "@visactor/vrender-components_v0.20.8",
       "date": "Sun, 29 Sep 2024 09:44:02 GMT",

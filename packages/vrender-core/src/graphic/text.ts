@@ -290,9 +290,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str,
             layoutObj.textOptions,
             maxLineWidth,
-            wordBreak === 'break-word'
+            wordBreak !== 'break-all',
+            wordBreak === 'keep-all'
           );
-          if (str !== '' && clip.str === '') {
+          if ((str !== '' && clip.str === '') || clip.wordBreaked) {
             if (ellipsis) {
               const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
                 str,
@@ -316,10 +317,19 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str: clip.str,
             width: clip.width
           });
+          let cutLength = clip.str.length;
+          if (clip.wordBreaked && !(str !== '' && clip.str === '')) {
+            needCut = true;
+            cutLength = clip.wordBreaked;
+          }
           if (clip.str.length === str.length) {
             // 不需要截断
           } else if (needCut) {
-            const newStr = str.substring(clip.str.length);
+            let newStr = str.substring(cutLength);
+            // 截断后，避免开头有空格很尬，去掉
+            if (wordBreak === 'keep-all') {
+              newStr = newStr.replace(/^\s+/g, '');
+            }
             lines.splice(i + 1, 0, newStr);
           }
         }

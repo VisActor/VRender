@@ -2,11 +2,11 @@
  * @description 自动隐藏
  */
 
-import type { IText } from '@visactor/vrender-core';
-import type { IBounds } from '@visactor/vutils';
+import { createRect, type IText } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { isEmpty, isFunction, last } from '@visactor/vutils';
 import type { CustomMethod } from '../type';
+import { textIntersect as intersect, hasOverlap } from '../util';
 
 const methods = {
   parity: function (items: IText[]) {
@@ -24,25 +24,6 @@ const methods = {
   }
 };
 
-function intersect(textA: IText, textB: IText, sep: number) {
-  let a: IBounds = textA.OBBBounds;
-  let b: IBounds = textB.OBBBounds;
-  if (a && b && !a.empty() && !b.empty()) {
-    return a.intersects(b);
-  }
-  a = textA.AABBBounds;
-  b = textB.AABBBounds;
-  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
-}
-
-function hasOverlap(items: IText[], pad: number) {
-  for (let i = 1, n = items.length, a = items[0], b; i < n; a = b, ++i) {
-    if (intersect(a, (b = items[i]), pad)) {
-      return true;
-    }
-  }
-}
-
 function hasBounds(item: IText) {
   let bounds;
   if (!item.OBBBounds.empty()) {
@@ -57,6 +38,23 @@ function hasBounds(item: IText) {
 function reset(items: IText[]) {
   items.forEach(item => item.setAttribute('opacity', 1));
   return items;
+}
+
+function forceItemVisible(sourceItem: IText, items: IText[], check: boolean, comparator: any, inverse = false) {
+  if (check && !sourceItem.attribute.opacity) {
+    const remainLength = items.length;
+    if (remainLength > 1) {
+      sourceItem.setAttribute('opacity', 1);
+      for (let i = 0; i < remainLength; i++) {
+        const item = inverse ? items[remainLength - 1 - i] : items[i];
+        if (comparator(item)) {
+          item.setAttribute('opacity', 0);
+        } else {
+          break;
+        }
+      }
+    }
+  }
 }
 
 type HideConfig = {
@@ -79,6 +77,10 @@ type HideConfig = {
    * 保证最后的label展示
    */
   lastVisible?: boolean;
+  /**
+   * 保证第一个的label展示
+   */
+  firstVisible?: boolean;
 };
 
 export function autoHide(labels: IText[], config: HideConfig) {
@@ -91,7 +93,7 @@ export function autoHide(labels: IText[], config: HideConfig) {
     return;
   }
 
-  let items;
+  let items: IText[];
 
   items = reset(source);
 
@@ -106,27 +108,31 @@ export function autoHide(labels: IText[], config: HideConfig) {
     /**
      * 0.17.10 之前，当最后label个数小于3 的时候，才做最后的label强制显示的策略
      */
-    const checkLast = items.length < 3 || config.lastVisible;
 
-    if (checkLast) {
-      const lastSourceItem = last(source);
+    const shouldCheck = (length: number, visibility: boolean) => length < 3 || visibility;
 
-      if (!lastSourceItem.attribute.opacity) {
-        const remainLength = items.length;
-        if (remainLength > 1) {
-          lastSourceItem.setAttribute('opacity', 1);
+    const checkFirst = shouldCheck(items.length, config.firstVisible);
+    let checkLast = shouldCheck(items.length, config.lastVisible);
 
-          for (let i = remainLength - 1; i >= 0; i--) {
-            if (intersect(items[i], lastSourceItem, sep)) {
-              items[i].setAttribute('opacity', 0);
-            } else {
-              // 当遇到第一个不相交的label的时候，就可以停止了
-              break;
-            }
-          }
-        }
-      }
+    const firstSourceItem = source[0];
+    const lastSourceItem = last(source);
+
+    if (intersect(firstSourceItem, lastSourceItem, sep)) {
+      lastSourceItem.setAttribute('opacity', 0); // Or firstSourceItem, depending on preference
+      checkLast = false;
     }
+
+    forceItemVisible(firstSourceItem, items, checkFirst, (item: IText) => intersect(item, firstSourceItem, sep));
+
+    forceItemVisible(
+      lastSourceItem,
+      items,
+      checkLast,
+      (item: IText) =>
+        intersect(item, lastSourceItem, sep) ||
+        (checkFirst && item !== firstSourceItem ? intersect(item, firstSourceItem, sep) : false),
+      true
+    );
   }
 
   source.forEach(item => {

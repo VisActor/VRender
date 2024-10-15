@@ -7,6 +7,8 @@ export interface TextOptionsType {
   fontFamily?: string;
   fontStyle?: string;
   fontVariant?: string;
+  textBaseline?: 'alphabetic' | 'top' | 'middle' | 'bottom';
+  textAlign?: 'left' | 'center' | 'right' | 'start' | 'end';
 }
 
 export interface ITextMeasure extends IContribution<IGraphicUtil> {
@@ -17,7 +19,8 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
     text: string,
     options: TextOptionsType,
     width: number,
-    wordBreak: boolean
+    wordBreak: boolean,
+    keepAllBreak?: boolean
   ) => { str: string; width: number };
   clipTextVertical: (
     verticalList: { text: string; width?: number; direction: number }[],

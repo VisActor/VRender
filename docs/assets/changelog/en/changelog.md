@@ -1,3 +1,16 @@
+# v0.20.8
+
+2024-09-30
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix line bounds with defined false, closed [#1463](https://github.com/VisActor/VRender/issues/1463)
+
+
+
+[more detail about v0.20.8](https://github.com/VisActor/VRender/releases/tag/v0.20.8)
+
 # v0.20.7
 
 2024-09-27

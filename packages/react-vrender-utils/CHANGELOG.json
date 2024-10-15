@@ -2,6 +2,66 @@
   "name": "@visactor/react-vrender-utils",
   "entries": [
     {
+      "version": "0.20.9",
+      "tag": "@visactor/react-vrender-utils_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.8",
+      "tag": "@visactor/react-vrender-utils_v0.20.8",
+      "date": "Sun, 29 Sep 2024 09:44:02 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.7",
+      "tag": "@visactor/react-vrender-utils_v0.20.7",
+      "date": "Fri, 27 Sep 2024 03:22:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.6",
+      "tag": "@visactor/react-vrender-utils_v0.20.6",
+      "date": "Thu, 26 Sep 2024 09:28:35 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.5",
+      "tag": "@visactor/react-vrender-utils_v0.20.5",
+      "date": "Fri, 20 Sep 2024 06:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix path string of arc, fix #1434\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.4",
+      "tag": "@visactor/react-vrender-utils_v0.20.4",
+      "date": "Thu, 12 Sep 2024 07:33:20 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.3",
+      "tag": "@visactor/react-vrender-utils_v0.20.3",
+      "date": "Sat, 07 Sep 2024 09:16:33 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.2",
+      "tag": "@visactor/react-vrender-utils_v0.20.2",
+      "date": "Wed, 04 Sep 2024 12:52:31 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.1",
+      "tag": "@visactor/react-vrender-utils_v0.20.1",
+      "date": "Fri, 30 Aug 2024 09:55:07 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.0",
       "tag": "@visactor/react-vrender-utils_v0.20.0",
       "date": "Thu, 15 Aug 2024 07:26:54 GMT",

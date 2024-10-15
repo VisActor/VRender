@@ -1,5 +1,4 @@
 import type {
-  IGraphicAttribute,
   ILineGraphicAttribute,
   SymbolType,
   ITextGraphicAttribute,
@@ -108,6 +107,47 @@ export interface ILine3dType {
   anchor3d?: [number, number];
 }
 
+export interface BreakSymbol {
+  /**
+   * 是否显示
+   */
+  visible?: boolean;
+  /**
+   * 截断图形旋转的弧度。
+   */
+  angle?: number;
+
+  /**
+   * 样式配置
+   */
+  style?: Partial<ISymbolGraphicAttribute>;
+}
+export interface AxisBreakProps {
+  /**
+   * 轴截断的范围，值为归一化后的数据
+   */
+  range: [number, number];
+  /**
+   * 截断图形配置
+   */
+  breakSymbol?: BreakSymbol;
+  /**
+   * 轴截断原始的数据范围
+   */
+  rawRange?: [number, number];
+}
+
+export interface TransformedAxisBreak extends AxisBreakProps {
+  /**
+   * 截断的起始点
+   */
+  startPoint: Point;
+  /**
+   * 截断的结束点
+   */
+  endPoint: Point;
+}
+
 export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
   /**
    * 起始点坐标
@@ -127,6 +167,7 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
    * 如果同时声明了 verticalLimitSize，请保证 verticalMinSize <= verticalLimitSize，否则会以 verticalLimitSize 为准。
    */
   verticalMinSize?: number;
+
   /**
    * 轴标签配置
    */
@@ -152,6 +193,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * @since 0.17.10
      */
     lastVisible?: boolean;
+    /**
+     * 保证第一个的label必须展示
+     * @default false
+     * @since 0.20.7
+     */
+    firstVisible?: boolean;
   };
   /**
    * 坐标轴背景配置
@@ -170,6 +217,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      */
     state?: AxisItemStateStyle<Partial<IRectGraphicAttribute>>;
   };
+
+  /**
+   * 轴截断配置
+   * @since 0.20.3
+   */
+  breaks?: AxisBreakProps[];
 }
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {
@@ -271,21 +324,6 @@ export interface LineAttributes extends Pick<SegmentAttributes, 'startSymbol' | 
    * 是否展示轴线
    */
   visible?: boolean;
-  /**
-   * TODO: 待支持
-   * 坐标轴截断范围，当需要对坐标轴轴线截断时，可配置该属性
-   */
-  breakRange?: [number, number];
-  /**
-   * TODO: 待支持
-   * 截断区域的形状
-   */
-  breakShape?: SymbolType | [SymbolType, SymbolType];
-  /**
-   * TODO: 待支持
-   * 截断图形样式
-   */
-  breakShapeStyle?: Partial<IGraphicAttribute>;
   /**
    * 线的样式配置
    */
@@ -396,6 +434,21 @@ export interface AxisLabelOverlap {
    * @default '...'
    */
   limitEllipsis?: string;
+  /**
+   * 文字超出坐标轴范围时，两侧可以提供扩充的空间大小。
+   * 例如，x 轴坐标 135 度旋转时，左侧第一个标签可能超出坐标轴范围，导致文本被缩略，此时可以通过配置 `overflowLimitLength` 优化效果。
+   * 仅当 `autoLimit` 为 true 时生效。
+   * @default 0
+   * @since 0.20.3 支持 X 轴配置生效
+   */
+  overflowLimitLength?:
+    | number
+    | {
+        left?: number;
+        right?: number;
+        // top?: number;
+        // bottom?: number;
+      };
 
   /**
    * 自定义布局配置，如果声明了 `layoutFunc`，则默认提供的防重叠相关的配置（`autoHide`, `autoRotate`, `autoLimit`）均不生效
@@ -406,6 +459,13 @@ export interface AxisLabelOverlap {
    * @returns void
    */
   layoutFunc?: (labels: IText[], labelData: AxisItem[], layer: number, axis: IGroup) => void;
+
+  /**
+   * 标签自动换行。与 `autoRotate` 不能同时生效，若开启了 `autoRotate`，则优先使用自动旋转策略。
+   * @since 0.20.3
+   * @default false
+   */
+  autoWrap?: boolean;
 }
 
 export type LabelAttributes = Omit<AxisLabelOverlap, 'text'> &
@@ -451,6 +511,21 @@ export type CoordinateType = 'cartesian' | 'polar' | 'geo' | 'none';
 export type IOrientType = 'left' | 'top' | 'right' | 'bottom' | 'z';
 export type IPolarOrientType = 'radius' | 'angle';
 
+type breakData = {
+  /**
+   * 截断后的值域范围
+   */
+  domain?: [number, number][];
+  /**
+   * 截断后的归一化范围
+   */
+  scope?: [number, number][];
+  /**
+   * 用户配置的截断范围
+   */
+  breakDomains: [number, number][];
+};
+
 export interface ITickDataOpt {
   /**
    * 是否进行轴采样
@@ -469,12 +544,21 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  labelFirstVisible?: boolean;
+  labelLastVisible?: boolean;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => breakData;
 }
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
   axisOrientType: IOrientType;
-  labelLastVisible: boolean;
   labelFlush: boolean;
+  /**
+   * 截断数据范围配置
+   */
+  breakData?: () => breakData;
 }
 
 export interface IPolarTickDataOpt extends ITickDataOpt {
@@ -490,7 +574,7 @@ export interface ITickData {
   // label: string;
 }
 
-type ITickCallbackOption = {
+export type ITickCallbackOption = {
   /**
    * 坐标轴占据的画布大小。
    * 直角坐标系中为轴的宽度或高度。

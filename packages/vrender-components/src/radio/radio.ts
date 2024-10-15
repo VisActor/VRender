@@ -41,6 +41,8 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   _circle: Arc;
   _text: WrapText;
 
+  name: 'radio';
+
   constructor(attributes: RadioAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, Radio.defaultAttributes, attributes));
     this.renderGroup();
@@ -78,6 +80,11 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
       this._circle.setAttributes({
         fill: this.attribute.circle.checkedFill,
         stroke: this.attribute.circle.checkedStroke
+      });
+    } else if (this.attribute.disabled) {
+      this._circle.setAttributes({
+        fill: this.attribute.circle.disableFill
+        // stroke: this.attribute.circle.disableFill
       });
     }
     this.appendChild(this._circle);
@@ -136,4 +143,11 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
 
     this.stage.renderNextFrame();
   };
+
+  initAttributes(params: RadioAttributes, options?: ComponentOptions) {
+    params = options?.skipDefault ? params : merge({}, Radio.defaultAttributes, params);
+    super.initAttributes(params);
+    this.renderGroup();
+    this.render();
+  }
 }

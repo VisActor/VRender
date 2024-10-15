@@ -55,6 +55,8 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
   _indeterminateIcon: Image;
   _text: Text;
 
+  name: 'checkbox';
+
   constructor(attributes: CheckboxAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, CheckBox.defaultAttributes, attributes));
     this.renderGroup();
@@ -93,6 +95,11 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
       this._box.setAttributes({
         fill: this.attribute.box.checkedFill,
         stroke: this.attribute.box.checkedStroke
+      });
+    } else if (this.attribute.disabled) {
+      this._box.setAttributes({
+        fill: this.attribute.box.disableFill
+        // stroke: this.attribute.box.disableFill
       });
     }
     this.appendChild(this._box);
@@ -192,4 +199,11 @@ export class CheckBox extends AbstractComponent<Required<CheckboxAttributes>> {
 
     this.stage.renderNextFrame();
   };
+
+  initAttributes(params: CheckboxAttributes, options?: ComponentOptions) {
+    params = options?.skipDefault ? params : merge({}, CheckBox.defaultAttributes, params);
+    super.initAttributes(params);
+    this.renderGroup();
+    this.render();
+  }
 }

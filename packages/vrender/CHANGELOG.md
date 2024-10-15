@@ -1,6 +1,62 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+_Version update only_
+
+## 0.20.8
+Sun, 29 Sep 2024 09:44:02 GMT
+
+_Version update only_
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+_Version update only_
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+_Version update only_
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- fix: fix maxLineWidth of arc label
+
+
+- fix: add disableFill box color in checkbox and radio #1437
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
+
+## 0.20.4
+Thu, 12 Sep 2024 07:33:20 GMT
+
+_Version update only_
+
+## 0.20.3
+Sat, 07 Sep 2024 09:16:33 GMT
+
+_Version update only_
+
+## 0.20.2
+Wed, 04 Sep 2024 12:52:31 GMT
+
+_Version update only_
+
+## 0.20.1
+Fri, 30 Aug 2024 09:55:08 GMT
+
+_Version update only_
 
 ## 0.20.0
 Thu, 15 Aug 2024 07:26:54 GMT

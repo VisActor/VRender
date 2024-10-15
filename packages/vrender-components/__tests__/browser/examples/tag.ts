@@ -59,16 +59,23 @@ export function run() {
       lineWidth: 1,
       cornerRadius: 4
     },
-    shape: {
-      visible: guiObject.symbolVisible,
-      symbolType: guiObject.symbolType,
-      fill: '#08979c',
-      fillOpacity: 0.3
-    },
-    padding: 10
+    // shape: {
+    //   visible: guiObject.symbolVisible,
+    //   symbolType: guiObject.symbolType,
+    //   fill: '#08979c',
+    //   fillOpacity: 0.3
+    // },
+    padding: 10,
     // space: 0
     // minWidth: 500
-    // maxWidth: 80
+    // maxWidth: 80,
+    state: {
+      panel: {
+        hover: {
+          fill: 'yellow'
+        }
+      }
+    }
   });
 
   window['tag'] = tag;
@@ -102,15 +109,11 @@ export function run() {
 
   console.log(tag, tag.AABBBounds.width(), tag.AABBBounds.height());
   tag.addEventListener('pointerenter', () => {
-    tag.setAttribute('panel', {
-      fill: 'yellow'
-    });
+    tag.addState('hover', true, false);
   });
 
   tag.addEventListener('pointerleave', () => {
-    tag.setAttribute('panel', {
-      fill: '#e6fffb'
-    });
+    tag.removeState('hover', false);
   });
 
   stage.addEventListener('pointerdown', () => {

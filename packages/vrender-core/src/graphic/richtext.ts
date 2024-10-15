@@ -64,6 +64,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   constructor(params?: IRichTextGraphicAttribute) {
     super(params);
     this.numberType = RICHTEXT_NUMBER_TYPE;
+
+    this.onBeforeAttributeUpdate = ((val: any, attributes: any, key: null | string | string[]) => {
+      for (const key in val) {
+        if (key === 'hoverIconId') {
+          if (val[key] === attributes[key]) {
+            continue;
+          }
+          const icon = this._frameCache.icons.get(val[key]);
+          this.updateHoverIconState(icon);
+        }
+      }
+    }) as any;
   }
 
   get width(): number {
@@ -173,10 +185,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     richtextTheme: Required<IRichTextGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, richtextTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
-
     const {
       width = richtextTheme.width,
       height = richtextTheme.height,
@@ -255,6 +263,27 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
     return this._frameCache;
   }
+
+  get cliped() {
+    const frameCache = this.getFrameCache();
+    if (frameCache.actualHeight > frameCache.height) {
+      return true;
+    }
+    const { disableAutoWrapLine } = this.attribute;
+    if (disableAutoWrapLine) {
+      for (let i = 0; i < frameCache.lines.length; i++) {
+        const l = frameCache.lines[i];
+        for (let j = 0; j < l.paragraphs.length; j++) {
+          const p = l.paragraphs[j];
+          if ((p as any).overflow && (p as any).text !== '') {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+    // if (height < this.attribute.height || )
+  }
   combinedStyleToCharacter(config: IRichTextImageCharacter | IRichTextParagraphCharacter) {
     const {
       fill,
@@ -308,6 +337,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         const config = this.combinedStyleToCharacter(
           textConfig[i] as IRichTextImageCharacter
         ) as IRichTextImageCharacter;
+        (config as any).lineWidth = undefined; // for icon bounds
         // 直接创建icon Mark
         const iconCache =
           config.id && this._frameCache && this._frameCache.icons && this._frameCache.icons.get(config.id);
@@ -477,29 +507,48 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       if (pickedIcon && pickedIcon === this._currentHoverIcon) {
         // do nothing
       } else if (pickedIcon) {
-        this._currentHoverIcon?.setHoverState(false);
-        this._currentHoverIcon = pickedIcon;
-        this._currentHoverIcon.setHoverState(true);
-        this.stage?.setCursor(pickedIcon.attribute.cursor);
-        this.stage?.renderNextFrame();
-      } else if (!pickedIcon && this._currentHoverIcon) {
-        this._currentHoverIcon.setHoverState(false);
-        this._currentHoverIcon = null;
-        this.stage?.setCursor();
-        // console.log('setCursor()');
+        this.setAttribute('hoverIconId', pickedIcon.richtextId);
 
-        this.stage?.renderNextFrame();
+        // this._currentHoverIcon?.setHoverState(false);
+        // this._currentHoverIcon = pickedIcon;
+        // this._currentHoverIcon.setHoverState(true);
+        // this.stage?.setCursor(pickedIcon.attribute.cursor);
+        // this.stage?.renderNextFrame();
+      } else if (!pickedIcon && this._currentHoverIcon) {
+        this.setAttribute('hoverIconId', undefined);
+
+        // this._currentHoverIcon.setHoverState(false);
+        // this._currentHoverIcon = null;
+        // this.stage?.setCursor();
+        // this.stage?.renderNextFrame();
       }
     });
 
     this.addEventListener('pointerleave', (e: FederatedMouseEvent) => {
       if (this._currentHoverIcon) {
-        this._currentHoverIcon.setHoverState(false);
-        this._currentHoverIcon = null;
-        this.stage?.setCursor();
-        this.stage?.renderNextFrame();
+        this.setAttribute('hoverIconId', undefined);
+
+        // this._currentHoverIcon.setHoverState(false);
+        // this._currentHoverIcon = null;
+        // this.stage?.setCursor();
+        // this.stage?.renderNextFrame();
       }
     });
+  }
+
+  updateHoverIconState(pickedIcon?: IRichTextIcon) {
+    if (pickedIcon) {
+      this._currentHoverIcon?.setHoverState(false);
+      this._currentHoverIcon = pickedIcon;
+      this._currentHoverIcon.setHoverState(true);
+      this.stage?.setCursor(pickedIcon.attribute.cursor);
+      this.stage?.renderNextFrame();
+    } else {
+      this._currentHoverIcon.setHoverState(false);
+      this._currentHoverIcon = null;
+      this.stage?.setCursor();
+      this.stage?.renderNextFrame();
+    }
   }
 
   pickIcon(point: EventPoint): IRichTextIcon | undefined {
@@ -512,7 +561,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     //   }
     // }
     let pickIcon: IRichTextIcon | undefined;
-    frameCache.icons.forEach(icon => {
+    frameCache.icons.forEach((icon, key) => {
       const bounds = icon.AABBBounds.clone();
       bounds.translate(icon._marginArray[3], icon._marginArray[0]);
       if (bounds.containsPoint({ x: point.x - x, y: point.y - y })) {

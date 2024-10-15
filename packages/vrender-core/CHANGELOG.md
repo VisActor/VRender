@@ -1,6 +1,113 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- feat: text support keep-all, closed #1466
+- fix: fix max width of arc label in left
+
+
+
+## 0.20.8
+Sun, 29 Sep 2024 09:44:02 GMT
+
+### Updates
+
+- fix: fix line bounds with defined false, closed #1463
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+_Version update only_
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+### Updates
+
+- fix: fix customPath of arc
+
+
+- feat: support obb bounds in text graphic
+- fix: fix limit width of arc label when has customized align offset
+
+
+- fix: fix error of `alternateColor`
+
+
+- fix: fix issue with interactive graphic while parent was removed
+- fix: outside label should not apply `smartInvert`
+
+
+- fix: fix `boundsPadding` of legend focus icon
+
+
+- fix: line segment update animation result error
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- feat: poptip suppport multiline text, closed #1444
+- feat: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+- fix: fix error of `bounds-contex` when use `arcTo` in customShape
+- fix: fix maxLineWidth of arc label
+
+
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
+
+## 0.20.4
+Thu, 12 Sep 2024 07:33:20 GMT
+
+### Updates
+
+- feat: pauseRender support pass count
+- fix: add updateHoverIconState in richtext
+
+## 0.20.3
+Sat, 07 Sep 2024 09:16:33 GMT
+
+### Updates
+
+- fix: fix error of updateAABBbounds when morphing
+
+
+- fix: tag padding not work when label is rich text. fix@VisActor/VChart#3151
+
+## 0.20.2
+Wed, 04 Sep 2024 12:52:31 GMT
+
+### Updates
+
+- fix: fix error of interpolate when use rgba color
+
+
+- fix: fix bug of label in radarchart triggered by aniamtion
+
+
+
+## 0.20.1
+Fri, 30 Aug 2024 09:55:08 GMT
+
+### Updates
+
+- fix: fix issue with poptip release
+- fix: fix issue with animate zero duration
+- fix: fix textAlign of label when set different angle
+
+
+- fix: fix memory leak problem in ResourceLoader
+- fix: fix issue with richtext edit plugin while defucus out of text
 
 ## 0.20.0
 Thu, 15 Aug 2024 07:26:54 GMT

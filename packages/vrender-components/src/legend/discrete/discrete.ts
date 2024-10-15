@@ -11,7 +11,8 @@ import {
   isNil,
   isFunction,
   isArray,
-  minInArray
+  minInArray,
+  throttle
 } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
@@ -23,7 +24,8 @@ import type {
   ITextGraphicAttribute,
   CustomEvent,
   IText,
-  IRichText
+  IRichText,
+  FederatedWheelEvent
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -52,6 +54,7 @@ import type {
 import type { ComponentOptions } from '../../interface';
 import { loadDiscreteLegendComponent } from '../register';
 import { createTextGraphicByType } from '../../util';
+import type { ScrollBarAttributes } from '../../scrollbar';
 import { ScrollBar } from '../../scrollbar';
 
 const DEFAULT_STATES = {
@@ -556,10 +559,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         x: 0,
         y: -focusSize / 2 - 1,
         strokeBoundsBuffer: 0,
+        boundsPadding: parsedPadding,
         ...focusIconStyle,
         visible: true,
-        pickMode: 'imprecise',
-        boundsPadding: parsedPadding
+        pickMode: 'imprecise'
       });
       this._appendDataToShape(focusShape, LEGEND_ELEMENT_NAME.focus, item, itemGroup);
 
@@ -623,10 +626,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             x: this._itemWidthByUser - shapeSize / 2 - parsedPadding[1] - parsedPadding[3] - focusSpace - valueSpace
           });
         } else {
-          valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
+          valueShape.setAttribute('x', labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
         }
       } else {
-        valueShape.setAttribute('x', valueSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
+        valueShape.setAttribute('x', labelSpace + (labelShape.AABBBounds.empty() ? 0 : labelShape.AABBBounds.x2));
       }
       focusStartX = valueSpace + (valueShape.AABBBounds.empty() ? 0 : valueShape.AABBBounds.x2);
 
@@ -737,14 +740,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         });
   }
 
-  private _updatePositionOfPager(
-    contentWidth: number,
-    contentHeight: number,
-    renderStartY: number,
-    compWidth: number,
-    compHeight: number
-  ) {
-    const { maxHeight, pager } = this.attribute;
+  private _updatePositionOfPager(renderStartY: number, compWidth: number, compHeight: number) {
+    const { pager } = this.attribute;
     const { totalPage, isHorizontal } = this._itemContext;
     const position = (pager && (pager as LegendPagerAttributes).position) || 'middle';
     (this._pagerComponent as Pager).setTotal(totalPage);
@@ -759,7 +756,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         y = renderStartY + compHeight / 2 - this._pagerComponent.AABBBounds.height() / 2;
       }
       this._pagerComponent.setAttributes({
-        x: contentWidth,
+        x: compWidth - this._pagerComponent.AABBBounds.width(),
         y
       });
     } else {
@@ -773,7 +770,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
       this._pagerComponent.setAttributes({
         x,
-        y: (maxHeight as number) - this._pagerComponent.AABBBounds.height()
+        y: compHeight - this._pagerComponent.AABBBounds.height()
       });
     }
   }
@@ -802,12 +799,24 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const pageParser = this._itemContext.isScrollbar
       ? (e: CustomEvent) => {
           const { value } = e.detail;
-          let newPage = value[0] * this._itemContext.totalPage;
-
-          if ((pager as LegendScrollbarAttributes).scrollByPosition) {
-            newPage = newPage + 1;
+          let newPage;
+          // 判断scrollbar在起点和终点的临界情况
+          // 原因:
+          // 假设totalPage为6, 则初始range=[0, 0.16666666666666666], 此时span=0.16666666666666666 = 1/6
+          // 随着scrollbar移动, 计算精度有所偏差, 在终点时range=[0.833333333333333, 1], 此时span=0.16666666666666696 > 1/6
+          // 导致在终点时无法触及最后一页的起点, 从而无法成功滚动到最后一页
+          if (value[0] === 0) {
+            newPage = 1;
+          } else if (value[1] === 1) {
+            newPage = this._itemContext.totalPage;
           } else {
-            newPage = Math.floor(newPage) + 1;
+            newPage = value[0] * this._itemContext.totalPage;
+
+            if ((pager as LegendScrollbarAttributes).scrollByPosition) {
+              newPage = newPage + 1;
+            } else {
+              newPage = Math.floor(newPage) + 1;
+            }
           }
 
           return newPage;
@@ -815,6 +824,18 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       : (e: CustomEvent) => {
           return e.detail.current;
         };
+
+    const onScroll = (e: FederatedWheelEvent) => {
+      const scrollComponent = this._pagerComponent as ScrollBar;
+      const preScrollRange = scrollComponent.getScrollRange();
+      const { direction } = scrollComponent.attribute as ScrollBarAttributes;
+      const { width, height } = scrollComponent.getSliderRenderBounds();
+      const currentScrollValue = direction === 'vertical' ? e.deltaY / height : e.deltaX / width;
+      scrollComponent.setScrollRange(
+        [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue],
+        true
+      );
+    };
 
     const onPaging = (e: CustomEvent) => {
       const newPage = pageParser(e);
@@ -845,6 +866,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (this._itemContext.isScrollbar) {
       this._pagerComponent.addEventListener('scrollDrag', onPaging);
       this._pagerComponent.addEventListener('scrollUp', onPaging);
+      if (((this.attribute as DiscreteLegendAttrs).pager as LegendScrollbarAttributes).roamScroll) {
+        const THROTTLE_TIME = 50;
+        // preventDefault不能和throttle一起使用, 否则阻止默认事件失败
+        this.addEventListener('wheel', (e: FederatedWheelEvent) => e.nativeEvent.preventDefault());
+        this.addEventListener('wheel', throttle(onScroll, THROTTLE_TIME));
+      }
     } else {
       this._pagerComponent.addEventListener('toPrev', onPaging);
       this._pagerComponent.addEventListener('toNext', onPaging);
@@ -908,7 +935,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       this._itemContext.totalPage = total;
 
-      this._updatePositionOfPager(contentWidth, contentHeight, renderStartY, compWidth, compHeight);
+      this._updatePositionOfPager(renderStartY, compWidth, compHeight);
     } else {
       compWidth = this._itemMaxWidth * maxCol + (maxCol - 1) * spaceCol;
       compHeight = maxHeight;
@@ -949,7 +976,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       const total = Math.ceil(pages / maxCol);
 
       this._itemContext.totalPage = total;
-      this._updatePositionOfPager(contentWidth, contentHeight, renderStartY, compWidth, compHeight);
+      this._updatePositionOfPager(renderStartY, compWidth, compHeight);
     }
 
     // 初始化 defaultCurrent
@@ -1356,5 +1383,10 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
 
     return newConfig;
+  }
+
+  release(): void {
+    super.release();
+    this.removeAllEventListeners();
   }
 }

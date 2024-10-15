@@ -42,6 +42,13 @@
                 "zh": "如何在项目中引用 VRender",
                 "en": "How to Import VRender"
               }
+            },
+            {
+              "path": "Vrender_basic_tutorial",
+              "title": {
+                "zh": "VRender基础教程",
+                "en": "VRender Basic Tutorial"
+              }
             }
           ]
         },

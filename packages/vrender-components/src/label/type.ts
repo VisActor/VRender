@@ -11,7 +11,9 @@ import type {
   IRichTextCharacter,
   IRichText,
   ILine,
-  ICustomPath2D
+  ICustomPath2D,
+  IArc,
+  IGroup
 } from '@visactor/vrender-core';
 import type { BoundsAnchorType, IPointLike, InsideBoundsAnchorType } from '@visactor/vutils';
 
@@ -102,9 +104,9 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | boolean;
-  animationEnter?: ILabelUpdateAnimation;
-  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[];
-  animationExit?: ILabelExitAnimation;
+  animationEnter?: ILabelUpdateAnimation | boolean;
+  animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[] | boolean;
+  animationExit?: ILabelExitAnimation | boolean;
 
   // 排序 or 删减
   dataFilter?: (data: LabelItem[]) => LabelItem[];
@@ -241,6 +243,14 @@ export interface SmartInvertAttrs {
    * label超出mark范围，也以mark作为背景色进行反色
    */
   outsideEnable?: boolean;
+  /**
+   * 当标签和mark相交，但是没有完全在mark内部的时候，支持三种处理方式：
+   *
+   * * none：不做任何处理
+   * * stroked：标签存在描边的时候，根据描边进行处理
+   * * inside: 和标签完全在mark内部一样处理
+   */
+  interactInvertType?: 'none' | 'stroked' | 'inside';
 }
 
 export type PositionStrategy = {
@@ -356,8 +366,9 @@ export interface ArcLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签位置
    * @default 'outside'
+   * @since 0.20.1 support 'inside-center'
    */
-  position?: Functional<'inside' | 'outside' | 'inside-inner' | 'inside-outer'>;
+  position?: 'inside' | 'outside' | 'inside-inner' | 'inside-outer' | 'inside-center';
 
   // 画布宽度
   width?: number;
@@ -425,11 +436,7 @@ export interface ILabelLineSpec {
    * 自定义路径
    * @since 0.19.21
    */
-  customShape?: (
-    text: ITextGraphicAttribute,
-    attrs: Partial<ILineGraphicAttribute>,
-    path: ICustomPath2D
-  ) => ICustomPath2D;
+  customShape?: (container: IGroup, attrs: Partial<ILineGraphicAttribute>, path: ICustomPath2D) => ICustomPath2D;
   /**
    * 引导线样式
    */
@@ -445,8 +452,9 @@ export interface IArcLabelLineSpec extends ILabelLineSpec {
   /**
    * 引导线 line2 部分最小长度
    * @default 10
+   * @since 0.20.3 支持函数回调
    */
-  line2MinLength?: number;
+  line2MinLength?: number | ((texts: IGraphic[], arcs: IArc[], attrs: Partial<ArcLabelAttrs>) => number);
   /**
    * 引导线是否光滑
    * @default false
@@ -466,6 +474,11 @@ export interface IArcLabelLayoutSpec {
   textAlign?: ArcLabelAlignType;
   /** @deprecate 建议统一使用textAlign，后续将废除 */
   align?: ArcLabelAlignType;
+  /**
+   * 标签对齐的偏移量
+   * @since 0.20.3
+   */
+  alignOffset?: number | ((texts: IGraphic[], arcs: IArc[], attrs: Partial<ArcLabelAttrs>) => number);
   /**
    * 标签布局策略
    * @default 'priority'

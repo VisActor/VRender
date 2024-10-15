@@ -42,9 +42,6 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     aabbBounds: IAABBBounds,
     full?: boolean
   ) {
-    if (!application.graphicService.validCheck(attribute, circleTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       full
         ? this.updateCircleAABBBoundsImprecise(attribute, circleTheme, aabbBounds)

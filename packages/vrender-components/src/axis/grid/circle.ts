@@ -20,6 +20,13 @@ export class CircleAxisGrid extends BaseGrid<CircleAxisGridAttributes> {
     super(options?.skipDefault ? attributes : merge({}, BaseGrid.defaultAttributes, attributes), options);
   }
 
+  protected getGridPointsByValue(value: number) {
+    const basePoint = this.getTickCoord(value);
+    const { radius, innerRadius = 0 } = this.attribute;
+
+    return [basePoint, this.getVerticalCoord(basePoint, radius - innerRadius, true)];
+  }
+
   protected getGridAttribute(isSubGrid: boolean) {
     let gridAttribute;
     let items: GridItem[] = [];

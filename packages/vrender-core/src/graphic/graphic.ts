@@ -1,5 +1,6 @@
 import type { ICustomPath2D } from './../interface/path';
-import type { Dict, IPointLike, IAABBBounds } from '@visactor/vutils';
+import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
+import { OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -220,10 +221,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
-  // protected declare _OBBBounds?: OBBBounds;
-  // get OBBBounds(): OBBBounds {
-  //   return this.tryUpdateOBBBounds();
-  // }
+  protected declare _OBBBounds?: IOBBBounds;
+  get OBBBounds(): IOBBBounds {
+    return this.tryUpdateOBBBounds();
+  }
   protected declare _globalAABBBounds: IAABBBounds;
   // 全局包围盒，部分图元需要，动态初始化，建议使用AABBBounds
   get globalAABBBounds(): IAABBBounds {
@@ -267,6 +268,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare pathProxy?: ICustomPath2D;
   // 依附于某个theme，如果该节点不存在parent，那么这个Theme就作为节点的Theme，避免添加到节点前计算属性
   declare attachedThemeGraphic?: IGraphic;
+  protected updateAABBBoundsStamp: number;
+  protected updateOBBBoundsStamp?: number;
 
   constructor(params: T = {} as T) {
     super();
@@ -274,6 +277,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._updateTag = UpdateTag.INIT;
     this.attribute = params;
     this.valid = this.isValid();
+    this.updateAABBBoundsStamp = 0;
     if (params.background) {
       this.loadImage((params.background as any).background ?? params.background, true);
     } else if (params.shadowGraphic) {
@@ -325,6 +329,26 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return bounds;
   }
 
+  protected tryUpdateOBBBounds(): IOBBBounds {
+    if (!this._OBBBounds) {
+      this._OBBBounds = new OBBBounds();
+    }
+    // 尝试更新AABBBounds
+    this.tryUpdateAABBBounds();
+    // 如果AABBBounds和OBBBounds不一致，则重新计算OBBBounds
+    if (this.updateOBBBoundsStamp === this.updateAABBBoundsStamp) {
+      return this._OBBBounds;
+    }
+    this.updateOBBBoundsStamp = this.updateAABBBoundsStamp;
+    if (!this.valid) {
+      this._OBBBounds.clear();
+      return this._OBBBounds;
+    }
+
+    const bounds = this.doUpdateOBBBounds();
+    return bounds;
+  }
+
   protected combindShadowAABBBounds(bounds: IAABBBounds) {
     // 合并shadowRoot的Bounds
     if (this.shadowRoot) {
@@ -335,6 +359,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   abstract getGraphicTheme(): T;
 
+  protected doUpdateOBBBounds(): IOBBBounds {
+    return this._OBBBounds;
+  }
+
   protected abstract updateAABBBounds(
     attribute: T,
     symbolTheme: Required<T>,
@@ -343,6 +371,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   ): IAABBBounds;
 
   protected doUpdateAABBBounds(full?: boolean): IAABBBounds {
+    this.updateAABBBoundsStamp++;
     const graphicTheme = this.getGraphicTheme();
     this._AABBBounds.clear();
     const attribute = this.attribute;
@@ -424,9 +453,25 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   shouldUpdateAABBBounds(): boolean {
     // 如果存在shadowRoot，那么判断shadowRoot是否需要更新
     if (this.shadowRoot) {
-      return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds();
+      return (
+        (!!(this._updateTag & UpdateTag.UPDATE_BOUNDS) || this.shadowRoot.shouldUpdateAABBBounds()) &&
+        application.graphicService.validCheck(
+          this.attribute,
+          this.getGraphicTheme() as Required<T>,
+          this._AABBBounds,
+          this
+        )
+      );
     }
-    return !!(this._updateTag & UpdateTag.UPDATE_BOUNDS);
+    return (
+      !!(this._updateTag & UpdateTag.UPDATE_BOUNDS) &&
+      application.graphicService.validCheck(
+        this.attribute,
+        this.getGraphicTheme() as Required<T>,
+        this._AABBBounds,
+        this
+      )
+    );
   }
 
   // 自身变化导致的AABBBounds的变化
@@ -755,7 +800,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline()).bind(this);
+    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline(), params?.slience);
+
+    animate.bind(this);
     if (params) {
       const { onStart, onFrame, onEnd, onRemove } = params;
       onStart != null && animate.onStart(onStart);
@@ -830,7 +877,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
       });
 
-      const animate = this.animate();
+      const animate = this.animate({ slience: true });
       (animate as any).stateNames = stateNames;
       animate.to(
         animateAttrs,
@@ -1246,7 +1293,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
         const nextStepVal = nextProps[key];
         const lastStepVal = (lastProps && lastProps[key]) ?? subAnimate.getLastPropByName(key, step);
-        if (nextStepVal == null || lastStepVal == null) {
+        if (nextStepVal == null || lastStepVal == null || nextStepVal === lastStepVal) {
           // 用户直接调用stepInterpolate可能会走进来，如果传入的参数出现null或者undefined，直接赋值最终的值
           nextAttributes[key] = nextStepVal;
           return;

@@ -23,18 +23,21 @@ import type { SegmentAttributes } from '../segment';
 import { Segment } from '../segment';
 import { angleTo } from '../util/matrix';
 import type { TagAttributes } from '../tag';
-import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem } from './type';
+import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, TransformedAxisBreak } from './type';
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
-import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
+import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
 import { measureTextSize } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
+import { autoWrap as autoWrapFunc } from './overlap/auto-wrap';
+
 import { alignAxisLabels } from '../util/align';
 import { LineAxisMixin } from './mixin/line';
 import type { ComponentOptions } from '../interface';
 import { loadLineAxisComponent } from './register';
+import { getAxisBreakSymbolAttrs } from './util';
 
 loadLineAxisComponent();
 export interface LineAxis
@@ -48,8 +51,61 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
   }
 
+  private _breaks: TransformedAxisBreak[];
+
   protected _renderInner(container: IGroup) {
+    this._breaks = null; // 置空，防止轴更新时缓存了旧值
+    if (this.attribute.breaks && this.attribute.breaks.length) {
+      const transformedBreaks = [];
+      for (let index = 0; index < this.attribute.breaks.length; index++) {
+        const aBreak = this.attribute.breaks[index];
+        const { range, breakSymbol, rawRange } = aBreak;
+        transformedBreaks.push({
+          startPoint: this.getTickCoord(range[0]),
+          endPoint: this.getTickCoord(range[1]),
+          range,
+          breakSymbol,
+          rawRange
+        });
+      }
+      this._breaks = transformedBreaks;
+    }
     super._renderInner(container);
+
+    // 渲染 break symbol
+    if (this._breaks && this._breaks.length) {
+      this._breaks.forEach((b, index) => {
+        const { startPoint, endPoint, breakSymbol, rawRange } = b;
+
+        if (breakSymbol?.visible !== false) {
+          const axisBreakGroup = graphicCreator.group({
+            zIndex: TopZIndex // 层级需要高于轴线
+          });
+          axisBreakGroup.name = AXIS_ELEMENT_NAME.axisBreak;
+          axisBreakGroup.id = this._getNodeId(`${AXIS_ELEMENT_NAME.axisBreak}-${index}`);
+          axisBreakGroup.data = rawRange;
+          const symbolStyle = getAxisBreakSymbolAttrs(breakSymbol);
+          const shape1 = graphicCreator.symbol({
+            x: startPoint.x,
+            y: startPoint.y,
+            ...symbolStyle
+          });
+          shape1.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+          const shape2 = graphicCreator.symbol({
+            x: endPoint.x,
+            y: endPoint.y,
+            ...symbolStyle
+          });
+          shape2.name = AXIS_ELEMENT_NAME.axisBreakSymbol;
+
+          axisBreakGroup.add(shape1);
+          axisBreakGroup.add(shape2);
+
+          container.add(axisBreakGroup);
+        }
+      });
+    }
+
     const { panel } = this.attribute;
 
     // TODO: 目前是通过包围盒绘制，在一些情况下会有那问题，比如圆弧轴、带了箭头的坐标轴等
@@ -72,18 +128,32 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     }
   }
 
-  // TODO: break
   protected renderLine(container: IGroup): void {
     const { start, end, line } = this.attribute as LineAxisAttributes;
-    const { startSymbol, endSymbol, style, breakRange, breakShape, breakShapeStyle, state, ...restLineAttrs } =
-      line as LineAttributes;
+    const { startSymbol, endSymbol, style, state, ...restLineAttrs } = line as LineAttributes;
+
     const lineAttrs = {
-      points: [start, end],
       startSymbol,
       endSymbol,
       lineStyle: style,
       ...restLineAttrs
     } as SegmentAttributes;
+
+    if (this._breaks && this._breaks.length) {
+      // 配置了轴截断
+      const linePoints = [];
+      let lastStartPoint = start;
+      this._breaks.forEach(b => {
+        const { startPoint, endPoint } = b;
+        linePoints.push([lastStartPoint, startPoint]);
+        lastStartPoint = endPoint;
+      });
+      linePoints.push([lastStartPoint, end]);
+      lineAttrs.points = linePoints;
+      lineAttrs.multiSegment = true;
+    } else {
+      lineAttrs.points = [start, end];
+    }
 
     if (!isEmpty(state)) {
       lineAttrs.state = {
@@ -96,6 +166,27 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     axisLineGroup.name = AXIS_ELEMENT_NAME.line;
     axisLineGroup.id = this._getNodeId('line');
     container.add(axisLineGroup as unknown as INode);
+  }
+
+  protected getTextAlign(vector: number[]): TextAlignType {
+    let align: TextAlignType = 'center';
+
+    if (isNumberClose(vector[0], 0)) {
+      if (isNumberClose(vector[1], 0)) {
+        if (Object.is(vector[1], -0)) {
+          align = 'start';
+        } else if (Object.is(vector[0], -0)) {
+          align = 'end';
+        }
+      } else {
+        align = 'center';
+      }
+    } else if (vector[0] > 0) {
+      align = 'start';
+    } else if (vector[0] < 0) {
+      align = 'end';
+    }
+    return align;
   }
 
   // TODO: 太 hack 了，需要静心优化
@@ -136,9 +227,23 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
         }
       } else {
         if (axisVector[0] === 0) {
-          const boundsWidth = this.axisLabelsContainer ? this.axisLabelsContainer.AABBBounds.width() : 0;
-          if (isFinite(boundsWidth)) {
-            labelLength += boundsWidth + (layerCount - 1) * space;
+          if (
+            this.axisLabelsContainer &&
+            this.axisLabelsContainer.AABBBounds &&
+            !this.axisLabelsContainer.AABBBounds.empty()
+          ) {
+            const baseX = this.axisLabelLayerSize[0].labelPos;
+            const bounds = this.axisLabelsContainer.AABBBounds;
+
+            labelLength +=
+              (factor === 1
+                ? bounds.x2 > baseX
+                  ? Math.min(bounds.x2 - baseX, bounds.width())
+                  : 0
+                : bounds.x1 < baseX
+                ? Math.min(baseX - bounds.x1, bounds.width())
+                : 0) +
+              (layerCount - 1) * space;
           } else {
             labelLength = 0;
           }
@@ -147,36 +252,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           Object.keys(this.axisLabelLayerSize).forEach((layer, index) => {
             labelLength += this.axisLabelLayerSize[layer].width + (index > 0 ? space : 0);
           });
-        }
-
-        const textAlign = this.axisLabelLayerSize[0].textAlign;
-        const isTextAlignStart = textAlign === 'start' || textAlign === 'left';
-        const isTextCenter = textAlign === 'center';
-        const isReverse = axisVector[1] > 0;
-        if (factor === 1) {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? labelLength
-              : isTextCenter
-              ? labelLength / 2
-              : space
-            : isTextAlignStart
-            ? space
-            : isTextCenter
-            ? labelLength / 2
-            : labelLength;
-        } else {
-          labelLength = isReverse
-            ? isTextAlignStart
-              ? space
-              : isTextCenter
-              ? labelLength / 2
-              : labelLength
-            : isTextAlignStart
-            ? labelLength
-            : isTextCenter
-            ? labelLength / 2
-            : space;
         }
       }
     }
@@ -442,21 +517,33 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       autoHide,
       autoHideMethod,
       autoHideSeparation,
-      lastVisible
+      lastVisible,
+      firstVisible,
+      autoWrap,
+      overflowLimitLength
     } = label;
 
     if (isFunction(layoutFunc)) {
       // 自定义布局
       layoutFunc(labelShapes, labelData, layer, this);
     } else {
-      // order: autoRotate -> autoLimit -> autoHide
+      // order: autoRotate Or autoRotate -> autoLimit -> autoHide
+      // priority: autoRotate > autoWrap
       if (autoRotate) {
         autoRotateFunc(labelShapes, {
           labelRotateAngle: autoRotateAngle,
           orient
         });
+      } else if (autoWrap) {
+        const isVertical = orient === 'left' || orient === 'right';
+        const axisLength = isVertical
+          ? Math.abs(this.attribute.start.y - this.attribute.end.y)
+          : Math.abs(this.attribute.start.x - this.attribute.end.x);
+        autoWrapFunc(labelShapes, { orient, limitLength, axisLength, ellipsis: limitEllipsis });
       }
-      if (autoLimit && isValidNumber(limitLength) && limitLength > 0) {
+
+      // autoWrap has computed width & height limit
+      if (!autoWrap && autoLimit && isValidNumber(limitLength) && limitLength > 0) {
         const isVertical = orient === 'left' || orient === 'right';
         const axisLength = isVertical
           ? Math.abs(this.attribute.start.y - this.attribute.end.y)
@@ -473,7 +560,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           verticalLimitLength,
           ellipsis: limitEllipsis,
           orient,
-          axisLength
+          axisLength,
+          overflowLimitLength
         });
       }
       if (autoHide) {
@@ -481,7 +569,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
           orient,
           method: autoHideMethod,
           separation: autoHideSeparation,
-          lastVisible
+          lastVisible,
+          firstVisible
         });
       }
     }
@@ -538,11 +627,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
     if (isValid(this.attribute.label.containerAlign)) {
       let start;
       if (orient === 'left') {
-        start = axisLabelContainerBounds.x2;
+        start = axisLabelContainerBounds.x2 - axisLabelContainerSize;
       } else if (orient === 'right') {
         start = axisLabelContainerBounds.x1;
       } else if (orient === 'top') {
-        start = axisLabelContainerBounds.y2;
+        start = axisLabelContainerBounds.y2 - axisLabelContainerSize;
       } else if (orient === 'bottom') {
         start = axisLabelContainerBounds.y1;
       }
@@ -568,6 +657,11 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
     }
     return limitLength;
+  }
+
+  release(): void {
+    super.release();
+    this._breaks = null;
   }
 }
 

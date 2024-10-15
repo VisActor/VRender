@@ -1,6 +1,123 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 15 Aug 2024 07:26:54 GMT and should not be manually modified.
+This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- fix: fix smartInvert when `outsideEnable` is true
+
+
+- feat: support axis label `firstVisible` in autoHide and linear axis sampling
+- feat: add `interactInvertType` for smartInvert
+
+
+- fix: fix max width of arc label in left
+
+
+- fix: fix `pager.space` of discrete legend
+
+
+- fix: fix smart invert when only has intercet width base mark
+
+
+- fix: fix `legend.item.label.space` when has value
+
+
+- fix: legend scroll critical value leads last page not render. fix@VisActor/VChart#3172
+
+## 0.20.8
+Sun, 29 Sep 2024 09:44:02 GMT
+
+_Version update only_
+
+## 0.20.7
+Fri, 27 Sep 2024 03:22:31 GMT
+
+### Updates
+
+- feat: legend support roam scroll. close@VisActor/VChart#3254
+
+## 0.20.6
+Thu, 26 Sep 2024 09:28:36 GMT
+
+### Updates
+
+-  feat: support obb text bounds to enhance autoHide effect
+- fix: fix limit width of arc label when has customized align offset
+
+
+- fix: fix error of `alternateColor`
+
+
+- fix: outside label should not apply `smartInvert`
+
+
+- fix: fix `boundsPadding` of legend focus icon
+
+
+
+## 0.20.5
+Fri, 20 Sep 2024 06:37:57 GMT
+
+### Updates
+
+- fix: update parameters
+- fix: fix maxLineWidth of arc label
+
+
+- fix: fix path string of arc, fix #1434
+
+
+- fix: fix `textStyle` of data-zoom
+
+
+- fix: fix error of morphing animation in `multiToOneMorph`, fix #1439
+
+
+
+## 0.20.4
+Thu, 12 Sep 2024 07:33:20 GMT
+
+### Updates
+
+- fix: fix the issue where labels are not drawn when the linelabel animation is enabled.
+
+## 0.20.3
+Sat, 07 Sep 2024 09:16:33 GMT
+
+### Updates
+
+- feat: add `alignOffset` in arc-label, `line2MinLength` support customized callback
+
+
+- feat: support axis `breaks` for line axis
+- feat: support `autoWrap` in line axis label
+- feat: label component supports disable specific state animation
+- fix: tag padding not work when label is rich text. fix@VisActor/VChart#3151
+
+## 0.20.2
+Wed, 04 Sep 2024 12:52:31 GMT
+
+_Version update only_
+
+## 0.20.1
+Fri, 30 Aug 2024 09:55:07 GMT
+
+### Updates
+
+- feat: support position `inside-center` of arc label
+- feat: add necessary APIs to player component
+- fix: fix textAlign of label when set different angle
+
+
+- fix: indicator stop tooltip interaction. fix@VisActor/VChart#3123
+- fix: segment line will cause incorrect label position
+- fix: fix issue with poptip memory while stage is released
+- feat: support line segments update animation in TagPointsUpdate custom animation
+- perf: optimize the performance of label component
 
 ## 0.20.0
 Thu, 15 Aug 2024 07:26:54 GMT

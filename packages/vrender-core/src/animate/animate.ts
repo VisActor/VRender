@@ -192,8 +192,13 @@ export class Animate implements IAnimate {
   declare _onRemove?: (() => void)[];
   declare _preventAttrs?: Set<string>;
   static interpolateMap: Map<string, InterpolateFunc> = new Map();
+  slience?: boolean;
 
-  constructor(id: string | number = Generator.GenAutoIncrementId(), timeline: ITimeline = defaultTimeline) {
+  constructor(
+    id: string | number = Generator.GenAutoIncrementId(),
+    timeline: ITimeline = defaultTimeline,
+    slience?: boolean
+  ) {
     this.id = id;
     this.timeline = timeline;
     this.status = AnimateStatus.INITIAL;
@@ -204,6 +209,7 @@ export class Animate implements IAnimate {
     this._startTime = 0;
     this._duringTime = 0;
     this.timeline.addAnimate(this);
+    this.slience = slience;
   }
 
   setTimeline(timeline: ITimeline) {
@@ -420,7 +426,7 @@ export class Animate implements IAnimate {
   bind(target: IAnimateTarget) {
     this.target = target;
 
-    if (this.target.onAnimateBind) {
+    if (this.target.onAnimateBind && !this.slience) {
       this.target.onAnimateBind(this);
     }
 
@@ -445,7 +451,7 @@ export class Animate implements IAnimate {
       this.status = AnimateStatus.RUNNING;
       this._onStart && this._onStart.forEach(cb => cb());
     }
-    const end = this.setPosition(this.rawPosition + delta * this.timeScale);
+    const end = this.setPosition(Math.max(this.rawPosition, 0) + delta * this.timeScale);
     if (end && this.status === AnimateStatus.RUNNING) {
       this.status = AnimateStatus.END;
       this._onEnd && this._onEnd.forEach(cb => cb());
@@ -776,7 +782,10 @@ export class SubAnimate implements ISubAnimate {
     if (d <= 0) {
       // 如果不用执行，跳过
       end = true;
-      return end;
+      // 小于0的话，直接return，如果等于0，那还是得走动画逻辑，将end属性设置上去
+      if (d < 0) {
+        return end;
+      }
     }
     loop = Math.floor(rawPosition / d);
     position = rawPosition - loop * d;

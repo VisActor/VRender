@@ -9,7 +9,7 @@ import type {
 import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { TextMeasure, isObject } from '@visactor/vutils';
+import { TextMeasure, isObject, isValid } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
 import type { HTMLTextContent, ReactTextContent, TextContent } from '../core/type';
 
@@ -75,9 +75,13 @@ export function getTextType(attributes: TextContent, typeKey = 'type') {
 }
 
 export function richTextAttributeTransform(attributes: ITextGraphicAttribute & IRichTextAttribute & TextContent) {
+  if (isValid(attributes.maxLineWidth)) {
+    attributes.maxWidth = attributes.maxLineWidth;
+    delete attributes.maxLineWidth;
+  }
+
   attributes.width = attributes.width ?? 0;
   attributes.height = attributes.height ?? 0;
-  attributes.maxWidth = attributes.maxLineWidth;
   attributes.textConfig = (attributes.text as unknown as any).text || attributes.text;
   return attributes;
 }

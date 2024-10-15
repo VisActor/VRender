@@ -60,9 +60,6 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     lineTheme: Required<ILineGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, lineTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       attribute.segments
         ? this.updateLineAABBBoundsBySegments(attribute, lineTheme, aabbBounds)
@@ -85,7 +82,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     const { points = lineTheme.points, connectedType } = attribute;
     const b = aabbBounds;
     points.forEach(p => {
-      if (p.defined !== false || connectedType === 'zero') {
+      if (p.defined !== false || connectedType === 'zero' || connectedType === 'connect') {
         b.add(p.x, p.y);
       }
     });
@@ -101,7 +98,7 @@ export class Line extends Graphic<ILineGraphicAttribute> implements ILine {
     const b = aabbBounds;
     segments.forEach(s => {
       s.points.forEach(p => {
-        if (p.defined !== false || connectedType === 'zero') {
+        if (p.defined !== false || connectedType === 'zero' || connectedType === 'connect') {
           b.add(p.x, p.y);
         }
       });

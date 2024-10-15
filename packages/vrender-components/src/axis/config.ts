@@ -52,3 +52,10 @@ export const DEFAULT_AXIS_THEME = {
     }
   }
 };
+
+export const DEFAULT_AXIS_BREAK_SYMBOL_STYLE = {
+  size: 8,
+  stroke: '#000',
+  lineWidth: 1,
+  zIndex: 1
+};

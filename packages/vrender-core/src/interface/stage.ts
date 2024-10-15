@@ -162,7 +162,7 @@ export interface IStage extends INode {
   ticker: ITicker;
   increaseAutoRender: boolean;
   readonly renderService: IRenderService;
-  pickerService?: IPickerService;
+  getPickerService: () => IPickerService;
   readonly pluginService: IPluginService;
   readonly layerService: ILayerService;
   // 如果传入CanvasId，如果存在相同Id，说明这两个图层使用相同的Canvas绘制
@@ -227,7 +227,7 @@ export interface IStage extends INode {
   release: () => void;
   setStage: (stage?: IStage) => void;
 
-  pauseRender: () => void;
+  pauseRender: (sk?: number) => void;
   resumeRender: () => void;
 
   setCursor: (mode?: string) => void;

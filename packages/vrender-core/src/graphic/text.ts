@@ -1,5 +1,5 @@
-import type { IAABBBounds } from '@visactor/vutils';
-import { max, isArray, getContextFont, transformBoundsWithMatrix } from '@visactor/vutils';
+import type { IAABBBounds, IOBBBounds } from '@visactor/vutils';
+import { max, isArray, getContextFont, transformBoundsWithMatrix, rotatePoint } from '@visactor/vutils';
 import { textDrawOffsetX, textLayoutOffsetY } from '../common/text';
 import { CanvasTextLayout } from '../core/contributions/textMeasure/layout';
 import { application } from '../application';
@@ -47,6 +47,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   cache: ITextCache;
   _font: string;
 
+  protected declare obbText?: Text;
+
   get font(): string {
     const textTheme = this.getGraphicTheme();
     if (!this._font) {
@@ -78,14 +80,20 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   get cliped(): boolean | undefined {
     const textTheme = this.getGraphicTheme();
     const attribute = this.attribute;
-    if (this.isMultiLine) {
-      return undefined;
-    }
-    const { maxLineWidth = textTheme.maxLineWidth } = attribute;
+    const { maxLineWidth = textTheme.maxLineWidth, text, whiteSpace = textTheme.whiteSpace } = attribute;
     if (!Number.isFinite(maxLineWidth)) {
       return false;
     }
     this.tryUpdateAABBBounds();
+    if (this.cache?.layoutData?.lines) {
+      let mergedText = '';
+      this.cache.layoutData.lines.forEach(item => {
+        mergedText += item.str;
+      });
+      const originText = Array.isArray(text) ? text.join('') : text;
+
+      return originText !== mergedText;
+    }
     if (attribute.direction === 'vertical' && this.cache.verticalList && this.cache.verticalList[0]) {
       return this.cache.verticalList[0].map(item => item.text).join('') !== attribute.text.toString();
     }
@@ -132,14 +140,35 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return getTheme(this).text;
   }
 
+  protected doUpdateOBBBounds(): IOBBBounds {
+    const graphicTheme = this.getGraphicTheme();
+    this._OBBBounds.clear();
+    const attribute = this.attribute;
+    const { angle = graphicTheme.angle } = attribute;
+    if (!angle) {
+      const b = this.AABBBounds;
+      this._OBBBounds.setValue(b.x1, b.y1, b.x2, b.y2);
+      return this._OBBBounds;
+    }
+    if (!this.obbText) {
+      this.obbText = new Text({});
+    }
+    this.obbText.setAttributes({ ...attribute, angle: 0 });
+    const bounds1 = this.obbText.AABBBounds;
+    const { x, y } = attribute;
+    const boundsCenter = { x: (bounds1.x1 + bounds1.x2) / 2, y: (bounds1.y1 + bounds1.y2) / 2 };
+    const center = rotatePoint(boundsCenter, angle, { x, y });
+    this._OBBBounds.copy(bounds1);
+    this._OBBBounds.translate(center.x - boundsCenter.x, center.y - boundsCenter.y);
+    this._OBBBounds.angle = angle;
+    return this._OBBBounds;
+  }
+
   protected updateAABBBounds(
     attribute: ITextGraphicAttribute,
     textTheme: Required<ITextGraphicAttribute>,
     aabbBounds: IAABBBounds
   ) {
-    if (!application.graphicService.validCheck(attribute, textTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     const { text = textTheme.text } = this.attribute;
     if (Array.isArray(text)) {
       this.updateMultilineAABBBounds(text as (number | string)[]);
@@ -261,9 +290,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str,
             layoutObj.textOptions,
             maxLineWidth,
-            wordBreak === 'break-word'
+            wordBreak !== 'break-all',
+            wordBreak === 'keep-all'
           );
-          if (str !== '' && clip.str === '') {
+          if ((str !== '' && clip.str === '') || clip.wordBreaked) {
             if (ellipsis) {
               const clipEllipsis = layoutObj.textMeasure.clipTextWithSuffix(
                 str,
@@ -287,10 +317,19 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str: clip.str,
             width: clip.width
           });
+          let cutLength = clip.str.length;
+          if (clip.wordBreaked && !(str !== '' && clip.str === '')) {
+            needCut = true;
+            cutLength = clip.wordBreaked;
+          }
           if (clip.str.length === str.length) {
             // 不需要截断
           } else if (needCut) {
-            const newStr = str.substring(clip.str.length);
+            let newStr = str.substring(cutLength);
+            // 截断后，避免开头有空格很尬，去掉
+            if (wordBreak === 'keep-all') {
+              newStr = newStr.replace(/^\s+/g, '');
+            }
             lines.splice(i + 1, 0, newStr);
           }
         }

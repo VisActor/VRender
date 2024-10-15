@@ -75,10 +75,13 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
       }
     } else if (graphic._showPoptip === 2) {
       graphic._showPoptip = 0;
-      this.poptipComponent &&
+      if (this.poptipComponent) {
         this.poptipComponent.setAttributes({
           visibleAll: false
         });
+        this.poptipComponent.parent?.removeChild(this.poptipComponent);
+        this.poptipComponent = null;
+      }
     }
   }
 }

@@ -262,9 +262,6 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     aabbBounds: IAABBBounds,
     full?: boolean
   ) {
-    if (!application.graphicService.validCheck(attribute, arcTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       full
         ? this.updateArcAABBBoundsImprecise(attribute, arcTheme, aabbBounds)
@@ -349,8 +346,8 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
 
     const attribute = this.attribute;
     const { startAngle, endAngle } = this.getParsedAngle();
-    let innerRadius = attribute.innerRadius - (attribute.innerPadding || 0);
-    let outerRadius = attribute.outerRadius - (attribute.outerPadding || 0);
+    let innerRadius = (attribute.innerRadius ?? 0) - (attribute.innerPadding ?? 0);
+    let outerRadius = (attribute.outerRadius ?? 0) - (attribute.outerPadding ?? 0);
     const deltaAngle = abs(endAngle - startAngle);
     const clockwise: boolean = endAngle > startAngle;
 

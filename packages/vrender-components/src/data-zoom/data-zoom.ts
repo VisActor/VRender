@@ -523,11 +523,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       };
       startTextAlignStyle = {
         textAlign: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'left' : 'right',
-        textBaseline: 'middle'
+        textBaseline: restStartTextStyle?.textStyle?.textBaseline ?? 'middle'
       };
       endTextAlignStyle = {
         textAlign: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'right' : 'left',
-        textBaseline: 'middle'
+        textBaseline: restEndTextStyle?.textStyle?.textBaseline ?? 'middle'
       };
     } else {
       startTextPosition = {
@@ -539,11 +539,11 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         y: position.y + end * height
       };
       startTextAlignStyle = {
-        textAlign: 'center',
+        textAlign: restStartTextStyle?.textStyle?.textAlign ?? 'center',
         textBaseline: this.isTextOverflow(componentBoundsLike, startTextBounds, 'start') ? 'top' : 'bottom'
       };
       endTextAlignStyle = {
-        textAlign: 'center',
+        textAlign: restEndTextStyle?.textStyle?.textAlign ?? 'center',
         textBaseline: this.isTextOverflow(componentBoundsLike, endTextBounds, 'end') ? 'bottom' : 'top'
       };
     }

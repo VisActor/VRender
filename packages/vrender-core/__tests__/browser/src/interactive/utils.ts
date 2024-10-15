@@ -44,7 +44,7 @@ export function renderElement(num: number, type: string, canopusCb: Function) {
       console.log({
         pick: pickResult && pickResult.graphic && pickResult.graphic.id,
         containPoint: arr.filter(graphic => {
-          return graphic.containsPoint(e.offsetX, e.offsetY, 0, stage.pickerService);
+          return graphic.containsPoint(e.offsetX, e.offsetY, 0, stage.getPickerService());
         }),
         dpr: stage.window.dpr
       });

@@ -1,6 +1,6 @@
 import type { IText, ITextGraphicAttribute, EasingType } from '@visactor/vrender-core';
 import { IncreaseCount } from '@visactor/vrender-core';
-import type { BaseLabelAttrs, ILabelAnimation, ILabelUpdateChannelAnimation } from '../type';
+import type { ILabelAnimation, ILabelUpdateAnimation, ILabelUpdateChannelAnimation, LabelContent } from '../type';
 import { array, isArray, isEmpty, isValidNumber } from '@visactor/vutils';
 
 const fadeIn = (textAttribute: ITextGraphicAttribute = {}) => {
@@ -45,30 +45,36 @@ export function getAnimationAttributes(
   return animationEffects[type]?.(textAttribute) ?? { from: {}, to: {} };
 }
 
-export function updateAnimation(prev: IText, next: IText, animationConfig: BaseLabelAttrs['animationUpdate']) {
+export function updateAnimation(
+  prev: LabelContent['text'],
+  next: LabelContent['text'],
+  animationConfig: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[]
+) {
   if (!isArray(animationConfig)) {
     const { duration, easing, increaseEffect = true } = animationConfig;
     prev.animate().to(next.attribute, duration, easing);
-    increaseEffect && playIncreaseCount(prev, next, duration, easing);
+    if (increaseEffect && prev.type === 'text' && next.type === 'text') {
+      playIncreaseCount(prev as IText, next as IText, duration, easing);
+    }
     return;
   }
 
-  animationConfig.forEach((cfg, i) => {
+  animationConfig.forEach(cfg => {
     const { duration, easing, increaseEffect = true, channel } = cfg;
-    const { from, to } = update(prev, next, channel, cfg.options);
+    const { to } = update(prev, next, channel, cfg.options);
     if (!isEmpty(to)) {
       prev.animate().to(to, duration, easing);
     }
 
-    if ('text' in from && 'text' in to && increaseEffect) {
-      playIncreaseCount(prev, next, duration, easing);
+    if (increaseEffect && prev.type === 'text' && next.type === 'text') {
+      playIncreaseCount(prev as IText, next as IText, duration, easing);
     }
   });
 }
 
 export const update = (
-  prev: IText,
-  next: IText,
+  prev: LabelContent['text'],
+  next: LabelContent['text'],
   channel?: string[],
   options?: ILabelUpdateChannelAnimation['options']
 ) => {

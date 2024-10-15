@@ -129,9 +129,6 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     aabbBounds: IAABBBounds,
     full?: boolean
   ) {
-    if (!application.graphicService.validCheck(attribute, symbolTheme, aabbBounds, this)) {
-      return aabbBounds;
-    }
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
       full
         ? this.updateSymbolAABBBoundsImprecise(attribute, symbolTheme, aabbBounds)

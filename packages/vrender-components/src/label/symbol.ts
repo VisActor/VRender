@@ -18,7 +18,8 @@ export class SymbolLabel extends LabelBase<SymbolLabelAttrs> {
   };
 
   constructor(attributes: SymbolLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, SymbolLabel.defaultAttributes, attributes));
+    const { data, ...restAttributes } = attributes;
+    super(options?.skipDefault ? attributes : { data, ...merge({}, SymbolLabel.defaultAttributes, restAttributes) });
   }
 
   protected labeling(textBounds: IBoundsLike, graphicBounds: IBoundsLike, position = 'top', offset = 0) {

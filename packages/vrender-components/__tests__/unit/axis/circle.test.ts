@@ -76,10 +76,10 @@ describe('Circle Axis', () => {
     // label
     const axisLabels = axis.getElementsByName(`${AXIS_ELEMENT_NAME.labelContainer}-layer-0`)[0] as unknown as Group;
     expect(axisLabels.childrenCount).toBe(8);
-    expect((axisLabels.children[1] as unknown as Text).attribute.textAlign).toBe('center');
-    expect((axisLabels.children[1] as unknown as Text).attribute.textBaseline).toBe('middle');
-    expect((axisLabels.children[5] as unknown as Text).attribute.textAlign).toBe('center');
-    expect((axisLabels.children[5] as unknown as Text).attribute.textBaseline).toBe('middle');
+    expect((axisLabels.children[1] as unknown as Text).attribute.textAlign).toBe('left');
+    expect((axisLabels.children[1] as unknown as Text).attribute.textBaseline).toBe('bottom');
+    expect((axisLabels.children[5] as unknown as Text).attribute.textAlign).toBe('right');
+    expect((axisLabels.children[5] as unknown as Text).attribute.textBaseline).toBe('top');
 
     // tick & subTick
     const tickLineGroup = axis.getElementsByName(AXIS_ELEMENT_NAME.tickContainer)[0] as unknown as Group;

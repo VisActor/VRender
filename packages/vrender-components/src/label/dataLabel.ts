@@ -19,7 +19,10 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
   };
 
   constructor(attributes: DataLabelAttrs, options?: ComponentOptions) {
-    super(options?.skipDefault ? attributes : merge({}, DataLabel.defaultAttributes, attributes));
+    const { dataLabels, ...restAttributes } = attributes;
+    super(
+      options?.skipDefault ? attributes : { dataLabels, ...merge({}, DataLabel.defaultAttributes, restAttributes) }
+    );
   }
 
   protected render(): void {
@@ -48,6 +51,11 @@ export class DataLabel extends AbstractComponent<DataLabelAttrs> {
       if (labelComponent) {
         const { baseMarkGroupName, type } = dataLabel;
         const id = dataLabel.id ?? `${baseMarkGroupName}-${type}-${i}`;
+
+        if (dataLabel.type === 'arc') {
+          dataLabel.width = size.width;
+          dataLabel.height = size.height;
+        }
 
         let component = this._componentMap.get(id);
         if (component) {

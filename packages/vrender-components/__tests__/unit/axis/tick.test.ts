@@ -28,3 +28,21 @@ test('Normal Line Ticks', () => {
     }).map(tick => tick.value)
   ).toStrictEqual([0, 20, 40, 60, 80, 100]);
 });
+
+test('Line Ticks has breakData config', () => {
+  const scale = new LinearScale().domain([0, 2000, 10000, 25000]).range([292, 23, 23, 0]).nice();
+  // TODO：分段的  scale  默认不对 count 进行处理，即每一个子段都使用 count
+  expect(
+    ticks(scale, {
+      coordinateType: 'cartesian',
+      axisOrientType: 'left',
+      labelStyle: {},
+      tickCount: 5,
+      breakData: () => {
+        return {
+          breakDomains: [[2000, 10000]]
+        };
+      }
+    }).map(tick => tick.value)
+  ).toStrictEqual([0, 500, 1000, 1500, 15000, 20000, 25000]);
+});

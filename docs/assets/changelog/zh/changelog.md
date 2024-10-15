@@ -1,3 +1,144 @@
+# v0.20.8
+
+2024-09-30
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix line bounds with defined false, closed [#1463](https://github.com/VisActor/VRender/issues/1463)
+
+
+
+[更多详情请查看 v0.20.8](https://github.com/VisActor/VRender/releases/tag/v0.20.8)
+
+# v0.20.7
+
+2024-09-27
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: legend support roam scroll. close@VisActor/VChart[#3254](https://github.com/VisActor/VRender/issues/3254)
+
+[更多详情请查看 v0.20.7](https://github.com/VisActor/VRender/releases/tag/v0.20.7)
+
+# v0.20.6
+
+2024-09-26
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support obb text bounds to enhance autoHide effect
+- **@visactor/vrender-core**: support obb bounds in text graphic
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix limit width of arc label when has customized align offset
+- **@visactor/vrender-components**: fix error of `alternateColor`
+- **@visactor/vrender-components**: outside label should not apply `smartInvert`
+- **@visactor/vrender-components**: fix `boundsPadding` of legend focus icon
+- **@visactor/vrender-core**: fix customPath of arc
+- **@visactor/vrender-core**: fix issue with interactive graphic while parent was removed
+- **@visactor/vrender-core**: line segment update animation result error
+
+
+
+[更多详情请查看 v0.20.6](https://github.com/VisActor/VRender/releases/tag/v0.20.6)
+
+# v0.20.5
+
+2024-09-20
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: poptip suppport multiline text, closed [#1444](https://github.com/VisActor/VRender/issues/1444)
+- **@visactor/vrender-core**: fix issue with richtext width on disableAutoWrapLine mode, support clip attr
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: update parameters
+- **@visactor/vrender-components**: fix maxLineWidth of arc label
+- **@visactor/vrender-components**: fix `textStyle` of data-zoom
+- **@visactor/vrender-core**: fix error of `bounds-contex` when use `arcTo` in customShape
+- **@visactor/vrender-core**: fix path string of arc, fix [#1434](https://github.com/VisActor/VRender/issues/1434)
+- **@visactor/vrender-core**: fix error of morphing animation in `multiToOneMorph`, fix [#1439](https://github.com/VisActor/VRender/issues/1439)
+- **@visactor/vrender**: add disableFill box color in checkbox and radio [#1437](https://github.com/VisActor/VRender/issues/1437)
+
+[更多详情请查看 v0.20.5](https://github.com/VisActor/VRender/releases/tag/v0.20.5)
+
+# v0.20.4
+
+2024-09-12
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: pauseRender support pass count
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the issue where labels are not drawn when the linelabel animation is enabled.
+- **@visactor/vrender-core**: add updateHoverIconState in richtext
+
+
+
+[更多详情请查看 v0.20.4](https://github.com/VisActor/VRender/releases/tag/v0.20.4)
+
+# v0.20.3
+
+2024-09-09
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add `alignOffset` in arc-label, `line2MinLength` support customized callback
+- **@visactor/vrender-components**: support axis `breaks` for line axis
+- **@visactor/vrender-components**: support `autoWrap` in line axis label
+- **@visactor/vrender-components**: label component supports disable specific state animation
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: tag padding not work when label is rich text. fix@VisActor/VChart[#3151](https://github.com/VisActor/VRender/issues/3151)
+- **@visactor/vrender-core**: fix error of updateAABBbounds when morphing
+- **@visactor/vrender-core**: tag padding not work when label is rich text. fix@VisActor/VChart[#3151](https://github.com/VisActor/VRender/issues/3151)
+
+
+
+[更多详情请查看 v0.20.3](https://github.com/VisActor/VRender/releases/tag/v0.20.3)
+
+# v0.20.1
+
+2024-09-03
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support position `inside-center` of arc label
+- **@visactor/vrender-components**: add necessary APIs to player component
+- **@visactor/vrender-components**: support line segments update animation in TagPointsUpdate custom animation
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix textAlign of label when set different angle
+- **@visactor/vrender-components**: indicator stop tooltip interaction. fix@VisActor/VChart[#3123](https://github.com/VisActor/VRender/issues/3123)
+- **@visactor/vrender-components**: segment line will cause incorrect label position
+- **@visactor/vrender-components**: fix issue with poptip memory while stage is released
+- **@visactor/vrender-core**: fix issue with poptip release
+- **@visactor/vrender-core**: fix issue with animate zero duration
+- **@visactor/vrender-core**: fix textAlign of label when set different angle
+- **@visactor/vrender-core**: fix memory leak problem in ResourceLoader
+- **@visactor/vrender-core**: fix issue with richtext edit plugin while defucus out of text
+
+**⚡ 性能优化**
+
+- **@visactor/vrender-components**: optimize the performance of label component
+
+
+
+[更多详情请查看 v0.20.1](https://github.com/VisActor/VRender/releases/tag/v0.20.1)
+
 # v0.20.0
 
 2024-08-16

@@ -56,19 +56,23 @@ export function bitmapTool(
   return scale;
 }
 
+export function clampRangeByBitmap($: BitmapTool, range: IBoundsLike) {
+  const { x1, x2, y1, y2 } = range;
+  const _x1 = clampRange(x1, 0, $.width);
+  const _x2 = clampRange(x2, 0, $.width);
+  const _y1 = clampRange(y1, 0, $.height);
+  const _y2 = clampRange(y2, 0, $.height);
+  return {
+    x1: $.x(_x1),
+    x2: $.x(_x2),
+    y1: $.y(_y1),
+    y2: $.y(_y2)
+  };
+}
+
 export function boundToRange($: BitmapTool, bound: IBoundsLike, clamp: boolean = false) {
   if (clamp) {
-    const { x1, x2, y1, y2 } = bound;
-    const _x1 = clampRange(x1, 0, $.width);
-    const _x2 = clampRange(x2, 0, $.width);
-    const _y1 = clampRange(y1, 0, $.height);
-    const _y2 = clampRange(y2, 0, $.height);
-    return {
-      x1: $.x(_x1),
-      x2: $.x(_x2),
-      y1: $.y(_y1),
-      y2: $.y(_y2)
-    };
+    return clampRangeByBitmap($, bound);
   }
 
   return {

@@ -218,7 +218,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.onChange(this.handleChange);
   }
 
-  handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, orient: 'left' | 'right') => {
+  handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
     // 修改cursor的位置，但并不同步到curIdx，因为这可能是临时的
     // const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
     // console.log(this.curCursorIdx, cursorIdx);
@@ -227,7 +227,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.updateCbs.forEach(cb => cb('input', this));
   };
 
-  handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, orient: 'left' | 'right') => {
+  handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
     // 修改cursor的位置，并同步到editModule
     this.curCursorIdx = cursorIdx;
     this.selectionStartCursorIdx = cursorIdx;

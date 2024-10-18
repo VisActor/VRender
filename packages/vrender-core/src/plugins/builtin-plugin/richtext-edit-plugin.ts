@@ -294,7 +294,6 @@ export class RichTextEditPlugin implements IPlugin {
     if (!cache) {
       return;
     }
-
     // 计算全局偏移
     this.computeGlobalDelta(cache);
 
@@ -522,17 +521,18 @@ export class RichTextEditPlugin implements IPlugin {
   protected computeGlobalDelta(cache: IRichTextFrame) {
     this.deltaX = 0;
     this.deltaY = 0;
-    const height = cache.actualHeight;
+    const height = cache.height;
+    const actualHeight = cache.actualHeight;
     const width = cache.lines.reduce((w, item) => Math.max(w, item.actualWidth), 0);
     if (cache.globalAlign === 'center') {
       this.deltaX = -width / 2;
     } else if (cache.globalAlign === 'right') {
       this.deltaX = -width;
     }
-    if (cache.globalBaseline === 'middle') {
-      this.deltaY = -height / 2;
-    } else if (cache.globalBaseline === 'bottom') {
-      this.deltaY = -height;
+    if (cache.verticalDirection === 'middle') {
+      this.deltaY = height / 2 - actualHeight / 2;
+    } else if (cache.verticalDirection === 'bottom') {
+      this.deltaY = height - actualHeight;
     }
   }
 

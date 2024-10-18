@@ -18,7 +18,7 @@ function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
  * @param cursorIndex
  * @returns
  */
-export function findConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[], cursorIndex: number): number {
+export function findConfigIndex(textConfig: IRichTextCharacter[], cursorIndex: number): number {
   let index = 0;
   // 小于0是在最前面了
   if (cursorIndex < 0) {
@@ -50,6 +50,12 @@ export function textConfigIgnoreLinebreakIdxToCursorIdx(textConfig: IRichTextCha
       index++;
     }
   }
+  // 正常Cursor是放在右边的，但如果回退到换行符了，那就放在左侧
+  if ((textConfig[cursorIndex] as any)?.text === '\n') {
+    index -= 0.1;
+  } else {
+    index += 0.1;
+  }
   return index;
 }
 
@@ -61,13 +67,9 @@ export class EditModule {
   cursorIndex: number;
   selectionStartCursorIdx: number;
   // 输入的回调（composing的时候每次也会触发）
-  onInputCbList: Array<
-    (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void
-  >;
+  onInputCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
   // change的回调（composing确认才会触发）
-  onChangeCbList: Array<
-    (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void
-  >;
+  onChangeCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
 
   constructor(container?: HTMLElement) {
     this.container = container ?? document.body;
@@ -83,11 +85,11 @@ export class EditModule {
     this.onChangeCbList = [];
   }
 
-  onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void) {
+  onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
     this.onInputCbList.push(cb);
   }
 
-  onChange(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText, pos: 'left' | 'right') => void) {
+  onChange(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
     this.onChangeCbList.push(cb);
   }
 
@@ -115,7 +117,7 @@ export class EditModule {
       const config = textConfig[0];
       textConfig.unshift({ fill: 'black', ...config, text: '' });
     } else {
-      const cursorIndex = findConfigIndexIgnoreLinebreak(textConfig, this.cursorIndex);
+      const cursorIndex = findConfigIndex(textConfig, this.cursorIndex);
       const lastConfig = textConfig[cursorIndex];
       textConfig.splice(cursorIndex + 1, 0, { ...lastConfig, text: '' });
     }
@@ -126,7 +128,7 @@ export class EditModule {
     this.isComposing = false;
     // 拆分上一次的内容
     const { textConfig = [] } = this.currRt.attribute;
-    const configIdx = findConfigIndexIgnoreLinebreak(textConfig, this.cursorIndex + 1);
+    const configIdx = findConfigIndex(textConfig, this.cursorIndex + 1);
 
     const lastConfig = textConfig[configIdx];
     textConfig.splice(configIdx, 1);
@@ -142,8 +144,7 @@ export class EditModule {
         this.isComposing,
         // TODO 当换行后刚开始输入会有问题，后续看这里具体Cursor变换逻辑
         Math.min(this.cursorIndex + textList.length, getMaxConfigIndexIgnoreLinebreak(textConfig) + 0.1),
-        this.currRt,
-        'right'
+        this.currRt
       );
     });
   };
@@ -176,10 +177,16 @@ export class EditModule {
 
     // 转换成基于textConfig的
     // let delta = 0;
-    startIdx = findConfigIndexIgnoreLinebreak(textConfig, startIdx);
+    startIdx = findConfigIndex(textConfig, startIdx);
     // delta = this.selectionStartCursorIdx - startIdx;
-    endIdx = findConfigIndexIgnoreLinebreak(textConfig, endIdx);
+    endIdx = findConfigIndex(textConfig, endIdx);
     // console.log(startIdx, delta, endIdx);
+
+    let idxDelta = 0;
+    // 如果是换行，得往回一格
+    if (str === '\n') {
+      idxDelta = -0.2;
+    }
 
     const lastConfigIdx = startIdx + (this.isComposing ? 1 : 0);
     let lastConfig: any = textConfig[lastConfigIdx];
@@ -220,14 +227,16 @@ export class EditModule {
     }
 
     this.currRt.setAttributes({ textConfig });
-    this.cursorIndex = textConfigIgnoreLinebreakIdxToCursorIdx(textConfig, startIdx) + 0.1;
+    this.cursorIndex = textConfigIgnoreLinebreakIdxToCursorIdx(textConfig, startIdx);
+
+    this.cursorIndex += idxDelta;
     if (!this.isComposing) {
       this.onChangeCbList.forEach(cb => {
-        cb(str, this.isComposing, this.cursorIndex, this.currRt, str === '\n' ? 'left' : 'right');
+        cb(str, this.isComposing, this.cursorIndex, this.currRt);
       });
     } else {
       this.onInputCbList.forEach(cb => {
-        cb(str, this.isComposing, this.cursorIndex, this.currRt, str === '\n' ? 'left' : 'right');
+        cb(str, this.isComposing, this.cursorIndex, this.currRt);
       });
     }
   };

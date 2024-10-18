@@ -1,3 +1,4 @@
+import { application } from '../../application';
 import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
 import { IRichTextIcon, IRichTextParagraph } from '../../interface';
 
@@ -102,7 +103,7 @@ export class EditModule {
     textAreaDom.addEventListener('input', this.handleInput);
     textAreaDom.addEventListener('compositionstart', this.handleCompositionStart);
     textAreaDom.addEventListener('compositionend', this.handleCompositionEnd);
-    window.addEventListener('keydown', this.handleKeyDown);
+    application.global.addEventListener('keydown', this.handleKeyDown);
   }
 
   handleKeyDown = (e: KeyboardEvent) => {
@@ -258,6 +259,6 @@ export class EditModule {
     this.textAreaDom.removeEventListener('input', this.handleInput);
     this.textAreaDom.removeEventListener('compositionstart', this.handleCompositionStart);
     this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
-    window.removeEventListener('keydown', this.handleKeyDown);
+    application.global.removeEventListener('keydown', this.handleKeyDown);
   }
 }

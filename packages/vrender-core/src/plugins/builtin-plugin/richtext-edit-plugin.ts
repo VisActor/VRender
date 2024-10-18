@@ -20,6 +20,7 @@ import type {
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
 import { EditModule } from './edit-module';
+import { application } from '../../application';
 
 type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
 
@@ -213,10 +214,89 @@ export class RichTextEditPlugin implements IPlugin {
     context.stage.on('pointerdown', this.handlePointerDown);
     context.stage.on('pointerup', this.handlePointerUp);
     context.stage.on('pointerleave', this.handlePointerUp);
+    application.global.addEventListener('keydown', this.handleKeyDown);
 
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
   }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (!(this.currRt && this.editing)) {
+      return;
+    }
+    const cache = this.currRt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    let x = 0;
+    let y = 0;
+    if (e.key === 'ArrowUp') {
+      y = -1;
+    } else if (e.key === 'ArrowDown') {
+      y = 1;
+    } else if (e.key === 'ArrowLeft') {
+      x = -1;
+    } else if (e.key === 'ArrowRight') {
+      x = 1;
+    }
+
+    // const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
+    const { lineInfo, columnInfo } = this.getColumnByIndex(cache, Math.round(this.curCursorIdx));
+    if (x) {
+      // 快接近首尾需要特殊处理
+      if (
+        x > 0 &&
+        columnInfo === lineInfo.paragraphs[lineInfo.paragraphs.length - 2] &&
+        this.curCursorIdx < Math.round(this.curCursorIdx)
+      ) {
+        this.curCursorIdx = this.curCursorIdx + 0.2;
+      } else if (
+        x > 0 &&
+        columnInfo === lineInfo.paragraphs[lineInfo.paragraphs.length - 1] &&
+        this.curCursorIdx > Math.round(this.curCursorIdx)
+      ) {
+        this.curCursorIdx = this.curCursorIdx + 1 - 0.2;
+      } else if (x < 0 && columnInfo === lineInfo.paragraphs[0] && this.curCursorIdx > Math.round(this.curCursorIdx)) {
+        this.curCursorIdx = this.curCursorIdx - 0.2;
+      } else if (x < 0 && columnInfo === lineInfo.paragraphs[0] && this.curCursorIdx < Math.round(this.curCursorIdx)) {
+        this.curCursorIdx = this.curCursorIdx - 1 + 0.2;
+      } else {
+        this.curCursorIdx += x;
+      }
+
+      const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
+      this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
+      this.hideSelection();
+    }
+
+    if (y) {
+      if (y > 0 && lineInfo === cache.lines[cache.lines.length - 1]) {
+        return;
+      }
+      if (y < 0 && lineInfo === cache.lines[0]) {
+        return;
+      }
+      const lineIdx = cache.lines.findIndex(item => item === lineInfo) + y;
+      if (lineIdx < 0 || lineIdx >= cache.lines.length) {
+        return;
+      }
+      const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
+      const posX = pos.x;
+      let posY = (pos.y1 + pos.y2) / 2;
+      posY += y * lineInfo.height;
+      const nextLineInfo = cache.lines[lineIdx];
+      const { columnInfo, delta } = this.getColumnAndIndexByLinePoint(nextLineInfo, { x: posX, y: posY });
+      if (!columnInfo) {
+        return;
+      }
+      const cursorIdx = this.getColumnIndex(cache, columnInfo) + delta;
+      const data = this.computedCursorPosByCursorIdx(cursorIdx, this.currRt);
+
+      this.curCursorIdx = cursorIdx;
+      this.selectionStartCursorIdx = cursorIdx;
+      this.setCursorAndTextArea(data.x, data.y1, data.y2, this.currRt);
+    }
+  };
 
   handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
     // 修改cursor的位置，但并不同步到curIdx，因为这可能是临时的
@@ -243,6 +323,8 @@ export class RichTextEditPlugin implements IPlugin {
     context.stage.off('pointerdown', this.handlePointerDown);
     context.stage.off('pointerup', this.handlePointerUp);
     context.stage.off('pointerleave', this.handlePointerUp);
+
+    application.global.addEventListener('keydown', this.handleKeyDown);
   }
 
   handleMove = (e: PointerEvent) => {

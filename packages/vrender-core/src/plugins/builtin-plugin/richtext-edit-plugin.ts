@@ -384,9 +384,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
-      const animate = line.animate();
-      animate.setTimeline(this.timeline);
-      animate.to({ opacity: 1 }, 10, 'linear').wait(700).to({ opacity: 0 }, 10, 'linear').wait(700).loop(Infinity);
+      this.addAnimateToLine(line);
       this.editLine = line;
       this.ticker.start(true);
 
@@ -423,6 +421,17 @@ export class RichTextEditPlugin implements IPlugin {
       this.editBg.release();
       this.editBg = null;
     }
+  }
+
+  protected addAnimateToLine(line: ILine) {
+    line.animates &&
+      line.animates.forEach(animate => {
+        animate.stop();
+        animate.release();
+      });
+    const animate = line.animate();
+    animate.setTimeline(this.timeline);
+    animate.to({ opacity: 1 }, 10, 'linear').wait(700).to({ opacity: 0 }, 10, 'linear').wait(700).loop(Infinity);
   }
 
   // 显示selection
@@ -635,6 +644,7 @@ export class RichTextEditPlugin implements IPlugin {
         { x, y: y2 }
       ]
     });
+    this.addAnimateToLine(this.editLine);
     const out = { x: 0, y: 0 };
     rt.globalTransMatrix.getInverse().transformPoint({ x, y: y1 }, out);
     // TODO 考虑stage变换

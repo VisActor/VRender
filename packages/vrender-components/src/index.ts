@@ -28,5 +28,6 @@ export * from './jsx';
 export * from './checkbox';
 export * from './radio';
 export * from './empty-tip';
+export * from './weather';
 export * from './util';
 export * from './switch';

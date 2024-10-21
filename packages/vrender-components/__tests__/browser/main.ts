@@ -293,6 +293,10 @@ const specs = [
   {
     path: 'switch',
     name: 'switch'
+  },
+  {
+    path: 'weather-box',
+    name: 'weather-box'
   }
 ];
 

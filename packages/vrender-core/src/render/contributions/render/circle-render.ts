@@ -68,7 +68,8 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
       startAngle = circleAttribute.startAngle,
       endAngle = circleAttribute.endAngle,
       x: originX = circleAttribute.x,
-      y: originY = circleAttribute.y
+      y: originY = circleAttribute.y,
+      fillStrokeOrder = circleAttribute.fillStrokeOrder
     } = circle.attribute;
 
     const data = this.valid(circle, circleAttribute, fillCb, strokeCb);
@@ -99,22 +100,34 @@ export class DefaultCanvasCircleRender extends BaseRender<ICircle> implements IG
       strokeCb
     );
 
-    if (doFill) {
-      if (fillCb) {
-        fillCb(context, circle.attribute, circleAttribute);
-      } else if (fVisible) {
-        context.setCommonStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
-        context.fill();
+    const _runFill = () => {
+      if (doFill) {
+        if (fillCb) {
+          fillCb(context, circle.attribute, circleAttribute);
+        } else if (fVisible) {
+          context.setCommonStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
+          context.fill();
+        }
       }
-    }
+    };
 
-    if (doStroke) {
-      if (strokeCb) {
-        strokeCb(context, circle.attribute, circleAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
-        context.stroke();
+    const _runStroke = () => {
+      if (doStroke) {
+        if (strokeCb) {
+          strokeCb(context, circle.attribute, circleAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(circle, circle.attribute, originX - x, originY - y, circleAttribute);
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(

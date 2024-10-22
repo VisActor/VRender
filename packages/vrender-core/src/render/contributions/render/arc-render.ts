@@ -216,7 +216,8 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
       fill = arcAttribute.fill,
       stroke = arcAttribute.stroke,
       x: originX = arcAttribute.x,
-      y: originY = arcAttribute.y
+      y: originY = arcAttribute.y,
+      fillStrokeOrder = arcAttribute.fillStrokeOrder
     } = arc.attribute;
     const data = this.valid(arc, arcAttribute, fillCb, strokeCb);
     if (!data) {
@@ -281,22 +282,34 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
         strokeCb
       );
 
-      if (doFill) {
-        if (fillCb) {
-          fillCb(context, arc.attribute, arcAttribute);
-        } else if (fVisible) {
-          context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-          context.fill();
+      const _runFill = () => {
+        if (doFill) {
+          if (fillCb) {
+            fillCb(context, arc.attribute, arcAttribute);
+          } else if (fVisible) {
+            context.setCommonStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+            context.fill();
+          }
         }
-      }
+      };
 
-      if (doStroke && isFullStroke) {
-        if (strokeCb) {
-          strokeCb(context, arc.attribute, arcAttribute);
-        } else if (sVisible) {
-          context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
-          context.stroke();
+      const _runStroke = () => {
+        if (doStroke && isFullStroke) {
+          if (strokeCb) {
+            strokeCb(context, arc.attribute, arcAttribute);
+          } else if (sVisible) {
+            context.setStrokeStyle(arc, arc.attribute, originX - x, originY - y, arcAttribute);
+            context.stroke();
+          }
         }
+      };
+
+      if (!fillStrokeOrder) {
+        _runFill();
+        _runStroke();
+      } else {
+        _runStroke();
+        _runFill();
       }
     }
 
@@ -360,29 +373,42 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
           );
         }
 
-        if (doFill) {
-          // 获取渐变色最后一个颜色
-          const color = fill;
-          if ((color as IGradientColor).gradient === 'conical') {
-            const lastColor = getConicGradientAt(0, 0, endAngle, color as any);
-            if (fillCb) {
-              // fillCb(context, arc.attribute, arcAttribute);
-            } else if (fillVisible) {
-              // context.closePath();
-              context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
-              context.fillStyle = lastColor as string;
-              context.fill();
+        const _runFill = () => {
+          if (doFill) {
+            // 获取渐变色最后一个颜色
+            const color = fill;
+            if ((color as IGradientColor).gradient === 'conical') {
+              const lastColor = getConicGradientAt(0, 0, endAngle, color as any);
+              if (fillCb) {
+                // fillCb(context, arc.attribute, arcAttribute);
+              } else if (fillVisible) {
+                // context.closePath();
+                context.setCommonStyle(arc, arc.attribute, x, y, arcAttribute);
+                context.fillStyle = lastColor as string;
+                context.fill();
+              }
             }
           }
-        }
-        if (doStroke) {
-          if (strokeCb) {
-            // fillCb(context, arc.attribute, arcAttribute);
-          } else if (sVisible) {
-            context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
-            // context.strokeStyle = 'red';
-            context.stroke();
+        };
+
+        const _runStroke = () => {
+          if (doStroke) {
+            if (strokeCb) {
+              // fillCb(context, arc.attribute, arcAttribute);
+            } else if (sVisible) {
+              context.setStrokeStyle(arc, arc.attribute, x, y, arcAttribute);
+              // context.strokeStyle = 'red';
+              context.stroke();
+            }
           }
+        };
+
+        if (!fillStrokeOrder) {
+          _runFill();
+          _runStroke();
+        } else {
+          _runFill();
+          _runStroke();
         }
       }
     }

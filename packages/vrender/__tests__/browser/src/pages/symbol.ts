@@ -102,6 +102,8 @@ export const page = () => {
       stroke: 'black',
       lineWidth: 3,
       lineCap: 'round',
+      fill: 'pink',
+      fillStrokeOrder: 1,
       size: 40
     });
     const text = createText({

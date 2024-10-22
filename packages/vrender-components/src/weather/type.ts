@@ -28,4 +28,7 @@ export interface IWeatherBoxAttrs extends IGroupGraphicAttribute {
   rainSnowStyle?: {
     background?: string;
   };
+  defaultStyle?: {
+    background?: string;
+  };
 }

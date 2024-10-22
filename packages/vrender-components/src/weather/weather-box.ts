@@ -39,7 +39,7 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
     rainIconPath:
       'M802.94208 583.04c19.328 38.016 29.056 78.336 29.056 120.96a313.216 313.216 0 0 1-44.032 161.536 324.48 324.48 0 0 1-114.56 114.944c-23.552 13.696-49.024 24.32-76.416 32-27.264 7.68-55.68 11.52-84.992 11.52-29.44 0-57.6-3.84-84.992-11.52a331.136 331.136 0 0 1-76.544-32 337.536 337.536 0 0 1-65.024-49.92 337.536 337.536 0 0 1-49.92-65.024 331.136 331.136 0 0 1-32-76.544A313.216 313.216 0 0 1 191.99808 704c0-42.24 9.344-82.56 28.032-120.448L509.43808 0l293.504 583.04z',
     windIconPath:
-      'M174.5 394.1h331.2c91 0 166-73.2 166.3-164.2 0.3-91-73.7-165.1-164.7-165.1-43.2 0-84 16.6-114.9 46.7-15.5 15.1-27.7 32.9-36.2 52.2-12.7 29.1 8.4 61.7 40.1 62.6 18.5 0.5 35.2-10.4 42.6-27.3 11.6-26.2 37.7-44.2 68.3-44.2 41.4 0 75.1 33.9 74.7 75.4-0.4 41.1-34.5 73.9-75.6 73.9H174.5c-24.9 0-45 20.1-45 45s20.2 45 45 45zM189.3 634.2l0.6 45-0.6-45zM682 626.9c-0.6 0-0.8 0-427.3 6.3-7.3 0.1-14.2 0.2-20.5 0.3-24.8 0.4-44.7 20.8-44.3 45.6 0.3 24.9 20.8 44.8 45.7 44.4 6.3-0.1 13.2-0.2 20.5-0.3 124.9-1.9 415.3-6.2 426.2-6.3 42.8 0.2 77.2 36.5 74.2 80-2.8 39.8-35.9 70-75.7 69.3-30.2-0.5-55.9-18.5-67.2-44.5-7.3-16.8-24.1-27.5-42.5-27-31.7 0.9-52.8 33.5-40.1 62.6 8.4 19.4 20.6 37.1 36.2 52.2 30.9 30.1 71.8 46.7 115 46.7 91.8-0.1 166.8-77 164.5-168.8-2.3-88.9-75.3-160.5-164.7-160.5z M856.6 240.3c-29-11.5-60.5 10.1-60.5 41.4v1.3c0 18 10.9 34.4 27.6 41.1 27.5 11 47 38 47 69.4 0 41.2-33.5 74.7 74.7 74.7H112.6c-24.9 0-45 20.1-45 45s20.1 45 45 45h683.5c90.8 0 164.7-73.9 164.7-164.7-0.1-69.5-43.3-129-104.2-153.2z',
+      'M686.624 143.072h-150.816a40.352 40.352 0 1 0 0 80.608h150.816a80.672 80.672 0 1 1 0 161.184H226.624a40.352 40.352 0 1 0 0 80.608h460a161.344 161.344 0 1 0 0-322.4z m168.768 725.344h-126.72a40.352 40.352 0 1 1 0-80.576h126.56a80.672 80.672 0 1 0 0-161.184H42.176a40.352 40.352 0 1 1 0-80.608h813.056a161.344 161.344 0 1 1 0 322.368z',
     windRatio: 0,
     rainRatio: 0,
     snowRatio: 0,
@@ -59,6 +59,9 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
     },
     rainSnowStyle: {
       background: 'rgb(130, 190, 210)'
+    },
+    defaultStyle: {
+      background: 'rgb(184, 206, 239)'
     }
   };
 
@@ -84,6 +87,7 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
       rainSnowStyle,
       rainStyle,
       snowStyle,
+      defaultStyle,
       windIconPath,
       windSize,
       windSpeed
@@ -95,6 +99,8 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
       this.attribute.background = rainStyle?.background;
     } else if (snowRatio) {
       this.attribute.background = snowStyle?.background;
+    } else {
+      this.attribute.background = defaultStyle?.background;
     }
     this.attribute.clip = true;
 
@@ -152,7 +158,7 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
       'symbol'
     ) as ISymbol;
 
-    const duration = (1 - windRatio) * (speed / 4) + (speed / 4) * 1000;
+    const duration = (speed / 4) * 1000;
 
     wind.animate().to({ opacity: 1 }, duration, 'linear').to({ opacity: 0 }, duration, 'linear').loop(Infinity);
   }

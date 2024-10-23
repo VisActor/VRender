@@ -11,6 +11,48 @@ import type {
 } from '../../../../interface';
 import { pi2 } from '@visactor/vutils';
 
+function formatRatio(ratio: number) {
+  if (ratio <= 0.5) {
+    return ratio * 4 - 1;
+  }
+  return -4 * ratio + 3;
+}
+
+function drawWave(
+  ctx: IContext2d,
+  ratio: number,
+  boundsWidth: number,
+  boundsHeight: number,
+  textureOptions: { fill: string; percent: number; frequency: number; amplitude: number },
+  offsetX: number,
+  offsetY: number
+) {
+  const { fill = 'orange', percent = 0.6, frequency = 4 } = textureOptions;
+  let { amplitude = 10 } = textureOptions;
+  amplitude = amplitude * formatRatio(ratio);
+
+  const height = boundsHeight * (1 - percent);
+  const width = boundsWidth;
+
+  const step = Math.max(Math.round(width / 70), 2);
+  ctx.beginPath();
+  ctx.moveTo(0 + offsetX, boundsHeight + offsetY);
+  ctx.lineTo(0 + offsetX, height + offsetY);
+  const delta = (width / frequency) * ratio;
+  const c = width / Math.PI / (frequency * 2);
+
+  for (let i = 0; i < width; i += step) {
+    const y = amplitude * Math.sin((i + delta) / c);
+    ctx.lineTo(i + offsetX, height + y + offsetY);
+  }
+
+  ctx.lineTo(width + offsetX, boundsHeight + offsetY);
+  ctx.closePath();
+
+  ctx.fillStyle = fill;
+  ctx.fill();
+}
+
 export class DefaultBaseTextureRenderContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
   time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
   useStyle: boolean = true;
@@ -190,6 +232,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
     textureSize: number,
     texturePadding: number
   ) {
+    const { textureRatio = graphicAttribute.textureRatio, textureOptions = null } = graphic.attribute;
     let pattern: CanvasPattern = this.textureMap.get(texture);
 
     if (!pattern) {
@@ -227,6 +270,13 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       context.fillStyle = pattern;
       context.fill();
       context.highPerformanceRestore();
+    } else if (texture === 'wave') {
+      context.save();
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.clip();
+      const b = graphic.AABBBounds;
+      drawWave(context, textureRatio, b.width(), b.height(), textureOptions || {}, x + b.x1 - x, y + b.y1 - y);
+      context.restore();
     }
   }
 }

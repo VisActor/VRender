@@ -221,6 +221,9 @@ export type IGraphicStyle = ILayout &
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
+    // 如果做动画的话，这里代表ratio
+    textureRatio: number;
+    textureOptions: any;
     background:
       | IBackgroundType
       | {

@@ -179,6 +179,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   zIndex: 0,
   layout: null,
   boundsPadding: 0,
+  fillStrokeOrder: 0,
   renderStyle: 'default',
   pickMode: 'accurate',
   customPickShape: null,
@@ -277,6 +278,7 @@ export const DefaultLineAttribute: Required<ILineGraphicAttribute> = {
 export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
   ...DefaultAttribute,
   path: new CustomPath2D(),
+  fillStrokeOrder: 1,
   customPath: () => {
     Logger.getInstance().warn('空函数');
   }

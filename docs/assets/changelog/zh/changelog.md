@@ -1,3 +1,29 @@
+# v0.20.9
+
+2024-10-15
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support axis label `firstVisible` in autoHide and linear axis sampling
+- **@visactor/vrender-components**: add `interactInvertType` for smartInvert
+- **@visactor/vrender-core**: text support keep-all, closed [#1466](https://github.com/VisActor/VRender/issues/1466)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix smartInvert when `outsideEnable` is true
+- **@visactor/vrender-components**: fix max width of arc label in left
+- **@visactor/vrender-components**: fix `pager.space` of discrete legend
+- **@visactor/vrender-components**: fix smart invert when only has intercet width base mark
+- **@visactor/vrender-components**: fix `legend.item.label.space` when has value
+- **@visactor/vrender-components**: legend scroll critical value leads last page not render. fix@VisActor/VChart[#3172](https://github.com/VisActor/VRender/issues/3172)
+- **@visactor/vrender-kits**: fix max width of arc label in left
+- **@visactor/vrender-core**: fix max width of arc label in left
+
+
+
+[更多详情请查看 v0.20.9](https://github.com/VisActor/VRender/releases/tag/v0.20.9)
+
 # v0.20.8
 
 2024-09-30

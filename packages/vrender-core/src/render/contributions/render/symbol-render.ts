@@ -72,7 +72,8 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       x: originX = symbolAttribute.x,
       y: originY = symbolAttribute.y,
       scaleX = symbolAttribute.scaleX,
-      scaleY = symbolAttribute.scaleY
+      scaleY = symbolAttribute.scaleY,
+      fillStrokeOrder = symbolAttribute.fillStrokeOrder
     } = symbol.attribute;
 
     const data = this.valid(symbol, symbolAttribute, fillCb, strokeCb);
@@ -101,21 +102,32 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
         obj.stroke = a.stroke ?? symbol.attribute.stroke;
         a = obj;
       }
-      if (a.fill) {
-        if (fillCb) {
-          fillCb(context, symbol.attribute, symbolAttribute);
-        } else {
-          context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
-          context.fill();
+      const _runFill = () => {
+        if (a.fill) {
+          if (fillCb) {
+            fillCb(context, symbol.attribute, symbolAttribute);
+          } else {
+            context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
+            context.fill();
+          }
         }
-      }
-      if (a.stroke) {
-        if (strokeCb) {
-          strokeCb(context, symbol.attribute, symbolAttribute);
-        } else {
-          context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
-          context.stroke();
+      };
+      const _runStroke = () => {
+        if (a.stroke) {
+          if (strokeCb) {
+            strokeCb(context, symbol.attribute, symbolAttribute);
+          } else {
+            context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
+            context.stroke();
+          }
         }
+      };
+      if (!fillStrokeOrder) {
+        _runFill();
+        _runStroke();
+      } else {
+        _runStroke();
+        _runFill();
       }
     };
     if (keepDirIn3d && context.camera && context.project) {
@@ -169,27 +181,39 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     // }
 
     // svg就不用fill和stroke了
-    if (doFill && !parsedPath.isSvg) {
-      if (fillCb) {
-        fillCb(context, symbol.attribute, symbolAttribute);
-      } else if (fVisible) {
-        context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
-        context.fill();
+    const _runFill = () => {
+      if (doFill && !parsedPath.isSvg) {
+        if (fillCb) {
+          fillCb(context, symbol.attribute, symbolAttribute);
+        } else if (fVisible) {
+          context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
+          context.fill();
+        }
       }
-    }
-    if (doStroke && !parsedPath.isSvg) {
-      if (strokeCb) {
-        strokeCb(context, symbol.attribute, symbolAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(
-          symbol,
-          symbol.attribute,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          symbolAttribute
-        );
-        context.stroke();
+    };
+    const _runStroke = () => {
+      if (doStroke && !parsedPath.isSvg) {
+        if (strokeCb) {
+          strokeCb(context, symbol.attribute, symbolAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(
+            symbol,
+            symbol.attribute,
+            (originX - x) / scaleX,
+            (originY - y) / scaleY,
+            symbolAttribute
+          );
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(

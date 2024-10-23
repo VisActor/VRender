@@ -111,15 +111,47 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     );
 
     const { x: originX = 0, x: originY = 0 } = area.attribute;
-    if (fill !== false) {
-      if (fillCb) {
-        fillCb(context, area.attribute, areaAttribute);
-      } else if (fillOpacity) {
-        context.setCommonStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
-        context.fill();
+    const _runFill = () => {
+      if (fill !== false) {
+        if (fillCb) {
+          fillCb(context, area.attribute, areaAttribute);
+        } else if (fillOpacity) {
+          context.setCommonStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+          context.fill();
+        }
       }
-    }
+    };
 
+    const _runStroke = () => {
+      if (stroke) {
+        const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
+        if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
+          context.beginPath();
+          if (stroke[0]) {
+            context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
+            for (let i = 1; i < points.length; i++) {
+              const p = points[i];
+              context.lineTo(p.x + offsetX, p.y + offsetY, z);
+            }
+          } else if (stroke[2]) {
+            const endP = points[points.length - 1];
+            context.moveTo(endP.x + offsetX, endP.y + offsetY, z);
+            for (let i = points.length - 2; i >= 0; i--) {
+              const p = points[i];
+              context.lineTo((p.x1 ?? p.x) + offsetX, (p.y1 ?? p.y) + offsetY, z);
+            }
+          }
+        }
+        if (strokeCb) {
+          strokeCb(context, area.attribute, areaAttribute);
+        } else {
+          context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
+          context.stroke();
+        }
+      }
+    };
+
+    _runFill();
     this.afterRenderStep(
       area,
       context,
@@ -135,33 +167,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       null,
       { attribute: area.attribute }
     );
-
-    if (stroke) {
-      const { stroke = areaAttribute && areaAttribute.stroke } = area.attribute;
-      if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
-        context.beginPath();
-        if (stroke[0]) {
-          context.moveTo(startP.x + offsetX, startP.y + offsetY, z);
-          for (let i = 1; i < points.length; i++) {
-            const p = points[i];
-            context.lineTo(p.x + offsetX, p.y + offsetY, z);
-          }
-        } else if (stroke[2]) {
-          const endP = points[points.length - 1];
-          context.moveTo(endP.x + offsetX, endP.y + offsetY, z);
-          for (let i = points.length - 2; i >= 0; i--) {
-            const p = points[i];
-            context.lineTo((p.x1 ?? p.x) + offsetX, (p.y1 ?? p.y) + offsetY, z);
-          }
-        }
-      }
-      if (strokeCb) {
-        strokeCb(context, area.attribute, areaAttribute);
-      } else {
-        context.setStrokeStyle(area, area.attribute, originX - offsetX, originY - offsetY, areaAttribute);
-        context.stroke();
-      }
-    }
+    _runStroke();
   }
 
   drawShape(
@@ -538,7 +544,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     // 绘制connect区域
     let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
-    const da = [];
+    const da: any[] = [];
     if (connect) {
       if (isArray(defaultAttribute)) {
         connectedType = connectedType ?? defaultAttribute[0].connectedType ?? defaultAttribute[1].connectedType;
@@ -627,21 +633,61 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     context.setShadowBlendStyle && context.setShadowBlendStyle(area, attribute, defaultAttribute);
 
     const { x: originX = 0, x: originY = 0 } = attribute;
-    if (fill !== false) {
-      if (fillCb) {
-        fillCb(context, attribute, defaultAttribute);
-      } else if (fillOpacity) {
-        context.setCommonStyle(
-          area,
-          connect ? connectedStyle : attribute,
-          originX - offsetX,
-          originY - offsetY,
-          connect ? da : defaultAttribute
-        );
-        context.fill();
+    const _runFill = () => {
+      if (fill !== false) {
+        if (fillCb) {
+          fillCb(context, attribute, defaultAttribute);
+        } else if (fillOpacity) {
+          context.setCommonStyle(
+            area,
+            connect ? connectedStyle : attribute,
+            originX - offsetX,
+            originY - offsetY,
+            connect ? da : defaultAttribute
+          );
+          context.fill();
+        }
       }
-    }
+    };
 
+    const _runStroke = () => {
+      if (stroke !== false) {
+        if (strokeCb) {
+          strokeCb(context, attribute, defaultAttribute);
+        } else {
+          const { stroke = defaultAttribute && (defaultAttribute as any)[1] && (defaultAttribute as any)[1].stroke } =
+            attribute;
+          if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
+            context.beginPath();
+            drawSegments(
+              context.camera ? context : context.nativeContext,
+              stroke[0] ? cache.top : cache.bottom,
+              clipRange,
+              direction === Direction.ROW ? 'x' : 'y',
+              {
+                offsetX,
+                offsetY,
+                offsetZ,
+                drawConnect: connect,
+                mode: connectedType,
+                zeroX: connectedX,
+                zeroY: connectedY
+              }
+            );
+          }
+          context.setStrokeStyle(
+            area,
+            connect ? connectedStyle : attribute,
+            originX - offsetX,
+            originY - offsetY,
+            connect ? da : defaultAttribute
+          );
+          context.stroke();
+        }
+      }
+    };
+
+    _runFill();
     this.afterRenderStep(
       area,
       context,
@@ -657,40 +703,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       null,
       { attribute }
     );
-
-    if (stroke !== false) {
-      if (strokeCb) {
-        strokeCb(context, attribute, defaultAttribute);
-      } else {
-        const { stroke = defaultAttribute && defaultAttribute[1] && defaultAttribute[1].stroke } = attribute;
-        if (isArray(stroke) && (stroke[0] || stroke[2]) && stroke[1] === false) {
-          context.beginPath();
-          drawSegments(
-            context.camera ? context : context.nativeContext,
-            stroke[0] ? cache.top : cache.bottom,
-            clipRange,
-            direction === Direction.ROW ? 'x' : 'y',
-            {
-              offsetX,
-              offsetY,
-              offsetZ,
-              drawConnect: connect,
-              mode: connectedType,
-              zeroX: connectedX,
-              zeroY: connectedY
-            }
-          );
-        }
-        context.setStrokeStyle(
-          area,
-          connect ? connectedStyle : attribute,
-          originX - offsetX,
-          originY - offsetY,
-          connect ? da : defaultAttribute
-        );
-        context.stroke();
-      }
-    }
+    _runStroke();
 
     return ret;
   }

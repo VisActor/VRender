@@ -70,6 +70,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       x: originX = imageAttribute.x,
       y: originY = imageAttribute.y,
       cornerRadius = imageAttribute.cornerRadius,
+      fillStrokeOrder = imageAttribute.fillStrokeOrder,
       image: url
     } = image.attribute;
 
@@ -87,61 +88,73 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     // context.beginPath();
     // context.image(x, y, width, height);
 
-    if (doFill) {
-      if (fillCb) {
-        fillCb(context, image.attribute, imageAttribute);
-      } else if (fVisible) {
-        if (!url || !image.resources) {
-          return;
-        }
-        const res = image.resources.get(url);
-        if (res.state !== 'success') {
-          return;
-        }
+    const _runFill = () => {
+      if (doFill) {
+        if (fillCb) {
+          fillCb(context, image.attribute, imageAttribute);
+        } else if (fVisible) {
+          if (!url || !image.resources) {
+            return;
+          }
+          const res = image.resources.get(url);
+          if (res.state !== 'success') {
+            return;
+          }
 
-        // deal with cornerRadius
-        let needRestore = false;
-        if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
-          // 不需要处理圆角
-        } else {
-          context.beginPath();
-          createRectPath(context, x, y, width, height, cornerRadius);
-          context.save();
-          context.clip();
-          needRestore = true;
-        }
+          // deal with cornerRadius
+          let needRestore = false;
+          if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
+            // 不需要处理圆角
+          } else {
+            context.beginPath();
+            createRectPath(context, x, y, width, height, cornerRadius);
+            context.save();
+            context.clip();
+            needRestore = true;
+          }
 
-        context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
-        let repeat = 0;
-        if (repeatX === 'repeat') {
-          repeat |= 0b0001;
-        }
-        if (repeatY === 'repeat') {
-          repeat |= 0b0010;
-        }
-        if (repeat) {
-          const pattern = context.createPattern(res.data, repeatStr[repeat]);
-          context.fillStyle = pattern;
-          context.translate(x, y, true);
-          context.fillRect(0, 0, width, height);
-          context.translate(-x, -y, true);
-        } else {
-          context.drawImage(res.data, x, y, width, height);
-        }
+          context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
+          let repeat = 0;
+          if (repeatX === 'repeat') {
+            repeat |= 0b0001;
+          }
+          if (repeatY === 'repeat') {
+            repeat |= 0b0010;
+          }
+          if (repeat) {
+            const pattern = context.createPattern(res.data, repeatStr[repeat]);
+            context.fillStyle = pattern;
+            context.translate(x, y, true);
+            context.fillRect(0, 0, width, height);
+            context.translate(-x, -y, true);
+          } else {
+            context.drawImage(res.data, x, y, width, height);
+          }
 
-        if (needRestore) {
-          context.restore();
+          if (needRestore) {
+            context.restore();
+          }
         }
       }
-    }
+    };
 
-    if (doStroke) {
-      if (strokeCb) {
-        strokeCb(context, image.attribute, imageAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(image, image.attribute, originX - x, originY - y, imageAttribute);
-        context.stroke();
+    const _runStroke = () => {
+      if (doStroke) {
+        if (strokeCb) {
+          strokeCb(context, image.attribute, imageAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(image, image.attribute, originX - x, originY - y, imageAttribute);
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);

@@ -71,7 +71,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    const { points, fillStrokeOrder = areaAttribute.fillStrokeOrder } = area.attribute;
+    const { points } = area.attribute;
     if (points.length < 2) {
       return;
     }
@@ -151,14 +151,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     };
 
-    if (!fillStrokeOrder) {
-      _runFill();
-      _runStroke();
-    } else {
-      _runStroke();
-      _runFill();
-    }
-
+    _runFill();
     this.afterRenderStep(
       area,
       context,
@@ -174,6 +167,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       null,
       { attribute: area.attribute }
     );
+    _runStroke();
   }
 
   drawShape(
@@ -550,7 +544,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     }
     // 绘制connect区域
     let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
-    const { fillStrokeOrder = (defaultAttribute as any).fillStrokeOrder } = attribute;
     const da: any[] = [];
     if (connect) {
       if (isArray(defaultAttribute)) {
@@ -694,14 +687,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       }
     };
 
-    if (!fillStrokeOrder) {
-      _runFill();
-      _runStroke();
-    } else {
-      _runStroke();
-      _runFill();
-    }
-
+    _runFill();
     this.afterRenderStep(
       area,
       context,
@@ -717,6 +703,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       null,
       { attribute }
     );
+    _runStroke();
 
     return ret;
   }

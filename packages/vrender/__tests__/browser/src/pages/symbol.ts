@@ -102,8 +102,24 @@ export const page = () => {
       stroke: 'black',
       lineWidth: 3,
       lineCap: 'round',
+      texture: 'wave',
+      textureOptions: {
+        amplitude: 3,
+        frequency: 2,
+        percent: 0.3
+      },
       size: 40
     });
+    symbol
+      .animate()
+      .to(
+        {
+          textureRatio: 1
+        },
+        2000,
+        'linear'
+      )
+      .loop(Infinity);
     const text = createText({
       x: x,
       y: y + 30,

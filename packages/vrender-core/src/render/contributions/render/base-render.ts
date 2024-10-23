@@ -15,9 +15,11 @@ import type {
 } from '../../../interface';
 import { getModelMatrix, shouldUseMat4 } from '../../../graphic/graphic-service/graphic-service';
 import { mat4Allocate } from '../../../allocator/matrix-allocate';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
+import { fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
+import { getTheme } from '../../../graphic';
+import { renderCommandList } from '../../../common/render-command-list';
 
 const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
 
@@ -161,6 +163,116 @@ export abstract class BaseRender<T extends IGraphic> {
           params
         );
       });
+  }
+
+  drawPathProxy(
+    graphic: T,
+    context: IContext2d,
+    x: number,
+    y: number,
+    drawContext: IDrawContext,
+    params?: IGraphicRenderDrawParams,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (!graphic.pathProxy) {
+      return false;
+    }
+
+    const themeAttributes = (getTheme(graphic, params?.theme) as any)[graphic.type.replace('3d', '')];
+
+    const {
+      fill = themeAttributes.fill,
+      stroke = themeAttributes.stroke,
+      opacity = themeAttributes.opacity,
+      fillOpacity = themeAttributes.fillOpacity,
+      lineWidth = themeAttributes.lineWidth,
+      strokeOpacity = themeAttributes.strokeOpacity,
+      visible = themeAttributes.visible,
+      x: originX = themeAttributes.x,
+      y: originY = themeAttributes.y
+    } = graphic.attribute;
+    // 不绘制或者透明
+    const fVisible = fillVisible(opacity, fillOpacity, fill);
+    const sVisible = strokeVisible(opacity, strokeOpacity);
+    const doFill = runFill(fill);
+    const doStroke = runStroke(stroke, lineWidth);
+
+    if (!visible) {
+      return true;
+    }
+
+    if (!(doFill || doStroke)) {
+      return true;
+    }
+
+    // 如果存在fillCb和strokeCb，那就不直接跳过
+    if (!(fVisible || sVisible || fillCb || strokeCb)) {
+      return true;
+    }
+
+    context.beginPath();
+    const path = typeof graphic.pathProxy === 'function' ? graphic.pathProxy(graphic.attribute) : graphic.pathProxy;
+    renderCommandList(path.commandList, context, x, y);
+
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(graphic, graphic.attribute, themeAttributes);
+
+    this.beforeRenderStep(
+      graphic,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      themeAttributes,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
+
+    if (doStroke) {
+      if (strokeCb) {
+        strokeCb(context, graphic.attribute, themeAttributes);
+      } else if (sVisible) {
+        context.setStrokeStyle(graphic, graphic.attribute, x - originX, y - originY, themeAttributes);
+        context.stroke();
+      }
+    }
+    if (doFill) {
+      if (fillCb) {
+        fillCb(context, graphic.attribute, themeAttributes);
+      } else if (fVisible) {
+        context.setCommonStyle(graphic, graphic.attribute, x - originX, y - originY, themeAttributes);
+        context.fill();
+      }
+    }
+
+    this.afterRenderStep(
+      graphic,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      themeAttributes,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
+    return true;
   }
 
   valid(graphic: IGraphic, defaultAttribute: IGraphicAttribute, fillCb?: any, strokeCb?: any) {
@@ -405,7 +517,7 @@ export abstract class BaseRender<T extends IGraphic> {
     const { x, y, z, lastModelMatrix } = data;
 
     this.z = z;
-    if (drawPathProxy(graphic, context, x, y, drawContext, params)) {
+    if (this.drawPathProxy(graphic, context, x, y, drawContext, params)) {
       context.highPerformanceRestore();
       return;
     }

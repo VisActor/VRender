@@ -590,7 +590,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
 
     for (let i = 0; i < labels.length; i++) {
-      if (labels[i].visible === false) {
+      if (labels[i].attribute.visible === false) {
         continue;
       }
 

@@ -411,9 +411,9 @@ export type IGraphicStyle = ILayout &
      * 背景透明度
      */
     backgroundOpacity: number;
-    /**
-     * 背景，支持颜色字符串、html image元素、html canvas元素
-     */
+    // 如果做动画的话，这里代表ratio
+    textureRatio: number;
+    textureOptions: any;
     background:
       | IBackgroundType
       | {

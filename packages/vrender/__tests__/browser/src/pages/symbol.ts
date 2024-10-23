@@ -97,17 +97,19 @@ export const page = () => {
     const x = ((i % 6) + 0.5) * 100;
     const y = (Math.floor(i / 6) + 0.5) * 100;
     const symbol = createSymbol({
-      symbolType: st,
+      symbolType: 'square',
       x: x,
       y: y,
       stroke: 'black',
       lineWidth: 3,
       lineCap: 'round',
       texture: 'wave',
+      textureColor: 'red',
       textureOptions: {
         amplitude: 3,
         frequency: 2,
-        percent: 0.3
+        percent: 0.3,
+        phi: Math.random() * 100
       },
       size: 40
     });

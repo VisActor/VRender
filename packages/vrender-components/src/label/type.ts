@@ -179,7 +179,7 @@ export interface OverlapAttrs {
 
   /**
    * 发生重叠后的躲避策略
-   * @since 0.20.9支持全局 Y 方向偏移策略 'shiftY'。当标签发生重叠时，会保相对位置并在 Y 方向上散开。由于 'shiftY' 是全局布局策略，不与其他策略同时生效。
+   * @since 0.20.10 支持全局 Y 方向偏移策略 'shiftY'。当标签发生重叠时，会保相对位置并在 Y 方向上散开。由于 'shiftY' 是全局布局策略，不与其他策略同时生效。
    */
   strategy?: Strategy[] | ShiftYStrategy;
 
@@ -191,7 +191,7 @@ export interface OverlapAttrs {
 
   /**
    * 防重叠的顺序权重
-   * @since 0.20.9
+   * @since 0.20.10
    * @param labelItem
    * @returns number 数值越大，权重越高。权重越高的标签越优先被布局。
    */

@@ -23,11 +23,18 @@ function drawWave(
   ratio: number,
   boundsWidth: number,
   boundsHeight: number,
-  textureOptions: { fill: string; percent: number; frequency: number; amplitude: number },
+  textureOptions: {
+    fill: string;
+    percent: number;
+    frequency: number;
+    amplitude: number;
+    opacity?: number;
+    phi?: number;
+  },
   offsetX: number,
   offsetY: number
 ) {
-  const { fill = 'orange', percent = 0.6, frequency = 4 } = textureOptions;
+  const { fill = 'orange', percent = 0.6, frequency = 4, opacity, phi = 0 } = textureOptions;
   let { amplitude = 10 } = textureOptions;
   amplitude = amplitude * formatRatio(ratio);
 
@@ -42,7 +49,7 @@ function drawWave(
   const c = width / Math.PI / (frequency * 2);
 
   for (let i = 0; i < width; i += step) {
-    const y = amplitude * Math.sin((i + delta) / c);
+    const y = amplitude * Math.sin((i + delta + phi) / c + phi);
     ctx.lineTo(i + offsetX, height + y + offsetY);
   }
 
@@ -50,6 +57,9 @@ function drawWave(
   ctx.closePath();
 
   ctx.fillStyle = fill;
+  if (isFinite(opacity)) {
+    ctx.globalAlpha = opacity;
+  }
   ctx.fill();
 }
 
@@ -275,7 +285,15 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.clip();
       const b = graphic.AABBBounds;
-      drawWave(context, textureRatio, b.width(), b.height(), textureOptions || {}, x + b.x1 - x, y + b.y1 - y);
+      drawWave(
+        context,
+        textureRatio,
+        b.width(),
+        b.height(),
+        { ...(textureOptions || {}), fill: textureColor },
+        x + b.x1 - x,
+        y + b.y1 - y
+      );
       context.restore();
     }
   }

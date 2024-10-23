@@ -1,6 +1,6 @@
 import { inject, injectable } from '../common/inversify-lite';
 import type { IPointLike } from '@visactor/vutils';
-import { Matrix, type IBoundsLike, type IMatrix, IBounds, Point } from '@visactor/vutils';
+import { Matrix, type IBoundsLike, type IMatrix, IBounds, Point, isEqual, isNumberClose } from '@visactor/vutils';
 import { Generator } from '../common/generator';
 import type {
   ICanvas,
@@ -234,8 +234,8 @@ export class DefaultWindow implements IWindow {
     return !(
       viewBox.x1 === 0 &&
       viewBox.y1 === 0 &&
-      this.width === viewBox.width() &&
-      this.height === viewBox.height()
+      isNumberClose(this.width, viewBox.width()) &&
+      isNumberClose(this.height, viewBox.height())
     );
   }
 

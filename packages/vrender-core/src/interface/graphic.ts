@@ -320,6 +320,8 @@ export type IGraphicAttribute = IDebugType &
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
     // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
     overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
+    // 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+    fillStrokeOrder: number;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

@@ -105,19 +105,21 @@ export function autoHide(labels: IText[], config: HideConfig) {
     do {
       items = reduce(items, sep);
     } while (items.length >= 3 && hasOverlap(items, sep));
+
+    const shouldCheck = (length: number, visibility: boolean, checkLength: boolean = true) => {
+      return checkLength ? length < 3 || visibility : visibility;
+    };
+
+    const checkFirst = shouldCheck(items.length, config.firstVisible, false);
     /**
-     * 0.17.10 之前，当最后label个数小于3 的时候，才做最后的label强制显示的策略
+     * 0.17.10 之前，当最后 label 个数小于 3 的时候，才做最后的label强制显示的策略
      */
-
-    const shouldCheck = (length: number, visibility: boolean) => length < 3 || visibility;
-
-    const checkFirst = shouldCheck(items.length, config.firstVisible);
     let checkLast = shouldCheck(items.length, config.lastVisible);
 
     const firstSourceItem = source[0];
     const lastSourceItem = last(source);
 
-    if (intersect(firstSourceItem, lastSourceItem, sep)) {
+    if (intersect(firstSourceItem, lastSourceItem, sep) && checkFirst && checkLast) {
       lastSourceItem.setAttribute('opacity', 0); // Or firstSourceItem, depending on preference
       checkLast = false;
     }

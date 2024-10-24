@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: annotate the Ramer Douglas Peucker algorithm in point optimization",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -9,7 +9,8 @@ import {
   DrawContribution,
   PickItemInterceptor,
   canvasAllocate,
-  application
+  application,
+  PickServiceInterceptor
 } from '@visactor/vrender-core';
 import type {
   ICanvas,
@@ -23,7 +24,8 @@ import type {
   IContributionProvider,
   IPickItemInterceptorContribution,
   IPickParams,
-  PickResult
+  PickResult,
+  IPickServiceInterceptorContribution
 } from '@visactor/vrender-core';
 import {
   CanvasArcPicker,
@@ -60,9 +62,13 @@ export class DefaultCanvasPickerService extends DefaultPickService implements IP
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
+
+    @inject(ContributionProvider)
+    @named(PickServiceInterceptor)
+    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
   ) {
-    super(pickItemInterceptorContributions);
+    super(pickItemInterceptorContributions, pickServiceInterceptorContributions);
     this.global.hooks.onSetEnv.tap('canvas-picker-service', (_, env, global) => {
       this.configure(global, env);
     });

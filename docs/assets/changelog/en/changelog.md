@@ -1,3 +1,21 @@
+# v0.20.10
+
+2024-10-25
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: support fillStrokeOrder, closed [#1505](https://github.com/VisActor/VRender/issues/1505)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with parse m where multi pos follow, closed [#1490](https://github.com/VisActor/VRender/issues/1490)
+- **@visactor/vrender-core**: fix the accuracy issue of number matching, closed [#1488](https://github.com/VisActor/VRender/issues/1488)
+
+
+
+[more detail about v0.20.10](https://github.com/VisActor/VRender/releases/tag/v0.20.10)
+
 # v0.20.9
 
 2024-10-15

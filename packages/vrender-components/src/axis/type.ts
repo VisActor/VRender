@@ -227,6 +227,11 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {
   /**
+   * 坐标轴可用布局区域的大小，之前是通过width,height传入，会影响组件的Bounds大小，影响拾取
+   * @since 0.20.11
+   */
+  size?: { width: number; height: number };
+  /**
    * 当配置了 innerRadius 时，可以通过设置 inside: true，将坐标轴战士在内圆半径上。
    * @default false
    */

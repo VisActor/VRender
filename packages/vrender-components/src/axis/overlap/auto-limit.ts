@@ -39,21 +39,26 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
   if (isEmpty(labels) || !isValidNumber(limitLength)) {
     return;
   }
-  const DELTA = Math.sin(Math.PI / 10);
-
   const overflowLimitLength = normalizeOverflowLimitLength(config.overflowLimitLength);
+  // 注意：自动隐藏算法暂时只考虑所有标签角度都一致的情况
+  const firstLabel = labels[0];
+  const angle = firstLabel.attribute.angle;
+  const hasAngle = !isNil(angle);
+  const cos = hasAngle ? Math.cos(angle) : 1;
+  const sin = hasAngle ? Math.sin(angle) : 0;
+  const isHorizontal = isAngleHorizontal(angle);
+  const isVertical = isAngleVertical(angle);
+  const isX = orient === 'top' || orient === 'bottom';
+  const direction = firstLabel.attribute.direction;
+  const checkBox =
+    !isHorizontal &&
+    !isVertical &&
+    isX &&
+    labels.length >= 3 &&
+    labels.some(label => Math.abs(label.AABBBounds.width() - firstLabel.AABBBounds.width()) >= 2) &&
+    firstLabel.AABBBounds.width() > Math.abs(limitLength / sin);
 
   labels.forEach(label => {
-    const angle = label.attribute.angle;
-
-    const hasAngle = !isNil(angle);
-    const cos = hasAngle ? Math.cos(angle) : 1;
-    const sin = hasAngle ? Math.sin(angle) : 0;
-    const isHorizontal = isAngleHorizontal(angle);
-    const isVertical = isAngleVertical(angle);
-
-    const isX = orient === 'top' || orient === 'bottom';
-
     if (isX) {
       if (isVertical && Math.floor(label.AABBBounds.height()) <= limitLength) {
         return;
@@ -63,7 +68,6 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
       }
     }
 
-    const direction = label.attribute.direction;
     if (!isX) {
       if (direction === 'vertical' && Math.floor(label.AABBBounds.height()) <= verticalLimitLength) {
         return;
@@ -87,13 +91,24 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
         const { x1, x2 } = label.AABBBounds;
         const tan = sin / cos;
         const verticalSizeLimit = Math.abs(limitLength / sin);
-        if (tan > 0 && x1 <= axisLength && limitLength / tan + x1 > axisLength) {
+
+        if (
+          checkBox &&
+          tan > 0 &&
+          x1 <= axisLength + overflowLimitLength.right &&
+          limitLength / tan + x1 > axisLength + overflowLimitLength.right
+        ) {
           // 以 x1 近似为锚点，文字在 x1 右侧
-          const lengthLimit = (axisLength - x1) / Math.abs(cos) + overflowLimitLength.right;
+          const lengthLimit = (axisLength - x1 + overflowLimitLength.right) / Math.abs(cos);
           limitLabelLength = Math.min(lengthLimit, verticalSizeLimit);
-        } else if (tan < 0 && x2 >= 0 && limitLength / tan + x2 < 0) {
+        } else if (
+          checkBox &&
+          tan < 0 &&
+          x2 >= -overflowLimitLength.left &&
+          limitLength / tan + x2 < -overflowLimitLength.left
+        ) {
           // 以 x2 近似为锚点，文字在 x2 左侧
-          const lengthLimit = x2 / Math.abs(cos) + overflowLimitLength.left;
+          const lengthLimit = (x2 + overflowLimitLength.left) / Math.abs(cos);
           limitLabelLength = Math.min(lengthLimit, verticalSizeLimit);
         } else {
           limitLabelLength = verticalSizeLimit;

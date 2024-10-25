@@ -1,13 +1,11 @@
 import { ContainerModule } from '../common/inversify-lite';
-import { PickerService, GlobalPickerService } from './constants';
+import { PickerService, GlobalPickerService, PickItemInterceptor, PickServiceInterceptor } from './constants';
 import { DefaultGlobalPickerService } from './global-picker-service';
 // import { DefaultCanvasPickerService } from './canvas-picker-service';
 // import { DefaultMathPickerService } from './math-picker-service';
 import {
   Canvas3DPickItemInterceptor,
   InteractivePickItemInterceptorContribution,
-  PickItemInterceptor,
-  PickServiceInterceptor,
   ShadowPickServiceInterceptorContribution,
   ShadowRootPickItemInterceptorContribution
 } from './pick-interceptor';

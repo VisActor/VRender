@@ -22,8 +22,8 @@ import { getTheme } from '../graphic/theme';
 import { DefaultAttribute } from '../graphic/config';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
-import { PickItemInterceptor, PickServiceInterceptor } from './pick-interceptor';
 import { application } from '../application';
+import { PickItemInterceptor, PickServiceInterceptor } from './constants';
 
 @injectable()
 export abstract class DefaultPickService implements IPickerService {

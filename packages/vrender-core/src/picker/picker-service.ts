@@ -15,13 +15,14 @@ import type {
   IPickParams,
   PickResult,
   IPickItemInterceptorContribution,
-  IContributionProvider
+  IContributionProvider,
+  IPickServiceInterceptorContribution
 } from '../interface';
 import { getTheme } from '../graphic/theme';
 import { DefaultAttribute } from '../graphic/config';
 import { mat3Tomat4, multiplyMat4Mat4 } from '../common/matrix';
 import { mat4Allocate, matrixAllocate } from '../allocator/matrix-allocate';
-import { PickItemInterceptor } from './pick-interceptor';
+import { PickItemInterceptor, PickServiceInterceptor } from './pick-interceptor';
 import { application } from '../application';
 
 @injectable()
@@ -30,6 +31,7 @@ export abstract class DefaultPickService implements IPickerService {
   declare pickerMap: Map<number, IGraphicPicker>;
   declare pickContext?: IContext2d;
   declare InterceptorContributions: IPickItemInterceptorContribution[];
+  declare pickerServiceInterceptorContributions: IPickServiceInterceptorContribution[];
   declare global: IGlobal;
 
   constructor(
@@ -37,13 +39,20 @@ export abstract class DefaultPickService implements IPickerService {
     // @ts-ignore
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
+    // @ts-ignore
+    @inject(ContributionProvider)
+    @named(PickServiceInterceptor)
+    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
   ) {
     this.global = application.global;
   }
 
   protected _init() {
     this.InterceptorContributions = this.pickItemInterceptorContributions
+      .getContributions()
+      .sort((a, b) => a.order - b.order);
+    this.pickerServiceInterceptorContributions = this.pickServiceInterceptorContributions
       .getContributions()
       .sort((a, b) => a.order - b.order);
   }
@@ -93,19 +102,28 @@ export abstract class DefaultPickService implements IPickerService {
       this.pickContext.inuse = false;
     }
 
-    // 判断是否有shadow-dom
-    if (result.graphic) {
-      let g = result.graphic;
-      while (g.parent) {
-        g = g.parent;
-      }
-      if (g.shadowHost) {
-        result.params = {
-          shadowTarget: result.graphic
-        };
-        result.graphic = g.shadowHost;
+    if (this.pickerServiceInterceptorContributions.length) {
+      for (let i = 0; i < this.pickerServiceInterceptorContributions.length; i++) {
+        const drawContribution = this.pickerServiceInterceptorContributions[i];
+        if (drawContribution.afterPickItem) {
+          result = drawContribution.afterPickItem(result, this, point, params, { parentMatrix });
+        }
       }
     }
+    // // 判断是否有shadow-dom
+    // if (result.graphic) {
+    //   let g = result.graphic;
+    //   while (g.parent) {
+    //     g = g.parent;
+    //   }
+    //   if (g.shadowHost) {
+    //     result.params = {
+    //       shadowTarget: result.graphic
+    //     };
+    //     result.graphic = g.shadowHost;
+    //   }
+    // }
+
     return result;
   }
 

@@ -7,7 +7,8 @@ import {
   named,
   DefaultPickService,
   EmptyContext2d,
-  PickItemInterceptor
+  PickItemInterceptor,
+  PickServiceInterceptor
 } from '@visactor/vrender-core';
 import type {
   ICanvas,
@@ -20,7 +21,8 @@ import type {
   IContributionProvider,
   IPickItemInterceptorContribution,
   IPickParams,
-  PickResult
+  PickResult,
+  IPickServiceInterceptorContribution
 } from '@visactor/vrender-core';
 import { MathPickerContribution } from './contributions/constants';
 
@@ -41,9 +43,12 @@ export class DefaultMathPickerService extends DefaultPickService implements IPic
     // 拦截器
     @inject(ContributionProvider)
     @named(PickItemInterceptor)
-    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>
+    protected readonly pickItemInterceptorContributions: IContributionProvider<IPickItemInterceptorContribution>,
+    @inject(ContributionProvider)
+    @named(PickServiceInterceptor)
+    protected readonly pickServiceInterceptorContributions: IContributionProvider<IPickServiceInterceptorContribution>
   ) {
-    super(pickItemInterceptorContributions);
+    super(pickItemInterceptorContributions, pickServiceInterceptorContributions);
     this.global.hooks.onSetEnv.tap('math-picker-service', (lastEnv, env, global) => {
       this.configure(global, env);
     });

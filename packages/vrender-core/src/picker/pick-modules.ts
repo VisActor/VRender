@@ -7,6 +7,8 @@ import {
   Canvas3DPickItemInterceptor,
   InteractivePickItemInterceptorContribution,
   PickItemInterceptor,
+  PickServiceInterceptor,
+  ShadowPickServiceInterceptorContribution,
   ShadowRootPickItemInterceptorContribution
 } from './pick-interceptor';
 import { bindContributionProvider } from '../common/contribution-provider';
@@ -33,4 +35,9 @@ export default new ContainerModule((bind, unbind, isBound) => {
   bind(InteractivePickItemInterceptorContribution).toSelf().inSingletonScope();
   bind(PickItemInterceptor).toService(InteractivePickItemInterceptorContribution);
   bindContributionProvider(bind, PickItemInterceptor);
+
+  bind(ShadowPickServiceInterceptorContribution).toSelf().inSingletonScope();
+  bind(PickServiceInterceptor).toService(ShadowPickServiceInterceptorContribution);
+
+  bindContributionProvider(bind, PickServiceInterceptor);
 });

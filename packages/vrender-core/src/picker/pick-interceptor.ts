@@ -15,11 +15,6 @@ import { matrixAllocate } from '../allocator/matrix-allocate';
 import { draw3dItem } from '../common/3d-interceptor';
 import { getTheme } from '../graphic';
 
-// 拦截器
-export const PickItemInterceptor = Symbol.for('PickItemInterceptor');
-// pickService的拦截器
-export const PickServiceInterceptor = Symbol.for('PickServiceInterceptor');
-
 @injectable()
 export class ShadowPickServiceInterceptorContribution implements IPickServiceInterceptorContribution {
   order: number = 1;

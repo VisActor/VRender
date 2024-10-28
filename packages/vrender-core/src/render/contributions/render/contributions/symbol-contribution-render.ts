@@ -7,7 +7,9 @@ import type {
   IThemeAttribute,
   ISymbolRenderContribution,
   IDrawContext,
-  IBorderStyle
+  IBorderStyle,
+  IBaseRenderContribution,
+  ICustomPath2D
 } from '../../../../interface';
 import { getScaledStroke } from '../../../../common/canvas-utils';
 import { defaultBaseBackgroundRenderContribution } from './base-contribution-render';
@@ -100,6 +102,86 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
   }
 }
 
+export class DefaultSymbolClipRangeStrokeRenderContribution
+  implements IBaseRenderContribution<ISymbol, ISymbolGraphicAttribute>
+{
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+
+  drawShape(
+    graphic: ISymbol,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    graphicAttribute: Required<ISymbolGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
+    strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
+    options?: any
+  ) {
+    const {
+      clipRange = graphicAttribute.clipRange,
+      x: originX = graphicAttribute.x,
+      y: originY = graphicAttribute.y,
+      z = graphicAttribute.z,
+      size = graphicAttribute.size,
+      scaleX = graphicAttribute.scaleX,
+      scaleY = graphicAttribute.scaleY
+    } = graphic.attribute;
+    const parsedPath = graphic.getParsedPath();
+    // todo: 考虑使用path
+    if (!(parsedPath && clipRange < 1 && clipRange > 0)) {
+      return;
+    }
+
+    const callback = (p: ICustomPath2D, a: any) => {
+      // 如果是svg的话，合并一下fill和stroke
+      if (graphic._parsedPath.svgCache) {
+        const obj = Object.assign({}, a);
+        obj.fill = a.fill ?? graphic.attribute.fill;
+        obj.opacity = a.opacity ?? graphic.attribute.opacity;
+        obj.fillOpacity = graphic.attribute.fillOpacity;
+        obj.stroke = a.stroke ?? graphic.attribute.stroke;
+        obj.lineWidth = a.lineWidth ?? graphic.attribute.lineWidth;
+        a = obj;
+      }
+
+      if (a.stroke) {
+        if (strokeCb) {
+          strokeCb(context, graphic.attribute, graphicAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(graphic, a, (originX - x) / scaleX, (originY - y) / scaleY, graphicAttribute);
+          context.stroke();
+        }
+      }
+    };
+
+    context.beginPath();
+    parsedPath.drawWithClipRange && parsedPath.drawWithClipRange(context, size, x, y, clipRange, z, callback);
+
+    if (doStroke && !parsedPath.isSvg) {
+      if (strokeCb) {
+        strokeCb(context, graphic.attribute, graphicAttribute);
+      } else if (sVisible) {
+        context.setStrokeStyle(
+          graphic,
+          graphic.attribute,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          graphicAttribute
+        );
+        context.stroke();
+      }
+    }
+  }
+}
+
 export const defaultSymbolRenderContribution = new DefaultSymbolRenderContribution();
+export const defaultSymbolClipRangeStrokeRenderContribution = new DefaultSymbolClipRangeStrokeRenderContribution();
 export const defaultSymbolTextureRenderContribution = defaultBaseTextureRenderContribution;
 export const defaultSymbolBackgroundRenderContribution = defaultBaseBackgroundRenderContribution;

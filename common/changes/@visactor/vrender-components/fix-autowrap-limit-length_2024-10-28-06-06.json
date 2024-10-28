@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: optimize limit length calculation for line axis label autoWrap",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

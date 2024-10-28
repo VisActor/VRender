@@ -105,18 +105,37 @@ export const page = () => {
     const x = ((i % 6) + 0.5) * 100;
     const y = (Math.floor(i / 6) + 0.5) * 100;
     const symbol = createSymbol({
-      symbolType: st,
+      symbolType: 'square',
       x: x,
       y: y,
       stroke: 'black',
       lineWidth: 6,
       lineCap: 'round',
       // fill: 'pink',
+      texture: 'wave',
+      textureColor: 'red',
+      textureOptions: {
+        amplitude: 3,
+        frequency: 2,
+        percent: 0.3,
+        phi: Math.random() * 100
+      },
+      fill: 'pink',
       fillStrokeOrder: 1,
       clipRange: 0,
       size: 60
     });
     symbol.animate().to({ clipRange: 1 }, 1000, 'linear');
+    symbol
+      .animate()
+      .to(
+        {
+          textureRatio: 1
+        },
+        2000,
+        'linear'
+      )
+      .loop(Infinity);
     const text = createText({
       x: x,
       y: y + 60,

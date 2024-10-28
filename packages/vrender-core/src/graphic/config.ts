@@ -125,6 +125,8 @@ export const DefaultStyle: IGraphicStyle = {
   forceBoundsHeight: undefined,
   opacity: 1,
   background: null,
+  textureRatio: 0,
+  textureOptions: null,
   backgroundOpacity: 1,
   backgroundCornerRadius: 0,
   texture: null,

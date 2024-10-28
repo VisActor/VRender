@@ -51,6 +51,10 @@ export * from './picker/contributions/canvas-picker/arc3d-module';
 
 export * from './picker/contributions/canvas-picker/pyramid3d-module';
 
+export * from './graphic/Lottie';
+export * from './picker/contributions/canvas-picker/lottie-module';
+export * from './render/contributions/canvas/lottie-module';
+
 export * from './register/register-arc';
 export * from './register/register-arc3d';
 export * from './register/register-area';

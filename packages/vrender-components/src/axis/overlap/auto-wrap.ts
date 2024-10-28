@@ -1,5 +1,5 @@
 import type { IText } from '@visactor/vrender-core';
-import { isEmpty, isValidNumber } from '@visactor/vutils';
+import { isEmpty, isValidNumber, min } from '@visactor/vutils';
 import { isAngleHorizontal, isAngleVertical } from './util';
 
 type WrapConfig = {
@@ -15,9 +15,9 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
     return;
   }
 
-  const verticalLimitLength = axisLength / labels.length;
+  let verticalLimitLength = axisLength / labels.length;
 
-  labels.forEach(label => {
+  labels.forEach((label, index) => {
     const angle = label.attribute.angle;
 
     const isHorizontal = isAngleHorizontal(angle);
@@ -28,12 +28,24 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
       if (isVertical && Math.floor(label.AABBBounds.height()) <= limitLength) {
         return;
       }
-      if (isHorizontal && Math.floor(label.AABBBounds.width()) <= verticalLimitLength) {
-        return;
+      if (isHorizontal) {
+        const curLabelX = label.attribute.x;
+        const nextLabelX = labels[index + 1]?.attribute.x;
+        const lastLabelX = labels[index - 1]?.attribute.x;
+        const minGap = getLabelMinGap(curLabelX, nextLabelX, lastLabelX);
+        if (isValidNumber(minGap)) {
+          verticalLimitLength = min(verticalLimitLength, minGap);
+        }
       }
     } else {
-      if (isVertical && Math.floor(label.AABBBounds.height()) <= verticalLimitLength) {
-        return;
+      if (isVertical) {
+        const curLabelY = label.attribute.y;
+        const nextLabelY = labels[index + 1]?.attribute.y;
+        const lastLabelY = labels[index - 1]?.attribute.y;
+        const minGap = getLabelMinGap(curLabelY, nextLabelY, lastLabelY);
+        if (isValidNumber(minGap)) {
+          verticalLimitLength = min(verticalLimitLength, minGap);
+        }
       }
       if (isHorizontal && Math.floor(label.AABBBounds.width()) <= limitLength) {
         return;
@@ -60,7 +72,6 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
         heightLimit = verticalLimitLength;
       }
     }
-
     label.setAttributes({
       maxLineWidth: limitLabelLength,
       ellipsis: label.attribute.ellipsis ?? ellipsis,
@@ -68,4 +79,21 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
       heightLimit
     });
   });
+}
+
+function getLabelMinGap(current: number, next?: number, prev?: number) {
+  let minGap;
+  if (isValidNumber(next)) {
+    minGap = Math.abs(next - current);
+  }
+
+  if (isValidNumber(prev)) {
+    if (isValidNumber(minGap)) {
+      minGap = Math.min(Math.abs(current - prev), minGap);
+    } else {
+      minGap = Math.abs(current - prev);
+    }
+  }
+
+  return minGap;
 }

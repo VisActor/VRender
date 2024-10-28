@@ -1,6 +1,6 @@
 import { isArray, type IBounds, AABBBounds, isNumber } from '@visactor/vutils';
 import { renderCommandList } from '../../common/render-command-list';
-import type { IContext2d, ICustomPath2D, IGraphicAttribute, ISymbolClass } from '../../interface';
+import type { IContext2d, ICustomPath2D, IGraphicAttribute, IPath2D, ISymbolClass } from '../../interface';
 
 const tempBounds = new AABBBounds();
 export class CustomSymbolClass implements ISymbolClass {
@@ -63,6 +63,30 @@ export class CustomSymbolClass implements ISymbolClass {
 
   protected parseSize(size: number | [number, number]): number {
     return isNumber(size) ? size : Math.min(size[0], size[1]);
+  }
+  drawWithClipRange(
+    ctx: IPath2D,
+    size: number,
+    x: number,
+    y: number,
+    clipRange: number,
+    z?: number,
+    cb?: (p: ICustomPath2D, a: any) => void
+  ) {
+    if (this.isSvg) {
+      if (!this.svgCache) {
+        return false;
+      }
+      this.svgCache.forEach(item => {
+        item.path.drawWithClipRange(ctx, size, x, y, clipRange);
+        cb && cb(item.path, item.attribute);
+      });
+      return false;
+    }
+    this.path.drawWithClipRange(ctx, size, x, y, clipRange);
+    // this.path.drawWithClipRange && this.path.drawWithClipRange(ctx, clipRange);
+    // renderCommandList(this.path.commandList, ctx, x, y, size + offset, size + offset);
+    return false;
   }
 
   bounds(size: number, bounds: IBounds) {

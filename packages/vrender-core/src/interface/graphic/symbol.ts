@@ -5,6 +5,7 @@ import type { ICustomPath2D, IPath2D } from '../path';
 export type ISymbolAttribute = {
   symbolType: SymbolType;
   size: number | [number, number];
+  clipRange: number;
 };
 
 export type ISymbolGraphicAttribute = Partial<IGraphicAttribute> & Partial<ISymbolAttribute>;
@@ -50,6 +51,15 @@ export interface ISymbolClass {
     size: number | [number, number],
     x: number,
     y: number,
+    z?: number,
+    cb?: (p: ICustomPath2D, a: any) => void
+  ) => boolean;
+  drawWithClipRange: (
+    ctx: IPath2D,
+    size: number | [number, number],
+    x: number,
+    y: number,
+    clipRange: number,
     z?: number,
     cb?: (p: ICustomPath2D, a: any) => void
   ) => boolean;

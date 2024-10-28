@@ -284,6 +284,7 @@ export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
   ...DefaultAttribute,
   path: new CustomPath2D(),
   fillStrokeOrder: 1,
+  clipRange: 1,
   customPath: () => {
     Logger.getInstance().warn('空函数');
   }
@@ -320,7 +321,8 @@ export const DefaultSymbolAttribute: Required<ISymbolGraphicAttribute> = {
   ...DefaultAttribute,
   symbolType: 'circle',
   size: 10, // 外接**正方形**的边长
-  keepDirIn3d: true
+  keepDirIn3d: true,
+  clipRange: 1
 };
 
 export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {

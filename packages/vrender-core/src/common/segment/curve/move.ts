@@ -1,5 +1,5 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import type { IMoveCurve, IDirection } from '../../../interface';
+import type { IMoveCurve, IDirection, IPath2D } from '../../../interface';
 import { Curve } from './base';
 import { CurveTypeEnum } from '../../enums';
 
@@ -23,5 +23,9 @@ export class MoveCurve extends Curve implements IMoveCurve {
   }
   protected calcProjLength(direction: IDirection): number {
     throw new Error('QuadraticBezierCurve暂不支持updateLength');
+  }
+
+  draw(path: IPath2D, x: number, y: number, sx: number, sy: number, percent: number) {
+    path.moveTo(this.p1.x * sx + x, this.p1.y * sy + y);
   }
 }

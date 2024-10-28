@@ -50,12 +50,14 @@ export function autoLimit(labels: IText[], config: LimitConfig) {
   const isVertical = isAngleVertical(angle);
   const isX = orient === 'top' || orient === 'bottom';
   const direction = firstLabel.attribute.direction;
+  // 判断有长度差异的阀值
+  const THRESHOLD = 2;
   const checkBox =
     !isHorizontal &&
     !isVertical &&
     isX &&
-    labels.length >= 3 &&
-    labels.some(label => Math.abs(label.AABBBounds.width() - firstLabel.AABBBounds.width()) >= 2) &&
+    (labels.length < 2 ||
+      labels.some(label => Math.abs(label.AABBBounds.width() - firstLabel.AABBBounds.width()) >= THRESHOLD)) &&
     firstLabel.AABBBounds.width() > Math.abs(limitLength / sin);
 
   labels.forEach(label => {

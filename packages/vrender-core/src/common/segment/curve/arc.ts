@@ -1,5 +1,5 @@
-import { CurveTypeEnum } from 'src/common/enums';
-import type { IDirection, IArcCurve } from '../../../interface';
+import type { IDirection, IArcCurve, IPath2D } from '../../../interface';
+import { CurveTypeEnum } from '../../enums';
 import { Curve } from './base';
 import type { IPoint, IPointLike } from '@visactor/vutils';
 
@@ -25,5 +25,9 @@ export class ArcCurve extends Curve implements IArcCurve {
   }
   getAngleAt(t: number): number {
     throw new Error('ArcCurve暂不支持getAngleAt');
+  }
+
+  draw(path: IPath2D, percent: number) {
+    throw new Error('暂不支持');
   }
 }

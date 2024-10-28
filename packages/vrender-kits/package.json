@@ -24,7 +24,7 @@
     "@visactor/vrender-core": "workspace:0.21.9",
     "@resvg/resvg-js": "2.4.1",
     "roughjs": "4.5.2",
-    "gifuct-js": "2.1.2"
+    "lottie-web": "^5.12.2"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

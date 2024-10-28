@@ -15,15 +15,16 @@ export function autoWrap(labels: IText[], config: WrapConfig) {
     return;
   }
 
+  // 注意：自动换行算法暂时只考虑所有标签角度都一致的情况
+  const firstLabel = labels[0];
+  const angle = firstLabel.attribute.angle;
+  const isHorizontal = isAngleHorizontal(angle);
+  const isVertical = isAngleVertical(angle);
+  const isX = orient === 'top' || orient === 'bottom';
+
   let verticalLimitLength = axisLength / labels.length;
 
   labels.forEach((label, index) => {
-    const angle = label.attribute.angle;
-
-    const isHorizontal = isAngleHorizontal(angle);
-    const isVertical = isAngleVertical(angle);
-    const isX = orient === 'top' || orient === 'bottom';
-
     if (isX) {
       if (isVertical && Math.floor(label.AABBBounds.height()) <= limitLength) {
         return;

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix group fill gradient #1518",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

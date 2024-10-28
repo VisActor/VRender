@@ -54,7 +54,7 @@ export interface ISymbolClass {
     z?: number,
     cb?: (p: ICustomPath2D, a: any) => void
   ) => boolean;
-  drawWithClipRange: (
+  drawWithClipRange?: (
     ctx: IPath2D,
     size: number | [number, number],
     x: number,

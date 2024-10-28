@@ -1,5 +1,5 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
-import type { IEllipseCurve, IDirection } from '../../../interface';
+import type { IEllipseCurve, IDirection, IPath2D } from '../../../interface';
 import { Curve } from './base';
 import { CurveTypeEnum } from '../../enums';
 
@@ -41,5 +41,9 @@ export class EllipseCurve extends Curve implements IEllipseCurve {
   }
   protected calcProjLength(direction: IDirection): number {
     throw new Error('QuadraticBezierCurve暂不支持updateLength');
+  }
+
+  draw(path: IPath2D, percent: number) {
+    throw new Error('暂不支持');
   }
 }

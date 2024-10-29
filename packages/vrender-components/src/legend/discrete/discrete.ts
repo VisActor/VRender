@@ -490,14 +490,17 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor
+        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor,
+        _debug_bounds: true,
+        fill: 'red'
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup);
     } else {
       itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        ...backgroundStyle.style
+        ...backgroundStyle.style,
+        fill: 'red'
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, backgroundStyle.state);
     }
@@ -508,7 +511,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const innerGroup = graphicCreator.group({
       x: 0,
       y: 0,
-      pickable: false
+      pickable: false,
+      _debug_bounds: true,
+      fill: 'red'
     });
     itemGroup.add(innerGroup);
 
@@ -961,7 +966,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         if (contentHeight < startY + (height as number)) {
           startY = 0;
           startX += this._itemMaxWidth + spaceCol;
-          pages += 1;
+          // pages += 1;
         }
         if (index > 0) {
           item.setAttributes({
@@ -1051,8 +1056,17 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
         const { height } = item.attribute;
 
+        const prePages = pages;
+        const preStartY = startY;
         pages = Math.floor((startY + height) / contentHeight) + 1;
         startY += spaceRow + (height as number);
+
+        // 边界场景: 最后一项item的文字内容在倒数第二页, 但由于bounds比文字本身大一点, 触发分页, 导致最后一页是空白
+        // 关联issue: https://github.com/VisActor/VChart/issues/3344
+        if (prePages !== pages && index === itemsContainer.getChildren().length - 1) {
+          contentHeight = preStartY + height; // 保证刚好完全展示最后一项
+          pages -= 1; // 不分页
+        }
       });
 
       this._itemContext.totalPage = pages;

@@ -490,17 +490,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor,
-        _debug_bounds: true,
-        fill: 'red'
+        cursor: (backgroundStyle.style as IGroupGraphicAttribute)?.cursor
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup);
     } else {
       itemGroup = graphicCreator.group({
         x: 0,
         y: 0,
-        ...backgroundStyle.style,
-        fill: 'red'
+        ...backgroundStyle.style
       });
       this._appendDataToShape(itemGroup, LEGEND_ELEMENT_NAME.item, item, itemGroup, backgroundStyle.state);
     }
@@ -511,9 +508,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const innerGroup = graphicCreator.group({
       x: 0,
       y: 0,
-      pickable: false,
-      _debug_bounds: true,
-      fill: 'red'
+      pickable: false
     });
     itemGroup.add(innerGroup);
 
@@ -966,7 +961,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         if (contentHeight < startY + (height as number)) {
           startY = 0;
           startX += this._itemMaxWidth + spaceCol;
-          // pages += 1;
+          pages += 1;
         }
         if (index > 0) {
           item.setAttributes({

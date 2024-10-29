@@ -19,11 +19,8 @@ import type {
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { PATH_NUMBER_TYPE } from '../../../graphic/constants';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { PathRenderContribution } from './contributions/constants';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import {
   defaultPathBackgroundRenderContribution,
   defaultPathTextureRenderContribution
@@ -65,7 +62,11 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
   ) {
     // const pathAttribute = graphicService.themeService.getCurrentTheme().pathAttribute;
     const pathAttribute = this.tempTheme ?? getTheme(path, params?.theme).path;
-    const { x: originX = pathAttribute.x, y: originY = pathAttribute.y } = path.attribute;
+    const {
+      x: originX = pathAttribute.x,
+      y: originY = pathAttribute.y,
+      fillStrokeOrder = pathAttribute.fillStrokeOrder
+    } = path.attribute;
 
     const z = this.z ?? 0;
 
@@ -101,21 +102,33 @@ export class DefaultCanvasPathRender extends BaseRender<IPath> implements IGraph
       strokeCb
     );
 
-    if (doStroke) {
-      if (strokeCb) {
-        strokeCb(context, path.attribute, pathAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
-        context.stroke();
+    const _runStroke = () => {
+      if (doStroke) {
+        if (strokeCb) {
+          strokeCb(context, path.attribute, pathAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
+          context.stroke();
+        }
       }
-    }
-    if (doFill) {
-      if (fillCb) {
-        fillCb(context, path.attribute, pathAttribute);
-      } else if (fVisible) {
-        context.setCommonStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
-        context.fill();
+    };
+    const _runFill = () => {
+      if (doFill) {
+        if (fillCb) {
+          fillCb(context, path.attribute, pathAttribute);
+        } else if (fVisible) {
+          context.setCommonStyle(path, path.attribute, originX - x, originY - y, pathAttribute);
+          context.fill();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(

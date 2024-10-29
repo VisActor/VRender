@@ -1,6 +1,25 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Sun, 29 Sep 2024 09:44:02 GMT and should not be manually modified.
+This log was last generated on Wed, 23 Oct 2024 08:37:33 GMT and should not be manually modified.
+
+## 0.20.10
+Wed, 23 Oct 2024 08:37:33 GMT
+
+### Updates
+
+- feat: support fillStrokeOrder, closed #1505
+- fix: fix issue with parse m where multi pos follow, closed #1490
+- fix: fix the accuracy issue of number matching, closed #1488
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- feat: text support keep-all, closed #1466
+- fix: fix max width of arc label in left
+
+
 
 ## 0.20.8
 Sun, 29 Sep 2024 09:44:02 GMT

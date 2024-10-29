@@ -165,10 +165,12 @@ export class ATextMeasure implements ITextMeasure {
     text: string,
     options: TextOptionsType,
     width: number,
-    wordBreak: boolean
+    wordBreak: boolean,
+    keepAllBreak?: boolean
   ): {
     str: string;
     width: number;
+    wordBreaked?: number;
   } {
     if (text.length === 0) {
       return { str: '', width: 0 };
@@ -184,8 +186,12 @@ export class ATextMeasure implements ITextMeasure {
     const data = this._clipText(text, options, width, 0, text.length - 1, 'end', false);
     // 如果需要文字截断
     if (wordBreak && data.str !== text) {
-      const index = testLetter(text, data.str.length);
+      let index = testLetter(text, data.str.length, keepAllBreak);
       if (index !== data.str.length) {
+        if (index > data.str.length) {
+          (data as any).wordBreaked = index;
+          index = data.str.length;
+        }
         data.str = text.substring(0, index);
         data.width = this.measureTextWidth(data.str, options);
       }

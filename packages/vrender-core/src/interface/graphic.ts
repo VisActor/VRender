@@ -38,7 +38,8 @@ export type GraphicType =
   | 'shadowroot'
   | 'polygon'
   | 'pyramid3d'
-  | 'glyph';
+  | 'glyph'
+  | string;
 
 // Cursor style
 // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -217,6 +218,9 @@ export type IGraphicStyle = ILayout &
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
+    // 如果做动画的话，这里代表ratio
+    textureRatio: number;
+    textureOptions: any;
     background:
       | IBackgroundType
       | {
@@ -320,6 +324,8 @@ export type IGraphicAttribute = IDebugType &
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
     // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
     overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
+    // 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+    fillStrokeOrder: number;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

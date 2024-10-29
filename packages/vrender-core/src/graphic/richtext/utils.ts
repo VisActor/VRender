@@ -167,10 +167,10 @@ export function getStrByWithCanvas(
   // 测量从头到当前位置宽度以及从头到下一个字符位置宽度
   let index = guessIndex;
   let temp = desc.slice(0, index);
-  let tempWidth = Math.floor(textMeasure.measureText(temp, character).width);
+  let tempWidth = Math.floor(textMeasure.measureText(temp, character as any).width);
 
   let tempNext = desc.slice(0, index + 1);
-  let tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character).width);
+  let tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character as any).width);
 
   // 到当前位置宽度 < width && 到下一个字符位置宽度 > width时，认为找到准确阶段位置
   while (tempWidth > width || tempWidthNext <= width) {
@@ -189,10 +189,10 @@ export function getStrByWithCanvas(
     }
 
     temp = desc.slice(0, index);
-    tempWidth = Math.floor(textMeasure.measureText(temp, character).width);
+    tempWidth = Math.floor(textMeasure.measureText(temp, character as any).width);
 
     tempNext = desc.slice(0, index + 1);
-    tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character).width);
+    tempWidthNext = Math.floor(textMeasure.measureText(tempNext, character as any).width);
   }
 
   // 处理特殊情况
@@ -203,7 +203,14 @@ export function getStrByWithCanvas(
   return index;
 }
 
-export function testLetter(string: string, index: number): number {
+/**
+ * 向前找到单词结尾处换行
+ * @param string
+ * @param index
+ * @param negativeWrongMatch 如果为true，那么如果无法匹配就会向后找到单词的结尾，否则就直接返回index
+ * @returns
+ */
+export function testLetter(string: string, index: number, negativeWrongMatch: boolean = false): number {
   let i = index;
   // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
   while (
@@ -214,7 +221,30 @@ export function testLetter(string: string, index: number): number {
     i--;
     // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
     if (i <= 0) {
-      return index;
+      return negativeWrongMatch ? testLetter2(string, index) : index;
+    }
+  }
+  return i;
+}
+
+/**
+ * 向后找到单词结尾处换行
+ * @param string
+ * @param index
+ * @returns
+ */
+export function testLetter2(string: string, index: number) {
+  let i = index;
+  // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
+  while (
+    (regLetter.test(string[i - 1]) && regLetter.test(string[i])) ||
+    // 行首标点符号处理
+    regPunctuation.test(string[i])
+  ) {
+    i++;
+    // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
+    if (i >= string.length) {
+      return i;
     }
   }
   return i;
@@ -275,7 +305,7 @@ export function measureTextCanvas(
   character: IRichTextParagraphCharacter
 ): { ascent: number; height: number; descent: number; width: number } {
   const textMeasure = application.graphicUtil.textMeasure;
-  const measurement = textMeasure.measureText(text, character) as TextMetrics;
+  const measurement = textMeasure.measureText(text, character as any) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
     ascent: 0,
     height: 0,

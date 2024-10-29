@@ -4,6 +4,7 @@ import type { ICustomPath2D } from '../path';
 
 export type IPathAttribute = {
   path: ICustomPath2D | string;
+  clipRange: number;
   customPath: (context: ICustomPath2D, pathMark: IPath) => void;
 };
 

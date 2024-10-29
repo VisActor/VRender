@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-kits",
-  "version": "0.20.8",
+  "version": "0.20.10",
   "description": "",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,9 +21,10 @@
   },
   "dependencies": {
     "@visactor/vutils": "~0.18.17",
-    "@visactor/vrender-core": "workspace:0.20.8",
+    "@visactor/vrender-core": "workspace:0.20.10",
     "@resvg/resvg-js": "2.4.1",
-    "roughjs": "4.5.2"
+    "roughjs": "4.5.2",
+    "lottie-web": "^5.12.2"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

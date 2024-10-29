@@ -97,12 +97,19 @@ export function parseSvgPath(str: string): Array<string | number>[] {
     if (currCommandData.length - 1 > standardCommandLen) {
       // 如果命令长度超过默认长度，就拆分为多个命令
       let subCommand: (string | number)[];
+      let bestCommandChar = commandChar;
       for (let i = 1, len = currCommandData.length; i < len; i += standardCommandLen) {
-        subCommand = [commandChar];
+        subCommand = [bestCommandChar];
         for (let j = i, subLen = i + standardCommandLen; j < subLen; j++) {
           subCommand.push(currCommandData[j]);
         }
         result.push(subCommand);
+        // 如果是一堆m命令，后续就转为l命令
+        if (bestCommandChar === 'm') {
+          bestCommandChar = 'l';
+        } else if (bestCommandChar === 'M') {
+          bestCommandChar = 'L';
+        }
       }
     } else {
       result.push(currCommandData);

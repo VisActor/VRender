@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-duplicate-imports
-import type { IGraphic, IGroup, ITextGraphicAttribute, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import type { Dict } from '@visactor/vutils';
+import type { IGraphic, IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
+import type { Dict, IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
 import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge } from '@visactor/vutils';
 import { traverseGroup } from '../util/common';
@@ -149,4 +149,25 @@ export function getPolygonPath(points: Point[], closed: boolean) {
   }
 
   return path;
+}
+
+export function textIntersect(textA: IText, textB: IText, sep: number) {
+  let a: IBounds = textA.OBBBounds;
+  let b: IBounds = textB.OBBBounds;
+  if (a && b && !a.empty() && !b.empty()) {
+    return a.intersects(b);
+  }
+  a = textA.AABBBounds;
+  b = textB.AABBBounds;
+  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+}
+
+export function hasOverlap<T>(items: IText[], pad: number): boolean {
+  for (let i = 1, n = items.length, a = items[0], b; i < n; a = b, ++i) {
+    b = items[i];
+    if (textIntersect(a, b, pad)) {
+      return true;
+    }
+  }
+  return false;
 }

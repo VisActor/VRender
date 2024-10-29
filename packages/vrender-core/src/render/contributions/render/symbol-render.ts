@@ -23,6 +23,7 @@ import { SymbolRenderContribution } from './contributions/constants';
 import { isArray } from '@visactor/vutils';
 import {
   defaultSymbolBackgroundRenderContribution,
+  defaultSymbolClipRangeStrokeRenderContribution,
   defaultSymbolRenderContribution,
   defaultSymbolTextureRenderContribution
 } from './contributions';
@@ -41,7 +42,8 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     this.builtinContributions = [
       defaultSymbolRenderContribution,
       defaultSymbolBackgroundRenderContribution,
-      defaultSymbolTextureRenderContribution
+      defaultSymbolTextureRenderContribution,
+      defaultSymbolClipRangeStrokeRenderContribution
     ];
     this.init(symbolRenderContribitions);
   }
@@ -72,7 +74,9 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       x: originX = symbolAttribute.x,
       y: originY = symbolAttribute.y,
       scaleX = symbolAttribute.scaleX,
-      scaleY = symbolAttribute.scaleY
+      scaleY = symbolAttribute.scaleY,
+      fillStrokeOrder = symbolAttribute.fillStrokeOrder,
+      clipRange = symbolAttribute.clipRange
     } = symbol.attribute;
 
     const data = this.valid(symbol, symbolAttribute, fillCb, strokeCb);
@@ -99,46 +103,55 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
         obj.opacity = a.opacity ?? symbol.attribute.opacity;
         obj.fillOpacity = symbol.attribute.fillOpacity;
         obj.stroke = a.stroke ?? symbol.attribute.stroke;
+        obj.lineWidth = a.lineWidth ?? symbol.attribute.lineWidth;
         a = obj;
       }
-      if (a.fill) {
-        if (fillCb) {
-          fillCb(context, symbol.attribute, symbolAttribute);
-        } else {
-          context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
-          context.fill();
+      const _runFill = () => {
+        if (a.fill) {
+          if (fillCb) {
+            fillCb(context, symbol.attribute, symbolAttribute);
+          } else {
+            context.setCommonStyle(symbol, a, originX - x, originY - y, symbolAttribute);
+            context.fill();
+          }
         }
-      }
-      if (a.stroke) {
-        if (strokeCb) {
-          strokeCb(context, symbol.attribute, symbolAttribute);
-        } else {
-          context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
-          context.stroke();
+      };
+      const _runStroke = () => {
+        if (a.stroke) {
+          if (strokeCb) {
+            strokeCb(context, symbol.attribute, symbolAttribute);
+          } else if (sVisible && clipRange >= 1) {
+            context.setStrokeStyle(symbol, a, (originX - x) / scaleX, (originY - y) / scaleY, symbolAttribute);
+            context.stroke();
+          }
         }
+      };
+      if (!fillStrokeOrder) {
+        _runFill();
+        _runStroke();
+      } else {
+        _runStroke();
+        _runFill();
       }
     };
-    if (keepDirIn3d && context.camera && context.project) {
+    let _size = size;
+    let _x = x;
+    let _y = y;
+    let _z = z;
+    const camera = context.camera;
+    if (keepDirIn3d && camera && context.project) {
       const p = context.project(x, y, z);
-      const camera = context.camera;
       context.camera = null;
-      if (
-        parsedPath.draw(
-          context,
-          isArray(size) ? [size[0] * scaleX, size[1] * scaleY] : size * scaleX,
-          p.x,
-          p.y,
-          undefined,
-          callback
-        ) === false
-      ) {
-        context.closePath();
-      }
+      _size = isArray(size) ? [size[0] * scaleX, size[1] * scaleY] : size * scaleX;
+      _x = p.x;
+      _y = p.y;
+      _z = undefined;
+    }
+    if (parsedPath.draw(context, size, x, y, z, callback) === false) {
+      context.closePath();
+    }
+    if (keepDirIn3d && context.camera && context.project) {
       context.camera = camera;
-    } else {
-      if (parsedPath.draw(context, size, x, y, z, callback) === false) {
-        context.closePath();
-      }
     }
 
     // shadow
@@ -169,27 +182,40 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     // }
 
     // svg就不用fill和stroke了
-    if (doFill && !parsedPath.isSvg) {
-      if (fillCb) {
-        fillCb(context, symbol.attribute, symbolAttribute);
-      } else if (fVisible) {
-        context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
-        context.fill();
+    const _runFill = () => {
+      if (doFill && !parsedPath.isSvg) {
+        if (fillCb) {
+          fillCb(context, symbol.attribute, symbolAttribute);
+        } else if (fVisible) {
+          context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
+          context.fill();
+        }
       }
-    }
-    if (doStroke && !parsedPath.isSvg) {
-      if (strokeCb) {
-        strokeCb(context, symbol.attribute, symbolAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(
-          symbol,
-          symbol.attribute,
-          (originX - x) / scaleX,
-          (originY - y) / scaleY,
-          symbolAttribute
-        );
-        context.stroke();
+    };
+    const _runStroke = () => {
+      if (doStroke && !parsedPath.isSvg) {
+        if (strokeCb) {
+          strokeCb(context, symbol.attribute, symbolAttribute);
+        } else if (sVisible && clipRange >= 1) {
+          // 如果clipRange < 1，就需要靠afterRender进行绘制了
+          context.setStrokeStyle(
+            symbol,
+            symbol.attribute,
+            (originX - x) / scaleX,
+            (originY - y) / scaleY,
+            symbolAttribute
+          );
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(

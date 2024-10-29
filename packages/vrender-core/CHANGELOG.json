@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.10",
+      "tag": "@visactor/vrender-core_v0.20.10",
+      "date": "Wed, 23 Oct 2024 08:37:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support fillStrokeOrder, closed #1505"
+          },
+          {
+            "comment": "fix: fix issue with parse m where multi pos follow, closed #1490"
+          },
+          {
+            "comment": "fix: fix the accuracy issue of number matching, closed #1488"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.9",
+      "tag": "@visactor/vrender-core_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: text support keep-all, closed #1466"
+          },
+          {
+            "comment": "fix: fix max width of arc label in left\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.8",
       "tag": "@visactor/vrender-core_v0.20.8",
       "date": "Sun, 29 Sep 2024 09:44:02 GMT",

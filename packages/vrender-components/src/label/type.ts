@@ -179,14 +179,23 @@ export interface OverlapAttrs {
 
   /**
    * 发生重叠后的躲避策略
+   * @since 0.20.10 支持全局 Y 方向偏移策略 'shiftY'。当标签发生重叠时，会保相对位置并在 Y 方向上散开。由于 'shiftY' 是全局布局策略，不与其他策略同时生效。
    */
-  strategy?: Strategy[];
+  strategy?: Strategy[] | ShiftYStrategy;
 
   /**
    * 文字在防重叠计算中预留的边距。
    * @default 0
    */
   overlapPadding?: number;
+
+  /**
+   * 防重叠的顺序权重
+   * @since 0.20.10
+   * @param labelItem
+   * @returns number 数值越大，权重越高。权重越高的标签越优先被布局。
+   */
+  priority?: (labelItem: LabelItem) => number;
 }
 
 export interface SmartInvertAttrs {
@@ -243,7 +252,34 @@ export interface SmartInvertAttrs {
    * label超出mark范围，也以mark作为背景色进行反色
    */
   outsideEnable?: boolean;
+  /**
+   * 当标签和mark相交，但是没有完全在mark内部的时候，支持三种处理方式：
+   *
+   * * none：不做任何处理
+   * * stroked：标签存在描边的时候，根据描边进行处理
+   * * inside: 和标签完全在mark内部一样处理
+   */
+  interactInvertType?: 'none' | 'stroked' | 'inside';
 }
+
+export type ShiftYStrategy = {
+  type: 'shiftY';
+  /**
+   * 布局迭代次数
+   * @default 10
+   */
+  iteration?: number;
+  /**
+   * 布局容差
+   * @default 0.1
+   */
+  maxError?: number;
+  /**
+   * 散开后的间距
+   * @default 1
+   */
+  padding?: number;
+};
 
 export type PositionStrategy = {
   /**

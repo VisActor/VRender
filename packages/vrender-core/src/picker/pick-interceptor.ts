@@ -7,6 +7,7 @@ import type {
   IGroup,
   IPickItemInterceptorContribution,
   IPickParams,
+  IPickServiceInterceptorContribution,
   IPickerService,
   PickResult
 } from '../interface';
@@ -14,8 +15,33 @@ import { matrixAllocate } from '../allocator/matrix-allocate';
 import { draw3dItem } from '../common/3d-interceptor';
 import { getTheme } from '../graphic';
 
-// 拦截器
-export const PickItemInterceptor = Symbol.for('PickItemInterceptor');
+@injectable()
+export class ShadowPickServiceInterceptorContribution implements IPickServiceInterceptorContribution {
+  order: number = 1;
+  afterPickItem(
+    result: PickResult,
+    pickerService: IPickerService,
+    point: IPointLike,
+    pickParams: IPickParams,
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ): null | PickResult {
+    if (result.graphic) {
+      let g = result.graphic;
+      while (g.parent) {
+        g = g.parent;
+      }
+      if (g.shadowHost) {
+        result.params = {
+          shadowTarget: result.graphic
+        };
+        result.graphic = g.shadowHost;
+      }
+    }
+    return result;
+  }
+}
 
 /**
  * 影子节点拦截器，用于渲染影子节点

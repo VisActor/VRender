@@ -1054,7 +1054,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       // - item高度不一致的情况: 最后一项的的高度分到最后一页的高度 >= 1/3 才分页
       const items = itemsContainer.getChildren() as IGroup[];
       const itemsHeightArr = items.map((item: IGroup) => item.attribute.height);
-      if (new Set(itemsHeightArr).size === 1) {
+      if (itemsHeightArr.length === 1 || itemsHeightArr.every(entry => entry === itemsHeightArr[0])) {
         const itemHeight = itemsHeightArr[0];
         const maxContentHeight = contentHeight;
         const pageItemsCount = Math.floor(maxContentHeight / (spaceRow + itemHeight));

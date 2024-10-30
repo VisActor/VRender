@@ -194,6 +194,8 @@ export interface IAnimate {
   getEndProps: () => Record<string, any>;
 
   setTimeline: (timeline: ITimeline) => void;
+  // getTimeline: () => ITimeline;
+  readonly timeline: ITimeline;
 
   bind: (target: IAnimateTarget) => this;
   to: (props: Record<string, any>, duration: number, easing: EasingType, params?: IStepConfig) => this;

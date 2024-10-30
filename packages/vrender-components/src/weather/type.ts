@@ -1,4 +1,4 @@
-import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroupGraphicAttribute, IRectGraphicAttribute, ISymbolGraphicAttribute } from '@visactor/vrender-core';
 
 export interface IWeatherBoxAttrs extends IGroupGraphicAttribute {
   rainIconPath?: string;
@@ -13,22 +13,17 @@ export interface IWeatherBoxAttrs extends IGroupGraphicAttribute {
   snowSpeed?: number;
   windSpeed?: number;
 
+  snowRainBottomPadding?: number;
+
   rainRatio?: number;
   rainCountThreshold?: number;
   snowRatio?: number;
   snowCountThreshold?: number;
   windRatio?: number;
 
-  rainStyle?: {
-    background?: string;
-  };
-  snowStyle?: {
-    background?: string;
-  };
-  rainSnowStyle?: {
-    background?: string;
-  };
-  defaultStyle?: {
-    background?: string;
-  };
+  windAnimateEffect?: 'fade' | 'clipRange';
+
+  rainStyle?: ISymbolGraphicAttribute;
+  snowStyle?: ISymbolGraphicAttribute;
+  windStyle?: ISymbolGraphicAttribute;
 }

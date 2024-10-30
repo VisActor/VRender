@@ -635,11 +635,12 @@ export class SubAnimate implements ISubAnimate {
       step.propKeys = Object.keys(step.props);
     }
     if (!(params && params.noPreventAttrs)) {
-      this.target.animates.forEach(a => {
-        if (a.id !== this.animate.id) {
-          a.preventAttrs(step.propKeys);
-        }
-      });
+      this.target.animates &&
+        this.target.animates.forEach(a => {
+          if (a.id !== this.animate.id) {
+            a.preventAttrs(step.propKeys);
+          }
+        });
     }
     return this;
   }

@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 23 Oct 2024 08:37:33 GMT and should not be manually modified.
+This log was last generated on Wed, 30 Oct 2024 13:10:03 GMT and should not be manually modified.
+
+## 0.20.11
+Wed, 30 Oct 2024 13:10:03 GMT
+
+### Updates
+
+- fix: fix group fill gradient #1518
+- fix: annotate the Ramer Douglas Peucker algorithm in point optimization
 
 ## 0.20.10
 Wed, 23 Oct 2024 08:37:33 GMT

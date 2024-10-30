@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.11",
+      "tag": "@visactor/vrender-core_v0.20.11",
+      "date": "Wed, 30 Oct 2024 13:10:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix group fill gradient #1518"
+          },
+          {
+            "comment": "fix: annotate the Ramer Douglas Peucker algorithm in point optimization"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.10",
       "tag": "@visactor/vrender-core_v0.20.10",
       "date": "Wed, 23 Oct 2024 08:37:33 GMT",

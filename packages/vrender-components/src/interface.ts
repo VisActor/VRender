@@ -4,7 +4,8 @@ import type {
   IGroup,
   IRectGraphicAttribute,
   IRichText,
-  IText
+  IText,
+  ITimeline
 } from '@visactor/vrender-core';
 import type { TextContent } from './core/type';
 
@@ -31,4 +32,6 @@ export interface ComponentOptions {
   skipDefault?: boolean;
   /** the mode of component, only axis support 3d mode now */
   mode?: '2d' | '3d';
+  /* 传递一个独立的timeline */
+  timeline?: ITimeline;
 }

@@ -1,6 +1,6 @@
 import { calculateLineHeight } from '../../common/utils';
 import type { IContext2d, IRichTextParagraphCharacter } from '../../interface';
-import { measureTextCanvas, applyFillStyle, applyStrokeStyle, getStrByWithCanvas } from './utils';
+import { measureTextCanvas, getStrByWithCanvas } from './utils';
 
 /**
  * 部分代码参考 https://github.com/danielearwicker/carota/
@@ -210,12 +210,8 @@ export default class Paragraph {
     }
 
     if (this.character.stroke) {
-      applyStrokeStyle(ctx, this.character);
       ctx.strokeText(text, left, baseline);
     }
-
-    // 下面绘制underline和line-through时需要设置FillStyle
-    applyFillStyle(ctx, this.character);
 
     if (this.character.fill) {
       ctx.fillText(text, left, baseline);

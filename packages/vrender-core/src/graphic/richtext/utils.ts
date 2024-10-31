@@ -1,4 +1,6 @@
+import type { IBoundsLike } from '@visactor/vutils';
 import { application } from '../../application';
+import { createColor } from '../../common/canvas-utils';
 import type { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
 
 export const DIRECTION_KEY = {
@@ -60,7 +62,7 @@ const setTextStyle = (ctx: IContext2d, character: IRichTextParagraphCharacter) =
 };
 
 // Applies the style of a run to the canvas context
-export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter, b?: IBoundsLike) {
   const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
   if (!fillStyle) {
     ctx.globalAlpha = 0;
@@ -70,7 +72,7 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
   const { fillOpacity = 1, opacity = 1 } = character;
 
   ctx.globalAlpha = fillOpacity * opacity;
-  ctx.fillStyle = fillStyle as string;
+  ctx.fillStyle = b ? createColor(ctx, fillStyle, { AABBBounds: b }) : (fillStyle as string);
 
   setTextStyle(ctx, character);
 }

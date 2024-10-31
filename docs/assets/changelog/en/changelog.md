@@ -1,3 +1,17 @@
+# v0.20.12
+
+2024-10-31
+
+
+**What's Changed**
+
+* feat: upgrade vutils to ~0.18.18 by @neuqzxy in https://github.com/VisActor/VRender/pull/1528
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.20.11...v0.20.12
+
+[more detail about v0.20.12](https://github.com/VisActor/VRender/releases/tag/v0.20.12)
+
 # v0.20.11
 
 2024-10-31

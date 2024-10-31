@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.20.11",
+  "version": "0.20.12",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -24,17 +24,17 @@
     "analysis-core": "cross-env DEBUG='Bundler*' bundle -f umd -a -i core.ts"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.18.17",
-    "@visactor/vscale": "~0.18.17",
-    "@visactor/vrender-core": "workspace:0.20.11",
-    "@visactor/vrender-kits": "workspace:0.20.11"
+    "@visactor/vutils": "~0.18.18",
+    "@visactor/vscale": "~0.18.18",
+    "@visactor/vrender-core": "workspace:0.20.12",
+    "@visactor/vrender-kits": "workspace:0.20.12"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~0.18.17",
+    "@visactor/vscale": "~0.18.18",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

@@ -1,3 +1,20 @@
+# v0.20.11
+
+2024-10-31
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: optimize limit length calculation for line axis label autoWrap
+- **@visactor/vrender-components**: fix bounds of circle axis
+- **@visactor/vrender-components**: last page is empty in legend. fix@VisActor/VChart[#3344](https://github.com/VisActor/VRender/issues/3344)
+- **@visactor/vrender-core**: fix group fill gradient [#1518](https://github.com/VisActor/VRender/issues/1518)
+- **@visactor/vrender-core**: annotate the Ramer Douglas Peucker algorithm in point optimization
+
+
+
+[更多详情请查看 v0.20.11](https://github.com/VisActor/VRender/releases/tag/v0.20.11)
+
 # v0.20.10
 
 2024-10-25

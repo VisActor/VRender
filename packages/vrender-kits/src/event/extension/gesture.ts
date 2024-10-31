@@ -158,6 +158,8 @@ export class Gesture extends EventEmitter {
   }
 
   private onStart = (ev?: FederatedPointerEvent) => {
+    this.cachedEvents = [];
+    this.startPoints = [];
     this.reset();
 
     this.startTime = clock.now();
@@ -188,6 +190,7 @@ export class Gesture extends EventEmitter {
         this.triggerEvent(eventType, event);
         this.eventType = eventType;
         this.direction = direction;
+        this.pressTimeout = null;
       }, this.config.press.time);
       return;
     }

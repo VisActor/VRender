@@ -73,7 +73,10 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       path = groupAttribute.path,
       lineWidth = groupAttribute.lineWidth,
       visible = groupAttribute.visible,
-      fillStrokeOrder = groupAttribute.fillStrokeOrder
+      fillStrokeOrder = groupAttribute.fillStrokeOrder,
+
+      x: originX = groupAttribute.x,
+      y: originY = groupAttribute.y
     } = group.attribute;
 
     // 不绘制或者透明
@@ -166,7 +169,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
         if (fillCb) {
           fillCb(context, group.attribute, groupAttribute);
         } else if (fVisible) {
-          context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
+          context.setCommonStyle(group, group.attribute, originX - x, originY - y, groupAttribute);
           context.fill();
         }
       }
@@ -177,7 +180,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
         if (strokeCb) {
           strokeCb(context, group.attribute, groupAttribute);
         } else if (sVisible) {
-          context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
+          context.setStrokeStyle(group, group.attribute, originX - x, originY - y, groupAttribute);
           context.stroke();
         }
       }

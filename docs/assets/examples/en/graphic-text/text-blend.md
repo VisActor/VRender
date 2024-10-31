@@ -4,7 +4,7 @@ group: graphic-text
 title: text-blend
 keywords: text
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-blend.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-blend.png
 ---
 
 # text graphic

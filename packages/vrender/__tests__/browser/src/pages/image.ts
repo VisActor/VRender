@@ -51,7 +51,7 @@ export const page = () => {
       width: 200,
       height: 200,
       image:
-        'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vchart-editor/upload-images/a85cb6c4-b494-4a52-bfec-5ca557132dde'
+        'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vchart-editor/upload-images/a85cb6c4-b494-4a52-bfec-5ca557132dde'
       // repeatX: 'repeat',
       // repeatY: 'repeat'
       // cornerRadius: 100

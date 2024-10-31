@@ -4,7 +4,7 @@ group: graphic-glyph
 title: basic-glyph
 keywords: glyph
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/glyph-basic.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/glyph-basic.png
 ---
 
 # glyph 图元

@@ -4,7 +4,7 @@ group: graphic-symbol
 title: basic-symbol
 keywords: symbol
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/symbol-basic.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/symbol-basic.png
 ---
 
 # symbol graphic

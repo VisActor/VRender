@@ -4,7 +4,7 @@ group: graphic-symbol
 title: symbol-wave
 keywords: symbol
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/wave01.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/wave01.gif
 ---
 
 # symbol wave

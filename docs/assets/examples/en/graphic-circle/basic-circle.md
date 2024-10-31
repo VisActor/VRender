@@ -4,7 +4,7 @@ group: graphic-circle
 title: basic-circle
 keywords: circle
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/circle-base.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/circle-base.png
 ---
 
 # circle graphic

@@ -4,7 +4,7 @@ group: graphic-richtext
 title: basic-richtext
 keywords: richtext
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/richtext-basic1.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/richtext-basic1.png
 ---
 
 # richtext graphic

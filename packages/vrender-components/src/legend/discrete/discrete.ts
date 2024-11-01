@@ -1047,13 +1047,37 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       }
 
       // 重新进行布局
+      // 边界场景: 最后一项item的文字内容在倒数第二页, 但由于bounds比文字本身大一点, 触发分页, 导致最后一页是空白
+      // 关联issue: https://github.com/VisActor/VChart/issues/3344
+      // 解决方式:
+      // - 所有的item 高度一致的时候: 按照 (itemHeight + space) * 倍数 布局
+      // - item高度不一致的情况: 最后一项的的高度分到最后一页的高度 >= 1/3 才分页
+      const items = itemsContainer.getChildren() as IGroup[];
+      const itemsHeightArr = items.map((item: IGroup) => item.attribute.height);
+      if (itemsHeightArr.length === 1 || itemsHeightArr.every(entry => entry === itemsHeightArr[0])) {
+        const itemHeight = itemsHeightArr[0];
+        const maxContentHeight = contentHeight;
+        const pageItemsCount = Math.floor(maxContentHeight / (spaceRow + itemHeight));
+        contentHeight = pageItemsCount * (spaceRow + itemHeight);
+        pages = Math.ceil(items.length / pageItemsCount);
+      } else {
+        items.forEach((item, index) => {
+          const { height } = item.attribute;
 
-      (itemsContainer.getChildren() as unknown as IGroup[]).forEach((item, index) => {
-        const { height } = item.attribute;
-
-        pages = Math.floor((startY + height) / contentHeight) + 1;
-        startY += spaceRow + (height as number);
-      });
+          const prePages = pages;
+          const preStartY = startY;
+          pages = Math.floor((startY + height) / contentHeight) + 1;
+          startY += spaceRow + (height as number);
+          if (
+            prePages !== pages && // 触发分页
+            index === itemsContainer.getChildren().length - 1 && //
+            startY - contentHeight >= (1 / 3) * height
+          ) {
+            contentHeight = preStartY + height; // 保证刚好完全展示最后一项
+            pages -= 1; // 不分页
+          }
+        });
+      }
 
       this._itemContext.totalPage = pages;
       this._itemContext.pages = pages;

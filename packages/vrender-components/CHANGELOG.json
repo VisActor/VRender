@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.12",
+      "tag": "@visactor/vrender-components_v0.20.12",
+      "date": "Thu, 31 Oct 2024 02:49:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.11",
+      "tag": "@visactor/vrender-components_v0.20.11",
+      "date": "Wed, 30 Oct 2024 13:10:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: optimize limit length calculation for line axis label autoWrap"
+          },
+          {
+            "comment": "fix: fix bounds of circle axis\n\n"
+          },
+          {
+            "comment": "fix: last page is empty in legend. fix@VisActor/VChart#3344"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.10",
       "tag": "@visactor/vrender-components_v0.20.10",
       "date": "Wed, 23 Oct 2024 08:37:33 GMT",

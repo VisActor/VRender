@@ -28,4 +28,11 @@ export class MoveCurve extends Curve implements IMoveCurve {
   draw(path: IPath2D, x: number, y: number, sx: number, sy: number, percent: number) {
     path.moveTo(this.p1.x * sx + x, this.p1.y * sy + y);
   }
+
+  includeX(x: number): boolean {
+    return false;
+  }
+  getYAt(x: number): number {
+    return Infinity;
+  }
 }

@@ -4,7 +4,7 @@ group: graphic-text
 title: basic-text
 keywords: text
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-basic.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-basic.png
 ---
 
 # text 图元

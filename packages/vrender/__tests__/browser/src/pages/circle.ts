@@ -1,6 +1,6 @@
 import { createStage, DragNDrop, createCircle, IGraphic, vglobal } from '@visactor/vrender';
 import { colorPools } from '../utils';
-import { createGroup } from '@visactor/vrender';
+import { createGroup, generatorPathEasingFunc } from '@visactor/vrender';
 
 export const page = () => {
   const t = performance.now();
@@ -11,6 +11,20 @@ export const page = () => {
   const delta = performance.now() - t;
   window.delta = delta;
   const graphics: IGraphic[] = [];
+  const func = generatorPathEasingFunc(
+    'M 0 0 C 0.078 0.204 0.05 0.291 0.152 0.363 C 0.291 0.295 0.236 -0.224 0.334 -0.24 C 0.486 -0.224 0.48 0.202 0.566 0.217 C 0.696 0.183 0.622 -0.113 0.751 -0.138 C 0.873 -0.09 0.798 0.085 0.903 0.109 C 0.989 0.097 0.983 0.049 1 0'
+  );
+  for (let i = 0; i < 100; i++) {
+    const x = i * 0.01;
+    const y = func(x);
+    const circle = createCircle({
+      x: x * 100 + 100,
+      y: y * 100 + 100,
+      radius: 1,
+      fill: 'red'
+    });
+    stage.defaultLayer.add(circle);
+  }
   // graphics.push(createCircle({
   //   radius: 50,
   //   x: 100,

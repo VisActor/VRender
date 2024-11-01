@@ -46,4 +46,11 @@ export class EllipseCurve extends Curve implements IEllipseCurve {
   draw(path: IPath2D, percent: number) {
     throw new Error('暂不支持');
   }
+
+  getYAt(x: number): number {
+    throw new Error('QuadraticBezierCurve暂不支持getYAt');
+  }
+  includeX(x: number): boolean {
+    throw new Error('QuadraticBezierCurve暂不支持includeX');
+  }
 }

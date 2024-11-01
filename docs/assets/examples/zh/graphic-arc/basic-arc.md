@@ -4,7 +4,7 @@ group: graphic-arc
 title: basic-arc
 keywords: arc
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/base-arc.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/base-arc.png
 ---
 
 # arc 图元

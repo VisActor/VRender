@@ -30,4 +30,10 @@ export class ArcCurve extends Curve implements IArcCurve {
   draw(path: IPath2D, percent: number) {
     throw new Error('暂不支持');
   }
+  getYAt(x: number): number {
+    throw new Error('ArcCurve暂不支持getYAt');
+  }
+  includeX(x: number): boolean {
+    throw new Error('ArcCurve暂不支持includeX');
+  }
 }

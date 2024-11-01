@@ -617,6 +617,19 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
     return this._curves.reduce((l, c) => l + c.getLength(), 0);
   }
 
+  getYAt(x: number): number {
+    if (!this.curves) {
+      return Infinity;
+    }
+    for (let i = 0; i < this.curves.length; i++) {
+      const curve = this.curves[i];
+      if (curve.includeX(x)) {
+        return curve.getYAt(x);
+      }
+    }
+    return Infinity;
+  }
+
   getAttrAt(distance: number): { pos: IPointLike; angle: number } {
     if (!this._curves) {
       return { pos: { x: 0, y: 0 }, angle: 0 };

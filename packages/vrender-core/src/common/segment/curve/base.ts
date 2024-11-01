@@ -9,6 +9,8 @@ export abstract class Curve implements ICurve<IPoint> {
   protected length: number;
   abstract getPointAt(t: number): IPointLike;
   abstract getAngleAt(t: number): number;
+  abstract getYAt(x: number): number;
+  abstract includeX(x: number): boolean;
   getLength(direction?: IDirection): number {
     if (direction != null) {
       return this.calcProjLength(direction);

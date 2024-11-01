@@ -63,4 +63,11 @@ export class QuadraticBezierCurve extends Curve implements IQuadraticBezierCurve
       path.quadraticCurveTo(curve1.p1.x * sx + x, curve1.p1.y * sy + y, curve1.p2.x * sx + x, curve1.p2.y * sy + y);
     }
   }
+
+  getYAt(x: number): number {
+    throw new Error('QuadraticBezierCurve暂不支持getYAt');
+  }
+  includeX(x: number): boolean {
+    throw new Error('QuadraticBezierCurve暂不支持includeX');
+  }
 }

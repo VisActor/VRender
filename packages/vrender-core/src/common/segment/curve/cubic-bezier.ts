@@ -140,4 +140,17 @@ export class CubicBezierCurve extends Curve implements ICubicBezierCurve {
       );
     }
   }
+
+  includeX(x: number): boolean {
+    const minX = min(this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+    const maxX = max(this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+    return x >= minX && x <= maxX;
+  }
+
+  getYAt(x: number): number {
+    const minX = min(this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+    const maxX = max(this.p0.x, this.p1.x, this.p2.x, this.p3.x);
+    const t = (x - minX) / (maxX - minX);
+    return this.getPointAt(t).y;
+  }
 }

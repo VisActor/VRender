@@ -26,4 +26,10 @@ export class ArcCurve extends Curve implements IArcCurve {
   getAngleAt(t: number): number {
     throw new Error('ArcCurve暂不支持getAngleAt');
   }
+  getYAt(x: number): number {
+    throw new Error('ArcCurve暂不支持getYAt');
+  }
+  includeX(x: number): boolean {
+    throw new Error('ArcCurve暂不支持includeX');
+  }
 }

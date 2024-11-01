@@ -42,4 +42,11 @@ export class EllipseCurve extends Curve implements IEllipseCurve {
   protected calcProjLength(direction: IDirection): number {
     throw new Error('QuadraticBezierCurve暂不支持updateLength');
   }
+
+  getYAt(x: number): number {
+    throw new Error('QuadraticBezierCurve暂不支持getYAt');
+  }
+  includeX(x: number): boolean {
+    throw new Error('QuadraticBezierCurve暂不支持includeX');
+  }
 }

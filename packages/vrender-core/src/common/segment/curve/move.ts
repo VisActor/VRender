@@ -24,4 +24,10 @@ export class MoveCurve extends Curve implements IMoveCurve {
   protected calcProjLength(direction: IDirection): number {
     throw new Error('QuadraticBezierCurve暂不支持updateLength');
   }
+  includeX(x: number): boolean {
+    return false;
+  }
+  getYAt(x: number): number {
+    return Infinity;
+  }
 }

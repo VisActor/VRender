@@ -381,12 +381,14 @@ export class Gesture extends EventEmitter {
     }
 
     this.throttleTimer = application.global.getRequestAnimationFrame()(() => {
+      application.global.getCancelAnimationFrame()(this.throttleTimer);
+      this.throttleTimer = null;
+
       for (let i = 0, len = emitThrottles.length; i < len; i++) {
         const { type, ev } = emitThrottles[i];
         this.emitEvent(type, ev);
       }
       // 清空
-      this.throttleTimer = 0;
       this.emitThrottles.length = 0;
     });
   }

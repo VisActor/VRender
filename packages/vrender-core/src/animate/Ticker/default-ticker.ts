@@ -221,8 +221,15 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.timelines.forEach(t => {
       t.tick(delta);
     });
-    this.emit('afterTick');
+    this.emit('tick');
   };
+
+  release(): void {
+    this.stop();
+    this.timelines = [];
+    this.tickerHandler.release();
+    this.emit('afterTick');
+  }
 
   /**
    * 同步tick状态，需要手动触发tick执行，保证属性为走完动画的属性

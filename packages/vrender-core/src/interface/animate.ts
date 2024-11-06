@@ -347,4 +347,9 @@ export interface ITicker extends EventEmitter {
   addTimeline: (timeline: ITimeline) => void;
   remTimeline: (timeline: ITimeline) => void;
   trySyncTickStatus: () => void;
+
+  release: () => void;
+
+  // 是否自动停止，默认为true
+  autoStop: boolean;
 }

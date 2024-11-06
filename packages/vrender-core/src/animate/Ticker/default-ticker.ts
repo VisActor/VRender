@@ -1,4 +1,4 @@
-import { Logger } from '@visactor/vutils';
+import { EventEmitter, Logger } from '@visactor/vutils';
 import type { ITickHandler, ITickerHandlerStatic, ITimeline, ITicker } from '../../interface';
 import { application } from '../../application';
 import type { TickerMode } from './type';
@@ -6,7 +6,7 @@ import { STATUS } from './type';
 import { RAFTickHandler } from './raf-tick-handler';
 import { TimeOutTickHandler } from './timeout-tick-handler';
 
-export class DefaultTicker implements ITicker {
+export class DefaultTicker extends EventEmitter implements ITicker {
   protected interval: number;
   protected tickerHandler: ITickHandler;
   protected _mode: TickerMode;
@@ -28,6 +28,7 @@ export class DefaultTicker implements ITicker {
   }
 
   constructor(timelines: ITimeline[] = []) {
+    super();
     this.init();
     this.lastFrameTime = -1;
     this.tickCounts = 0;
@@ -220,5 +221,12 @@ export class DefaultTicker implements ITicker {
     this.timelines.forEach(t => {
       t.tick(delta);
     });
+    this.emit('tick', delta);
   };
+
+  release(): void {
+    this.stop();
+    this.timelines = [];
+    this.tickerHandler.release();
+  }
 }

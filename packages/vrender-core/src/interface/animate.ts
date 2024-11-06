@@ -1,3 +1,4 @@
+import type { EventEmitter } from '@visactor/vutils';
 import type { AnimateMode, AnimateStatus, AnimateStepType } from '../common/enums';
 import type { Releaseable } from './common';
 import type { IGraphic } from './graphic';
@@ -329,7 +330,7 @@ export interface ITickerHandlerStatic {
   new (): ITickHandler;
 }
 
-export interface ITicker {
+export interface ITicker extends EventEmitter {
   setFPS?: (fps: number) => void;
   setInterval?: (interval: number) => void;
   getFPS?: () => number;
@@ -345,4 +346,9 @@ export interface ITicker {
   stop: () => void;
   addTimeline: (timeline: ITimeline) => void;
   remTimeline: (timeline: ITimeline) => void;
+
+  release: () => void;
+
+  // 是否自动停止，默认为true
+  autoStop: boolean;
 }

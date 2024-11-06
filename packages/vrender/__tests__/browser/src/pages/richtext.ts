@@ -15,8 +15,10 @@ export const page = () => {
       visible: true,
       fontSize: 26,
       width: 0,
+      height: 0,
       background: 'green',
-      // "textAlign": "center",
+      textAlign: 'left',
+      verticalDirection: 'top',
       textConfig: [
         {
           text: '我',
@@ -217,7 +219,7 @@ export const page = () => {
           fill: '#0f51b5'
         },
         {
-          text: '风\n',
+          text: '风',
           fontSize: 26,
           textAlign: 'center',
           fill: '#0f51b5'
@@ -1030,7 +1032,7 @@ export const page = () => {
   //     .replaceAll('"', '\\"')}; width: 30; height: 30; id: circle-0" />`
   // );
 
-  shapes.length = 0;
+  // shapes.length = 0;
 
   shapes.push(rt);
 

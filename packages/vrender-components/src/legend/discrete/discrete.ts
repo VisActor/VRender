@@ -12,7 +12,10 @@ import {
   isFunction,
   isArray,
   minInArray,
-  throttle
+  throttle,
+  isNumberClose,
+  clamp,
+  isObject
 } from '@visactor/vutils';
 import type {
   FederatedPointerEvent,
@@ -25,7 +28,9 @@ import type {
   CustomEvent,
   IText,
   IRichText,
-  FederatedWheelEvent
+  FederatedWheelEvent,
+  ILinearGradient,
+  IRect
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator } from '@visactor/vrender-core';
@@ -93,6 +98,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     currentPage: number;
     totalPage: number;
     isScrollbar: boolean;
+  };
+  private _scrollMask: IRect;
+  private _scrollMaskContext: {
+    startStops: ILinearGradient['stops'];
+    endStops: ILinearGradient['stops'];
   };
 
   static defaultAttributes: Partial<DiscreteLegendAttrs> = {
@@ -424,13 +434,26 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
 
     const { hover = true, select = true } = this.attribute;
+
     if (hover) {
-      this._itemsContainer.addEventListener('pointermove', this._onHover as EventListenerOrEventListenerObject);
-      this._itemsContainer.addEventListener('pointerleave', this._onUnHover as EventListenerOrEventListenerObject);
+      let trigger = 'pointerdown';
+      let triggerOff = 'pointerleave';
+
+      if (isObject(hover)) {
+        hover.trigger && (trigger = hover.trigger);
+        hover.triggerOff && (triggerOff = hover.triggerOff);
+      }
+
+      this._itemsContainer.addEventListener(trigger, this._onHover as EventListenerOrEventListenerObject);
+      this._itemsContainer.addEventListener(triggerOff, this._onUnHover as EventListenerOrEventListenerObject);
     }
 
     if (select) {
-      this._itemsContainer.addEventListener('pointerdown', this._onClick as EventListenerOrEventListenerObject);
+      let trigger = 'pointerdown';
+      if (isObject(select) && select.trigger) {
+        trigger = select.trigger;
+      }
+      this._itemsContainer.addEventListener(trigger, this._onClick as EventListenerOrEventListenerObject);
     }
   }
 
@@ -729,13 +752,13 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           direction: 'horizontal',
           disableTriggerEvent,
           range: [0, 0.5],
-          height: 12,
+          height: compStyle.visible === false ? 0 : 12,
           ...(compStyle as LegendScrollbarAttributes),
           width: compSize
         })
       : new ScrollBar({
           direction: 'vertical',
-          width: 12,
+          width: compStyle.visible === false ? 0 : 12,
           range: [0, 0.5],
           ...(compStyle as LegendScrollbarAttributes),
           height: compSize,
@@ -838,6 +861,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue],
         true
       );
+
+      this.updateScrollMaskGradient();
     };
 
     const onPaging = (e: CustomEvent) => {
@@ -857,6 +882,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         this._itemContext.totalPage = newTotalPage;
         (this._pagerComponent as ScrollBar).setScrollRange([(newPage - 1) / newTotalPage, newPage / newTotalPage]);
       }
+
+      this.updateScrollMaskGradient();
 
       if (animation) {
         (this._itemsContainer as IGroup)
@@ -1109,9 +1136,94 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     clipGroup.add(itemsContainer);
     this._innerView.add(clipGroup);
 
-    this._bindEventsOfPager(isHorizontal ? contentWidth : contentHeight, isHorizontal ? 'x' : 'y');
+    if ((pager as LegendScrollbarAttributes).scrollMask?.visible) {
+      this.renderScrollMask(clipGroup);
+    }
 
+    this._bindEventsOfPager(isHorizontal ? contentWidth : contentHeight, isHorizontal ? 'x' : 'y');
     return true;
+  }
+
+  private renderScrollMask(clipGroup: IGroup) {
+    const { scrollMask = {} } = this.attribute.pager as LegendScrollbarAttributes;
+    const { visible = true, gradientLength = 16, gradientStops } = scrollMask;
+    if (!visible || !gradientStops) {
+      return;
+    }
+    const width = clipGroup.AABBBounds.width();
+    const height = clipGroup.AABBBounds.height();
+    const totalLength = this._itemContext.isHorizontal ? width : height;
+
+    const startStops = gradientStops.map(stop => {
+      return {
+        offset: (gradientLength * stop.offset) / totalLength,
+        color: stop.color
+      };
+    });
+    const endStops = gradientStops.map(stop => {
+      return {
+        offset: (totalLength - gradientLength * stop.offset) / totalLength,
+        color: stop.color
+      };
+    });
+
+    const mask = graphicCreator.rect({
+      x: 0,
+      y: 0,
+      width,
+      height
+    });
+    this._scrollMask = mask;
+    this._scrollMaskContext = { startStops, endStops };
+    this.updateScrollMaskGradient();
+
+    clipGroup.add(mask);
+  }
+
+  private updateScrollMaskGradient() {
+    if (!this._scrollMask || !this._pagerComponent) {
+      return;
+    }
+
+    if (!this._itemContext.isScrollbar) {
+      return;
+    }
+
+    const [start, end] = (this._pagerComponent as ScrollBar).getScrollRange();
+    const stops = [];
+    if (!isNumberClose(clamp(end, 0, 1), 1)) {
+      stops.push(...this._scrollMaskContext.endStops);
+    }
+
+    if (!isNumberClose(clamp(start, 0, 1), 0)) {
+      stops.push(...this._scrollMaskContext.startStops);
+    }
+
+    if (stops.length) {
+      if (this._itemContext.isHorizontal) {
+        this._scrollMask.setAttributes({
+          fill: {
+            gradient: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 1,
+            y1: 0,
+            stops
+          }
+        });
+      } else {
+        this._scrollMask.setAttributes({
+          fill: {
+            gradient: 'linear',
+            x0: 0,
+            y0: 0,
+            x1: 0,
+            y1: 1,
+            stops
+          }
+        });
+      }
+    }
   }
 
   private _renderPagerComponent() {

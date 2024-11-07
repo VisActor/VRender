@@ -1,6 +1,7 @@
 import type {
   EasingType,
   IGroupGraphicAttribute,
+  ILinearGradient,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
@@ -8,6 +9,7 @@ import type { BaseGraphicAttributes, Padding } from '../../core/type';
 import type { PagerAttributes } from '../../pager';
 import type { LegendBaseAttributes } from '../type';
 import type { ScrollBarAttributes } from '../../scrollbar/type';
+import type { GraphicEventType } from '@visactor/vrender-core';
 
 export interface LegendSwitchComponentAttributes {
   /**
@@ -50,6 +52,15 @@ export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'lim
      * @default false
      */
     roamScroll?: boolean;
+
+    scrollMask?: {
+      /** 是否显示 @default false */
+      visible?: boolean;
+      /** 渐变区域长度 @default 16 */
+      gradientLength?: number;
+      /** 渐变配置 */
+      gradientStops: ILinearGradient['stops'];
+    };
   };
 
 export type LegendItemDatum = {
@@ -189,11 +200,21 @@ export type DiscreteLegendAttrs = {
   /**
    * 是否开启选中交互
    */
-  select?: boolean;
+  select?:
+    | boolean
+    | {
+        trigger?: GraphicEventType;
+      };
+
   /**
    * 是否开启 hover 交互
    */
-  hover?: boolean;
+  hover?:
+    | boolean
+    | {
+        trigger?: GraphicEventType;
+        triggerOff?: GraphicEventType;
+      };
   /**
    * 图例数据
    */

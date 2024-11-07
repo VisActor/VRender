@@ -280,23 +280,30 @@ export class Gesture extends EventEmitter {
             endEvent.velocity = velocity;
             endEvent.direction = calcDirection(prevMovePoint, lastMovePoint);
             this.triggerEvent('swipe', endEvent);
+
+            this.cachedEvents = [];
+            this.startPoints = [];
+            this.reset();
+            return;
           }
         }
       }
 
-      if (now - this.lastTapTime < this.config.tap.interval && ev.target === this.lastTapTarget) {
-        this.tapCount++;
-      } else {
-        this.tapCount = 1;
-      }
-      this.lastTapTime = now;
-      this.lastTapTarget = ev.target;
+      if (now - this.startTime < this.config.press.time) {
+        if (now - this.lastTapTime < this.config.tap.interval && ev.target === this.lastTapTarget) {
+          this.tapCount++;
+        } else {
+          this.tapCount = 1;
+        }
+        this.lastTapTime = now;
+        this.lastTapTarget = ev.target;
 
-      if (this.tapCount === 1) {
-        this.triggerEvent('tap', endEvent);
-      } else if (this.tapCount === 2) {
-        this.triggerEvent('doubletap', endEvent);
-        this.tapCount = 0; // reset tapCount after doubletap
+        if (this.tapCount === 1) {
+          this.triggerEvent('tap', endEvent);
+        } else if (this.tapCount === 2) {
+          this.triggerEvent('doubletap', endEvent);
+          this.tapCount = 0; // reset tapCount after doubletap
+        }
       }
     }
 

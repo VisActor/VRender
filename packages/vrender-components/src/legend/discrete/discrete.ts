@@ -1081,30 +1081,25 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const maxHeight = this._contentMaxHeight;
 
     let comp: ScrollBar | Pager;
-    let compSize = 0;
     let contentWidth = 0;
     let contentHeight = 0;
     let startY = 0; // 临时变量，用来存储布局的起始点
     let pages = 1; // 页数
 
     if (isHorizontal) {
-      compSize = maxWidth;
       contentWidth = maxWidth;
       contentHeight = this._itemHeight;
       // 水平布局，支持上下翻页
-      comp = this._createScrollbar(compStyle, compSize);
+      comp = this._createScrollbar(compStyle, contentWidth);
       this._pagerComponent = comp;
       this._innerView.add(comp as unknown as INode);
     } else {
-      compSize = maxHeight;
-
-      // 垂直布局，支持左右翻页
-      comp = this._createScrollbar(compStyle, compSize);
-      this._pagerComponent = comp;
-      this._innerView.add(comp as unknown as INode);
-
       contentHeight = (maxHeight as number) - renderStartY;
       contentWidth = this._itemMaxWidth;
+      // 垂直布局，支持左右翻页
+      comp = this._createScrollbar(compStyle, contentHeight);
+      this._pagerComponent = comp;
+      this._innerView.add(comp as unknown as INode);
 
       if (contentHeight <= 0) {
         // 布局空间不够则不进行分页器渲染
@@ -1152,9 +1147,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     // 初始化 defaultCurrent
     if (defaultCurrent > 1) {
       if (isHorizontal) {
-        itemsContainer.setAttribute('x', -(defaultCurrent - 1) * (contentWidth + spaceCol));
+        const maxOffset = this._itemsContainer.AABBBounds.width() - contentWidth;
+        itemsContainer.setAttribute('x', -Math.min((defaultCurrent - 1) * (contentWidth + spaceCol), maxOffset));
       } else {
-        itemsContainer.setAttribute('y', -(defaultCurrent - 1) * (contentHeight + spaceRow));
+        const maxOffset = this._itemsContainer.AABBBounds.height() - contentHeight;
+        itemsContainer.setAttribute('y', -Math.min((defaultCurrent - 1) * (contentHeight + spaceRow), maxOffset));
       }
     }
 

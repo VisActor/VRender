@@ -98,6 +98,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     currentPage: number;
     totalPage: number;
     isScrollbar: boolean;
+    clipContainer: IGroup;
   };
   private _scrollMask: IRect;
   private _scrollMaskContext: {
@@ -801,10 +802,30 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     }
   }
 
-  private _updatePositionOfScrollbar(contentWidth: number, contentHeight: number, renderStartY: number) {
-    const { currentPage, totalPage, isHorizontal } = this._itemContext;
+  private _computeScrollbarDelta() {
+    const { isHorizontal, clipContainer } = this._itemContext;
+    const itemContainerBounds = this._itemsContainer.AABBBounds;
+    const clipContainerBounds = clipContainer.AABBBounds;
 
-    (this._pagerComponent as ScrollBar).setScrollRange([(currentPage - 1) / totalPage, currentPage / totalPage]);
+    let delta;
+    let innerViewSize;
+
+    if (isHorizontal) {
+      innerViewSize = clipContainerBounds.width();
+      delta = innerViewSize / itemContainerBounds.width();
+    } else {
+      innerViewSize = clipContainerBounds.height();
+      delta = innerViewSize / itemContainerBounds.height();
+    }
+    return delta;
+  }
+
+  private _updatePositionOfScrollbar(contentWidth: number, contentHeight: number, renderStartY: number) {
+    const { isHorizontal, currentPage, totalPage } = this._itemContext;
+
+    const start = (currentPage - 1) / totalPage;
+
+    (this._pagerComponent as ScrollBar).setScrollRange([start, start + this._computeScrollbarDelta()]);
 
     if (isHorizontal) {
       (this._pagerComponent as ScrollBar).setAttributes({
@@ -826,23 +847,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       ? (e: CustomEvent) => {
           const { value } = e.detail;
           let newPage;
-          // 判断scrollbar在起点和终点的临界情况
-          // 原因:
-          // 假设totalPage为6, 则初始range=[0, 0.16666666666666666], 此时span=0.16666666666666666 = 1/6
-          // 随着scrollbar移动, 计算精度有所偏差, 在终点时range=[0.833333333333333, 1], 此时span=0.16666666666666696 > 1/6
-          // 导致在终点时无法触及最后一页的起点, 从而无法成功滚动到最后一页
+          // page 信息不再用于 scroll 窗口的位置更新
+          // scrollbar 模式，记录 newPage 用于开启 lazyLoad 的场景
           if (value[0] === 0) {
             newPage = 1;
           } else if (value[1] === 1) {
             newPage = this._itemContext.totalPage;
           } else {
-            newPage = value[0] * this._itemContext.totalPage;
-
-            if ((pager as LegendScrollbarAttributes).scrollByPosition) {
-              newPage = newPage + 1;
-            } else {
-              newPage = Math.floor(newPage) + 1;
-            }
+            newPage = value[0] * this._itemContext.totalPage + 1;
           }
 
           return newPage;
@@ -862,7 +874,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         true
       );
 
-      this.updateScrollMaskGradient();
+      this.updateScrollMask();
     };
 
     const onPaging = (e: CustomEvent) => {
@@ -871,26 +883,45 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       if (newPage === this._itemContext.currentPage) {
         return;
       }
-
       this._itemContext.currentPage = newPage;
-
       if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
         this._renderItems();
-
         const newTotalPage = Math.ceil(this._itemContext.pages / this._itemContext.maxPages);
         // 更新总页数
         this._itemContext.totalPage = newTotalPage;
-        (this._pagerComponent as ScrollBar).setScrollRange([(newPage - 1) / newTotalPage, newPage / newTotalPage]);
+        // 更新 scrollbar 的范围
+        if (this._itemContext.isScrollbar && this._pagerComponent) {
+          const newDelta = this._computeScrollbarDelta();
+          const [start] = (this._pagerComponent as ScrollBar).getScrollRange();
+          (this._pagerComponent as ScrollBar).setScrollRange([start, start + newDelta]);
+        }
       }
 
-      this.updateScrollMaskGradient();
-
-      if (animation) {
-        (this._itemsContainer as IGroup)
-          .animate()
-          .to({ [channel]: -(newPage - 1) * pageSize }, animationDuration, animationEasing);
+      if (!this._itemContext.isScrollbar) {
+        if (animation) {
+          (this._itemsContainer as IGroup)
+            .animate()
+            .to({ [channel]: -(newPage - 1) * pageSize }, animationDuration, animationEasing);
+        } else {
+          (this._itemsContainer as IGroup).setAttribute(channel, -(newPage - 1) * pageSize);
+        }
       } else {
-        (this._itemsContainer as IGroup).setAttribute(channel, -(newPage - 1) * pageSize);
+        const [start] = (this._pagerComponent as ScrollBar).getScrollRange();
+        let containerSize;
+        if (this._itemContext.isHorizontal) {
+          containerSize = this._itemsContainer.AABBBounds.width();
+        } else {
+          containerSize = this._itemsContainer.AABBBounds.height();
+        }
+
+        const startOffset = containerSize * start;
+        this.updateScrollMask();
+
+        if (animation) {
+          this._itemsContainer.animate().to({ [channel]: -startOffset }, animationDuration, animationEasing);
+        } else {
+          this._itemsContainer.setAttribute(channel, -startOffset);
+        }
       }
     };
     if (this._itemContext.isScrollbar) {
@@ -1029,6 +1060,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
     clipGroup.add(itemsContainer);
     this._innerView.add(clipGroup);
+    this._itemContext.clipContainer = clipGroup;
 
     this._bindEventsOfPager(isHorizontal ? compHeight + spaceRow : compWidth + spaceCol, isHorizontal ? 'y' : 'x');
 
@@ -1059,8 +1091,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       comp = this._createScrollbar(compStyle, compSize);
       this._pagerComponent = comp;
       this._innerView.add(comp as unknown as INode);
-
-      this._updatePositionOfScrollbar(contentWidth, contentHeight, renderStartY);
     } else {
       compSize = maxHeight;
 
@@ -1113,7 +1143,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       this._itemContext.totalPage = pages;
       this._itemContext.pages = pages;
-      this._updatePositionOfScrollbar(contentWidth, contentHeight, renderStartY);
     }
 
     // 初始化 defaultCurrent
@@ -1135,6 +1164,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
     clipGroup.add(itemsContainer);
     this._innerView.add(clipGroup);
+    this._itemContext.clipContainer = clipGroup;
+
+    this._updatePositionOfScrollbar(contentWidth, contentHeight, renderStartY);
 
     if ((pager as LegendScrollbarAttributes).scrollMask?.visible) {
       this.renderScrollMask(clipGroup);
@@ -1145,7 +1177,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   private renderScrollMask(clipGroup: IGroup) {
-    const { scrollMask = {} } = this.attribute.pager as LegendScrollbarAttributes;
+    const { scrollMask = {} as LegendScrollbarAttributes['scrollMask'] } = this.attribute
+      .pager as LegendScrollbarAttributes;
     const { visible = true, gradientLength = 16, gradientStops } = scrollMask;
     if (!visible || !gradientStops) {
       return;
@@ -1175,12 +1208,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     });
     this._scrollMask = mask;
     this._scrollMaskContext = { startStops, endStops };
-    this.updateScrollMaskGradient();
+    this.updateScrollMask();
 
     clipGroup.add(mask);
   }
 
-  private updateScrollMaskGradient() {
+  private updateScrollMask() {
     if (!this._scrollMask || !this._pagerComponent) {
       return;
     }

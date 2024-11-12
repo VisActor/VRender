@@ -406,7 +406,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       items: legendItems,
       isHorizontal,
       totalPage: Infinity,
-      isScrollbar: pager && (pager as LegendScrollbarAttributes).type === 'scrollbar'
+      isScrollbar: pager && (pager as LegendScrollbarAttributes).type === 'scrollbar',
+      clipContainer: undefined
     };
 
     this._itemContext = this._renderItems();
@@ -883,9 +884,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       if (newPage === this._itemContext.currentPage) {
         return;
       }
+
       this._itemContext.currentPage = newPage;
+
       if (this._itemContext && this._itemContext.startIndex < this._itemContext.items.length) {
         this._renderItems();
+
         const newTotalPage = Math.ceil(this._itemContext.pages / this._itemContext.maxPages);
         // 更新总页数
         this._itemContext.totalPage = newTotalPage;

@@ -46,13 +46,27 @@ export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
 export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'limitRange'> &
   LegendSwitchComponentAttributes & {
     type: 'scrollbar';
+    /**
+     * @deprecated since 0.20.13
+     * 滚动条的位置是否支持展示在分页的中间。
+     * 0.20.13 版本改造了滚动条逻辑后，此配置废弃。改造内容：
+     *   由分页拟合的滚动调整为滚动窗口的逻辑，不再与分页绑定
+     */
     scrollByPosition?: boolean;
     /**
      * 是否支持鼠标/触控板滚动
      * @default false
      */
     roamScroll?: boolean;
-
+    /**
+     * @since 0.20.13
+     * 是否隐藏滚动条
+     */
+    visible?: boolean;
+    /**
+     * @since 0.20.13
+     * 滚动时，图例区域未到尽头时的前后遮罩
+     */
     scrollMask?: {
       /** 是否显示 @default false */
       visible?: boolean;

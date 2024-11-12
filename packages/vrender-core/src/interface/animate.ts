@@ -346,6 +346,7 @@ export interface ITicker extends EventEmitter {
   stop: () => void;
   addTimeline: (timeline: ITimeline) => void;
   remTimeline: (timeline: ITimeline) => void;
+  getTimelines: () => ITimeline[];
 
   release: () => void;
 

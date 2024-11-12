@@ -1,5 +1,5 @@
 import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType, IOBBBounds } from '@visactor/vutils';
-import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
+import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
 import type { IShadowRoot } from './graphic/shadow-root';
@@ -218,6 +218,8 @@ export type IGraphicStyle = ILayout &
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
+    // 纹理是否自动做动画
+    autoAnimateTexture: boolean;
     // 如果做动画的话，这里代表ratio
     textureRatio: number;
     textureOptions: any;
@@ -354,6 +356,7 @@ export type ISetAttributeContext = {
 export type IGraphicAnimateParams = {
   slience?: boolean;
   id?: number | string;
+  timeline?: ITimeline;
   onStart?: () => void;
   onFrame?: (step: IStep, ratio: number) => void;
   onEnd?: () => void;

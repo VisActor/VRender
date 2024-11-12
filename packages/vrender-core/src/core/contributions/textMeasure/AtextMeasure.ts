@@ -231,6 +231,12 @@ export class ATextMeasure implements ITextMeasure {
     leftIdx: number,
     rightIdx: number
   ): { str: string; width: number } {
+    // 添加退出条件，如果leftIdx和rightIdx相等，那么就返回这个字符串（理论上这时出问题了）
+    if (leftIdx === rightIdx) {
+      console.warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      const subText = text.substring(0, rightIdx + 1);
+      return { str: subText, width: this.measureTextWidth(subText, options) };
+    }
     const middleIdx = Math.floor((leftIdx + rightIdx) / 2);
     const subText = text.substring(0, middleIdx + 1);
     const strWidth = this.measureTextWidth(subText, options);

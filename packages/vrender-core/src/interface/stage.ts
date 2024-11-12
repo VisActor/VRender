@@ -43,6 +43,8 @@ export interface IStageParams {
   title: string;
   // 是否开启自动渲染
   autoRender: boolean;
+  // 是否开启自动刷新
+  autoRefresh: boolean;
   // 是否开启布局支持
   enableLayout: boolean;
   // 是否关闭脏矩形检测

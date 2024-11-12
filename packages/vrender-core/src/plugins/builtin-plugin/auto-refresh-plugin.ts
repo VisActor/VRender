@@ -27,6 +27,11 @@ export class AutoRefreshPlugin implements IPlugin {
   }
 
   refresh() {
+    if (!this._refreshByMediaQuery()) {
+      this._refreshByRaf();
+    }
+  }
+  protected _refreshByRaf() {
     const raf = application.global.getRequestAnimationFrame();
     this.rafId = raf(() => {
       if (application.global.devicePixelRatio !== this.dpr) {
@@ -35,6 +40,23 @@ export class AutoRefreshPlugin implements IPlugin {
       }
       this.refresh();
     });
+  }
+  protected _refreshByMediaQuery() {
+    try {
+      const mqString = `(resolution: ${window.devicePixelRatio}dppx)`;
+
+      const updatePixelRatio = () => {
+        if (window.devicePixelRatio !== this.dpr) {
+          this.dpr = window.devicePixelRatio;
+          this.pluginService.stage.setDpr(this.dpr, true);
+        }
+      };
+
+      matchMedia(mqString).addEventListener('change', updatePixelRatio);
+    } catch (err) {
+      return false;
+    }
+    return true;
   }
   deactivate(context: IPluginService): void {
     const craf = application.global.getCancelAnimationFrame();

@@ -53,6 +53,9 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   remTimeline(timeline: ITimeline) {
     this.timelines = this.timelines.filter(t => t !== timeline);
   }
+  getTimelines(): ITimeline[] {
+    return this.timelines;
+  }
 
   protected initHandler(): ITickHandler | null {
     if (this._mode) {

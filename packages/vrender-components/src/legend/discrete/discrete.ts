@@ -74,6 +74,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   private _itemHeightByUser: number | undefined = undefined;
   private _itemHeight = 0; // 存储每一个图例项的高度
   private _itemMaxWidth = 0; // 存储图例项的最大的宽度
+  private _contentMaxHeight = 0; // 存储图例的最大的宽度 （去除 padding）
   private _pagerComponent: Pager | ScrollBar;
   private _lastActiveItem: IGroup;
   private _itemContext: {
@@ -218,7 +219,6 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       maxCol = 1,
       maxRow = 2,
       maxWidth,
-      maxHeight,
       defaultSelected,
       lazyload,
       autoPage
@@ -228,6 +228,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const itemsContainer = this._itemsContainer;
     const { items: legendItems, isHorizontal, startIndex, isScrollbar } = this._itemContext;
     const maxPages = isScrollbar ? 1 : isHorizontal ? maxRow : maxCol;
+    const maxHeight = this._contentMaxHeight;
 
     let { doWrap, maxWidthInCol, startX, startY, pages } = this._itemContext;
     let item: LegendItemDatum;
@@ -339,7 +340,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
   }
 
   protected _renderContent() {
-    const { item = {}, items, reversed, maxWidth } = this.attribute as DiscreteLegendAttrs;
+    const { item = {}, items, reversed, maxWidth, maxHeight } = this.attribute as DiscreteLegendAttrs;
     if (item.visible === false || isEmpty(items)) {
       return;
     }
@@ -348,6 +349,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     if (reversed) {
       legendItems = items?.reverse();
     }
+
+    this._contentMaxHeight = Math.max(0, maxHeight - this._parsedPadding[0] - this._parsedPadding[2]);
 
     const itemsContainer = graphicCreator.group({
       x: 0,
@@ -880,11 +883,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderPager() {
     const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
+    const { maxWidth, maxCol = 1, maxRow = 2, item = {}, pager = {} } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
     const { space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
     const { isHorizontal } = this._itemContext;
+    const maxHeight = this._contentMaxHeight;
 
     let comp: ScrollBar | Pager;
     let compWidth = 0;
@@ -1006,11 +1010,12 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
   private _renderScrollbar() {
     const renderStartY = this._title ? this._title.AABBBounds.height() + get(this.attribute, 'title.space', 8) : 0;
-    const { maxWidth, maxHeight, item = {}, pager = {} } = this.attribute;
+    const { maxWidth, item = {}, pager = {} } = this.attribute;
     const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = item;
     const itemsContainer = this._itemsContainer as IGroup;
     const { space: pagerSpace = DEFAULT_PAGER_SPACE, defaultCurrent = 1, ...compStyle } = pager;
     const { isHorizontal } = this._itemContext;
+    const maxHeight = this._contentMaxHeight;
 
     let comp: ScrollBar | Pager;
     let compSize = 0;

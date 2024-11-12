@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support custom event trigger in discrete legend",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -217,6 +217,7 @@ export type DiscreteLegendAttrs = {
   select?:
     | boolean
     | {
+        /** @since 0.20.13 */
         trigger?: GraphicEventType;
       };
 
@@ -226,7 +227,9 @@ export type DiscreteLegendAttrs = {
   hover?:
     | boolean
     | {
+        /** @since 0.20.13 */
         trigger?: GraphicEventType;
+        /** @since 0.20.13 */
         triggerOff?: GraphicEventType;
       };
   /**

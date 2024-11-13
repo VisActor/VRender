@@ -144,7 +144,7 @@ export class DefaultImageRenderContribution extends DefaultRectRenderContributio
   useStyle: boolean = true;
   order: number = 0;
   drawShape(
-    rect: any,
+    image: any,
     context: IContext2d,
     x: number,
     y: number,
@@ -165,20 +165,24 @@ export class DefaultImageRenderContribution extends DefaultRectRenderContributio
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    return super.drawShape(
-      rect,
-      context,
-      x,
-      y,
-      doFill,
-      doStroke,
-      fVisible,
-      sVisible,
-      rectAttribute,
-      drawContext,
-      fillCb,
-      strokeCb
-    );
+    if (image.isGifImage && image.renderFrame && image.playing) {
+      image.renderFrame(context, x, y);
+    } else {
+      return super.drawShape(
+        image,
+        context,
+        x,
+        y,
+        doFill,
+        doStroke,
+        fVisible,
+        sVisible,
+        rectAttribute,
+        drawContext,
+        fillCb,
+        strokeCb
+      );
+    }
   }
 }
 

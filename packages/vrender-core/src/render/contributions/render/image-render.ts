@@ -162,18 +162,21 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {
     const { image: url } = image.attribute;
-    if (!url || !image.resources) {
-      return;
-    }
-    const res = image.resources.get(url);
-    // if (res.state !== 'success') {
-    //   return;
-    // }
-    if (res.state === 'loading' && isString(url)) {
-      ResourceLoader.improveImageLoading(url);
-      return;
-    } else if (res.state !== 'success') {
-      return;
+
+    if (!image.isGifImage) {
+      if (!url || !image.resources) {
+        return;
+      }
+      const res = image.resources.get(url);
+      // if (res.state !== 'success') {
+      //   return;
+      // }
+      if (res.state === 'loading' && isString(url)) {
+        ResourceLoader.improveImageLoading(url);
+        return;
+      } else if (res.state !== 'success') {
+        return;
+      }
     }
 
     const { context } = renderService.drawParams;

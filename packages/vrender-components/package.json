@@ -27,7 +27,8 @@
     "@visactor/vutils": "~0.18.18",
     "@visactor/vscale": "~0.18.18",
     "@visactor/vrender-core": "workspace:0.20.12",
-    "@visactor/vrender-kits": "workspace:0.20.12"
+    "@visactor/vrender-kits": "workspace:0.20.12",
+    "gifuct-js": "2.1.2"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

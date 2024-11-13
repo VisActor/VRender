@@ -97,6 +97,10 @@ export type EasingTypeStr =
   | 'expoIn'
   | 'expoOut'
   | 'expoInOut'
+  // @since 0.21.0
+  | 'easeInOutQuad'
+  | 'easeOutElastic'
+  | 'easeInOutElastic'
   | '';
 export type EasingTypeFunc = (t: number) => number;
 

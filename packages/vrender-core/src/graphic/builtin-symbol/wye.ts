@@ -4,7 +4,7 @@ import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
- * 
+ *
  *Copyright 2010-2021 Mike Bostock
 
   Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -54,13 +54,13 @@ export class WyeSymbol extends BaseSymbol implements ISymbolClass {
     'M0.25 0.14433756729740646L0.25 0.6443375672974064L-0.25 0.6443375672974064L-0.25 0.14433756729740643L-0.6830127018922193 -0.10566243270259357L-0.4330127018922193 -0.5386751345948129L0 -0.28867513459481287L0.4330127018922193 -0.5386751345948129L0.6830127018922193 -0.10566243270259357Z';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     // const r = sqrt(size / a);
     return wye(ctx, r, transX, transY);
   }
 
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     // const r = sqrt(size / a);
     return wye(ctx, r, transX, transY);
   }

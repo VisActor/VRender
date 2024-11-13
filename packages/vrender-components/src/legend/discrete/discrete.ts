@@ -438,7 +438,7 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     const { hover = true, select = true } = this.attribute;
 
     if (hover) {
-      let trigger = 'pointerdown';
+      let trigger = 'pointermove';
       let triggerOff = 'pointerleave';
 
       if (isObject(hover)) {

@@ -62,12 +62,12 @@ export class ArrowSymbol extends BaseSymbol implements ISymbolClass {
     'M-0.07142857142857142,0.5L0.07142857142857142,0.5L0.07142857142857142,-0.0625L0.2,-0.0625L0,-0.5L-0.2,-0.0625L-0.07142857142857142,-0.0625Z';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return arrow(ctx, r, transX, transY);
   }
 
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     return arrow(ctx, r, transX, transY);
   }
 }

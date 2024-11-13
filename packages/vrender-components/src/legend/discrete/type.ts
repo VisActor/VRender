@@ -1,6 +1,7 @@
 import type {
   EasingType,
   IGroupGraphicAttribute,
+  ILinearGradient,
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
@@ -8,6 +9,7 @@ import type { BaseGraphicAttributes, Padding } from '../../core/type';
 import type { PagerAttributes } from '../../pager';
 import type { LegendBaseAttributes } from '../type';
 import type { ScrollBarAttributes } from '../../scrollbar/type';
+import type { GraphicEventType } from '@visactor/vrender-core';
 
 export interface LegendSwitchComponentAttributes {
   /**
@@ -44,12 +46,35 @@ export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
 export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'limitRange'> &
   LegendSwitchComponentAttributes & {
     type: 'scrollbar';
+    /**
+     * @deprecated since 0.20.13
+     * 滚动条的位置是否支持展示在分页的中间。
+     * 0.20.13 版本改造了滚动条逻辑后，此配置废弃。改造内容：
+     *   由分页拟合的滚动调整为滚动窗口的逻辑，不再与分页绑定
+     */
     scrollByPosition?: boolean;
     /**
      * 是否支持鼠标/触控板滚动
      * @default false
      */
     roamScroll?: boolean;
+    /**
+     * @since 0.20.13
+     * 是否隐藏滚动条
+     */
+    visible?: boolean;
+    /**
+     * @since 0.20.13
+     * 滚动时，图例区域未到尽头时的前后遮罩
+     */
+    scrollMask?: {
+      /** 是否显示 @default false */
+      visible?: boolean;
+      /** 渐变区域长度 @default 16 */
+      gradientLength?: number;
+      /** 渐变配置 */
+      gradientStops: ILinearGradient['stops'];
+    };
   };
 
 export type LegendItemDatum = {
@@ -189,11 +214,24 @@ export type DiscreteLegendAttrs = {
   /**
    * 是否开启选中交互
    */
-  select?: boolean;
+  select?:
+    | boolean
+    | {
+        /** @since 0.20.13 */
+        trigger?: GraphicEventType;
+      };
+
   /**
    * 是否开启 hover 交互
    */
-  hover?: boolean;
+  hover?:
+    | boolean
+    | {
+        /** @since 0.20.13 */
+        trigger?: GraphicEventType;
+        /** @since 0.20.13 */
+        triggerOff?: GraphicEventType;
+      };
   /**
    * 图例数据
    */

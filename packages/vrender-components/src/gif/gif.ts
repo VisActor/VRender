@@ -1,4 +1,4 @@
-import type { IImageGraphicAttribute } from '@visactor/vrender-core';
+import type { IImageGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
 import { application, Image, ResourceLoader } from '@visactor/vrender-core';
 import type { ITimeline } from '@visactor/vrender-core';
 import { isString } from '@visactor/vutils';
@@ -28,6 +28,10 @@ export class GifImage extends Image {
   constructor(params: IGifImageGraphicAttribute) {
     super(params);
 
+    this.loadGif();
+  }
+
+  loadGif() {
     if (isString(this.attribute.gifImage)) {
       ResourceLoader.GetFile(this.attribute.gifImage, 'arrayBuffer')
         .then((res: ArrayBuffer) => {
@@ -130,5 +134,23 @@ export class GifImage extends Image {
       this.attribute.width,
       this.attribute.height
     );
+  }
+
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean, context?: ISetAttributeContext): void {
+    super.setAttribute(key, value, forceUpdateTag, context);
+    if (key === 'gifImage') {
+      this.loadGif();
+    }
+  }
+
+  setAttributes(
+    params: Partial<IGifImageGraphicAttribute>,
+    forceUpdateTag?: boolean,
+    context?: ISetAttributeContext
+  ): void {
+    super.setAttributes(params, forceUpdateTag, context);
+    if (params.gifImage) {
+      this.loadGif();
+    }
   }
 }

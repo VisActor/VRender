@@ -3,7 +3,7 @@ import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
- * 
+ *
  *Copyright 2010-2021 Mike Bostock
 
   Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -34,12 +34,12 @@ export class TriangleDownSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M-0.5,-0.5 L0.5,-0.5 L0,0.5 Z';
 
   draw(ctx: IContext2d, size: number, x: number, y: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return trianglDownOffset(ctx, r, x, y);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return trianglDownOffset(ctx, r, x, y, offset);
   }
 }

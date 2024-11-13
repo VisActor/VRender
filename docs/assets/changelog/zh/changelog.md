@@ -1,3 +1,16 @@
+# v0.20.14
+
+2024-11-13
+
+
+**What's Changed**
+
+* fix: incorrect default hover trigger of discrete legend by @xiaoluoHe in https://github.com/VisActor/VRender/pull/1550
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.20.13...v0.20.14
+
+[更多详情请查看 v0.20.14](https://github.com/VisActor/VRender/releases/tag/v0.20.14)
+
 # v0.20.13
 
 2024-11-13

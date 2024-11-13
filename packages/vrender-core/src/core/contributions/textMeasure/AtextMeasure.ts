@@ -4,6 +4,7 @@ import type { ICanvas, IContext2d, EnvType } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';
 import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
 import { testLetter } from '../../../graphic/richtext/utils';
+import { Logger } from '@visactor/vutils';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {
@@ -231,6 +232,13 @@ export class ATextMeasure implements ITextMeasure {
     leftIdx: number,
     rightIdx: number
   ): { str: string; width: number } {
+    // 添加退出条件，如果leftIdx和rightIdx相等，那么就返回这个字符串（理论上这时出问题了）
+    if (leftIdx === rightIdx) {
+      Logger.getInstance().warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      // console.warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      const subText = text.substring(0, rightIdx + 1);
+      return { str: subText, width: this.measureTextWidth(subText, options) };
+    }
     const middleIdx = Math.floor((leftIdx + rightIdx) / 2);
     const subText = text.substring(0, middleIdx + 1);
     const strWidth = this.measureTextWidth(subText, options);
@@ -276,7 +284,7 @@ export class ATextMeasure implements ITextMeasure {
     rightIdx: number
   ): { str: string; width: number } {
     const middleIdx = Math.ceil((leftIdx + rightIdx) / 2);
-    const subText = text.substring(middleIdx - 1, text.length - 1);
+    const subText = text.substring(middleIdx - 1, text.length);
     const strWidth = this.measureTextWidth(subText, options);
     let length: number;
     if (strWidth > width) {
@@ -285,21 +293,21 @@ export class ATextMeasure implements ITextMeasure {
         return { str: '', width: 0 };
       } // 如果子字符串长度小于1，而且大于给定宽的话，返回空字符串
       // 先判断是不是左侧的那个字符
-      const str = text.substring(middleIdx, text.length - 1);
+      const str = text.substring(middleIdx, text.length);
       // 如果到左侧的字符小于或等于width，那么说明就是左侧的字符
       length = this.measureTextWidth(str, options);
       if (length <= width) {
         return { str, width: length };
       }
       // 返回leftIdx到middleIdx
-      return this._clipTextStart(text, options, width, middleIdx, text.length - 1);
+      return this._clipTextStart(text, options, width, middleIdx, text.length);
     } else if (strWidth < width) {
       // 如果字符串的宽度小于限制宽度
       if (middleIdx <= 0) {
         return { str: text, width: this.measureTextWidth(text, options) };
       } // 如果已经到结尾了，返回text
       // 先判断是不是右侧的那个字符
-      const str = text.substring(middleIdx - 2, text.length - 1);
+      const str = text.substring(middleIdx - 2, text.length);
       // 如果到右侧的字符大于或等于width，那么说明就是这个字符串
       length = this.measureTextWidth(str, options);
       if (length >= width) {

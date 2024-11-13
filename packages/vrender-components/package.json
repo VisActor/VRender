@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.20.12",
+  "version": "0.20.13",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -26,8 +26,8 @@
   "dependencies": {
     "@visactor/vutils": "~0.18.18",
     "@visactor/vscale": "~0.18.18",
-    "@visactor/vrender-core": "workspace:0.20.12",
-    "@visactor/vrender-kits": "workspace:0.20.12",
+    "@visactor/vrender-core": "workspace:0.20.13",
+    "@visactor/vrender-kits": "workspace:0.20.13",
     "gifuct-js": "2.1.2"
   },
   "devDependencies": {

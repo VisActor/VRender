@@ -4,7 +4,7 @@ group: graphic-arc
 title: fan
 keywords: arc
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/fan.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/fan.gif
 ---
 
 # arc fan

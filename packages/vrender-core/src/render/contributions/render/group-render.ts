@@ -72,7 +72,11 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       cornerRadius = groupAttribute.cornerRadius,
       path = groupAttribute.path,
       lineWidth = groupAttribute.lineWidth,
-      visible = groupAttribute.visible
+      visible = groupAttribute.visible,
+      fillStrokeOrder = groupAttribute.fillStrokeOrder,
+
+      x: originX = groupAttribute.x,
+      y: originY = groupAttribute.y
     } = group.attribute;
 
     // 不绘制或者透明
@@ -160,21 +164,34 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(group, group.attribute, groupAttribute);
 
-    if (doFillOrStroke.doFill) {
-      if (fillCb) {
-        fillCb(context, group.attribute, groupAttribute);
-      } else if (fVisible) {
-        context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
-        context.fill();
+    const _runFill = () => {
+      if ((doFillOrStroke as any).doFill) {
+        if (fillCb) {
+          fillCb(context, group.attribute, groupAttribute);
+        } else if (fVisible) {
+          context.setCommonStyle(group, group.attribute, originX - x, originY - y, groupAttribute);
+          context.fill();
+        }
       }
-    }
-    if (doFillOrStroke.doStroke) {
-      if (strokeCb) {
-        strokeCb(context, group.attribute, groupAttribute);
-      } else if (sVisible) {
-        context.setStrokeStyle(group, group.attribute, x, y, groupAttribute);
-        context.stroke();
+    };
+
+    const _runStroke = () => {
+      if ((doFillOrStroke as any).doStroke) {
+        if (strokeCb) {
+          strokeCb(context, group.attribute, groupAttribute);
+        } else if (sVisible) {
+          context.setStrokeStyle(group, group.attribute, originX - x, originY - y, groupAttribute);
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this._groupRenderContribitions.forEach(c => {

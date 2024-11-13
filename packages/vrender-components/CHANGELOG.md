@@ -1,6 +1,45 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+
+## 0.20.14
+Wed, 13 Nov 2024 07:47:16 GMT
+
+_Version update only_
+
+## 0.20.13
+Wed, 13 Nov 2024 06:35:02 GMT
+
+### Updates
+
+- feat: support custom event trigger in discrete legend
+- feat: support scrollMask in scroll type discrete legend
+- refactor: optimize the scroll effect of discrete legend
+- fix: fix the issue of the legend scrollbar being clipped when positioned left or right
+- fix: fix smartInvert of gradient bar
+
+
+
+## 0.20.12
+Thu, 31 Oct 2024 02:49:49 GMT
+
+_Version update only_
+
+## 0.20.11
+Wed, 30 Oct 2024 13:10:03 GMT
+
+### Updates
+
+- fix: optimize limit length calculation for line axis label autoWrap
+- fix: fix bounds of circle axis
+
+
+- fix: last page is empty in legend. fix@VisActor/VChart#3344
+
+## 0.20.10
+Wed, 23 Oct 2024 08:37:33 GMT
+
+_Version update only_
 
 ## 0.20.9
 Tue, 15 Oct 2024 03:50:15 GMT

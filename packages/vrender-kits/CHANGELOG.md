@@ -1,6 +1,38 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Tue, 15 Oct 2024 03:50:15 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+
+## 0.20.14
+Wed, 13 Nov 2024 07:47:16 GMT
+
+_Version update only_
+
+## 0.20.13
+Wed, 13 Nov 2024 06:35:02 GMT
+
+### Updates
+
+- fix: fix trigger of press in mobile
+
+
+- fix: fix smartInvert of gradient bar
+
+
+
+## 0.20.12
+Thu, 31 Oct 2024 02:49:49 GMT
+
+_Version update only_
+
+## 0.20.11
+Wed, 30 Oct 2024 13:10:03 GMT
+
+_Version update only_
+
+## 0.20.10
+Wed, 23 Oct 2024 08:37:33 GMT
+
+_Version update only_
 
 ## 0.20.9
 Tue, 15 Oct 2024 03:50:15 GMT

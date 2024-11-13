@@ -1,3 +1,92 @@
+# v0.20.14
+
+2024-11-13
+
+
+**What's Changed**
+
+* fix: incorrect default hover trigger of discrete legend by @xiaoluoHe in https://github.com/VisActor/VRender/pull/1550
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.20.13...v0.20.14
+
+[更多详情请查看 v0.20.14](https://github.com/VisActor/VRender/releases/tag/v0.20.14)
+
+# v0.20.13
+
+2024-11-13
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support custom event trigger in discrete legend
+- **@visactor/vrender-components**: support scrollMask in scroll type discrete legend
+- **@visactor/vrender-core**: support auto refresh plugin
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the issue of the legend scrollbar being clipped when positioned left or right
+- **@visactor/vrender-components**: fix smartInvert of gradient bar
+- **@visactor/vrender-kits**: fix trigger of press in mobile
+- **@visactor/vrender-core**: fix issue with text clip
+- **@visactor/vrender**: fix trigger of press in mobile
+
+**🔨 功能重构**
+
+- **@visactor/vrender-components**: optimize the scroll effect of discrete legend
+
+
+
+[更多详情请查看 v0.20.13](https://github.com/VisActor/VRender/releases/tag/v0.20.13)
+
+# v0.20.12
+
+2024-10-31
+
+
+**What's Changed**
+
+* feat: upgrade vutils to ~0.18.18 by @neuqzxy in https://github.com/VisActor/VRender/pull/1528
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.20.11...v0.20.12
+
+[更多详情请查看 v0.20.12](https://github.com/VisActor/VRender/releases/tag/v0.20.12)
+
+# v0.20.11
+
+2024-10-31
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: optimize limit length calculation for line axis label autoWrap
+- **@visactor/vrender-components**: fix bounds of circle axis
+- **@visactor/vrender-components**: last page is empty in legend. fix@VisActor/VChart[#3344](https://github.com/VisActor/VRender/issues/3344)
+- **@visactor/vrender-core**: fix group fill gradient [#1518](https://github.com/VisActor/VRender/issues/1518)
+- **@visactor/vrender-core**: annotate the Ramer Douglas Peucker algorithm in point optimization
+
+
+
+[更多详情请查看 v0.20.11](https://github.com/VisActor/VRender/releases/tag/v0.20.11)
+
+# v0.20.10
+
+2024-10-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: support fillStrokeOrder, closed [#1505](https://github.com/VisActor/VRender/issues/1505)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with parse m where multi pos follow, closed [#1490](https://github.com/VisActor/VRender/issues/1490)
+- **@visactor/vrender-core**: fix the accuracy issue of number matching, closed [#1488](https://github.com/VisActor/VRender/issues/1488)
+
+
+
+[更多详情请查看 v0.20.10](https://github.com/VisActor/VRender/releases/tag/v0.20.10)
+
 # v0.20.9
 
 2024-10-15

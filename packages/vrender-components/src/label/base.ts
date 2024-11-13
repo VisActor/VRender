@@ -11,7 +11,8 @@ import type {
   ILine,
   IArea,
   IRichText,
-  ILineGraphicAttribute
+  ILineGraphicAttribute,
+  ILinearGradient
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
@@ -33,7 +34,7 @@ import type { PointLocationCfg } from '../core/type';
 import { labelSmartInvert, contrastAccessibilityChecker, smartInvertStrategy } from '../util/label-smartInvert';
 import { createTextGraphicByType, getMarksByName, getNoneGroupMarksByName, traverseGroup } from '../util';
 import { StateValue } from '../constant';
-import type { Bitmap } from './overlap';
+import type { Bitmap, BitmapTool } from './overlap';
 // eslint-disable-next-line no-duplicate-imports
 import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap';
 import type {
@@ -45,12 +46,15 @@ import type {
   ILabelEnterAnimation,
   ILabelExitAnimation,
   ILabelUpdateAnimation,
-  LabelContent
+  LabelContent,
+  ShiftYStrategy,
+  Strategy
 } from './type';
 import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
 import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadLabelComponent } from './register';
+import { shiftY } from './overlap/shiftY';
 
 loadLabelComponent();
 export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
@@ -491,7 +495,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       return [];
     }
     const option = (isObject(this.attribute.overlap) ? this.attribute.overlap : {}) as OverlapAttrs;
-    const result: (IText | IRichText)[] = [];
     const baseMarkGroup = this.getBaseMarkGroup();
 
     const size = option.size ?? {
@@ -503,6 +506,59 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       return labels;
     }
 
+    const { strategy, priority } = option;
+
+    const bmpTool = this._bmpTool || bitmapTool(size.width, size.height);
+    const bitmap = this._bitmap || bmpTool.bitmap();
+
+    if (priority) {
+      labels = labels.sort((a, b) => priority((b.attribute as any).data) - priority((a.attribute as any).data));
+    }
+
+    if ((strategy as ShiftYStrategy)?.type === 'shiftY') {
+      return this._overlapGlobal(labels, option, bmpTool, bitmap);
+    }
+    return this._overlapByStrategy(labels, option, bmpTool, bitmap);
+  }
+
+  protected _overlapGlobal(labels: (IText | IRichText)[], option: OverlapAttrs, bmpTool: BitmapTool, bitmap: Bitmap) {
+    let result = labels.filter(label => label.attribute.visible && label.attribute.opacity !== 0);
+    const { clampForce = true, hideOnHit = true, overlapPadding, strategy } = option;
+    if (clampForce) {
+      for (let i = 0; i < result.length; i++) {
+        const text = labels[i];
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        if (dx !== 0 || dy !== 0) {
+          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+        }
+      }
+    }
+    result = shiftY(result as any, { maxY: bmpTool.height, ...(strategy as ShiftYStrategy) });
+
+    for (let i = 0; i < result.length; i++) {
+      const text = result[i];
+      const bounds = text.AABBBounds;
+      const range = boundToRange(bmpTool, bounds, true);
+      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
+        bitmap.setRange(range);
+      } else {
+        if (hideOnHit) {
+          text.setAttributes({ visible: false });
+        } else {
+          bitmap.setRange(range);
+        }
+      }
+    }
+
+    return result;
+  }
+
+  protected _overlapByStrategy(
+    labels: (IText | IRichText)[],
+    option: OverlapAttrs,
+    bmpTool: BitmapTool,
+    bitmap: Bitmap
+  ) {
     const {
       avoidBaseMark,
       strategy = [],
@@ -511,10 +567,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       avoidMarks = [],
       overlapPadding
     } = option;
-    const bmpTool = this._bmpTool || bitmapTool(size.width, size.height);
-    const bitmap = this._bitmap || bmpTool.bitmap();
-    const checkBounds = strategy.some(s => s.type === 'bound');
+    const result: (IText | IRichText)[] = [];
 
+    const checkBounds = (strategy as Strategy[]).some(s => s.type === 'bound');
     // 躲避关联的基础图元
     if (avoidBaseMark) {
       this._baseMarks?.forEach(mark => {
@@ -536,7 +591,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     }
 
     for (let i = 0; i < labels.length; i++) {
-      if (labels[i].visible === false) {
+      if (labels[i].attribute.visible === false) {
         continue;
       }
 
@@ -546,7 +601,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (!isRectIntersect(baseMark.AABBBounds, { x1: 0, x2: bmpTool.width, y1: 0, y2: bmpTool.height }, true)) {
         continue;
       }
-
       // 默认位置可以放置
       if (canPlace(bmpTool, bitmap, text.AABBBounds, clampForce, overlapPadding)) {
         // 如果配置了限制在图形内部，需要提前判断；
@@ -570,7 +624,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       let hasPlace: ReturnType<typeof place> = false;
       // 发生碰撞，根据策略寻找可放置的位置
-      for (let j = 0; j < strategy.length; j++) {
+      for (let j = 0; j < (strategy as Strategy[]).length; j++) {
         hasPlace = place(
           bmpTool,
           bitmap,
@@ -622,7 +676,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       !hasPlace && !hideOnHit && result.push(text);
     }
-
     return result;
   }
 
@@ -927,8 +980,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      const backgroundColor = baseMark.attribute.fill as IColor;
-      const foregroundColor = label.attribute.fill as IColor;
+      let backgroundColor = baseMark.attribute.fill as IColor;
+      let foregroundColor = label.attribute.fill as IColor;
+
+      if (isObject(backgroundColor) && backgroundColor.gradient) {
+        const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
+
+        if (firstStopColor) {
+          backgroundColor = firstStopColor;
+          foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
+        }
+      }
+
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,

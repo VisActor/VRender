@@ -36,6 +36,7 @@ import { Theme } from '../graphic/theme';
 import { PickerService } from '../picker/constants';
 import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
+import { AutoRefreshPlugin } from '../plugins/builtin-plugin/auto-refresh-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { defaultTicker } from '../animate/default-ticker';
@@ -166,6 +167,7 @@ export class Stage extends Group implements IStage {
   ticker: ITicker;
 
   autoRender: boolean;
+  autoRefresh: boolean;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
   reactAttribute: boolean | string | any;
@@ -257,6 +259,9 @@ export class Stage extends Group implements IStage {
     // this.autoRender = params.autoRender;
     if (params.autoRender) {
       this.enableAutoRender();
+    }
+    if (params.autoRefresh) {
+      this.enableAutoRefresh();
     }
     // 默认不开启dirtyBounds
     if (params.disableDirtyBounds === false) {
@@ -499,6 +504,22 @@ export class Stage extends Group implements IStage {
     }
     this.autoRender = false;
     this.pluginService.findPluginsByName('AutoRenderPlugin').forEach(plugin => {
+      this.pluginService.unRegister(plugin);
+    });
+  }
+  enableAutoRefresh() {
+    if (this.autoRefresh) {
+      return;
+    }
+    this.autoRefresh = true;
+    this.pluginService.register(new AutoRefreshPlugin());
+  }
+  disableAutoRefresh() {
+    if (!this.autoRefresh) {
+      return;
+    }
+    this.autoRefresh = false;
+    this.pluginService.findPluginsByName('AutoRefreshPlugin').forEach(plugin => {
       this.pluginService.unRegister(plugin);
     });
   }

@@ -6,7 +6,7 @@ import type { LabelBase } from '../base';
 import type { BaseLabelAttrs, OverlapAttrs, Strategy } from '../type';
 import type { Bitmap } from './bitmap';
 import type { BitmapTool } from './scaler';
-import { boundToRange } from './scaler';
+import { boundToRange, clampRangeByBitmap } from './scaler';
 
 /**
  * 防重叠逻辑参考 https://github.com/vega/vega/
@@ -51,10 +51,15 @@ export function canPlace($: BitmapTool, bitmap: Bitmap, bound: IBoundsLike, chec
   }
   range = boundToRange($, range);
 
-  const outOfBounds = checkBound && bitmap.outOfBounds(range);
+  const outOfBounds = bitmap.outOfBounds(range);
 
-  if (outOfBounds) {
+  if (checkBound && outOfBounds) {
     return false;
+  }
+
+  // 超出边界，需要将判断区域调整到可视区域内
+  if (outOfBounds) {
+    range = clampRangeByBitmap($, range);
   }
 
   return !bitmap.getRange(range);

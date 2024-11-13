@@ -20,7 +20,7 @@ import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES } from './constant';
 import { CircleAxisMixin } from './mixin/circle';
-import { getCircleLabelPosition, getCirclePoints, getPolygonPath } from './util';
+import { getCirclePoints, getPolygonPath } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadCircleAxisComponent } from './register';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
@@ -216,22 +216,21 @@ export class CircleAxis extends AxisBase<CircleAxisAttributes> {
       return;
     }
 
-    const { inside, radius, center, width, height, label, orient } = this.attribute;
+    const { inside, radius, center, size, label, orient } = this.attribute;
     // 宽高为0的异常情况，还是以圆心进行布局
-    const bounds =
-      width && height
-        ? {
-            x1: 0,
-            y1: 0,
-            x2: width,
-            y2: height
-          }
-        : {
-            x1: center.x - radius,
-            y1: center.y - radius,
-            x2: center.x + radius,
-            y2: center.y + radius
-          };
+    const bounds = size
+      ? {
+          x1: 0,
+          y1: 0,
+          x2: size.width,
+          y2: size.height
+        }
+      : {
+          x1: center.x - radius,
+          y1: center.y - radius,
+          x2: center.x + radius,
+          y2: center.y + radius
+        };
     const { layoutFunc, autoLimit, limitEllipsis, autoHide, autoHideMethod, autoHideSeparation, autoWrap } = label;
 
     if (isFunction(layoutFunc)) {

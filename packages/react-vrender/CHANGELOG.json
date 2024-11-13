@@ -2,6 +2,36 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.20.14",
+      "tag": "@visactor/react-vrender_v0.20.14",
+      "date": "Wed, 13 Nov 2024 07:47:15 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.13",
+      "tag": "@visactor/react-vrender_v0.20.13",
+      "date": "Wed, 13 Nov 2024 06:35:02 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.12",
+      "tag": "@visactor/react-vrender_v0.20.12",
+      "date": "Thu, 31 Oct 2024 02:49:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.11",
+      "tag": "@visactor/react-vrender_v0.20.11",
+      "date": "Wed, 30 Oct 2024 13:10:03 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.10",
+      "tag": "@visactor/react-vrender_v0.20.10",
+      "date": "Wed, 23 Oct 2024 08:37:33 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.9",
       "tag": "@visactor/react-vrender_v0.20.9",
       "date": "Tue, 15 Oct 2024 03:50:15 GMT",

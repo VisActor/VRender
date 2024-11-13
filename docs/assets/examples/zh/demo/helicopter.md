@@ -4,7 +4,7 @@ group: graphic-text
 title: 文字直升机
 keywords: helicopter
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/helicopter01.gif
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/helicopter01.gif
 ---
 
 # 直升机 demo

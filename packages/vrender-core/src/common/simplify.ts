@@ -62,13 +62,14 @@ function simplifyDPStep(
       nextIdx = i;
     }
   }
+
   if (maxSqDist > sqTolerance) {
     if (nextIdx - startIdx > 2) {
       simplifyDPStep(points, startIdx, nextIdx, sqTolerance, simplified);
     }
     simplified.push(points[nextIdx], points[nextIdx + 1]);
     if (endIdx - nextIdx > 2) {
-      simplifyDPStep(points, nextIdx, endIdx, sqTolerance, simplified);
+      simplifyDPStep(points, nextIdx + 1, endIdx, sqTolerance, simplified);
     }
   }
 }
@@ -88,6 +89,7 @@ export function flatten_simplify(points: IPointLike[], tolerance: number, highes
   }
   const sqTolerance = tolerance !== undefined ? tolerance * tolerance : 1;
   points = highestQuality ? points : simplifyRadialDist(points, sqTolerance);
-  points = simplifyDouglasPeucker(points, sqTolerance);
+  // 暂时屏蔽 Douglas-Peucker 算法, 因为在极端情况下不会有点被删除, 导致性能问题
+  // points = simplifyDouglasPeucker(points, sqTolerance);
   return points;
 }

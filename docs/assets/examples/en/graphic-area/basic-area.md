@@ -4,7 +4,7 @@ group: graphic-area
 title: basic-area
 keywords: area
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/area.jpeg
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/area.jpeg
 ---
 
 # area graphic

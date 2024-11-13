@@ -4,6 +4,7 @@ import type { ICanvas, IContext2d, EnvType } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';
 import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
 import { testLetter } from '../../../graphic/richtext/utils';
+import { Logger } from '@visactor/vutils';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {
@@ -233,7 +234,8 @@ export class ATextMeasure implements ITextMeasure {
   ): { str: string; width: number } {
     // 添加退出条件，如果leftIdx和rightIdx相等，那么就返回这个字符串（理论上这时出问题了）
     if (leftIdx === rightIdx) {
-      console.warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      Logger.getInstance().warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      // console.warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
       const subText = text.substring(0, rightIdx + 1);
       return { str: subText, width: this.measureTextWidth(subText, options) };
     }

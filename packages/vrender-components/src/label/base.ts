@@ -11,7 +11,8 @@ import type {
   ILine,
   IArea,
   IRichText,
-  ILineGraphicAttribute
+  ILineGraphicAttribute,
+  ILinearGradient
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
@@ -979,8 +980,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      const backgroundColor = baseMark.attribute.fill as IColor;
-      const foregroundColor = label.attribute.fill as IColor;
+      let backgroundColor = baseMark.attribute.fill as IColor;
+      let foregroundColor = label.attribute.fill as IColor;
+
+      if (isObject(backgroundColor) && backgroundColor.gradient) {
+        const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
+
+        if (firstStopColor) {
+          backgroundColor = firstStopColor;
+          foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
+        }
+      }
+
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,

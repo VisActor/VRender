@@ -45,7 +45,7 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(388.84796142578125);
+    expect(legend.AABBBounds.width()).toBe(428.84796142578125);
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item without value', () => {

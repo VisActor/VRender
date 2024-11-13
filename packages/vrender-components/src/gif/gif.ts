@@ -80,7 +80,7 @@ export class GifImage extends Image {
     const frame = this.loadedFrames[this.frameIndex || 0];
 
     if (frame.disposalType === 2) {
-      this.gifCtx.clearRect(0, 0, this.attribute.width, this.attribute.height);
+      this.gifCtx.clearRect(0, 0, this.gifCanvas.width, this.gifCanvas.height);
     }
 
     // draw image into gifCanvas

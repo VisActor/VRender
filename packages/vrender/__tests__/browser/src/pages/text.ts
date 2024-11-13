@@ -180,6 +180,11 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
+  setTimeout(() => {
+    debugger;
+    text.setAttributes({ visible: false });
+    console.log(text.AABBBounds);
+  }, 1000);
   const b = text.OBBBounds;
   const circle = createCircle({
     x: (b.x1 + b.x2) / 2,
@@ -202,19 +207,19 @@ export const page = () => {
   graphics.push(rect);
 
   const textLimit = createText({
-    x: 800,
-    y: 500,
+    x: 500,
+    y: 300,
     fill: colorPools[5],
     // text: ['Tffg'],
-    text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+    text: 'this is textaaaaaaaaaaaaaaaaa aaa this isisisisisis abc',
     // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
     // heightLimit: 40,
-    wordBreak: 'break-word',
-    maxLineWidth: 200,
+    wordBreak: 'keep-all',
+    maxLineWidth: 100,
     stroke: 'green',
     textAlign: 'left',
-    textBaseline: 'middle'
-    // whiteSpace: 'normal'
+    textBaseline: 'middle',
+    whiteSpace: 'normal'
     // wrap: true
   });
   console.log('textLimit', textLimit);

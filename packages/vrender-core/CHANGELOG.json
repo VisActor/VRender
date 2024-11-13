@@ -2,6 +2,96 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.14",
+      "tag": "@visactor/vrender-core_v0.20.14",
+      "date": "Wed, 13 Nov 2024 07:47:16 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.13",
+      "tag": "@visactor/vrender-core_v0.20.13",
+      "date": "Wed, 13 Nov 2024 06:35:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support auto refresh plugin"
+          },
+          {
+            "comment": "fix: fix smartInvert of gradient bar\n\n"
+          },
+          {
+            "comment": "fix: fix issue with text clip"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.12",
+      "tag": "@visactor/vrender-core_v0.20.12",
+      "date": "Thu, 31 Oct 2024 02:49:49 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.11",
+      "tag": "@visactor/vrender-core_v0.20.11",
+      "date": "Wed, 30 Oct 2024 13:10:03 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix group fill gradient #1518"
+          },
+          {
+            "comment": "fix: annotate the Ramer Douglas Peucker algorithm in point optimization"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.10",
+      "tag": "@visactor/vrender-core_v0.20.10",
+      "date": "Wed, 23 Oct 2024 08:37:33 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support fillStrokeOrder, closed #1505"
+          },
+          {
+            "comment": "fix: fix issue with parse m where multi pos follow, closed #1490"
+          },
+          {
+            "comment": "fix: fix the accuracy issue of number matching, closed #1488"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.9",
+      "tag": "@visactor/vrender-core_v0.20.9",
+      "date": "Tue, 15 Oct 2024 03:50:15 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: text support keep-all, closed #1466"
+          },
+          {
+            "comment": "fix: fix max width of arc label in left\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.8",
+      "tag": "@visactor/vrender-core_v0.20.8",
+      "date": "Sun, 29 Sep 2024 09:44:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix line bounds with defined false, closed #1463"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.7",
       "tag": "@visactor/vrender-core_v0.20.7",
       "date": "Fri, 27 Sep 2024 03:22:31 GMT",

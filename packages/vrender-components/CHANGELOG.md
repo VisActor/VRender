@@ -1,6 +1,76 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 27 Sep 2024 03:22:31 GMT and should not be manually modified.
+This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+
+## 0.20.14
+Wed, 13 Nov 2024 07:47:16 GMT
+
+_Version update only_
+
+## 0.20.13
+Wed, 13 Nov 2024 06:35:02 GMT
+
+### Updates
+
+- feat: support custom event trigger in discrete legend
+- feat: support scrollMask in scroll type discrete legend
+- refactor: optimize the scroll effect of discrete legend
+- fix: fix the issue of the legend scrollbar being clipped when positioned left or right
+- fix: fix smartInvert of gradient bar
+
+
+
+## 0.20.12
+Thu, 31 Oct 2024 02:49:49 GMT
+
+_Version update only_
+
+## 0.20.11
+Wed, 30 Oct 2024 13:10:03 GMT
+
+### Updates
+
+- fix: optimize limit length calculation for line axis label autoWrap
+- fix: fix bounds of circle axis
+
+
+- fix: last page is empty in legend. fix@VisActor/VChart#3344
+
+## 0.20.10
+Wed, 23 Oct 2024 08:37:33 GMT
+
+_Version update only_
+
+## 0.20.9
+Tue, 15 Oct 2024 03:50:15 GMT
+
+### Updates
+
+- fix: fix smartInvert when `outsideEnable` is true
+
+
+- feat: support axis label `firstVisible` in autoHide and linear axis sampling
+- feat: add `interactInvertType` for smartInvert
+
+
+- fix: fix max width of arc label in left
+
+
+- fix: fix `pager.space` of discrete legend
+
+
+- fix: fix smart invert when only has intercet width base mark
+
+
+- fix: fix `legend.item.label.space` when has value
+
+
+- fix: legend scroll critical value leads last page not render. fix@VisActor/VChart#3172
+
+## 0.20.8
+Sun, 29 Sep 2024 09:44:02 GMT
+
+_Version update only_
 
 ## 0.20.7
 Fri, 27 Sep 2024 03:22:31 GMT

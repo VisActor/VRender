@@ -193,6 +193,12 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
      * @since 0.17.10
      */
     lastVisible?: boolean;
+    /**
+     * 保证第一个的label必须展示
+     * @default false
+     * @since 0.20.7
+     */
+    firstVisible?: boolean;
   };
   /**
    * 坐标轴背景配置
@@ -220,6 +226,11 @@ export interface LineAxisAttributes extends Omit<AxisBaseAttributes, 'label'> {
 }
 
 export interface CircleAxisAttributes extends AxisBaseAttributes {
+  /**
+   * 坐标轴可用布局区域的大小，之前是通过width,height传入，会影响组件的Bounds大小，影响拾取
+   * @since 0.20.11
+   */
+  size?: { width: number; height: number };
   /**
    * 当配置了 innerRadius 时，可以通过设置 inside: true，将坐标轴战士在内圆半径上。
    * @default false
@@ -538,6 +549,8 @@ export interface ITickDataOpt {
   labelFormatter?: (value: any) => string;
   labelStyle: ITextGraphicAttribute;
   labelGap?: number;
+  labelFirstVisible?: boolean;
+  labelLastVisible?: boolean;
   /**
    * 截断数据范围配置
    */
@@ -546,7 +559,6 @@ export interface ITickDataOpt {
 
 export interface ICartesianTickDataOpt extends ITickDataOpt {
   axisOrientType: IOrientType;
-  labelLastVisible: boolean;
   labelFlush: boolean;
   /**
    * 截断数据范围配置

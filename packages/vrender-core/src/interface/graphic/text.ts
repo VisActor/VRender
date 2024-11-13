@@ -50,7 +50,7 @@ export type ITextAttribute = {
   scaleIn3d: boolean;
   direction: 'horizontal' | 'vertical';
   verticalMode: number; // 垂直布局的模式，0代表默认（横向textAlign，纵向textBaseline），1代表特殊（横向textBaseline，纵向textAlign）
-  wordBreak: 'break-word' | 'break-all';
+  wordBreak: 'break-word' | 'break-all' | 'keep-all';
   ignoreBuf: boolean;
   heightLimit: number;
   lineClamp: number;

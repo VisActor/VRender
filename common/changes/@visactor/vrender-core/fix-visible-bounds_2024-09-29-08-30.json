@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: fix line bounds with defined false, closed #1463",
+      "comment": "fix: fix issue with dirtyBounds incorrectly while set visible",
       "type": "none"
     }
   ],

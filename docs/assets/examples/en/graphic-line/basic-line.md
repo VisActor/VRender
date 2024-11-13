@@ -4,7 +4,7 @@ group: graphic-line
 title: basic-line
 keywords: line
 order: 1-0
-cover: http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/line-basic.png
+cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/line-basic.png
 ---
 
 # line graphic

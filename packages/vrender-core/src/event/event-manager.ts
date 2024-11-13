@@ -54,6 +54,7 @@ type EventManagerConfig = {
    * @default 200
    */
   clickInterval?: number;
+  supportsTouchEvents?: boolean;
 };
 
 type EmitterListener = { fn: (...args: any[]) => any; context: any; once: boolean };
@@ -552,7 +553,7 @@ export class EventManager {
           // 双击
           this.dispatchEvent(clickEvent, 'dblclick');
         }
-      } else if (clickEvent.pointerType === 'touch') {
+      } else if (clickEvent.pointerType === 'touch' && this._config.supportsTouchEvents) {
         this.dispatchEvent(clickEvent, 'tap');
         if (clickHistory.clickCount === 2) {
           // 双击

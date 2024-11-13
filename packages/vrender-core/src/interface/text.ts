@@ -23,7 +23,8 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
     text: string,
     options: TextOptionsType,
     width: number,
-    wordBreak: boolean
+    wordBreak: boolean,
+    keepAllBreak?: boolean
   ) => { str: string; width: number };
   clipTextVertical: (
     verticalList: { text: string; width?: number; direction: number }[],

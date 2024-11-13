@@ -80,7 +80,8 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       x1,
       y1,
       x: originX = rectAttribute.x,
-      y: originY = rectAttribute.y
+      y: originY = rectAttribute.y,
+      fillStrokeOrder = rectAttribute.fillStrokeOrder
     } = rect.attribute;
     let { width, height } = rect.attribute;
     width = (width ?? x1 - originX) || 0;
@@ -140,23 +141,35 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       doFillOrStroke
     );
 
-    if (doFillOrStroke.doFill) {
-      if (fillCb) {
-        fillCb(context, rect.attribute, rectAttribute);
-      } else if (fVisible) {
-        // 存在fill
-        context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
-        context.fill();
+    const _runFill = () => {
+      if (doFillOrStroke.doFill) {
+        if (fillCb) {
+          fillCb(context, rect.attribute, rectAttribute);
+        } else if (fVisible) {
+          // 存在fill
+          context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+          context.fill();
+        }
       }
-    }
-    if (doFillOrStroke.doStroke) {
-      if (strokeCb) {
-        strokeCb(context, rect.attribute, rectAttribute);
-      } else if (sVisible) {
-        // 存在stroke
-        context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
-        context.stroke();
+    };
+    const _runStroke = () => {
+      if (doFillOrStroke.doStroke) {
+        if (strokeCb) {
+          strokeCb(context, rect.attribute, rectAttribute);
+        } else if (sVisible) {
+          // 存在stroke
+          context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+          context.stroke();
+        }
       }
+    };
+
+    if (!fillStrokeOrder) {
+      _runFill();
+      _runStroke();
+    } else {
+      _runStroke();
+      _runFill();
     }
 
     this.afterRenderStep(

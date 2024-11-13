@@ -105,7 +105,10 @@ export const page = () => {
       lineCap: 'round',
       fill: 'pink',
       fillStrokeOrder: 1,
-      size: 40
+      size: 40,
+      scaleX: 2,
+      scaleY: 2,
+      keepStrokeScale: true
     });
     const text = createText({
       x: x,

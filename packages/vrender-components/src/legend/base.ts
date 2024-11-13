@@ -15,24 +15,24 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
   name = 'legend';
   protected _innerView!: IGroup;
   protected _title: Tag | null = null;
+  protected _parsedPadding: number[];
 
   render() {
     this.removeAllChild(true);
 
     const { interactive = true, title, padding = 0 } = this.attribute;
-    const parsedPadding = normalizePadding(padding);
+    this._parsedPadding = normalizePadding(padding);
 
     // 创建一个内部的 container 用于存储所有的元素
     const innerView = graphicCreator.group({
-      x: parsedPadding[3],
-      y: parsedPadding[0],
+      x: this._parsedPadding[3],
+      y: this._parsedPadding[0],
       pickable: interactive,
       childrenPickable: interactive
     });
     innerView.name = LEGEND_ELEMENT_NAME.innerView;
     this.add(innerView);
     this._innerView = innerView;
-
     if (title?.visible) {
       // 渲染标题
       this._renderTitle(title);
@@ -47,8 +47,8 @@ export abstract class LegendBase<T extends LegendBaseAttributes> extends Abstrac
     }
 
     const viewBounds = this._innerView.AABBBounds;
-    this.attribute.width = viewBounds.width() + parsedPadding[1] + parsedPadding[3];
-    this.attribute.height = viewBounds.height() + parsedPadding[0] + parsedPadding[2];
+    this.attribute.width = viewBounds.width() + this._parsedPadding[1] + this._parsedPadding[3];
+    this.attribute.height = viewBounds.height() + this._parsedPadding[0] + this._parsedPadding[2];
   }
   /**
    * 图例主体内容渲染

@@ -23,7 +23,7 @@ export interface GestureConfig {
     time?: number;
     /**
      * @default 10
-     * Minimal movement that is allowed while pressing.
+     * Maximal movement that is allowed while pressing.
      * @see http://hammerjs.github.io/recognizer-press/
      */
     threshold?: number;

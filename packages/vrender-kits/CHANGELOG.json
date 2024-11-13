@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.20.13",
+      "tag": "@visactor/vrender-kits_v0.20.13",
+      "date": "Wed, 13 Nov 2024 06:35:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix trigger of press in mobile\n\n"
+          },
+          {
+            "comment": "fix: fix smartInvert of gradient bar\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.12",
       "tag": "@visactor/vrender-kits_v0.20.12",
       "date": "Thu, 31 Oct 2024 02:49:49 GMT",

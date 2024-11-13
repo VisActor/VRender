@@ -1,7 +1,15 @@
 import '@visactor/vrender';
-import { DiscreteLegend, Pager } from '../../../src';
+import { DiscreteLegend } from '../../../src';
 import render from '../../util/render';
 
+const scrollMask = {
+  visible: true,
+  gradientStops: [
+    { offset: 0, color: 'rgba(255,255,255,1)' },
+    { offset: 0.5, color: 'rgba(255,255,255,0.8)' },
+    { offset: 1, color: 'rgba(255,255,255,0)' }
+  ]
+};
 const hLegend = new DiscreteLegend({
   x: 20,
   y: 20,
@@ -65,7 +73,11 @@ const hLegend = new DiscreteLegend({
   ],
   allowAllCanceled: false,
   pager: {
-    type: 'scrollbar'
+    type: 'scrollbar',
+    scrollByPosition: false,
+    roamScroll: true,
+    visible: false,
+    scrollMask
   },
   lazyload: true
 });
@@ -171,7 +183,10 @@ const vLegend = new DiscreteLegend({
   selectMode: 'single',
   pager: {
     type: 'scrollbar',
+    // visible: false,
+    roamScroll: true,
     scrollByPosition: false,
+    scrollMask,
     railStyle: {
       fill: 'pink'
     }
@@ -284,7 +299,8 @@ const legend = new DiscreteLegend({
   },
   autoPage: true,
   pager: {
-    type: 'scrollbar'
+    type: 'scrollbar',
+    scrollMask
   },
   hover: true,
   select: false,
@@ -394,12 +410,12 @@ const disableTriggerEventLegend = new DiscreteLegend({
   allowAllCanceled: false,
   pager: {
     type: 'scrollbar',
-    scrollByPosition: false,
-    roamScroll: true
+    roamScroll: true,
+    scrollMask
   }
 });
 
-const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend], 'main');
+const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend], 'main', { background: '#fff' });
 
 vLegend.addEventListener('legendItemClick', e => {
   console.log(e, e.detail.currentSelected);
@@ -414,3 +430,4 @@ vLegend.addEventListener('legendItemUnHover', e => {
 });
 
 window.vLegend = vLegend;
+window.hLegend = hLegend;

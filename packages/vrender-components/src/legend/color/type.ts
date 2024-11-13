@@ -1,5 +1,5 @@
-import { SliderAttributes } from '../../slider/type';
-import { LegendBaseAttributes } from '../type';
+import type { SliderAttributes } from '../../slider/type';
+import type { LegendBaseAttributes } from '../type';
 export type ColorLegendAttributes = {
   /**
    * 图例的颜色

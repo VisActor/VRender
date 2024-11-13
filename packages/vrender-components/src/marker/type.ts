@@ -13,8 +13,8 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment';
-import type { TagAttributes } from '../tag';
+import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment/type';
+import type { TagAttributes } from '../tag/type';
 import type { Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {

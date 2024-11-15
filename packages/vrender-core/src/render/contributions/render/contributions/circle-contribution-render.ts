@@ -54,14 +54,15 @@ export class DefaultCircleRenderContribution implements ICircleRenderContributio
       x: originX = circleAttribute.x,
       y: originY = circleAttribute.y,
       scaleX = circleAttribute.scaleX,
-      scaleY = circleAttribute.scaleY
+      scaleY = circleAttribute.scaleY,
+      keepStrokeScale = circleAttribute.keepStrokeScale
     } = circle.attribute;
 
     const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
       const doStroke = !!(borderStyle && borderStyle.stroke);
 
       const { distance = circleAttribute[key].distance } = borderStyle;
-      const d = getScaledStroke(context, distance as number, context.dpr);
+      const d = keepStrokeScale ? (distance as number) : getScaledStroke(context, distance as number, context.dpr);
       const sign = key === 'outerBorder' ? 1 : -1;
       context.beginPath();
       context.arc(x, y, radius + sign * d, startAngle, endAngle);

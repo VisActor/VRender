@@ -14,11 +14,13 @@ export const page = () => {
     createRichText({
       visible: true,
       fontSize: 26,
-      width: 0,
-      height: 0,
+      width: 500,
+      height: 500,
+      x: 100,
+      y: 100,
       background: 'green',
-      textAlign: 'left',
-      verticalDirection: 'top',
+      textAlign: 'right',
+      verticalDirection: 'middle',
       textConfig: [
         {
           text: '我',

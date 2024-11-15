@@ -325,9 +325,10 @@ export class Gesture extends EventEmitter {
 
   private getEventType(point: IPointLike) {
     const { eventType, startTime, startPoints } = this;
-    if (eventType) {
+    if (eventType === 'press') {
       return eventType;
     }
+
     let type;
     const now = clock.now();
     if (now - startTime > this.config.press.time && calcDistance(startPoints[0], point) < this.config.press.threshold) {

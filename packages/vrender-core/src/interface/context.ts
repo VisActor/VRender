@@ -34,6 +34,7 @@ export interface IStrokeStyleParams {
   lineJoin?: CanvasLineJoin;
   miterLimit?: number;
   opacity?: number;
+  keepStrokeScale?: boolean;
 }
 export interface ITextStyleParams {
   font?: string;

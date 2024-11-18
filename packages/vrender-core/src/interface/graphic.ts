@@ -322,6 +322,9 @@ export type IGraphicAttribute = IDebugType &
     overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
     // 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
     fillStrokeOrder: number;
+    // @since 0.20.15
+    // 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
+    keepStrokeScale: boolean;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {

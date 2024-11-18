@@ -59,14 +59,15 @@ export class DefaultSymbolRenderContribution implements ISymbolRenderContributio
       x: originX = symbolAttribute.x,
       y: originY = symbolAttribute.y,
       scaleX = symbolAttribute.scaleX,
-      scaleY = symbolAttribute.scaleY
+      scaleY = symbolAttribute.scaleY,
+      keepStrokeScale = symbolAttribute.keepStrokeScale
     } = symbol.attribute;
 
     const renderBorder = (borderStyle: Partial<IBorderStyle>, key: 'outerBorder' | 'innerBorder') => {
       const doStroke = !!(borderStyle && borderStyle.stroke);
 
       const { distance = symbolAttribute[key].distance } = borderStyle;
-      const d = getScaledStroke(context, distance as number, context.dpr);
+      const d = keepStrokeScale ? (distance as number) : getScaledStroke(context, distance as number, context.dpr);
       const sign = key === 'outerBorder' ? 1 : -1;
 
       context.beginPath();

@@ -206,7 +206,6 @@ importers:
       '@visactor/vutils': ~0.18.17
       cross-env: ^7.0.3
       eslint: ~8.18.0
-      gifuct-js: 2.1.2
       jest: ^26.0.0
       jest-electron: ^0.1.12
       lil-gui: ^0.17.0
@@ -218,7 +217,6 @@ importers:
       '@visactor/vrender-kits': link:../vrender-kits
       '@visactor/vscale': 0.18.18
       '@visactor/vutils': 0.18.18
-      gifuct-js: 2.1.2
     devDependencies:
       '@internal/bundler': link:../../tools/bundler
       '@internal/eslint-config': link:../../share/eslint-config
@@ -295,6 +293,7 @@ importers:
       canvas: 2.11.2
       cross-env: ^7.0.3
       eslint: ~8.18.0
+      gifuct-js: 2.1.2
       node-fetch: 2.6.6
       react: ^18.0.0
       react-dom: ^18.0.0
@@ -305,6 +304,7 @@ importers:
       '@resvg/resvg-js': 2.4.1
       '@visactor/vrender-core': link:../vrender-core
       '@visactor/vutils': 0.18.18
+      gifuct-js: 2.1.2
       roughjs: 4.5.2
     devDependencies:
       '@internal/bundler': link:../../tools/bundler

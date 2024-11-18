@@ -165,24 +165,20 @@ export class DefaultImageRenderContribution extends DefaultRectRenderContributio
       themeAttribute: IThemeAttribute
     ) => boolean
   ) {
-    if (image.isGifImage && image.renderFrame && image.playing) {
-      image.renderFrame(context, x, y);
-    } else {
-      return super.drawShape(
-        image,
-        context,
-        x,
-        y,
-        doFill,
-        doStroke,
-        fVisible,
-        sVisible,
-        rectAttribute,
-        drawContext,
-        fillCb,
-        strokeCb
-      );
-    }
+    return super.drawShape(
+      image,
+      context,
+      x,
+      y,
+      doFill,
+      doStroke,
+      fVisible,
+      sVisible,
+      rectAttribute,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 }
 

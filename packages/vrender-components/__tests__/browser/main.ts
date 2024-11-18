@@ -285,10 +285,6 @@ const specs = [
   {
     path: 'timeline',
     name: 'timeline'
-  },
-  {
-    path: 'gif',
-    name: 'gif'
   }
 ];
 

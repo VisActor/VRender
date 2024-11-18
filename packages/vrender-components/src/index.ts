@@ -29,4 +29,3 @@ export * from './checkbox';
 export * from './radio';
 export * from './empty-tip';
 export * from './util';
-export * from './gif';

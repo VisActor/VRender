@@ -4,13 +4,11 @@ import type { ITimeline } from '@visactor/vrender-core';
 import { isString } from '@visactor/vutils';
 import type { ParsedFrame } from 'gifuct-js';
 import { decompressFrames, parseGIF } from 'gifuct-js';
+import type { IGifImage, IGifImageGraphicAttribute } from '../interface/gif-image';
+import { GIFIMAGE_NUMBER_TYPE } from './constants';
 
-export interface IGifImageGraphicAttribute extends IImageGraphicAttribute {
-  timeline?: ITimeline;
-  gifImage?: string | ArrayBuffer;
-}
-
-export class GifImage extends Image {
+export class GifImage extends Image implements IGifImage {
+  type: any = 'gif-image';
   declare attribute: IGifImageGraphicAttribute;
 
   frameImageData?: ImageData;
@@ -23,11 +21,9 @@ export class GifImage extends Image {
   playing?: boolean;
   lastTime?: number;
 
-  isGifImage = true;
-
   constructor(params: IGifImageGraphicAttribute) {
     super(params);
-
+    this.numberType = GIFIMAGE_NUMBER_TYPE;
     this.loadGif();
   }
 
@@ -153,4 +149,8 @@ export class GifImage extends Image {
       this.loadGif();
     }
   }
+}
+
+export function createGifImage(attributes: IGifImageGraphicAttribute): IGifImage {
+  return new GifImage(attributes);
 }

@@ -190,6 +190,10 @@ export const pages = [
       {
         name: 'react',
         path: 'react'
+      },
+      {
+        name: 'gif-image',
+        path: 'gif-image'
       }
     ]
   },

@@ -59,6 +59,17 @@ export class DirtyBoundsPlugin implements IPlugin {
         stage.dirty(params.globalAABBBounds);
       }
     );
+    application.graphicService.hooks.clearAABBBounds.tap(
+      this.key,
+      (graphic: IGraphic, stage: IStage, bounds: IAABBBounds) => {
+        if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
+          return;
+        }
+        if (stage) {
+          stage.dirty(bounds);
+        }
+      }
+    );
     application.graphicService.hooks.onRemove.tap(this.key, (graphic: IGraphic) => {
       const stage = graphic.stage;
       if (!(stage && stage === this.pluginService.stage && stage.renderCount)) {
@@ -76,6 +87,10 @@ export class DirtyBoundsPlugin implements IPlugin {
       });
     application.graphicService.hooks.afterUpdateAABBBounds.taps =
       application.graphicService.hooks.afterUpdateAABBBounds.taps.filter(item => {
+        return item.name !== this.key;
+      });
+    application.graphicService.hooks.clearAABBBounds.taps =
+      application.graphicService.hooks.clearAABBBounds.taps.filter(item => {
         return item.name !== this.key;
       });
     context.stage.hooks.afterRender.taps = context.stage.hooks.afterRender.taps.filter(item => {

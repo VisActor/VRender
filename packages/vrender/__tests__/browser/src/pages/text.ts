@@ -190,6 +190,11 @@ export const page = () => {
     // scaleY: 2
   });
   graphics.push(text);
+  setTimeout(() => {
+    debugger;
+    text.setAttributes({ visible: false });
+    console.log(text.AABBBounds);
+  }, 1000);
   const b = text.OBBBounds;
   const circle = createCircle({
     x: (b.x1 + b.x2) / 2,
@@ -233,6 +238,7 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
+    disableDirtyBounds: false,
     pluginList: ['poptipForText']
   });
 

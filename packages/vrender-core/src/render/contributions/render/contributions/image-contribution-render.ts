@@ -144,7 +144,7 @@ export class DefaultImageRenderContribution extends DefaultRectRenderContributio
   useStyle: boolean = true;
   order: number = 0;
   drawShape(
-    rect: any,
+    image: any,
     context: IContext2d,
     x: number,
     y: number,
@@ -166,7 +166,7 @@ export class DefaultImageRenderContribution extends DefaultRectRenderContributio
     ) => boolean
   ) {
     return super.drawShape(
-      rect,
+      image,
       context,
       x,
       y,

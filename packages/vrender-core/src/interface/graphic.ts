@@ -38,7 +38,8 @@ export type GraphicType =
   | 'shadowroot'
   | 'polygon'
   | 'pyramid3d'
-  | 'glyph';
+  | 'glyph'
+  | string;
 
 // Cursor style
 // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor

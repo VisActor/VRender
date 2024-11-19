@@ -71,12 +71,6 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
       y: originY = textAttribute.y
     } = text.attribute;
 
-    let { textAlign = textAttribute.textAlign, textBaseline = textAttribute.textBaseline } = text.attribute;
-    if (!verticalMode && direction === 'vertical') {
-      const t = textAlign;
-      textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
-      textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);
-    }
     const lineHeight = calculateLineHeight(text.attribute.lineHeight, fontSize) ?? fontSize;
 
     const data = this.valid(text, textAttribute, fillCb, strokeCb);
@@ -139,7 +133,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         } else if (fVisible) {
           context.setCommonStyle(text, text.attribute, originX - x, originY - y, textAttribute);
           context.fillText(t, _x, _y, z);
-          this.drawUnderLine(underline, lineThrough, text, _x, _y, z, textAttribute, context);
+          // 垂直布局的情况下不支持下划线和中划线
+          // this.drawUnderLine(underline, lineThrough, text, _x, _y, 0, 0, z, textAttribute, context);
         }
       }
 
@@ -178,8 +173,9 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
               lineThrough,
               text,
               (line.leftOffset || 0) + xOffset + x,
-              // y是基于alphabetic对齐的，这里-0.05是为了和不换行的文字保持效果一致
-              (line.topOffset || 0) + yOffset + y - textDrawOffsetY('bottom', fontSize) - 0.05 * fontSize,
+              (line.topOffset || 0) + yOffset + y,
+              line.descent,
+              (line.descent - line.ascent) / 2,
               z,
               textAttribute,
               context,
@@ -191,6 +187,12 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
         }
       }
     } else {
+      let { textAlign = textAttribute.textAlign, textBaseline = textAttribute.textBaseline } = text.attribute;
+      if (!verticalMode) {
+        const t = textAlign;
+        textAlign = text.getBaselineMapAlign()[textBaseline] ?? ('left' as any);
+        textBaseline = text.getAlignMapBaseline()[t] ?? ('top' as any);
+      }
       text.tryUpdateAABBBounds(); // 更新cache
       const cache = text.cache;
       const { verticalList } = cache;
@@ -260,8 +262,10 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     underline: number,
     lineThrough: number,
     text: IText,
-    x: number,
-    y: number,
+    anchorX: number,
+    anchorY: number,
+    offsetUnderLineY: number,
+    offsetThroughLineY: number,
     z: number,
     textAttribute: Required<ITextGraphicAttribute>,
     context: IContext2d,
@@ -275,8 +279,8 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
 
     const {
       textAlign = textAttribute.textAlign,
-      textBaseline = textAttribute.textBaseline,
-      fontSize = textAttribute.fontSize,
+      // textBaseline = textAttribute.textBaseline,
+      // fontSize = textAttribute.fontSize,
       fill = textAttribute.fill,
       opacity = textAttribute.opacity,
       underlineOffset = textAttribute.underlineOffset,
@@ -286,29 +290,31 @@ export class DefaultCanvasTextRender extends BaseRender<IText> implements IGraph
     const isMulti = !isNil(multiOption);
     const w = isMulti ? multiOption!.width : text.clipedWidth;
     const offsetX = isMulti ? 0 : textDrawOffsetX(textAlign, w);
-    const offsetY = textLayoutOffsetY(isMulti ? 'alphabetic' : textBaseline, fontSize, fontSize);
+    // const offsetY = textLayoutOffsetY(isMulti ? 'alphabetic' : textBaseline, fontSize, fontSize);
     const attribute = { lineWidth: 0, stroke: fill, opacity, strokeOpacity: fillOpacity };
-    let deltaY = isMulti ? -3 : 0;
+    // let deltaY = isMulti ? -3 : 0;
     if (underline) {
       attribute.lineWidth = underline;
-      context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setStrokeStyle(text, attribute, anchorX, anchorY, textAttribute);
       underlineDash && context.setLineDash(underlineDash);
       context.beginPath();
-      const dy = y + offsetY + fontSize + underlineOffset + deltaY;
-      context.moveTo(x + offsetX, dy, z);
-      context.lineTo(x + offsetX + w, dy, z);
+      // const dy = y + offsetY + fontSize + underlineOffset + deltaY;
+      const dy = anchorY + offsetUnderLineY + underlineOffset;
+      context.moveTo(anchorX + offsetX, dy, z);
+      context.lineTo(anchorX + offsetX + w, dy, z);
       context.stroke();
     }
-    if (isMulti) {
-      deltaY = -1;
-    }
+    // if (isMulti) {
+    //   deltaY = -1;
+    // }
     if (lineThrough) {
       attribute.lineWidth = lineThrough;
-      context.setStrokeStyle(text, attribute, x, y, textAttribute);
+      context.setStrokeStyle(text, attribute, anchorX, anchorY, textAttribute);
       context.beginPath();
-      const dy = y + offsetY + fontSize / 2 + deltaY;
-      context.moveTo(x + offsetX, dy, z);
-      context.lineTo(x + offsetX + w, dy, z);
+      // const dy = y + offsetY + fontSize / 2 + deltaY;
+      const dy = anchorY + offsetThroughLineY;
+      context.moveTo(anchorX + offsetX, dy, z);
+      context.lineTo(anchorX + offsetX + w, dy, z);
       context.stroke();
     }
   }

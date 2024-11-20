@@ -150,7 +150,9 @@ export class DebugDrawItemInterceptorContribution implements IDrawItemIntercepto
     const { context } = drawContext;
     context.highPerformanceSave();
     // 直接transform
-    graphic.parent && context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
+    const t1 = graphic.parent.globalTransMatrix;
+    const t2 = graphic.stage.window.getViewBoxTransform().clone().multiply(t1.a, t1.b, t1.c, t1.d, t1.e, t1.f);
+    graphic.parent && context.setTransformFromMatrix(t2, true);
     graphic.glyphHost &&
       graphic.glyphHost.parent &&
       context.setTransformFromMatrix(graphic.glyphHost.parent.globalTransMatrix, true);

@@ -265,8 +265,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       suffixPosition = textTheme.suffixPosition
     } = attribute;
 
-    const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(attribute, textTheme) + buf;
+    // const buf = ignoreBuf ? 0 : 2;
+    const lineHeight = this.getLineHeight(attribute, textTheme);
 
     if (whiteSpace === 'normal' || wrap) {
       return this.updateWrapAABBBounds(text);
@@ -329,8 +329,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineClamp
     } = this.attribute;
 
-    const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(this.attribute, textTheme) + buf;
+    // const buf = ignoreBuf ? 0 : 2;
+    const lineHeight = this.getLineHeight(this.attribute, textTheme);
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;

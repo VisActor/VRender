@@ -161,28 +161,41 @@ export function defaultLabelPosition(type?: string) {
   }
 }
 
-export function clampText(text: IText, width: number, height: number) {
+export function clampText(
+  text: IText,
+  width: number,
+  height: number,
+  padding: { top?: number; left?: number; right?: number; bottom?: number } = {}
+) {
   const { x1, x2, y1, y2 } = text.AABBBounds;
+  const { top = 0, left = 0, right = 0, bottom = 0 } = padding;
+
   const minX = Math.min(x1, x2);
   const maxX = Math.max(x1, x2);
 
   const minY = Math.min(y1, y2);
   const maxY = Math.max(y1, y2);
 
+  const minXWithPadding = 0 - left;
+  const maxXWithPadding = width + right;
+
+  const minYWithPadding = 0 - top;
+  const maxYWithPadding = height + bottom;
+
   let dx = 0;
   let dy = 0;
 
   // x 方向
-  if (minX < 0 && maxX - minX <= width) {
+  if (minX < minXWithPadding && maxX - minX <= width) {
     dx = -minX;
-  } else if (maxX > width && minX - (maxX - width) >= 0) {
+  } else if (maxX > maxXWithPadding && minX - (maxX - width) >= minXWithPadding) {
     dx = width - maxX;
   }
 
   // y 方向
-  if (minY < 0 && maxY - minY <= height) {
+  if (minY < minYWithPadding && maxY - minY <= height) {
     dy = -minY;
-  } else if (maxY > height && minY - (maxY - height) >= 0) {
+  } else if (maxY > maxYWithPadding && minY - (maxY - height) >= minYWithPadding) {
     dy = height - maxY;
   }
 

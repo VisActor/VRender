@@ -527,19 +527,30 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (clampForce) {
       for (let i = 0; i < result.length; i++) {
         const text = labels[i];
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx !== 0 || dy !== 0) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+          text._isClamped = true;
         }
       }
     }
-    result = shiftY(result as any, { maxY: bmpTool.height, ...(strategy as ShiftYStrategy) });
+    result = shiftY(result as any, {
+      maxY: bmpTool.height,
+      ...(strategy as ShiftYStrategy),
+      labelling: (text: IText) => {
+        const baseMark = this.getRelatedGraphic(text.attribute);
+        const graphicBound = this._isCollectionBase
+          ? this.getGraphicBounds(null, this._idToPoint.get((text.attribute as any).id))
+          : this.getGraphicBounds(baseMark, text);
+        return this.labeling(text.AABBBounds, graphicBound, 'bottom', this.attribute.offset);
+      }
+    });
 
     for (let i = 0; i < result.length; i++) {
       const text = result[i];
       const bounds = text.AABBBounds;
       const range = boundToRange(bmpTool, bounds, true);
-      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
+      if (canPlace(bmpTool, bitmap, bounds, clampForce, text._isClamped ? 0 : overlapPadding)) {
         bitmap.setRange(range);
       } else {
         if (hideOnHit) {
@@ -549,7 +560,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       }
     }
-
     return result;
   }
 
@@ -646,7 +656,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
         // 向内挤压不考虑 overlapPadding
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx === 0 && dy === 0) {
           if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
             // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下

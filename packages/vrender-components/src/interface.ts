@@ -1,12 +1,4 @@
-import type {
-  ICustomPath2D,
-  IGraphicAttribute,
-  IGroup,
-  IRectGraphicAttribute,
-  IRichText,
-  IText
-} from '@visactor/vrender-core';
-import type { TextContent } from './core/type';
+import type { ICustomPath2D, IGraphicAttribute, IGroup, IRectGraphicAttribute } from '@visactor/vrender-core';
 
 export type Direction = 'horizontal' | 'vertical';
 

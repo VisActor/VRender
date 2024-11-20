@@ -8,7 +8,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import type { IDelayType, OrientType } from '../interface';
-import type { TagAttributes } from '../tag';
+import type { TagAttributes } from '../tag/type';
 
 export enum DataZoomActiveTag {
   startHandler = 'startHandler',

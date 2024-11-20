@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with _debug_bounds",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

@@ -15,17 +15,17 @@ export class LineVSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M0,-0.5L0,0.5';
 
   draw(ctx: IContext2d, size: number, x: number, y: number, z?: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return lineV(ctx, r, x, y, z);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     return lineV(ctx, r, x, y, z);
   }
 
   drawToSvgPath(size: number, x: number, y: number, z?: number): string {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return `M ${x}, ${y - r} L ${x},${y + r}`;
   }
 }

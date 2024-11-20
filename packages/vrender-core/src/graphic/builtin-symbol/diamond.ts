@@ -3,7 +3,7 @@ import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
- * 
+ *
  *Copyright 2010-2021 Mike Bostock
 
   Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -37,18 +37,18 @@ export class DiamondSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M-0.5,0L0,-0.5L0.5,0L0,0.5Z';
 
   draw(ctx: IContext2d, size: number, x: number, y: number, z?: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return diamond(ctx, r, x, y, z);
   }
 
   // 适应方向的draw
   drawFitDir(ctx: IContext2d, size: number, x: number, y: number, z?: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return diamond(ctx, r, x, y, z);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     return diamond(ctx, r, x, y, z);
   }
 }

@@ -48,12 +48,12 @@ export class WedgeSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M0,-0.5773502691896257L-0.125,0.28867513459481287L0.125,0.28867513459481287Z';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return wedge(ctx, r, transX, transY);
   }
 
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     return wedge(ctx, r, transX, transY);
   }
 }

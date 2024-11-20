@@ -3,7 +3,7 @@ import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
- * 
+ *
  *Copyright 2010-2021 Mike Bostock
 
   Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -37,12 +37,12 @@ export class ThinTriangleSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M0,-0.5773502691896257L-0.5,0.28867513459481287L0.5,0.28867513459481287Z';
 
   draw(ctx: IContext2d, size: number, x: number, y: number) {
-    const r = size / 2 / sqrt3;
+    const r = this.parseSize(size) / 2 / sqrt3;
     return thinTriangle(ctx, r, x, y);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number) {
-    const r = size / 2 / sqrt3 + offset;
+    const r = this.parseSize(size) / 2 / sqrt3 + offset;
     return thinTriangle(ctx, r, x, y);
   }
 }

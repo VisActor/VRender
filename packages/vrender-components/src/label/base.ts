@@ -11,7 +11,8 @@ import type {
   ILine,
   IArea,
   IRichText,
-  ILineGraphicAttribute
+  ILineGraphicAttribute,
+  ILinearGradient
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
@@ -526,19 +527,30 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (clampForce) {
       for (let i = 0; i < result.length; i++) {
         const text = labels[i];
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx !== 0 || dy !== 0) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+          text._isClamped = true;
         }
       }
     }
-    result = shiftY(result as any, { maxY: bmpTool.height, ...(strategy as ShiftYStrategy) });
+    result = shiftY(result as any, {
+      maxY: bmpTool.height,
+      ...(strategy as ShiftYStrategy),
+      labelling: (text: IText) => {
+        const baseMark = this.getRelatedGraphic(text.attribute);
+        const graphicBound = this._isCollectionBase
+          ? this.getGraphicBounds(null, this._idToPoint.get((text.attribute as any).id))
+          : this.getGraphicBounds(baseMark, text);
+        return this.labeling(text.AABBBounds, graphicBound, 'bottom', this.attribute.offset);
+      }
+    });
 
     for (let i = 0; i < result.length; i++) {
       const text = result[i];
       const bounds = text.AABBBounds;
       const range = boundToRange(bmpTool, bounds, true);
-      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
+      if (canPlace(bmpTool, bitmap, bounds, clampForce, text._isClamped ? 0 : overlapPadding)) {
         bitmap.setRange(range);
       } else {
         if (hideOnHit) {
@@ -548,7 +560,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       }
     }
-
     return result;
   }
 
@@ -645,7 +656,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
         // 向内挤压不考虑 overlapPadding
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx === 0 && dy === 0) {
           if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
             // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
@@ -979,8 +990,18 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      const backgroundColor = baseMark.attribute.fill as IColor;
-      const foregroundColor = label.attribute.fill as IColor;
+      let backgroundColor = baseMark.attribute.fill as IColor;
+      let foregroundColor = label.attribute.fill as IColor;
+
+      if (isObject(backgroundColor) && backgroundColor.gradient) {
+        const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
+
+        if (firstStopColor) {
+          backgroundColor = firstStopColor;
+          foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
+        }
+      }
+
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,

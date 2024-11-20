@@ -158,6 +158,8 @@ export class Gesture extends EventEmitter {
   }
 
   private onStart = (ev?: FederatedPointerEvent) => {
+    this.cachedEvents = [];
+    this.startPoints = [];
     this.reset();
 
     this.startTime = clock.now();
@@ -188,6 +190,7 @@ export class Gesture extends EventEmitter {
         this.triggerEvent(eventType, event);
         this.eventType = eventType;
         this.direction = direction;
+        this.pressTimeout = null;
       }, this.config.press.time);
       return;
     }
@@ -277,23 +280,30 @@ export class Gesture extends EventEmitter {
             endEvent.velocity = velocity;
             endEvent.direction = calcDirection(prevMovePoint, lastMovePoint);
             this.triggerEvent('swipe', endEvent);
+
+            this.cachedEvents = [];
+            this.startPoints = [];
+            this.reset();
+            return;
           }
         }
       }
 
-      if (now - this.lastTapTime < this.config.tap.interval && ev.target === this.lastTapTarget) {
-        this.tapCount++;
-      } else {
-        this.tapCount = 1;
-      }
-      this.lastTapTime = now;
-      this.lastTapTarget = ev.target;
+      if (now - this.startTime < this.config.press.time) {
+        if (now - this.lastTapTime < this.config.tap.interval && ev.target === this.lastTapTarget) {
+          this.tapCount++;
+        } else {
+          this.tapCount = 1;
+        }
+        this.lastTapTime = now;
+        this.lastTapTarget = ev.target;
 
-      if (this.tapCount === 1) {
-        this.triggerEvent('tap', endEvent);
-      } else if (this.tapCount === 2) {
-        this.triggerEvent('doubletap', endEvent);
-        this.tapCount = 0; // reset tapCount after doubletap
+        if (this.tapCount === 1) {
+          this.triggerEvent('tap', endEvent);
+        } else if (this.tapCount === 2) {
+          this.triggerEvent('doubletap', endEvent);
+          this.tapCount = 0; // reset tapCount after doubletap
+        }
       }
     }
 
@@ -315,9 +325,10 @@ export class Gesture extends EventEmitter {
 
   private getEventType(point: IPointLike) {
     const { eventType, startTime, startPoints } = this;
-    if (eventType) {
+    if (eventType === 'press') {
       return eventType;
     }
+
     let type;
     const now = clock.now();
     if (now - startTime > this.config.press.time && calcDistance(startPoints[0], point) < this.config.press.threshold) {
@@ -378,12 +389,14 @@ export class Gesture extends EventEmitter {
     }
 
     this.throttleTimer = application.global.getRequestAnimationFrame()(() => {
+      application.global.getCancelAnimationFrame()(this.throttleTimer);
+      this.throttleTimer = null;
+
       for (let i = 0, len = emitThrottles.length; i < len; i++) {
         const { type, ev } = emitThrottles[i];
         this.emitEvent(type, ev);
       }
       // 清空
-      this.throttleTimer = 0;
       this.emitThrottles.length = 0;
     });
   }

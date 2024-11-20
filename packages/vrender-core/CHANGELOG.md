@@ -1,6 +1,29 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 31 Oct 2024 02:49:49 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Nov 2024 08:34:34 GMT and should not be manually modified.
+
+## 0.20.15
+Fri, 15 Nov 2024 08:34:34 GMT
+
+### Updates
+
+- feat: support keepStrokeScale
+
+## 0.20.14
+Wed, 13 Nov 2024 07:47:16 GMT
+
+_Version update only_
+
+## 0.20.13
+Wed, 13 Nov 2024 06:35:02 GMT
+
+### Updates
+
+- feat: support auto refresh plugin
+- fix: fix smartInvert of gradient bar
+
+
+- fix: fix issue with text clip
 
 ## 0.20.12
 Thu, 31 Oct 2024 02:49:49 GMT

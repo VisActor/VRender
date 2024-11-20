@@ -75,7 +75,10 @@ export abstract class PickerBase {
         }
         const lineWidth = arcAttribute.lineWidth || themeAttribute.lineWidth;
         const pickStrokeBuffer = arcAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
+        const keepStrokeScale = arcAttribute.keepStrokeScale || themeAttribute.keepStrokeScale;
+        pickContext.lineWidth = keepStrokeScale
+          ? lineWidth + pickStrokeBuffer
+          : getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(point.x, point.y);
         return picked;
       }

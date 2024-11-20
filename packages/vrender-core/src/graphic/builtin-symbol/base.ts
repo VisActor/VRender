@@ -16,4 +16,8 @@ export class BaseSymbol {
       bounds.y2 = size[1] / 2;
     }
   }
+
+  protected parseSize(size: number | [number, number]) {
+    return isNumber(size) ? size : Math.min(size[0], size[1]);
+  }
 }

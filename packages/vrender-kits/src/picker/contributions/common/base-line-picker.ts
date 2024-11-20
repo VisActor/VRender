@@ -70,7 +70,10 @@ export abstract class BaseLinePicker<T extends IGraphic<Partial<IGraphicAttribut
         }
         const lineWidth = lineAttribute.lineWidth || themeAttribute.lineWidth;
         const pickStrokeBuffer = lineAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
-        pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
+        const keepStrokeScale = lineAttribute.keepStrokeScale || themeAttribute.keepStrokeScale;
+        pickContext.lineWidth = keepStrokeScale
+          ? lineWidth + pickStrokeBuffer
+          : getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(pickPoint.x, pickPoint.y);
         return picked;
       }

@@ -1,4 +1,4 @@
-import { isArray, type IBounds, AABBBounds } from '@visactor/vutils';
+import { isArray, type IBounds, AABBBounds, isNumber } from '@visactor/vutils';
 import { renderCommandList } from '../../common/render-command-list';
 import type { IContext2d, ICustomPath2D, IGraphicAttribute, ISymbolClass } from '../../interface';
 
@@ -33,6 +33,7 @@ export class CustomSymbolClass implements ISymbolClass {
     z?: number,
     cb?: (path: ICustomPath2D, attribute?: Record<string, any>) => void
   ) {
+    size = this.parseSize(size);
     if (this.isSvg) {
       if (!this.svgCache) {
         return false;
@@ -56,10 +57,16 @@ export class CustomSymbolClass implements ISymbolClass {
     z?: number,
     cb?: (path: ICustomPath2D, attribute?: Record<string, any>) => void
   ) {
+    size = this.parseSize(size);
     return this.drawOffset(ctx, size, x, y, 0, z, cb);
   }
 
+  protected parseSize(size: number | [number, number]): number {
+    return isNumber(size) ? size : Math.min(size[0], size[1]);
+  }
+
   bounds(size: number, bounds: IBounds) {
+    size = this.parseSize(size);
     if (this.isSvg) {
       if (!this.svgCache) {
         return;

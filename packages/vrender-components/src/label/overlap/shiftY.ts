@@ -60,14 +60,14 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
     // 从最后一个 text 向前遍历，如果与前一个 text 相交，则尝试放到下方（需要判断和前一个 text 是否相交，若相交则不能放到下方）
     for (let i = texts.length - 1; i > 0; i--) {
       const curText = texts[i];
-      const nextText = texts[i - 1];
-      const prevText = texts[i + 1];
+      const upperText = texts[i - 1];
+      const lowerText = texts[i + 1];
 
       // 当前 text 和上面一个 text 相交
-      if (isIntersect(getY1(nextText) + getHeight(nextText), getY1(curText))) {
+      if (isIntersect(getY1(upperText) + getHeight(upperText), getY1(curText))) {
         const { y } = labelling(curText);
         // 挪动当前 text 后， 和下面一个 text 不相交
-        if (!prevText || !isIntersect(y + getHeight(curText) / 2, getY1(prevText))) {
+        if (!lowerText || !isIntersect(y + getHeight(curText) / 2, getY1(lowerText))) {
           if (y + getHeight(curText) / 2 <= maxY) {
             setY1(curText, getY1(curText) + y - getY(curText));
           }
@@ -84,25 +84,27 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
     textInformation.set(text, { y1Initial: y1, y1, y2, y, height: y2 - y1, x1, x2, x });
     let hasRange = false;
 
-    for (const [range, texts] of xMap) {
+    for (const [range, xGroupTexts] of xMap) {
       const { start, end } = range;
       // 1. x1,x2 在 start 和 end 范围内
       if (x1 >= start && x2 <= end) {
-        texts.push(text);
+        xGroupTexts.push(text);
         hasRange = true;
       }
       // 2. x 坐标接近，相差在 5px 以内
-      else if (isNumberClose(x, getX(texts[0]), undefined, 5)) {
+      else if (isNumberClose(x, getX(xGroupTexts[0]), undefined, 5)) {
         // x 坐标相等，也纳入到一个分组中，并且要扩大分组 range
         const newRange = { start: Math.min(start, x1), end: Math.max(end, x2) };
-        xMap.set(newRange, [...texts, text]);
+        xGroupTexts.push(text);
+        xMap.set(newRange, xGroupTexts);
         xMap.delete(range);
         hasRange = true;
       }
       // 3. 与区间相交范围 > 50%
       else if (getIntersectionLength([start, end], [x1, x2]) / (end - start) > 0.5) {
         const newRange = { start: Math.min(start, x1), end: Math.max(end, x2) };
-        xMap.set(newRange, [...texts, text]);
+        xGroupTexts.push(text);
+        xMap.set(newRange, xGroupTexts);
         xMap.delete(range);
         hasRange = true;
       }
@@ -168,7 +170,8 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   }
 
   const result = [];
-  // texts 按照 x 进行排序，然后左右交替
+  // 调整文字顺序，越靠前的越优先占据空间
+  // texts 按照 x 进行排序，然后左右交替，保证首尾标签优先展示
   texts.sort((a, b) => a.attribute.x - b.attribute.x);
   let start = 0;
   let end = texts.length - 1;

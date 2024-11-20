@@ -189,6 +189,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   globalCompositeOperation: '',
   overflow: 'hidden',
   shadowPickMode: 'graphic',
+  keepStrokeScale: false,
   ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform

@@ -16,6 +16,9 @@ export const commonStrokeCb = (
 ) => {
   const lineWidth = symbolAttribute.lineWidth || themeAttribute.lineWidth;
   const pickStrokeBuffer = symbolAttribute.pickStrokeBuffer || themeAttribute.pickStrokeBuffer;
-  pickContext.lineWidth = getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
+  const keepStrokeScale = symbolAttribute.keepStrokeScale || themeAttribute.keepStrokeScale;
+  pickContext.lineWidth = keepStrokeScale
+    ? lineWidth + pickStrokeBuffer
+    : getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
   return context.isPointInStroke(pickPoint.x, pickPoint.y);
 };

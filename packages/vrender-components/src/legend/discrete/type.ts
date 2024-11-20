@@ -6,7 +6,7 @@ import type {
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { BaseGraphicAttributes, Padding } from '../../core/type';
-import type { PagerAttributes } from '../../pager';
+import type { PagerAttributes } from '../../pager/type';
 import type { LegendBaseAttributes } from '../type';
 import type { ScrollBarAttributes } from '../../scrollbar/type';
 import type { GraphicEventType } from '@visactor/vrender-core';

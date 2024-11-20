@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+This log was last generated on Fri, 15 Nov 2024 08:34:34 GMT and should not be manually modified.
+
+## 0.20.15
+Fri, 15 Nov 2024 08:34:34 GMT
+
+### Updates
+
+- fix: fix press in andiord
 
 ## 0.20.14
 Wed, 13 Nov 2024 07:47:16 GMT

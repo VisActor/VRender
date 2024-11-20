@@ -209,7 +209,8 @@ export default class Paragraph {
       baseline = 0;
     }
 
-    if (this.character.stroke) {
+    const { lineWidth = 1 } = this.character;
+    if (this.character.stroke && lineWidth) {
       applyStrokeStyle(ctx, this.character);
       ctx.strokeText(text, left, baseline);
     }

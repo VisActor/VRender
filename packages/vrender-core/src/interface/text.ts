@@ -15,6 +15,10 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
   measureTextWidth: (text: string, options: TextOptionsType) => number;
   measureTextPixelHeight: (text: string, options: TextOptionsType) => number;
   measureTextBoundHieght: (text: string, options: TextOptionsType) => number;
+  measureTextPixelADscentAndWidth: (
+    text: string,
+    options: TextOptionsType
+  ) => { width: number; ascent: number; descent: number };
   clipText: (
     text: string,
     options: TextOptionsType,
@@ -32,9 +36,10 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
     text: string,
     options: TextOptionsType,
     width: number,
-    suffix: string,
+    suffix: string | boolean,
     wordBreak: boolean,
-    position: 'start' | 'end' | 'middle'
+    position: 'start' | 'end' | 'middle',
+    forceSuffix?: boolean
   ) => { str: string; width: number };
   clipTextWithSuffixVertical: (
     verticalList: { text: string; width?: number; direction: number }[],

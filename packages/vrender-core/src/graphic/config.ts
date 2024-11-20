@@ -88,6 +88,7 @@ export const DefaultStrokeStyle: IStrokeStyle = {
 export const DefaultTextStyle: Required<ITextAttribute> = {
   text: '',
   maxLineWidth: Infinity,
+  maxWidth: Infinity,
   textAlign: 'left',
   textBaseline: 'alphabetic',
   fontSize: 16,

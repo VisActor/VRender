@@ -3,18 +3,38 @@ import { isNumberClose } from '@visactor/vutils';
 
 export interface IShiftYOption {
   labelling: (...args: any[]) => any;
-  /**
-   * 是否开启全局调整，开启后，所有文字会整体调整，否则只会按照 x 分组调整 top/bottom
-   * @default true
-   */
+
   maxY?: number;
   globalShiftY?: {
+    /**
+     * 是否开启全局调整，开启后，所有文字会整体调整，否则只会按照 x 分组调整 top/bottom
+     * @default true
+     */
     enable?: boolean;
+    /**
+     * 最大迭代次数
+     * @default 10
+     */
     maxIterations?: number;
+    /**
+     * 最大误差
+     * @default 0.1
+     */
     maxError?: number;
+    /**
+     * 调整后 text 之间的 padding
+     * @default 1
+     */
     padding?: number;
-    maxAttempts?: number; // 每个 text 最大被调整的次数
-    deltaYTolerance?: number; // 每个 text 调整的 y 坐标差值限制
+    /**
+     * 每个 text 最大被调整的次数
+     * @default 1000
+     */
+    maxAttempts?: number;
+    /**
+     * 每个 text 调整的 y 坐标差值限制
+     */
+    deltaYTolerance?: number;
   };
 }
 

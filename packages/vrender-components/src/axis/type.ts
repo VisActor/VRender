@@ -1,6 +1,5 @@
 import type {
   ILineGraphicAttribute,
-  SymbolType,
   ITextGraphicAttribute,
   ISymbolGraphicAttribute,
   IRectGraphicAttribute,
@@ -12,8 +11,8 @@ import type {
 import type { Dict } from '@visactor/vutils';
 import type { ContinuousScale, CustomTicksFunc } from '@visactor/vscale';
 import type { Point, TextContent } from '../core/type';
-import type { SegmentAttributes } from '../segment';
-import type { TagAttributes } from '../tag';
+import type { SegmentAttributes } from '../segment/type';
+import type { TagAttributes } from '../tag/type';
 
 export type AxisItemStateStyle<T> = {
   hover?: T;

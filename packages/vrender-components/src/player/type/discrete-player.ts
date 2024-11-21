@@ -1,6 +1,6 @@
-import { BasePlayerAttributes } from './base';
-import { DirectionType } from './direction';
-import { BasePlayerLayoutAttributes } from './layout';
+import type { BasePlayerAttributes } from './base';
+import type { DirectionType } from './direction';
+import type { BasePlayerLayoutAttributes } from './layout';
 
 export type DiscretePlayerAttributes = {
   /**

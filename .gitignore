@@ -96,3 +96,6 @@ docs/demos/src/node/image.png
 
 # generated documents
 docs/public/documents
+
+spec-types
+*.tsbuildinfo

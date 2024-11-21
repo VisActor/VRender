@@ -4,7 +4,6 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import { ILineAttribute, ISymbolAttribute } from '@visactor/vrender-core';
 
 export interface TimelineAttrs extends IGroupGraphicAttribute {
   width: number;

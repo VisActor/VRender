@@ -3,7 +3,7 @@ import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
- * 
+ *
  *Copyright 2010-2021 Mike Bostock
 
   Permission to use, copy, modify, and/or distribute this software for any purpose
@@ -62,12 +62,12 @@ export class CrossSymbol extends BaseSymbol implements ISymbolClass {
     'M-0.5,-0.2L-0.5,0.2L-0.2,0.2L-0.2,0.5L0.2,0.5L0.2,0.2L0.5,0.2L0.5,-0.2L0.2,-0.2L0.2,-0.5L-0.2,-0.5L-0.2,-0.2Z';
 
   draw(ctx: IContext2d, size: number, x: number, y: number, z?: number) {
-    const r = size / 6;
+    const r = this.parseSize(size) / 6;
     return cross(ctx, r, x, y, z);
   }
 
   drawOffset(ctx: IContext2d, size: number, x: number, y: number, offset: number, z?: number) {
-    const r = size / 6;
+    const r = this.parseSize(size) / 6;
     return crossOffset(ctx, r, x, y, offset, z);
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-components",
-  "version": "0.20.15",
+  "version": "0.20.16",
   "description": "components library for dp visualization",
   "sideEffects": false,
   "main": "cjs/index.js",
@@ -21,13 +21,14 @@
     "test-cov": "jest --coverage",
     "test-live": "npm run test-watch __tests__/unit/",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
-    "analysis-core": "cross-env DEBUG='Bundler*' bundle -f umd -a -i core.ts"
+    "analysis-core": "cross-env DEBUG='Bundler*' bundle -f umd -a -i core.ts",
+    "build:spec-types": "rm -rf ./spec-types && tsc -p ./tsconfig.spec.json --declaration --emitDeclarationOnly --outDir ./spec-types"
   },
   "dependencies": {
     "@visactor/vutils": "~0.18.18",
     "@visactor/vscale": "~0.18.18",
-    "@visactor/vrender-core": "workspace:0.20.15",
-    "@visactor/vrender-kits": "workspace:0.20.15"
+    "@visactor/vrender-core": "workspace:0.20.16",
+    "@visactor/vrender-kits": "workspace:0.20.16"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

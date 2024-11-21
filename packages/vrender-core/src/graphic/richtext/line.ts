@@ -2,7 +2,7 @@
 import type { IContext2d, IRichTextIcon } from '../../interface';
 import { RichTextIcon } from './icon';
 import Paragraph from './paragraph';
-import { DIRECTION_KEY, measureTextCanvas, regFirstSpace } from './utils';
+import { applyFillStyle, applyStrokeStyle, DIRECTION_KEY, measureTextCanvas, regFirstSpace } from './utils';
 
 /**
  * 部分代码参考 https://github.com/danielearwicker/carota/
@@ -202,7 +202,7 @@ export default class Line {
     }
 
     // 正常绘制
-    this.paragraphs.map((paragraph, index) => {
+    this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {
         // 更新icon位置
         paragraph.setAttributes({
@@ -214,6 +214,15 @@ export default class Line {
         drawIcon(paragraph, ctx, x + paragraph._x, y + paragraph._y, this.ascent);
         return;
       }
+      const b = {
+        x1: this.left,
+        y1: this.top,
+        x2: this.left + this.actualWidth,
+        y2: this.top + this.height
+      };
+      applyStrokeStyle(ctx, paragraph.character);
+      // 下面绘制underline和line-through时需要设置FillStyle
+      applyFillStyle(ctx, paragraph.character, b);
       paragraph.draw(ctx, y + this.ascent, x, index === 0, this.textAlign);
     });
   }
@@ -250,7 +259,7 @@ export default class Line {
 
     let width = 0;
     // 正常绘制
-    this.paragraphs.map((paragraph, index) => {
+    this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {
         width += paragraph.width; // todo: 处理direction
       } else {

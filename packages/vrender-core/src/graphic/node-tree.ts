@@ -181,7 +181,7 @@ export class Node extends EventEmitter<any, any> implements INode {
     if (!referenceNode) {
       return this.appendChild(newNode);
     }
-    if (this._uid === newNode._uid) {
+    if (this === newNode || newNode === referenceNode) {
       return null;
     }
     if (newNode.isAncestorsOf(this)) {
@@ -225,7 +225,7 @@ export class Node extends EventEmitter<any, any> implements INode {
     if (!referenceNode) {
       return this.appendChild(newNode);
     }
-    if (this._uid === newNode._uid) {
+    if (this === newNode || newNode === referenceNode) {
       return null;
     }
     if (newNode.isAncestorsOf(this)) {
@@ -272,7 +272,7 @@ export class Node extends EventEmitter<any, any> implements INode {
     if (idx >= this.childrenCount) {
       return this.appendChild(newNode);
     }
-    if (this._uid === newNode._uid) {
+    if (this === newNode) {
       return null;
     }
     if (newNode.isAncestorsOf(this)) {

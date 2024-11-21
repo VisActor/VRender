@@ -2,11 +2,20 @@ import type { IText } from '@visactor/vrender-core';
 import { isNumberClose } from '@visactor/vutils';
 
 export interface IShiftYOption {
-  maxIterations?: number;
-  maxError?: number;
-  padding?: number;
-  maxY?: number;
   labelling: (...args: any[]) => any;
+  /**
+   * 是否开启全局调整，开启后，所有文字会整体调整，否则只会按照 x 分组调整 top/bottom
+   * @default true
+   */
+  maxY?: number;
+  globalShiftY?: {
+    enable?: boolean;
+    maxIterations?: number;
+    maxError?: number;
+    padding?: number;
+    maxAttempts?: number; // 每个 text 最大被调整的次数
+    deltaYTolerance?: number; // 每个 text 调整的 y 坐标差值限制
+  };
 }
 
 const isIntersect = (top: number, bottom: number) => {
@@ -28,7 +37,11 @@ function getIntersectionLength(range1: number[], range2: number[]) {
 }
 
 export function shiftY(texts: IText[], option: IShiftYOption) {
-  const { maxIterations = 10, maxError = 0.1, padding = 1, maxY = Number.MAX_VALUE, labelling } = option;
+  const {
+    maxY = Number.MAX_VALUE,
+    labelling,
+    globalShiftY = { enable: true, maxIterations: 10, maxError: 0.1, padding: 1 }
+  } = option;
 
   const n = texts.length;
   if (n <= 1) {
@@ -39,7 +52,17 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   const xMap = new Map<{ start: number; end: number }, IText[]>();
   const textInformation = new Map<
     IText,
-    { y1Initial: number; y1: number; y: number; y2: number; height: number; x1: number; x2: number; x: number }
+    {
+      y1Initial: number;
+      y1: number;
+      y: number;
+      y2: number;
+      height: number;
+      x1: number;
+      x2: number;
+      x: number;
+      attempts: number;
+    }
   >();
 
   const getY1Initial = (text: IText) => textInformation.get(text).y1Initial;
@@ -49,8 +72,14 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   const getX = (text: IText) => textInformation.get(text).x;
   const getX1 = (text: IText) => textInformation.get(text).x1;
   const getX2 = (text: IText) => textInformation.get(text).x2;
+  const getAdjustAttempts = (text: IText) => textInformation.get(text).attempts;
+
   const setY1 = (text: IText, y: number) => {
     textInformation.get(text).y1 = y;
+  };
+
+  const setAdjustAttempts = (text: IText, attempts: number) => {
+    textInformation.get(text).attempts = attempts;
   };
 
   function adjustPositionInOneGroup(texts: IText[]) {
@@ -81,7 +110,7 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   for (const text of texts) {
     const { y1, y2, x1, x2 } = text.AABBBounds;
     const { x, y } = text.attribute;
-    textInformation.set(text, { y1Initial: y1, y1, y2, y, height: y2 - y1, x1, x2, x });
+    textInformation.set(text, { y1Initial: y1, y1, y2, y, height: y2 - y1, x1, x2, x, attempts: 0 });
     let hasRange = false;
 
     for (const [range, xGroupTexts] of xMap) {
@@ -127,40 +156,70 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   }
 
   // 整体调整一次 Y 坐标，进行散开
-  for (let iter = 0; iter < maxIterations; iter++) {
-    texts.sort((a, b) => getY1(a) - getY1(b));
-    let error = 0;
-    for (let i = 0; i < n - 1; i++) {
-      const curText = texts[i];
-      let j = i + 1;
-      let nextText;
-      while (
-        (nextText = texts[j]) &&
-        !isXIntersect([getX1(curText), getX2(curText)], [getX1(nextText), getX2(nextText)])
-      ) {
-        j += 1;
-      }
-      if (nextText) {
-        const y1 = getY1(curText);
-        const h0 = getHeight(curText);
-        const nextY1 = getY1(nextText);
-        const delta = nextY1 - (y1 + h0);
-        if (delta < padding) {
-          const newDelta = (padding - delta) / 2;
-          error = Math.max(error, newDelta);
-          if (y1 + newDelta + getHeight(nextText) > maxY) {
-            setY1(curText, y1 - (padding - delta));
-          } else if (y1 - newDelta < 0) {
-            setY1(nextText, nextY1 + (padding - delta));
-          } else {
-            setY1(curText, y1 - newDelta);
-            setY1(nextText, nextY1 + newDelta);
+  if (globalShiftY.enable !== false) {
+    const {
+      maxIterations = 10,
+      maxError = 0.1,
+      padding = 1,
+      maxAttempts = 1000,
+      deltaYTolerance = Number.MAX_VALUE
+    } = globalShiftY;
+    for (let iter = 0; iter < maxIterations; iter++) {
+      texts.sort((a, b) => getY1(a) - getY1(b));
+      let error = 0;
+      for (let i = 0; i < n - 1; i++) {
+        const curText = texts[i];
+        if (getAdjustAttempts(curText) >= maxAttempts) {
+          continue;
+        }
+        let j = i + 1;
+        let nextText;
+        while (
+          (nextText = texts[j]) &&
+          !isXIntersect([getX1(curText), getX2(curText)], [getX1(nextText), getX2(nextText)])
+        ) {
+          j += 1;
+        }
+        if (nextText) {
+          const y1 = getY1(curText);
+          const h0 = getHeight(curText);
+          const nextY1 = getY1(nextText);
+          const delta = nextY1 - (y1 + h0);
+          if (delta < padding) {
+            const newDelta = (padding - delta) / 2;
+            error = Math.max(error, newDelta);
+            if (y1 + newDelta + getHeight(nextText) > maxY) {
+              const newY1 = y1 - (padding - delta);
+              const curTextDelta = getY1Initial(curText) - newY1;
+              if (Math.abs(curTextDelta) <= deltaYTolerance) {
+                setY1(curText, newY1);
+                setAdjustAttempts(curText, getAdjustAttempts(curText) + 1);
+              }
+            } else if (y1 - newDelta < 0) {
+              const newY1 = nextY1 + (padding - delta);
+              const nextTextDelta = getY1Initial(nextText) - newY1;
+              if (Math.abs(nextTextDelta) <= deltaYTolerance) {
+                setY1(nextText, newY1);
+                setAdjustAttempts(nextText, getAdjustAttempts(nextText) + 1);
+              }
+            } else {
+              const newCurY1 = y1 - newDelta;
+              const curTextDelta = getY1Initial(curText) - newCurY1;
+              const newNextY1 = nextY1 + newDelta;
+              const nextTextDelta = getY1Initial(nextText) - newNextY1;
+              if (Math.abs(curTextDelta) <= deltaYTolerance && Math.abs(nextTextDelta) <= deltaYTolerance) {
+                setY1(curText, newCurY1);
+                setY1(nextText, newNextY1);
+                setAdjustAttempts(curText, getAdjustAttempts(curText) + 1);
+                setAdjustAttempts(nextText, getAdjustAttempts(nextText) + 1);
+              }
+            }
           }
         }
       }
-    }
-    if (error < maxError) {
-      break;
+      if (error < maxError) {
+        break;
+      }
     }
   }
 

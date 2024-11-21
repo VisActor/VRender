@@ -25,6 +25,7 @@ import {
 import type { ComponentOptions } from '../interface';
 import { registerLabelComponent } from './data-label-register';
 import { isFunction } from '@visactor/vutils';
+import { itemIntersect } from '../util';
 
 export class ArcInfo {
   key!: string;
@@ -149,7 +150,23 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
   protected _overlapping(labels: (IText | IRichText)[]) {
     if (['inside', 'inside-center'].includes(this.attribute.position as string)) {
-      return super._overlapping(labels);
+      if (this.attribute.rotate === false) {
+        return super._overlapping(labels);
+      }
+
+      // 默认做了旋转
+      const visibleLabels: (IText | IRichText)[] = [];
+      labels.forEach((label, index) => {
+        if (index === 0) {
+          visibleLabels.push(label);
+        } else if (visibleLabels.every(v => !itemIntersect(label as IText, v as IText))) {
+          visibleLabels.push(label);
+        } else {
+          label.setAttribute('visible', false);
+        }
+      });
+
+      return labels;
     }
     return labels;
   }
@@ -358,7 +375,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
         limit = outerRadius - minRadius - spaceWidth;
       }
       // TODO: 对于不旋转的内部标签设置 limit 为 outerRadius
-      if (labelConfig.rotate !== true) {
+      if (labelConfig.rotate === false) {
         limit = outerRadius - spaceWidth;
       }
       const text = this._getFormatLabelText(arc.refDatum, limit);

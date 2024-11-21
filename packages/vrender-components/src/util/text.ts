@@ -9,7 +9,7 @@ import type {
 import { getTextBounds, graphicCreator } from '@visactor/vrender-core';
 import type { ITextMeasureOption } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { TextMeasure, isObject, isValid } from '@visactor/vutils';
+import { TextMeasure, isObject, isValid, isRectIntersect, isRotateAABBIntersect } from '@visactor/vutils';
 import { DEFAULT_TEXT_FONT_FAMILY, DEFAULT_TEXT_FONT_SIZE } from '../constant';
 import type { HTMLTextContent, ReactTextContent, TextContent } from '../core/type';
 
@@ -150,4 +150,16 @@ export function alignTextInLine(
       graphic.setAttribute('x', pos);
     }
   }
+}
+
+export function itemIntersect(item1: IText, item2: IText) {
+  if (!item1.OBBBounds?.empty() && !item2.OBBBounds?.empty()) {
+    return item1.OBBBounds.intersects(item2.OBBBounds);
+  }
+  return (
+    isRectIntersect(item1.AABBBounds, item2.AABBBounds, false) &&
+    (item1.rotatedBounds && item2.rotatedBounds
+      ? isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true)
+      : true)
+  );
 }

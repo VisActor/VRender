@@ -3,7 +3,8 @@
  */
 import type { IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { degreeToRadian, isEmpty } from '@visactor/vutils';
-import { genRotateBounds, itemIntersect } from './util';
+import { genRotateBounds } from './util';
+import { itemIntersect } from '../../util/text';
 
 type RotateConfig = {
   /**

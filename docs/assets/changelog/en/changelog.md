@@ -1,3 +1,20 @@
+# v0.20.15
+
+2024-11-21
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: support keepStrokeScale
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix press in andiord
+
+
+
+[more detail about v0.20.15](https://github.com/VisActor/VRender/releases/tag/v0.20.15)
+
 # v0.20.14
 
 2024-11-13

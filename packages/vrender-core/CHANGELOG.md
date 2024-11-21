@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 15 Nov 2024 08:34:34 GMT and should not be manually modified.
+This log was last generated on Thu, 21 Nov 2024 06:58:23 GMT and should not be manually modified.
+
+## 0.20.16
+Thu, 21 Nov 2024 06:58:23 GMT
+
+### Updates
+
+- fix: fix issue with _debug_bounds
+- fix: fix issue with string linear-gradient
+- fix: fix issue where not work when lineWidth is set to 0
+- fix: fix drawing issue when size is array
 
 ## 0.20.15
 Fri, 15 Nov 2024 08:34:34 GMT

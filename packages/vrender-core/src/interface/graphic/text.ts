@@ -31,6 +31,12 @@ export interface LayoutType {
   textBaseline: TextBaselineType;
 }
 
+export enum MeasureModeEnum {
+  estimate = 0,
+  actualBounding = 1,
+  fontBounding = 2
+}
+
 export type ITextAttribute = {
   text: string | number | string[] | number[];
   maxLineWidth: number;
@@ -62,6 +68,8 @@ export type ITextAttribute = {
   // textDecorationWidth: number;
   // padding?: number | number[];
   disableAutoClipedPoptip?: boolean;
+  // 测量模式，默认使用actualBounding
+  measureMode?: MeasureModeEnum;
 };
 export type ITextCache = {
   // 单行文本的时候缓存（多行文本没有）

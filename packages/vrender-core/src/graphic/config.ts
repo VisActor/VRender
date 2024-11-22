@@ -1,36 +1,37 @@
 // 存放公共属性
 import { Logger, Matrix, pi2 } from '@visactor/vutils';
 import { CustomPath2D } from '../common/custom-path2d';
-import type {
-  IArcGraphicAttribute,
-  IAreaGraphicAttribute,
-  IGraphicAttribute,
-  ICircleGraphicAttribute,
-  IFillStyle,
-  IGlyphGraphicAttribute,
-  IGroupGraphicAttribute,
-  IImageGraphicAttribute,
-  ILineGraphicAttribute,
-  IPathGraphicAttribute,
-  IPolygonGraphicAttribute,
-  IRect3dGraphicAttribute,
-  IRectGraphicAttribute,
-  IStrokeStyle,
-  IGraphicStyle,
-  ISymbolGraphicAttribute,
-  ITextAttribute,
-  ITextGraphicAttribute,
-  IRichTextGraphicAttribute,
-  ITransform,
-  RichTextWordBreak,
-  RichTextVerticalDirection,
-  RichTextGlobalAlignType,
-  RichTextGlobalBaselineType,
-  IRichTextIconGraphicAttribute,
-  IConnectedStyle,
-  ILayout,
-  IDebugType,
-  IPickStyle
+import {
+  type IArcGraphicAttribute,
+  type IAreaGraphicAttribute,
+  type IGraphicAttribute,
+  type ICircleGraphicAttribute,
+  type IFillStyle,
+  type IGlyphGraphicAttribute,
+  type IGroupGraphicAttribute,
+  type IImageGraphicAttribute,
+  type ILineGraphicAttribute,
+  type IPathGraphicAttribute,
+  type IPolygonGraphicAttribute,
+  type IRect3dGraphicAttribute,
+  type IRectGraphicAttribute,
+  type IStrokeStyle,
+  type IGraphicStyle,
+  type ISymbolGraphicAttribute,
+  type ITextAttribute,
+  type ITextGraphicAttribute,
+  type IRichTextGraphicAttribute,
+  type ITransform,
+  type RichTextWordBreak,
+  type RichTextVerticalDirection,
+  type RichTextGlobalAlignType,
+  type RichTextGlobalBaselineType,
+  type IRichTextIconGraphicAttribute,
+  type IConnectedStyle,
+  type ILayout,
+  type IDebugType,
+  type IPickStyle,
+  MeasureModeEnum
 } from '../interface';
 
 export const DefaultLayout: ILayout = {
@@ -114,7 +115,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   suffixPosition: 'end',
   underlineDash: [],
   underlineOffset: 0,
-  disableAutoClipedPoptip: undefined
+  disableAutoClipedPoptip: undefined,
+  measureMode: MeasureModeEnum.fontBounding
 };
 
 export const DefaultPickStyle: IPickStyle = {

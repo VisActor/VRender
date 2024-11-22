@@ -1,6 +1,7 @@
 import type { vec2 } from '@visactor/vutils';
 import type { ITextMeasure, TextOptionsType } from '../../../interface/text';
 import type { TextLayoutBBox, LayoutItemType, LayoutType, TextAlignType, TextBaselineType } from '../../../interface';
+import { MeasureModeEnum } from '../../../interface';
 
 export class CanvasTextLayout {
   private fontFamily: string;
@@ -56,9 +57,13 @@ export class CanvasTextLayout {
     lineHeight: number,
     suffix: string = '',
     wordBreak: boolean,
-    lineWidth?: number,
-    suffixPosition: 'start' | 'end' | 'middle' = 'end'
+    params?: {
+      lineWidth?: number;
+      suffixPosition?: 'start' | 'end' | 'middle';
+      measureMode?: MeasureModeEnum;
+    }
   ): LayoutType {
+    const { lineWidth, suffixPosition = 'end', measureMode = MeasureModeEnum.actualBounding } = params ?? {};
     lines = lines.map(l => l.toString()) as string[];
     const linesLayout: LayoutItemType[] = [];
     // bbox高度可能大于totalHeight
@@ -67,7 +72,11 @@ export class CanvasTextLayout {
       // 直接使用lineWidth，并拆分字符串
       let width: number;
       for (let i = 0, len = lines.length; i < len; i++) {
-        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(lines[i] as string, this.textOptions);
+        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(
+          lines[i] as string,
+          this.textOptions,
+          measureMode
+        );
         width = Math.min(metrics.width, lineWidth);
         linesLayout.push({
           str:
@@ -89,17 +98,21 @@ export class CanvasTextLayout {
       bboxWH[0] = lineWidth;
     } else {
       // 使用所有行中最长的作为lineWidth
-      lineWidth = 0;
+      let _lineWidth = 0;
       let width: number;
       let text: string;
       for (let i = 0, len = lines.length; i < len; i++) {
         text = lines[i] as string;
-        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(lines[i] as string, this.textOptions);
+        const metrics = this.textMeasure.measureTextPixelADscentAndWidth(
+          lines[i] as string,
+          this.textOptions,
+          measureMode
+        );
         width = metrics.width;
-        lineWidth = Math.max(lineWidth, width);
+        _lineWidth = Math.max(_lineWidth, width);
         linesLayout.push({ str: text, width, ascent: metrics.ascent, descent: metrics.descent });
       }
-      bboxWH[0] = lineWidth;
+      bboxWH[0] = _lineWidth;
     }
     bboxWH[1] = linesLayout.length * lineHeight;
 

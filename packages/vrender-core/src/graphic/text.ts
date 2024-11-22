@@ -241,6 +241,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return b;
   }
 
+  guessLineHeightBuf(fontSize: number) {
+    return fontSize ? fontSize * 0.1 : 0;
+  }
+
   /**
    * 计算多行文字的bounds，缓存每行文字的布局位置
    * @param text
@@ -259,14 +263,15 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       maxLineWidth,
       stroke = textTheme.stroke,
       wrap = textTheme.wrap,
-      ignoreBuf = textTheme.ignoreBuf,
+      measureMode = textTheme.measureMode,
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
-      suffixPosition = textTheme.suffixPosition
+      suffixPosition = textTheme.suffixPosition,
+      ignoreBuf = textTheme.ignoreBuf
     } = attribute;
 
-    // const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(attribute, textTheme);
+    const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
+    const lineHeight = this.getLineHeight(attribute, textTheme) + buf;
 
     if (whiteSpace === 'normal' || wrap) {
       return this.updateWrapAABBBounds(text);
@@ -280,7 +285,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       return this._AABBBounds;
     }
     const textMeasure = application.graphicUtil.textMeasure;
-    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily }, textMeasure);
+    const layoutObj = new CanvasTextLayout(fontFamily, { fontSize, fontWeight, fontFamily, lineHeight }, textMeasure);
     const layoutData = layoutObj.GetLayoutByLines(
       text,
       textAlign,
@@ -288,8 +293,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineHeight,
       ellipsis === true ? (textTheme.ellipsis as string) : ellipsis || undefined,
       false,
-      maxLineWidth,
-      suffixPosition
+      {
+        lineWidth: maxLineWidth,
+        suffixPosition,
+        measureMode
+      }
     );
     const { bbox } = layoutData;
     this.cache.layoutData = layoutData;
@@ -324,13 +332,14 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       fontWeight = textTheme.fontWeight,
       // widthLimit,
       ignoreBuf = textTheme.ignoreBuf,
+      measureMode = textTheme.measureMode,
       suffixPosition = textTheme.suffixPosition,
       heightLimit = 0,
       lineClamp
     } = this.attribute;
 
-    // const buf = ignoreBuf ? 0 : 2;
-    const lineHeight = this.getLineHeight(this.attribute, textTheme);
+    const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
+    const lineHeight = this.getLineHeight(this.attribute, textTheme) + buf;
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
@@ -342,7 +351,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     }
 
     const textMeasure = application.graphicUtil.textMeasure;
-    const textOptions = { fontSize, fontWeight, fontFamily };
+    const textOptions = { fontSize, fontWeight, fontFamily, lineHeight };
     const layoutObj = new CanvasTextLayout(fontFamily, textOptions, textMeasure as any);
 
     // layoutObj内逻辑
@@ -378,7 +387,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
               suffixPosition,
               i !== lines.length - 1
             );
-            const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions);
+            const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions, measureMode);
             linesLayout.push({
               str: clip.str,
               width: clip.width,
@@ -415,7 +424,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             }
             needCut = false;
           }
-          const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions);
+          const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions, measureMode);
           linesLayout.push({
             str: clip.str,
             width: clip.width,
@@ -458,7 +467,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             false,
             suffixPosition
           );
-          const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions);
+          const matrics = textMeasure.measureTextPixelADscentAndWidth(clip.str, textOptions, measureMode);
           linesLayout.push({
             str: clip.str,
             width: clip.width,
@@ -472,7 +481,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         text = lines[i] as string;
         width = textMeasure.measureTextWidth(text, textOptions);
         lineWidth = Math.max(lineWidth, width);
-        const matrics = textMeasure.measureTextPixelADscentAndWidth(text, textOptions);
+        const matrics = textMeasure.measureTextPixelADscentAndWidth(text, textOptions, measureMode);
         linesLayout.push({ str: text, width, ascent: matrics.ascent, descent: matrics.descent });
       }
       bboxWH[0] = lineWidth;

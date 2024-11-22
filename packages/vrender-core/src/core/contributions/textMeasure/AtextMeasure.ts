@@ -1,6 +1,7 @@
 import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicUtil } from '../../../interface/core';
 import type { ICanvas, IContext2d, EnvType } from '../../../interface';
+import { MeasureModeEnum } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';
 import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
 import { testLetter } from '../../../graphic/richtext/utils';
@@ -169,28 +170,32 @@ export class ATextMeasure implements ITextMeasure {
 
   protected measureTextBoundADscentEstimate(options: TextOptionsType) {
     const fontSize = options.fontSize ?? DefaultTextStyle.fontSize;
-    const { textBaseline } = options;
-    if (textBaseline === 'bottom') {
-      return {
-        ascent: fontSize,
-        descent: 0
-      };
-    } else if (textBaseline === 'middle') {
-      return {
-        ascent: fontSize / 2,
-        descent: fontSize / 2
-      };
-    } else if (textBaseline === 'alphabetic') {
-      return {
-        ascent: 0.79 * fontSize,
-        descent: 0.21 * fontSize
-      };
-    }
-
     return {
-      ascent: 0,
-      descent: fontSize
+      ascent: 0.79 * fontSize,
+      descent: 0.21 * fontSize
     };
+    // const { textBaseline } = options;
+    // if (textBaseline === 'bottom') {
+    //   return {
+    //     ascent: fontSize,
+    //     descent: 0
+    //   };
+    // } else if (textBaseline === 'middle') {
+    //   return {
+    //     ascent: fontSize / 2,
+    //     descent: fontSize / 2
+    //   };
+    // } else if (textBaseline === 'alphabetic') {
+    //   return {
+    //     ascent: 0.79 * fontSize,
+    //     descent: 0.21 * fontSize
+    //   };
+    // }
+
+    // return {
+    //   ascent: 0,
+    //   descent: fontSize
+    // };
   }
 
   protected measureTextBoundLeftRightEstimate(options: TextOptionsType) {
@@ -216,7 +221,8 @@ export class ATextMeasure implements ITextMeasure {
 
   measureTextPixelADscentAndWidth(
     text: string,
-    options: TextOptionsType
+    options: TextOptionsType,
+    mode: MeasureModeEnum
   ): { width: number; ascent: number; descent: number } {
     if (!this.context) {
       return {
@@ -225,6 +231,45 @@ export class ATextMeasure implements ITextMeasure {
       };
     }
     const out = this._measureTextWithoutAlignBaseline(text, options, true);
+
+    if (mode === MeasureModeEnum.actualBounding) {
+      return {
+        ascent: (out as any).actualBoundingBoxAscent,
+        descent: (out as any).actualBoundingBoxDescent,
+        width: (out as any).width
+      };
+    } else if (mode === MeasureModeEnum.estimate) {
+      return {
+        ...this.measureTextBoundADscentEstimate(options),
+        width: (out as any).width
+      };
+    } else if (mode === MeasureModeEnum.fontBounding) {
+      const { lineHeight = options.fontSize } = options;
+      let ratio = 1;
+      if (lineHeight) {
+        const fontBoundingHeight = (out as any).fontBoundingBoxAscent + (out as any).fontBoundingBoxDescent;
+        ratio = lineHeight / fontBoundingHeight;
+      }
+      // 避免二次矫正，应当保证所有字符组合的基线都一样，否则fontBounding就失去意义了
+      // 但如果超出边界了，就只能进行二次矫正
+      let ascent = (out as any).fontBoundingBoxAscent * ratio;
+      let descent = (out as any).fontBoundingBoxDescent * ratio;
+      // 只能一边超出，都超出的话目前无法矫正，因为行高不能超
+      if ((out as any).actualBoundingBoxDescent && descent < (out as any).actualBoundingBoxDescent) {
+        const delta = (out as any).actualBoundingBoxDescent - descent;
+        descent += delta;
+        ascent -= delta;
+      } else if ((out as any).actualBoundingBoxAscent && ascent < (out as any).actualBoundingBoxAscent) {
+        const delta = (out as any).actualBoundingBoxAscent - ascent;
+        ascent += delta;
+        descent -= delta;
+      }
+      return {
+        ascent,
+        descent,
+        width: (out as any).width
+      };
+    }
     return {
       ascent: (out as any).actualBoundingBoxAscent,
       descent: (out as any).actualBoundingBoxDescent,

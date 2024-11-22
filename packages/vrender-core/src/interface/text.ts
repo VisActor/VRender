@@ -1,5 +1,6 @@
 import type { IContribution } from './contribution';
 import type { IGraphicUtil } from './core';
+import type { MeasureModeEnum } from './graphic/text';
 
 export interface TextOptionsType {
   fontSize?: number;
@@ -7,6 +8,7 @@ export interface TextOptionsType {
   fontFamily?: string;
   fontStyle?: string;
   fontVariant?: string;
+  lineHeight?: number;
   textBaseline?: 'alphabetic' | 'top' | 'middle' | 'bottom';
   textAlign?: 'left' | 'center' | 'right' | 'start' | 'end';
 }
@@ -17,7 +19,8 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
   measureTextBoundHieght: (text: string, options: TextOptionsType) => number;
   measureTextPixelADscentAndWidth: (
     text: string,
-    options: TextOptionsType
+    options: TextOptionsType,
+    mode: MeasureModeEnum
   ) => { width: number; ascent: number; descent: number };
   clipText: (
     text: string,

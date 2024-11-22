@@ -265,6 +265,11 @@ export const page = () => {
       textBaseline: 'middle',
       x: 500
     }
+    // {
+    //   text: '...',
+    //   textBaseline: 'bottom',
+    //   x: 550
+    // }
   ];
 
   graphics.push(
@@ -336,6 +341,7 @@ export const page = () => {
         y: 500,
         ...item,
         fill: 'red',
+        measureMode: 1,
         ignoreBuf: true,
         fontSize: 22,
         _debug_bounds: true,

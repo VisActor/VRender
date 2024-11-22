@@ -199,6 +199,16 @@ export class CanvasTextLayout {
     }
 
     line.topOffset = lineHeight / 2 + (line.ascent - line.descent) / 2 + origin[1];
+    // const actualHeight = line.ascent + line.descent;
+    // const buf = 2;
+    // const actualHeightWithBuf = actualHeight + buf;
+    // if (actualHeightWithBuf < lineHeight - buf) {
+    //   if (textBaseline === 'bottom') {
+    //     line.topOffset += (lineHeight - (actualHeightWithBuf)) / 2;
+    //   } else if (textBaseline === 'top') {
+    //     line.topOffset -= (lineHeight - (actualHeightWithBuf)) / 2;
+    //   }
+    // }
     origin[1] += lineHeight;
 
     return line;

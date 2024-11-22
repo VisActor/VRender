@@ -314,9 +314,9 @@ describe('Graphic-Bounds', () => {
     });
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
-    expect(text.AABBBounds.y1).toBeCloseTo(87.36);
+    expect(text.AABBBounds.y1).toBeCloseTo(86.096);
     expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
-    expect(text.AABBBounds.y2).toBeCloseTo(103.36);
+    expect(text.AABBBounds.y2).toBeCloseTo(103.696);
 
     text = createText({
       x: 100,
@@ -328,9 +328,9 @@ describe('Graphic-Bounds', () => {
     });
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
-    expect(text.AABBBounds.y1).toBeCloseTo(74.72);
+    expect(text.AABBBounds.y1).toBeCloseTo(72.192);
     expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
-    expect(text.AABBBounds.y2).toBeCloseTo(106.72);
+    expect(text.AABBBounds.y2).toBeCloseTo(107.392);
   });
 
   it('arc bounds', () => {

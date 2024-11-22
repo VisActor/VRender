@@ -350,6 +350,46 @@ export const page = () => {
     );
   });
 
+  graphics.push(
+    createLine({
+      x: 229,
+      y: 207,
+      stroke: 'blue',
+      points: [
+        { x: -100, y: 0 },
+        { x: 300, y: 0 }
+      ]
+    })
+  );
+  graphics.push(
+    createText({
+      textAlign: 'center',
+      lineWidth: 0,
+      textConfig: [],
+      lineHeight: '150%',
+      fontWeight: 'bold',
+      fillOpacity: 1,
+      textBaseline: 'alphabetic',
+      fill: 'red',
+      fontFamily:
+        'LarkHackSafariFont,LarkEmojiFont,LarkChineseQuote,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Tahoma,"PingFang SC","Microsoft Yahei",Arial,"Hiragino Sans GB",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+      fontStyle: '',
+      underline: 0,
+      stroke: '#00295C',
+      visible: true,
+      x: 229,
+      y: 207,
+      angle: 0,
+      limitAttrs: {
+        text: '节日福利'
+      },
+      text: '节日福利',
+      fontSize: 69,
+      _debug_bounds: true,
+      pickable: true
+    })
+  );
+
   const stage = createStage({
     canvas: 'main',
     autoRender: true,

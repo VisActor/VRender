@@ -314,9 +314,9 @@ describe('Graphic-Bounds', () => {
     });
 
     expect(text.AABBBounds.x1).toBeCloseTo(100);
-    expect(text.AABBBounds.y1).toBeCloseTo(86.096);
+    expect(text.AABBBounds.y1).toBeCloseTo(85.50588235294117);
     expect(text.AABBBounds.x2).toBeCloseTo(185.390625);
-    expect(text.AABBBounds.y2).toBeCloseTo(103.696);
+    expect(text.AABBBounds.y2).toBeCloseTo(103.10588235294118);
 
     text = createText({
       x: 100,

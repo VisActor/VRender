@@ -495,7 +495,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       height: bboxWH[1]
     };
 
-    layoutObj.LayoutBBox(bbox, textAlign, textBaseline as any);
+    layoutObj.LayoutBBox(bbox, textAlign, textBaseline as any, linesLayout);
 
     const layoutData = layoutObj.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline as any, lineHeight);
 

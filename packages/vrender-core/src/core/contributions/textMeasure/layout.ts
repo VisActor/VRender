@@ -21,7 +21,12 @@ export class CanvasTextLayout {
    * @param textBaseline
    * @returns
    */
-  LayoutBBox(bbox: TextLayoutBBox, textAlign: TextAlignType, textBaseline: TextBaselineType): TextLayoutBBox {
+  LayoutBBox(
+    bbox: TextLayoutBBox,
+    textAlign: TextAlignType,
+    textBaseline: TextBaselineType,
+    linesLayout: LayoutItemType[]
+  ): TextLayoutBBox {
     if (textAlign === 'left' || textAlign === 'start') {
       bbox.xOffset = 0;
     } else if (textAlign === 'center') {
@@ -37,7 +42,13 @@ export class CanvasTextLayout {
     } else if (textBaseline === 'middle') {
       bbox.yOffset = bbox.height / -2;
     } else if (textBaseline === 'alphabetic') {
-      bbox.yOffset = bbox.height * -0.79;
+      // 如果仅有一行，要保证和直接使用canvas绘制的textBaseline一致
+      let percent = 0.79;
+      if (linesLayout.length === 1) {
+        const lineInfo = linesLayout[0];
+        percent = lineInfo.ascent / (lineInfo.ascent + lineInfo.descent);
+      }
+      bbox.yOffset = bbox.height * -percent;
     } else {
       bbox.yOffset = -bbox.height;
     }
@@ -125,7 +136,7 @@ export class CanvasTextLayout {
       height: bboxWH[1]
     };
 
-    this.LayoutBBox(bbox, textAlign, textBaseline);
+    this.LayoutBBox(bbox, textAlign, textBaseline, linesLayout);
 
     return this.layoutWithBBox(bbox, linesLayout, textAlign, textBaseline, lineHeight);
   }
@@ -199,16 +210,17 @@ export class CanvasTextLayout {
     }
 
     line.topOffset = lineHeight / 2 + (line.ascent - line.descent) / 2 + origin[1];
-    // const actualHeight = line.ascent + line.descent;
-    // const buf = 2;
-    // const actualHeightWithBuf = actualHeight + buf;
-    // if (actualHeightWithBuf < lineHeight - buf) {
-    //   if (textBaseline === 'bottom') {
-    //     line.topOffset += (lineHeight - (actualHeightWithBuf)) / 2;
-    //   } else if (textBaseline === 'top') {
-    //     line.topOffset -= (lineHeight - (actualHeightWithBuf)) / 2;
-    //   }
-    // }
+
+    const actualHeight = line.ascent + line.descent;
+    const buf = 0;
+    const actualHeightWithBuf = actualHeight + buf;
+    if (actualHeightWithBuf < lineHeight - buf) {
+      if (textBaseline === 'bottom') {
+        line.topOffset += (lineHeight - actualHeightWithBuf) / 2;
+      } else if (textBaseline === 'top') {
+        line.topOffset -= (lineHeight - actualHeightWithBuf) / 2;
+      }
+    }
     origin[1] += lineHeight;
 
     return line;

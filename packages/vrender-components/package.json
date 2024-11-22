@@ -25,8 +25,8 @@
     "build:spec-types": "rm -rf ./spec-types && tsc -p ./tsconfig.spec.json --declaration --emitDeclarationOnly --outDir ./spec-types"
   },
   "dependencies": {
-    "@visactor/vutils": "~0.19.0",
-    "@visactor/vscale": "~0.19.0",
+    "@visactor/vutils": "~0.19.1",
+    "@visactor/vscale": "~0.19.1",
     "@visactor/vrender-core": "workspace:0.20.15",
     "@visactor/vrender-kits": "workspace:0.20.15"
   },
@@ -35,7 +35,7 @@
     "@internal/eslint-config": "workspace:*",
     "@internal/ts-config": "workspace:*",
     "@rushstack/eslint-patch": "~1.1.4",
-    "@visactor/vscale": "~0.19.0",
+    "@visactor/vscale": "~0.19.1",
     "@types/jest": "^26.0.0",
     "jest": "^26.0.0",
     "jest-electron": "^0.1.12",

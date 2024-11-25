@@ -244,16 +244,16 @@ export class ATextMeasure implements ITextMeasure {
         width: (out as any).width
       };
     } else if (mode === MeasureModeEnum.fontBounding) {
-      const { lineHeight = options.fontSize } = options;
-      let ratio = 1;
-      if (lineHeight) {
-        const fontBoundingHeight = (out as any).fontBoundingBoxAscent + (out as any).fontBoundingBoxDescent;
-        ratio = lineHeight / fontBoundingHeight;
-      }
+      // const { lineHeight = options.fontSize } = options;
+      // let ratio = 1;
+      // if (lineHeight) {
+      //   const fontBoundingHeight = (out as any).fontBoundingBoxAscent + (out as any).fontBoundingBoxDescent;
+      //   ratio = lineHeight / fontBoundingHeight;
+      // }
       // 避免二次矫正，应当保证所有字符组合的基线都一样，否则fontBounding就失去意义了
       // 但如果超出边界了，就只能进行二次矫正
-      let ascent = (out as any).fontBoundingBoxAscent * ratio;
-      let descent = (out as any).fontBoundingBoxDescent * ratio;
+      let ascent = (out as any).fontBoundingBoxAscent;
+      let descent = (out as any).fontBoundingBoxDescent;
       // 只能一边超出，都超出的话目前无法矫正，因为行高不能超
       if ((out as any).actualBoundingBoxDescent && descent < (out as any).actualBoundingBoxDescent) {
         const delta = (out as any).actualBoundingBoxDescent - descent;

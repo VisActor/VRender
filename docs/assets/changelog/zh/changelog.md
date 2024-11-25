@@ -1,3 +1,19 @@
+# v0.20.16
+
+2024-11-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with _debug_bounds
+- **@visactor/vrender-core**: fix issue with string linear-gradient
+- **@visactor/vrender-core**: fix issue where not work when lineWidth is set to 0
+- **@visactor/vrender-core**: fix drawing issue when size is array
+
+
+
+[更多详情请查看 v0.20.16](https://github.com/VisActor/VRender/releases/tag/v0.20.16)
+
 # v0.20.15
 
 2024-11-21

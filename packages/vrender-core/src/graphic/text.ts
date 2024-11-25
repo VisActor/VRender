@@ -267,7 +267,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       lineWidth = textTheme.lineWidth,
       whiteSpace = textTheme.whiteSpace,
       suffixPosition = textTheme.suffixPosition,
-      ignoreBuf = textTheme.ignoreBuf
+      ignoreBuf = textTheme.ignoreBuf,
+      keepCenterInLine = textTheme.keepCenterInLine
     } = attribute;
 
     const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
@@ -296,7 +297,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       {
         lineWidth: maxLineWidth,
         suffixPosition,
-        measureMode
+        measureMode,
+        keepCenterInLine
       }
     );
     const { bbox } = layoutData;
@@ -335,7 +337,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       measureMode = textTheme.measureMode,
       suffixPosition = textTheme.suffixPosition,
       heightLimit = 0,
-      lineClamp
+      lineClamp,
+      keepCenterInLine = textTheme.keepCenterInLine
     } = this.attribute;
 
     const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
@@ -392,7 +395,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
               str: clip.str,
               width: clip.width,
               ascent: matrics.ascent,
-              descent: matrics.descent
+              descent: matrics.descent,
+              keepCenterInLine
             });
             break; // 不处理后续行
           }
@@ -429,7 +433,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str: clip.str,
             width: clip.width,
             ascent: matrics.ascent,
-            descent: matrics.descent
+            descent: matrics.descent,
+            keepCenterInLine
           });
           let cutLength = clip.str.length;
           if (clip.wordBreaked && !(str !== '' && clip.str === '')) {
@@ -472,7 +477,8 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
             str: clip.str,
             width: clip.width,
             ascent: matrics.ascent,
-            descent: matrics.descent
+            descent: matrics.descent,
+            keepCenterInLine
           });
           lineWidth = Math.max(lineWidth, clip.width);
           break; // 不处理后续行
@@ -482,7 +488,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
         width = textMeasure.measureTextWidth(text, textOptions);
         lineWidth = Math.max(lineWidth, width);
         const matrics = textMeasure.measureTextPixelADscentAndWidth(text, textOptions, measureMode);
-        linesLayout.push({ str: text, width, ascent: matrics.ascent, descent: matrics.descent });
+        linesLayout.push({ str: text, width, ascent: matrics.ascent, descent: matrics.descent, keepCenterInLine });
       }
       bboxWH[0] = lineWidth;
     }

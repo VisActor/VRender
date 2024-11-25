@@ -116,7 +116,8 @@ export const DefaultTextStyle: Required<ITextAttribute> = {
   underlineDash: [],
   underlineOffset: 0,
   disableAutoClipedPoptip: undefined,
-  measureMode: MeasureModeEnum.fontBounding
+  measureMode: MeasureModeEnum.fontBounding,
+  keepCenterInLine: false
 };
 
 export const DefaultPickStyle: IPickStyle = {

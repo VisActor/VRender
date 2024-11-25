@@ -109,7 +109,8 @@ export class WrapText extends Text {
               str: clip.str,
               width: clip.width,
               ascent: 0,
-              descent: 0
+              descent: 0,
+              keepCenterInLine: false
             });
             break; // 不处理后续行
           }
@@ -145,7 +146,8 @@ export class WrapText extends Text {
             str: clip.str,
             width: clip.width,
             ascent: 0,
-            descent: 0
+            descent: 0,
+            keepCenterInLine: false
           });
           if (clip.str.length === str.length) {
             // 不需要截断
@@ -182,7 +184,8 @@ export class WrapText extends Text {
             str: clip.str,
             width: clip.width,
             ascent: 0,
-            descent: 0
+            descent: 0,
+            keepCenterInLine: false
           });
           lineWidth = Math.max(lineWidth, clip.width);
           break; // 不处理后续行
@@ -191,7 +194,7 @@ export class WrapText extends Text {
         text = lines[i] as string;
         width = layoutObj.textMeasure.measureTextWidth(text, layoutObj.textOptions, wordBreak === 'break-word');
         lineWidth = Math.max(lineWidth, width);
-        linesLayout.push({ str: text, width, ascent: 0, descent: 0 });
+        linesLayout.push({ str: text, width, ascent: 0, descent: 0, keepCenterInLine: false });
       }
       bboxWH[0] = lineWidth;
     }

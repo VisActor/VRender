@@ -72,9 +72,15 @@ export class CanvasTextLayout {
       lineWidth?: number;
       suffixPosition?: 'start' | 'end' | 'middle';
       measureMode?: MeasureModeEnum;
+      keepCenterInLine?: boolean;
     }
   ): LayoutType {
-    const { lineWidth, suffixPosition = 'end', measureMode = MeasureModeEnum.actualBounding } = params ?? {};
+    const {
+      lineWidth,
+      suffixPosition = 'end',
+      measureMode = MeasureModeEnum.actualBounding,
+      keepCenterInLine = false
+    } = params ?? {};
     lines = lines.map(l => l.toString()) as string[];
     const linesLayout: LayoutItemType[] = [];
     // bbox高度可能大于totalHeight
@@ -103,7 +109,8 @@ export class CanvasTextLayout {
                 ).str,
           width,
           ascent: metrics.ascent,
-          descent: metrics.descent
+          descent: metrics.descent,
+          keepCenterInLine
         });
       }
       bboxWH[0] = lineWidth;
@@ -121,7 +128,7 @@ export class CanvasTextLayout {
         );
         width = metrics.width;
         _lineWidth = Math.max(_lineWidth, width);
-        linesLayout.push({ str: text, width, ascent: metrics.ascent, descent: metrics.descent });
+        linesLayout.push({ str: text, width, ascent: metrics.ascent, descent: metrics.descent, keepCenterInLine });
       }
       bboxWH[0] = _lineWidth;
     }
@@ -211,16 +218,19 @@ export class CanvasTextLayout {
 
     line.topOffset = lineHeight / 2 + (line.ascent - line.descent) / 2 + origin[1];
 
-    const actualHeight = line.ascent + line.descent;
-    const buf = 0;
-    const actualHeightWithBuf = actualHeight + buf;
-    if (actualHeightWithBuf < lineHeight - buf) {
-      if (textBaseline === 'bottom') {
-        line.topOffset += (lineHeight - actualHeightWithBuf) / 2;
-      } else if (textBaseline === 'top') {
-        line.topOffset -= (lineHeight - actualHeightWithBuf) / 2;
+    if (!line.keepCenterInLine) {
+      const actualHeight = line.ascent + line.descent;
+      const buf = 0;
+      const actualHeightWithBuf = actualHeight + buf;
+      if (actualHeightWithBuf < lineHeight - buf) {
+        if (textBaseline === 'bottom') {
+          line.topOffset += (lineHeight - actualHeightWithBuf) / 2;
+        } else if (textBaseline === 'top') {
+          line.topOffset -= (lineHeight - actualHeightWithBuf) / 2;
+        }
       }
     }
+
     origin[1] += lineHeight;
 
     return line;

@@ -14,6 +14,7 @@ export interface LayoutItemType {
   width: number;
   ascent: number;
   descent: number;
+  keepCenterInLine: boolean;
 }
 
 export interface SimplifyLayoutType {
@@ -68,8 +69,12 @@ export type ITextAttribute = {
   // textDecorationWidth: number;
   // padding?: number | number[];
   disableAutoClipedPoptip?: boolean;
+  // @since 0.21.0
   // 测量模式，默认使用actualBounding
   measureMode?: MeasureModeEnum;
+  // @since 0.21.0
+  // 保持在行中间的位置
+  keepCenterInLine?: boolean;
 };
 export type ITextCache = {
   // 单行文本的时候缓存（多行文本没有）

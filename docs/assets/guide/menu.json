@@ -60,10 +60,24 @@
           },
           "children": [
             {
-              "path": "Events_and_Animation",
+              "path": "Create_Instance",
               "title": {
-                "zh": "了解事件和动画",
-                "en": "Events and Animation"
+                "zh": "创建实例",
+                "en": "Create Instance"
+              }
+            },
+            {
+              "path": "Graphic",
+              "title": {
+                "zh": "图元",
+                "en": "Graphic"
+              }
+            },
+            {
+              "path": "Event",
+              "title": {
+                "zh": "事件",
+                "en": "Event"
               }
             },
             {

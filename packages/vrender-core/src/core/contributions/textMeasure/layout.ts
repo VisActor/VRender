@@ -34,7 +34,7 @@ export class CanvasTextLayout {
     } else if (textAlign === 'right' || textAlign === 'end') {
       bbox.xOffset = -bbox.width;
     } else {
-      throw new Error('非法的textAlign');
+      bbox.xOffset = 0;
     }
 
     if (textBaseline === 'top') {

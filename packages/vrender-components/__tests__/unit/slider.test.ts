@@ -132,7 +132,7 @@ describe('Slider', () => {
       expect(startText.attribute.textBaseline).toBe('top');
 
       const endText = slider.getElementsByName(SLIDER_ELEMENT_NAME.endText)[0] as IText;
-      expect(endText.attribute.y).toBe(229.2);
+      expect(endText.attribute.y).toBe(228);
       expect(endText.attribute.x).toBeCloseTo(5);
       expect(endText.attribute.textAlign).toBe('center');
       expect(endText.attribute.textBaseline).toBe('top');

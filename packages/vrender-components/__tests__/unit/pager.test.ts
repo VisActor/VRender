@@ -58,6 +58,6 @@ describe('Pager', () => {
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeFalsy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
     expect(pager.AABBBounds.width()).toBeCloseTo(20.399993896484375);
-    expect(pager.AABBBounds.height()).toBeCloseTo(59.2);
+    expect(pager.AABBBounds.height()).toBeCloseTo(58);
   });
 });

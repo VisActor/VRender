@@ -272,7 +272,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     } = attribute;
 
     const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
-    const lineHeight = this.getLineHeight(attribute, textTheme) + buf;
+    const lineHeight = this.getLineHeight(attribute, textTheme, buf);
 
     if (whiteSpace === 'normal' || wrap) {
       return this.updateWrapAABBBounds(text);
@@ -342,7 +342,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     } = this.attribute;
 
     const buf = ignoreBuf ? 0 : this.guessLineHeightBuf(fontSize);
-    const lineHeight = this.getLineHeight(this.attribute, textTheme) + buf;
+    const lineHeight = this.getLineHeight(this.attribute, textTheme, buf);
 
     if (!this.shouldUpdateShape() && this.cache?.layoutData) {
       const bbox = this.cache.layoutData.bbox;
@@ -538,7 +538,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       suffixPosition = textTheme.suffixPosition
     } = attribute;
 
-    const lineHeight = this.getLineHeight(attribute, textTheme);
+    const lineHeight = this.getLineHeight(attribute, textTheme, 0);
 
     let { textAlign = textTheme.textAlign, textBaseline = textTheme.textBaseline } = attribute;
     if (!verticalMode) {
@@ -639,10 +639,10 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return attribute.maxLineWidth ?? attribute.maxWidth ?? theme.maxWidth;
   }
 
-  protected getLineHeight(attribute: ITextGraphicAttribute, textTheme: ITextGraphicAttribute) {
+  protected getLineHeight(attribute: ITextGraphicAttribute, textTheme: ITextGraphicAttribute, buf: number) {
     return (
       calculateLineHeight(attribute.lineHeight, attribute.fontSize || textTheme.fontSize) ??
-      (attribute.fontSize || textTheme.fontSize)
+      (attribute.fontSize || textTheme.fontSize) + buf
     );
   }
 

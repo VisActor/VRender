@@ -218,6 +218,7 @@ export class CanvasTextLayout {
 
     line.topOffset = lineHeight / 2 + (line.ascent - line.descent) / 2 + origin[1];
 
+    // 在行内进行偏移
     if (!line.keepCenterInLine) {
       const actualHeight = line.ascent + line.descent;
       const buf = 0;
@@ -228,6 +229,11 @@ export class CanvasTextLayout {
         } else if (textBaseline === 'top') {
           line.topOffset -= (lineHeight - actualHeightWithBuf) / 2;
         }
+      }
+      if (textBaseline === 'alphabetic') {
+        const fontBoundingHeight = line.ascent + line.descent;
+        const ratio = lineHeight / fontBoundingHeight;
+        line.topOffset = lineHeight / 2 + ((line.ascent - line.descent) / 2) * ratio + origin[1];
       }
     }
 

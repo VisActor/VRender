@@ -212,7 +212,7 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
   updateSingallineAABBBounds(text: number | string): IAABBBounds {
     this.updateMultilineAABBBounds([text]);
     const layoutData = this.cache.layoutData;
-    if (layoutData) {
+    if (layoutData && layoutData.lines && layoutData.lines.length) {
       const line = layoutData.lines[0];
       this.cache.clipedText = line.str;
       this.cache.clipedWidth = line.width;

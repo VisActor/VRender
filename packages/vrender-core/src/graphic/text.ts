@@ -444,7 +444,11 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
           if (clip.str.length === str.length) {
             // 不需要截断
           } else if (needCut) {
-            const newStr = str.substring(cutLength);
+            let newStr = str.substring(cutLength);
+            // 截断后，避免开头有空格很尬，去掉
+            if (wordBreak === 'keep-all') {
+              newStr = newStr.replace(/^\s+/g, '');
+            }
             lines.splice(i + 1, 0, newStr);
           }
         }

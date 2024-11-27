@@ -421,7 +421,7 @@ describe('DiscreteLegend', () => {
     expect((legend.getElementsByName('legendItem')[0] as IGroup).AABBBounds.width()).toBe(121.95);
     expect(
       (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemLabel')[0] as IText)._AABBBounds.width()
-    ).toBeCloseTo(63.61000366210938);
+    ).toBeCloseTo(57.143951416015625);
     expect(
       (legend.getElementsByName('legendItem')[0].getElementsByName('legendItemValue')[0] as IText).attribute
         .maxLineWidth

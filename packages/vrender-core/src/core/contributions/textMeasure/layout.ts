@@ -100,7 +100,7 @@ export class CanvasTextLayout {
           const data = this.textMeasure.clipTextWithSuffix(
             lines[i] as string,
             this.textOptions,
-            width,
+            lineWidth,
             suffix,
             wordBreak,
             suffixPosition

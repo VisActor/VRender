@@ -45,7 +45,7 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(428.84796142578125);
+    expect(legend.AABBBounds.width()).toBe(422.05995178222656);
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item without value', () => {
@@ -71,7 +71,7 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(320);
+    expect(legend.AABBBounds.width()).toBe(310);
   });
 
   it('should not exceed the maximum width of the item, and the basic length exceeds, legend item with focus', () => {
@@ -133,7 +133,7 @@ describe('Legend focus layout', () => {
     stage.defaultLayer.add(legend as unknown as IGraphic);
     stage.render();
 
-    expect(legend.AABBBounds.width()).toBe(100.71428571428572);
+    expect(legend.AABBBounds.width()).toBe(99.92627607073103);
   });
 
   it('should calculate when legend item just has label', () => {

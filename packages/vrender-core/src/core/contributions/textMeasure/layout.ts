@@ -94,19 +94,25 @@ export class CanvasTextLayout {
           this.textOptions,
           measureMode
         );
-        width = Math.min(metrics.width, lineWidth);
+        let str: string = lines[i].toString();
+        // 大于最大宽度，需要裁剪
+        if (metrics.width > lineWidth) {
+          const data = this.textMeasure.clipTextWithSuffix(
+            lines[i] as string,
+            this.textOptions,
+            width,
+            suffix,
+            wordBreak,
+            suffixPosition
+          );
+          str = data.str;
+          width = data.width;
+        } else {
+          // 小于最大宽度，不需要裁剪，直接取文字总宽度即可
+          width = metrics.width;
+        }
         linesLayout.push({
-          str:
-            metrics.width <= lineWidth
-              ? lines[i].toString()
-              : this.textMeasure.clipTextWithSuffix(
-                  lines[i] as string,
-                  this.textOptions,
-                  width,
-                  suffix,
-                  wordBreak,
-                  suffixPosition
-                ).str,
+          str,
           width,
           ascent: metrics.ascent,
           descent: metrics.descent,

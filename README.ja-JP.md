@@ -13,12 +13,12 @@
 
 <div align="center">
 
-VRender, not just a feature-rich visual rendering engine, but also a skillful and ingenious tool for creating beautiful artwork.
+VRenderは、機能豊富なビジュアルレンダリングエンジンであり、美しいアートワークを作成するための巧妙で独創的なツールです。
 
 <p align="center">
-  <a href="https://www.visactor.io/vrender">Introduction</a> •
-  <a href="https://www.visactor.io/vrender/example">Demo</a> •
-  <a href="https://www.visactor.io/vrender/guide/">Tutorial</a> •
+  <a href="https://www.visactor.io/vrender">紹介</a> •
+  <a href="https://www.visactor.io/vrender/example">デモ</a> •
+  <a href="https://www.visactor.io/vrender/guide/">チュートリアル</a> •
 </p>
 
 ![image test](https://github.com/visactor/vrender/actions/workflows/bug-server.yml/badge.svg?event=push)
@@ -31,33 +31,33 @@ VRender, not just a feature-rich visual rendering engine, but also a skillful an
 
 <div align="center">
 
-English | [简体中文](./README.zh-CN.md) | [日本語](./README.ja-JP.md)
+[English](./README.md) | [简体中文](./README.zh-CN.md) | 日本語
 
 </div>
 
 <div align="center">
 
-（video）
+（ビデオ）
 
 </div>
 
-# Introduction
+# 紹介
 
-VRender is a visual render library. The core capabilities are as follows:
+VRenderはビジュアルレンダリングライブラリです。主な機能は以下の通りです：
 
-1. Rich in features: customizable animations, element composition, narrative arrangement, suitable for various visualization scenarios.
-2. Flexible extensibility: provides a plugin system for unrestricted expansion.
-3. Simple yet powerful: seamless transition between 2D/3D effects with the same configuration.
+1. 機能が豊富：カスタマイズ可能なアニメーション、要素の組み合わせ、ナラティブの配置、さまざまなビジュアライゼーションシナリオに適しています。
+2. 柔軟な拡張性：プラグインシステムを提供し、自由に拡張可能です。
+3. シンプルで強力：同じ設定で2D/3D効果をシームレスに切り替えられます。
 
-# Repo Intro
+# リポジトリの紹介
 
-This repository includes the following packages:
+このリポジトリには以下のパッケージが含まれています：
 
-1. VRender: The main package of VRender
+1. VRender: VRenderのメインパッケージ
 
-# Usage
+# 使用方法
 
-## Installation
+## インストール
 
 [npm package](https://www.npmjs.com/package/@visactor/vrender)
 
@@ -69,7 +69,7 @@ npm install @visactor/vrender
 yarn add @visactor/vrender
 ```
 
-## Quick Start
+## クイックスタート
 
 ```javascript
 import { createSymbol, createStage } from '@visactor/vrender';
@@ -110,29 +110,29 @@ st.defaultLayer.add(sy);
 
 ##
 
-[More demos and detailed tutorials](https://visactor.io/vrender)
+[詳細なデモとチュートリアル](https://visactor.io/vrender)
 
-# Related Links
+# 関連リンク
 
-- [Official website](https://visactor.io/vrender)
+- [公式サイト](https://visactor.io/vrender)
 
-# Ecosystem
+# エコシステム
 
-| Project                                                     | Description                                                                            |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| [VChart](https://visactor.io/vchart)                        | A charts lib based on [VisActor/VRender](https://visactor.io/vrender)                  |
-| [VGrammar](https://visactor.io/vgrammar)                    | A visual grammar lib based on [VisActor/VRender](https://visactor.io/vrender)          |
-| [React Component Library](https://visactor.io/react-vchart) | A React chart component library based on [VisActor/VChart](https://visactor.io/vchart) |
-| [AI-generated Components](https://visactor.io/ai-vchart)    | AI-generated chart component.                                                          |
+| プロジェクト | 説明 |
+| ---- | ---- |
+| [VChart](https://visactor.io/vchart) | [VisActor/VRender](https://visactor.io/vrender) に基づいたチャートライブラリ |
+| [VGrammar](https://visactor.io/vgrammar) | [VisActor/VRender](https://visactor.io/vrender) に基づいたビジュアル文法ライブラリ |
+| [React コンポーネントライブラリ](https://visactor.io/react-vchart) | [VisActor/VChart](https://visactor.io/vchart) に基づいた React チャートコンポーネントライブラリ |
+| [AI生成コンポーネント](https://visactor.io/ai-vchart) | AI生成のチャートコンポーネント |
 
-# Contribution
+# 貢献
 
-If you would like to contribute, please read the [Code of Conduct ](./CODE_OF_CONDUCT.md) and [ Guide](./CONTRIBUTING.md) first。
+貢献したい場合は、まず [行動規範](./CODE_OF_CONDUCT.md) と [ガイド](./CONTRIBUTING.md) をお読みください。
 
-Small streams converge to make great rivers and seas!
+小さな流れが大河となり、最終的には大海となります！
 
 <a href="https://github.com/visactor/vrender/graphs/contributors"><img src="https://contrib.rocks/image?repo=visactor/vrender" /></a>
 
-# License
+# ライセンス
 
-[MIT License](./LICENSE)
+[MIT ライセンス](./LICENSE)

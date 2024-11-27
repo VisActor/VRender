@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-core_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with _debug_bounds"
+          },
+          {
+            "comment": "fix: fix issue with string linear-gradient"
+          },
+          {
+            "comment": "fix: fix issue where not work when lineWidth is set to 0"
+          },
+          {
+            "comment": "fix: fix drawing issue when size is array"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.15",
       "tag": "@visactor/vrender-core_v0.20.15",
       "date": "Fri, 15 Nov 2024 08:34:34 GMT",

@@ -31,7 +31,7 @@ VRender，不只是一个功能丰富的可视化渲染引可视化渲染擎，�
 
 <div align="center">
 
-[English](./README.md) | 简体中文
+[English](./README.md) | 简体中文 | [日本語](./README.ja-JP.md)
 
 </div>
 

@@ -2,7 +2,7 @@
 
 组件是特殊的图元，也是特殊的Group。VRender提供了一系列内置的组件，比如`datazoom`、`axes`、`label`、`legend`、`poptip`等，这些组件可以帮助我们快速实现一些常见的交互效果。外部也可以通过继承`@visactor/vrender-components`中的`AbstractComponent`来实现自定义组件。
 
-![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-component-intro-all.png)
+![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-component-intro-component.png)
 
 ## 介绍
 
@@ -167,6 +167,7 @@ class CircleBox extends VRenderComponent.AbstractComponent {
     circleStyle: {
       fill: 'red',
     },
+    stroke: 'blue',
     circleCount: 10,
     width: 300,
     height: 300
@@ -193,7 +194,7 @@ class CircleBox extends VRenderComponent.AbstractComponent {
   }
 }
 
-const textLimit = new CircleBox({circleCount: 10});
+const textLimit = new CircleBox({x: 10, y: 10, circleCount: 100});
 const stage = VRender.createStage({
   container: CONTAINER_ID,
   autoRender: true,

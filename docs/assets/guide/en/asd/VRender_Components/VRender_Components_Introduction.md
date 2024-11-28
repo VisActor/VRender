@@ -2,7 +2,7 @@
 
 Components are special primitives and also special Groups. VRender provides a series of built-in components, such as `datazoom`, `axes`, `label`, `legend`, `poptip`, etc., which can help us quickly achieve some common interactive effects. Externally, custom components can be implemented by inheriting `AbstractComponent` from `@visactor/vrender-components`.
 
-![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-component-intro-all.png)
+![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-component-intro-component.png)
 
 ## Introduction
 
@@ -167,6 +167,7 @@ class CircleBox extends VRenderComponent.AbstractComponent {
     circleStyle: {
       fill: 'red',
     },
+    stroke: 'blue',
     circleCount: 10,
     width: 300,
     height: 300
@@ -176,7 +177,7 @@ class CircleBox extends VRenderComponent.AbstractComponent {
     super(options?.skipDefault ? attributes : ({...CircleBox.defaultAttributes, ...attributes}));
   }
 
-  // Called every time valid attributes are updated
+  // 每次合法属性更新都会调用
   render() {
     const { circleCount, circleStyle, width, height } = this.attribute;
 
@@ -184,20 +185,20 @@ class CircleBox extends VRenderComponent.AbstractComponent {
     const count = Math.ceil(Math.sqrt(circleCount));
     const radius = Math.floor(minWH) / count / 2;
     for (let i = 0; i < circleCount; i++) {
-      // Calculate the position of the child element
+      // 计算子元素的位置
       const x = (i % count) * radius * 2 + radius;
       const y = Math.floor(i / count) * radius * 2 + radius;
-      // Add or create child elements
+      // 添加或创建子元素
       const circle = this.createOrUpdateChild(`circle-${i}`, { ...circleStyle, radius, x, y }, 'circle');
     }
   }
 }
 
-const textLimit = new CircleBox({circleCount: 10});
+const textLimit = new CircleBox({x: 10, y: 10, circleCount: 100});
 const stage = VRender.createStage({
   container: CONTAINER_ID,
   autoRender: true,
-  pluginList: ['poptipForText'] // Enable the poptipForText plugin
+  pluginList: ['poptipForText'] // 启用poptipForText插件
 });
 
 stage.defaultLayer.add(textLimit);

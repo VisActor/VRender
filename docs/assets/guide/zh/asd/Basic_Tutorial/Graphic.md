@@ -4,7 +4,7 @@
 
 VRender有很多图元，但是它们的使用方法都差不多，因为他们都继承自`Graphic`类，它们都有几乎相同的属性和方法，只是接受的参数不同。下图所示为图元的继承关系图。
 
-![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-graphic.png)
+![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-graphic-rel.png)
 
 1. 首先他们都继承自`Node`，所以所有图元都有树的结构。
 2. 然后他们都继承自`Graphic`，所以他们都有图元的基础属性和方法比如`x`、`y`、`fill`等。

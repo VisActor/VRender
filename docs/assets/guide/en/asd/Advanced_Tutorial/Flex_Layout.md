@@ -135,7 +135,7 @@ const stage = new VRender.Stage({
   enableLayout: true
 });
 
-stage.defaultLayer.add(rect);
+stage.defaultLayer.add(group);
 
 window['stage'] = stage;
 ```

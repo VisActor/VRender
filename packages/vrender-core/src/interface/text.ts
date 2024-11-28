@@ -1,5 +1,6 @@
 import type { IContribution } from './contribution';
 import type { IGraphicUtil } from './core';
+import type { MeasureModeEnum } from './graphic/text';
 
 export interface TextOptionsType {
   fontSize?: number;
@@ -7,6 +8,7 @@ export interface TextOptionsType {
   fontFamily?: string;
   fontStyle?: string;
   fontVariant?: string;
+  lineHeight?: number;
   textBaseline?: 'alphabetic' | 'top' | 'middle' | 'bottom';
   textAlign?: 'left' | 'center' | 'right' | 'start' | 'end';
 }
@@ -15,13 +17,18 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
   measureTextWidth: (text: string, options: TextOptionsType) => number;
   measureTextPixelHeight: (text: string, options: TextOptionsType) => number;
   measureTextBoundHieght: (text: string, options: TextOptionsType) => number;
+  measureTextPixelADscentAndWidth: (
+    text: string,
+    options: TextOptionsType,
+    mode: MeasureModeEnum
+  ) => { width: number; ascent: number; descent: number };
   clipText: (
     text: string,
     options: TextOptionsType,
     width: number,
     wordBreak: boolean,
     keepAllBreak?: boolean
-  ) => { str: string; width: number };
+  ) => { str: string; width: number; wordBreaked?: number };
   clipTextVertical: (
     verticalList: { text: string; width?: number; direction: number }[],
     options: TextOptionsType,
@@ -32,9 +39,10 @@ export interface ITextMeasure extends IContribution<IGraphicUtil> {
     text: string,
     options: TextOptionsType,
     width: number,
-    suffix: string,
+    suffix: string | boolean,
     wordBreak: boolean,
-    position: 'start' | 'end' | 'middle'
+    position: 'start' | 'end' | 'middle',
+    forceSuffix?: boolean
   ) => { str: string; width: number };
   clipTextWithSuffixVertical: (
     verticalList: { text: string; width?: number; direction: number }[],

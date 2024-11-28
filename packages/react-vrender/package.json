@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@visactor/vrender": "workspace:0.20.16",
-    "@visactor/vutils": "~0.18.18",
+    "@visactor/vutils": "~0.19.1",
     "react-reconciler": "^0.29.0",
     "tslib": "^2.3.1"
   },

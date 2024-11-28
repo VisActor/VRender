@@ -362,10 +362,15 @@ export class RafBasedSTO {
 
 export const rafBasedSto = new RafBasedSTO();
 
-export const calculateLineHeight = (lineHeight: string | number, fontSize: number): number => {
+export const _calculateLineHeight = (lineHeight: string | number, fontSize: number): number => {
   if (isString(lineHeight) && lineHeight[lineHeight.length - 1] === '%') {
     const scale = Number.parseFloat(lineHeight.substring(0, lineHeight.length - 1)) / 100;
     return fontSize * scale;
   }
   return lineHeight as number;
+};
+
+export const calculateLineHeight = (lineHeight: string | number, fontSize: number): number => {
+  const _lh = _calculateLineHeight(lineHeight, fontSize);
+  return isNaN(_lh) ? _lh : Math.max(fontSize, _lh);
 };

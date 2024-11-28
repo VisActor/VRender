@@ -60,10 +60,24 @@
           },
           "children": [
             {
-              "path": "Events_and_Animation",
+              "path": "Create_Instance",
               "title": {
-                "zh": "了解事件和动画",
-                "en": "Events and Animation"
+                "zh": "创建实例",
+                "en": "Create Instance"
+              }
+            },
+            {
+              "path": "Graphic",
+              "title": {
+                "zh": "图元",
+                "en": "Graphic"
+              }
+            },
+            {
+              "path": "Event",
+              "title": {
+                "zh": "事件",
+                "en": "Event"
               }
             },
             {
@@ -92,6 +106,68 @@
               "title": {
                 "zh": "Jsx配置",
                 "en": "jsx config"
+              }
+            }
+          ]
+        },
+        {
+          "path": "Advanced_Tutorial",
+          "title": {
+            "zh": "进阶教程",
+            "en": "Advanced Tutorial"
+          },
+          "children": [
+            {
+              "path": "Custom_Graphic",
+              "title": {
+                "zh": "自定义图元",
+                "en": "Custom Graphic"
+              }
+            },
+            {
+              "path": "Flex_Layout",
+              "title": {
+                "zh": "flex 布局",
+                "en": "Flex Layout"
+              }
+            }
+          ]
+        },
+        {
+          "path": "VRender_Components",
+          "title": {
+            "zh": "VRender组件",
+            "en": "VRender Components"
+          },
+          "children": [
+            {
+              "path": "VRender_Components_Introduction",
+              "title": {
+                "zh": "VRender组件介绍",
+                "en": "VRender Components Introduction"
+              }
+            },
+            {
+              "path": "VRender_Components_PopTip",
+              "title": {
+                "zh": "PopTip 组件",
+                "en": "PopTip Component"
+              }
+            }
+          ]
+        },
+        {
+          "path": "FAQ",
+          "title": {
+            "zh": "FAQ",
+            "en": "FAQ"
+          },
+          "children": [
+            {
+              "path": "What_Is_BoundsPadding",
+              "title": {
+                "zh": "boundsPadding是什么",
+                "en": "What Is BoundsPadding"
               }
             }
           ]

@@ -36,7 +36,7 @@ const stage = new VRender.Stage({
   autoRender: true
 });
 
-const textLimit = cVRender.reateText({
+const textLimit = VRender.createText({
   x: 0,
   y: 0,
   fill: 'pink',

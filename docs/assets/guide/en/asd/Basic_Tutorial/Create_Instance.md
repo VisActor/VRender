@@ -2,6 +2,8 @@
 
 Similar to the DOM tree and React virtual node tree, VRender also draws based on a scene tree. VRender mounts this scene tree through layers, which are managed by the Stage. The Stage manages the lifecycle of the entire application, the position and size of views, and the logic for scene drawing and picking.
 
+As shown in the diagram below, a VRender application generally includes a `Stage`, which can have multiple layers (`Layer`) attached to it, and each layer can have multiple graphic elements attached to it.
+
 ![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/stage-tree.png)
 
 ## Creating a Stage

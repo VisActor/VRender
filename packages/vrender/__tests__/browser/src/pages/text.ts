@@ -50,189 +50,350 @@ function performance(stage: any) {
 
 export const page = () => {
   const graphics: IGraphic[] = [];
-  const t = createText({
-    text: ['2022年世界国家和地区GDP总量 🚀'],
-    ellipsis: '...',
-    fill: 'linear-gradient(90deg, #215F97 0%, #FF948F 100%)',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    textBaseline: 'top',
-    width: 308,
-    lineHeight: '150%',
-    fontStyle: 'normal',
-    underline: 1,
-    stroke: 'transparent',
-    fontFamily: '',
-    wrap: true,
-    whiteSpace: 'no-wrap',
-    maxLineWidth: 308,
-    x: 154,
-    y: 0
-  });
-  console.log(t, t.cliped);
-  graphics.push(t);
-  // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
+  // const t = createText({
+  //   text: ['2022年世界国家和地区GDP总量 🚀'],
+  //   ellipsis: '...',
+  //   fill: 'linear-gradient(90deg, #215F97 0%, #FF948F 100%)',
+  //   fontSize: 24,
+  //   fontWeight: 'bold',
+  //   textAlign: 'center',
+  //   textBaseline: 'top',
+  //   width: 308,
+  //   lineHeight: '150%',
+  //   fontStyle: 'normal',
+  //   underline: 1,
+  //   stroke: 'transparent',
+  //   fontFamily: '',
+  //   wrap: true,
+  //   whiteSpace: 'no-wrap',
+  //   maxLineWidth: 308,
+  //   x: 154,
+  //   y: 0
+  // });
+  // console.log(t, t.cliped);
+  // graphics.push(t);
+  // // t.animate().to({ maxLineWidth: 0 }, 3000, 'linear');
 
-  const tt = createText({
-    x: 971.9754981994629,
-    y: -213.8625716268361,
-    textAlign: 'center',
-    _debug_bounds: true,
-    textBaseline: 'middle',
-    text: ['细分'],
-    underline: 1,
-    underlineOffset: 0,
-    underlineDash: [2, 2],
-    fontSize: 16,
-    whiteSpace: 'normal',
-    graphicAlign: 'center',
-    graphicBaseline: 'middle',
-    fill: '#000',
-    ignoreBuf: true,
-    fontFamily: 'D-Din',
-    maxLineWidth: 120,
-    heightLimit: 999999,
-    // angle: 0.6,
-    // anchor: [971.9754981994629, -213.8625716268361],
-    visible: true,
-    background: '#F54A45'
-  });
-  console.log(tt);
-  const g = createGroup({
-    // angle: 0.6
-    x: -600,
-    y: 600
-  });
-  g.add(tt);
+  // const tt = createText({
+  //   x: 971.9754981994629,
+  //   y: -213.8625716268361,
+  //   textAlign: 'center',
+  //   _debug_bounds: true,
+  //   textBaseline: 'middle',
+  //   text: ['细分'],
+  //   underline: 1,
+  //   underlineOffset: 0,
+  //   underlineDash: [2, 2],
+  //   fontSize: 16,
+  //   whiteSpace: 'normal',
+  //   graphicAlign: 'center',
+  //   graphicBaseline: 'middle',
+  //   fill: '#000',
+  //   ignoreBuf: true,
+  //   fontFamily: 'D-Din',
+  //   maxLineWidth: 120,
+  //   heightLimit: 999999,
+  //   // angle: 0.6,
+  //   // anchor: [971.9754981994629, -213.8625716268361],
+  //   visible: true,
+  //   background: '#F54A45'
+  // });
+  // console.log(tt);
+  // const g = createGroup({
+  //   // angle: 0.6
+  //   x: -600,
+  //   y: 600
+  // });
+  // g.add(tt);
 
-  graphics.push(g);
+  // graphics.push(g);
 
-  graphics.push(
-    createText({
-      x: 300,
-      y: 200,
-      // fill: {
-      //   gradient: 'linear',
-      //   x0: 0,
-      //   y0: 0,
-      //   x1: 1,
-      //   y1: 1,
-      //   stops: [
-      //     { offset: 0, color: 'green' },
-      //     { offset: 0.5, color: 'orange' },
-      //     { offset: 1, color: 'red' }
-      //   ]
-      // },
-      // background: 'red',
-      // backgroundCornerRadius: 10,
-      text: ['这是一行文字', '这是第二哈那个'],
-      fill: 'red',
-      maxLineWidth: 100,
-      whiteSpace: 'normal',
-      fontSize: 36,
-      textBaseline: 'top'
-    })
-  );
-  console.log('aaa', graphics[graphics.length - 1]);
+  // graphics.push(
+  //   createText({
+  //     x: 300,
+  //     y: 200,
+  //     // fill: {
+  //     //   gradient: 'linear',
+  //     //   x0: 0,
+  //     //   y0: 0,
+  //     //   x1: 1,
+  //     //   y1: 1,
+  //     //   stops: [
+  //     //     { offset: 0, color: 'green' },
+  //     //     { offset: 0.5, color: 'orange' },
+  //     //     { offset: 1, color: 'red' }
+  //     //   ]
+  //     // },
+  //     // background: 'red',
+  //     // backgroundCornerRadius: 10,
+  //     text: ['这是一行文字', '这是第二哈那个'],
+  //     fill: 'red',
+  //     maxLineWidth: 100,
+  //     whiteSpace: 'normal',
+  //     fontSize: 36,
+  //     textBaseline: 'top'
+  //   })
+  // );
+  // console.log('aaa', graphics[graphics.length - 1]);
+  // graphics.push(
+  //   createLine({
+  //     x: 300,
+  //     y: 200,
+  //     // fill: {
+  //     //   gradient: 'linear',
+  //     //   x0: 0,
+  //     //   y0: 0,
+  //     //   x1: 1,
+  //     //   y1: 1,
+  //     //   stops: [
+  //     //     { offset: 0, color: 'green' },
+  //     //     { offset: 0.5, color: 'orange' },
+  //     //     { offset: 1, color: 'red' }
+  //     //   ]
+  //     // },
+  //     // background: 'red',
+  //     // backgroundCornerRadius: 10,
+  //     stroke: 'green',
+  //     points: [
+  //       { x: -100, y: 0 },
+  //       { x: 300, y: 0 }
+  //     ]
+  //   })
+  // );
+
+  // const text = createText({
+  //   x: 500,
+  //   y: 200,
+  //   fill: colorPools[5],
+  //   // text: ['Tffg'],
+  //   text: 'fkdalfffffffffffffffffjkllllll',
+  //   wordBreak: 'break-word',
+  //   maxLineWidth: 200,
+  //   // ellipsis: '',
+  //   direction: 'horizontal',
+  //   angle: 0.6,
+  //   stroke: 'green',
+  //   // wordBreak: 'break-word',
+  //   // maxLineWidth: 200,
+  //   // ellipsis: '',
+  //   // direction: 'vertical',
+  //   // fontSize: 120,
+  //   // stroke: 'green',
+  //   // lineWidth: 100,
+  //   // lineHeight: 30,
+  //   // lineThrough: 1,
+  //   // underline: 1,
+  //   textAlign: 'left',
+  //   textBaseline: 'middle'
+  //   // textBaseline: 'bottom'
+  //   // scaleX: 2,
+  //   // scaleY: 2
+  // });
+  // graphics.push(text);
+  // setTimeout(() => {
+  //   debugger;
+  //   text.setAttributes({ visible: false });
+  //   console.log(text.AABBBounds);
+  // }, 1000);
+  // const b = text.OBBBounds;
+  // const circle = createCircle({
+  //   x: (b.x1 + b.x2) / 2,
+  //   y: (b.y1 + b.y2) / 2,
+  //   fill: 'black',
+  //   radius: 2
+  // });
+  // graphics.push(circle);
+
+  // const rect = createRect({
+  //   x: b.x1,
+  //   y: b.y1,
+  //   width: b.width(),
+  //   height: b.height(),
+  //   stroke: 'red',
+  //   anchor: [(b.x1 + b.x2) / 2, (b.y1 + b.y2) / 2],
+  //   angle: 0.6,
+  //   lineWidth: 1
+  // });
+  // graphics.push(rect);
+
+  // const textLimit = createText({
+  //   x: 500,
+  //   y: 300,
+  //   fill: colorPools[5],
+  //   // text: ['Tffg'],
+  //   text: 'this is textaaaaaaaaaaaaaaaaa aaa this isisisisisis abc',
+  //   // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
+  //   // heightLimit: 40,
+  //   wordBreak: 'keep-all',
+  //   maxLineWidth: 100,
+  //   stroke: 'green',
+  //   textAlign: 'left',
+  //   textBaseline: 'middle',
+  //   whiteSpace: 'normal'
+  //   // wrap: true
+  // });
+  // console.log('textLimit', textLimit);
+  // graphics.push(textLimit);
+
+  const list = [
+    {
+      text: 'Mar',
+      textBaseline: 'bottom'
+    },
+    {
+      text: 'May',
+      textBaseline: 'bottom'
+    },
+    {
+      text: 'Mar',
+      textBaseline: 'middle'
+    },
+    {
+      text: 'May',
+      textBaseline: 'middle'
+    },
+    {
+      text: 'Sale',
+      textBaseline: 'middle'
+    },
+    {
+      text: 'Sale_aa',
+      textBaseline: 'middle'
+    },
+    {
+      text: 'ggg',
+      textBaseline: 'middle',
+      x: 500
+    }
+    // {
+    //   text: '...',
+    //   textBaseline: 'bottom',
+    //   x: 550
+    // }
+  ];
+
   graphics.push(
     createLine({
-      x: 300,
-      y: 200,
-      // fill: {
-      //   gradient: 'linear',
-      //   x0: 0,
-      //   y0: 0,
-      //   x1: 1,
-      //   y1: 1,
-      //   stops: [
-      //     { offset: 0, color: 'green' },
-      //     { offset: 0.5, color: 'orange' },
-      //     { offset: 1, color: 'red' }
-      //   ]
-      // },
-      // background: 'red',
-      // backgroundCornerRadius: 10,
-      stroke: 'green',
+      x: 0,
+      y: 300,
+      points: [
+        { x: 0, y: 0 },
+        { x: 1000, y: 0 }
+      ],
+      stroke: 'pink'
+    })
+  );
+  graphics.push(
+    createLine({
+      x: 0,
+      y: 400,
+      points: [
+        { x: 0, y: 0 },
+        { x: 1000, y: 0 }
+      ],
+      stroke: 'pink'
+    })
+  );
+  graphics.push(
+    createLine({
+      x: 0,
+      y: 500,
+      points: [
+        { x: 0, y: 0 },
+        { x: 1000, y: 0 }
+      ],
+      stroke: 'pink'
+    })
+  );
+
+  list.forEach((item, index) => {
+    graphics.push(
+      createText({
+        x: 50 + index * 50,
+        y: 300,
+        fill: 'red',
+        measureMode: 0,
+        ignoreBuf: true,
+        fontSize: 22,
+        _debug_bounds: true,
+        ...item
+      })
+    );
+  });
+  list.forEach((item, index) => {
+    graphics.push(
+      createText({
+        x: 50 + index * 50,
+        y: 400,
+        fill: 'red',
+        measureMode: 2,
+        ignoreBuf: true,
+        fontSize: 22,
+        _debug_bounds: true,
+        ...item
+      })
+    );
+  });
+  list.forEach((item, index) => {
+    graphics.push(
+      createText({
+        x: 50 + index * 50,
+        y: 500,
+        ...item,
+        fill: 'red',
+        measureMode: 1,
+        ignoreBuf: true,
+        fontSize: 22,
+        _debug_bounds: true,
+        ...item
+      })
+    );
+  });
+
+  graphics.push(
+    createLine({
+      x: 229,
+      y: 207,
+      stroke: 'blue',
       points: [
         { x: -100, y: 0 },
         { x: 300, y: 0 }
       ]
     })
   );
-
-  const text = createText({
-    x: 500,
-    y: 200,
-    fill: colorPools[5],
-    // text: ['Tffg'],
-    text: 'fkdalfffffffffffffffffjkllllll',
-    wordBreak: 'break-word',
-    maxLineWidth: 200,
-    // ellipsis: '',
-    direction: 'horizontal',
-    angle: 0.6,
-    stroke: 'green',
-    // wordBreak: 'break-word',
-    // maxLineWidth: 200,
-    // ellipsis: '',
-    // direction: 'vertical',
-    // fontSize: 120,
-    // stroke: 'green',
-    // lineWidth: 100,
-    // lineHeight: 30,
-    // lineThrough: 1,
-    // underline: 1,
-    textAlign: 'left',
-    textBaseline: 'middle'
-    // textBaseline: 'bottom'
-    // scaleX: 2,
-    // scaleY: 2
-  });
-  graphics.push(text);
-  const b = text.OBBBounds;
-  const circle = createCircle({
-    x: (b.x1 + b.x2) / 2,
-    y: (b.y1 + b.y2) / 2,
-    fill: 'black',
-    radius: 2
-  });
-  graphics.push(circle);
-
-  const rect = createRect({
-    x: b.x1,
-    y: b.y1,
-    width: b.width(),
-    height: b.height(),
-    stroke: 'red',
-    anchor: [(b.x1 + b.x2) / 2, (b.y1 + b.y2) / 2],
-    angle: 0.6,
-    lineWidth: 1
-  });
-  graphics.push(rect);
-
-  const textLimit = createText({
-    x: 500,
-    y: 300,
-    fill: colorPools[5],
-    // text: ['Tffg'],
-    text: 'this is textaaaaaaaaaaaaaaaaa aaa this isisisisisis abc',
-    // text: '这是textabc这aaaaa是什么这是阿萨姆abcaaaaabcdef这是textabc这aaaaa是什么这是阿萨姆abcaaaaa',
-    // heightLimit: 40,
-    wordBreak: 'keep-all',
-    maxLineWidth: 100,
-    stroke: 'green',
-    textAlign: 'left',
-    textBaseline: 'middle',
-    whiteSpace: 'normal'
-    // wrap: true
-  });
-  console.log('textLimit', textLimit);
-  graphics.push(textLimit);
+  graphics.push(
+    createText({
+      textAlign: 'center',
+      lineWidth: 0,
+      textConfig: [],
+      lineHeight: '150%',
+      fontWeight: 'bold',
+      fillOpacity: 1,
+      textBaseline: 'alphabetic',
+      fill: 'red',
+      fontFamily:
+        'LarkHackSafariFont,LarkEmojiFont,LarkChineseQuote,-apple-system,BlinkMacSystemFont,"Helvetica Neue",Tahoma,"PingFang SC","Microsoft Yahei",Arial,"Hiragino Sans GB",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"',
+      fontStyle: '',
+      underline: 0,
+      stroke: '#00295C',
+      visible: true,
+      x: 229,
+      y: 207,
+      angle: 0,
+      limitAttrs: {
+        text: '节日福利'
+      },
+      text: '节日福利',
+      fontSize: 69,
+      _debug_bounds: true,
+      pickable: true
+    })
+  );
 
   const stage = createStage({
     canvas: 'main',
     autoRender: true,
+    disableDirtyBounds: false,
     pluginList: ['poptipForText']
   });
 
@@ -252,8 +413,8 @@ export const page = () => {
     performance(stage);
   });
 
-  setTimeout(() => {
-    console.log(stage.getLayer('_builtin_interactive').children);
-    stage.release();
-  }, 2000);
+  // setTimeout(() => {
+  //   console.log(stage.getLayer('_builtin_interactive').children);
+  //   stage.release();
+  // }, 2000);
 };

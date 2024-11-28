@@ -1050,14 +1050,14 @@ describe('Line Axis', () => {
       let firstLabel = axis.getElementsByName('axis-label')[0] as IText;
       let firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
       expect(firstLabel.attribute.textBaseline).toBe('bottom');
-      expect(firstLabel.attribute.y).toBe(firstLayer.AABBBounds.y2 - 2);
+      expect(firstLabel.attribute.y).toBe(firstLayer.AABBBounds.y2);
 
       axis.setAttribute('label', { containerAlign: 'middle' });
       firstLabel = axis.getElementsByName('axis-label')[0] as IText;
       firstLayer = axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup;
       expect(firstLabel.attribute.textBaseline).toBe('bottom');
       expect((firstLabel.AABBBounds.y1 + firstLabel.AABBBounds.y2) / 2).toBeCloseTo(
-        (firstLayer.AABBBounds.y1 + firstLayer.AABBBounds.y2) * 0.5 - 2
+        (firstLayer.AABBBounds.y1 + firstLayer.AABBBounds.y2) * 0.5
       );
 
       axis.setAttribute('label', { containerAlign: 'top' });

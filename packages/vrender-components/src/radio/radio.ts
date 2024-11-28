@@ -1,7 +1,7 @@
 import { merge } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { RadioAttributes } from './type';
-import { Arc, WrapText } from '@visactor/vrender-core';
+import { Arc, Text } from '@visactor/vrender-core';
 import type { ComponentOptions } from '../interface';
 import { loadRadioComponent } from './register';
 
@@ -39,7 +39,7 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
     }
   };
   _circle: Arc;
-  _text: WrapText;
+  _text: Text;
 
   name: 'radio';
 
@@ -91,7 +91,7 @@ export class Radio extends AbstractComponent<Required<RadioAttributes>> {
   }
 
   renderText() {
-    this._text = new WrapText(merge({}, this.attribute.text));
+    this._text = new Text(merge({}, this.attribute.text));
     if (this.attribute.disabled) {
       this._text.setAttribute('fill', this.attribute.text.disableFill);
     }

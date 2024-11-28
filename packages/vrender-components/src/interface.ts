@@ -7,7 +7,6 @@ import type {
   IText,
   ITimeline
 } from '@visactor/vrender-core';
-import type { TextContent } from './core/type';
 
 export type Direction = 'horizontal' | 'vertical';
 

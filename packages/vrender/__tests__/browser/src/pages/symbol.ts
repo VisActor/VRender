@@ -114,8 +114,10 @@ export const page = () => {
       lineJoin: 'round',
       // fill: 'pink',
       fillStrokeOrder: 1,
-      clipRange: 0,
-      size: 60
+      size: 40,
+      scaleX: 2,
+      scaleY: 2,
+      keepStrokeScale: true
     });
     symbol.animate().to({ clipRange: 1 }, 1000, 'linear');
     const text = createText({

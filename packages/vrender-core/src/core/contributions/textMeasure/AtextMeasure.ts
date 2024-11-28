@@ -1,9 +1,11 @@
 import { injectable } from '../../../common/inversify-lite';
 import type { IGraphicUtil } from '../../../interface/core';
 import type { ICanvas, IContext2d, EnvType } from '../../../interface';
+import { MeasureModeEnum } from '../../../interface';
 import type { TextOptionsType, ITextMeasure } from '../../../interface/text';
 import { DefaultTextAttribute, DefaultTextStyle } from '../../../graphic/config';
 import { testLetter } from '../../../graphic/richtext/utils';
+import { Logger } from '@visactor/vutils';
 
 @injectable()
 export class ATextMeasure implements ITextMeasure {
@@ -17,22 +19,43 @@ export class ATextMeasure implements ITextMeasure {
     service.bindTextMeasure(this);
   }
 
-  /**
-   * 获取text宽度，measureText.width
-   * @param text
-   * @param options
-   */
-  measureTextWidth(text: string, options: TextOptionsType): number {
-    if (!this.context) {
-      return this.estimate(text, options).width;
-    }
+  protected _measureTextWithoutAlignBaseline(text: string, options: TextOptionsType, compatible?: boolean) {
     this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
-    return textMeasure.width;
+    const metrics = this.context.measureText(text);
+
+    return compatible ? this.compatibleMetrics(metrics, options) : metrics;
+  }
+
+  protected _measureTextWithAlignBaseline(text: string, options: TextOptionsType, compatible?: boolean) {
+    this.context.setTextStyle(options);
+    const metrics = this.context.measureText(text);
+
+    return compatible ? this.compatibleMetrics(metrics, options) : metrics;
+  }
+
+  protected compatibleMetrics(metrics: TextMetrics | { width: number }, options: TextOptionsType) {
+    if (
+      (metrics as any).actualBoundingBoxAscent == null ||
+      (metrics as any).actualBoundingBoxDescent == null ||
+      (metrics as any).fontBoundingBoxAscent == null ||
+      (metrics as any).fontBoundingBoxDescent == null
+    ) {
+      const { ascent, descent } = this.measureTextBoundADscentEstimate(options);
+      (metrics as any).actualBoundingBoxAscent = ascent;
+      (metrics as any).actualBoundingBoxDescent = descent;
+      (metrics as any).fontBoundingBoxAscent = ascent;
+      (metrics as any).fontBoundingBoxDescent = descent;
+    }
+    if ((metrics as any).actualBoundingBoxLeft == null || (metrics as any).actualBoundingBoxRight == null) {
+      const { left, right } = this.measureTextBoundLeftRightEstimate(options);
+      (metrics as any).actualBoundingBoxLeft = left;
+      (metrics as any).actualBoundingBoxRight = right;
+    }
+    return metrics;
   }
 
   // 估算文字长度
-  estimate(
+  protected estimate(
     text: string,
     { fontSize = DefaultTextAttribute.fontSize }: TextOptionsType
   ): { width: number; height: number } {
@@ -50,17 +73,71 @@ export class ATextMeasure implements ITextMeasure {
   }
 
   /**
+   * 获取text宽度，measureText.width
+   * @param text
+   * @param options
+   */
+  measureTextWidth(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }): number {
+    if (!this.context) {
+      return this.estimate(text, options).width;
+    }
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options);
+    return textMeasure.width;
+  }
+  /**
+   * 获取text宽度，measureText.width
+   * @param text
+   * @param options
+   */
+  measureTextBoundsWidth(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
+    if (!this.context) {
+      return this.estimate(text, options).width;
+    }
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options);
+    return textMeasure.width;
+  }
+
+  measureTextBoundsLeftRight(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundLeftRightEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      left: (textMeasure as any).actualBoundingBoxLeft,
+      right: (textMeasure as any).actualBoundingBoxRight
+    };
+  }
+
+  /**
    * 获取text像素高度，基于actualBoundingBoxAscent和actualBoundingBoxDescent
    * @param text
    * @param options
    */
-  measureTextPixelHeight(text: string, options: TextOptionsType): number {
+  measureTextPixelHeight(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
     if (!this.context) {
       return options.fontSize ?? DefaultTextStyle.fontSize;
     }
-    this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options, true);
     return Math.abs((textMeasure as any).actualBoundingBoxAscent - (textMeasure as any).actualBoundingBoxDescent);
+  }
+
+  measureTextPixelADscent(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundADscentEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      ascent: (textMeasure as any).actualBoundingBoxAscent,
+      descent: (textMeasure as any).actualBoundingBoxDescent
+    };
   }
 
   /**
@@ -68,13 +145,136 @@ export class ATextMeasure implements ITextMeasure {
    * @param text
    * @param options
    */
-  measureTextBoundHieght(text: string, options: TextOptionsType): number {
+  measureTextBoundHieght(
+    text: string,
+    options: TextOptionsType,
+    textMeasure?: TextMetrics | { width: number }
+  ): number {
     if (!this.context) {
       return options.fontSize ?? DefaultTextStyle.fontSize;
     }
-    this.context.setTextStyleWithoutAlignBaseline(options);
-    const textMeasure = this.context.measureText(text);
+    textMeasure = textMeasure ?? this._measureTextWithoutAlignBaseline(text, options, true);
     return Math.abs((textMeasure as any).fontBoundingBoxAscent - (textMeasure as any).fontBoundingBoxDescent);
+  }
+
+  measureTextBoundADscent(text: string, options: TextOptionsType, textMeasure?: TextMetrics | { width: number }) {
+    if (!this.context) {
+      return this.measureTextBoundADscentEstimate(options);
+    }
+    textMeasure = textMeasure ?? this._measureTextWithAlignBaseline(text, options, true);
+    return {
+      ascent: (textMeasure as any).fontBoundingBoxAscent,
+      descent: (textMeasure as any).fontBoundingBoxDescent
+    };
+  }
+
+  protected measureTextBoundADscentEstimate(options: TextOptionsType) {
+    const fontSize = options.fontSize ?? DefaultTextStyle.fontSize;
+    return {
+      ascent: 0.79 * fontSize,
+      descent: 0.21 * fontSize
+    };
+    // const { textBaseline } = options;
+    // if (textBaseline === 'bottom') {
+    //   return {
+    //     ascent: fontSize,
+    //     descent: 0
+    //   };
+    // } else if (textBaseline === 'middle') {
+    //   return {
+    //     ascent: fontSize / 2,
+    //     descent: fontSize / 2
+    //   };
+    // } else if (textBaseline === 'alphabetic') {
+    //   return {
+    //     ascent: 0.79 * fontSize,
+    //     descent: 0.21 * fontSize
+    //   };
+    // }
+
+    // return {
+    //   ascent: 0,
+    //   descent: fontSize
+    // };
+  }
+
+  protected measureTextBoundLeftRightEstimate(options: TextOptionsType) {
+    const fontSize = options.fontSize ?? DefaultTextStyle.fontSize;
+    const { textAlign } = options;
+
+    if (textAlign === 'center') {
+      return {
+        left: fontSize / 2,
+        right: fontSize / 2
+      };
+    } else if (textAlign === 'right' || textAlign === 'end') {
+      return {
+        left: fontSize,
+        right: 0
+      };
+    }
+    return {
+      left: 0,
+      right: fontSize
+    };
+  }
+
+  measureTextPixelADscentAndWidth(
+    text: string,
+    options: TextOptionsType,
+    mode: MeasureModeEnum
+  ): { width: number; ascent: number; descent: number } {
+    if (!this.context) {
+      return {
+        ...this.measureTextBoundADscentEstimate(options),
+        width: this.estimate(text, options).width
+      };
+    }
+    const out = this._measureTextWithoutAlignBaseline(text, options, true);
+
+    if (mode === MeasureModeEnum.actualBounding) {
+      return {
+        ascent: (out as any).actualBoundingBoxAscent,
+        descent: (out as any).actualBoundingBoxDescent,
+        width: (out as any).width
+      };
+    } else if (mode === MeasureModeEnum.estimate) {
+      return {
+        ...this.measureTextBoundADscentEstimate(options),
+        width: (out as any).width
+      };
+    } else if (mode === MeasureModeEnum.fontBounding) {
+      // const { lineHeight = options.fontSize } = options;
+      // let ratio = 1;
+      // if (lineHeight) {
+      //   const fontBoundingHeight = (out as any).fontBoundingBoxAscent + (out as any).fontBoundingBoxDescent;
+      //   ratio = lineHeight / fontBoundingHeight;
+      // }
+      // 避免二次矫正，应当保证所有字符组合的基线都一样，否则fontBounding就失去意义了
+      // 但如果超出边界了，就只能进行二次矫正
+      let ascent = (out as any).fontBoundingBoxAscent;
+      let descent = (out as any).fontBoundingBoxDescent;
+      // 只能一边超出，都超出的话目前无法矫正，因为行高不能超
+      if ((out as any).actualBoundingBoxDescent && descent < (out as any).actualBoundingBoxDescent) {
+        const delta = (out as any).actualBoundingBoxDescent - descent;
+        descent += delta;
+        ascent -= delta;
+      } else if ((out as any).actualBoundingBoxAscent && ascent < (out as any).actualBoundingBoxAscent) {
+        const delta = (out as any).actualBoundingBoxAscent - ascent;
+        ascent += delta;
+        descent -= delta;
+      }
+      return {
+        ascent,
+        descent,
+        width: (out as any).width
+      };
+    }
+    return {
+      ascent: (out as any).actualBoundingBoxAscent,
+      descent: (out as any).actualBoundingBoxDescent,
+      width: (out as any).width
+    };
   }
 
   /**
@@ -231,6 +431,13 @@ export class ATextMeasure implements ITextMeasure {
     leftIdx: number,
     rightIdx: number
   ): { str: string; width: number } {
+    // 添加退出条件，如果leftIdx和rightIdx相等，那么就返回这个字符串（理论上这时出问题了）
+    if (leftIdx === rightIdx) {
+      Logger.getInstance().warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      // console.warn(`【_clipTextEnd】不应该走到这里${text}, ${leftIdx}, ${rightIdx}`);
+      const subText = text.substring(0, rightIdx + 1);
+      return { str: subText, width: this.measureTextWidth(subText, options) };
+    }
     const middleIdx = Math.floor((leftIdx + rightIdx) / 2);
     const subText = text.substring(0, middleIdx + 1);
     const strWidth = this.measureTextWidth(subText, options);
@@ -276,7 +483,7 @@ export class ATextMeasure implements ITextMeasure {
     rightIdx: number
   ): { str: string; width: number } {
     const middleIdx = Math.ceil((leftIdx + rightIdx) / 2);
-    const subText = text.substring(middleIdx - 1, text.length - 1);
+    const subText = text.substring(middleIdx - 1, text.length);
     const strWidth = this.measureTextWidth(subText, options);
     let length: number;
     if (strWidth > width) {
@@ -285,21 +492,21 @@ export class ATextMeasure implements ITextMeasure {
         return { str: '', width: 0 };
       } // 如果子字符串长度小于1，而且大于给定宽的话，返回空字符串
       // 先判断是不是左侧的那个字符
-      const str = text.substring(middleIdx, text.length - 1);
+      const str = text.substring(middleIdx, text.length);
       // 如果到左侧的字符小于或等于width，那么说明就是左侧的字符
       length = this.measureTextWidth(str, options);
       if (length <= width) {
         return { str, width: length };
       }
       // 返回leftIdx到middleIdx
-      return this._clipTextStart(text, options, width, middleIdx, text.length - 1);
+      return this._clipTextStart(text, options, width, middleIdx, text.length);
     } else if (strWidth < width) {
       // 如果字符串的宽度小于限制宽度
       if (middleIdx <= 0) {
         return { str: text, width: this.measureTextWidth(text, options) };
       } // 如果已经到结尾了，返回text
       // 先判断是不是右侧的那个字符
-      const str = text.substring(middleIdx - 2, text.length - 1);
+      const str = text.substring(middleIdx - 2, text.length);
       // 如果到右侧的字符大于或等于width，那么说明就是这个字符串
       length = this.measureTextWidth(str, options);
       if (length >= width) {

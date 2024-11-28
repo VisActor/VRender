@@ -36,6 +36,7 @@ import { Theme } from '../graphic/theme';
 import { PickerService } from '../picker/constants';
 import { PluginService } from '../plugins/constants';
 import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
+import { AutoRefreshPlugin } from '../plugins/builtin-plugin/auto-refresh-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
 import { defaultTicker } from '../animate/default-ticker';
@@ -166,6 +167,7 @@ export class Stage extends Group implements IStage {
   ticker: ITicker;
 
   autoRender: boolean;
+  autoRefresh: boolean;
   _enableLayout: boolean;
   htmlAttribute: boolean | string | any;
   reactAttribute: boolean | string | any;
@@ -194,6 +196,10 @@ export class Stage extends Group implements IStage {
   protected timeline: ITimeline;
 
   declare params: Partial<IStageParams>;
+
+  // 是否在render之前执行了tick，如果没有执行，尝试执行tick用来应用动画属性，避免动画过程中随意赋值然后又调用同步render导致属性的突变
+  // 第一次render不需要强行走动画
+  protected tickedBeforeRender: boolean = true;
 
   /**
    * 所有属性都具有默认值。
@@ -258,6 +264,9 @@ export class Stage extends Group implements IStage {
     if (params.autoRender) {
       this.enableAutoRender();
     }
+    if (params.autoRefresh) {
+      this.enableAutoRefresh();
+    }
     // 默认不开启dirtyBounds
     if (params.disableDirtyBounds === false) {
       this.enableDirtyBounds();
@@ -288,6 +297,7 @@ export class Stage extends Group implements IStage {
     if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
     }
+    this.ticker.on('afterTick', this.afterTickCb);
   }
 
   pauseRender(sr: number = -1) {
@@ -447,6 +457,18 @@ export class Stage extends Group implements IStage {
     this._afterRender && this._afterRender(stage);
     this._afterNextRenderCbs && this._afterNextRenderCbs.forEach(cb => cb(stage));
     this._afterNextRenderCbs = null;
+    this.tickedBeforeRender = false;
+  };
+
+  protected afterTickCb = () => {
+    this.tickedBeforeRender = true;
+    // 性能模式不用立刻渲染
+    if (this.params.optimize?.tickRenderMode === 'performance') {
+      // do nothing
+    } else {
+      // 不是rendering的时候，render
+      this.state !== 'rendering' && this.render();
+    }
   };
 
   setBeforeRender(cb: (stage: IStage) => void) {
@@ -499,6 +521,22 @@ export class Stage extends Group implements IStage {
     }
     this.autoRender = false;
     this.pluginService.findPluginsByName('AutoRenderPlugin').forEach(plugin => {
+      this.pluginService.unRegister(plugin);
+    });
+  }
+  enableAutoRefresh() {
+    if (this.autoRefresh) {
+      return;
+    }
+    this.autoRefresh = true;
+    this.pluginService.register(new AutoRefreshPlugin());
+  }
+  disableAutoRefresh() {
+    if (!this.autoRefresh) {
+      return;
+    }
+    this.autoRefresh = false;
+    this.pluginService.findPluginsByName('AutoRefreshPlugin').forEach(plugin => {
       this.pluginService.unRegister(plugin);
     });
   }
@@ -689,6 +727,10 @@ export class Stage extends Group implements IStage {
     this.timeline.resume();
     const state = this.state;
     this.state = 'rendering';
+    // 判断是否需要手动执行tick
+    if (!this.tickedBeforeRender) {
+      this.ticker.trySyncTickStatus();
+    }
     this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
@@ -947,6 +989,7 @@ export class Stage extends Group implements IStage {
     }
     this.window.release();
     this.ticker.remTimeline(this.timeline);
+    this.ticker.removeListener('afterTick', this.afterTickCb);
     this.renderService.renderTreeRoots = [];
   }
 

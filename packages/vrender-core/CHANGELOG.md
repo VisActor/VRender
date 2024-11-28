@@ -1,6 +1,49 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 31 Oct 2024 02:49:49 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Nov 2024 03:30:36 GMT and should not be manually modified.
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+### Updates
+
+- feat: use ascend and decent to make measure more accurate
+- feat: sync animated attribute while call render func, closed #1416
+- fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- fix: fix issue with dirtyBounds incorrectly while set visible
+
+## 0.20.16
+Thu, 21 Nov 2024 06:58:23 GMT
+
+### Updates
+
+- fix: fix issue with _debug_bounds
+- fix: fix issue with string linear-gradient
+- fix: fix issue where not work when lineWidth is set to 0
+- fix: fix drawing issue when size is array
+
+## 0.20.15
+Fri, 15 Nov 2024 08:34:34 GMT
+
+### Updates
+
+- feat: support keepStrokeScale
+
+## 0.20.14
+Wed, 13 Nov 2024 07:47:16 GMT
+
+_Version update only_
+
+## 0.20.13
+Wed, 13 Nov 2024 06:35:02 GMT
+
+### Updates
+
+- feat: support auto refresh plugin
+- fix: fix smartInvert of gradient bar
+
+
+- fix: fix issue with text clip
 
 ## 0.20.12
 Thu, 31 Oct 2024 02:49:49 GMT

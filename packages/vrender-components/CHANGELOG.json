@@ -2,6 +2,60 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.0",
+      "tag": "@visactor/vrender-components_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": " feat: support label overlap for inside arc labels"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-components_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.15",
+      "tag": "@visactor/vrender-components_v0.20.15",
+      "date": "Fri, 15 Nov 2024 08:34:34 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.14",
+      "tag": "@visactor/vrender-components_v0.20.14",
+      "date": "Wed, 13 Nov 2024 07:47:16 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.13",
+      "tag": "@visactor/vrender-components_v0.20.13",
+      "date": "Wed, 13 Nov 2024 06:35:02 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support custom event trigger in discrete legend"
+          },
+          {
+            "comment": "feat: support scrollMask in scroll type discrete legend"
+          },
+          {
+            "comment": "refactor: optimize the scroll effect of discrete legend"
+          },
+          {
+            "comment": "fix: fix the issue of the legend scrollbar being clipped when positioned left or right"
+          },
+          {
+            "comment": "fix: fix smartInvert of gradient bar\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.12",
       "tag": "@visactor/vrender-components_v0.20.12",
       "date": "Thu, 31 Oct 2024 02:49:49 GMT",

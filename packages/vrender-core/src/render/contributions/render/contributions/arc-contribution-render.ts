@@ -56,7 +56,8 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       x: originX = arcAttribute.x,
       y: originY = arcAttribute.y,
       scaleX = arcAttribute.scaleX,
-      scaleY = arcAttribute.scaleY
+      scaleY = arcAttribute.scaleY,
+      keepStrokeScale = arcAttribute.keepStrokeScale
     } = arc.attribute;
     let { innerRadius = arcAttribute.innerRadius, outerRadius = arcAttribute.outerRadius } = arc.attribute;
     outerRadius += outerPadding;
@@ -66,7 +67,7 @@ export class DefaultArcRenderContribution implements IArcRenderContribution {
       const doStroke = !!(borderStyle && borderStyle.stroke);
 
       const { distance = arcAttribute[key].distance } = borderStyle;
-      const d = getScaledStroke(context, distance as number, context.dpr);
+      const d = keepStrokeScale ? (distance as number) : getScaledStroke(context, distance as number, context.dpr);
       const deltaAngle = (distance as number) / outerRadius;
       const sign = key === 'outerBorder' ? 1 : -1;
       arc.setAttributes({

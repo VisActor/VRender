@@ -6,9 +6,9 @@ import { array } from '@visactor/vutils';
 import { initBrowserEnv } from '@visactor/vrender-kits';
 initBrowserEnv();
 
-export default function render(component: IGraphic | IGraphic[], canvasId: string) {
+export default function render(component: IGraphic | IGraphic[], canvasId: string, option?: Partial<IStageParams>) {
   // 创建舞台实例
-  const stage = createRenderer(canvasId);
+  const stage = createRenderer(canvasId, option);
   window.stage = stage;
   // 将组件添加至舞台
   array(component).forEach(c => {

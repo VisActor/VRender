@@ -60,10 +60,11 @@ export class HarmonyContext2d extends BrowserContext2d implements IContext2d {
         lineJoin = defaultParams.lineJoin,
         lineDash = defaultParams.lineDash,
         lineCap = defaultParams.lineCap,
-        miterLimit = defaultParams.miterLimit
+        miterLimit = defaultParams.miterLimit,
+        keepStrokeScale = defaultParams.keepStrokeScale
       } = attribute;
       _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
-      _context.lineWidth = getScaledStroke(this, lineWidth, this.dpr);
+      _context.lineWidth = keepStrokeScale ? lineWidth : getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
       // lynx环境中lineDash不能为[0, 0]

@@ -1,3 +1,76 @@
+# v0.20.16
+
+2024-11-25
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with _debug_bounds
+- **@visactor/vrender-core**: fix issue with string linear-gradient
+- **@visactor/vrender-core**: fix issue where not work when lineWidth is set to 0
+- **@visactor/vrender-core**: fix drawing issue when size is array
+
+
+
+[more detail about v0.20.16](https://github.com/VisActor/VRender/releases/tag/v0.20.16)
+
+# v0.20.15
+
+2024-11-21
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-core**: support keepStrokeScale
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix press in andiord
+
+
+
+[more detail about v0.20.15](https://github.com/VisActor/VRender/releases/tag/v0.20.15)
+
+# v0.20.14
+
+2024-11-13
+
+
+**What's Changed**
+
+* fix: incorrect default hover trigger of discrete legend by @xiaoluoHe in https://github.com/VisActor/VRender/pull/1550
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.20.13...v0.20.14
+
+[more detail about v0.20.14](https://github.com/VisActor/VRender/releases/tag/v0.20.14)
+
+# v0.20.13
+
+2024-11-13
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support custom event trigger in discrete legend
+- **@visactor/vrender-components**: support scrollMask in scroll type discrete legend
+- **@visactor/vrender-core**: support auto refresh plugin
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: fix the issue of the legend scrollbar being clipped when positioned left or right
+- **@visactor/vrender-components**: fix smartInvert of gradient bar
+- **@visactor/vrender-kits**: fix trigger of press in mobile
+- **@visactor/vrender-core**: fix issue with text clip
+- **@visactor/vrender**: fix trigger of press in mobile
+
+**🔨 Refactor**
+
+- **@visactor/vrender-components**: optimize the scroll effect of discrete legend
+
+
+
+[more detail about v0.20.13](https://github.com/VisActor/VRender/releases/tag/v0.20.13)
+
 # v0.20.12
 
 2024-10-31

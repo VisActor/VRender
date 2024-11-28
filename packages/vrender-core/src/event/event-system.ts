@@ -103,7 +103,8 @@ export class EventSystem {
       supportsPointerEvents = global.supportsPointerEvents
     } = params;
     this.manager = new EventManager(rootNode, {
-      clickInterval
+      clickInterval,
+      supportsTouchEvents: supportsTouchEvents
     });
 
     this.globalObj = global;

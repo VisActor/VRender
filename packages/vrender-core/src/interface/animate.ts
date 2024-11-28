@@ -356,4 +356,5 @@ export interface ITicker extends EventEmitter {
 
   // 是否自动停止，默认为true
   autoStop: boolean;
+  trySyncTickStatus: () => void;
 }

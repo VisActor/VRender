@@ -1,6 +1,6 @@
 {
   "name": "@visactor/vrender-core",
-  "version": "0.20.12",
+  "version": "0.21.0",
   "description": "",
   "sideEffects": [
     "./src/modules.ts",
@@ -25,11 +25,12 @@
     "test": "jest",
     "test-live": "npm run test-watch __tests__/unit/theme/line.test.ts",
     "test-watch": "cross-env DEBUG_MODE=1 jest --watch",
-    "test-cov": "jest -w 16 --coverage"
+    "test-cov": "jest -w 16 --coverage",
+    "build:spec-types": "rm -rf ./spec-types && tsc -p ./tsconfig.spec.json --declaration --emitDeclarationOnly --outDir ./spec-types"
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~0.18.18"
+    "@visactor/vutils": "~0.19.1"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

@@ -36,10 +36,10 @@ const stage = new VRender.Stage({
   autoRender: true
 });
 
-const textLimit = createText({
+const textLimit = cVRender.reateText({
   x: 0,
   y: 0,
-  fill: colorPools[5],
+  fill: 'pink',
   text: '这是没有BoundsPadding的文字包围盒',
   wordBreak: 'keep-all',
   maxLineWidth: 120,
@@ -49,10 +49,10 @@ const textLimit = createText({
   _debug_bounds: true,
   background: 'green'
 });
-const textLimit2 = createText({
+const textLimit2 = VRender.createText({
   x: 0,
   y: 60,
-  fill: colorPools[5],
+  fill: 'pink',
   text: '这是有BoundsPadding的文字包围盒',
   wordBreak: 'keep-all',
   maxLineWidth: 120,
@@ -64,8 +64,7 @@ const textLimit2 = createText({
   background: 'green'
 });
 
-const group = createGroup({x: 100, y: 100, width: 200, height: 200})
-graphics.push(group);
+const group = VRender.createGroup({x: 100, y: 100, width: 200, height: 200});
 group.add(textLimit);
 group.add(textLimit2);
 
@@ -84,10 +83,10 @@ const stage = new VRender.Stage({
   enableLayout: true
 });
 
-const textLimit = createText({
+const textLimit = VRender.createText({
   x: 0,
   y: 0,
-  fill: colorPools[5],
+  fill: 'pink',
   text: '这是没有BoundsPadding的文字包围盒',
   wordBreak: 'keep-all',
   maxLineWidth: 120,
@@ -97,10 +96,10 @@ const textLimit = createText({
   _debug_bounds: true,
   background: 'green'
 });
-const textLimit2 = createText({
+const textLimit2 = VRender.createText({
   x: 0,
   y: 60,
-  fill: colorPools[5],
+  fill: 'pink',
   text: '这是有BoundsPadding的文字包围盒',
   wordBreak: 'keep-all',
   maxLineWidth: 120,
@@ -112,8 +111,7 @@ const textLimit2 = createText({
   background: 'green'
 });
 
-const group = createGroup({x: 100, y: 100, width: 200, height: 200, display: 'flex'})
-graphics.push(group);
+const group = VRender.createGroup({x: 100, y: 100, width: 200, height: 200, display: 'flex'});
 group.add(textLimit);
 group.add(textLimit2);
 

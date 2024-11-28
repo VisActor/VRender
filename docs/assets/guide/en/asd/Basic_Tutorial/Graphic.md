@@ -4,7 +4,7 @@
 
 VRender has many primitives, but their usage is similar because they all inherit from the `Graphic` class. They all have almost the same properties and methods, just accepting different parameters. The inheritance diagram of primitives is shown in the following figure.
 
-![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-graphic.png)
+![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vrender-graphic-rel.png)
 
 1. Firstly, they all inherit from `Node`, so all primitives have a tree structure.
 2. Then they all inherit from `Graphic`, so they all have basic properties and methods of primitives such as `x`, `y`, `fill`, etc.

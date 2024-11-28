@@ -1,6 +1,6 @@
 # What is BoundsPadding
 
-【Note】By default, `VRender` does not have a layout similar to `DOM`. In `DOM`, you can write two `div` elements, and the second `div` will be placed below the first `div`. However, in `VRender`, if you write two rectangles, the second rectangle will overlay the first one. This is because all positioning in `VRender` is relative positioning, with the coordinate system having the origin at the top left corner, with the positive `x` axis to the right and the positive `y` axis downwards. This difference in layout behavior between `VRender` and `DOM` is due to their different positioning systems.
+*Note:* By default, `VRender` does not have a layout similar to the `DOM`. For example, in the `DOM`, you can have two `div` elements, and the second `div` will be placed below the first `div`. However, in `VRender`, if you have two rectangles, the second rectangle will overlay the first one. This is because all positioning in `VRender` is relative positioning, *it relies on the x, y parameters you configure for positioning*, with the coordinate system having the origin at the top left corner, the positive direction of the x-axis to the right, and the positive direction of the y-axis downwards. This difference in layout between `VRender` and the `DOM` is due to this positioning system.
 
 All graphics elements have their own `AABBBounds`. If you find the `AABBBounds` too small and need to enlarge it, you can configure `BoundsPadding`.
 

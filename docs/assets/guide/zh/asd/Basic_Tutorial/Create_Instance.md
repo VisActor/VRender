@@ -2,6 +2,8 @@
 
 和Dom树、React虚拟节点树类似，VRender也是基于一颗场景树进行绘制的，，VRender通过图层来挂载这颗场景树，图层则由Stage进行管理，Stage管理整个应用的生命周期，视图的位置和大小，场景的绘制、拾取等逻辑。
 
+如下图所示，一个VRender应用一般包括一个`Stage`，`Stage`下可挂载多个图层(`Layer`)，图层下可以挂载多个图形元素。
+
 ![](https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/stage-tree.png)
 
 ## 创建Stage

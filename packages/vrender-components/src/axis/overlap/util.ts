@@ -1,5 +1,5 @@
 import type { IText } from '@visactor/vrender-core';
-import { isNil, isRectIntersect, isRotateAABBIntersect, rotatePoint } from '@visactor/vutils';
+import { isNil, rotatePoint } from '@visactor/vutils';
 
 // 计算水平情况下的包围盒
 function genNormalBounds(item: IText) {
@@ -38,18 +38,6 @@ export function genRotateBounds(items: IText[]) {
     bounds.centerY += deltaY;
     item.rotatedBounds = bounds;
   });
-}
-
-export function itemIntersect(item1: IText, item2: IText) {
-  if (!item1.OBBBounds?.empty() && !item2.OBBBounds?.empty()) {
-    return item1.OBBBounds.intersects(item2.OBBBounds);
-  }
-  return (
-    isRectIntersect(item1.AABBBounds, item2.AABBBounds, false) &&
-    (item1.rotatedBounds && item2.rotatedBounds
-      ? isRotateAABBIntersect(item1.rotatedBounds, item2.rotatedBounds, true)
-      : true)
-  );
 }
 
 const DELTA_ANGLE = Math.sin(Math.PI / 10);

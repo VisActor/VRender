@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix the issue when line is configured to connect, closed #3238",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

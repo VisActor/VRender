@@ -453,7 +453,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   }
 
   protected computeNewPositionAfterTargetItem(position: Point) {
-    const { itemContent = {}, targetSymbol } = this.attribute as MarkPointAttrs;
+    const { itemContent = {}, targetSymbol, itemLine } = this.attribute as MarkPointAttrs;
     const { offsetX: itemContentOffsetX = 0, offsetY: itemContentOffsetY = 0 } = itemContent;
     const {
       offset: targetSymbolOffset = 0,
@@ -462,7 +462,18 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       size: targetSymbolSize
     } = targetSymbol;
     const targetSize = targetItemvisible ? targetSymbolStyle.size ?? targetSymbolSize ?? 20 : 0;
-    const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
+
+    let targetOffsetAngle;
+    if (itemLine.type === 'type-do') {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX / 2);
+    } else if (itemLine.type === 'type-po') {
+      targetOffsetAngle = deltaXYToAngle(0, itemContentOffsetX);
+    } else if (itemLine.type === 'type-op') {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, 0);
+    } else {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
+    }
+
     const newPosition: Point = {
       x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle),
       y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle)
@@ -471,7 +482,6 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
       y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
     };
-
     return { newPosition, newItemPosition };
   }
 

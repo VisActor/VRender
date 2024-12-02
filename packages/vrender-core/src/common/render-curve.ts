@@ -37,7 +37,9 @@ function drawEachCurve(
     // 找到合法的点
     const { originP1, originP2 } = curve;
     let validP: IPointLike;
-    if (originP1 && originP1.defined !== false) {
+    // 只能第一个curve才可以用p0作为合法点，后面的curve都不应该算p1，因为已经算在前面了
+    // lastCurve只在第一个curve不存在
+    if (originP1 && originP1.defined !== false && !lastCurve) {
       validP = p0;
     } else if (originP1 && originP2.defined !== false) {
       validP = curve.p3 ?? curve.p1;

@@ -356,8 +356,8 @@ export class DefaultDrawContribution implements IDrawContribution {
       if (retrans) {
         tempBounds = this.dirtyBounds.clone();
         // 变换dirtyBounds
-        const m = graphic.globalTransMatrix.getInverse();
-        this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(m);
+        // const m = graphic.globalTransMatrix.getInverse();
+        // this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(m);
         this.dirtyBounds.translate(-scrollX, -scrollY);
       }
     }

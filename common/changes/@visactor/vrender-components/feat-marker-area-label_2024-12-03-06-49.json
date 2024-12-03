@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support vertex point of marker area label. close @VisActor/VChart#3442",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

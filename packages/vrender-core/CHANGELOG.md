@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 21 Nov 2024 06:58:23 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Dec 2024 13:06:17 GMT and should not be manually modified.
+
+## 0.20.17
+Tue, 03 Dec 2024 13:06:17 GMT
+
+### Updates
+
+- fix: fix the issue when line is configured to connect, closed #3238
+- fix: fix issue with richtext setAttribute, closed #1578
 
 ## 0.20.16
 Thu, 21 Nov 2024 06:58:23 GMT

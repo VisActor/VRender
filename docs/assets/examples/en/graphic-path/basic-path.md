@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/path-basic.jp
 
 # path graphic
 
+The `Path` element is a basic graphic element used to draw complex shapes and curves, widely used in computer graphics, graphic design, and data visualization. It creates arbitrary shapes by defining a series of line segments and curves, providing flexibility and expressiveness. Its syntax is consistent with the `path` tag in SVG.
+
 ## code demo
 
 ```javascript livedemo template=vrender

@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/fan.gif
 
 # arc 扇子
 
+A demo of a fan
+
 ## 代码演示
 
 ```javascript livedemo template=vrender

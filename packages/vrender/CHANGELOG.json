@@ -2,6 +2,12 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender_v0.20.16",
+      "date": "Tue, 03 Dec 2024 12:24:51 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.15",
       "tag": "@visactor/vrender_v0.20.15",
       "date": "Fri, 15 Nov 2024 08:34:34 GMT",

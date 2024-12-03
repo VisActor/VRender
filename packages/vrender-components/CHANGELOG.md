@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 15 Nov 2024 08:34:34 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Dec 2024 12:24:51 GMT and should not be manually modified.
+
+## 0.20.16
+Tue, 03 Dec 2024 12:24:51 GMT
+
+### Updates
+
+- feat: support vertex point of marker area label. close @VisActor/VChart#3442
+- fix: end symbol angle when arc line in markpoint. fix @VisActor/VChart#3427
 
 ## 0.20.15
 Fri, 15 Nov 2024 08:34:34 GMT

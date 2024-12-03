@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-components_v0.20.16",
+      "date": "Tue, 03 Dec 2024 12:24:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support vertex point of marker area label. close @VisActor/VChart#3442"
+          },
+          {
+            "comment": "fix: end symbol angle when arc line in markpoint. fix @VisActor/VChart#3427"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.15",
       "tag": "@visactor/vrender-components_v0.20.15",
       "date": "Fri, 15 Nov 2024 08:34:34 GMT",

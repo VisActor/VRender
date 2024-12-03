@@ -9,6 +9,10 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/area.jpeg
 
 # area 图元
 
+`area`图元是用于表示数据变化的图形元素，通常在面积图中使用。面积图通过填充线下方的区域来展示数值的大小和变化趋势，强调数据的总体量而不仅仅是单一数值。
+
+该图元主要通过`points`数组定义形状，其中每项是个对象，有x1、x2、y1、y2几个属性用来表示上下的两个点
+
 ## 代码演示
 
 ```javascript livedemo template=vrender

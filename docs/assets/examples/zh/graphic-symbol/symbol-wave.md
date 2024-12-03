@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/wave01.gif
 
 # symbol 波浪
 
+波浪的3d效果
+
 ## 代码演示
 
 ```javascript livedemo template=vrender

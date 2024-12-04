@@ -252,7 +252,7 @@ export class ScrollBarPlugin implements IPlugin {
       const ratio = Math.min(this.scrollContainerBounds.width() / childrenBounds.width(), 1);
       const start = Math.max(Math.min(scrollX / this.childrenBounds.width(), 0), ratio - 1);
       attrs.x = x + dx;
-      attrs.y = y + dy + height - this.scrollContainerBounds.height();
+      attrs.y = y + dy + height - (attrs.height ?? 0);
       attrs.range = [-start, -start + ratio];
     } else {
       const ratio = Math.min(this.scrollContainerBounds.height() / childrenBounds.height(), 1);

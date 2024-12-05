@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.1",
+      "tag": "@visactor/vrender-core_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with insertAfter and insertBefore"
+          },
+          {
+            "comment": "fix: fix the issue when line is configured to connect, closed #3238"
+          },
+          {
+            "comment": "fix: fix issue with richtext setAttribute, closed #1578"
+          },
+          {
+            "comment": "fix: fix issue with richtext default font"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.0",
       "tag": "@visactor/vrender-core_v0.21.0",
       "date": "Thu, 28 Nov 2024 03:30:36 GMT",

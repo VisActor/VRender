@@ -1,3 +1,16 @@
+# v0.20.18
+
+2024-12-05
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `restorePosition` in position/bound label overlap strategy
+
+
+
+[more detail about v0.20.18](https://github.com/VisActor/VRender/releases/tag/v0.20.18)
+
 # v0.21.1
 
 2024-12-05

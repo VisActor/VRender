@@ -1,3 +1,26 @@
+# v0.21.1
+
+2024-12-05
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support `restorePosition` in position/bound label overlap strategy
+- **@visactor/vrender-components**: support vertex point of marker area label. close @VisActor/VChart[#3442](https://github.com/VisActor/VRender/issues/3442)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: end symbol angle when arc line in markpoint. fix @VisActor/VChart[#3427](https://github.com/VisActor/VRender/issues/3427)
+- **@visactor/vrender-components**: fix issue with scroll-plugin
+- **@visactor/vrender-core**: fix issue with insertAfter and insertBefore
+- **@visactor/vrender-core**: fix the issue when line is configured to connect, closed [#3238](https://github.com/VisActor/VRender/issues/3238)
+- **@visactor/vrender-core**: fix issue with richtext setAttribute, closed [#1578](https://github.com/VisActor/VRender/issues/1578)
+- **@visactor/vrender-core**: fix issue with richtext default font
+
+
+
+[more detail about v0.21.1](https://github.com/VisActor/VRender/releases/tag/v0.21.1)
+
 # v0.21.0
 
 2024-12-05

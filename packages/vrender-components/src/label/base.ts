@@ -550,9 +550,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const text = result[i];
       const bounds = text.AABBBounds;
       const range = boundToRange(bmpTool, bounds, true);
-      if (canPlace(bmpTool, bitmap, bounds, clampForce, text._isClamped ? 0 : overlapPadding)) {
+      if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
         bitmap.setRange(range);
       } else {
+        if (clampForce) {
+          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+          if (placedAfterClampForce) {
+            continue;
+          }
+        }
         if (hideOnHit) {
           text.setAttributes({ visible: false });
         } else {
@@ -561,6 +567,34 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
     }
     return result;
+  }
+
+  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap) {
+    const { dy = 0, dx = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
+    if (dx === 0 && dy === 0) {
+      if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
+        // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
+        bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+        return true;
+      }
+    } else if (
+      canPlace(
+        bmpTool,
+        bitmap,
+        {
+          x1: text.AABBBounds.x1 + dx,
+          x2: text.AABBBounds.x2 + dx,
+          y1: text.AABBBounds.y1 + dy,
+          y2: text.AABBBounds.y2 + dy
+        }
+        // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
+      )
+    ) {
+      text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+      bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+      return true;
+    }
+    return false;
   }
 
   protected _overlapByStrategy(
@@ -658,29 +692,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         // 向内挤压不考虑 overlapPadding
         const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx === 0 && dy === 0) {
-          if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
-            // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
-            bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+          if (placedAfterClampForce) {
             result.push(text);
             continue;
           }
-        } else if (
-          canPlace(
-            bmpTool,
-            bitmap,
-            {
-              x1: text.AABBBounds.x1 + dx,
-              x2: text.AABBBounds.x2 + dx,
-              y1: text.AABBBounds.y1 + dy,
-              y2: text.AABBBounds.y2 + dy
-            }
-            // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
-          )
-        ) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
-          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-          result.push(text);
-          continue;
         }
       }
 

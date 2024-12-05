@@ -288,6 +288,13 @@ export type PositionStrategy = {
    */
   type: 'position';
   position?: Functional<LabelPosition[]>;
+  /**
+   * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
+   * 默认为 true，若为 false，则标签会被放在 position 数组的最后一个位置。
+   * @since 0.20.18
+   * @default true
+   */
+  restorePosition?: boolean;
 };
 
 export type BoundStrategy = {
@@ -297,6 +304,13 @@ export type BoundStrategy = {
    */
   type: 'bound';
   position?: Functional<LabelPosition[]>;
+  /**
+   * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
+   * 默认为 true，若为 false，则标签会被放在 position 数组的最后一个位置。
+   * @since 0.20.18
+   * @default true
+   */
+  restorePosition?: boolean;
 };
 
 export type MoveYStrategy = {

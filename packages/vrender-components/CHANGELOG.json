@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.1",
+      "tag": "@visactor/vrender-components_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `restorePosition` in position/bound label overlap strategy"
+          },
+          {
+            "comment": "feat: support vertex point of marker area label. close @VisActor/VChart#3442"
+          },
+          {
+            "comment": "fix: end symbol angle when arc line in markpoint. fix @VisActor/VChart#3427"
+          },
+          {
+            "comment": "fix: fix issue with scroll-plugin"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.0",
       "tag": "@visactor/vrender-components_v0.21.0",
       "date": "Thu, 28 Nov 2024 03:30:36 GMT",

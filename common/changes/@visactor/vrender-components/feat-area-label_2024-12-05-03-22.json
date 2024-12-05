@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support `restorePosition` in position/bound label overlap strategy",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

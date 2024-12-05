@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.18",
+      "tag": "@visactor/vrender-components_v0.20.18",
+      "date": "Thu, 05 Dec 2024 08:03:54 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `restorePosition` in position/bound label overlap strategy"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.17",
       "tag": "@visactor/vrender-components_v0.20.17",
       "date": "Tue, 03 Dec 2024 13:06:17 GMT",

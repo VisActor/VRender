@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 03 Dec 2024 13:06:17 GMT and should not be manually modified.
+This log was last generated on Thu, 05 Dec 2024 08:03:54 GMT and should not be manually modified.
+
+## 0.20.18
+Thu, 05 Dec 2024 08:03:54 GMT
+
+### Updates
+
+- feat: support `restorePosition` in position/bound label overlap strategy
 
 ## 0.20.17
 Tue, 03 Dec 2024 13:06:17 GMT

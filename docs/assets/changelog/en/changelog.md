@@ -1,3 +1,23 @@
+# v0.21.0
+
+2024-12-05
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support label overlap for inside arc labels
+- **@visactor/vrender-core**: use ascend and decent to make measure more accurate
+- **@visactor/vrender-core**: sync animated attribute while call render func, closed [#1416](https://github.com/VisActor/VRender/issues/1416)
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- **@visactor/vrender-core**: fix issue with dirtyBounds incorrectly while set visible
+
+
+
+[more detail about v0.21.0](https://github.com/VisActor/VRender/releases/tag/v0.21.0)
+
 # v0.20.16
 
 2024-11-25

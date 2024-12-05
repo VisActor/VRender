@@ -689,14 +689,10 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
-        // 向内挤压不考虑 overlapPadding
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
-        if (dx === 0 && dy === 0) {
-          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
-          if (placedAfterClampForce) {
-            result.push(text);
-            continue;
-          }
+        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+        if (placedAfterClampForce) {
+          result.push(text);
+          continue;
         }
       }
 

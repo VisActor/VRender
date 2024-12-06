@@ -6,10 +6,11 @@ on:
       - 'pre-release/[0-9]+.[0-9]+.[0-9]+-alpha.[0-9]+'
       - 'pre-release/[0-9]+.[0-9]+.[0-9]+-beta.[0-9]+'
       - 'pre-release/[0-9]+.[0-9]+.[0-9]+-rc.[0-9]+'
+      - 'pre-release/[0-9]+.[0-9]+.[0-9]+-vstory.[0-9]+'
 
 jobs:
   build:
-    runs-on: macOS-12 # 如果用了electron，记得改成 macOS-latest
+    runs-on: macOS-13 # 如果用了electron，记得改成 macOS-latest
 
     permissions:
       contents: write

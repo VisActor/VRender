@@ -42,11 +42,21 @@ export enum IMarkAreaLabelPosition {
   right = 'right',
   top = 'top',
   bottom = 'bottom',
+  topLeft = 'topLeft',
+  topRight = 'topRight',
+  bottomLeft = 'bottomLeft',
+  bottomRight = 'bottomRight',
+
   middle = 'middle',
+
   insideLeft = 'insideLeft',
   insideRight = 'insideRight',
   insideTop = 'insideTop',
-  insideBottom = 'insideBottom'
+  insideBottom = 'insideBottom',
+  insideTopLeft = 'insideTopLeft',
+  insideTopRight = 'insideTopRight',
+  insideBottomLeft = 'insideBottomLeft',
+  insideBottomRight = 'insideBottomRight'
 }
 
 export enum IMarkCommonArcLabelPosition {

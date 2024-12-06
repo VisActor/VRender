@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/symbol-basic.
 
 # symbol graphic
 
+The syntax of the `symbol` primitive is similar to the `path` primitive, but it supports some built-in shapes and also supports `size` to control the pixel size.
+
 ## code demo
 
 ```javascript livedemo template=vrender

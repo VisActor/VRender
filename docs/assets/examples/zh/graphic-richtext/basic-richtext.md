@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/richtext-basi
 
 # richtext 图元
 
+`RichText`（富文本）图元是一种用于显示和处理多样化文本内容的图形元素，广泛应用于图形用户界面、网页设计和数据可视化中。与普通文本不同，富文本图元支持多种文本格式和样式，使得文本信息更加丰富和生动。
+
 ## 代码演示
 
 ```javascript livedemo template=vrender

@@ -9,6 +9,10 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/area.jpeg
 
 # area graphic
 
+The `area` element is used to represent changes in data as a graphical element, commonly used in area charts. Area charts display the size and trend of values by filling the area below the line, emphasizing the overall quantity of data rather than just individual values.
+
+This element is mainly defined by the `points` array, where each item is an object with properties such as x1, x2, y1, and y2 to represent the two points above and below.
+
 ## code demo
 
 ```javascript livedemo template=vrender

@@ -84,16 +84,21 @@ export function placeToCandidates(
   text: Text,
   candidates: PointLocationCfg[] = [],
   clampForce = true,
-  pad = 0
+  pad = 0,
+  changePosition = false
 ): PointLocationCfg | false {
   const validCandidates = candidates.filter(candidate => isValid(candidate));
   for (let i = 0; i < validCandidates.length; i++) {
-    const tempText = text.clone();
-    tempText.setAttributes(validCandidates[i]);
-    tempText.update();
+    let measureText;
+    if (changePosition) {
+      measureText = text;
+    } else {
+      measureText = text.clone();
+    }
+    measureText.setAttributes(validCandidates[i]);
 
-    if (canPlace($, bitmap, tempText.AABBBounds, clampForce, pad)) {
-      bitmap.setRange(boundToRange($, tempText.AABBBounds, true));
+    if (canPlace($, bitmap, measureText.AABBBounds, clampForce, pad)) {
+      bitmap.setRange(boundToRange($, measureText.AABBBounds, true));
       return validCandidates[i];
     }
   }
@@ -113,11 +118,11 @@ export function place<T extends BaseLabelAttrs>(
   const overlapPadding = (attrs.overlap as OverlapAttrs)?.overlapPadding;
   if (s.type === 'bound' || s.type === 'position') {
     if (isFunction(labeling)) {
-      // TODO：这里可以 filter 掉初始位置，提升一部分性能
       const userPosition = isFunction(s.position) ? s.position(text.attribute) : s.position;
       const positions = (userPosition || defaultLabelPosition(attrs.type)) as string[];
       const candidates = positions.map(p => labeling(text.AABBBounds, bounds, p, attrs.offset) as PointLocationCfg);
-      return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding);
+      const shouldClone = s.restorePosition === false;
+      return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding, shouldClone);
     }
     return false;
   }

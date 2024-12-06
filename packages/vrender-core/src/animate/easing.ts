@@ -247,4 +247,7 @@ export class Easing {
       ? -(Math.pow(2, 20 * x - 10) * Math.sin((20 * x - 11.125) * c5)) / 2
       : (Math.pow(2, -20 * x + 10) * Math.sin((20 * x - 11.125) * c5)) / 2 + 1;
   };
+  static registerFunc(name: string, func: (t: number) => number) {
+    (Easing as any)[name] = func;
+  }
 }

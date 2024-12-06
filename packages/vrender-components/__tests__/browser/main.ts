@@ -285,6 +285,10 @@ const specs = [
   {
     path: 'timeline',
     name: 'timeline'
+  },
+  {
+    path: 'weather-box',
+    name: 'weather-box'
   }
 ];
 

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently",
+      "comment": "fix: fix issue with insertAfter and insertBefore",
       "type": "none"
     }
   ],

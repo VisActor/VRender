@@ -800,7 +800,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline(), params?.slience);
+    const animate = new Animate(
+      params?.id,
+      params?.timeline ?? (this.stage && this.stage.getTimeline()),
+      params?.slience
+    );
 
     animate.bind(this);
     if (params) {

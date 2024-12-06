@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.0",
+      "tag": "@visactor/vrender-core_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: use ascend and decent to make measure more accurate"
+          },
+          {
+            "comment": "feat: sync animated attribute while call render func, closed #1416"
+          },
+          {
+            "comment": "fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently"
+          },
+          {
+            "comment": "fix: fix issue with dirtyBounds incorrectly while set visible"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.16",
       "tag": "@visactor/vrender-core_v0.20.16",
       "date": "Thu, 21 Nov 2024 06:58:23 GMT",

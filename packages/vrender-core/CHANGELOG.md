@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 21 Nov 2024 06:58:23 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Nov 2024 03:30:36 GMT and should not be manually modified.
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+### Updates
+
+- feat: use ascend and decent to make measure more accurate
+- feat: sync animated attribute while call render func, closed #1416
+- fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- fix: fix issue with dirtyBounds incorrectly while set visible
 
 ## 0.20.16
 Thu, 21 Nov 2024 06:58:23 GMT

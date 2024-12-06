@@ -1,7 +1,8 @@
-import type { IPath2D, ICustomPath2D, ILineCurve, ICubicBezierCurve } from '../../../interface';
+import type { IPath2D, ICustomPath2D, ILineCurve, ICubicBezierCurve, IQuadraticBezierCurve } from '../../../interface';
 import { Point } from '@visactor/vutils';
 import { LineCurve } from './line';
 import { CubicBezierCurve } from './cubic-bezier';
+import { QuadraticBezierCurve } from './quadratic-bezier';
 
 export class CurveContext implements IPath2D {
   declare path: ICustomPath2D;
@@ -21,7 +22,7 @@ export class CurveContext implements IPath2D {
   }
   lineTo(x: number, y: number) {
     const curve = this.addLinearCurve(x, y);
-    this.path.curves.push(curve);
+    this.path.addCurve(curve);
     this._lastX = x;
     this._lastY = y;
   }
@@ -31,7 +32,14 @@ export class CurveContext implements IPath2D {
     return curve;
   }
   quadraticCurveTo(aCPx: number, aCPy: number, aX: number, aY: number) {
-    throw new Error('CurveContext不支持调用quadraticCurveTo');
+    const curve: IQuadraticBezierCurve = new QuadraticBezierCurve(
+      new Point(this._lastX, this._lastY),
+      new Point(aCPx, aCPy),
+      new Point(aX, aY)
+    );
+    this.path.addCurve(curve);
+    this._lastX = aX;
+    this._lastY = aY;
   }
   bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void {
     const curve: ICubicBezierCurve = new CubicBezierCurve(
@@ -40,7 +48,7 @@ export class CurveContext implements IPath2D {
       new Point(cp2x, cp2y),
       new Point(x, y)
     );
-    this.path.curves.push(curve);
+    this.path.addCurve(curve);
     this._lastX = x;
     this._lastY = y;
   }

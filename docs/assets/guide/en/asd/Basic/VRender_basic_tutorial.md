@@ -14,7 +14,7 @@ VRender is a relatively low-level rendering library. We will introduce the usage
 
 ## Graphic System
 
-This section will quickly introduce the graphic system. For more detailed understanding, please refer to [Graphic System (waiting for document writing)](./graphic)
+This section will quickly introduce the graphic system. For more detailed understanding, please refer to [Graphic System](./Basic_Tutorial/Graphic)
 
 ### Create Graphics
 

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 21 Nov 2024 06:58:23 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Nov 2024 03:30:36 GMT and should not be manually modified.
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+### Updates
+
+-  feat: support label overlap for inside arc labels
 
 ## 0.20.16
 Thu, 21 Nov 2024 06:58:23 GMT

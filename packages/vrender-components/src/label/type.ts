@@ -384,8 +384,9 @@ export interface LineDataLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签位置
    * @default 'top'
+   * @since 0.21.1 支持 'inside-middle' 在面积图元中显示在中间位置
    */
-  position?: Functional<BoundsAnchorType>;
+  position?: Functional<BoundsAnchorType | 'inside-middle'>;
 }
 
 export interface PolygonLabelAttrs extends BaseLabelAttrs {

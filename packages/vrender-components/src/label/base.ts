@@ -697,14 +697,26 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return (this.getRootNode() as IGroup).find(node => node.name === baseMarkGroupName, true) as IGroup;
   }
 
-  protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
-  protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
+  protected getGraphicBounds(
+    graphic?: IGraphic,
+    point: Partial<PointLocationCfg> = {},
+    position?: string
+  ): IBoundsLike {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
         return graphic.AABBBounds;
       }
       const { x, y } = graphic.attribute;
       return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
+    }
+    if (point && position && position === 'inside-middle') {
+      const { x, y, x1 = x, y1 = y } = point;
+      return {
+        x1: (x + x1) / 2,
+        x2: (x + x1) / 2,
+        y1: (y + y1) / 2,
+        y2: (y + y1) / 2
+      };
     }
     const { x, y } = point;
     return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;

@@ -104,4 +104,4 @@ circle.addEventListener('click', () => {
 stage.defaultLayer.add(circle);
 ```
 
-希望这篇教程对你学习如何使用 VChart 有所帮助。现在，你可以尝试绘制不同类型的图表，并通过深入了解 VChart 的各种配置选项，定制出更加丰富多样的图表效果。勇敢开始你的 VChart 之旅吧！
+希望这篇教程对你学习如何使用 VRender 有所帮助。现在，你可以尝试绘制不同类型的图元，并通过深入了解 VRender 的各种配置选项，定制出更加丰富多样的绘图效果。勇敢开始你的 VRender 之旅吧！

@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-blend.pn
 
 # text graphic
 
+`text`支持canvas原生的`globalCompositeOperation`系列配置的效果
+
 ## code demo
 
 ```javascript livedemo template=vrender
@@ -24,7 +26,7 @@ const t1 = createText({
   fontFamily: 'Lato',
   fontWeight: 'bolder',
   fill: '#08fff9',
-  blend: 'lighten',
+  globalCompositeOperation: 'lighten',
   x: x,
   y: y
 });
@@ -36,7 +38,7 @@ const t2 = createText({
   fontSize: 120,
   fontFamily: 'Lato',
   fontWeight: 'bolder',
-  blend: 'lighten',
+  globalCompositeOperation: 'lighten',
   fill: '#f00044',
   x: x + delta,
   y: y + delta

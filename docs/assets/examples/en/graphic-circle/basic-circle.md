@@ -9,6 +9,13 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/circle-base.p
 
 # circle graphic
 
+`Circle` primitive is a basic graphic element used to represent circles or circle-related graphics. In computer graphics, graphic design, and data visualization, the `Circle` primitive is the foundation for building various graphics and charts.
+
+Key features:
+- Center Point: The central position of the circle, usually represented by a coordinate point.
+- Radius: The distance from the center point to any point on the circumference, determining the size of the circle.
+- Boundary: The outer boundary of the circle is a smooth curve, where all points on the boundary are equidistant from the center point.
+
 ## code demo
 
 ```javascript livedemo template=vrender

@@ -9,6 +9,13 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/text-basic.pn
 
 # text graphic
 
+The `Text` element is a basic graphic element used to display simple text information, widely used in computer graphics, user interface design, and data visualization. It is mainly used to render characters and textual content, providing information and identification.
+
+Main features:
+- Font and style: The Text element can be styled with different fonts, sizes, colors, and styles (such as bold, italic) to meet design requirements.
+- Positioning: Text is usually positioned relative to anchor points through its align and baseline, allowing for flexible placement.
+- Line height: The line height can be adjusted to improve the readability and visual effect of the text.
+
 ## code demo
 
 ```javascript livedemo template=vrender

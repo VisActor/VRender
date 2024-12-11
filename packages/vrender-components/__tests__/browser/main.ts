@@ -297,6 +297,10 @@ const specs = [
   {
     path: 'weather-box',
     name: 'weather-box'
+  },
+  {
+    path: 'story-label-item',
+    name: 'story-label-item'
   }
 ];
 

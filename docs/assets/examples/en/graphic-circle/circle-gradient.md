@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/circle-gradie
 
 # circle graphic
 
+The `Circle` primitive supports gradient color effects.
+
 ## code demo
 
 ```javascript livedemo template=vrender

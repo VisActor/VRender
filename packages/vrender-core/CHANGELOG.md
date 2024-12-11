@@ -1,6 +1,26 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 21 Nov 2024 06:58:23 GMT and should not be manually modified.
+This log was last generated on Thu, 05 Dec 2024 07:50:47 GMT and should not be manually modified.
+
+## 0.21.1
+Thu, 05 Dec 2024 07:50:47 GMT
+
+### Updates
+
+- fix: fix issue with insertAfter and insertBefore
+- fix: fix the issue when line is configured to connect, closed #3238
+- fix: fix issue with richtext setAttribute, closed #1578
+- fix: fix issue with richtext default font
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+### Updates
+
+- feat: use ascend and decent to make measure more accurate
+- feat: sync animated attribute while call render func, closed #1416
+- fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- fix: fix issue with dirtyBounds incorrectly while set visible
 
 ## 0.20.16
 Thu, 21 Nov 2024 06:58:23 GMT

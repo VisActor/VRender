@@ -219,3 +219,10 @@ shadowRoot 在宿主图元的上方还是下方，>0 为下方，<0 为上方
 #${prefix} globalCompositeOperation(CanvasRenderingContext2D['globalCompositeOperation']) = ''
 
 对应 Canvas 的 globalCompositeOperation，用来配置滤镜
+
+#${prefix} boundsPadding(number[]) = []
+
+图元的包围盒的 padding，当自动计算的AABBBounds不满足要求的时候可以配置，可以调整包围盒的大小。
+如果是number，那么四个方向的padding都是这个值
+如果是[number, number] ，那么分别是上下和左右的padding
+如果是[number, number, number, number]，那么分别是上右下左的

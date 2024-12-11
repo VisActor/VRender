@@ -243,9 +243,19 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
     this._isStraightLine =
       fuzzyEqualNumber(itemOffsetX, 0, FUZZY_EQUAL_DELTA) || fuzzyEqualNumber(itemOffsetY, 0, FUZZY_EQUAL_DELTA);
     if (this._isArcLine) {
-      const { x: x1, y: y1 } = newPosition;
-      const { x: x2, y: y2 } = newItemPosition;
+      // 思路:
+      // 1. 以数据位置为起点, 标记内容的位置为终点绘制圆弧
+      //    - 在起点与终点的垂直平分线上找圆心
+      //    - 根据圆心计算半径
+      //    - 根据圆心计算起始角度和结束角度
+      // 2. 根据数据位置上要绘制的targetSymbol调整起始角度, 保证标记线上的startSymbol紧贴在targetSymbol上
+      //    ps: 计算时将targetSymbol看作圆, 如果是其他不规则形状, 无法保证
+      //    - 直接计算圆弧与targetSymbol的交点 到 圆心 的角度(也可以先计算交点的准确坐标, 但需解二元二次方程, 可行却没必要)
+      //    - 用计算好的起始角度 - 交点到圆心的角度, 得到最终起始角度
+      // 3. 根据是否为凹凸圆弧, 进行角度的进一步加工
 
+      const { x: x1, y: y1 } = this.attribute.position;
+      const { x: x2, y: y2 } = newItemPosition;
       // 得到中点和斜率
       const x0 = (x1 + x2) / 2;
       const y0 = (y1 + y2) / 2;
@@ -254,13 +264,19 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       const line = (x: number) => k * (x - x0) + y0;
       // 在垂直平分线上找圆心
       const direction = y2 > y1 ? -1 : 1;
-
       const deltaX = arcRatio * direction * x0; // 数值决定曲率, 符号决定法向, 可通过配置自定义
       const centerX = x0 + deltaX;
       const centerY = line(centerX);
+      // 计算半径和角度
       startAngle = deltaXYToAngle(y1 - centerY, x1 - centerX);
       endAngle = deltaXYToAngle(y2 - centerY, x2 - centerX);
       center = { x: centerX, y: centerY };
+
+      // 圆弧与symbol交点的角度
+      const R = Math.sqrt((centerX - x1) * (centerX - x1) + (centerY - y1) * (centerY - y1));
+      const r = this.attribute.targetSymbol.style.size / 2;
+      const deltaAngle = Math.acos(Math.sqrt(1 - (r * r) / (4 * R * R))) * 2;
+      startAngle = startAngle + deltaAngle;
 
       if (arcRatio > 0) {
         // 此时绘制凹圆弧, 顺时针绘制
@@ -437,7 +453,7 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
   }
 
   protected computeNewPositionAfterTargetItem(position: Point) {
-    const { itemContent = {}, targetSymbol } = this.attribute as MarkPointAttrs;
+    const { itemContent = {}, targetSymbol, itemLine } = this.attribute as MarkPointAttrs;
     const { offsetX: itemContentOffsetX = 0, offsetY: itemContentOffsetY = 0 } = itemContent;
     const {
       offset: targetSymbolOffset = 0,
@@ -446,7 +462,18 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       size: targetSymbolSize
     } = targetSymbol;
     const targetSize = targetItemvisible ? targetSymbolStyle.size ?? targetSymbolSize ?? 20 : 0;
-    const targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
+
+    let targetOffsetAngle;
+    if (itemLine.type === 'type-do') {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX / 2);
+    } else if (itemLine.type === 'type-po') {
+      targetOffsetAngle = deltaXYToAngle(0, itemContentOffsetX);
+    } else if (itemLine.type === 'type-op') {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, 0);
+    } else {
+      targetOffsetAngle = deltaXYToAngle(itemContentOffsetY, itemContentOffsetX);
+    }
+
     const newPosition: Point = {
       x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle),
       y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle)
@@ -455,7 +482,6 @@ export class MarkPoint extends Marker<MarkPointAttrs, MarkPointAnimationType> {
       x: position.x + (targetSize / 2 + targetSymbolOffset) * Math.cos(targetOffsetAngle) + itemContentOffsetX, // 偏移量 = targetItem size + targetItem space + 用户配置offset
       y: position.y + (targetSize / 2 + targetSymbolOffset) * Math.sin(targetOffsetAngle) + itemContentOffsetY // 偏移量 = targetItem size + targetItem space + 用户配置offset
     };
-
     return { newPosition, newItemPosition };
   }
 

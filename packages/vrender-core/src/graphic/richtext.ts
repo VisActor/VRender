@@ -41,6 +41,13 @@ const RICHTEXT_UPDATE_TAG_KEY = [
   'fill',
   'stroke',
   'fontSize',
+  'fontFamily',
+  'fontStyle',
+  'fontWeight',
+  'lineWidth',
+  'opacity',
+  'fillOpacity',
+  'strokeOpacity',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 
@@ -451,7 +458,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       }
     } else {
       for (let i = 0; i < paragraphs.length; i++) {
+        if (i === paragraphs.length - 1) {
+          wrapper.newLine = true;
+        }
         wrapper.deal(paragraphs[i]);
+        wrapper.newLine = false;
       }
     }
 

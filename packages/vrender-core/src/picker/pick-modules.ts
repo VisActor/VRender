@@ -1,12 +1,12 @@
 import { ContainerModule } from '../common/inversify-lite';
-import { PickerService, GlobalPickerService } from './constants';
+import { PickerService, GlobalPickerService, PickItemInterceptor, PickServiceInterceptor } from './constants';
 import { DefaultGlobalPickerService } from './global-picker-service';
 // import { DefaultCanvasPickerService } from './canvas-picker-service';
 // import { DefaultMathPickerService } from './math-picker-service';
 import {
   Canvas3DPickItemInterceptor,
   InteractivePickItemInterceptorContribution,
-  PickItemInterceptor,
+  ShadowPickServiceInterceptorContribution,
   ShadowRootPickItemInterceptorContribution
 } from './pick-interceptor';
 import { bindContributionProvider } from '../common/contribution-provider';
@@ -33,4 +33,9 @@ export default new ContainerModule((bind, unbind, isBound) => {
   bind(InteractivePickItemInterceptorContribution).toSelf().inSingletonScope();
   bind(PickItemInterceptor).toService(InteractivePickItemInterceptorContribution);
   bindContributionProvider(bind, PickItemInterceptor);
+
+  bind(ShadowPickServiceInterceptorContribution).toSelf().inSingletonScope();
+  bind(PickServiceInterceptor).toService(ShadowPickServiceInterceptorContribution);
+
+  bindContributionProvider(bind, PickServiceInterceptor);
 });

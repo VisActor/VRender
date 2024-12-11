@@ -184,7 +184,7 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     const originalAABBBounds = aabbBounds; // fix aabbbounds update error in flex layout
     aabbBounds = aabbBounds.clone();
 
-    const { width, height, path, clip = groupTheme.clip, display } = attribute;
+    const { width, height, path, clip = groupTheme.clip } = attribute;
     // 添加自身的fill或者clip
     if (path && path.length) {
       path.forEach(g => {
@@ -198,6 +198,9 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
       this.forEachChildren((node: IGraphic) => {
         aabbBounds.union(node.AABBBounds);
       });
+      // 如果没有clip的话，还需要加一下scroll
+      const { scrollX = 0, scrollY = 0 } = attribute;
+      aabbBounds.translate(scrollX, scrollY);
     }
     application.graphicService.updateTempAABBBounds(aabbBounds);
 

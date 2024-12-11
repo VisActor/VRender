@@ -44,7 +44,7 @@ export function run() {
     x: 100,
     y: 100,
     fill: 'red',
-    clip: true,
+    clip: false,
     overflow: 'scroll'
   });
 
@@ -73,7 +73,8 @@ export function run() {
     }
   }
 
-  const stage = render([hScrollBar, vScrollBar, group], 'main');
+  const stage = render([group], 'main');
+  window.stage = stage;
   hScrollBar.addEventListener('mouseenter', e => {
     console.log('abc');
     hScrollBar.setAttributes({ visible: true });

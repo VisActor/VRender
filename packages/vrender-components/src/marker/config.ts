@@ -364,6 +364,39 @@ export const DEFAULT_CARTESIAN_MARK_AREA_TEXT_STYLE_MAP: {
   middle: {
     textAlign: 'center',
     textBaseline: 'middle'
+  },
+
+  topLeft: {
+    textAlign: 'right',
+    textBaseline: 'top'
+  },
+  insideTopLeft: {
+    textAlign: 'left',
+    textBaseline: 'top'
+  },
+  topRight: {
+    textAlign: 'left',
+    textBaseline: 'top'
+  },
+  insideTopRight: {
+    textAlign: 'right',
+    textBaseline: 'top'
+  },
+  bottomLeft: {
+    textAlign: 'right',
+    textBaseline: 'bottom'
+  },
+  insideBottomLeft: {
+    textAlign: 'left',
+    textBaseline: 'bottom'
+  },
+  bottomRight: {
+    textAlign: 'left',
+    textBaseline: 'bottom'
+  },
+  insideBottomRight: {
+    textAlign: 'right',
+    textBaseline: 'bottom'
   }
 };
 

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: use ascend and decent to make measure more accurate",
+      "comment": "feat: enhance rect cornerType",
       "type": "none"
     }
   ],

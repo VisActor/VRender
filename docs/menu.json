@@ -11,5 +11,10 @@
     "menu": "option",
     "type": "markdown-template",
     "entry": "option"
+  },
+  {
+    "menu": "contributing",
+    "type": "markdown",
+    "entry": "contributing"
   }
 ]

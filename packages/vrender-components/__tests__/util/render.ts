@@ -4,7 +4,10 @@ import { Group, Line, Text, createStage, Symbol, Rect, Path, Arc, Area, Circle, 
 
 import { array } from '@visactor/vutils';
 import { initBrowserEnv } from '@visactor/vrender-kits';
+import { loadScrollbar } from '../../src';
 initBrowserEnv();
+
+loadScrollbar();
 
 export default function render(component: IGraphic | IGraphic[], canvasId: string, option?: Partial<IStageParams>) {
   // 创建舞台实例
@@ -26,7 +29,7 @@ export function createRenderer(canvasId: string, option: Partial<IStageParams> =
     width: 600,
     height: 600,
     autoRender: true,
-    disableDirtyBounds: true,
+    disableDirtyBounds: false,
     // canvasControled: false,
     background: 'rgba(238,238,238,0.5)',
     viewBox: {

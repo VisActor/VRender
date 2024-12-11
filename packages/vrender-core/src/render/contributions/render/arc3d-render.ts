@@ -15,8 +15,6 @@ import type {
   IGraphicRender,
   IGraphicRenderDrawParams
 } from '../../../interface';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
-import { mat4Allocate } from '../../../allocator/matrix-allocate';
 import { BaseRender } from './base-render';
 import { ARC3D_NUMBER_TYPE } from '../../../graphic/constants';
 import { ColorStore, ColorType } from '../../../color-string';

@@ -2,6 +2,7 @@ import type { IBoundsLike } from '@visactor/vutils';
 import { application } from '../../application';
 import { createColor } from '../../common/canvas-utils';
 import type { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
+import { DEFAULT_TEXT_FONT_FAMILY } from '../../constants';
 
 export const DIRECTION_KEY = {
   horizontal: {
@@ -26,7 +27,7 @@ export const DIRECTION_KEY = {
 
 const defaultFormatting = {
   fontSize: 16,
-  fontFamily: 'sans-serif',
+  fontFamily: DEFAULT_TEXT_FONT_FAMILY,
   fill: true,
   stroke: false,
   fontWeight: 'normal',
@@ -57,7 +58,7 @@ const setTextStyle = (ctx: IContext2d, character: IRichTextParagraphCharacter) =
     fontStyle: character.fontStyle || '',
     fontWeight: character.fontWeight || '',
     fontSize,
-    fontFamily: character.fontFamily || 'sans-serif'
+    fontFamily: character.fontFamily
   } as ITextStyleParams);
 };
 

@@ -1,6 +1,29 @@
 # 动画
+VRender的动画是通过`Animate`实例来实现的，`Animate`提供了多种插值方法，包括`to`、`from`、`wait`、`loop`、`bounce`、`reverse`、`startAt`等方法，这些方法可以链式调用，实现复杂的动画效果。我们通过图元的API`animate()`来创建的一个`Animate`实例。在阅读此章节之前，建议先了解图元的API，才能更好地理解动画的使用。图元的文档可以参考[图元](./Graphic)章节。
 
 # 基本使用
+
+创建动画的基本demo：
+
+```javascript livedemo template=vrender
+const rect = VRender.createRect({ x: 100, y: 100, width: 100, height: 100, fill: 'red' });
+
+const stage = new VRender.Stage({
+  container: CONTAINER_ID,
+  autoRender: true
+});
+
+stage.defaultLayer.add(rect);
+
+// 创建动画，链式调用
+rect
+ .animate()
+  // 终点属性，时间，插值函数
+ .to({ height: 200 }, 2000, 'quadIn')
+ .to({ x: 300 }, 200, 'quadIn')
+ .wait(2000)
+ .to({ y: 300 }, 200, 'backInOut')
+```
 
 ## Graphic.Animate
 
@@ -19,11 +42,6 @@ graphic
             console.log('某一帧');
           }
     })
-    .to({ height: 200 }, 2000, 'quadIn')
-    .to({ x: 600 }, 200, 'quadIn')
-    .wait(200)
-    .to({ y: 600 }, 200, 'backInOut')
-    .to({ fillColor: 'green' }, 2000, 'quadIn');
 ```
 
 ## Animate.to

@@ -71,6 +71,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       y: originY = imageAttribute.y,
       cornerRadius = imageAttribute.cornerRadius,
       fillStrokeOrder = imageAttribute.fillStrokeOrder,
+      cornerType = imageAttribute.cornerType,
       image: url
     } = image.attribute;
 
@@ -107,7 +108,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
             // 不需要处理圆角
           } else {
             context.beginPath();
-            createRectPath(context, x, y, width, height, cornerRadius);
+            createRectPath(context, x, y, width, height, cornerRadius, cornerType === 'round');
             context.save();
             context.clip();
             needRestore = true;

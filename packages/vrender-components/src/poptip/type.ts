@@ -50,8 +50,22 @@ export type PopTipAttributes = {
   padding?: Padding;
   /**
    * 标签的背景面板配置, TODO: 支持symbol形状
+   * space: 与位置之间的距离
+   * square: 是否是正方形
    */
-  panel?: BackgroundAttributes & ISymbolGraphicAttribute & { space?: number };
+  panel?: BackgroundAttributes &
+    ISymbolGraphicAttribute & { space?: number; square?: boolean; panelSymbolType?: string };
+
+  // 标签三角的模式，默认是default，即默认的三角形状，concise是紧凑型三角形状显得更简洁
+  // @since 0.22.0
+  triangleMode?: 'default' | 'concise';
+
+  // 放置在poptip前方的logo区域
+  logoSymbol?: ISymbolGraphicAttribute;
+  // logo内的text
+  logoText?: string | string[] | number | number[];
+  // logo内的text样式
+  logoTextStyle?: Partial<ITextGraphicAttribute>;
 
   /**
    * 最小宽度，像素值

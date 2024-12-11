@@ -9,6 +9,13 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/line-basic.pn
 
 # line 图元
 
+`Line`图元是用于表示数据变化趋势的基本图形元素，通常在折线图和其他图表中使用。它通过连接数据点形成线段，直观地展示数据随时间或其他变量的变化。
+
+主要特征：
+- 数据点：Line图元通过一系列坐标点来表示数值，这些点通常在二维坐标系中绘制。
+- 线段：数据点之间通过直线或曲线连接，形成连续的线，便于观察数据的变化趋势。
+- 可视化效果：线条的颜色、粗细和样式可以根据需要进行调整，以突出不同的数据系列或变化程度。
+
 ## 代码演示
 
 ```javascript livedemo template=vrender

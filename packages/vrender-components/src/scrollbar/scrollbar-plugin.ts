@@ -40,7 +40,10 @@ export class ScrollBarPlugin implements IPlugin {
     this.params = ScrollBarPlugin.defaultParams;
   }
   scroll = (e: { deltaX: number; deltaY: number; target: IGraphic }) => {
+    // 计算子元素的bounds
     const graphic = e.target as any;
+    // childrenBounds.set(0, 0, scrollContainer.AABBBounds.width(), scrollContainer.AABBBounds.height());
+
     const data = this.getScrollContainer(graphic);
 
     if (!data && !this.scrollContainer) {
@@ -72,8 +75,13 @@ export class ScrollBarPlugin implements IPlugin {
     }
 
     this.scrollContainer = data ?? this.scrollContainer;
-
+    if (!data) {
+      return;
+    }
     const scrollContainer = data.g;
+    if (!scrollContainer) {
+      return;
+    }
     const { width, height, scrollX = 0, scrollY = 0 } = scrollContainer.attribute;
     let newScrollX = scrollX;
     let newScrollY = scrollY;
@@ -94,34 +102,32 @@ export class ScrollBarPlugin implements IPlugin {
       }
     }
 
-    // 计算子元素的bounds
-    const childrenBounds = this.childrenBounds;
-
-    childrenBounds.clear();
-    childrenBounds.set(0, 0, scrollContainer.AABBBounds.width(), scrollContainer.AABBBounds.height());
-
-    const scrollWidth = childrenBounds.width();
-    const scrollHeight = childrenBounds.height();
+    const scrollWidth = this.childrenBounds.width();
+    const scrollHeight = this.childrenBounds.height();
 
     if (showH) {
-      newScrollX = Math.max(Math.min((e.deltaX ?? 0) - scrollX, scrollWidth - width), 0);
-    } else {
-      newScrollX = -scrollX;
+      newScrollX = scrollX - (e.deltaX ?? 0);
+      if (newScrollX > 0) {
+        newScrollX = 0;
+      } else if (newScrollX < width - scrollWidth) {
+        newScrollX = width - scrollWidth;
+      }
     }
 
     if (showV) {
-      newScrollY = Math.max(Math.min((e.deltaY ?? 0) - scrollY, scrollHeight - height), 0);
-    } else {
-      newScrollY = -scrollY;
+      newScrollY = scrollY - (e.deltaY ?? 0);
+      if (newScrollY > 0) {
+        newScrollY = 0;
+      } else if (newScrollY < height - scrollHeight) {
+        newScrollY = height - scrollHeight;
+      }
     }
 
-    childrenBounds.translate(-newScrollX, -newScrollY);
-
-    this.addOrUpdateScroll(showH, showV, scrollContainer.parent, scrollContainer);
     scrollContainer.setAttributes({
-      scrollX: -newScrollX,
-      scrollY: -newScrollY
+      scrollX: newScrollX,
+      scrollY: newScrollY
     });
+    this.addOrUpdateScroll(showH, showV, scrollContainer.parent, scrollContainer);
   };
 
   handleScrollBarChange = (params: any) => {
@@ -241,15 +247,16 @@ export class ScrollBarPlugin implements IPlugin {
     }
     const childrenBounds = this.childrenBounds;
 
+    const { scrollX, scrollY } = scrollContainer.attribute;
     if (isHorozntal) {
       const ratio = Math.min(this.scrollContainerBounds.width() / childrenBounds.width(), 1);
-      const start = Math.max(Math.min(this.childrenBounds.x1 / this.childrenBounds.width(), 0), ratio - 1);
+      const start = Math.max(Math.min(scrollX / this.childrenBounds.width(), 0), ratio - 1);
       attrs.x = x + dx;
-      attrs.y = y + dy + height - this.scrollContainerBounds.height();
+      attrs.y = y + dy + height - (attrs.height ?? 0);
       attrs.range = [-start, -start + ratio];
     } else {
       const ratio = Math.min(this.scrollContainerBounds.height() / childrenBounds.height(), 1);
-      const start = Math.max(Math.min(this.childrenBounds.y1 / this.childrenBounds.height(), 0), ratio - 1);
+      const start = Math.max(Math.min(scrollY / this.childrenBounds.height(), 0), ratio - 1);
       attrs.x = x + dx + width - this.scrollContainerBounds.width();
       attrs.y = y + dy;
       attrs.range = [-start, -start + ratio];
@@ -297,13 +304,20 @@ export class ScrollBarPlugin implements IPlugin {
       showV = !showH;
     }
 
+    const childrenBounds = this.childrenBounds;
+
+    childrenBounds.clear();
+    g.forEachChildren((g: IGraphic) => {
+      childrenBounds.union(g.AABBBounds);
+    });
+
     if (!g.AABBBounds.empty()) {
       if (showH) {
-        showH = width < g.AABBBounds.width();
+        showH = width < childrenBounds.width();
       }
 
       if (showV) {
-        showV = height < g.AABBBounds.height();
+        showV = height < childrenBounds.height();
       }
     }
 

@@ -7,7 +7,9 @@ order: 1-0
 cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/circle-gradient.png
 ---
 
-# circle 图元
+# circle 渐变色
+
+`Circle`图元支持渐变色的效果
 
 ## 代码演示
 

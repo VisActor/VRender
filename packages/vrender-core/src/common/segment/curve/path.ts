@@ -3,14 +3,18 @@ import { AABBBounds } from '@visactor/vutils';
 import type { ICurvePath, ICurve } from '../../../interface';
 
 export class CurvePath implements ICurvePath<IPoint> {
-  curves: ICurve<IPoint>[];
+  _curves: ICurve<IPoint>[];
   bounds: IAABBBounds;
   constructor() {
-    this.curves = [];
+    this._curves = [];
     this.bounds = new AABBBounds();
   }
+  get curves(): ICurve<IPoint>[] {
+    return this._curves;
+  }
+
   getCurveLengths(): number[] {
-    return this.curves.map(curve => curve.getLength());
+    return this._curves.map(curve => curve.getLength());
   }
   getPointAt(t: number): IPointLike {
     return { x: 0, y: 0 };

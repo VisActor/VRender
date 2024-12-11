@@ -54,15 +54,17 @@ export class LynxContext2d extends BrowserContext2d implements IContext2d {
         lineDash = defaultParams.lineDash,
         lineCap = defaultParams.lineCap,
         miterLimit = defaultParams.miterLimit,
-        keepStrokeScale = defaultParams.keepStrokeScale
+        keepStrokeScale = defaultParams.keepStrokeScale,
+        lineDashOffset = defaultParams.lineDashOffset,
       } = attribute;
       _context.globalAlpha = strokeOpacity * opacity * this.baseGlobalAlpha;
       _context.lineWidth = keepStrokeScale ? lineWidth : getScaledStroke(this, lineWidth, this.dpr);
       _context.strokeStyle = createColor(this, stroke as any, params, offsetX, offsetY);
       _context.lineJoin = lineJoin;
       // lynx环境中lineDash不能为[0, 0]
-      if (!(lineDash[0] === 0 && lineDash[1] === 0)) {
-        lineDash && _context.setLineDash(lineDash);
+      if (!(lineDash[0] === 0 && lineDash[1] === 0) && lineDash) {
+        _context.setLineDash(lineDash);
+        _context.lineDashOffset = lineDashOffset;
       }
       _context.lineCap = lineCap;
       _context.miterLimit = miterLimit;

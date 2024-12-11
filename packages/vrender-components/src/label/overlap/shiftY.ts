@@ -103,17 +103,17 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
   };
 
   function adjustPositionInOneGroup(texts: IText[]) {
-    if (texts.length === 1) {
-      return;
-    }
     // 从最后一个 text 向前遍历，如果与前一个 text 相交，则尝试放到下方（需要判断和前一个 text 是否相交，若相交则不能放到下方）
-    for (let i = texts.length - 1; i > 0; i--) {
+    for (let i = texts.length - 1; i >= 0; i--) {
       const curText = texts[i];
       const upperText = texts[i - 1];
       const lowerText = texts[i + 1];
-
       // 当前 text 和上面一个 text 相交
-      if (isIntersect(getY1(upperText) + getHeight(upperText), getY1(curText))) {
+      if (
+        (upperText && isIntersect(getY1(upperText) + getHeight(upperText), getY1(curText))) ||
+        // 如果是最顶上被 clamp 进来的 text，也尝试向下摆放
+        (getY1(curText) === 0 && curText._isClamped)
+      ) {
         const { y } = labelling(curText);
         // 挪动当前 text 后， 和下面一个 text 不相交
         if (!lowerText || !isIntersect(y + getHeight(curText) / 2, getY1(lowerText))) {

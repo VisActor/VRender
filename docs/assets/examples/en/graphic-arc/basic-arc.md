@@ -9,6 +9,14 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/base-arc.png
 
 # arc graphic
 
+The `Arc` primitive is a basic graphic element commonly used to represent curves or arcs. In computer graphics and graphic design, the Arc primitive is used to depict a portion of a circle or any arbitrary curve, typically defined by a center point, radius, start angle, and end angle.
+
+Key features:
+- Center Point: The central position of the arc, usually a coordinate point.
+- Inner Radius: The distance from the center point to any point on the inner arc, determining the size of the inner arc.
+- Outer Radius: The distance from the center point to any point on the outer arc, determining the size of the outer arc.
+- Start Angle and End Angle: Determine the starting and ending positions of the arc, typically expressed in degrees or radians.
+
 ## code demo
 
 ```javascript livedemo template=vrender

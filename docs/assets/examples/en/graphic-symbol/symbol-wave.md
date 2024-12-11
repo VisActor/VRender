@@ -9,6 +9,8 @@ cover: https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/wave01.gif
 
 # symbol wave
 
+3D effect of waves
+
 ## code demo
 
 ```javascript livedemo template=vrender

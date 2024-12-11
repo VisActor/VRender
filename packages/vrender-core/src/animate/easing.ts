@@ -251,3 +251,23 @@ export class Easing {
     (Easing as any)[name] = func;
   }
 }
+
+function flicker(t: number, n: number) {
+  const step = 1 / n;
+  let flag = 1;
+  while (t > step) {
+    t -= step;
+    flag *= -1;
+  }
+  const v = (flag * t) / step;
+  return v > 0 ? v : 1 + v;
+}
+
+// 注册flicker
+for (let i = 0; i < 10; i++) {
+  (Easing as any)[`flicker${i}`] = (t: number) => flicker(t, i);
+}
+
+for (let i = 2; i < 10; i++) {
+  (Easing as any)[`aIn${i}`] = (t: number) => i * t * t + (1 - i) * t;
+}

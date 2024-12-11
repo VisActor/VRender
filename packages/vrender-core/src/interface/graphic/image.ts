@@ -9,6 +9,7 @@ export type IImageAttribute = {
   repeatY: IRepeatType;
   image: string | HTMLImageElement | HTMLCanvasElement;
   cornerRadius: number | number[];
+  cornerType: 'round' | 'bevel';
 };
 
 export type IImageGraphicAttribute = Partial<IGraphicAttribute> & Partial<IImageAttribute>;

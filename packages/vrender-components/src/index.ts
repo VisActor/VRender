@@ -30,3 +30,4 @@ export * from './radio';
 export * from './empty-tip';
 export * from './weather';
 export * from './util';
+export * from './label-item';

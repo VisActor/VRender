@@ -252,7 +252,8 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   alignContent: 'flex-start',
-  baseOpacity: 1
+  baseOpacity: 1,
+  cornerType: 'round'
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
@@ -300,7 +301,8 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   x1: 0,
   y1: 0,
   strokeBoundsBuffer: 0,
-  cornerRadius: 0
+  cornerRadius: 0,
+  cornerType: 'round'
 };
 
 export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
@@ -310,7 +312,8 @@ export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
   x1: 0,
   y1: 0,
   cornerRadius: 0,
-  length: 0
+  length: 0,
+  cornerType: 'round'
 };
 
 export const DefaultSymbolAttribute: Required<ISymbolGraphicAttribute> = {
@@ -355,7 +358,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   height: 0,
   ...DefaultAttribute,
   fill: true,
-  cornerRadius: 0
+  cornerRadius: 0,
+  cornerType: 'round'
 };
 
 export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribute> = {

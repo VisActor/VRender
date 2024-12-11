@@ -64,7 +64,15 @@ export class DefaultImageBackgroundRenderContribution
         context.beginPath();
         const { x, y, width, height } = getActualPosition(graphic);
         if (cornerRadius) {
-          createRectPath(context, x - expandX, y - expandY, width + expandX * 2, height + expandY * 2, cornerRadius);
+          createRectPath(
+            context,
+            x - expandX,
+            y - expandY,
+            width + expandX * 2,
+            height + expandY * 2,
+            cornerRadius,
+            true
+          );
         } else {
           context.rect(x - expandX, y - expandY, width + expandX * 2, height + expandY * 2);
         }

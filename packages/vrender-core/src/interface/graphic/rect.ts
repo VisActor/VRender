@@ -7,6 +7,7 @@ export type IRectAttribute = {
   x1: number;
   y1: number;
   cornerRadius: number | number[];
+  cornerType: 'round' | 'bevel';
 };
 
 export type IRectGraphicAttribute = Partial<IGraphicAttribute> & Partial<IRectAttribute>;

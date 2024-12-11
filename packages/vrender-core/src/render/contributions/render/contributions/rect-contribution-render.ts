@@ -51,6 +51,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
     }
     const {
       cornerRadius = rectAttribute.cornerRadius,
+      cornerType = rectAttribute.cornerType,
       opacity = rectAttribute.opacity,
       x: originX = rectAttribute.x,
       y: originY = rectAttribute.y,
@@ -83,7 +84,15 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
         context.beginPath();
 
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, nextX, nextY, width - sign * dw, height - sign * dw, cornerRadius);
+        createRectPath(
+          context,
+          nextX,
+          nextY,
+          width - sign * dw,
+          height - sign * dw,
+          cornerRadius,
+          cornerType === 'round'
+        );
       }
 
       // shadow
@@ -182,7 +191,8 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
       x: originX = groupAttribute.x,
       y: originY = groupAttribute.y,
       stroke = groupAttribute.stroke,
-      cornerRadius = groupAttribute.cornerRadius
+      cornerRadius = groupAttribute.cornerRadius,
+      cornerType = groupAttribute.cornerType
     } = rect.attribute as any;
 
     let { width, height } = rect.attribute;
@@ -207,6 +217,7 @@ export class SplitRectAfterRenderContribution implements IRectRenderContribution
         width,
         height,
         cornerRadius,
+        cornerType === 'round',
         new Array(4).fill(0).map((_, i) => (x1: number, y1: number, x2: number, y2: number) => {
           if (stroke[i]) {
             if (!(lastStrokeI === i - 1 && stroke[i] === lastStroke)) {

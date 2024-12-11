@@ -113,7 +113,7 @@ export class DefaultTextBackgroundRenderContribution
       context.fillStyle = background as string;
       if (backgroundCornerRadius) {
         // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-        createRectPath(context, b.x1, b.y1, b.width(), b.height(), backgroundCornerRadius);
+        createRectPath(context, b.x1, b.y1, b.width(), b.height(), backgroundCornerRadius, true);
         context.fill();
       } else {
         context.fillRect(b.x1, b.y1, b.width(), b.height());

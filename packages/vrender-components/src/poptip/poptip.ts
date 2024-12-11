@@ -1,15 +1,17 @@
 /**
  * @description PopTip组件
  */
-import type {
-  IGroup,
-  IRect,
-  ISymbol,
-  ISymbolGraphicAttribute,
-  IText,
-  ITextGraphicAttribute,
-  TextAlignType,
-  TextBaselineType
+import {
+  InputText,
+  type IGraphic,
+  type IGroup,
+  type IRect,
+  type ISymbol,
+  type ISymbolGraphicAttribute,
+  type IText,
+  type ITextGraphicAttribute,
+  type TextAlignType,
+  type TextBaselineType
 } from '@visactor/vrender-core';
 import {
   AABBBounds,
@@ -33,6 +35,22 @@ import { loadPoptipComponent } from './register';
 const _tBounds = new AABBBounds();
 
 loadPoptipComponent();
+
+const tlStr = 'M -0.5 -0.5, L -0.5 0.5, L 0.5 -0.5, Z';
+const blStr = 'M -0.5 -0.5, L -0.5 0.5, L 0.5 0.5, Z';
+const trStr = 'M -0.5 -0.5, L 0.5 -0.5, L 0.5 0.5, Z';
+const brStr = 'M 0.5 -0.5, L 0.5 0.5, L -0.5 0.5, Z';
+
+const conciseSymbolMap = {
+  tl: tlStr,
+  tr: trStr,
+  bl: blStr,
+  br: brStr,
+  lt: tlStr,
+  lb: blStr,
+  rt: trStr,
+  rb: brStr
+};
 export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   name = 'poptip';
 
@@ -53,10 +71,15 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       textAlign: 'left',
       textBaseline: 'top'
     },
+    panel: {} as any,
     maxWidthPercent: 0.8,
     space: 8,
     padding: 10
   };
+
+  titleShape?: IText;
+  contentShape?: IText;
+  group?: IGroup;
 
   constructor(attributes: PopTipAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, PopTip.defaultAttributes, attributes));
@@ -67,7 +90,11 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       titleStyle = {} as ITextGraphicAttribute,
       position,
       contentStyle = {} as ITextGraphicAttribute,
-      panel = {} as BackgroundAttributes & ISymbolGraphicAttribute & { space?: number },
+      panel,
+      logoSymbol,
+      logoText,
+      logoTextStyle = {} as ITextGraphicAttribute,
+      triangleMode = 'default',
       space = 4,
       minWidth = 0,
       maxWidth = Infinity,
@@ -87,6 +114,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     const parsedPadding = normalizePadding(padding);
 
     const group = this.createOrUpdateChild('poptip-content', { x: 0, y: 0, zIndex: 1 }, 'group') as IGroup;
+    this.group = group;
 
     const maxLineWidth = maxWidth - parsedPadding[1] - parsedPadding[3];
 
@@ -142,6 +170,9 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       height += contentHeight;
     }
 
+    this.titleShape = titleShape;
+    this.contentShape = contentShape;
+
     // 计算整个popTip的宽高
     let popTipWidth = max(
       titleWidth + parsedPadding[1] + parsedPadding[3],
@@ -155,7 +186,16 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     let poptipHeight = parsedPadding[0] + parsedPadding[2] + height;
 
     // 绘制背景层
-    const { visible: bgVisible, ...backgroundStyle } = panel;
+    const { visible: bgVisible, square, ...backgroundStyle } = panel;
+    // 如果是正方形，取宽高的最大值，同时文字也需要居中
+    if (square) {
+      const maxWH = max(popTipWidth, poptipHeight);
+      popTipWidth = maxWH;
+      const deltaH = maxWH - poptipHeight;
+      poptipHeight = maxWH;
+      titleShape.setAttributes({ dy: deltaH / 2 });
+      contentShape.setAttributes({ dy: deltaH / 2 });
+    }
     const symbolSize = backgroundStyle.size ?? 12;
     const spaceSize: number | [number, number] = isArray(symbolSize)
       ? [symbolSize[0] + (backgroundStyle.space ?? 0), symbolSize[1] + (backgroundStyle.space ?? 0)]
@@ -195,32 +235,49 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     // 最多循环this.positionList次
     let maxBBoxI: number;
     let maxBBoxSize: number = -Infinity;
+
     for (let i = 0; i < this.positionList.length + 1; i++) {
       const p = layout ? this.positionList[i === this.positionList.length ? maxBBoxI : i] : position;
-      const { angle, offset, rectOffset } = this.getAngleAndOffset(
+      let symbolType = 'arrow2Left';
+      let offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
+      let offsetY = 0;
+      if (p === 'top' || p === 'bottom' || p === 'left' || p === 'right') {
+        symbolType = 'arrow2Left';
+      } else if (triangleMode === 'concise') {
+        symbolType = (conciseSymbolMap as any)[p];
+        offsetX = ['tl', 'bl', 'rt', 'rb'].includes(position)
+          ? (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2
+          : -(isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2;
+        offsetY = ['tl', 'tr', 'lb', 'rb'].includes(position)
+          ? -(isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2
+          : (isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2;
+      }
+
+      const { angle, offset } = this.getAngleAndOffset(
         p,
         popTipWidth,
         poptipHeight,
-        isArray(spaceSize) ? (spaceSize as [number, number]) : [spaceSize, spaceSize - lineWidth]
+        isArray(spaceSize) ? (spaceSize as [number, number]) : [spaceSize, spaceSize - lineWidth],
+        symbolType
       );
       if (isBoolean(bgVisible)) {
-        const offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
         const bgSymbol = group.createOrUpdateChild(
           'poptip-symbol-panel',
           {
             ...backgroundStyle,
             visible: bgVisible && (contentVisible || titleVisible),
             x: offsetX,
-            y: 0,
+            y: offsetY,
             strokeBoundsBuffer: -1,
             boundsPadding: -2,
             anchor: [0, 0],
-            symbolType: 'arrow2Left',
+            symbolType,
             angle: angle,
             dx: offset[0],
-            dy: offset[1],
+            // 标签和背景同时移动
+            dy: offset[1] - (backgroundStyle.space ?? 0),
             size: symbolSize,
-            zIndex: -9
+            zIndex: 9
           },
           'symbol'
         ) as ISymbol;
@@ -228,19 +285,36 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
           bgSymbol.states = state.panel;
         }
 
-        const bgRect = group.createOrUpdateChild(
-          'poptip-rect-panel',
-          {
-            ...backgroundStyle,
-            visible: bgVisible && (contentVisible || titleVisible),
-            x: 0,
-            y: 0,
-            width: popTipWidth,
-            height: poptipHeight,
-            zIndex: -8
-          },
-          'rect'
-        ) as IRect;
+        let bgRect: IGraphic;
+        if (panel.panelSymbolType) {
+          bgRect = group.createOrUpdateChild(
+            'poptip-rect-panel',
+            {
+              ...backgroundStyle,
+              visible: bgVisible && (contentVisible || titleVisible),
+              x: 0,
+              y: 0,
+              symbolType: 'rect',
+              size: [popTipWidth, poptipHeight],
+              zIndex: -8
+            },
+            'symbol'
+          ) as ISymbol;
+        } else {
+          bgRect = group.createOrUpdateChild(
+            'poptip-rect-panel',
+            {
+              ...backgroundStyle,
+              visible: bgVisible && (contentVisible || titleVisible),
+              x: 0,
+              y: 0,
+              width: popTipWidth,
+              height: poptipHeight,
+              zIndex: -8
+            },
+            'rect'
+          ) as IRect;
+        }
         if (!isEmpty(state?.panel)) {
           bgRect.states = state.panel;
         }
@@ -248,8 +322,54 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
 
       group.setAttributes({
         x: -offset[0] + dx,
-        y: -offset[1] + dy
+        y: -offset[1] + dy,
+        anchor: [offsetX, offsetY]
       });
+
+      // 添加logo和logo内的text
+      if (logoSymbol) {
+        const { size = 12 } = logoSymbol;
+        const sizeArray = isArray(size) ? (size as [number | string, number | string]) : [size, size];
+        if (sizeArray[1] === 'auto') {
+          sizeArray[1] = poptipHeight;
+        }
+        if (sizeArray[0] === 'auto') {
+          sizeArray[0] = poptipHeight;
+        }
+        const sizeW = sizeArray[0] as number;
+        group.createOrUpdateChild(
+          'poptip-logo',
+          {
+            ...logoSymbol,
+            x: 0,
+            y: poptipHeight / 2,
+            visible: bgVisible && (contentVisible || titleVisible),
+            zIndex: 10,
+            size: sizeArray as [number, number]
+          },
+          'symbol'
+        );
+        group.setAttributes({
+          x: -offset[0] + dx + sizeW / 2,
+          y: -offset[1] + dy
+        });
+        if (logoText) {
+          group.createOrUpdateChild(
+            'poptip-logo-text',
+            {
+              ...logoTextStyle,
+              x: 0,
+              y: poptipHeight / 2,
+              visible: bgVisible && (contentVisible || titleVisible),
+              text: logoText,
+              textAlign: 'center',
+              textBaseline: 'middle',
+              zIndex: 10
+            },
+            'text'
+          );
+        }
+      }
 
       if (layout && range) {
         _tBounds.setValue(0, 0, popTipWidth, poptipHeight).transformWithMatrix(group.globalTransMatrix);
@@ -277,47 +397,96 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     position: string,
     width: number,
     height: number,
-    size: [number, number]
-  ): { angle: number; offset: [number, number]; rectOffset: [number, number] } {
+    size: [number, number],
+    symbolType: 'arrow2Left' | string
+  ): { angle: number; offset: [number, number] } {
     // const sizeW = size[0];
-    const sizeH = size[1] / 2;
+    const sizeH = symbolType === 'arrow2Left' ? size[1] / 2 : size[1];
     switch (position) {
       case 'tl':
         return {
-          angle: (pi / 2) * 3,
-          offset: [width / 4, height + sizeH],
-          rectOffset: [-width / 4, -height - size[1]]
+          angle: symbolType === 'arrow2Left' ? (pi / 2) * 3 : 0,
+          offset: symbolType === 'arrow2Left' ? [width / 4, height + sizeH] : [0, height + sizeH]
         };
       case 'top':
-        return { angle: (pi / 2) * 3, offset: [width / 2, height + sizeH], rectOffset: [0, -height - size[1]] };
+        return { angle: (pi / 2) * 3, offset: [width / 2, height + sizeH] };
       case 'tr':
         return {
-          angle: (pi / 2) * 3,
-          offset: [(width / 4) * 3, height + sizeH],
-          rectOffset: [(width / 4) * 3, -height - size[1]]
+          angle: symbolType === 'arrow2Left' ? (pi / 2) * 3 : 0,
+          offset: symbolType === 'arrow2Left' ? [(width / 4) * 3, height + sizeH] : [width, height + sizeH]
         };
       case 'rt':
-        return { angle: 0, offset: [-sizeH, height / 5], rectOffset: [(width / 4) * 3, -height - size[1]] };
+        return {
+          angle: 0,
+          offset: symbolType === 'arrow2Left' ? [-sizeH, height / 5] : [-sizeH, 0]
+        };
       case 'right':
-        return { angle: 0, offset: [-sizeH, height / 2], rectOffset: [(width / 4) * 3, -height - size[1]] };
+        return { angle: 0, offset: [-sizeH, height / 2] };
       case 'rb':
-        return { angle: 0, offset: [-sizeH, (height / 5) * 4], rectOffset: [(width / 4) * 3, -height - size[1]] };
+        return {
+          angle: 0,
+          offset: symbolType === 'arrow2Left' ? [-sizeH, (height / 5) * 4] : [-sizeH, height]
+        };
       case 'bl':
-        return { angle: pi / 2, offset: [width / 4, -sizeH], rectOffset: [-width / 4, -height - size[1]] };
+        return {
+          angle: symbolType === 'arrow2Left' ? pi / 2 : 0,
+          offset: symbolType === 'arrow2Left' ? [width / 4, -sizeH] : [0, -sizeH]
+        };
       case 'bottom':
-        return { angle: pi / 2, offset: [width / 2, -sizeH], rectOffset: [0, -height - size[1]] };
+        return { angle: pi / 2, offset: [width / 2, -sizeH] };
       case 'br':
-        return { angle: pi / 2, offset: [(width / 4) * 3, -sizeH], rectOffset: [(width / 4) * 3, -height - size[1]] };
+        return {
+          angle: symbolType === 'arrow2Left' ? pi / 2 : 0,
+          offset: symbolType === 'arrow2Left' ? [(width / 4) * 3, -sizeH] : [width, -sizeH]
+        };
       case 'lt':
-        return { angle: pi, offset: [width + sizeH, height / 5], rectOffset: [-width / 4, -height - size[1]] };
+        return {
+          angle: symbolType === 'arrow2Left' ? pi : 0,
+          offset: symbolType === 'arrow2Left' ? [width + sizeH, height / 5] : [width + sizeH, 0]
+        };
       case 'left':
-        return { angle: pi, offset: [width + sizeH, height / 2], rectOffset: [0, -height - size[1]] };
+        return { angle: pi, offset: [width + sizeH, height / 2] };
       case 'lb':
         return {
-          angle: pi,
-          offset: [width + sizeH, (height / 5) * 4],
-          rectOffset: [(width / 4) * 3, -height - size[1]]
+          angle: symbolType === 'arrow2Left' ? pi : 0,
+          offset: symbolType === 'arrow2Left' ? [width + sizeH, (height / 5) * 4] : [width + sizeH, height]
         };
     }
+  }
+
+  appearAnimate(animateConfig: { duration?: number; easing?: string; wave?: number }) {
+    // 基准时间，line[0, 500], point[100, 600] 100 onebyone, pointNormal[600, 1000] 90+90 onebyone, activeLine[500, 700]
+    // line和activeLine的clipRange
+    const { duration = 1000, easing = 'quadOut' } = animateConfig;
+    this.setAttributes({ scaleX: 0, scaleY: 0 });
+    this.animate().to({ scaleX: 1, scaleY: 1 }, (duration / 3) * 2, easing as any);
+    this.titleShape &&
+      this.titleShape
+        .animate()
+        .play(new InputText({ text: '' }, { text: this.titleShape.attribute.text as string }, duration, easing as any));
+    this.contentShape &&
+      this.contentShape
+        .animate()
+        .play(
+          new InputText({ text: '' }, { text: this.contentShape.attribute.text as string }, duration, easing as any)
+        );
+
+    // 摇摆
+    if (animateConfig.wave) {
+      const dur = duration / 6;
+      this.group
+        .animate()
+        .to({ angle: animateConfig.wave }, dur, easing as any)
+        .to({ angle: -animateConfig.wave }, dur * 2, easing as any)
+        .to({ angle: animateConfig.wave }, dur * 2, easing as any)
+        .to({ angle: 0 }, dur, easing as any);
+    }
+  }
+
+  disappearAnimate(animateConfig: { duration?: number; easing?: string }) {
+    // 基准时间，line[0, 500], point[100, 600] 100 onebyone, pointNormal[600, 1000] 90+90 onebyone, activeLine[500, 700]
+    // line和activeLine的clipRange
+    const { duration = 1000, easing = 'quadOut' } = animateConfig;
+    this.animate().to({ scaleX: 0, scaleY: 0 }, duration, easing as any);
   }
 }

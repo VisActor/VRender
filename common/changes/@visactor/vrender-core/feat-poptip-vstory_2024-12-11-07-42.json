@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: enhance rect cornerType",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

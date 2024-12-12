@@ -185,7 +185,7 @@ export function shiftY(texts: IText[], option: IShiftYOption) {
       deltaYTolerance = Number.MAX_VALUE
     } = globalShiftY;
     for (let iter = 0; iter < maxIterations; iter++) {
-      texts.sort((a, b) => getY1(a) - getY1(b));
+      texts.sort((a, b) => getY1Initial(a) - getY1Initial(b));
       let error = 0;
       for (let i = 0; i < n - 1; i++) {
         const curText = texts[i];

@@ -1,3 +1,46 @@
+# v0.21.1
+
+2024-12-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support `restorePosition` in position/bound label overlap strategy
+- **@visactor/vrender-components**: support vertex point of marker area label. close @VisActor/VChart[#3442](https://github.com/VisActor/VRender/issues/3442)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: end symbol angle when arc line in markpoint. fix @VisActor/VChart[#3427](https://github.com/VisActor/VRender/issues/3427)
+- **@visactor/vrender-components**: fix issue with scroll-plugin
+- **@visactor/vrender-core**: fix issue with insertAfter and insertBefore
+- **@visactor/vrender-core**: fix the issue when line is configured to connect, closed [#3238](https://github.com/VisActor/VRender/issues/3238)
+- **@visactor/vrender-core**: fix issue with richtext setAttribute, closed [#1578](https://github.com/VisActor/VRender/issues/1578)
+- **@visactor/vrender-core**: fix issue with richtext default font
+
+
+
+[更多详情请查看 v0.21.1](https://github.com/VisActor/VRender/releases/tag/v0.21.1)
+
+# v0.21.0
+
+2024-12-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support label overlap for inside arc labels
+- **@visactor/vrender-core**: use ascend and decent to make measure more accurate
+- **@visactor/vrender-core**: sync animated attribute while call render func, closed [#1416](https://github.com/VisActor/VRender/issues/1416)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- **@visactor/vrender-core**: fix issue with dirtyBounds incorrectly while set visible
+
+
+
+[更多详情请查看 v0.21.0](https://github.com/VisActor/VRender/releases/tag/v0.21.0)
+
 # v0.20.16
 
 2024-11-25

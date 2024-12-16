@@ -41,18 +41,21 @@ export const page = () => {
           text: '我',
           fontSize: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {
           text: '们',
           fontSize: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {
           text: '是',
           fontSize: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {

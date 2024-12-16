@@ -209,6 +209,20 @@ export default class Paragraph {
       baseline = 0;
     }
 
+    if (this.character.fill) {
+      if (this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0)) {
+        const fillStyle = ctx.fillStyle;
+        const globalAlpha = ctx.globalAlpha;
+        ctx.fillStyle = this.character.background;
+        if (this.character.backgroundOpacity !== void 0) {
+          ctx.globalAlpha = this.character.backgroundOpacity;
+        }
+        ctx.fillRect(left, baseline - this.ascent, this.widthOrigin || this.width, this.ascent + this.descent);
+        ctx.fillStyle = fillStyle;
+        ctx.globalAlpha = globalAlpha;
+      }
+    }
+
     const { lineWidth = 1 } = this.character;
     if (this.character.stroke && lineWidth) {
       ctx.strokeText(text, left, baseline);

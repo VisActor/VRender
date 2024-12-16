@@ -574,7 +574,7 @@ export class RichTextEditPlugin implements IPlugin {
       if (!currCursorData) {
         return;
       }
-      const curCursorIdx = currCursorData.cursorIndex;
+      // const curCursorIdx = currCursorData.cursorIndex;
       const lineInfo = currCursorData.lineInfo;
       const columnIndex = lineInfo.paragraphs.findIndex(item => item === currCursorData.columnInfo);
       if (columnIndex < 0) {
@@ -583,10 +583,19 @@ export class RichTextEditPlugin implements IPlugin {
       const str = lineInfo.paragraphs.reduce((str, item) => {
         return str + item.text;
       }, '');
+
+      let idx = 0;
+      for (let i = 0; i < cache.lines.length; i++) {
+        const line = cache.lines[i];
+        if (line === lineInfo) {
+          break;
+        }
+        idx += line.paragraphs.length;
+      }
+
       const startIdx = testLetter(str, columnIndex);
       const endIndex = testLetter2(str, columnIndex);
-
-      this.selectionRange(curCursorIdx - (columnIndex - startIdx) - 0.9, curCursorIdx + (endIndex - columnIndex) - 0.9);
+      this.selectionRange(idx + startIdx - 0.1, idx + endIndex - 0.1);
     }
   }
 

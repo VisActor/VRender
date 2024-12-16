@@ -163,6 +163,10 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
    * 富文本片段的文字描边透明度
    */
   strokeOpacity?: number;
+  // 仅支持纯色背景
+  background?: string;
+  // 背景透明度
+  backgroundOpacity?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

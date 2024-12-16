@@ -119,6 +119,9 @@ export interface IEnvContribution
     loadState: 'success' | 'fail';
     data: Blob | null;
   }>;
+
+  isMacOS: () => boolean;
+  copyToClipBoard: (text: string) => Promise<void>;
 }
 
 export type IMiniAppEnvParams = {
@@ -198,6 +201,8 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
 
   isChrome: () => boolean;
   isSafari: () => boolean;
+  isMacOS: () => boolean;
+  copyToClipBoard: (text: string) => Promise<void>;
 
   /**
    * 获取环境中最大静态canvas的数量，纯粹canvas

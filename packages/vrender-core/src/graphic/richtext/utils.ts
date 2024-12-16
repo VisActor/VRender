@@ -240,7 +240,7 @@ export function testLetter2(string: string, index: number) {
   let i = index;
   // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
   while (
-    (regLetter.test(string[i - 1]) && regLetter.test(string[i])) ||
+    (regLetter.test(string[i + 1]) && regLetter.test(string[i])) ||
     // 行首标点符号处理
     regPunctuation.test(string[i])
   ) {
@@ -250,7 +250,7 @@ export function testLetter2(string: string, index: number) {
       return i;
     }
   }
-  return i;
+  return i + 1;
 }
 
 // 测量文字详细信息

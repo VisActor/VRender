@@ -246,6 +246,12 @@ export const page = () => {
           fontSize: 26,
           textAlign: 'center',
           fill: '#0f51b5'
+        },
+        {
+          text: 'and this is our world, \nthat we call life',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
         }
       ]
     })

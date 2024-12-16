@@ -433,8 +433,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             leftMostLabel.setAttributes({ dx: (leftMostLabel.attribute.dx ?? 0) + left - leftBound });
           } else {
             leftMostLabel.setAttributes({
-              x: left,
-              textAlign: 'left'
+              x: leftMostLabel.attribute.x + left - leftBound
             });
           }
         }
@@ -446,8 +445,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             rightMostLabel.setAttributes({ dx: (rightMostLabel.attribute.dx ?? 0) + right - rightBound });
           } else {
             rightMostLabel.setAttributes({
-              x: right,
-              textAlign: 'right'
+              x: rightMostLabel.attribute.x + right - rightBound
             });
           }
         }
@@ -469,8 +467,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           } else {
             topMostLabel.setAttributes({
-              y: top,
-              textBaseline: 'top'
+              y: topMostLabel.attribute.y + top - topBound
             });
           }
         }
@@ -484,8 +481,7 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
             });
           } else {
             bottomMostLabel.setAttributes({
-              y: bottom,
-              textBaseline: 'bottom'
+              y: bottomMostLabel.attribute.y + bottom - bottomBound
             });
           }
         }

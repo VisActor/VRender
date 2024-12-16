@@ -1,6 +1,12 @@
 import { application } from '../../application';
 import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
-import { IRichTextIcon, IRichTextParagraph } from '../../interface';
+
+let isMac = false;
+try {
+  isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+} catch (err) {
+  // ignore
+}
 
 function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
   let idx = 0;

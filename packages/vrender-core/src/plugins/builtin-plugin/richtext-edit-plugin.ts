@@ -19,7 +19,7 @@ import type {
   ITimeline
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
-import { EditModule } from './edit-module';
+import { EditModule, findConfigIndex } from './edit-module';
 import { application } from '../../application';
 
 type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
@@ -39,6 +39,22 @@ class Selection {
     return this.selectionStartCursorIdx === this.curCursorIdx;
   }
 
+  getSelectionPureText(): string {
+    const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
+    const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
+    if (minCursorIdx === maxCursorIdx) {
+      return '';
+    }
+    const config = this.rt.attribute.textConfig as any;
+    const startIdx = findConfigIndex(config, Math.ceil(minCursorIdx));
+    const endIdx = findConfigIndex(config, Math.floor(maxCursorIdx));
+    let str = '';
+    for (let i = startIdx; i <= endIdx; i++) {
+      str += config[i].text;
+    }
+    return str;
+  }
+
   hasFormat(key: string): boolean {
     return this.getFormat(key) != null;
   }
@@ -52,8 +68,16 @@ class Selection {
     if (!this.rt) {
       return null;
     }
-    const idx = Math.round(cursorIdx);
+    let idx = Math.round(cursorIdx);
     const config = this.rt.attribute.textConfig as any;
+    for (let i = 0; i < config.length; i++) {
+      if (config[i].text !== '\n') {
+        idx--;
+        if (idx < 0) {
+          return config[i][key];
+        }
+      }
+    }
     return config[Math.min(idx, config.length - 1)][key] ?? (this.rt.attribute as any)[key];
   }
   getFormat(key: string): any {
@@ -67,7 +91,7 @@ class Selection {
     if (minCursorIdx === maxCursorIdx) {
       return [this._getFormat(key, minCursorIdx)];
     }
-    for (let i = minCursorIdx; i < maxCursorIdx; i++) {
+    for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = this._getFormat(key, i);
       val && valSet.add(val);
     }
@@ -220,13 +244,76 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.onChange(this.handleChange);
   }
 
-  handleKeyDown = (e: KeyboardEvent) => {
-    if (!(this.currRt && this.editing)) {
+  copyToClipboard(e: KeyboardEvent): boolean {
+    if (
+      (application.global.isMacOS() && e.metaKey && e.key === 'c') ||
+      (!application.global.isMacOS() && e.ctrlKey && e.key === 'c')
+    ) {
+      const selection = this.getSelection();
+      const text = selection.getSelectionPureText();
+      application.global.copyToClipBoard(text);
+      e.preventDefault();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 选中某一个区间，startIdx和endIdx分别是开始结束的光标位置
+   * 设置光标为endIdx，设置开始位置为startIdx
+   * @param startIdx 开始位置
+   * @param endIdx 结束位置
+   * @returns
+   */
+  selectionRange(startIdx: number, endIdx: number) {
+    const currRt = this.currRt;
+    if (!currRt) {
       return;
+    }
+    const cache = currRt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+
+    this.curCursorIdx = endIdx;
+    this.selectionStartCursorIdx = startIdx;
+    const { x, y1, y2 } = this.computedCursorPosByCursorIdx(this.selectionStartCursorIdx, this.currRt);
+    this.startCursorPos = { x, y: (y1 + y2) / 2 };
+    const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
+    this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
+    this._tryShowSelection(pos, cache);
+  }
+
+  fullSelection(e: KeyboardEvent) {
+    if (
+      (application.global.isMacOS() && e.metaKey && e.key === 'a') ||
+      (!application.global.isMacOS() && e.ctrlKey && e.key === 'a')
+    ) {
+      const currRt = this.currRt;
+      if (!currRt) {
+        return;
+      }
+      const cache = currRt.getFrameCache();
+      if (!cache) {
+        return;
+      }
+      const { lines } = cache;
+      const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
+      this.selectionRange(-0.1, totalCursorCount + 0.1);
+
+      e.preventDefault();
+      return true;
+    }
+    return false;
+  }
+
+  directKey(e: KeyboardEvent) {
+    if (!(e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      return false;
     }
     const cache = this.currRt.getFrameCache();
     if (!cache) {
-      return;
+      return false;
     }
     let x = 0;
     let y = 0;
@@ -295,6 +382,29 @@ export class RichTextEditPlugin implements IPlugin {
       this.curCursorIdx = cursorIdx;
       this.selectionStartCursorIdx = cursorIdx;
       this.setCursorAndTextArea(data.x, data.y1, data.y2, this.currRt);
+    }
+
+    return true;
+  }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (!(this.currRt && this.editing)) {
+      return;
+    }
+    // 复制到剪贴板
+    // cmd/ctl + C
+    if (this.copyToClipboard(e)) {
+      return;
+    }
+    // 全选
+    // cmd/ctl + A
+    if (this.fullSelection(e)) {
+      return;
+    }
+    // 方向键
+    // 上、下、左、右
+    if (this.directKey(e)) {
+      return;
     }
   };
 
@@ -440,12 +550,23 @@ export class RichTextEditPlugin implements IPlugin {
     if (!(cache && this.editBg && this.pointerDown && this.startCursorPos)) {
       return;
     }
-    let startCursorPos = this.startCursorPos;
+
     const currCursorData = this.computedCursorPosByEvent(e, cache);
     if (!currCursorData) {
       return;
     }
     this.curCursorIdx = currCursorData.cursorIndex;
+  }
+
+  _tryShowSelection(
+    currCursorData: {
+      x: any;
+      y1: number;
+      y2: number;
+    },
+    cache: IRichTextFrame
+  ) {
+    let startCursorPos = this.startCursorPos;
     let endCursorPos = {
       x: currCursorData.x,
       y: (currCursorData.y1 + currCursorData.y2) / 2
@@ -521,7 +642,7 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
 
-    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, e.target as IRichText);
+    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, this.currRt as IRichText);
 
     this.triggerRender();
     this.updateCbs.forEach(cb => cb('selection', this));

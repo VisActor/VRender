@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the incorrect flush effect with background axis labels",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

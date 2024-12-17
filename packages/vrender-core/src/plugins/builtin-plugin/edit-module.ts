@@ -1,13 +1,6 @@
 import { application } from '../../application';
 import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
 
-let isMac = false;
-try {
-  isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
-} catch (err) {
-  // ignore
-}
-
 function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
   let idx = 0;
   for (let i = 0; i < textConfig.length; i++) {
@@ -20,22 +13,27 @@ function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
 }
 
 /**
- * 找到cursorIndex所在的textConfig的位置，忽略换行符
+ * 找到cursorIndex所在的textConfig的位置，忽略单个换行符，连续换行符的时候只忽略第一个
  * @param textConfig
  * @param cursorIndex
  * @returns
  */
-export function findConfigIndex(textConfig: IRichTextCharacter[], cursorIndex: number): number {
+export function findConfigIndexByCursorIdx(textConfig: IRichTextCharacter[], cursorIndex: number): number {
   let index = 0;
   // 小于0是在最前面了
   if (cursorIndex < 0) {
     return -1;
   }
   let idx = Math.round(cursorIndex);
+  let lastLineBreak = true;
   for (index = 0; index < textConfig.length; index++) {
     const c = textConfig[index] as IRichTextParagraphCharacter;
-    if (c.text !== '\n') {
+    if (c.text === '\n') {
+      idx -= Number(lastLineBreak);
+      lastLineBreak = true;
+    } else {
       idx--;
+      lastLineBreak = false;
     }
     if (idx < 0) {
       break;
@@ -49,16 +47,29 @@ export function findConfigIndex(textConfig: IRichTextCharacter[], cursorIndex: n
   return Math.min(index, textConfig.length - 1);
 }
 
-export function textConfigIgnoreLinebreakIdxToCursorIdx(textConfig: IRichTextCharacter[], cursorIndex: number): number {
+export function findCursorIdxByConfigIndex(textConfig: IRichTextCharacter[], configIndex: number): number {
   let index = 0;
-  for (let i = 0; i < cursorIndex; i++) {
+  // 仅有一个\n，那不算
+  // 如果有连续的\n，那就少算一个
+  let lastLineBreak = true;
+  let delta = 0;
+  for (let i = 0; i <= configIndex + delta; i++) {
     const c = textConfig[i] as IRichTextParagraphCharacter;
-    if (c.text !== '\n') {
+    if (c.text === '\n') {
+      index += Number(lastLineBreak);
+      // 第一个换行符当做不存在
+      delta += 1 - Number(lastLineBreak);
+      lastLineBreak = true;
+    } else {
       index++;
+      lastLineBreak = false;
+      // 回归
+      delta = 0;
     }
   }
+  index = Math.max(index - 1, 0);
   // 正常Cursor是放在右边的，但如果回退到换行符了，那就放在左侧
-  if ((textConfig[cursorIndex] as any)?.text === '\n') {
+  if ((textConfig[configIndex] as any)?.text === '\n') {
     index -= 0.1;
   } else {
     index += 0.1;
@@ -124,7 +135,7 @@ export class EditModule {
       const config = textConfig[0];
       textConfig.unshift({ fill: 'black', ...config, text: '' });
     } else {
-      const cursorIndex = findConfigIndex(textConfig, this.cursorIndex);
+      const cursorIndex = findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
       const lastConfig = textConfig[cursorIndex];
       textConfig.splice(cursorIndex + 1, 0, { ...lastConfig, text: '' });
     }
@@ -135,7 +146,7 @@ export class EditModule {
     this.isComposing = false;
     // 拆分上一次的内容
     const { textConfig = [] } = this.currRt.attribute;
-    const configIdx = findConfigIndex(textConfig, this.cursorIndex + 1);
+    const configIdx = findConfigIndexByCursorIdx(textConfig, this.cursorIndex + 1);
 
     const lastConfig = textConfig[configIdx];
     textConfig.splice(configIdx, 1);
@@ -187,9 +198,9 @@ export class EditModule {
 
     // 转换成基于textConfig的
     // let delta = 0;
-    startIdx = findConfigIndex(textConfig, startIdx);
+    startIdx = findConfigIndexByCursorIdx(textConfig, startIdx);
     // delta = this.selectionStartCursorIdx - startIdx;
-    endIdx = findConfigIndex(textConfig, endIdx);
+    endIdx = findConfigIndexByCursorIdx(textConfig, endIdx);
     // console.log(startIdx, delta, endIdx);
 
     let idxDelta = 0;
@@ -238,7 +249,7 @@ export class EditModule {
     }
 
     this.currRt.setAttributes({ textConfig });
-    this.cursorIndex = textConfigIgnoreLinebreakIdxToCursorIdx(textConfig, startIdx);
+    this.cursorIndex = findCursorIdxByConfigIndex(textConfig, startIdx);
 
     this.cursorIndex += idxDelta;
     if (!this.isComposing) {

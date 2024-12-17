@@ -19,7 +19,7 @@ import type {
   ITimeline
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
-import { EditModule, findConfigIndex } from './edit-module';
+import { EditModule, findConfigIndexByCursorIdx } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
@@ -48,8 +48,8 @@ class Selection {
       return '';
     }
     const config = this.rt.attribute.textConfig as any;
-    const startIdx = findConfigIndex(config, Math.ceil(minCursorIdx));
-    const endIdx = findConfigIndex(config, Math.floor(maxCursorIdx));
+    const startIdx = findConfigIndexByCursorIdx(config, Math.ceil(minCursorIdx));
+    const endIdx = findConfigIndexByCursorIdx(config, Math.floor(maxCursorIdx));
     let str = '';
     for (let i = startIdx; i <= endIdx; i++) {
       str += config[i].text;

@@ -39,7 +39,7 @@ export const page = () => {
       // "textAlign": "center",
       textConfig: [
         {
-          text: 'and this is our world, \nthat we call life',
+          text: 'and',
           fontSize: 16,
           lineHeight: 26,
           textAlign: 'center',

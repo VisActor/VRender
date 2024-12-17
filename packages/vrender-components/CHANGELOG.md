@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 12 Dec 2024 13:32:30 GMT and should not be manually modified.
+This log was last generated on Tue, 17 Dec 2024 13:55:39 GMT and should not be manually modified.
+
+## 0.20.21
+Tue, 17 Dec 2024 13:55:39 GMT
+
+### Updates
+
+- fix: obb autoHide should support autoHideSeparation(without rotate)
 
 ## 0.20.20
 Thu, 12 Dec 2024 13:32:30 GMT

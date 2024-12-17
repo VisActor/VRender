@@ -338,7 +338,7 @@ export const page = () => {
     }
   });
 
-  ['bold', 'italic', 'underline', 'lineThrough', { fill: 'red' }].forEach(item => {
+  ['bold', 'italic', 'underline', 'lineThrough', { fill: 'red' }, { background: 'pink' }].forEach(item => {
     const btn = document.createElement('button');
     btn.innerHTML = typeof item === 'string' ? item : JSON.stringify(item);
     btn.addEventListener('click', () => {

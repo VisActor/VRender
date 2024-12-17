@@ -39,7 +39,263 @@ export const page = () => {
       // "textAlign": "center",
       textConfig: [
         {
-          text: 'and',
+          text: '我',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          background: 'orange',
+          fill: '#0f51b5'
+        },
+        {
+          text: '们',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          background: 'orange',
+          fill: '#0f51b5'
+        },
+        {
+          text: '是',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          background: 'orange',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缘',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: 'a',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '故',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '的',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '尘😁',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '埃\n',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缘',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '无',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '故',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '的',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '游',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '走\n',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '黑',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '暗',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '只',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '需',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '要',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '张',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '开',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '一',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '张',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '缝',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '隙\n',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '就',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '能',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '挂',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '起',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '飓',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '[4]',
+          script: 'super',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '风\n',
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: 'and this is our world, \nthat we call life',
           fontSize: 16,
           lineHeight: 26,
           textAlign: 'center',

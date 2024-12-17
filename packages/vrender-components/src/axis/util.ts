@@ -179,19 +179,21 @@ export function textIntersect(textA: IText, textB: IText, sep: number) {
   }
 
   // 非水平文字且有 OBB 包围盒
-  const expandedTextA = textA.clone();
-  const boundsPaddingA = textA.attribute.boundsPadding ?? 0;
-  expandedTextA.setAttributes({
-    boundsPadding: isNumber(boundsPaddingA) ? boundsPaddingA + sep / 2 : boundsPaddingA.map(v => v + sep / 2)
-  });
-  const expandTextB = textB.clone();
-  const boundsPaddingB = textB.attribute.boundsPadding ?? 0;
+  // TODO: 待支持有旋转角度下的 sep 计算逻辑
+  return a.intersects(b);
+  //   const expandedTextA = textA.clone();
+  //   const boundsPaddingA = textA.attribute.boundsPadding ?? 0;
+  //   expandedTextA.setAttributes({
+  //     boundsPadding: isNumber(boundsPaddingA) ? boundsPaddingA + sep / 2 : boundsPaddingA.map(v => v + sep / 2)
+  //   });
+  //   const expandTextB = textB.clone();
+  //   const boundsPaddingB = textB.attribute.boundsPadding ?? 0;
 
-  expandTextB.setAttributes({
-    boundsPadding: isNumber(boundsPaddingB) ? boundsPaddingB + sep / 2 : boundsPaddingB.map(v => v + sep / 2)
-  });
+  //   expandTextB.setAttributes({
+  //     boundsPadding: isNumber(boundsPaddingB) ? boundsPaddingB + sep / 2 : boundsPaddingB.map(v => v + sep / 2)
+  //   });
 
-  return expandedTextA.OBBBounds.intersects(expandTextB.OBBBounds);
+  //   return expandedTextA.OBBBounds.intersects(expandTextB.OBBBounds);
 }
 
 export function hasOverlap<T>(items: IText[], pad: number): boolean {

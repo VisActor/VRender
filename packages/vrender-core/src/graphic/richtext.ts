@@ -196,9 +196,12 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
         line.paragraphs.every(item => !(item.text && isString(item.text) && RichText.splitText(item.text).length > 1))
       );
     }
+    // isComposing的不算
     const tc = cache as IRichTextGraphicAttribute['textConfig'];
     return tc.every(
-      item => !((item as any).text && isString((item as any).text) && RichText.splitText((item as any).text).length > 1)
+      item =>
+        (item as any).isComposing ||
+        !((item as any).text && isString((item as any).text) && RichText.splitText((item as any).text).length > 1)
     );
   }
 

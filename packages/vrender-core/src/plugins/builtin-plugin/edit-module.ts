@@ -265,7 +265,7 @@ export class EditModule {
       }
 
       if (!this.isComposing) {
-        currConfig = { ...lastConfig, text: '' };
+        currConfig = { fill: 'black', ...lastConfig, text: '' };
         startIdx += 1;
         textConfig.splice(startIdx, 0, currConfig);
       }

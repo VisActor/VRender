@@ -160,6 +160,9 @@ export class EditModule {
     if (!this.currRt) {
       return;
     }
+    if (ev.inputType === 'historyUndo') {
+      return;
+    }
 
     // 如果是回车，那就不往后+1
     const { textConfig = [], ...rest } = this.currRt.attribute;

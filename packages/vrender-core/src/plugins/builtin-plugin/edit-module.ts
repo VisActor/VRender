@@ -140,15 +140,16 @@ export class EditModule {
   }
 
   handleFocusIn = () => {
-    this.focusOutTimer && clearTimeout(this.focusOutTimer);
-    this.focusOutTimer = 0;
-    this.onFocusInList && this.onFocusInList.forEach(cb => cb());
+    // this.focusOutTimer && clearTimeout(this.focusOutTimer);
+    // this.focusOutTimer = 0;
+    // this.onFocusInList && this.onFocusInList.forEach(cb => cb());
   };
   handleFocusOut = () => {
-    // 延时触发，避免误关闭
-    this.focusOutTimer = setTimeout(() => {
-      this.onFocusOutList && this.onFocusOutList.forEach(cb => cb());
-    }, 100);
+    // 暂时注释，会导致非期待情况下的误关闭
+    // // 延时触发，避免误关闭
+    // this.focusOutTimer = setTimeout(() => {
+    //   this.onFocusOutList && this.onFocusOutList.forEach(cb => cb());
+    // }, 100);
   };
 
   handleKeyDown = (e: KeyboardEvent) => {

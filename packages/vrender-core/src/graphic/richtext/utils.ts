@@ -325,8 +325,8 @@ export function measureTextCanvas(
     result.descent = 0;
   } else {
     result.width = Math.floor(measurement.width);
-    result.height = Math.floor(measurement.actualBoundingBoxAscent + measurement.actualBoundingBoxDescent);
-    result.ascent = Math.floor(measurement.actualBoundingBoxAscent);
+    result.height = Math.floor(measurement.fontBoundingBoxAscent + measurement.fontBoundingBoxDescent);
+    result.ascent = Math.floor(measurement.fontBoundingBoxAscent);
     result.descent = result.height - result.ascent;
   }
   return result;

@@ -1,5 +1,5 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { isNumber } from '@visactor/vutils';
+import { isNumber, isString } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -13,7 +13,9 @@ import type {
   IStage,
   ILayer,
   IRichTextIcon,
-  EventPoint
+  EventPoint,
+  IRichTextFrame,
+  ISetAttributeContext
 } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultRichTextAttribute } from './config';
@@ -187,6 +189,42 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return getTheme(this).richtext;
   }
 
+  static AllSingleCharacter(cache: IRichTextFrame | IRichTextGraphicAttribute['textConfig']) {
+    if ((cache as IRichTextFrame).lines) {
+      const frame = cache as IRichTextFrame;
+      return frame.lines.every(line =>
+        line.paragraphs.every(item => !(item.text && isString(item.text) && RichText.splitText(item.text).length > 1))
+      );
+    }
+    const tc = cache as IRichTextGraphicAttribute['textConfig'];
+    return tc.every(
+      item => !((item as any).text && isString((item as any).text) && RichText.splitText((item as any).text).length > 1)
+    );
+  }
+
+  static splitText(text: string) {
+    // 😁这种emoji长度算两个，所以得处理一下
+    return Array.from(text);
+  }
+
+  static TransformTextConfig2SingleCharacter(textConfig: IRichTextGraphicAttribute['textConfig']) {
+    const tc: IRichTextGraphicAttribute['textConfig'] = [];
+    textConfig.forEach((item: IRichTextParagraphCharacter) => {
+      const textList = RichText.splitText(item.text.toString());
+      if (isString(item.text) && textList.length > 1) {
+        // 拆分
+        for (let i = 0; i < textList.length; i++) {
+          const t = textList[i];
+          tc.push({ ...item, text: t });
+        }
+      } else {
+        tc.push(item);
+      }
+    });
+
+    return tc;
+  }
+
   protected updateAABBBounds(
     attribute: IRichTextGraphicAttribute,
     richtextTheme: Required<IRichTextGraphicAttribute>,
@@ -321,7 +359,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
     const {
-      textConfig: _tc = [],
       maxWidth,
       maxHeight,
       width,
@@ -333,8 +370,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textBaseline,
       layoutDirection,
       singleLine,
-      disableAutoWrapLine
+      disableAutoWrapLine,
+      editable
     } = this.attribute;
+
+    let { textConfig: _tc = [] } = this.attribute;
+
+    // 预处理editable，将textConfig中的text转换为单个字符
+    if (editable && _tc.length > 0 && !RichText.AllSingleCharacter(_tc)) {
+      _tc = RichText.TransformTextConfig2SingleCharacter(_tc);
+      this.attribute.textConfig = _tc;
+    }
+
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
 
     const textConfig = tc ?? _tc;

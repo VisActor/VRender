@@ -1,7 +1,7 @@
 import type { IPointLike } from '@visactor/vutils';
 import { isObject, isString, max, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
-import { createGroup, createLine, createRect } from '../../graphic';
+import { createGroup, createLine, createRect, RichText } from '../../graphic';
 import type {
   IGroup,
   ILine,
@@ -138,33 +138,27 @@ export class RichTextEditPlugin implements IPlugin {
   protected declare deltaX: number;
   protected declare deltaY: number;
 
-  static splitText(text: string) {
-    // 😁这种emoji长度算两个，所以得处理一下
-    return Array.from(text);
-  }
+  // static splitText(text: string) {
+  //   // 😁这种emoji长度算两个，所以得处理一下
+  //   return Array.from(text);
+  // }
 
   static tryUpdateRichtext(richtext: IRichText) {
     const cache = richtext.getFrameCache();
-    if (
-      !cache.lines.every(line =>
-        line.paragraphs.every(
-          item => !(item.text && isString(item.text) && RichTextEditPlugin.splitText(item.text).length > 1)
-        )
-      )
-    ) {
-      const tc: IRichTextCharacter[] = [];
-      richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
-        const textList = RichTextEditPlugin.splitText(item.text.toString());
-        if (isString(item.text) && textList.length > 1) {
-          // 拆分
-          for (let i = 0; i < textList.length; i++) {
-            const t = textList[i];
-            tc.push({ ...item, text: t });
-          }
-        } else {
-          tc.push(item);
-        }
-      });
+    if (!RichText.AllSingleCharacter(cache)) {
+      const tc = RichText.TransformTextConfig2SingleCharacter(richtext.attribute.textConfig);
+      // richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
+      //   const textList = RichTextEditPlugin.splitText(item.text.toString());
+      //   if (isString(item.text) && textList.length > 1) {
+      //     // 拆分
+      //     for (let i = 0; i < textList.length; i++) {
+      //       const t = textList[i];
+      //       tc.push({ ...item, text: t });
+      //     }
+      //   } else {
+      //     tc.push(item);
+      //   }
+      // });
       richtext.setAttributes({ textConfig: tc });
       richtext.doUpdateFrameCache(tc);
     }

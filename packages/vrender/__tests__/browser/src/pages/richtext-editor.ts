@@ -245,6 +245,13 @@ export const page = () => {
           fill: '#0f51b5'
         },
         {
+          text: '[4]',
+          script: 'super',
+          fontSize: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
           text: '风\n',
           fontSize: 26,
           textAlign: 'center',
@@ -259,6 +266,8 @@ export const page = () => {
       ]
     })
   );
+
+  console.log(shapes[0]);
 
   const stage = createStage({
     canvas: 'main',

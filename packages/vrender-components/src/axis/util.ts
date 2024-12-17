@@ -1,8 +1,8 @@
 // eslint-disable-next-line no-duplicate-imports
 import type { IGraphic, IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import type { Dict, IBounds } from '@visactor/vutils';
+import type { Dict, IBounds, IOBBBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge } from '@visactor/vutils';
+import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge, isNil } from '@visactor/vutils';
 import { traverseGroup } from '../util/common';
 import type { Vector2 } from '../util';
 // eslint-disable-next-line no-duplicate-imports
@@ -10,6 +10,7 @@ import { scale, length } from '../util';
 import type { BreakSymbol } from './type';
 import { DEFAULT_AXIS_BREAK_SYMBOL_STYLE } from './config';
 import type { Point } from '../core/type';
+import { isAngleHorizontal, isAngleVertical } from './overlap/util';
 
 // 和 vutils 版本不同
 export const clampRadian = (angle: number = 0) => {
@@ -155,7 +156,22 @@ export function textIntersect(textA: IText, textB: IText, sep: number) {
   let a: IBounds = textA.OBBBounds;
   let b: IBounds = textB.OBBBounds;
   if (a && b && !a.empty() && !b.empty()) {
-    return a.intersects(b);
+    if (a.intersects(b)) {
+      return true;
+    }
+    // 注意：默认旋转角度一样
+    const angle = (a as IOBBBounds).angle;
+    const hasAngle = isNil(angle);
+    if (!hasAngle || isAngleHorizontal(angle) || isAngleVertical(angle)) {
+      return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+    }
+    // 旋转后的两个中心点未必在一条水平线上
+    const centerA = { x: (a.x1 + a.x2) / 2, y: (a.y1 + a.y2) / 2 };
+    const centerB = { x: (b.x1 + b.x2) / 2, y: (b.y1 + b.y2) / 2 };
+    const centerDistance = Math.sqrt((centerA.x - centerB.x) ** 2 + (centerA.y - centerB.y) ** 2);
+    const height = a.height();
+    const centerAngle = Math.PI - Math.atan2(centerB.y - centerA.y, centerB.x - centerA.x);
+    return sep > Math.abs(Math.sin((angle as number) + centerAngle)) * centerDistance - height;
   }
   a = textA.AABBBounds;
   b = textB.AABBBounds;

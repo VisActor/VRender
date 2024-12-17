@@ -492,8 +492,8 @@ export class RichTextEditPlugin implements IPlugin {
     // 计算全局偏移
     this.computeGlobalDelta(cache);
 
-    // 添加cursor节点
-    shadowRoot.setAttributes({ shadowRootIdx: -1, x: this.deltaX, y: this.deltaY });
+    // 添加cursor节点，shadowRoot在上面
+    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响

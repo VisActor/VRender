@@ -21,7 +21,8 @@ import type {
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
 import { EditModule, findConfigIndex } from './edit-module';
 import { application } from '../../application';
-import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
+import { getWordStartEndIdx } from '../../graphic/richtext/utils';
+// import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
 type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
 
@@ -270,6 +271,15 @@ export class RichTextEditPlugin implements IPlugin {
     if (!cache) {
       return;
     }
+    // 对startIdx和endIdx约束
+    const { lines } = cache;
+    const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
+    if (startIdx > endIdx) {
+      [startIdx, endIdx] = [endIdx, startIdx];
+    }
+    startIdx = Math.min(Math.max(startIdx, -0.1), totalCursorCount + 0.1);
+    endIdx = Math.min(Math.max(endIdx, -0.1), totalCursorCount + 0.1);
+
     this.curCursorIdx = endIdx;
     this.selectionStartCursorIdx = startIdx;
     const { x, y1, y2 } = this.computedCursorPosByCursorIdx(this.selectionStartCursorIdx, this.currRt);
@@ -587,9 +597,9 @@ export class RichTextEditPlugin implements IPlugin {
         idx += line.paragraphs.length;
       }
 
-      const startIdx = testLetter(str, columnIndex);
-      const endIndex = testLetter2(str, columnIndex);
-      this.selectionRange(idx + startIdx - 0.1, idx + endIndex - 0.1);
+      const { startIdx, endIdx } = getWordStartEndIdx(str, columnIndex);
+
+      this.selectionRange(idx + startIdx - 0.1, idx + endIdx - 0.1);
     }
   }
 

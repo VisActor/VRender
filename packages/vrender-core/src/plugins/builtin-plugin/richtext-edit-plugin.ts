@@ -239,6 +239,7 @@ export class RichTextEditPlugin implements IPlugin {
 
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
+    this.editModule.onFocusOut(this.handleFocusOut);
   }
 
   copyToClipboard(e: KeyboardEvent): boolean {
@@ -334,6 +335,8 @@ export class RichTextEditPlugin implements IPlugin {
 
     // const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
     const { lineInfo, columnInfo } = this.getColumnByIndex(cache, Math.round(this.curCursorIdx));
+    const { lines } = cache;
+    const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
     if (x) {
       // 快接近首尾需要特殊处理
       if (
@@ -354,6 +357,11 @@ export class RichTextEditPlugin implements IPlugin {
         this.curCursorIdx = this.curCursorIdx - 1 + 0.2;
       } else {
         this.curCursorIdx += x;
+      }
+      if (this.curCursorIdx < -0.1) {
+        this.curCursorIdx = -0.1;
+      } else if (this.curCursorIdx > totalCursorCount + 0.1) {
+        this.curCursorIdx = totalCursorCount + 0.1;
       }
 
       const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
@@ -381,8 +389,14 @@ export class RichTextEditPlugin implements IPlugin {
       if (!columnInfo) {
         return;
       }
-      const cursorIdx = this.getColumnIndex(cache, columnInfo) + delta;
+      let cursorIdx = this.getColumnIndex(cache, columnInfo) + delta;
       const data = this.computedCursorPosByCursorIdx(cursorIdx, this.currRt);
+
+      if (cursorIdx < -0.1) {
+        cursorIdx = -0.1;
+      } else if (cursorIdx > totalCursorCount + 0.1) {
+        cursorIdx = totalCursorCount + 0.1;
+      }
 
       this.curCursorIdx = cursorIdx;
       this.selectionStartCursorIdx = cursorIdx;
@@ -432,6 +446,18 @@ export class RichTextEditPlugin implements IPlugin {
     this.updateCbs.forEach(cb => cb('change', this));
   };
 
+  handleFocusIn = () => {
+    // this.updateCbs.forEach(cb => cb(this.editing ? 'onfocus' : 'defocus', this));
+  };
+
+  handleFocusOut = () => {
+    this.editing = false;
+    this.deFocus();
+    this.pointerDown = false;
+    this.triggerRender();
+    this.updateCbs.forEach(cb => cb('defocus', this));
+  };
+
   deactivate(context: IPluginService): void {
     // context.stage.off('pointerdown', this.handleClick);
     context.stage.off('pointermove', this.handleMove);
@@ -470,7 +496,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (this.editing) {
       this.onFocus(e);
     } else {
-      this.deFocus(e);
+      this.deFocus();
     }
     this.triggerRender();
     this.pointerDown = true;
@@ -488,7 +514,7 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   onFocus(e: PointerEvent) {
-    this.deFocus(e);
+    this.deFocus();
     this.currRt = e.target as IRichText;
 
     // 创建shadowGraphic
@@ -528,7 +554,7 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
-  protected deFocus(e: PointerEvent) {
+  protected deFocus() {
     const target = this.currRt as IRichText;
     if (!target) {
       return;

@@ -142,7 +142,7 @@ export class EditModule {
     const text = (lastConfig as any).text;
     const textList: string[] = text ? Array.from(text.toString()) : [];
     for (let i = 0; i < textList.length; i++) {
-      textConfig.splice(i + configIdx, 0, { ...lastConfig, text: textList[i] });
+      textConfig.splice(i + configIdx, 0, { ...lastConfig, isComposing: false, text: textList[i] } as any);
     }
     this.currRt.setAttributes({ textConfig });
     this.onChangeCbList.forEach(cb => {
@@ -231,6 +231,7 @@ export class EditModule {
         textConfig.splice(startIdx, 0, currConfig);
       }
       (currConfig as any).text = str;
+      currConfig.isComposing = this.isComposing;
       if (!textConfig.length) {
         textConfig.push(currConfig);
       }

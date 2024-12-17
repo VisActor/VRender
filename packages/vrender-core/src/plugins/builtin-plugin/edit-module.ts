@@ -88,6 +88,9 @@ export class EditModule {
   onInputCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
   // change的回调（composing确认才会触发）
   onChangeCbList: Array<(text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void>;
+  onFocusInList: Array<() => void>;
+  onFocusOutList: Array<() => void>;
+  focusOutTimer: number;
 
   constructor(container?: HTMLElement) {
     this.container = container ?? document.body;
@@ -101,6 +104,8 @@ export class EditModule {
     this.isComposing = false;
     this.onInputCbList = [];
     this.onChangeCbList = [];
+    this.onFocusInList = [];
+    this.onFocusOutList = [];
   }
 
   onInput(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
@@ -109,6 +114,14 @@ export class EditModule {
 
   onChange(cb: (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => void) {
     this.onChangeCbList.push(cb);
+  }
+
+  onFocusIn(cb: () => void) {
+    this.onFocusInList.push(cb);
+  }
+
+  onFocusOut(cb: () => void) {
+    this.onFocusOutList.push(cb);
   }
 
   applyStyle(textAreaDom: HTMLTextAreaElement) {
@@ -120,8 +133,23 @@ export class EditModule {
     textAreaDom.addEventListener('input', this.handleInput);
     textAreaDom.addEventListener('compositionstart', this.handleCompositionStart);
     textAreaDom.addEventListener('compositionend', this.handleCompositionEnd);
+    // 监听焦点
+    textAreaDom.addEventListener('focusin', this.handleFocusIn);
+    textAreaDom.addEventListener('focusout', this.handleFocusOut);
     application.global.addEventListener('keydown', this.handleKeyDown);
   }
+
+  handleFocusIn = () => {
+    this.focusOutTimer && clearTimeout(this.focusOutTimer);
+    this.focusOutTimer = 0;
+    this.onFocusInList && this.onFocusInList.forEach(cb => cb());
+  };
+  handleFocusOut = () => {
+    // 延时触发，避免误关闭
+    this.focusOutTimer = setTimeout(() => {
+      this.onFocusOutList && this.onFocusOutList.forEach(cb => cb());
+    }, 100);
+  };
 
   handleKeyDown = (e: KeyboardEvent) => {
     if (e.key === 'Delete' || e.key === 'Backspace') {
@@ -280,6 +308,8 @@ export class EditModule {
     this.textAreaDom.removeEventListener('input', this.handleInput);
     this.textAreaDom.removeEventListener('compositionstart', this.handleCompositionStart);
     this.textAreaDom.removeEventListener('compositionend', this.handleCompositionEnd);
+    this.textAreaDom.addEventListener('focusin', this.handleFocusOut);
+    this.textAreaDom.addEventListener('focusout', this.handleFocusOut);
     application.global.removeEventListener('keydown', this.handleKeyDown);
   }
 }

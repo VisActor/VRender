@@ -478,6 +478,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       this._frameCache?.icons
     );
     const wrapper = new Wrapper(frame);
+    // @since 0.22.0
+    // 如果可编辑的话，则支持多换行符
+    wrapper.newLine = editable;
     if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
@@ -508,11 +511,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       }
     } else {
       for (let i = 0; i < paragraphs.length; i++) {
-        if (i === paragraphs.length - 1) {
-          wrapper.newLine = true;
-        }
+        // if (i === paragraphs.length - 1) {
+        //   wrapper.newLine = true;
+        // }
         wrapper.deal(paragraphs[i]);
-        wrapper.newLine = false;
+        // wrapper.newLine = false;
       }
     }
 
@@ -537,6 +540,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
       frame.lines.forEach(function (l) {
         l.calcOffset(offsetSize, false);
+      });
+    }
+
+    // 处理空行
+    if (editable) {
+      frame.lines.forEach(item => {
+        const lastParagraphs = item.paragraphs;
+        item.paragraphs = item.paragraphs.filter(p => (p as any).text !== '');
+        if (item.paragraphs.length === 0 && lastParagraphs.length) {
+          (lastParagraphs[0] as any).text = '\n';
+          item.paragraphs.push(lastParagraphs[0]);
+        }
       });
     }
 

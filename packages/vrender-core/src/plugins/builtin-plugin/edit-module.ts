@@ -39,7 +39,8 @@ export function findConfigIndexByCursorIdx(textConfig: IRichTextCharacter[], cur
       break;
     }
   }
-  if (cursorIndex - Math.round(cursorIndex) < 0) {
+  // 换行符永远往前走一格
+  if (cursorIndex - Math.round(cursorIndex) < 0 || (textConfig[index] as IRichTextParagraphCharacter).text === '\n') {
     index--;
   }
   index = Math.max(index, 0);

@@ -1,5 +1,4 @@
 // eslint-disable-next-line no-duplicate-imports
-import { isNumber } from '@visactor/vutils';
 import type { IGraphic, IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import type { Dict, IBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports

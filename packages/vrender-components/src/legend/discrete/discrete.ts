@@ -245,6 +245,8 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
     let item: LegendItemDatum;
     let lastItemWidth = 0;
 
+    let lastLineHeight = 0;
+    const lastLineItemGroup: IGroup[] = [];
     for (let index = startIndex, len = legendItems.length; index < len; index++) {
       if (lazyload && pages > this._itemContext.currentPage * maxPages) {
         break;
@@ -277,15 +279,30 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
         // 水平布局
         if (isValid(maxWidth)) {
           if (isScrollbar && autoPage) {
+            // 不需要换行时
             pages = Math.ceil((startX + itemWidth) / maxWidth);
             doWrap = pages > 1;
           } else if (startX + itemWidth > maxWidth) {
+            // 需要换行
             doWrap = true;
-
+            // 避免第一个元素就超出最大宽度，额外换了一行，所以限制 startX > 0 ?
             if (startX > 0) {
+              // 进行换行
+              // 换行前，先将上一行的元素按照最大高度进行居中
+              // eslint-disable-next-line no-loop-func
+              lastLineItemGroup.forEach(i => {
+                i.setAttributes({
+                  y: i.attribute.y + (lastLineHeight - i.attribute.height) / 2
+                });
+              });
+
               pages += 1;
               startX = 0;
-              startY += itemHeight + spaceRow;
+              // 应该增加的是上一行的高度 而不是当前元素高度
+              startY += lastLineHeight + spaceRow;
+              // 重置上一行的临时内容
+              lastLineHeight = 0;
+              lastLineItemGroup.length = 0;
             }
           }
         }
@@ -296,6 +313,9 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
           });
         }
         startX += spaceCol + itemWidth;
+        // 此时记录当前行的最大高度
+        lastLineHeight = Math.max(lastLineHeight, itemHeight);
+        lastLineItemGroup.push(itemGroup);
       } else {
         // 垂直布局
         if (isValid(maxHeight)) {
@@ -330,6 +350,15 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
 
       itemsContainer.add(itemGroup);
       lastItemWidth = itemWidth;
+    }
+
+    if (isHorizontal) {
+      // 水平布局 最后一行居中
+      lastLineItemGroup.forEach(i => {
+        i.setAttributes({
+          y: i.attribute.y + (lastLineHeight - i.attribute.height) / 2
+        });
+      });
     }
 
     this._itemContext.doWrap = doWrap;

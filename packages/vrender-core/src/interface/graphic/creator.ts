@@ -8,7 +8,7 @@ import type { IImageAttribute, IImageGraphicAttribute } from './image';
 import type { IIsogonAttribute } from './isogon';
 import type { ILineAttribute, ILineGraphicAttribute } from './line';
 import type { IPathAttribute, IPathGraphicAttribute } from './path';
-import type { IPolygonAttribute } from './polygon';
+import type { IPolygonAttribute, IPolygonGraphicAttribute } from './polygon';
 import type { IRectAttribute, IRectGraphicAttribute } from './rect';
 import type { IRichTextAttribute, IRichTextGraphicAttribute } from './richText';
 import type { ISvgAttribute } from './svg';
@@ -68,6 +68,7 @@ export interface GraphicAttributeMap {
   readonly text: ITextGraphicAttribute;
   readonly richtext: IRichTextGraphicAttribute;
   readonly wrapText: IWrapTextGraphicAttribute;
+  readonly polygon: IPolygonGraphicAttribute;
 }
 
 // export declare function createArc(params: Partial<IArcAttribute & IGraphicAttribute>): IArc;

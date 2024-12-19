@@ -246,7 +246,12 @@ export class EditModule {
     const text = (lastConfig as any).text;
     const textList: string[] = text ? Array.from(text.toString()) : [];
     for (let i = 0; i < textList.length; i++) {
-      textConfig.splice(i + configIdx, 0, { ...lastConfig, isComposing: false, text: textList[i] } as any);
+      textConfig.splice(i + configIdx, 0, {
+        fill: 'black',
+        ...lastConfig,
+        isComposing: false,
+        text: textList[i]
+      } as any);
     }
     this.currRt.setAttributes({ textConfig });
     const nextConfigIdx = configIdx + textList.length;
@@ -304,13 +309,17 @@ export class EditModule {
     let nextConfigIdx = startIdx;
 
     // 删除键
-    if (ev.type === 'Backspace' && !this.isComposing && startIdx === endIdx) {
-      if (startIdx <= 0) {
-        return;
+    if (ev.type === 'Backspace' && !this.isComposing) {
+      if (startIdx === endIdx) {
+        if (startIdx <= 0) {
+          return;
+        }
+        // 删除
+        textConfig.splice(startIdx - 1, 1);
+        nextConfigIdx = Math.max(startIdx - 1, 0);
+      } else {
+        // 不插入内容
       }
-      // 删除
-      textConfig.splice(startIdx - 1, 1);
-      nextConfigIdx = Math.max(startIdx - 1, 0);
     } else {
       // 插入
       if (!this.isComposing) {
@@ -329,7 +338,7 @@ export class EditModule {
     // nextConfigIdx = Math.min(nextConfigIdx, textConfig.length - 1);
 
     let cursorIndex = this.cursorIndex;
-    if (str.length > 1 && !this.isComposing) {
+    if (str && str.length > 1 && !this.isComposing) {
       // 如果字符长度大于1且不是composing，那说明是粘贴
       // 拆分
       this.parseCompositionStr(nextConfigIdx - 1);

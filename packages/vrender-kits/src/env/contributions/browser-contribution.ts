@@ -62,6 +62,7 @@ export function createImageElement(src: string, isSvg: boolean = false): Promise
 export class BrowserEnvContribution extends BaseEnvContribution implements IEnvContribution {
   type: EnvType = 'browser';
   supportEvent: boolean = true;
+  _isMacOS?: boolean;
 
   constructor() {
     super();
@@ -349,5 +350,27 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
       top: actualTop,
       left: actualLeft
     };
+  }
+
+  isMacOS(): boolean {
+    if (this._isMacOS === void 0) {
+      try {
+        this._isMacOS = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+      } catch (err) {
+        this._isMacOS = false;
+      }
+    }
+    return this._isMacOS;
+  }
+
+  copyToClipBoard(text: string): Promise<void> {
+    return navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        return;
+      })
+      .catch(err => {
+        return;
+      });
   }
 }

@@ -60,6 +60,10 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   opacity?: number;
   fillOpacity?: number;
   strokeOpacity?: number;
+  // 仅支持纯色背景
+  background?: string;
+  // 背景透明度
+  backgroundOpacity?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

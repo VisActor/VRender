@@ -182,4 +182,11 @@ export abstract class BaseEnvContribution implements IEnvContribution {
   getElementTopLeft(dom: any, baseWindow?: boolean): { top: number; left: number } {
     return { top: 0, left: 0 };
   }
+
+  isMacOS() {
+    return false;
+  }
+  copyToClipBoard(text: string) {
+    return Promise.resolve(null);
+  }
 }

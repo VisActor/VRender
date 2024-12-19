@@ -197,7 +197,7 @@ export class RichTextEditPlugin implements IPlugin {
     const maxCursorIdx = Math.max(selectionStartCursorIdx, curCursorIdx);
     const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
     const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
-    const config = rt.attribute.textConfig.slice(minConfigIdx + 1, maxConfigIdx + 1);
+    const config = rt.attribute.textConfig.slice(minConfigIdx, maxConfigIdx);
     if (payload === 'bold') {
       config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
     } else if (payload === 'italic') {

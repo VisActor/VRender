@@ -589,6 +589,9 @@ const hLegend4 = new DiscreteLegend({
       }
     }
   ],
+  item: {
+    verticalAlign: 'top'
+  },
   allowAllCanceled: false,
   autoPage: false,
   pager: {

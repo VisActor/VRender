@@ -234,7 +234,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       lazyload,
       autoPage
     } = this.attribute as DiscreteLegendAttrs;
-    const { spaceCol = DEFAULT_ITEM_SPACE_COL, spaceRow = DEFAULT_ITEM_SPACE_ROW } = itemAttrs;
+    const {
+      spaceCol = DEFAULT_ITEM_SPACE_COL,
+      spaceRow = DEFAULT_ITEM_SPACE_ROW,
+      verticalAlign = 'middle'
+    } = itemAttrs;
 
     const itemsContainer = this._itemsContainer;
     const { items: legendItems, isHorizontal, startIndex, isScrollbar } = this._itemContext;
@@ -289,12 +293,14 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
             if (startX > 0) {
               // 进行换行
               // 换行前，先将上一行的元素按照最大高度进行居中
-              // eslint-disable-next-line no-loop-func
-              lastLineItemGroup.forEach(i => {
-                i.setAttributes({
-                  y: i.attribute.y + (lastLineHeight - i.attribute.height) / 2
+              if (verticalAlign === 'middle' || verticalAlign === 'bottom') {
+                // eslint-disable-next-line no-loop-func
+                lastLineItemGroup.forEach(i => {
+                  i.setAttributes({
+                    y: i.attribute.y + (lastLineHeight - i.attribute.height) / (verticalAlign === 'middle' ? 2 : 1)
+                  });
                 });
-              });
+              }
 
               pages += 1;
               startX = 0;
@@ -352,11 +358,11 @@ export class DiscreteLegend extends LegendBase<DiscreteLegendAttrs> {
       lastItemWidth = itemWidth;
     }
 
-    if (isHorizontal) {
+    if (isHorizontal && (verticalAlign === 'middle' || verticalAlign === 'bottom')) {
       // 水平布局 最后一行居中
       lastLineItemGroup.forEach(i => {
         i.setAttributes({
-          y: i.attribute.y + (lastLineHeight - i.attribute.height) / 2
+          y: i.attribute.y + (lastLineHeight - i.attribute.height) / (verticalAlign === 'middle' ? 2 : 1)
         });
       });
     }

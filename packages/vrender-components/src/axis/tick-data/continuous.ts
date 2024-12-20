@@ -6,6 +6,16 @@ import type { ICartesianTickDataOpt, ILabelItem, ITickData, ITickDataOpt } from 
 // eslint-disable-next-line no-duplicate-imports
 import { convertDomainToTickData, getCartesianLabelBounds } from './util';
 import { textIntersect as intersect, hasOverlap } from '../util';
+
+const filterTicksByBreak = (ticks: number[], breakDomains: [number, number][]) => {
+  return breakDomains && breakDomains.length
+    ? ticks.filter(tick => {
+        return breakDomains.every(breakDomain => {
+          return tick < breakDomain[0] || tick > breakDomain[1];
+        });
+      })
+    : ticks;
+};
 function getScaleTicks(
   op: ITickDataOpt,
   scale: ContinuousScale,
@@ -92,7 +102,10 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
-    scaleTicks = (scale as LinearScale).stepTicks(tickStep);
+    scaleTicks = filterTicksByBreak(
+      (scale as LinearScale).stepTicks(tickStep),
+      breakData && breakData() ? breakData().breakDomains : null
+    );
   } else if (isValid(forceTickCount)) {
     scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, subDomain?: [number, number]) => {
       if (subDomain && subDomain.length) {

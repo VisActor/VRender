@@ -119,6 +119,14 @@ export interface IEnvContribution
     loadState: 'success' | 'fail';
     data: Blob | null;
   }>;
+  // @since 0.21.3
+  /**
+   * 加载字体，参数对应Font类
+   * @param font 字体名
+   * @param source 数据源
+   * @param descriptors 其他描述
+   * @returns
+   */
   loadFont: (
     font: string,
     source: string | BinaryData,

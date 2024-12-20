@@ -351,9 +351,13 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
     };
   }
 
-  async loadFont(font: string, url: string): Promise<{ loadState: 'success' | 'fail' }> {
+  async loadFont(
+    font: string,
+    source: string | BinaryData,
+    descriptors?: FontFaceDescriptors
+  ): Promise<{ loadState: 'success' | 'fail' }> {
     // 创建字体实例
-    const myFont = new FontFace(font, `url(${url})`);
+    const myFont = new FontFace(font, isString(source) ? `url(${source})` : source, descriptors);
 
     // 加载字体
     return myFont

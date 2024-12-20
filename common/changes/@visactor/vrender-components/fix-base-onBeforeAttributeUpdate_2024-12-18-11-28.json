@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: add onBeforeAttributeUpdate in base-component",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

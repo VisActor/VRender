@@ -44,6 +44,9 @@ export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implement
       return;
     }
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(richtext, richtext.attribute, richtextAttribute);
+
     context.translate(x, y);
     this.beforeRenderStep(
       richtext,

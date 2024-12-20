@@ -191,17 +191,17 @@ export function clampText(
   let dy = 0;
 
   // x 方向
-  if (minX < minXWithPadding && maxX - minX <= width) {
+  if (minX < minXWithPadding) {
     dx = -minX;
-  } else if (maxX > maxXWithPadding && minX - (maxX - width) >= minXWithPadding) {
-    dx = width - maxX;
+  } else if (maxX > maxXWithPadding) {
+    dx = maxXWithPadding - maxX;
   }
 
   // y 方向
-  if (minY < minYWithPadding && maxY - minY <= height) {
+  if (minY < minYWithPadding) {
     dy = -minY;
-  } else if (maxY > maxYWithPadding && minY - (maxY - height) >= minYWithPadding) {
-    dy = height - maxY;
+  } else if (maxY > maxYWithPadding) {
+    dy = maxYWithPadding - maxY;
   }
 
   return { dx, dy };

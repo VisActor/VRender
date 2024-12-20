@@ -1,6 +1,7 @@
 import '@visactor/vrender';
 import { DiscreteLegend, Pager } from '../../../src';
 import render from '../../util/render';
+import { IGraphic } from '../../../../vrender-core/es/interface';
 
 const hLegend = new DiscreteLegend({
   x: 20,
@@ -460,7 +461,158 @@ const vLegend = new DiscreteLegend({
   // reversed: true
 });
 
-const stage = render([hLegend, vLegend, legend, disableTriggerEventLegend, hLegend2], 'main');
+const hLegend3 = new DiscreteLegend({
+  x: 20,
+  y: 440,
+
+  // ==== 测试使用 ====
+  stroke: 'red',
+  // ==== 测试使用 end ====
+
+  maxWidth: 400,
+  maxRow: 1,
+  title: {
+    visible: true,
+    text: '水平布局',
+    padding: 4,
+    background: {
+      visible: true,
+      style: {
+        fill: 'red'
+      }
+    }
+  },
+  item: {
+    focus: true,
+    // padding: [0, 20, 0, 0],
+    // width: 120,
+    shape: {
+      style: {
+        size: 8
+      }
+    },
+    value: {
+      alignRight: true,
+      style: {
+        fill: '#666',
+        fontWeight: 'bold'
+      }
+    },
+    background: {
+      style: {
+        stroke: '#000',
+        lineWidth: 1
+      }
+    }
+  },
+  items: [
+    { label: '苹果', shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉', shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子', shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄', shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨', shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果1', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉1', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子1', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄1', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨1', value: 100, shape: { fill: 'green', symbolType: 'star' } },
+    { label: '苹果2', value: 100, shape: { fill: 'red', symbolType: 'circle' } },
+    { label: '香蕉2', value: 100, shape: { fill: 'yellow', symbolType: 'square' } },
+    { label: '橘子2', value: 100, shape: { fill: 'orange', symbolType: 'triangle' } },
+    { label: '葡萄2', value: 100, shape: { fill: 'purple', symbolType: 'diamond' } },
+    { label: '梨2', value: 100, shape: { fill: 'green', symbolType: 'star' } }
+  ],
+  allowAllCanceled: false,
+  pager: {
+    fill: 'red',
+    padding: 10
+  }
+});
+
+const hLegend4 = new DiscreteLegend({
+  x: 20,
+  y: 510,
+
+  // ==== 测试使用 ====
+  stroke: 'red',
+  // ==== 测试使用 end ====
+
+  maxWidth: 500,
+  maxHeight: 500,
+  title: {
+    visible: true,
+    text: '水平布局-不同行高',
+    padding: 4,
+    background: {
+      visible: true,
+      style: {
+        fill: 'red'
+      }
+    }
+  },
+  items: [
+    {
+      label: [
+        '0啊实打实的啊实打实的啊实打实的啊实打实的啊实打实的啊实打实的',
+        '啊实打实的',
+        '啊实打实的',
+        '啊实打实的'
+      ],
+      shape: {
+        symbolType: 'square',
+        fillOpacity: 1,
+        fill: 'red'
+      }
+    },
+    {
+      label: ['1'],
+      shape: {
+        symbolType: 'square',
+        fillOpacity: 1,
+        fill: 'blue'
+      }
+    },
+    {
+      label: ['2', '啊实打实的'],
+      shape: {
+        symbolType: 'square',
+        fillOpacity: 1,
+        fill: 'green'
+      }
+    },
+    {
+      label: ['3', 'a', 'b', 'c', 'd'],
+      shape: {
+        symbolType: 'square',
+        fillOpacity: 1,
+        fill: 'yellow'
+      }
+    }
+  ],
+  item: {
+    verticalAlign: 'top'
+  },
+  allowAllCanceled: false,
+  autoPage: false,
+  pager: {
+    fill: 'red',
+    padding: 10
+  }
+});
+
+const stage = render(
+  [hLegend, vLegend, legend, disableTriggerEventLegend, hLegend2, hLegend4] as unknown as IGraphic[],
+  'main',
+  {
+    viewBox: {
+      x1: 50,
+      y1: 50,
+      x2: 550,
+      y2: 750
+    },
+    height: 800
+  }
+);
 
 vLegend.addEventListener('legendItemClick', e => {
   console.log(e, e.detail.currentSelected);

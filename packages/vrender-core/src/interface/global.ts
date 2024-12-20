@@ -121,7 +121,8 @@ export interface IEnvContribution
   }>;
   loadFont: (
     font: string,
-    url: string
+    source: string | BinaryData,
+    descriptors?: FontFaceDescriptors
   ) => Promise<{
     loadState: 'success' | 'fail';
   }>;

@@ -347,11 +347,11 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.loadBlob(url);
   }
 
-  async loadFont(name: string, url: string) {
+  async loadFont(name: string, source: string | BinaryData, descriptors?: FontFaceDescriptors) {
     if (!this._env) {
       this.setEnv('browser');
     }
-    return this.envContribution.loadFont(name, url);
+    return this.envContribution.loadFont(name, source, descriptors);
   }
 
   isChrome(): boolean {

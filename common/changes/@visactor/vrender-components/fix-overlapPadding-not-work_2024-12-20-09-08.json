@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: label overlapPadding not work correctly",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

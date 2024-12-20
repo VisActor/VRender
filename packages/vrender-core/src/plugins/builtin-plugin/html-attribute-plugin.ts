@@ -118,6 +118,17 @@ export class HtmlAttributePlugin implements IPlugin {
     };
   }
 
+  onWheel = (ev: Event) => {
+    try {
+      const newEvent = new (ev as any).constructor(ev.type, ev);
+      const canvas = this.pluginService.stage.window.getContext().getCanvas().nativeCanvas;
+      canvas.dispatchEvent(newEvent);
+    } catch (err) {
+      return;
+      // console.log(err);
+    }
+  };
+
   updateStyleOfWrapContainer(
     graphic: IGraphic,
     stage: IStage,
@@ -125,12 +136,23 @@ export class HtmlAttributePlugin implements IPlugin {
     nativeContainer: HTMLElement,
     options: SimpleDomStyleOptions & CommonDomOptions
   ) {
-    const { pointerEvents } = options;
+    const { pointerEvents, penetrateEventList = [] } = options;
     let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
     calculateStyle.display = graphic.attribute.visible !== false ? 'block' : 'none';
     // 事件穿透
     calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
+    if (calculateStyle.pointerEvents !== 'none') {
+      // 删除所有的事件
+      this.removeWrapContainerEventListener(wrapContainer);
+      // 监听所有的事件
+      penetrateEventList.forEach(event => {
+        if (event === 'wheel') {
+          wrapContainer.addEventListener('wheel', this.onWheel);
+        }
+      });
+    }
+
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';
@@ -246,10 +268,15 @@ export class HtmlAttributePlugin implements IPlugin {
     }
 
     const { wrapContainer } = this.htmlMap[id];
-
-    wrapContainer && application.global.removeDom(wrapContainer);
+    if (wrapContainer) {
+      application.global.removeDom(wrapContainer);
+    }
 
     this.htmlMap[id] = null;
+  }
+
+  removeWrapContainerEventListener(wrapContainer: HTMLElement) {
+    wrapContainer.removeEventListener('wheel', this.onWheel);
   }
 
   renderGraphicHTML(graphic: IGraphic) {

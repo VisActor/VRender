@@ -202,6 +202,9 @@ export interface CommonDomOptions {
   container: string | HTMLElement | null; // id或者dom
   visible?: boolean;
   pointerEvents?: boolean | string;
+  // 可穿透的事件列表
+  // @since 0.21.2
+  penetrateEventList?: string[];
   anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 

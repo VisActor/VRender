@@ -209,6 +209,7 @@ export type LegendItem = {
    */
   align?: 'left' | 'right';
   /**
+   * @since 0.21.3
    * 水平方向时，一行中多个图例的垂直对齐方式
    */
   verticalAlign?: 'top' | 'middle' | 'bottom';

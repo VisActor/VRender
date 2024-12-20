@@ -554,7 +554,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         bitmap.setRange(range);
       } else {
         if (clampForce) {
-          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
           if (placedAfterClampForce) {
             continue;
           }
@@ -569,11 +569,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return result;
   }
 
-  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap) {
+  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap, overlapPadding = 0) {
     const { dy = 0, dx = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
     if (dx === 0 && dy === 0) {
-      if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
-        // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
+      // 再次检查，若不考虑边界，仍然可以放得下，代表当前 text 没有与其他 text 重叠
+      if (canPlace(bmpTool, bitmap, text.AABBBounds, false, overlapPadding)) {
         bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
         return true;
       }
@@ -689,7 +689,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
-        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
         if (placedAfterClampForce) {
           result.push(text);
           continue;

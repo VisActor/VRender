@@ -40,7 +40,9 @@ export class DefaultImageBackgroundRenderContribution
     const {
       background,
       backgroundMode = graphicAttribute.backgroundMode,
-      backgroundFit = graphicAttribute.backgroundFit
+      backgroundFit = graphicAttribute.backgroundFit,
+      width,
+      height
     } = graphic.attribute;
     if (!background) {
       return;
@@ -82,8 +84,9 @@ export class DefaultImageBackgroundRenderContribution
         }
       } else {
         context.beginPath();
-        const b = graphic.AABBBounds;
-        context.rect(x, y, b.width(), b.height());
+        // const b = graphic.AABBBounds;
+        // image的背景不包括Bounds了
+        context.rect(x, y, width || 0, height || 0);
         context.fillStyle = background as string;
         context.globalAlpha = 1;
         context.fill();

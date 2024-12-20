@@ -144,7 +144,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
           strokeCb(context, image.attribute, imageAttribute);
         } else if (sVisible) {
           context.setStrokeStyle(image, image.attribute, originX - x, originY - y, imageAttribute);
-          context.stroke();
+          context.strokeRect(x, y, width, height);
         }
       }
     };

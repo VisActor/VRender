@@ -9,7 +9,8 @@ import type {
   CreateDOMParamsType,
   CommonDomOptions,
   SimpleDomStyleOptions,
-  IText
+  IText,
+  ILayer
 } from '../../interface';
 import { application } from '../../application';
 import { getTheme } from '../../graphic/theme';
@@ -43,7 +44,8 @@ export class HtmlAttributePlugin implements IPlugin {
         return;
       }
 
-      this.drawHTML(context.stage.renderService);
+      // 全量查找，因为可能会有只渲染交互层的情况
+      this.drawHTML([...(context.stage.getChildren() as any)]);
     });
   }
   deactivate(context: IPluginService): void {
@@ -213,9 +215,9 @@ export class HtmlAttributePlugin implements IPlugin {
     this.renderId += 1;
   }
 
-  protected drawHTML(renderService: IRenderService) {
+  protected drawHTML(layers: ILayer[]) {
     if (application.global.env === 'browser') {
-      renderService.renderTreeRoots
+      layers
         .sort((a, b) => {
           return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
         })

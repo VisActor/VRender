@@ -182,4 +182,8 @@ export abstract class BaseEnvContribution implements IEnvContribution {
   getElementTopLeft(dom: any, baseWindow?: boolean): { top: number; left: number } {
     return { top: 0, left: 0 };
   }
+
+  async loadFont(font: string, url: string): Promise<{ loadState: 'success' | 'fail' }> {
+    return { loadState: 'fail' };
+  }
 }

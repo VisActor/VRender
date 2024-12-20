@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support loadFont",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

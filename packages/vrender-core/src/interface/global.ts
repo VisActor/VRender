@@ -119,6 +119,12 @@ export interface IEnvContribution
     loadState: 'success' | 'fail';
     data: Blob | null;
   }>;
+  loadFont: (
+    font: string,
+    url: string
+  ) => Promise<{
+    loadState: 'success' | 'fail';
+  }>;
 }
 
 export type IMiniAppEnvParams = {

@@ -350,4 +350,22 @@ export class BrowserEnvContribution extends BaseEnvContribution implements IEnvC
       left: actualLeft
     };
   }
+
+  async loadFont(font: string, url: string): Promise<{ loadState: 'success' | 'fail' }> {
+    // 创建字体实例
+    const myFont = new FontFace(font, `url(${url})`);
+
+    // 加载字体
+    return myFont
+      .load()
+      .then(function (loadedFont) {
+        // 将字体添加到文档中
+        (document.fonts as any).add(loadedFont);
+        return { loadState: 'success' } as { loadState: 'success' | 'fail' };
+      })
+      .catch(function (error) {
+        console.error('Failed to load font:', error);
+        return { loadState: 'fail' } as { loadState: 'success' | 'fail' };
+      });
+  }
 }

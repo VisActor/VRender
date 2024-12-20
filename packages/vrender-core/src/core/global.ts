@@ -347,6 +347,13 @@ export class DefaultGlobal implements IGlobal {
     return this.envContribution.loadBlob(url);
   }
 
+  async loadFont(name: string, url: string) {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.loadFont(name, url);
+  }
+
   isChrome(): boolean {
     if (this._isChrome != null) {
       return this._isChrome;

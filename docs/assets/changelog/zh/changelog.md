@@ -1,3 +1,28 @@
+# v0.21.3
+
+2024-12-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: optimization legend layout in isHorizontal
+- **@visactor/vrender-kits**: support loadFont
+- **@visactor/vrender-core**: support loadFont
+- **@visactor/vrender-core**: support penetrateEventList
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: axis break should filter ticks when set `tickStep`
+- **@visactor/vrender-components**: obb autoHide should support autoHideSeparation(without rotate)
+- **@visactor/vrender-components**: label overlapPadding not work correctly
+- **@visactor/vrender-components**: optimize the performance of ticks in time-scale
+- **@visactor/vrender-core**: fix issue with image stroke and background
+- **@visactor/vrender-core**: fix issue with html when include interactive layer
+- **@visactor/vrender-core**: fix issue with richtext not support setShadowBlendStyle
+- **@visactor/vrender-core**: optimize the performance of ticks in time-scale
+
+[更多详情请查看 v0.21.3](https://github.com/VisActor/VRender/releases/tag/v0.21.3)
+
 # v0.21.1
 
 2024-12-05

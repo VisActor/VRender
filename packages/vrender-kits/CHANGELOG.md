@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Mon, 23 Dec 2024 08:28:14 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 10:16:00 GMT and should not be manually modified.
+
+## 0.21.4
+Mon, 23 Dec 2024 10:16:00 GMT
+
+### Updates
+
+- fix: fix issue with gesture emitEvent when gesture is released
 
 ## 0.21.3
 Mon, 23 Dec 2024 08:28:14 GMT

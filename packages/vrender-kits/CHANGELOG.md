@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 12 Dec 2024 10:23:51 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 08:28:14 GMT and should not be manually modified.
+
+## 0.21.3
+Mon, 23 Dec 2024 08:28:14 GMT
+
+### Updates
+
+- feat: support loadFont
 
 ## 0.21.2
 Thu, 12 Dec 2024 10:23:51 GMT

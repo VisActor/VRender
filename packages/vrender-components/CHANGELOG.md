@@ -1,6 +1,23 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 12 Dec 2024 10:23:51 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 08:28:14 GMT and should not be manually modified.
+
+## 0.21.3
+Mon, 23 Dec 2024 08:28:14 GMT
+
+### Updates
+
+- feat: optimization legend layout in isHorizontal
+
+
+- fix: axis break should filter ticks when set `tickStep`
+
+
+- fix: obb autoHide should support autoHideSeparation(without rotate)
+- fix: label overlapPadding not work correctly
+- fix: optimize the performance of ticks in time-scale
+
+
 
 ## 0.21.2
 Thu, 12 Dec 2024 10:23:51 GMT

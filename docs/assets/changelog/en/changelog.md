@@ -1,3 +1,16 @@
+# v0.21.4
+
+2024-12-23
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix issue with gesture emitEvent when gesture is released
+
+
+
+[more detail about v0.21.4](https://github.com/VisActor/VRender/releases/tag/v0.21.4)
+
 # v0.21.3
 
 2024-12-23

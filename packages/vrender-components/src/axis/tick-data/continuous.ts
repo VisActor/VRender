@@ -155,16 +155,35 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     // 判断重叠
     if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
       const { labelGap = 4, labelFlush } = op as ICartesianTickDataOpt;
-      let items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt).map(
-        (bounds, i) =>
-          ({
-            AABBBounds: bounds,
-            value: scaleTicks[i]
-          } as ILabelItem<number>)
-      );
-      const source = [...items];
-      const firstSourceItem = source[0];
-      const lastSourceItem = last(source);
+      const MIN_FONT_SIZE = 6;
+      let items: ILabelItem<number>[];
+      // 刻度个数 > 像素个数的情况，先做一层预估，减少计算，避免卡死的情况
+      if (scaleTicks.length * MIN_FONT_SIZE > rangeSize) {
+        const samplingScaleTicks: number[] = [];
+        const step = Math.floor((scaleTicks.length * MIN_FONT_SIZE) / rangeSize);
+        scaleTicks.forEach((tick, index) => {
+          if (index % step === 0 || index === scaleTicks.length - 1) {
+            samplingScaleTicks.push(tick);
+          }
+        });
+        items = getCartesianLabelBounds(scale, samplingScaleTicks, op as ICartesianTickDataOpt).map(
+          (bounds, i) =>
+            ({
+              AABBBounds: bounds,
+              value: samplingScaleTicks[i]
+            } as ILabelItem<number>)
+        );
+      } else {
+        items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt).map(
+          (bounds, i) =>
+            ({
+              AABBBounds: bounds,
+              value: scaleTicks[i]
+            } as ILabelItem<number>)
+        );
+      }
+      const firstSourceItem = items[0];
+      const lastSourceItem = last(items);
 
       const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
       while (items.length >= 3 && hasOverlap(items as any, labelGap)) {

@@ -104,11 +104,22 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | boolean;
+  /**
+   * 新增标签动画
+   */
   animationEnter?: ILabelUpdateAnimation | boolean;
+  /**
+   * 标签更新动画
+   */
   animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[] | boolean;
+  /**
+   * 标签被删除的动画配置
+   */
   animationExit?: ILabelExitAnimation | boolean;
 
-  // 排序 or 删减
+  /**
+   * 数据过滤自定义函数，可以用于 排序 or 删减
+   */
   dataFilter?: (data: LabelItem[]) => LabelItem[];
 
   /** 自定义布局函数

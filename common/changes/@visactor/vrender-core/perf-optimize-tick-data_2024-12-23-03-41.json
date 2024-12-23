@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: optimize the performance of ticks in time-scale\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

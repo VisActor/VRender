@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Tue, 17 Dec 2024 13:55:39 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 03:32:38 GMT and should not be manually modified.
+
+## 0.20.22
+Mon, 23 Dec 2024 03:32:38 GMT
+
+### Updates
+
+- fix: label overlapPadding not work correctly
 
 ## 0.20.21
 Tue, 17 Dec 2024 13:55:39 GMT

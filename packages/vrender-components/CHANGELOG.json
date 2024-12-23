@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.20.22",
+      "tag": "@visactor/vrender-components_v0.20.22",
+      "date": "Mon, 23 Dec 2024 03:32:38 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: label overlapPadding not work correctly"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.21",
       "tag": "@visactor/vrender-components_v0.20.21",
       "date": "Tue, 17 Dec 2024 13:55:39 GMT",

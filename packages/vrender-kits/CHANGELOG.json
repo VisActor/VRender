@@ -2,6 +2,24 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.21.3",
+      "tag": "@visactor/vrender-kits_v0.21.3",
+      "date": "Mon, 23 Dec 2024 08:28:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support loadFont"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.2",
+      "tag": "@visactor/vrender-kits_v0.21.2",
+      "date": "Thu, 12 Dec 2024 10:23:51 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.21.1",
       "tag": "@visactor/vrender-kits_v0.21.1",
       "date": "Thu, 05 Dec 2024 07:50:47 GMT",

@@ -94,9 +94,7 @@ export class ShadowRootDrawItemInterceptorContribution implements IDrawItemInter
     const { context } = drawContext;
     context.highPerformanceSave();
     // 直接transform
-    const t1 = graphic.parent.globalTransMatrix;
-    const t2 = graphic.stage.window.getViewBoxTransform().clone().multiply(t1.a, t1.b, t1.c, t1.d, t1.e, t1.f);
-    graphic.parent && context.setTransformFromMatrix(t2, true);
+    context.transformFromMatrix(graphic.transMatrix, true);
 
     // 变换dirtyBounds
     if (drawContribution.dirtyBounds && drawContribution.backupDirtyBounds) {

@@ -554,7 +554,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         bitmap.setRange(range);
       } else {
         if (clampForce) {
-          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
           if (placedAfterClampForce) {
             continue;
           }
@@ -569,11 +569,11 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return result;
   }
 
-  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap) {
+  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap, overlapPadding = 0) {
     const { dy = 0, dx = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
     if (dx === 0 && dy === 0) {
-      if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
-        // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
+      // 再次检查，若不考虑边界，仍然可以放得下，代表当前 text 没有与其他 text 重叠
+      if (canPlace(bmpTool, bitmap, text.AABBBounds, false, overlapPadding)) {
         bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
         return true;
       }
@@ -689,7 +689,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
-        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap);
+        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
         if (placedAfterClampForce) {
           result.push(text);
           continue;
@@ -709,14 +709,26 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return (this.getRootNode() as IGroup).find(node => node.name === baseMarkGroupName, true) as IGroup;
   }
 
-  protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
-  protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
+  protected getGraphicBounds(
+    graphic?: IGraphic,
+    point: Partial<PointLocationCfg> = {},
+    position?: string
+  ): IBoundsLike {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
         return graphic.AABBBounds;
       }
       const { x, y } = graphic.attribute;
       return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
+    }
+    if (point && position && position === 'inside-middle') {
+      const { x, y, x1 = x, y1 = y } = point;
+      return {
+        x1: (x + x1) / 2,
+        x2: (x + x1) / 2,
+        y1: (y + y1) / 2,
+        y2: (y + y1) / 2
+      };
     }
     const { x, y } = point;
     return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;

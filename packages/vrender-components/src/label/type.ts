@@ -104,11 +104,22 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | boolean;
+  /**
+   * 新增标签动画
+   */
   animationEnter?: ILabelUpdateAnimation | boolean;
+  /**
+   * 标签更新动画
+   */
   animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[] | boolean;
+  /**
+   * 标签被删除的动画配置
+   */
   animationExit?: ILabelExitAnimation | boolean;
 
-  // 排序 or 删减
+  /**
+   * 数据过滤自定义函数，可以用于 排序 or 删减
+   */
   dataFilter?: (data: LabelItem[]) => LabelItem[];
 
   /** 自定义布局函数
@@ -384,8 +395,9 @@ export interface LineDataLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签位置
    * @default 'top'
+   * @since 0.21.1 支持 'inside-middle' 在面积图元中显示在中间位置
    */
-  position?: Functional<BoundsAnchorType>;
+  position?: Functional<BoundsAnchorType | 'inside-middle'>;
 }
 
 export interface PolygonLabelAttrs extends BaseLabelAttrs {

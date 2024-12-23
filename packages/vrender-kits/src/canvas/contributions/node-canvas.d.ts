@@ -342,7 +342,7 @@ export function loadImage(src: string | Buffer, options?: any): Promise<Image>;
  * @param fontFace Description of the font face, corresponding to CSS properties
  * used in `@font-face` rules.
  */
-export function registerFont(path: string, fontFace: { family: string; weight?: string; style?: string }): void;
+export function loadFont(path: string, fontFace: { family: string; weight?: string; style?: string }): void;
 
 /** This class must not be constructed directly; use `canvas.createPNGStream()`. */
 export class PNGStream extends Readable {}

@@ -6,6 +6,16 @@ import type { ICartesianTickDataOpt, ILabelItem, ITickData, ITickDataOpt } from 
 // eslint-disable-next-line no-duplicate-imports
 import { convertDomainToTickData, getCartesianLabelBounds } from './util';
 import { textIntersect as intersect, hasOverlap } from '../util';
+
+const filterTicksByBreak = (ticks: number[], breakDomains: [number, number][]) => {
+  return breakDomains && breakDomains.length
+    ? ticks.filter(tick => {
+        return breakDomains.every(breakDomain => {
+          return tick < breakDomain[0] || tick > breakDomain[1];
+        });
+      })
+    : ticks;
+};
 function getScaleTicks(
   op: ITickDataOpt,
   scale: ContinuousScale,
@@ -92,7 +102,10 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
 
   let scaleTicks: number[];
   if (isValid(tickStep)) {
-    scaleTicks = (scale as LinearScale).stepTicks(tickStep);
+    scaleTicks = filterTicksByBreak(
+      (scale as LinearScale).stepTicks(tickStep),
+      breakData && breakData() ? breakData().breakDomains : null
+    );
   } else if (isValid(forceTickCount)) {
     scaleTicks = getScaleTicks(op, scale, forceTickCount, (count: number, subDomain?: [number, number]) => {
       if (subDomain && subDomain.length) {
@@ -142,16 +155,35 @@ export const continuousTicks = (scale: ContinuousScale, op: ITickDataOpt): ITick
     // 判断重叠
     if (op.coordinateType === 'cartesian' || (op.coordinateType === 'polar' && op.axisOrientType === 'radius')) {
       const { labelGap = 4, labelFlush } = op as ICartesianTickDataOpt;
-      let items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt).map(
-        (bounds, i) =>
-          ({
-            AABBBounds: bounds,
-            value: scaleTicks[i]
-          } as ILabelItem<number>)
-      );
-      const source = [...items];
-      const firstSourceItem = source[0];
-      const lastSourceItem = last(source);
+      const MIN_FONT_SIZE = 6;
+      let items: ILabelItem<number>[];
+      // 刻度个数 > 像素个数的情况，先做一层预估，减少计算，避免卡死的情况
+      if (scaleTicks.length * MIN_FONT_SIZE > rangeSize) {
+        const samplingScaleTicks: number[] = [];
+        const step = Math.floor((scaleTicks.length * MIN_FONT_SIZE) / rangeSize);
+        scaleTicks.forEach((tick, index) => {
+          if (index % step === 0 || index === scaleTicks.length - 1) {
+            samplingScaleTicks.push(tick);
+          }
+        });
+        items = getCartesianLabelBounds(scale, samplingScaleTicks, op as ICartesianTickDataOpt).map(
+          (bounds, i) =>
+            ({
+              AABBBounds: bounds,
+              value: samplingScaleTicks[i]
+            } as ILabelItem<number>)
+        );
+      } else {
+        items = getCartesianLabelBounds(scale, scaleTicks, op as ICartesianTickDataOpt).map(
+          (bounds, i) =>
+            ({
+              AABBBounds: bounds,
+              value: scaleTicks[i]
+            } as ILabelItem<number>)
+        );
+      }
+      const firstSourceItem = items[0];
+      const lastSourceItem = last(items);
 
       const samplingMethod = breakData && breakData() ? methods.greedy : methods.parity; // 由于轴截断后刻度会存在不均匀的情况，所以不能使用 parity 算法
       while (items.length >= 3 && hasOverlap(items as any, labelGap)) {

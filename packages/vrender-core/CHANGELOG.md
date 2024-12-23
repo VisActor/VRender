@@ -1,6 +1,27 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 05 Dec 2024 07:50:47 GMT and should not be manually modified.
+This log was last generated on Mon, 23 Dec 2024 08:28:14 GMT and should not be manually modified.
+
+## 0.21.3
+Mon, 23 Dec 2024 08:28:14 GMT
+
+### Updates
+
+- feat: support loadFont
+- feat: support penetrateEventList
+- fix: fix issue with image stroke and background
+- fix: fix issue with html when include interactive layer
+- fix: fix issue with richtext not support setShadowBlendStyle
+- fix: optimize the performance of ticks in time-scale
+
+
+
+## 0.21.2
+Thu, 12 Dec 2024 10:23:51 GMT
+
+### Updates
+
+- fix: fix issue with shadow-root transform
 
 ## 0.21.1
 Thu, 05 Dec 2024 07:50:47 GMT

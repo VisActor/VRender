@@ -271,11 +271,25 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    */
   private _pointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
-    const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
+    const {
+      start: startAttr,
+      end: endAttr,
+      brushSelect,
+      realTime = true,
+      position,
+      size,
+      disableDispatchOutSide = false
+    } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
-    const { attPos, max } = this._layoutCache;
-    const dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
+    const { attPos, max, attSize } = this._layoutCache;
+    let dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
 
+    if (
+      disableDispatchOutSide &&
+      (pos[attPos] <= position[attPos] || pos[attPos] >= position[attPos] + size[attSize])
+    ) {
+      dis = 0;
+    }
     let { start, end } = this.state;
     // this._activeState= false;
     if (this._activeState) {

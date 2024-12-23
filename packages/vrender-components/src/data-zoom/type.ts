@@ -220,4 +220,8 @@ export interface DataZoomAttributes extends IGroupGraphicAttribute {
    * 参考: https://mourner.github.io/simplify-js/
    */
   tolerance?: number;
+  /**
+   * @default false
+   */
+  disableDispatchOutSide?: boolean;
 }

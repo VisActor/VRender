@@ -196,7 +196,7 @@ export class HtmlAttributePlugin implements IPlugin {
     // 更新样式
     application.global.updateDom(wrapContainer, {
       width: options.width,
-      height: options.width,
+      height: options.height,
       style: calculateStyle
     });
   }

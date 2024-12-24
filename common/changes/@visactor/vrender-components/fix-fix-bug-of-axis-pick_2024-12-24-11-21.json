@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix the bug of axis pickable\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-components"
+    }
+  ],
+  "packageName": "@visactor/vrender-components",
+  "email": "lixuef1313@163.com"
+}

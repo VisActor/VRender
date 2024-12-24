@@ -282,36 +282,41 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max, attSize } = this._layoutCache;
-    let dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
 
-    if (
-      disableDispatchOutSide &&
-      (pos[attPos] <= position[attPos] || pos[attPos] >= position[attPos] + size[attSize])
-    ) {
-      dis = 0;
-    }
     let { start, end } = this.state;
-    // this._activeState= false;
     if (this._activeState) {
-      // if (this._activeTag === DataZoomActiveTag.background) {
-      // } else
+      let dis = (pos[attPos] - this._activeCache.lastPos[attPos]) / max;
+      // 如果不期望拖拽边界后响应handler移动, 则:
+      // 拖拽middleHandler时, dis = 0;
+      // 拖拽startHandler / endHandler时, handler新位置 = 鼠标位置
+      if (
+        disableDispatchOutSide &&
+        (pos[attPos] <= position[attPos] || pos[attPos] >= position[attPos] + size[attSize])
+      ) {
+        dis = 0;
+      }
+      // 鼠标位置对应到0-1的范围
+      const posInRange = Math.min((pos[attPos] - position[attPos]) / max, 1);
+
       if (this._activeTag === DataZoomActiveTag.middleHandler) {
         this.moveZoomWithMiddle((this.state.start + this.state.end) / 2 + dis);
       } else if (this._activeTag === DataZoomActiveTag.startHandler) {
-        if (start + dis > end) {
+        const newPosInRange = disableDispatchOutSide ? posInRange : start + dis;
+        if (newPosInRange > end) {
           start = end;
-          end = start + dis;
+          end = newPosInRange;
           this._activeTag = DataZoomActiveTag.endHandler;
         } else {
-          start = start + dis;
+          start = newPosInRange;
         }
       } else if (this._activeTag === DataZoomActiveTag.endHandler) {
-        if (end + dis < start) {
+        const newPosInRange = disableDispatchOutSide ? posInRange : end + dis;
+        if (newPosInRange < start) {
           end = start;
-          start = end + dis;
+          start = newPosInRange;
           this._activeTag = DataZoomActiveTag.startHandler;
         } else {
-          end = end + dis;
+          end = newPosInRange;
         }
       }
       this._activeCache.lastPos = pos;

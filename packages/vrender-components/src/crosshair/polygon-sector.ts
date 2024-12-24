@@ -9,6 +9,7 @@ import { CrosshairBase } from './base';
 import type { PolygonSectorCrosshairAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadPolygonSectorCrosshairComponent } from './register';
+import { getPolygonPath } from '../axis';
 
 loadPolygonSectorCrosshairComponent();
 export class PolygonSectorCrosshair extends CrosshairBase<PolygonSectorCrosshairAttrs> {
@@ -32,17 +33,11 @@ export class PolygonSectorCrosshair extends CrosshairBase<PolygonSectorCrosshair
     points.push(polarToCartesian(center, radius, (startAngle + endAngle) / 2));
     points.push(polarToCartesian(center, radius * Math.cos((endAngle - startAngle) / 2), endAngle));
     points.push(polarToCartesian(center, innerRadius, endAngle));
-    const path = points.reduce((acc, cur, index) => {
-      if (index === 0) {
-        return `M${cur.x},${cur.y}`;
-      }
-      return acc + `L${cur.x},${cur.y}`;
-    }, '');
 
     const polygon = container.createOrUpdateChild(
       'crosshair-polygon-sector',
       {
-        path,
+        path: getPolygonPath(points, true),
         ...polygonSectorStyle
       },
       'path'

@@ -80,11 +80,30 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     }
     const { fVisible, sVisible, doFill, doStroke } = data;
 
-    // shadow
-    context.setShadowBlendStyle && context.setShadowBlendStyle(image, image.attribute, imageAttribute);
+    if (!url || !image.resources) {
+      return;
+    }
+    const res = image.resources.get(url);
+    if (res.state !== 'success') {
+      return;
+    }
+
+    // deal with cornerRadius
+    let needRestore = false;
+    if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
+      // 不需要处理圆角
+    } else {
+      context.beginPath();
+      createRectPath(context, x, y, width, height, cornerRadius);
+      context.save();
+      context.clip();
+      needRestore = true;
+    }
 
     this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(image, image.attribute, imageAttribute);
     // context.beginPath();
     // context.image(x, y, width, height);
 
@@ -93,26 +112,6 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
         if (fillCb) {
           fillCb(context, image.attribute, imageAttribute);
         } else if (fVisible) {
-          if (!url || !image.resources) {
-            return;
-          }
-          const res = image.resources.get(url);
-          if (res.state !== 'success') {
-            return;
-          }
-
-          // deal with cornerRadius
-          let needRestore = false;
-          if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
-            // 不需要处理圆角
-          } else {
-            context.beginPath();
-            createRectPath(context, x, y, width, height, cornerRadius);
-            context.save();
-            context.clip();
-            needRestore = true;
-          }
-
           context.setCommonStyle(image, image.attribute, x, y, imageAttribute);
           let repeat = 0;
           if (repeatX === 'repeat') {
@@ -130,10 +129,6 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
           } else {
             context.drawImage(res.data, x, y, width, height);
           }
-
-          if (needRestore) {
-            context.restore();
-          }
         }
       }
     };
@@ -144,7 +139,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
           strokeCb(context, image.attribute, imageAttribute);
         } else if (sVisible) {
           context.setStrokeStyle(image, image.attribute, originX - x, originY - y, imageAttribute);
-          context.strokeRect(x, y, width, height);
+          context.stroke();
         }
       }
     };
@@ -158,6 +153,10 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     }
 
     this.afterRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
+
+    if (needRestore) {
+      context.restore();
+    }
   }
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {

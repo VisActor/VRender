@@ -1,3 +1,16 @@
+# v0.21.5
+
+2024-12-24
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with image background stroke, closed [#1640](https://github.com/VisActor/VRender/issues/1640)
+
+
+
+[更多详情请查看 v0.21.5](https://github.com/VisActor/VRender/releases/tag/v0.21.5)
+
 # v0.21.4
 
 2024-12-23

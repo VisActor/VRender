@@ -155,6 +155,10 @@ const specs = [
     name: '扇形 crosshair'
   },
   {
+    path: 'crosshair-polygon-sector',
+    name: '矩形扇形 crosshair'
+  },
+  {
     path: 'crosshair-polygon',
     name: '多边形 crosshair'
   },
@@ -285,6 +289,10 @@ const specs = [
   {
     path: 'timeline',
     name: 'timeline'
+  },
+  {
+    path: 'switch',
+    name: 'switch'
   }
 ];
 

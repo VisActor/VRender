@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.7",
+      "tag": "@visactor/vrender-components_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support polygon sector crosshair for non-smooth angle axis"
+          },
+          {
+            "comment": "feat: add switch component"
+          },
+          {
+            "comment": "Revert \"fix: fix the bug of axis pickable\"\n\nThis reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.\n\n"
+          },
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.6",
       "tag": "@visactor/vrender-components_v0.21.6",
       "date": "Tue, 24 Dec 2024 12:46:37 GMT",

@@ -1,3 +1,18 @@
+# v0.21.6
+
+2024-12-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: add onBeforeAttributeUpdate in base-component
+- **@visactor/vrender-components**: fix the bug of axis pickable
+- **@visactor/vrender-core**: fix issue with stroke clip
+
+
+
+[更多详情请查看 v0.21.6](https://github.com/VisActor/VRender/releases/tag/v0.21.6)
+
 # v0.21.5
 
 2024-12-24

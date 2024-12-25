@@ -299,7 +299,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           graphicAttribute.outerRadius,
           center
         );
-        arc.refArc = currentMark;
+        arc.refArc = currentMark as IArc;
         arc.pointA = polarToCartesian(
           center as IPoint,
           this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),

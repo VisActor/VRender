@@ -1,6 +1,15 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 24 Dec 2024 12:46:37 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Dec 2024 07:53:11 GMT and should not be manually modified.
+
+## 0.21.7
+Wed, 25 Dec 2024 07:53:11 GMT
+
+### Updates
+
+- fix: upgrade vutils to 0.19.3
+
+
 
 ## 0.21.6
 Tue, 24 Dec 2024 12:46:37 GMT

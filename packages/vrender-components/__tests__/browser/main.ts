@@ -289,6 +289,10 @@ const specs = [
   {
     path: 'timeline',
     name: 'timeline'
+  },
+  {
+    path: 'switch',
+    name: 'switch'
   }
 ];
 

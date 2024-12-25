@@ -135,7 +135,6 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
     this.add(this._innerView);
 
     this._renderInner(this._innerView);
-    this.setAttribute('pickable', false);
 
     this._bindEvent();
   }

@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.6",
+      "tag": "@visactor/vrender-core_v0.21.6",
+      "date": "Tue, 24 Dec 2024 12:46:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with stroke clip"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.5",
       "tag": "@visactor/vrender-core_v0.21.5",
       "date": "Tue, 24 Dec 2024 07:53:11 GMT",

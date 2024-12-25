@@ -95,12 +95,8 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     } else {
       context.beginPath();
       createRectPath(context, x, y, width, height, cornerRadius);
-      context.save();
-      context.clip();
       needRestore = true;
     }
-
-    this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(image, image.attribute, imageAttribute);
@@ -145,18 +141,30 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     };
 
     if (!fillStrokeOrder) {
+      if (needRestore) {
+        context.save();
+        context.clip();
+      }
+      this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       _runFill();
+      if (needRestore) {
+        context.restore();
+      }
       _runStroke();
     } else {
       _runStroke();
+      if (needRestore) {
+        context.save();
+        context.clip();
+      }
+      this.beforeRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
       _runFill();
+      if (needRestore) {
+        context.restore();
+      }
     }
 
     this.afterRenderStep(image, context, x, y, doFill, false, fVisible, false, imageAttribute, drawContext, fillCb);
-
-    if (needRestore) {
-      context.restore();
-    }
   }
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {

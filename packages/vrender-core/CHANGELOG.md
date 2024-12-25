@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 24 Dec 2024 07:53:11 GMT and should not be manually modified.
+This log was last generated on Tue, 24 Dec 2024 12:46:37 GMT and should not be manually modified.
+
+## 0.21.6
+Tue, 24 Dec 2024 12:46:37 GMT
+
+### Updates
+
+- fix: fix issue with stroke clip
 
 ## 0.21.5
 Tue, 24 Dec 2024 07:53:11 GMT

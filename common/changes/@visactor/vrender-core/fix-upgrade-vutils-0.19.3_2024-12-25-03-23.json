@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: upgrade vutils to 0.19.3\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

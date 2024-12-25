@@ -2,6 +2,18 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.21.7",
+      "tag": "@visactor/react-vrender_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.6",
       "tag": "@visactor/react-vrender_v0.21.6",
       "date": "Tue, 24 Dec 2024 12:46:37 GMT",

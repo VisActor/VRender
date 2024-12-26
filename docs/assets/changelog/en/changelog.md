@@ -1,3 +1,32 @@
+# v0.21.7
+
+2024-12-25
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support polygon sector crosshair for non-smooth angle axis
+- **@visactor/vrender-components**: add switch component
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender-utils**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender**: upgrade vutils to 0.19.3
+- **@visactor/vrender-kits**: upgrade vutils to 0.19.3
+- **@visactor/vrender-core**: upgrade vutils to 0.19.3
+- **@visactor/vrender**: upgrade vutils to 0.19.3
+
+**🔖 other**
+
+- **@visactor/vrender-components**: Revert "fix: fix the bug of axis pickable"
+
+This reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.
+
+
+
+[more detail about v0.21.7](https://github.com/VisActor/VRender/releases/tag/v0.21.7)
+
 # v0.21.6
 
 2024-12-25

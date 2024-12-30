@@ -219,3 +219,42 @@ shadowRoot 在宿主图元的上方还是下方，>0 为下方，<0 为上方
 #${prefix} globalCompositeOperation(CanvasRenderingContext2D['globalCompositeOperation']) = ''
 
 对应 Canvas 的 globalCompositeOperation，用来配置滤镜
+
+#${prefix} poptip(any) = any
+`poptip` 配置，在该图元位置展示配置的 poptip 元素，需要开启 poptip 功能。具体配置查看[poptip](/vrender/guide/asd/VRender_Components/VRender_Components_PopTip)
+
+##${prefix} position('auto' | 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb') = 'auto'
+位置信息，默认自动定位
+##${prefix}  title(string | string[] | number | number[])
+标题内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+##${prefix}   titleStyle(Partial<ITextGraphicAttribute>)
+标题文本样式
+##${prefix}   titleFormatMethod((t: string | string[] | number | number[]) => string | string[] | number | number[])
+标题格式化函数
+##${prefix}   content(string | string[] | number | number[])
+内容文本，如果需要进行换行，则使用数组形式，如 ['abc', '123']
+##${prefix} contentStyle(Partial<ITextGraphicAttribute>)
+内容文本样式
+##${prefix} contentFormatMethod((t: string | string[] | number | number[]) => string | string[] | number | number[])
+内容格式化函数
+##${prefix} space(number)
+标题与内容的间距
+##${prefix} padding(Padding)
+内部边距
+##${prefix} panel(BackgroundAttributes & ISymbolGraphicAttribute & { space?: number })
+标签的背景面板配置
+##${prefix} minWidth(number) = 30
+最小宽度，像素值
+##${prefix} maxWidth(number)
+最大宽度，像素值。当文字超过最大宽度时，会自动省略。
+##${prefix} maxWidthPercent(number)
+最大宽度比例
+##${prefix} visible(boolean) = true
+是否可见
+##${prefix} visibleFunc((graphic: IGraphic) => boolean) = undefined
+是否可见
+
+##${prefix} dx(number) = 0
+x 方向的偏移
+##${prefix} dy(number) = 0
+y 方向的偏移

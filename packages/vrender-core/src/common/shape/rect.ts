@@ -12,7 +12,7 @@ export function createRectPath(
   width: number,
   height: number,
   rectCornerRadius: number | number[],
-  roundCorner: boolean,
+  roundCorner: boolean = true,
   edgeCb?: IEdgeCb[]
 ) {
   if (width < 0) {

@@ -423,4 +423,18 @@ export class DefaultGlobal implements IGlobal {
     }
     return this.envContribution.getElementTopLeft(dom, baseWindow);
   }
+
+  isMacOS(): boolean {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.isMacOS();
+  }
+
+  copyToClipBoard(text: string) {
+    if (!this._env) {
+      this.setEnv('browser');
+    }
+    return this.envContribution.copyToClipBoard(text);
+  }
 }

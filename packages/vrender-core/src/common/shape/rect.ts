@@ -13,7 +13,7 @@ export function createRectPath(
   height: number,
   rectCornerRadius: number | number[],
   // @since 0.22.0
-  roundCorner: boolean,
+  roundCorner: boolean = true,
   edgeCb?: IEdgeCb[]
 ) {
   // TODO 避免breakChange，旧版本的roundCorner位置是edgeCb

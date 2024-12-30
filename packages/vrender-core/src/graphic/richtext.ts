@@ -304,12 +304,12 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   protected needUpdateTag(key: string): boolean {
     return super.needUpdateTag(key, RICHTEXT_UPDATE_TAG_KEY);
   }
-  getFrameCache(): Frame {
+  getFrameCache(): IRichTextFrame {
     if (this.shouldUpdateShape()) {
       this.doUpdateFrameCache();
       this.clearUpdateShapeTag();
     }
-    return this._frameCache;
+    return this._frameCache as IRichTextFrame;
   }
 
   get cliped() {

@@ -511,11 +511,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       }
     } else {
       for (let i = 0; i < paragraphs.length; i++) {
-        // if (i === paragraphs.length - 1) {
-        //   wrapper.newLine = true;
-        // }
         wrapper.deal(paragraphs[i]);
-        // wrapper.newLine = false;
       }
     }
 

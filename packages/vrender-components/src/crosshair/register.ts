@@ -25,3 +25,8 @@ export function loadSectorCrosshairComponent() {
   registerGroup();
   registerArc();
 }
+
+export function loadPolygonSectorCrosshairComponent() {
+  registerGroup();
+  registerPath();
+}

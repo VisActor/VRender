@@ -29,6 +29,7 @@ import { isFunction } from '@visactor/vutils';
 export class ArcInfo {
   key!: string;
   refDatum!: any;
+  refArc!: IArc;
   /**
    * 绘图区圆弧中点
    */
@@ -239,6 +240,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
             basedArc.labelLimit ?? (labels[i].attribute as ITextAttribute).maxLineWidth;
         }
 
+        if (basedArc.refArc && basedArc.refArc.type === 'arc3d') {
+          (labelAttribute as any).anchor3d = [
+            basedArc.circleCenter.x - labelAttribute.x,
+            basedArc.circleCenter.y - labelAttribute.y
+          ];
+          (labelAttribute as any).beta = basedArc.refArc.attribute.beta;
+        }
+
         labels[i].setAttributes(labelAttribute);
       }
     }
@@ -290,7 +299,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
           graphicAttribute.outerRadius,
           center
         );
-
+        arc.refArc = currentMark as IArc;
         arc.pointA = polarToCartesian(
           center as IPoint,
           this.computeDatumRadius(center.x * 2, center.y * 2, graphicAttribute.outerRadius),
@@ -1004,6 +1013,14 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       if (line.smooth) {
         lineGraphic.setAttributes({
           curveType: 'basis'
+        });
+      }
+
+      if (baseMark.type === 'arc3d' && baseMark) {
+        const { beta, x, y } = baseMark.attribute;
+        lineGraphic.setAttributes({
+          beta,
+          anchor3d: [x, y]
         });
       }
     }

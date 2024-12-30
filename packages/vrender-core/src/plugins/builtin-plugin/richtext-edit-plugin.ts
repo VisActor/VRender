@@ -1,7 +1,7 @@
 import type { IPointLike } from '@visactor/vutils';
 import { isObject, isString, max, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
-import { createGroup, createLine, createRect } from '../../graphic';
+import { createGroup, createLine, createRect, RichText } from '../../graphic';
 import type {
   IGroup,
   ILine,
@@ -19,8 +19,10 @@ import type {
   ITimeline
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
-import { EditModule } from './edit-module';
+import { EditModule, findConfigIndexByCursorIdx } from './edit-module';
 import { application } from '../../application';
+import { getWordStartEndIdx } from '../../graphic/richtext/utils';
+// import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
 type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
 
@@ -39,6 +41,22 @@ class Selection {
     return this.selectionStartCursorIdx === this.curCursorIdx;
   }
 
+  getSelectionPureText(): string {
+    const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
+    const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
+    if (minCursorIdx === maxCursorIdx) {
+      return '';
+    }
+    const config = this.rt.attribute.textConfig as any;
+    const startIdx = findConfigIndexByCursorIdx(config, Math.ceil(minCursorIdx));
+    const endIdx = findConfigIndexByCursorIdx(config, Math.floor(maxCursorIdx));
+    let str = '';
+    for (let i = startIdx; i <= endIdx; i++) {
+      str += config[i].text;
+    }
+    return str;
+  }
+
   hasFormat(key: string): boolean {
     return this.getFormat(key) != null;
   }
@@ -52,8 +70,16 @@ class Selection {
     if (!this.rt) {
       return null;
     }
-    const idx = Math.round(cursorIdx);
+    let idx = Math.round(cursorIdx);
     const config = this.rt.attribute.textConfig as any;
+    for (let i = 0; i < config.length; i++) {
+      if (config[i].text !== '\n') {
+        idx--;
+        if (idx < 0) {
+          return config[i][key];
+        }
+      }
+    }
     return config[Math.min(idx, config.length - 1)][key] ?? (this.rt.attribute as any)[key];
   }
   getFormat(key: string): any {
@@ -67,7 +93,7 @@ class Selection {
     if (minCursorIdx === maxCursorIdx) {
       return [this._getFormat(key, minCursorIdx)];
     }
-    for (let i = minCursorIdx; i < maxCursorIdx; i++) {
+    for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = this._getFormat(key, i);
       val && valSet.add(val);
     }
@@ -113,33 +139,27 @@ export class RichTextEditPlugin implements IPlugin {
   protected declare deltaX: number;
   protected declare deltaY: number;
 
-  static splitText(text: string) {
-    // 😁这种emoji长度算两个，所以得处理一下
-    return Array.from(text);
-  }
+  // static splitText(text: string) {
+  //   // 😁这种emoji长度算两个，所以得处理一下
+  //   return Array.from(text);
+  // }
 
   static tryUpdateRichtext(richtext: IRichText) {
     const cache = richtext.getFrameCache();
-    if (
-      !cache.lines.every(line =>
-        line.paragraphs.every(
-          item => !(item.text && isString(item.text) && RichTextEditPlugin.splitText(item.text).length > 1)
-        )
-      )
-    ) {
-      const tc: IRichTextCharacter[] = [];
-      richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
-        const textList = RichTextEditPlugin.splitText(item.text.toString());
-        if (isString(item.text) && textList.length > 1) {
-          // 拆分
-          for (let i = 0; i < textList.length; i++) {
-            const t = textList[i];
-            tc.push({ ...item, text: t });
-          }
-        } else {
-          tc.push(item);
-        }
-      });
+    if (!RichText.AllSingleCharacter(cache)) {
+      const tc = RichText.TransformTextConfig2SingleCharacter(richtext.attribute.textConfig);
+      // richtext.attribute.textConfig.forEach((item: IRichTextParagraphCharacter) => {
+      //   const textList = RichTextEditPlugin.splitText(item.text.toString());
+      //   if (isString(item.text) && textList.length > 1) {
+      //     // 拆分
+      //     for (let i = 0; i < textList.length; i++) {
+      //       const t = textList[i];
+      //       tc.push({ ...item, text: t });
+      //     }
+      //   } else {
+      //     tc.push(item);
+      //   }
+      // });
       richtext.setAttributes({ textConfig: tc });
       richtext.doUpdateFrameCache(tc);
     }
@@ -175,7 +195,9 @@ export class RichTextEditPlugin implements IPlugin {
     const { selectionStartCursorIdx, curCursorIdx } = selectionData;
     const minCursorIdx = Math.min(selectionStartCursorIdx, curCursorIdx);
     const maxCursorIdx = Math.max(selectionStartCursorIdx, curCursorIdx);
-    const config = rt.attribute.textConfig.slice(minCursorIdx + 1, maxCursorIdx + 1);
+    const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
+    const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
+    const config = rt.attribute.textConfig.slice(minConfigIdx, maxConfigIdx);
     if (payload === 'bold') {
       config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
     } else if (payload === 'italic') {
@@ -214,19 +236,92 @@ export class RichTextEditPlugin implements IPlugin {
     context.stage.on('pointerdown', this.handlePointerDown);
     context.stage.on('pointerup', this.handlePointerUp);
     context.stage.on('pointerleave', this.handlePointerUp);
+    context.stage.on('dblclick', this.handleDBLClick);
     application.global.addEventListener('keydown', this.handleKeyDown);
 
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
+    this.editModule.onFocusOut(this.handleFocusOut);
   }
 
-  handleKeyDown = (e: KeyboardEvent) => {
-    if (!(this.currRt && this.editing)) {
+  copyToClipboard(e: KeyboardEvent): boolean {
+    if (
+      (application.global.isMacOS() && e.metaKey && e.key === 'c') ||
+      (!application.global.isMacOS() && e.ctrlKey && e.key === 'c')
+    ) {
+      const selection = this.getSelection();
+      const text = selection.getSelectionPureText();
+      application.global.copyToClipBoard(text);
+      e.preventDefault();
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 选中某一个区间，startIdx和endIdx分别是开始结束的光标位置
+   * 设置光标为endIdx，设置开始位置为startIdx
+   * @param startIdx 开始位置
+   * @param endIdx 结束位置
+   * @returns
+   */
+  selectionRange(startIdx: number, endIdx: number) {
+    const currRt = this.currRt;
+    if (!currRt) {
       return;
+    }
+    const cache = currRt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    // 对startIdx和endIdx约束
+    const { lines } = cache;
+    const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
+    if (startIdx > endIdx) {
+      [startIdx, endIdx] = [endIdx, startIdx];
+    }
+    startIdx = Math.min(Math.max(startIdx, -0.1), totalCursorCount + 0.1);
+    endIdx = Math.min(Math.max(endIdx, -0.1), totalCursorCount + 0.1);
+
+    this.curCursorIdx = endIdx;
+    this.selectionStartCursorIdx = startIdx;
+    const { x, y1, y2 } = this.computedCursorPosByCursorIdx(this.selectionStartCursorIdx, this.currRt);
+    this.startCursorPos = { x, y: (y1 + y2) / 2 };
+    const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
+    this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
+    this._tryShowSelection(pos, cache);
+  }
+
+  fullSelection(e: KeyboardEvent) {
+    if (
+      (application.global.isMacOS() && e.metaKey && e.key === 'a') ||
+      (!application.global.isMacOS() && e.ctrlKey && e.key === 'a')
+    ) {
+      const currRt = this.currRt;
+      if (!currRt) {
+        return;
+      }
+      const cache = currRt.getFrameCache();
+      if (!cache) {
+        return;
+      }
+      const { lines } = cache;
+      const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
+      this.selectionRange(-0.1, totalCursorCount + 0.1);
+
+      e.preventDefault();
+      return true;
+    }
+    return false;
+  }
+
+  directKey(e: KeyboardEvent) {
+    if (!(e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+      return false;
     }
     const cache = this.currRt.getFrameCache();
     if (!cache) {
-      return;
+      return false;
     }
     let x = 0;
     let y = 0;
@@ -242,6 +337,8 @@ export class RichTextEditPlugin implements IPlugin {
 
     // const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
     const { lineInfo, columnInfo } = this.getColumnByIndex(cache, Math.round(this.curCursorIdx));
+    const { lines } = cache;
+    const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
     if (x) {
       // 快接近首尾需要特殊处理
       if (
@@ -262,6 +359,11 @@ export class RichTextEditPlugin implements IPlugin {
         this.curCursorIdx = this.curCursorIdx - 1 + 0.2;
       } else {
         this.curCursorIdx += x;
+      }
+      if (this.curCursorIdx < -0.1) {
+        this.curCursorIdx = -0.1;
+      } else if (this.curCursorIdx > totalCursorCount + 0.1) {
+        this.curCursorIdx = totalCursorCount + 0.1;
       }
 
       const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
@@ -289,12 +391,41 @@ export class RichTextEditPlugin implements IPlugin {
       if (!columnInfo) {
         return;
       }
-      const cursorIdx = this.getColumnIndex(cache, columnInfo) + delta;
+      let cursorIdx = this.getColumnIndex(cache, columnInfo) + delta;
       const data = this.computedCursorPosByCursorIdx(cursorIdx, this.currRt);
+
+      if (cursorIdx < -0.1) {
+        cursorIdx = -0.1;
+      } else if (cursorIdx > totalCursorCount + 0.1) {
+        cursorIdx = totalCursorCount + 0.1;
+      }
 
       this.curCursorIdx = cursorIdx;
       this.selectionStartCursorIdx = cursorIdx;
       this.setCursorAndTextArea(data.x, data.y1, data.y2, this.currRt);
+    }
+
+    return true;
+  }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (!(this.currRt && this.editing)) {
+      return;
+    }
+    // 复制到剪贴板
+    // cmd/ctl + C
+    if (this.copyToClipboard(e)) {
+      return;
+    }
+    // 全选
+    // cmd/ctl + A
+    if (this.fullSelection(e)) {
+      return;
+    }
+    // 方向键
+    // 上、下、左、右
+    if (this.directKey(e)) {
+      return;
     }
   };
 
@@ -317,12 +448,25 @@ export class RichTextEditPlugin implements IPlugin {
     this.updateCbs.forEach(cb => cb('change', this));
   };
 
+  handleFocusIn = () => {
+    // this.updateCbs.forEach(cb => cb(this.editing ? 'onfocus' : 'defocus', this));
+  };
+
+  handleFocusOut = () => {
+    this.editing = false;
+    this.deFocus();
+    this.pointerDown = false;
+    this.triggerRender();
+    this.updateCbs.forEach(cb => cb('defocus', this));
+  };
+
   deactivate(context: IPluginService): void {
     // context.stage.off('pointerdown', this.handleClick);
     context.stage.off('pointermove', this.handleMove);
     context.stage.off('pointerdown', this.handlePointerDown);
     context.stage.off('pointerup', this.handlePointerUp);
     context.stage.off('pointerleave', this.handlePointerUp);
+    context.stage.off('dblclick', this.handleDBLClick);
 
     application.global.addEventListener('keydown', this.handleKeyDown);
   }
@@ -335,7 +479,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.handleEnter(e);
     (e.target as any).once('pointerleave', this.handleLeave);
 
-    this.tryShowSelection(e);
+    this.tryShowSelection(e, false);
   };
 
   // 鼠标进入
@@ -354,7 +498,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (this.editing) {
       this.onFocus(e);
     } else {
-      this.deFocus(e);
+      this.deFocus();
     }
     this.triggerRender();
     this.pointerDown = true;
@@ -363,9 +507,16 @@ export class RichTextEditPlugin implements IPlugin {
   handlePointerUp = (e: PointerEvent) => {
     this.pointerDown = false;
   };
+  handleDBLClick = (e: PointerEvent) => {
+    if (!this.editing) {
+      return;
+    }
+
+    this.tryShowSelection(e, true);
+  };
 
   onFocus(e: PointerEvent) {
-    this.deFocus(e);
+    this.deFocus();
     this.currRt = e.target as IRichText;
 
     // 创建shadowGraphic
@@ -379,8 +530,8 @@ export class RichTextEditPlugin implements IPlugin {
     // 计算全局偏移
     this.computeGlobalDelta(cache);
 
-    // 添加cursor节点
-    shadowRoot.setAttributes({ shadowRootIdx: -1, x: this.deltaX, y: this.deltaY });
+    // 添加cursor节点，shadowRoot在上面
+    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
@@ -405,7 +556,7 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
-  protected deFocus(e: PointerEvent) {
+  protected deFocus() {
     const target = this.currRt as IRichText;
     if (!target) {
       return;
@@ -435,17 +586,60 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   // 显示selection
-  tryShowSelection(e: PointerEvent) {
+  tryShowSelection(e: PointerEvent, dblclick: boolean) {
     const cache = (e.target as IRichText).getFrameCache();
-    if (!(cache && this.editBg && this.pointerDown && this.startCursorPos)) {
+    if (!(cache && this.editBg && this.startCursorPos)) {
       return;
     }
+
+    if (!dblclick) {
+      if (this.pointerDown) {
+        const currCursorData = this.computedCursorPosByEvent(e, cache);
+        if (!currCursorData) {
+          return;
+        }
+        this.curCursorIdx = currCursorData.cursorIndex;
+        this._tryShowSelection(currCursorData, cache);
+      }
+    } else {
+      const currCursorData = this.computedCursorPosByEvent(e, cache);
+      if (!currCursorData) {
+        return;
+      }
+      // const curCursorIdx = currCursorData.cursorIndex;
+      const lineInfo = currCursorData.lineInfo;
+      const columnIndex = lineInfo.paragraphs.findIndex(item => item === currCursorData.columnInfo);
+      if (columnIndex < 0) {
+        return;
+      }
+      const str = lineInfo.paragraphs.reduce((str, item) => {
+        return str + item.text;
+      }, '');
+
+      let idx = 0;
+      for (let i = 0; i < cache.lines.length; i++) {
+        const line = cache.lines[i];
+        if (line === lineInfo) {
+          break;
+        }
+        idx += line.paragraphs.length;
+      }
+
+      const { startIdx, endIdx } = getWordStartEndIdx(str, columnIndex);
+
+      this.selectionRange(idx + startIdx - 0.1, idx + endIdx - 0.1);
+    }
+  }
+
+  _tryShowSelection(
+    currCursorData: {
+      x: any;
+      y1: number;
+      y2: number;
+    },
+    cache: IRichTextFrame
+  ) {
     let startCursorPos = this.startCursorPos;
-    const currCursorData = this.computedCursorPosByEvent(e, cache);
-    if (!currCursorData) {
-      return;
-    }
-    this.curCursorIdx = currCursorData.cursorIndex;
     let endCursorPos = {
       x: currCursorData.x,
       y: (currCursorData.y1 + currCursorData.y2) / 2
@@ -521,7 +715,7 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
 
-    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, e.target as IRichText);
+    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, this.currRt as IRichText);
 
     this.triggerRender();
     this.updateCbs.forEach(cb => cb('selection', this));
@@ -585,6 +779,13 @@ export class RichTextEditPlugin implements IPlugin {
       delta
     };
   }
+  /* 工具函数 */
+  /**
+   * 根据给定的ParagraphInfo得到对应的index
+   * @param cache 富文本缓存
+   * @param cInfo ParagraphInfo
+   * @returns
+   */
   protected getColumnIndex(cache: IRichTextFrame, cInfo: IRichTextParagraph | IRichTextIcon) {
     // TODO 【注意】认为cache都是单个字符拆分的
     let inputIndex = -1;
@@ -655,6 +856,12 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.moveTo(out.x, out.y, rt, this.curCursorIdx, this.selectionStartCursorIdx);
   }
 
+  /**
+   * 根据Event算出光标位置等信息
+   * @param e Event
+   * @param cache 富文本缓存
+   * @returns
+   */
   protected computedCursorPosByEvent(e: PointerEvent, cache: IRichTextFrame) {
     const p1 = this.getEventPosition(e);
     const lineInfo = this.getLineByPoint(cache, p1);
@@ -680,11 +887,18 @@ export class RichTextEditPlugin implements IPlugin {
       x,
       y1,
       y2,
-      cursorIndex
+      cursorIndex,
+      lineInfo,
+      columnInfo
     };
   }
 
-  // 根据cursorIdx计算出点的位置
+  /**
+   * 根据cursorIdx计算出点的位置
+   * @param cursorIdx index
+   * @param rt 富文本
+   * @returns
+   */
   protected computedCursorPosByCursorIdx(cursorIdx: number, rt: IRichText) {
     const idx = Math.round(cursorIdx);
     const leftRight = cursorIdx - idx; // >0 向右，<0 向左
@@ -708,6 +922,12 @@ export class RichTextEditPlugin implements IPlugin {
     return { x, y1, y2 };
   }
 
+  /**
+   * 根据index获取columnInfo
+   * @param cache 缓存
+   * @param index index
+   * @returns
+   */
   protected getColumnByIndex(
     cache: IRichTextFrame,
     index: number

@@ -1,6 +1,34 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 23 Dec 2024 08:28:14 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Dec 2024 07:53:11 GMT and should not be manually modified.
+
+## 0.21.7
+Wed, 25 Dec 2024 07:53:11 GMT
+
+### Updates
+
+- fix: upgrade vutils to 0.19.3
+
+
+
+## 0.21.6
+Tue, 24 Dec 2024 12:46:37 GMT
+
+### Updates
+
+- fix: fix issue with stroke clip
+
+## 0.21.5
+Tue, 24 Dec 2024 07:53:11 GMT
+
+### Updates
+
+- fix: fix issue with image background stroke, closed #1640
+
+## 0.21.4
+Mon, 23 Dec 2024 10:16:00 GMT
+
+_Version update only_
 
 ## 0.21.3
 Mon, 23 Dec 2024 08:28:14 GMT

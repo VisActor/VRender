@@ -1,3 +1,73 @@
+# v0.21.7
+
+2024-12-25
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: support polygon sector crosshair for non-smooth angle axis
+- **@visactor/vrender-components**: add switch component
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender-utils**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender**: upgrade vutils to 0.19.3
+- **@visactor/vrender-kits**: upgrade vutils to 0.19.3
+- **@visactor/vrender-core**: upgrade vutils to 0.19.3
+- **@visactor/vrender**: upgrade vutils to 0.19.3
+
+**🔖 other**
+
+- **@visactor/vrender-components**: Revert "fix: fix the bug of axis pickable"
+
+This reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.
+
+
+
+[more detail about v0.21.7](https://github.com/VisActor/VRender/releases/tag/v0.21.7)
+
+# v0.21.6
+
+2024-12-25
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: add onBeforeAttributeUpdate in base-component
+- **@visactor/vrender-components**: fix the bug of axis pickable
+- **@visactor/vrender-core**: fix issue with stroke clip
+
+
+
+[more detail about v0.21.6](https://github.com/VisActor/VRender/releases/tag/v0.21.6)
+
+# v0.21.5
+
+2024-12-24
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix issue with image background stroke, closed [#1640](https://github.com/VisActor/VRender/issues/1640)
+
+
+
+[more detail about v0.21.5](https://github.com/VisActor/VRender/releases/tag/v0.21.5)
+
+# v0.21.4
+
+2024-12-23
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: fix issue with gesture emitEvent when gesture is released
+
+
+
+[more detail about v0.21.4](https://github.com/VisActor/VRender/releases/tag/v0.21.4)
+
 # v0.21.3
 
 2024-12-23

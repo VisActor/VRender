@@ -293,7 +293,12 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
       if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
         const subTitleVerticalAlign = subtextStyle.verticalAlign ? subtextStyle.verticalAlign : verticalAlign;
-        const subTitleYStart = this._mainTitle ? this._mainTitle.AABBBounds.y2 : 0;
+        const subTitleYStart = this._mainTitle
+          ? isValid(fixedMainTitleHeight)
+            ? // 如果是用户指定的高度，根据bounds的height 和指定高度求最大值
+              this._mainTitle.AABBBounds.y1 + Math.max(this._mainTitle.AABBBounds.height(), fixedMainTitleHeight)
+            : this._mainTitle.AABBBounds.y2
+          : 0;
         const subTitleHeight = subtextStyle.height ?? height;
         if (subTitleVerticalAlign === 'middle' && isValid(subTitleHeight)) {
           this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight / 2);

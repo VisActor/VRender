@@ -223,7 +223,7 @@ export default class Line {
       applyStrokeStyle(ctx, paragraph.character);
       // 下面绘制underline和line-through时需要设置FillStyle
       applyFillStyle(ctx, paragraph.character, b);
-      paragraph.draw(ctx, y + this.ascent, x, index === 0, this.textAlign);
+      paragraph.draw(ctx, y, this.ascent, x, index === 0, this.textAlign);
     });
   }
 

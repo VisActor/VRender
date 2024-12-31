@@ -224,6 +224,7 @@ export type IGraphicStyle = ILayout &
     // 背景图偏移，只在no-repeat的时候生效
     backgroundOffsetX: number;
     backgroundOffsetY: number;
+    backgroundClip: boolean;
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
     // 纹理是否自动做动画
@@ -248,6 +249,7 @@ export type IGraphicStyle = ILayout &
     textureSize: number; // 纹理大小
     texturePadding: number; // 纹理间隙
     blur: number;
+    filter: string;
     cursor: Cursor | null; // 鼠标样式
     renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string

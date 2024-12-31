@@ -477,6 +477,7 @@ export type IGraphicStyle = ILayout &
      * 设置图形对应的鼠标样式
      */
     cursor: Cursor | null;
+    filter: string;
     renderStyle?: 'default' | 'rough' | any;
     /**
      * HTML的dom或者string

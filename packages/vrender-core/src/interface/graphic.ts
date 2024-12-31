@@ -417,6 +417,10 @@ export type IGraphicStyle = ILayout &
      */
     backgroundOffsetY: number;
     /**
+     * 背景图是否裁切
+     */
+    backgroundClip: boolean;
+    /**
      * 背景圆角半径
      */
     backgroundCornerRadius: number | number[];
@@ -483,10 +487,15 @@ export type IGraphicStyle = ILayout &
     texturePadding: number;
 
     blur: number;
+<<<<<<< HEAD
     /**
      * 设置图形对应的鼠标样式
      */
     cursor: Cursor | null;
+=======
+    filter: string;
+    cursor: Cursor | null; // 鼠标样式
+>>>>>>> 27493122 (feat: support backgroundClip)
     renderStyle?: 'default' | 'rough' | any;
     /**
      * HTML的dom或者string

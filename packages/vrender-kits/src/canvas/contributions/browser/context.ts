@@ -1052,6 +1052,7 @@ export class BrowserContext2d implements IContext2d {
       shadowOffsetX = defaultParams.shadowOffsetX,
       shadowOffsetY = defaultParams.shadowOffsetY,
       blur = defaultParams.blur,
+      filter = defaultParams.filter,
       globalCompositeOperation = defaultParams.globalCompositeOperation
     } = attribute;
     if (opacity <= 1e-12) {
@@ -1076,6 +1077,13 @@ export class BrowserContext2d implements IContext2d {
       this._clearFilterStyle = true;
     } else if (this._clearFilterStyle) {
       _context.filter = 'blur(0px)';
+      this._clearFilterStyle = false;
+    }
+    if (filter) {
+      _context.filter = filter;
+      this._clearFilterStyle = true;
+    } else if (this._clearFilterStyle) {
+      _context.filter = '';
       this._clearFilterStyle = false;
     }
 

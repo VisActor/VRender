@@ -103,7 +103,7 @@ export class DefaultTextBackgroundRenderContribution
       }
 
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
+      this.doDrawImage(context, res.data, b, { backgroundMode, backgroundFit });
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {

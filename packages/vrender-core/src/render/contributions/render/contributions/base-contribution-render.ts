@@ -45,7 +45,8 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundFit = graphicAttribute.backgroundFit,
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
-      backgroundOffsetY = graphicAttribute.backgroundOffsetY
+      backgroundOffsetY = graphicAttribute.backgroundOffsetY,
+      backgroundClip = graphicAttribute.backgroundClip
     } = graphic.attribute;
     if (!background) {
       return;
@@ -65,7 +66,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
         context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
         context.translate(scrollX, scrollY);
       }
-      context.clip();
+      backgroundClip && context.clip();
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.globalAlpha = backgroundOpacity * opacity;

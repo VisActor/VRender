@@ -200,7 +200,7 @@ export class Animate implements IAnimate {
     slience?: boolean
   ) {
     this.id = id;
-    this.timeline = timeline;
+    this.timeline = timeline || defaultTimeline;
     this.status = AnimateStatus.INITIAL;
     this.tailAnimate = new SubAnimate(this);
     this.subAnimates = [this.tailAnimate];

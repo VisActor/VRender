@@ -39,7 +39,10 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       backgroundOpacity = graphic.attribute.fillOpacity ?? graphicAttribute.backgroundOpacity,
       opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
-      backgroundFit = graphicAttribute.backgroundFit
+      backgroundFit = graphicAttribute.backgroundFit,
+      backgroundScale = graphicAttribute.backgroundScale,
+      backgroundOffsetX = graphicAttribute.backgroundOffsetX,
+      backgroundOffsetY = graphicAttribute.backgroundOffsetY
     } = graphic.attribute;
     if (!background) {
       return;
@@ -63,7 +66,13 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       const b = graphic.AABBBounds;
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.globalAlpha = backgroundOpacity * opacity;
-      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
+      this.doDrawImage(context, res.data, b, {
+        backgroundMode,
+        backgroundFit,
+        backgroundScale,
+        backgroundOffsetX,
+        backgroundOffsetY
+      });
       context.restore();
       if (!graphic.transMatrix.onlyTranslate()) {
         context.setTransformForCurrent();
@@ -82,16 +91,28 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     context: IContext2d,
     data: any,
     b: IBounds,
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat',
-    backgroundFit: boolean
+    params: {
+      backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+      backgroundFit: boolean;
+      backgroundScale?: number;
+      backgroundOffsetX?: number;
+      backgroundOffsetY?: number;
+    }
   ): void {
+    const { backgroundMode, backgroundFit, backgroundScale = 1, backgroundOffsetX = 0, backgroundOffsetY = 0 } = params;
+    const targetW = b.width();
+    const targetH = b.height();
+    let w = targetW;
+    let h = targetH;
     if (backgroundMode === 'no-repeat') {
-      context.drawImage(data, b.x1, b.y1, b.width(), b.height());
+      if (backgroundFit) {
+        context.drawImage(data, b.x1, b.y1, b.width(), b.height());
+      } else {
+        const resW = data.width * backgroundScale;
+        const resH = data.height * backgroundScale;
+        context.drawImage(data, b.x1 + backgroundOffsetX, b.y1 + backgroundOffsetY, resW, resH);
+      }
     } else {
-      const targetW = b.width();
-      const targetH = b.height();
-      let w = targetW;
-      let h = targetH;
       // debugger;
       // TODO 考虑缓存
       if (backgroundFit && backgroundMode !== 'repeat' && (data.width || data.height)) {

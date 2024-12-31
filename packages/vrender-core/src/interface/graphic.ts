@@ -403,6 +403,19 @@ export type IGraphicStyle = ILayout &
      * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
      */
     backgroundFit: boolean;
+
+    /**
+     * 背景图缩放，只在no-repeat的时候生效
+     */
+    backgroundScale: number;
+    /**
+     * 背景图偏移，只在no-repeat的时候生效
+     */
+    backgroundOffsetX: number;
+    /**
+     * 背景图偏移，只在no-repeat的时候生效
+     */
+    backgroundOffsetY: number;
     /**
      * 背景圆角半径
      */

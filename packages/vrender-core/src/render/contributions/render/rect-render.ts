@@ -115,7 +115,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       context.beginPath();
 
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-      createRectPath(context, x, y, width, height, cornerRadius, cornerType === 'round');
+      createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
     }
 
     const doFillOrStroke = {

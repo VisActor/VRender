@@ -142,7 +142,8 @@ export default class Paragraph {
     }
   }
 
-  draw(ctx: IContext2d, baseline: number, deltaLeft: number, isLineFirst: boolean, textAlign: string) {
+  draw(ctx: IContext2d, top: number, ascent: number, deltaLeft: number, isLineFirst: boolean, textAlign: string) {
+    let baseline = top + ascent;
     let text = this.text;
     let left = this.left + deltaLeft;
     baseline += this.top;
@@ -207,6 +208,20 @@ export default class Paragraph {
       ctx.translate(left, baseline);
       left = 0;
       baseline = 0;
+    }
+
+    if (this.character.fill) {
+      if (this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0)) {
+        const fillStyle = ctx.fillStyle;
+        const globalAlpha = ctx.globalAlpha;
+        ctx.fillStyle = this.character.background;
+        if (this.character.backgroundOpacity !== void 0) {
+          ctx.globalAlpha = this.character.backgroundOpacity;
+        }
+        ctx.fillRect(left, top, this.widthOrigin || this.width, this.lineHeight);
+        ctx.fillStyle = fillStyle;
+        ctx.globalAlpha = globalAlpha;
+      }
     }
 
     const { lineWidth = 1 } = this.character;

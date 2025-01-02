@@ -206,6 +206,42 @@ export function getStrByWithCanvas(
   return index;
 }
 
+export function getWordStartEndIdx(string: string, index: number) {
+  let startIdx = index;
+  // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
+  while (
+    (regLetter.test(string[startIdx - 1]) && regLetter.test(string[startIdx])) ||
+    // 行首标点符号处理
+    regPunctuation.test(string[startIdx])
+  ) {
+    startIdx--;
+    // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
+    if (startIdx <= 0) {
+      break;
+    }
+  }
+
+  let endIdx = index;
+  // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
+  while (
+    (regLetter.test(string[endIdx + 1]) && regLetter.test(string[endIdx])) ||
+    // 行首标点符号处理
+    regPunctuation.test(string[endIdx])
+  ) {
+    endIdx++;
+    // 无法满足所有条件，放弃匹配，直接截断，避免陷入死循环
+    if (endIdx >= string.length) {
+      break;
+    }
+  }
+  endIdx = Math.min(endIdx + 1, string.length);
+
+  return {
+    startIdx,
+    endIdx
+  };
+}
+
 /**
  * 向前找到单词结尾处换行
  * @param string
@@ -240,7 +276,7 @@ export function testLetter2(string: string, index: number) {
   let i = index;
   // 切分前后都是英文字母数字下划线，向前找到非英文字母处换行
   while (
-    (regLetter.test(string[i - 1]) && regLetter.test(string[i])) ||
+    (regLetter.test(string[i + 1]) && regLetter.test(string[i])) ||
     // 行首标点符号处理
     regPunctuation.test(string[i])
   ) {
@@ -250,7 +286,7 @@ export function testLetter2(string: string, index: number) {
       return i;
     }
   }
-  return i;
+  return i + 1;
 }
 
 // 测量文字详细信息

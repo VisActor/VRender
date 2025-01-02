@@ -147,12 +147,10 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       _y = p.y;
       _z = undefined;
     }
-    if (parsedPath.draw(context, size, x, y, z, callback) === false) {
+    if (parsedPath.draw(context, size, _x, _y, _z, callback) === false) {
       context.closePath();
     }
-    if (keepDirIn3d && context.camera && context.project) {
-      context.camera = camera;
-    }
+    context.camera = camera;
 
     // shadow
     context.setShadowBlendStyle && context.setShadowBlendStyle(symbol, symbol.attribute, symbolAttribute);

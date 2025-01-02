@@ -123,7 +123,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
             // 不需要处理圆角
           } else {
             context.beginPath();
-            createRectPath(context, x, y, width, height, cornerRadius, cornerType === 'round');
+            createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
             context.save();
             context.clip();
             needRestore = true;

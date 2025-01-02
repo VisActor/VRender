@@ -12,9 +12,15 @@ export function createRectPath(
   width: number,
   height: number,
   rectCornerRadius: number | number[],
+  // @since 0.22.0
   roundCorner: boolean,
   edgeCb?: IEdgeCb[]
 ) {
+  // TODO 避免breakChange，旧版本的roundCorner位置是edgeCb
+  if (Array.isArray(roundCorner)) {
+    edgeCb = roundCorner;
+    roundCorner = true;
+  }
   if (width < 0) {
     x += width;
     width = -width;

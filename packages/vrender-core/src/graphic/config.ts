@@ -129,6 +129,9 @@ export const DefaultStyle: IGraphicStyle = {
   forceBoundsHeight: undefined,
   opacity: 1,
   background: null,
+  autoAnimateTexture: false,
+  textureRatio: 0,
+  textureOptions: null,
   backgroundOpacity: 1,
   backgroundCornerRadius: 0,
   texture: null,
@@ -137,7 +140,12 @@ export const DefaultStyle: IGraphicStyle = {
   texturePadding: 2,
   backgroundMode: 'no-repeat',
   backgroundFit: true,
+  backgroundClip: true,
+  backgroundScale: 1,
+  backgroundOffsetX: 0,
+  backgroundOffsetY: 0,
   blur: 0,
+  filter: '',
   cursor: null,
   html: null,
   react: null,
@@ -254,7 +262,8 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   justifyContent: 'flex-start',
   alignItems: 'flex-start',
   alignContent: 'flex-start',
-  baseOpacity: 1
+  baseOpacity: 1,
+  cornerType: 'round'
 };
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
@@ -282,6 +291,7 @@ export const DefaultPathAttribute: Required<IPathGraphicAttribute> = {
   ...DefaultAttribute,
   path: new CustomPath2D(),
   fillStrokeOrder: 1,
+  clipRange: 1,
   customPath: () => {
     Logger.getInstance().warn('空函数');
   }
@@ -301,7 +311,8 @@ export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {
   x1: 0,
   y1: 0,
   strokeBoundsBuffer: 0,
-  cornerRadius: 0
+  cornerRadius: 0,
+  cornerType: 'round'
 };
 
 export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
@@ -311,14 +322,16 @@ export const DefaultRect3dAttribute: Required<IRect3dGraphicAttribute> = {
   x1: 0,
   y1: 0,
   cornerRadius: 0,
-  length: 0
+  length: 0,
+  cornerType: 'round'
 };
 
 export const DefaultSymbolAttribute: Required<ISymbolGraphicAttribute> = {
   ...DefaultAttribute,
   symbolType: 'circle',
   size: 10, // 外接**正方形**的边长
-  keepDirIn3d: true
+  keepDirIn3d: true,
+  clipRange: 1
 };
 
 export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
@@ -355,7 +368,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   height: 0,
   ...DefaultAttribute,
   fill: true,
-  cornerRadius: 0
+  cornerRadius: 0,
+  cornerType: 'round'
 };
 
 export const DefaultRichTextIconAttribute: Required<IRichTextIconGraphicAttribute> = {

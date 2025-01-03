@@ -50,6 +50,9 @@ export interface ICurve<T> {
   getPointAt: (t: number) => IPointLike;
   getAngleAt: (t: number) => number;
   getLength: (direction?: IDirection) => number;
+  draw: (path: IPath2D, x: number, y: number, sx: number, sy: number, percent: number) => void;
+  getYAt: (x: number) => number;
+  includeX: (x: number) => boolean;
 }
 
 export interface ICubicBezierCurve extends ICurve<IPoint> {
@@ -152,5 +155,7 @@ export interface ICustomPath2D extends ICurvePath<IPoint>, IPath2D, Releaseable 
   fromString: (pathStr: string, x?: number, y?: number, sX?: number, sY?: number) => ICustomPath2D;
   fromCustomPath2D: (path: ICustomPath2D, x?: number, y?: number, sX?: number, sY?: number) => ICustomPath2D;
   addCurve: (curve: ICurve<IPoint>) => void;
+  getYAt: (x: number) => number;
   clear: () => void;
+  drawWithClipRange: (ctx: IPath2D, size: number, x: number, y: number, clipRange: number) => void;
 }

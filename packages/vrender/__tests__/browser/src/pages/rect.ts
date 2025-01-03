@@ -56,14 +56,18 @@ export const page = () => {
     scaleY: 2,
     width: 200,
     height: 200,
-    cornerRadius: [0, 10, 10, 0],
+    // cornerRadius: [0, 10, 10, 0],
     stroke: 'red',
     // scaleCenter: ['50%', '50%'],
     // _debug_bounds: true,
     fill: 'conic-gradient(from 90deg, rgba(5,0,255,1) 16%, rgba(0,255,10,1) 41%, rgba(9,9,121,1) 53%, rgba(0,212,255,1) 100%)',
     // cornerRadius: [5, 10, 15, 20],
-    lineWidth: 5
+    lineWidth: 5,
+    lineDash: [100, 10],
+    lineDashOffset: -100
   });
+
+  // r.animate().to({ lineDash: [2000, 1000], lineDashOffset: 100 }, 1000, 'linear');
 
   graphics.push(r);
   // r.animate().to({ scaleX: 2, scaleY: 2 }, 1000, 'linear');

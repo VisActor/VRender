@@ -99,4 +99,6 @@ export * from './plugins/builtin-plugin/html-attribute-plugin';
 export * from './plugins/builtin-plugin/react-attribute-plugin';
 export * from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
+
+export * from './animate/easing-func';
 export * from './plugins/builtin-plugin/edit-module';

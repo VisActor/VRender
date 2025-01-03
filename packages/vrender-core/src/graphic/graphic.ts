@@ -1,6 +1,6 @@
 import type { ICustomPath2D } from './../interface/path';
 import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { OBBBounds } from '@visactor/vutils';
+import { interpolateNumber, last, OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -800,7 +800,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline(), params?.slience);
+    const animate = new Animate(
+      params?.id,
+      params?.timeline ?? (this.stage && this.stage.getTimeline()),
+      params?.slience
+    );
 
     animate.bind(this);
     if (params) {
@@ -1368,6 +1372,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       }
 
       return true;
+    } else if (Array.isArray(nextStepVal) && nextStepVal.length === lastStepVal.length) {
+      const nextList = [];
+      let valid = true;
+      for (let i = 0; i < nextStepVal.length; i++) {
+        const v = lastStepVal[i];
+        const val = v + (nextStepVal[i] - v) * ratio;
+        if (!Number.isFinite(val)) {
+          valid = false;
+          break;
+        }
+        nextList.push(val);
+      }
+      if (valid) {
+        nextAttributes[key] = nextList;
+      }
     }
 
     return false;

@@ -74,7 +74,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       lineWidth = groupAttribute.lineWidth,
       visible = groupAttribute.visible,
       fillStrokeOrder = groupAttribute.fillStrokeOrder,
-
+      cornerType = groupAttribute.cornerType,
       x: originX = groupAttribute.x,
       y: originY = groupAttribute.y
     } = group.attribute;
@@ -122,7 +122,7 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     } else {
       context.beginPath();
       // 测试后，cache对于重绘性能提升不大，但是在首屏有一定性能损耗，因此rect不再使用cache
-      createRectPath(context, x, y, width, height, cornerRadius);
+      createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
     }
 
     if (!this._groupRenderContribitions) {

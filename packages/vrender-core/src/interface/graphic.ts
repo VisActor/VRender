@@ -1,5 +1,5 @@
 import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType, IOBBBounds } from '@visactor/vutils';
-import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
+import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
 import type { IShadowRoot } from './graphic/shadow-root';
@@ -38,7 +38,8 @@ export type GraphicType =
   | 'shadowroot'
   | 'polygon'
   | 'pyramid3d'
-  | 'glyph';
+  | 'glyph'
+  | string;
 
 // Cursor style
 // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -218,8 +219,19 @@ export type IGraphicStyle = ILayout &
     shadowGraphic?: IGraphic | undefined;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+    // 背景图缩放，只在no-repeat的时候生效
+    backgroundScale: number;
+    // 背景图偏移，只在no-repeat的时候生效
+    backgroundOffsetX: number;
+    backgroundOffsetY: number;
+    backgroundClip: boolean;
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
+    // 纹理是否自动做动画
+    autoAnimateTexture: boolean;
+    // 如果做动画的话，这里代表ratio
+    textureRatio: number;
+    textureOptions: any;
     background:
       | IBackgroundType
       | {
@@ -237,6 +249,7 @@ export type IGraphicStyle = ILayout &
     textureSize: number; // 纹理大小
     texturePadding: number; // 纹理间隙
     blur: number;
+    filter: string;
     cursor: Cursor | null; // 鼠标样式
     renderStyle?: 'default' | 'rough' | any;
     // HTML的dom或者string
@@ -356,6 +369,7 @@ export type ISetAttributeContext = {
 export type IGraphicAnimateParams = {
   slience?: boolean;
   id?: number | string;
+  timeline?: ITimeline;
   onStart?: () => void;
   onFrame?: (step: IStep, ratio: number) => void;
   onEnd?: () => void;

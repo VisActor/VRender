@@ -16,11 +16,9 @@ import type {
   IRenderService
 } from '../../../interface';
 import { drawPolygon, drawRoundedPolygon } from '../../../common/polygon';
-import { drawPathProxy, fillVisible, runFill, runStroke, strokeVisible } from './utils';
 import { PolygonRenderContribution } from './contributions/constants';
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import { ContributionProvider } from '../../../common/contribution-provider';
-import { BaseRenderContributionTime } from '../../../common/enums';
 import { BaseRender } from './base-render';
 import {
   defaultPolygonBackgroundRenderContribution,

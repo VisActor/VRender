@@ -7,7 +7,7 @@ import { abs } from '@visactor/vutils';
 import { Direction } from './enums';
 import { drawArc, addArcToBezierPath } from './shape/arc';
 import { renderCommandList } from './render-command-list';
-import { calcLineCache } from './segment';
+import { calcLineCache, CurveContext } from './segment';
 
 /**
  * 部分源码参考 https://github.com/d3/d3-shape/
@@ -42,6 +42,10 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
       this._ctx = ctx;
     }
     this._boundsContext = new BoundsContext(this.bounds);
+  }
+
+  get curves(): ICurve<IPoint>[] {
+    return this.tryBuildCurves();
   }
 
   setCtx(ctx?: IPath2D) {
@@ -104,17 +108,26 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
   }
 
   addCurve(curve: ICurve<IPoint>) {
-    this.curves.push(curve);
+    this._curves.push(curve);
     // todo parse curve
   }
   clear() {
     this.transformCbList = null;
     this.commandList.length = 0;
-    this.curves.length = 0;
+    this._curves.length = 0;
   }
 
   beginPath() {
     this.clear();
+  }
+
+  // 默认不创建curves，获取curves的时候动态生成
+  tryBuildCurves() {
+    if (!(this._curves && this._curves.length)) {
+      const curveContext = new CurveContext(this);
+      renderCommandList(this.commandList, curveContext, 0, 0, 1, 1);
+    }
+    return this._curves;
   }
 
   toString(): string {
@@ -183,7 +196,7 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
     } else if (clipRangeByDimension === 'auto') {
       this.direction = cache.direction;
     }
-    this.curves = cache.curves;
+    this._curves = cache.curves;
   }
   fromCustomPath2D(path: ICustomPath2D, x?: number, y?: number, sX?: number, sY?: number) {
     this.clear();
@@ -587,31 +600,44 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
 
   getLength(): number {
     if (this.direction === Direction.COLUMN) {
-      if (!this.curves.length) {
+      if (!this._curves.length) {
         return 0;
       }
-      const sc = this.curves[0];
-      const ec = this.curves[this.curves.length - 1];
+      const sc = this._curves[0];
+      const ec = this._curves[this._curves.length - 1];
       return abs(sc.p0.y - ec.p1.y);
     } else if (this.direction === Direction.ROW) {
-      if (!this.curves.length) {
+      if (!this._curves.length) {
         return 0;
       }
-      const sc = this.curves[0];
-      const ec = this.curves[this.curves.length - 1];
+      const sc = this._curves[0];
+      const ec = this._curves[this._curves.length - 1];
       return abs(sc.p0.x - ec.p1.x);
     }
-    return this.curves.reduce((l, c) => l + c.getLength(), 0);
+    return this._curves.reduce((l, c) => l + c.getLength(), 0);
+  }
+
+  getYAt(x: number): number {
+    if (!this.curves) {
+      return Infinity;
+    }
+    for (let i = 0; i < this.curves.length; i++) {
+      const curve = this.curves[i];
+      if (curve.includeX(x)) {
+        return curve.getYAt(x);
+      }
+    }
+    return Infinity;
   }
 
   getAttrAt(distance: number): { pos: IPointLike; angle: number } {
-    if (!this.curves) {
+    if (!this._curves) {
       return { pos: { x: 0, y: 0 }, angle: 0 };
     }
     let _dis = 0;
     let curve: ICurve<IPoint>;
-    for (let i = 0; i < this.curves.length; i++) {
-      curve = this.curves[i];
+    for (let i = 0; i < this._curves.length; i++) {
+      curve = this._curves[i];
       const cl = curve.getLength(this.direction);
       if (_dis + cl >= distance) {
         break;
@@ -623,6 +649,24 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
     const pos = curve.getPointAt(t);
     const angle = curve.getAngleAt(t);
     return { pos, angle };
+  }
+
+  drawWithClipRange(ctx: IPath2D, size: number, x: number, y: number, clipRange: number) {
+    this.tryBuildCurves();
+    const totalLen = this.getLength() * clipRange;
+    let currLen = 0;
+    for (let i = 0; i < this._curves.length; i++) {
+      const curve = this._curves[i];
+      const cl = curve.getLength(this.direction);
+      if (currLen + cl <= totalLen) {
+        curve.draw(ctx, x, y, size, size, 1);
+      } else {
+        const percent = 1 - (currLen + cl - totalLen) / cl;
+        curve.draw(ctx, x, y, size, size, percent);
+        break;
+      }
+      currLen += cl;
+    }
   }
 }
 

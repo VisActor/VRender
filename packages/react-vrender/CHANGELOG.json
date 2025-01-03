@@ -2,6 +2,72 @@
   "name": "@visactor/react-vrender",
   "entries": [
     {
+      "version": "0.21.7",
+      "tag": "@visactor/react-vrender_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.6",
+      "tag": "@visactor/react-vrender_v0.21.6",
+      "date": "Tue, 24 Dec 2024 12:46:37 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.5",
+      "tag": "@visactor/react-vrender_v0.21.5",
+      "date": "Tue, 24 Dec 2024 07:53:11 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.4",
+      "tag": "@visactor/react-vrender_v0.21.4",
+      "date": "Mon, 23 Dec 2024 10:16:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.3",
+      "tag": "@visactor/react-vrender_v0.21.3",
+      "date": "Mon, 23 Dec 2024 08:28:14 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.2",
+      "tag": "@visactor/react-vrender_v0.21.2",
+      "date": "Thu, 12 Dec 2024 10:23:51 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.1",
+      "tag": "@visactor/react-vrender_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:46 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.0",
+      "tag": "@visactor/react-vrender_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.16",
+      "tag": "@visactor/react-vrender_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.15",
+      "tag": "@visactor/react-vrender_v0.20.15",
+      "date": "Fri, 15 Nov 2024 08:34:34 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.14",
       "tag": "@visactor/react-vrender_v0.20.14",
       "date": "Wed, 13 Nov 2024 07:47:15 GMT",

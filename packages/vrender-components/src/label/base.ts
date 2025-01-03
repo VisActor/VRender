@@ -527,13 +527,24 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     if (clampForce) {
       for (let i = 0; i < result.length; i++) {
         const text = labels[i];
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
+        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
         if (dx !== 0 || dy !== 0) {
           text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+          text._isClamped = true;
         }
       }
     }
-    result = shiftY(result as any, { maxY: bmpTool.height, ...(strategy as ShiftYStrategy) });
+    result = shiftY(result as any, {
+      maxY: bmpTool.height,
+      ...(strategy as ShiftYStrategy),
+      labelling: (text: IText) => {
+        const baseMark = this.getRelatedGraphic(text.attribute);
+        const graphicBound = this._isCollectionBase
+          ? this.getGraphicBounds(null, this._idToPoint.get((text.attribute as any).id))
+          : this.getGraphicBounds(baseMark, text);
+        return this.labeling(text.AABBBounds, graphicBound, 'bottom', this.attribute.offset);
+      }
+    });
 
     for (let i = 0; i < result.length; i++) {
       const text = result[i];
@@ -542,6 +553,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       if (canPlace(bmpTool, bitmap, bounds, clampForce, overlapPadding)) {
         bitmap.setRange(range);
       } else {
+        if (clampForce) {
+          const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
+          if (placedAfterClampForce) {
+            continue;
+          }
+        }
         if (hideOnHit) {
           text.setAttributes({ visible: false });
         } else {
@@ -549,8 +566,35 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       }
     }
-
     return result;
+  }
+
+  protected _processClampForce(text: IText, bmpTool: BitmapTool, bitmap: Bitmap, overlapPadding = 0) {
+    const { dy = 0, dx = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height, bmpTool.padding);
+    if (dx === 0 && dy === 0) {
+      // 再次检查，若不考虑边界，仍然可以放得下，代表当前 text 没有与其他 text 重叠
+      if (canPlace(bmpTool, bitmap, text.AABBBounds, false, overlapPadding)) {
+        bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+        return true;
+      }
+    } else if (
+      canPlace(
+        bmpTool,
+        bitmap,
+        {
+          x1: text.AABBBounds.x1 + dx,
+          x2: text.AABBBounds.x2 + dx,
+          y1: text.AABBBounds.y1 + dy,
+          y2: text.AABBBounds.y2 + dy
+        }
+        // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
+      )
+    ) {
+      text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
+      bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+      return true;
+    }
+    return false;
   }
 
   protected _overlapByStrategy(
@@ -645,30 +689,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
       // 尝试向内挤压
       if (!hasPlace && clampForce) {
-        // 向内挤压不考虑 overlapPadding
-        const { dx = 0, dy = 0 } = clampText(text as IText, bmpTool.width, bmpTool.height);
-        if (dx === 0 && dy === 0) {
-          if (canPlace(bmpTool, bitmap, text.AABBBounds)) {
-            // xy方向偏移都为0，意味着不考虑 overlapPadding 时，实际上可以放得下
-            bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-            result.push(text);
-            continue;
-          }
-        } else if (
-          canPlace(
-            bmpTool,
-            bitmap,
-            {
-              x1: text.AABBBounds.x1 + dx,
-              x2: text.AABBBounds.x2 + dx,
-              y1: text.AABBBounds.y1 + dy,
-              y2: text.AABBBounds.y2 + dy
-            }
-            // 向内 clamp 只处理超出的位移量，不叠加 overlapPadding
-          )
-        ) {
-          text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
-          bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
+        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
+        if (placedAfterClampForce) {
           result.push(text);
           continue;
         }
@@ -687,14 +709,26 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     return (this.getRootNode() as IGroup).find(node => node.name === baseMarkGroupName, true) as IGroup;
   }
 
-  protected getGraphicBounds(graphic?: IGraphic, point?: Partial<PointLocationCfg>, position?: string): IBoundsLike;
-  protected getGraphicBounds(graphic?: IGraphic, point: Partial<PointLocationCfg> = {}): IBoundsLike {
+  protected getGraphicBounds(
+    graphic?: IGraphic,
+    point: Partial<PointLocationCfg> = {},
+    position?: string
+  ): IBoundsLike {
     if (graphic) {
       if (graphic.attribute.visible !== false) {
         return graphic.AABBBounds;
       }
       const { x, y } = graphic.attribute;
       return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;
+    }
+    if (point && position && position === 'inside-middle') {
+      const { x, y, x1 = x, y1 = y } = point;
+      return {
+        x1: (x + x1) / 2,
+        x2: (x + x1) / 2,
+        y1: (y + y1) / 2,
+        y2: (y + y1) / 2
+      };
     }
     const { x, y } = point;
     return { x1: x, x2: x, y1: y, y2: y } as IBoundsLike;

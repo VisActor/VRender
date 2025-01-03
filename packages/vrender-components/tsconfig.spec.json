@@ -1,0 +1,22 @@
+{
+  "extends": "@internal/ts-config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "composite": true,
+    "isolatedModules": false,
+    "sourceMap": false,
+    "removeComments": false
+  },
+  "include": ["src/**/type.ts", "src/player/type/", "src/player/controller/constant.ts", "src/interface.ts"],
+  "references": [
+    {
+      "path": "../vrender"
+    },
+    {
+      "path": "../vrender-core"
+    },
+    {
+      "path": "../vrender-kits"
+    }
+  ]
+}

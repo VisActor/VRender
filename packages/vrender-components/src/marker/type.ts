@@ -13,8 +13,8 @@ import type {
   ISymbolGraphicAttribute,
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
-import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment';
-import type { TagAttributes } from '../tag';
+import type { CommonSegmentAttributes, ILineGraphicWithCornerRadius, SegmentAttributes } from '../segment/type';
+import type { TagAttributes } from '../tag/type';
 import type { Point, State } from '../core/type';
 
 export enum IMarkLineLabelPosition {
@@ -42,11 +42,21 @@ export enum IMarkAreaLabelPosition {
   right = 'right',
   top = 'top',
   bottom = 'bottom',
+  topLeft = 'topLeft',
+  topRight = 'topRight',
+  bottomLeft = 'bottomLeft',
+  bottomRight = 'bottomRight',
+
   middle = 'middle',
+
   insideLeft = 'insideLeft',
   insideRight = 'insideRight',
   insideTop = 'insideTop',
-  insideBottom = 'insideBottom'
+  insideBottom = 'insideBottom',
+  insideTopLeft = 'insideTopLeft',
+  insideTopRight = 'insideTopRight',
+  insideBottomLeft = 'insideBottomLeft',
+  insideBottomRight = 'insideBottomRight'
 }
 
 export enum IMarkCommonArcLabelPosition {

@@ -2,6 +2,162 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.7",
+      "tag": "@visactor/vrender-core_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.6",
+      "tag": "@visactor/vrender-core_v0.21.6",
+      "date": "Tue, 24 Dec 2024 12:46:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with stroke clip"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.5",
+      "tag": "@visactor/vrender-core_v0.21.5",
+      "date": "Tue, 24 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with image background stroke, closed #1640"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.4",
+      "tag": "@visactor/vrender-core_v0.21.4",
+      "date": "Mon, 23 Dec 2024 10:16:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.3",
+      "tag": "@visactor/vrender-core_v0.21.3",
+      "date": "Mon, 23 Dec 2024 08:28:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support loadFont"
+          },
+          {
+            "comment": "feat: support penetrateEventList"
+          },
+          {
+            "comment": "fix: fix issue with image stroke and background"
+          },
+          {
+            "comment": "fix: fix issue with html when include interactive layer"
+          },
+          {
+            "comment": "fix: fix issue with richtext not support setShadowBlendStyle"
+          },
+          {
+            "comment": "fix: optimize the performance of ticks in time-scale\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.2",
+      "tag": "@visactor/vrender-core_v0.21.2",
+      "date": "Thu, 12 Dec 2024 10:23:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with shadow-root transform"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.1",
+      "tag": "@visactor/vrender-core_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with insertAfter and insertBefore"
+          },
+          {
+            "comment": "fix: fix the issue when line is configured to connect, closed #3238"
+          },
+          {
+            "comment": "fix: fix issue with richtext setAttribute, closed #1578"
+          },
+          {
+            "comment": "fix: fix issue with richtext default font"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.0",
+      "tag": "@visactor/vrender-core_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: use ascend and decent to make measure more accurate"
+          },
+          {
+            "comment": "feat: sync animated attribute while call render func, closed #1416"
+          },
+          {
+            "comment": "fix: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently"
+          },
+          {
+            "comment": "fix: fix issue with dirtyBounds incorrectly while set visible"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-core_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with _debug_bounds"
+          },
+          {
+            "comment": "fix: fix issue with string linear-gradient"
+          },
+          {
+            "comment": "fix: fix issue where not work when lineWidth is set to 0"
+          },
+          {
+            "comment": "fix: fix drawing issue when size is array"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.15",
+      "tag": "@visactor/vrender-core_v0.20.15",
+      "date": "Fri, 15 Nov 2024 08:34:34 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support keepStrokeScale"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.20.14",
       "tag": "@visactor/vrender-core_v0.20.14",
       "date": "Wed, 13 Nov 2024 07:47:16 GMT",

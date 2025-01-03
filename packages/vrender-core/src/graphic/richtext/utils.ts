@@ -1,5 +1,8 @@
+import type { IBoundsLike } from '@visactor/vutils';
 import { application } from '../../application';
+import { createColor } from '../../common/canvas-utils';
 import type { IContext2d, ITextStyleParams, IRichTextParagraphCharacter } from '../../interface';
+import { DEFAULT_TEXT_FONT_FAMILY } from '../../constants';
 
 export const DIRECTION_KEY = {
   horizontal: {
@@ -24,7 +27,7 @@ export const DIRECTION_KEY = {
 
 const defaultFormatting = {
   fontSize: 16,
-  fontFamily: 'sans-serif',
+  fontFamily: DEFAULT_TEXT_FONT_FAMILY,
   fill: true,
   stroke: false,
   fontWeight: 'normal',
@@ -55,12 +58,12 @@ const setTextStyle = (ctx: IContext2d, character: IRichTextParagraphCharacter) =
     fontStyle: character.fontStyle || '',
     fontWeight: character.fontWeight || '',
     fontSize,
-    fontFamily: character.fontFamily || 'sans-serif'
+    fontFamily: character.fontFamily
   } as ITextStyleParams);
 };
 
 // Applies the style of a run to the canvas context
-export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter) {
+export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCharacter, b?: IBoundsLike) {
   const fillStyle = (character && (character.fill as string)) || defaultFormatting.fill;
   if (!fillStyle) {
     ctx.globalAlpha = 0;
@@ -70,7 +73,7 @@ export function applyFillStyle(ctx: IContext2d, character: IRichTextParagraphCha
   const { fillOpacity = 1, opacity = 1 } = character;
 
   ctx.globalAlpha = fillOpacity * opacity;
-  ctx.fillStyle = fillStyle as string;
+  ctx.fillStyle = b ? createColor(ctx, fillStyle, { AABBBounds: b }) : (fillStyle as string);
 
   setTextStyle(ctx, character);
 }

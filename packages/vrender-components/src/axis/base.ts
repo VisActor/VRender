@@ -340,7 +340,7 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AbstractCom
         });
         text.states = labelState;
       }
-
+      text.data = { ...item, index, layer };
       labelGroup.add(text);
     });
 

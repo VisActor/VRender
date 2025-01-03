@@ -10,6 +10,7 @@ import { scale, length } from '../util';
 import type { BreakSymbol } from './type';
 import { DEFAULT_AXIS_BREAK_SYMBOL_STYLE } from './config';
 import type { Point } from '../core/type';
+import { isAngleHorizontal } from './overlap/util';
 
 // 和 vutils 版本不同
 export const clampRadian = (angle: number = 0) => {
@@ -152,14 +153,46 @@ export function getPolygonPath(points: Point[], closed: boolean) {
 }
 
 export function textIntersect(textA: IText, textB: IText, sep: number) {
-  let a: IBounds = textA.OBBBounds;
-  let b: IBounds = textB.OBBBounds;
-  if (a && b && !a.empty() && !b.empty()) {
-    return a.intersects(b);
+  let a: IBounds;
+  let b: IBounds;
+  // 注意：默认旋转角度一样
+  const angle = textA.attribute?.angle;
+  const isHorizontal = isAngleHorizontal(angle, Number.EPSILON);
+  const isAABBIntersects = (textA: IText, textB: IText, sep: number) => {
+    a = textA.AABBBounds;
+    b = textB.AABBBounds;
+    return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+  };
+
+  // 水平文字可以直接用 AABB 包围盒计算
+  if (isHorizontal) {
+    return isAABBIntersects(textA, textB, sep);
   }
-  a = textA.AABBBounds;
-  b = textB.AABBBounds;
-  return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
+
+  a = textA.OBBBounds;
+  b = textB.OBBBounds;
+
+  // 没有 OBB bounds 则用 AABB 包围盒计算
+  if (!a || !b || a.empty() || b.empty()) {
+    return isAABBIntersects(textA, textB, sep);
+  }
+
+  // 非水平文字且有 OBB 包围盒
+  // TODO: 待支持有旋转角度下的 sep 计算逻辑
+  return a.intersects(b);
+  //   const expandedTextA = textA.clone();
+  //   const boundsPaddingA = textA.attribute.boundsPadding ?? 0;
+  //   expandedTextA.setAttributes({
+  //     boundsPadding: isNumber(boundsPaddingA) ? boundsPaddingA + sep / 2 : boundsPaddingA.map(v => v + sep / 2)
+  //   });
+  //   const expandTextB = textB.clone();
+  //   const boundsPaddingB = textB.attribute.boundsPadding ?? 0;
+
+  //   expandTextB.setAttributes({
+  //     boundsPadding: isNumber(boundsPaddingB) ? boundsPaddingB + sep / 2 : boundsPaddingB.map(v => v + sep / 2)
+  //   });
+
+  //   return expandedTextA.OBBBounds.intersects(expandTextB.OBBBounds);
 }
 
 export function hasOverlap<T>(items: IText[], pad: number): boolean {

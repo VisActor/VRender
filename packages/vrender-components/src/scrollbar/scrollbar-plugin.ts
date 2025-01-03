@@ -2,7 +2,9 @@ import type { IGraphic, IGroup, IPlugin, IPluginService } from '@visactor/vrende
 import { Generator, injectable } from '@visactor/vrender-core';
 import { ScrollBar } from './scrollbar';
 import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds, abs, max, min } from '@visactor/vutils';
+import { AABBBounds, abs, Bounds } from '@visactor/vutils';
+import { SCROLLBAR_EVENT } from '../constant';
+import type { ScrollBarAttributes } from './type';
 
 // _showPoptip: 0-没有，1-添加，2-删除
 
@@ -19,9 +21,9 @@ export class ScrollBarPlugin implements IPlugin {
   pluginService: IPluginService;
   _uid: number = Generator.GenAutoIncrementId();
   key: string = this.name + this._uid;
-  activeGraphic: IGraphic;
-  childrenBounds: IAABBBounds;
+  scrollContainer?: { g: IGroup; showH: boolean; showV: boolean };
   scrollContainerBounds: IAABBBounds;
+  childrenBounds: IAABBBounds;
 
   static defaultParams: IParams = {
     timeout: 500
@@ -38,221 +40,298 @@ export class ScrollBarPlugin implements IPlugin {
     this.params = ScrollBarPlugin.defaultParams;
   }
   scroll = (e: { deltaX: number; deltaY: number; target: IGraphic }) => {
+    // 计算子元素的bounds
     const graphic = e.target as any;
+    // childrenBounds.set(0, 0, scrollContainer.AABBBounds.width(), scrollContainer.AABBBounds.height());
+
     const data = this.getScrollContainer(graphic);
-    const { g: scrollContainer } = data;
-    let { showH, showV } = data;
-    if (!scrollContainer || scrollContainer.count === 1) {
+
+    if (!data && !this.scrollContainer) {
       return;
     }
-    this.scrollContainerBounds = scrollContainer.AABBBounds.clone();
-    if (abs(e.deltaX) > abs(e.deltaY)) {
-      showH = showH && true;
-      showV = showV && false;
-    } else {
-      showH = showH && false;
-      showV = showV && true;
-    }
-    scrollContainer.setAttributes({
-      scrollX: showH ? (scrollContainer.attribute.scrollX || 0) + e.deltaX : scrollContainer.attribute.scrollX || 0,
-      scrollY: showV ? (scrollContainer.attribute.scrollY || 0) + e.deltaY : scrollContainer.attribute.scrollY || 0
-    });
 
-    // 计算子元素的bounds
-    const childrenBounds = this.childrenBounds;
-    const scrollContainerBounds = this.scrollContainerBounds;
-    childrenBounds.clear();
-    scrollContainer.forEachChildren((c: IGraphic) => {
-      childrenBounds.union(c.AABBBounds);
-    });
-    // 判断是否需要显示H或V，如果bounds完全在内部，那就不需要显示
-    childrenBounds.transformWithMatrix(scrollContainer.transMatrix);
-    if (showH && scrollContainerBounds.x1 <= childrenBounds.x1 && scrollContainerBounds.x2 >= childrenBounds.x2) {
-      showH = false;
-    }
+    if (!data && this.scrollContainer) {
+      if (!this.scrollContainer.g.stage || this.scrollContainer.g.stage !== graphic.stage) {
+        return;
+      }
+      const newScrollContainer = this.formatScrollContainer(this.scrollContainer.g);
 
-    if (showV && scrollContainerBounds.y1 <= childrenBounds.y1 && scrollContainerBounds.y2 >= childrenBounds.y2) {
-      showV = false;
+      if (!newScrollContainer) {
+        this.clearScrollbar(this.scrollContainer.g, 'all');
+        // 删除老的scrollbar
+        return;
+      }
+      if (this.scrollContainer.showH && !newScrollContainer.showH) {
+        this.clearScrollbar(this.scrollContainer.g, 'horizontal');
+      }
+
+      if (this.scrollContainer.showV && !newScrollContainer.showV) {
+        this.clearScrollbar(this.scrollContainer.g, 'vertical');
+      }
+
+      this.scrollContainer = newScrollContainer;
+    } else if (data && this.scrollContainer && data.g !== this.scrollContainer.g) {
+      this.clearScrollbar(this.scrollContainer.g, 'all');
     }
 
-    // 转到当前坐标系下
-    const m = scrollContainer.transMatrix;
-    scrollContainerBounds.translate(-m.e, -m.f);
-    childrenBounds.translate(-m.e, -m.f);
-    // 如果子元素的bounds小于scrollContainer，那么就扩充
+    this.scrollContainer = data ?? this.scrollContainer;
+    if (!data) {
+      return;
+    }
+    const scrollContainer = data.g;
+    if (!scrollContainer) {
+      return;
+    }
+    const { width, height, scrollX = 0, scrollY = 0 } = scrollContainer.attribute;
+    let newScrollX = scrollX;
+    let newScrollY = scrollY;
+    let { showH, showV } = data;
+    this.scrollContainerBounds = new Bounds().set(
+      0,
+      0,
+      scrollContainer.attribute.width,
+      scrollContainer.attribute.height
+    );
+    if (showH && showH) {
+      if (abs(e.deltaX) > abs(e.deltaY)) {
+        showH = showH && true;
+        showV = showV && false;
+      } else {
+        showH = showH && false;
+        showV = showV && true;
+      }
+    }
+
+    const scrollWidth = this.childrenBounds.width();
+    const scrollHeight = this.childrenBounds.height();
+
     if (showH) {
-      childrenBounds.x1 = min(childrenBounds.x1, scrollContainerBounds.x1);
-      childrenBounds.x2 = max(childrenBounds.x2, scrollContainerBounds.x2);
+      newScrollX = scrollX - (e.deltaX ?? 0);
+      if (newScrollX > 0) {
+        newScrollX = 0;
+      } else if (newScrollX < width - scrollWidth) {
+        newScrollX = width - scrollWidth;
+      }
     }
-    if (showV) {
-      childrenBounds.y1 = min(childrenBounds.y1, scrollContainerBounds.y1);
-      childrenBounds.y2 = max(childrenBounds.y2, scrollContainerBounds.y2);
-    }
-    childrenBounds.translate(scrollContainer.attribute.scrollX, scrollContainer.attribute.scrollY);
 
-    const shadowRoot = scrollContainer.shadowRoot ?? scrollContainer.attachShadow();
-    const container = shadowRoot.createOrUpdateChild('scroll-bar', {}, 'group') as IGroup;
-    const { h, v, deltaH, deltaV } = this.addOrUpdateScroll(showH, showV, container, scrollContainer);
+    if (showV) {
+      newScrollY = scrollY - (e.deltaY ?? 0);
+      if (newScrollY > 0) {
+        newScrollY = 0;
+      } else if (newScrollY < height - scrollHeight) {
+        newScrollY = height - scrollHeight;
+      }
+    }
+
     scrollContainer.setAttributes({
-      scrollX: h ? scrollContainer.attribute.scrollX || 0 : (scrollContainer.attribute.scrollX || 0) + deltaH,
-      scrollY: v ? scrollContainer.attribute.scrollY || 0 : (scrollContainer.attribute.scrollY || 0) + deltaV
+      scrollX: newScrollX,
+      scrollY: newScrollY
     });
+    this.addOrUpdateScroll(showH, showV, scrollContainer.parent, scrollContainer);
   };
-  addOrUpdateScroll(
-    showH: boolean,
-    showV: boolean,
-    container: IGroup,
-    scrollContainer: IGroup
-  ): { h: boolean; deltaH: number; v: boolean; deltaV: number } {
-    const scrollbars = container.children;
-    let h = false;
-    let v = false;
-    let deltaH = 0;
-    let deltaV = 0;
+
+  handleScrollBarChange = (params: any) => {
+    if (
+      !this.scrollContainer ||
+      !this.scrollContainerBounds ||
+      !this.childrenBounds ||
+      !params ||
+      !params.target ||
+      !params.detail ||
+      !params.detail.value
+    ) {
+      return;
+    }
+    const scrollbar = params.target;
+    const newRange = params.detail.value;
+
+    if (scrollbar.attribute.direction === 'horizontal') {
+      const scrollWidth = this.childrenBounds.width();
+
+      this.scrollContainer.g.setAttributes({ scrollX: -newRange[0] * scrollWidth });
+    } else {
+      const scrollHeight = this.childrenBounds.height();
+
+      this.scrollContainer.g.setAttributes({ scrollY: -newRange[0] * scrollHeight });
+    }
+  };
+
+  initEventOfScrollbar(scrollContainer: IGroup, scrollbar: IGroup, isHorozntal?: boolean) {
+    scrollContainer.addEventListener('pointerover', () => {
+      scrollbar.setAttribute('visibleAll', true);
+    });
+    scrollContainer.addEventListener('pointermove', () => {
+      scrollbar.setAttribute('visibleAll', true);
+    });
+    scrollContainer.addEventListener('pointerout', () => {
+      scrollbar.setAttribute('visibleAll', false);
+    });
+    scrollbar.addEventListener('pointerover', () => {
+      scrollbar.setAttribute('visibleAll', true);
+    });
+    scrollbar.addEventListener('pointerout', () => {
+      scrollbar.setAttribute('visibleAll', true);
+    });
+
+    scrollbar.addEventListener('scrollUp', this.handleScrollBarChange);
+    scrollbar.addEventListener(SCROLLBAR_EVENT, this.handleScrollBarChange);
+  }
+
+  addOrUpdateScroll(showH: boolean, showV: boolean, container: IGroup, scrollContainer: IGroup) {
     if (showH) {
-      const hScrollbar = scrollbars.filter((g: ScrollBar) => g.attribute.direction !== 'vertical')[0] as ScrollBar;
-      const d = this.addOrUpdateHScroll(this.scrollContainerBounds, container, hScrollbar);
-      h = d.valid;
-      deltaH = d.delta;
-      this.disappearScrollBar(hScrollbar, v);
+      const { scrollBar: hScrollbar, isUpdate } = this.addOrUpdateHScroll(scrollContainer, container, true);
+
+      if (!isUpdate) {
+        this.initEventOfScrollbar(scrollContainer, hScrollbar, true);
+      }
+    } else {
+      this.clearScrollbar(scrollContainer, 'horizontal');
     }
     if (showV) {
-      const vScrollbar = scrollbars.filter((g: ScrollBar) => g.attribute.direction === 'vertical')[0] as ScrollBar;
-      const d = this.addOrUpdateVScroll(this.scrollContainerBounds, container, vScrollbar);
-      v = d.valid;
-      deltaV = d.delta;
-      this.disappearScrollBar(vScrollbar, v);
+      const { scrollBar: vScrollbar, isUpdate } = this.addOrUpdateHScroll(scrollContainer, container, false);
+
+      if (!isUpdate) {
+        this.initEventOfScrollbar(scrollContainer, vScrollbar, false);
+      }
+    } else {
+      this.clearScrollbar(scrollContainer, 'vertical');
     }
-    return {
-      h,
-      deltaH,
-      v,
-      deltaV
-    };
   }
-  addOrUpdateHScroll(
-    scrollContainerB: IAABBBounds,
-    container: IGroup,
-    scrollBar?: ScrollBar
-  ): { valid: boolean; delta: number } {
-    if (!scrollBar) {
-      scrollBar = new ScrollBar({
-        direction: 'horizontal',
-        x: 0,
-        y: 0,
-        width: scrollContainerB.width(),
-        height: 12,
-        padding: [2, 0],
-        railStyle: {
-          fill: 'rgba(0, 0, 0, .1)'
-        },
-        range: [0, 0.05]
-      });
-      container.add(scrollBar);
-    }
-    const b = scrollBar.AABBBounds;
-    const childrenBounds = this.childrenBounds;
-    const y = scrollContainerB.y2 - b.height();
 
-    const ratio = Math.min(b.width() / this.childrenBounds.width(), 1);
-    let start =
-      ((scrollContainerB.x1 - childrenBounds.x1) / (childrenBounds.width() - scrollContainerB.width())) * (1 - ratio);
+  getDirection(isHorozntal?: boolean) {
+    return isHorozntal ? 'horizontal' : 'vertical';
+  }
 
-    let valid = true;
-    let delta = 0;
-    if (start < 0) {
-      start = 0;
-      valid = false;
-      delta = scrollContainerB.x1 - childrenBounds.x1;
-    } else if (start + ratio > 1) {
-      start = 1 - ratio;
-      valid = false;
-      delta = scrollContainerB.x1 - childrenBounds.x1 - (childrenBounds.width() - scrollContainerB.width());
-    }
-    scrollBar.setAttributes({
-      y,
+  addOrUpdateHScroll(scrollContainer: IGroup, container: IGroup, isHorozntal?: boolean) {
+    const direction = this.getDirection(isHorozntal);
+    const name = `${scrollContainer.name ?? scrollContainer._uid}_${this.getDirection(isHorozntal)}_${this.name}`;
+    const scrollbars = container.children.filter((g: ScrollBar) => g.name === name);
+    let isUpdate = true;
+    let scrollBar = scrollbars[0] as ScrollBar;
+
+    const { y = 0, dy = 0, x = 0, dx = 0, height, width, zIndex = 0 } = this.scrollContainer.g.attribute;
+    const attrs: Partial<ScrollBarAttributes> = {
+      x: 0,
+      y: 0,
+      direction,
+      zIndex: zIndex + 1,
       visibleAll: true,
-      range: [start, start + ratio]
-    });
-    return {
-      valid,
-      delta
+      padding: [2, 0],
+      railStyle: {
+        fill: 'rgba(0, 0, 0, .1)'
+      },
+      range: [0, 0.05]
     };
-  }
 
-  addOrUpdateVScroll(
-    scrollContainerB: IAABBBounds,
-    container: IGroup,
-    scrollBar?: ScrollBar
-  ): { valid: boolean; delta: number } {
+    if (isHorozntal) {
+      attrs.width = this.scrollContainerBounds.width();
+      attrs.height = 12;
+    } else {
+      attrs.height = this.scrollContainerBounds.height();
+      attrs.width = 12;
+    }
+
     if (!scrollBar) {
-      scrollBar = new ScrollBar({
-        direction: 'vertical',
-        x: 0,
-        y: 0,
-        width: 12,
-        height: scrollContainerB.height(),
-        padding: [2, 0],
-        railStyle: {
-          fill: 'rgba(0, 0, 0, .1)'
-        },
-        range: [0, 0.05]
-      });
-      container.add(scrollBar);
-    }
-    const b = scrollBar.AABBBounds;
-    const x = scrollContainerB.x2 - b.width();
-    const childrenBounds = this.childrenBounds;
-    const ratio = Math.min(b.height() / childrenBounds.height(), 1);
-    let start =
-      ((scrollContainerB.y1 - childrenBounds.y1) / (childrenBounds.height() - scrollContainerB.height())) * (1 - ratio);
+      isUpdate = false;
 
-    let valid = true;
-    let delta = 0;
-    if (start < 0) {
-      start = 0;
-      valid = false;
-      delta = scrollContainerB.y1 - childrenBounds.y1;
-    } else if (start + ratio > 1) {
-      start = 1 - ratio;
-      valid = false;
-      delta = scrollContainerB.y1 - childrenBounds.y1 - (childrenBounds.height() - scrollContainerB.height());
+      scrollBar = new ScrollBar(attrs as ScrollBarAttributes);
+      scrollBar.name = name;
+      container.add(scrollBar);
+      (scrollBar as any).isScrollBar = true;
+    } else if (scrollbars.length > 1) {
+      scrollbars.forEach((child: IGraphic, index: number) => {
+        if (index) {
+          child.parent?.removeChild(child);
+        }
+      });
     }
-    scrollBar.setAttributes({
-      x,
-      visibleAll: true,
-      range: [start, start + ratio]
-    });
+    const childrenBounds = this.childrenBounds;
+
+    const { scrollX, scrollY } = scrollContainer.attribute;
+    if (isHorozntal) {
+      const ratio = Math.min(this.scrollContainerBounds.width() / childrenBounds.width(), 1);
+      const start = Math.max(Math.min(scrollX / this.childrenBounds.width(), 0), ratio - 1);
+      attrs.x = x + dx;
+      attrs.y = y + dy + height - (attrs.height ?? 0);
+      attrs.range = [-start, -start + ratio];
+    } else {
+      const ratio = Math.min(this.scrollContainerBounds.height() / childrenBounds.height(), 1);
+      const start = Math.max(Math.min(scrollY / this.childrenBounds.height(), 0), ratio - 1);
+      attrs.x = x + dx + width - this.scrollContainerBounds.width();
+      attrs.y = y + dy;
+      attrs.range = [-start, -start + ratio];
+    }
+
+    scrollBar.setAttributes(attrs);
     return {
-      valid,
-      delta
+      scrollBar,
+      isUpdate
     };
   }
 
-  disappearScrollBar(scrollBar: ScrollBar, valid: boolean) {
-    if ((scrollBar as any)._plugin_timeout) {
-      clearTimeout((scrollBar as any)._plugin_timeout);
+  clearScrollbar(scrollContainer: IGroup, type: 'horizontal' | 'vertical' | 'all') {
+    if (!scrollContainer.parent) {
+      return;
     }
-    (scrollBar as any)._plugin_timeout = setTimeout(() => {
-      scrollBar.setAttribute('visibleAll', false);
-    }, this.params.timeout ?? 0);
+    const scrollbarBars = scrollContainer.parent.children.filter((child: IGroup) => {
+      return (child as any).isScrollBar && (type === 'all' || (child.attribute as any).direction === type);
+    });
+
+    scrollbarBars.forEach((child: IGraphic) => {
+      child.parent.removeChild(child);
+    });
+  }
+
+  formatScrollContainer(g: IGraphic) {
+    if (!g || g.type !== 'group' || !g.attribute) {
+      return null;
+    }
+
+    const { overflow, width, height } = (g as IGroup).attribute;
+
+    if (!overflow || overflow === 'hidden') {
+      return null;
+    }
+
+    let showH = false;
+    let showV = false;
+
+    if (overflow === 'scroll') {
+      showH = true;
+      showV = true;
+    } else {
+      showH = overflow === 'scroll-x';
+      showV = !showH;
+    }
+
+    const childrenBounds = this.childrenBounds;
+
+    childrenBounds.clear();
+    g.forEachChildren((g: IGraphic) => {
+      childrenBounds.union(g.AABBBounds);
+    });
+
+    if (!g.AABBBounds.empty()) {
+      if (showH) {
+        showH = width < childrenBounds.width();
+      }
+
+      if (showV) {
+        showV = height < childrenBounds.height();
+      }
+    }
+
+    return showH || showV ? { g: g as IGroup, showH, showV } : null;
   }
 
   // 获取响应滚动的元素
   getScrollContainer(graphic: IGraphic): { g: IGroup; showH: boolean; showV: boolean } | null {
     let g = graphic;
     while (g) {
-      if (g.attribute.overflow && g.attribute.overflow !== 'hidden') {
-        const overflow = g.attribute.overflow;
-        let showH = false;
-        let showV = false;
-        if (overflow === 'scroll') {
-          (showH = true), (showV = true);
-        } else {
-          showH = overflow === 'scroll-x';
-          showV = !showH;
-        }
-        return { g: g as IGroup, showH, showV };
+      const res = this.formatScrollContainer(g);
+
+      if (res) {
+        return res;
       }
       g = g.parent;
     }

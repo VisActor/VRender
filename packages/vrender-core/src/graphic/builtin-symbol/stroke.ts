@@ -45,12 +45,12 @@ export class StrokeSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: '' = '';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
-    const r = size / 2;
+    const r = this.parseSize(size) / 2;
     return stroke(ctx, r, transX, transY);
   }
 
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
-    const r = size / 2 + offset;
+    const r = this.parseSize(size) / 2 + offset;
     return stroke(ctx, r, transX, transY);
   }
 }

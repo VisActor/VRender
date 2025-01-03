@@ -1,5 +1,5 @@
-import { ContinuousPlayerAttributes } from './continuous-player';
-import { DiscretePlayerAttributes } from './discrete-player';
+import type { ContinuousPlayerAttributes } from './continuous-player';
+import type { DiscretePlayerAttributes } from './discrete-player';
 
 export * from './base';
 export * from './direction';

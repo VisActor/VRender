@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: handle the additional logic of 3d arc label layout",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

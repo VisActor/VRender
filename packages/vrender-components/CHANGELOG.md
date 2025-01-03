@@ -1,6 +1,93 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Dec 2024 07:53:11 GMT and should not be manually modified.
+
+## 0.21.7
+Wed, 25 Dec 2024 07:53:11 GMT
+
+### Updates
+
+- feat: support polygon sector crosshair for non-smooth angle axis
+- feat: add switch component
+- Revert "fix: fix the bug of axis pickable"
+
+This reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.
+
+
+- fix: upgrade vutils to 0.19.3
+
+
+
+## 0.21.6
+Tue, 24 Dec 2024 12:46:37 GMT
+
+### Updates
+
+- fix: add onBeforeAttributeUpdate in base-component
+- fix: fix the bug of axis pickable
+
+
+
+## 0.21.5
+Tue, 24 Dec 2024 07:53:11 GMT
+
+_Version update only_
+
+## 0.21.4
+Mon, 23 Dec 2024 10:16:00 GMT
+
+_Version update only_
+
+## 0.21.3
+Mon, 23 Dec 2024 08:28:14 GMT
+
+### Updates
+
+- feat: optimization legend layout in isHorizontal
+
+
+- fix: axis break should filter ticks when set `tickStep`
+
+
+- fix: obb autoHide should support autoHideSeparation(without rotate)
+- fix: label overlapPadding not work correctly
+- fix: optimize the performance of ticks in time-scale
+
+
+
+## 0.21.2
+Thu, 12 Dec 2024 10:23:51 GMT
+
+### Updates
+
+- feat: support 'inside-middle' position for line-data label
+
+## 0.21.1
+Thu, 05 Dec 2024 07:50:47 GMT
+
+### Updates
+
+- feat: support `restorePosition` in position/bound label overlap strategy
+- feat: support vertex point of marker area label. close @VisActor/VChart#3442
+- fix: end symbol angle when arc line in markpoint. fix @VisActor/VChart#3427
+- fix: fix issue with scroll-plugin
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+### Updates
+
+-  feat: support label overlap for inside arc labels
+
+## 0.20.16
+Thu, 21 Nov 2024 06:58:23 GMT
+
+_Version update only_
+
+## 0.20.15
+Fri, 15 Nov 2024 08:34:34 GMT
+
+_Version update only_
 
 ## 0.20.14
 Wed, 13 Nov 2024 07:47:16 GMT

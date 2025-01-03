@@ -53,14 +53,14 @@ export function itemIntersect(item1: IText, item2: IText) {
 }
 
 const DELTA_ANGLE = Math.sin(Math.PI / 10);
-export function isAngleVertical(angle: number) {
+export function isAngleVertical(angle: number, delta = DELTA_ANGLE) {
   const hasAngle = !isNil(angle) && angle !== 0;
   const cos = hasAngle ? Math.cos(angle) : 1;
-  return hasAngle && Math.abs(cos) <= DELTA_ANGLE;
+  return hasAngle && Math.abs(cos) <= delta;
 }
 
-export function isAngleHorizontal(angle: number) {
+export function isAngleHorizontal(angle: number, delta = DELTA_ANGLE) {
   const hasAngle = !isNil(angle) && angle !== 0;
   const sin = hasAngle ? Math.sin(angle) : 0;
-  return !hasAngle || Math.abs(sin) <= DELTA_ANGLE;
+  return !hasAngle || Math.abs(sin) <= delta;
 }

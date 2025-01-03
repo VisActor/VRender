@@ -48,12 +48,12 @@ export class Arrow2RightSymbol extends BaseSymbol implements ISymbolClass {
   pathStr: string = 'M -0.25 -0.5 l 0.25 0 l -0.25 0.5';
 
   draw(ctx: IContext2d, size: number, transX: number, transY: number) {
-    const r = size / 4;
+    const r = this.parseSize(size) / 4;
     return arrow2Right(ctx, r, transX, transY);
   }
 
   drawOffset(ctx: IContext2d, size: number, transX: number, transY: number, offset: number) {
-    const r = size / 4 + offset;
+    const r = this.parseSize(size) / 4 + offset;
     return arrow2Right(ctx, r, transX, transY);
   }
 }

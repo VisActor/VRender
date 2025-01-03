@@ -325,9 +325,10 @@ export class Gesture extends EventEmitter {
 
   private getEventType(point: IPointLike) {
     const { eventType, startTime, startPoints } = this;
-    if (eventType) {
+    if (eventType === 'press') {
       return eventType;
     }
+
     let type;
     const now = clock.now();
     if (now - startTime > this.config.press.time && calcDistance(startPoints[0], point) < this.config.press.threshold) {
@@ -422,6 +423,9 @@ export class Gesture extends EventEmitter {
   }
 
   private emitEvent(type: string, e: GestureEvent) {
+    if (!this.element) {
+      return;
+    }
     const events = (this.element as unknown as any)._events;
     const listeners = events[WILDCARD];
     if (listeners) {

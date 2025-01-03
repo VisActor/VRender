@@ -414,7 +414,7 @@ export class GradientParser {
     while (angle < 0) {
       angle += pi2;
     }
-    while (angle > pi2) {
+    while (angle >= pi2) {
       angle -= pi2;
     }
     let x0 = 0;
@@ -425,7 +425,7 @@ export class GradientParser {
       x0 = 0;
       y0 = 1;
       x1 = Math.sin(angle);
-      y1 = Math.cos(angle);
+      y1 = y0 - Math.cos(angle);
     } else if (angle < pi) {
       x0 = 0;
       y0 = 0;

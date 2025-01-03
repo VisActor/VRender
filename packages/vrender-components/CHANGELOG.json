@@ -2,6 +2,135 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.7",
+      "tag": "@visactor/vrender-components_v0.21.7",
+      "date": "Wed, 25 Dec 2024 07:53:11 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support polygon sector crosshair for non-smooth angle axis"
+          },
+          {
+            "comment": "feat: add switch component"
+          },
+          {
+            "comment": "Revert \"fix: fix the bug of axis pickable\"\n\nThis reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.\n\n"
+          },
+          {
+            "comment": "fix: upgrade vutils to 0.19.3\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.6",
+      "tag": "@visactor/vrender-components_v0.21.6",
+      "date": "Tue, 24 Dec 2024 12:46:37 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: add onBeforeAttributeUpdate in base-component"
+          },
+          {
+            "comment": "fix: fix the bug of axis pickable\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.5",
+      "tag": "@visactor/vrender-components_v0.21.5",
+      "date": "Tue, 24 Dec 2024 07:53:11 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.4",
+      "tag": "@visactor/vrender-components_v0.21.4",
+      "date": "Mon, 23 Dec 2024 10:16:00 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.21.3",
+      "tag": "@visactor/vrender-components_v0.21.3",
+      "date": "Mon, 23 Dec 2024 08:28:14 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: optimization legend layout in isHorizontal\n\n"
+          },
+          {
+            "comment": "fix: axis break should filter ticks when set `tickStep`\n\n"
+          },
+          {
+            "comment": "fix: obb autoHide should support autoHideSeparation(without rotate)"
+          },
+          {
+            "comment": "fix: label overlapPadding not work correctly"
+          },
+          {
+            "comment": "fix: optimize the performance of ticks in time-scale\n\n"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.2",
+      "tag": "@visactor/vrender-components_v0.21.2",
+      "date": "Thu, 12 Dec 2024 10:23:51 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support 'inside-middle' position for line-data label"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.1",
+      "tag": "@visactor/vrender-components_v0.21.1",
+      "date": "Thu, 05 Dec 2024 07:50:47 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support `restorePosition` in position/bound label overlap strategy"
+          },
+          {
+            "comment": "feat: support vertex point of marker area label. close @VisActor/VChart#3442"
+          },
+          {
+            "comment": "fix: end symbol angle when arc line in markpoint. fix @VisActor/VChart#3427"
+          },
+          {
+            "comment": "fix: fix issue with scroll-plugin"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.21.0",
+      "tag": "@visactor/vrender-components_v0.21.0",
+      "date": "Thu, 28 Nov 2024 03:30:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": " feat: support label overlap for inside arc labels"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.20.16",
+      "tag": "@visactor/vrender-components_v0.20.16",
+      "date": "Thu, 21 Nov 2024 06:58:23 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.20.15",
+      "tag": "@visactor/vrender-components_v0.20.15",
+      "date": "Fri, 15 Nov 2024 08:34:34 GMT",
+      "comments": {}
+    },
+    {
       "version": "0.20.14",
       "tag": "@visactor/vrender-components_v0.20.14",
       "date": "Wed, 13 Nov 2024 07:47:16 GMT",

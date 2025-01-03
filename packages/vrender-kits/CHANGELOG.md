@@ -1,6 +1,66 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Wed, 13 Nov 2024 07:47:16 GMT and should not be manually modified.
+This log was last generated on Wed, 25 Dec 2024 07:53:11 GMT and should not be manually modified.
+
+## 0.21.7
+Wed, 25 Dec 2024 07:53:11 GMT
+
+### Updates
+
+- fix: upgrade vutils to 0.19.3
+
+
+
+## 0.21.6
+Tue, 24 Dec 2024 12:46:37 GMT
+
+_Version update only_
+
+## 0.21.5
+Tue, 24 Dec 2024 07:53:11 GMT
+
+_Version update only_
+
+## 0.21.4
+Mon, 23 Dec 2024 10:16:00 GMT
+
+### Updates
+
+- fix: fix issue with gesture emitEvent when gesture is released
+
+## 0.21.3
+Mon, 23 Dec 2024 08:28:14 GMT
+
+### Updates
+
+- feat: support loadFont
+
+## 0.21.2
+Thu, 12 Dec 2024 10:23:51 GMT
+
+_Version update only_
+
+## 0.21.1
+Thu, 05 Dec 2024 07:50:47 GMT
+
+_Version update only_
+
+## 0.21.0
+Thu, 28 Nov 2024 03:30:36 GMT
+
+_Version update only_
+
+## 0.20.16
+Thu, 21 Nov 2024 06:58:23 GMT
+
+_Version update only_
+
+## 0.20.15
+Fri, 15 Nov 2024 08:34:34 GMT
+
+### Updates
+
+- fix: fix press in andiord
 
 ## 0.20.14
 Wed, 13 Nov 2024 07:47:16 GMT

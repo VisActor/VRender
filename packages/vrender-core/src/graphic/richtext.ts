@@ -41,6 +41,13 @@ const RICHTEXT_UPDATE_TAG_KEY = [
   'fill',
   'stroke',
   'fontSize',
+  'fontFamily',
+  'fontStyle',
+  'fontWeight',
+  'lineWidth',
+  'opacity',
+  'fillOpacity',
+  'strokeOpacity',
   ...GRAPHIC_UPDATE_TAG_KEY
 ];
 

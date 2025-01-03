@@ -57,7 +57,8 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
       scaleX = rectAttribute.scaleX,
       scaleY = rectAttribute.scaleY,
       x1,
-      y1
+      y1,
+      keepStrokeScale = rectAttribute.keepStrokeScale
     } = rect.attribute;
 
     let { width, height } = rect.attribute;
@@ -70,7 +71,7 @@ export class DefaultRectRenderContribution implements IRectRenderContribution {
 
       const sign = key === 'outerBorder' ? -1 : 1;
       const { distance = rectAttribute[key].distance } = borderStyle;
-      const d = getScaledStroke(context, distance as number, context.dpr);
+      const d = keepStrokeScale ? (distance as number) : getScaledStroke(context, distance as number, context.dpr);
       const nextX = x + sign * d;
       const nextY = y + sign * d;
       const dw = d * 2;

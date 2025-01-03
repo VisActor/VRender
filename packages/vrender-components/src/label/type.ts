@@ -104,11 +104,22 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
 
   /** 动画配置 */
   animation?: ILabelAnimation | boolean;
+  /**
+   * 新增标签动画
+   */
   animationEnter?: ILabelUpdateAnimation | boolean;
+  /**
+   * 标签更新动画
+   */
   animationUpdate?: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[] | boolean;
+  /**
+   * 标签被删除的动画配置
+   */
   animationExit?: ILabelExitAnimation | boolean;
 
-  // 排序 or 删减
+  /**
+   * 数据过滤自定义函数，可以用于 排序 or 删减
+   */
   dataFilter?: (data: LabelItem[]) => LabelItem[];
 
   /** 自定义布局函数
@@ -288,6 +299,13 @@ export type PositionStrategy = {
    */
   type: 'position';
   position?: Functional<LabelPosition[]>;
+  /**
+   * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
+   * 默认为 true，若为 false，则标签会被放在 position 数组的最后一个位置。
+   * @since 0.20.18
+   * @default true
+   */
+  restorePosition?: boolean;
 };
 
 export type BoundStrategy = {
@@ -297,6 +315,13 @@ export type BoundStrategy = {
    */
   type: 'bound';
   position?: Functional<LabelPosition[]>;
+  /**
+   * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
+   * 默认为 true，若为 false，则标签会被放在 position 数组的最后一个位置。
+   * @since 0.20.18
+   * @default true
+   */
+  restorePosition?: boolean;
 };
 
 export type MoveYStrategy = {
@@ -370,8 +395,9 @@ export interface LineDataLabelAttrs extends BaseLabelAttrs {
   /**
    * 标签位置
    * @default 'top'
+   * @since 0.21.1 支持 'inside-middle' 在面积图元中显示在中间位置
    */
-  position?: Functional<BoundsAnchorType>;
+  position?: Functional<BoundsAnchorType | 'inside-middle'>;
 }
 
 export interface PolygonLabelAttrs extends BaseLabelAttrs {

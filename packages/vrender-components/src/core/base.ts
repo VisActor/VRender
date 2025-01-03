@@ -1,7 +1,7 @@
 /**
  * @description 组件基类
  */
-import type { IGroupGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroupGraphicAttribute, ISetAttributeContext } from '@visactor/vrender-core';
 import { Group, CustomEvent } from '@visactor/vrender-core';
 import type { Dict } from '@visactor/vutils';
 import { merge, isFunction, isPlainObject, isNil } from '@visactor/vutils';
@@ -65,7 +65,13 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
    * @param value
    * @param forceUpdateTag
    */
-  setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined): void {
+  setAttribute(key: string, value: any, forceUpdateTag?: boolean | undefined, context?: ISetAttributeContext): void {
+    const params =
+      this.onBeforeAttributeUpdate && this.onBeforeAttributeUpdate({ [key]: value }, this.attribute, key, context);
+    if (params) {
+      return this._setAttributes(params as Partial<T>, forceUpdateTag);
+    }
+
     // overwrite when previous or next attribute is function
     if (
       isPlainObject(this.attribute[key]) &&
@@ -93,8 +99,16 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     this.onAttributeUpdate();
   }
 
+  setAttributes(params: Partial<T>, forceUpdateTag?: boolean | undefined, context?: ISetAttributeContext): void {
+    params =
+      (this.onBeforeAttributeUpdate &&
+        (this.onBeforeAttributeUpdate(params, this.attribute, null, context) as Partial<T>)) ||
+      params;
+    return this._setAttributes(params, forceUpdateTag);
+  }
+
   // @ts-ignore
-  setAttributes(params: Partial<T>, forceUpdateTag?: boolean | undefined): void {
+  _setAttributes(params: Partial<T>, forceUpdateTag?: boolean | undefined): void {
     const keys = Object.keys(params) as (keyof T)[];
     this._mergeAttributes(params, keys);
 

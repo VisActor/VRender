@@ -9,7 +9,8 @@ import type {
   CreateDOMParamsType,
   CommonDomOptions,
   SimpleDomStyleOptions,
-  IText
+  IText,
+  ILayer
 } from '../../interface';
 import { application } from '../../application';
 import { getTheme } from '../../graphic/theme';
@@ -43,7 +44,8 @@ export class HtmlAttributePlugin implements IPlugin {
         return;
       }
 
-      this.drawHTML(context.stage.renderService);
+      // 全量查找，因为可能会有只渲染交互层的情况
+      this.drawHTML([...(context.stage.getChildren() as any)]);
     });
   }
   deactivate(context: IPluginService): void {
@@ -116,6 +118,17 @@ export class HtmlAttributePlugin implements IPlugin {
     };
   }
 
+  onWheel = (ev: Event) => {
+    try {
+      const newEvent = new (ev as any).constructor(ev.type, ev);
+      const canvas = this.pluginService.stage.window.getContext().getCanvas().nativeCanvas;
+      canvas.dispatchEvent(newEvent);
+    } catch (err) {
+      return;
+      // console.log(err);
+    }
+  };
+
   updateStyleOfWrapContainer(
     graphic: IGraphic,
     stage: IStage,
@@ -123,12 +136,23 @@ export class HtmlAttributePlugin implements IPlugin {
     nativeContainer: HTMLElement,
     options: SimpleDomStyleOptions & CommonDomOptions
   ) {
-    const { pointerEvents } = options;
+    const { pointerEvents, penetrateEventList = [] } = options;
     let calculateStyle = this.parseDefaultStyleFromGraphic(graphic);
 
     calculateStyle.display = graphic.attribute.visible !== false ? 'block' : 'none';
     // 事件穿透
     calculateStyle.pointerEvents = pointerEvents === true ? 'all' : pointerEvents ? pointerEvents : 'none';
+    if (calculateStyle.pointerEvents !== 'none') {
+      // 删除所有的事件
+      this.removeWrapContainerEventListener(wrapContainer);
+      // 监听所有的事件
+      penetrateEventList.forEach(event => {
+        if (event === 'wheel') {
+          wrapContainer.addEventListener('wheel', this.onWheel);
+        }
+      });
+    }
+
     // 定位wrapGroup
     if (!wrapContainer.style.position) {
       wrapContainer.style.position = 'absolute';
@@ -196,7 +220,7 @@ export class HtmlAttributePlugin implements IPlugin {
     // 更新样式
     application.global.updateDom(wrapContainer, {
       width: options.width,
-      height: options.width,
+      height: options.height,
       style: calculateStyle
     });
   }
@@ -213,9 +237,9 @@ export class HtmlAttributePlugin implements IPlugin {
     this.renderId += 1;
   }
 
-  protected drawHTML(renderService: IRenderService) {
+  protected drawHTML(layers: ILayer[]) {
     if (application.global.env === 'browser') {
-      renderService.renderTreeRoots
+      layers
         .sort((a, b) => {
           return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
         })
@@ -244,10 +268,15 @@ export class HtmlAttributePlugin implements IPlugin {
     }
 
     const { wrapContainer } = this.htmlMap[id];
-
-    wrapContainer && application.global.removeDom(wrapContainer);
+    if (wrapContainer) {
+      application.global.removeDom(wrapContainer);
+    }
 
     this.htmlMap[id] = null;
+  }
+
+  removeWrapContainerEventListener(wrapContainer: HTMLElement) {
+    wrapContainer.removeEventListener('wheel', this.onWheel);
   }
 
   renderGraphicHTML(graphic: IGraphic) {

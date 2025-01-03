@@ -84,16 +84,21 @@ export function placeToCandidates(
   text: Text,
   candidates: PointLocationCfg[] = [],
   clampForce = true,
-  pad = 0
+  pad = 0,
+  changePosition = false
 ): PointLocationCfg | false {
   const validCandidates = candidates.filter(candidate => isValid(candidate));
   for (let i = 0; i < validCandidates.length; i++) {
-    const tempText = text.clone();
-    tempText.setAttributes(validCandidates[i]);
-    tempText.update();
+    let measureText;
+    if (changePosition) {
+      measureText = text;
+    } else {
+      measureText = text.clone();
+    }
+    measureText.setAttributes(validCandidates[i]);
 
-    if (canPlace($, bitmap, tempText.AABBBounds, clampForce, pad)) {
-      bitmap.setRange(boundToRange($, tempText.AABBBounds, true));
+    if (canPlace($, bitmap, measureText.AABBBounds, clampForce, pad)) {
+      bitmap.setRange(boundToRange($, measureText.AABBBounds, true));
       return validCandidates[i];
     }
   }
@@ -113,11 +118,11 @@ export function place<T extends BaseLabelAttrs>(
   const overlapPadding = (attrs.overlap as OverlapAttrs)?.overlapPadding;
   if (s.type === 'bound' || s.type === 'position') {
     if (isFunction(labeling)) {
-      // TODO：这里可以 filter 掉初始位置，提升一部分性能
       const userPosition = isFunction(s.position) ? s.position(text.attribute) : s.position;
       const positions = (userPosition || defaultLabelPosition(attrs.type)) as string[];
       const candidates = positions.map(p => labeling(text.AABBBounds, bounds, p, attrs.offset) as PointLocationCfg);
-      return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding);
+      const shouldClone = s.restorePosition === false;
+      return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding, shouldClone);
     }
     return false;
   }
@@ -161,29 +166,42 @@ export function defaultLabelPosition(type?: string) {
   }
 }
 
-export function clampText(text: IText, width: number, height: number) {
+export function clampText(
+  text: IText,
+  width: number,
+  height: number,
+  padding: { top?: number; left?: number; right?: number; bottom?: number } = {}
+) {
   const { x1, x2, y1, y2 } = text.AABBBounds;
+  const { top = 0, left = 0, right = 0, bottom = 0 } = padding;
+
   const minX = Math.min(x1, x2);
   const maxX = Math.max(x1, x2);
 
   const minY = Math.min(y1, y2);
   const maxY = Math.max(y1, y2);
 
+  const minXWithPadding = 0 - left;
+  const maxXWithPadding = width + right;
+
+  const minYWithPadding = 0 - top;
+  const maxYWithPadding = height + bottom;
+
   let dx = 0;
   let dy = 0;
 
   // x 方向
-  if (minX < 0 && maxX - minX <= width) {
+  if (minX < minXWithPadding) {
     dx = -minX;
-  } else if (maxX > width && minX - (maxX - width) >= 0) {
-    dx = width - maxX;
+  } else if (maxX > maxXWithPadding) {
+    dx = maxXWithPadding - maxX;
   }
 
   // y 方向
-  if (minY < 0 && maxY - minY <= height) {
+  if (minY < minYWithPadding) {
     dy = -minY;
-  } else if (maxY > height && minY - (maxY - height) >= 0) {
-    dy = height - maxY;
+  } else if (maxY > maxYWithPadding) {
+    dy = maxYWithPadding - maxY;
   }
 
   return { dx, dy };

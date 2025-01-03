@@ -6,7 +6,7 @@ import type {
   ITextGraphicAttribute
 } from '@visactor/vrender-core';
 import type { BaseGraphicAttributes, Padding } from '../../core/type';
-import type { PagerAttributes } from '../../pager';
+import type { PagerAttributes } from '../../pager/type';
 import type { LegendBaseAttributes } from '../type';
 import type { ScrollBarAttributes } from '../../scrollbar/type';
 import type { GraphicEventType } from '@visactor/vrender-core';
@@ -208,6 +208,11 @@ export type LegendItem = {
    * 'right' 图标在右侧
    */
   align?: 'left' | 'right';
+  /**
+   * @since 0.21.3
+   * 水平方向时，一行中多个图例的垂直对齐方式
+   */
+  verticalAlign?: 'top' | 'middle' | 'bottom';
 };
 
 export type DiscreteLegendAttrs = {

@@ -1,3 +1,174 @@
+# v0.21.7
+
+2024-12-25
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support polygon sector crosshair for non-smooth angle axis
+- **@visactor/vrender-components**: add switch component
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender-utils**: upgrade vutils to 0.19.3
+- **@visactor/react-vrender**: upgrade vutils to 0.19.3
+- **@visactor/vrender-kits**: upgrade vutils to 0.19.3
+- **@visactor/vrender-core**: upgrade vutils to 0.19.3
+- **@visactor/vrender**: upgrade vutils to 0.19.3
+
+**🔖 其他**
+
+- **@visactor/vrender-components**: Revert "fix: fix the bug of axis pickable"
+
+This reverts commit 55637a84c01f7af8f4b64ccdfc8cd7215a257c03.
+
+
+
+[更多详情请查看 v0.21.7](https://github.com/VisActor/VRender/releases/tag/v0.21.7)
+
+# v0.21.6
+
+2024-12-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: add onBeforeAttributeUpdate in base-component
+- **@visactor/vrender-components**: fix the bug of axis pickable
+- **@visactor/vrender-core**: fix issue with stroke clip
+
+
+
+[更多详情请查看 v0.21.6](https://github.com/VisActor/VRender/releases/tag/v0.21.6)
+
+# v0.21.5
+
+2024-12-24
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with image background stroke, closed [#1640](https://github.com/VisActor/VRender/issues/1640)
+
+
+
+[更多详情请查看 v0.21.5](https://github.com/VisActor/VRender/releases/tag/v0.21.5)
+
+# v0.21.4
+
+2024-12-23
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-kits**: fix issue with gesture emitEvent when gesture is released
+
+
+
+[更多详情请查看 v0.21.4](https://github.com/VisActor/VRender/releases/tag/v0.21.4)
+
+# v0.21.3
+
+2024-12-23
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: optimization legend layout in isHorizontal
+- **@visactor/vrender-kits**: support loadFont
+- **@visactor/vrender-core**: support loadFont
+- **@visactor/vrender-core**: support penetrateEventList
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: axis break should filter ticks when set `tickStep`
+- **@visactor/vrender-components**: obb autoHide should support autoHideSeparation(without rotate)
+- **@visactor/vrender-components**: label overlapPadding not work correctly
+- **@visactor/vrender-components**: optimize the performance of ticks in time-scale
+- **@visactor/vrender-core**: fix issue with image stroke and background
+- **@visactor/vrender-core**: fix issue with html when include interactive layer
+- **@visactor/vrender-core**: fix issue with richtext not support setShadowBlendStyle
+- **@visactor/vrender-core**: optimize the performance of ticks in time-scale
+
+[更多详情请查看 v0.21.3](https://github.com/VisActor/VRender/releases/tag/v0.21.3)
+
+# v0.21.1
+
+2024-12-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support `restorePosition` in position/bound label overlap strategy
+- **@visactor/vrender-components**: support vertex point of marker area label. close @VisActor/VChart[#3442](https://github.com/VisActor/VRender/issues/3442)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: end symbol angle when arc line in markpoint. fix @VisActor/VChart[#3427](https://github.com/VisActor/VRender/issues/3427)
+- **@visactor/vrender-components**: fix issue with scroll-plugin
+- **@visactor/vrender-core**: fix issue with insertAfter and insertBefore
+- **@visactor/vrender-core**: fix the issue when line is configured to connect, closed [#3238](https://github.com/VisActor/VRender/issues/3238)
+- **@visactor/vrender-core**: fix issue with richtext setAttribute, closed [#1578](https://github.com/VisActor/VRender/issues/1578)
+- **@visactor/vrender-core**: fix issue with richtext default font
+
+
+
+[更多详情请查看 v0.21.1](https://github.com/VisActor/VRender/releases/tag/v0.21.1)
+
+# v0.21.0
+
+2024-12-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: support label overlap for inside arc labels
+- **@visactor/vrender-core**: use ascend and decent to make measure more accurate
+- **@visactor/vrender-core**: sync animated attribute while call render func, closed [#1416](https://github.com/VisActor/VRender/issues/1416)
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: smooth out stuttering effects when multiple TagPointsUpdate instances execute concurrently
+- **@visactor/vrender-core**: fix issue with dirtyBounds incorrectly while set visible
+
+
+
+[更多详情请查看 v0.21.0](https://github.com/VisActor/VRender/releases/tag/v0.21.0)
+
+# v0.20.16
+
+2024-11-25
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with _debug_bounds
+- **@visactor/vrender-core**: fix issue with string linear-gradient
+- **@visactor/vrender-core**: fix issue where not work when lineWidth is set to 0
+- **@visactor/vrender-core**: fix drawing issue when size is array
+
+
+
+[更多详情请查看 v0.20.16](https://github.com/VisActor/VRender/releases/tag/v0.20.16)
+
+# v0.20.15
+
+2024-11-21
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-core**: support keepStrokeScale
+
+**🐛 功能修复**
+
+- **@visactor/vrender-kits**: fix press in andiord
+
+
+
+[更多详情请查看 v0.20.15](https://github.com/VisActor/VRender/releases/tag/v0.20.15)
+
 # v0.20.14
 
 2024-11-13

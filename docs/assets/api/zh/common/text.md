@@ -36,3 +36,7 @@ Roboto,Helvetica,Arial,sans-serif, apple color emoji,segoe ui emoji,segoe ui sym
 #${prefix} lineThrough(number) = 0
 
 中划线线粗
+
+#${prefix} disableAutoClipedPoptip(boolean) = false
+
+禁用省略hover展示poptip

@@ -10,7 +10,7 @@ function flatten(list: any, out: any[]): void {
 }
 
 export function jsx(type: string | any, config: Record<string, any>, ...children: any) {
-  const { key, name, id, attribute, stateProxy, ...props } = config || {};
+  const { key, name, id, attribute, stateProxy, animation, timeline, ...props } = config || {};
 
   let c = type;
   if (isString(type)) {
@@ -27,6 +27,22 @@ export function jsx(type: string | any, config: Record<string, any>, ...children
 
   if (stateProxy) {
     g.stateProxy = stateProxy;
+  }
+
+  if (name) {
+    g.name = name;
+  }
+
+  if (isArray(animation)) {
+    // animation={[
+    //   ['to', { angle: 2 * Math.PI }, 1000, 'linear'],
+    //   ['loop', Infinity]
+    // ]}
+    const animate = g.animate();
+    timeline && animate.setTimeline(timeline);
+    animation.forEach((item: any[]) => {
+      animate[item[0]](...item.slice(1));
+    });
   }
 
   return g;

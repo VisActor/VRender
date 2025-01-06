@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.8",
+      "tag": "@visactor/vrender-components_v0.21.8",
+      "date": "Mon, 06 Jan 2025 11:07:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: handle the additional logic of 3d arc label layout"
+          },
+          {
+            "comment": "fix: fix layout of title component\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.7",
       "tag": "@visactor/vrender-components_v0.21.7",
       "date": "Wed, 25 Dec 2024 07:53:11 GMT",

@@ -1,6 +1,16 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Wed, 25 Dec 2024 07:53:11 GMT and should not be manually modified.
+This log was last generated on Mon, 06 Jan 2025 11:07:36 GMT and should not be manually modified.
+
+## 0.21.8
+Mon, 06 Jan 2025 11:07:36 GMT
+
+### Updates
+
+- fix: handle the additional logic of 3d arc label layout
+- fix: fix layout of title component
+
+
 
 ## 0.21.7
 Wed, 25 Dec 2024 07:53:11 GMT

@@ -304,6 +304,7 @@ importers:
       '@resvg/resvg-js': 2.4.1
       '@visactor/vrender-core': link:../vrender-core
       '@visactor/vutils': 0.19.3
+      gifuct-js: 2.1.2
       roughjs: 4.5.2
     devDependencies:
       '@internal/bundler': link:../../tools/bundler

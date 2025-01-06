@@ -5,6 +5,9 @@ interface IGradientStop {
 
 export type IGradientColor = ILinearGradient | IRadialGradient | IConicalGradient;
 
+/**
+ * 线性渐变色
+ */
 export interface ILinearGradient {
   gradient: 'linear';
   x0?: number;
@@ -14,6 +17,9 @@ export interface ILinearGradient {
   stops: IGradientStop[];
 }
 
+/**
+ * 径向渐变色
+ */
 export interface IRadialGradient {
   gradient: 'radial';
   x0?: number;
@@ -25,6 +31,9 @@ export interface IRadialGradient {
   stops: IGradientStop[];
 }
 
+/**
+ * 环形渐变色/锥形渐变色
+ */
 export interface IConicalGradient {
   gradient: 'conical';
   startAngle?: number;
@@ -39,4 +48,8 @@ export interface IColorStop {
   color: string;
 }
 
+/**
+ * 颜色类型，
+ * 支持字符串、线性渐变、径向渐变、锥形渐变
+ */
 export type IColor = string | ILinearGradient | IRadialGradient | IConicalGradient;

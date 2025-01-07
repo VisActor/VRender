@@ -283,4 +283,6 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   getElementTop: (dom: any, baseWindow?: boolean) => number;
   getElementLeft: (dom: any, baseWindow?: boolean) => number;
   getElementTopLeft: (dom: any, baseWindow?: boolean) => { top: number; left: number };
+
+  isImageAnonymous: boolean;
 }

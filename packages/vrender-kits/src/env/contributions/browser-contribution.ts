@@ -1,4 +1,4 @@
-import { injectable, Generator, BaseEnvContribution } from '@visactor/vrender-core';
+import { injectable, Generator, BaseEnvContribution, application } from '@visactor/vrender-core';
 import type {
   ICanvasLike,
   EnvType,
@@ -38,7 +38,9 @@ class DynamicB {
 
 export function createImageElement(src: string, isSvg: boolean = false): Promise<HTMLImageElement> {
   const img = document.createElement('img');
-  img.crossOrigin = 'anonymous';
+  if (application.global.isImageAnonymous) {
+    img.crossOrigin = 'anonymous';
+  }
   if (isSvg) {
     const data = new Blob([src], { type: 'image/svg+xml' });
     src = window.URL.createObjectURL(data);

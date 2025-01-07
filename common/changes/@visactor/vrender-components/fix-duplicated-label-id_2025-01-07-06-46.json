@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix duplicate label issue after custom filtering with label dataFilter",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

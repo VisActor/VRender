@@ -182,6 +182,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       data = dataFilter(data);
     }
 
+    if (data && data.length) {
+      // 数据保护，防止重复 id 造成不可预知的问题
+      const seenIds = new Set();
+      data = data.filter(d => !seenIds.has(d.id) && seenIds.add(d.id));
+    }
+
     let labels: (IText | IRichText)[] = this._initText(data);
 
     if (isFunction(customLayoutFunc)) {

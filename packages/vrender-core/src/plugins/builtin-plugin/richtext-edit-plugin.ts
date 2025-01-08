@@ -1,7 +1,15 @@
 import type { IPointLike } from '@visactor/vutils';
 import { isObject, isString, max, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
-import { createGroup, createLine, createRect, RichText } from '../../graphic';
+import {
+  createGroup,
+  createLine,
+  createRect,
+  createRichText,
+  createText,
+  getRichTextBounds,
+  RichText
+} from '../../graphic';
 import type {
   IGroup,
   ILine,
@@ -112,12 +120,17 @@ export class RichTextEditPlugin implements IPlugin {
 
   // 是否正在编辑
   editing: boolean = false;
+  // 是否正在聚焦中
+  focusing: boolean = false;
   // 鼠标是否按下，判断是否展示selection
   pointerDown: boolean = false;
 
   // selection组件
   editLine: ILine;
   editBg: IGroup;
+  shadowPlaceHolder: IRichText;
+  shadowBounds: IRect;
+
   ticker: ITicker;
   timeline: ITimeline;
 
@@ -430,6 +443,10 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    // 如果文字被删除光了，那么展示一个shadowRoot
+    this.tryShowShadowPlaceholder();
+    this.tryShowInputBounds();
+
     // 修改cursor的位置，但并不同步到curIdx，因为这可能是临时的
     // const p = this.getPointByColumnIdx(cursorIdx, rt, orient);
     // console.log(this.curCursorIdx, cursorIdx);
@@ -439,6 +456,9 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    this.tryShowShadowPlaceholder();
+    this.tryShowInputBounds();
+
     // 修改cursor的位置，并同步到editModule
     this.curCursorIdx = cursorIdx;
     this.selectionStartCursorIdx = cursorIdx;
@@ -448,16 +468,100 @@ export class RichTextEditPlugin implements IPlugin {
     this.updateCbs.forEach(cb => cb('change', this));
   };
 
+  tryShowShadowPlaceholder() {
+    if (!this.currRt) {
+      return;
+    }
+    // 删除富文本影子节点
+    const shadowRoot = this.currRt.shadowRoot;
+    if (shadowRoot) {
+      const placeholder = shadowRoot.getElementsByType('richtext')[0];
+      placeholder && shadowRoot.removeChild(placeholder);
+    }
+    const { textConfig, editOptions } = this.currRt.attribute;
+    if (textConfig && textConfig.length) {
+      return;
+    }
+    if (!(editOptions && editOptions.placeholder)) {
+      return;
+    }
+    const {
+      placeholder,
+      placeholderColor = 'rgba(0, 0, 0, 0.6)',
+      placeholderFontFamily,
+      placeholderFontSize
+    } = editOptions;
+    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    this.shadowPlaceHolder = createRichText({
+      ...this.currRt.attribute,
+      x: 0,
+      y: 0,
+      angle: 0,
+      _debug_bounds: false,
+      textConfig: [
+        { text: placeholder, fill: placeholderColor, fontFamily: placeholderFontFamily, fontSize: placeholderFontSize }
+      ]
+    });
+    shadow.add(this.shadowPlaceHolder);
+  }
+
+  tryShowInputBounds() {
+    if (!(this.currRt && this.focusing)) {
+      return;
+    }
+    const { editOptions } = this.currRt.attribute;
+    const { boundsStrokeWhenInput } = editOptions;
+
+    if (!editOptions || !boundsStrokeWhenInput) {
+      return;
+    }
+    const b = this.currRt.AABBBounds;
+    this.shadowBounds = this.shadowBounds || createRect({});
+    this.shadowBounds.setAttributes({
+      x: 0,
+      y: 0,
+      width: b.width(),
+      height: b.height(),
+      fill: false,
+      stroke: boundsStrokeWhenInput,
+      lineWidth: 1,
+      boundsMode: 'empty',
+      zIndex: -1
+    });
+    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    shadow.add(this.shadowBounds);
+
+    this.offsetLineBgAndShadowBounds();
+  }
+
+  trySyncPlaceholderToTextConfig() {
+    if (!this.currRt) {
+      return;
+    }
+    const { textConfig, editOptions } = this.currRt.attribute;
+    if (textConfig && textConfig.length) {
+      return;
+    }
+    if (!(editOptions && editOptions.placeholder)) {
+      return;
+    }
+    const { placeholder } = editOptions;
+    this.currRt.setAttributes({ textConfig: [{ text: placeholder, fill: 'black' }] });
+  }
+
   handleFocusIn = () => {
+    throw new Error('不会走到这里 handleFocusIn');
     // this.updateCbs.forEach(cb => cb(this.editing ? 'onfocus' : 'defocus', this));
   };
 
   handleFocusOut = () => {
-    this.editing = false;
-    this.deFocus();
-    this.pointerDown = false;
-    this.triggerRender();
-    this.updateCbs.forEach(cb => cb('defocus', this));
+    throw new Error('不会走到这里 handleFocusOut');
+    // console.log('abc')
+    // this.editing = false;
+    // this.deFocus();
+    // this.pointerDown = false;
+    // this.triggerRender();
+    // this.updateCbs.forEach(cb => cb('defocus', this));
   };
 
   deactivate(context: IPluginService): void {
@@ -498,7 +602,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (this.editing) {
       this.onFocus(e);
     } else {
-      this.deFocus();
+      this.deFocus(true);
     }
     this.triggerRender();
     this.pointerDown = true;
@@ -515,14 +619,15 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowSelection(e, true);
   };
 
-  onFocus(e: PointerEvent) {
-    this.deFocus();
+  onFocus(e: PointerEvent, data?: any) {
+    this.deFocus(false);
+    this.focusing = true;
     this.currRt = e.target as IRichText;
 
     // 创建shadowGraphic
     const target = e.target as IRichText;
     RichTextEditPlugin.tryUpdateRichtext(target);
-    const shadowRoot = target.attachShadow();
+    const shadowRoot = target.shadowRoot || target.attachShadow();
     const cache = target.getFrameCache();
     if (!cache) {
       return;
@@ -533,19 +638,19 @@ export class RichTextEditPlugin implements IPlugin {
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
-      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
+      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsMode: 'empty' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
       this.ticker.start(true);
 
-      const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
+      const g = createGroup({ x: 0, y: 0, width: 0, height: 0, boundsMode: 'empty' });
       this.editBg = g;
       shadowRoot.add(this.editLine);
       shadowRoot.add(this.editBg);
     }
 
-    const data = this.computedCursorPosByEvent(e, cache);
+    data = data || this.computedCursorPosByEvent(e, cache);
 
     if (data) {
       const { x, y1, y2, cursorIndex } = data;
@@ -553,25 +658,74 @@ export class RichTextEditPlugin implements IPlugin {
       this.curCursorIdx = cursorIndex;
       this.selectionStartCursorIdx = cursorIndex;
       this.setCursorAndTextArea(x, y1, y2, target);
+    } else {
+      const x = 0;
+      const y1 = 0;
+      const y2 = target.AABBBounds.height();
+      this.startCursorPos = { x, y: (y1 + y2) / 2 };
+      this.curCursorIdx = -0.1;
+      this.selectionStartCursorIdx = -0.1;
+      this.setCursorAndTextArea(x, y1, y2, target);
+    }
+
+    // 聚焦的时候也判断，这样在最开始就能展示placeholder，否则需要等用户输入
+    this.tryShowShadowPlaceholder();
+    // 聚焦的时候也判断，这样在最开始就能展示bounds，否则需要等用户输入
+    this.tryShowInputBounds();
+  }
+
+  // 偏移线和背景，因为文字的baseline可能是middle或者bottom
+  protected offsetLineBgAndShadowBounds() {
+    const rt = this.currRt;
+    const { textBaseline } = rt.attribute;
+    let dy = 0;
+    if (textBaseline === 'middle') {
+      const b = getRichTextBounds(rt.attribute);
+      dy = -b.height() / 2;
+    } else if (textBaseline === 'bottom') {
+      const b = getRichTextBounds(rt.attribute);
+      dy = -b.height();
+    }
+    this.editLine.setAttributes({ dy });
+    this.editBg.setAttributes({ dy });
+    if (this.shadowBounds) {
+      this.shadowBounds.setAttributes({ dy });
     }
   }
 
-  protected deFocus() {
+  protected deFocus(trulyDeFocus = false) {
     const target = this.currRt as IRichText;
     if (!target) {
       return;
     }
-    target.detachShadow();
+    if (trulyDeFocus) {
+      this.trySyncPlaceholderToTextConfig();
+      target.detachShadow();
+    }
     this.currRt = null;
     if (this.editLine) {
-      this.editLine.parent.removeChild(this.editLine);
+      this.editLine.parent && this.editLine.parent.removeChild(this.editLine);
       this.editLine.release();
       this.editLine = null;
 
-      this.editBg.parent.removeChild(this.editBg);
+      this.editBg.parent && this.editBg.parent.removeChild(this.editBg);
       this.editBg.release();
       this.editBg = null;
     }
+
+    if (trulyDeFocus) {
+      if (this.shadowBounds) {
+        this.shadowBounds.parent && this.shadowBounds.parent.removeChild(this.shadowBounds);
+        this.shadowBounds.release();
+        this.shadowBounds = null;
+      }
+      if (this.shadowPlaceHolder) {
+        this.shadowPlaceHolder.parent && this.shadowPlaceHolder.parent.removeChild(this.shadowPlaceHolder);
+        this.shadowPlaceHolder.release();
+        this.shadowPlaceHolder = null;
+      }
+    }
+    this.focusing = false;
   }
 
   protected addAnimateToLine(line: ILine) {
@@ -835,6 +989,18 @@ export class RichTextEditPlugin implements IPlugin {
     (e.target as IRichText).globalTransMatrix.transformPoint(p, p1);
     p1.x -= this.deltaX;
     p1.y -= this.deltaY;
+
+    const rt = this.currRt;
+    const { textBaseline } = rt.attribute;
+    let dy = 0;
+    if (textBaseline === 'middle') {
+      const b = getRichTextBounds(rt.attribute);
+      dy = b.height() / 2;
+    } else if (textBaseline === 'bottom') {
+      const b = getRichTextBounds(rt.attribute);
+      dy = b.height();
+    }
+    p1.y += dy;
     return p1;
   }
 
@@ -852,6 +1018,8 @@ export class RichTextEditPlugin implements IPlugin {
     const { left, top } = this.pluginService.stage.window.getBoundingClientRect();
     out.x += left;
     out.y += top;
+
+    this.offsetLineBgAndShadowBounds();
 
     this.editModule.moveTo(out.x, out.y, rt, this.curCursorIdx, this.selectionStartCursorIdx);
   }
@@ -919,7 +1087,7 @@ export class RichTextEditPlugin implements IPlugin {
     y1 += 2;
     y2 -= 2;
 
-    return { x, y1, y2 };
+    return { x, y1, y2, lineInfo, columnInfo };
   }
 
   /**
@@ -976,5 +1144,52 @@ export class RichTextEditPlugin implements IPlugin {
       return RichTextEditPlugin.CreateSelection(this.currRt);
     }
     return null;
+  }
+
+  forceFocus(params: { e?: PointerEvent; target: IRichText | null; cursorIndex?: number }) {
+    const { target, e, cursorIndex } = params;
+    if (!target) {
+      return;
+    }
+    this.currRt = target;
+    if (e) {
+      this._forceFocusByEvent(e);
+    } else {
+      this._forceFocusByCursorIndex(cursorIndex ?? -0.1);
+    }
+  }
+
+  protected _forceFocusByEvent(e: PointerEvent) {
+    this.handleEnter(e);
+    this.handlePointerDown(e);
+    this.handlePointerUp(e);
+  }
+
+  protected _forceFocusByCursorIndex(cursorIndex: number) {
+    const richtext = this.currRt;
+    if (!richtext) {
+      return;
+    }
+
+    let x = 0;
+    let y1 = 0;
+    let y2 = 2;
+    let lineInfo = null;
+    let columnInfo = null;
+    const data = this.computedCursorPosByCursorIdx(cursorIndex, richtext);
+    x = data.x;
+    y1 = data.y1;
+    y2 = data.y2;
+    lineInfo = data.lineInfo;
+    columnInfo = data.columnInfo;
+
+    this.onFocus({ target: this.currRt } as any, {
+      x,
+      y1,
+      y2,
+      cursorIndex,
+      lineInfo,
+      columnInfo
+    });
   }
 }

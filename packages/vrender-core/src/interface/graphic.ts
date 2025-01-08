@@ -288,7 +288,7 @@ export type IGraphicAttribute = IDebugType &
      * 选择模式，精确模式，粗糙模式（包围盒模式），自定义模式
      */
     pickMode: 'accurate' | 'imprecise' | 'custom';
-    boundsMode: 'accurate' | 'imprecise';
+    boundsMode: 'accurate' | 'imprecise' | 'empty';
     customPickShape: () => boolean | null;
     /**
      * 是否支持事件拾取，默认为 true。

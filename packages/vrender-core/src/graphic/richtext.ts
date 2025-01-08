@@ -239,7 +239,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       maxWidth = richtextTheme.maxWidth,
       maxHeight = richtextTheme.maxHeight,
       textAlign = richtextTheme.textAlign,
-      textBaseline = richtextTheme.textBaseline
+      textBaseline = richtextTheme.textBaseline,
+      editOptions
     } = attribute;
 
     if (width > 0 && height > 0) {
@@ -256,6 +257,12 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       contentWidth = typeof maxWidth === 'number' && contentWidth > maxWidth ? maxWidth : contentWidth || 0;
 
       aabbBounds.set(0, 0, contentWidth, contentHeight);
+    }
+
+    // 如果是可编辑状态，且没有设置高度，就用fontSize，否则就完全选不到了
+    if (editOptions && editOptions.keepHeightWhileEmpty && !aabbBounds.height() && !attribute.textConfig?.length) {
+      aabbBounds.y2 = aabbBounds.y1 + (attribute.fontSize ?? 12);
+      aabbBounds.x2 = aabbBounds.x1 + 2;
     }
 
     // 调整对齐方式

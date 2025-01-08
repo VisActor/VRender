@@ -369,7 +369,11 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     if (
       this.useDirtyBounds &&
-      !(graphic.isContainer || isRectIntersect(graphic.AABBBounds, tempBounds ?? this.dirtyBounds, false))
+      !(
+        graphic.isContainer ||
+        graphic.attribute.boundsMode === 'empty' ||
+        isRectIntersect(graphic.AABBBounds, tempBounds ?? this.dirtyBounds, false)
+      )
     ) {
       if (retrans && graphic.parent) {
         const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;

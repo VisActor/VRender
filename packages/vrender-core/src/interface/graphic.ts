@@ -219,11 +219,13 @@ export type IGraphicStyle = ILayout &
     shadowGraphic?: IGraphic | undefined;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+    backgroundKeepAspectRatio: boolean; // 是否保持背景图的宽高比
     // 背景图缩放，只在no-repeat的时候生效
     backgroundScale: number;
     // 背景图偏移，只在no-repeat的时候生效
     backgroundOffsetX: number;
     backgroundOffsetY: number;
+    // 是否调用clip避免绘制到图元外部
     backgroundClip: boolean;
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;

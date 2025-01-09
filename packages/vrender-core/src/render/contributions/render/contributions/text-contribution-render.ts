@@ -34,8 +34,11 @@ export class DefaultTextBackgroundRenderContribution
     fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
     strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean
   ) {
-    const { backgroundMode = graphicAttribute.backgroundMode, backgroundFit = graphicAttribute.backgroundFit } =
-      graphic.attribute;
+    const {
+      backgroundMode = graphicAttribute.backgroundMode,
+      backgroundFit = graphicAttribute.backgroundFit,
+      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio
+    } = graphic.attribute;
     let { background } = graphic.attribute;
     if (!background) {
       return;
@@ -103,7 +106,7 @@ export class DefaultTextBackgroundRenderContribution
       }
 
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      this.doDrawImage(context, res.data, b, { backgroundMode, backgroundFit });
+      this.doDrawImage(context, res.data, b, { backgroundMode, backgroundFit, backgroundKeepAspectRatio });
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {

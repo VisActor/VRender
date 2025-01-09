@@ -43,6 +43,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       opacity = graphicAttribute.opacity,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit,
+      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
       backgroundOffsetY = graphicAttribute.backgroundOffsetY,
@@ -73,6 +74,7 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
       this.doDrawImage(context, res.data, b, {
         backgroundMode,
         backgroundFit,
+        backgroundKeepAspectRatio,
         backgroundScale,
         backgroundOffsetX,
         backgroundOffsetY
@@ -98,19 +100,38 @@ export class DefaultBaseBackgroundRenderContribution implements IBaseRenderContr
     params: {
       backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
       backgroundFit: boolean;
+      backgroundKeepAspectRatio: boolean;
       backgroundScale?: number;
       backgroundOffsetX?: number;
       backgroundOffsetY?: number;
     }
   ): void {
-    const { backgroundMode, backgroundFit, backgroundScale = 1, backgroundOffsetX = 0, backgroundOffsetY = 0 } = params;
+    const {
+      backgroundMode,
+      backgroundFit,
+      backgroundKeepAspectRatio,
+      backgroundScale = 1,
+      backgroundOffsetX = 0,
+      backgroundOffsetY = 0
+    } = params;
     const targetW = b.width();
     const targetH = b.height();
     let w = targetW;
     let h = targetH;
     if (backgroundMode === 'no-repeat') {
       if (backgroundFit) {
-        context.drawImage(data, b.x1, b.y1, b.width(), b.height());
+        if (!backgroundKeepAspectRatio) {
+          context.drawImage(data, b.x1, b.y1, b.width(), b.height());
+        } else {
+          const maxScale = Math.max(targetW / data.width, targetH / data.height);
+          context.drawImage(
+            data,
+            b.x1 + backgroundOffsetX,
+            b.y1 + backgroundOffsetY,
+            data.width * maxScale * backgroundScale,
+            data.height * maxScale * backgroundScale
+          );
+        }
       } else {
         const resW = data.width * backgroundScale;
         const resH = data.height * backgroundScale;

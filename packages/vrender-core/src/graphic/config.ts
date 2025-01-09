@@ -140,6 +140,7 @@ export const DefaultStyle: IGraphicStyle = {
   texturePadding: 2,
   backgroundMode: 'no-repeat',
   backgroundFit: true,
+  backgroundKeepAspectRatio: false,
   backgroundClip: true,
   backgroundScale: 1,
   backgroundOffsetX: 0,

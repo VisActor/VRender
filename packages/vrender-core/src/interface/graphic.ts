@@ -13,10 +13,19 @@ import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 
 type IStrokeSeg = {
-  start: number; // 百分比
-  // end和length二选一
-  end: number; // 百分比
-  length: number; // 像素长度
+  /**
+   * 百分比
+   */
+  start: number;
+  /**
+   * 百分比
+   * end和length二选一
+   */
+  end: number;
+  /**
+   * 像素长度
+   */
+  length: number;
 };
 
 // TODO 最后加一个any
@@ -104,11 +113,29 @@ export type ITransform = {
 
 export type IFillType = boolean | string | IColor;
 export type IFillStyle = {
+  /**
+   * 图形的填充透明度
+   */
   fillOpacity: number;
+  /**
+   * 图形模糊效果程度
+   */
   shadowBlur: number;
+  /**
+   * 图形的阴影颜色
+   */
   shadowColor: string;
+  /**
+   * 阴影水平偏移距离
+   */
   shadowOffsetX: number;
+  /**
+   * 阴影垂直偏移距离
+   */
   shadowOffsetY: number;
+  /**
+   * 图形的填充颜色
+   */
   fill: IFillType;
 };
 
@@ -123,8 +150,17 @@ export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
 
 export type IStrokeType = boolean | string | IColor | null;
 export type IStrokeStyle = {
+  /**
+   * 外部边框的样式配置，默认不展示外部边框
+   */
   outerBorder: Partial<IBorderStyle>;
+  /**
+   * 内部边框的样式配置
+   */
   innerBorder: Partial<IBorderStyle>;
+  /**
+   * 描边的透明度
+   */
   strokeOpacity: number;
   lineDash: number[];
   lineDashOffset: number;
@@ -132,7 +168,9 @@ export type IStrokeStyle = {
   lineCap: CanvasLineCap;
   lineJoin: CanvasLineJoin;
   miterLimit: number;
-  // 描边的boundsBuffer，用于控制bounds的buffer
+  /**
+   * 描边的boundsBuffer，用于控制bounds的buffer
+   */
   strokeBoundsBuffer: number;
   /**
    * stroke - true 全描边
@@ -157,8 +195,13 @@ export type IStrokeStyle = {
 type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
 
 export type IConnectedStyle = {
-  // 连接，取零或者断开
+  /**
+   * 连接，取零或者断开
+   */
   connectedType: 'connect' | 'zero' | 'none';
+  /**
+   * 连接线的样式配置
+   */
   connectedStyle: {
     stroke: IStrokeStyle['stroke'];
     strokeOpacity: IStrokeStyle['strokeOpacity'];
@@ -213,40 +256,94 @@ export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
   IPickStyle & {
+    /**
+     * 强制设置的bounds宽度，主要用于使用html或者react展示图形的时候，设置一个固定的宽度
+     */
     forceBoundsWidth: number | (() => number) | undefined;
+    /**
+     * 强制设置的bounds高度，主要用于使用html或者react展示图形的时候，设置一个固定的高度
+     */
     forceBoundsHeight: number | (() => number) | undefined;
+    /**
+     * 透明度，会同时影响填充和描边
+     */
     opacity: number;
     shadowGraphic?: IGraphic | undefined;
     backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
     backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
     backgroundCornerRadius: number | number[];
     backgroundOpacity: number;
+    /**
+     * 背景，支持颜色字符串、html image元素、html canvas元素
+     */
     background:
       | IBackgroundType
       | {
+          /**
+           * 背景，支持颜色字符串、html image元素、html canvas元素
+           */
           background: IBackgroundType;
+          /**
+           * 背景的x方向偏移量
+           */
           dx?: number;
+          /**
+           * 背景的y方向偏移量
+           */
           dy?: number;
+          /**
+           * 背景宽度
+           */
           width?: number;
+          /**
+           * 背景高度
+           */
           height?: number;
+          /**
+           * 背景的x坐标
+           */
           x?: number;
+          /**
+           * 背景的y坐标
+           */
           y?: number;
         }
       | null; // 背景，可以与fill同时存在
-    texture: TextureType | string; // 纹理
-    textureColor: string; // 纹理颜色
-    textureSize: number; // 纹理大小
-    texturePadding: number; // 纹理间隙
+    /**
+     * 纹理的类型
+     */
+    texture: TextureType | string;
+    /**
+     * 纹理的颜色
+     */
+    textureColor: string;
+    /**
+     * 纹理的大小
+     */
+    textureSize: number;
+    /**
+     * 纹理的间隙
+     */
+    texturePadding: number;
+
     blur: number;
-    cursor: Cursor | null; // 鼠标样式
+    /**
+     * 设置图形对应的鼠标样式
+     */
+    cursor: Cursor | null;
     renderStyle?: 'default' | 'rough' | any;
-    // HTML的dom或者string
+    /**
+     * HTML的dom或者string
+     */
     html:
       | ({
           dom: string | HTMLElement; // dom字符串或者dom
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;
+    /**
+     * 使用react元素渲染内容
+     */
     react:
       | ({
           element: any; // react场景节点
@@ -256,7 +353,9 @@ export type IGraphicStyle = ILayout &
   };
 
 export type IPickStyle = {
-  // 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
+  /**
+   * 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
+   */
   pickStrokeBuffer: number;
 };
 
@@ -270,7 +369,9 @@ export type IGraphicAttribute = IDebugType &
      * stroke百分比
      */
     strokeSeg: IStrokeSeg | null;
-    // 包围盒的padding
+    /**
+     * 包围盒的padding
+     */
     boundsPadding: number | number[];
     /**
      * 选择模式，精确模式，粗糙模式（包围盒模式），自定义模式
@@ -306,6 +407,9 @@ export type IGraphicAttribute = IDebugType &
      * @default true
      */
     visible: boolean;
+    /**
+     * 分组下的层级，层级越小越先绘制
+     */
     zIndex: number;
     layout: any;
     /**
@@ -320,14 +424,26 @@ export type IGraphicAttribute = IDebugType &
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
     shadowPickMode?: 'full' | 'graphic';
+    /**
+     * 全局范围的层级，设置了这个属性的图形，会提取到交互层进行渲染
+     */
     globalZIndex: number;
+    /**
+     * canvas 的合成方式
+     */
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
-    // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
+    /**
+     * 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
+     */
     overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
-    // 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+    /**
+     * 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+     */
     fillStrokeOrder: number;
-    // @since 0.20.15
-    // 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
+    /**
+     * @since 0.20.15
+     * 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
+     */
     keepStrokeScale: boolean;
   };
 

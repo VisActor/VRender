@@ -52,9 +52,21 @@ export type Padding =
   | number
   | number[]
   | {
+      /**
+       * 上边距
+       */
       top?: number;
+      /**
+       * 下边距
+       */
       bottom?: number;
+      /**
+       * 左边距
+       */
       left?: number;
+      /**
+       * 右边距
+       */
       right?: number;
     };
 
@@ -65,7 +77,13 @@ type CommonTextContent = {
     | number
     | number[]
     | {
+        /**
+         * 指定文本节点类型为'text'
+         */
         type?: 'text';
+        /**
+         * 设置文本的内容
+         */
         text: string | string[] | number | number[];
       };
 };

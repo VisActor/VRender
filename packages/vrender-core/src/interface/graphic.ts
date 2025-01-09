@@ -91,23 +91,77 @@ export type Cursor =
   | 'zoom-out';
 
 export type ITransform = {
+  /**
+   * x坐标
+   */
   x: number;
+  /**
+   * y坐标
+   */
   y: number;
+  /**
+   * z坐标
+   */
   z: number;
+  /**
+   * x方向偏移量
+   */
   dx: number;
+  /**
+   * y方向偏移量
+   */
   dy: number;
+  /**
+   * z方向偏移量
+   */
   dz: number;
+  /**
+   * x方向的滚动值
+   */
   scrollX: number;
+  /**
+   * y方向的滚动值
+   */
   scrollY: number;
+  /**
+   * x方向的缩放值
+   */
   scaleX: number;
+  /**
+   * y方向的缩放值
+   */
   scaleY: number;
+  /**
+   * z方向的缩放值
+   */
   scaleZ: number;
+  /**
+   * 绕z轴的转角，即xy平面上的旋转角度
+   */
   angle: number;
+  /**
+   * 绕x轴的转角
+   */
   alpha: number;
+  /**
+   * 绕y轴的转角
+   */
   beta: number;
+  /**
+   * 应用缩放的中心
+   */
   scaleCenter: [number | string, number | string];
-  anchor: [number | string, number | string]; // 基于AABB的锚点位置，用于简单的定位某些path
-  anchor3d: [number | string, number | string, number] | [number | string, number | string]; // 3d的锚点位置
+  /**
+   * 基于AABB的锚点位置，用于简单的定位某些path
+   */
+  anchor: [number | string, number | string];
+  /**
+   * 3d的锚点位置
+   */
+  anchor3d: [number | string, number | string, number] | [number | string, number | string];
+  /**
+   * 处理矩阵，在正常计算完变换矩阵之后，会将该矩阵乘到变换矩阵上得到最终的变换矩阵
+   */
   postMatrix: IMatrix;
 };
 
@@ -140,11 +194,20 @@ export type IFillStyle = {
 };
 
 export type ILayout = {
+  /**
+   * 设置对齐方式
+   */
   alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center';
 };
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
+  /**
+   * 边距离边缘的距离
+   */
   distance: number | string;
+  /**
+   * 是否显示边框，默认是不显示的
+   */
   visible?: boolean;
 };
 
@@ -162,11 +225,34 @@ export type IStrokeStyle = {
    * 描边的透明度
    */
   strokeOpacity: number;
+  /**
+   * 设置线条虚线样式的属性，它通过定义实线和空白的交替长度来创建虚线效果
+   */
   lineDash: number[];
+
+  /**
+   * 设置虚线样式的起始偏移量
+   */
   lineDashOffset: number;
+
+  /**
+   * 设置线条的宽度
+   */
   lineWidth: number;
+
+  /**
+   * 设置线条末端的样式
+   */
   lineCap: CanvasLineCap;
+
+  /**
+   * 设置线条拐角的样式
+   */
   lineJoin: CanvasLineJoin;
+
+  /**
+   * 设置线条拐角处的斜接限制
+   */
   miterLimit: number;
   /**
    * 描边的boundsBuffer，用于控制bounds的buffer
@@ -229,8 +315,17 @@ export type IBackgroundConfig = {
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
 export interface SimpleDomStyleOptions {
-  width: number; // 容器的宽度
-  height: number; // 容器的高度
+  /**
+   * 容器的宽度
+   */
+  width: number;
+  /**
+   * 容器的高度
+   */
+  height: number;
+  /**
+   * 容器的样式设置
+   */
   style?:
     | string
     | Record<string, any>
@@ -242,13 +337,41 @@ export interface SimpleDomStyleOptions {
 }
 
 export interface CommonDomOptions {
+  /**
+   * 全局唯一的id
+   */
   id?: string;
-  container: string | HTMLElement | null; // id或者dom
+  /**
+   * 容器元素的id或者dom元素
+   */
+  container: string | HTMLElement | null;
+  /**
+   * 是否显示
+   */
   visible?: boolean;
+  /**
+   * 是否支持事件冒泡
+   */
   pointerEvents?: boolean | string;
-  // 可穿透的事件列表
-  // @since 0.21.2
+  /**
+   * 可穿透的事件列表
+   * @since 0.21.2
+   */
   penetrateEventList?: string[];
+  /**
+   * 定位类型
+   * 'position' - 根据挂载图形节点的坐标也就是x,y进行定位
+   * 'boundsLeftTop' - 定位到挂载图形节点bounds的左上角
+   * 'left' - 定位到挂载图形节点bounds 的左侧
+   * 'right' - 定位到挂载图形节点bounds 的右侧
+   * 'bottom' - 定位到挂载图形节点bounds 的底部
+   * 'top' - 定位到挂载图形节点bounds 的顶部
+   * 'center' - 定位到挂载图形节点bounds 的中心
+   * 'top-left' - 定位到挂载图形节点bounds 的左上角
+   * 'top-right' - 定位到挂载图形节点bounds 的右上角
+   * 'bottom-left' - 定位到挂载图形节点bounds 的左下角
+   * 'bottom-right' - 定位到挂载图形节点bounds 的右下角
+   */
   anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 
@@ -268,10 +391,25 @@ export type IGraphicStyle = ILayout &
      * 透明度，会同时影响填充和描边
      */
     opacity: number;
+    /**
+     * 影子节点
+     */
     shadowGraphic?: IGraphic | undefined;
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
-    backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+    /**
+     * 背景填充模式（与具体图元有关）
+     */
+    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+    /**
+     * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+     */
+    backgroundFit: boolean;
+    /**
+     * 背景圆角半径
+     */
     backgroundCornerRadius: number | number[];
+    /**
+     * 背景透明度
+     */
     backgroundOpacity: number;
     /**
      * 背景，支持颜色字符串、html image元素、html canvas元素
@@ -337,7 +475,10 @@ export type IGraphicStyle = ILayout &
      */
     html:
       | ({
-          dom: string | HTMLElement; // dom字符串或者dom
+          /**
+           * dom字符串或者dom
+           */
+          dom: string | HTMLElement;
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;
@@ -346,7 +487,10 @@ export type IGraphicStyle = ILayout &
      */
     react:
       | ({
-          element: any; // react场景节点
+          /**
+           * react场景节点
+           */
+          element: any;
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;

@@ -448,7 +448,13 @@ export interface AxisLabelOverlap {
   overflowLimitLength?:
     | number
     | {
+        /**
+         * 左侧扩充空间的大小
+         */
         left?: number;
+        /**
+         * 右侧扩充空间的大小
+         */
         right?: number;
         // top?: number;
         // bottom?: number;

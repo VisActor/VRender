@@ -52,6 +52,7 @@ export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
 export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'limitRange'> &
   LegendSwitchComponentAttributes & {
     /**
+     * 将翻页器的类型设置为 'scrollbar'
      * 申明图例组件使用滚动条进行翻页展示更多的图例项
      */
     type: 'scrollbar';
@@ -218,8 +219,8 @@ export type LegendItem = {
    */
   align?: 'left' | 'right';
   /**
-   * @since 0.21.3
    * 水平方向时，一行中多个图例的垂直对齐方式
+   * @since 0.21.3
    */
   verticalAlign?: 'top' | 'middle' | 'bottom';
 };

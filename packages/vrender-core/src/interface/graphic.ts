@@ -156,8 +156,13 @@ export type IStrokeStyle = {
 type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
 
 export type IConnectedStyle = {
-  // 连接，取零或者断开
-  connectedType: 'connect' | 'zero' | 'none';
+  /**
+   * 连接，取零或者断开
+   */
+  connectedType: 'connect' | 'none';
+  /**
+   * 连接线的样式配置
+   */
   connectedStyle: {
     stroke: IStrokeStyle['stroke'];
     strokeOpacity: IStrokeStyle['strokeOpacity'];

@@ -82,7 +82,7 @@ export function drawSegments(
     offsetY?: number;
     offsetZ?: number;
     drawConnect?: boolean; // 是否是绘制connect区域的效果
-    mode?: 'none' | 'connect' | 'zero';
+    mode?: 'none' | 'connect';
     zeroX?: number;
     zeroY?: number;
   }

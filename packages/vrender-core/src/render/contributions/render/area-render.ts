@@ -195,7 +195,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       fillOpacity = areaAttribute.fillOpacity,
       z = areaAttribute.z,
       strokeOpacity = areaAttribute.strokeOpacity,
-      curveTension = areaAttribute.curveTension
+      curveTension = areaAttribute.curveTension,
+      connectedType = areaAttribute.connectedType
     } = area.attribute;
 
     const data = this.valid(area, areaAttribute, fillCb, strokeCb);
@@ -209,6 +210,13 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     let { curveType = areaAttribute.curveType } = area.attribute;
     if (closePath && curveType === 'linear') {
       curveType = 'linearClosed';
+    }
+
+    function parsePoint(points: IPointLike[], connectedType: 'none' | 'connect') {
+      if (connectedType !== 'connect') {
+        return points;
+      }
+      return points.filter(p => p.defined !== false);
     }
 
     if (clipRange === 1 && !segments && !points.some(p => p.defined === false) && curveType === 'linear') {
@@ -250,7 +258,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               startPoint.x = lastTopSeg.endX;
               startPoint.y = lastTopSeg.endY;
             }
-            const data = calcLineCache(seg.points, curveType, {
+            const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
               startPoint,
               curveTension
             });
@@ -281,7 +289,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
           }
           if (bottomPoints.length > 1) {
             lastBottomSeg = calcLineCache(
-              bottomPoints,
+              parsePoint(bottomPoints, connectedType),
               curveType === 'stepBefore' ? 'stepAfter' : curveType === 'stepAfter' ? 'stepBefore' : curveType,
               { curveTension }
             );
@@ -294,12 +302,12 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
         }));
       } else if (points && points.length) {
         // 转换points
-        const topPoints = points;
+        const topPoints = parsePoint(points, connectedType);
         const bottomPoints: IPointLike[] = [];
-        for (let i = points.length - 1; i >= 0; i--) {
+        for (let i = topPoints.length - 1; i >= 0; i--) {
           bottomPoints.push({
-            x: points[i].x1 ?? points[i].x,
-            y: points[i].y1 ?? points[i].y
+            x: points[i].x1 ?? topPoints[i].x,
+            y: points[i].y1 ?? topPoints[i].y
           });
         }
         const topCache = calcLineCache(topPoints, curveType, { curveTension });
@@ -456,50 +464,24 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       themeAttribute: IThemeAttribute | IThemeAttribute[]
     ) => boolean
   ): boolean {
-    let ret = false;
-    ret =
-      ret ||
-      this._drawSegmentItem(
-        context,
-        cache,
-        fill,
-        fillOpacity,
-        stroke,
-        strokeOpacity,
-        attribute,
-        defaultAttribute,
-        clipRange,
-        offsetX,
-        offsetY,
-        offsetZ,
-        area,
-        drawContext,
-        false,
-        fillCb,
-        strokeCb
-      );
-    ret =
-      ret ||
-      this._drawSegmentItem(
-        context,
-        cache,
-        fill,
-        fillOpacity,
-        stroke,
-        strokeOpacity,
-        attribute,
-        defaultAttribute,
-        clipRange,
-        offsetX,
-        offsetY,
-        offsetZ,
-        area,
-        drawContext,
-        true,
-        fillCb,
-        strokeCb
-      );
-    return ret;
+    return this._drawSegmentItem(
+      context,
+      cache,
+      fill,
+      fillOpacity,
+      stroke,
+      strokeOpacity,
+      attribute,
+      defaultAttribute,
+      clipRange,
+      offsetX,
+      offsetY,
+      offsetZ,
+      area,
+      drawContext,
+      fillCb,
+      strokeCb
+    );
   }
 
   protected _drawSegmentItem(
@@ -517,7 +499,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
     offsetZ: number,
     area: IArea,
     drawContext: IDrawContext,
-    connect: boolean,
     fillCb?: (
       ctx: IContext2d,
       lineAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
@@ -541,38 +522,6 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       )
     ) {
       return;
-    }
-    // 绘制connect区域
-    let { connectedType, connectedX, connectedY, connectedStyle } = attribute;
-    const da: any[] = [];
-    if (connect) {
-      if (isArray(defaultAttribute)) {
-        connectedType = connectedType ?? defaultAttribute[0].connectedType ?? defaultAttribute[1].connectedType;
-        connectedX = connectedX ?? defaultAttribute[0].connectedX ?? defaultAttribute[1].connectedX;
-        connectedY = connectedY ?? defaultAttribute[0].connectedY ?? defaultAttribute[1].connectedY;
-        connectedStyle = connectedStyle ?? defaultAttribute[0].connectedStyle ?? defaultAttribute[1].connectedStyle;
-      } else {
-        connectedType = connectedType ?? defaultAttribute.connectedType;
-        connectedX = connectedX ?? defaultAttribute.connectedX;
-        connectedY = connectedY ?? defaultAttribute.connectedY;
-        connectedStyle = connectedStyle ?? defaultAttribute.connectedStyle;
-      }
-
-      // 如果有非法值就是none
-      if (connectedType !== 'connect' && connectedType !== 'zero') {
-        connectedType = 'none';
-      }
-
-      if (isArray(defaultAttribute)) {
-        defaultAttribute.forEach(i => da.push(i));
-      } else {
-        da.push(defaultAttribute);
-      }
-      da.push(attribute);
-    }
-
-    if (connect && connectedType === 'none') {
-      return false;
     }
 
     context.beginPath();
@@ -606,11 +555,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
       offsetX,
       offsetY,
       offsetZ,
-      direction,
-      drawConnect: connect,
-      mode: connectedType,
-      zeroX: connectedX,
-      zeroY: connectedY
+      direction
     });
 
     this.beforeRenderStep(
@@ -638,13 +583,7 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
         if (fillCb) {
           fillCb(context, attribute, defaultAttribute);
         } else if (fillOpacity) {
-          context.setCommonStyle(
-            area,
-            connect ? connectedStyle : attribute,
-            originX - offsetX,
-            originY - offsetY,
-            connect ? da : defaultAttribute
-          );
+          context.setCommonStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
           context.fill();
         }
       }
@@ -667,21 +606,11 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
               {
                 offsetX,
                 offsetY,
-                offsetZ,
-                drawConnect: connect,
-                mode: connectedType,
-                zeroX: connectedX,
-                zeroY: connectedY
+                offsetZ
               }
             );
           }
-          context.setStrokeStyle(
-            area,
-            connect ? connectedStyle : attribute,
-            originX - offsetX,
-            originY - offsetY,
-            connect ? da : defaultAttribute
-          );
+          context.setStrokeStyle(area, attribute, originX - offsetX, originY - offsetY, defaultAttribute);
           context.stroke();
         }
       }

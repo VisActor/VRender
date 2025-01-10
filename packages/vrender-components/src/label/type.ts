@@ -162,7 +162,16 @@ export interface OverlapAttrs {
   /**
    * 防重叠的区域大小
    */
-  size?: { width: number; height: number };
+  size?: {
+    /**
+     * 防重叠区域的宽度
+     */
+    width: number;
+    /**
+     * 防重叠区域的高度
+     */
+    height: number;
+  };
 
   /**
    * 发生重叠后，是否隐藏标签
@@ -274,6 +283,9 @@ export interface SmartInvertAttrs {
 }
 
 export type ShiftYStrategy = {
+  /**
+   * 将防重叠策略设置为 'shiftY'
+   */
   type: 'shiftY';
   /**
    * 布局迭代次数
@@ -294,10 +306,13 @@ export type ShiftYStrategy = {
 
 export type PositionStrategy = {
   /**
-   * 可选位置策略。
+   * 将防重叠的策略设置为'position'，即可选位置策略。
    * 若默认位置没有足够的空间放置标签，则考虑 position 内的备选位置。
    */
   type: 'position';
+  /**
+   * 所有的备选位置
+   */
   position?: Functional<LabelPosition[]>;
   /**
    * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
@@ -310,10 +325,13 @@ export type PositionStrategy = {
 
 export type BoundStrategy = {
   /**
-   * 标签配置在图形内部时使用。
+   * 将防重叠策略设置为'bound'，当标签配置在图形内部时使用。
    * 当图形大小不足以放下标签，则考虑 position 内的备选位置。
    */
   type: 'bound';
+  /**
+   * 所有的备选位置
+   */
   position?: Functional<LabelPosition[]>;
   /**
    * 当 position 内的备选位置依然无法放下标签时，标签是否放回原位。
@@ -326,7 +344,7 @@ export type BoundStrategy = {
 
 export type MoveYStrategy = {
   /**
-   * 可选位置策略。
+   * 将防重叠策略设置为'moveY'
    * 若默认位置没有足够的空间放置标签，则根据 offset 在Y方向上寻找位置。
    */
   type: 'moveY';
@@ -338,7 +356,7 @@ export type MoveYStrategy = {
 
 export type MoveXStrategy = {
   /**
-   * 可选位置策略。
+   * 将防重叠策略设置为'moveX'
    * 若默认位置没有足够的空间放置标签，则根据 offset 在X方向上寻找位置。
    */
   type: 'moveX';
@@ -555,26 +573,65 @@ export interface DataLabelAttrs extends IGroupGraphicAttribute {
 
 export type Functional<T> = T | ((data: any) => T);
 
+/**
+ * 标签的离场动画配置
+ */
 export interface ILabelExitAnimation {
+  /**
+   * 动画执行的时长
+   */
   duration?: number;
+  /**
+   * 动画延迟的时长
+   */
   delay?: number;
+  /**
+   * 动画的缓动函数
+   */
   easing?: EasingType;
 }
 
+/**
+ * 标签的入场动画配置
+ */
 export interface ILabelEnterAnimation extends ILabelExitAnimation {
+  /**
+   * 标签动画的模式，支持三种类型
+   * - same-time：标签出现动画和关联图形的动画同时进行
+   * - after：当关联动图的出场动画结束后，执行标签的出场动画
+   * - after-all：当所有关联图元的出场动画结束后，执行标签的出场动画
+   */
   mode?: 'same-time' | 'after' | 'after-all';
 }
 
+/**
+ * 标签的更新动画配置
+ */
 export interface ILabelUpdateAnimation extends ILabelExitAnimation {
-  /** 是否开启 increaseCount 动画
+  /**
+   * 是否开启 increaseCount 动画
    * @default true
    */
   increaseEffect?: boolean;
 }
 
+/**
+ * 标签更新的时候，动画的通道配置
+ */
 export interface ILabelUpdateChannelAnimation extends ILabelUpdateAnimation {
+  /**
+   * 进行插值动画的视觉通道
+   */
   channel?: string[];
-  options?: { excludeChannels?: string[] };
+  /**
+   * 动画的配置
+   */
+  options?: {
+    /**
+     * 忽略的视觉通道
+     */
+    excludeChannels?: string[];
+  };
 }
 
 export interface ILabelAnimation extends ILabelEnterAnimation, ILabelExitAnimation, ILabelUpdateAnimation {}

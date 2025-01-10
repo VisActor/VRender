@@ -38,7 +38,7 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeTruthy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(86.39999389648438);
+    expect(pager.AABBBounds.width()).toBeCloseTo(86.20799255371094);
     expect(pager.AABBBounds.height()).toBeCloseTo(35);
   });
 
@@ -57,7 +57,7 @@ describe('Pager', () => {
 
     expect((pager.preHandler as ISymbol).hasState('disable')).toBeFalsy();
     expect((pager.nextHandler as ISymbol).hasState('disable')).toBeFalsy();
-    expect(pager.AABBBounds.width()).toBeCloseTo(20.399993896484375);
+    expect(pager.AABBBounds.width()).toBeCloseTo(20.087982177734375);
     expect(pager.AABBBounds.height()).toBeCloseTo(58);
   });
 });

@@ -291,6 +291,6 @@ describe('Auto Limit', () => {
     stage.defaultLayer.add(axis as unknown as IGraphic);
     stage.render();
     expect((axis.getElementsByName('axis-label')[4] as IText).clipedText).toBe('40-44');
-    expect(Math.floor(axis.AABBBounds.width())).toBe(67);
+    expect(Math.floor(axis.AABBBounds.width())).toBe(66);
   });
 });

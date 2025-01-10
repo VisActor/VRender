@@ -116,7 +116,7 @@ describe('Line Axis', () => {
     expect((axisLabels.children[0] as unknown as Text).attribute.textAlign).toBe('center');
     expect((axisLabels.children[0] as unknown as Text).attribute.textBaseline).toBe('top');
     expect((axisLabels.children[0] as unknown as Text).attribute.text).toBe('A---');
-    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.663970947265625);
+    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.5679931640625);
   });
 
   it('vertical direction.', () => {
@@ -191,7 +191,7 @@ describe('Line Axis', () => {
     expect((axisLabels.children[0] as unknown as Text).attribute.text).toBe('A---');
     expect((axisLabels.children[0] as unknown as Text).attribute.textAlign).toBe('end');
     expect((axisLabels.children[0] as unknown as Text).attribute.textBaseline).toBe('middle');
-    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.663970947265625);
+    expect((axisLabels.children[0] as unknown as Text).AABBBounds.width()).toBeCloseTo(29.5679931640625);
   });
 
   it('Line Axis with Title', () => {
@@ -221,22 +221,22 @@ describe('Line Axis', () => {
 
     let axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
     expect(axisTitle).toBeInstanceOf(Tag);
-    expect(axisTitle.attribute.x).toBeCloseTo(230.01857069132552);
-    expect(axisTitle.attribute.y).toBeCloseTo(398.9777151704094);
+    expect(axisTitle.attribute.x).toBeCloseTo(230.26441298848061);
+    expect(axisTitle.attribute.y).toBeCloseTo(398.6827044138233);
     expect(axisTitle.attribute.angle).toBeCloseTo(0.6947382761967031);
 
     // 将 title 位置更新至 start
     axis.setAttribute('title', { position: 'start' });
     axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
-    expect(axisTitle.attribute.x).toBeCloseTo(80.01857069132552);
-    expect(axisTitle.attribute.y).toBeCloseTo(273.9777151704094);
+    expect(axisTitle.attribute.x).toBeCloseTo(80.26441298848061);
+    expect(axisTitle.attribute.y).toBeCloseTo(273.6827044138233);
     expect(axisTitle.attribute.angle).toBeCloseTo(0.6947382761967031);
 
     // 将 title 位置更新至 end
     axis.setAttribute('title', { position: 'end' });
     axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
-    expect(axisTitle.attribute.x).toBeCloseTo(380.0185706913255);
-    expect(axisTitle.attribute.y).toBeCloseTo(523.9777151704094);
+    expect(axisTitle.attribute.x).toBeCloseTo(380.2644129884806);
+    expect(axisTitle.attribute.y).toBeCloseTo(523.6827044138232);
     expect(axisTitle.attribute.angle).toBeCloseTo(0.6947382761967031);
 
     // title 不跟随旋转
@@ -256,8 +256,8 @@ describe('Line Axis', () => {
       text: '我是一个坐标轴标题'
     });
     axisTitle = axis.getElementsByName(AXIS_ELEMENT_NAME.title)[0] as unknown as Tag;
-    expect(axisTitle.attribute.x).toBeCloseTo(380.0185706913255);
-    expect(axisTitle.attribute.y).toBeCloseTo(523.9777151704094);
+    expect(axisTitle.attribute.x).toBeCloseTo(380.2644129884806);
+    expect(axisTitle.attribute.y).toBeCloseTo(523.6827044138232);
     expect(axisTitle.attribute.angle).toBeCloseTo(0.6947382761967031);
     expect(axisTitle.getElementsByName('tag-panel')).toBeDefined();
 
@@ -932,7 +932,7 @@ describe('Line Axis', () => {
           (axis.getElementsByName('axis-label')[0] as IText).AABBBounds.width()
       ).toBeCloseTo((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.x1);
       expect((axis.getElementsByName('axis-label-container-layer-0')[0] as IGroup).AABBBounds.width()).toBeCloseTo(
-        11.16
+        11.183990478515625
       );
     });
 

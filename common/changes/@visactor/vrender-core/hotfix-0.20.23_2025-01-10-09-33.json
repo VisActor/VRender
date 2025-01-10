@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "feat: change effect for connectedType, closed #1660\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

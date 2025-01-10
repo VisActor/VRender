@@ -198,7 +198,7 @@ export type IConnectedStyle = {
   /**
    * 连接，取零或者断开
    */
-  connectedType: 'connect' | 'zero' | 'none';
+  connectedType: 'connect' | 'none';
   /**
    * 连接线的样式配置
    */

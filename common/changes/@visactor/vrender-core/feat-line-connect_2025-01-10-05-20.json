@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@visactor/vrender-core",
-      "comment": "feat: change effect for connectedType, closed #1660",
+      "comment": "feat: change effect for connectedType, closed #1660 ",
       "type": "none"
     }
   ],

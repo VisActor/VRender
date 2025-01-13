@@ -4,10 +4,24 @@ import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { IImage, IImageGraphicAttribute } from './image';
 import type { ITextGraphicAttribute } from './text';
 
+export type IRichTextEditOptionsType = {
+  placeholder?: string;
+  placeholderColor?: string;
+  placeholderFontSize?: number;
+  placeholderFontFamily?: string;
+  // 是否将placeholder同步到textConfig中
+  syncPlaceholderToTextConfig?: boolean;
+  // 即使是空文本，是否也保持高度
+  keepHeightWhileEmpty?: boolean;
+  // 是否在输入的时候展示包围框，不传默认是false，可以传入颜色
+  boundsStrokeWhenInput?: string;
+};
+
 export type IRichTextAttribute = {
   width: number;
   height: number;
   editable: boolean;
+  editOptions: IRichTextEditOptionsType | null;
   ellipsis: boolean | string;
   wordBreak: RichTextWordBreak;
   verticalDirection: RichTextVerticalDirection;

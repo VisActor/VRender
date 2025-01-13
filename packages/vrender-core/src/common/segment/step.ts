@@ -87,7 +87,11 @@ export class Step implements ICurvedSegment {
           this.context.lineTo(x, y, this._lastDefined !== false && p.defined !== false, p);
         } else {
           const x1 = this._x * (1 - this._t) + x * this._t;
-          this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false, this.lastPoint);
+          if (this._t === 0.5) {
+            this.context.lineTo(x1, this._y, this._lastDefined !== false, this.lastPoint);
+          } else {
+            this.context.lineTo(x1, this._y, this._lastDefined !== false && p.defined !== false, this.lastPoint);
+          }
           this.context.lineTo(x1, y, this._lastDefined !== false && p.defined !== false, p);
         }
         break;

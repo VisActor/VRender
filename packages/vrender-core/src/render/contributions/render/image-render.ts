@@ -169,6 +169,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
 
   draw(image: IImage, renderService: IRenderService, drawContext: IDrawContext) {
     const { image: url } = image.attribute;
+
     if (!url || !image.resources) {
       return;
     }

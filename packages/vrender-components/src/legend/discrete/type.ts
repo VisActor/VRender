@@ -34,6 +34,9 @@ export interface LegendSwitchComponentAttributes {
   animationEasing?: EasingType;
 }
 
+/**
+ * 离散类型的图例组件，当图例项较多的时候，默认使用分页器组件
+ */
 export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
   LegendSwitchComponentAttributes & {
     /**
@@ -43,8 +46,15 @@ export type LegendPagerAttributes = Omit<PagerAttributes, 'total'> &
     position?: 'start' | 'middle' | 'end';
   };
 
+/**
+ * 离散类型的图例组件使用滚动条组件的时候对应的配置
+ */
 export type LegendScrollbarAttributes = Omit<ScrollBarAttributes, 'range' | 'limitRange'> &
   LegendSwitchComponentAttributes & {
+    /**
+     * 将翻页器的类型设置为 'scrollbar'
+     * 申明图例组件使用滚动条进行翻页展示更多的图例项
+     */
     type: 'scrollbar';
     /**
      * @deprecated since 0.20.13
@@ -209,8 +219,8 @@ export type LegendItem = {
    */
   align?: 'left' | 'right';
   /**
-   * @since 0.21.3
    * 水平方向时，一行中多个图例的垂直对齐方式
+   * @since 0.21.3
    */
   verticalAlign?: 'top' | 'middle' | 'bottom';
 };
@@ -222,7 +232,10 @@ export type DiscreteLegendAttrs = {
   select?:
     | boolean
     | {
-        /** @since 0.20.13 */
+        /**
+         * 触发选中交互的事件类型
+         * @since 0.20.13
+         **/
         trigger?: GraphicEventType;
       };
 
@@ -232,9 +245,15 @@ export type DiscreteLegendAttrs = {
   hover?:
     | boolean
     | {
-        /** @since 0.20.13 */
+        /**
+         * 触发hover交互的事件类型
+         * @since 0.20.13
+         **/
         trigger?: GraphicEventType;
-        /** @since 0.20.13 */
+        /**
+         * 触发取消hover交互的事件类型
+         * @since 0.20.13
+         **/
         triggerOff?: GraphicEventType;
       };
   /**

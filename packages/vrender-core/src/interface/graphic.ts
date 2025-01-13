@@ -13,10 +13,19 @@ import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
 
 type IStrokeSeg = {
-  start: number; // 百分比
-  // end和length二选一
-  end: number; // 百分比
-  length: number; // 像素长度
+  /**
+   * 百分比
+   */
+  start: number;
+  /**
+   * 百分比
+   * end和length二选一
+   */
+  end: number;
+  /**
+   * 像素长度
+   */
+  length: number;
 };
 
 // TODO 最后加一个any
@@ -38,7 +47,8 @@ export type GraphicType =
   | 'shadowroot'
   | 'polygon'
   | 'pyramid3d'
-  | 'glyph';
+  | 'glyph'
+  | string;
 
 // Cursor style
 // See: https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
@@ -81,57 +91,172 @@ export type Cursor =
   | 'zoom-out';
 
 export type ITransform = {
+  /**
+   * x坐标
+   */
   x: number;
+  /**
+   * y坐标
+   */
   y: number;
+  /**
+   * z坐标
+   */
   z: number;
+  /**
+   * x方向偏移量
+   */
   dx: number;
+  /**
+   * y方向偏移量
+   */
   dy: number;
+  /**
+   * z方向偏移量
+   */
   dz: number;
+  /**
+   * x方向的滚动值
+   */
   scrollX: number;
+  /**
+   * y方向的滚动值
+   */
   scrollY: number;
+  /**
+   * x方向的缩放值
+   */
   scaleX: number;
+  /**
+   * y方向的缩放值
+   */
   scaleY: number;
+  /**
+   * z方向的缩放值
+   */
   scaleZ: number;
+  /**
+   * 绕z轴的转角，即xy平面上的旋转角度
+   */
   angle: number;
+  /**
+   * 绕x轴的转角
+   */
   alpha: number;
+  /**
+   * 绕y轴的转角
+   */
   beta: number;
+  /**
+   * 应用缩放的中心
+   */
   scaleCenter: [number | string, number | string];
-  anchor: [number | string, number | string]; // 基于AABB的锚点位置，用于简单的定位某些path
-  anchor3d: [number | string, number | string, number] | [number | string, number | string]; // 3d的锚点位置
+  /**
+   * 基于AABB的锚点位置，用于简单的定位某些path
+   */
+  anchor: [number | string, number | string];
+  /**
+   * 3d的锚点位置
+   */
+  anchor3d: [number | string, number | string, number] | [number | string, number | string];
+  /**
+   * 处理矩阵，在正常计算完变换矩阵之后，会将该矩阵乘到变换矩阵上得到最终的变换矩阵
+   */
   postMatrix: IMatrix;
 };
 
 export type IFillType = boolean | string | IColor;
 export type IFillStyle = {
+  /**
+   * 图形的填充透明度
+   */
   fillOpacity: number;
+  /**
+   * 图形模糊效果程度
+   */
   shadowBlur: number;
+  /**
+   * 图形的阴影颜色
+   */
   shadowColor: string;
+  /**
+   * 阴影水平偏移距离
+   */
   shadowOffsetX: number;
+  /**
+   * 阴影垂直偏移距离
+   */
   shadowOffsetY: number;
+  /**
+   * 图形的填充颜色
+   */
   fill: IFillType;
 };
 
 export type ILayout = {
+  /**
+   * 设置对齐方式
+   */
   alignSelf: 'auto' | 'flex-start' | 'flex-end' | 'center';
 };
 
 export type IBorderStyle = Omit<IStrokeStyle, 'outerBorder' | 'innerBorder'> & {
+  /**
+   * 边距离边缘的距离
+   */
   distance: number | string;
+  /**
+   * 是否显示边框，默认是不显示的
+   */
   visible?: boolean;
 };
 
 export type IStrokeType = boolean | string | IColor | null;
 export type IStrokeStyle = {
+  /**
+   * 外部边框的样式配置，默认不展示外部边框
+   */
   outerBorder: Partial<IBorderStyle>;
+  /**
+   * 内部边框的样式配置
+   */
   innerBorder: Partial<IBorderStyle>;
+  /**
+   * 描边的透明度
+   */
   strokeOpacity: number;
+  /**
+   * 设置线条虚线样式的属性，它通过定义实线和空白的交替长度来创建虚线效果
+   */
   lineDash: number[];
+
+  /**
+   * 设置虚线样式的起始偏移量
+   */
   lineDashOffset: number;
+
+  /**
+   * 设置线条的宽度
+   */
   lineWidth: number;
+
+  /**
+   * 设置线条末端的样式
+   */
   lineCap: CanvasLineCap;
+
+  /**
+   * 设置线条拐角的样式
+   */
   lineJoin: CanvasLineJoin;
+
+  /**
+   * 设置线条拐角处的斜接限制
+   */
   miterLimit: number;
-  // 描边的boundsBuffer，用于控制bounds的buffer
+  /**
+   * 描边的boundsBuffer，用于控制bounds的buffer
+   */
   strokeBoundsBuffer: number;
   /**
    * stroke - true 全描边
@@ -156,8 +281,13 @@ export type IStrokeStyle = {
 type TextureType = 'circle' | 'diamond' | 'rect' | 'vertical-line' | 'horizontal-line' | 'bias-lr' | 'bias-rl' | 'grid';
 
 export type IConnectedStyle = {
-  // 连接，取零或者断开
-  connectedType: 'connect' | 'zero' | 'none';
+  /**
+   * 连接，取零或者断开
+   */
+  connectedType: 'connect' | 'none';
+  /**
+   * 连接线的样式配置
+   */
   connectedStyle: {
     stroke: IStrokeStyle['stroke'];
     strokeOpacity: IStrokeStyle['strokeOpacity'];
@@ -185,8 +315,17 @@ export type IBackgroundConfig = {
 type IBackgroundType = string | HTMLImageElement | HTMLCanvasElement | IBackgroundConfig;
 
 export interface SimpleDomStyleOptions {
-  width: number; // 容器的宽度
-  height: number; // 容器的高度
+  /**
+   * 容器的宽度
+   */
+  width: number;
+  /**
+   * 容器的高度
+   */
+  height: number;
+  /**
+   * 容器的样式设置
+   */
   style?:
     | string
     | Record<string, any>
@@ -198,13 +337,41 @@ export interface SimpleDomStyleOptions {
 }
 
 export interface CommonDomOptions {
+  /**
+   * 全局唯一的id
+   */
   id?: string;
-  container: string | HTMLElement | null; // id或者dom
+  /**
+   * 容器元素的id或者dom元素
+   */
+  container: string | HTMLElement | null;
+  /**
+   * 是否显示
+   */
   visible?: boolean;
+  /**
+   * 是否支持事件冒泡
+   */
   pointerEvents?: boolean | string;
-  // 可穿透的事件列表
-  // @since 0.21.2
+  /**
+   * 可穿透的事件列表
+   * @since 0.21.2
+   */
   penetrateEventList?: string[];
+  /**
+   * 定位类型
+   * 'position' - 根据挂载图形节点的坐标也就是x,y进行定位
+   * 'boundsLeftTop' - 定位到挂载图形节点bounds的左上角
+   * 'left' - 定位到挂载图形节点bounds 的左侧
+   * 'right' - 定位到挂载图形节点bounds 的右侧
+   * 'bottom' - 定位到挂载图形节点bounds 的底部
+   * 'top' - 定位到挂载图形节点bounds 的顶部
+   * 'center' - 定位到挂载图形节点bounds 的中心
+   * 'top-left' - 定位到挂载图形节点bounds 的左上角
+   * 'top-right' - 定位到挂载图形节点bounds 的右上角
+   * 'bottom-left' - 定位到挂载图形节点bounds 的左下角
+   * 'bottom-right' - 定位到挂载图形节点bounds 的右下角
+   */
   anchorType?: 'position' | 'boundsLeftTop' | BoundsAnchorType;
 }
 
@@ -212,50 +379,127 @@ export type IGraphicStyle = ILayout &
   IFillStyle &
   IStrokeStyle &
   IPickStyle & {
+    /**
+     * 强制设置的bounds宽度，主要用于使用html或者react展示图形的时候，设置一个固定的宽度
+     */
     forceBoundsWidth: number | (() => number) | undefined;
+    /**
+     * 强制设置的bounds高度，主要用于使用html或者react展示图形的时候，设置一个固定的高度
+     */
     forceBoundsHeight: number | (() => number) | undefined;
+    /**
+     * 透明度，会同时影响填充和描边
+     */
     opacity: number;
+    /**
+     * 影子节点
+     */
     shadowGraphic?: IGraphic | undefined;
-    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'; // 填充模式（与具体图元有关）
-    backgroundFit: boolean; // 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+    /**
+     * 背景填充模式（与具体图元有关）
+     */
+    backgroundMode: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
+    /**
+     * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
+     */
+    backgroundFit: boolean;
+    /**
+     * 背景圆角半径
+     */
     backgroundCornerRadius: number | number[];
+    /**
+     * 背景透明度
+     */
     backgroundOpacity: number;
+    /**
+     * 背景，支持颜色字符串、html image元素、html canvas元素
+     */
     background:
       | IBackgroundType
       | {
+          /**
+           * 背景，支持颜色字符串、html image元素、html canvas元素
+           */
           background: IBackgroundType;
+          /**
+           * 背景的x方向偏移量
+           */
           dx?: number;
+          /**
+           * 背景的y方向偏移量
+           */
           dy?: number;
+          /**
+           * 背景宽度
+           */
           width?: number;
+          /**
+           * 背景高度
+           */
           height?: number;
+          /**
+           * 背景的x坐标
+           */
           x?: number;
+          /**
+           * 背景的y坐标
+           */
           y?: number;
         }
       | null; // 背景，可以与fill同时存在
-    texture: TextureType | string; // 纹理
-    textureColor: string; // 纹理颜色
-    textureSize: number; // 纹理大小
-    texturePadding: number; // 纹理间隙
+    /**
+     * 纹理的类型
+     */
+    texture: TextureType | string;
+    /**
+     * 纹理的颜色
+     */
+    textureColor: string;
+    /**
+     * 纹理的大小
+     */
+    textureSize: number;
+    /**
+     * 纹理的间隙
+     */
+    texturePadding: number;
+
     blur: number;
-    cursor: Cursor | null; // 鼠标样式
+    /**
+     * 设置图形对应的鼠标样式
+     */
+    cursor: Cursor | null;
     renderStyle?: 'default' | 'rough' | any;
-    // HTML的dom或者string
+    /**
+     * HTML的dom或者string
+     */
     html:
       | ({
-          dom: string | HTMLElement; // dom字符串或者dom
+          /**
+           * dom字符串或者dom
+           */
+          dom: string | HTMLElement;
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;
+    /**
+     * 使用react元素渲染内容
+     */
     react:
       | ({
-          element: any; // react场景节点
+          /**
+           * react场景节点
+           */
+          element: any;
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;
   };
 
 export type IPickStyle = {
-  // 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
+  /**
+   * 给stroke模式的pick额外加的buffer，用于外界控制stroke区域的pick范围
+   */
   pickStrokeBuffer: number;
 };
 
@@ -269,7 +513,9 @@ export type IGraphicAttribute = IDebugType &
      * stroke百分比
      */
     strokeSeg: IStrokeSeg | null;
-    // 包围盒的padding
+    /**
+     * 包围盒的padding
+     */
     boundsPadding: number | number[];
     /**
      * 选择模式，精确模式，粗糙模式（包围盒模式），自定义模式
@@ -305,6 +551,9 @@ export type IGraphicAttribute = IDebugType &
      * @default true
      */
     visible: boolean;
+    /**
+     * 分组下的层级，层级越小越先绘制
+     */
     zIndex: number;
     layout: any;
     /**
@@ -319,14 +568,26 @@ export type IGraphicAttribute = IDebugType &
     keepDirIn3d?: boolean;
     shadowRootIdx: number;
     shadowPickMode?: 'full' | 'graphic';
+    /**
+     * 全局范围的层级，设置了这个属性的图形，会提取到交互层进行渲染
+     */
     globalZIndex: number;
+    /**
+     * canvas 的合成方式
+     */
     globalCompositeOperation: CanvasRenderingContext2D['globalCompositeOperation'] | '';
-    // 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
+    /**
+     * 完全支持滚动 | 完全不支持滚动 | 支持x方向的滚动 | 支持y方向的滚动
+     */
     overflow: 'scroll' | 'hidden' | 'scroll-x' | 'scroll-y';
-    // 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+    /**
+     * 绘制fill和stroke的顺序，为0表示fill先绘制，1表示stroke先绘制
+     */
     fillStrokeOrder: number;
-    // @since 0.20.15
-    // 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
+    /**
+     * @since 0.20.15
+     * 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
+     */
     keepStrokeScale: boolean;
   };
 

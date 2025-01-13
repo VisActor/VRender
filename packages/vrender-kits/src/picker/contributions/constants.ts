@@ -19,6 +19,7 @@ export const CanvasArc3dPicker = Symbol.for('CanvasArc3dPicker');
 export const CanvasAreaPicker = Symbol.for('CanvasAreaPicker');
 export const CanvasCirclePicker = Symbol.for('CanvasCirclePicker');
 export const CanvasImagePicker = Symbol.for('CanvasImagePicker');
+export const CanvasGifImagePicker = Symbol.for('CanvasGifImagePicker');
 export const CanvasLinePicker = Symbol.for('CanvasLinePicker');
 export const CanvasPathPicker = Symbol.for('CanvasPathPicker');
 export const CanvasRectPicker = Symbol.for('CanvasRectPicker');

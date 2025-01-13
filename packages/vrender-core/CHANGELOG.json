@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.9",
+      "tag": "@visactor/vrender-core_v0.21.9",
+      "date": "Mon, 13 Jan 2025 03:23:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: change effect for connectedType, closed #1660 "
+          },
+          {
+            "comment": "fix: fix issue with animate error when graphic.stage is null"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.8",
       "tag": "@visactor/vrender-core_v0.21.8",
       "date": "Mon, 06 Jan 2025 11:07:36 GMT",

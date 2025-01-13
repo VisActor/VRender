@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.21.9",
+      "tag": "@visactor/vrender-kits_v0.21.9",
+      "date": "Mon, 13 Jan 2025 03:23:50 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix drawShape function in gif-image render "
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.8",
       "tag": "@visactor/vrender-kits_v0.21.8",
       "date": "Mon, 06 Jan 2025 11:07:36 GMT",

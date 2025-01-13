@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Mon, 06 Jan 2025 11:07:36 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Jan 2025 03:23:50 GMT and should not be manually modified.
+
+## 0.21.9
+Mon, 13 Jan 2025 03:23:50 GMT
+
+### Updates
+
+- feat: change effect for connectedType, closed #1660 
+- fix: fix issue with animate error when graphic.stage is null
 
 ## 0.21.8
 Mon, 06 Jan 2025 11:07:36 GMT

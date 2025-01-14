@@ -196,7 +196,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.deltaY = 0;
   }
 
-  formatTextCommandCb(payload: string, p: RichTextEditPlugin) {
+  formatTextCommandCb = (payload: string, p: RichTextEditPlugin) => {
     const rt = p.currRt;
     if (!rt) {
       return;
@@ -223,7 +223,13 @@ export class RichTextEditPlugin implements IPlugin {
       config.forEach((item: IRichTextParagraphCharacter) => merge(item, payload));
     }
     rt.setAttributes(rt.attribute);
-  }
+    // 重新渲染Selection位置，因为fontSize会影响文字大小
+    const cache = rt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
+  };
 
   dispatchCommand(command: string, payload: any) {
     const cbs = this.commandCbs.get(command);
@@ -236,9 +242,25 @@ export class RichTextEditPlugin implements IPlugin {
     cbs.push(cb);
   }
 
+  removeCommand(command: string, cb: (payload: any, p: RichTextEditPlugin) => void) {
+    const cbs: Array<(payload: any, p: RichTextEditPlugin) => void> = this.commandCbs.get(command) || [];
+    const idx = cbs.indexOf(cb);
+    if (idx > -1) {
+      cbs.splice(idx, 1);
+    }
+  }
+
   registerUpdateListener(cb: (type: UpdateType, p: RichTextEditPlugin) => void) {
     const cbs = this.updateCbs || [];
     cbs.push(cb);
+  }
+
+  removeUpdateListener(cb: (type: UpdateType, p: RichTextEditPlugin) => void) {
+    const cbs = this.updateCbs || [];
+    const idx = cbs.indexOf(cb);
+    if (idx > -1) {
+      cbs.splice(idx, 1);
+    }
   }
 
   activate(context: IPluginService): void {
@@ -296,8 +318,12 @@ export class RichTextEditPlugin implements IPlugin {
     startIdx = Math.min(Math.max(startIdx, -0.1), totalCursorCount + 0.1);
     endIdx = Math.min(Math.max(endIdx, -0.1), totalCursorCount + 0.1);
 
-    this.curCursorIdx = endIdx;
-    this.selectionStartCursorIdx = startIdx;
+    this.selectionRangeByCursorIdx(startIdx, endIdx, cache);
+  }
+
+  selectionRangeByCursorIdx(startCursorIdx: number, endCursorIdx: number, cache: IRichTextFrame) {
+    this.curCursorIdx = endCursorIdx;
+    this.selectionStartCursorIdx = startCursorIdx;
     const { x, y1, y2 } = this.computedCursorPosByCursorIdx(this.selectionStartCursorIdx, this.currRt);
     this.startCursorPos = { x, y: (y1 + y2) / 2 };
     const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
@@ -443,6 +469,9 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    if (!this.currRt) {
+      return;
+    }
     // 如果文字被删除光了，那么展示一个shadowRoot
     this.tryShowShadowPlaceholder();
     this.tryShowInputBounds();
@@ -456,6 +485,9 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    if (!this.currRt) {
+      return;
+    }
     this.tryShowShadowPlaceholder();
     this.tryShowInputBounds();
 
@@ -509,7 +541,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (!(this.currRt && this.focusing)) {
       return;
     }
-    const { editOptions } = this.currRt.attribute;
+    const { editOptions = {} } = this.currRt.attribute;
     const { boundsStrokeWhenInput } = editOptions;
 
     if (!editOptions || !boundsStrokeWhenInput) {
@@ -623,6 +655,9 @@ export class RichTextEditPlugin implements IPlugin {
     this.deFocus(false);
     this.focusing = true;
     this.currRt = e.target as IRichText;
+    if (!this.currRt) {
+      return;
+    }
 
     // 创建shadowGraphic
     const target = e.target as IRichText;
@@ -686,8 +721,8 @@ export class RichTextEditPlugin implements IPlugin {
       const b = getRichTextBounds(rt.attribute);
       dy = -b.height();
     }
-    this.editLine.setAttributes({ dy });
-    this.editBg.setAttributes({ dy });
+    this.editLine && this.editLine.setAttributes({ dy });
+    this.editBg && this.editBg.setAttributes({ dy });
     if (this.shadowBounds) {
       this.shadowBounds.setAttributes({ dy });
     }

@@ -658,7 +658,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.deFocus(false);
     this.focusing = true;
     const target = e.target as IRichText;
-    if (!target) {
+    if (!(target && target.type === 'richtext')) {
       return;
     }
     this.currRt = target as IRichText;

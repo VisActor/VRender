@@ -27,6 +27,9 @@ function makeUpCanvas(
   const dpr = pixelRatio ?? tt.getSystemInfoSync().pixelRatio;
 
   canvasIdLists.forEach((id, i) => {
+    if (canvasMap.has(id)) {
+      return;
+    }
     const ctx = tt.createCanvasContext(id);
 
     const canvas = new CanvasWrapDisableWH(ctx.canvas || {}, ctx, dpr, domref.width, domref.height, id);

@@ -142,7 +142,15 @@ export default class Paragraph {
     }
   }
 
-  draw(ctx: IContext2d, top: number, ascent: number, deltaLeft: number, isLineFirst: boolean, textAlign: string) {
+  draw(
+    ctx: IContext2d,
+    top: number,
+    ascent: number,
+    deltaLeft: number,
+    isLineFirst: boolean,
+    textAlign: string,
+    lineHeight: number
+  ) {
     let baseline = top + ascent;
     let text = this.text;
     let left = this.left + deltaLeft;
@@ -222,7 +230,7 @@ export default class Paragraph {
         const leftInt = Math.round(left);
         const topInt = Math.round(top);
         const right = left + (this.widthOrigin || this.width);
-        const bottom = top + this.lineHeight;
+        const bottom = top + lineHeight;
         const rightInt = Math.round(right);
         const bottomInt = Math.round(bottom);
         const _left = left > leftInt ? leftInt : leftInt - 0.5;

@@ -80,6 +80,9 @@ class Selection {
     }
     let idx = Math.round(cursorIdx);
     const config = this.rt.attribute.textConfig as any;
+    if (!config.length) {
+      return null;
+    }
     for (let i = 0; i < config.length; i++) {
       if (config[i].text !== '\n') {
         idx--;

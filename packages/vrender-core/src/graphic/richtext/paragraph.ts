@@ -234,7 +234,7 @@ export default class Paragraph {
     }
 
     if (this.character.fill) {
-      if (typeof this.character.lineThrough === 'boolean' || typeof this.character.underline === 'boolean') {
+      if (this.character.lineThrough || this.character.underline) {
         if (this.character.underline) {
           ctx.fillRect(
             left,

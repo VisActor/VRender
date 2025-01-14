@@ -1,4 +1,4 @@
-import type { IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import { isObject, isString, max, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
 import {
@@ -717,11 +717,17 @@ export class RichTextEditPlugin implements IPlugin {
     const rt = this.currRt;
     const { textBaseline } = rt.attribute;
     let dy = 0;
+    let attr = rt.attribute;
+    let b: IAABBBounds;
+    if (textBaseline === 'middle' || textBaseline === 'bottom') {
+      if (!attr.textConfig.length) {
+        attr = { ...attr, textConfig: [{ text: 'a' }] };
+      }
+      b = getRichTextBounds(attr);
+    }
     if (textBaseline === 'middle') {
-      const b = getRichTextBounds(rt.attribute);
       dy = -b.height() / 2;
     } else if (textBaseline === 'bottom') {
-      const b = getRichTextBounds(rt.attribute);
       dy = -b.height();
     }
     this.editLine && this.editLine.setAttributes({ dy });

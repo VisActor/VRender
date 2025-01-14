@@ -657,13 +657,14 @@ export class RichTextEditPlugin implements IPlugin {
   onFocus(e: PointerEvent, data?: any) {
     this.deFocus(false);
     this.focusing = true;
-    this.currRt = e.target as IRichText;
-    if (!this.currRt) {
+    const target = e.target as IRichText;
+    if (!target) {
       return;
     }
+    this.currRt = target as IRichText;
 
     // 创建shadowGraphic
-    const target = e.target as IRichText;
+
     RichTextEditPlugin.tryUpdateRichtext(target);
     const shadowRoot = target.shadowRoot || target.attachShadow();
     const cache = target.getFrameCache();

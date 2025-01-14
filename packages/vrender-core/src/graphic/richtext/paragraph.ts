@@ -218,7 +218,18 @@ export default class Paragraph {
         if (this.character.backgroundOpacity !== void 0) {
           ctx.globalAlpha = this.character.backgroundOpacity;
         }
-        ctx.fillRect(left, top, this.widthOrigin || this.width, this.lineHeight);
+        // 背景稍微扩充一些buf，否则会出现白线
+        const leftInt = Math.round(left);
+        const topInt = Math.round(top);
+        const right = left + (this.widthOrigin || this.width);
+        const bottom = top + this.lineHeight;
+        const rightInt = Math.round(right);
+        const bottomInt = Math.round(bottom);
+        const _left = left > leftInt ? leftInt : leftInt - 0.5;
+        const _top = top > topInt ? topInt : topInt - 0.5;
+        const _right = rightInt > right ? rightInt : rightInt + 0.5;
+        const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
+        ctx.fillRect(_left, _top, _right - _left, _bottom - _top);
         ctx.fillStyle = fillStyle;
         ctx.globalAlpha = globalAlpha;
       }

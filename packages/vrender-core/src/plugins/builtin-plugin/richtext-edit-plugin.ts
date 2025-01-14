@@ -676,7 +676,7 @@ export class RichTextEditPlugin implements IPlugin {
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
-      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsMode: 'empty' });
+      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsPadding: [0, -0.25, 0, -0.25] });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
@@ -778,8 +778,9 @@ export class RichTextEditPlugin implements IPlugin {
         animate.stop();
         animate.release();
       });
-    const animate = line.animate();
-    animate.setTimeline(this.timeline);
+    const animate = line.animate({
+      timeline: this.timeline
+    });
     animate.to({ opacity: 1 }, 10, 'linear').wait(700).to({ opacity: 0 }, 10, 'linear').wait(700).loop(Infinity);
   }
 
@@ -913,7 +914,7 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
 
-    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, this.currRt as IRichText);
+    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1, currCursorData.y2, this.currRt as IRichText);
 
     this.triggerRender();
     this.updateCbs.forEach(cb => cb('selection', this));
@@ -1086,10 +1087,8 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
 
-    let y1 = lineInfo.top;
-    let y2 = lineInfo.top + lineInfo.height;
-    y1 += 2;
-    y2 -= 2;
+    const y1 = lineInfo.top;
+    const y2 = lineInfo.top + lineInfo.height;
 
     let cursorIndex = this.getColumnIndex(cache, columnInfo);
     cursorIndex += delta;
@@ -1118,6 +1117,15 @@ export class RichTextEditPlugin implements IPlugin {
     const column = this.getColumnByIndex(cache, idx);
     const height = rt.attribute.fontSize ?? (rt.attribute.textConfig?.[0] as any)?.fontSize;
     if (!column) {
+      // 检查是不是空文本
+      if (!cache.lines.length) {
+        const b = getRichTextBounds({ ...rt.attribute, textConfig: [{ text: 'a' }] });
+        return {
+          x: 0,
+          y1: 0,
+          y2: b.height()
+        };
+      }
       return {
         x: 0,
         y1: 0,
@@ -1125,11 +1133,9 @@ export class RichTextEditPlugin implements IPlugin {
       };
     }
     const { lineInfo, columnInfo } = column;
-    let y1 = lineInfo.top;
-    let y2 = lineInfo.top + lineInfo.height;
+    const y1 = lineInfo.top;
+    const y2 = lineInfo.top + lineInfo.height;
     const x = columnInfo.left + (leftRight < 0 ? 0 : columnInfo.width);
-    y1 += 2;
-    y2 -= 2;
 
     return { x, y1, y2, lineInfo, columnInfo };
   }

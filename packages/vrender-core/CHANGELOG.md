@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 15 Jan 2025 03:14:32 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Jan 2025 12:13:28 GMT and should not be manually modified.
+
+## 0.21.11
+Wed, 15 Jan 2025 12:13:28 GMT
+
+### Updates
+
+- fix: fix issue with area connect type
 
 ## 0.21.10
 Wed, 15 Jan 2025 03:14:32 GMT

@@ -994,7 +994,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
     const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors, mode, interactInvertType } = option;
+    const { textType, contrastRatiosThreshold, alternativeColors, mode, interactInvertType = 'inside' } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';

@@ -278,6 +278,9 @@ export interface SmartInvertAttrs {
    * * none：不做任何处理
    * * stroked：标签存在描边的时候，根据描边进行处理
    * * inside: 和标签完全在mark内部一样处理
+   * 在 0.22.0 版本之前，该配置项的默认值为 undefined。
+   * 在 0.22.0 版本后，该配置项的默认值为 'inside'。
+   * @default 'inside'
    */
   interactInvertType?: 'none' | 'stroked' | 'inside';
   /**

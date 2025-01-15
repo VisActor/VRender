@@ -1,38 +1,66 @@
 import type { IColor } from '@visactor/vrender-core';
-import { Color, hexToRgb } from '@visactor/vutils';
+import { Color, RGB, hexToRgb, isValidNumber } from '@visactor/vutils';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];
 
 /**
  * 标签智能反色
  * @param foregroundColorOrigin
- * @param backgroundColorOrogin
+ * @param backgroundColorOrigin
  * @returns
  */
 export function labelSmartInvert(
   foregroundColorOrigin: IColor | undefined,
-  backgroundColorOrogin: IColor | undefined,
+  backgroundColorOrigin: IColor | undefined,
+  foregroundOpacity: number,
+  backgroundOpacity: number,
   textType?: string | undefined,
   contrastRatiosThreshold?: number,
   alternativeColors?: string | string[],
   mode?: string
 ): IColor | undefined {
-  if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrogin !== 'string') {
+  if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrigin !== 'string') {
     return foregroundColorOrigin;
   }
-  const foregroundColor = new Color(foregroundColorOrigin as string).toHex();
-  const backgroundColor = new Color(backgroundColorOrogin as string).toHex();
-  if (!contrastAccessibilityChecker(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, mode)) {
+  let foregroundColor = new Color(foregroundColorOrigin as string).setOpacity(foregroundOpacity);
+  let backgroundColor = new Color(backgroundColorOrigin as string).setOpacity(backgroundOpacity);
+  if (foregroundOpacity < 1) {
+    foregroundColor = blendColor(foregroundColor, backgroundColor);
+  }
+  if (backgroundOpacity < 1) {
+    backgroundColor = blendColor(backgroundColor);
+  }
+  const foregroundHex = foregroundColor.toHex();
+  const backgroundHex = backgroundColor.toHex();
+  if (!contrastAccessibilityChecker(foregroundHex, backgroundHex, textType, contrastRatiosThreshold, mode)) {
     return improveContrastReverse(
-      foregroundColor,
-      backgroundColor,
+      foregroundHex,
+      backgroundHex,
       textType,
       contrastRatiosThreshold,
       alternativeColors,
       mode
     );
   }
-  return foregroundColor;
+  return foregroundHex;
+}
+
+/**
+ * Target.R = ((1 - Source.A) * BGColor.R) + (Source.A * Source.R)
+ * Target.G = ((1 - Source.A) * BGColor.G) + (Source.A * Source.G)
+ * Target.B = ((1 - Source.A) * BGColor.B) + (Source.A * Source.B)
+ * @param source
+ * @param background
+ */
+function blendColor(source: Color, background?: Color) {
+  if (!background) {
+    background = new Color(new RGB(255, 255, 255).toString());
+  }
+  const alpha = source.color.opacity;
+  const r = ~~((1 - alpha) * background.color.r + alpha * source.color.r);
+  const g = ~~((1 - alpha) * background.color.g + alpha * source.color.g);
+  const b = ~~((1 - alpha) * background.color.b + alpha * source.color.b);
+  return new Color(new RGB(r, g, b).toString());
 }
 
 /**
@@ -103,21 +131,15 @@ export function contrastAccessibilityChecker(
     return false;
   }
   //Contrast ratios can range from 1 to 21
-  if (contrastRatiosThreshold) {
-    if (contrastRatios(foregroundColor, backgroundColor) > contrastRatiosThreshold) {
-      return true;
+  let threshold = contrastRatiosThreshold;
+  if (!isValidNumber(threshold)) {
+    if (textType === 'largeText') {
+      threshold = 3;
+    } else {
+      threshold = 4.5;
     }
-    return false;
-  } else if (textType === 'largeText') {
-    if (contrastRatios(foregroundColor, backgroundColor) > 3) {
-      return true;
-    }
-    return false;
   }
-  if (contrastRatios(foregroundColor, backgroundColor) > 4.5) {
-    return true;
-  }
-  return false;
+  return contrastRatios(foregroundColor, backgroundColor) > threshold;
 }
 
 /**

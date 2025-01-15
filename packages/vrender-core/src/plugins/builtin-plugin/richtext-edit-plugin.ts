@@ -583,7 +583,18 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { placeholder } = editOptions;
-    this.currRt.setAttributes({ textConfig: [{ text: placeholder, fill: 'black' }] });
+    const { fontSize, fontFamily, fontWeight, fill } = this.currRt.attribute;
+    this.currRt.setAttributes({
+      textConfig: [
+        {
+          text: placeholder,
+          fill: fill ?? 'black',
+          fontSize: isFinite(fontSize) ? fontSize : 12,
+          fontFamily,
+          fontWeight: fontWeight.toString()
+        }
+      ]
+    });
   }
 
   handleFocusIn = () => {

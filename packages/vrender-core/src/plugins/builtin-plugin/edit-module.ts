@@ -1,5 +1,10 @@
 import { application } from '../../application';
-import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from '../../interface';
+import type {
+  IRichText,
+  IRichTextCharacter,
+  IRichTextGraphicAttribute,
+  IRichTextParagraphCharacter
+} from '../../interface';
 
 // function getMaxConfigIndexIgnoreLinebreak(textConfig: IRichTextCharacter[]) {
 //   let idx = 0;
@@ -11,6 +16,21 @@ import type { IRichText, IRichTextCharacter, IRichTextParagraphCharacter } from 
 //   }
 //   return Math.max(idx - 1, 0);
 // }
+
+function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) {
+  const { fill = 'black', stroke = false, fontWeight = 'normal', fontFamily = 'Arial' } = attribute;
+  let { fontSize = 12 } = attribute;
+  if (!isFinite(fontSize)) {
+    fontSize = 12;
+  }
+  return {
+    fill,
+    stroke,
+    fontSize,
+    fontWeight,
+    fontFamily
+  } as any;
+}
 
 /**
  * 找到cursorIndex所在的textConfig的位置，给出的index就是要插入的准确位置
@@ -194,7 +214,7 @@ export class EditModule {
     this.composingConfigIdx = this.cursorIndex < 0 ? 0 : findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
     if (this.cursorIndex < 0) {
       const config = textConfig[0];
-      textConfig.unshift({ fill: 'black', ...config, text: '' });
+      textConfig.unshift({ ...getDefaultCharacterConfig(this.currRt.attribute), ...config, text: '' });
     } else {
       const configIdx = this.composingConfigIdx;
       const lastConfig = textConfig[configIdx] || textConfig[configIdx - 1];
@@ -290,12 +310,7 @@ export class EditModule {
     // 算一个默认属性
     let lastConfig: any = textConfig[lastConfigIdx];
     if (!lastConfig) {
-      lastConfig = {
-        fill: rest.fill ?? 'black',
-        stroke: rest.stroke ?? false,
-        fontSize: rest.fontSize ?? 12,
-        fontWeight: rest.fontWeight ?? 'normal'
-      };
+      lastConfig = getDefaultCharacterConfig(rest);
     }
     let nextConfig = lastConfig;
 

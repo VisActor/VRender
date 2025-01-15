@@ -28,6 +28,9 @@ async function makeUpCanvas(
 
   for (let i = 0; i < canvasIdLists.length; i++) {
     const id = canvasIdLists[i];
+    if (canvasMap.has(id)) {
+      continue;
+    }
     await new Promise(resolve => {
       let data = wx.createSelectorQuery();
       if (component) {

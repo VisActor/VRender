@@ -49,36 +49,25 @@ export class MarkArea extends Marker<MarkAreaAttrs, CommonMarkAreaAnimationType>
 
   protected getPointAttrByPosition(position: IMarkAreaLabelPosition) {
     const { x1, x2, y1, y2 } = this._area.AABBBounds;
-
-    if (position.includes('left') || position.includes('Left')) {
-      return {
-        x: x1,
-        y: (y1 + y2) / 2
-      };
-    }
-    if (position.includes('right') || position.includes('Right')) {
-      return {
-        x: x2,
-        y: (y1 + y2) / 2
-      };
-    }
-    if (position.includes('top') || position.includes('Top')) {
-      return {
-        x: (x1 + x2) / 2,
-        y: y1
-      };
-    }
-    if (position.includes('bottom') || position.includes('Bottom')) {
-      return {
-        x: (x1 + x2) / 2,
-        y: y2
-      };
-    }
-
-    return {
+    const result = {
       x: (x1 + x2) / 2,
       y: (y1 + y2) / 2
     };
+
+    if (position.includes('left') || position.includes('Left')) {
+      result.x = x1;
+    }
+    if (position.includes('right') || position.includes('Right')) {
+      result.x = x2;
+    }
+    if (position.includes('top') || position.includes('Top')) {
+      result.y = y1;
+    }
+    if (position.includes('bottom') || position.includes('Bottom')) {
+      result.y = y2;
+    }
+
+    return result;
   }
 
   protected setLabelPos() {

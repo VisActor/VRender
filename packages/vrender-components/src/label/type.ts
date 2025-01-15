@@ -226,6 +226,13 @@ export interface SmartInvertAttrs {
    */
   mode?: string;
   /**
+   * 颜色亮度的计算方法。
+   * 当 mode 为 'WCAG' 时，默认采用 'wcag' 标准计算方法，参考：https://www.w3.org/TR/WCAG21/#use-of-color
+   * 当 mode 为 'lightness' 时，默认采用 'hsl'
+   * @since 0.22.0
+   */
+  lumCalculate?: 'wcag' | 'hsl' | 'hsv' | 'lum' | 'lum2' | 'lum3';
+  /**
    * 文本类型
    * 包含普通文本和大文本，对应不同的对比度标准，label默认为普通文本
    * 'normalText' ｜ 'largeText'

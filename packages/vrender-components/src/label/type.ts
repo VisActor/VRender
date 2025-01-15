@@ -280,6 +280,13 @@ export interface SmartInvertAttrs {
    * * inside: 和标签完全在mark内部一样处理
    */
   interactInvertType?: 'none' | 'stroked' | 'inside';
+  /**
+   * 底层颜色
+   * 通常，反色的背景色取自图元填充色。当背景色为透明色时，需要与其底层颜色进行颜色混合计算。
+   * @default stage.background
+   * @since 0.22.0
+   */
+  underlyingColor?: string;
 }
 
 export type ShiftYStrategy = {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": " refactor: deprecate `label.smartInvert.outsideEnable`",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

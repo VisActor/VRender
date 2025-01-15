@@ -1016,6 +1016,12 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * */
       let backgroundColor = baseMark.attribute.fill as IColor;
       let foregroundColor = label.attribute.fill as IColor;
+      const { fillOpacity: backgroundFillOpacity = 1, opacity: backgroundOpacity = 1 } = baseMark.attribute;
+      const {
+        fillOpacity: foregroundFillOpacity = 1,
+        opacity: foregroundOpacity = 1,
+        strokeOpacity: foregroundStrokeOpacity = 1
+      } = label.attribute;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {
         const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
@@ -1029,6 +1035,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,
+        foregroundFillOpacity * foregroundOpacity,
+        backgroundFillOpacity * backgroundOpacity,
         textType,
         contrastRatiosThreshold,
         alternativeColors,
@@ -1063,6 +1071,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             fill: labelSmartInvert(
               label.attribute.fill as IColor,
               label.attribute.stroke as IColor,
+              foregroundFillOpacity * foregroundOpacity,
+              foregroundStrokeOpacity * foregroundOpacity,
               textType,
               contrastRatiosThreshold,
               alternativeColors,

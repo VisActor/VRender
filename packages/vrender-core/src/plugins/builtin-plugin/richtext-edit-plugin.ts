@@ -232,6 +232,8 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
+    // 设置属性的时候，Bounds也要更改
+    this.tryShowInputBounds();
   };
 
   dispatchCommand(command: string, payload: any) {
@@ -747,6 +749,7 @@ export class RichTextEditPlugin implements IPlugin {
       this.trySyncPlaceholderToTextConfig();
       target.detachShadow();
     }
+    const currRt = this.currRt;
     this.currRt = null;
     if (this.editLine) {
       this.editLine.parent && this.editLine.parent.removeChild(this.editLine);
@@ -771,6 +774,17 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
     this.focusing = false;
+
+    // 清理textConfig，不让最后有换行符
+    const textConfig = currRt.attribute.textConfig;
+    let lastConfig = textConfig[textConfig.length - 1];
+    let cleared = false;
+    while (lastConfig && (lastConfig as any).text === '\n') {
+      textConfig.pop();
+      lastConfig = textConfig[textConfig.length - 1];
+      cleared = true;
+    }
+    cleared && currRt.setAttributes({ textConfig });
   }
 
   protected addAnimateToLine(line: ILine) {

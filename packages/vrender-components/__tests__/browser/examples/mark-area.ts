@@ -145,7 +145,15 @@ export function run() {
       'insideLeft',
       'insideRight',
       'insideTop',
-      'insideBottom'
+      'insideBottom',
+      'topLeft',
+      'topRight',
+      'bottomLeft',
+      'bottomRight',
+      'insideTopLeft',
+      'insideTopRight',
+      'insideBottomLeft',
+      'insideBottomRight'
     ])
     .onChange(value => {
       markAreas.forEach(markArea =>

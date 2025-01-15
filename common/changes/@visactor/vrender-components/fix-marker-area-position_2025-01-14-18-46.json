@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: marker area support more position",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

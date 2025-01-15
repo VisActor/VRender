@@ -1037,21 +1037,23 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
         }
       }
-
+      const smartInvertParams = {
+        textType,
+        contrastRatiosThreshold,
+        alternativeColors,
+        mode,
+        underlyingColor
+      };
       const invertColor = labelSmartInvert(
         foregroundColor,
         backgroundColor,
         foregroundFillOpacity * foregroundOpacity,
         backgroundFillOpacity * backgroundOpacity,
-        {
-          textType,
-          contrastRatiosThreshold,
-          alternativeColors,
-          mode,
-          underlyingColor
-        }
+        smartInvertParams
       );
-      const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+      const similarColor = contrastAccessibilityChecker(invertColor, brightColor, smartInvertParams)
+        ? brightColor
+        : darkColor;
       const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
       const isIntersect =
         !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
@@ -1082,13 +1084,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               label.attribute.stroke as IColor,
               foregroundFillOpacity * foregroundOpacity,
               foregroundStrokeOpacity * foregroundOpacity,
-              {
-                textType,
-                contrastRatiosThreshold,
-                alternativeColors,
-                mode,
-                underlyingColor
-              }
+              smartInvertParams
             )
           });
           continue;

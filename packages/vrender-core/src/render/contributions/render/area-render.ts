@@ -306,8 +306,8 @@ export class DefaultCanvasAreaRender extends BaseRender<IArea> implements IGraph
         const bottomPoints: IPointLike[] = [];
         for (let i = topPoints.length - 1; i >= 0; i--) {
           bottomPoints.push({
-            x: points[i].x1 ?? topPoints[i].x,
-            y: points[i].y1 ?? topPoints[i].y
+            x: topPoints[i].x1 ?? topPoints[i].x,
+            y: topPoints[i].y1 ?? topPoints[i].y
           });
         }
         const topCache = calcLineCache(topPoints, curveType, { curveTension });

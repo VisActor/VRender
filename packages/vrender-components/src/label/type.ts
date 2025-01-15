@@ -270,6 +270,7 @@ export interface SmartInvertAttrs {
   darkColor?: string;
   /**
    * label超出mark范围，也以mark作为背景色进行反色
+   * @deprecated since 0.22.0
    */
   outsideEnable?: boolean;
   /**

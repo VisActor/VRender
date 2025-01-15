@@ -999,7 +999,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
-    const outsideEnable = option.outsideEnable ?? false;
+
     const colorFromGradient = (color: ILinearGradient) => {
       return color.stops?.[0]?.color;
     };
@@ -1062,7 +1062,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const isIntersect =
         !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
 
-      if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
+      if (isInside || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
         const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });

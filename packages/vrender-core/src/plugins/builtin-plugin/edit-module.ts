@@ -17,7 +17,7 @@ import type {
 //   return Math.max(idx - 1, 0);
 // }
 
-function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) {
+export function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) {
   const { fill = 'black', stroke = false, fontWeight = 'normal', fontFamily = 'Arial' } = attribute;
   let { fontSize = 12 } = attribute;
   if (!isFinite(fontSize)) {

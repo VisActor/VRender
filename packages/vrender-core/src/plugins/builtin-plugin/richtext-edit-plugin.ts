@@ -27,7 +27,7 @@ import type {
   ITimeline
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
-import { EditModule, findConfigIndexByCursorIdx } from './edit-module';
+import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
@@ -552,13 +552,19 @@ export class RichTextEditPlugin implements IPlugin {
     if (!editOptions || !boundsStrokeWhenInput) {
       return;
     }
+    const { attribute } = this.currRt;
     const b = this.currRt.AABBBounds;
+    let h = b.height();
+    if (!attribute.textConfig.length && this.editLine) {
+      const { points } = this.editLine.attribute;
+      h = points[1].y - points[0].y;
+    }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
       x: 0,
       y: 0,
       width: b.width(),
-      height: b.height(),
+      height: h,
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
@@ -583,15 +589,11 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { placeholder } = editOptions;
-    const { fontSize, fontFamily, fontWeight, fill } = this.currRt.attribute;
     this.currRt.setAttributes({
       textConfig: [
         {
           text: placeholder,
-          fill: fill ?? 'black',
-          fontSize: isFinite(fontSize) ? fontSize : 12,
-          fontFamily,
-          fontWeight: fontWeight.toString()
+          ...getDefaultCharacterConfig(this.currRt.attribute)
         }
       ]
     });
@@ -690,7 +692,7 @@ export class RichTextEditPlugin implements IPlugin {
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
-      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsPadding: [0, -0.25, 0, -0.25] });
+      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsMode: 'empty' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
@@ -713,7 +715,7 @@ export class RichTextEditPlugin implements IPlugin {
     } else {
       const x = 0;
       const y1 = 0;
-      const y2 = target.AABBBounds.height();
+      const y2 = getRichTextBounds({ ...target.attribute, textConfig: [{ text: 'a' }] }).height();
       this.startCursorPos = { x, y: (y1 + y2) / 2 };
       this.curCursorIdx = -0.1;
       this.selectionStartCursorIdx = -0.1;
@@ -724,6 +726,8 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowShadowPlaceholder();
     // 聚焦的时候也判断，这样在最开始就能展示bounds，否则需要等用户输入
     this.tryShowInputBounds();
+    // 触发Bounds更新
+    this.currRt.addUpdateBoundTag();
   }
 
   // 偏移线和背景，因为文字的baseline可能是middle或者bottom

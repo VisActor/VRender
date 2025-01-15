@@ -994,6 +994,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
     const outsideEnable = option.outsideEnable ?? false;
+    const colorFromGradient = (color: ILinearGradient) => {
+      return color.stops?.[0]?.color;
+    };
+    const underlyingColor =
+      option.underlyingColor ?? isObject(this.stage.background)
+        ? colorFromGradient(this.stage.background as ILinearGradient)
+        : this.stage.background;
 
     if (fillStrategy === 'null' && strokeStrategy === 'null') {
       return;
@@ -1024,8 +1031,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       } = label.attribute;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {
-        const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
-
+        const firstStopColor = colorFromGradient(backgroundColor as ILinearGradient);
         if (firstStopColor) {
           backgroundColor = firstStopColor;
           foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
@@ -1037,10 +1043,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         backgroundColor,
         foregroundFillOpacity * foregroundOpacity,
         backgroundFillOpacity * backgroundOpacity,
-        textType,
-        contrastRatiosThreshold,
-        alternativeColors,
-        mode
+        {
+          textType,
+          contrastRatiosThreshold,
+          alternativeColors,
+          mode,
+          underlyingColor
+        }
       );
       const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
       const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
@@ -1073,10 +1082,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
               label.attribute.stroke as IColor,
               foregroundFillOpacity * foregroundOpacity,
               foregroundStrokeOpacity * foregroundOpacity,
-              textType,
-              contrastRatiosThreshold,
-              alternativeColors,
-              mode
+              {
+                textType,
+                contrastRatiosThreshold,
+                alternativeColors,
+                mode,
+                underlyingColor
+              }
             )
           });
           continue;

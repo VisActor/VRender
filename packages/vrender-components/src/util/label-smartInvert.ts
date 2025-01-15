@@ -14,21 +14,26 @@ export function labelSmartInvert(
   backgroundColorOrigin: IColor | undefined,
   foregroundOpacity: number,
   backgroundOpacity: number,
-  textType?: string | undefined,
-  contrastRatiosThreshold?: number,
-  alternativeColors?: string | string[],
-  mode?: string
+  params: {
+    textType?: string | undefined;
+    contrastRatiosThreshold?: number;
+    alternativeColors?: string | string[];
+    mode?: string;
+    // 背景色为透明时，用作颜色混合
+    underlyingColor?: string;
+  } = {}
 ): IColor | undefined {
   if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrigin !== 'string') {
     return foregroundColorOrigin;
   }
+  const { textType, contrastRatiosThreshold, alternativeColors, mode, underlyingColor = 'white' } = params;
   let foregroundColor = new Color(foregroundColorOrigin as string).setOpacity(foregroundOpacity);
   let backgroundColor = new Color(backgroundColorOrigin as string).setOpacity(backgroundOpacity);
   if (foregroundOpacity < 1) {
     foregroundColor = blendColor(foregroundColor, backgroundColor);
   }
   if (backgroundOpacity < 1) {
-    backgroundColor = blendColor(backgroundColor);
+    backgroundColor = blendColor(backgroundColor, new Color(underlyingColor));
   }
   const foregroundHex = foregroundColor.toHex();
   const backgroundHex = backgroundColor.toHex();

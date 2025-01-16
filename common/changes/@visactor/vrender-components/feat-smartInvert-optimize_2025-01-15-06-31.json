@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support transparent foreground and background color for label `smartInvert`",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

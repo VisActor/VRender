@@ -113,6 +113,7 @@ class Selection {
 }
 
 export const FORMAT_TEXT_COMMAND = 'FORMAT_TEXT_COMMAND';
+export const FORMAT_ALL_TEXT_COMMAND = 'FORMAT_ALL_TEXT_COMMAND';
 export const FORMAT_ELEMENT_COMMAND = 'FORMAT_ELEMENT_COMMAND';
 export class RichTextEditPlugin implements IPlugin {
   name: 'RichTextEditPlugin' = 'RichTextEditPlugin';
@@ -192,6 +193,7 @@ export class RichTextEditPlugin implements IPlugin {
   constructor() {
     this.commandCbs = new Map();
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
+    this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
     this.updateCbs = [];
     this.timeline = new DefaultTimeline();
     this.ticker = new DefaultTicker([this.timeline]);
@@ -214,6 +216,19 @@ export class RichTextEditPlugin implements IPlugin {
     const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
     const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
     const config = rt.attribute.textConfig.slice(minConfigIdx, maxConfigIdx);
+    this._formatTextCommand(payload, config, rt);
+  };
+
+  formatAllTextCommandCb = (payload: string, p: RichTextEditPlugin) => {
+    const rt = p.currRt;
+    if (!rt) {
+      return;
+    }
+    const config = rt.attribute.textConfig;
+    this._formatTextCommand(payload, config, rt);
+  };
+
+  _formatTextCommand(payload: string, config: IRichTextCharacter[], rt: IRichText) {
     if (payload === 'bold') {
       config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
     } else if (payload === 'italic') {
@@ -234,7 +249,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
     // 设置属性的时候，Bounds也要更改
     this.tryShowInputBounds();
-  };
+  }
 
   dispatchCommand(command: string, payload: any) {
     const cbs = this.commandCbs.get(command);

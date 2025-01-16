@@ -261,15 +261,17 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
 
       if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
         const mainTitleVerticalAlign = textStyle.verticalAlign ? textStyle.verticalAlign : verticalAlign;
-        if (mainTitleVerticalAlign === 'middle' && isValid(fixedMainTitleHeight)) {
-          this._mainTitle.setAttribute('y', fixedMainTitleHeight / 2);
+        const mainTitleHeight = fixedMainTitleHeight ?? this._mainTitle.AABBBounds.height();
+
+        if (mainTitleVerticalAlign === 'middle' && isValid(mainTitleHeight)) {
+          this._mainTitle.setAttribute('y', mainTitleHeight / 2);
           this._mainTitle.setAttribute('textBaseline', 'middle');
-        } else if (mainTitleVerticalAlign === 'bottom' && isValid(fixedMainTitleHeight)) {
-          this._mainTitle.setAttribute('y', fixedMainTitleHeight);
+        } else if (mainTitleVerticalAlign === 'bottom' && isValid(mainTitleHeight)) {
+          this._mainTitle.setAttribute('y', mainTitleHeight);
           this._mainTitle.setAttribute('textBaseline', 'bottom');
         } else {
           this._mainTitle.setAttribute('y', 0);
-          this._mainTitle.setAttribute('textBaseline', 'top');
+          this._mainTitle.setAttribute('textBaseline', mainTitleVerticalAlign);
         }
       }
     }
@@ -308,7 +310,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
           this._subTitle.setAttribute('textBaseline', 'bottom');
         } else {
           this._subTitle.setAttribute('y', subTitleYStart);
-          this._subTitle.setAttribute('textBaseline', 'top');
+          this._subTitle.setAttribute('textBaseline', subTitleVerticalAlign);
         }
       }
     }

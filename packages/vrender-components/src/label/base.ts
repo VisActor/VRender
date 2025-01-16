@@ -581,7 +581,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       // 再次检查，若不考虑边界，仍然可以放得下，代表当前 text 没有与其他 text 重叠
       if (canPlace(bmpTool, bitmap, text.AABBBounds, false, overlapPadding)) {
         bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-        return true;
+        // return true;
+        return { x: text.attribute.x, y: text.attribute.y };
       }
     } else if (
       canPlace(
@@ -598,7 +599,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     ) {
       text.setAttributes({ x: text.attribute.x + dx, y: text.attribute.y + dy });
       bitmap.setRange(boundToRange(bmpTool, text.AABBBounds, true));
-      return true;
+      // return true;
+      return { x: text.attribute.x, y: text.attribute.y };
     }
     return false;
   }
@@ -672,6 +674,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       }
 
+      // 尝试向内挤压
+      if (clampForce) {
+        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
+        if (placedAfterClampForce) {
+          result.push(text);
+          continue;
+        }
+      }
+
       let hasPlace: ReturnType<typeof place> = false;
       // 发生碰撞，根据策略寻找可放置的位置
       for (let j = 0; j < (strategy as Strategy[]).length; j++) {
@@ -684,21 +695,15 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
           this._isCollectionBase
             ? this.getGraphicBounds(null, this._idToPoint.get((labels[i].attribute as any).id))
             : this.getGraphicBounds(baseMark, labels[i].attribute),
-          this.labeling
+          {
+            labeling: this.labeling,
+            processClampForce: this._processClampForce
+          }
         );
         if (hasPlace !== false) {
           text.setAttributes({ x: hasPlace.x, y: hasPlace.y });
           result.push(text);
           break;
-        }
-      }
-
-      // 尝试向内挤压
-      if (!hasPlace && clampForce) {
-        const placedAfterClampForce = this._processClampForce(text as IText, bmpTool, bitmap, overlapPadding);
-        if (placedAfterClampForce) {
-          result.push(text);
-          continue;
         }
       }
 

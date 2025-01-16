@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.11",
+      "tag": "@visactor/vrender-core_v0.21.11",
+      "date": "Wed, 15 Jan 2025 12:13:28 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with area connect type"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.10",
       "tag": "@visactor/vrender-core_v0.21.10",
       "date": "Wed, 15 Jan 2025 03:14:32 GMT",

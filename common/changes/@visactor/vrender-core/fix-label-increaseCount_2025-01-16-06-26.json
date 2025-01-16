@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix the issue where the final text of the label increase count  animation is incorrect",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

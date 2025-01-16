@@ -301,7 +301,7 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
               this._mainTitle.AABBBounds.y1 + Math.max(this._mainTitle.AABBBounds.height(), fixedMainTitleHeight)
             : this._mainTitle.AABBBounds.y2
           : 0;
-        const subTitleHeight = subtextStyle.height ?? height;
+        const subTitleHeight = subtextStyle.height ?? height ?? this._subTitle.AABBBounds.height();
         if (subTitleVerticalAlign === 'middle' && isValid(subTitleHeight)) {
           this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight / 2);
           this._subTitle.setAttribute('textBaseline', 'middle');

@@ -159,6 +159,93 @@ export default class Paragraph {
     }
   }
 
+  drawBackground(
+    ctx: IContext2d,
+    top: number,
+    ascent: number,
+    deltaLeft: number,
+    isLineFirst: boolean,
+    textAlign: string,
+    lineHeight: number
+  ) {
+    if (!(this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0))) {
+      return;
+    }
+    let baseline = top + ascent;
+    let text = this.text;
+    let left = this.left + deltaLeft;
+    baseline += this.top;
+    let direction = this.direction;
+
+    if (this.verticalEllipsis) {
+      text = this.ellipsisStr;
+      direction = 'vertical';
+      baseline -= this.ellipsisWidth / 2;
+    } else if (this.ellipsis === 'hide') {
+      return;
+    } else if (this.ellipsis === 'add') {
+      text += this.ellipsisStr;
+
+      if (textAlign === 'right' || textAlign === 'end') {
+        left -= this.ellipsisWidth;
+      }
+    } else if (this.ellipsis === 'replace') {
+      // 找到需要截断的字符长度
+      // const index = getStrByWith(text, this.width - this.ellipsisWidth + this.ellipsisOtherParagraphWidth, this.style, text.length - 1);
+      const index = getStrByWithCanvas(
+        text,
+        (direction === 'vertical' ? this.height : this.width) - this.ellipsisWidth + this.ellipsisOtherParagraphWidth,
+        this.character,
+        text.length - 1
+      );
+      text = text.slice(0, index);
+      text += this.ellipsisStr;
+
+      if (textAlign === 'right' || textAlign === 'end') {
+        const { width } = measureTextCanvas(this.text.slice(index), this.character);
+        if (direction === 'vertical') {
+          // baseline -= this.ellipsisWidth - width;
+        } else {
+          left -= this.ellipsisWidth - width;
+        }
+      }
+    }
+
+    // prepareContext(ctx);
+    switch (this.character.script) {
+      case 'super':
+        baseline -= this.ascent * (1 / 3);
+        break;
+      case 'sub':
+        baseline += this.descent / 2;
+        break;
+    }
+
+    // 处理旋转
+    if (direction === 'vertical') {
+      ctx.save();
+      ctx.rotateAbout(Math.PI / 2, left, baseline);
+      ctx.translate(-(this.heightOrigin as number) || -this.lineHeight / 2, -this.descent / 2);
+      ctx.translate(left, baseline);
+      left = 0;
+      baseline = 0;
+    }
+
+    const fillStyle = ctx.fillStyle;
+    const globalAlpha = ctx.globalAlpha;
+    ctx.fillStyle = this.character.background;
+    if (this.character.backgroundOpacity !== void 0) {
+      ctx.globalAlpha = this.character.backgroundOpacity;
+    }
+    // 背景稍微扩充一些buf，否则会出现白线
+    const right = left + (this.widthOrigin || this.width);
+    const bottom = top + lineHeight;
+    const lrtb = getFixedLRTB(left, right, top, bottom);
+    ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+    ctx.fillStyle = fillStyle;
+    ctx.globalAlpha = globalAlpha;
+  }
+
   draw(
     ctx: IContext2d,
     top: number,
@@ -235,23 +322,23 @@ export default class Paragraph {
       baseline = 0;
     }
 
-    if (this.character.fill) {
-      if (this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0)) {
-        const fillStyle = ctx.fillStyle;
-        const globalAlpha = ctx.globalAlpha;
-        ctx.fillStyle = this.character.background;
-        if (this.character.backgroundOpacity !== void 0) {
-          ctx.globalAlpha = this.character.backgroundOpacity;
-        }
-        // 背景稍微扩充一些buf，否则会出现白线
-        const right = left + (this.widthOrigin || this.width);
-        const bottom = top + lineHeight;
-        const lrtb = getFixedLRTB(left, right, top, bottom);
-        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
-        ctx.fillStyle = fillStyle;
-        ctx.globalAlpha = globalAlpha;
-      }
-    }
+    // if (this.character.fill) {
+    //   if (this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0)) {
+    //     const fillStyle = ctx.fillStyle;
+    //     const globalAlpha = ctx.globalAlpha;
+    //     ctx.fillStyle = this.character.background;
+    //     if (this.character.backgroundOpacity !== void 0) {
+    //       ctx.globalAlpha = this.character.backgroundOpacity;
+    //     }
+    //     // 背景稍微扩充一些buf，否则会出现白线
+    //     const right = left + (this.widthOrigin || this.width);
+    //     const bottom = top + lineHeight;
+    //     const lrtb = getFixedLRTB(left, right, top, bottom);
+    //     ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+    //     ctx.fillStyle = fillStyle;
+    //     ctx.globalAlpha = globalAlpha;
+    //   }
+    // }
 
     const { lineWidth = 1 } = this.character;
     if (this.character.stroke && lineWidth) {

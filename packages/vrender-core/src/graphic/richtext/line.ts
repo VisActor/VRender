@@ -201,6 +201,13 @@ export default class Line {
       }
     }
 
+    // 绘制背景
+    this.paragraphs.forEach((paragraph, index) => {
+      if (paragraph instanceof RichTextIcon) {
+        return;
+      }
+      paragraph.drawBackground(ctx, y, this.ascent, x, index === 0, this.textAlign, this.height);
+    });
     // 正常绘制
     this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {

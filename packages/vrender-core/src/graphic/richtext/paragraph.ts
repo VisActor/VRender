@@ -2,6 +2,23 @@ import { calculateLineHeight } from '../../common/utils';
 import type { IContext2d, IRichTextParagraphCharacter } from '../../interface';
 import { measureTextCanvas, getStrByWithCanvas } from './utils';
 
+function getFixedLRTB(left: number, right: number, top: number, bottom: number) {
+  const leftInt = Math.round(left);
+  const topInt = Math.round(top);
+  const rightInt = Math.round(right);
+  const bottomInt = Math.round(bottom);
+  const _left = left > leftInt ? leftInt : leftInt - 0.5;
+  const _top = top > topInt ? topInt : topInt - 0.5;
+  const _right = rightInt > right ? rightInt : rightInt + 0.5;
+  const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
+  return {
+    left: _left,
+    top: _top,
+    right: _right,
+    bottom: _bottom
+  };
+}
+
 /**
  * 部分代码参考 https://github.com/danielearwicker/carota/
  * The MIT License (MIT)
@@ -227,17 +244,10 @@ export default class Paragraph {
           ctx.globalAlpha = this.character.backgroundOpacity;
         }
         // 背景稍微扩充一些buf，否则会出现白线
-        const leftInt = Math.round(left);
-        const topInt = Math.round(top);
         const right = left + (this.widthOrigin || this.width);
         const bottom = top + lineHeight;
-        const rightInt = Math.round(right);
-        const bottomInt = Math.round(bottom);
-        const _left = left > leftInt ? leftInt : leftInt - 0.5;
-        const _top = top > topInt ? topInt : topInt - 0.5;
-        const _right = rightInt > right ? rightInt : rightInt + 0.5;
-        const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
-        ctx.fillRect(_left, _top, _right - _left, _bottom - _top);
+        const lrtb = getFixedLRTB(left, right, top, bottom);
+        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
         ctx.fillStyle = fillStyle;
         ctx.globalAlpha = globalAlpha;
       }
@@ -255,35 +265,31 @@ export default class Paragraph {
     if (this.character.fill) {
       if (this.character.lineThrough || this.character.underline) {
         if (this.character.underline) {
-          ctx.fillRect(
-            left,
-            1 + baseline,
-            this.widthOrigin || this.width,
-            this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
-          );
+          const top = 1 + baseline;
+          const right = left + (this.widthOrigin || this.width);
+          const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
+          const lrtb = getFixedLRTB(left, right, top, bottom);
+          ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
         }
         if (this.character.lineThrough) {
-          ctx.fillRect(
-            left,
-            1 + baseline - this.ascent / 2,
-            this.widthOrigin || this.width,
-            this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
-          );
+          const top = 1 + baseline - this.ascent / 2;
+          const right = left + (this.widthOrigin || this.width);
+          const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
+          const lrtb = getFixedLRTB(left, right, top, bottom);
+          ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
         }
       } else if (this.character.textDecoration === 'underline') {
-        ctx.fillRect(
-          left,
-          1 + baseline,
-          this.widthOrigin || this.width,
-          this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
-        );
+        const top = 1 + baseline;
+        const right = left + (this.widthOrigin || this.width);
+        const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
+        const lrtb = getFixedLRTB(left, right, top, bottom);
+        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
       } else if (this.character.textDecoration === 'line-through') {
-        ctx.fillRect(
-          left,
-          1 + baseline - this.ascent / 2,
-          this.widthOrigin || this.width,
-          this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
-        );
+        const top = 1 + baseline - this.ascent / 2;
+        const right = left + (this.widthOrigin || this.width);
+        const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
+        const lrtb = getFixedLRTB(left, right, top, bottom);
+        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
       }
     }
 

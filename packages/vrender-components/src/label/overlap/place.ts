@@ -83,11 +83,15 @@ export function placeToCandidates(
   bitmap: Bitmap,
   text: Text,
   candidates: PointLocationCfg[] = [],
-  clampForce = true,
-  pad = 0,
-  changePosition = false
+  params: {
+    clampForce?: boolean;
+    pad?: number;
+    changePosition?: boolean;
+    processClampForce?: LabelBase<any>['_processClampForce'];
+  } = {}
 ): PointLocationCfg | false {
   const validCandidates = candidates.filter(candidate => isValid(candidate));
+  const { clampForce = true, pad = 0, changePosition = false } = params;
   for (let i = 0; i < validCandidates.length; i++) {
     let measureText;
     if (changePosition) {
@@ -100,6 +104,11 @@ export function placeToCandidates(
     if (canPlace($, bitmap, measureText.AABBBounds, clampForce, pad)) {
       bitmap.setRange(boundToRange($, measureText.AABBBounds, true));
       return validCandidates[i];
+    } else if (params.processClampForce) {
+      const result = params.processClampForce(measureText, $, bitmap) as any;
+      if (result) {
+        return result;
+      }
     }
   }
   return false;
@@ -112,17 +121,26 @@ export function place<T extends BaseLabelAttrs>(
   attrs: T,
   text: Text,
   bounds: IBoundsLike,
-  labeling?: LabelBase<T>['labeling']
+  context: {
+    labeling?: LabelBase<T>['labeling'];
+    processClampForce?: LabelBase<T>['_processClampForce'];
+  }
 ): PointLocationCfg | false {
   const clampForce = (attrs.overlap as OverlapAttrs)?.clampForce;
   const overlapPadding = (attrs.overlap as OverlapAttrs)?.overlapPadding;
+  const { labeling, processClampForce } = context;
   if (s.type === 'bound' || s.type === 'position') {
     if (isFunction(labeling)) {
       const userPosition = isFunction(s.position) ? s.position(text.attribute) : s.position;
       const positions = (userPosition || defaultLabelPosition(attrs.type)) as string[];
       const candidates = positions.map(p => labeling(text.AABBBounds, bounds, p, attrs.offset) as PointLocationCfg);
       const shouldClone = s.restorePosition === false;
-      return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding, shouldClone);
+      return placeToCandidates($, bitmap, text, candidates, {
+        clampForce,
+        pad: overlapPadding,
+        changePosition: shouldClone,
+        processClampForce
+      });
     }
     return false;
   }
@@ -132,7 +150,7 @@ export function place<T extends BaseLabelAttrs>(
     const candidates = offset.map(dy => {
       return { x: text.attribute.x as number, y: (text.attribute.y as number) + dy };
     });
-    return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding);
+    return placeToCandidates($, bitmap, text, candidates, { clampForce, pad: overlapPadding, processClampForce });
   }
 
   if (s.type === 'moveX') {
@@ -140,7 +158,7 @@ export function place<T extends BaseLabelAttrs>(
     const candidates = offset.map(dx => {
       return { x: (text.attribute.x as number) + dx, y: text.attribute.y as number };
     });
-    return placeToCandidates($, bitmap, text, candidates, clampForce, overlapPadding);
+    return placeToCandidates($, bitmap, text, candidates, { clampForce, pad: overlapPadding, processClampForce });
   }
   return false;
 }

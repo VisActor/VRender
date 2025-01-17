@@ -1,4 +1,4 @@
-import type { IPointLike } from '@visactor/vutils';
+import type { IAABBBounds, IPointLike } from '@visactor/vutils';
 import { isObject, isString, max, merge } from '@visactor/vutils';
 import { Generator } from '../../common/generator';
 import {
@@ -27,7 +27,7 @@ import type {
   ITimeline
 } from '../../interface';
 import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
-import { EditModule, findConfigIndexByCursorIdx } from './edit-module';
+import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
@@ -80,6 +80,9 @@ class Selection {
     }
     let idx = Math.round(cursorIdx);
     const config = this.rt.attribute.textConfig as any;
+    if (!config.length) {
+      return null;
+    }
     for (let i = 0; i < config.length; i++) {
       if (config[i].text !== '\n') {
         idx--;
@@ -110,6 +113,7 @@ class Selection {
 }
 
 export const FORMAT_TEXT_COMMAND = 'FORMAT_TEXT_COMMAND';
+export const FORMAT_ALL_TEXT_COMMAND = 'FORMAT_ALL_TEXT_COMMAND';
 export const FORMAT_ELEMENT_COMMAND = 'FORMAT_ELEMENT_COMMAND';
 export class RichTextEditPlugin implements IPlugin {
   name: 'RichTextEditPlugin' = 'RichTextEditPlugin';
@@ -189,6 +193,7 @@ export class RichTextEditPlugin implements IPlugin {
   constructor() {
     this.commandCbs = new Map();
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
+    this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
     this.updateCbs = [];
     this.timeline = new DefaultTimeline();
     this.ticker = new DefaultTicker([this.timeline]);
@@ -196,7 +201,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.deltaY = 0;
   }
 
-  formatTextCommandCb(payload: string, p: RichTextEditPlugin) {
+  formatTextCommandCb = (payload: string, p: RichTextEditPlugin) => {
     const rt = p.currRt;
     if (!rt) {
       return;
@@ -211,6 +216,19 @@ export class RichTextEditPlugin implements IPlugin {
     const minConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, minCursorIdx);
     const maxConfigIdx = findConfigIndexByCursorIdx(rt.attribute.textConfig, maxCursorIdx);
     const config = rt.attribute.textConfig.slice(minConfigIdx, maxConfigIdx);
+    this._formatTextCommand(payload, config, rt);
+  };
+
+  formatAllTextCommandCb = (payload: string, p: RichTextEditPlugin) => {
+    const rt = p.currRt;
+    if (!rt) {
+      return;
+    }
+    const config = rt.attribute.textConfig;
+    this._formatTextCommand(payload, config, rt);
+  };
+
+  _formatTextCommand(payload: string, config: IRichTextCharacter[], rt: IRichText) {
     if (payload === 'bold') {
       config.forEach((item: IRichTextParagraphCharacter) => (item.fontWeight = 'bold'));
     } else if (payload === 'italic') {
@@ -223,6 +241,14 @@ export class RichTextEditPlugin implements IPlugin {
       config.forEach((item: IRichTextParagraphCharacter) => merge(item, payload));
     }
     rt.setAttributes(rt.attribute);
+    // 重新渲染Selection位置，因为fontSize会影响文字大小
+    const cache = rt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    this.selectionRangeByCursorIdx(this.selectionStartCursorIdx, this.curCursorIdx, cache);
+    // 设置属性的时候，Bounds也要更改
+    this.tryShowInputBounds();
   }
 
   dispatchCommand(command: string, payload: any) {
@@ -236,9 +262,25 @@ export class RichTextEditPlugin implements IPlugin {
     cbs.push(cb);
   }
 
+  removeCommand(command: string, cb: (payload: any, p: RichTextEditPlugin) => void) {
+    const cbs: Array<(payload: any, p: RichTextEditPlugin) => void> = this.commandCbs.get(command) || [];
+    const idx = cbs.indexOf(cb);
+    if (idx > -1) {
+      cbs.splice(idx, 1);
+    }
+  }
+
   registerUpdateListener(cb: (type: UpdateType, p: RichTextEditPlugin) => void) {
     const cbs = this.updateCbs || [];
     cbs.push(cb);
+  }
+
+  removeUpdateListener(cb: (type: UpdateType, p: RichTextEditPlugin) => void) {
+    const cbs = this.updateCbs || [];
+    const idx = cbs.indexOf(cb);
+    if (idx > -1) {
+      cbs.splice(idx, 1);
+    }
   }
 
   activate(context: IPluginService): void {
@@ -296,8 +338,12 @@ export class RichTextEditPlugin implements IPlugin {
     startIdx = Math.min(Math.max(startIdx, -0.1), totalCursorCount + 0.1);
     endIdx = Math.min(Math.max(endIdx, -0.1), totalCursorCount + 0.1);
 
-    this.curCursorIdx = endIdx;
-    this.selectionStartCursorIdx = startIdx;
+    this.selectionRangeByCursorIdx(startIdx, endIdx, cache);
+  }
+
+  selectionRangeByCursorIdx(startCursorIdx: number, endCursorIdx: number, cache: IRichTextFrame) {
+    this.curCursorIdx = endCursorIdx;
+    this.selectionStartCursorIdx = startCursorIdx;
     const { x, y1, y2 } = this.computedCursorPosByCursorIdx(this.selectionStartCursorIdx, this.currRt);
     this.startCursorPos = { x, y: (y1 + y2) / 2 };
     const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
@@ -443,6 +489,9 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleInput = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    if (!this.currRt) {
+      return;
+    }
     // 如果文字被删除光了，那么展示一个shadowRoot
     this.tryShowShadowPlaceholder();
     this.tryShowInputBounds();
@@ -456,6 +505,9 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   handleChange = (text: string, isComposing: boolean, cursorIdx: number, rt: IRichText) => {
+    if (!this.currRt) {
+      return;
+    }
     this.tryShowShadowPlaceholder();
     this.tryShowInputBounds();
 
@@ -509,19 +561,25 @@ export class RichTextEditPlugin implements IPlugin {
     if (!(this.currRt && this.focusing)) {
       return;
     }
-    const { editOptions } = this.currRt.attribute;
+    const { editOptions = {} } = this.currRt.attribute;
     const { boundsStrokeWhenInput } = editOptions;
 
     if (!editOptions || !boundsStrokeWhenInput) {
       return;
     }
+    const { attribute } = this.currRt;
     const b = this.currRt.AABBBounds;
+    let h = b.height();
+    if (!attribute.textConfig.length && this.editLine) {
+      const { points } = this.editLine.attribute;
+      h = points[1].y - points[0].y;
+    }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
       x: 0,
       y: 0,
       width: b.width(),
-      height: b.height(),
+      height: h,
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
@@ -546,7 +604,14 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { placeholder } = editOptions;
-    this.currRt.setAttributes({ textConfig: [{ text: placeholder, fill: 'black' }] });
+    this.currRt.setAttributes({
+      textConfig: [
+        {
+          text: placeholder,
+          ...getDefaultCharacterConfig(this.currRt.attribute)
+        }
+      ]
+    });
   }
 
   handleFocusIn = () => {
@@ -622,10 +687,14 @@ export class RichTextEditPlugin implements IPlugin {
   onFocus(e: PointerEvent, data?: any) {
     this.deFocus(false);
     this.focusing = true;
-    this.currRt = e.target as IRichText;
+    const target = e.target as IRichText;
+    if (!(target && target.type === 'richtext')) {
+      return;
+    }
+    this.currRt = target as IRichText;
 
     // 创建shadowGraphic
-    const target = e.target as IRichText;
+
     RichTextEditPlugin.tryUpdateRichtext(target);
     const shadowRoot = target.shadowRoot || target.attachShadow();
     const cache = target.getFrameCache();
@@ -661,7 +730,7 @@ export class RichTextEditPlugin implements IPlugin {
     } else {
       const x = 0;
       const y1 = 0;
-      const y2 = target.AABBBounds.height();
+      const y2 = getRichTextBounds({ ...target.attribute, textConfig: [{ text: 'a' }] }).height();
       this.startCursorPos = { x, y: (y1 + y2) / 2 };
       this.curCursorIdx = -0.1;
       this.selectionStartCursorIdx = -0.1;
@@ -672,6 +741,8 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowShadowPlaceholder();
     // 聚焦的时候也判断，这样在最开始就能展示bounds，否则需要等用户输入
     this.tryShowInputBounds();
+    // 触发Bounds更新
+    this.currRt.addUpdateBoundTag();
   }
 
   // 偏移线和背景，因为文字的baseline可能是middle或者bottom
@@ -679,15 +750,21 @@ export class RichTextEditPlugin implements IPlugin {
     const rt = this.currRt;
     const { textBaseline } = rt.attribute;
     let dy = 0;
+    let attr = rt.attribute;
+    let b: IAABBBounds;
+    if (textBaseline === 'middle' || textBaseline === 'bottom') {
+      if (!attr.textConfig.length) {
+        attr = { ...attr, textConfig: [{ text: 'a' }] };
+      }
+      b = getRichTextBounds(attr);
+    }
     if (textBaseline === 'middle') {
-      const b = getRichTextBounds(rt.attribute);
       dy = -b.height() / 2;
     } else if (textBaseline === 'bottom') {
-      const b = getRichTextBounds(rt.attribute);
       dy = -b.height();
     }
-    this.editLine.setAttributes({ dy });
-    this.editBg.setAttributes({ dy });
+    this.editLine && this.editLine.setAttributes({ dy });
+    this.editBg && this.editBg.setAttributes({ dy });
     if (this.shadowBounds) {
       this.shadowBounds.setAttributes({ dy });
     }
@@ -702,6 +779,7 @@ export class RichTextEditPlugin implements IPlugin {
       this.trySyncPlaceholderToTextConfig();
       target.detachShadow();
     }
+    const currRt = this.currRt;
     this.currRt = null;
     if (this.editLine) {
       this.editLine.parent && this.editLine.parent.removeChild(this.editLine);
@@ -726,6 +804,17 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
     this.focusing = false;
+
+    // 清理textConfig，不让最后有换行符
+    const textConfig = currRt.attribute.textConfig;
+    let lastConfig = textConfig[textConfig.length - 1];
+    let cleared = false;
+    while (lastConfig && (lastConfig as any).text === '\n') {
+      textConfig.pop();
+      lastConfig = textConfig[textConfig.length - 1];
+      cleared = true;
+    }
+    cleared && currRt.setAttributes({ textConfig });
   }
 
   protected addAnimateToLine(line: ILine) {
@@ -734,8 +823,9 @@ export class RichTextEditPlugin implements IPlugin {
         animate.stop();
         animate.release();
       });
-    const animate = line.animate();
-    animate.setTimeline(this.timeline);
+    const animate = line.animate({
+      timeline: this.timeline
+    });
     animate.to({ opacity: 1 }, 10, 'linear').wait(700).to({ opacity: 0 }, 10, 'linear').wait(700).loop(Infinity);
   }
 
@@ -869,7 +959,7 @@ export class RichTextEditPlugin implements IPlugin {
       }
     }
 
-    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1 + 2, currCursorData.y2 - 2, this.currRt as IRichText);
+    this.setCursorAndTextArea(currCursorData.x, currCursorData.y1, currCursorData.y2, this.currRt as IRichText);
 
     this.triggerRender();
     this.updateCbs.forEach(cb => cb('selection', this));
@@ -1042,10 +1132,8 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
 
-    let y1 = lineInfo.top;
-    let y2 = lineInfo.top + lineInfo.height;
-    y1 += 2;
-    y2 -= 2;
+    const y1 = lineInfo.top;
+    const y2 = lineInfo.top + lineInfo.height;
 
     let cursorIndex = this.getColumnIndex(cache, columnInfo);
     cursorIndex += delta;
@@ -1074,6 +1162,15 @@ export class RichTextEditPlugin implements IPlugin {
     const column = this.getColumnByIndex(cache, idx);
     const height = rt.attribute.fontSize ?? (rt.attribute.textConfig?.[0] as any)?.fontSize;
     if (!column) {
+      // 检查是不是空文本
+      if (!cache.lines.length) {
+        const b = getRichTextBounds({ ...rt.attribute, textConfig: [{ text: 'a' }] });
+        return {
+          x: 0,
+          y1: 0,
+          y2: b.height()
+        };
+      }
       return {
         x: 0,
         y1: 0,
@@ -1081,11 +1178,9 @@ export class RichTextEditPlugin implements IPlugin {
       };
     }
     const { lineInfo, columnInfo } = column;
-    let y1 = lineInfo.top;
-    let y2 = lineInfo.top + lineInfo.height;
+    const y1 = lineInfo.top;
+    const y2 = lineInfo.top + lineInfo.height;
     const x = columnInfo.left + (leftRight < 0 ? 0 : columnInfo.width);
-    y1 += 2;
-    y2 -= 2;
 
     return { x, y1, y2, lineInfo, columnInfo };
   }

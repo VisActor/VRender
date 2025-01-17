@@ -351,18 +351,15 @@ export function measureTextCanvas(
     descent: 0,
     width: 0
   };
-  if (
-    typeof measurement.actualBoundingBoxAscent !== 'number' ||
-    typeof measurement.actualBoundingBoxDescent !== 'number'
-  ) {
-    result.width = Math.floor(measurement.width);
+  if (typeof measurement.fontBoundingBoxAscent !== 'number' || typeof measurement.fontBoundingBoxDescent !== 'number') {
+    result.width = measurement.width;
     result.height = character.fontSize || 0;
     result.ascent = result.height;
     result.descent = 0;
   } else {
-    result.width = Math.floor(measurement.width);
-    result.height = Math.floor(measurement.actualBoundingBoxAscent + measurement.actualBoundingBoxDescent);
-    result.ascent = Math.floor(measurement.actualBoundingBoxAscent);
+    result.width = measurement.width;
+    result.height = Math.floor(measurement.fontBoundingBoxAscent + measurement.fontBoundingBoxDescent);
+    result.ascent = Math.floor(measurement.fontBoundingBoxAscent);
     result.descent = result.height - result.ascent;
   }
   return result;

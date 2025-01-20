@@ -73,6 +73,7 @@ export class CustomSymbolClass implements ISymbolClass {
     z?: number,
     cb?: (p: ICustomPath2D, a: any) => void
   ) {
+    size = this.parseSize(size);
     if (this.isSvg) {
       if (!this.svgCache) {
         return false;

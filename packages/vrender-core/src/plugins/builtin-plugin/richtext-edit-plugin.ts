@@ -373,6 +373,12 @@ export class RichTextEditPlugin implements IPlugin {
         return;
       }
       const { lines } = cache;
+      if (lines.length === 0) {
+        return;
+      }
+      if (!lines[0].paragraphs || lines[0].paragraphs.length === 0) {
+        return;
+      }
       const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
       this.selectionRange(-0.1, totalCursorCount + 0.1);
 
@@ -567,6 +573,9 @@ export class RichTextEditPlugin implements IPlugin {
       ...this.currRt.attribute,
       x: 0,
       y: 0,
+      pickable: false,
+      editable: false,
+      editOptions: null,
       angle: 0,
       _debug_bounds: false,
       textConfig: [textConfigItem]
@@ -616,7 +625,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (textConfig && textConfig.length) {
       return;
     }
-    if (!(editOptions && editOptions.placeholder)) {
+    if (!(editOptions && editOptions.placeholder && editOptions.syncPlaceHolderToTextConfig)) {
       return;
     }
     const { placeholder } = editOptions;
@@ -788,11 +797,11 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected deFocus(trulyDeFocus = false) {
-    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     const target = this.currRt as IRichText;
     if (!target) {
       return;
     }
+    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     if (trulyDeFocus) {
       this.trySyncPlaceholderToTextConfig();
       target.detachShadow();
@@ -908,6 +917,9 @@ export class RichTextEditPlugin implements IPlugin {
     };
     let line0Info = this.getLineByPoint(cache, startCursorPos);
     let line1Info = this.getLineByPoint(cache, endCursorPos);
+    if (!line0Info || !line1Info) {
+      return;
+    }
 
     if (
       startCursorPos.y > endCursorPos.y ||

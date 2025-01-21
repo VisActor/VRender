@@ -205,8 +205,19 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     );
   }
 
+  static splitEmoji(text: string) {
+    // 👈🏻这种emoji用Array.from还处理不了，所以得兼容一下
+    return [...new (Intl as any).Segmenter().segment(text)].map(x => x.segment);
+  }
+
   static splitText(text: string) {
     // 😁这种emoji长度算两个，所以得处理一下
+    try {
+      const arr = this.splitEmoji(text);
+      return arr;
+    } catch (e) {
+      // do nothing
+    }
     return Array.from(text);
   }
 

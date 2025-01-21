@@ -8,6 +8,7 @@ import type { TitleAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { DEFAULT_HTML_TEXT_SPEC } from '../constant';
 import { loadTitleComponent } from './register';
+import { Text } from '@visactor/vrender-core';
 
 loadTitleComponent();
 export class Title extends AbstractComponent<Required<TitleAttrs>> {
@@ -259,18 +260,20 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         }
       }
 
-      if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
-        const mainTitleVerticalAlign = textStyle.verticalAlign ? textStyle.verticalAlign : verticalAlign;
-        if (mainTitleVerticalAlign === 'middle' && isValid(fixedMainTitleHeight)) {
-          this._mainTitle.setAttribute('y', fixedMainTitleHeight / 2);
-          this._mainTitle.setAttribute('textBaseline', 'middle');
-        } else if (mainTitleVerticalAlign === 'bottom' && isValid(fixedMainTitleHeight)) {
-          this._mainTitle.setAttribute('y', fixedMainTitleHeight);
-          this._mainTitle.setAttribute('textBaseline', 'bottom');
-        } else {
-          this._mainTitle.setAttribute('y', 0);
-          this._mainTitle.setAttribute('textBaseline', 'top');
-        }
+      const mainTitleVerticalAlign = textStyle.verticalAlign ? textStyle.verticalAlign : verticalAlign;
+      const mainTitleHeight =
+        fixedMainTitleHeight ?? (this._mainTitle.AABBBounds.empty() ? 0 : this._mainTitle.AABBBounds.height());
+
+      if (mainTitleVerticalAlign === 'middle') {
+        this._mainTitle.setAttribute('y', mainTitleHeight / 2);
+        this._mainTitle.setAttribute('textBaseline', 'middle');
+      } else if (mainTitleVerticalAlign === 'bottom') {
+        this._mainTitle.setAttribute('y', mainTitleHeight);
+        this._mainTitle.setAttribute('textBaseline', 'bottom');
+      } else {
+        // 如果没有显示的设置verticalAlign，默认top
+        this._mainTitle.setAttribute('y', 0);
+        this._mainTitle.setAttribute('textBaseline', 'top');
       }
     }
 
@@ -291,25 +294,26 @@ export class Title extends AbstractComponent<Required<TitleAttrs>> {
         }
       }
 
-      if (isValid(verticalAlign) || isValid(textStyle.verticalAlign)) {
-        const subTitleVerticalAlign = subtextStyle.verticalAlign ? subtextStyle.verticalAlign : verticalAlign;
-        const subTitleYStart = this._mainTitle
-          ? isValid(fixedMainTitleHeight)
-            ? // 如果是用户指定的高度，根据bounds的height 和指定高度求最大值
-              this._mainTitle.AABBBounds.y1 + Math.max(this._mainTitle.AABBBounds.height(), fixedMainTitleHeight)
-            : this._mainTitle.AABBBounds.y2
-          : 0;
-        const subTitleHeight = subtextStyle.height ?? height;
-        if (subTitleVerticalAlign === 'middle' && isValid(subTitleHeight)) {
-          this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight / 2);
-          this._subTitle.setAttribute('textBaseline', 'middle');
-        } else if (subTitleVerticalAlign === 'bottom' && isValid(subTitleHeight)) {
-          this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight);
-          this._subTitle.setAttribute('textBaseline', 'bottom');
-        } else {
-          this._subTitle.setAttribute('y', subTitleYStart);
-          this._subTitle.setAttribute('textBaseline', 'top');
-        }
+      const subTitleVerticalAlign = subtextStyle.verticalAlign ? subtextStyle.verticalAlign : verticalAlign;
+
+      const subTitleYStart = this._mainTitle
+        ? isValid(fixedMainTitleHeight)
+          ? // 如果是用户指定的高度，根据bounds的height 和指定高度求最大值
+            this._mainTitle.AABBBounds.y1 +
+            Math.max(this._mainTitle.AABBBounds.empty() ? 0 : this._mainTitle.AABBBounds.height(), fixedMainTitleHeight)
+          : this._mainTitle.AABBBounds.y2
+        : 0;
+      const subTitleHeight =
+        subtextStyle.height ?? height ?? (this._subTitle.AABBBounds.empty() ? 0 : this._subTitle.AABBBounds.height());
+      if (subTitleVerticalAlign === 'middle') {
+        this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight / 2);
+        this._subTitle.setAttribute('textBaseline', 'middle');
+      } else if (subTitleVerticalAlign === 'bottom') {
+        this._subTitle.setAttribute('y', subTitleYStart + subTitleHeight);
+        this._subTitle.setAttribute('textBaseline', 'bottom');
+      } else {
+        this._subTitle.setAttribute('y', subTitleYStart);
+        this._subTitle.setAttribute('textBaseline', 'top');
       }
     }
   }

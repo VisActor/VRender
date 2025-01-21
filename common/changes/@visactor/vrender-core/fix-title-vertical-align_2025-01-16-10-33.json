@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix layout of title when not set height\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-core"
+    }
+  ],
+  "packageName": "@visactor/vrender-core",
+  "email": "dingling112@gmail.com"
+}

@@ -7,15 +7,16 @@ function getFixedLRTB(left: number, right: number, top: number, bottom: number) 
   const topInt = Math.round(top);
   const rightInt = Math.round(right);
   const bottomInt = Math.round(bottom);
-  const _left = left > leftInt ? leftInt : leftInt - 0.5;
-  const _top = top > topInt ? topInt : topInt - 0.5;
-  const _right = rightInt > right ? rightInt : rightInt + 0.5;
-  const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
+  // 会导致背景色重叠
+  // const _left = left > leftInt ? leftInt : leftInt - 0.5;
+  // const _top = top > topInt ? topInt : topInt - 0.5;
+  // const _right = rightInt > right ? rightInt : rightInt + 0.5;
+  // const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
   return {
-    left: _left,
-    top: _top,
-    right: _right,
-    bottom: _bottom
+    left: leftInt,
+    top: topInt,
+    right: rightInt,
+    bottom: bottomInt
   };
 }
 

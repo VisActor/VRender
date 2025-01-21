@@ -594,11 +594,12 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { attribute } = this.currRt;
-    const b = this.currRt.AABBBounds;
+    let b = this.currRt.AABBBounds;
     let h = b.height();
     if (!attribute.textConfig.length && this.editLine) {
       const { points } = this.editLine.attribute;
       h = points[1].y - points[0].y;
+      b = getRichTextBounds({ ...this.shadowPlaceHolder.attribute });
     }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({

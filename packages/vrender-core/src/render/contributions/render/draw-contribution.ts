@@ -205,7 +205,11 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    if (this.useDirtyBounds && !isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
+    if (
+      this.useDirtyBounds &&
+      !isRectIntersect(group.AABBBounds, this.dirtyBounds, false) &&
+      group.attribute.boundsMode !== 'empty'
+    ) {
       return;
     }
 

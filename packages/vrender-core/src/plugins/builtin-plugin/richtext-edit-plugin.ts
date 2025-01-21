@@ -32,7 +32,15 @@ import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
-type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
+type UpdateType =
+  | 'input'
+  | 'change'
+  | 'onfocus'
+  | 'beforeOnfocus'
+  | 'defocus'
+  | 'beforeDefocus'
+  | 'selection'
+  | 'dispatch';
 
 class Selection {
   selectionStartCursorIdx: number;
@@ -150,7 +158,7 @@ export class RichTextEditPlugin implements IPlugin {
   editModule: EditModule;
 
   protected commandCbs: Map<string, Array<(payload: any, p: RichTextEditPlugin) => void>>;
-  protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin) => void>;
+  protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin, params?: any) => void>;
 
   // 富文本外部有align或者baseline的时候，需要对光标做偏移
   protected declare deltaX: number;
@@ -543,16 +551,25 @@ export class RichTextEditPlugin implements IPlugin {
       placeholderFontFamily,
       placeholderFontSize
     } = editOptions;
-    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    const shadow = this.getShadow(this.currRt);
+    const textConfigItem = { ...getDefaultCharacterConfig(this.currRt.attribute), text: placeholder };
+    if (placeholderColor) {
+      textConfigItem.fill = placeholderColor;
+    }
+    if (placeholderFontFamily) {
+      textConfigItem.fontFamily = placeholderFontFamily;
+    }
+    if (placeholderFontSize) {
+      textConfigItem.fontSize = placeholderFontSize;
+    }
+
     this.shadowPlaceHolder = createRichText({
       ...this.currRt.attribute,
       x: 0,
       y: 0,
       angle: 0,
       _debug_bounds: false,
-      textConfig: [
-        { text: placeholder, fill: placeholderColor, fontFamily: placeholderFontFamily, fontSize: placeholderFontSize }
-      ]
+      textConfig: [textConfigItem]
     });
     shadow.add(this.shadowPlaceHolder);
   }
@@ -583,10 +600,9 @@ export class RichTextEditPlugin implements IPlugin {
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
-      boundsMode: 'empty',
       zIndex: -1
     });
-    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    const shadow = this.getShadow(this.currRt);
     shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
@@ -685,6 +701,7 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   onFocus(e: PointerEvent, data?: any) {
+    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeOnfocus', this));
     this.deFocus(false);
     this.focusing = true;
     const target = e.target as IRichText;
@@ -696,7 +713,7 @@ export class RichTextEditPlugin implements IPlugin {
     // 创建shadowGraphic
 
     RichTextEditPlugin.tryUpdateRichtext(target);
-    const shadowRoot = target.shadowRoot || target.attachShadow();
+    const shadowRoot = this.getShadow(target);
     const cache = target.getFrameCache();
     if (!cache) {
       return;
@@ -707,13 +724,13 @@ export class RichTextEditPlugin implements IPlugin {
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
-      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsMode: 'empty' });
+      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
       this.ticker.start(true);
 
-      const g = createGroup({ x: 0, y: 0, width: 0, height: 0, boundsMode: 'empty' });
+      const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
       shadowRoot.add(this.editLine);
       shadowRoot.add(this.editBg);
@@ -771,6 +788,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected deFocus(trulyDeFocus = false) {
+    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     const target = this.currRt as IRichText;
     if (!target) {
       return;
@@ -970,6 +988,12 @@ export class RichTextEditPlugin implements IPlugin {
       this.editBg.removeAllChild();
       this.editBg.setAttributes({ fill: 'transparent' });
     }
+  }
+
+  protected getShadow(rt: IRichText) {
+    const sr = rt.shadowRoot || rt.attachShadow();
+    sr.setAttributes({ boundsMode: 'empty' });
+    return sr;
   }
 
   protected getLineByPoint(cache: IRichTextFrame, p1: IPointLike): IRichTextLine {

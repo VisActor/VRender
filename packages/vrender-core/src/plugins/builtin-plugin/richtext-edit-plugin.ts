@@ -689,33 +689,38 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   handleMove = (e: PointerEvent) => {
-    if (!this.isRichtext(e)) {
+    // 如果发现当前的richtext不是editable的richtext，那么需要强行defocus一下，这可能是用户手动设置了richtext的editable为false
+    if (this.currRt && !this.currRt.attribute.editable) {
+      this.deFocus(true);
+    }
+    if (!this.isEditableRichtext(e)) {
+      this.handleLeave();
       return;
     }
-    this.currRt = e.target as IRichText;
-    this.handleEnter(e);
+    // this.currRt = e.target as IRichText;
+    this.handleEnter();
     (e.target as any).once('pointerleave', this.handleLeave, { capture: true });
 
     this.tryShowSelection(e, false);
   };
 
   // 鼠标进入
-  handleEnter = (e: PointerEvent) => {
+  handleEnter = () => {
     this.editing = true;
     this.pluginService.stage.setCursor('text');
   };
 
   // 鼠标离开
-  handleLeave = (e: PointerEvent) => {
+  handleLeave = () => {
     this.editing = false;
     this.pluginService.stage.setCursor('default');
   };
 
   handlePointerDown = (e: PointerEvent) => {
-    if (this.editing) {
-      this.onFocus(e);
-    } else {
+    if (!this.editing || !this.isEditableRichtext(e)) {
       this.deFocus(true);
+    } else {
+      this.onFocus(e);
     }
     this.triggerRender();
     this.pointerDown = true;
@@ -894,6 +899,9 @@ export class RichTextEditPlugin implements IPlugin {
       cleared = true;
     }
     cleared && currRt.setAttributes({ textConfig });
+
+    // TODO 因为handlerLeave可能不会执行，所以这里需要手动清除
+    currRt.removeEventListener('pointerleave', this.handleLeave);
   }
 
   protected addAnimateToLine(line: ILine) {
@@ -1131,7 +1139,11 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected isRichtext(e: PointerEvent) {
-    return !!(e.target && (e.target as any).type === 'richtext' && (e.target as any).attribute.editable);
+    return !!(e.target && (e.target as any).type === 'richtext');
+  }
+
+  protected isEditableRichtext(e: PointerEvent) {
+    return this.isRichtext(e) && !!(e.target as any).attribute.editable;
   }
 
   // 如果没有开自动渲染，得触发重绘
@@ -1344,7 +1356,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected _forceFocusByEvent(e: PointerEvent) {
-    this.handleEnter(e);
+    this.handleEnter();
     this.handlePointerDown(e);
     this.handlePointerUp(e);
   }

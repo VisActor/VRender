@@ -40,7 +40,7 @@ import type {
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
 import { application } from '../application';
-import { Animate, DefaultStateAnimateConfig } from '../animate';
+import { Animate, DefaultStateAnimateConfig, defaultTimeline } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
 import { ResourceLoader } from '../resource-loader/loader';
@@ -823,6 +823,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     }
     this.animates.set(animate.id, animate);
     animate.onRemove(() => {
+      animate.stop();
       this.animates.delete(animate.id);
     });
 
@@ -1214,9 +1215,12 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.layer = layer;
       this.setStageToShadowRoot(stage, layer);
       if (this.animates && this.animates.size) {
+        // 设置timeline为所属的stage上的timeline，但如果timeline并不是默认的timeline，就不用覆盖
         const timeline = stage.getTimeline();
         this.animates.forEach(a => {
-          a.setTimeline(timeline);
+          if (a.timeline === defaultTimeline) {
+            a.setTimeline(timeline);
+          }
         });
       }
       this._onSetStage && this._onSetStage(this, stage, layer);
@@ -1437,6 +1441,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   detachShadow() {
     if (this.shadowRoot) {
       this.addUpdateBoundTag();
+      this.shadowRoot.release(true);
       this.shadowRoot = null;
     }
   }
@@ -1565,6 +1570,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   release(): void {
     this.releaseStatus = 'released';
+    this.stopAnimates();
     application.graphicService.onRelease(this);
   }
 

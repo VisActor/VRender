@@ -439,6 +439,8 @@ export class RichTextEditPlugin implements IPlugin {
         this.curCursorIdx = totalCursorCount + 0.1;
       }
 
+      this.selectionStartCursorIdx = this.curCursorIdx;
+
       const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
       this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
       this.hideSelection();
@@ -854,6 +856,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected addAnimateToLine(line: ILine) {
+    line.setAttributes({ opacity: 1 });
     line.animates &&
       line.animates.forEach(animate => {
         animate.stop();

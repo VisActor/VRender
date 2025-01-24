@@ -804,16 +804,15 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected deFocus(trulyDeFocus = false) {
-    const target = this.currRt as IRichText;
-    if (!target) {
+    const currRt = this.currRt as IRichText;
+    if (!currRt) {
       return;
     }
     this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     if (trulyDeFocus) {
       this.trySyncPlaceholderToTextConfig();
-      target.detachShadow();
+      currRt.detachShadow();
     }
-    const currRt = this.currRt;
     this.currRt = null;
     if (this.editLine) {
       this.editLine.parent && this.editLine.parent.removeChild(this.editLine);

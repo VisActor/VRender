@@ -105,7 +105,7 @@ class Selection {
     return this.getAllFormat(key)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, includeUndefined?: boolean): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
@@ -114,7 +114,11 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = this._getFormat(key, i);
-      val && valSet.add(val);
+      if (includeUndefined) {
+        valSet.add(val);
+      } else {
+        val !== undefined && valSet.add(val);
+      }
     }
     return Array.from(valSet.values());
   }

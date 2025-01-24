@@ -105,7 +105,7 @@ class Selection {
     return this.getAllFormat(key)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, includeUndefined?: boolean): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
@@ -114,7 +114,11 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = this._getFormat(key, i);
-      val && valSet.add(val);
+      if (includeUndefined) {
+        valSet.add(val);
+      } else {
+        val !== undefined && valSet.add(val);
+      }
     }
     return Array.from(valSet.values());
   }
@@ -438,6 +442,8 @@ export class RichTextEditPlugin implements IPlugin {
       } else if (this.curCursorIdx > totalCursorCount + 0.1) {
         this.curCursorIdx = totalCursorCount + 0.1;
       }
+
+      this.selectionStartCursorIdx = this.curCursorIdx;
 
       const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
       this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
@@ -854,6 +860,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected addAnimateToLine(line: ILine) {
+    line.setAttributes({ opacity: 1 });
     line.animates &&
       line.animates.forEach(animate => {
         animate.stop();

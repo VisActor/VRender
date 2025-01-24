@@ -414,6 +414,15 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
   getNoWorkAnimateAttr(): Record<string, number> {
     return Group.NOWORK_ANIMATE_ATTR;
   }
+
+  release(all?: boolean) {
+    if (all) {
+      this.forEachChildren((g: IGraphic) => {
+        g.release(all);
+      });
+    }
+    super.release();
+  }
 }
 
 export function createGroup(attributes: IGroupGraphicAttribute): IGroup {

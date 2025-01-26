@@ -195,7 +195,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         data,
         labels,
         this.getRelatedGraphic.bind(this),
-        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null,
+        this
       );
     } else {
       // 根据关联图元和配置的position计算标签坐标
@@ -206,7 +207,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       labels = customOverlapFunc(
         labels as Text[],
         this.getRelatedGraphic.bind(this),
-        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null,
+        this
       );
     } else {
       // 防重叠逻辑
@@ -219,7 +221,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       this.attribute.onAfterOverlapping(
         labels as Text[],
         this.getRelatedGraphic.bind(this),
-        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null
+        this._isCollectionBase ? (d: LabelItem) => this._idToPoint.get(d.id) : null,
+        this
       );
     }
 

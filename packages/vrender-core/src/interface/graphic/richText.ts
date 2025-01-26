@@ -6,6 +6,7 @@ import type { ITextGraphicAttribute } from './text';
 
 export type IRichTextEditOptionsType = {
   placeholder?: string;
+  syncPlaceHolderToTextConfig?: boolean;
   placeholderColor?: string;
   placeholderFontSize?: number;
   placeholderFontFamily?: string;

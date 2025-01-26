@@ -7,15 +7,16 @@ function getFixedLRTB(left: number, right: number, top: number, bottom: number) 
   const topInt = Math.round(top);
   const rightInt = Math.round(right);
   const bottomInt = Math.round(bottom);
-  const _left = left > leftInt ? leftInt : leftInt - 0.5;
-  const _top = top > topInt ? topInt : topInt - 0.5;
-  const _right = rightInt > right ? rightInt : rightInt + 0.5;
-  const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
+  // 会导致背景色重叠
+  // const _left = left > leftInt ? leftInt : leftInt - 0.5;
+  // const _top = top > topInt ? topInt : topInt - 0.5;
+  // const _right = rightInt > right ? rightInt : rightInt + 0.5;
+  // const _bottom = bottomInt > bottom ? bottomInt : bottomInt + 0.5;
   return {
-    left: _left,
-    top: _top,
-    right: _right,
-    bottom: _bottom
+    left: leftInt,
+    top: topInt,
+    right: rightInt,
+    bottom: bottomInt
   };
 }
 
@@ -210,40 +211,16 @@ export default class Paragraph {
         }
       }
     }
-
-    // prepareContext(ctx);
-    switch (this.character.script) {
-      case 'super':
-        baseline -= this.ascent * (1 / 3);
-        break;
-      case 'sub':
-        baseline += this.descent / 2;
-        break;
-    }
-
-    // 处理旋转
-    if (direction === 'vertical') {
-      ctx.save();
-      ctx.rotateAbout(Math.PI / 2, left, baseline);
-      ctx.translate(-(this.heightOrigin as number) || -this.lineHeight / 2, -this.descent / 2);
-      ctx.translate(left, baseline);
-      left = 0;
-      baseline = 0;
-    }
-
-    const fillStyle = ctx.fillStyle;
-    const globalAlpha = ctx.globalAlpha;
-    ctx.fillStyle = this.character.background;
-    if (this.character.backgroundOpacity !== void 0) {
-      ctx.globalAlpha = this.character.backgroundOpacity;
-    }
     // 背景稍微扩充一些buf，否则会出现白线
     const right = left + (this.widthOrigin || this.width);
     const bottom = top + lineHeight;
     const lrtb = getFixedLRTB(left, right, top, bottom);
-    ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
-    ctx.fillStyle = fillStyle;
-    ctx.globalAlpha = globalAlpha;
+
+    return {
+      ...lrtb,
+      fillStyle: this.character.background,
+      globalAlpha: this.character.backgroundOpacity
+    };
   }
 
   draw(

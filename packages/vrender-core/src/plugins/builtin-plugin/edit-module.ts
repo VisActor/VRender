@@ -267,6 +267,7 @@ export class EditModule {
     const textList: string[] = text ? Array.from(text.toString()) : [];
     for (let i = 0; i < textList.length; i++) {
       textConfig.splice(i + configIdx, 0, {
+        ...getDefaultCharacterConfig(this.currRt.attribute),
         fill: 'black',
         ...lastConfig,
         isComposing: false,

@@ -32,7 +32,15 @@ import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
 // import { testLetter, testLetter2 } from '../../graphic/richtext/utils';
 
-type UpdateType = 'input' | 'change' | 'onfocus' | 'defocus' | 'selection' | 'dispatch';
+type UpdateType =
+  | 'input'
+  | 'change'
+  | 'onfocus'
+  | 'beforeOnfocus'
+  | 'defocus'
+  | 'beforeDefocus'
+  | 'selection'
+  | 'dispatch';
 
 class Selection {
   selectionStartCursorIdx: number;
@@ -97,7 +105,7 @@ class Selection {
     return this.getAllFormat(key)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, includeUndefined?: boolean): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
@@ -106,7 +114,11 @@ class Selection {
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
       const val = this._getFormat(key, i);
-      val && valSet.add(val);
+      if (includeUndefined) {
+        valSet.add(val);
+      } else {
+        val !== undefined && valSet.add(val);
+      }
     }
     return Array.from(valSet.values());
   }
@@ -150,7 +162,7 @@ export class RichTextEditPlugin implements IPlugin {
   editModule: EditModule;
 
   protected commandCbs: Map<string, Array<(payload: any, p: RichTextEditPlugin) => void>>;
-  protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin) => void>;
+  protected updateCbs: Array<(type: UpdateType, p: RichTextEditPlugin, params?: any) => void>;
 
   // 富文本外部有align或者baseline的时候，需要对光标做偏移
   protected declare deltaX: number;
@@ -365,6 +377,12 @@ export class RichTextEditPlugin implements IPlugin {
         return;
       }
       const { lines } = cache;
+      if (lines.length === 0) {
+        return;
+      }
+      if (!lines[0].paragraphs || lines[0].paragraphs.length === 0) {
+        return;
+      }
       const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
       this.selectionRange(-0.1, totalCursorCount + 0.1);
 
@@ -424,6 +442,8 @@ export class RichTextEditPlugin implements IPlugin {
       } else if (this.curCursorIdx > totalCursorCount + 0.1) {
         this.curCursorIdx = totalCursorCount + 0.1;
       }
+
+      this.selectionStartCursorIdx = this.curCursorIdx;
 
       const pos = this.computedCursorPosByCursorIdx(this.curCursorIdx, this.currRt);
       this.setCursorAndTextArea(pos.x, pos.y1, pos.y2, this.currRt);
@@ -543,16 +563,28 @@ export class RichTextEditPlugin implements IPlugin {
       placeholderFontFamily,
       placeholderFontSize
     } = editOptions;
-    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    const shadow = this.getShadow(this.currRt);
+    const textConfigItem = { ...getDefaultCharacterConfig(this.currRt.attribute), text: placeholder };
+    if (placeholderColor) {
+      textConfigItem.fill = placeholderColor;
+    }
+    if (placeholderFontFamily) {
+      textConfigItem.fontFamily = placeholderFontFamily;
+    }
+    if (placeholderFontSize) {
+      textConfigItem.fontSize = placeholderFontSize;
+    }
+
     this.shadowPlaceHolder = createRichText({
       ...this.currRt.attribute,
       x: 0,
       y: 0,
+      pickable: false,
+      editable: false,
+      editOptions: null,
       angle: 0,
       _debug_bounds: false,
-      textConfig: [
-        { text: placeholder, fill: placeholderColor, fontFamily: placeholderFontFamily, fontSize: placeholderFontSize }
-      ]
+      textConfig: [textConfigItem]
     });
     shadow.add(this.shadowPlaceHolder);
   }
@@ -568,11 +600,12 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { attribute } = this.currRt;
-    const b = this.currRt.AABBBounds;
+    let b = this.currRt.AABBBounds;
     let h = b.height();
     if (!attribute.textConfig.length && this.editLine) {
       const { points } = this.editLine.attribute;
       h = points[1].y - points[0].y;
+      b = getRichTextBounds({ ...this.shadowPlaceHolder.attribute });
     }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
@@ -583,10 +616,9 @@ export class RichTextEditPlugin implements IPlugin {
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
-      boundsMode: 'empty',
       zIndex: -1
     });
-    const shadow = this.currRt.shadowRoot || this.currRt.attachShadow();
+    const shadow = this.getShadow(this.currRt);
     shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
@@ -600,7 +632,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (textConfig && textConfig.length) {
       return;
     }
-    if (!(editOptions && editOptions.placeholder)) {
+    if (!(editOptions && editOptions.placeholder && editOptions.syncPlaceHolderToTextConfig)) {
       return;
     }
     const { placeholder } = editOptions;
@@ -641,33 +673,39 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   handleMove = (e: PointerEvent) => {
-    if (!this.isRichtext(e)) {
+    // 如果发现当前的richtext不是editable的richtext，那么需要强行defocus一下，这可能是用户手动设置了richtext的editable为false
+    if (this.currRt && !this.currRt.attribute.editable) {
+      this.deFocus(true);
+    }
+    if (!this.isEditableRichtext(e)) {
+      this.handleLeave();
       return;
     }
-    this.currRt = e.target as IRichText;
-    this.handleEnter(e);
+    // this.currRt = e.target as IRichText;
+    this.handleEnter();
+    // TODO 这里可能走不到
     (e.target as any).once('pointerleave', this.handleLeave);
 
     this.tryShowSelection(e, false);
   };
 
   // 鼠标进入
-  handleEnter = (e: PointerEvent) => {
+  handleEnter = () => {
     this.editing = true;
     this.pluginService.stage.setCursor('text');
   };
 
   // 鼠标离开
-  handleLeave = (e: PointerEvent) => {
+  handleLeave = () => {
     this.editing = false;
     this.pluginService.stage.setCursor('default');
   };
 
   handlePointerDown = (e: PointerEvent) => {
-    if (this.editing) {
-      this.onFocus(e);
-    } else {
+    if (!this.editing || !this.isEditableRichtext(e)) {
       this.deFocus(true);
+    } else {
+      this.onFocus(e);
     }
     this.triggerRender();
     this.pointerDown = true;
@@ -685,6 +723,7 @@ export class RichTextEditPlugin implements IPlugin {
   };
 
   onFocus(e: PointerEvent, data?: any) {
+    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeOnfocus', this));
     this.deFocus(false);
     this.focusing = true;
     const target = e.target as IRichText;
@@ -696,7 +735,7 @@ export class RichTextEditPlugin implements IPlugin {
     // 创建shadowGraphic
 
     RichTextEditPlugin.tryUpdateRichtext(target);
-    const shadowRoot = target.shadowRoot || target.attachShadow();
+    const shadowRoot = this.getShadow(target);
     const cache = target.getFrameCache();
     if (!cache) {
       return;
@@ -707,13 +746,13 @@ export class RichTextEditPlugin implements IPlugin {
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
     if (!this.editLine) {
-      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black', boundsMode: 'empty' });
+      const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
       this.ticker.start(true);
 
-      const g = createGroup({ x: 0, y: 0, width: 0, height: 0, boundsMode: 'empty' });
+      const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
       shadowRoot.add(this.editLine);
       shadowRoot.add(this.editBg);
@@ -771,15 +810,15 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected deFocus(trulyDeFocus = false) {
-    const target = this.currRt as IRichText;
-    if (!target) {
+    const currRt = this.currRt as IRichText;
+    if (!currRt) {
       return;
     }
+    this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     if (trulyDeFocus) {
       this.trySyncPlaceholderToTextConfig();
-      target.detachShadow();
+      currRt.detachShadow();
     }
-    const currRt = this.currRt;
     this.currRt = null;
     if (this.editLine) {
       this.editLine.parent && this.editLine.parent.removeChild(this.editLine);
@@ -815,9 +854,13 @@ export class RichTextEditPlugin implements IPlugin {
       cleared = true;
     }
     cleared && currRt.setAttributes({ textConfig });
+
+    // TODO 因为handlerLeave可能不会执行，所以这里需要手动清除
+    currRt.removeEventListener('pointerleave', this.handleLeave);
   }
 
   protected addAnimateToLine(line: ILine) {
+    line.setAttributes({ opacity: 1 });
     line.animates &&
       line.animates.forEach(animate => {
         animate.stop();
@@ -890,6 +933,9 @@ export class RichTextEditPlugin implements IPlugin {
     };
     let line0Info = this.getLineByPoint(cache, startCursorPos);
     let line1Info = this.getLineByPoint(cache, endCursorPos);
+    if (!line0Info || !line1Info) {
+      return;
+    }
 
     if (
       startCursorPos.y > endCursorPos.y ||
@@ -972,6 +1018,12 @@ export class RichTextEditPlugin implements IPlugin {
     }
   }
 
+  protected getShadow(rt: IRichText) {
+    const sr = rt.shadowRoot || rt.attachShadow();
+    sr.setAttributes({ boundsMode: 'empty' });
+    return sr;
+  }
+
   protected getLineByPoint(cache: IRichTextFrame, p1: IPointLike): IRichTextLine {
     let lineInfo = cache.lines[0];
     for (let i = 0; i < cache.lines.length; i++) {
@@ -1046,7 +1098,11 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected isRichtext(e: PointerEvent) {
-    return !!(e.target && (e.target as any).type === 'richtext' && (e.target as any).attribute.editable);
+    return !!(e.target && (e.target as any).type === 'richtext');
+  }
+
+  protected isEditableRichtext(e: PointerEvent) {
+    return this.isRichtext(e) && !!(e.target as any).attribute.editable;
   }
 
   // 如果没有开自动渲染，得触发重绘
@@ -1255,7 +1311,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected _forceFocusByEvent(e: PointerEvent) {
-    this.handleEnter(e);
+    this.handleEnter();
     this.handlePointerDown(e);
     this.handlePointerUp(e);
   }

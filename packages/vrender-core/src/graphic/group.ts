@@ -147,6 +147,10 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
     const bounds = this.doUpdateAABBBounds();
     this.addUpdateLayoutTag();
     application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, selfChange);
+    // 直接返回空Bounds，但是前面的流程还是要走
+    if (this.attribute.boundsMode === 'empty') {
+      bounds.clear();
+    }
     return bounds;
   }
 
@@ -409,6 +413,15 @@ export class Group extends Graphic<IGroupGraphicAttribute> implements IGroup {
 
   getNoWorkAnimateAttr(): Record<string, number> {
     return Group.NOWORK_ANIMATE_ATTR;
+  }
+
+  release(all?: boolean) {
+    if (all) {
+      this.forEachChildren((g: IGraphic) => {
+        g.release(all);
+      });
+    }
+    super.release();
   }
 }
 

@@ -178,7 +178,7 @@ export default class Line {
           const ellipsis = drawEllipsis === true ? '...' : drawEllipsis || '';
           paragraph.ellipsisStr = ellipsis;
           // const { width } = measureText('...', paragraph.style);
-          const { width } = measureTextCanvas(ellipsis, paragraph.character);
+          const { width } = measureTextCanvas(ellipsis, paragraph.character, paragraph.ascentDescentMode);
           const ellipsisWidth = width || 0;
           if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
             // 省略号可以直接接在后面paragraph
@@ -243,7 +243,7 @@ export default class Line {
         break; // todo: 处理最后为图标，显示省略号的情况
       }
 
-      const { width } = measureTextCanvas(ellipsis, paragraph.character);
+      const { width } = measureTextCanvas(ellipsis, paragraph.character, paragraph.ascentDescentMode);
       const ellipsisWidth = width || 0;
       if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
         // 省略号可以直接接在后面paragraph

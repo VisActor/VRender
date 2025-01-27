@@ -381,7 +381,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       layoutDirection,
       singleLine,
       disableAutoWrapLine,
-      editable
+      editable,
+      ascentDescentMode
     } = this.attribute;
 
     let { textConfig: _tc = [] } = this.attribute;
@@ -427,10 +428,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
-            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig));
+            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
           }
         } else if (richTextConfig.text) {
-          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig));
+          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig, ascentDescentMode));
         }
       }
     }

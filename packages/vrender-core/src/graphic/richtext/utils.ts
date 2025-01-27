@@ -341,7 +341,8 @@ export function measureTextDom(
 // 测量文字详细信息
 export function measureTextCanvas(
   text: string,
-  character: IRichTextParagraphCharacter
+  character: IRichTextParagraphCharacter,
+  mode: 'actual' | 'font' = 'actual'
 ): { ascent: number; height: number; descent: number; width: number } {
   const textMeasure = application.graphicUtil.textMeasure;
   const measurement = textMeasure.measureText(text, character as any) as TextMetrics;
@@ -351,15 +352,17 @@ export function measureTextCanvas(
     descent: 0,
     width: 0
   };
-  if (typeof measurement.fontBoundingBoxAscent !== 'number' || typeof measurement.fontBoundingBoxDescent !== 'number') {
+  const ascent = mode === 'actual' ? measurement.actualBoundingBoxAscent : measurement.fontBoundingBoxAscent;
+  const descent = mode === 'actual' ? measurement.actualBoundingBoxDescent : measurement.fontBoundingBoxDescent;
+  if (typeof ascent !== 'number' || typeof descent !== 'number') {
     result.width = measurement.width;
     result.height = character.fontSize || 0;
     result.ascent = result.height;
     result.descent = 0;
   } else {
     result.width = measurement.width;
-    result.height = Math.floor(measurement.fontBoundingBoxAscent + measurement.fontBoundingBoxDescent);
-    result.ascent = Math.floor(measurement.fontBoundingBoxAscent);
+    result.height = Math.floor(ascent + descent);
+    result.ascent = Math.floor(ascent);
     result.descent = result.height - result.ascent;
   }
   return result;

@@ -363,27 +363,47 @@ export default class Paragraph {
           const right = left + (this.widthOrigin || this.width);
           const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
           const lrtb = getFixedLRTB(left, right, top, bottom);
-          ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+          ctx.fillRect(
+            lrtb.left,
+            1 + baseline,
+            lrtb.right - lrtb.left,
+            this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
+          );
         }
         if (this.character.lineThrough) {
           const top = 1 + baseline - this.ascent / 2;
           const right = left + (this.widthOrigin || this.width);
           const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
           const lrtb = getFixedLRTB(left, right, top, bottom);
-          ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+          ctx.fillRect(
+            lrtb.left,
+            1 + baseline - this.ascent / 2,
+            lrtb.right - lrtb.left,
+            this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
+          );
         }
       } else if (this.character.textDecoration === 'underline') {
         const top = 1 + baseline;
         const right = left + (this.widthOrigin || this.width);
         const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
         const lrtb = getFixedLRTB(left, right, top, bottom);
-        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+        ctx.fillRect(
+          lrtb.left,
+          1 + baseline,
+          lrtb.right - lrtb.left,
+          this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
+        );
       } else if (this.character.textDecoration === 'line-through') {
         const top = 1 + baseline - this.ascent / 2;
         const right = left + (this.widthOrigin || this.width);
         const bottom = top + (this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1);
         const lrtb = getFixedLRTB(left, right, top, bottom);
-        ctx.fillRect(lrtb.left, lrtb.top, lrtb.right - lrtb.left, lrtb.bottom - lrtb.top);
+        ctx.fillRect(
+          lrtb.left,
+          1 + baseline - this.ascent / 2,
+          lrtb.right - lrtb.left,
+          this.character.fontSize ? Math.max(1, Math.floor(this.character.fontSize / 10)) : 1
+        );
       }
     }
 

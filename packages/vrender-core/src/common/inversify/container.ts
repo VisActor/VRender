@@ -200,16 +200,18 @@ export class Container {
         serviceIdentifier: injectIdentifier,
         constructorArgsMetadata
       };
-      const bindings = this._bindingDictionary.get(injectIdentifier).filter(b => {
+      const bindings = (this._bindingDictionary.get(injectIdentifier) || []).filter(b => {
         return b.constraint(target as any);
       });
-      const request = {
-        injectIdentifier,
-        metadata: constructorArgsMetadata,
-        bindings
-      };
+      if (bindings.length) {
+        const request = {
+          injectIdentifier,
+          metadata: constructorArgsMetadata,
+          bindings: bindings
+        };
 
-      arr.push(request);
+        arr.push(request);
+      }
     }
 
     return arr;

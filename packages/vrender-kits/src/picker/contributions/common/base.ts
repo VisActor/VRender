@@ -12,13 +12,16 @@ import type {
 } from '@visactor/vrender-core';
 
 export abstract class PickerBase {
-  canvasRenderer!: IGraphicRender;
+  canvasRenderer?: IGraphicRender;
 
   contains(graphic: IGraphic, point: IPoint, params?: IPickParams): boolean {
     if (!graphic.AABBBounds.containsPoint(point)) {
       return false;
     }
     if (graphic.attribute.pickMode === 'imprecise') {
+      return true;
+    }
+    if (!this.canvasRenderer) {
       return true;
     }
 

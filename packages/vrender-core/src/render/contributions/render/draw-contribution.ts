@@ -18,7 +18,7 @@ import { findNextGraphic, foreach } from '../../../common/sort';
 import { ContributionProvider } from '../../../common/contribution-provider';
 import { DefaultAttribute } from '../../../graphic/config';
 import type { IAABBBounds, IBounds, IMatrix } from '@visactor/vutils';
-import { Bounds, Logger, getRectIntersect, isRectIntersect } from '@visactor/vutils';
+import { Bounds, Logger, getRectIntersect, isArray, isRectIntersect } from '@visactor/vutils';
 import { container } from '../../../container';
 import { GraphicRender, IncrementalDrawContribution } from './symbol';
 import { DrawItemInterceptor } from './draw-interceptor';
@@ -66,6 +66,9 @@ export class DefaultDrawContribution implements IDrawContribution {
     this.backupDirtyBounds = new Bounds();
     this.global = application.global;
     this.layerService = application.layerService;
+    if (!isArray(this.contributions)) {
+      this.contributions = [this.contributions];
+    }
     this.init();
   }
 

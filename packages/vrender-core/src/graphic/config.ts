@@ -346,6 +346,7 @@ export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultTextStyle,
   editable: false,
   editOptions: null,
+  ascentDescentMode: 'actual',
   width: 300,
   height: 300,
   ellipsis: true,

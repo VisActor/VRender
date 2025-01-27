@@ -31,6 +31,10 @@ export type IRichTextAttribute = {
    */
   editable: boolean;
   /**
+   * 测量ascent和descent的模式，预览的时候actual比较合适，而如果需要编辑的话，font比较合适
+   */
+  ascentDescentMode?: 'actual' | 'font';
+  /**
    * 富文本的编辑配置
    */
   editOptions: IRichTextEditOptionsType | null;

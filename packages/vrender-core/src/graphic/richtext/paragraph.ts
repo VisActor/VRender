@@ -66,6 +66,7 @@ export default class Paragraph {
   widthOrigin?: number;
   heightOrigin?: number;
   textBaseline?: CanvasTextBaseline;
+  ascentDescentMode?: 'actual' | 'font';
 
   ellipsis: 'normal' | 'add' | 'replace' | 'hide';
   ellipsisStr: string;
@@ -74,10 +75,16 @@ export default class Paragraph {
   verticalEllipsis?: boolean;
   overflow?: boolean;
 
-  constructor(text: string, newLine: boolean, character: IRichTextParagraphCharacter) {
+  constructor(
+    text: string,
+    newLine: boolean,
+    character: IRichTextParagraphCharacter,
+    ascentDescentMode?: 'actual' | 'font'
+  ) {
     // 测量文字
     this.fontSize = character.fontSize || 16;
     this.textBaseline = character.textBaseline || 'alphabetic';
+    this.ascentDescentMode = ascentDescentMode;
 
     // 处理行高：
     // lineHeight为数字时，大于fontSize取lineHeight，小于fontSize时取fontSize
@@ -91,7 +98,7 @@ export default class Paragraph {
 
     this.height = this.lineHeight;
 
-    const { ascent, height, descent, width } = measureTextCanvas(text, character);
+    const { ascent, height, descent, width } = measureTextCanvas(text, character, this.ascentDescentMode);
 
     let halfDetaHeight = 0;
     let deltaAscent = 0;
@@ -150,7 +157,7 @@ export default class Paragraph {
   }
 
   updateWidth() {
-    const { width } = measureTextCanvas(this.text, this.character);
+    const { width } = measureTextCanvas(this.text, this.character, this.ascentDescentMode);
     this.width = width;
     if (this.direction === 'vertical') {
       this.widthOrigin = this.width;
@@ -202,7 +209,7 @@ export default class Paragraph {
       text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
-        const { width } = measureTextCanvas(this.text.slice(index), this.character);
+        const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
         if (direction === 'vertical') {
           // baseline -= this.ellipsisWidth - width;
         } else {
@@ -286,7 +293,7 @@ export default class Paragraph {
       text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
-        const { width } = measureTextCanvas(this.text.slice(index), this.character);
+        const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
         if (direction === 'vertical') {
           // baseline -= this.ellipsisWidth - width;
         } else {
@@ -407,7 +414,7 @@ export default class Paragraph {
       text = text.slice(0, index);
       text += this.ellipsisStr;
 
-      const { width: measureWidth } = measureTextCanvas(this.text.slice(index), this.character);
+      const { width: measureWidth } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
       return width + this.ellipsisWidth - measureWidth;
     }
     return width;
@@ -417,8 +424,8 @@ export default class Paragraph {
 export function seperateParagraph(paragraph: Paragraph, index: number) {
   const text1 = paragraph.text.slice(0, index);
   const text2 = paragraph.text.slice(index);
-  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character);
-  const p2 = new Paragraph(text2, true, paragraph.character);
+  const p1 = new Paragraph(text1, paragraph.newLine, paragraph.character, paragraph.ascentDescentMode);
+  const p2 = new Paragraph(text2, true, paragraph.character, paragraph.ascentDescentMode);
 
   return [p1, p2];
 }

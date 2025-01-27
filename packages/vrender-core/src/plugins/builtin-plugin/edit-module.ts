@@ -214,11 +214,11 @@ export class EditModule {
     this.composingConfigIdx = this.cursorIndex < 0 ? 0 : findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
     if (this.cursorIndex < 0) {
       const config = textConfig[0];
-      textConfig.unshift({ ...getDefaultCharacterConfig(this.currRt.attribute), ...config, text: '' });
+      textConfig.unshift({ fill: 'black', ...getDefaultCharacterConfig(this.currRt.attribute), ...config, text: '' });
     } else {
       const configIdx = this.composingConfigIdx;
       const lastConfig = textConfig[configIdx] || textConfig[configIdx - 1];
-      textConfig.splice(configIdx, 0, { ...lastConfig, text: '' });
+      textConfig.splice(configIdx, 0, { fill: 'black', ...lastConfig, text: '' });
     }
   };
   handleCompositionEnd = () => {

@@ -178,7 +178,7 @@ export default class Line {
           const ellipsis = drawEllipsis === true ? '...' : drawEllipsis || '';
           paragraph.ellipsisStr = ellipsis;
           // const { width } = measureText('...', paragraph.style);
-          const { width } = measureTextCanvas(ellipsis, paragraph.character);
+          const { width } = measureTextCanvas(ellipsis, paragraph.character, paragraph.ascentDescentMode);
           const ellipsisWidth = width || 0;
           if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
             // 省略号可以直接接在后面paragraph
@@ -201,6 +201,13 @@ export default class Line {
       }
     }
 
+    // 绘制背景
+    this.paragraphs.forEach((paragraph, index) => {
+      if (paragraph instanceof RichTextIcon) {
+        return;
+      }
+      paragraph.drawBackground(ctx, y, this.ascent, x, index === 0, this.textAlign, this.height);
+    });
     // 正常绘制
     this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {
@@ -223,7 +230,7 @@ export default class Line {
       applyStrokeStyle(ctx, paragraph.character);
       // 下面绘制underline和line-through时需要设置FillStyle
       applyFillStyle(ctx, paragraph.character, b);
-      paragraph.draw(ctx, y + this.ascent, x, index === 0, this.textAlign);
+      paragraph.draw(ctx, y, this.ascent, x, index === 0, this.textAlign, this.height);
     });
   }
 
@@ -236,7 +243,7 @@ export default class Line {
         break; // todo: 处理最后为图标，显示省略号的情况
       }
 
-      const { width } = measureTextCanvas(ellipsis, paragraph.character);
+      const { width } = measureTextCanvas(ellipsis, paragraph.character, paragraph.ascentDescentMode);
       const ellipsisWidth = width || 0;
       if (ellipsisWidth <= this.blankWidth + otherParagraphWidth) {
         // 省略号可以直接接在后面paragraph

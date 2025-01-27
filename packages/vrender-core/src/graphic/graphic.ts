@@ -1,6 +1,6 @@
 import type { ICustomPath2D } from './../interface/path';
 import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { OBBBounds } from '@visactor/vutils';
+import { interpolateNumber, last, OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -218,7 +218,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // aabbBounds，所有图形都需要有，所以初始化即赋值
   protected declare _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
-    return this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
+    return this.tryUpdateAABBBounds();
   }
   // 具有旋转的包围盒，部分图元需要，动态初始化
   protected declare _OBBBounds?: IOBBBounds;
@@ -313,7 +313,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this._emitCustomEvent('animate-bind', animate);
   }
 
-  protected tryUpdateAABBBounds(full?: boolean): IAABBBounds {
+  protected tryUpdateAABBBounds(): IAABBBounds {
+    const full = this.attribute.boundsMode === 'imprecise';
     if (!this.shouldUpdateAABBBounds()) {
       return this._AABBBounds;
     }
@@ -326,6 +327,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     const bounds = this.doUpdateAABBBounds(full);
     // this.addUpdateLayoutTag();
     application.graphicService.afterUpdateAABBBounds(this, this.stage, this._AABBBounds, this, true);
+
+    // 直接返回空Bounds，但是前面的流程还是要走
+    if (this.attribute.boundsMode === 'empty') {
+      bounds.clear();
+    }
     return bounds;
   }
 
@@ -800,7 +806,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(params?.id, this.stage && this.stage.getTimeline(), params?.slience);
+    const animate = new Animate(
+      params?.id,
+      params?.timeline ?? (this.stage && this.stage.getTimeline()),
+      params?.slience
+    );
 
     animate.bind(this);
     if (params) {
@@ -835,10 +845,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   update(d?: { bounds: boolean; trans: boolean }) {
     if (d) {
-      d.bounds && this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
+      d.bounds && this.tryUpdateAABBBounds();
       d.trans && this.tryUpdateLocalTransMatrix();
     } else {
-      this.tryUpdateAABBBounds(this.attribute.boundsMode === 'imprecise');
+      this.tryUpdateAABBBounds();
       this.tryUpdateLocalTransMatrix();
     }
   }
@@ -1368,6 +1378,21 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       }
 
       return true;
+    } else if (Array.isArray(nextStepVal) && nextStepVal.length === lastStepVal.length) {
+      const nextList = [];
+      let valid = true;
+      for (let i = 0; i < nextStepVal.length; i++) {
+        const v = lastStepVal[i];
+        const val = v + (nextStepVal[i] - v) * ratio;
+        if (!Number.isFinite(val)) {
+          valid = false;
+          break;
+        }
+        nextList.push(val);
+      }
+      if (valid) {
+        nextAttributes[key] = nextList;
+      }
     }
 
     return false;

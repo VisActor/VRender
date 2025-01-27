@@ -244,7 +244,7 @@ export class InputText extends ACustomAnimate<{ text: string }> {
   declare target: IGraphic;
 
   private fromText: string = '';
-  private toText: string = '';
+  private toText: string | string[] = '';
 
   getEndProps(): Record<string, any> {
     if (this.valid === false) {
@@ -257,24 +257,28 @@ export class InputText extends ACustomAnimate<{ text: string }> {
 
   onBind(): void {
     this.fromText = this.from?.text ?? '';
-    this.toText = this.to?.text ?? '';
-    if (!this.toText || isArray(this.toText)) {
+    this.toText = this.to?.text || '';
+    if (!this.toText || (isArray(this.toText) && this.toText.length === 0)) {
       this.valid = false;
-    } else {
-      this.toText = this.toText.toString();
-      const root = this.target.attachShadow();
-      const line = application.graphicService.creator.line({
-        x: 0,
-        y: 0,
-        points: [
-          { x: 0, y: 0 },
-          { x: 0, y: this.target.getComputedAttribute('fontSize') }
-        ],
-        stroke: 'black',
-        lineWidth: 1
-      });
-      root.add(line);
     }
+    if (isArray(this.toText)) {
+      this.toText = this.toText.map(item => (item || '').toString());
+    }
+    //  else {
+    //   this.toText = this.toText.toString();
+    //   // const root = this.target.attachShadow();
+    //   // const line = application.graphicService.creator.line({
+    //   //   x: 0,
+    //   //   y: 0,
+    //   //   points: [
+    //   //     { x: 0, y: 0 },
+    //   //     { x: 0, y: this.target.getComputedAttribute('fontSize') }
+    //   //   ],
+    //   //   stroke: 'black',
+    //   //   lineWidth: 1
+    //   // });
+    //   // root.add(line);
+    // }
   }
 
   onEnd(): void {
@@ -288,15 +292,33 @@ export class InputText extends ACustomAnimate<{ text: string }> {
     }
     // update text
     const fromCount = this.fromText.length;
-    const toCount = this.toText.length;
+    const toTextIsArray = isArray(this.toText);
+    const toCount = toTextIsArray
+      ? (this.toText as unknown as string[]).reduce((c, t) => c + (t || '').length, 0)
+      : this.toText.length;
     const count = Math.ceil(fromCount + (toCount - fromCount) * ratio);
 
-    out.text = this.toText.substr(0, count);
+    if (toTextIsArray) {
+      out.text = [];
+      let len = 0;
+      (this.toText as unknown as string[]).forEach(t => {
+        if (len + t.length > count) {
+          out.text.push(t.substr(0, count - len));
+          len = count;
+        } else {
+          out.text.push(t);
+          len += t.length;
+        }
+      });
+    } else {
+      out.text = (this.toText as string).substr(0, count);
+    }
+    // console.log(out.text)
 
     // update line position
-    const line = this.target.shadowRoot?.at(0) as IGraphic;
-    const endX = (this.target as any).clipedWidth + 2;
-    line.setAttribute('x', endX);
+    // const line = this.target.shadowRoot?.at(0) as IGraphic;
+    // const endX = (this.target as any).clipedWidth + 2;
+    // line.setAttribute('x', endX);
   }
 }
 

@@ -115,7 +115,7 @@ export class DefaultCanvasRichTextRender extends BaseRender<IRichText> implement
         context.rect(x - expandX, y - expandY, backgroundWidth, backgroundHeight);
       } else {
         context.beginPath();
-        createRectPath(context, x - expandX, y - expandY, backgroundWidth, backgroundHeight, backgroundRadius);
+        createRectPath(context, x - expandX, y - expandY, backgroundWidth, backgroundHeight, backgroundRadius, true);
       }
       if (backgroundFill) {
         // context.setCommonStyle(rect, rect.attribute, x, y, rectAttribute);

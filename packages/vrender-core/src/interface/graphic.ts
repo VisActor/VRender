@@ -1,5 +1,5 @@
 import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType, IOBBBounds } from '@visactor/vutils';
-import type { IAnimate, IStep, EasingType, IAnimateTarget } from './animate';
+import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animate';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
 import type { IShadowRoot } from './graphic/shadow-root';
@@ -403,6 +403,23 @@ export type IGraphicStyle = ILayout &
      * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
      */
     backgroundFit: boolean;
+
+    /**
+     * 背景图缩放，只在no-repeat的时候生效
+     */
+    backgroundScale: number;
+    /**
+     * 背景图偏移，只在no-repeat的时候生效
+     */
+    backgroundOffsetX: number;
+    /**
+     * 背景图偏移，只在no-repeat的时候生效
+     */
+    backgroundOffsetY: number;
+    /**
+     * 背景图是否裁切
+     */
+    backgroundClip: boolean;
     /**
      * 背景圆角半径
      */
@@ -414,6 +431,11 @@ export type IGraphicStyle = ILayout &
     /**
      * 背景，支持颜色字符串、html image元素、html canvas元素
      */
+    // 纹理是否自动做动画
+    autoAnimateTexture: boolean;
+    // 如果做动画的话，这里代表ratio
+    textureRatio: number;
+    textureOptions: any;
     background:
       | IBackgroundType
       | {
@@ -469,6 +491,7 @@ export type IGraphicStyle = ILayout &
      * 设置图形对应的鼠标样式
      */
     cursor: Cursor | null;
+    filter: string;
     renderStyle?: 'default' | 'rough' | any;
     /**
      * HTML的dom或者string
@@ -521,7 +544,7 @@ export type IGraphicAttribute = IDebugType &
      * 选择模式，精确模式，粗糙模式（包围盒模式），自定义模式
      */
     pickMode: 'accurate' | 'imprecise' | 'custom';
-    boundsMode: 'accurate' | 'imprecise';
+    boundsMode: 'accurate' | 'imprecise' | 'empty';
     customPickShape: () => boolean | null;
     /**
      * 是否支持事件拾取，默认为 true。
@@ -617,6 +640,7 @@ export type ISetAttributeContext = {
 export type IGraphicAnimateParams = {
   slience?: boolean;
   id?: number | string;
+  timeline?: ITimeline;
   onStart?: () => void;
   onFrame?: (step: IStep, ratio: number) => void;
   onEnd?: () => void;

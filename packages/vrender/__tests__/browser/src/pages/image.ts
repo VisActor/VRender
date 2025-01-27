@@ -69,19 +69,16 @@ export const page = () => {
   shapes.push(svgImage);
 
   const image = createImage({
-    x: 500,
-    y: 100,
-    width: 100,
-    height: 100,
-    image: urlPng,
-    cornerRadius: 100,
-    // stroke: 'green',
-    // lineWidth: 10,
-    outerBorder: {
-      distance: 50,
-      lineWidth: 100,
-      stroke: 'pink'
-    }
+    x: 50,
+    y: 50,
+    width: 200,
+    height: 200,
+    lineWidth: 10,
+    cornerRadius: 14,
+    stroke: '#000000',
+    fill: 'transparent',
+    image:
+      'http://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vchart-editor/upload-images/014d69b2-2731-4daa-9e60-68925fa1e54b.jpg'
   });
   shapes.push(image);
 

@@ -1,6 +1,6 @@
 import type { IPoint, IPointLike } from '@visactor/vutils';
 import { abs, atan2, PointService } from '@visactor/vutils';
-import type { ILineCurve, IDirection } from '../../../interface';
+import type { ILineCurve, IDirection, IPath2D } from '../../../interface';
 import { Curve } from './base';
 import { CurveTypeEnum, Direction } from '../../enums';
 
@@ -62,5 +62,32 @@ export class LineCurve extends Curve implements ILineCurve {
       return abs(this.p0.y - this.p1.y);
     }
     return 0;
+  }
+
+  draw(path: IPath2D, x: number, y: number, sx: number, sy: number, percent: number) {
+    path.moveTo(this.p0.x * sx + x, this.p0.y * sy + y);
+    if (percent >= 1) {
+      path.lineTo(this.p1.x * sx + x, this.p1.y * sy + y);
+    } else if (percent > 0) {
+      const p = this.getPointAt(percent);
+      path.lineTo(p.x * sx + x, p.y * sy + y);
+    }
+  }
+  includeX(x: number): boolean {
+    return (x >= this.p0.x && x <= this.p1.x) || (x >= this.p1.x && x <= this.p0.x);
+  }
+
+  getYAt(x: number): number {
+    if (this.includeX(x)) {
+      let minP = this.p0;
+      let maxP = this.p1;
+      if (this.p0.x > this.p1.x) {
+        minP = this.p1;
+        maxP = this.p0;
+      }
+      const percent = (x - minP.x) / (maxP.x - minP.x);
+      return minP.y + percent * (maxP.y - minP.y);
+    }
+    return Infinity;
   }
 }

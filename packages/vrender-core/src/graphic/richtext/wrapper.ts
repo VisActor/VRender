@@ -47,6 +47,7 @@ export default class Wrapper {
   lineBuffer: (Paragraph | RichTextIcon)[];
   direction: 'horizontal' | 'vertical';
   directionKey: { width: string; height: string };
+  newLine: boolean; // 空换行符是否新增一行
 
   constructor(frame: Frame) {
     this.frame = frame;
@@ -164,7 +165,7 @@ export default class Wrapper {
       this.send();
     }
 
-    if (paragraph.text.length === 0) {
+    if (paragraph.text.length === 0 && !this.newLine) {
       return;
     } // 换行符分割出的Paragraph不进入line
 

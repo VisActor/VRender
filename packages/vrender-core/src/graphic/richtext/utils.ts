@@ -355,12 +355,12 @@ export function measureTextCanvas(
   const ascent = mode === 'actual' ? measurement.actualBoundingBoxAscent : measurement.fontBoundingBoxAscent;
   const descent = mode === 'actual' ? measurement.actualBoundingBoxDescent : measurement.fontBoundingBoxDescent;
   if (typeof ascent !== 'number' || typeof descent !== 'number') {
-    result.width = measurement.width;
+    result.width = Math.floor(measurement.width);
     result.height = character.fontSize || 0;
     result.ascent = result.height;
     result.descent = 0;
   } else {
-    result.width = measurement.width;
+    result.width = Math.floor(measurement.width);
     result.height = Math.floor(ascent + descent);
     result.ascent = Math.floor(ascent);
     result.descent = result.height - result.ascent;

@@ -40,6 +40,9 @@ export class ATextMeasure implements ITextMeasure {
       (metrics as any).fontBoundingBoxAscent == null ||
       (metrics as any).fontBoundingBoxDescent == null
     ) {
+      metrics = {
+        width: metrics.width
+      };
       const { ascent, descent } = this.measureTextBoundADscentEstimate(options);
       (metrics as any).actualBoundingBoxAscent = ascent;
       (metrics as any).actualBoundingBoxDescent = descent;
@@ -47,6 +50,13 @@ export class ATextMeasure implements ITextMeasure {
       (metrics as any).fontBoundingBoxDescent = descent;
     }
     if ((metrics as any).actualBoundingBoxLeft == null || (metrics as any).actualBoundingBoxRight == null) {
+      metrics = {
+        width: metrics.width,
+        actualBoundingBoxAscent: (metrics as any).actualBoundingBoxAscent,
+        actualBoundingBoxDescent: (metrics as any).actualBoundingBoxDescent,
+        fontBoundingBoxAscent: (metrics as any).fontBoundingBoxAscent,
+        fontBoundingBoxDescent: (metrics as any).fontBoundingBoxDescent
+      };
       const { left, right } = this.measureTextBoundLeftRightEstimate(options);
       (metrics as any).actualBoundingBoxLeft = left;
       (metrics as any).actualBoundingBoxRight = right;

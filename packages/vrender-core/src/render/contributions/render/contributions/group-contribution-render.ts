@@ -33,6 +33,7 @@ export class DefaultGroupBackgroundRenderContribution
       background,
       backgroundMode = graphicAttribute.backgroundMode,
       backgroundFit = graphicAttribute.backgroundFit,
+      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
       backgroundScale = graphicAttribute.backgroundScale,
       backgroundOffsetX = graphicAttribute.backgroundOffsetX,
       backgroundOffsetY = graphicAttribute.backgroundOffsetY
@@ -54,6 +55,7 @@ export class DefaultGroupBackgroundRenderContribution
       this.doDrawImage(context, res.data, b, {
         backgroundMode,
         backgroundFit,
+        backgroundKeepAspectRatio,
         backgroundScale,
         backgroundOffsetX,
         backgroundOffsetY

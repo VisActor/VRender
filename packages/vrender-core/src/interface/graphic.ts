@@ -403,7 +403,10 @@ export type IGraphicStyle = ILayout &
      * 是否正好填充，只在repeat-x或者repeat-y以及no-repeat的时候生效
      */
     backgroundFit: boolean;
-
+    /**
+     * 是否保持背景图的宽高比
+     */
+    backgroundKeepAspectRatio: boolean;
     /**
      * 背景图缩放，只在no-repeat的时候生效
      */
@@ -417,7 +420,7 @@ export type IGraphicStyle = ILayout &
      */
     backgroundOffsetY: number;
     /**
-     * 背景图是否裁切
+     * 背景图是否裁切，是否调用clip避免绘制到图元外部
      */
     backgroundClip: boolean;
     /**

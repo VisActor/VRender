@@ -56,7 +56,7 @@ export class ResourceLoader {
     }
   }
 
-  static GetSvg(svgStr: string, mark: IImage) {
+  static GetSvg(svgStr: string, mark: ImagePayload) {
     let data = ResourceLoader.cache.get(svgStr);
     if (data) {
       // 存在缓存

@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Wed, 15 Jan 2025 12:13:28 GMT and should not be manually modified.
+This log was last generated on Wed, 05 Feb 2025 07:04:09 GMT and should not be manually modified.
+
+## 0.21.12
+Wed, 05 Feb 2025 07:04:09 GMT
+
+### Updates
+
+- fix: fix issue with inversify error when nobind
 
 ## 0.21.11
 Wed, 15 Jan 2025 12:13:28 GMT

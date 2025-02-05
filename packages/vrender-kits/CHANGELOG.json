@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.21.12",
+      "tag": "@visactor/vrender-kits_v0.21.12",
+      "date": "Wed, 05 Feb 2025 07:04:09 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with inversify error when nobind"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.11",
       "tag": "@visactor/vrender-kits_v0.21.11",
       "date": "Wed, 15 Jan 2025 12:13:28 GMT",

@@ -28,6 +28,13 @@ import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
 
+let supportIntl = false;
+try {
+  supportIntl = Intl && typeof (Intl as any).Segmenter === 'function';
+} catch (e) {
+  supportIntl = false;
+}
+
 const RICHTEXT_UPDATE_TAG_KEY = [
   'width',
   'height',
@@ -206,7 +213,16 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   }
 
   static splitText(text: string) {
-    // 😁这种emoji长度算两个，所以得处理一下
+    if (supportIntl) {
+      // 不传入具体语言标签，使用默认设置
+      const segmenter = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' });
+      const segments = [];
+      for (const { segment } of segmenter.segment(text)) {
+        segments.push(segment);
+      }
+      return segments;
+    }
+    // 如果不支持 Intl.Segmenter，则使用旧方法
     return Array.from(text);
   }
 

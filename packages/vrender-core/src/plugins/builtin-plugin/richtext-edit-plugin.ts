@@ -606,6 +606,7 @@ export class RichTextEditPlugin implements IPlugin {
     shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
+    this.offsetShadowRoot();
   }
 
   trySyncPlaceholderToTextConfig() {
@@ -719,10 +720,7 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     // 计算全局偏移
-    this.computeGlobalDelta(cache);
-
-    // 添加cursor节点，shadowRoot在上面
-    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
+    this.offsetShadowRoot(target);
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
@@ -760,6 +758,26 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowInputBounds();
     // 触发Bounds更新
     this.currRt.addUpdateBoundTag();
+  }
+
+  offsetShadowRoot(rt?: IRichText) {
+    rt = rt || this.currRt;
+    if (!rt) {
+      return;
+    }
+    const shadowRoot = this.getShadow(rt);
+    if (!shadowRoot) {
+      return;
+    }
+    const cache = rt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    // 计算全局偏移
+    this.computeGlobalDelta(cache);
+
+    // 添加cursor节点，shadowRoot在上面
+    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
   }
 
   // 偏移线和背景，因为文字的baseline可能是middle或者bottom
@@ -1134,6 +1152,7 @@ export class RichTextEditPlugin implements IPlugin {
     out.y += top;
 
     this.offsetLineBgAndShadowBounds();
+    this.offsetShadowRoot();
 
     this.editModule.moveTo(out.x, out.y, rt, this.curCursorIdx, this.selectionStartCursorIdx);
   }

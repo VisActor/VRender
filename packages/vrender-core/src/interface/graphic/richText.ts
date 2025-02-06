@@ -15,6 +15,7 @@ export type IRichTextEditOptionsType = {
   keepHeightWhileEmpty?: boolean;
   // 是否在输入的时候展示包围框，不传默认是false，可以传入颜色
   boundsStrokeWhenInput?: string;
+  stopPropagation?: boolean;
 };
 
 export type IRichTextAttribute = {

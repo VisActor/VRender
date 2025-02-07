@@ -16,6 +16,10 @@ export const pages = [
         path: 'performance-test'
       },
       {
+        name: '按需加载',
+        path: 'anxu-picker'
+      },
+      {
         name: '基础事件测试',
         path: 'interactive-test'
       },

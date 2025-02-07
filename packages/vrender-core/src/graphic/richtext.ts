@@ -255,7 +255,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       maxWidth = richtextTheme.maxWidth,
       maxHeight = richtextTheme.maxHeight,
       textAlign = richtextTheme.textAlign,
-      textBaseline = richtextTheme.textBaseline,
+      verticalDirection = attribute.textBaseline ?? richtextTheme.textBaseline ?? richtextTheme.verticalDirection,
       editOptions
     } = attribute;
 
@@ -283,7 +283,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
     // 调整对齐方式
     let deltaY = 0;
-    switch (textBaseline) {
+    switch (verticalDirection) {
       case 'top':
         deltaY = 0;
         break;

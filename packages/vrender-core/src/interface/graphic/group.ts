@@ -8,6 +8,7 @@ export type IGroupAttribute = {
   width: number;
   height: number;
   cornerRadius: number | number[];
+  cornerType: 'round' | 'bevel';
   clip: boolean;
   visibleAll: boolean;
   display?: 'relative' | 'inner-block' | 'flex';

@@ -1,4 +1,4 @@
-import type { IRichTextAttribute, ITextGraphicAttribute } from '../interface';
+import type { IRichTextAttribute, IRichTextGraphicAttribute, ITextGraphicAttribute } from '../interface';
 import { graphicCreator } from './graphic-creator';
 // import { createRichText, createText } from './graphic-creator';
 
@@ -12,7 +12,7 @@ export function getTextBounds(params: ITextBoundsParams) {
   return text.AABBBounds;
 }
 
-type IRichTextBoundsParams = Partial<IRichTextAttribute>;
+type IRichTextBoundsParams = Partial<IRichTextGraphicAttribute>;
 let richText: any;
 export function getRichTextBounds(params: IRichTextBoundsParams) {
   if (!richText) {

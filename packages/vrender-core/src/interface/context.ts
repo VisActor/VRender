@@ -22,6 +22,7 @@ export interface ICommonStyleParams {
   globalCompositeOperation?: CanvasRenderingContext2D['globalCompositeOperation'] | '';
   opacity?: number;
   blur?: number;
+  filter?: string;
 }
 
 export interface IStrokeStyleParams {

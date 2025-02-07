@@ -32,7 +32,11 @@ export class DefaultGroupBackgroundRenderContribution
     const {
       background,
       backgroundMode = graphicAttribute.backgroundMode,
-      backgroundFit = graphicAttribute.backgroundFit
+      backgroundFit = graphicAttribute.backgroundFit,
+      backgroundKeepAspectRatio = graphicAttribute.backgroundKeepAspectRatio,
+      backgroundScale = graphicAttribute.backgroundScale,
+      backgroundOffsetX = graphicAttribute.backgroundOffsetX,
+      backgroundOffsetY = graphicAttribute.backgroundOffsetY
     } = graphic.attribute;
     if (!background) {
       return;
@@ -48,7 +52,14 @@ export class DefaultGroupBackgroundRenderContribution
 
       context.setTransformFromMatrix(graphic.parent.globalTransMatrix, true);
       const b = graphic.AABBBounds;
-      this.doDrawImage(context, res.data, b, backgroundMode, backgroundFit);
+      this.doDrawImage(context, res.data, b, {
+        backgroundMode,
+        backgroundFit,
+        backgroundKeepAspectRatio,
+        backgroundScale,
+        backgroundOffsetX,
+        backgroundOffsetY
+      });
       context.highPerformanceRestore();
       context.setTransformForCurrent();
     } else {

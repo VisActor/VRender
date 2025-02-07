@@ -32,6 +32,8 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
 
   protected skipDefault?: boolean;
 
+  protected _skipRenderAttributes: string[] = GROUP_ATTRIBUTES;
+
   constructor(attributes: T, options?: ComponentOptions) {
     super(attributes);
 
@@ -85,7 +87,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     }
 
     // HACK: 待优化
-    if (!GROUP_ATTRIBUTES.includes(key as string)) {
+    if (!this._skipRenderAttributes.includes(key as string)) {
       this.render();
     }
 
@@ -113,7 +115,7 @@ export abstract class AbstractComponent<T extends IGroupGraphicAttribute = IGrou
     this._mergeAttributes(params, keys);
 
     // HACK: 待优化
-    if (!keys.every(key => GROUP_ATTRIBUTES.includes(key as string))) {
+    if (!keys.every(key => this._skipRenderAttributes.includes(key as string))) {
       this.render();
     }
 

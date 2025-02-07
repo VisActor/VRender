@@ -208,7 +208,11 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    if (this.useDirtyBounds && !isRectIntersect(group.AABBBounds, this.dirtyBounds, false)) {
+    if (
+      this.useDirtyBounds &&
+      !isRectIntersect(group.AABBBounds, this.dirtyBounds, false) &&
+      group.attribute.boundsMode !== 'empty'
+    ) {
       return;
     }
 
@@ -372,7 +376,11 @@ export class DefaultDrawContribution implements IDrawContribution {
 
     if (
       this.useDirtyBounds &&
-      !(graphic.isContainer || isRectIntersect(graphic.AABBBounds, tempBounds ?? this.dirtyBounds, false))
+      !(
+        graphic.isContainer ||
+        graphic.attribute.boundsMode === 'empty' ||
+        isRectIntersect(graphic.AABBBounds, tempBounds ?? this.dirtyBounds, false)
+      )
     ) {
       if (retrans && graphic.parent) {
         const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;

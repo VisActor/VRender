@@ -190,4 +190,11 @@ export abstract class BaseEnvContribution implements IEnvContribution {
   ): Promise<{ loadState: 'success' | 'fail' }> {
     return { loadState: 'fail' };
   }
+
+  isMacOS() {
+    return false;
+  }
+  copyToClipBoard(text: string) {
+    return Promise.resolve(null);
+  }
 }

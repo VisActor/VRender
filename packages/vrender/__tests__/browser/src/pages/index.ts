@@ -92,6 +92,10 @@ export const pages = [
         path: 'animate'
       },
       {
+        name: 'lottie',
+        path: 'lottie'
+      },
+      {
         name: 'window-event',
         path: 'window-event'
       },

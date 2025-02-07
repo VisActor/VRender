@@ -129,7 +129,8 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
     item: LabelItem[],
     labels: (IText | IRichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
-    getRelatedPoint?: (data: LabelItem) => IPointLike
+    getRelatedPoint: ((data: LabelItem) => IPointLike) | null | undefined,
+    labelComponent: IGroup
   ) => (IText | IRichText)[];
 
   /** 自定义标签躲避函数
@@ -138,7 +139,8 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   customOverlapFunc?: (
     label: (IText | IRichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
-    getRelatedPoint?: (data: LabelItem) => IPointLike
+    getRelatedPoint: ((data: LabelItem) => IPointLike) | null | undefined,
+    labelComponent: IGroup
   ) => (IText | IRichText)[];
   /**
    * 防重叠计算完成后的回调函数
@@ -147,7 +149,8 @@ export interface BaseLabelAttrs extends IGroupGraphicAttribute {
   onAfterOverlapping?: (
     labels: (IText | IRichText)[],
     getRelatedGraphic: (data: LabelItem) => IGraphic,
-    getRelatedPoint?: (data: LabelItem) => IPointLike
+    getRelatedPoint: ((data: LabelItem) => IPointLike) | null | undefined,
+    labelComponent: IGroup
   ) => void;
   /**
    * 关闭交互效果

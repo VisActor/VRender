@@ -648,7 +648,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (textConfig && textConfig.length) {
       return;
     }
-    if (!(editOptions && editOptions.placeholder)) {
+    if (!(editOptions && editOptions.placeholder && editOptions.syncPlaceholderToTextConfig)) {
       return;
     }
     const { placeholder } = editOptions;

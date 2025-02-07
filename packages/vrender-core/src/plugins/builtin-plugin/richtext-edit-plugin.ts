@@ -101,19 +101,23 @@ class Selection {
     }
     return config[Math.min(idx, config.length - 1)][key] ?? (this.rt.attribute as any)[key];
   }
-  getFormat(key: string): any {
-    return this.getAllFormat(key)[0];
+  getFormat(key: string, supportOutAttr: boolean = false): any {
+    return this.getAllFormat(key, supportOutAttr)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, supportOutAttr: boolean = false): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
     if (minCursorIdx === maxCursorIdx) {
-      return [this._getFormat(key, minCursorIdx)];
+      return supportOutAttr
+        ? [this._getFormat(key, minCursorIdx) ?? (this.rt?.attribute as any)[key]]
+        : [this._getFormat(key, minCursorIdx)];
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
-      const val = this._getFormat(key, i);
+      const val = supportOutAttr
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
+        : this._getFormat(key, i);
       val && valSet.add(val);
     }
     return Array.from(valSet.values());

@@ -1,3 +1,26 @@
+# v0.21.12
+
+2025-02-05
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: add instance to the callback of label
+- **@visactor/vrender-core**: add instance to the callback of label
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix layout of title when not set height
+- **@visactor/vrender-kits**: fix issue with inversify error when nobind
+- **@visactor/vrender-core**: fix issue with inversify error when nobind
+- **@visactor/vrender-core**: fix the issue where the final text of the label increase count  animation is incorrect
+- **@visactor/vrender-core**: fix layout of title when not set height
+- **@visactor/vrender**: fix issue with inversify error when nobind
+
+
+
+[更多详情请查看 v0.21.12](https://github.com/VisActor/VRender/releases/tag/v0.21.12)
+
 # v0.21.7
 
 2024-12-25

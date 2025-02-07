@@ -1,3 +1,19 @@
+# v0.21.14
+
+2025-02-07
+
+
+**What's Changed**
+
+* [Auto Sync] Sync the code from branch main to branch develop after release 0.21.13 by @github-actions in https://github.com/VisActor/VRender/pull/1704
+* feat: upgrade vutil to 0.19.4 by @neuqzxy in https://github.com/VisActor/VRender/pull/1709
+* [Auto release] release 0.21.14 by @github-actions in https://github.com/VisActor/VRender/pull/1711
+
+
+**Full Changelog**: https://github.com/VisActor/VRender/compare/v0.21.13...v0.21.14
+
+[more detail about v0.21.14](https://github.com/VisActor/VRender/releases/tag/v0.21.14)
+
 # v0.21.12
 
 2025-02-05

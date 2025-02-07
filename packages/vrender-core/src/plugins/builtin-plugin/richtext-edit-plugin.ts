@@ -101,19 +101,23 @@ class Selection {
     }
     return config[Math.min(idx, config.length - 1)][key] ?? (this.rt.attribute as any)[key];
   }
-  getFormat(key: string): any {
-    return this.getAllFormat(key)[0];
+  getFormat(key: string, supportOutAttr: boolean = false): any {
+    return this.getAllFormat(key, supportOutAttr)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, supportOutAttr: boolean = false): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
     if (minCursorIdx === maxCursorIdx) {
-      return [this._getFormat(key, minCursorIdx)];
+      return supportOutAttr
+        ? [this._getFormat(key, minCursorIdx) ?? (this.rt?.attribute as any)[key]]
+        : [this._getFormat(key, minCursorIdx)];
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
-      const val = this._getFormat(key, i);
+      const val = supportOutAttr
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
+        : this._getFormat(key, i);
       val && valSet.add(val);
     }
     return Array.from(valSet.values());
@@ -369,6 +373,9 @@ export class RichTextEditPlugin implements IPlugin {
       return;
     }
     const { lines } = cache;
+    if (!(lines.length && lines[0].paragraphs.length)) {
+      return;
+    }
     const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
     this.selectionRange(-0.1, totalCursorCount + 0.1);
   }
@@ -570,11 +577,31 @@ export class RichTextEditPlugin implements IPlugin {
       ...this.currRt.attribute,
       x: 0,
       y: 0,
+      // 倒回去，因为shadowPlace能够适用富文本的align和baseline
+      dx: -this.deltaX,
+      dy: -this.deltaY,
       angle: 0,
-      _debug_bounds: false,
       textConfig: [textConfigItem]
     });
     shadow.add(this.shadowPlaceHolder);
+  }
+
+  /**
+   * 获取富文本的AABBBounds，如果内部没有内容的话高度依然要保持，同时如果有placeholder的话，需要把placeholder宽度加上
+   * @param rt
+   */
+  getRichTextAABBBounds(rt: IRichText) {
+    const { attribute } = rt;
+    if (!attribute.textConfig.length) {
+      return getRichTextBounds({
+        ...this.shadowPlaceHolder.attribute,
+        x: attribute.x,
+        y: attribute.y,
+        textAlign: attribute.textAlign,
+        boundsMode: 'accurate'
+      });
+    }
+    return rt.AABBBounds;
   }
 
   tryShowInputBounds() {
@@ -587,19 +614,20 @@ export class RichTextEditPlugin implements IPlugin {
     if (!editOptions || !boundsStrokeWhenInput) {
       return;
     }
-    const { attribute } = this.currRt;
-    const b = this.currRt.AABBBounds;
-    let h = b.height();
-    if (!attribute.textConfig.length && this.editLine) {
-      const { points } = this.editLine.attribute;
-      h = points[1].y - points[0].y;
-    }
+    // const { attribute } = this.currRt;
+    const b = this.getRichTextAABBBounds(this.currRt);
+    const height = b.height();
+    const width = b.width();
+    // if (!attribute.textConfig.length && this.editLine) {
+    //   const { points } = this.editLine.attribute;
+    //   height = points[1].y - points[0].y;
+    // }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
       x: 0,
       y: 0,
-      width: b.width(),
-      height: h,
+      width,
+      height,
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
@@ -620,7 +648,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (textConfig && textConfig.length) {
       return;
     }
-    if (!(editOptions && editOptions.placeholder)) {
+    if (!(editOptions && editOptions.placeholder && editOptions.syncPlaceholderToTextConfig)) {
       return;
     }
     const { placeholder } = editOptions;
@@ -788,6 +816,7 @@ export class RichTextEditPlugin implements IPlugin {
 
     // 添加cursor节点，shadowRoot在上面
     shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
+    this.shadowPlaceHolder && this.shadowPlaceHolder.setAttributes({ dx: -this.deltaX, dy: -this.deltaY });
   }
 
   // 偏移线和背景，因为文字的baseline可能是middle或者bottom
@@ -1113,6 +1142,9 @@ export class RichTextEditPlugin implements IPlugin {
   protected computeGlobalDelta(cache: IRichTextFrame) {
     this.deltaX = 0;
     this.deltaY = 0;
+    if (cache.lines.length === 0 && this.shadowPlaceHolder) {
+      cache = this.shadowPlaceHolder.getFrameCache();
+    }
     const height = cache.height;
     const actualHeight = cache.actualHeight;
     const width = cache.lines.reduce((w, item) => Math.max(w, item.actualWidth), 0);

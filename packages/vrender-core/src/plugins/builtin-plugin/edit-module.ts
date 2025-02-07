@@ -261,7 +261,7 @@ export class EditModule {
   parseCompositionStr(configIdx: number) {
     const { textConfig = [] } = this.currRt.attribute;
 
-    const lastConfig = textConfig[configIdx];
+    const lastConfig = textConfig[configIdx] ?? {};
     textConfig.splice(configIdx, 1);
     const text = (lastConfig as any).text;
     const textList: string[] = text ? Array.from(text.toString()) : [];

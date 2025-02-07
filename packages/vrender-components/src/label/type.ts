@@ -226,6 +226,13 @@ export interface SmartInvertAttrs {
    */
   mode?: string;
   /**
+   * 颜色亮度的计算方法。
+   * 当 mode 为 'WCAG' 时，默认采用 'wcag' 标准计算方法，参考：https://www.w3.org/TR/WCAG21/#use-of-color
+   * 当 mode 为 'lightness' 时，默认采用 'hsl'
+   * @since 0.22.0
+   */
+  lumCalculate?: 'wcag' | 'hsl' | 'hsv' | 'lum' | 'lum2' | 'lum3';
+  /**
    * 文本类型
    * 包含普通文本和大文本，对应不同的对比度标准，label默认为普通文本
    * 'normalText' ｜ 'largeText'
@@ -270,6 +277,7 @@ export interface SmartInvertAttrs {
   darkColor?: string;
   /**
    * label超出mark范围，也以mark作为背景色进行反色
+   * @deprecated since 0.22.0
    */
   outsideEnable?: boolean;
   /**
@@ -278,8 +286,18 @@ export interface SmartInvertAttrs {
    * * none：不做任何处理
    * * stroked：标签存在描边的时候，根据描边进行处理
    * * inside: 和标签完全在mark内部一样处理
+   * 在 0.22.0 版本之前，该配置项的默认值为 undefined。
+   * 在 0.22.0 版本后，该配置项的默认值为 'inside'。
+   * @default 'inside'
    */
   interactInvertType?: 'none' | 'stroked' | 'inside';
+  /**
+   * 底层颜色
+   * 通常，反色的背景色取自图元填充色。当背景色为透明色时，需要与其底层颜色进行颜色混合计算。
+   * @default stage.background
+   * @since 0.22.0
+   */
+  underlyingColor?: string;
 }
 
 export type ShiftYStrategy = {

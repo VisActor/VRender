@@ -1,38 +1,63 @@
 import type { IColor } from '@visactor/vrender-core';
-import { Color, hexToRgb } from '@visactor/vutils';
+import { Color, RGB, isValidNumber } from '@visactor/vutils';
+import type { SmartInvertAttrs } from '../label';
 
 const defaultAlternativeColors: string[] = ['#ffffff', '#000000'];
+
+type SmartInvertParams = Pick<
+  SmartInvertAttrs,
+  'textType' | 'contrastRatiosThreshold' | 'alternativeColors' | 'mode' | 'lumCalculate' | 'underlyingColor'
+>;
 
 /**
  * 标签智能反色
  * @param foregroundColorOrigin
- * @param backgroundColorOrogin
+ * @param backgroundColorOrigin
  * @returns
  */
 export function labelSmartInvert(
   foregroundColorOrigin: IColor | undefined,
-  backgroundColorOrogin: IColor | undefined,
-  textType?: string | undefined,
-  contrastRatiosThreshold?: number,
-  alternativeColors?: string | string[],
-  mode?: string
+  backgroundColorOrigin: IColor | undefined,
+  foregroundOpacity: number,
+  backgroundOpacity: number,
+  params: SmartInvertParams = {}
 ): IColor | undefined {
-  if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrogin !== 'string') {
+  if (typeof foregroundColorOrigin !== 'string' || typeof backgroundColorOrigin !== 'string') {
     return foregroundColorOrigin;
   }
-  const foregroundColor = new Color(foregroundColorOrigin as string).toHex();
-  const backgroundColor = new Color(backgroundColorOrogin as string).toHex();
-  if (!contrastAccessibilityChecker(foregroundColor, backgroundColor, textType, contrastRatiosThreshold, mode)) {
-    return improveContrastReverse(
-      foregroundColor,
-      backgroundColor,
-      textType,
-      contrastRatiosThreshold,
-      alternativeColors,
-      mode
-    );
+  const { textType, contrastRatiosThreshold, alternativeColors, mode, underlyingColor = 'white' } = params;
+  let foregroundColor = new Color(foregroundColorOrigin as string).setOpacity(foregroundOpacity);
+  let backgroundColor = new Color(backgroundColorOrigin as string).setOpacity(backgroundOpacity);
+  if (foregroundOpacity < 1) {
+    foregroundColor = blendColor(foregroundColor, backgroundColor);
   }
-  return foregroundColor;
+  if (backgroundOpacity < 1) {
+    backgroundColor = blendColor(backgroundColor, new Color(underlyingColor));
+  }
+  const foregroundHex = foregroundColor.toHex();
+  const backgroundHex = backgroundColor.toHex();
+  if (!contrastAccessibilityChecker(foregroundHex, backgroundHex, { textType, contrastRatiosThreshold, mode })) {
+    return improveContrastReverse(foregroundHex, backgroundHex, params);
+  }
+  return foregroundHex;
+}
+
+/**
+ * Target.R = ((1 - Source.A) * BGColor.R) + (Source.A * Source.R)
+ * Target.G = ((1 - Source.A) * BGColor.G) + (Source.A * Source.G)
+ * Target.B = ((1 - Source.A) * BGColor.B) + (Source.A * Source.B)
+ * @param source
+ * @param background
+ */
+function blendColor(source: Color, background?: Color) {
+  if (!background) {
+    background = new Color(new RGB(255, 255, 255).toString());
+  }
+  const alpha = source.color.opacity;
+  const r = ~~((1 - alpha) * background.color.r + alpha * source.color.r);
+  const g = ~~((1 - alpha) * background.color.g + alpha * source.color.g);
+  const b = ~~((1 - alpha) * background.color.b + alpha * source.color.b);
+  return new Color(new RGB(r, g, b).toString());
 }
 
 /**
@@ -45,12 +70,10 @@ export function labelSmartInvert(
 function improveContrastReverse(
   foregroundColor: IColor | undefined,
   backgroundColor: IColor | undefined,
-  textType?: IColor | undefined,
-  contrastRatiosThreshold?: number,
-  alternativeColors?: string | string[],
-  mode?: string
+  params: SmartInvertParams = {}
 ) {
   const alternativeColorPalletes: string[] = [];
+  const { alternativeColors } = params;
   if (alternativeColors) {
     if (alternativeColors instanceof Array) {
       alternativeColorPalletes.push(...alternativeColors);
@@ -63,7 +86,7 @@ function improveContrastReverse(
     if (foregroundColor === alternativeColor) {
       continue;
     }
-    if (contrastAccessibilityChecker(alternativeColor, backgroundColor, textType, contrastRatiosThreshold, mode)) {
+    if (contrastAccessibilityChecker(alternativeColor, backgroundColor, params)) {
       return alternativeColor;
     }
   }
@@ -82,13 +105,15 @@ function improveContrastReverse(
 export function contrastAccessibilityChecker(
   foregroundColor: IColor | undefined,
   backgroundColor: IColor | undefined,
-  textType?: IColor | undefined,
-  contrastRatiosThreshold?: number,
-  mode?: string
+  params: SmartInvertParams = {}
 ): boolean {
+  const { mode, textType, contrastRatiosThreshold } = params;
+  const isLightnessMode = mode === 'lightness';
+  const lumCalculate = (params.lumCalculate as SmartInvertAttrs['lumCalculate']) ?? isLightnessMode ? 'hsl' : 'wcag';
+
+  const backgroundColorLightness = Color.getColorBrightness(new Color(backgroundColor as string), lumCalculate as any);
+  const foregroundColorLightness = Color.getColorBrightness(new Color(foregroundColor as string), lumCalculate as any);
   if (mode === 'lightness') {
-    const backgroundColorLightness = Color.getColorBrightness(new Color(backgroundColor as string));
-    const foregroundColorLightness = Color.getColorBrightness(new Color(foregroundColor as string));
     if (foregroundColorLightness < 0.5) {
       // 文字颜色为'#ffffff'
       if (backgroundColorLightness >= 0.5) {
@@ -103,21 +128,15 @@ export function contrastAccessibilityChecker(
     return false;
   }
   //Contrast ratios can range from 1 to 21
-  if (contrastRatiosThreshold) {
-    if (contrastRatios(foregroundColor, backgroundColor) > contrastRatiosThreshold) {
-      return true;
+  let threshold = contrastRatiosThreshold;
+  if (!isValidNumber(threshold)) {
+    if (textType === 'largeText') {
+      threshold = 3;
+    } else {
+      threshold = 4.5;
     }
-    return false;
-  } else if (textType === 'largeText') {
-    if (contrastRatios(foregroundColor, backgroundColor) > 3) {
-      return true;
-    }
-    return false;
   }
-  if (contrastRatios(foregroundColor, backgroundColor) > 4.5) {
-    return true;
-  }
-  return false;
+  return contrastRatios(foregroundColorLightness, backgroundColorLightness) > threshold;
 }
 
 /**
@@ -130,55 +149,11 @@ export function contrastAccessibilityChecker(
  * @param backgroundColor
  * @returns
  */
-function contrastRatios(foregroundColor: IColor | undefined, backgroundColor: IColor | undefined): number {
-  const foregroundColorLuminance = getColorLuminance(foregroundColor as string);
-  const backgroundColorLuminance = getColorLuminance(backgroundColor as string);
+function contrastRatios(foregroundColorLuminance: number, backgroundColorLuminance: number): number {
   const L1 = foregroundColorLuminance > backgroundColorLuminance ? foregroundColorLuminance : backgroundColorLuminance;
   const L2 = foregroundColorLuminance > backgroundColorLuminance ? backgroundColorLuminance : foregroundColorLuminance;
   const contrastRatios = (L1 + 0.05) / (L2 + 0.05);
   return contrastRatios;
-}
-
-/**
- *  计算相对亮度 https://webaim.org/articles/contrast/
- * the relative brightness of any point in a colorspace, normalized to 0 for darkest black and 1 for lightest white
- * Note 1: For the sRGB colorspace, the relative luminance of a color is defined as
- * L = 0.2126 * R + 0.7152 * G + 0.0722 * B where R, G and B are defined as:
- * if RsRGB <= 0.03928 then R = RsRGB/12.92 else R = ((RsRGB+0.055)/1.055) ^ 2.4
- * if GsRGB <= 0.03928 then G = GsRGB/12.92 else G = ((GsRGB+0.055)/1.055) ^ 2.4
- * if BsRGB <= 0.03928 then B = BsRGB/12.92 else B = ((BsRGB+0.055)/1.055) ^ 2.4
- * and RsRGB, GsRGB, and BsRGB are defined as:
- * RsRGB = R8bit/255
- * GsRGB = G8bit/255
- * BsRGB = B8bit/255
- * @param color
- * @returns
- */
-function getColorLuminance(color: string): number {
-  const rgb8bit = hexToRgb(color);
-  const RsRGB = rgb8bit[0] / 255;
-  const GsRGB = rgb8bit[1] / 255;
-  const BsRGB = rgb8bit[2] / 255;
-  let R;
-  let G;
-  let B;
-  if (RsRGB <= 0.03928) {
-    R = RsRGB / 12.92;
-  } else {
-    R = Math.pow((RsRGB + 0.055) / 1.055, 2.4);
-  }
-  if (GsRGB <= 0.03928) {
-    G = GsRGB / 12.92;
-  } else {
-    G = Math.pow((GsRGB + 0.055) / 1.055, 2.4);
-  }
-  if (BsRGB <= 0.03928) {
-    B = BsRGB / 12.92;
-  } else {
-    B = Math.pow((BsRGB + 0.055) / 1.055, 2.4);
-  }
-  const L = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  return L;
 }
 
 export function smartInvertStrategy(

@@ -994,12 +994,19 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
     const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;
-    const { textType, contrastRatiosThreshold, alternativeColors, mode, interactInvertType } = option;
+    const { textType, contrastRatiosThreshold, alternativeColors, mode, interactInvertType = 'inside' } = option;
     const fillStrategy = option.fillStrategy ?? 'invertBase';
     const strokeStrategy = option.strokeStrategy ?? 'base';
     const brightColor = option.brightColor ?? '#ffffff';
     const darkColor = option.darkColor ?? '#000000';
-    const outsideEnable = option.outsideEnable ?? false;
+
+    const colorFromGradient = (color: ILinearGradient) => {
+      return color.stops?.[0]?.color;
+    };
+    const underlyingColor =
+      option.underlyingColor ?? isObject(this.stage.background)
+        ? colorFromGradient(this.stage.background as ILinearGradient)
+        : this.stage.background;
 
     if (fillStrategy === 'null' && strokeStrategy === 'null') {
       return;
@@ -1022,30 +1029,42 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * */
       let backgroundColor = baseMark.attribute.fill as IColor;
       let foregroundColor = label.attribute.fill as IColor;
+      const { fillOpacity: backgroundFillOpacity = 1, opacity: backgroundOpacity = 1 } = baseMark.attribute;
+      const {
+        fillOpacity: foregroundFillOpacity = 1,
+        opacity: foregroundOpacity = 1,
+        strokeOpacity: foregroundStrokeOpacity = 1
+      } = label.attribute;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {
-        const firstStopColor = (backgroundColor as ILinearGradient).stops?.[0]?.color;
-
+        const firstStopColor = colorFromGradient(backgroundColor as ILinearGradient);
         if (firstStopColor) {
           backgroundColor = firstStopColor;
           foregroundColor = firstStopColor; // 渐变色的时候，标签的颜色可能会和背景色不一致，所以需要设置为相同的颜色
         }
       }
-
-      const invertColor = labelSmartInvert(
-        foregroundColor,
-        backgroundColor,
+      const smartInvertParams = {
         textType,
         contrastRatiosThreshold,
         alternativeColors,
-        mode
+        mode,
+        underlyingColor
+      };
+      const invertColor = labelSmartInvert(
+        foregroundColor,
+        backgroundColor,
+        foregroundFillOpacity * foregroundOpacity,
+        backgroundFillOpacity * backgroundOpacity,
+        smartInvertParams
       );
-      const similarColor = contrastAccessibilityChecker(invertColor, brightColor) ? brightColor : darkColor;
+      const similarColor = contrastAccessibilityChecker(invertColor, brightColor, smartInvertParams)
+        ? brightColor
+        : darkColor;
       const isInside = this._canPlaceInside(label.AABBBounds, baseMark.AABBBounds);
       const isIntersect =
         !isInside && label.AABBBounds && baseMark.AABBBounds && baseMark.AABBBounds.intersects(label.AABBBounds);
 
-      if (isInside || outsideEnable || (isIntersect && interactInvertType === 'inside')) {
+      if (isInside || (isIntersect && interactInvertType === 'inside')) {
         // 按照标签展示在柱子内部的情况，执行反色逻辑
         const fill = smartInvertStrategy(fillStrategy, backgroundColor, invertColor, similarColor);
         fill && label.setAttributes({ fill });
@@ -1069,10 +1088,9 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
             fill: labelSmartInvert(
               label.attribute.fill as IColor,
               label.attribute.stroke as IColor,
-              textType,
-              contrastRatiosThreshold,
-              alternativeColors,
-              mode
+              foregroundFillOpacity * foregroundOpacity,
+              foregroundStrokeOpacity * foregroundOpacity,
+              smartInvertParams
             )
           });
           continue;

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support `lumCalculate` in label smartInvert",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

@@ -101,19 +101,23 @@ class Selection {
     }
     return config[Math.min(idx, config.length - 1)][key] ?? (this.rt.attribute as any)[key];
   }
-  getFormat(key: string): any {
-    return this.getAllFormat(key)[0];
+  getFormat(key: string, supportOutAttr: boolean = false): any {
+    return this.getAllFormat(key, supportOutAttr)[0];
   }
 
-  getAllFormat(key: string): any {
+  getAllFormat(key: string, supportOutAttr: boolean = false): any {
     const valSet = new Set();
     const minCursorIdx = Math.min(this.selectionStartCursorIdx, this.curCursorIdx);
     const maxCursorIdx = Math.max(this.selectionStartCursorIdx, this.curCursorIdx);
     if (minCursorIdx === maxCursorIdx) {
-      return [this._getFormat(key, minCursorIdx)];
+      return supportOutAttr
+        ? [this._getFormat(key, minCursorIdx) ?? (this.rt?.attribute as any)[key]]
+        : [this._getFormat(key, minCursorIdx)];
     }
     for (let i = Math.ceil(minCursorIdx); i <= Math.floor(maxCursorIdx); i++) {
-      const val = this._getFormat(key, i);
+      const val = supportOutAttr
+        ? this._getFormat(key, i) ?? (this.rt?.attribute as any)[key]
+        : this._getFormat(key, i);
       val && valSet.add(val);
     }
     return Array.from(valSet.values());
@@ -295,11 +299,11 @@ export class RichTextEditPlugin implements IPlugin {
     this.pluginService = context;
     this.editModule = new EditModule();
     // context.stage.on('click', this.handleClick);
-    context.stage.on('pointermove', this.handleMove);
-    context.stage.on('pointerdown', this.handlePointerDown);
-    context.stage.on('pointerup', this.handlePointerUp);
-    context.stage.on('pointerleave', this.handlePointerUp);
-    context.stage.on('dblclick', this.handleDBLClick);
+    context.stage.on('pointermove', this.handleMove, { capture: true });
+    context.stage.on('pointerdown', this.handlePointerDown, { capture: true });
+    context.stage.on('pointerup', this.handlePointerUp, { capture: true });
+    context.stage.on('pointerleave', this.handlePointerUp, { capture: true });
+    context.stage.on('dblclick', this.handleDBLClick, { capture: true });
     application.global.addEventListener('keydown', this.handleKeyDown);
 
     this.editModule.onInput(this.handleInput);
@@ -359,30 +363,36 @@ export class RichTextEditPlugin implements IPlugin {
     this._tryShowSelection(pos, cache);
   }
 
-  fullSelection(e: KeyboardEvent) {
+  fullSelection() {
+    const currRt = this.currRt;
+    if (!currRt) {
+      return;
+    }
+    const cache = currRt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    const { lines } = cache;
+    if (!(lines.length && lines[0].paragraphs.length)) {
+      return;
+    }
+    const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
+    this.selectionRange(-0.1, totalCursorCount + 0.1);
+  }
+
+  protected fullSelectionKeyHandler(e: KeyboardEvent) {
     if (
       (application.global.isMacOS() && e.metaKey && e.key === 'a') ||
       (!application.global.isMacOS() && e.ctrlKey && e.key === 'a')
     ) {
-      const currRt = this.currRt;
-      if (!currRt) {
-        return;
-      }
-      const cache = currRt.getFrameCache();
-      if (!cache) {
-        return;
-      }
-      const { lines } = cache;
-      const totalCursorCount = lines.reduce((total, line) => total + line.paragraphs.length, 0) - 1;
-      this.selectionRange(-0.1, totalCursorCount + 0.1);
-
+      this.fullSelection();
       e.preventDefault();
       return true;
     }
     return false;
   }
 
-  directKey(e: KeyboardEvent) {
+  directKeyHandler(e: KeyboardEvent) {
     if (!(e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
       return false;
     }
@@ -486,12 +496,12 @@ export class RichTextEditPlugin implements IPlugin {
     }
     // 全选
     // cmd/ctl + A
-    if (this.fullSelection(e)) {
+    if (this.fullSelectionKeyHandler(e)) {
       return;
     }
     // 方向键
     // 上、下、左、右
-    if (this.directKey(e)) {
+    if (this.directKeyHandler(e)) {
       return;
     }
   };
@@ -538,7 +548,7 @@ export class RichTextEditPlugin implements IPlugin {
       const placeholder = shadowRoot.getElementsByType('richtext')[0];
       placeholder && shadowRoot.removeChild(placeholder);
     }
-    const { textConfig, editOptions } = this.currRt.attribute;
+    const { textConfig, editOptions = {} } = this.currRt.attribute;
     if (textConfig && textConfig.length) {
       return;
     }
@@ -567,11 +577,31 @@ export class RichTextEditPlugin implements IPlugin {
       ...this.currRt.attribute,
       x: 0,
       y: 0,
+      // 倒回去，因为shadowPlace能够适用富文本的align和baseline
+      dx: -this.deltaX,
+      dy: -this.deltaY,
       angle: 0,
-      _debug_bounds: false,
       textConfig: [textConfigItem]
     });
     shadow.add(this.shadowPlaceHolder);
+  }
+
+  /**
+   * 获取富文本的AABBBounds，如果内部没有内容的话高度依然要保持，同时如果有placeholder的话，需要把placeholder宽度加上
+   * @param rt
+   */
+  getRichTextAABBBounds(rt: IRichText) {
+    const { attribute } = rt;
+    if (!attribute.textConfig.length) {
+      return getRichTextBounds({
+        ...this.shadowPlaceHolder.attribute,
+        x: attribute.x,
+        y: attribute.y,
+        textAlign: attribute.textAlign,
+        boundsMode: 'accurate'
+      });
+    }
+    return rt.AABBBounds;
   }
 
   tryShowInputBounds() {
@@ -584,19 +614,20 @@ export class RichTextEditPlugin implements IPlugin {
     if (!editOptions || !boundsStrokeWhenInput) {
       return;
     }
-    const { attribute } = this.currRt;
-    const b = this.currRt.AABBBounds;
-    let h = b.height();
-    if (!attribute.textConfig.length && this.editLine) {
-      const { points } = this.editLine.attribute;
-      h = points[1].y - points[0].y;
-    }
+    // const { attribute } = this.currRt;
+    const b = this.getRichTextAABBBounds(this.currRt);
+    const height = b.height();
+    const width = b.width();
+    // if (!attribute.textConfig.length && this.editLine) {
+    //   const { points } = this.editLine.attribute;
+    //   height = points[1].y - points[0].y;
+    // }
     this.shadowBounds = this.shadowBounds || createRect({});
     this.shadowBounds.setAttributes({
       x: 0,
       y: 0,
-      width: b.width(),
-      height: h,
+      width,
+      height,
       fill: false,
       stroke: boundsStrokeWhenInput,
       lineWidth: 1,
@@ -606,6 +637,7 @@ export class RichTextEditPlugin implements IPlugin {
     shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
+    this.offsetShadowRoot();
   }
 
   trySyncPlaceholderToTextConfig() {
@@ -616,7 +648,7 @@ export class RichTextEditPlugin implements IPlugin {
     if (textConfig && textConfig.length) {
       return;
     }
-    if (!(editOptions && editOptions.placeholder)) {
+    if (!(editOptions && editOptions.placeholder && editOptions.syncPlaceholderToTextConfig)) {
       return;
     }
     const { placeholder } = editOptions;
@@ -647,11 +679,11 @@ export class RichTextEditPlugin implements IPlugin {
 
   deactivate(context: IPluginService): void {
     // context.stage.off('pointerdown', this.handleClick);
-    context.stage.off('pointermove', this.handleMove);
-    context.stage.off('pointerdown', this.handlePointerDown);
-    context.stage.off('pointerup', this.handlePointerUp);
-    context.stage.off('pointerleave', this.handlePointerUp);
-    context.stage.off('dblclick', this.handleDBLClick);
+    context.stage.off('pointermove', this.handleMove, { capture: true });
+    context.stage.off('pointerdown', this.handlePointerDown, { capture: true });
+    context.stage.off('pointerup', this.handlePointerUp, { capture: true });
+    context.stage.off('pointerleave', this.handlePointerUp, { capture: true });
+    context.stage.off('dblclick', this.handleDBLClick, { capture: true });
 
     application.global.addEventListener('keydown', this.handleKeyDown);
   }
@@ -662,7 +694,7 @@ export class RichTextEditPlugin implements IPlugin {
     }
     this.currRt = e.target as IRichText;
     this.handleEnter(e);
-    (e.target as any).once('pointerleave', this.handleLeave);
+    (e.target as any).once('pointerleave', this.handleLeave, { capture: true });
 
     this.tryShowSelection(e, false);
   };
@@ -700,6 +732,10 @@ export class RichTextEditPlugin implements IPlugin {
     this.tryShowSelection(e, true);
   };
 
+  protected stopPropagation(e: Event) {
+    e.stopPropagation();
+  }
+
   onFocus(e: PointerEvent, data?: any) {
     this.updateCbs && this.updateCbs.forEach(cb => cb('beforeOnfocus', this));
     this.deFocus(false);
@@ -711,18 +747,18 @@ export class RichTextEditPlugin implements IPlugin {
     this.currRt = target as IRichText;
 
     // 创建shadowGraphic
-
     RichTextEditPlugin.tryUpdateRichtext(target);
     const shadowRoot = this.getShadow(target);
     const cache = target.getFrameCache();
     if (!cache) {
       return;
     }
+    const { editOptions = {} } = this.currRt.attribute;
+    if (editOptions.stopPropagation) {
+      target.addEventListener('*', this.stopPropagation);
+    }
     // 计算全局偏移
-    this.computeGlobalDelta(cache);
-
-    // 添加cursor节点，shadowRoot在上面
-    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
+    this.offsetShadowRoot(target);
     if (!this.editLine) {
       const line = createLine({ x: 0, y: 0, lineWidth: 1, stroke: 'black' });
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
@@ -762,6 +798,27 @@ export class RichTextEditPlugin implements IPlugin {
     this.currRt.addUpdateBoundTag();
   }
 
+  offsetShadowRoot(rt?: IRichText) {
+    rt = rt || this.currRt;
+    if (!rt) {
+      return;
+    }
+    const shadowRoot = this.getShadow(rt);
+    if (!shadowRoot) {
+      return;
+    }
+    const cache = rt.getFrameCache();
+    if (!cache) {
+      return;
+    }
+    // 计算全局偏移
+    this.computeGlobalDelta(cache);
+
+    // 添加cursor节点，shadowRoot在上面
+    shadowRoot.setAttributes({ shadowRootIdx: 1, pickable: false, x: this.deltaX, y: this.deltaY });
+    this.shadowPlaceHolder && this.shadowPlaceHolder.setAttributes({ dx: -this.deltaX, dy: -this.deltaY });
+  }
+
   // 偏移线和背景，因为文字的baseline可能是middle或者bottom
   protected offsetLineBgAndShadowBounds() {
     const rt = this.currRt;
@@ -792,6 +849,10 @@ export class RichTextEditPlugin implements IPlugin {
     const target = this.currRt as IRichText;
     if (!target) {
       return;
+    }
+    const { editOptions = {} } = target.attribute;
+    if (editOptions.stopPropagation) {
+      target.removeEventListener('*', this.stopPropagation);
     }
     if (trulyDeFocus) {
       this.trySyncPlaceholderToTextConfig();
@@ -1081,6 +1142,9 @@ export class RichTextEditPlugin implements IPlugin {
   protected computeGlobalDelta(cache: IRichTextFrame) {
     this.deltaX = 0;
     this.deltaY = 0;
+    if (cache.lines.length === 0 && this.shadowPlaceHolder) {
+      cache = this.shadowPlaceHolder.getFrameCache();
+    }
     const height = cache.height;
     const actualHeight = cache.actualHeight;
     const width = cache.lines.reduce((w, item) => Math.max(w, item.actualWidth), 0);
@@ -1134,6 +1198,7 @@ export class RichTextEditPlugin implements IPlugin {
     out.y += top;
 
     this.offsetLineBgAndShadowBounds();
+    this.offsetShadowRoot();
 
     this.editModule.moveTo(out.x, out.y, rt, this.curCursorIdx, this.selectionStartCursorIdx);
   }

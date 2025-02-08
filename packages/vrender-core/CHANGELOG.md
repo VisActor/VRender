@@ -1,6 +1,18 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 07 Feb 2025 13:42:01 GMT and should not be manually modified.
+This log was last generated on Fri, 07 Feb 2025 14:23:36 GMT and should not be manually modified.
+
+## 0.22.0
+Fri, 07 Feb 2025 14:23:36 GMT
+
+### Updates
+
+- feat: support backgroundScale, offsetXY
+- feat: background support backgroundKeepAspectRatio
+- feat: enhance rect cornerType
+- fix: fix issue with insertAfter and insertBefore
+- feat: support backgroundClip
+- fix: fix drawing issue when size is array
 
 ## 0.21.14
 Fri, 07 Feb 2025 13:42:01 GMT

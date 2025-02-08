@@ -390,25 +390,26 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
           // transform to absolute x,y
           tempX = x + (current[3] as number);
           tempY = y + (current[4] as number);
-          // calculate reflection of previous control points
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-          this.bezierCurveTo(
-            controlX + l,
-            controlY + t,
-            x + (current[1] as number) + l,
-            y + (current[2] as number) + t,
-            tempX + l,
-            tempY + t
-          );
 
-          // set control point to 2nd one of this command
-          // the first control point is assumed to be the reflection of
-          // the second control point on the previous command relative
-          // to the current point.
-          controlX = x + (current[1] as number);
-          controlY = y + (current[2] as number);
+          if ((previous![0] as string).match(/[CcSs]/) === null) {
+            // If there is no previous command or if the previous command was not a C, c, S or s,
+            // assume the control point is coincident with the current point
+            controlX = x;
+            controlY = y;
+          } else {
+            // calculate reflection of previous control points
+            controlX = 2 * x - controlX;
+            controlY = 2 * y - controlY;
+          }
 
+          tempControlX = x + (current[1] as number); // store new control point
+          tempControlY = y + (current[2] as number);
+
+          this.bezierCurveTo(controlX + l, controlY + t, tempControlX + l, tempControlY + t, tempX + l, tempY + t);
+
+          // update control point
+          controlX = tempControlX;
+          controlY = tempControlY;
           x = tempX;
           y = tempY;
           break;
@@ -416,26 +417,28 @@ export class CustomPath2D extends CurvePath implements ICustomPath2D {
         case 'S': // shorthand cubic bezierCurveTo, absolute
           tempX = current[3] as number;
           tempY = current[4] as number;
-          // calculate reflection of previous control points
-          controlX = 2 * x - controlX;
-          controlY = 2 * y - controlY;
-          this.bezierCurveTo(
-            controlX + l,
-            controlY + t,
-            (current[1] as number) + l,
-            (current[2] as number) + t,
-            tempX + l,
-            tempY + t
-          );
+
+          if ((previous![0] as string).match(/[CcSs]/) === null) {
+            // If there is no previous command or if the previous command was not a C, c, S or s,
+            // assume the control point is coincident with the current point
+            controlX = x;
+            controlY = y;
+          } else {
+            // calculate reflection of previous control points
+            controlX = 2 * x - controlX;
+            controlY = 2 * y - controlY;
+          }
+
+          tempControlX = current[1] as number; // store new control point
+          tempControlY = current[2] as number;
+
+          this.bezierCurveTo(controlX + l, controlY + t, tempControlX + l, tempControlY + t, tempX + l, tempY + t);
+
+          // update control point and current position
+          controlX = tempControlX;
+          controlY = tempControlY;
           x = tempX;
           y = tempY;
-          // set control point to 2nd one of this command
-          // the first control point is assumed to be the reflection of
-          // the second control point on the previous command relative
-          // to the current point.
-          controlX = current[1] as number;
-          controlY = current[2] as number;
-
           break;
 
         case 'q': // quadraticCurveTo, relative

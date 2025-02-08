@@ -1,3 +1,26 @@
+# v0.22.0
+
+2025-02-08
+
+
+**🆕 新增功能**
+
+- **@visactor/vrender-components**: enhance poptip to support vstory
+- **@visactor/vrender-components**: support weather-box component
+- **@visactor/vrender-core**: support backgroundScale, offsetXY
+- **@visactor/vrender-core**: background support backgroundKeepAspectRatio
+- **@visactor/vrender-core**: enhance rect cornerType
+- **@visactor/vrender-core**: support backgroundClip
+
+**🐛 功能修复**
+
+- **@visactor/vrender-core**: fix issue with insertAfter and insertBefore
+- **@visactor/vrender-core**: fix drawing issue when size is array
+
+
+
+[更多详情请查看 v0.22.0](https://github.com/VisActor/VRender/releases/tag/v0.22.0)
+
 # v0.21.14
 
 2025-02-07

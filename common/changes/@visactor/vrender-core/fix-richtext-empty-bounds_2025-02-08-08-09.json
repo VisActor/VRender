@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: clear richtext bounds while it is empty",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

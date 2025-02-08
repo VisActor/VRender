@@ -318,6 +318,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
     }
     application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
+    // 都为0的话，就直接clear
+    if (aabbBounds.width() === 0 && aabbBounds.height() === 0) {
+      aabbBounds.clear();
+    }
     return aabbBounds;
   }
 

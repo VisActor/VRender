@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.0",
+      "tag": "@visactor/vrender-components_v0.22.0",
+      "date": "Fri, 07 Feb 2025 14:23:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: enhance poptip to support vstory"
+          },
+          {
+            "comment": "feat: support weather-box component"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.14",
       "tag": "@visactor/vrender-components_v0.21.14",
       "date": "Fri, 07 Feb 2025 13:42:01 GMT",

@@ -2,6 +2,33 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.0",
+      "tag": "@visactor/vrender-core_v0.22.0",
+      "date": "Fri, 07 Feb 2025 14:23:36 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: support backgroundScale, offsetXY"
+          },
+          {
+            "comment": "feat: background support backgroundKeepAspectRatio"
+          },
+          {
+            "comment": "feat: enhance rect cornerType"
+          },
+          {
+            "comment": "fix: fix issue with insertAfter and insertBefore"
+          },
+          {
+            "comment": "feat: support backgroundClip"
+          },
+          {
+            "comment": "fix: fix drawing issue when size is array"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.14",
       "tag": "@visactor/vrender-core_v0.21.14",
       "date": "Fri, 07 Feb 2025 13:42:01 GMT",

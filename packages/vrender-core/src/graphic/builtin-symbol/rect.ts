@@ -1,6 +1,6 @@
 import type { IBounds } from '@visactor/vutils';
 import { isNumber } from '@visactor/vutils';
-import type { IContext2d, SymbolType, ISymbolClass } from '../../interface';
+import type { IContext2d, SymbolType, ISymbolClass, ICustomPath2D, IPath2D } from '../../interface';
 import { BaseSymbol } from './base';
 
 /**
@@ -58,6 +58,46 @@ export class RectSymbol extends BaseSymbol implements ISymbolClass {
     return rectSizeArray(ctx, size, x, y);
     // const rectSize: [number, number] =  ? [size, size] : size;
     // return rect(ctx, rectSize, x, y);
+  }
+
+  drawWithClipRange(
+    ctx: IPath2D,
+    size: number | [number, number],
+    x: number,
+    y: number,
+    clipRange: number,
+    z?: number,
+    cb?: (p: ICustomPath2D, a: any) => void
+  ) {
+    if (isNumber(size)) {
+      size = [size, size / 2];
+    }
+    const totalLength = (size[0] + size[1]) * 2;
+    const drawLength = totalLength * clipRange;
+    const points = [
+      { x: x + size[0] / 2, y: y - size[1] / 2 },
+      { x: x + size[0] / 2, y: y + size[1] / 2 },
+      { x: x - size[0] / 2, y: y + size[1] / 2 },
+      { x: x - size[0] / 2, y: y - size[1] / 2 }
+    ];
+    let currLength = 0;
+    let lastP = points[3];
+    ctx.moveTo(lastP.x, lastP.y);
+    for (let i = 0; i < points.length; i++) {
+      const p = points[i];
+      const len = Math.sqrt((p.x - lastP.x) * (p.x - lastP.x) + (p.y - lastP.y) * (p.y - lastP.y));
+      if (currLength + len > drawLength) {
+        const dx = ((p.x - lastP.x) * (drawLength - currLength)) / len;
+        const dy = ((p.y - lastP.y) * (drawLength - currLength)) / len;
+        ctx.lineTo(lastP.x + dx, lastP.y + dy);
+        break;
+      } else {
+        ctx.lineTo(p.x, p.y);
+      }
+      lastP = p;
+      currLength += len;
+    }
+    return false;
   }
 
   drawOffset(ctx: IContext2d, size: number | [number, number], x: number, y: number, offset: number) {

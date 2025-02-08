@@ -96,6 +96,37 @@ export interface IPickItemInterceptorContribution {
   //   pickerService: IPickerService,
   // ) => boolean;
 }
+export interface IPickServiceInterceptorContribution {
+  order: number;
+  // null代表没匹配到，boolean代表是否pick中
+  beforePickItem?: (
+    result: PickResult,
+    pickerService: IPickerService,
+    point: IPointLike,
+    drawContext: {
+      in3dInterceptor?: boolean;
+    },
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ) => PickResult | null;
+
+  afterPickItem?: (
+    result: PickResult,
+    pickerService: IPickerService,
+    point: IPointLike,
+    drawContext: {
+      in3dInterceptor?: boolean;
+    },
+    params?: {
+      parentMatrix: IMatrix;
+    }
+  ) => PickResult | null;
+  // afterPickItem?: (
+  //   graphic: IGraphic,
+  //   pickerService: IPickerService,
+  // ) => boolean;
+}
 
 export interface IBoundsPicker {
   type: string;

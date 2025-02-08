@@ -28,9 +28,10 @@ export const page = () => {
   shapes.push(
     createRichText({
       visible: true,
-      fontSize: 26,
+      fontSize: 16,
       _debug_bounds: true,
       width: 0,
+      height: 0,
       x: 100,
       y: 100,
       editable: true,
@@ -39,217 +40,272 @@ export const page = () => {
       textConfig: [
         {
           text: '我',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {
           text: '们',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {
           text: '是',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
+          background: 'orange',
           fill: '#0f51b5'
         },
         {
           text: '无',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '缘',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: 'a',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '无',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '故',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '的',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '尘😁',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '埃\n',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '无',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '缘',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '无',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '故',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '的',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '游',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '走\n',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '黑',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '暗',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '只',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '需',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '要',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '张',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '开',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '一',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '张',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '缝',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '隙\n',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '就',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '能',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '挂',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '起',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '飓',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: '[4]',
+          script: 'super',
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         },
         {
           text: '风\n',
-          fontSize: 26,
+          fontSize: 16,
+          lineHeight: 26,
+          textAlign: 'center',
+          fill: '#0f51b5'
+        },
+        {
+          text: 'and this is our world, \nthat we call life',
+          fontSize: 16,
+          lineHeight: 26,
           textAlign: 'center',
           fill: '#0f51b5'
         }
       ]
     })
   );
+
+  console.log(shapes[0]);
 
   const stage = createStage({
     canvas: 'main',
@@ -282,7 +338,7 @@ export const page = () => {
     }
   });
 
-  ['bold', 'italic', 'underline', 'lineThrough', { fill: 'red' }].forEach(item => {
+  ['bold', 'italic', 'underline', 'lineThrough', { fill: 'red' }, { background: 'pink' }].forEach(item => {
     const btn = document.createElement('button');
     btn.innerHTML = typeof item === 'string' ? item : JSON.stringify(item);
     btn.addEventListener('click', () => {

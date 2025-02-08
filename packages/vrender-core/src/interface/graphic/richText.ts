@@ -4,6 +4,20 @@ import type { IGraphicAttribute, IGraphic } from '../graphic';
 import type { IImage, IImageGraphicAttribute } from './image';
 import type { ITextGraphicAttribute } from './text';
 
+export type IRichTextEditOptionsType = {
+  placeholder?: string;
+  placeholderColor?: string;
+  placeholderFontSize?: number;
+  placeholderFontFamily?: string;
+  // 是否将placeholder同步到textConfig中
+  syncPlaceholderToTextConfig?: boolean;
+  // 即使是空文本，是否也保持高度
+  keepHeightWhileEmpty?: boolean;
+  // 是否在输入的时候展示包围框，不传默认是false，可以传入颜色
+  boundsStrokeWhenInput?: string;
+  stopPropagation?: boolean;
+};
+
 export type IRichTextAttribute = {
   /**
    * 富文本的总宽度
@@ -17,6 +31,14 @@ export type IRichTextAttribute = {
    * 是否可编辑
    */
   editable: boolean;
+  /**
+   * 测量ascent和descent的模式，预览的时候actual比较合适，而如果需要编辑的话，font比较合适
+   */
+  ascentDescentMode?: 'actual' | 'font';
+  /**
+   * 富文本的编辑配置
+   */
+  editOptions: IRichTextEditOptionsType | null;
   /**
    * 文本超长的时候是否显示省略字符串
    * 1. boolean类型，true 表示将截断后的省略字符串设置为..., false 表示不显示省略字符串
@@ -163,6 +185,10 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
    * 富文本片段的文字描边透明度
    */
   strokeOpacity?: number;
+  // 仅支持纯色背景
+  background?: string;
+  // 背景透明度
+  backgroundOpacity?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

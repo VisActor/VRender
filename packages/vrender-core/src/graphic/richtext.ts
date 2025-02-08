@@ -1,5 +1,5 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { isNumber } from '@visactor/vutils';
+import { isNumber, isString } from '@visactor/vutils';
 import type {
   IRichText,
   IRichTextCharacter,
@@ -13,7 +13,9 @@ import type {
   IStage,
   ILayer,
   IRichTextIcon,
-  EventPoint
+  EventPoint,
+  IRichTextFrame,
+  ISetAttributeContext
 } from '../interface';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { DefaultRichTextAttribute } from './config';
@@ -25,6 +27,13 @@ import { RichTextIcon } from './richtext/icon';
 import type { FederatedMouseEvent } from '../event';
 import { application } from '../application';
 import { RICHTEXT_NUMBER_TYPE } from './constants';
+
+let supportIntl = false;
+try {
+  supportIntl = Intl && typeof (Intl as any).Segmenter === 'function';
+} catch (e) {
+  supportIntl = false;
+}
 
 const RICHTEXT_UPDATE_TAG_KEY = [
   'width',
@@ -187,6 +196,54 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     return getTheme(this).richtext;
   }
 
+  static AllSingleCharacter(cache: IRichTextFrame | IRichTextGraphicAttribute['textConfig']) {
+    if ((cache as IRichTextFrame).lines) {
+      const frame = cache as IRichTextFrame;
+      return frame.lines.every(line =>
+        line.paragraphs.every(item => !(item.text && isString(item.text) && RichText.splitText(item.text).length > 1))
+      );
+    }
+    // isComposing的不算
+    const tc = cache as IRichTextGraphicAttribute['textConfig'];
+    return tc.every(
+      item =>
+        (item as any).isComposing ||
+        !((item as any).text && isString((item as any).text) && RichText.splitText((item as any).text).length > 1)
+    );
+  }
+
+  static splitText(text: string) {
+    if (supportIntl) {
+      // 不传入具体语言标签，使用默认设置
+      const segmenter = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' });
+      const segments = [];
+      for (const { segment } of segmenter.segment(text)) {
+        segments.push(segment);
+      }
+      return segments;
+    }
+    // 如果不支持 Intl.Segmenter，则使用旧方法
+    return Array.from(text);
+  }
+
+  static TransformTextConfig2SingleCharacter(textConfig: IRichTextGraphicAttribute['textConfig']) {
+    const tc: IRichTextGraphicAttribute['textConfig'] = [];
+    textConfig.forEach((item: IRichTextParagraphCharacter) => {
+      const textList = RichText.splitText(item.text.toString());
+      if (isString(item.text) && textList.length > 1) {
+        // 拆分
+        for (let i = 0; i < textList.length; i++) {
+          const t = textList[i];
+          tc.push({ ...item, text: t });
+        }
+      } else {
+        tc.push(item);
+      }
+    });
+
+    return tc;
+  }
+
   protected updateAABBBounds(
     attribute: IRichTextGraphicAttribute,
     richtextTheme: Required<IRichTextGraphicAttribute>,
@@ -198,7 +255,8 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       maxWidth = richtextTheme.maxWidth,
       maxHeight = richtextTheme.maxHeight,
       textAlign = richtextTheme.textAlign,
-      textBaseline = richtextTheme.textBaseline
+      verticalDirection = attribute.textBaseline ?? richtextTheme.textBaseline ?? richtextTheme.verticalDirection,
+      editOptions
     } = attribute;
 
     if (width > 0 && height > 0) {
@@ -217,9 +275,15 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       aabbBounds.set(0, 0, contentWidth, contentHeight);
     }
 
+    // 如果是可编辑状态，且没有设置高度，就用fontSize，否则就完全选不到了
+    if (editOptions && editOptions.keepHeightWhileEmpty && !aabbBounds.height() && !attribute.textConfig?.length) {
+      aabbBounds.y2 = aabbBounds.y1 + (attribute.fontSize ?? 12);
+      aabbBounds.x2 = aabbBounds.x1 + 2;
+    }
+
     // 调整对齐方式
     let deltaY = 0;
-    switch (textBaseline) {
+    switch (verticalDirection) {
       case 'top':
         deltaY = 0;
         break;
@@ -263,12 +327,12 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   protected needUpdateTag(key: string): boolean {
     return super.needUpdateTag(key, RICHTEXT_UPDATE_TAG_KEY);
   }
-  getFrameCache(): Frame {
+  getFrameCache(): IRichTextFrame {
     if (this.shouldUpdateShape()) {
       this.doUpdateFrameCache();
       this.clearUpdateShapeTag();
     }
-    return this._frameCache;
+    return this._frameCache as IRichTextFrame;
   }
 
   get cliped() {
@@ -321,7 +385,6 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
   doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
     const {
-      textConfig: _tc = [],
       maxWidth,
       maxHeight,
       width,
@@ -333,8 +396,19 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       textBaseline,
       layoutDirection,
       singleLine,
-      disableAutoWrapLine
+      disableAutoWrapLine,
+      editable,
+      ascentDescentMode
     } = this.attribute;
+
+    let { textConfig: _tc = [] } = this.attribute;
+
+    // 预处理editable，将textConfig中的text转换为单个字符
+    if (editable && _tc.length > 0 && !RichText.AllSingleCharacter(_tc)) {
+      _tc = RichText.TransformTextConfig2SingleCharacter(_tc);
+      this.attribute.textConfig = _tc;
+    }
+
     const paragraphs: (Paragraph | RichTextIcon)[] = [];
 
     const textConfig = tc ?? _tc;
@@ -370,10 +444,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
-            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig));
+            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
           }
         } else if (richTextConfig.text) {
-          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig));
+          paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig, ascentDescentMode));
         }
       }
     }
@@ -428,6 +502,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       this._frameCache?.icons
     );
     const wrapper = new Wrapper(frame);
+    // @since 0.22.0
+    // 如果可编辑的话，则支持多换行符
+    wrapper.newLine = editable;
     if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
@@ -483,6 +560,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
       frame.lines.forEach(function (l) {
         l.calcOffset(offsetSize, false);
+      });
+    }
+
+    // 处理空行
+    if (editable) {
+      frame.lines.forEach(item => {
+        const lastParagraphs = item.paragraphs;
+        item.paragraphs = item.paragraphs.filter(p => (p as any).text !== '');
+        if (item.paragraphs.length === 0 && lastParagraphs.length) {
+          (lastParagraphs[0] as any).text = '\n';
+          item.paragraphs.push(lastParagraphs[0]);
+        }
       });
     }
 

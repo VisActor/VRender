@@ -74,19 +74,19 @@ export class NodeWindowHandlerContribution extends BaseWindowHandlerContribution
   private createWindowByCanvas(params: IWindowParams) {
     // 获取canvas
     const canvas = params!.canvas as HTMLCanvasElement | null;
-
+    const dpr = params.dpr ?? 1;
     // 如果没有传入wh，或者是不受控制的canvas，那就用canvas的原始wh
     let width = params.width;
     let height = params.height;
     if (width == null || height == null || !params.canvasControled) {
-      width = canvas.width;
-      height = canvas.height;
+      width = canvas.width / dpr;
+      height = canvas.height / dpr;
     }
 
     this.canvas = new NodeCanvas({
       width: width,
       height: height,
-      dpr: 1,
+      dpr: dpr,
       nativeCanvas: canvas,
       canvasControled: params.canvasControled
     });

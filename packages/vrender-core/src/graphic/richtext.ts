@@ -444,7 +444,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
-            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
+            if (j === 0) {
+              paragraphs.push(new Paragraph(textParts[j], false, richTextConfig, ascentDescentMode));
+            } else if (textParts[j] || i === textConfig.length - 1) {
+              paragraphs.push(new Paragraph(textParts[j], true, richTextConfig, ascentDescentMode));
+            } else {
+              // 空行的话，config应该要和下一行对齐
+              const nextRichTextConfig = this.combinedStyleToCharacter(
+                textConfig[i + 1] as IRichTextParagraphCharacter
+              ) as IRichTextParagraphCharacter;
+              paragraphs.push(new Paragraph(textParts[j], true, nextRichTextConfig, ascentDescentMode));
+            }
+            // paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
           }
         } else if (richTextConfig.text) {
           paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig, ascentDescentMode));

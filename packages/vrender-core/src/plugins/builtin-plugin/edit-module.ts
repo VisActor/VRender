@@ -18,7 +18,7 @@ import type {
 // }
 
 export function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) {
-  const { fill = 'black', stroke = false, fontWeight = 'normal', fontFamily = 'Arial' } = attribute;
+  const { fill = 'black', stroke = false, fontWeight = 'normal', lineHeight, fontFamily = 'Arial' } = attribute;
   let { fontSize = 12 } = attribute;
   if (!isFinite(fontSize)) {
     fontSize = 12;
@@ -28,7 +28,8 @@ export function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) 
     stroke,
     fontSize,
     fontWeight,
-    fontFamily
+    fontFamily,
+    lineHeight
   } as any;
 }
 

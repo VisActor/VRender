@@ -370,6 +370,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       lineWidth,
       opacity,
       fillOpacity,
+      lineHeight,
       strokeOpacity
     } = this.attribute;
     return {
@@ -382,6 +383,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       lineWidth,
       opacity,
       fillOpacity,
+      lineHeight,
       strokeOpacity,
       ...config
     };

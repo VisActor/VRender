@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix: fix the bug of dpr will not work when createWindowByCanvas in node env\n\n",
+      "type": "none",
+      "packageName": "@visactor/vrender-kits"
+    }
+  ],
+  "packageName": "@visactor/vrender-kits",
+  "email": "lixuef1313@163.com"
+}

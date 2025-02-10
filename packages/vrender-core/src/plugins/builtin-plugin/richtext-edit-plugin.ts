@@ -11,6 +11,7 @@ import {
   RichText
 } from '../../graphic';
 import type {
+  IGraphic,
   IGroup,
   ILine,
   IPlugin,
@@ -636,7 +637,8 @@ export class RichTextEditPlugin implements IPlugin {
       zIndex: -1
     });
     const shadow = this.getShadow(this.currRt);
-    shadow.add(this.shadowBounds);
+    this.addEditLineOrBgOrBounds(this.shadowBounds, shadow);
+    // shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
     this.offsetShadowRoot();
@@ -743,6 +745,24 @@ export class RichTextEditPlugin implements IPlugin {
     e.stopPropagation();
   }
 
+  addEditLineOrBgOrBounds(graphic: IGraphic, shadowRoot: IGroup) {
+    let group = shadowRoot.getElementById('emptyBoundsContainer');
+    if (!group) {
+      group = createGroup({ x: 0, y: 0, width: 0, height: 0, boundsMode: 'empty' });
+      group.id = 'emptyBoundsContainer';
+      shadowRoot.add(group);
+    }
+    group.add(graphic);
+  }
+
+  removeEditLineOrBgOrBounds(graphic: IGraphic, shadowRoot: IGroup) {
+    const group = shadowRoot.getElementById('emptyBoundsContainer');
+    if (!group) {
+      return;
+    }
+    group.removeChild(graphic);
+  }
+
   onFocus(e: PointerEvent, data?: any) {
     this.updateCbs && this.updateCbs.forEach(cb => cb('beforeOnfocus', this));
     this.deFocus(false);
@@ -775,8 +795,10 @@ export class RichTextEditPlugin implements IPlugin {
 
       const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
-      shadowRoot.add(this.editLine);
-      shadowRoot.add(this.editBg);
+      this.addEditLineOrBgOrBounds(this.editLine, shadowRoot);
+      this.addEditLineOrBgOrBounds(this.editBg, shadowRoot);
+      // shadowRoot.add(this.editLine);
+      // shadowRoot.add(this.editBg);
     }
 
     data = data || this.computedCursorPosByEvent(e, cache);
@@ -866,19 +888,20 @@ export class RichTextEditPlugin implements IPlugin {
       currRt.detachShadow();
     }
     this.currRt = null;
+    const shadowRoot = this.getShadow(currRt);
     if (this.editLine) {
-      this.editLine.parent && this.editLine.parent.removeChild(this.editLine);
+      this.removeEditLineOrBgOrBounds(this.editLine, shadowRoot);
       this.editLine.release();
       this.editLine = null;
 
-      this.editBg.parent && this.editBg.parent.removeChild(this.editBg);
+      this.removeEditLineOrBgOrBounds(this.editBg, shadowRoot);
       this.editBg.release();
       this.editBg = null;
     }
 
     if (trulyDeFocus) {
       if (this.shadowBounds) {
-        this.shadowBounds.parent && this.shadowBounds.parent.removeChild(this.shadowBounds);
+        this.removeEditLineOrBgOrBounds(this.shadowBounds, shadowRoot);
         this.shadowBounds.release();
         this.shadowBounds = null;
       }
@@ -1063,7 +1086,8 @@ export class RichTextEditPlugin implements IPlugin {
 
   protected getShadow(rt: IRichText) {
     const sr = rt.shadowRoot || rt.attachShadow();
-    sr.setAttributes({ boundsMode: 'empty' });
+    // TODO 这里比较hack，因为emptyBoundsContainer是empty，导致shadowRoot的Bounds为空，所以这里给一个1*1的rect，让其能绘制
+    sr.setAttributes({ width: 1, height: 1 });
     return sr;
   }
 

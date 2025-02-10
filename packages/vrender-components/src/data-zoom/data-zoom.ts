@@ -221,7 +221,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    return this.stage.eventPointTransform(e);
+    // updateSpec过程中交互的话, stage可能为空
+    return this.stage?.eventPointTransform(e) ?? { x: 0, y: 0 };
   }
 
   /**

@@ -740,6 +740,7 @@ export class RichTextEditPlugin implements IPlugin {
     this.updateCbs && this.updateCbs.forEach(cb => cb('beforeOnfocus', this));
     this.deFocus(false);
     this.focusing = true;
+    this.editing = true;
     const target = e.target as IRichText;
     if (!(target && target.type === 'richtext')) {
       return;
@@ -845,6 +846,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected deFocus(trulyDeFocus = false) {
+    this.editing = false;
     this.updateCbs && this.updateCbs.forEach(cb => cb('beforeDefocus', this, { trulyDeFocus }));
     const target = this.currRt as IRichText;
     if (!target) {

@@ -10,9 +10,9 @@ export class QuadraticBezierCurve extends Curve implements IQuadraticBezierCurve
   declare originP1?: IPointLike;
   declare originP2?: IPointLike;
 
-  declare readonly p0: IPoint;
-  declare readonly p1: IPoint;
-  declare readonly p2: IPoint;
+  declare p0: IPoint;
+  declare p1: IPoint;
+  declare p2: IPoint;
   constructor(p0: IPoint, p1: IPoint, p2: IPoint) {
     super();
     this.p0 = p0;
@@ -69,5 +69,10 @@ export class QuadraticBezierCurve extends Curve implements IQuadraticBezierCurve
   }
   includeX(x: number): boolean {
     throw new Error('QuadraticBezierCurve暂不支持includeX');
+  }
+
+  reverse() {
+    [this.p0, this.p1, this.p2] = [this.p2, this.p1, this.p0];
+    [this.originP1, this.originP2] = [this.originP2, this.originP1];
   }
 }

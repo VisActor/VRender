@@ -1,5 +1,5 @@
 import type { IPointLike } from '@visactor/vutils';
-import type { ICurveType, IGenSegmentParams, ISegPath2D } from '../../interface';
+import type { ICurveType, ISegment, ISegPath2D } from '../../interface';
 import { genLinearSegments } from './linear';
 import { genBasisSegments } from './basis';
 import { genMonotoneXSegments, genMonotoneYSegments } from './monotone';
@@ -44,4 +44,14 @@ export function calcLineCache(
     default:
       return genLinearSegments(points, params);
   }
+}
+
+export function calcSegLineCache(
+  segments: ISegment[],
+  points: IPointLike[],
+  curveType: ICurveType,
+  params?: { startPoint?: IPointLike; curveTension?: number }
+): ISegPath2D[] {
+  const cache = calcLineCache(points, curveType, params);
+  return (cache as any).splitBySegments(segments);
 }

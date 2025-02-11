@@ -20,6 +20,14 @@ export type IRichTextEditOptionsType = {
 
 export type IRichTextAttribute = {
   /**
+   * @since 0.22.1
+   * 升级后避免break change，通过开关来控制
+   */
+  upgradeAttrs: {
+    lineHeight: true;
+    multiBreakLine: true;
+  } | null;
+  /**
    * 富文本的总宽度
    */
   width: number;

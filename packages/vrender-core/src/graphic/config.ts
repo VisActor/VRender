@@ -345,6 +345,7 @@ export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
 export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultAttribute,
   ...DefaultTextStyle,
+  upgradeAttrs: null,
   editable: false,
   editOptions: null,
   ascentDescentMode: 'actual',

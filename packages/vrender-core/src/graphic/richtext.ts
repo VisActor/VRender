@@ -371,9 +371,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       opacity,
       fillOpacity,
       lineHeight,
-      strokeOpacity
+      strokeOpacity,
+      upgradeAttrs
     } = this.attribute;
-    return {
+    const out = {
       fill,
       stroke,
       fontSize,
@@ -383,10 +384,13 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       lineWidth,
       opacity,
       fillOpacity,
-      lineHeight,
       strokeOpacity,
       ...config
     };
+    if (upgradeAttrs?.lineHeight) {
+      out.lineHeight = lineHeight;
+    }
+    return out;
   }
   doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
@@ -404,8 +408,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       singleLine,
       disableAutoWrapLine,
       editable,
-      ascentDescentMode
+      ascentDescentMode,
+      upgradeAttrs
     } = this.attribute;
+
+    const enableMultiBreakLine = upgradeAttrs && upgradeAttrs.multiBreakLine;
 
     let { textConfig: _tc = [] } = this.attribute;
 
@@ -521,7 +528,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     const wrapper = new Wrapper(frame);
     // @since 0.22.0
     // 如果可编辑的话，则支持多换行符
-    wrapper.newLine = editable;
+    wrapper.newLine = enableMultiBreakLine;
     if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
@@ -581,7 +588,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
 
     // 处理空行
-    if (editable) {
+    if (enableMultiBreakLine) {
       frame.lines.forEach(item => {
         const lastParagraphs = item.paragraphs;
         item.paragraphs = item.paragraphs.filter(p => (p as any).text !== '');

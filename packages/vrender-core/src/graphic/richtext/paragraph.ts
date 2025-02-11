@@ -175,7 +175,14 @@ export default class Paragraph {
     textAlign: string,
     lineHeight: number
   ) {
-    if (!(this.character.background && (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0))) {
+    if (
+      !(
+        this.text !== '' &&
+        this.text !== '\n' &&
+        this.character.background &&
+        (!this.character.backgroundOpacity || this.character.backgroundOpacity > 0)
+      )
+    ) {
       return;
     }
     let baseline = top + ascent;

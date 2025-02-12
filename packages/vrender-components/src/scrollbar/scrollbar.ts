@@ -10,7 +10,7 @@ import { AbstractComponent } from '../core/base';
 import type { ScrollBarAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadScrollbarComponent } from './register';
-import { SCROLLBAR_EVENT } from '../constant';
+import { SCROLLBAR_START_EVENT, SCROLLBAR_EVENT, SCROLLBAR_END_EVENT } from '../constant';
 
 type ComponentBounds = {
   x1: number;
@@ -313,7 +313,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const { direction } = this.attribute as ScrollBarAttributes;
     const { x, y } = this.stage.eventPointTransform(e);
     this._prePos = direction === 'horizontal' ? x : y;
-    this._dispatchEvent('scrollDown', {
+    this._dispatchEvent(SCROLLBAR_START_EVENT, {
       pos: this._prePos,
       event: e
     });
@@ -366,13 +366,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
 
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
-    const { realTime = true, range: preRange, limitRange = [0, 1] } = this.attribute as ScrollBarAttributes;
+    const { range: preRange, limitRange = [0, 1] } = this.attribute as ScrollBarAttributes;
     // 发射 change 事件
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
 
-    this._dispatchEvent('scrollUp', {
+    this._dispatchEvent(SCROLLBAR_END_EVENT, {
       pre: preRange,
       value: clampRange(range, limitRange[0], limitRange[1])
     });

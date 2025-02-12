@@ -28,4 +28,6 @@ export const DEFAULT_HTML_TEXT_SPEC = {
   style: {}
 };
 
+export const SCROLLBAR_START_EVENT = 'scrollDown';
 export const SCROLLBAR_EVENT = 'scrollDrag';
+export const SCROLLBAR_END_EVENT = 'scrollUp';

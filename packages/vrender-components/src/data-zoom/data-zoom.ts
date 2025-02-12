@@ -221,7 +221,8 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
   /** 事件系统坐标转换为stage坐标 */
   protected eventPosToStagePos(e: FederatedPointerEvent) {
-    return this.stage.eventPointTransform(e);
+    // updateSpec过程中交互的话, stage可能为空
+    return this.stage?.eventPointTransform(e) ?? { x: 0, y: 0 };
   }
 
   /**
@@ -309,7 +310,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
       this.setStateAttr(start, end, true);
-
       if (realTime) {
         this._dispatchEvent('change', {
           start,
@@ -342,17 +342,14 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     // dragMask不依赖于state更新
     brushSelect && this.renderDragMask();
 
-    // 避免attributes相同时, 重复渲染
-    if (start !== this.state.start || end !== this.state.end) {
-      this.setStateAttr(this.state.start, this.state.end, true);
-
-      this._dispatchEvent('change', {
-        start: this.state.start,
-        end: this.state.end,
-        tag: this._activeTag
-      });
-    }
-
+    // 此次dispatch不能被省略
+    // 因为pointermove时, 已经将状态更新至最新, 所以在pointerup时, 必定start = state.start & end = state.end
+    // 而realTime = false时, 需要依赖这次dispatch来更新图表图元
+    this._dispatchEvent('change', {
+      start: this.state.start,
+      end: this.state.end,
+      tag: this._activeTag
+    });
     // 拖拽结束后卸载事件
     if (vglobal.env === 'browser') {
       // 拖拽时

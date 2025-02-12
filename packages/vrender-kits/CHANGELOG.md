@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 06 Feb 2025 08:25:45 GMT and should not be manually modified.
+This log was last generated on Wed, 12 Feb 2025 03:52:41 GMT and should not be manually modified.
+
+## 0.21.14
+Wed, 12 Feb 2025 03:52:41 GMT
+
+### Updates
+
+- fix: datazoom error when spec is updating. fix@visactor/vchart#3712
 
 ## 0.21.13
 Thu, 06 Feb 2025 08:25:45 GMT

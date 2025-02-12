@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.21.14",
+      "tag": "@visactor/vrender-components_v0.21.14",
+      "date": "Wed, 12 Feb 2025 03:52:41 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: datazoom and scrollbar realtime not work. fix@visactor/vchart#3716"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.13",
       "tag": "@visactor/vrender-components_v0.21.13",
       "date": "Thu, 06 Feb 2025 08:25:45 GMT",

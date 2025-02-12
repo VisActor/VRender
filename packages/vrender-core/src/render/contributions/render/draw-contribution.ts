@@ -132,8 +132,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     context.inuse = true;
     context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
-    context.clearMatrix();
-    context.setTransformForCurrent(true);
+    context.clearMatrix(false);
+    // context.setTransformForCurrent(true);
 
     // const drawInArea =
     //   dirtyBounds.width() * context.dpr < context.canvas.width ||

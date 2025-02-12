@@ -125,6 +125,7 @@ export class BrowserContext2d implements IContext2d {
   declare fontFamily: string;
   declare fontSize: number;
   declare _clearMatrix: IMatrix;
+  declare _font?: string;
   // 属性代理
   set fillStyle(d: string | CanvasGradient | CanvasPattern) {
     this.nativeContext.fillStyle = d;
@@ -133,10 +134,14 @@ export class BrowserContext2d implements IContext2d {
     return this.nativeContext.fillStyle;
   }
   set font(d: string) {
+    if (d === this._font) {
+      return;
+    }
+    this._font = d;
     this.nativeContext.font = d;
   }
   get font(): string {
-    return this.nativeContext.font;
+    return this._font ?? this.nativeContext.font;
   }
   set globalAlpha(d: number) {
     this.nativeContext.globalAlpha = d * this.baseGlobalAlpha;
@@ -1166,13 +1171,9 @@ export class BrowserContext2d implements IContext2d {
     }
     const { scaleIn3d = defaultParams.scaleIn3d } = params;
     if (params.font) {
-      _context.font = params.font;
+      this.font = params.font;
     } else {
-      _context.font = getContextFont(
-        params,
-        defaultParams,
-        scaleIn3d && this.camera && this.camera.getProjectionScale(z)
-      );
+      this.font = getContextFont(params, defaultParams, scaleIn3d && this.camera && this.camera.getProjectionScale(z));
     }
     const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
     this.fontFamily = fontFamily;
@@ -1189,9 +1190,9 @@ export class BrowserContext2d implements IContext2d {
       defaultParams = this.textAttributes;
     }
     if (params.font) {
-      _context.font = params.font;
+      this.font = params.font;
     } else {
-      _context.font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
+      this.font = getContextFont(params, defaultParams, this.camera && this.camera.getProjectionScale(z));
     }
     const { fontFamily = defaultParams.fontFamily, fontSize = defaultParams.fontSize } = params;
     this.fontFamily = fontFamily;

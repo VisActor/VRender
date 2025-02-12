@@ -789,9 +789,17 @@ export class Stage extends Group implements IStage {
     }
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      this.global.getRequestAnimationFrame()(() => {
-        this._doRenderInThisFrame(), (this.willNextFrameRender = false);
-      });
+      // 如果使用raf，那么大量图表的时候原生RAF可能会导致卡顿，所以这里使用VRender封装的RAF处理
+      // 但需要注意的是，可能会在非常卡的时候更卡了，所以需要外部去配置
+      if (this.params.optimize?.useHighPerformanceRequestAnimationFrameInRenderNextFrame) {
+        this.global.getHighPerformanceRequestAnimationFrame()(() => {
+          this._doRenderInThisFrame(), (this.willNextFrameRender = false);
+        });
+      } else {
+        this.global.getRequestAnimationFrame()(() => {
+          this._doRenderInThisFrame(), (this.willNextFrameRender = false);
+        });
+      }
     }
   }
 

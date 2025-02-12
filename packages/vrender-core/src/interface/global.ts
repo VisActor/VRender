@@ -253,6 +253,7 @@ export interface IGlobal extends Omit<IEventElement, 'on' | 'off' | 'once' | 'em
   measureTextMethod: 'native' | 'simple' | 'quick';
 
   getRequestAnimationFrame: () => null | ((callback: FrameRequestCallback) => number);
+  getHighPerformanceRequestAnimationFrame: () => null | ((callback: FrameRequestCallback) => number);
   getCancelAnimationFrame: () => null | ((h: number) => void);
 
   /**

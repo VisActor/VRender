@@ -124,6 +124,8 @@ export class DefaultGlobal implements IGlobal {
     onSetEnv: ISyncHook<[EnvType | undefined, EnvType, IGlobal]>;
   };
 
+  nextAnimationFrameCbs: FrameRequestCallback[] = [];
+
   constructor(
     // todo: 不需要创建，动态获取就行？
     @inject(ContributionProvider)
@@ -280,6 +282,42 @@ export class DefaultGlobal implements IGlobal {
     }
     return this.envContribution.getCancelAnimationFrame();
   }
+
+  // 获取很多RAF会导致性能降低，所以Global自行维护一个RAF数组，然后在一个requestAnimationFrame中执行
+  getHighPerformanceRequestAnimationFrame() {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    return this.addAnimationFrame;
+  }
+
+  protected addAnimationFrame = (callback: FrameRequestCallback) => {
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.nextAnimationFrameCbs.push(callback);
+    // 下一帧执行nextAnimationFrameCbs
+    this.tryRunAnimationFrameNextFrame();
+    return this.nextAnimationFrameCbs.length - 1;
+  };
+
+  protected runAnimationFrame = (time: number) => {
+    const cbs = this.nextAnimationFrameCbs;
+    this.nextAnimationFrameCbs = [];
+    for (let i = 0; i < cbs.length; i++) {
+      cbs[i](time);
+    }
+  };
+
+  protected tryRunAnimationFrameNextFrame = () => {
+    if (!(this.nextAnimationFrameCbs && this.nextAnimationFrameCbs.length === 1)) {
+      return;
+    }
+    if (!this._env) {
+      this.setEnv(defaultEnv);
+    }
+    this.envContribution.getRequestAnimationFrame()(this.runAnimationFrame);
+  };
 
   getElementById(str: string): HTMLElement | null {
     if (!this._env) {

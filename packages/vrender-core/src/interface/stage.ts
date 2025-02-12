@@ -107,6 +107,8 @@ export type IOptimizeType = {
   disableCheckGraphicWidthOutRange?: boolean;
   // tick渲染模式，effect会在tick之后立刻执行render，保证动画效果正常。performance模式中tick和render均是RAF，属性可能会被篡改
   tickRenderMode?: 'effect' | 'performance';
+  // 是否在renderNextFrame的时候使用高性能的requestAnimationFrame，默认为false
+  useHighPerformanceRequestAnimationFrameInRenderNextFrame?: boolean;
 };
 
 export interface IOption3D {

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: support optmize.maxFPS to optimize performance",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

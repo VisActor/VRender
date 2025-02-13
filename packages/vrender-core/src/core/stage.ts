@@ -197,6 +197,8 @@ export class Stage extends Group implements IStage {
 
   declare params: Partial<IStageParams>;
 
+  declare _lastRenderFinishedTimestamp: number;
+
   // 是否在render之前执行了tick，如果没有执行，尝试执行tick用来应用动画属性，避免动画过程中随意赋值然后又调用同步render导致属性的突变
   // 第一次render不需要强行走动画
   protected tickedBeforeRender: boolean = true;
@@ -458,6 +460,7 @@ export class Stage extends Group implements IStage {
     this._afterNextRenderCbs && this._afterNextRenderCbs.forEach(cb => cb(stage));
     this._afterNextRenderCbs = null;
     this.tickedBeforeRender = false;
+    this._lastRenderFinishedTimestamp = Date.now();
   };
 
   protected afterTickCb = () => {
@@ -795,8 +798,24 @@ export class Stage extends Group implements IStage {
     }
   }
 
+  // 检测是否超过最大FPS
+  protected checkOutOfMaxFPS() {
+    if (this.params.optimize?.maxFPS) {
+      const delta = Date.now() - this._lastRenderFinishedTimestamp;
+      const fps = 1000 / delta;
+      if (fps > this.params.optimize.maxFPS) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   _doRenderInThisFrame() {
     if (this.releaseStatus === 'released') {
+      return;
+    }
+    if (this.checkOutOfMaxFPS()) {
+      this.renderNextFrame();
       return;
     }
     this.timeline.resume();

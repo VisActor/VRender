@@ -130,7 +130,7 @@ export const DefaultStyle: IGraphicStyle = {
   opacity: 1,
   background: null,
   autoAnimateTexture: false,
-  textureRatio: 0,
+  textureRatio: 1,
   textureOptions: null,
   backgroundOpacity: 1,
   backgroundCornerRadius: 0,

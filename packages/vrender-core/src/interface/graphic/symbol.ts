@@ -12,6 +12,7 @@ export type ISymbolGraphicAttribute = Partial<IGraphicAttribute> & Partial<ISymb
 
 export interface ISymbol extends IGraphic<ISymbolGraphicAttribute> {
   getParsedPath: () => ISymbolClass;
+  getParsedPath2D: (x?: number, y?: number, size?: number) => Path2D | null;
 }
 
 export type SymbolType =

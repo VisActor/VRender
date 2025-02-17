@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: richtext support multi-breakline at the end of line",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

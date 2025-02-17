@@ -36,6 +36,9 @@ export const page = () => {
       y: 100,
       lineHeight: '150%',
       editable: true,
+      upgradeAttrs: {
+        multiBreakLine: true
+      },
       // background: 'green',
       // "textAlign": "center",
       textConfig: [

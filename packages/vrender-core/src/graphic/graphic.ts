@@ -1,6 +1,6 @@
 import type { ICustomPath2D } from './../interface/path';
 import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { interpolateNumber, last, OBBBounds } from '@visactor/vutils';
+import { isArray, OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -963,13 +963,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.normalAttrs = null;
   }
 
-  removeState(stateName: string, hasAnimation?: boolean) {
-    const index = this.currentStates ? this.currentStates.indexOf(stateName) : -1;
+  removeState(stateName: string | string[], hasAnimation?: boolean) {
+    if (this.currentStates) {
+      const filter = isArray(stateName) ? (s: string) => !stateName.includes(s) : (s: string) => s !== stateName;
+      const newStates = this.currentStates.filter(filter);
 
-    if (index >= 0) {
-      const currentStates = this.currentStates.filter(state => state !== stateName);
-
-      this.useStates(currentStates, hasAnimation);
+      if (newStates.length !== this.currentStates.length) {
+        this.useStates(newStates, hasAnimation);
+      }
     }
   }
 

@@ -82,8 +82,8 @@ export const page = () => {
         y: 200 * Math.floor(index / 5),
         fill: colorPools[index % colorPools.length],
         texture: symbolTypeList[index % symbolTypeList.length],
-        textureSize: 20,
-        texturePadding: 2,
+        textureSize: 6,
+        texturePadding: 0.5,
         textureRatio: 0,
         textureColor: 'orange',
         textureOptions: {
@@ -96,7 +96,7 @@ export const page = () => {
             ratio: number,
             graphic: IGraphic
           ) => {
-            const _r = effects[index](ctx, row, column, rowCount, columnCount, ratio, graphic);
+            const _r = effects[index](ctx, row, column, rowCount, columnCount, ratio, graphic, 0.3, 1);
             ctx.globalAlpha = _r;
             ctx.fill();
           }

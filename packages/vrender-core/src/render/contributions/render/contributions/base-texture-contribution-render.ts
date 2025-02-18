@@ -1,5 +1,6 @@
 import { canvasAllocate } from '../../../../allocator/canvas-allocate';
 import { BaseRenderContributionTime } from '../../../../common/enums';
+import { createSymbol } from '../../../../graphic';
 import type {
   IBaseRenderContribution,
   IContext2d,
@@ -7,6 +8,7 @@ import type {
   IGraphic,
   IGraphicAttribute,
   IStage,
+  ISymbol,
   IThemeAttribute
 } from '../../../../interface';
 import { pi2 } from '@visactor/vutils';
@@ -68,6 +70,7 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
   useStyle: boolean = true;
   textureMap?: Map<string, CanvasPattern>;
   order: number = 10;
+  _tempSymbolGraphic: ISymbol | null = null;
 
   createCommonPattern(
     size: number,
@@ -274,7 +277,46 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
       }
     }
 
-    if (pattern) {
+    if (textureOptions && textureOptions.dynamicTexture) {
+      // 动态纹理
+      context.save();
+      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      context.clip();
+      const { gridConfig = {} } = textureOptions;
+      const b = graphic.AABBBounds;
+      const width = b.width();
+      const height = b.height();
+      const padding = texturePadding;
+      const cellSize = textureSize;
+      const gridColumns = gridConfig.columns ? gridConfig.columns : Math.ceil(width / cellSize);
+      const gridRows = gridConfig.rows ? gridConfig.rows : Math.ceil(height / cellSize);
+      const gutterColumn = gridConfig.gutterColumn ? gridConfig.gutterColumn : padding * 2;
+      const gutterRow = gridConfig.gutterRow ? gridConfig.gutterRow : padding * 2;
+      if (!this._tempSymbolGraphic) {
+        this._tempSymbolGraphic = createSymbol({});
+      }
+      const sizeW = gridConfig.columns ? width / gridConfig.columns : cellSize;
+      const sizeH = gridConfig.rows ? height / gridConfig.rows : cellSize;
+      this._tempSymbolGraphic.setAttributes({
+        size: [sizeW - gutterColumn, sizeH - gutterRow],
+        symbolType: texture
+      });
+      const parsedPath = this._tempSymbolGraphic.getParsedPath();
+      for (let i = 0; i < gridRows; i++) {
+        for (let j = 0; j < gridColumns; j++) {
+          const _x = x + cellSize / 2 + j * cellSize;
+          const _y = y + cellSize / 2 + i * cellSize;
+          context.beginPath();
+          if (parsedPath.draw(context, Math.min(sizeW - gutterColumn, sizeH - gutterRow), _x, _y, 0) === false) {
+            context.closePath();
+          }
+          context.fillStyle = textureColor;
+          textureOptions.dynamicTexture(context, i, j, gridRows, gridColumns, textureRatio, graphic);
+        }
+      }
+
+      context.restore();
+    } else if (pattern) {
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
       context.fillStyle = pattern;

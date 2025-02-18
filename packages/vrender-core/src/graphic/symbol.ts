@@ -44,6 +44,20 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
     return this._parsedPath as ISymbolClass;
   }
 
+  getParsedPath2D(x = 0, y = 0, size = 1): Path2D | null {
+    let path: Path2D | null = null;
+    try {
+      path = new Path2D();
+    } catch (err) {
+      return null;
+    }
+    const parsedPath = this.getParsedPath();
+    if (!parsedPath) {
+      return null;
+    }
+    parsedPath.draw(path, size, x, y);
+  }
+
   isValid(): boolean {
     return super.isValid() && this._isValid();
   }

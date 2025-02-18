@@ -184,6 +184,10 @@ export const pages = [
         path: 'jsx'
       },
       {
+        name: 'dynamic-texture',
+        path: 'dynamic-texture'
+      },
+      {
         name: 'html元素',
         path: 'html'
       },

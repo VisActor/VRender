@@ -10,12 +10,33 @@ import type { ISegPath2D } from '../curve';
 export type IClipRangeByDimensionType = 'x' | 'y' | 'auto' | 'default';
 
 export type ILineAttribute = {
-  segments: ISegment[]; // 分段设置point和样式
-  points: IPointLike[]; // segments points 二选一
+  /**
+   * 分段设置point和样式
+   */
+  segments: ISegment[];
+  /**
+   * 所有点的坐标，segments 和 points 不能同时生效
+   */
+  points: IPointLike[];
+  /**
+   * 曲线的类型，默认为linear
+   */
   curveType: ICurveType;
+  /**
+   * 线段的裁切比例/显示长度占总长度的比例
+   */
   clipRange: number;
+  /**
+   * 裁剪的维度
+   */
   clipRangeByDimension: IClipRangeByDimensionType;
-  closePath: boolean; // 是否封闭路径
+  /**
+   * 是否封闭路径
+   */
+  closePath: boolean;
+  /**
+   * 曲线类型为catmullRom时，对应的张力参数
+   */
   curveTension: number;
 };
 

@@ -130,7 +130,7 @@ export const DefaultStyle: IGraphicStyle = {
   opacity: 1,
   background: null,
   autoAnimateTexture: false,
-  textureRatio: 0,
+  textureRatio: 1,
   textureOptions: null,
   backgroundOpacity: 1,
   backgroundCornerRadius: 0,
@@ -345,6 +345,7 @@ export const DefaultTextAttribute: Required<ITextGraphicAttribute> = {
 export const DefaultRichTextAttribute: Required<IRichTextGraphicAttribute> = {
   ...DefaultAttribute,
   ...DefaultTextStyle,
+  upgradeAttrs: null,
   editable: false,
   editOptions: null,
   ascentDescentMode: 'actual',

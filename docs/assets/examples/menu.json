@@ -211,6 +211,22 @@
           }
         }
       ]
+    },
+    {
+      "path": "effects",
+      "title": {
+        "zh": "效果",
+        "en": "effects"
+      },
+      "children": [
+        {
+          "path": "dynamic-texture",
+          "title": {
+            "zh": "动态纹理",
+            "en": "dynamic texture"
+          }
+        }
+      ]
     }
   ]
 }

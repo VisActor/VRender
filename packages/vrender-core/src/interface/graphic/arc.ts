@@ -5,13 +5,21 @@ import type { ICustomPath2D } from '../path';
  * 扇区属性
  */
 export type IArcAttribute = {
-  /** 内半径 */
+  /**
+   * 内半径
+   */
   innerRadius: number;
-  /** 外半径 */
+  /**
+   * 外半径
+   */
   outerRadius: number;
-  /* 内边距 */
+  /**
+   * 内边距
+   */
   innerPadding: number;
-  /* 外边距 */
+  /**
+   * 外边距
+   */
   outerPadding: number;
   /**
    * 起始角度；
@@ -47,6 +55,9 @@ export type IArcAttribute = {
    * 间隔角度通常只应用于环形扇区（即当内半径大于 0）
    */
   padAngle: number;
+  /**
+   * 间隙半径
+   */
   padRadius: number;
 
   /**

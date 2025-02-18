@@ -318,6 +318,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
     }
     application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
+    // 都为0的话，就直接clear
+    if (aabbBounds.width() === 0 && aabbBounds.height() === 0) {
+      aabbBounds.clear();
+    }
     return aabbBounds;
   }
 
@@ -366,9 +370,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       lineWidth,
       opacity,
       fillOpacity,
-      strokeOpacity
+      lineHeight,
+      strokeOpacity,
+      upgradeAttrs
     } = this.attribute;
-    return {
+    const out = {
       fill,
       stroke,
       fontSize,
@@ -381,6 +387,10 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       strokeOpacity,
       ...config
     };
+    if (upgradeAttrs?.lineHeight) {
+      out.lineHeight = lineHeight;
+    }
+    return out;
   }
   doUpdateFrameCache(tc?: IRichTextCharacter[]) {
     // 1. 测量，生成paragraph
@@ -398,8 +408,11 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       singleLine,
       disableAutoWrapLine,
       editable,
-      ascentDescentMode
+      ascentDescentMode,
+      upgradeAttrs
     } = this.attribute;
+
+    const enableMultiBreakLine = upgradeAttrs && upgradeAttrs.multiBreakLine;
 
     let { textConfig: _tc = [] } = this.attribute;
 
@@ -444,7 +457,18 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
           // 如果有文字内有换行符，将该段文字切为多段，并在后一段加入newLine标记
           const textParts = richTextConfig.text.split('\n');
           for (let j = 0; j < textParts.length; j++) {
-            paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
+            if (j === 0) {
+              paragraphs.push(new Paragraph(textParts[j], false, richTextConfig, ascentDescentMode));
+            } else if (textParts[j] || i === textConfig.length - 1) {
+              paragraphs.push(new Paragraph(textParts[j], true, richTextConfig, ascentDescentMode));
+            } else {
+              // 空行的话，config应该要和下一行对齐
+              const nextRichTextConfig = this.combinedStyleToCharacter(
+                textConfig[i + 1] as IRichTextParagraphCharacter
+              ) as IRichTextParagraphCharacter;
+              paragraphs.push(new Paragraph(textParts[j], true, nextRichTextConfig, ascentDescentMode));
+            }
+            // paragraphs.push(new Paragraph(textParts[j], j !== 0, richTextConfig, ascentDescentMode));
           }
         } else if (richTextConfig.text) {
           paragraphs.push(new Paragraph(richTextConfig.text, false, richTextConfig, ascentDescentMode));
@@ -504,7 +528,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     const wrapper = new Wrapper(frame);
     // @since 0.22.0
     // 如果可编辑的话，则支持多换行符
-    wrapper.newLine = editable;
+    wrapper.newLine = enableMultiBreakLine;
     if (disableAutoWrapLine) {
       let lineCount = 0;
       let skip = false;
@@ -564,7 +588,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     }
 
     // 处理空行
-    if (editable) {
+    if (enableMultiBreakLine) {
       frame.lines.forEach(item => {
         const lastParagraphs = item.paragraphs;
         item.paragraphs = item.paragraphs.filter(p => (p as any).text !== '');

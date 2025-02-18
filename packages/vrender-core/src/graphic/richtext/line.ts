@@ -202,12 +202,46 @@ export default class Line {
     }
 
     // 绘制背景
+    // 属性相同的背景，合并绘制
+    let fillStyle = '';
+    let globalAlpha = -1;
+    let currBgList: {
+      fillStyle: string;
+      globalAlpha: number;
+      left: number;
+      top: number;
+      right: number;
+      bottom: number;
+    }[] = [];
+    const bgList = [currBgList];
     this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {
         return;
       }
-      paragraph.drawBackground(ctx, y, this.ascent, x, index === 0, this.textAlign, this.height);
+      const data = paragraph.drawBackground(ctx, y, this.ascent, x, index === 0, this.textAlign, this.height);
+      if (!data) {
+        return;
+      }
+      if (!(fillStyle === data.fillStyle && globalAlpha === data.globalAlpha)) {
+        currBgList = [];
+        bgList.push(currBgList);
+        fillStyle = data.fillStyle;
+        globalAlpha = data.globalAlpha;
+      }
+      currBgList.push(data);
     });
+    // 绘制背景
+    bgList.forEach(bg => {
+      if (bg.length === 0) {
+        return;
+      }
+      const data = bg[0];
+      const end = bg[bg.length - 1];
+      ctx.fillStyle = data.fillStyle;
+      ctx.globalAlpha = data.globalAlpha;
+      ctx.fillRect(data.left, data.top, end.right - data.left, end.bottom - data.top);
+    });
+
     // 正常绘制
     this.paragraphs.forEach((paragraph, index) => {
       if (paragraph instanceof RichTextIcon) {

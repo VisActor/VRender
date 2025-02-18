@@ -77,5 +77,6 @@ export * from './register/register-shadowRoot';
 export * from './register/register-symbol';
 export * from './register/register-text';
 export * from './register/register-wraptext';
+export * from './tools/dynamicTexture/effect';
 // export const canvasModuleLoader = _canvasModuleLoader;
 // export { nodeLoader } from './node-bind'; // nodeLoader只在node入口暴露

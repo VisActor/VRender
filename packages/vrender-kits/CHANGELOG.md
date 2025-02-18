@@ -1,6 +1,20 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Fri, 07 Feb 2025 14:23:36 GMT and should not be manually modified.
+This log was last generated on Tue, 18 Feb 2025 10:14:45 GMT and should not be manually modified.
+
+## 0.22.1
+Tue, 18 Feb 2025 10:14:45 GMT
+
+### Updates
+
+- fix: datazoom error when spec is updating. fix@visactor/vchart#3712
+- feat: support dynamicTexture
+- feat: `removeState` of graphic should support array or string
+
+
+- fix: fix the bug of dpr will not work when createWindowByCanvas in node env
+
+
 
 ## 0.22.0
 Fri, 07 Feb 2025 14:23:36 GMT

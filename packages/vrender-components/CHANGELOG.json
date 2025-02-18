@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.1",
+      "tag": "@visactor/vrender-components_v0.22.1",
+      "date": "Tue, 18 Feb 2025 10:14:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: `removeState` of graphic should support array or string\n\n"
+          },
+          {
+            "comment": "fix: datazoom and scrollbar realtime not work. fix@visactor/vchart#3716"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.0",
       "tag": "@visactor/vrender-components_v0.22.0",
       "date": "Fri, 07 Feb 2025 14:23:36 GMT",

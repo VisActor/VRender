@@ -2,6 +2,27 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.22.1",
+      "tag": "@visactor/vrender-kits_v0.22.1",
+      "date": "Tue, 18 Feb 2025 10:14:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: datazoom error when spec is updating. fix@visactor/vchart#3712"
+          },
+          {
+            "comment": "feat: support dynamicTexture"
+          },
+          {
+            "comment": "feat: `removeState` of graphic should support array or string\n\n"
+          },
+          {
+            "comment": "fix: fix the bug of dpr will not work when createWindowByCanvas in node env\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.0",
       "tag": "@visactor/vrender-kits_v0.22.0",
       "date": "Fri, 07 Feb 2025 14:23:36 GMT",

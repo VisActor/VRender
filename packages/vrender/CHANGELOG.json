@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.22.1",
+      "tag": "@visactor/vrender_v0.22.1",
+      "date": "Tue, 18 Feb 2025 10:14:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: `removeState` of graphic should support array or string\n\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.0",
       "tag": "@visactor/vrender_v0.22.0",
       "date": "Fri, 07 Feb 2025 14:23:36 GMT",

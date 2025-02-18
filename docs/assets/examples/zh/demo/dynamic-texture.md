@@ -1,6 +1,6 @@
 ---
 category: examples
-group: dynamic-texture
+group: effects
 title: 动态纹理
 keywords: dynamic-texture
 order: 1-0

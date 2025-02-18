@@ -916,15 +916,15 @@ export class RichTextEditPlugin implements IPlugin {
     this.focusing = false;
 
     // 清理textConfig，不让最后有换行符
-    const textConfig = currRt.attribute.textConfig;
-    let lastConfig = textConfig[textConfig.length - 1];
-    let cleared = false;
-    while (lastConfig && (lastConfig as any).text === '\n') {
-      textConfig.pop();
-      lastConfig = textConfig[textConfig.length - 1];
-      cleared = true;
-    }
-    cleared && currRt.setAttributes({ textConfig });
+    // const textConfig = currRt.attribute.textConfig;
+    // let lastConfig = textConfig[textConfig.length - 1];
+    // let cleared = false;
+    // while (lastConfig && (lastConfig as any).text === '\n') {
+    //   textConfig.pop();
+    //   lastConfig = textConfig[textConfig.length - 1];
+    //   cleared = true;
+    // }
+    // cleared && currRt.setAttributes({ textConfig });
 
     // TODO 因为handlerLeave可能不会执行，所以这里需要手动清除
     currRt.removeEventListener('pointerleave', this.handleLeave);

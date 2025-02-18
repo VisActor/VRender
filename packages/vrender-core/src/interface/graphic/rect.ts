@@ -6,7 +6,15 @@ export type IRectAttribute = {
   height: number;
   x1: number;
   y1: number;
+  /**
+   * 圆角半径
+   */
   cornerRadius: number | number[];
+  /**
+   * 圆角类型，
+   * 'round' - 圆弧
+   * 'bevel' - 斜角
+   */
   cornerType: 'round' | 'bevel';
 };
 

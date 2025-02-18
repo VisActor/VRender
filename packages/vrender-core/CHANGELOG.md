@@ -1,6 +1,22 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 07 Feb 2025 14:23:36 GMT and should not be manually modified.
+This log was last generated on Tue, 18 Feb 2025 10:14:45 GMT and should not be manually modified.
+
+## 0.22.1
+Tue, 18 Feb 2025 10:14:45 GMT
+
+### Updates
+
+- feat: richtext support multi-breakline at the end of line
+- feat: support dynamicTexture
+- feat: `removeState` of graphic should support array or string
+
+
+- fix: fix issue with editing attribute when trigger focus manual
+- fix: fix issue with multiline richtext lineHeight
+- fix: fix issue with path parse, closed #1616
+- fix: fix issue with richtext background overlap, fix issue with deFocus
+- fix: clear richtext bounds while it is empty
 
 ## 0.22.0
 Fri, 07 Feb 2025 14:23:36 GMT

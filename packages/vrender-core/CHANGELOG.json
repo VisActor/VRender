@@ -2,6 +2,39 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.1",
+      "tag": "@visactor/vrender-core_v0.22.1",
+      "date": "Tue, 18 Feb 2025 10:14:45 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: richtext support multi-breakline at the end of line"
+          },
+          {
+            "comment": "feat: support dynamicTexture"
+          },
+          {
+            "comment": "feat: `removeState` of graphic should support array or string\n\n"
+          },
+          {
+            "comment": "fix: fix issue with editing attribute when trigger focus manual"
+          },
+          {
+            "comment": "fix: fix issue with multiline richtext lineHeight"
+          },
+          {
+            "comment": "fix: fix issue with path parse, closed #1616"
+          },
+          {
+            "comment": "fix: fix issue with richtext background overlap, fix issue with deFocus"
+          },
+          {
+            "comment": "fix: clear richtext bounds while it is empty"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.0",
       "tag": "@visactor/vrender-core_v0.22.0",
       "date": "Fri, 07 Feb 2025 14:23:36 GMT",

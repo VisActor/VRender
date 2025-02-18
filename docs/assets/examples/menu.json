@@ -213,10 +213,10 @@
       ]
     },
     {
-      "path": "demo",
+      "path": "effects",
       "title": {
-        "zh": "demo",
-        "en": "demo"
+        "zh": "效果",
+        "en": "effects"
       },
       "children": [
         {

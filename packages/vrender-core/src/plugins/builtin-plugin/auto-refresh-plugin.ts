@@ -10,6 +10,7 @@ export class AutoRefreshPlugin implements IPlugin {
   key: string = this.name + this._uid;
   dpr: number;
   rafId: number;
+  autoRefreshCbs?: (() => void)[];
 
   handleChange = (graphic: IGraphic) => {
     if (graphic.glyphHost) {
@@ -51,8 +52,14 @@ export class AutoRefreshPlugin implements IPlugin {
           this.pluginService.stage.setDpr(this.dpr, true);
         }
       };
-
-      matchMedia(mqString).addEventListener('change', updatePixelRatio);
+      const dom = matchMedia(mqString);
+      dom && dom.addEventListener('change', updatePixelRatio);
+      if (!this.autoRefreshCbs) {
+        this.autoRefreshCbs = [];
+      }
+      this.autoRefreshCbs.push(() => {
+        dom && dom.removeEventListener('change', updatePixelRatio);
+      });
     } catch (err) {
       return false;
     }
@@ -61,5 +68,9 @@ export class AutoRefreshPlugin implements IPlugin {
   deactivate(context: IPluginService): void {
     const craf = application.global.getCancelAnimationFrame();
     craf && this.rafId && craf(this.rafId);
+    this.autoRefreshCbs?.forEach(cb => {
+      cb();
+    });
+    this.autoRefreshCbs = undefined;
   }
 }

@@ -108,6 +108,7 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     const _runFill = () => {
       if (doFill) {
         if (fillCb) {
+          context.rect(x, y, width, height);
           fillCb(context, image.attribute, imageAttribute);
         } else if (fVisible) {
           context.setCommonStyle(image, image.attribute, x, y, imageAttribute);

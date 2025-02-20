@@ -1,18 +1,12 @@
 import type { IAABBBounds } from '@visactor/vutils';
-import { AABBBounds } from '@visactor/vutils';
-import { isArray, max } from '@visactor/vutils';
+import { isArray } from '@visactor/vutils';
 import type { ISymbol, ISymbolClass, ISymbolGraphicAttribute } from '../interface';
-import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { Graphic, GRAPHIC_UPDATE_TAG_KEY, NOWORK_ANIMATE_ATTR } from './graphic';
 import { getTheme } from './theme';
 import { application } from '../application';
 import { CustomPath2D } from '../common/custom-path2d';
-import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS, SYMBOL_NUMBER_TYPE } from './constants';
-import { XMLParser } from '../common/xml';
-import { isSvg } from '../common/xml/parser';
+import { SYMBOL_NUMBER_TYPE } from './constants';
 import { updateBoundsOfSymbolOuterBorder } from './graphic-service/symbol-outer-border-bounds';
-
-const _tempBounds = new AABBBounds();
 
 const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -21,8 +15,6 @@ const SYMBOL_UPDATE_TAG_KEY = ['symbolType', 'size', ...GRAPHIC_UPDATE_TAG_KEY];
  */
 export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol {
   type: 'symbol' = 'symbol';
-
-  static userSymbolMap: Record<string, ISymbolClass> = {};
 
   static NOWORK_ANIMATE_ATTR = {
     symbolType: 1,
@@ -38,7 +30,7 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
 
   getParsedPath(): ISymbolClass {
     if (this.shouldUpdateShape()) {
-      this.doUpdateParsedPath();
+      this._parsedPath = this.doUpdateParsedPath();
       this.clearUpdateShapeTag();
     }
     return this._parsedPath as ISymbolClass;
@@ -67,70 +59,8 @@ export class Symbol extends Graphic<ISymbolGraphicAttribute> implements ISymbol 
   }
 
   protected doUpdateParsedPath(): ISymbolClass {
-    const symbolTheme = this.getGraphicTheme();
-    // 查找内置symbol
-    let { symbolType = symbolTheme.symbolType } = this.attribute;
-    let path = builtinSymbolsMap[symbolType];
-    if (path) {
-      this._parsedPath = path;
-      return path;
-    }
-    path = Symbol.userSymbolMap[symbolType];
-    if (path) {
-      this._parsedPath = path;
-      return path;
-    }
-
-    const _symbolType = builtInSymbolStrMap[symbolType];
-    symbolType = _symbolType || symbolType;
-    // 判断是否是svg
-    const valid = isSvg(symbolType);
-    if (valid === true) {
-      const parser = new XMLParser();
-      const { svg } = parser.parse(symbolType);
-      if (!svg) {
-        return null;
-      }
-      const path = isArray(svg.path) ? svg.path : [svg.path];
-      _tempBounds.clear();
-      const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
-      path.forEach((item: any) => {
-        const cache = new CustomPath2D().fromString(item.d);
-        const attribute: any = {};
-        SVG_PARSE_ATTRIBUTE_MAP_KEYS.forEach(k => {
-          if (item[k]) {
-            (attribute as any)[(SVG_PARSE_ATTRIBUTE_MAP as any)[k]] = item[k];
-          }
-        });
-        // 查找
-        cacheList.push({
-          path: cache,
-          attribute
-        });
-        _tempBounds.union(cache.bounds);
-      });
-      const width = _tempBounds.width();
-      const height = _tempBounds.height();
-      // 规范化到1
-      const maxWH = max(width, height);
-      const scale = 1 / maxWH;
-      cacheList.forEach(cache => cache.path.transform(0, 0, scale, scale));
-
-      this._parsedPath = new CustomSymbolClass(symbolType, cacheList, true);
-      Symbol.userSymbolMap[symbolType] = this._parsedPath;
-      return this._parsedPath;
-    }
-
-    const cache = new CustomPath2D().fromString(symbolType);
-    const width = cache.bounds.width();
-    const height = cache.bounds.height();
-    // 规范化到1
-    const maxWH = max(width, height);
-    const scale = 1 / maxWH;
-    cache.transform(0, 0, scale, scale);
-    this._parsedPath = new CustomSymbolClass(symbolType, cache);
-    Symbol.userSymbolMap[symbolType] = this._parsedPath;
-    return this._parsedPath;
+    const { symbolType = 'circle' } = this.attribute;
+    return super.parsePath(symbolType);
   }
 
   getGraphicTheme(): Required<ISymbolGraphicAttribute> {

@@ -20,6 +20,7 @@ import { BaseRenderContributionTime } from '../../../common/enums';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
 import { getTheme } from '../../../graphic';
 import { renderCommandList } from '../../../common/render-command-list';
+import { defaultBaseClipRenderAfterContribution, defaultBaseClipRenderBeforeContribution } from './contributions';
 
 const result: IPointLike & { z: number; lastModelMatrix: mat4 } = { x: 0, y: 0, z: 0, lastModelMatrix: null };
 
@@ -43,7 +44,12 @@ export abstract class BaseRender<T extends IGraphic> {
     if (!this._renderContribitions) {
       this._renderContribitions = [];
     }
-    this.builtinContributions && this.builtinContributions.forEach(item => this._renderContribitions.push(item));
+    if (!this.builtinContributions) {
+      this.builtinContributions = [];
+    }
+    this.builtinContributions.push(defaultBaseClipRenderBeforeContribution);
+    this.builtinContributions.push(defaultBaseClipRenderAfterContribution);
+    this.builtinContributions.forEach(item => this._renderContribitions.push(item));
     if (this._renderContribitions.length) {
       this._renderContribitions.sort((a, b) => b.order - a.order);
       this._beforeRenderContribitions = this._renderContribitions.filter(

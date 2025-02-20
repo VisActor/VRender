@@ -202,6 +202,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   overflow: 'hidden',
   shadowPickMode: 'graphic',
   keepStrokeScale: false,
+  clipConfig: null,
   ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform

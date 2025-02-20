@@ -11,6 +11,7 @@ import type { IGlyphGraphicAttribute } from './graphic/glyph';
 import type { IContainPointMode } from '../common/enums';
 import type { IFace3d } from './graphic/face3d';
 import type { IPickerService } from './picker';
+import type { ISymbolClass } from './graphic/symbol';
 
 type IStrokeSeg = {
   /**
@@ -615,6 +616,16 @@ export type IGraphicAttribute = IDebugType &
      * 保持stroke的scale，默认为false，为true的话stroke显示的宽度会随着scale变化
      */
     keepStrokeScale: boolean;
+
+    /**
+     * @since 0.22.2
+     * 裁剪路径，用于裁剪图形，用于普通图元的裁剪
+     * 由于一般情况下普通图元只需要一个形状即可，所以这里不需要配置具体的位置和大小，强制中心在图元中心，宽高和图元Bounds宽高一致
+     * 不考虑其他复杂情况，否则配置项就非常多了，比如多路径，或者配置位置大小等，如果配置大小那还得用户自己去拿图元的大小，目前没有这种需求
+     */
+    clipConfig: {
+      shape: string;
+    } | null;
   };
 
 export interface IGraphicJson<T extends Partial<IGraphicAttribute> = Partial<IGraphicAttribute>> {
@@ -723,6 +734,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
 
   setMode: (mode: '3d' | '2d') => void;
   isValid: () => boolean;
+
+  getClipPath: () => ISymbolClass | null;
 
   // TODO: transform API
   // 基于当前transform的变换，普通用户尽量别用，拿捏不住的~

@@ -1,6 +1,6 @@
 import type { ICustomPath2D } from './../interface/path';
 import type { Dict, IPointLike, IAABBBounds, IOBBBounds } from '@visactor/vutils';
-import { isArray, OBBBounds } from '@visactor/vutils';
+import { isArray, max, OBBBounds } from '@visactor/vutils';
 import {
   AABBBounds,
   Matrix,
@@ -35,7 +35,8 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate
+  ISubAnimate,
+  ISymbolClass
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
@@ -48,7 +49,11 @@ import { AttributeUpdateType, IContainPointMode, UpdateTag } from '../common/enu
 import { BoundsContext } from '../common/bounds-context';
 import { renderCommandList } from '../common/render-command-list';
 import { parsePadding } from '../common/utils';
+import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
+import { isSvg, XMLParser } from '../common/xml';
+import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 
+const _tempBounds = new AABBBounds();
 /**
  * pathProxy参考自zrender
  * BSD 3-Clause License
@@ -187,6 +192,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   declare _events?: any;
 
+  static userSymbolMap: Record<string, ISymbolClass> = {};
+
   declare onBeforeAttributeUpdate?: (
     val: any,
     attributes: Partial<T>,
@@ -270,6 +277,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare attachedThemeGraphic?: IGraphic;
   protected updateAABBBoundsStamp: number;
   protected updateOBBBoundsStamp?: number;
+  declare clipPathMap?: Map<string, ISymbolClass>;
 
   constructor(params: T = {} as T) {
     super();
@@ -375,6 +383,91 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     aabbBounds: IAABBBounds,
     full?: boolean
   ): IAABBBounds;
+
+  getClipPath() {
+    const { clipConfig } = this.attribute;
+    if (!clipConfig) {
+      return null;
+    }
+    if (!this.clipPathMap) {
+      this.clipPathMap = new Map();
+    }
+
+    const { shape } = clipConfig;
+    let path = this.clipPathMap.get(shape) || null;
+    if (!path) {
+      // 即使清理，避免内存溢出
+      if (this.clipPathMap.size > 10) {
+        this.clipPathMap.clear();
+      }
+      path = this.parsePath(shape);
+      path && this.clipPathMap.set(shape, path);
+    }
+    return path;
+  }
+
+  parsePath(symbolType: string) {
+    if (!symbolType) {
+      return null;
+    }
+    let path = builtinSymbolsMap[symbolType];
+    if (path) {
+      return path;
+    }
+    path = Graphic.userSymbolMap[symbolType];
+    if (path) {
+      return path;
+    }
+    const _symbolType = builtInSymbolStrMap[symbolType];
+    symbolType = _symbolType || symbolType;
+    const valid = isSvg(symbolType);
+    if (valid === true) {
+      const parser = new XMLParser();
+      const { svg } = parser.parse(symbolType);
+      if (!svg) {
+        return null;
+      }
+      const path = isArray(svg.path) ? svg.path : [svg.path];
+      _tempBounds.clear();
+      const cacheList: { path: CustomPath2D; attribute: Record<string, any> }[] = [];
+      path.forEach((item: any) => {
+        const cache = new CustomPath2D().fromString(item.d);
+        const attribute: any = {};
+        SVG_PARSE_ATTRIBUTE_MAP_KEYS.forEach(k => {
+          if (item[k]) {
+            (attribute as any)[(SVG_PARSE_ATTRIBUTE_MAP as any)[k]] = item[k];
+          }
+        });
+        // 查找
+        cacheList.push({
+          path: cache,
+          attribute
+        });
+        _tempBounds.union(cache.bounds);
+      });
+      const width = _tempBounds.width();
+      const height = _tempBounds.height();
+      // 规范化到1
+      const maxWH = max(width, height);
+      const scale = 1 / maxWH;
+      cacheList.forEach(cache => cache.path.transform(0, 0, scale, scale));
+
+      const _parsedPath = new CustomSymbolClass(symbolType, cacheList, true);
+      Graphic.userSymbolMap[symbolType] = _parsedPath;
+      return _parsedPath;
+    }
+
+    const cache = new CustomPath2D().fromString(symbolType);
+    const width = cache.bounds.width();
+    const height = cache.bounds.height();
+    // 规范化到1
+    const maxWH = max(width, height);
+    const scale = 1 / maxWH;
+    cache.transform(0, 0, scale, scale);
+    const _parsedPath = new CustomSymbolClass(symbolType, cache);
+    Graphic.userSymbolMap[symbolType] = _parsedPath;
+    return _parsedPath;
+  }
 
   protected doUpdateAABBBounds(full?: boolean): IAABBBounds {
     this.updateAABBBoundsStamp++;

@@ -196,7 +196,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   declare parent: any;
 
   declare resources?: Map<
-    string,
+    string | HTMLImageElement | HTMLCanvasElement,
     { state: 'init' | 'loading' | 'success' | 'fail'; data?: HTMLImageElement | HTMLCanvasElement }
   >;
   declare backgroundImg?: boolean;

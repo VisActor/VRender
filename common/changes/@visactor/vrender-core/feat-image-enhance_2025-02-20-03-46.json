@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: image support auto width height by rawImage wh",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

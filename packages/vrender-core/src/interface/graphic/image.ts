@@ -12,6 +12,14 @@ export type IImageAttribute = {
    */
   height: number;
   /**
+   * 最大宽度
+   */
+  maxWidth?: number;
+  /**
+   * 最大高度
+   */
+  maxHeight?: number;
+  /**
    * x方向的重复方式
    */
   repeatX: IRepeatType;

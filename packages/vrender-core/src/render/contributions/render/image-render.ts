@@ -63,8 +63,6 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
     const imageAttribute = getTheme(image).image;
     const {
-      width = imageAttribute.width,
-      height = imageAttribute.height,
       repeatX = imageAttribute.repeatX,
       repeatY = imageAttribute.repeatY,
       x: originX = imageAttribute.x,
@@ -88,6 +86,9 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     if (res.state !== 'success') {
       return;
     }
+
+    const width = image.width;
+    const height = image.height;
 
     // deal with cornerRadius
     let needRestore = false;

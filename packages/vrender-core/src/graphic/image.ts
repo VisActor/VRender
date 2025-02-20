@@ -18,6 +18,8 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
   // 资源加载完成后回调，外部通过回调获取图片资源尺寸
   successCallback?: () => void;
   failCallback?: () => void;
+  declare _actualWidth?: number;
+  declare _actualHeight?: number;
 
   static NOWORK_ANIMATE_ATTR = {
     image: 1,
@@ -33,25 +35,39 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     this.loadImage(this.attribute.image);
   }
 
-  get width(): number {
-    return this.attribute.width ?? 0;
-  }
-  set width(width: number) {
-    if (this.attribute.width === width) {
-      this.attribute.width = width;
-      this.addUpdateShapeAndBoundsTag();
+  getImageElement(): HTMLImageElement | HTMLCanvasElement | null {
+    const { image } = this.attribute;
+    if (!image || !this.resources) {
+      return null;
     }
+    const res = this.resources.get(image);
+    if (res.state !== 'success') {
+      return null;
+    }
+    return res.data;
   }
 
+  get width(): number {
+    this.tryUpdateAABBBounds();
+    return this._actualWidth;
+  }
+  // set width(width: number) {
+  //   if (this.attribute.width === width) {
+  //     this.attribute.width = width;
+  //     this.addUpdateShapeAndBoundsTag();
+  //   }
+  // }
+
   get height(): number {
-    return this.attribute.height ?? 0;
+    this.tryUpdateAABBBounds();
+    return this._actualHeight;
   }
-  set height(height: number) {
-    if (this.attribute.height === height) {
-      this.attribute.height = height;
-      this.addUpdateShapeAndBoundsTag();
-    }
-  }
+  // set height(height: number) {
+  //   if (this.attribute.height === height) {
+  //     this.attribute.height = height;
+  //     this.addUpdateShapeAndBoundsTag();
+  //   }
+  // }
   get repeatX(): IRepeatType {
     return this.attribute.repeatX ?? 'no-repeat';
   }
@@ -85,6 +101,7 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
         this.successCallback();
       }
     });
+    this.addUpdateBoundTag();
   }
 
   imageLoadFail(url: string, cb?: () => void): void {
@@ -123,7 +140,37 @@ export class Image extends Graphic<IImageGraphicAttribute> implements IImage {
     aabbBounds: IAABBBounds
   ) {
     if (!this.updatePathProxyAABBBounds(aabbBounds)) {
-      const { width = imageTheme.width, height = imageTheme.height } = attribute;
+      const { maxWidth = imageTheme.maxWidth, maxHeight = imageTheme.maxHeight } = attribute;
+      let { width, height } = attribute;
+      if (width == null || height == null) {
+        const imageElement = this.getImageElement();
+        if (imageElement) {
+          // 如果给了width或者height，那就使用已给的width或者height来按比例缩放，否则就在maxWidth和maxHeight之间按比例缩放
+          const imageWidth = imageElement.width;
+          const imageHeight = imageElement.height;
+          if (width != null) {
+            height = width * (imageHeight / imageWidth);
+          } else if (height != null) {
+            width = height * (imageWidth / imageHeight);
+          } else {
+            // 如果width和height都没有给，那就使用maxWidth和maxHeight来按比例缩放
+            const imageRatio = imageWidth / imageHeight;
+            const maxWHRatio = maxWidth / maxHeight;
+            if (imageRatio > maxWHRatio) {
+              width = maxWidth;
+              height = maxWidth / imageRatio;
+            } else {
+              height = maxHeight;
+              width = maxHeight * imageRatio;
+            }
+          }
+        } else {
+          width = maxWidth;
+          height = maxHeight;
+        }
+      }
+      this._actualWidth = width;
+      this._actualHeight = height;
       aabbBounds.set(0, 0, width, height);
     }
 

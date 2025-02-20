@@ -1075,15 +1075,11 @@ export class BrowserContext2d implements IContext2d {
     if (blur) {
       _context.filter = `blur(${blur}px)`;
       this._clearFilterStyle = true;
-    } else if (this._clearFilterStyle) {
-      _context.filter = 'blur(0px)';
-      this._clearFilterStyle = false;
-    }
-    if (filter) {
+    } else if (filter) {
       _context.filter = filter;
       this._clearFilterStyle = true;
     } else if (this._clearFilterStyle) {
-      _context.filter = '';
+      _context.filter = 'blur(0px)';
       this._clearFilterStyle = false;
     }
 

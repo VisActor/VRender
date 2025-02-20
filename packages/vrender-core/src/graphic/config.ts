@@ -266,7 +266,9 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   alignContent: 'flex-start',
   baseOpacity: 1,
   cornerType: 'round'
-};
+  // 默认是0，不需要主题
+  // drawMode: 0
+} as any;
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
   ...DefaultAttribute,

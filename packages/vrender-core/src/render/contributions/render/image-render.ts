@@ -89,13 +89,15 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
 
     const width = image.width;
     const height = image.height;
+    context.beginPath();
 
     // deal with cornerRadius
     let needRestore = false;
     if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       // 不需要处理圆角
+      context.rect(x, y, width, height);
     } else {
-      context.beginPath();
+      // context.beginPath();
       createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
       needRestore = true;
     }
@@ -108,7 +110,6 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     const _runFill = () => {
       if (doFill) {
         if (fillCb) {
-          context.rect(x, y, width, height);
           fillCb(context, image.attribute, imageAttribute);
         } else if (fVisible) {
           context.setCommonStyle(image, image.attribute, x, y, imageAttribute);

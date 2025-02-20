@@ -22,8 +22,7 @@ export const page = () => {
       image: dogImage,
       clipConfig: {
         shape: 'rectRound'
-      },
-      _debug_bounds: true
+      }
     })
   );
   shapes.push(
@@ -31,8 +30,11 @@ export const page = () => {
       x: 10,
       y: 300,
       width: 100,
-      image: dogImage,
-      _debug_bounds: true
+      stroke: 'green',
+      cornerRadius: 20,
+      lineWidth: 10,
+      fillStrokeOrder: -1,
+      image: dogImage
     })
   );
   shapes.push(
@@ -42,7 +44,9 @@ export const page = () => {
       width: 100,
       height: 100,
       image: dogImage,
-      _debug_bounds: true
+      stroke: 'pink',
+      fillStrokeOrder: -1,
+      lineWidth: 10
     })
   );
 

@@ -1,3 +1,15 @@
+# v0.21.16
+
+2025-02-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix refresh memory issue caused by event listener
+
+
+[more detail about v0.21.16](https://github.com/VisActor/VRender/releases/tag/v0.21.16)
+
 # v0.22.1
 
 2025-02-18

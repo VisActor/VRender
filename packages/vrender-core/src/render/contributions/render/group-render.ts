@@ -25,6 +25,7 @@ import { GROUP_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRenderContributionTime } from '../../../common/enums';
 import { defaultGroupBackgroundRenderContribution } from './contributions';
 import { multiplyMat4Mat4 } from '../../../common/matrix';
+import { vglobal } from '../../../modules';
 
 @injectable()
 export class DefaultCanvasGroupRender implements IGraphicRender {
@@ -220,8 +221,47 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     if (!context) {
       return;
     }
+
     // debugger;
-    const { clip, baseOpacity = 1 } = group.attribute;
+    const { clip, baseOpacity = 1, drawMode, x, y, width, height } = group.attribute;
+    const lastNativeContext = context.nativeContext;
+    const lastNativeCanvas = context.canvas.nativeCanvas;
+
+    if (drawMode > 0) {
+      // 绘制到新的Canvas上，然后再绘制回来
+      const canvas = context.canvas;
+      const newCanvas = vglobal.createCanvas({ width: canvas.width, height: canvas.height, dpr: 1 });
+      const newContext = newCanvas.getContext('2d');
+      const transform = context.nativeContext.getTransform();
+      // 首先应用transform
+      newContext.setTransform(transform.a, transform.b, transform.c, transform.d, transform.e, transform.f);
+      // 然后将背景绘制到新的canvas上，只绘制group的Bounds区域
+      // 如果drawMode === 1，则需要背景
+      // 如果drawMode === 2，则不需要背景，只需要group即可
+      if (drawMode === 1) {
+        newContext.save();
+        newContext.clearRect(0, 0, canvas.width, canvas.height);
+        newContext.beginPath();
+
+        newContext.rect(x, y, width, height);
+        newContext.clip();
+        newContext.drawImage(
+          canvas.nativeCanvas,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+          0,
+          0,
+          canvas.displayWidth,
+          canvas.displayHeight
+        );
+        newContext.restore();
+      }
+      // 狸猫换太子，把新的context赋值给context
+      context.nativeContext = newContext;
+      canvas.nativeCanvas = newCanvas;
+    }
     if (clip) {
       context.save();
     } else {
@@ -303,6 +343,34 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     context.modelMatrix = lastModelMatrix;
 
     context.baseGlobalAlpha = baseGlobalAlpha;
+
+    if (drawMode > 0) {
+      // 将原始的context和canvas恢复，另外将newCanvas上的内容绘制到lastCanvas上
+      const newContext = context.nativeContext;
+      const newCanvas = context.canvas.nativeCanvas;
+      lastNativeContext.save();
+      lastNativeContext.setTransform(context.dpr, 0, 0, context.dpr, 0, 0, true);
+      // 如果drawMode === 1，则需要清一下之前的背景，否则背景就重复绘制了一次
+      if (drawMode === 1) {
+        newContext.rect(x, y, width, height);
+      }
+      lastNativeContext.drawImage(
+        newCanvas,
+        0,
+        0,
+        newCanvas.width,
+        newCanvas.height,
+        0,
+        0,
+        context.canvas.displayWidth,
+        context.canvas.displayHeight
+      );
+      const transform = newContext.getTransform();
+      lastNativeContext.setTransform(transform.a, transform.b, transform.c, transform.d, transform.e, transform.f);
+      context.nativeContext = lastNativeContext;
+      context.canvas.nativeCanvas = lastNativeCanvas;
+      lastNativeContext.restore();
+    }
 
     if (p && p.then) {
       p.then(() => {

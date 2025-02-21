@@ -55,6 +55,9 @@ export abstract class BaseCanvas implements ICanvas {
   get nativeCanvas(): HTMLCanvasElement {
     return this._nativeCanvas;
   }
+  set nativeCanvas(nativeCanvas: HTMLCanvasElement) {
+    this._nativeCanvas = nativeCanvas;
+  }
 
   get width(): number {
     return this._pixelWidth;

@@ -36,6 +36,10 @@ export const pages = [
         path: 'gesture-test'
       },
       {
+        name: 'image-cloud',
+        path: 'image-cloud'
+      },
+      {
         name: 'arc绘制',
         path: 'arc'
       },

@@ -136,6 +136,9 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       doStroke
     };
 
+    // shadow
+    context.setShadowBlendStyle && context.setShadowBlendStyle(group, group.attribute, groupAttribute);
+
     this._groupRenderContribitions.forEach(c => {
       if (c.time === BaseRenderContributionTime.beforeFillStroke) {
         // c.useStyle && context.setCommonStyle(group, group.attribute, x, y, groupAttribute);
@@ -161,9 +164,6 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
     if (clip) {
       context.clip();
     }
-
-    // shadow
-    context.setShadowBlendStyle && context.setShadowBlendStyle(group, group.attribute, groupAttribute);
 
     const _runFill = () => {
       if ((doFillOrStroke as any).doFill) {

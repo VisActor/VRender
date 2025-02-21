@@ -117,7 +117,7 @@ export const page = () => {
       clipRange: 0,
       size: 60
     });
-    symbol.animate().to({ clipRange: 1 }, 1000, 'linear');
+
     const text = createText({
       x: x,
       y: y + 60,
@@ -146,6 +146,7 @@ export const page = () => {
 
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
+    g.animate().to({ clipRange: 1 }, 1000, 'linear');
   });
   console.log(stage);
 

@@ -48,6 +48,7 @@ export abstract class PickerBase {
 
     // 详细形状判断
     let picked = false;
+    let _final = false;
     this.canvasRenderer.drawShape(
       graphic,
       pickContext,
@@ -58,22 +59,26 @@ export abstract class PickerBase {
       (
         context: IContext2d,
         arcAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-        themeAttribute: IThemeAttribute
+        themeAttribute: IThemeAttribute,
+        final?: boolean
       ) => {
         // 选中后面就不需要再走逻辑了
-        if (picked) {
+        if (picked || _final) {
           return true;
         }
         picked = context.isPointInPath(point.x, point.y);
+        // 是否是最终一次检测了
+        _final = final || _final;
         return picked;
       },
       (
         context: IContext2d,
         arcAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
-        themeAttribute: IThemeAttribute
+        themeAttribute: IThemeAttribute,
+        final?: boolean
       ) => {
         // 选中后面就不需要再走逻辑了
-        if (picked) {
+        if (picked || _final) {
           return true;
         }
         const lineWidth = arcAttribute.lineWidth || themeAttribute.lineWidth;
@@ -83,6 +88,8 @@ export abstract class PickerBase {
           ? lineWidth + pickStrokeBuffer
           : getScaledStroke(pickContext, lineWidth + pickStrokeBuffer, pickContext.dpr);
         picked = context.isPointInStroke(point.x, point.y);
+        // 是否是最终一次检测了
+        _final = final || _final;
         return picked;
       }
     );

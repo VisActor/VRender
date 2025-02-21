@@ -20,6 +20,9 @@ export const page = () => {
       x: 10,
       y: 10,
       image: dogImage,
+      clipConfig: {
+        shape: 'rectRound'
+      },
       _debug_bounds: true
     })
   );
@@ -42,6 +45,12 @@ export const page = () => {
       _debug_bounds: true
     })
   );
+
+  shapes.forEach(g => {
+    g.addEventListener('click', () => {
+      console.log('click', g._uid);
+    });
+  });
 
   const stage = createStage({
     canvas: 'main',

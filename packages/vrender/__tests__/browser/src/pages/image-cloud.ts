@@ -31,10 +31,12 @@ export const page = () => {
     width: 300,
     height: 300,
     background: visactorIcon,
-    drawMode: 2
+    drawMode: 1,
+    clip: true,
+    globalCompositeOperation: 'destination-in'
   });
 
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 20; i++) {
     const image = createImage({
       x: Math.random() * 350 - 25,
       y: Math.random() * 350 - 25,

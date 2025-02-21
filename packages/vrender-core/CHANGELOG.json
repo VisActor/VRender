@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.21.16",
+      "tag": "@visactor/vrender-core_v0.21.16",
+      "date": "Fri, 21 Feb 2025 03:55:31 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix refresh memory issue caused by event listener"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.21.15",
       "tag": "@visactor/vrender-core_v0.21.15",
       "date": "Wed, 12 Feb 2025 09:26:21 GMT",

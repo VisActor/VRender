@@ -16,6 +16,10 @@ export const pages = [
         path: 'performance-test'
       },
       {
+        name: '内存',
+        path: 'memory'
+      },
+      {
         name: '按需加载',
         path: 'anxu-picker'
       },

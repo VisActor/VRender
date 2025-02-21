@@ -370,6 +370,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   image: '',
   width: 0,
   height: 0,
+  maxWidth: 500,
+  maxHeight: 500,
   ...DefaultAttribute,
   fill: true,
   cornerRadius: 0,

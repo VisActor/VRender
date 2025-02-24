@@ -158,9 +158,13 @@ export class Gesture extends EventEmitter {
   }
 
   private onStart = (ev?: FederatedPointerEvent) => {
-    this.cachedEvents = [];
-    this.startPoints = [];
-    this.reset();
+    // 双指缩放时, onStart会被触发多次, startPoints负责收集上下文
+    // 如果onStart时清空startPoints, 会导致onMove提前return, 从而无法触发pinch事件
+    // 由于onEnd时会清空startPoints, 所以这里暂不清空
+    // 后续遇到bad case再作处理
+    // this.cachedEvents = [];
+    // this.startPoints = [];
+    // this.reset();
 
     this.startTime = clock.now();
 

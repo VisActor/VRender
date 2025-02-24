@@ -1433,7 +1433,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     nextParsedProps: any,
     ratio: number
   ) {
-    if (Number.isFinite(nextStepVal)) {
+    if (Number.isFinite(nextStepVal) && Number.isFinite(lastStepVal)) {
       nextAttributes[key] = lastStepVal + (nextStepVal - lastStepVal) * ratio;
       return true;
     } else if (key === 'fill') {

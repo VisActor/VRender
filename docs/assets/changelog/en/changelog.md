@@ -1,3 +1,28 @@
+# v0.22.2
+
+2025-02-24
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: add trigger array config to support pointerupoutside. close @VisActor/VChart[#3734](https://github.com/VisActor/VRender/issues/3734)
+- **@visactor/vrender-kits**: graphic support clipConfig attribute
+- **@visactor/vrender-core**: graphic support clipConfig attribute
+- **@visactor/vrender-core**: group support drawMode attribute
+- **@visactor/vrender-core**: image support auto width height by rawImage wh
+- **@visactor/vrender**: image support auto width height by rawImage wh
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix refresh memory issue caused by event listener
+- **@visactor/vrender-core**: fix issue with group setShadowBlendStyle not work on background
+- **@visactor/vrender-core**: fix issue with image stroke style
+- **@visactor/vrender-core**: issue where NAN appears during the text animation process, [#1752](https://github.com/VisActor/VRender/issues/1752)
+
+
+
+[more detail about v0.22.2](https://github.com/VisActor/VRender/releases/tag/v0.22.2)
+
 # v0.21.16
 
 2025-02-21

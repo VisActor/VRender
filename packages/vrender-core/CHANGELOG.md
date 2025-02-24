@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Tue, 18 Feb 2025 10:14:45 GMT and should not be manually modified.
+This log was last generated on Mon, 24 Feb 2025 08:19:49 GMT and should not be manually modified.
+
+## 0.22.2
+Mon, 24 Feb 2025 08:19:49 GMT
+
+### Updates
+
+- feat: graphic support clipConfig attribute
+- feat: group support drawMode attribute
+- feat: image support auto width height by rawImage wh
+- fix: fix refresh memory issue caused by event listener
+- fix: fix issue with group setShadowBlendStyle not work on background
+- fix: fix issue with image stroke style
+- fix: issue where NAN appears during the text animation process, #1752
 
 ## 0.22.1
 Tue, 18 Feb 2025 10:14:45 GMT

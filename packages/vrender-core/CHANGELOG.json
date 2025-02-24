@@ -2,6 +2,36 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.2",
+      "tag": "@visactor/vrender-core_v0.22.2",
+      "date": "Mon, 24 Feb 2025 08:19:49 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: graphic support clipConfig attribute"
+          },
+          {
+            "comment": "feat: group support drawMode attribute"
+          },
+          {
+            "comment": "feat: image support auto width height by rawImage wh"
+          },
+          {
+            "comment": "fix: fix refresh memory issue caused by event listener"
+          },
+          {
+            "comment": "fix: fix issue with group setShadowBlendStyle not work on background"
+          },
+          {
+            "comment": "fix: fix issue with image stroke style"
+          },
+          {
+            "comment": "fix: issue where NAN appears during the text animation process, #1752"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.1",
       "tag": "@visactor/vrender-core_v0.22.1",
       "date": "Tue, 18 Feb 2025 10:14:45 GMT",

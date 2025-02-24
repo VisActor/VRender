@@ -5,19 +5,19 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
   /**
    * 触发框选的事件名称
    */
-  trigger?: GraphicEventType;
+  trigger?: GraphicEventType | GraphicEventType[];
   /**
    * 更新框选的事件名称
    */
-  updateTrigger?: GraphicEventType;
+  updateTrigger?: GraphicEventType | GraphicEventType[];
   /**
    * 结束框选的事件名称
    */
-  endTrigger?: GraphicEventType;
+  endTrigger?: GraphicEventType | GraphicEventType[];
   /**
    * 清空框选的事件名称
    */
-  resetTrigger?: GraphicEventType;
+  resetTrigger?: GraphicEventType | GraphicEventType[];
   /**
    * 可交互范围
    */

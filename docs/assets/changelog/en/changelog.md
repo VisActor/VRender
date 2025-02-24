@@ -1,3 +1,45 @@
+# v0.21.16
+
+2025-02-21
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix refresh memory issue caused by event listener
+
+
+[more detail about v0.21.16](https://github.com/VisActor/VRender/releases/tag/v0.21.16)
+
+# v0.22.1
+
+2025-02-18
+
+
+**🆕 New feature**
+
+- **@visactor/vrender-components**: `removeState` of graphic should support array or string
+- **@visactor/vrender-kits**: support dynamicTexture
+- **@visactor/vrender-kits**: `removeState` of graphic should support array or string
+- **@visactor/vrender-core**: richtext support multi-breakline at the end of line
+- **@visactor/vrender-core**: support dynamicTexture
+- **@visactor/vrender-core**: `removeState` of graphic should support array or string
+- **@visactor/vrender**: `removeState` of graphic should support array or string
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: datazoom and scrollbar realtime not work. fix@visactor/vchart[#3716](https://github.com/VisActor/VRender/issues/3716)
+- **@visactor/vrender-kits**: datazoom error when spec is updating. fix@visactor/vchart[#3712](https://github.com/VisActor/VRender/issues/3712)
+- **@visactor/vrender-kits**: fix the bug of dpr will not work when createWindowByCanvas in node env
+- **@visactor/vrender-core**: fix issue with editing attribute when trigger focus manual
+- **@visactor/vrender-core**: fix issue with multiline richtext lineHeight
+- **@visactor/vrender-core**: fix issue with path parse, closed [#1616](https://github.com/VisActor/VRender/issues/1616)
+- **@visactor/vrender-core**: fix issue with richtext background overlap, fix issue with deFocus
+- **@visactor/vrender-core**: clear richtext bounds while it is empty
+
+
+
+[more detail about v0.22.1](https://github.com/VisActor/VRender/releases/tag/v0.22.1)
+
 # v0.22.0
 
 2025-02-08

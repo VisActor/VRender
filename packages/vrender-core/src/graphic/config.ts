@@ -202,6 +202,7 @@ export const DefaultAttribute: Required<IGraphicAttribute> = {
   overflow: 'hidden',
   shadowPickMode: 'graphic',
   keepStrokeScale: false,
+  clipConfig: null,
   ...DefaultDebugAttribute,
   ...DefaultStyle,
   ...DefaultTransform
@@ -265,7 +266,9 @@ export const DefaultGroupAttribute: Required<IGroupGraphicAttribute> = {
   alignContent: 'flex-start',
   baseOpacity: 1,
   cornerType: 'round'
-};
+  // 默认是0，不需要主题
+  // drawMode: 0
+} as any;
 
 export const DefaultGlyphAttribute: Required<IGlyphGraphicAttribute> = {
   ...DefaultAttribute,
@@ -370,6 +373,8 @@ export const DefaultImageAttribute: Required<IImageGraphicAttribute> = {
   image: '',
   width: 0,
   height: 0,
+  maxWidth: 500,
+  maxHeight: 500,
   ...DefaultAttribute,
   fill: true,
   cornerRadius: 0,

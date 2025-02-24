@@ -657,6 +657,12 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
     return super.needUpdateTag(key, k);
   }
 
+  protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any) {
+    if (key === 'text') {
+      nextAttributes.text = nextStepVal;
+    }
+  }
+
   clone(): Text {
     return new Text({ ...this.attribute });
   }

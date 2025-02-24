@@ -2,11 +2,14 @@
  * @description 框选组件
  */
 import type { FederatedPointerEvent, IGroup, IPolygon } from '@visactor/vrender-core';
+// eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, vglobal } from '@visactor/vrender-core';
 import type { IBounds, IPointLike } from '@visactor/vutils';
-import { cloneDeep, debounce, merge, polygonContainPoint, throttle } from '@visactor/vutils';
+// eslint-disable-next-line no-duplicate-imports
+import { array, cloneDeep, debounce, merge, polygonContainPoint, throttle } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { BrushAttributes } from './type';
+// eslint-disable-next-line no-duplicate-imports
 import { IOperateType } from './type';
 import { DEFAULT_BRUSH_ATTRIBUTES, DEFAULT_SIZE_THRESHOLD } from './config';
 import type { ComponentOptions } from '../interface';
@@ -28,6 +31,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _activeDrawState = false; // 用于标记绘制状态
   private _cacheDrawPoints: IPointLike[] = []; // 用于维护鼠标走过的路径，主要用于绘制mask的点
   private _isDrawedBeforeEnd = false;
+  private _isDownBeforeUpOutside = false; // 用于标记出画布外单击事件，以便清空
   // 移动mask时的相关属性
   private _activeMoveState = false; // 用于标记移动状态
   private _operatingMaskMoveDx = 0; // 用于标记移动的位移量
@@ -56,12 +60,13 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
     } = this.attribute as BrushAttributes;
     // 拖拽绘制开始
-    this.stage.addEventListener(trigger, this._onBrushStart as EventListener);
+    array(trigger).forEach(t => vglobal.addEventListener(t, this._onBrushStart as EventListener));
+
     // 拖拽绘制时
-    this.stage.addEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
+    array(updateTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushingWithDelay as EventListener));
     // 拖拽绘制结束
-    this.stage.addEventListener(endTrigger, this._onBrushEnd as EventListener);
-    this.stage.addEventListener(resetTrigger, this._onBrushEnd as EventListener);
+    array(endTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushEnd as EventListener));
+    array(resetTrigger).forEach(t => this.stage.addEventListener(t, this._onBrushClear as EventListener));
   }
 
   private _isPosInBrushMask(e: FederatedPointerEvent) {
@@ -94,6 +99,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    */
   private _onBrushStart = (e: FederatedPointerEvent) => {
     if (this._outOfInteractiveRange(e)) {
+      this._isDownBeforeUpOutside = true;
       return;
     }
     e.stopPropagation();
@@ -176,6 +182,28 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeDrawState = false;
     this._activeMoveState = false;
     this._isDrawedBeforeEnd = false;
+    if (this._operatingMask) {
+      this._operatingMask.setAttribute('pickable', false);
+    }
+  };
+
+  private _onBrushClear = (e: FederatedPointerEvent) => {
+    e.preventDefault();
+    const { removeOnClick = true } = this.attribute as BrushAttributes;
+    if (this._isDownBeforeUpOutside && removeOnClick) {
+      this._dispatchEvent(IOperateType.brushClear, {
+        operateMask: this._operatingMask as any,
+        operatedMaskAABBBounds: this._brushMaskAABBBoundsDict,
+        event: e
+      });
+      this._container.incrementalClearChild();
+      this._brushMaskAABBBoundsDict = {};
+    }
+
+    this._activeDrawState = false;
+    this._activeMoveState = false;
+    this._isDrawedBeforeEnd = false;
+    this._isDownBeforeUpOutside = false;
     if (this._operatingMask) {
       this._operatingMask.setAttribute('pickable', false);
     }
@@ -427,9 +455,9 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
       resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
     } = this.attribute as BrushAttributes;
-    this.stage.removeEventListener(trigger, this._onBrushStart as EventListener);
-    this.stage.removeEventListener(updateTrigger, this._onBrushingWithDelay as EventListener);
-    this.stage.removeEventListener(endTrigger, this._onBrushEnd as EventListener);
-    this.stage.removeEventListener(resetTrigger, this._onBrushEnd as EventListener);
+    array(trigger).forEach(t => vglobal.removeEventListener(t, this._onBrushStart as EventListener));
+    array(updateTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushingWithDelay as EventListener));
+    array(endTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushEnd as EventListener));
+    array(resetTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushClear as EventListener));
   }
 }

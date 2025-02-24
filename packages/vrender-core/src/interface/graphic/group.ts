@@ -62,6 +62,13 @@ export type IGroupAttribute = {
    * 基准的透明度，用于控制group下面整体图元的透明度
    */
   baseOpacity?: number;
+  /**
+   * 绘制模式
+   * 0 - 直接绘制
+   * 1 - 绘制到新Canvas上，再绘制回来，需要绘制背景，然后绘制group
+   * 2 - 绘制到新Canvas上，再绘制回来，不需要绘制背景，只需要绘制group
+   */
+  drawMode?: 0 | 1 | 2;
 };
 
 export type IGroupGraphicAttribute = Partial<IGraphicAttribute> & Partial<IGroupAttribute>;

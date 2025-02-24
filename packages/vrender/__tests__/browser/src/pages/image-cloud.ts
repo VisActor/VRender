@@ -1,4 +1,4 @@
-import { createStage, createImage } from '@visactor/vrender';
+import { createStage, createImage, createGroup } from '@visactor/vrender';
 import { addShapesToStage, colorPools } from '../utils';
 
 const urlPng = 'https://vega.github.io/images/idl-logo.png';
@@ -11,44 +11,42 @@ const base64 =
 // const urlSvg = 'https://replace-with-svg-link.svg';
 
 const dogImage = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/lovely_dog.jpg';
+const visactorIcon = 'https://lf9-dp-fe-cms-tos.byteorg.com/obj/bit-cloud/vrender/vsactor-icon.png';
 
 export const page = () => {
   const shapes = [];
 
   shapes.push(
     createImage({
-      x: 10,
-      y: 10,
+      x: 0,
+      y: 0,
       image: dogImage,
-      clipConfig: {
-        shape: 'rectRound'
-      }
+      height: 600
     })
   );
-  shapes.push(
-    createImage({
-      x: 10,
-      y: 300,
+
+  const group = createGroup({
+    x: 200,
+    y: 200,
+    width: 300,
+    height: 300,
+    background: visactorIcon,
+    drawMode: 1,
+    clip: true,
+    globalCompositeOperation: 'destination-in'
+  });
+
+  for (let i = 0; i < 20; i++) {
+    const image = createImage({
+      x: Math.random() * 350 - 25,
+      y: Math.random() * 350 - 25,
       width: 100,
-      stroke: 'green',
-      cornerRadius: 20,
-      lineWidth: 10,
-      fillStrokeOrder: -1,
-      image: dogImage
-    })
-  );
-  shapes.push(
-    createImage({
-      x: 200,
-      y: 300,
-      width: 100,
-      height: 100,
       image: dogImage,
-      stroke: 'pink',
-      fillStrokeOrder: -1,
-      lineWidth: 10
-    })
-  );
+      globalCompositeOperation: 'source-atop'
+    });
+    group.add(image);
+  }
+  shapes.push(group);
 
   shapes.forEach(g => {
     g.addEventListener('click', () => {

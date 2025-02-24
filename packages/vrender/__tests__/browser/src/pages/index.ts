@@ -16,6 +16,10 @@ export const pages = [
         path: 'performance-test'
       },
       {
+        name: '内存',
+        path: 'memory'
+      },
+      {
         name: '按需加载',
         path: 'anxu-picker'
       },
@@ -30,6 +34,10 @@ export const pages = [
       {
         name: '手势事件测试',
         path: 'gesture-test'
+      },
+      {
+        name: 'image-cloud',
+        path: 'image-cloud'
       },
       {
         name: 'arc绘制',

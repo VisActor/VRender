@@ -63,8 +63,6 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
     // const imageAttribute = graphicService.themeService.getCurrentTheme().imageAttribute;
     const imageAttribute = getTheme(image).image;
     const {
-      width = imageAttribute.width,
-      height = imageAttribute.height,
       repeatX = imageAttribute.repeatX,
       repeatY = imageAttribute.repeatY,
       x: originX = imageAttribute.x,
@@ -89,12 +87,17 @@ export class DefaultCanvasImageRender extends BaseRender<IImage> implements IGra
       return;
     }
 
+    const width = image.width;
+    const height = image.height;
+    context.beginPath();
+
     // deal with cornerRadius
     let needRestore = false;
     if (cornerRadius === 0 || (isArray(cornerRadius) && (<number[]>cornerRadius).every(num => num === 0))) {
       // 不需要处理圆角
+      context.rect(x, y, width, height);
     } else {
-      context.beginPath();
+      // context.beginPath();
       createRectPath(context, x, y, width, height, cornerRadius, cornerType !== 'bevel');
       needRestore = true;
     }

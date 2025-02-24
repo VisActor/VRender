@@ -250,3 +250,97 @@ export class DefaultBaseInteractiveRenderContribution implements IBaseRenderCont
     });
   }
 }
+
+export class DefaultBaseClipRenderBeforeContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.beforeFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+  drawShape(
+    graphic: IGraphic,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    graphicAttribute: Required<IGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IGraphicAttribute>,
+      themeAttribute: IThemeAttribute,
+      final?: boolean
+    ) => boolean,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IGraphicAttribute>,
+      themeAttribute: IThemeAttribute,
+      final?: boolean
+    ) => boolean,
+    options?: any
+  ) {
+    const { clipConfig } = graphic.attribute;
+    if (!clipConfig) {
+      return;
+    }
+    const clipPath = graphic.getClipPath();
+    if (!clipPath) {
+      return;
+    }
+    const draw = !(fillCb || strokeCb);
+    const b = graphic.AABBBounds;
+    const width = (graphic.attribute as any).width ?? b.width();
+    const height = (graphic.attribute as any).height ?? b.height();
+    if (draw) {
+      context.save();
+    }
+    context.beginPath();
+    if (clipPath.draw(context, [width, height], x + width / 2, y + height / 2, 0) === false) {
+      context.closePath();
+    }
+    if (fillCb) {
+      fillCb(context, graphic.attribute, graphicAttribute, true);
+    }
+
+    if (draw) {
+      context.clip();
+    }
+  }
+}
+
+export const defaultBaseClipRenderBeforeContribution = new DefaultBaseClipRenderBeforeContribution();
+export class DefaultBaseClipRenderAfterContribution implements IBaseRenderContribution<IGraphic, IGraphicAttribute> {
+  time: BaseRenderContributionTime = BaseRenderContributionTime.afterFillStroke;
+  useStyle: boolean = true;
+  order: number = 0;
+  drawShape(
+    graphic: IGraphic,
+    context: IContext2d,
+    x: number,
+    y: number,
+    doFill: boolean,
+    doStroke: boolean,
+    fVisible: boolean,
+    sVisible: boolean,
+    graphicAttribute: Required<IGraphicAttribute>,
+    drawContext: IDrawContext,
+    fillCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
+    strokeCb?: (ctx: IContext2d, markAttribute: Partial<IGraphicAttribute>, themeAttribute: IThemeAttribute) => boolean,
+    options?: any
+  ) {
+    const { clipConfig } = graphic.attribute;
+    if (!clipConfig) {
+      return;
+    }
+    const clipPath = graphic.getClipPath();
+    if (!clipPath) {
+      return;
+    }
+    if (!(fillCb || strokeCb)) {
+      context.restore();
+    }
+  }
+}
+
+export const defaultBaseClipRenderAfterContribution = new DefaultBaseClipRenderAfterContribution();

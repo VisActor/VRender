@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: issue where NAN appears during the text animation process, #1752",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

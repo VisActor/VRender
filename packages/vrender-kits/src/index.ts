@@ -59,6 +59,10 @@ export * from './graphic/Lottie';
 export * from './picker/contributions/canvas-picker/lottie-module';
 export * from './render/contributions/canvas/lottie-module';
 
+export * from './graphic/character';
+export * from './picker/contributions/canvas-picker/character-module';
+export * from './render/contributions/canvas/character-module';
+
 export * from './register/register-arc';
 export * from './register/register-arc3d';
 export * from './register/register-area';

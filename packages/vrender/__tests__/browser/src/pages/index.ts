@@ -24,6 +24,10 @@ export const pages = [
         path: 'anxu-picker'
       },
       {
+        name: 'character',
+        path: 'character'
+      },
+      {
         name: '基础事件测试',
         path: 'interactive-test'
       },

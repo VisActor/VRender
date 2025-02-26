@@ -28,308 +28,52 @@ export const page = () => {
   shapes.push(
     createRichText({
       visible: true,
+      x: 162.07207758976318,
+      y: 216.49803822714284,
+      textAlign: 'center',
+      text: null,
       fontSize: 16,
-      _debug_bounds: true,
-      width: 0,
-      height: 0,
-      x: 100,
-      y: 100,
-      lineHeight: '150%',
-      editable: true,
-      upgradeAttrs: {
-        multiBreakLine: true
+      whiteSpace: 'normal',
+      graphicAlign: 'center',
+      graphicBaseline: 'middle',
+      fill: '#1F2329',
+      ignoreBuf: true,
+      anchor: [-162.07207758976318, 216.49803822714284],
+      angle: 0,
+      editOptions: {
+        placeholder: '请输入文本',
+        placeholderColor: '#B3B8C3',
+        keepHeightWhileEmpty: true,
+        boundsStrokeWhenInput: '#3073F2',
+        syncPlaceholderToTextConfig: false,
+        stopPropagation: true
       },
-      // background: 'green',
-      // "textAlign": "center",
+      editable: true,
+      fontFamily: 'D-Din',
+      height: 0,
+      heightLimit: 999999,
+      lineHeight: '150%',
+      maxWidth: 120,
+      strokeBoundsBuffer: -1,
+      textBaseline: 'top',
       textConfig: [
         {
-          text: '我',
+          fill: '#1F2329',
+          stroke: false,
           fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '们',
-          fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '是',
-          fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          background: 'rgba(255, 0, 0, 0.3)',
-          fill: '#0f51b5'
-        },
-        {
-          text: '无',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '缘',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
           text: 'a',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '无',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '故',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '的',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '尘😁',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '埃\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '无',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '缘',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '无',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '故',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '的',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '游',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '走\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '黑',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '暗',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '只',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '需',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '要',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '张',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '开',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '一',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '张',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '缝',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '隙\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '就',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '能',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '挂',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '起',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '飓',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '[4]',
-          script: 'super',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: '风\n',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
-        },
-        {
-          text: 'and this is our world, \nthat we call life',
-          fontSize: 16,
-
-          textAlign: 'center',
-          fill: '#0f51b5'
+          isComposing: false
         }
-      ]
+      ],
+      upgradeAttrs: {
+        lineHeight: true,
+        multiBreakLine: true
+      },
+      verticalDirection: 'middle',
+      width: 0
     })
   );
 

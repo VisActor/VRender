@@ -71,7 +71,8 @@ export class DefaultCanvasCharacterRender extends DefaultCanvasRectRender implem
       return;
     }
 
-    drawContext.drawContribution.renderGroup(character.skeletonRootGraphic, drawContext, matrix);
+    const skeletonRootGraphic = character.skeletonRoot.getGraphic();
+    drawContext.drawContribution.renderGroup(skeletonRootGraphic, drawContext, matrix);
 
     context.highPerformanceRestore();
   }

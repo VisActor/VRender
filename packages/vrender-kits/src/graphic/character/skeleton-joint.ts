@@ -1,12 +1,12 @@
 import { Matrix, type IMatrix } from '@visactor/vutils';
 import type { ISkeletonJoint } from './interface';
+import type { IGroup } from '@visactor/vrender-core';
 
 export class SkeletonJoint implements ISkeletonJoint {
   private children: ISkeletonJoint[] = [];
   private localMatrix: Matrix = new Matrix();
-  private worldMatrix: Matrix = new Matrix();
   parent: ISkeletonJoint | null = null;
-
+  private _graphic: IGroup | null = null;
   constructor(
     public name: string,
     public position: [number, number] = [0, 0],
@@ -17,41 +17,49 @@ export class SkeletonJoint implements ISkeletonJoint {
     public height: number = 0
   ) {}
 
-  getWorldTransform(): Matrix {
-    return this.worldMatrix;
-  }
-
   getLocalTransform(): Matrix {
     return this.localMatrix;
+  }
+
+  getChildren(): ISkeletonJoint[] {
+    return this.children;
+  }
+
+  setGraphic(graphic: IGroup) {
+    this._graphic = graphic;
+  }
+
+  getGraphic(): IGroup {
+    return this._graphic;
   }
 
   setPosition(x: number, y: number) {
     this.position[0] = x;
     this.position[1] = y;
-    this.updateWorldTransforms();
+    this.updateTransforms();
   }
 
   setRotation(rotation: number) {
     this.rotation = rotation;
-    this.updateWorldTransforms();
+    this.updateTransforms();
   }
 
   setScale(x: number, y: number) {
     this.scale[0] = x;
     this.scale[1] = y;
-    this.updateWorldTransforms();
+    this.updateTransforms();
   }
 
   addChild(joint: ISkeletonJoint) {
     this.children.push(joint);
     joint.parent = this;
-    joint.updateWorldTransforms(this.worldMatrix);
+    joint.updateTransforms();
   }
 
   setPivot(x: number, y: number) {
     this.pivot[0] = x;
     this.pivot[1] = y;
-    this.updateWorldTransforms();
+    this.updateTransforms();
   }
 
   // 查找子节点
@@ -70,7 +78,7 @@ export class SkeletonJoint implements ISkeletonJoint {
     return null;
   }
 
-  updateWorldTransforms(parentMatrix?: IMatrix) {
+  updateTransforms() {
     // 计算局部变换矩阵
     this.localMatrix
       .reset()
@@ -79,44 +87,11 @@ export class SkeletonJoint implements ISkeletonJoint {
       .rotate(this.rotation)
       .scale(this.scale[0], this.scale[1])
       .translate(-this.pivot[0], -this.pivot[1]);
-
-    // 计算世界矩阵
-    if (parentMatrix) {
-      this.worldMatrix.setValue(
-        parentMatrix.a,
-        parentMatrix.b,
-        parentMatrix.c,
-        parentMatrix.d,
-        parentMatrix.e,
-        parentMatrix.f
-      );
-      this.worldMatrix.multiply(
-        this.localMatrix.a,
-        this.localMatrix.b,
-        this.localMatrix.c,
-        this.localMatrix.d,
-        this.localMatrix.e,
-        this.localMatrix.f
-      );
-    } else {
-      this.worldMatrix.setValue(
-        this.localMatrix.a,
-        this.localMatrix.b,
-        this.localMatrix.c,
-        this.localMatrix.d,
-        this.localMatrix.e,
-        this.localMatrix.f
-      );
-    }
-
-    // 递归更新子节点
-    this.children.forEach(child => child.updateWorldTransforms(this.worldMatrix));
   }
 
   release() {
     this.children.forEach(child => child.release());
     this.children = [];
     this.localMatrix.reset();
-    this.worldMatrix.reset();
   }
 }

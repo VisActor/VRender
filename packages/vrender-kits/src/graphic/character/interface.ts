@@ -47,7 +47,6 @@ export interface ICharacterGraphicAttribute extends IGraphicAttribute {
 export interface ICharacterGraphic extends Graphic<ICharacterGraphicAttribute> {
   skeletonRoot: ISkeletonJoint;
   currentPose: PoseState;
-  skeletonRootGraphic: IGroup;
   getPartsMap: () => Map<string, CharacterPart>;
   addPart: (name: string, partDef: PartDefinition) => void;
   getPart: (name: string) => CharacterPart | null;
@@ -75,8 +74,10 @@ export interface ISkeletonJoint {
   scale: [number, number];
   width: number;
   height: number;
-  updateWorldTransforms: (parentMatrix?: IMatrix) => void;
-  getWorldTransform: () => IMatrix;
+  setGraphic: (graphic: IGroup) => void;
+  getGraphic: () => IGroup;
+  getChildren: () => ISkeletonJoint[];
+  updateTransforms: (parentMatrix?: IMatrix) => void;
   getLocalTransform: () => IMatrix;
   setPosition: (x: number, y: number) => void;
   setRotation: (rotation: number) => void;
@@ -261,6 +262,7 @@ export interface HumanPartDefinition {
       cornerRadius?: number;
       stroke?: string;
       lineWidth?: number;
+      symbolType?: string;
     };
   };
   offset?: {

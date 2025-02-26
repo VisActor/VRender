@@ -6,9 +6,15 @@ import {
   GRAPHIC_UPDATE_TAG_KEY,
   NOWORK_ANIMATE_ATTR,
   Rect,
+  Symbol,
   createGroup
 } from '@visactor/vrender-core';
-import type { IRectGraphicAttribute, ICircleGraphicAttribute, IGroup } from '@visactor/vrender-core';
+import type {
+  IRectGraphicAttribute,
+  ICircleGraphicAttribute,
+  IGroup,
+  ISymbolGraphicAttribute
+} from '@visactor/vrender-core';
 import type {
   CharacterDefinition,
   CharacterPart,
@@ -38,8 +44,6 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
   private _definition?: CharacterDefinition;
   private _poses: Record<string, PoseState> = {};
   private _animationManager: AnimationManager;
-
-  skeletonRootGraphic: IGroup;
 
   declare attribute: ICharacterGraphicAttribute;
 
@@ -120,19 +124,6 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
       // 找到root节点并设置为骨骼根节点
       if (jointDef.name === 'root') {
         this._skeletonRoot = joint;
-        this.addPart('root', {
-          name: 'root',
-          jointName: 'root',
-          graphic: {
-            type: 'group',
-            attributes: {
-              x: jointDef.position[0],
-              y: jointDef.position[1],
-              width: 1,
-              height: 1
-            }
-          }
-        });
       }
     });
     // 第二遍建立父子关系
@@ -157,6 +148,31 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
       this._skeletonRoot = new SkeletonJoint('root', [0, 0], 0, [1, 1]);
       console.warn('No root joint found in skeleton definition, created a default one');
     }
+
+    // 更新所有关节的世界变换
+    this._skeletonRoot.updateTransforms();
+
+    this._initSkeletonGraphic(this._skeletonRoot);
+  }
+
+  private _initSkeletonGraphic(skeletonJoint: ISkeletonJoint, parentGraphic?: IGroup) {
+    const { position = [0, 0], rotation = 0, scale = [1, 1] } = skeletonJoint;
+    const graphic = createGroup({
+      x: position[0],
+      y: position[1],
+      angle: rotation,
+      scaleX: scale[0],
+      scaleY: scale[1],
+      width: 0.003,
+      height: 0.003,
+      fill: 'red'
+    });
+    graphic.name = skeletonJoint.name;
+    skeletonJoint.setGraphic(graphic);
+    parentGraphic?.add(graphic);
+    skeletonJoint.getChildren().forEach(child => {
+      this._initSkeletonGraphic(child, graphic);
+    });
   }
 
   // region 姿势管理
@@ -196,38 +212,33 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
 
     // 创建图形实例
     let graphic: Graphic;
-    if (name === 'root') {
-      // 创建根图形节点
-      this.skeletonRootGraphic = createGroup({
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0,
-        ...partDef.graphic.attributes
-      });
-      graphic = this.skeletonRootGraphic as any;
-    } else {
-      switch (partDef.graphic.type) {
-        case 'rect':
-          graphic = new Rect({
-            width: joint.width,
-            height: joint.height,
-            ...partDef.graphic.attributes
-          } as IRectGraphicAttribute);
-          break;
-        case 'circle':
-          graphic = new Circle({
-            radius: min(joint.width, joint.height) / 2,
-            ...(partDef.graphic.attributes as ICircleGraphicAttribute)
-          });
-          break;
-        default:
-          console.warn(`Unsupported graphic type: ${partDef.graphic.type}`);
-          return;
-      }
-      // 将图形添加到根图形节点
-      this.skeletonRootGraphic.add(graphic);
+    switch (partDef.graphic.type) {
+      case 'rect':
+        graphic = new Rect({
+          width: joint.width,
+          height: joint.height,
+          ...partDef.graphic.attributes
+        } as IRectGraphicAttribute);
+        break;
+      case 'circle':
+        graphic = new Circle({
+          radius: min(joint.width, joint.height) / 2,
+          ...(partDef.graphic.attributes as ICircleGraphicAttribute)
+        });
+        break;
+      case 'symbol':
+        graphic = new Symbol({
+          size: [joint.width, joint.height],
+          ...(partDef.graphic.attributes as ISymbolGraphicAttribute)
+        });
+        break;
+      default:
+        console.warn(`Unsupported graphic type: ${partDef.graphic.type}`);
+        return;
     }
+    // 获取当前joint的graphic，将part添加上去
+    const group = joint.getGraphic();
+    group.add(graphic);
 
     // 初始化图形位置
     this._applyJointTransform(graphic, joint, partDef.offset);
@@ -248,22 +259,32 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
     }
   ) {
     // 获取世界矩阵
-    const matrix = joint.getWorldTransform().clone();
-
-    // 应用局部偏移变换
     if (offset) {
-      if (offset.position) {
-        matrix.translate(offset.position[0], offset.position[1]);
-      }
-      if (offset.rotation) {
-        matrix.rotate(offset.rotation);
-      }
-      if (offset.scale) {
-        matrix.scale(offset.scale[0], offset.scale[1]);
-      }
+      const { position = [0, 0], rotation = 0, scale = [1, 1] } = offset;
+      graphic.setAttributes({
+        x: position[0],
+        y: position[1],
+        angle: rotation,
+        scaleX: scale[0],
+        scaleY: scale[1]
+      });
     }
+    // const matrix = joint.getLocalTransform().clone();
 
-    graphic.setAttribute('postMatrix', matrix);
+    // // 应用局部偏移变换
+    // if (offset) {
+    //   if (offset.position) {
+    //     matrix.translate(offset.position[0], offset.position[1]);
+    //   }
+    //   if (offset.rotation) {
+    //     matrix.rotate(offset.rotation);
+    //   }
+    //   if (offset.scale) {
+    //     matrix.scale(offset.scale[0], offset.scale[1]);
+    //   }
+    // }
+
+    // graphic.setAttribute('postMatrix', matrix);
   }
 
   getNoWorkAnimateAttr(): Record<string, number> {
@@ -277,9 +298,11 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
     full?: boolean
   ): IAABBBounds {
     aabbBounds.clear();
-    this._parts.forEach(part => {
-      aabbBounds.union(part.graphic.AABBBounds);
-    });
+    // this._parts.forEach(part => {
+    //   aabbBounds.union(part.graphic.AABBBounds);
+    // });
+    const { x, y, width, height } = this.attribute;
+    aabbBounds.setValue(x, y, x + width, y + height);
     return aabbBounds;
   }
 

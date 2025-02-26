@@ -97,8 +97,10 @@ export const page = () => {
     characterDefinition: characterConfig,
     x: 100,
     y: 100,
-    width: 200,
-    height: 300
+    width: 600,
+    height: 600,
+    _debug_bounds: true,
+    background: 'lightblue'
   });
 
   graphics.push(character);

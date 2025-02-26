@@ -89,6 +89,21 @@ export class SkeletonJoint implements ISkeletonJoint {
       .translate(-this.pivot[0], -this.pivot[1]);
   }
 
+  applyUpdate(updateChildren: boolean = false) {
+    this.updateTransforms();
+    const { position = [0, 0], rotation = 0, scale = [1, 1] } = this;
+    this._graphic.setAttributes({
+      x: position[0],
+      y: position[1],
+      angle: rotation,
+      scaleX: scale[0],
+      scaleY: scale[1]
+    });
+    if (updateChildren) {
+      this.children.forEach(child => child.applyUpdate(updateChildren));
+    }
+  }
+
   release() {
     this.children.forEach(child => child.release());
     this.children = [];

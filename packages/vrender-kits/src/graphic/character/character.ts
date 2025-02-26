@@ -10,10 +10,16 @@ import {
   createGroup
 } from '@visactor/vrender-core';
 import type {
+  IGraphic,
+  IGraphicAttribute,
   IRectGraphicAttribute,
-  ICircleGraphicAttribute,
+  ITextGraphicAttribute,
+  IPathGraphicAttribute,
+  IImageGraphicAttribute,
+  ISymbolGraphicAttribute,
+  IGroupGraphicAttribute,
   IGroup,
-  ISymbolGraphicAttribute
+  ICircleGraphicAttribute
 } from '@visactor/vrender-core';
 import type {
   CharacterDefinition,
@@ -31,6 +37,7 @@ import { AnimationManager } from './animation-manager';
 import { SkeletonAnimation } from './animations/skeleton-animation';
 import { MorphAnimation } from './animations/morph-animation';
 import { MotionAnimation } from './animations/motion-animation';
+import type { EasingType } from '@visactor/vrender-core';
 
 const CHARACTER_UPDATE_TAG_KEY = ['x', 'y', 'scaleX', 'scaleY', 'rotation', ...GRAPHIC_UPDATE_TAG_KEY];
 
@@ -38,12 +45,12 @@ export const CHARACTER_NUMBER_TYPE = Generator.GenAutoIncrementId();
 
 export class Character extends Graphic<ICharacterGraphicAttribute> implements ICharacterGraphic {
   type: 'character' = 'character';
-  private _skeletonRoot: ISkeletonJoint;
-  private _parts: Map<string, CharacterPart> = new Map();
-  private _currentPose: PoseState;
-  private _definition?: CharacterDefinition;
-  private _poses: Record<string, PoseState> = {};
-  private _animationManager: AnimationManager;
+  protected _skeletonRoot: ISkeletonJoint;
+  protected _parts: Map<string, CharacterPart> = new Map();
+  protected _currentPose: PoseState;
+  protected _definition?: CharacterDefinition;
+  protected _poses: Record<string, PoseState> = {};
+  protected _animationManager: AnimationManager;
 
   declare attribute: ICharacterGraphicAttribute;
 
@@ -97,7 +104,7 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
   }
 
   // region 骨骼初始化
-  private _initSkeleton(skeletonDef?: SkeletonDefinition) {
+  protected _initSkeleton(skeletonDef?: SkeletonDefinition) {
     if (!skeletonDef) {
       return;
     }
@@ -155,7 +162,7 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
     this._initSkeletonGraphic(this._skeletonRoot);
   }
 
-  private _initSkeletonGraphic(skeletonJoint: ISkeletonJoint, parentGraphic?: IGroup) {
+  protected _initSkeletonGraphic(skeletonJoint: ISkeletonJoint, parentGraphic?: IGroup) {
     const { position = [0, 0], rotation = 0, scale = [1, 1] } = skeletonJoint;
     const graphic = createGroup({
       x: position[0],
@@ -198,6 +205,8 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
       if (state.scale) {
         joint.setScale(...state.scale);
       }
+
+      joint.applyUpdate(false);
     });
   }
 
@@ -249,7 +258,7 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
   /**
    * 应用骨骼变换到具体图形
    */
-  private _applyJointTransform(
+  protected _applyJointTransform(
     graphic: Graphic,
     joint: ISkeletonJoint,
     offset?: {
@@ -258,7 +267,7 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
       scale?: [number, number];
     }
   ) {
-    // 获取世界矩阵
+    // 进行局部偏移
     if (offset) {
       const { position = [0, 0], rotation = 0, scale = [1, 1] } = offset;
       graphic.setAttributes({
@@ -269,22 +278,6 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
         scaleY: scale[1]
       });
     }
-    // const matrix = joint.getLocalTransform().clone();
-
-    // // 应用局部偏移变换
-    // if (offset) {
-    //   if (offset.position) {
-    //     matrix.translate(offset.position[0], offset.position[1]);
-    //   }
-    //   if (offset.rotation) {
-    //     matrix.rotate(offset.rotation);
-    //   }
-    //   if (offset.scale) {
-    //     matrix.scale(offset.scale[0], offset.scale[1]);
-    //   }
-    // }
-
-    // graphic.setAttribute('postMatrix', matrix);
   }
 
   getNoWorkAnimateAttr(): Record<string, number> {
@@ -332,9 +325,9 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
   /**
    * 播放姿势动画
    */
-  playPoseAnimation(targetPose: PoseState, duration: number = 1000, easing: string = 'linear') {
+  playPoseAnimation(targetPose: PoseState, duration: number = 1000, easing: EasingType = 'linear') {
     const animation = new SkeletonAnimation(this, targetPose, duration, easing);
-    this.animate().play(animation);
+    return this.animate().play(animation);
   }
 
   /**
@@ -509,6 +502,31 @@ export class Character extends Graphic<ICharacterGraphicAttribute> implements IC
     }
 
     this.playPoseAnimation(pose, duration);
+  }
+
+  /**
+   * 循环切换到预定义姿势
+   * @param poseName 预定义姿势名称
+   * @param duration 动画持续时间
+   * @param options 动画选项
+   */
+  switchToPoseWithLoop(
+    poseName: string,
+    duration: number = 1000,
+    options: {
+      loops?: number; // 循环次数
+      alternate?: boolean; // 是否交替反向播放
+      easing?: EasingType; // 缓动函数
+      onComplete?: () => void; // 完成回调
+    } = {}
+  ) {
+    const pose = this._poses[poseName];
+    if (!pose) {
+      console.warn(`Pose not found: ${poseName}`);
+      return;
+    }
+
+    return this._animationManager.playLoopPoseAnimation(pose, duration, options);
   }
 
   /**

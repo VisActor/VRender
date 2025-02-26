@@ -1,4 +1,4 @@
-import type { Graphic, IGraphic, IGraphicAttribute, IGroup } from '@visactor/vrender-core';
+import type { Graphic, IGraphic, IGraphicAttribute, IGroup, EasingType } from '@visactor/vrender-core';
 import type { IMatrix } from '@visactor/vutils';
 import type { AnimationManager } from './animation-manager';
 
@@ -53,7 +53,7 @@ export interface ICharacterGraphic extends Graphic<ICharacterGraphicAttribute> {
   removePart: (name: string) => void;
   getJoint: (name: string) => ISkeletonJoint | null;
   setJointPosition: (name: string, x: number, y: number) => void;
-  playPoseAnimation: (targetPose: PoseState, duration?: number, easing?: string) => void;
+  playPoseAnimation: (targetPose: PoseState, duration?: number, easing?: EasingType) => any;
   playMorphAnimation: (partName: string, targetState: string, duration: number) => void;
   playMotionAnimation: (partName: string) => void;
   createAnimationGroup: (config: {
@@ -87,6 +87,7 @@ export interface ISkeletonJoint {
   findJoint: (name: string, recursive?: boolean) => ISkeletonJoint | null;
   setPivot: (x: number, y: number) => void;
   release: () => void;
+  applyUpdate: (updateChildren?: boolean) => void;
 }
 
 // 类型补充

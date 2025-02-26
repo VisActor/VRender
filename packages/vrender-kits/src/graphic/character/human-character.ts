@@ -1,4 +1,5 @@
 import { Character } from './character';
+import type { EasingType } from '@visactor/vrender-core';
 import { Circle, Rect } from '@visactor/vrender-core';
 import type { ICharacterGraphicAttribute, CharacterDefinition, PoseState } from './interface';
 import { merge } from '@visactor/vutils';
@@ -124,6 +125,27 @@ export class HumanCharacter extends Character {
     this.loadFromDefinition({
       ...this.toDefinition(),
       parts
+    });
+  }
+
+  /**
+   * 播放来回挥手动画
+   * @param poseName 预定义姿势名称
+   * @param duration 单向动画持续时间
+   * @param loops 循环次数
+   * @param onComplete 完成回调
+   */
+  waveHand(poseName: string = 'wave', duration: number = 500, loops: number = 3, onComplete?: () => void) {
+    const pose = this._poses[poseName];
+    if (!pose) {
+      console.warn(`Wave pose not found: ${poseName}`);
+      return;
+    }
+
+    return this._animationManager.playPingPongPoseAnimation(pose, duration, {
+      loops,
+      easing: 'quadInOut' as EasingType,
+      onComplete
     });
   }
 }

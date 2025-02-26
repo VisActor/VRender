@@ -116,5 +116,37 @@ export const page = () => {
     stage.defaultLayer.add(g);
   });
 
+  // 添加按钮控制挥手动作
+  const waveButton = createRect({
+    x: 20,
+    y: 20,
+    width: 100,
+    height: 40,
+    fill: '#4CAF50',
+    radius: 5,
+    cursor: 'pointer',
+    text: {
+      text: '挥手',
+      fill: 'white',
+      textAlign: 'center',
+      textBaseline: 'middle',
+      x: 50,
+      y: 20
+    }
+  });
+
+  // 点击按钮时播放挥手动画
+  waveButton.addEventListener('click', () => {
+    character.waveHand('wave', 500, 3, () => {
+      console.log('Wave animation completed!');
+    });
+  });
+
+  stage.defaultLayer.add(waveButton);
+
+  // 初始调用一次挥手动画
+  character.waveHand('wave', 500, 3);
+  // character.switchToPose('wave', 1000);
+
   stage.render();
 };

@@ -1,8 +1,19 @@
+import type { EasingType } from '@visactor/vrender-core';
 import type { Character } from './character';
 import type { AdvancedAnimationConfig, PoseState } from './interface';
 import { MorphAnimation } from './animations/morph-animation';
 import { MotionAnimation } from './animations/motion-animation';
 import { SkeletonAnimation } from './animations/skeleton-animation';
+
+/**
+ * 动画选项接口
+ */
+interface IAnimationOptions {
+  loops?: number;
+  alternate?: boolean;
+  easing?: EasingType;
+  onComplete?: () => void;
+}
 
 /**
  * 动画管理器 - 统一管理所有类型的动画
@@ -43,14 +54,74 @@ export class AnimationManager {
   /**
    * 播放骨骼动画
    */
-  playPoseAnimation(targetPose: PoseState, duration: number = 1000, easing: string = 'linear') {
+  playPoseAnimation(targetPose: PoseState, duration: number = 1000, easing: EasingType = 'linear') {
     const animation = new SkeletonAnimation(this._character, targetPose, duration, easing);
-    const id = `pose_${Date.now()}`;
-    this._skeletonAnimations.set(id, animation);
-    // animation.onEnd(() => {
-    //   this._skeletonAnimations.delete(id);
-    // });
-    // animation.play();
+    // 使用Character的animate系统播放动画
+    return this._character.animate().play(animation);
+  }
+
+  /**
+   * 播放循环骨骼动画
+   * @param targetPose 目标姿势
+   * @param duration 动画持续时间
+   * @param options 动画选项
+   */
+  playLoopPoseAnimation(
+    targetPose: PoseState,
+    duration: number = 1000,
+    options: {
+      loops?: number; // 循环次数，0表示无限循环
+      alternate?: boolean; // 是否交替反向播放
+      easing?: EasingType; // 缓动函数
+      onComplete?: () => void; // 动画完成回调
+    } = {}
+  ) {
+    const { loops = 1, alternate = false, easing = 'linear', onComplete } = options;
+
+    // 创建动画实例
+    const animation = new SkeletonAnimation(this._character, targetPose, duration, easing);
+
+    // 使用Character的animate系统播放动画
+    const animateInstance = this._character.animate().play(animation);
+
+    // 设置循环
+    if (loops !== 1) {
+      if (loops === 0) {
+        // 无限循环
+        animateInstance.loop(Number.MAX_SAFE_INTEGER);
+      } else {
+        // 指定次数循环
+        animateInstance.loop(loops);
+      }
+    }
+
+    // 设置方向
+    if (alternate) {
+      // 使用bounce代替alternate
+      animateInstance.bounce(true);
+    }
+
+    // 设置完成回调
+    if (onComplete) {
+      animateInstance.onEnd(onComplete);
+    }
+
+    return animateInstance;
+  }
+
+  /**
+   * 播放往返姿势动画
+   */
+  playPingPongPoseAnimation(
+    targetPose: PoseState,
+    duration: number = 1000,
+    options: Omit<IAnimationOptions, 'alternate'> = {}
+  ) {
+    // 使用playLoopPoseAnimation并强制设置alternate为true
+    return this.playLoopPoseAnimation(targetPose, duration, {
+      ...options,
+      alternate: true
+    });
   }
 
   /**

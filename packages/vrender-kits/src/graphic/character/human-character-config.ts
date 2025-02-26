@@ -66,7 +66,7 @@ export const DEFAULT_HUMAN_SKELETON: SkeletonDefinition = {
  */
 export const DEFAULT_HUMAN_POSES: Record<string, PoseState> = {
   stand: {
-    root: { position: [0, 0], rotation: 0 },
+    root: { position: [0.5, 0.5], rotation: 0 },
     spine: { rotation: 0 },
     leftHip: { rotation: 0 },
     rightHip: { rotation: 0 },
@@ -78,7 +78,7 @@ export const DEFAULT_HUMAN_POSES: Record<string, PoseState> = {
     rightElbow: { rotation: 0 }
   },
   sit: {
-    root: { position: [0, -20] },
+    root: { position: [0.5, 0.5] },
     spine: { rotation: -0.1 },
     leftHip: { rotation: -1.5 },
     rightHip: { rotation: -1.5 },
@@ -96,6 +96,16 @@ export const DEFAULT_HUMAN_POSES: Record<string, PoseState> = {
     rightShoulder: { rotation: 0.5 },
     leftElbow: { rotation: 0.3 },
     rightElbow: { rotation: -0.3 }
+  },
+  wave: {
+    root: { position: [0.5, 0.5], rotation: 0.1 },
+    spine: { rotation: 0.1 },
+    chest: { rotation: 0.1 },
+    rightShoulder: { rotation: -1.2 },
+    rightElbow: { rotation: -1.0 },
+    rightHand: { rotation: 0.3 },
+    leftShoulder: { rotation: 0 },
+    leftElbow: { rotation: 0 }
   }
 };
 

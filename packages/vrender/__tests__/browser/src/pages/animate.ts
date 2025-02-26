@@ -214,6 +214,7 @@ export const page = () => {
       text2
         .animate()
         .play(new MotionPath(null, null, 10000, 'quadIn', { path: cp, distance: 1, changeAngle: true }))
+        .loop(3)
         .reversed(true);
     }
     stage.render();

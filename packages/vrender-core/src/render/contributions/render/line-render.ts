@@ -19,7 +19,7 @@ import { getTheme } from '../../../graphic/theme';
 import { LINE_NUMBER_TYPE } from '../../../graphic/constants';
 import { BaseRender } from './base-render';
 import { drawSegments } from '../../../common/render-curve';
-import { calcLineCache } from '../../../common/segment';
+import { calcLineCache, calcSegLineCache } from '../../../common/segment';
 
 /**
  * 默认的基于canvas的line渲染器
@@ -260,42 +260,48 @@ export class DefaultCanvasLineRender extends BaseRender<ILine> implements IGraph
 
       const _points = points;
       if (segments && segments.length) {
-        let startPoint: IPointLike;
-        let lastSeg: { endX: number; endY: number; curves: Array<{ defined: boolean }> };
-        line.cache = segments
-          .map((seg, index) => {
-            if (seg.points.length <= 1) {
-              // 第一个点的话，直接设置lastTopSeg
-              if (index === 0) {
-                seg.points[0] &&
-                  (lastSeg = {
-                    endX: seg.points[0].x,
-                    endY: seg.points[0].y,
-                    curves: [{ defined: seg.points[0].defined !== false }]
-                  });
-                return null;
-              }
-            }
-            // 添加上一个segment结束的点作为这个segment的起始点
-            if (index === 1) {
-              startPoint = {
-                x: lastSeg.endX,
-                y: lastSeg.endY,
-                defined: lastSeg.curves[lastSeg.curves.length - 1].defined
-              };
-            } else if (index > 1) {
-              startPoint.x = lastSeg.endX;
-              startPoint.y = lastSeg.endY;
-              startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
-            }
-            const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
-              startPoint,
-              curveTension
-            });
-            lastSeg = data;
-            return data;
-          })
-          .filter(item => !!item);
+        // 检测segment是否有定义curveType
+        const points: IPointLike[] = [];
+        segments.forEach(seg => {
+          parsePoint(seg.points, connectedType).forEach(p => {
+            points.push(p);
+          });
+        });
+        line.cache = calcSegLineCache(segments, points, curveType, { curveTension });
+        // line.cache = segments
+        //   .map((seg, index) => {
+        //     if (seg.points.length <= 1) {
+        //       // 第一个点的话，直接设置lastTopSeg
+        //       if (index === 0) {
+        //         seg.points[0] &&
+        //           (lastSeg = {
+        //             endX: seg.points[0].x,
+        //             endY: seg.points[0].y,
+        //             curves: [{ defined: seg.points[0].defined !== false }]
+        //           });
+        //         return null;
+        //       }
+        //     }
+        //     // 添加上一个segment结束的点作为这个segment的起始点
+        //     if (index === 1) {
+        //       startPoint = {
+        //         x: lastSeg.endX,
+        //         y: lastSeg.endY,
+        //         defined: lastSeg.curves[lastSeg.curves.length - 1].defined
+        //       };
+        //     } else if (index > 1) {
+        //       startPoint.x = lastSeg.endX;
+        //       startPoint.y = lastSeg.endY;
+        //       startPoint.defined = lastSeg.curves[lastSeg.curves.length - 1].defined;
+        //     }
+        //     const data = calcLineCache(parsePoint(seg.points, connectedType), curveType, {
+        //       startPoint,
+        //       curveTension
+        //     });
+        //     lastSeg = data;
+        //     return data;
+        //   })
+        //   .filter(item => !!item);
 
         // 如果lineClosed，那就绘制到第一个点
         if (curveType === 'linearClosed') {

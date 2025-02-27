@@ -3,6 +3,7 @@ import { BaseRenderContributionTime } from '../../../../common/enums';
 import { createSymbol } from '../../../../graphic';
 import type {
   IBaseRenderContribution,
+  ICanvas,
   IContext2d,
   IDrawContext,
   IGraphic,
@@ -279,11 +280,31 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
 
     if (textureOptions && textureOptions.dynamicTexture) {
       // 动态纹理
-      context.save();
-      context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
-      context.clip();
-      const { gridConfig = {} } = textureOptions;
+      const { gridConfig = {}, useNewCanvas } = textureOptions;
       const b = graphic.AABBBounds;
+      x = b.x1;
+      y = b.y1;
+      const originalContext = context;
+
+      let newCanvas: ICanvas;
+      if (useNewCanvas) {
+        newCanvas = canvasAllocate.allocate({ width: b.width(), height: b.height(), dpr: context.dpr });
+        const ctx = newCanvas.getContext('2d');
+        ctx.clearRect(0, 0, b.width(), b.height());
+        x = 0;
+        y = 0;
+        context = ctx;
+      }
+      originalContext.save();
+      // 避免本级已经transform过了，再用Bounds就重复了
+      if (graphic.parent && !graphic.transMatrix.onlyTranslate()) {
+        const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
+        originalContext.setTransformFromMatrix(graphic.parent.globalTransMatrix);
+        originalContext.translate(scrollX, scrollY, true);
+      }
+      originalContext.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);
+      originalContext.clip();
+
       const width = b.width();
       const height = b.height();
       const padding = texturePadding;
@@ -306,16 +327,52 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
         for (let j = 0; j < gridColumns; j++) {
           const _x = x + cellSize / 2 + j * cellSize;
           const _y = y + cellSize / 2 + i * cellSize;
+          textureOptions.beforeDynamicTexture?.(
+            context,
+            i,
+            j,
+            gridRows,
+            gridColumns,
+            textureRatio,
+            graphic,
+            b.width(),
+            b.height()
+          );
           context.beginPath();
           if (parsedPath.draw(context, Math.min(sizeW - gutterColumn, sizeH - gutterRow), _x, _y, 0) === false) {
             context.closePath();
           }
           context.fillStyle = textureColor;
-          textureOptions.dynamicTexture(context, i, j, gridRows, gridColumns, textureRatio, graphic);
+          textureOptions.dynamicTexture(
+            context,
+            i,
+            j,
+            gridRows,
+            gridColumns,
+            textureRatio,
+            graphic,
+            b.width(),
+            b.height()
+          );
         }
       }
+      if (useNewCanvas) {
+        // 不使用外部的opacity，动态纹理的opacity自己设置
+        originalContext.globalAlpha = 1;
+        originalContext.drawImage(
+          newCanvas.nativeCanvas,
+          0,
+          0,
+          newCanvas.nativeCanvas.width,
+          newCanvas.nativeCanvas.height,
+          b.x1,
+          b.y1,
+          b.width() * originalContext.dpr,
+          b.height() * originalContext.dpr
+        );
+      }
 
-      context.restore();
+      originalContext.restore();
     } else if (pattern) {
       context.highPerformanceSave();
       context.setCommonStyle(graphic, graphic.attribute, x, y, graphicAttribute);

@@ -1,3 +1,17 @@
+# v0.22.3
+
+2025-02-27
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-kits**: roam zoom not work in mobile browser
+- **@visactor/vrender-core**: fix issue with text edit include textAlign and bounds
+
+
+
+[more detail about v0.22.3](https://github.com/VisActor/VRender/releases/tag/v0.22.3)
+
 # v0.22.2
 
 2025-02-24

@@ -327,6 +327,17 @@ export class DefaultBaseTextureRenderContribution implements IBaseRenderContribu
         for (let j = 0; j < gridColumns; j++) {
           const _x = x + cellSize / 2 + j * cellSize;
           const _y = y + cellSize / 2 + i * cellSize;
+          textureOptions.beforeDynamicTexture?.(
+            context,
+            i,
+            j,
+            gridRows,
+            gridColumns,
+            textureRatio,
+            graphic,
+            b.width(),
+            b.height()
+          );
           context.beginPath();
           if (parsedPath.draw(context, Math.min(sizeW - gutterColumn, sizeH - gutterRow), _x, _y, 0) === false) {
             context.closePath();

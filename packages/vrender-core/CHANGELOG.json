@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.3",
+      "tag": "@visactor/vrender-core_v0.22.3",
+      "date": "Wed, 26 Feb 2025 07:36:06 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with text edit include textAlign and bounds"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.2",
       "tag": "@visactor/vrender-core_v0.22.2",
       "date": "Mon, 24 Feb 2025 08:19:49 GMT",

@@ -972,13 +972,11 @@ export const page = () => {
       'PingFang SC,Helvetica Neue,Microsoft Yahei,system-ui,-apple-system,segoe ui,Roboto,Helvetica,Arial,sans-serif,apple color emoji,segoe ui emoji,segoe ui symbol',
     textAlign: 'center',
     textBaseline: 'middle',
-    boundsPadding: [10, 0, 10, 0],
     fontWeight: 'normal',
     fillOpacity: 1,
     ellipsis: true,
     pickable: true,
     lineJoin: 'bevel',
-    stroke: '#ffffff',
     _debug_bounds: true,
     zIndex: -1,
     // maxLineWidth: 200,
@@ -989,23 +987,19 @@ export const page = () => {
     // lineWidth: 0,
     textConfig: [
       {
-        text: '空值0\n',
+        text: '',
         fontSize: 12,
         textAlign: 'left',
         fill: '#1F2329'
-      },
-      {
-        text: '8%',
-        fontSize: 12,
-        textAlign: 'left',
-        fill: '#646A73'
       }
     ],
     z: 0,
+    width: 0,
+    height: 0
     // width: 30,
-    width: 31,
+    // width: 31,
     // width: 0,
-    height: 80
+    // height: 80
     // maxWidth: 200
   });
 
@@ -1034,7 +1028,7 @@ export const page = () => {
   //     .replaceAll('"', '\\"')}; width: 30; height: 30; id: circle-0" />`
   // );
 
-  // shapes.length = 0;
+  shapes.length = 0;
 
   shapes.push(rt);
 

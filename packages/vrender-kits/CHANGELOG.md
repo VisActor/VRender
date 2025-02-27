@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Mon, 24 Feb 2025 08:19:49 GMT and should not be manually modified.
+This log was last generated on Wed, 26 Feb 2025 07:36:06 GMT and should not be manually modified.
+
+## 0.22.3
+Wed, 26 Feb 2025 07:36:06 GMT
+
+### Updates
+
+- fix: roam zoom not work in mobile browser
 
 ## 0.22.2
 Mon, 24 Feb 2025 08:19:49 GMT

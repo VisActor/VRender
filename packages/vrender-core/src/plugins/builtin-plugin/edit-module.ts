@@ -18,7 +18,14 @@ import type {
 // }
 
 export function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) {
-  const { fill = 'black', stroke = false, fontWeight = 'normal', lineHeight, fontFamily = 'Arial' } = attribute;
+  const {
+    fill = 'black',
+    stroke = false,
+    fontWeight = 'normal',
+    lineHeight,
+    fontFamily = 'Arial',
+    textAlign
+  } = attribute;
   let { fontSize = 12 } = attribute;
   if (!isFinite(fontSize)) {
     fontSize = 12;
@@ -29,7 +36,8 @@ export function getDefaultCharacterConfig(attribute: IRichTextGraphicAttribute) 
     fontSize,
     fontWeight,
     fontFamily,
-    lineHeight
+    lineHeight,
+    textAlign
   } as any;
 }
 
@@ -219,7 +227,12 @@ export class EditModule {
     } else {
       const configIdx = this.composingConfigIdx;
       const lastConfig = textConfig[configIdx] || textConfig[configIdx - 1];
-      textConfig.splice(configIdx, 0, { fill: 'black', ...lastConfig, text: '' });
+      textConfig.splice(configIdx, 0, {
+        fill: 'black',
+        ...getDefaultCharacterConfig(this.currRt.attribute),
+        ...lastConfig,
+        text: ''
+      });
     }
   };
   handleCompositionEnd = () => {

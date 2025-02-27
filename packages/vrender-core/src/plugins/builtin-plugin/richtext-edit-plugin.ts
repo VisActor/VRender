@@ -617,6 +617,8 @@ export class RichTextEditPlugin implements IPlugin {
     if (!editOptions || !boundsStrokeWhenInput) {
       return;
     }
+    // 得先偏移，不然上一次的Bounds会影响后续的计算
+    this.offsetShadowRoot();
     // const { attribute } = this.currRt;
     const b = this.getRichTextAABBBounds(this.currRt);
     const height = b.height();
@@ -641,7 +643,6 @@ export class RichTextEditPlugin implements IPlugin {
     // shadow.add(this.shadowBounds);
 
     this.offsetLineBgAndShadowBounds();
-    this.offsetShadowRoot();
   }
 
   trySyncPlaceholderToTextConfig() {
@@ -1089,7 +1090,7 @@ export class RichTextEditPlugin implements IPlugin {
   protected getShadow(rt: IRichText) {
     const sr = rt.shadowRoot || rt.attachShadow();
     // TODO 这里比较hack，因为emptyBoundsContainer是empty，导致shadowRoot的Bounds为空，所以这里给一个1*1的rect，让其能绘制
-    sr.setAttributes({ width: 1, height: 1 });
+    sr.setAttributes({ width: 0, height: 0 });
     return sr;
   }
 

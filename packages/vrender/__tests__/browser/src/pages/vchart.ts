@@ -20,56 +20,343 @@ export const page = () => {
     let i = 0;
 
     const spec = {
-      type: 'bar',
-      data: [
-        {
-          id: 'barData',
-          values: [
-            { month: 'Monday', sales: 22 },
-            { month: 'Tuesday', sales: 13 },
-            { month: 'Wednesday', sales: 25 },
-            { month: 'Thursday', sales: 29 },
-            { month: 'Friday', sales: 38 }
-          ]
-        }
-      ],
-      bar: {
+      type: 'area',
+      data: {
+        values: [
+          { type: 'Nail polish', country: 'Africa', value: 4229 },
+          { type: 'Nail polish', country: 'EU', value: 4376 },
+          { type: 'Nail polish', country: 'China', value: 3054 },
+          { type: 'Nail polish', country: 'USA', value: 12814 },
+          { type: 'Eyebrow pencil', country: 'Africa', value: 3932 },
+          { type: 'Eyebrow pencil', country: 'EU', value: 3987 },
+          { type: 'Eyebrow pencil', country: 'China', value: 5067 },
+          { type: 'Eyebrow pencil', country: 'USA', value: 13012 },
+          { type: 'Rouge', country: 'Africa', value: 5221 },
+          { type: 'Rouge', country: 'EU', value: 3574 },
+          { type: 'Rouge', country: 'China', value: 7004 },
+          { type: 'Rouge', country: 'USA', value: 11624 },
+          { type: 'Lipstick', country: 'Africa', value: 9256 },
+          { type: 'Lipstick', country: 'EU', value: 4376 },
+          { type: 'Lipstick', country: 'China', value: 9054 },
+          { type: 'Lipstick', country: 'USA', value: 8814 },
+          { type: 'Eyeshadows', country: 'Africa', value: 3308 },
+          { type: 'Eyeshadows', country: 'EU', value: 4572 },
+          { type: 'Eyeshadows', country: 'China', value: 12043 },
+          { type: 'Eyeshadows', country: 'USA', value: 12998 },
+          { type: 'Eyeliner', country: 'Africa', value: 5432 },
+          { type: 'Eyeliner', country: 'EU', value: 3417 },
+          { type: 'Eyeliner', country: 'China', value: 15067 },
+          { type: 'Eyeliner', country: 'USA', value: 12321 },
+          { type: 'Foundation', country: 'Africa', value: 13701 },
+          { type: 'Foundation', country: 'EU', value: 5231 },
+          { type: 'Foundation', country: 'China', value: 10119 },
+          { type: 'Foundation', country: 'USA', value: 10342 },
+          { type: 'Lip gloss', country: 'Africa', value: 4008 },
+          { type: 'Lip gloss', country: 'EU', value: 4572 },
+          { type: 'Lip gloss', country: 'China', value: 12043 },
+          { type: 'Lip gloss', country: 'USA', value: 22998 },
+          { type: 'Mascara', country: 'Africa', value: 18712 },
+          { type: 'Mascara', country: 'EU', value: 6134 },
+          { type: 'Mascara', country: 'China', value: 10419 },
+          { type: 'Mascara', country: 'USA', value: 11261 }
+        ]
+      },
+      title: {
+        visible: true,
+        text: '100% stacked area chart of cosmetic products sales'
+      },
+      line: false,
+      point: false,
+      area: {
         style: {
+          // boundsMode: 'imprecise',
+          _debug_bounds: true,
           texture: 'square',
-          textureSize: 6,
+          textureSize: 10,
           texturePadding: 1,
           textureRatio: 0,
           textureColor: 'orange',
-          textureOptions: {
-            dynamicTexture: (
-              ctx: any,
-              row: number,
-              column: number,
-              rowCount: number,
-              columnCount: number,
-              ratio: number,
-              graphic: any
-            ) => {
-              const _r = VRenderKits.randomOpacity(ctx, row, column, rowCount, columnCount, ratio, graphic, 0.5, 0.5);
-              ctx.globalAlpha = _r;
-              ctx.fill();
-            }
+          textureOptions: datum => {
+            const func =
+              datum.country === 'Africa'
+                ? (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+                    VRender.randomOpacity(ctx, row, column, rowCount, columnCount, ratio, graphic, 0.3)
+                : datum.country === 'EU'
+                ? (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+                    VRender.columnLeftToRight(ctx, row, column, rowCount, columnCount, ratio, graphic)
+                : datum.country === 'China'
+                ? (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+                    VRender.columnEdgeToCenter(ctx, row, column, rowCount, columnCount, ratio, graphic)
+                : (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+                    VRender.particleEffect(ctx, row, column, rowCount, columnCount, ratio, graphic);
+            return {
+              useNewCanvas: true,
+              dynamicTexture: (ctx, row, column, rowCount, columnCount, ratio, graphic) => {
+                const _r = func(ctx, row, column, rowCount, columnCount, ratio, graphic);
+                ctx.globalAlpha = _r;
+                ctx.fillStyle =
+                  datum.country === 'Africa'
+                    ? '#00C1D4'
+                    : datum.country === 'EU'
+                    ? '#FF2F92'
+                    : datum.country === 'China'
+                    ? '#000CEF'
+                    : '#FEC000';
+                ctx.fill();
+              }
+            };
           }
         }
       },
       animationAppear: {
-        bar: {
+        area: {
           channel: {
-            textureRatio: { from: 0, to: 1 }
+            textureRatio: {
+              from: 0,
+              to: 1
+            }
           },
           easing: 'linear',
           duration: 3000,
           loop: true
         }
       },
-      xField: 'month',
-      yField: 'sales'
+      percent: true,
+      xField: 'type',
+      yField: 'value',
+      seriesField: 'country',
+      legends: [{ visible: true, position: 'middle', orient: 'bottom' }],
+      axes: [
+        {
+          orient: 'left',
+          label: {
+            formatMethod(val) {
+              return `${(val * 100).toFixed(2)}%`;
+            }
+          }
+        }
+      ]
     };
+
+    // const spec = {
+    //   type: 'pie',
+    //   data: [
+    //     {
+    //       id: 'id0',
+    //       values: [
+    //         { type: 'oxygen', value: '46.60' },
+    //         { type: 'silicon', value: '27.72' },
+    //         { type: 'aluminum', value: '8.13' },
+    //         { type: 'iron', value: '5' },
+    //         { type: 'calcium', value: '3.63' },
+    //         { type: 'sodium', value: '2.83' },
+    //         { type: 'potassium', value: '2.59' },
+    //         { type: 'others', value: '3.5' }
+    //       ]
+    //     }
+    //   ],
+    //   outerRadius: 0.8,
+    //   valueField: 'value',
+    //   categoryField: 'type',
+    //   title: {
+    //     visible: true,
+    //     text: 'Statistics of Surface Element Content'
+    //   },
+    //   legends: {
+    //     visible: true,
+    //     orient: 'left'
+    //   },
+    //   label: {
+    //     visible: true
+    //   },
+    //   pie: {
+    //     style: {
+    //       boundsMode: 'imprecise',
+    //       // _debug_bounds: true,
+    //       texture: 'square',
+    //       textureSize: 5,
+    //       texturePadding: 1,
+    //       textureRatio: 0,
+    //       textureColor: 'orange',
+    //       textureOptions: datum => {
+    //         const colorPools = [
+    //           { background: '#FFFFFF', particleColor: '#00C1D4' },
+    //           { background: '#000000', particleColor: '#FF2F92' },
+    //           { background: '#FFFFFF', particleColor: '#000000' },
+    //           { background: '#000000', particleColor: '#FFFFFF' }
+    //         ];
+    //         return {
+    //           dynamicTexture: (ctx, row, column, rowCount, columnCount, ratio, graphic) => {
+    //             const _r = VRenderKits.spiralEffect(ctx, row, column, rowCount, columnCount, ratio, graphic);
+    //             ctx.globalAlpha = _r;
+    //             const i = row * columnCount + column;
+    //             ctx.fillStyle = colorPools[i % colorPools.length].particleColor;
+    //             ctx.fill();
+    //           }
+    //         };
+    //       }
+    //     }
+    //   },
+    //   animationAppear: {
+    //     pie: {
+    //       channel: {
+    //         textureRatio: {
+    //           from: 0,
+    //           to: 1
+    //         }
+    //       },
+    //       easing: 'linear',
+    //       duration: 3000,
+    //       loop: true
+    //     }
+    //   },
+    //   tooltip: {
+    //     mark: {
+    //       content: [
+    //         {
+    //           key: datum => datum['type'],
+    //           value: datum => datum['value'] + '%'
+    //         }
+    //       ]
+    //     }
+    //   }
+    // };
+
+    // const spec = {
+    //   type: 'bar',
+    //   data: [
+    //     {
+    //       id: 'barData',
+    //       values: [
+    //         {
+    //           State: 'WY',
+    //           Age: 'Under 5 Years',
+    //           Population: 25635
+    //         },
+    //         {
+    //           State: 'WY',
+    //           Age: '5 to 13 Years',
+    //           Population: 1890
+    //         },
+    //         {
+    //           State: 'WY',
+    //           Age: '14 to 17 Years',
+    //           Population: 9314
+    //         },
+    //         {
+    //           State: 'DC',
+    //           Age: 'Under 5 Years',
+    //           Population: 30352
+    //         },
+    //         {
+    //           State: 'DC',
+    //           Age: '5 to 13 Years',
+    //           Population: 20439
+    //         },
+    //         {
+    //           State: 'DC',
+    //           Age: '14 to 17 Years',
+    //           Population: 10225
+    //         },
+    //         {
+    //           State: 'VT',
+    //           Age: 'Under 5 Years',
+    //           Population: 38253
+    //         },
+    //         {
+    //           State: 'VT',
+    //           Age: '5 to 13 Years',
+    //           Population: 42538
+    //         },
+    //         {
+    //           State: 'VT',
+    //           Age: '14 to 17 Years',
+    //           Population: 15757
+    //         },
+    //         {
+    //           State: 'ND',
+    //           Age: 'Under 5 Years',
+    //           Population: 51896
+    //         },
+    //         {
+    //           State: 'ND',
+    //           Age: '5 to 13 Years',
+    //           Population: 67358
+    //         },
+    //         {
+    //           State: 'ND',
+    //           Age: '14 to 17 Years',
+    //           Population: 18794
+    //         },
+    //         {
+    //           State: 'AK',
+    //           Age: 'Under 5 Years',
+    //           Population: 72083
+    //         },
+    //         {
+    //           State: 'AK',
+    //           Age: '5 to 13 Years',
+    //           Population: 85640
+    //         },
+    //         {
+    //           State: 'AK',
+    //           Age: '14 to 17 Years',
+    //           Population: 22153
+    //         }
+    //       ]
+    //     }
+    //   ],
+    //   xField: 'State',
+    //   yField: 'Population',
+    //   seriesField: 'Age',
+    //   percent: true,
+    //   stack: true,
+    //   axes: [{ orient: 'bottom', bandPadding: 0 }],
+    //   bar: {
+    //     style: {
+    //       texture: 'square',
+    //       textureSize: 10,
+    //       texturePadding: 1,
+    //       textureRatio: 0,
+    //       textureColor: 'orange',
+    //       textureOptions: datum => {
+    //         console.log(datum);
+    //         const func =
+    //           datum.Age === 'Under 5 Years'
+    //             ? (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+    //                 VRender.randomOpacity(ctx, row, column, rowCount, columnCount, ratio, graphic, 0.3)
+    //             : datum.Age === '5 to 13 Years'
+    //             ? (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+    //                 VRender.columnLeftToRight(ctx, row, column, rowCount, columnCount, ratio, graphic)
+    //             : (ctx, row, column, rowCount, columnCount, ratio, graphic) =>
+    //                 VRender.columnRightToLeft(ctx, row, column, rowCount, columnCount, ratio, graphic);
+    //         return {
+    //           dynamicTexture: (ctx, row, column, rowCount, columnCount, ratio, graphic) => {
+    //             const _r = func(ctx, row, column, rowCount, columnCount, ratio, graphic);
+    //             ctx.globalAlpha = _r;
+    //             const i = row * columnCount + column;
+    //             ctx.fillStyle =
+    //               datum.Age === 'Under 5 Years' ? 'red' : datum.Age === '5 to 13 Years' ? 'blue' : 'green';
+    //             ctx.fill();
+    //           }
+    //         };
+    //       }
+    //     }
+    //   },
+    //   animationAppear: {
+    //     bar: {
+    //       channel: {
+    //         textureRatio: {
+    //           from: 0,
+    //           to: 1
+    //         }
+    //       },
+    //       easing: 'linear',
+    //       duration: 3000,
+    //       loop: true
+    //     }
+    //   }
+    // };
 
     const chartSpace = new window.ChartSpace.default(spec, {
       dom: 'container'

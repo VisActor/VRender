@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Wed, 26 Feb 2025 07:36:06 GMT and should not be manually modified.
+This log was last generated on Thu, 27 Feb 2025 08:34:05 GMT and should not be manually modified.
+
+## 0.22.4
+Thu, 27 Feb 2025 08:34:05 GMT
+
+### Updates
+
+- fix: fix pos issue with dynamic texture, optmize performance for dynamic texture
 
 ## 0.22.3
 Wed, 26 Feb 2025 07:36:06 GMT

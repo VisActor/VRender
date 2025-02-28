@@ -1,3 +1,16 @@
+# v0.22.4
+
+2025-02-27
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-core**: fix pos issue with dynamic texture, optmize performance for dynamic texture
+
+
+
+[more detail about v0.22.4](https://github.com/VisActor/VRender/releases/tag/v0.22.4)
+
 # v0.22.3
 
 2025-02-27

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: containerTextAlign and refX refY can not work when tag's label is rich text",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

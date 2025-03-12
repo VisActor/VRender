@@ -290,7 +290,9 @@ export class Stage extends Group implements IStage {
     this.ticker.addTimeline(this.timeline);
     this.timeline.pause();
     if (!params.optimize) {
-      params.optimize = {};
+      params.optimize = {
+        animateMode: 'performance'
+      };
     }
     this.optmize(params.optimize);
     // 如果背景是图片，触发加载图片操作

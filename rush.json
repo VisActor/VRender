@@ -41,6 +41,13 @@
       "versionPolicyName": "vrenderMain"
     },
     {
+      "packageName": "@visactor/vrender-animate",
+      "projectFolder": "packages/vrender-animate",
+      "tags": ["package"],
+      "shouldPublish": true,
+      "versionPolicyName": "vrenderMain"
+    },
+    {
       "packageName": "@visactor/vrender-kits",
       "projectFolder": "packages/vrender-kits",
       "tags": ["package"],

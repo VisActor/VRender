@@ -1,5 +1,25 @@
 import type { IContext2d, IGraphic } from '@visactor/vrender-core';
 
+function pseudoRandom(n: number, seed = 0) {
+  // 第一阶段：种子初始化混合
+  let hash = seed ^ 0xdeadbeef; // 初始混淆
+  hash = (hash ^ 0x9e3779b9) + (hash << 6) + (hash >> 2); // 位扩散
+
+  // 第二阶段：输入参数混合
+  hash = (hash ^ n) * 0xcc9e2d51; // 乘法混合
+  hash = (hash << 15) | (hash >>> 17); // 循环移位
+
+  // 第三阶段：增强位扩散
+  hash ^= hash << 25;
+  hash += hash << 9;
+  hash ^= hash >> 4;
+  hash ^= hash << 18;
+  hash |= 1; // 确保非零
+
+  // 最终计算
+  return ((hash >>> 0) % 0x7fffffff) / 0x7fffffff;
+}
+
 export function randomOpacity(
   ctx: IContext2d,
   row: number,
@@ -11,10 +31,7 @@ export function randomOpacity(
   minRatio: number = 0, // 最小ratio值，默认为0
   amplitude: number = 1 // 变化幅度，默认为1
 ): number {
-  if (!graphic.dynamicTextureCache) {
-    graphic.dynamicTextureCache = new Array(rowCount * columnCount).fill(0).map(item => Math.random() * 2 * Math.PI);
-  }
-  const targetRandomValue = graphic.dynamicTextureCache[row * columnCount + column];
+  const targetRandomValue = pseudoRandom(row * columnCount + column) * 2 * Math.PI;
   // 调整sin函数的振幅，并将结果映射到[minRatio, minRatio + amplitude]范围
   const _r = minRatio + (amplitude * (Math.sin(ratio * 2 * Math.PI + targetRandomValue) + 1)) / 2;
   return Math.min(1, Math.max(0, _r)); // 确保返回值在[0,1]范围内
@@ -408,19 +425,10 @@ export function particleEffect(
   minRatio: number = 0,
   amplitude: number = 1
 ): number {
-  // 初始化随机种子
-  if (!graphic.dynamicTextureCache) {
-    graphic.dynamicTextureCache = {
-      phases: new Array(rowCount * columnCount).fill(0).map(() => Math.random() * 2 * Math.PI),
-      speeds: new Array(rowCount * columnCount).fill(0).map(() => 0.5 + Math.random() * 0.5),
-      directions: new Array(rowCount * columnCount).fill(0).map(() => Math.random() * 2 * Math.PI)
-    };
-  }
-
   const index = row * columnCount + column;
-  const phase = graphic.dynamicTextureCache.phases[index];
-  const speed = graphic.dynamicTextureCache.speeds[index];
-  const direction = graphic.dynamicTextureCache.directions[index];
+  const phase = pseudoRandom(index, 0) * 2 * Math.PI;
+  const speed = pseudoRandom(index, 1) * 0.5 + 0.5;
+  const direction = pseudoRandom(index, 2) * 2 * Math.PI;
 
   // 计算到中心的距离
   const centerRow = rowCount / 2;

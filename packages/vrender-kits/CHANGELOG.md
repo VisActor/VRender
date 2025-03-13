@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Thu, 27 Feb 2025 08:34:05 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Mar 2025 09:51:07 GMT and should not be manually modified.
+
+## 0.22.5
+Thu, 13 Mar 2025 09:51:07 GMT
+
+### Updates
+
+- fix: change dynamicTextureCache to pseudoRandom to fix issue with resize
 
 ## 0.22.4
 Thu, 27 Feb 2025 08:34:05 GMT

@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 27 Feb 2025 08:34:05 GMT and should not be manually modified.
+This log was last generated on Thu, 13 Mar 2025 09:51:07 GMT and should not be manually modified.
+
+## 0.22.5
+Thu, 13 Mar 2025 09:51:07 GMT
+
+### Updates
+
+-  fix: fix the label overlap issue by setting `size.padding` in dataLabel
+- fix: containerTextAlign and refX refY can not work when tag's label is rich text
 
 ## 0.22.4
 Thu, 27 Feb 2025 08:34:05 GMT

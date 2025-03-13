@@ -58,10 +58,11 @@ export function bitmapTool(
 
 export function clampRangeByBitmap($: BitmapTool, range: IBoundsLike) {
   const { x1, x2, y1, y2 } = range;
-  const _x1 = clampRange(x1, 0, $.width);
-  const _x2 = clampRange(x2, 0, $.width);
-  const _y1 = clampRange(y1, 0, $.height);
-  const _y2 = clampRange(y2, 0, $.height);
+  const { top = 0, left = 0, right = 0, bottom = 0 } = $.padding;
+  const _x1 = clampRange(x1, -left, $.width + right);
+  const _x2 = clampRange(x2, -left, $.width + right);
+  const _y1 = clampRange(y1, -top, $.height + bottom);
+  const _y2 = clampRange(y2, -top, $.height + bottom);
   return {
     x1: $.x(_x1),
     x2: $.x(_x2),

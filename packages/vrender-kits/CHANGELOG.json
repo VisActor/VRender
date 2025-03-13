@@ -2,6 +2,18 @@
   "name": "@visactor/vrender-kits",
   "entries": [
     {
+      "version": "0.22.5",
+      "tag": "@visactor/vrender-kits_v0.22.5",
+      "date": "Thu, 13 Mar 2025 09:51:07 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: change dynamicTextureCache to pseudoRandom to fix issue with resize"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.4",
       "tag": "@visactor/vrender-kits_v0.22.4",
       "date": "Thu, 27 Feb 2025 08:34:05 GMT",

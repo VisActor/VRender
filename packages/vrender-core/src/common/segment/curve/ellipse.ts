@@ -52,4 +52,8 @@ export class EllipseCurve extends Curve implements IEllipseCurve {
   includeX(x: number): boolean {
     throw new Error('QuadraticBezierCurve暂不支持includeX');
   }
+
+  reverse() {
+    throw new Error('暂不支持');
+  }
 }

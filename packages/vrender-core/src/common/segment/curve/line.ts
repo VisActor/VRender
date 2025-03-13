@@ -90,4 +90,9 @@ export class LineCurve extends Curve implements ILineCurve {
     }
     return Infinity;
   }
+
+  reverse() {
+    [this.p0, this.p1] = [this.p1, this.p0];
+    [this.originP1, this.originP2] = [this.originP2, this.originP1];
+  }
 }

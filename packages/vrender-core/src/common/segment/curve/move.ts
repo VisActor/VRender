@@ -34,4 +34,8 @@ export class MoveCurve extends Curve implements IMoveCurve {
   getYAt(x: number): number {
     return Infinity;
   }
+
+  reverse() {
+    [this.p0, this.p1] = [this.p1, this.p0];
+  }
 }

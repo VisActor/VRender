@@ -22,13 +22,14 @@ async function makeUpCanvas(
   canvasMap: Map<string, ITTCanvas>,
   freeCanvasIdx: number,
   freeCanvasList: ITTCanvas[],
-  component: any
+  component: any,
+  forceUpdate?: boolean
 ) {
   const dpr = wx.getSystemInfoSync().pixelRatio;
 
   for (let i = 0; i < canvasIdLists.length; i++) {
     const id = canvasIdLists[i];
-    if (canvasMap.has(id)) {
+    if (!forceUpdate && canvasMap.has(id)) {
       continue;
     }
     await new Promise(resolve => {
@@ -135,7 +136,10 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
 
   // TODO：VGrammar在小程序环境会重复调用setEnv传入canvas，所以每次configure并不会释放
   // 这里等待后续和VGrammar沟通
-  configure(service: IGlobal, params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; component: any }) {
+  configure(
+    service: IGlobal,
+    params: { domref: any; canvasIdLists: string[]; freeCanvasIdx: number; component: any; forceUpdate?: boolean }
+  ) {
     if (service.env === this.type) {
       service.setActiveEnvContribution(this);
       return makeUpCanvas(
@@ -144,7 +148,8 @@ export class WxEnvContribution extends BaseEnvContribution implements IEnvContri
         this.canvasMap,
         params.freeCanvasIdx,
         this.freeCanvasList,
-        params.component
+        params.component,
+        params.forceUpdate
       ).then(() => {
         // loadFeishuContributions();
       });

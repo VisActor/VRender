@@ -1,3 +1,19 @@
+# v0.22.5
+
+2025-03-13
+
+
+**🐛 功能修复**
+
+- **@visactor/vrender-components**: fix the label overlap issue by setting `size.padding` in dataLabel
+- **@visactor/vrender-components**: containerTextAlign and refX refY can not work when tag's label is rich text
+- **@visactor/vrender-kits**: change dynamicTextureCache to pseudoRandom to fix issue with resize
+- **@visactor/vrender**: change dynamicTextureCache to pseudoRandom to fix issue with resize
+
+
+
+[更多详情请查看 v0.22.5](https://github.com/VisActor/VRender/releases/tag/v0.22.5)
+
 # v0.22.4
 
 2025-02-27

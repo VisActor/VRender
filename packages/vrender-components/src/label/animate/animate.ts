@@ -50,9 +50,20 @@ export function updateAnimation(
   next: LabelContent['text'],
   animationConfig: ILabelUpdateAnimation | ILabelUpdateChannelAnimation[]
 ) {
+  const changeAttributes = (prev: LabelContent['text'], next: LabelContent['text']) => {
+    const changed = {};
+    for (const key in next.attribute) {
+      if (prev.attribute[key] !== next.attribute[key]) {
+        changed[key] = next.attribute[key];
+      }
+    }
+    return changed;
+  };
+
   if (!isArray(animationConfig)) {
     const { duration, easing, increaseEffect = true } = animationConfig;
-    prev.animate().to(next.attribute, duration, easing);
+
+    prev.animate().to(changeAttributes(prev, next), duration, easing);
     if (increaseEffect && prev.type === 'text' && next.type === 'text') {
       playIncreaseCount(prev as IText, next as IText, duration, easing);
     }
@@ -63,7 +74,7 @@ export function updateAnimation(
     const { duration, easing, increaseEffect = true, channel } = cfg;
     const { to } = update(prev, next, channel, cfg.options);
     if (!isEmpty(to)) {
-      prev.animate().to(to, duration, easing);
+      prev.animate().to(changeAttributes(prev, next), duration, easing);
     }
 
     if (increaseEffect && prev.type === 'text' && next.type === 'text') {

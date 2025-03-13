@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": " fix: fix the label overlap issue by setting `size.padding` in dataLabel",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

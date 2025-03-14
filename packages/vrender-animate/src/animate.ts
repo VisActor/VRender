@@ -519,15 +519,21 @@ export class Animate implements IAnimate {
 
     let cycleTime = nextTime - this._startTime;
     let newLoop = false;
+    let bounceTime = false;
     if (this._loopCount > 0) {
-      cycleTime = cycleTime % this._duration;
-      const currentLoop = Math.floor(nextTime / this._duration);
+      cycleTime = (nextTime - this._startTime) % this._duration;
+      const currentLoop = Math.floor((nextTime - this._startTime) / this._duration);
       newLoop = currentLoop > this._currentLoop;
       this._currentLoop = currentLoop;
+
+      bounceTime = this._bounce && currentLoop % 2 === 1;
+      if (bounceTime) {
+        cycleTime = this._duration - cycleTime;
+      }
     }
 
-    // 如果是反转动画，需要反转周期内的时间
-    if (newLoop) {
+    // 如果是新的循环，重置为初始状态
+    if (newLoop && !bounceTime) {
       this.target.setAttributes(this._startProps);
     }
 

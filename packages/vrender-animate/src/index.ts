@@ -13,3 +13,4 @@ export { Step } from './step';
 
 // 导出工具函数
 export * from './utils/easing-func';
+export { registerAnimate } from './register';

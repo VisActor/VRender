@@ -1,5 +1,5 @@
 import type { IGraphic } from '@visactor/vrender-core';
-import { interpolateColor, interpolatePureColorArray, interpolatePureColorArrayToStr } from '@visactor/vrender-core';
+import { interpolateColor, interpolatePureColorArrayToStr } from '@visactor/vrender-core';
 import { interpolateNumber } from './number';
 import type { IStep } from '../intreface/animate';
 

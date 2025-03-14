@@ -108,7 +108,6 @@ export class Step implements IStep {
       return;
     }
 
-    this.propKeys = Object.keys(this.props);
     const funcs: ((key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => void)[] = [];
     this.propKeys.forEach(key => {
       // 普通颜色特殊处理，需要提前解析成number[]

@@ -1,4 +1,4 @@
-import { DefaultTicker, DefaultTimeline, Animate } from '@visactor/vrender-animate';
+import { DefaultTicker, DefaultTimeline, Animate, registerAnimate } from '@visactor/vrender-animate';
 import {
   container,
   createRect,
@@ -12,6 +12,8 @@ import {
 // container.load(roughModule);
 
 vglobal.setEnv('browser');
+
+registerAnimate();
 
 let stage: any;
 
@@ -83,7 +85,7 @@ export const page = () => {
     });
     stage.defaultLayer.add(rect);
     const ticker = new DefaultTicker(stage);
-    ticker.setFPS(10);
+    ticker.setFPS(30);
     const timeline = new DefaultTimeline();
     ticker.addTimeline(timeline);
 
@@ -98,11 +100,40 @@ export const page = () => {
     ticker.on('tick', () => {
       stage.render();
     });
-    function run() {
-      requestAnimationFrame(() => {
-        run();
-      });
-    }
-    run();
+  });
+
+  addCase('Animate chain', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'red'
+    });
+    stage.defaultLayer.add(rect);
+
+    rect.animate().to({ x: 300 }, 1000, 'linear').to({ y: 300 }, 1000, 'linear').to({ fill: 'blue' }, 1000, 'linear');
+    // 中途设置值没问题，它会从orange开始
+    rect.setAttribute('fill', 'orange');
+  });
+  addCase('Animate chain loop', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'red'
+    });
+    stage.defaultLayer.add(rect);
+
+    rect
+      .animate()
+      .to({ x: 300 }, 1000, 'linear')
+      .to({ y: 300 }, 1000, 'linear')
+      .to({ fill: 'blue' }, 1000, 'linear')
+      .loop(2)
+      .bounce(true);
+    // 中途设置值没问题，它会从orange开始
+    rect.setAttribute('fill', 'purple');
   });
 };

@@ -36,6 +36,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   protected tickerHandler: ITickHandler;
   protected status: STATUS;
   protected lastFrameTime: number = -1;
+  protected lastExecutionTime: number = -1; // Track the last time we actually executed a frame
   protected tickCounts: number = 0;
   protected stage: IStage;
   timelines: ITimeline[] = [];
@@ -45,6 +46,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     super();
     this.init();
     this.lastFrameTime = -1;
+    this.lastExecutionTime = -1;
     this.tickCounts = 0;
     this.stage = stage;
     this.autoStop = true;
@@ -180,6 +182,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.status = STATUS.INITIAL;
     this.setupTickHandler();
     this.lastFrameTime = -1;
+    this.lastExecutionTime = -1;
   }
 
   /**
@@ -199,6 +202,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.timelines = [];
     this.tickerHandler?.release();
     this.tickerHandler = null;
+    this.lastExecutionTime = -1;
   }
 
   protected handleTick = (handler: ITickHandler, params?: { once?: boolean }): void => {
@@ -210,7 +214,16 @@ export class DefaultTicker extends EventEmitter implements ITicker {
       return;
     }
 
-    this._handlerTick();
+    const currentTime = handler.getTime();
+
+    // Check if enough time has passed since last execution based on the interval (FPS limit)
+    const timeFromLastExecution = this.lastExecutionTime < 0 ? this.interval : currentTime - this.lastExecutionTime;
+
+    // Only execute the frame if enough time has passed according to our interval/FPS setting
+    if (timeFromLastExecution >= this.interval) {
+      this._handlerTick();
+      this.lastExecutionTime = currentTime;
+    }
 
     if (!once) {
       handler.tick(this.interval, this.handleTick);

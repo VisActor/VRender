@@ -83,6 +83,7 @@ export const page = () => {
     });
     stage.defaultLayer.add(rect);
     const ticker = new DefaultTicker(stage);
+    ticker.setFPS(10);
     const timeline = new DefaultTimeline();
     ticker.addTimeline(timeline);
 
@@ -97,5 +98,11 @@ export const page = () => {
     ticker.on('tick', () => {
       stage.render();
     });
+    function run() {
+      requestAnimationFrame(() => {
+        run();
+      });
+    }
+    run();
   });
 };

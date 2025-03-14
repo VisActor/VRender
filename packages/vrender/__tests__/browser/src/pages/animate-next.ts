@@ -136,4 +136,35 @@ export const page = () => {
     // 中途设置值没问题，它会从orange开始
     rect.setAttribute('fill', 'purple');
   });
+
+  addCase('Bounce Demo', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'green'
+    });
+    stage.defaultLayer.add(rect);
+
+    // Create a bouncing animation that moves right, then down, then changes color
+    // With bounce enabled, it will play forward then backward
+    rect
+      .animate()
+      .to({ x: 400 }, 1000, 'linear')
+      .to({ y: 400 }, 1000, 'linear')
+      .to({ fill: 'yellow' }, 1000, 'linear')
+      .loop(3) // Play the animation 3 times
+      .bounce(true); // Enable bounce so it goes forward and backward
+
+    // Add explanatory text
+    const text = createText({
+      x: 100,
+      y: 50,
+      text: 'Bounce Demo: Animation plays forward then backward with bounce(true)',
+      fontSize: 16,
+      fill: 'black'
+    });
+    stage.defaultLayer.add(text);
+  });
 };

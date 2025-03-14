@@ -19,6 +19,8 @@ export class DefaultTimeline implements ITimeline {
   // (_endAnimatePtr, animates.length) 表示已经结束的动画
   protected _endAnimatePtr: number = -1;
 
+  declare isGlobal?: boolean;
+
   get animateCount() {
     return this.animates.length;
   }
@@ -146,3 +148,6 @@ export class DefaultTimeline implements ITimeline {
     this._currentTime = time;
   }
 }
+
+export const defaultTimeline = new DefaultTimeline();
+defaultTimeline.isGlobal = true;

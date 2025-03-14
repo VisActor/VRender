@@ -15,7 +15,6 @@ export * from './core';
 export * from './core/light';
 export * from './core/camera';
 export * from './picker';
-export * from './animate';
 export * from './resource-loader/loader';
 export * from './color-string';
 export * from './factory';
@@ -52,7 +51,6 @@ export * from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
 
-export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';
 export * from './common/xml';
 export * from './common/inversify-lite';
@@ -101,5 +99,4 @@ export * from './plugins/builtin-plugin/react-attribute-plugin';
 export * from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
 
-export * from './animate/easing-func';
 export * from './plugins/builtin-plugin/edit-module';

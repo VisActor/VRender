@@ -181,6 +181,8 @@ export interface ICustomAnimate {
   getMergedEndProps: () => Record<string, any> | void;
 }
 
+export type IAnimateConstructor = new (...args: any[]) => IAnimate;
+
 // 每一个animate绑定一个graphic，用于描述这个graphic的动画内容
 // 在timeline层面，animate相当于是一段timeslice
 export interface IAnimate {
@@ -209,6 +211,7 @@ export interface IAnimate {
   onStart: (cb: () => void) => void;
   onEnd: (cb: () => void) => void;
   onFrame: (cb: (step: IStep, ratio: number) => void) => void;
+  onRemove: (cb: () => void) => void;
   // 屏蔽属性
   preventAttr: (key: string) => void;
   // 屏蔽属性
@@ -309,6 +312,7 @@ export interface MultiMorphingAnimateConfig extends MorphingAnimateConfig {
 export interface ITimeline {
   id: number;
   animateCount: number;
+  isGlobal: boolean;
   addAnimate: (animate: IAnimate) => void;
   removeAnimate: (animate: IAnimate, release?: boolean) => void;
   tick: (delta: number) => void;
@@ -316,6 +320,10 @@ export interface ITimeline {
   pause: () => void;
   resume: () => void;
 }
+
+export type ITimelineConstructor = new (...args: any[]) => ITimeline;
+
+export type ITickerConstructor = new (...args: any[]) => ITicker;
 
 export interface ITickHandler extends Releaseable {
   avaliable: () => boolean;

@@ -39,13 +39,12 @@ import { AutoRenderPlugin } from '../plugins/builtin-plugin/auto-render-plugin';
 import { AutoRefreshPlugin } from '../plugins/builtin-plugin/auto-refresh-plugin';
 import { IncrementalAutoRenderPlugin } from '../plugins/builtin-plugin/incremental-auto-render-plugin';
 import { DirtyBoundsPlugin } from '../plugins/builtin-plugin/dirty-bounds-plugin';
-import { defaultTicker } from '../animate/default-ticker';
 import { SyncHook } from '../tapable';
 import { LayerService } from './constants';
-import { DefaultTimeline } from '../animate';
 import { application } from '../application';
 import { isBrowserEnv } from '../env-check';
 import { Factory } from '../factory';
+import { Graphic } from '../graphic';
 
 const DefaultConfig = {
   WIDTH: 500,
@@ -284,11 +283,7 @@ export class Stage extends Group implements IStage {
     this.hooks.afterRender.tap('constructor', this.afterRender);
     this._beforeRender = params.beforeRender;
     this._afterRender = params.afterRender;
-    this.ticker = params.ticker || defaultTicker;
     this.supportInteractiveLayer = params.interactiveLayer !== false;
-    this.timeline = new DefaultTimeline();
-    this.ticker.addTimeline(this.timeline);
-    this.timeline.pause();
     if (!params.optimize) {
       params.optimize = {
         animateMode: 'performance'
@@ -299,7 +294,24 @@ export class Stage extends Group implements IStage {
     if (params.background && isString(this._background) && this._background.includes('/')) {
       this.setAttributes({ background: this._background });
     }
-    this.ticker.on('afterTick', this.afterTickCb);
+
+    this.initAnimate(params);
+  }
+
+  initAnimate(params: Partial<IStageParams>) {
+    if (Graphic.Ticker && Graphic.Timeline) {
+      this.ticker = params.ticker || new Graphic.Ticker(this);
+      this.timeline = new Graphic.Timeline();
+      this.ticker.addTimeline(this.timeline);
+      this.ticker.on('tick', this.afterTickCb);
+    }
+  }
+
+  startAnimate() {
+    if (this.ticker && this.timeline) {
+      this.ticker.start();
+      this.timeline.resume();
+    }
   }
 
   pauseRender(sr: number = -1) {
@@ -725,14 +737,9 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.ticker.start();
-    this.timeline.resume();
+    this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
-    // 判断是否需要手动执行tick
-    if (!this.tickedBeforeRender) {
-      this.ticker.trySyncTickStatus();
-    }
     this.layerService.prepareStageLayer(this);
     if (!this._skipRender) {
       this.lastRenderparams = params;
@@ -801,8 +808,7 @@ export class Stage extends Group implements IStage {
     if (this.releaseStatus === 'released') {
       return;
     }
-    this.timeline.resume();
-    this.ticker.start();
+    this.startAnimate();
     const state = this.state;
     this.state = 'rendering';
     this.layerService.prepareStageLayer(this);
@@ -961,10 +967,6 @@ export class Stage extends Group implements IStage {
     return false;
   }
 
-  // 动画相关
-  startAnimate(t: number): void {
-    throw new Error('暂不支持');
-  }
   setToFrame(t: number): void {
     throw new Error('暂不支持');
   }
@@ -990,8 +992,8 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.release();
     }
     this.window.release();
-    this.ticker.remTimeline(this.timeline);
-    this.ticker.removeListener('afterTick', this.afterTickCb);
+    this.ticker?.remTimeline(this?.timeline);
+    this.ticker?.removeListener('afterTick', this.afterTickCb);
     this.renderService.renderTreeRoots = [];
   }
 

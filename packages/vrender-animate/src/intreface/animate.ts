@@ -1,20 +1,20 @@
-import type { ICustomAnimate, IGraphic, ITimeline } from '@visactor/vrender-core';
+import type { ICustomAnimate, IGraphic } from '@visactor/vrender-core';
 import type { EasingType, EasingTypeFunc } from './easing';
 import type { AnimateStatus, IAnimateStepType } from './type';
+import type { ITimeline } from './timeline';
 
 export interface IStep {
   type: IAnimateStepType;
   prev?: IStep;
   // 持续时间
   duration: number;
-  // 在animate中的位置
-  position: number;
   // 链表，下一个
   next?: IStep;
   // 属性
   props?: Record<string, any>;
   // 解析后的属性（用于性能优化，避免每次tick都解析）
-  parsedProps?: any;
+  fromParsedProps?: Record<string, any>;
+  toParsedProps?: Record<string, any>;
   // 解析后的属性列表（用于性能优化，避免每次tick都解析）
   propKeys?: string[];
   // 缓动函数
@@ -28,16 +28,18 @@ export interface IStep {
   animate: IAnimate;
 
   // 设置持续时间
-  setDuration: (duration: number) => void;
+  setDuration: (duration: number, updateDownstream?: boolean) => void;
   // 获取持续时间
   getDuration: () => number;
-  // 确定插值函数（在开始的时候就确定，避免每次tick都解析）
-  determineInterpolationFunction: () => void;
-  // 确定更新函数（在开始的时候就确定，避免每次tick都解析）
-  determineUpdateFunction: () => void;
+  // // 确定插值函数（在开始的时候就确定，避免每次tick都解析）
+  // determineInterpolationFunction: () => void;
+  // // 确定更新函数（在开始的时候就确定，避免每次tick都解析）
+  // determineUpdateFunction: () => void;
+  // 确定插值更新函数（在开始的时候就确定，避免每次tick都解析）
+  determineInterpolateUpdateFunction: () => void;
 
   // 设置开始时间
-  setStartTime: (time: number) => void;
+  setStartTime: (time: number, updateDownstream?: boolean) => void;
   // 获取开始时间
   getStartTime: () => number;
 
@@ -48,19 +50,15 @@ export interface IStep {
   // 开始执行的时候调用（如果有循环，那每个周期都会调用）
   onStart: () => void;
   // 结束执行的时候调用（如果有循环，那每个周期都会调用）
-  onEnd: () => void;
+  onEnd: (cb?: (animate: IAnimate, step: IStep) => void) => void;
   // 更新执行的时候调用（如果有循环，那每个周期都会调用）
   onUpdate: (end: boolean, ratio: number, out: Record<string, any>) => void;
-  // 结束的时候调用（如果有循环，会在整个循环最终结束的时候调用）
-  onFinish: () => void;
 }
 
 export interface IAnimate {
   readonly id: string | number;
   status: AnimateStatus;
   target: IGraphic;
-
-  interpolateFunc: (key: string, ratio: number, from: any, to: any, nextAttributes: any) => boolean;
 
   _onStart?: (() => void)[];
   _onFrame?: ((step: IStep, ratio: number) => void)[];
@@ -131,11 +129,6 @@ export interface IAnimate {
   loop: (n: number) => IAnimate;
   // 反弹动画
   bounce: (b: boolean) => IAnimate;
-
-  // 下一个动画指针
-  nextAnimate?: IAnimate;
-  // 上一个动画指针
-  prevAnimate?: IAnimate;
 
   advance: (delta: number) => void;
 

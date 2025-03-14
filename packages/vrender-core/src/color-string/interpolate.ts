@@ -186,6 +186,16 @@ export function interpolatePureColorArray(
     from[3] + (to[3] - from[3]) * ratio
   ];
 }
+export function interpolatePureColorArrayToStr(
+  from: [number, number, number, number],
+  to: [number, number, number, number],
+  ratio: number
+): string {
+  // eslint-disable-next-line max-len
+  return `rgba(${from[0] + (to[0] - from[0]) * ratio},${from[1] + (to[1] - from[1]) * ratio},${
+    from[2] + (to[2] - from[2]) * ratio
+  },${from[3] + (to[3] - from[3]) * ratio})`;
+}
 
 const _fromColorRGB: [number, number, number, number] = [0, 0, 0, 0];
 const _toColorRGB: [number, number, number, number] = [0, 0, 0, 0];

@@ -112,6 +112,7 @@ export interface IAnimate {
   release: () => void;
   // 获取持续的时长
   getDuration: () => number;
+  getTotalDuration: () => number;
   // 获取动画开始时间（注意并不是子动画的startAt）
   getStartTime: () => number;
   // 等待delay

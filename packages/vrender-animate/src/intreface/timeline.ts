@@ -16,24 +16,14 @@ export interface ITimeline {
   pause: () => void;
   // 恢复动画
   resume: () => void;
-  // 设置开始时间
-  setStartTime: (time: number) => void;
-  // 获取开始时间
-  getStartTime: () => number;
-  // 获取当前时间
-  getCurrentTime: () => number;
-  // 设置当前时间
-  setCurrentTime: (time: number) => void;
   // 获取动画总时长
   getTotalDuration: () => number;
-  // 获取动画的播放状态
-  getPlayState: () => 'playing' | 'paused' | 'stopped';
   // 获取动画的播放速度
   getPlaySpeed: () => number;
   // 设置动画的播放速度
   setPlaySpeed: (speed: number) => void;
-  // 获取动画的播放方向
-  getPlayDirection: () => 'forward' | 'backward';
-  // 设置动画的播放方向
-  setPlayDirection: (direction: 'forward' | 'backward') => void;
+  // 获取动画的播放状态
+  getPlayState: () => 'playing' | 'paused' | 'stopped';
+  // 获取动画是否正在运行
+  isRunning: () => boolean;
 }

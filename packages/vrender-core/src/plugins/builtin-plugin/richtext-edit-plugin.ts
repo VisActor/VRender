@@ -8,6 +8,7 @@ import {
   createRichText,
   createText,
   getRichTextBounds,
+  Graphic,
   RichText
 } from '../../graphic';
 import type {
@@ -27,7 +28,6 @@ import type {
   ITicker,
   ITimeline
 } from '../../interface';
-import { Animate, DefaultTicker, DefaultTimeline } from '../../animate';
 import { EditModule, findConfigIndexByCursorIdx, getDefaultCharacterConfig } from './edit-module';
 import { application } from '../../application';
 import { getWordStartEndIdx } from '../../graphic/richtext/utils';
@@ -148,8 +148,8 @@ export class RichTextEditPlugin implements IPlugin {
   shadowPlaceHolder: IRichText;
   shadowBounds: IRect;
 
-  ticker: ITicker;
-  timeline: ITimeline;
+  ticker?: ITicker;
+  timeline?: ITimeline;
 
   currRt: IRichText;
 
@@ -208,8 +208,8 @@ export class RichTextEditPlugin implements IPlugin {
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
     this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
     this.updateCbs = [];
-    this.timeline = new DefaultTimeline();
-    this.ticker = new DefaultTicker([this.timeline]);
+    this.timeline = Graphic.Timeline && new Graphic.Timeline();
+    this.ticker = Graphic.Ticker && new Graphic.Ticker([this.timeline]);
     this.deltaX = 0;
     this.deltaY = 0;
   }
@@ -933,6 +933,9 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected addAnimateToLine(line: ILine) {
+    if (!Graphic.Animate) {
+      return;
+    }
     line.setAttributes({ opacity: 1 });
     line.animates &&
       line.animates.forEach(animate => {

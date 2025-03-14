@@ -15,6 +15,7 @@ export interface IStep {
   // 解析后的属性（用于性能优化，避免每次tick都解析）
   fromParsedProps?: Record<string, any>;
   toParsedProps?: Record<string, any>;
+  fromProps?: Record<string, any>;
   // 解析后的属性列表（用于性能优化，避免每次tick都解析）
   propKeys?: string[];
   // 缓动函数
@@ -79,9 +80,10 @@ export interface IAnimate {
   from: (props: Record<string, any>, duration: number, easing: EasingType) => this;
   pause: () => void;
   resume: () => void;
-  onStart: (cb: () => void) => void;
-  onEnd: (cb: () => void) => void;
+  onStart: (cb?: () => void) => void;
+  onEnd: (cb?: () => void) => void;
   onFrame: (cb: (step: IStep, ratio: number) => void) => void;
+  onRemove: (cb?: () => void) => void;
   // 屏蔽属性
   preventAttr: (key: string) => void;
   // 屏蔽属性
@@ -124,7 +126,7 @@ export interface IAnimate {
   parallel: (animate: IAnimate) => this;
 
   // 反转动画
-  reversed: (r: boolean) => IAnimate;
+  // reversed: (r: boolean) => IAnimate;
   // 循环动画
   loop: (n: number) => IAnimate;
   // 反弹动画

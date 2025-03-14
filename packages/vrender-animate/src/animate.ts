@@ -3,45 +3,67 @@ import type { EasingType } from './intreface/easing';
 import { AnimateStatus, AnimateStepType } from './intreface/type';
 import { Step } from './step';
 import type { ITimeline } from './intreface/timeline';
-import type { ICustomAnimate, IGraphic } from '@visactor/vrender-core';
-
-let uniqueId = 0;
+import { Generator, type ICustomAnimate, type IGraphic } from '@visactor/vrender-core';
+import { defaultTimeline } from './timeline';
 
 export class Animate implements IAnimate {
   readonly id: string | number;
-  status: AnimateStatus = AnimateStatus.INITIAL;
+  status: AnimateStatus;
   target: IGraphic;
 
   // 回调函数列表
-  _onStart?: (() => void)[] = [];
-  _onFrame?: ((step: IStep, ratio: number) => void)[] = [];
-  _onEnd?: (() => void)[] = [];
-  _onRemove?: (() => void)[] = [];
+  _onStart?: (() => void)[];
+  _onFrame?: ((step: IStep, ratio: number) => void)[];
+  _onEnd?: (() => void)[];
+  _onRemove?: (() => void)[];
 
   // 时间控制
   private _timeline: ITimeline;
-  private _startTime: number = 0;
-  private _duration: number = 0;
-  private _totalDuration: number = 0;
+  private _startTime: number;
+  private _duration: number;
+  private _totalDuration: number;
 
   // 动画控制
-  private _reversed: boolean = false;
-  private _loopCount: number = 0;
-  private _bounce: boolean = false;
+  // private _reversed: boolean;
+  private _loopCount: number;
+  private _currentLoop: number;
+  private _bounce: boolean;
 
   // 链表头节点和尾节点
-  private _firstStep: IStep | null = null;
-  private _lastStep: IStep | null = null;
+  private _firstStep: IStep | null;
+  private _lastStep: IStep | null;
 
   // 初始属性和屏蔽的属性
-  private _startProps: Record<string, any> = {};
-  private _endProps: Record<string, any> = {};
-  private _preventAttrs: Set<string> = new Set();
+  private _startProps: Record<string, any>;
+  private _endProps: Record<string, any>;
+  private _preventAttrs: Set<string>;
 
-  protected currentTime: number = 0;
+  protected currentTime: number;
+  slience?: boolean;
 
-  constructor(id: string | number = uniqueId++) {
+  constructor(
+    id: string | number = Generator.GenAutoIncrementId(),
+    timeline: ITimeline = defaultTimeline,
+    slience?: boolean
+  ) {
     this.id = id;
+    this.status = AnimateStatus.INITIAL;
+    this._timeline = timeline;
+    timeline.addAnimate(this);
+    this.slience = slience;
+    this._startTime = 0;
+    this._duration = 0;
+    this._totalDuration = 0;
+    // this._reversed = false;
+    this._loopCount = 0;
+    this._currentLoop = 0;
+    this._bounce = false;
+    this._firstStep = null;
+    this._lastStep = null;
+    this._startProps = {};
+    this._endProps = {};
+    this._preventAttrs = new Set();
+    this.currentTime = 0;
   }
 
   /**
@@ -105,11 +127,23 @@ export class Animate implements IAnimate {
       this._lastStep = step;
     }
 
-    // 保存最终属性
+    /* 预设置step的属性，基于性能考虑，实现比较复杂 */
+    // step.propKeys为真实的props属性的key
     step.propKeys = step.propKeys || Object.keys(step.props);
+    // step.props为包含前序step的props的最终props，用于跳帧等场景，可以直接设置
+    Object.keys(this._endProps).forEach(key => {
+      step.props[key] = step.props[key] ?? this._endProps[key];
+    });
+    // 将最终的props设置到step.props中
     step.propKeys.forEach(key => {
       this._endProps[key] = step.props[key];
     });
+    // 给step的props的原型链上绑定Animate的_startProps
+    // 下一个step在查找上一个step.props（也就是找到它的fromProps）的时候，就能拿到初始的props了
+    // 比如：
+    // rect.animate().to({ x: 100 }, 1000, 'linear').to({ y: 100 }, 1000, 'linear');
+    // 在第二个step查找fromProps的时候，就能拿到第一个step的endProps中的y值（在原型链上）
+    Object.setPrototypeOf(step.props, this._startProps);
 
     this.updateDuration();
 
@@ -168,7 +202,7 @@ export class Animate implements IAnimate {
       }
       this._onStart.push(cb);
     } else {
-      this._onStart.forEach(cb => cb());
+      this._onStart?.forEach(cb => cb());
       // 设置开始属性，Animate不会重复执行start所以不需要判断firstStart
       Object.keys(this._endProps).forEach(key => {
         this._startProps[key] = this.target.getComputedAttribute(key);
@@ -186,7 +220,7 @@ export class Animate implements IAnimate {
       }
       this._onEnd.push(cb);
     } else {
-      this._onEnd.forEach(cb => cb());
+      this._onEnd?.forEach(cb => cb());
     }
   }
 
@@ -199,6 +233,20 @@ export class Animate implements IAnimate {
         this._onFrame = [];
       }
       this._onFrame.push(cb);
+    }
+  }
+
+  /**
+   * 注册移除回调
+   */
+  onRemove(cb?: () => void): void {
+    if (cb) {
+      if (!this._onRemove) {
+        this._onRemove = [];
+      }
+      this._onRemove.push(cb);
+    } else {
+      this._onRemove?.forEach(cb => cb());
     }
   }
 
@@ -419,19 +467,20 @@ export class Animate implements IAnimate {
     return this;
   }
 
-  /**
-   * 设置动画是否反转
-   */
-  reversed(r: boolean): this {
-    this._reversed = r;
-    return this;
-  }
+  // /**
+  //  * 设置动画是否反转
+  //  */
+  // reversed(r: boolean): this {
+  //   this._reversed = r;
+  //   return this;
+  // }
 
   /**
    * 设置动画循环次数
    */
   loop(n: number): this {
     this._loopCount = n;
+    this.updateDuration();
     return this;
   }
 
@@ -462,19 +511,24 @@ export class Animate implements IAnimate {
 
     this.status = AnimateStatus.RUNNING;
 
-    const deltaFotStep = nextTime - this._startTime;
-
     // 如果是第一次运行，触发开始回调
     if (this.currentTime <= this._startTime) {
       this.onStart();
     }
     this.currentTime = nextTime;
 
-    let cycleTime = deltaFotStep % this._duration;
+    let cycleTime = nextTime - this._startTime;
+    let newLoop = false;
+    if (this._loopCount > 0) {
+      cycleTime = cycleTime % this._duration;
+      const currentLoop = Math.floor(nextTime / this._duration);
+      newLoop = currentLoop > this._currentLoop;
+      this._currentLoop = currentLoop;
+    }
 
     // 如果是反转动画，需要反转周期内的时间
-    if (this._reversed) {
-      cycleTime = this._duration - cycleTime;
+    if (newLoop) {
+      this.target.setAttributes(this._startProps);
     }
 
     // 选择起始步骤和遍历方向
@@ -483,41 +537,20 @@ export class Animate implements IAnimate {
     if (this._lastStep === this._firstStep) {
       targetStep = this._firstStep;
     } else {
-      let currentStep: IStep | null = null;
-      if (this._reversed) {
-        // 反转时从最后一个步骤开始查找
-        currentStep = this._lastStep;
+      let currentStep: IStep = this._firstStep;
+      // 从前向后寻找当前时间所在的step
+      while (currentStep) {
+        const stepStartTime = currentStep.getStartTime();
+        const stepDuration = currentStep.getDuration();
+        const stepEndTime = stepStartTime + stepDuration;
 
-        // 从后向前寻找当前时间所在的step
-        while (currentStep) {
-          const stepEndTime = currentStep.getStartTime() + currentStep.getDuration();
-
-          // 反转时，我们需要从动画结束时间向开始时间查找
-          if (cycleTime <= stepEndTime && cycleTime > currentStep.getStartTime()) {
-            targetStep = currentStep;
-            break;
-          }
-
-          currentStep = currentStep.prev;
+        // 找到当前周期时间所在的step
+        if (cycleTime >= stepStartTime && cycleTime < stepEndTime) {
+          targetStep = currentStep;
+          break;
         }
-      } else {
-        // 正常顺序从第一个步骤开始查找
-        currentStep = this._firstStep;
 
-        // 从前向后寻找当前时间所在的step
-        while (currentStep) {
-          const stepStartTime = currentStep.getStartTime();
-          const stepDuration = currentStep.getDuration();
-          const stepEndTime = stepStartTime + stepDuration;
-
-          // 找到当前周期时间所在的step
-          if (cycleTime >= stepStartTime && cycleTime < stepEndTime) {
-            targetStep = currentStep;
-            break;
-          }
-
-          currentStep = currentStep.next;
-        }
+        currentStep = currentStep.next;
       }
     }
 
@@ -532,9 +565,7 @@ export class Animate implements IAnimate {
     const stepStartTime = targetStep.getStartTime();
     const stepDuration = targetStep.getDuration();
 
-    const ratio = this._reversed
-      ? (stepStartTime + stepDuration - cycleTime) / stepDuration
-      : (cycleTime - stepStartTime) / stepDuration;
+    const ratio = (cycleTime - stepStartTime) / stepDuration;
     // // 限制ratio在0-1之间
     // ratio = Math.max(0, Math.min(1, ratio));
 

@@ -2,6 +2,7 @@ import type { IAnimate } from './animate';
 
 export interface ITimeline {
   id: number;
+  isGlobal?: boolean;
   // 包含的动画数量（animate数组的数量），包含所有动画
   animateCount: number;
   // 添加动画

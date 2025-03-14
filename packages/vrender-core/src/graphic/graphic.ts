@@ -27,6 +27,7 @@ import type {
 import { Node } from './node-tree';
 import type {
   IAnimate,
+  IAnimateConstructor,
   IAnimateTarget,
   IGlyphGraphicAttribute,
   IGroup,
@@ -36,12 +37,13 @@ import type {
   IStage,
   IStep,
   ISubAnimate,
-  ISymbolClass
+  ISymbolClass,
+  ITickerConstructor,
+  ITimelineConstructor
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
 import { application } from '../application';
-import { Animate, DefaultStateAnimateConfig, defaultTimeline } from '../animate';
 import { interpolateColor } from '../color-string/interpolate';
 import { CustomPath2D } from '../common/custom-path2d';
 import { ResourceLoader } from '../resource-loader/loader';
@@ -52,6 +54,7 @@ import { parsePadding } from '../common/utils';
 import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './builtin-symbol';
 import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
+import { DefaultStateAnimateConfig } from '../animate/config';
 
 const _tempBounds = new AABBBounds();
 /**
@@ -166,6 +169,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   extends Node
   implements IGraphic<T>, IAnimateTarget
 {
+  static Animate: IAnimateConstructor;
+  static Timeline: ITimelineConstructor;
+  static Ticker: ITickerConstructor;
+  static defaultTimeline: ITimelineConstructor;
   /**
    * Mixes all enumerable properties and methods from a source object to Element.
    * @param source - The source of properties and methods to mix in.
@@ -899,7 +906,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (!this.animates) {
       this.animates = new Map();
     }
-    const animate = new Animate(
+    const animate = new Graphic.Animate(
       params?.id,
       params?.timeline ?? (this.stage && this.stage.getTimeline()),
       params?.slience
@@ -1312,7 +1319,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         // 设置timeline为所属的stage上的timeline，但如果timeline并不是默认的timeline，就不用覆盖
         const timeline = stage.getTimeline();
         this.animates.forEach(a => {
-          if (a.timeline === defaultTimeline) {
+          if (a.timeline.isGlobal) {
             a.setTimeline(timeline);
           }
         });

@@ -430,7 +430,7 @@ export class Animate implements IAnimate {
     // 计算所有动画结束的最大时间点
     let maxEndTime = 0;
     list.forEach(animate => {
-      const endTime = animate.getStartTime() + animate.getDuration();
+      const endTime = animate.getStartTime() + animate.getTotalDuration();
       maxEndTime = Math.max(maxEndTime, endTime);
     });
 
@@ -447,7 +447,7 @@ export class Animate implements IAnimate {
     }
 
     // 计算指定动画结束的时间点
-    const endTime = animate.getStartTime() + animate.getDuration();
+    const endTime = animate.getStartTime() + animate.getTotalDuration();
 
     // 设置当前动画的开始时间为结束时间
     return this.startAt(endTime);
@@ -497,9 +497,9 @@ export class Animate implements IAnimate {
    */
   advance(delta: number): void {
     const nextTime = this.currentTime + delta;
-
     // 如果还没开始，直接return
     if (nextTime < this._startTime) {
+      this.currentTime = nextTime;
       return;
     }
     // 如果已经结束，设置状态后return
@@ -598,5 +598,9 @@ export class Animate implements IAnimate {
 
     this._duration = this._lastStep.getStartTime() + this._lastStep.getDuration();
     this._totalDuration = this._duration * (this._loopCount + 1);
+  }
+
+  getTotalDuration(): number {
+    return this._totalDuration;
   }
 }

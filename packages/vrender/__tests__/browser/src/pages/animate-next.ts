@@ -13,7 +13,7 @@ import {
 
 vglobal.setEnv('browser');
 
-registerAnimate();
+// registerAnimate();
 
 let stage: any;
 
@@ -165,6 +165,76 @@ export const page = () => {
       fontSize: 16,
       fill: 'black'
     });
+    stage.defaultLayer.add(text);
+  });
+  addCase('Animate Schedule', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'green'
+    });
+    stage.defaultLayer.add(rect);
+
+    // Create a bouncing animation that moves right, then down, then changes color
+    // With bounce enabled, it will play forward then backward
+    const rectAnimate = rect
+      .animate()
+      .to({ x: 400 }, 1000, 'linear')
+      .to({ y: 400 }, 1000, 'linear')
+      .to({ fill: 'yellow' }, 1000, 'linear')
+      .loop(3) // Play the animation 3 times
+      .bounce(true); // Enable bounce so it goes forward and backward
+
+    // Add explanatory text
+    const text = createText({
+      x: 300,
+      y: 50,
+      text: 'Animate Schedule',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center',
+      opacity: 0
+    });
+    const textAnimate = text.animate().to({ opacity: 1 }, 1000, 'linear');
+    textAnimate.after(rectAnimate);
+    stage.defaultLayer.add(text);
+  });
+
+  addCase('startAt', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'green'
+    });
+    stage.defaultLayer.add(rect);
+
+    // Create a bouncing animation that moves right, then down, then changes color
+    // With bounce enabled, it will play forward then backward
+    const rectAnimate = rect
+      .animate()
+      .startAt(2000)
+      .to({ x: 400 }, 1000, 'linear')
+      .to({ y: 400 }, 1000, 'linear')
+      .to({ fill: 'yellow' }, 1000, 'linear')
+      .loop(3) // Play the animation 3 times
+      .bounce(true); // Enable bounce so it goes forward and backward
+
+    // Add explanatory text
+    const text = createText({
+      x: 300,
+      y: 50,
+      text: 'Animate Schedule',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center',
+      opacity: 0
+    });
+    const textAnimate = text.animate().to({ opacity: 1 }, 1000, 'linear');
+    textAnimate.after(rectAnimate);
     stage.defaultLayer.add(text);
   });
 };

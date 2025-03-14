@@ -1,6 +1,6 @@
 import { Graphic } from '@visactor/vrender-core';
 import { Animate } from './animate';
-import { defaultTimeline, DefaultTimeline } from './timeline';
+import { DefaultTimeline } from './timeline';
 import { DefaultTicker } from './ticker/default-ticker';
 
 export function registerAnimate() {
@@ -12,11 +12,5 @@ export function registerAnimate() {
   }
   if (!(Graphic as any).Ticker) {
     (Graphic as any).Ticker = DefaultTicker;
-  }
-  if (!(Graphic as any).defaultTicker) {
-    (Graphic as any).defaultTicker = DefaultTicker;
-  }
-  if (!(Graphic as any).defaultTimeline) {
-    (Graphic as any).defaultTimeline = defaultTimeline;
   }
 }

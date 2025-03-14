@@ -172,7 +172,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   static Animate: IAnimateConstructor;
   static Timeline: ITimelineConstructor;
   static Ticker: ITickerConstructor;
-  static defaultTimeline: ITimelineConstructor;
   /**
    * Mixes all enumerable properties and methods from a source object to Element.
    * @param source - The source of properties and methods to mix in.
@@ -914,6 +913,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   animate(params?: IGraphicAnimateParams) {
+    if (!Graphic.Animate) {
+      return null;
+    }
     if (!this.animates) {
       this.animates = new Map();
     }
@@ -1335,6 +1337,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         this.animates.forEach(a => {
           if (a.timeline.isGlobal) {
             a.setTimeline(timeline);
+            timeline.addAnimate(a);
           }
         });
       }

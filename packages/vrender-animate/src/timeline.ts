@@ -91,8 +91,10 @@ export class DefaultTimeline implements ITimeline {
     if (this._endAnimatePtr < 0) {
       return;
     }
-    animate._onRemove && animate._onRemove.forEach(cb => cb());
-    release && animate.release();
+    if (release) {
+      animate._onRemove && animate._onRemove.forEach(cb => cb());
+      animate.release();
+    }
 
     index = index ?? this.animates.indexOf(animate);
     // 交换位置
@@ -149,5 +151,6 @@ export class DefaultTimeline implements ITimeline {
   }
 }
 
+// 不会使用，存粹做临时存储用，请一定要放置到stage中才行
 export const defaultTimeline = new DefaultTimeline();
 defaultTimeline.isGlobal = true;

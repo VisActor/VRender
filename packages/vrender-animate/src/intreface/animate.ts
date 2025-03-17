@@ -1,7 +1,11 @@
-import type { ICustomAnimate, IGraphic } from '@visactor/vrender-core';
+import type { IGraphic } from '@visactor/vrender-core';
 import type { EasingType, EasingTypeFunc } from './easing';
 import type { AnimateStatus, IAnimateStepType } from './type';
 import type { ITimeline } from './timeline';
+
+export interface ICustomAnimate extends IStep {
+  type: IAnimateStepType;
+}
 
 export interface IStep {
   type: IAnimateStepType;
@@ -32,10 +36,6 @@ export interface IStep {
   setDuration: (duration: number, updateDownstream?: boolean) => void;
   // 获取持续时间
   getDuration: () => number;
-  // // 确定插值函数（在开始的时候就确定，避免每次tick都解析）
-  // determineInterpolationFunction: () => void;
-  // // 确定更新函数（在开始的时候就确定，避免每次tick都解析）
-  // determineUpdateFunction: () => void;
   // 确定插值更新函数（在开始的时候就确定，避免每次tick都解析）
   determineInterpolateUpdateFunction: () => void;
 
@@ -44,6 +44,7 @@ export interface IStep {
   // 获取开始时间
   getStartTime: () => number;
 
+  bind: (target: IGraphic, animate: IAnimate) => void;
   // 在第一次绑定到Animate的时候触发
   onBind: () => void;
   // 第一次执行的时候调用
@@ -53,7 +54,12 @@ export interface IStep {
   // 结束执行的时候调用（如果有循环，那每个周期都会调用）
   onEnd: (cb?: (animate: IAnimate, step: IStep) => void) => void;
   // 更新执行的时候调用（如果有循环，那每个周期都会调用）
+  update: (end: boolean, ratio: number, out: Record<string, any>) => void;
   onUpdate: (end: boolean, ratio: number, out: Record<string, any>) => void;
+
+  getEndProps: () => Record<string, any> | void;
+  getFromProps: () => Record<string, any> | void;
+  getMergedEndProps: () => Record<string, any> | void;
 }
 
 export interface IAnimate {
@@ -138,4 +144,10 @@ export interface IAnimate {
   // 设置开始时间（startAt之前是完全不会进入动画生命周期的）
   // 它和wait不一样，如果调用的是wait，wait过程中还算是一个动画阶段，只是空的阶段，而startAt之前是完全不会进入动画生命周期的
   startAt: (t: number) => IAnimate;
+
+  // 重新同步和计算props，用于内部某些step发生了变更后，重新计算自身
+  reSyncProps: () => void;
+
+  // 更新duration
+  updateDuration: () => void;
 }

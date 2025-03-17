@@ -13,7 +13,7 @@ import {
 
 vglobal.setEnv('browser');
 
-// registerAnimate();
+registerAnimate();
 
 let stage: any;
 
@@ -131,8 +131,7 @@ export const page = () => {
       .to({ x: 300 }, 1000, 'linear')
       .to({ y: 300 }, 1000, 'linear')
       .to({ fill: 'blue' }, 1000, 'linear')
-      .loop(2)
-      .bounce(true);
+      .loop(2);
     // 中途设置值没问题，它会从orange开始
     rect.setAttribute('fill', 'purple');
   });

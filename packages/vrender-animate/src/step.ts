@@ -38,27 +38,23 @@ export class Step implements IStep {
 
   protected _endCb?: (animate: IAnimate, step: IStep) => void;
 
-  constructor(
-    type: IAnimateStepType,
-    props: Record<string, any>,
-    duration: number,
-    easing: EasingType,
-    animate: IAnimate
-  ) {
+  constructor(type: IAnimateStepType, props: Record<string, any>, duration: number, easing: EasingType) {
     this.type = type;
     this.props = props;
     this.duration = duration;
-    this.animate = animate;
-    this.target = animate.target;
     // 设置缓动函数
     if (easing) {
       this.easing = typeof easing === 'function' ? easing : Easing[easing];
     }
-
-    this.onBind();
     if (type === 'wait') {
       this.onUpdate = noop;
     }
+  }
+
+  bind(target: IGraphic, animate: IAnimate): void {
+    this.target = target;
+    this.animate = animate;
+    this.onBind();
   }
 
   append(step: IStep): void {
@@ -79,6 +75,7 @@ export class Step implements IStep {
       currentStartTime += currentStep.duration;
       currentStep = currentStep.next;
     }
+    this.animate.updateDuration();
   }
 
   getLastProps(): any {
@@ -177,11 +174,13 @@ export class Step implements IStep {
    * 更新执行的时候调用
    * 如果跳帧了就不一定会执行
    */
-  onUpdate = (end: boolean, ratio: number, out: Record<string, any>): void => {
+  update = (end: boolean, ratio: number, out: Record<string, any>): void => {
+    // TODO 需要修复，只有在开始的时候才调用
     this.onStart();
     if (!this.props || !this.propKeys) {
       return;
     }
+    this.onUpdate(end, ratio, out);
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
     this.interpolateUpdateFunctions.forEach((func, index) => {
@@ -190,6 +189,10 @@ export class Step implements IStep {
       const toValue = this.props[key];
       func(key, fromValue, toValue, easedRatio, this, this.target);
     });
+  };
+
+  onUpdate = (end: boolean, ratio: number, out: Record<string, any>): void => {
+    // ...
   };
 
   /**
@@ -203,5 +206,29 @@ export class Step implements IStep {
       this.target.setAttributes(this.props);
       this._endCb(this.animate, this);
     }
+  }
+
+  /**
+   * 获取结束的属性，包含前序的终值，是merge过的
+   * @returns
+   */
+  getEndProps(): Record<string, any> | void {
+    return this.props;
+  }
+
+  /**
+   * 获取开始的属性，是前序的终值
+   * @returns
+   */
+  getFromProps(): Record<string, any> | void {
+    return this.fromProps;
+  }
+
+  /**
+   * 获取结束的属性，包含前序的终值，是merge过的，同getEndProps
+   * @returns
+   */
+  getMergedEndProps(): Record<string, any> | void {
+    return this.getEndProps();
   }
 }

@@ -25,7 +25,7 @@ export class Step implements IStep {
     step: IStep,
     target: IGraphic
   ) => void)[];
-  easing?: EasingTypeFunc;
+  easing: EasingTypeFunc;
   animate: IAnimate;
   target: IGraphic;
   fromProps: Record<string, any>;
@@ -45,6 +45,8 @@ export class Step implements IStep {
     // 设置缓动函数
     if (easing) {
       this.easing = typeof easing === 'function' ? easing : Easing[easing];
+    } else {
+      this.easing = Easing.linear;
     }
     if (type === 'wait') {
       this.onUpdate = noop;
@@ -163,10 +165,10 @@ export class Step implements IStep {
   onStart(): void {
     if (!this._hasFirstRun) {
       this._hasFirstRun = true;
-      this.onFirstRun();
       // 获取上一步的属性值作为起始值
       this.fromProps = this.getLastProps();
       this.determineInterpolateUpdateFunction();
+      this.onFirstRun();
     }
   }
 
@@ -174,13 +176,12 @@ export class Step implements IStep {
    * 更新执行的时候调用
    * 如果跳帧了就不一定会执行
    */
-  update = (end: boolean, ratio: number, out: Record<string, any>): void => {
+  update(end: boolean, ratio: number, out: Record<string, any>): void {
     // TODO 需要修复，只有在开始的时候才调用
     this.onStart();
     if (!this.props || !this.propKeys) {
       return;
     }
-    this.onUpdate(end, ratio, out);
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
     this.interpolateUpdateFunctions.forEach((func, index) => {
@@ -189,7 +190,8 @@ export class Step implements IStep {
       const toValue = this.props[key];
       func(key, fromValue, toValue, easedRatio, this, this.target);
     });
-  };
+    this.onUpdate(end, easedRatio, out);
+  }
 
   onUpdate = (end: boolean, ratio: number, out: Record<string, any>): void => {
     // ...
@@ -212,7 +214,7 @@ export class Step implements IStep {
    * 获取结束的属性，包含前序的终值，是merge过的
    * @returns
    */
-  getEndProps(): Record<string, any> | void {
+  getEndProps(): Record<string, any> {
     return this.props;
   }
 
@@ -220,7 +222,7 @@ export class Step implements IStep {
    * 获取开始的属性，是前序的终值
    * @returns
    */
-  getFromProps(): Record<string, any> | void {
+  getFromProps(): Record<string, any> {
     return this.fromProps;
   }
 

@@ -15,3 +15,4 @@ export { Step } from './step';
 export * from './utils/easing-func';
 export { registerAnimate } from './register';
 export { ACustomAnimate } from './custom/custom-animate';
+export { IncreaseCount } from './custom/number';

@@ -1,4 +1,4 @@
-import { DefaultTicker, DefaultTimeline, Animate, registerAnimate } from '@visactor/vrender-animate';
+import { DefaultTicker, DefaultTimeline, Animate, registerAnimate, IncreaseCount } from '@visactor/vrender-animate';
 import {
   container,
   createRect,
@@ -39,7 +39,7 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
 
 export const page = () => {
   const btnContainer = document.createElement('div');
-  btnContainer.style.width = '80%';
+  btnContainer.style.width = '1000px';
   btnContainer.style.background = '#cecece';
   btnContainer.style.display = 'flex';
   btnContainer.style.flexDirection = 'row';
@@ -234,6 +234,25 @@ export const page = () => {
     });
     const textAnimate = text.animate().to({ opacity: 1 }, 1000, 'linear');
     textAnimate.after(rectAnimate);
+    stage.defaultLayer.add(text);
+  });
+  addCase('custom IncreaseCount', btnContainer, stage => {
+    // Add explanatory text
+    const text = createText({
+      x: 300,
+      y: 50,
+      text: '0%咿呀呀',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center',
+      opacity: 1
+    });
+    const customAnimate = new IncreaseCount(null, { text: '12,345,678%咿呀呀' }, 1000, 'linear', {
+      decimalLength: 0,
+      format: 'thousandth',
+      formatTemplate: '{{var}}%咿呀呀'
+    });
+    text.animate().play(customAnimate);
     stage.defaultLayer.add(text);
   });
 };

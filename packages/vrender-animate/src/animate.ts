@@ -547,6 +547,7 @@ export class Animate implements IAnimate {
     }
     // 如果已经结束，设置状态后return
     if (nextTime >= this._startTime + this._totalDuration) {
+      this._lastStep?.onEnd();
       this.onEnd();
       this.status = AnimateStatus.END;
       return;

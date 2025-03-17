@@ -1,9 +1,9 @@
-import type { IAnimate, IStep } from './intreface/animate';
+import type { IAnimate, IStep, ICustomAnimate } from './intreface/animate';
 import type { EasingType } from './intreface/easing';
 import { AnimateStatus, AnimateStepType } from './intreface/type';
 import { Step } from './step';
 import type { ITimeline } from './intreface/timeline';
-import { Generator, type ICustomAnimate, type IGraphic } from '@visactor/vrender-core';
+import { Generator, type IGraphic } from '@visactor/vrender-core';
 import { defaultTimeline } from './timeline';
 
 export class Animate implements IAnimate {
@@ -115,8 +115,16 @@ export class Animate implements IAnimate {
    */
   to(props: Record<string, any>, duration: number = 300, easing: EasingType = 'linear'): this {
     // 创建新的step
-    const step = new Step(AnimateStepType.to, props, duration, easing, this);
+    const step = new Step(AnimateStepType.to, props, duration, easing);
 
+    this.updateStepAfterAppend(step);
+
+    step.bind(this.target, this);
+
+    return this;
+  }
+
+  protected updateStepAfterAppend(step: IStep): void {
     // 如果是第一个step
     if (!this._firstStep) {
       this._firstStep = step;
@@ -125,6 +133,23 @@ export class Animate implements IAnimate {
       // 添加到链表末尾
       this._lastStep.append(step);
       this._lastStep = step;
+    }
+
+    this.parseStepProps(step);
+
+    this.updateDuration();
+  }
+
+  /**
+   * 解析step的props
+   * 1. 预先获取step的propKeys并保存
+   * 2. 将截止目前的最新props设置到step.props中，这样该props上的属性就是最终的属性了，跳帧时直接设置即可
+   * 3. 同步到_endProps中，保存这个Animate实例的最终props
+   * 4. 给step的props的原型链上绑定Animate的_startProps，这样在下一个step查找fromProps的时候，一定能拿得到值
+   */
+  parseStepProps(step: IStep) {
+    if (!this._lastStep) {
+      return;
     }
 
     /* 预设置step的属性，基于性能考虑，实现比较复杂 */
@@ -144,10 +169,39 @@ export class Animate implements IAnimate {
     // rect.animate().to({ x: 100 }, 1000, 'linear').to({ y: 100 }, 1000, 'linear');
     // 在第二个step查找fromProps的时候，就能拿到第一个step的endProps中的y值（在原型链上）
     Object.setPrototypeOf(step.props, this._startProps);
+  }
 
-    this.updateDuration();
-
-    return this;
+  /**
+   * 重新同步和计算props，用于内部某些step发生了变更后，重新计算自身
+   * 性能较差，不要频繁调用
+   * @returns
+   */
+  reSyncProps() {
+    if (!this._lastStep) {
+      return;
+    }
+    this._endProps = {};
+    let currentStep: IStep = this._firstStep;
+    // 从前向后寻找当前时间所在的step
+    while (currentStep) {
+      // step.props为包含前序step的props的最终props，用于跳帧等场景，可以直接设置
+      // eslint-disable-next-line no-loop-func
+      Object.keys(this._endProps).forEach(key => {
+        currentStep.props[key] = currentStep.props[key] ?? this._endProps[key];
+      });
+      // 将最终的props设置到step.props中
+      // eslint-disable-next-line no-loop-func
+      currentStep.propKeys.forEach(key => {
+        this._endProps[key] = currentStep.props[key];
+      });
+      // 给step的props的原型链上绑定Animate的_startProps
+      // 下一个step在查找上一个step.props（也就是找到它的fromProps）的时候，就能拿到初始的props了
+      // 比如：
+      // rect.animate().to({ x: 100 }, 1000, 'linear').to({ y: 100 }, 1000, 'linear');
+      // 在第二个step查找fromProps的时候，就能拿到第一个step的endProps中的y值（在原型链上）
+      Object.setPrototypeOf(currentStep.props, this._startProps);
+      currentStep = currentStep.next;
+    }
   }
 
   /**
@@ -157,7 +211,7 @@ export class Animate implements IAnimate {
    */
   from(props: Record<string, any>, duration: number = 300, easing: EasingType = 'linear'): this {
     // 创建新的step
-    const step = new Step(AnimateStepType.from, props, duration, easing, this);
+    const step = new Step(AnimateStepType.from, props, duration, easing);
 
     // 如果是第一个step
     if (!this._firstStep) {
@@ -170,6 +224,17 @@ export class Animate implements IAnimate {
     }
 
     this.updateDuration();
+
+    return this;
+  }
+
+  /**
+   * 自定义动画
+   */
+  play(customAnimate: ICustomAnimate): this {
+    this.updateStepAfterAppend(customAnimate);
+
+    customAnimate.bind(this.target, this);
 
     return this;
   }
@@ -304,28 +369,6 @@ export class Animate implements IAnimate {
   }
 
   /**
-   * 自定义动画
-   */
-  play(customAnimate: ICustomAnimate): this {
-    // 创建新的step
-    const step = new Step(AnimateStepType.customAnimate, { customAnimate }, 0, 'linear', this);
-
-    // 如果是第一个step
-    if (!this._firstStep) {
-      this._firstStep = step;
-      this._lastStep = step;
-    } else {
-      // 添加到链表末尾
-      this._lastStep.append(step);
-      this._lastStep = step;
-    }
-
-    this.updateDuration();
-
-    return this;
-  }
-
-  /**
    * 获取起始值，该起始值为animate的起始值，并不一定为step的起始值
    */
   getFromValue(): Record<string, any> {
@@ -402,7 +445,7 @@ export class Animate implements IAnimate {
    */
   wait(delay: number): this {
     // 创建新的wait step
-    const step = new Step(AnimateStepType.wait, {}, delay, 'linear', this);
+    const step = new Step(AnimateStepType.wait, {}, delay, 'linear');
 
     // 如果是第一个step
     if (!this._firstStep) {
@@ -576,7 +619,7 @@ export class Animate implements IAnimate {
     // ratio = Math.max(0, Math.min(1, ratio));
 
     const isEnd = ratio >= 1;
-    targetStep.onUpdate(isEnd, ratio, {});
+    targetStep.update(isEnd, ratio, {});
 
     // 如果step执行完毕
     if (isEnd) {
@@ -590,7 +633,7 @@ export class Animate implements IAnimate {
     // }
   }
 
-  protected updateDuration(): void {
+  updateDuration(): void {
     if (!this._lastStep) {
       this._duration = 0;
       return;

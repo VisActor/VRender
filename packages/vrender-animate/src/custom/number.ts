@@ -189,7 +189,7 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
     }
   }
 
-  onUpdate = (end: boolean, ratio: number, out: Record<string, any>): void => {
+  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     if (!this.valid) {
       return;
     }
@@ -237,5 +237,5 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
 
     // 更新图形的text属性
     this.target.setAttribute('text', formattedText);
-  };
+  }
 }

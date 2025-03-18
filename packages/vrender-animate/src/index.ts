@@ -16,3 +16,8 @@ export * from './utils/easing-func';
 export { registerAnimate } from './register';
 export { ACustomAnimate } from './custom/custom-animate';
 export { IncreaseCount } from './custom/number';
+export { InputText } from './custom/input-text';
+export { ClipGraphicAnimate, ClipAngleAnimate, ClipRadiusAnimate, ClipDirectionAnimate } from './custom/clip-graphic';
+export { TagPointsUpdate } from './custom/tag-points';
+export { GroupFadeIn, GroupFadeOut } from './custom/group-fade';
+export { RotateBySphereAnimate } from './custom/sphere';

@@ -57,7 +57,7 @@ export * from './context';
 export * from './path';
 export * from './color';
 export * from './common';
-export * from './animate';
+// export * from './animate';
 export * from './camera';
 export * from './matrix';
 export * from './light';

@@ -1,4 +1,11 @@
-import { DefaultTicker, DefaultTimeline, Animate, registerAnimate, IncreaseCount } from '@visactor/vrender-animate';
+import {
+  DefaultTicker,
+  DefaultTimeline,
+  Animate,
+  registerAnimate,
+  IncreaseCount,
+  InputText
+} from '@visactor/vrender-animate';
 import {
   container,
   createRect,
@@ -253,6 +260,22 @@ export const page = () => {
       formatTemplate: '{{var}}%咿呀呀'
     });
     text.animate().play(customAnimate);
+    stage.defaultLayer.add(text);
+  });
+  addCase('custom InputText', btnContainer, stage => {
+    // Add explanatory text
+    const text = createText({
+      x: 300,
+      y: 50,
+      text: '',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center',
+      opacity: 1
+    });
+    // Terminal-style animation with prompt
+    const terminalAnimation = new InputText({ text: '' }, { text: '这是一段文本内容' }, 1000, 'linear');
+    text.animate().play(terminalAnimation);
     stage.defaultLayer.add(text);
   });
 };

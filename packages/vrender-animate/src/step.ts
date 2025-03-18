@@ -193,9 +193,9 @@ export class Step implements IStep {
     this.onUpdate(end, easedRatio, out);
   }
 
-  onUpdate = (end: boolean, ratio: number, out: Record<string, any>): void => {
+  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     // ...
-  };
+  }
 
   /**
    * 结束执行的时候调用

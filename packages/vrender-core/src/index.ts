@@ -100,3 +100,26 @@ export * from './plugins/builtin-plugin/3dview-transform-plugin';
 export * from './plugins/builtin-plugin/flex-layout-plugin';
 
 export * from './plugins/builtin-plugin/edit-module';
+export {
+  registerAnimate,
+  ACustomAnimate,
+  InputText,
+  IncreaseCount,
+  Animate,
+  DefaultTicker,
+  DefaultTimeline,
+  TagPointsUpdate,
+  ClipGraphicAnimate,
+  ClipAngleAnimate,
+  ClipRadiusAnimate,
+  ClipDirectionAnimate,
+  GroupFadeIn,
+  GroupFadeOut,
+  RotateBySphereAnimate
+} from '@visactor/vrender-animate';
+
+// TODO VChart那块非要引用vgrammar-core，这里先临时导出，后面删除
+export const AnimateGroup = {};
+export const oneToMultiMorph = {};
+export const multiToOneMorph = {};
+export const morphPath = {};

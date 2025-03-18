@@ -30,7 +30,8 @@
   },
   "dependencies": {
     "color-convert": "2.0.1",
-    "@visactor/vutils": "~0.19.5"
+    "@visactor/vutils": "~0.19.5",
+    "@visactor/vrender-animate": "workspace:0.22.8"
   },
   "devDependencies": {
     "@internal/bundler": "workspace:*",

@@ -12,7 +12,8 @@ import type {
   IArea,
   IRichText,
   ILineGraphicAttribute,
-  ILinearGradient
+  ILinearGradient,
+  IRectGraphicAttribute
 } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { graphicCreator, AttributeUpdateType, IContainPointMode, CustomPath2D } from '@visactor/vrender-core';
@@ -27,7 +28,8 @@ import {
   isRectIntersect,
   isNil,
   isArray,
-  isObject
+  isObject,
+  pointInRect
 } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 import type { PointLocationCfg } from '../core/type';
@@ -531,7 +533,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
   }
 
   protected _overlapGlobal(labels: (IText | IRichText)[], option: OverlapAttrs, bmpTool: BitmapTool, bitmap: Bitmap) {
-    let result = labels.filter(label => label.attribute.visible && label.attribute.opacity !== 0);
+    let result = labels.filter(
+      label =>
+        label.attribute.visible &&
+        label.attribute.opacity !== 0 &&
+        this.isMarkInsideRect(this.getRelatedGraphic(label.attribute), bmpTool)
+    );
+
     const { clampForce = true, hideOnHit = true, overlapPadding, strategy } = option;
     if (clampForce) {
       for (let i = 0; i < result.length; i++) {
@@ -651,7 +659,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       const text = labels[i] as IText | IRichText;
       const baseMark = this.getRelatedGraphic(text.attribute);
       text.update();
-      if (!isRectIntersect(baseMark.AABBBounds, { x1: 0, x2: bmpTool.width, y1: 0, y2: bmpTool.height }, true)) {
+      if (!this.isMarkInsideRect(baseMark, bmpTool)) {
         continue;
       }
       // 默认位置可以放置
@@ -708,6 +716,23 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       !hasPlace && !hideOnHit && result.push(text);
     }
     return result;
+  }
+
+  protected isMarkInsideRect(baseMark: IGraphic, bmpTool: BitmapTool) {
+    const { left, right, top, bottom } = bmpTool.padding;
+    const rect: IBoundsLike = { x1: -left, x2: bmpTool.width + right, y1: -top, y2: bmpTool.height + bottom };
+    const bounds = baseMark.AABBBounds;
+    if (bounds.width() !== 0 && bounds.height() !== 0) {
+      return isRectIntersect(baseMark.AABBBounds, rect, true);
+    }
+    const { attribute } = baseMark;
+    if (baseMark.type === 'rect') {
+      const { x, x1, y, y1 } = attribute as IRectGraphicAttribute;
+      return pointInRect({ x: x ?? x1, y: y ?? y1 }, rect, true);
+    } else if ('x' in attribute && 'y' in attribute) {
+      return pointInRect({ x: attribute.x, y: attribute.y }, rect, true);
+    }
+    return false;
   }
 
   protected getBaseMarkGroup() {

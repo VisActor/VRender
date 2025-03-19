@@ -5,7 +5,8 @@ import {
   registerAnimate,
   IncreaseCount,
   InputText,
-  AnimateExecutor
+  AnimateExecutor,
+  ACustomAnimate
 } from '@visactor/vrender-animate';
 import {
   container,
@@ -16,8 +17,11 @@ import {
   vglobal,
   createCircle,
   createText,
-  createGroup
+  createGroup,
+  createLine,
+  createPath
 } from '@visactor/vrender';
+import type { EasingType } from '@visactor/vrender-animate';
 // container.load(roughModule);
 
 vglobal.setEnv('browser');
@@ -44,6 +48,41 @@ function addCase(name: string, container: HTMLElement, cb: (stage: any) => void)
     });
     cb(stage);
   });
+}
+
+// Custom rainbow color interpolator function
+function rainbowColorInterpolator(
+  ratio: number,
+  from: any,
+  to: any,
+  out: Record<string, any>,
+  datum: any,
+  target: IGraphic,
+  params: any
+) {
+  // Create rainbow effect using HSL colors
+  const hue = (ratio * 360) % 360;
+  target.attribute.fill = `hsl(${hue}, 80%, 60%)`;
+}
+
+// Path tracing interpolator function
+function pathTracingInterpolator(
+  ratio: number,
+  from: any,
+  to: any,
+  out: Record<string, any>,
+  datum: any,
+  target: IGraphic,
+  params: any
+) {
+  const path = params.path || 'M0,0 L100,0 L100,100 L0,100 Z';
+  const length = 100 || params.length || 1000; // Estimate of path length
+
+  // Set stroke-dasharray and stroke-dashoffset to create tracing effect
+  // out.strokeDasharray = length;
+  // out.strokeDashoffset = length * (1 - ratio);
+  target.attribute.lineDash = [length, length];
+  target.attribute.lineDashOffset = length * (1 - ratio);
 }
 
 export const page = () => {
@@ -602,5 +641,180 @@ export const page = () => {
     });
     stage.defaultLayer.add(group);
     stage.defaultLayer.add(text);
+  });
+
+  // New test cases for custom animations
+  addCase('AnimateExecutor Custom Interpolator', btnContainer, stage => {
+    // Create a group to hold all elements
+    const group = createGroup({
+      x: 100,
+      y: 100
+    });
+
+    // Add a title
+    const title = createText({
+      x: 400,
+      y: 30,
+      text: 'AnimateExecutor with Custom Interpolator Function',
+      fontSize: 18,
+      fill: 'black',
+      textAlign: 'center'
+    });
+
+    // Create a row of rectangles for the rainbow effect
+    const rectangles = [];
+    for (let i = 0; i < 10; i++) {
+      const rect = createRect({
+        x: i * 70,
+        y: 80,
+        width: 60,
+        height: 60,
+        fill: 'gray',
+        cornerRadius: 5 // Using cornerRadius instead of radius
+      });
+      rectangles.push(rect);
+      group.add(rect);
+    }
+
+    // Create path for the path tracing demo
+    const pathElement = createPath({
+      path: 'M50,250 C150,150 250,350 350,250 S550,150 650,250',
+      stroke: 'black',
+      lineWidth: 5,
+      fill: 'transparent'
+      // strokeDasharray and strokeDashoffset will be set by the animation
+    });
+    group.add(pathElement);
+
+    // Create a text label for the path tracing demo
+    const pathLabel = createText({
+      x: 350,
+      y: 210,
+      text: 'Path Tracing Animation',
+      fontSize: 14,
+      fill: 'black',
+      textAlign: 'center'
+    });
+    group.add(pathLabel);
+
+    // Create executor
+    const executor = new AnimateExecutor(group);
+
+    // Rainbow color animation using custom interpolator
+    executor.execute({
+      type: 'to',
+      custom: rainbowColorInterpolator,
+      channel: {
+        fill: { to: 'transparent' } // Placeholder, actual color will be set by interpolator
+      },
+      oneByOne: 50,
+      duration: 2000,
+      loop: Infinity
+    });
+
+    // Path tracing animation using custom interpolator
+    executor.executeItem(
+      {
+        type: 'to',
+        custom: pathTracingInterpolator,
+        customParameters: {
+          path: 'M50,250 C150,150 250,350 350,250 S550,150 650,250',
+          length: 800 // Approximate length of the path
+        },
+        channel: {
+          strokeDasharray: { to: 800 },
+          strokeDashoffset: { to: 0 }
+        },
+        duration: 3000,
+        loop: Infinity
+      },
+      pathElement
+    );
+
+    stage.defaultLayer.add(group);
+    stage.defaultLayer.add(title);
+  });
+
+  addCase('AnimateExecutor Custom Animation Class', btnContainer, stage => {
+    // Create a group to hold all elements
+    const group = createGroup({
+      x: 100,
+      y: 100
+    });
+
+    // Add a title
+    const title = createText({
+      x: 400,
+      y: 30,
+      text: 'AnimateExecutor with Custom Animation Classes',
+      fontSize: 18,
+      fill: 'black',
+      textAlign: 'center'
+    });
+
+    // Create text element for typewriter effect
+    const typewriterText = createText({
+      x: 350,
+      y: 100,
+      text: '',
+      fontSize: 20,
+      fill: 'blue',
+      textAlign: 'center'
+    });
+    group.add(typewriterText);
+
+    // Create a row of circles for wave animation
+    const circles = [];
+    for (let i = 0; i < 12; i++) {
+      const circle = createCircle({
+        x: 50 + i * 60,
+        y: 200,
+        radius: 15,
+        fill: 'purple',
+        opacity: 0.6
+      });
+      circles.push(circle);
+      group.add(circle);
+    }
+
+    // Create executor
+    const executor = new AnimateExecutor(group);
+
+    // Apply typewriter animation
+    executor.executeItem(
+      {
+        type: 'to',
+        custom: InputText,
+        channel: {
+          text: { to: 'This is a custom typewriter animation effect!' }
+        },
+        duration: 3000,
+        loop: true
+      },
+      typewriterText
+    );
+
+    // Apply wave animation to circles
+    // circles.forEach((circle, index) => {
+    //   executor.executeItem(
+    //     {
+    //       type: 'to',
+    //       custom: WaveAnimate,
+    //       customParameters: {
+    //         amplitude: 30,
+    //         frequency: 2 + index * 0.2 // Different frequency for each circle
+    //       },
+    //       channel: {
+    //         y: { to: 200 } // This will be replaced by the wave animation
+    //       },
+    //       duration: 3000,
+    //       loop: true
+    //     },
+    //     circle
+    //   );
+    // });
+
+    stage.defaultLayer.add(group);
+    stage.defaultLayer.add(title);
   });
 };

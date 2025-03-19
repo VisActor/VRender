@@ -184,12 +184,14 @@ export class Step implements IStep {
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.interpolateUpdateFunctions.forEach((func, index) => {
-      const key = this.propKeys[index];
-      const fromValue = this.fromProps[key];
-      const toValue = this.props[key];
-      func(key, fromValue, toValue, easedRatio, this, this.target);
-    });
+    this.animate.interpolateUpdateFunction
+      ? this.animate.interpolateUpdateFunction(this.fromProps, this.props, easedRatio, this, this.target)
+      : this.interpolateUpdateFunctions.forEach((func, index) => {
+          const key = this.propKeys[index];
+          const fromValue = this.fromProps[key];
+          const toValue = this.props[key];
+          func(key, fromValue, toValue, easedRatio, this, this.target);
+        });
     this.onUpdate(end, easedRatio, out);
   }
 

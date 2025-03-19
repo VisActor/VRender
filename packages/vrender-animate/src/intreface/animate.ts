@@ -67,6 +67,10 @@ export interface IAnimate {
   status: AnimateStatus;
   target: IGraphic;
 
+  interpolateUpdateFunction:
+    | ((from: Record<string, any>, to: Record<string, any>, ratio: number, step: IStep, target: IGraphic) => void)
+    | null;
+
   _onStart?: (() => void)[];
   _onFrame?: ((step: IStep, ratio: number) => void)[];
   _onEnd?: (() => void)[];
@@ -135,7 +139,7 @@ export interface IAnimate {
   // 反转动画
   // reversed: (r: boolean) => IAnimate;
   // 循环动画
-  loop: (n: number) => IAnimate;
+  loop: (n: number | boolean) => IAnimate;
   // 反弹动画
   bounce: (b: boolean) => IAnimate;
 

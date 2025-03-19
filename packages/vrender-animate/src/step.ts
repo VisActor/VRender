@@ -234,3 +234,18 @@ export class Step implements IStep {
     return this.getEndProps();
   }
 }
+
+export class WaitStep extends Step {
+  constructor(type: IAnimateStepType, props: Record<string, any>, duration: number, easing: EasingType) {
+    super(type, props, duration, easing);
+  }
+
+  update(end: boolean, ratio: number, out: Record<string, any>): void {
+    this.onStart();
+    // 其他的不执行
+  }
+
+  determineInterpolateUpdateFunction(): void {
+    return;
+  }
+}

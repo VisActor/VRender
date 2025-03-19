@@ -198,6 +198,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   declare _events?: any;
 
+  // 保存语法上下文
+  declare context?: Record<string, any>;
+
   static userSymbolMap: Record<string, ISymbolClass> = {};
 
   declare onBeforeAttributeUpdate?: (

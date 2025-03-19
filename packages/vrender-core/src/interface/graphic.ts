@@ -692,7 +692,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   glyphHost?: IGraphic<IGlyphGraphicAttribute>;
   backgroundImg?: boolean;
   attachedThemeGraphic?: IGraphic<any>;
-
+  /**
+   * 保存语法上下文
+   */
+  context?: Record<string, any>;
   bindDom?: Map<
     string | HTMLElement,
     { container: HTMLElement | string; dom: HTMLElement | any; wrapGroup: HTMLDivElement | any; root?: any }

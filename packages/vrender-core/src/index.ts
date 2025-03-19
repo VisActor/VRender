@@ -120,7 +120,7 @@ export {
   RotateBySphereAnimate
 } from '@visactor/vrender-animate';
 
-// TODO VChart那块非要引用vgrammar-core，这里先临时导出，后面删除
+// TODO VChart那块要引用vgrammar-core，这里先临时导出，后面删除
 export const AnimateGroup = {};
 export const oneToMultiMorph = {};
 export const multiToOneMorph = {};

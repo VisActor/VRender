@@ -41,6 +41,10 @@ export class Animate implements IAnimate {
   protected currentTime: number;
   slience?: boolean;
 
+  interpolateUpdateFunction:
+    | ((from: Record<string, any>, to: Record<string, any>, ratio: number, step: IStep, target: IGraphic) => void)
+    | null;
+
   constructor(
     id: string | number = Generator.GenAutoIncrementId(),
     timeline: ITimeline = defaultTimeline,
@@ -64,6 +68,7 @@ export class Animate implements IAnimate {
     this._endProps = {};
     this._preventAttrs = new Set();
     this.currentTime = 0;
+    this.interpolateUpdateFunction = null;
   }
 
   /**
@@ -512,9 +517,14 @@ export class Animate implements IAnimate {
   // }
 
   /**
-   * 设置动画循环次数
+   * 设置动画循环次数，如果传入true，则无限循环，如果传入false，则不循环
    */
-  loop(n: number): this {
+  loop(n: number | boolean): this {
+    if (n === true) {
+      n = Infinity;
+    } else if (n === false) {
+      n = 0;
+    }
     this._loopCount = n;
     this.updateDuration();
     return this;

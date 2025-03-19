@@ -14,7 +14,7 @@ import type {
 import { ACustomAnimate } from '../custom/custom-animate';
 import type { EasingType } from '../intreface/easing';
 import type { IAnimate } from '../intreface/animate';
-import { cloneDeep, isArray, scale } from '@visactor/vutils';
+import { cloneDeep, isArray, isFunction, scale } from '@visactor/vutils';
 
 export class AnimateExecutor {
   declare _target: IGroup;
@@ -187,35 +187,37 @@ export class AnimateExecutor {
     // 根据 channel 配置创建属性对象
     const props = this.createPropsFromChannel(channel, graphic);
 
-    if (type === 'to') {
+    // 处理自定义动画
+    if (custom) {
+      const customParams = this.resolveValue(customParameters, graphic, {});
+
+      if (isFunction(custom)) {
+        if (/^class\s/.test(Function.prototype.toString.call(custom))) {
+          // 自定义动画构造器 - 创建自定义动画类
+          this.createCustomAnimation(
+            animate,
+            custom as IAnimationCustomConstructor,
+            props,
+            duration as number,
+            easing,
+            customParams
+          );
+        } else {
+          // 自定义插值器 - 创建自定义插值动画
+          this.createCustomInterpolatorAnimation(
+            animate,
+            custom as IAnimationChannelInterpolator,
+            props,
+            duration as number,
+            easing,
+            customParams
+          );
+        }
+      }
+    } else if (type === 'to') {
       animate.to(props, duration as number, easing);
     } else if (type === 'from') {
       animate.from(props, duration as number, easing);
-    } else if (custom) {
-      // 处理自定义动画
-      const customParams = this.resolveValue(customParameters, graphic, {});
-
-      if (typeof custom === 'function') {
-        // 自定义插值器 - 创建自定义插值动画
-        this.createCustomInterpolatorAnimation(
-          animate,
-          custom as IAnimationChannelInterpolator,
-          props,
-          duration as number,
-          easing,
-          customParams
-        );
-      } else {
-        // 自定义动画构造器 - 创建自定义动画类
-        this.createCustomAnimation(
-          animate,
-          custom as IAnimationCustomConstructor,
-          props,
-          duration as number,
-          easing,
-          customParams
-        );
-      }
     }
 
     // 添加后延迟
@@ -291,7 +293,7 @@ export class AnimateExecutor {
         // 处理自定义动画
         const customParams = this.resolveValue(customParameters, graphic, {});
 
-        if (typeof custom === 'function') {
+        if (isFunction(custom)) {
           // 自定义插值器 - 创建自定义插值动画
           this.createCustomInterpolatorAnimation(
             animate,
@@ -341,44 +343,11 @@ export class AnimateExecutor {
       from[key] = animate.target.getComputedAttribute(key);
     });
 
-    // 创建自定义动画步骤
-    // 注意：这里需要设计一个特殊的自定义动画类来处理插值器函数
-    class CustomInterpolatorAnimate extends ACustomAnimate<Record<string, any>> {
-      interpolator: IAnimationChannelInterpolator;
-      parameters: any;
+    animate.interpolateUpdateFunction = (from, to, ratio, step, target) => {
+      interpolator(ratio, from, to, step, target, animate.target, customParams);
+    };
 
-      constructor(
-        from: Record<string, any>,
-        to: Record<string, any>,
-        duration: number,
-        easing: EasingType,
-        interpolator: IAnimationChannelInterpolator,
-        parameters: any
-      ) {
-        super(from, to, duration, easing, parameters);
-        this.interpolator = interpolator;
-        this.parameters = parameters;
-        this.setProps(to);
-      }
-
-      onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-        // 调用插值器函数进行自定义插值
-        this.interpolator(
-          ratio,
-          this.customFrom,
-          this.props,
-          out,
-          (this.target.context as any)?.data,
-          this.target,
-          this.parameters
-        );
-      }
-    }
-
-    // 创建并添加自定义插值动画
-    const customAnimate = new CustomInterpolatorAnimate(from, to, duration, easing, interpolator, customParams);
-
-    animate.play(customAnimate);
+    animate.to(props, duration, easing);
   }
 
   /**
@@ -460,7 +429,7 @@ export class AnimateExecutor {
   /**
    * 执行动画（具体执行到内部的单个图元）
    */
-  executeItem(params: IAnimationConfig, graphic: IGraphic, index: number): IAnimate | null {
+  executeItem(params: IAnimationConfig, graphic: IGraphic, index: number = 0): IAnimate | null {
     if (!graphic) {
       return null;
     }

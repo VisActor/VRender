@@ -182,13 +182,17 @@ export class InterpolateUpdateStore {
     (target.attribute as any).innerRadius = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
   };
+  size = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
+    (target.attribute as any).size = interpolateNumber(from, to, ratio);
+    target.addUpdateBoundTag();
+  };
 }
 
 export const interpolateUpdateStore = new InterpolateUpdateStore();
 
 export function commonInterpolateUpdate(key: string, from: any, to: any, ratio: number, step: IStep, target: IGraphic) {
   if (Number.isFinite(to) && Number.isFinite(from)) {
-    target.attribute = from + (to - from) * ratio;
+    (target.attribute as any)[key] = from + (to - from) * ratio;
     return true;
   } else if (Array.isArray(to) && Array.isArray(from) && to.length === from.length) {
     const nextList = [];

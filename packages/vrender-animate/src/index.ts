@@ -21,3 +21,4 @@ export { ClipGraphicAnimate, ClipAngleAnimate, ClipRadiusAnimate, ClipDirectionA
 export { TagPointsUpdate } from './custom/tag-points';
 export { GroupFadeIn, GroupFadeOut } from './custom/group-fade';
 export { RotateBySphereAnimate } from './custom/sphere';
+export { AnimateExecutor } from './executor/animate-executor';

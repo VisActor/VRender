@@ -1,7 +1,7 @@
 import type { IAnimate, IStep, ICustomAnimate } from './intreface/animate';
 import type { EasingType } from './intreface/easing';
 import { AnimateStatus, AnimateStepType } from './intreface/type';
-import { Step } from './step';
+import { Step, WaitStep } from './step';
 import type { ITimeline } from './intreface/timeline';
 import { Generator, type IGraphic } from '@visactor/vrender-core';
 import { defaultTimeline } from './timeline';
@@ -117,6 +117,21 @@ export class Animate implements IAnimate {
     // 创建新的step
     const step = new Step(AnimateStepType.to, props, duration, easing);
 
+    this.updateStepAfterAppend(step);
+
+    step.bind(this.target, this);
+
+    return this;
+  }
+
+  /**
+   * 等待延迟
+   */
+  wait(delay: number): this {
+    // 创建新的wait step
+    const step = new WaitStep(AnimateStepType.wait, {}, delay, 'linear');
+
+    // 如果是第一个step
     this.updateStepAfterAppend(step);
 
     step.bind(this.target, this);
@@ -438,28 +453,6 @@ export class Animate implements IAnimate {
    */
   getStartTime(): number {
     return this._startTime;
-  }
-
-  /**
-   * 等待延迟
-   */
-  wait(delay: number): this {
-    // 创建新的wait step
-    const step = new Step(AnimateStepType.wait, {}, delay, 'linear');
-
-    // 如果是第一个step
-    if (!this._firstStep) {
-      this._firstStep = step;
-      this._lastStep = step;
-    } else {
-      // 添加到链表末尾
-      this._lastStep.append(step);
-      this._lastStep = step;
-    }
-
-    this.updateDuration();
-
-    return this;
   }
 
   /**

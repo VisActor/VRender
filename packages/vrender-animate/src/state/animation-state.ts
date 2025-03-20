@@ -55,11 +55,10 @@ export class AnimationStateManager {
     const registry = AnimationTransitionRegistry.getInstance();
 
     // TODO 这里指判断第一个状态，后续如果需要的话要循环判断
-    const _stateList = this.stateList[0];
     // 检查是否需要停止当前状态，以及下一个状态是否需要应用
     const shouldStopState: IStateInfo[] = [];
     const shouldApplyState: IStateInfo[] = [];
-    if (!_stateList) {
+    if (!(this.stateList && this.stateList.length)) {
       nextState.forEach((state, index) => {
         shouldApplyState.push({
           state,
@@ -68,8 +67,18 @@ export class AnimationStateManager {
         });
       });
     } else {
+      const _stateList = this.stateList[0];
       nextState.forEach((state, index) => {
-        const result = registry.isTransitionAllowed(_stateList.state, state, this.graphic);
+        // 遍历this.stateList，获取result，只要有一个是false，那这个result就是false
+        const result: { allowTransition: boolean; stopOriginalTransition: boolean } = {
+          allowTransition: true,
+          stopOriginalTransition: true
+        };
+        this.stateList.forEach(currState => {
+          const _result = registry.isTransitionAllowed(currState.state, state, this.graphic);
+          result.allowTransition = result.allowTransition && _result.allowTransition;
+          result.stopOriginalTransition = result.stopOriginalTransition && _result.stopOriginalTransition;
+        });
         if (result.allowTransition) {
           shouldApplyState.push({
             state,
@@ -89,24 +98,34 @@ export class AnimationStateManager {
     });
 
     // 立即应用动画，串行的应用
-    for (let i = 0; i < shouldApplyState.length; i++) {
-      shouldApplyState[i].executor.execute(shouldApplyState[i].animationConfig);
+    if (shouldApplyState.length) {
+      shouldApplyState[0].executor.execute(shouldApplyState[0].animationConfig);
       // 如果下一个状态存在，那么下一个状态的动画在当前状态动画结束后立即执行
-      const nextState = shouldApplyState[i + 1];
-      shouldApplyState[i].executor.onEnd(() => {
-        if (nextState) {
-          nextState.executor.execute(nextState.animationConfig);
-        }
-        // 删除这个状态
-        this.stateList = this.stateList.filter(state => state !== shouldApplyState[i]);
-      });
+      for (let i = 1; i < shouldApplyState.length; i++) {
+        const nextState = shouldApplyState[i];
+        shouldApplyState[i - 1].executor.onEnd(() => {
+          if (nextState) {
+            nextState.executor.execute(nextState.animationConfig);
+          }
+          // 删除这个状态
+          this.stateList = this.stateList.filter(state => state !== shouldApplyState[i]);
+        });
+      }
     }
 
-    this.stateList = this.stateList.filter(state => !shouldStopState.includes(state));
+    if (this.stateList) {
+      this.stateList = this.stateList.filter(state => !shouldStopState.includes(state));
+    } else {
+      this.stateList = [];
+    }
     this.stateList.push(...shouldApplyState);
   }
 
   clearState(): void {
+    // 清空状态
+    this.stateList?.forEach(state => {
+      state.executor.stop();
+    });
     this.stateList = null;
   }
 

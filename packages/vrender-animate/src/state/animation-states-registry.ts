@@ -38,39 +38,90 @@ export class AnimationTransitionRegistry {
    * 注册默认的转换规则
    */
   private registerDefaultTransitions(): void {
-    // 设置默认的转换规则
-    // 退出动画不能被中断，除非是进入动画
-    this.registerTransition('exit', 'enter', () => ({
+    // appear动画，可以被任何动画覆盖，但不会停止（disappear、exit除外）
+    this.registerTransition('appear', '*', () => ({
+      allowTransition: true,
+      stopOriginalTransition: false
+    }));
+    // appear 动画碰到appear动画，什么都不会发生
+    this.registerTransition('appear', 'appear', () => ({
+      allowTransition: false,
+      stopOriginalTransition: false
+    }));
+    this.registerTransition('appear', 'disappear', () => ({
       allowTransition: true,
       stopOriginalTransition: true
     }));
+    this.registerTransition('appear', 'exit', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+
+    // 循环动画（normal），可以被任何动画覆盖，但不会停止（disappear、exit除外）
+    this.registerTransition('normal', '*', () => ({
+      allowTransition: true,
+      stopOriginalTransition: false
+    }));
+    this.registerTransition('normal', 'normal', () => ({
+      allowTransition: false,
+      stopOriginalTransition: false
+    }));
+    this.registerTransition('normal', 'disappear', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+    this.registerTransition('normal', 'exit', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+
+    // 退出动画不能被覆盖或停止(disappear除外)
     this.registerTransition('exit', '*', () => ({
       allowTransition: false,
       stopOriginalTransition: false
     }));
+    this.registerTransition('exit', 'disappear', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+    // 退出动画碰到enter动画，会立即停止
+    this.registerTransition('exit', 'enter', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+    // 退出动画碰到退出，什么都不会发生
+    this.registerTransition('exit', 'exit', () => ({
+      allowTransition: false,
+      stopOriginalTransition: false
+    }));
 
-    // 进入动画可以被任何动画中断
+    // enter 动画可以被任何动画覆盖，但不会停止（exit、disappear除外）
     this.registerTransition('enter', '*', () => ({
       allowTransition: true,
+      stopOriginalTransition: false
+    }));
+    // enter 动画碰到enter动画，什么都不会发生
+    this.registerTransition('enter', 'enter', () => ({
+      allowTransition: false,
+      stopOriginalTransition: false
+    }));
+    this.registerTransition('enter', 'disappear', () => ({
+      allowTransition: true,
+      stopOriginalTransition: true
+    }));
+    this.registerTransition('enter', 'exit', () => ({
+      allowTransition: true,
       stopOriginalTransition: true
     }));
 
-    // Disappear 是一个退出动画，遵循相同的规则
-    this.registerTransition('disappear', 'enter', () => ({
-      allowTransition: true,
-      stopOriginalTransition: true
-    }));
-    this.registerTransition('disappear', 'appear', () => ({
-      allowTransition: true,
-      stopOriginalTransition: true
-    }));
+    // disappear 动画碰到任何动画，什么都不会发生（appear除外）
     this.registerTransition('disappear', '*', () => ({
       allowTransition: false,
       stopOriginalTransition: false
     }));
 
-    // Appear 是一个进入动画，可以被任何动画中断
-    this.registerTransition('appear', '*', () => ({
+    // disappear 动画碰到appear动画，会立即停止
+    this.registerTransition('disappear', 'appear', () => ({
       allowTransition: true,
       stopOriginalTransition: true
     }));
@@ -81,23 +132,27 @@ export class AnimationTransitionRegistry {
    */
   isTransitionAllowed(fromState: string, toState: string, graphic: IGraphic): ITransitionResult {
     // 直接转换规则
-    if (this.transitions.get(fromState)?.has(toState)) {
-      return this.transitions.get(fromState).get(toState)(graphic, fromState);
+    let func = this.transitions.get(fromState)?.get(toState);
+    if (func) {
+      return func(graphic, fromState);
     }
 
     // 状态到通配符
-    if (this.transitions.get(fromState)?.has('*')) {
-      return this.transitions.get(fromState).get('*')(graphic, fromState);
+    func = this.transitions.get(fromState)?.get('*');
+    if (func) {
+      return func(graphic, fromState);
     }
 
     // 通配符到状态
-    if (this.transitions.get('*')?.has(toState)) {
-      return this.transitions.get('*').get(toState)(graphic, fromState);
+    func = this.transitions.get('*')?.get(toState);
+    if (func) {
+      return func(graphic, fromState);
     }
 
     // 通配符到通配符
-    if (this.transitions.get('*')?.has('*')) {
-      return this.transitions.get('*').get('*')(graphic, fromState);
+    func = this.transitions.get('*')?.get('*');
+    if (func) {
+      return func(graphic, fromState);
     }
 
     // 默认允许转换

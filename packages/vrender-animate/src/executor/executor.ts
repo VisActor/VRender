@@ -113,6 +113,8 @@ export interface IAnimationTypeConfig {
   options?: MarkFunctionValueType<any>;
   /** 动画执行相关控制配置项 */
   controlOptions?: IAnimationControlOptions;
+  /** 动画优先级 */
+  priority?: number;
 }
 
 /**
@@ -139,6 +141,8 @@ export interface IAnimationTimeline {
   sort?: (datumA: any, datumB: any, elementA: IGraphic, elementB: IGraphic, parameters: any) => number;
   /** 动画执行相关控制配置项 */
   controlOptions?: IAnimationControlOptions;
+  /** 动画优先级 */
+  priority?: number;
 }
 
 /**

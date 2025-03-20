@@ -69,7 +69,7 @@ export interface IAnimate {
   readonly id: string | number;
   status: AnimateStatus;
   target: IGraphic;
-
+  priority: number;
   interpolateUpdateFunction:
     | ((from: Record<string, any>, to: Record<string, any>, ratio: number, step: IStep, target: IGraphic) => void)
     | null;

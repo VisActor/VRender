@@ -178,8 +178,8 @@ export class Step implements IStep {
     // 屏蔽掉之前动画冲突的属性
     const animate = this.animate;
     const target = this.target;
-    target.animates.forEach(a => {
-      if (a.id === animate.id) {
+    target.animates.forEach((a: any) => {
+      if (a === animate || a.priority > animate.priority) {
         return;
       }
       const fromProps = a.getStartProps();

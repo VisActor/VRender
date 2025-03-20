@@ -76,10 +76,11 @@ function pathTracingInterpolator(
   params: any
 ) {
   const path = params.path || 'M0,0 L100,0 L100,100 L0,100 Z';
-  const length = 100 || params.length || 1000; // Estimate of path length
+  const length = 1000; // Estimate of path length
 
   // Set stroke-dasharray and stroke-dashoffset to create tracing effect
   // out.strokeDasharray = length;
+  console.log(target.attribute);
   // out.strokeDashoffset = length * (1 - ratio);
   target.attribute.lineDash = [length, length];
   target.attribute.lineDashOffset = length * (1 - ratio);
@@ -93,7 +94,7 @@ export const page = () => {
   btnContainer.style.flexDirection = 'row';
   btnContainer.style.gap = '3px';
   btnContainer.style.flexWrap = 'wrap';
-  btnContainer.style.height = '90px';
+  btnContainer.style.height = '120px';
   const canvas = document.getElementById('main');
   // 将btnContainer添加到canvas之前
   canvas.parentNode.insertBefore(btnContainer, canvas);
@@ -163,6 +164,21 @@ export const page = () => {
     rect.animate().to({ x: 300 }, 1000, 'linear').to({ y: 300 }, 1000, 'linear').to({ fill: 'blue' }, 1000, 'linear');
     // 中途设置值没问题，它会从orange开始
     rect.setAttribute('fill', 'orange');
+  });
+  addCase('Animate conflict', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'red'
+    });
+    stage.defaultLayer.add(rect);
+
+    rect.animate().to({ x: 600, y: 300 }, 6000, 'linear');
+    setTimeout(() => {
+      rect.animate().to({ fill: 'orange' }, 1000, 'linear').to({ x: 0 }, 2000, 'linear');
+    }, 1000);
   });
   addCase('Animate chain loop', btnContainer, stage => {
     const rect = createRect({
@@ -352,7 +368,7 @@ export const page = () => {
         }
       },
       duration: 1000,
-      easing: 'linear'
+      easing: 'elasticOut'
     });
 
     // Add title
@@ -365,6 +381,48 @@ export const page = () => {
       textAlign: 'center'
     });
     stage.defaultLayer.add(group);
+    stage.defaultLayer.add(text);
+  });
+  addCase('AnimateExecutor Item', btnContainer, stage => {
+    // Add explanatory text
+
+    for (let i = 0; i < 6; i++) {
+      const rect = createRect({
+        x: i * 100,
+        y: 100,
+        width: 80,
+        height: 100,
+        fill: 'black'
+      });
+      const executor = new AnimateExecutor(rect);
+
+      // Basic animation - all elements fade and change color simultaneously
+      executor.execute({
+        type: 'to',
+        channel: {
+          fill: {
+            to: 'red'
+          },
+          opacity: {
+            to: 0.5
+          }
+        },
+        duration: 1000,
+        easing: 'elasticOut'
+      });
+      stage.defaultLayer.add(rect);
+    }
+
+    // Add title
+    const text = createText({
+      x: 300,
+      y: 50,
+      text: 'Basic AnimateExecutor - Simultaneous Animation',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center'
+    });
+
     stage.defaultLayer.add(text);
   });
 
@@ -605,6 +663,73 @@ export const page = () => {
 
     // Apply animation only to elements where row + col is even
     executor.execute({
+      timeSlices: [
+        {
+          effects: {
+            type: 'to',
+            channel: {
+              fill: {
+                to: 'blue'
+              },
+              width: {
+                to: 90
+              },
+              height: {
+                to: 90
+              }
+            },
+            easing: 'elasticOut'
+          },
+          duration: 1000
+        }
+      ],
+      // Partitioner function to filter elements
+      partitioner: (datum: any, graphic: IGraphic, params: any) => {
+        return datum && datum.length && datum[0].even === true;
+      },
+      oneByOne: 50
+    });
+
+    // Add title
+    const text = createText({
+      x: 400,
+      y: 50,
+      text: 'AnimateExecutor with Partitioner - Filtered Animation',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center'
+    });
+    stage.defaultLayer.add(group);
+    stage.defaultLayer.add(text);
+  });
+  addCase('AnimateExecutor lifecycle', btnContainer, stage => {
+    // Create a group with a grid of rectangles
+    const group = createGroup({
+      x: 100,
+      y: 150
+    });
+
+    // Create a 6x4 grid of rectangles
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 6; col++) {
+        const rect = createRect({
+          x: col * 100,
+          y: row * 100,
+          width: 80,
+          height: 80,
+          fill: 'gray'
+        });
+        rect.context = {
+          data: [{ row, col, even: (row + col) % 2 === 0 }]
+        };
+        group.add(rect);
+      }
+    }
+
+    const executor = new AnimateExecutor(group);
+
+    // Apply animation only to elements where row + col is even
+    executor.execute({
       timeSlices: {
         effects: {
           type: 'to',
@@ -623,6 +748,7 @@ export const page = () => {
         },
         duration: 1000
       },
+      loop: 2,
       // Partitioner function to filter elements
       partitioner: (datum: any, graphic: IGraphic, params: any) => {
         return datum && datum.length && datum[0].even === true;
@@ -634,10 +760,18 @@ export const page = () => {
     const text = createText({
       x: 400,
       y: 50,
-      text: 'AnimateExecutor with Partitioner - Filtered Animation',
+      text: 'AnimateExecutor with lifecycle',
       fontSize: 16,
       fill: 'black',
       textAlign: 'center'
+    });
+
+    executor.onStart(() => {
+      console.log('onStart');
+    });
+    executor.onEnd(() => {
+      console.log('onEnd');
+      alert('完成');
     });
     stage.defaultLayer.add(group);
     stage.defaultLayer.add(text);
@@ -681,7 +815,7 @@ export const page = () => {
       path: 'M50,250 C150,150 250,350 350,250 S550,150 650,250',
       stroke: 'black',
       lineWidth: 5,
-      fill: 'transparent'
+      fill: 'orange'
       // strokeDasharray and strokeDashoffset will be set by the animation
     });
     group.add(pathElement);
@@ -704,9 +838,7 @@ export const page = () => {
     executor.execute({
       type: 'to',
       custom: rainbowColorInterpolator,
-      channel: {
-        fill: { to: 'transparent' } // Placeholder, actual color will be set by interpolator
-      },
+      channel: {},
       oneByOne: 50,
       duration: 2000,
       loop: Infinity
@@ -736,6 +868,89 @@ export const page = () => {
   });
 
   addCase('AnimateExecutor Custom Animation Class', btnContainer, stage => {
+    // Create a group to hold all elements
+    const group = createGroup({
+      x: 100,
+      y: 100
+    });
+
+    // Add a title
+    const title = createText({
+      x: 400,
+      y: 30,
+      text: 'AnimateExecutor with Custom Animation Classes',
+      fontSize: 18,
+      fill: 'black',
+      textAlign: 'center'
+    });
+
+    // Create text element for typewriter effect
+    const typewriterText = createText({
+      x: 350,
+      y: 100,
+      text: '',
+      fontSize: 20,
+      fill: 'blue',
+      textAlign: 'center'
+    });
+    group.add(typewriterText);
+
+    // Create a row of circles for wave animation
+    const circles = [];
+    for (let i = 0; i < 12; i++) {
+      const circle = createCircle({
+        x: 50 + i * 60,
+        y: 200,
+        radius: 15,
+        fill: 'purple',
+        opacity: 0.6
+      });
+      circles.push(circle);
+      group.add(circle);
+    }
+
+    // Create executor
+    const executor = new AnimateExecutor(group);
+
+    // Apply typewriter animation
+    executor.executeItem(
+      {
+        type: 'to',
+        custom: InputText,
+        channel: {
+          text: { to: 'This is a custom typewriter animation effect!' }
+        },
+        duration: 3000,
+        loop: true
+      },
+      typewriterText
+    );
+
+    // Apply wave animation to circles
+    // circles.forEach((circle, index) => {
+    //   executor.executeItem(
+    //     {
+    //       type: 'to',
+    //       custom: WaveAnimate,
+    //       customParameters: {
+    //         amplitude: 30,
+    //         frequency: 2 + index * 0.2 // Different frequency for each circle
+    //       },
+    //       channel: {
+    //         y: { to: 200 } // This will be replaced by the wave animation
+    //       },
+    //       duration: 3000,
+    //       loop: true
+    //     },
+    //     circle
+    //   );
+    // });
+
+    stage.defaultLayer.add(group);
+    stage.defaultLayer.add(title);
+  });
+
+  addCase('AnimateExecutor conflict', btnContainer, stage => {
     // Create a group to hold all elements
     const group = createGroup({
       x: 100,

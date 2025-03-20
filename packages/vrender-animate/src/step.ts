@@ -169,7 +169,49 @@ export class Step implements IStep {
       this.fromProps = this.getLastProps();
       this.determineInterpolateUpdateFunction();
       this.onFirstRun();
+      this.tryPreventConflict();
+      this.trySyncStartProps();
     }
+  }
+
+  protected tryPreventConflict(): void {
+    // 屏蔽掉之前动画冲突的属性
+    const animate = this.animate;
+    const target = this.target;
+    target.animates.forEach(a => {
+      if (a.id === animate.id) {
+        return;
+      }
+      const fromProps = a.getStartProps();
+      this.propKeys.forEach(key => {
+        if (fromProps[key] != null) {
+          a.preventAttr(key);
+        }
+      });
+    });
+  }
+
+  /**
+   * 删除自身属性，会直接从props等内容里删除掉
+   */
+  deleteSelfAttr(key: string): void {
+    delete this.props[key];
+    delete this.fromProps[key];
+    const index = this.propKeys.indexOf(key);
+    if (index !== -1) {
+      this.propKeys.splice(index, 1);
+      this.interpolateUpdateFunctions?.splice(index, 1);
+    }
+  }
+
+  /**
+   * 尝试同步startProps，因为当前animate的startProps仅包含当前animate的信息，不排除过程中有其他animate的干扰
+   * 所以为了避免属性突变，需要确保startProps的属性值是最新的
+   */
+  trySyncStartProps(): void {
+    this.propKeys.forEach(key => {
+      this.fromProps[key] = this.animate.target.getComputedAttribute(key);
+    });
   }
 
   /**
@@ -187,6 +229,10 @@ export class Step implements IStep {
     this.animate.interpolateUpdateFunction
       ? this.animate.interpolateUpdateFunction(this.fromProps, this.props, easedRatio, this, this.target)
       : this.interpolateUpdateFunctions.forEach((func, index) => {
+          // 如果这个属性被屏蔽了，直接跳过
+          if (!this.animate.validAttr(this.propKeys[index])) {
+            return;
+          }
           const key = this.propKeys[index];
           const fromValue = this.fromProps[key];
           const toValue = this.props[key];

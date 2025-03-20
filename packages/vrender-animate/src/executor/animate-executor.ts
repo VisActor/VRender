@@ -11,23 +11,102 @@ import type {
   IAnimationCustomConstructor,
   IAnimationChannelInterpolator
 } from './executor';
-import { ACustomAnimate } from '../custom/custom-animate';
 import type { EasingType } from '../intreface/easing';
 import type { IAnimate } from '../intreface/animate';
 import { cloneDeep, isArray, isFunction, scale } from '@visactor/vutils';
 
-export class AnimateExecutor {
-  declare _target: IGroup;
+interface IAnimateExecutor {
+  execute: (params: IAnimationConfig) => void;
+  executeItem: (params: IAnimationConfig, graphic: IGraphic, index?: number) => IAnimate | null;
+  onStart: (cb?: () => void) => void;
+  onEnd: (cb?: () => void) => void;
+}
 
-  constructor(target: IGroup) {
+export class AnimateExecutor implements IAnimateExecutor {
+  declare _target: IGraphic;
+
+  // 所有动画实例
+  private _animates: IAnimate[] = [];
+
+  // 动画开始回调
+  private _startCallbacks: (() => void)[] = [];
+  // 动画结束回调
+  private _endCallbacks: (() => void)[] = [];
+
+  // 是否已经开始动画
+  private _started: boolean = false;
+
+  // 当前正在运行的动画数量
+  private _activeCount: number = 0;
+
+  constructor(target: IGraphic) {
     this._target = target;
   }
 
   /**
-   * 执行动画，针对图元组
-   * 1. oneByOne 为 true 时，内部图元依次执行动画，每个图元通过（duration，delay，delayAfter）来控制自身动画的执行
-   * 2. totalTime为总时长（如果有oneByOne的话，从开始到最后一个图元动画结束的时长为totalTime），如果配置了totalTime，那么duration，delay，delayAfter会根据totalTime进行等比缩放
-   * 3. 如果配置了partitioner，则根据partitioner进行筛选子图元再执行动画
+   * 注册一个回调，当动画开始时调用
+   */
+  onStart(cb?: () => void): void {
+    if (cb) {
+      this._startCallbacks.push(cb);
+
+      // 如果动画已经开始，立即调用回调
+      if (this._started && this._activeCount > 0) {
+        cb();
+      }
+    } else {
+      this._startCallbacks.forEach(cb => {
+        cb();
+      });
+    }
+  }
+
+  /**
+   * 注册一个回调，当所有动画结束时调用
+   */
+  onEnd(cb?: () => void): void {
+    if (cb) {
+      this._endCallbacks.push(cb);
+    } else {
+      this._endCallbacks.forEach(cb => {
+        cb();
+      });
+    }
+  }
+
+  /**
+   * 跟踪动画并附加生命周期钩子
+   */
+  private _trackAnimation(animate: IAnimate): void {
+    this._animates.push(animate);
+    this._activeCount++;
+
+    // 如果这是第一个正在运行的动画，触发onStart回调
+    if (this._activeCount === 1 && !this._started) {
+      this._started = true;
+      this.onStart();
+    }
+
+    // 处理动画完成
+    animate.onEnd(() => {
+      this._activeCount--;
+
+      // 从跟踪的动画中移除
+      const index = this._animates.indexOf(animate);
+      if (index >= 0) {
+        this._animates.splice(index, 1);
+      }
+
+      // 如果所有动画都已完成，触发onEnd回调
+      if (this._activeCount === 0 && this._started) {
+        this._started = false;
+        this.onEnd();
+      }
+    });
+  }
+
+  /**
+   * 执行动画，针对一组元素
    */
   execute(params: IAnimationConfig) {
     // 判断是否为timeline配置
@@ -35,6 +114,7 @@ export class AnimateExecutor {
 
     // 获取子图元
     if (this._target.count <= 1) {
+      this.executeItem(params, this._target, 0);
       return;
     }
 
@@ -134,11 +214,17 @@ export class AnimateExecutor {
     const cb = isTimeline
       ? (child: IGraphic, index: number) => {
           // 执行单个图元的timeline动画
-          this.executeTimelineItem(parsedParams as IAnimationTimeline, child, index);
+          const animate = this.executeTimelineItem(parsedParams as IAnimationTimeline, child, index);
+          if (animate) {
+            this._trackAnimation(animate);
+          }
         }
       : (child: IGraphic, index: number) => {
           // 执行单个图元的config动画
-          this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, child, index);
+          const animate = this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, child, index);
+          if (animate) {
+            this._trackAnimation(animate);
+          }
         };
 
     // 执行每个图元的动画
@@ -445,6 +531,30 @@ export class AnimateExecutor {
       animate = this.executeTypeConfigItem(params as IAnimationTypeConfig, graphic, index);
     }
 
+    // 跟踪动画以进行生命周期管理
+    if (animate) {
+      this._trackAnimation(animate);
+    }
+
     return animate;
+  }
+
+  /**
+   * 停止所有由该执行器管理的动画
+   */
+  stop(): void {
+    this._animates.forEach(animate => {
+      animate.stop();
+    });
+
+    // 清空动画实例数组
+    this._animates = [];
+    this._activeCount = 0;
+
+    // 如果动画正在运行，触发结束回调
+    if (this._started) {
+      this._started = false;
+      this.onEnd();
+    }
   }
 }

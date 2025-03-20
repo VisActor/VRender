@@ -60,6 +60,9 @@ export interface IStep {
   getEndProps: () => Record<string, any> | void;
   getFromProps: () => Record<string, any> | void;
   getMergedEndProps: () => Record<string, any> | void;
+
+  // 屏蔽自身属性，会直接从props等内容里删除掉
+  deleteSelfAttr: (key: string) => void;
 }
 
 export interface IAnimate {

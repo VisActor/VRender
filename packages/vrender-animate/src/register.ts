@@ -17,5 +17,5 @@ export function registerAnimate() {
   }
 
   // Mix in animation state methods to Graphic prototype
-  mixin(Graphic.prototype, new GraphicStateExtension());
+  mixin(Graphic, GraphicStateExtension);
 }

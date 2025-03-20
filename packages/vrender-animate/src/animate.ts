@@ -37,6 +37,8 @@ export class Animate implements IAnimate {
   private _startProps: Record<string, any>;
   private _endProps: Record<string, any>;
   private _preventAttrs: Set<string>;
+  // 优先级，用于判定是否能被后续的动画preventAttr
+  declare priority: number;
 
   protected currentTime: number;
   slience?: boolean;
@@ -69,6 +71,7 @@ export class Animate implements IAnimate {
     this._preventAttrs = new Set();
     this.currentTime = 0;
     this.interpolateUpdateFunction = null;
+    this.priority = 0;
   }
 
   /**
@@ -610,7 +613,7 @@ export class Animate implements IAnimate {
         const stepEndTime = stepStartTime + stepDuration;
 
         // 找到当前周期时间所在的step
-        if (cycleTime >= stepStartTime && cycleTime < stepEndTime) {
+        if (cycleTime >= stepStartTime && cycleTime <= stepEndTime) {
           targetStep = currentStep;
           break;
         }
@@ -621,8 +624,8 @@ export class Animate implements IAnimate {
 
     // 如果没找到目标step（可能是所有step都执行完了，但整体动画还没结束，这正常是不存在的）
     if (!targetStep) {
-      this.currentTime = nextTime;
-      console.warn('动画出现问题');
+      // this.currentTime = nextTime;
+      // console.warn('动画出现问题');
       return;
     }
 

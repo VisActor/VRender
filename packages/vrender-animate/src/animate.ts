@@ -188,7 +188,8 @@ export class Animate implements IAnimate {
     // 比如：
     // rect.animate().to({ x: 100 }, 1000, 'linear').to({ y: 100 }, 1000, 'linear');
     // 在第二个step查找fromProps的时候，就能拿到第一个step的endProps中的y值（在原型链上）
-    Object.setPrototypeOf(step.props, this._startProps);
+    // TODO 由于会有其他animate的干扰，所以不能直接设置原型链
+    // Object.setPrototypeOf(step.props, this._startProps);
   }
 
   /**
@@ -219,7 +220,8 @@ export class Animate implements IAnimate {
       // 比如：
       // rect.animate().to({ x: 100 }, 1000, 'linear').to({ y: 100 }, 1000, 'linear');
       // 在第二个step查找fromProps的时候，就能拿到第一个step的endProps中的y值（在原型链上）
-      Object.setPrototypeOf(currentStep.props, this._startProps);
+      // TODO 由于会有其他animate的干扰，所以不能直接设置原型链
+      // Object.setPrototypeOf(currentStep.props, this._startProps);
       currentStep = currentStep.next;
     }
   }
@@ -340,6 +342,14 @@ export class Animate implements IAnimate {
    */
   preventAttr(key: string): void {
     this._preventAttrs.add(key);
+    // 从所有step中移除该属性，并从自身的_startProps和_endProps中移除该属性
+    delete this._startProps[key];
+    delete this._endProps[key];
+    let step = this._firstStep;
+    while (step) {
+      step.deleteSelfAttr(key);
+      step = step.next;
+    }
   }
 
   /**
@@ -411,6 +421,8 @@ export class Animate implements IAnimate {
     }
 
     this.status = AnimateStatus.END;
+
+    this.onEnd();
 
     if (!this.target) {
       return;

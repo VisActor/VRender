@@ -22,3 +22,6 @@ export { TagPointsUpdate } from './custom/tag-points';
 export { GroupFadeIn, GroupFadeOut } from './custom/group-fade';
 export { RotateBySphereAnimate } from './custom/sphere';
 export { AnimateExecutor } from './executor/animate-executor';
+
+// Export animation state modules
+export * from './state';

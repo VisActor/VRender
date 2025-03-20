@@ -24,6 +24,10 @@ export const pages = [
         path: 'animate-next'
       },
       {
+        name: 'animate-state',
+        path: 'animate-state'
+      },
+      {
         name: '内存',
         path: 'memory'
       },

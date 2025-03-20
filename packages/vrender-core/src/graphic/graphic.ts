@@ -943,6 +943,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       this.animates.delete(animate.id);
     });
 
+    // TODO 考虑性能问题
+    this.stage?.ticker.start();
+
     return animate;
   }
 

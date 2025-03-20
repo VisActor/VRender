@@ -112,12 +112,6 @@ export class AnimateExecutor implements IAnimateExecutor {
     // 判断是否为timeline配置
     const isTimeline = 'timeSlices' in params;
 
-    // 获取子图元
-    if (this._target.count <= 1) {
-      this.executeItem(params, this._target, 0);
-      return;
-    }
-
     // 筛选符合条件的子图元
     let filteredChildren: IGraphic[];
 
@@ -230,6 +224,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     // 执行每个图元的动画
     if (filteredChildren) {
       filteredChildren.forEach(cb);
+    } else if (this._target.count <= 1) {
+      cb(this._target, 0);
     } else {
       this._target.forEachChildren(cb);
     }
@@ -253,12 +249,15 @@ export class AnimateExecutor implements IAnimateExecutor {
       startTime = 0,
       oneByOneDelay = 0,
       loop,
+      bounce,
+      priority = 0,
       options,
       controlOptions
     } = params as any;
 
     // 创建动画实例
     const animate = graphic.animate() as unknown as IAnimate;
+    animate.priority = priority;
 
     const delayValue = delay as number;
 
@@ -316,6 +315,11 @@ export class AnimateExecutor implements IAnimateExecutor {
       animate.loop(loop as number);
     }
 
+    // 设置反弹
+    if (bounce) {
+      animate.bounce(true);
+    }
+
     return animate;
   }
 
@@ -323,10 +327,11 @@ export class AnimateExecutor implements IAnimateExecutor {
    * 执行 Timeline 类型的动画
    */
   private executeTimelineItem(params: IAnimationTimeline, graphic: IGraphic, index: number): IAnimate {
-    const { timeSlices, startTime = 0, loop, oneByOneDelay, controlOptions } = params as any;
+    const { timeSlices, startTime = 0, loop, bounce, oneByOneDelay, priority, controlOptions } = params as any;
 
     // 创建动画实例
     const animate = graphic.animate() as unknown as IAnimate;
+    animate.priority = priority;
 
     // 设置开始时间
     animate.startAt((startTime as number) + index * oneByOneDelay);
@@ -334,6 +339,11 @@ export class AnimateExecutor implements IAnimateExecutor {
     // 设置循环
     if (loop && (loop as number) > 0) {
       animate.loop(loop as number);
+    }
+
+    // 设置反弹
+    if (bounce) {
+      animate.bounce(true);
     }
 
     // 处理时间切片

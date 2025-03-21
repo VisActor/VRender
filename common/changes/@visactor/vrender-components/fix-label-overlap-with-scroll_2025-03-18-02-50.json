@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix the label overlap issue in scenarios with a scrollbar",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

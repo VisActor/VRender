@@ -1,6 +1,14 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Thu, 13 Mar 2025 09:51:07 GMT and should not be manually modified.
+This log was last generated on Fri, 21 Mar 2025 08:20:48 GMT and should not be manually modified.
+
+## 0.22.6
+Fri, 21 Mar 2025 08:20:48 GMT
+
+### Updates
+
+- fix: fix the label overlap issue in scenarios with a scrollbar
+- fix(vrender-components): fix the label animation attribute conflict issue, #3803
 
 ## 0.22.5
 Thu, 13 Mar 2025 09:51:07 GMT

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with edit while first character is \\n",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

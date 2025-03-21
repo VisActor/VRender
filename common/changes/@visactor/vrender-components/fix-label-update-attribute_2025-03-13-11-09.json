@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix(vrender-components): fix the label animation attribute conflict issue, #3803",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

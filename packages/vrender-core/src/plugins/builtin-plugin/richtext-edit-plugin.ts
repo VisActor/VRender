@@ -891,6 +891,7 @@ export class RichTextEditPlugin implements IPlugin {
       currRt.detachShadow();
     }
     this.currRt = null;
+    this.editModule.currRt = null;
     const shadowRoot = this.getShadow(currRt);
     if (this.editLine) {
       this.removeEditLineOrBgOrBounds(this.editLine, shadowRoot);

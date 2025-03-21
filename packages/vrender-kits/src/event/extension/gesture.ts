@@ -138,6 +138,7 @@ export class Gesture extends EventEmitter {
     element.addEventListener('pointerdown', this.onStart);
     element.addEventListener('pointermove', this.onMove);
     element.addEventListener('pointerup', this.onEnd);
+    element.addEventListener('pointerleave', this.onEnd);
     element.addEventListener('pointerupoutside', this.onEnd);
   }
 
@@ -149,6 +150,7 @@ export class Gesture extends EventEmitter {
     element.removeEventListener('pointerdown', this.onStart);
     element.removeEventListener('pointermove', this.onMove);
     element.removeEventListener('pointerup', this.onEnd);
+    element.removeEventListener('pointerleave', this.onEnd);
     element.removeEventListener('pointerupoutside', this.onEnd);
   }
 

@@ -212,12 +212,18 @@ export class EditModule {
   };
 
   handleKeyDown = (e: KeyboardEvent) => {
+    if (!this.currRt) {
+      return;
+    }
     if (e.key === 'Delete' || e.key === 'Backspace') {
       this.handleInput({ data: null, type: 'Backspace' });
     }
   };
 
   handleCompositionStart = () => {
+    if (!this.currRt) {
+      return;
+    }
     this.isComposing = true;
     const { textConfig = [] } = this.currRt.attribute;
     this.composingConfigIdx = this.cursorIndex < 0 ? 0 : findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
@@ -273,6 +279,9 @@ export class EditModule {
    * @param configIdx
    */
   parseCompositionStr(configIdx: number) {
+    if (!this.currRt) {
+      return '';
+    }
     const { textConfig = [] } = this.currRt.attribute;
 
     const lastConfig = textConfig[configIdx] ?? {};

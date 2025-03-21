@@ -311,26 +311,17 @@ export class EventSystem {
       return;
     }
     const { globalObj, domElement } = this;
+    const globalDocument = globalObj.getDocument() ?? domElement;
 
     if (this.supportsPointerEvents) {
-      if (globalObj.getDocument()) {
-        globalObj.getDocument().removeEventListener('pointermove', this.onPointerMove, true);
-        globalObj.getDocument().removeEventListener('pointerup', this.onPointerUp, true);
-      } else {
-        domElement.removeEventListener('pointermove', this.onPointerMove, true);
-        domElement.removeEventListener('pointerup', this.onPointerUp, true);
-      }
+      globalDocument.removeEventListener('pointermove', this.onPointerMove, true);
+      globalDocument.removeEventListener('pointerup', this.onPointerUp, true);
       domElement.removeEventListener('pointerdown', this.onPointerDown, true);
       domElement.removeEventListener('pointerleave', this.onPointerOverOut, true);
       domElement.removeEventListener('pointerover', this.onPointerOverOut, true);
     } else {
-      if (globalObj.getDocument()) {
-        globalObj.getDocument().removeEventListener('mousemove', this.onPointerMove, true);
-        globalObj.getDocument().removeEventListener('mouseup', this.onPointerUp, true);
-      } else {
-        domElement.removeEventListener('mousemove', this.onPointerMove, true);
-        domElement.removeEventListener('mouseup', this.onPointerUp, true);
-      }
+      globalDocument.removeEventListener('mousemove', this.onPointerMove, true);
+      globalDocument.removeEventListener('mouseup', this.onPointerUp, true);
       domElement.removeEventListener('mousedown', this.onPointerDown, true);
       domElement.removeEventListener('mouseout', this.onPointerOverOut, true);
       domElement.removeEventListener('mouseover', this.onPointerOverOut, true);

@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Thu, 13 Mar 2025 09:51:07 GMT and should not be manually modified.
+This log was last generated on Fri, 21 Mar 2025 08:20:48 GMT and should not be manually modified.
+
+## 0.22.6
+Fri, 21 Mar 2025 08:20:48 GMT
+
+_Version update only_
 
 ## 0.22.5
 Thu, 13 Mar 2025 09:51:07 GMT

@@ -2,6 +2,21 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.6",
+      "tag": "@visactor/vrender-components_v0.22.6",
+      "date": "Fri, 21 Mar 2025 08:20:48 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix the label overlap issue in scenarios with a scrollbar"
+          },
+          {
+            "comment": "fix(vrender-components): fix the label animation attribute conflict issue, #3803"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.5",
       "tag": "@visactor/vrender-components_v0.22.5",
       "date": "Thu, 13 Mar 2025 09:51:07 GMT",

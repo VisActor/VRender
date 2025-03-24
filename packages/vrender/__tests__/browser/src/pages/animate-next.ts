@@ -6,7 +6,8 @@ import {
   IncreaseCount,
   InputText,
   AnimateExecutor,
-  ACustomAnimate
+  ACustomAnimate,
+  registerCustomAnimate
 } from '@visactor/vrender-animate';
 import {
   container,
@@ -27,6 +28,7 @@ import type { EasingType } from '@visactor/vrender-animate';
 vglobal.setEnv('browser');
 
 registerAnimate();
+registerCustomAnimate();
 
 let stage: any;
 
@@ -151,6 +153,20 @@ export const page = () => {
     });
   });
 
+  addCase('Animate basic', btnContainer, stage => {
+    const rect = createRect({
+      x: 100,
+      y: 100,
+      width: 100,
+      height: 100,
+      fill: 'red'
+    });
+    stage.defaultLayer.add(rect);
+
+    rect.animate().to({ x: 300 }, 1000, 'linear');
+    // 中途设置值没问题，它会从orange开始
+    rect.setAttribute('fill', 'orange');
+  });
   addCase('Animate chain', btnContainer, stage => {
     const rect = createRect({
       x: 100,
@@ -749,6 +765,68 @@ export const page = () => {
         duration: 1000
       },
       loop: 2,
+      // Partitioner function to filter elements
+      partitioner: (datum: any, graphic: IGraphic, params: any) => {
+        return datum && datum.length && datum[0].even === true;
+      },
+      oneByOne: 50
+    });
+
+    // Add title
+    const text = createText({
+      x: 400,
+      y: 50,
+      text: 'AnimateExecutor with lifecycle',
+      fontSize: 16,
+      fill: 'black',
+      textAlign: 'center'
+    });
+
+    executor.onStart(() => {
+      console.log('onStart');
+    });
+    executor.onEnd(() => {
+      console.log('onEnd');
+      alert('完成');
+    });
+    stage.defaultLayer.add(group);
+    stage.defaultLayer.add(text);
+  });
+  addCase('AnimateExecutor builtInAnimate', btnContainer, stage => {
+    // Create a group with a grid of rectangles
+    const group = createGroup({
+      x: 100,
+      y: 150
+    });
+
+    // Create a 6x4 grid of rectangles
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 6; col++) {
+        const rect = createRect({
+          x: col * 100,
+          y: row * 100,
+          width: 80,
+          height: 80,
+          fill: 'gray'
+        });
+        rect.context = {
+          data: [{ row, col, even: (row + col) % 2 === 0 }]
+        };
+        group.add(rect);
+      }
+    }
+
+    const executor = new AnimateExecutor(group);
+
+    // Apply animation only to elements where row + col is even
+    executor.execute({
+      timeSlices: {
+        effects: {
+          type: 'scaleIn',
+          easing: 'elasticOut'
+        },
+        duration: 1000
+      },
       // Partitioner function to filter elements
       partitioner: (datum: any, graphic: IGraphic, params: any) => {
         return datum && datum.length && datum[0].even === true;

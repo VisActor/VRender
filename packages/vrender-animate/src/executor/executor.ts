@@ -89,6 +89,8 @@ export interface IAnimationTypeConfig {
   type?: string;
   /** 动画 channel 配置 */
   channel?: IAnimationChannelAttrs | IAnimationChannelAttributes;
+  /** 动画 to 配置（和channel互斥，如果同时设置，以to为准） */
+  to?: Record<string, any>;
   /** 动画 自定义插值 配置 */
   custom?: IAnimationChannelInterpolator | IAnimationCustomConstructor;
   /** 动画 custom 参数配置 */

@@ -793,7 +793,7 @@ export class RichTextEditPlugin implements IPlugin {
       // 不使用stage的Ticker，避免影响其他的动画以及受到其他动画影响
       this.addAnimateToLine(line);
       this.editLine = line;
-      this.ticker.start(true);
+      this.ticker && this.ticker.start(true);
 
       const g = createGroup({ x: 0, y: 0, width: 0, height: 0 });
       this.editBg = g;
@@ -933,7 +933,7 @@ export class RichTextEditPlugin implements IPlugin {
   }
 
   protected addAnimateToLine(line: ILine) {
-    if (!Graphic.Animate) {
+    if (!line.animate) {
       return;
     }
     line.setAttributes({ opacity: 1 });

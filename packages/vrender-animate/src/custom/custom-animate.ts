@@ -8,6 +8,8 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
   declare customFrom: T;
   declare params?: any;
   declare props?: T;
+  declare from?: T;
+  declare to?: T;
 
   // 为了兼容旧的api，from和to是可选的，且尽量不需要From，因为为了避免突变，From都应该从当前位置开始
   // 所以From并不会真正设置到fromProps中，而是作为customFrom参数
@@ -15,14 +17,6 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
     super('customAnimate', customTo, duration, easing);
     this.customFrom = customFrom;
     this.params = params;
-  }
-
-  get from() {
-    return this.getFromProps();
-  }
-
-  get to() {
-    return this.getEndProps();
   }
 
   update(end: boolean, ratio: number, out: Record<string, any>): void {

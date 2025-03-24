@@ -23,6 +23,12 @@ interface IAnimateExecutor {
 }
 
 export class AnimateExecutor implements IAnimateExecutor {
+  static builtInAnimateMap: Record<string, IAnimationCustomConstructor> = {};
+
+  static registerBuiltInAnimate(name: string, animate: IAnimationCustomConstructor) {
+    AnimateExecutor.builtInAnimateMap[name] = animate;
+  }
+
   declare _target: IGraphic;
 
   // 所有动画实例
@@ -105,30 +111,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     });
   }
 
-  /**
-   * 执行动画，针对一组元素
-   */
-  execute(params: IAnimationConfig) {
-    // 判断是否为timeline配置
+  parseParams(params: IAnimationConfig): IAnimationConfig {
     const isTimeline = 'timeSlices' in params;
-
-    // 筛选符合条件的子图元
-    let filteredChildren: IGraphic[];
-
-    // 如果设置了partitioner，则进行筛选
-    if (isTimeline && params.partitioner) {
-      filteredChildren = (filteredChildren ?? (this._target.getChildren() as IGraphic[])).filter(child => {
-        return (params as IAnimationTimeline).partitioner((child.context as any)?.data, child, {});
-      });
-    }
-
-    // 如果需要排序，则进行排序
-    if (isTimeline && (params as IAnimationTimeline).sort) {
-      filteredChildren = filteredChildren ?? (this._target.getChildren() as IGraphic[]);
-      filteredChildren.sort((a, b) => {
-        return (params as IAnimationTimeline).sort((a.context as any)?.data, (b.context as any)?.data, a, b, {});
-      });
-    }
 
     const totalTime = this.resolveValue(params.totalTime, undefined, undefined);
     const startTime = this.resolveValue(params.startTime, undefined, 0);
@@ -201,21 +185,47 @@ export class AnimateExecutor implements IAnimateExecutor {
       }
     }
 
-    // const duration = this.resolveValue(isTimeline ? 0 : (params as IAnimationTypeConfig).duration, undefined, 300);
+    return parsedParams;
+  }
 
-    // const animates: IAnimate[] = [];
+  /**
+   * 执行动画，针对一组元素
+   */
+  execute(params: IAnimationConfig) {
+    // 判断是否为timeline配置
+    const isTimeline = 'timeSlices' in params;
+
+    // 筛选符合条件的子图元
+    let filteredChildren: IGraphic[];
+
+    // 如果设置了partitioner，则进行筛选
+    if (isTimeline && params.partitioner) {
+      filteredChildren = (filteredChildren ?? (this._target.getChildren() as IGraphic[])).filter(child => {
+        return (params as IAnimationTimeline).partitioner((child.context as any)?.data, child, {});
+      });
+    }
+
+    // 如果需要排序，则进行排序
+    if (isTimeline && (params as IAnimationTimeline).sort) {
+      filteredChildren = filteredChildren ?? (this._target.getChildren() as IGraphic[]);
+      filteredChildren.sort((a, b) => {
+        return (params as IAnimationTimeline).sort((a.context as any)?.data, (b.context as any)?.data, a, b, {});
+      });
+    }
+
+    const parsedParams = this.parseParams(params);
 
     const cb = isTimeline
-      ? (child: IGraphic, index: number) => {
+      ? (child: IGraphic, index: number, count: number) => {
           // 执行单个图元的timeline动画
-          const animate = this.executeTimelineItem(parsedParams as IAnimationTimeline, child, index);
+          const animate = this.executeTimelineItem(parsedParams as IAnimationTimeline, child, index, count);
           if (animate) {
             this._trackAnimation(animate);
           }
         }
-      : (child: IGraphic, index: number) => {
+      : (child: IGraphic, index: number, count: number) => {
           // 执行单个图元的config动画
-          const animate = this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, child, index);
+          const animate = this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, child, index, count);
           if (animate) {
             this._trackAnimation(animate);
           }
@@ -223,11 +233,11 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     // 执行每个图元的动画
     if (filteredChildren) {
-      filteredChildren.forEach(cb);
+      filteredChildren.forEach((child, index) => cb(child, index, filteredChildren.length));
     } else if (this._target.count <= 1) {
-      cb(this._target, 0);
+      cb(this._target, 0, 1);
     } else {
-      this._target.forEachChildren(cb);
+      this._target.forEachChildren((child, index) => cb(child as IGraphic, index, this._target.count - 1));
     }
 
     return;
@@ -236,11 +246,15 @@ export class AnimateExecutor implements IAnimateExecutor {
   /**
    * 执行 TypeConfig 类型的动画
    */
-  private executeTypeConfigItem(params: IAnimationTypeConfig, graphic: IGraphic, index: number): IAnimate {
+  private executeTypeConfigItem(
+    params: IAnimationTypeConfig,
+    graphic: IGraphic,
+    index: number,
+    count: number
+  ): IAnimate {
     const {
-      type = 'to',
+      type,
       channel,
-      custom,
       customParameters,
       easing = 'linear',
       delay = 0,
@@ -254,6 +268,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       options,
       controlOptions
     } = params as any;
+    const custom = params.custom ?? AnimateExecutor.builtInAnimateMap[type];
 
     // 创建动画实例
     const animate = graphic.animate() as unknown as IAnimate;
@@ -261,8 +276,16 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     const delayValue = delay as number;
 
+    // 如果设置了indexKey，则使用indexKey作为index
+    const datum = graphic.context?.data?.[0];
+    const indexKey = graphic.context?.indexKey;
+    if (datum && indexKey) {
+      index = datum[indexKey] ?? index;
+    }
+
     // 设置开始时间
-    animate.startAt((startTime as number) + index * oneByOneDelay);
+    animate.startAt(startTime as number);
+    animate.wait(index * oneByOneDelay);
 
     // 添加延迟
     if (delayValue > 0) {
@@ -270,12 +293,60 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
 
     // 根据 channel 配置创建属性对象
-    const props = this.createPropsFromChannel(channel, graphic);
+    const props = params.to ?? this.createPropsFromChannel(channel, graphic);
 
+    this._handleRunAnimate(
+      animate,
+      custom,
+      props,
+      duration as number,
+      easing,
+      customParameters,
+      options,
+      type,
+      graphic
+    );
+
+    if (oneByOneDelay) {
+      animate.wait(oneByOneDelay * (count - index - 1));
+    }
+
+    // 添加后延迟
+    if ((delayAfter as number) > 0) {
+      animate.wait(delayAfter as number);
+    }
+
+    // 设置循环
+    if (loop && (loop as number) > 0) {
+      animate.loop(loop as number);
+    }
+
+    // 设置反弹
+    if (bounce) {
+      animate.bounce(true);
+    }
+
+    return animate;
+  }
+
+  private _handleRunAnimate(
+    animate: IAnimate,
+    custom: IAnimationCustomConstructor | IAnimationChannelInterpolator,
+    props: Record<string, any>,
+    duration: number,
+    easing: EasingType,
+    customParameters: any,
+    options: any,
+    type: string,
+    graphic: IGraphic
+  ) {
     // 处理自定义动画
     if (custom) {
       const customParams = this.resolveValue(customParameters, graphic, {});
-
+      const objOptions = isFunction(options)
+        ? options.call(null, customParameters.data && customParameters.data[0], graphic, customParameters)
+        : options;
+      customParams.options = objOptions;
       if (isFunction(custom)) {
         if (/^class\s/.test(Function.prototype.toString.call(custom))) {
           // 自定义动画构造器 - 创建自定义动画类
@@ -304,37 +375,28 @@ export class AnimateExecutor implements IAnimateExecutor {
     } else if (type === 'from') {
       animate.from(props, duration as number, easing);
     }
-
-    // 添加后延迟
-    if ((delayAfter as number) > 0) {
-      animate.wait(delayAfter as number);
-    }
-
-    // 设置循环
-    if (loop && (loop as number) > 0) {
-      animate.loop(loop as number);
-    }
-
-    // 设置反弹
-    if (bounce) {
-      animate.bounce(true);
-    }
-
-    return animate;
   }
 
   /**
    * 执行 Timeline 类型的动画
    */
-  private executeTimelineItem(params: IAnimationTimeline, graphic: IGraphic, index: number): IAnimate {
+  private executeTimelineItem(params: IAnimationTimeline, graphic: IGraphic, index: number, count: number): IAnimate {
     const { timeSlices, startTime = 0, loop, bounce, oneByOneDelay, priority, controlOptions } = params as any;
+
+    // 如果设置了indexKey，则使用indexKey作为index
+    const datum = graphic.context?.data?.[0];
+    const indexKey = graphic.context?.indexKey;
+    if (datum && indexKey) {
+      index = datum[indexKey] ?? index;
+    }
 
     // 创建动画实例
     const animate = graphic.animate() as unknown as IAnimate;
     animate.priority = priority;
 
     // 设置开始时间
-    animate.startAt((startTime as number) + index * oneByOneDelay);
+    animate.startAt(startTime as number);
+    animate.wait(index * oneByOneDelay);
 
     // 设置循环
     if (loop && (loop as number) > 0) {
@@ -353,6 +415,11 @@ export class AnimateExecutor implements IAnimateExecutor {
       this.applyTimeSliceToAnimate(slice, animate, graphic);
     });
 
+    // 后等待
+    if (oneByOneDelay) {
+      animate.wait(oneByOneDelay * (count - index - 1));
+    }
+
     return animate;
   }
 
@@ -363,7 +430,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     const { effects, duration = 300, delay = 0, delayAfter = 0 } = slice;
 
     // 解析时间参数
-    const durationValue = duration as number;
+    // const durationValue = duration as number;
     const delayValue = delay as number;
     const delayAfterValue = delayAfter as number;
 
@@ -376,41 +443,23 @@ export class AnimateExecutor implements IAnimateExecutor {
     const effectsArray = Array.isArray(effects) ? effects : [effects];
 
     effectsArray.forEach(effect => {
-      const { type = 'to', channel, custom, customParameters, easing = 'linear', options } = effect;
+      const { type = 'to', channel, customParameters, easing = 'linear', options } = effect;
+
+      const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
 
       // 根据 channel 配置创建属性对象
       const props = this.createPropsFromChannel(channel, graphic);
-
-      if (type === 'to') {
-        animate.to(props, durationValue, easing);
-      } else if (type === 'from') {
-        animate.from(props, durationValue, easing);
-      } else if (custom) {
-        // 处理自定义动画
-        const customParams = this.resolveValue(customParameters, graphic, {});
-
-        if (isFunction(custom)) {
-          // 自定义插值器 - 创建自定义插值动画
-          this.createCustomInterpolatorAnimation(
-            animate,
-            custom as IAnimationChannelInterpolator,
-            props,
-            durationValue,
-            easing,
-            customParams
-          );
-        } else {
-          // 自定义动画构造器 - 创建自定义动画类
-          this.createCustomAnimation(
-            animate,
-            custom as IAnimationCustomConstructor,
-            props,
-            durationValue,
-            easing,
-            customParams
-          );
-        }
-      }
+      this._handleRunAnimate(
+        animate,
+        custom,
+        props,
+        duration as number,
+        easing,
+        customParameters,
+        options,
+        type,
+        graphic
+      );
     });
 
     // 添加后延迟
@@ -486,12 +535,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       return props;
     }
 
-    if (Array.isArray(channel)) {
-      // 如果是属性数组，使用当前的属性值
-      channel.forEach(attr => {
-        props[attr] = graphic.getComputedAttribute(attr);
-      });
-    } else {
+    if (!Array.isArray(channel)) {
       // 如果是对象，解析 from/to 配置
       Object.entries(channel).forEach(([key, config]) => {
         if (config.to !== undefined) {
@@ -525,7 +569,7 @@ export class AnimateExecutor implements IAnimateExecutor {
   /**
    * 执行动画（具体执行到内部的单个图元）
    */
-  executeItem(params: IAnimationConfig, graphic: IGraphic, index: number = 0): IAnimate | null {
+  executeItem(params: IAnimationConfig, graphic: IGraphic, index: number = 0, count: number = 1): IAnimate | null {
     if (!graphic) {
       return null;
     }
@@ -535,10 +579,10 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     if (isTimeline) {
       // 处理 Timeline 类型的动画配置
-      animate = this.executeTimelineItem(params as IAnimationTimeline, graphic, index);
+      animate = this.executeTimelineItem(params as IAnimationTimeline, graphic, index, count);
     } else {
       // 处理 TypeConfig 类型的动画配置
-      animate = this.executeTypeConfigItem(params as IAnimationTypeConfig, graphic, index);
+      animate = this.executeTypeConfigItem(params as IAnimationTypeConfig, graphic, index, count);
     }
 
     // 跟踪动画以进行生命周期管理
@@ -552,10 +596,12 @@ export class AnimateExecutor implements IAnimateExecutor {
   /**
    * 停止所有由该执行器管理的动画
    */
-  stop(): void {
-    this._animates.forEach(animate => {
-      animate.stop();
-    });
+  stop(type?: 'start' | 'end' | Record<string, any>): void {
+    // animate.stop会从数组里删除，所以需要while循环，不能forEach
+    while (this._animates.length > 0) {
+      const animate = this._animates.pop();
+      animate?.stop(type);
+    }
 
     // 清空动画实例数组
     this._animates = [];

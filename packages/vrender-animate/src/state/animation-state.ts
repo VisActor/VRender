@@ -50,8 +50,9 @@ export class AnimationStateManager {
    * 应用状态
    * @param nextState 下一个状态数组，如果传入数组，那么状态是串行的。但是每次applyState都会立即执行动画，也就是applyState和applyState之间是并行
    * @param animationConfig 动画配置
+   * @param callback 动画结束后的回调函数，参数empty为true表示没有动画需要执行直接调的回调
    */
-  applyState(nextState: string[], animationConfig: IAnimationState[]): void {
+  applyState(nextState: string[], animationConfig: IAnimationState[], callback?: (empty?: boolean) => void): void {
     const registry = AnimationTransitionRegistry.getInstance();
 
     // TODO 这里指判断第一个状态，后续如果需要的话要循环判断
@@ -67,7 +68,7 @@ export class AnimationStateManager {
         });
       });
     } else {
-      const _stateList = this.stateList[0];
+      // const _stateList = this.stateList[0];
       nextState.forEach((state, index) => {
         // 遍历this.stateList，获取result，只要有一个是false，那这个result就是false
         const result: { allowTransition: boolean; stopOriginalTransition: boolean } = {
@@ -77,17 +78,21 @@ export class AnimationStateManager {
         this.stateList.forEach(currState => {
           const _result = registry.isTransitionAllowed(currState.state, state, this.graphic);
           result.allowTransition = result.allowTransition && _result.allowTransition;
-          result.stopOriginalTransition = result.stopOriginalTransition && _result.stopOriginalTransition;
         });
+        // 所有状态都允许过渡，则添加到shouldApplyState
         if (result.allowTransition) {
           shouldApplyState.push({
             state,
             animationConfig: animationConfig[index].animation,
             executor: new AnimateExecutor(this.graphic)
           });
-        }
-        if (result.stopOriginalTransition) {
-          shouldStopState.push(_stateList);
+          // 允许过渡的话，需要重新遍历this.stateList，获取stopOriginalTransition
+          this.stateList.forEach(currState => {
+            const _result = registry.isTransitionAllowed(currState.state, state, this.graphic);
+            if (_result.stopOriginalTransition) {
+              shouldStopState.push(currState);
+            }
+          });
         }
       });
     }
@@ -101,16 +106,25 @@ export class AnimationStateManager {
     if (shouldApplyState.length) {
       shouldApplyState[0].executor.execute(shouldApplyState[0].animationConfig);
       // 如果下一个状态存在，那么下一个状态的动画在当前状态动画结束后立即执行
-      for (let i = 1; i < shouldApplyState.length; i++) {
-        const nextState = shouldApplyState[i];
-        shouldApplyState[i - 1].executor.onEnd(() => {
+      for (let i = 0; i < shouldApplyState.length; i++) {
+        const nextState = shouldApplyState[i + 1];
+        const currentState = shouldApplyState[i];
+        currentState.executor.onEnd(() => {
           if (nextState) {
             nextState.executor.execute(nextState.animationConfig);
           }
           // 删除这个状态
-          this.stateList = this.stateList.filter(state => state !== shouldApplyState[i]);
+          this.stateList = this.stateList.filter(state => state !== currentState);
+
+          // 如果是最后一个状态且有回调，则调用回调
+          if (i === shouldApplyState.length - 1 && callback) {
+            callback(false);
+          }
         });
       }
+    } else if (callback) {
+      // 如果没有需要应用的动画状态，直接调用回调
+      callback(true);
     }
 
     if (this.stateList) {
@@ -119,6 +133,13 @@ export class AnimationStateManager {
       this.stateList = [];
     }
     this.stateList.push(...shouldApplyState);
+  }
+
+  stopState(state: string, type?: 'start' | 'end' | Record<string, any>): void {
+    const stateInfo = this.stateList?.find(stateInfo => stateInfo.state === state);
+    if (stateInfo) {
+      stateInfo.executor.stop(type);
+    }
   }
 
   clearState(): void {

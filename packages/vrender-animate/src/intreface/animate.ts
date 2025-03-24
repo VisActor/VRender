@@ -139,6 +139,8 @@ export interface IAnimate {
   // 并行执行
   parallel: (animate: IAnimate) => this;
 
+  getLoop: () => number;
+
   // 反转动画
   // reversed: (r: boolean) => IAnimate;
   // 循环动画

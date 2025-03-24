@@ -114,6 +114,10 @@ export class Animate implements IAnimate {
    */
   bind(target: IGraphic): this {
     this.target = target;
+    // 添加一个animationAttribute属性，用于存储动画过程中的属性
+    if (!this.target.animationAttribute) {
+      this.target.animationAttribute = {};
+    }
     return this;
   }
 
@@ -419,9 +423,10 @@ export class Animate implements IAnimate {
    * 停止动画
    */
   stop(type?: 'start' | 'end' | Record<string, any>): void {
-    if (this.status !== AnimateStatus.RUNNING) {
-      return;
-    }
+    // TODO 有些动画可能一添加就被删除
+    // if (this.status === AnimateStatus.END) {
+    //   return;
+    // }
 
     this.status = AnimateStatus.END;
 
@@ -557,6 +562,10 @@ export class Animate implements IAnimate {
    * 推进动画
    */
   advance(delta: number): void {
+    if (this.status === AnimateStatus.END) {
+      console.warn('aaa 动画已经结束，不能推进');
+      return;
+    }
     const nextTime = this.currentTime + delta;
     // 如果还没开始，直接return
     if (nextTime < this._startTime) {
@@ -664,5 +673,9 @@ export class Animate implements IAnimate {
 
   getTotalDuration(): number {
     return this._totalDuration;
+  }
+
+  getLoop(): number {
+    return this._loopCount;
   }
 }

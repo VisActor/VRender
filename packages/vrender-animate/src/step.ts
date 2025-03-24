@@ -168,9 +168,9 @@ export class Step implements IStep {
       // 获取上一步的属性值作为起始值
       this.fromProps = this.getLastProps();
       this.determineInterpolateUpdateFunction();
-      this.onFirstRun();
       this.tryPreventConflict();
       this.trySyncStartProps();
+      this.onFirstRun();
     }
   }
 
@@ -196,7 +196,8 @@ export class Step implements IStep {
    */
   deleteSelfAttr(key: string): void {
     delete this.props[key];
-    delete this.fromProps[key];
+    // fromProps在动画开始时才会计算，这时可能不在
+    this.fromProps && delete this.fromProps[key];
     const index = this.propKeys.indexOf(key);
     if (index !== -1) {
       this.propKeys.splice(index, 1);

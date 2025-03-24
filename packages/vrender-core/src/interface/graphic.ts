@@ -779,7 +779,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   update: (d?: { bounds: boolean; trans: boolean }) => void;
 
   // animate
-  animate: (params?: IGraphicAnimateParams) => IAnimate;
+  animate?: (params?: IGraphicAnimateParams) => IAnimate;
 
   // 语法糖，可有可无，有的为了首屏性能考虑做成get方法，有的由外界直接托管，内部不赋值
   name?: string;
@@ -832,6 +832,8 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   stopAnimates: (stopChildren?: boolean) => void;
   getNoWorkAnimateAttr: () => Record<string, number>;
   getGraphicTheme: () => T;
+
+  getAttributes: () => Partial<T>;
 }
 
 export interface IRoot extends IGraphic {

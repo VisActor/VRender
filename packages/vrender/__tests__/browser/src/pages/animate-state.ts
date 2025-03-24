@@ -6,7 +6,8 @@ import {
   IncreaseCount,
   InputText,
   AnimateExecutor,
-  ACustomAnimate
+  ACustomAnimate,
+  registerCustomAnimate
 } from '@visactor/vrender-animate';
 import {
   container,
@@ -27,6 +28,7 @@ import type { EasingType } from '@visactor/vrender-animate';
 vglobal.setEnv('browser');
 
 registerAnimate();
+registerCustomAnimate();
 
 let stage: any;
 
@@ -807,46 +809,6 @@ export const page = () => {
     group.add(rect2);
     group.add(rect3);
 
-    // Register animation states
-    group.registerAnimationState({
-      name: 'appear',
-      animation: {
-        type: 'to',
-        channel: {
-          opacity: { from: 0, to: 1 },
-          scaleX: { from: 0.5, to: 1 },
-          scaleY: { from: 0.5, to: 1 }
-        },
-        duration: 1000,
-        easing: 'elasticOut'
-      }
-    });
-
-    group.registerAnimationState({
-      name: 'shuffle',
-      animation: {
-        type: 'to',
-        channel: {
-          x: { to: 200 }
-        },
-        duration: 1000,
-        easing: 'linear'
-      }
-    });
-
-    group.registerAnimationState({
-      name: 'disappear',
-      animation: {
-        type: 'to',
-        channel: {
-          opacity: { to: 0 },
-          y: { to: 250 }
-        },
-        duration: 800,
-        easing: 'sineIn'
-      }
-    });
-
     // Create control buttons
     const createControlButton = (x: number, y: number, label: string, action: () => void) => {
       const buttonGroup = createGroup({
@@ -897,24 +859,65 @@ export const page = () => {
 
     buttonsGroup.add(
       createControlButton(200, 0, 'Appear', () => {
+        const normalAnimation = {
+          name: 'normal',
+          animation: {
+            loop: true,
+            startTime: 100,
+            oneByOne: 100,
+            priority: 1,
+            timeSlices: [
+              {
+                delay: 1000,
+                effects: {
+                  channel: {
+                    fillOpacity: {
+                      to: 0.5
+                    }
+                  },
+                  easing: 'linear'
+                },
+                duration: 500
+              },
+              {
+                effects: {
+                  channel: {
+                    fillOpacity: {
+                      to: 1
+                    }
+                  },
+                  easing: 'linear'
+                },
+                duration: 500
+              }
+            ],
+            customParameters: null
+          }
+        };
         group.applyAnimationState(
-          ['appear'],
+          ['appear', 'normal'],
           [
             {
               name: 'appear',
               animation: {
                 type: 'to',
                 channel: {
-                  opacity: { from: 0, to: 1 },
-                  scaleX: { from: 0.5, to: 1 },
-                  scaleY: { from: 0.5, to: 1 }
+                  scaleX: { from: 0, to: 1.6 },
+                  scaleY: { from: 0, to: 1.6 }
                 },
                 duration: 1000,
                 easing: 'elasticOut'
               }
-            }
+            },
+            normalAnimation
           ]
         );
+
+        setTimeout(() => {
+          group.stopAnimationState('normal');
+          group.applyAnimationState(['normal'], [normalAnimation]);
+          console.log(group);
+        }, 3000);
       })
     );
 

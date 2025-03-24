@@ -117,7 +117,9 @@ export {
   ClipDirectionAnimate,
   GroupFadeIn,
   GroupFadeOut,
-  RotateBySphereAnimate
+  RotateBySphereAnimate,
+  registerCustomAnimate,
+  AnimationTransitionRegistry
 } from '@visactor/vrender-animate';
 
 // TODO VChart那块要引用vgrammar-core，这里先临时导出，后面删除

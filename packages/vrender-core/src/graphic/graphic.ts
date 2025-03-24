@@ -55,6 +55,7 @@ import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './bui
 import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
+import type { ITimeline } from '../interface/animate';
 
 const _tempBounds = new AABBBounds();
 /**
@@ -172,6 +173,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   static Animate: IAnimateConstructor;
   static Timeline: ITimelineConstructor;
   static Ticker: ITickerConstructor;
+  static defaultTimeline: ITimeline;
   /**
    * Mixes all enumerable properties and methods from a source object to Element.
    * @param source - The source of properties and methods to mix in.
@@ -306,6 +308,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } else if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
+  }
+
+  getAttributes(): T {
+    return this.attribute;
   }
 
   setMode(mode: '2d' | '3d') {
@@ -915,40 +921,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return this;
   }
 
-  animate(params?: IGraphicAnimateParams) {
-    if (!Graphic.Animate) {
-      return null;
-    }
-    if (!this.animates) {
-      this.animates = new Map();
-    }
-    const animate = new Graphic.Animate(
-      params?.id,
-      params?.timeline ?? (this.stage && this.stage.getTimeline()),
-      params?.slience
-    );
-
-    animate.bind(this);
-    if (params) {
-      const { onStart, onFrame, onEnd, onRemove } = params;
-      onStart != null && animate.onStart(onStart);
-      onFrame != null && animate.onFrame(onFrame);
-      onEnd != null && animate.onEnd(onEnd);
-      onRemove != null && animate.onRemove(onRemove);
-      animate.interpolateFunc = params.interpolate;
-    }
-    this.animates.set(animate.id, animate);
-    animate.onRemove(() => {
-      animate.stop();
-      this.animates.delete(animate.id);
-    });
-
-    // TODO 考虑性能问题
-    this.stage?.ticker.start();
-
-    return animate;
-  }
-
   onAttributeUpdate(context?: ISetAttributeContext) {
     if (context && context.skipUpdateCallback) {
       return;
@@ -1007,13 +979,30 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
         }
       });
 
-      const animate = this.animate({ slience: true });
-      (animate as any).stateNames = stateNames;
-      animate.to(
-        animateAttrs,
-        this.stateAnimateConfig?.duration ?? DefaultStateAnimateConfig.duration,
-        this.stateAnimateConfig?.easing ?? DefaultStateAnimateConfig.easing
+      const stateAnimateConfig =
+        this.context.stateAnimateConfig ?? this.stateAnimateConfig ?? DefaultStateAnimateConfig;
+      // 需要注册动画
+      (this as any).applyAnimationState(
+        ['state'],
+        [
+          {
+            name: 'state',
+            animation: {
+              type: 'state',
+              to: animateAttrs,
+              duration: stateAnimateConfig.duration,
+              easing: stateAnimateConfig.easing
+            }
+          }
+        ]
       );
+      // const animate = this.animate({ slience: true });
+      // (animate as any).stateNames = stateNames;
+      // animate.to(
+      //   animateAttrs,
+      //   this.stateAnimateConfig?.duration ?? DefaultStateAnimateConfig.duration,
+      //   this.stateAnimateConfig?.easing ?? DefaultStateAnimateConfig.easing
+      // );
       noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
       this.stopStateAnimates();

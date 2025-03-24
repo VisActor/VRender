@@ -62,6 +62,7 @@ export class AnimationTransitionRegistry {
       allowTransition: true,
       stopOriginalTransition: false
     }));
+    // 循环动画碰到循环动画，什么都不会发生
     this.registerTransition('normal', 'normal', () => ({
       allowTransition: false,
       stopOriginalTransition: false

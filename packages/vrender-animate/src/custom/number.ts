@@ -185,7 +185,7 @@ export class IncreaseCount extends ACustomAnimate<{ text: string | number }> {
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
     super.onEnd(cb);
     if (!cb) {
-      this.target.setAttributes(this.to);
+      this.props && this.target.setAttributes(this.props as any);
     }
   }
 

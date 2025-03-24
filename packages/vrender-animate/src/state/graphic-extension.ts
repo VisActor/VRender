@@ -32,8 +32,16 @@ export class GraphicStateExtension {
   /**
    * 应用一个动画状态到图形
    */
-  applyAnimationState(state: string[], animationConfig: IAnimationState[]): this {
-    this._getAnimationStateManager(this as unknown as IGraphic).applyState(state, animationConfig);
+  applyAnimationState(state: string[], animationConfig: IAnimationState[], callback?: (empty?: boolean) => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyState(state, animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 停止一个动画状态
+   */
+  stopAnimationState(state: string, type?: 'start' | 'end' | Record<string, any>): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).stopState(state, type);
     return this;
   }
 

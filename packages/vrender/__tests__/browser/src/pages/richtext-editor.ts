@@ -66,6 +66,26 @@ export const page = () => {
           lineHeight: '150%',
           text: 'a',
           isComposing: false
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'b',
+          isComposing: false
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'c',
+          isComposing: false
         }
       ],
       upgradeAttrs: {

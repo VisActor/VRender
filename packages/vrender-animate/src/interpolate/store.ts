@@ -141,22 +141,27 @@ export class InterpolateUpdateStore {
   x = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.x = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
   };
   y = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.y = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
   };
   angle = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.angle = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
   };
   scaleX = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.scaleX = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
   };
   scaleY = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.scaleY = interpolateNumber(from, to, ratio);
     target.addUpdateBoundTag();
+    target.addUpdatePositionTag();
   };
   lineWidth = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.lineWidth = interpolateNumber(from, to, ratio);

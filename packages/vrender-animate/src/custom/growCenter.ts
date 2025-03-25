@@ -1,5 +1,5 @@
 import type { IGraphic, IGroup } from '@visactor/vrender-core';
-import { isNil, isNumber, isValid } from '@visactor/vutils';
+import { isValid } from '@visactor/vutils';
 import type { IAnimate, IStep } from '../intreface/animate';
 import type { EasingType } from '../intreface/easing';
 import { ACustomAnimate } from './custom-animate';

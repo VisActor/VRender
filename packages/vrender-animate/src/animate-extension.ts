@@ -8,7 +8,8 @@
 import type { IGraphicAnimateParams } from '@visactor/vrender-core';
 import type { IAnimate } from './intreface/animate';
 import { Animate } from './animate';
-import { defaultTimeline } from './timeline';
+import { DefaultTimeline, defaultTimeline } from './timeline';
+import { DefaultTicker } from './ticker/default-ticker';
 
 // 基于性能考虑，每次调用animate函数，都会设置animatedAttribute为null，每次getAttributes(true)会根据animatedAttribute属性判断是否需要重新计算animatedAttribute。
 export class AnimateExtension {
@@ -63,6 +64,14 @@ export class AnimateExtension {
         }
       });
     }
+  }
+
+  createTimeline() {
+    return new DefaultTimeline();
+  }
+
+  createTicker(stage: any) {
+    return new DefaultTicker(stage);
   }
 
   protected getFinalAttribute() {

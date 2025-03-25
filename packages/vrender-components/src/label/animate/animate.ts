@@ -1,5 +1,5 @@
 import type { IText, ITextGraphicAttribute, EasingType } from '@visactor/vrender-core';
-import { IncreaseCount } from '@visactor/vrender-core';
+import { IncreaseCount } from '@visactor/vrender-animate';
 import type { ILabelAnimation, ILabelUpdateAnimation, ILabelUpdateChannelAnimation, LabelContent } from '../type';
 import { array, isArray, isEmpty, isValidNumber } from '@visactor/vutils';
 
@@ -104,7 +104,7 @@ export function playIncreaseCount(prev: IText, next: IText, duration: number, ea
           { text: next.attribute.text as string },
           duration,
           easing
-        )
+        ) as any
       );
   }
 }

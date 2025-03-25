@@ -2,7 +2,8 @@ import { AbstractComponent } from '../core/base';
 import type { IWeatherBoxAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { merge } from '@visactor/vutils';
-import { Animate, DefaultTimeline, type IGroup, type ISymbol, type ITimeline } from '@visactor/vrender-core';
+import type { IGroup, ISymbol } from '@visactor/vrender-core';
+import { Animate, DefaultTimeline, type ITimeline } from '@visactor/vrender-animate';
 
 // todo 后续可能做成有随机数种子的伪随机，这样可以保证每次都生成一样的随机数
 function random() {
@@ -65,7 +66,7 @@ export class WeatherBox extends AbstractComponent<Required<IWeatherBoxAttrs>> {
 
   constructor(attributes: IWeatherBoxAttrs, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, WeatherBox.defaultAttributes, attributes));
-    this.timeline = options?.timeline ?? new DefaultTimeline();
+    this.timeline = options?.timeline ?? (new DefaultTimeline() as any);
   }
 
   protected render(): void {

@@ -160,3 +160,8 @@ export interface IAnimate {
   // 更新duration
   updateDuration: () => void;
 }
+
+export enum AnimateMode {
+  NORMAL = 0b0000,
+  SET_ATTR_IMMEDIATELY = 0b0001
+}

@@ -243,6 +243,7 @@ importers:
       '@internal/ts-config': workspace:*
       '@rushstack/eslint-patch': ~1.1.4
       '@types/jest': ^26.0.0
+      '@visactor/vrender-animate': workspace:0.22.4
       '@visactor/vrender-core': workspace:0.22.4
       '@visactor/vrender-kits': workspace:0.22.4
       '@visactor/vscale': ~0.19.4
@@ -256,6 +257,7 @@ importers:
       typescript: 4.9.5
       vite: 3.2.6
     dependencies:
+      '@visactor/vrender-animate': link:../vrender-animate
       '@visactor/vrender-core': link:../vrender-core
       '@visactor/vrender-kits': link:../vrender-kits
       '@visactor/vscale': 0.19.4
@@ -284,7 +286,6 @@ importers:
       '@types/jest': ^26.0.0
       '@types/react': ^18.0.0
       '@types/react-dom': ^18.0.0
-      '@visactor/vrender-animate': workspace:0.22.4
       '@visactor/vutils': ~0.19.4
       '@vitejs/plugin-react': 3.1.0
       color-convert: 2.0.1
@@ -299,7 +300,6 @@ importers:
       typescript: 4.9.5
       vite: 3.2.6
     dependencies:
-      '@visactor/vrender-animate': link:../vrender-animate
       '@visactor/vutils': 0.19.4
       color-convert: 2.0.1
     devDependencies:

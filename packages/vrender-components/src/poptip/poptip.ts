@@ -2,7 +2,6 @@
  * @description PopTip组件
  */
 import {
-  InputText,
   type IGraphic,
   type IGroup,
   type IRect,
@@ -13,6 +12,7 @@ import {
   type TextAlignType,
   type TextBaselineType
 } from '@visactor/vrender-core';
+import { InputText } from '@visactor/vrender-animate';
 import {
   AABBBounds,
   Bounds,
@@ -463,12 +463,24 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
     this.titleShape &&
       this.titleShape
         .animate()
-        .play(new InputText({ text: '' }, { text: this.titleShape.attribute.text as string }, duration, easing as any));
+        .play(
+          new InputText(
+            { text: '' },
+            { text: this.titleShape.attribute.text as string },
+            duration,
+            easing as any
+          ) as any
+        );
     this.contentShape &&
       this.contentShape
         .animate()
         .play(
-          new InputText({ text: '' }, { text: this.contentShape.attribute.text as string }, duration, easing as any)
+          new InputText(
+            { text: '' },
+            { text: this.contentShape.attribute.text as string },
+            duration,
+            easing as any
+          ) as any
         );
 
     // 摇摆

@@ -170,10 +170,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   extends Node
   implements IGraphic<T>, IAnimateTarget
 {
-  static Animate: IAnimateConstructor;
-  static Timeline: ITimelineConstructor;
-  static Ticker: ITickerConstructor;
-  static defaultTimeline: ITimeline;
   /**
    * Mixes all enumerable properties and methods from a source object to Element.
    * @param source - The source of properties and methods to mix in.
@@ -284,6 +280,8 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   /** 获取state图形属性的方法 */
   declare stateProxy?: (stateName: string, targetStates?: string[]) => T;
   declare animates: Map<string | number, IAnimate>;
+
+  declare animate?: () => IAnimate;
 
   declare nextAttrs?: T;
   declare prevAttrs?: T;

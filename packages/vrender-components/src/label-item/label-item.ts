@@ -7,7 +7,7 @@ import type {
   ISymbolGraphicAttribute,
   IText
 } from '@visactor/vrender-core';
-import { ILineAttribute, InputText, ISymbolAttribute } from '@visactor/vrender-core';
+import { InputText } from '@visactor/vrender-animate';
 import { AbstractComponent } from '../core/base';
 import type { IStoryLabelItemAttrs } from './type';
 import type { ComponentOptions } from '../interface';
@@ -277,14 +277,14 @@ export class StoryLabelItem extends AbstractComponent<Required<IStoryLabelItemAt
       this._titleTop
         .animate()
         .wait(symbolTime * 5)
-        .play(new InputText({ text: '' }, { text: titleTopText }, symbolTime * 4, 'linear'));
+        .play(new InputText({ text: '' }, { text: titleTopText }, symbolTime * 4, 'linear') as any);
 
       const titleBottomText = this._titleBottom.attribute.text as string;
       this._titleBottom.setAttributes({ text: '' });
       this._titleBottom
         .animate()
         .wait(symbolTime * 5)
-        .play(new InputText({ text: '' }, { text: titleBottomText }, symbolTime * 4, 'linear'));
+        .play(new InputText({ text: '' }, { text: titleBottomText }, symbolTime * 4, 'linear') as any);
     } else {
       this._titleTop.setAttributes({ dy: this._titleTop.AABBBounds.height() + 10 });
       this._titleTop

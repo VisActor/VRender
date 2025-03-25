@@ -299,9 +299,9 @@ export class Stage extends Group implements IStage {
   }
 
   initAnimate(params: Partial<IStageParams>) {
-    if (Graphic.Ticker && Graphic.Timeline) {
-      this.ticker = params.ticker || new Graphic.Ticker(this);
-      this.timeline = new Graphic.Timeline();
+    if ((this as any).createTicker && (this as any).createTimeline) {
+      this.ticker = params.ticker || (this as any).createTicker(this);
+      this.timeline = (this as any).createTimeline();
       this.ticker.addTimeline(this.timeline);
       this.ticker.on('tick', this.afterTickCb);
     }

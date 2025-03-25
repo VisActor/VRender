@@ -341,6 +341,9 @@ importers:
 
   ../../packages/vrender-components:
     dependencies:
+      '@visactor/vrender-animate':
+        specifier: workspace:0.22.8
+        version: link:../vrender-animate
       '@visactor/vrender-core':
         specifier: workspace:0.22.8
         version: link:../vrender-core

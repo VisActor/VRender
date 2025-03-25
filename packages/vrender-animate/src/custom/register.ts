@@ -1,8 +1,18 @@
 import { AnimateExecutor } from '../executor/animate-executor';
 import { ClipIn, ClipOut } from './clip';
 import { FadeIn, FadeOut } from './fade';
+import { GrowAngleIn, GrowAngleOut } from './growAngle';
 import { GrowCenterIn, GrowCenterOut } from './growCenter';
 import { GrowHeightIn, GrowHeightOut } from './growHeight';
+import {
+  GrowPointsIn,
+  GrowPointsOut,
+  GrowPointsXIn,
+  GrowPointsXOut,
+  GrowPointsYIn,
+  GrowPointsYOut
+} from './growPoints';
+import { GrowRadiusIn, GrowRadiusOut } from './growRadius';
 import { GrowWidthIn, GrowWidthOut } from './growWidth';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
@@ -21,6 +31,16 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('clipOut', ClipOut);
   AnimateExecutor.registerBuiltInAnimate('fadeIn', FadeIn);
   AnimateExecutor.registerBuiltInAnimate('fadeOut', FadeOut);
+  AnimateExecutor.registerBuiltInAnimate('growPointsIn', GrowPointsIn);
+  AnimateExecutor.registerBuiltInAnimate('growPointsOut', GrowPointsOut);
+  AnimateExecutor.registerBuiltInAnimate('growPointsXIn', GrowPointsXIn);
+  AnimateExecutor.registerBuiltInAnimate('growPointsXOut', GrowPointsXOut);
+  AnimateExecutor.registerBuiltInAnimate('growPointsYIn', GrowPointsYIn);
+  AnimateExecutor.registerBuiltInAnimate('growPointsYOut', GrowPointsYOut);
+  AnimateExecutor.registerBuiltInAnimate('growAngleIn', GrowAngleIn);
+  AnimateExecutor.registerBuiltInAnimate('growAngleOut', GrowAngleOut);
+  AnimateExecutor.registerBuiltInAnimate('growRadiusIn', GrowRadiusIn);
+  AnimateExecutor.registerBuiltInAnimate('growRadiusOut', GrowRadiusOut);
   // state和update共用一个自定义动画类
   AnimateExecutor.registerBuiltInAnimate('update', Update);
   AnimateExecutor.registerBuiltInAnimate('state', State);

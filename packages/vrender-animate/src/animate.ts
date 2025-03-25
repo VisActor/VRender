@@ -114,6 +114,10 @@ export class Animate implements IAnimate {
    */
   bind(target: IGraphic): this {
     this.target = target;
+
+    if (this.target.onAnimateBind && !this.slience) {
+      this.target.onAnimateBind(this as any);
+    }
     // 添加一个animationAttribute属性，用于存储动画过程中的属性
     if (!this.target.animationAttribute) {
       this.target.animationAttribute = {};

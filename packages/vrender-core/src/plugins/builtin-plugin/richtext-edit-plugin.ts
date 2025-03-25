@@ -208,8 +208,6 @@ export class RichTextEditPlugin implements IPlugin {
     this.commandCbs.set(FORMAT_TEXT_COMMAND, [this.formatTextCommandCb]);
     this.commandCbs.set(FORMAT_ALL_TEXT_COMMAND, [this.formatAllTextCommandCb]);
     this.updateCbs = [];
-    this.timeline = Graphic.Timeline && new Graphic.Timeline();
-    this.ticker = Graphic.Ticker && new Graphic.Ticker([this.timeline]);
     this.deltaX = 0;
     this.deltaY = 0;
   }
@@ -310,6 +308,9 @@ export class RichTextEditPlugin implements IPlugin {
     this.editModule.onInput(this.handleInput);
     this.editModule.onChange(this.handleChange);
     this.editModule.onFocusOut(this.handleFocusOut);
+
+    this.timeline = (this as any).createTimeline && (this as any).createTimeline();
+    this.ticker = (this as any).createTicker && (this as any).createTicker(context.stage);
   }
 
   copyToClipboard(e: KeyboardEvent): boolean {

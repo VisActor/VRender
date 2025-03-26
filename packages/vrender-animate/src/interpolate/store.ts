@@ -1,7 +1,8 @@
 import type { IGraphic } from '@visactor/vrender-core';
-import { interpolateColor, interpolatePureColorArrayToStr } from '@visactor/vrender-core';
+import { interpolateColor, interpolatePureColorArrayToStr, pointsInterpolation } from '@visactor/vrender-core';
 import { interpolateNumber } from './number';
 import type { IStep } from '../intreface/animate';
+import type { IPointLike } from '@visactor/vutils';
 
 // 直接设置，触发 隐藏类（Hidden Class）优化：
 /**
@@ -98,11 +99,9 @@ export class InterpolateUpdateStore {
     step: IStep,
     target: IGraphic
   ) => {
-    target.attribute.fill = interpolatePureColorArrayToStr(
-      step.fromParsedProps.fill,
-      step.toParsedProps.fill,
-      ratio
-    ) as any;
+    target.attribute.fill = step.fromParsedProps.fill
+      ? (interpolatePureColorArrayToStr(step.fromParsedProps.fill, step.toParsedProps.fill, ratio) as any)
+      : step.toParsedProps.fill;
   };
   stroke = (
     key: string,
@@ -122,11 +121,9 @@ export class InterpolateUpdateStore {
     step: IStep,
     target: IGraphic
   ) => {
-    target.attribute.stroke = interpolatePureColorArrayToStr(
-      step.fromParsedProps.stroke,
-      step.toParsedProps.stroke,
-      ratio
-    ) as any;
+    target.attribute.stroke = step.fromParsedProps.stroke
+      ? (interpolatePureColorArrayToStr(step.fromParsedProps.stroke, step.toParsedProps.stroke, ratio) as any)
+      : step.toParsedProps.stroke;
   };
 
   // 需要更新Bounds
@@ -189,6 +186,10 @@ export class InterpolateUpdateStore {
   };
   size = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     (target.attribute as any).size = interpolateNumber(from, to, ratio);
+    target.addUpdateBoundTag();
+  };
+  points = (key: string, from: IPointLike[], to: IPointLike[], ratio: number, step: IStep, target: IGraphic) => {
+    (target.attribute as any).points = pointsInterpolation(from, to, ratio);
     target.addUpdateBoundTag();
   };
 }

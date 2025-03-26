@@ -84,12 +84,12 @@ const growRadiusOutIndividual = (
   const attrs = graphic.getFinalAttribute();
   if (options && options.orient === 'inside') {
     return {
-      from: { innerRadius: graphic.getGraphicAttribute('innerRadius', true) },
+      from: { innerRadius: attrs?.innerRadius },
       to: { innerRadius: attrs?.outerRadius }
     };
   }
   return {
-    from: { outerRadius: graphic.getGraphicAttribute('outerRadius', true) },
+    from: { outerRadius: attrs?.outerRadius },
     to: { outerRadius: attrs?.innerRadius }
   };
 };
@@ -99,11 +99,12 @@ const growRadiusOutOverall = (
   options: IGrowRadiusAnimationOptions,
   animationParameters: IAnimationParameters
 ) => {
+  const attrs = graphic.getFinalAttribute();
   const overallValue = isNumber(options?.overall) ? options.overall : 0;
   return {
     from: {
-      innerRadius: graphic.getGraphicAttribute('innerRadius', true),
-      outerRadius: graphic.getGraphicAttribute('outerRadius', true)
+      innerRadius: attrs?.innerRadius,
+      outerRadius: attrs?.outerRadius
     },
     to: {
       innerRadius: overallValue,
@@ -142,6 +143,10 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
  */
 export class GrowRadiusIn extends GworPointsBase {
   onBind(): void {
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    if (this.params?.diffAttrs) {
+      this.target.setAttributes(this.params.diffAttrs);
+    }
     const { from, to } = growRadiusIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context.lastAttrs ?? from;
     this.props = to;

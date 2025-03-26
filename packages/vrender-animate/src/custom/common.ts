@@ -16,7 +16,11 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    const attrs = this.target.getFinalAttribute();
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    if (this.params?.diffAttrs) {
+      this.target.setAttributes(this.params.diffAttrs);
+    }
+    const attrs = this.target.getAttributes(true);
     const fromAttrs = this.target.context.lastAttrs ?? {};
 
     const to: Record<string, number> = {};

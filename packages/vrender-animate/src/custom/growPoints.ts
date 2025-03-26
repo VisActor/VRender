@@ -111,7 +111,7 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
  */
 export class GrowPointsIn extends GworPointsBase {
   onBind(): void {
-    if (['area', 'line'].includes(this.target.type)) {
+    if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsIn(this.target, this.params.options, this.params);
       const fromAttrs = this.target.context.lastAttrs ?? from;
       this.props = to;
@@ -205,7 +205,7 @@ const growPointsXOut: TypeAnimation<IGraphic> = (
 
 export class GrowPointsXIn extends GworPointsBase {
   onBind(): void {
-    if (['area', 'line'].includes(this.target.type)) {
+    if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsXIn(this.target, this.params.options, this.params);
       const fromAttrs = this.target.context.lastAttrs ?? from;
       this.props = to;
@@ -299,7 +299,11 @@ const growPointsYOut: TypeAnimation<IGraphic> = (
 
 export class GrowPointsYIn extends GworPointsBase {
   onBind(): void {
-    if (['area', 'line'].includes(this.target.type)) {
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    if (this.params?.diffAttrs) {
+      this.target.setAttributes(this.params.diffAttrs);
+    }
+    if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYIn(this.target, this.params.options, this.params);
       const fromAttrs = this.target.context.lastAttrs ?? from;
       this.props = to;

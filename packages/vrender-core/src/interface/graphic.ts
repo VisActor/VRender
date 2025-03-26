@@ -810,7 +810,7 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   getNoWorkAnimateAttr: () => Record<string, number>;
   getGraphicTheme: () => T;
 
-  getAttributes: () => Partial<T>;
+  getAttributes: (final?: boolean) => Partial<T>;
 }
 
 export interface IRoot extends IGraphic {

@@ -111,7 +111,7 @@ export class Step implements IStep {
     this.propKeys.forEach(key => {
       // 普通颜色特殊处理，需要提前解析成number[]
       if (key === 'fill' || key === 'stroke') {
-        const from = this.getLastProps()[key];
+        const from = this.fromProps[key];
         const to = this.props[key];
         if (isString(from) && isString(to)) {
           const fromArray = ColorStore.Get(from, ColorType.Color255);
@@ -124,8 +124,12 @@ export class Step implements IStep {
           }
           this.fromParsedProps[key] = fromArray;
           this.toParsedProps[key] = toArray;
+          funcs.push((interpolateUpdateStore as any)[key === 'fill' ? 'fillPure' : 'strokePure']);
+        } else if ((interpolateUpdateStore as any)[key]) {
+          funcs.push((interpolateUpdateStore as any)[key]);
+        } else {
+          funcs.push(commonInterpolateUpdate);
         }
-        funcs.push((interpolateUpdateStore as any)[key === 'fill' ? 'fillPure' : 'strokePure']);
       } else if ((interpolateUpdateStore as any)[key]) {
         funcs.push((interpolateUpdateStore as any)[key]);
       } else {
@@ -167,6 +171,11 @@ export class Step implements IStep {
       this._hasFirstRun = true;
       // 获取上一步的属性值作为起始值
       this.fromProps = this.getLastProps();
+      const startProps = this.animate.getStartProps();
+      this.propKeys &&
+        this.propKeys.forEach(key => {
+          this.fromProps[key] = this.fromProps[key] ?? startProps[key];
+        });
       this.determineInterpolateUpdateFunction();
       this.tryPreventConflict();
       this.trySyncStartProps();
@@ -251,10 +260,10 @@ export class Step implements IStep {
    * 如果跳帧了就不一定会执行
    */
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
+    this.target.setAttributes(this.props);
     if (cb) {
       this._endCb = cb;
     } else if (this._endCb) {
-      this.target.setAttributes(this.props);
       this._endCb(this.animate, this);
     }
   }

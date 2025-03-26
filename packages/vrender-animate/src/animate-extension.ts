@@ -13,14 +13,13 @@ import { DefaultTicker } from './ticker/default-ticker';
 
 // 基于性能考虑，每次调用animate函数，都会设置animatedAttribute为null，每次getAttributes(true)会根据animatedAttribute属性判断是否需要重新计算animatedAttribute。
 export class AnimateExtension {
-  animatedAttribute: Record<string, any> | null = null;
+  declare finalAttribute: Record<string, any>;
 
   declare animates: Map<string | number, IAnimate>;
 
   getAttributes(final: boolean = false) {
     if (final) {
-      this.computeAnimatedAttribute();
-      return this.getFinalAttribute();
+      return this.finalAttribute;
     }
     return (this as any).attribute;
   }
@@ -54,18 +53,6 @@ export class AnimateExtension {
     return animate;
   }
 
-  protected computeAnimatedAttribute() {
-    if (!this.animatedAttribute) {
-      this.animatedAttribute = {};
-
-      this.animates.forEach(animate => {
-        if (animate.getLoop() !== Infinity) {
-          Object.assign(this.animatedAttribute, animate.getEndProps());
-        }
-      });
-    }
-  }
-
   createTimeline() {
     return new DefaultTimeline();
   }
@@ -74,9 +61,18 @@ export class AnimateExtension {
     return new DefaultTicker(stage);
   }
 
+  setFinalAttribute(finalAttribute: Record<string, any>) {
+    if (!this.finalAttribute) {
+      this.finalAttribute = {};
+    }
+    Object.assign(this.finalAttribute, finalAttribute);
+  }
+
+  initFinalAttribute(finalAttribute: Record<string, any>) {
+    this.finalAttribute = finalAttribute;
+  }
+
   protected getFinalAttribute() {
-    const finalAttribute = {};
-    Object.assign(finalAttribute, (this as any).attribute, this.animatedAttribute);
-    return finalAttribute;
+    return this.finalAttribute;
   }
 }

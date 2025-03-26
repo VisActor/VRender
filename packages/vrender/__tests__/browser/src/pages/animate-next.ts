@@ -163,7 +163,7 @@ export const page = () => {
     });
     stage.defaultLayer.add(rect);
 
-    rect.animate().to({ x: 300 }, 1000, 'linear');
+    rect.animate().to({ x: 300 }, 1000, 'linear').to({ y: 300 }, 1000, 'linear');
     // 中途设置值没问题，它会从orange开始
     rect.setAttribute('fill', 'orange');
   });

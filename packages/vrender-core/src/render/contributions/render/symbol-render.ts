@@ -65,10 +65,11 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    symbolAttribute?: Required<ISymbolGraphicAttribute>
   ) {
     // const symbolAttribute = graphicService.themeService.getCurrentTheme().symbolAttribute;
-    const symbolAttribute = getTheme(symbol, params?.theme).symbol;
+    symbolAttribute = symbolAttribute ?? getTheme(symbol, params?.theme).symbol;
 
     const {
       size = symbolAttribute.size,

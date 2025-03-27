@@ -67,6 +67,7 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
     ) => boolean,
     rectAttribute?: Required<IRectGraphicAttribute>
   ) {
+    rectAttribute = rectAttribute ?? getTheme(rect, params?.theme).rect;
     const {
       fill = rectAttribute.fill,
       background,

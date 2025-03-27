@@ -187,6 +187,15 @@ export class CommonDrawItemInterceptorContribution implements IDrawItemIntercept
     drawContribution: IDrawContribution,
     params?: IGraphicRenderDrawParams
   ): boolean {
+    // 【性能方案】判定写在外层,减少遍历判断耗时，10000条数据减少1ms
+    if (
+      (!graphic.in3dMode || drawContext.in3dInterceptor) &&
+      !graphic.shadowRoot &&
+      !(graphic.baseGraphic || graphic.attribute.globalZIndex || graphic.interactiveGraphic)
+    ) {
+      return false;
+    }
+
     for (let i = 0; i < this.interceptors.length; i++) {
       if (
         this.interceptors[i].afterDrawItem &&

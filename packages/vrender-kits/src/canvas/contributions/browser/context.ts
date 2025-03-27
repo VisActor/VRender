@@ -1059,17 +1059,19 @@ export class BrowserContext2d implements IContext2d {
     const {
       opacity = defaultParams.opacity,
       shadowBlur = defaultParams.shadowBlur,
-      shadowColor = defaultParams.shadowColor,
-      shadowOffsetX = defaultParams.shadowOffsetX,
-      shadowOffsetY = defaultParams.shadowOffsetY,
       blur = defaultParams.blur,
-      filter = defaultParams.filter,
       globalCompositeOperation = defaultParams.globalCompositeOperation
     } = attribute;
     if (opacity <= 1e-12) {
       return;
     }
-    if (shadowBlur || shadowOffsetX || shadowOffsetY) {
+    if (shadowBlur) {
+      const {
+        shadowColor = defaultParams.shadowColor,
+        shadowOffsetX = defaultParams.shadowOffsetX,
+        shadowOffsetY = defaultParams.shadowOffsetY
+      } = attribute;
+
       // canvas的shadow不支持dpr，这里手动设置
       _context.shadowBlur = shadowBlur * this.dpr;
       _context.shadowColor = shadowColor;
@@ -1085,9 +1087,6 @@ export class BrowserContext2d implements IContext2d {
 
     if (blur) {
       _context.filter = `blur(${blur}px)`;
-      this._clearFilterStyle = true;
-    } else if (filter) {
-      _context.filter = filter;
       this._clearFilterStyle = true;
     } else if (this._clearFilterStyle) {
       _context.filter = 'blur(0px)';

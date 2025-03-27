@@ -184,7 +184,6 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
     this._updateFunction(ratio);
-    this.target.addUpdatePositionTag();
     this.target.addUpdateShapeAndBoundsTag();
   }
 }

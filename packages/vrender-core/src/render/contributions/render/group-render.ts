@@ -10,7 +10,8 @@ import type {
   IRenderService,
   IGraphicRender,
   IGraphicRenderDrawParams,
-  IContributionProvider
+  IContributionProvider,
+  IGroupGraphicAttribute
 } from '../../../interface';
 import { getTheme } from '../../../graphic/theme';
 import { getModelMatrix } from '../../../graphic/graphic-service/graphic-service';
@@ -56,18 +57,25 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    groupAttribute?: Required<IGroupGraphicAttribute>
   ) {
-    // const groupAttribute = graphicService.themeService.getCurrentTheme().groupAttribute;
-    const groupAttribute = getTheme(group, params?.theme).group;
+    // 提前判定，否则每次都要获取一堆属性
     const {
+      clip = groupAttribute.clip,
       fill = groupAttribute.fill,
-      background,
       stroke = groupAttribute.stroke,
+      background
+    } = group.attribute;
+
+    if (!(clip || fill || stroke || background)) {
+      return;
+    }
+
+    const {
       opacity = groupAttribute.opacity,
       width = groupAttribute.width,
       height = groupAttribute.height,
-      clip = groupAttribute.clip,
       fillOpacity = groupAttribute.fillOpacity,
       strokeOpacity = groupAttribute.strokeOpacity,
       cornerRadius = groupAttribute.cornerRadius,
@@ -321,10 +329,11 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
         drawContext,
         params,
         () => false,
-        () => false
+        () => false,
+        groupAttribute
       );
     } else {
-      this.drawShape(group, context, 0, 0, drawContext);
+      this.drawShape(group, context, 0, 0, drawContext, null, null, null, groupAttribute);
     }
 
     // 绘制子元素的时候要添加scroll

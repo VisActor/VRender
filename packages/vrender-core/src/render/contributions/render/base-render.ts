@@ -505,7 +505,8 @@ export abstract class BaseRender<T extends IGraphic> {
     defaultAttr: IGraphicAttribute,
     computed3dMatrix: boolean,
     drawContext: IDrawContext,
-    params?: IGraphicRenderDrawParams
+    params?: IGraphicRenderDrawParams,
+    themeAttribute?: IGraphicAttribute
   ) {
     const { context } = drawContext;
     if (!context) {
@@ -528,7 +529,7 @@ export abstract class BaseRender<T extends IGraphic> {
       return;
     }
 
-    this.drawShape(graphic, context, x, y, drawContext, params);
+    this.drawShape(graphic, context, x, y, drawContext, params, null, null, themeAttribute);
     this.z = 0;
 
     if (context.modelMatrix !== lastModelMatrix) {
@@ -555,7 +556,8 @@ export abstract class BaseRender<T extends IGraphic> {
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    themeAttribute?: IGraphicAttribute
   ): void;
 
   // abstract drawShape(

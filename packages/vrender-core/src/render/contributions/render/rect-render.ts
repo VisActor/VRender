@@ -64,9 +64,9 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       ctx: IContext2d,
       markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
       themeAttribute: IThemeAttribute
-    ) => boolean
+    ) => boolean,
+    rectAttribute?: Required<IRectGraphicAttribute>
   ) {
-    const rectAttribute = this.tempTheme ?? getTheme(rect, params?.theme).rect;
     const {
       fill = rectAttribute.fill,
       background,
@@ -142,35 +142,36 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
       doFillOrStroke
     );
 
-    const _runFill = () => {
-      if (doFillOrStroke.doFill) {
-        if (fillCb) {
-          fillCb(context, rect.attribute, rectAttribute);
-        } else if (fVisible) {
-          // 存在fill
-          context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
-          context.fill();
-        }
-      }
-    };
-    const _runStroke = () => {
-      if (doFillOrStroke.doStroke) {
-        if (strokeCb) {
-          strokeCb(context, rect.attribute, rectAttribute);
-        } else if (sVisible) {
-          // 存在stroke
-          context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
-          context.stroke();
-        }
-      }
-    };
+    // 内联的函数性能差
+    // const _runFill = () => {
+    //   if (doFillOrStroke.doFill) {
+    //     if (fillCb) {
+    //       fillCb(context, rect.attribute, rectAttribute);
+    //     } else if (fVisible) {
+    //       // 存在fill
+    //       context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+    //       context.fill();
+    //     }
+    //   }
+    // };
+    // const _runStroke = () => {
+    //   if (doFillOrStroke.doStroke) {
+    //     if (strokeCb) {
+    //       strokeCb(context, rect.attribute, rectAttribute);
+    //     } else if (sVisible) {
+    //       // 存在stroke
+    //       context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+    //       context.stroke();
+    //     }
+    //   }
+    // };
 
     if (!fillStrokeOrder) {
-      _runFill();
-      _runStroke();
+      this._runFill(rect, context, x, y, rectAttribute, doFillOrStroke, fVisible, originX, originY, fillCb);
+      this._runStroke(rect, context, x, y, rectAttribute, doFillOrStroke, sVisible, originX, originY, strokeCb);
     } else {
-      _runStroke();
-      _runFill();
+      this._runStroke(rect, context, x, y, rectAttribute, doFillOrStroke, sVisible, originX, originY, strokeCb);
+      this._runFill(rect, context, x, y, rectAttribute, doFillOrStroke, fVisible, originX, originY, fillCb);
     }
 
     this.afterRenderStep(
@@ -189,10 +190,62 @@ export class DefaultCanvasRectRender extends BaseRender<IRect> implements IGraph
     );
   }
 
+  private _runFill(
+    rect: IRect,
+    context: IContext2d,
+    x: number,
+    y: number,
+    rectAttribute: Required<IRectGraphicAttribute>,
+    doFillOrStroke: { doFill: boolean; doStroke: boolean },
+    fVisible: boolean,
+    originX: number,
+    originY: number,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doFillOrStroke.doFill) {
+      if (fillCb) {
+        fillCb(context, rect.attribute, rectAttribute);
+      } else if (fVisible) {
+        // 存在fill
+        context.setCommonStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+        context.fill();
+      }
+    }
+  }
+
+  private _runStroke(
+    rect: IRect,
+    context: IContext2d,
+    x: number,
+    y: number,
+    rectAttribute: Required<IRectGraphicAttribute>,
+    doFillOrStroke: { doFill: boolean; doStroke: boolean },
+    sVisible: boolean,
+    originX: number,
+    originY: number,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doFillOrStroke.doStroke) {
+      if (strokeCb) {
+        strokeCb(context, rect.attribute, rectAttribute);
+      } else if (sVisible) {
+        // 存在stroke
+        context.setStrokeStyle(rect, rect.attribute, originX - x, originY - y, rectAttribute);
+        context.stroke();
+      }
+    }
+  }
+
   draw(rect: IRect, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {
     const rectAttribute = getTheme(rect, params?.theme).rect;
-    this.tempTheme = rectAttribute;
-    this._draw(rect, rectAttribute, false, drawContext, params);
-    this.tempTheme = null;
+    this._draw(rect, rectAttribute, false, drawContext, params, rectAttribute);
   }
 }

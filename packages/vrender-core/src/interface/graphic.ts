@@ -495,6 +495,7 @@ export type IGraphicStyle = ILayout &
      * 设置图形对应的鼠标样式
      */
     cursor: Cursor | null;
+    // @deprecated 用处少废弃，后续考虑新设计API
     filter: string;
     renderStyle?: 'default' | 'rough' | any;
     /**

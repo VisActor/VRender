@@ -15,7 +15,8 @@ import type {
   IGraphicRender,
   IGraphicRenderDrawParams,
   IContributionProvider,
-  ICustomPath2D
+  ICustomPath2D,
+  ISymbolGraphicAttribute
 } from '../../../interface';
 import type {} from '../../render-service';
 import { BaseRender } from './base-render';
@@ -180,40 +181,71 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
     // }
 
     // svg就不用fill和stroke了
-    const _runFill = () => {
-      if (doFill && !parsedPath.isSvg) {
-        if (fillCb) {
-          fillCb(context, symbol.attribute, symbolAttribute);
-        } else if (fVisible) {
-          context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
-          context.fill();
-        }
-      }
-    };
-    const _runStroke = () => {
-      if (doStroke && !parsedPath.isSvg) {
-        if (strokeCb) {
-          strokeCb(context, symbol.attribute, symbolAttribute);
-        } else if (sVisible && clipRange >= 1) {
-          // 如果clipRange < 1，就需要靠afterRender进行绘制了
-          context.setStrokeStyle(
-            symbol,
-            symbol.attribute,
-            (originX - x) / scaleX,
-            (originY - y) / scaleY,
-            symbolAttribute
-          );
-          context.stroke();
-        }
-      }
-    };
+    // 内联的函数性能差
+    // const _runFill = () => {
+    //   if (doFill && !parsedPath.isSvg) {
+    //     if (fillCb) {
+    //       fillCb(context, symbol.attribute, symbolAttribute);
+    //     } else if (fVisible) {
+    //       context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
+    //       context.fill();
+    //     }
+    //   }
+    // };
+    // const _runStroke = () => {
+    //   if (doStroke && !parsedPath.isSvg) {
+    //     if (strokeCb) {
+    //       strokeCb(context, symbol.attribute, symbolAttribute);
+    //     } else if (sVisible && clipRange >= 1) {
+    //       // 如果clipRange < 1，就需要靠afterRender进行绘制了
+    //       context.setStrokeStyle(
+    //         symbol,
+    //         symbol.attribute,
+    //         (originX - x) / scaleX,
+    //         (originY - y) / scaleY,
+    //         symbolAttribute
+    //       );
+    //       context.stroke();
+    //     }
+    //   }
+    // };
 
     if (!fillStrokeOrder) {
-      _runFill();
-      _runStroke();
+      this._runFill(symbol, context, x, y, symbolAttribute, doFill, fVisible, originX, originY, parsedPath, fillCb);
+      this._runStroke(
+        symbol,
+        context,
+        x,
+        y,
+        symbolAttribute,
+        doStroke,
+        sVisible,
+        originX,
+        originY,
+        parsedPath,
+        clipRange,
+        scaleX,
+        scaleY,
+        strokeCb
+      );
     } else {
-      _runStroke();
-      _runFill();
+      this._runStroke(
+        symbol,
+        context,
+        x,
+        y,
+        symbolAttribute,
+        doStroke,
+        sVisible,
+        originX,
+        originY,
+        parsedPath,
+        clipRange,
+        scaleX,
+        scaleY,
+        strokeCb
+      );
+      this._runFill(symbol, context, x, y, symbolAttribute, doFill, fVisible, originX, originY, parsedPath, fillCb);
     }
 
     this.afterRenderStep(
@@ -230,6 +262,70 @@ export class DefaultCanvasSymbolRender extends BaseRender<ISymbol> implements IG
       fillCb,
       strokeCb
     );
+  }
+
+  private _runFill(
+    symbol: ISymbol,
+    context: IContext2d,
+    x: number,
+    y: number,
+    symbolAttribute: Required<ISymbolGraphicAttribute>,
+    doFill: boolean,
+    fVisible: boolean,
+    originX: number,
+    originY: number,
+    parsedPath: any,
+    fillCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doFill && !parsedPath.isSvg) {
+      if (fillCb) {
+        fillCb(context, symbol.attribute, symbolAttribute);
+      } else if (fVisible) {
+        context.setCommonStyle(symbol, symbol.attribute, originX - x, originY - y, symbolAttribute);
+        context.fill();
+      }
+    }
+  }
+
+  private _runStroke(
+    symbol: ISymbol,
+    context: IContext2d,
+    x: number,
+    y: number,
+    symbolAttribute: Required<ISymbolGraphicAttribute>,
+    doStroke: boolean,
+    sVisible: boolean,
+    originX: number,
+    originY: number,
+    parsedPath: any,
+    clipRange: number,
+    scaleX: number,
+    scaleY: number,
+    strokeCb?: (
+      ctx: IContext2d,
+      markAttribute: Partial<IMarkAttribute & IGraphicAttribute>,
+      themeAttribute: IThemeAttribute
+    ) => boolean
+  ) {
+    if (doStroke && !parsedPath.isSvg) {
+      if (strokeCb) {
+        strokeCb(context, symbol.attribute, symbolAttribute);
+      } else if (sVisible && clipRange >= 1) {
+        // 如果clipRange < 1，就需要靠afterRender进行绘制了
+        context.setStrokeStyle(
+          symbol,
+          symbol.attribute,
+          (originX - x) / scaleX,
+          (originY - y) / scaleY,
+          symbolAttribute
+        );
+        context.stroke();
+      }
+    }
   }
 
   draw(symbol: ISymbol, renderService: IRenderService, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) {

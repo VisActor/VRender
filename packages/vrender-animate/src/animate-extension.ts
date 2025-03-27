@@ -18,7 +18,7 @@ export class AnimateExtension {
   declare animates: Map<string | number, IAnimate>;
 
   getAttributes(final: boolean = false) {
-    if (final) {
+    if (final && this.finalAttribute) {
       return this.finalAttribute;
     }
     return (this as any).attribute;

@@ -20,7 +20,7 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
     if (this.params?.diffAttrs) {
       this.target.setAttributes(this.params.diffAttrs);
     }
-    const attrs = this.target.getAttributes(true);
+    const attrs = (this.target as any).getAttributes(true);
     const fromAttrs = this.target.context.lastAttrs ?? {};
 
     const to: Record<string, number> = {};

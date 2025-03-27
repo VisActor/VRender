@@ -102,16 +102,18 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
 
   onBind(): void {
     if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
+      Object.assign(this.target.attribute, this.params.diffAttrs);
     }
     const { from, to } = growHeightIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
     this.from = fromAttrs;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+    // 性能优化，不需要setAttributes
+    Object.assign(this.target.attribute, fromAttrs);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateBoundTag();
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
@@ -119,10 +121,12 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    const attribute: Record<string, any> = this.target.attribute;
     this.propKeys.forEach(key => {
-      out[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
-    this.target.setAttributes(out);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }
 
@@ -214,9 +218,11 @@ export class GrowHeightOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    const attribute: Record<string, any> = this.target.attribute;
     this.propKeys.forEach(key => {
-      out[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
-    this.target.setAttributes(out);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }

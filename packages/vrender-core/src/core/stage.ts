@@ -200,6 +200,9 @@ export class Stage extends Group implements IStage {
   // 第一次render不需要强行走动画
   protected tickedBeforeRender: boolean = true;
 
+  // 随机分配一个rafId
+  readonly rafId: number;
+
   /**
    * 所有属性都具有默认值。
    * Canvas为字符串或者Canvas元素，那么默认图层就会绑定到这个Canvas上
@@ -296,6 +299,7 @@ export class Stage extends Group implements IStage {
     }
 
     this.initAnimate(params);
+    this.rafId = Math.floor(Math.random() * 3);
   }
 
   initAnimate(params: Partial<IStageParams>) {
@@ -477,12 +481,7 @@ export class Stage extends Group implements IStage {
   protected afterTickCb = () => {
     this.tickedBeforeRender = true;
     // 性能模式不用立刻渲染
-    if (this.params.optimize?.tickRenderMode === 'performance') {
-      // do nothing
-    } else {
-      // 不是rendering的时候，render
-      this.state !== 'rendering' && this.render();
-    }
+    this.state !== 'rendering' && this.render();
   };
 
   setBeforeRender(cb: (stage: IStage) => void) {
@@ -798,7 +797,7 @@ export class Stage extends Group implements IStage {
     }
     if (!this.willNextFrameRender) {
       this.willNextFrameRender = true;
-      this.global.getRequestAnimationFrame()(() => {
+      this.global.getSpecifiedRequestAnimationFrame(this.rafId)(() => {
         this._doRenderInThisFrame(), (this.willNextFrameRender = false);
       });
     }

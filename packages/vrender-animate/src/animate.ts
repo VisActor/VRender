@@ -133,9 +133,9 @@ export class Animate implements IAnimate {
     // 创建新的step
     const step = new Step(AnimateStepType.to, props, duration, easing);
 
-    this.updateStepAfterAppend(step);
-
     step.bind(this.target, this);
+
+    this.updateStepAfterAppend(step);
 
     return this;
   }
@@ -147,10 +147,9 @@ export class Animate implements IAnimate {
     // 创建新的wait step
     const step = new WaitStep(AnimateStepType.wait, {}, delay, 'linear');
 
-    // 如果是第一个step
-    this.updateStepAfterAppend(step);
-
     step.bind(this.target, this);
+
+    this.updateStepAfterAppend(step);
 
     return this;
   }
@@ -265,9 +264,8 @@ export class Animate implements IAnimate {
    * 自定义动画
    */
   play(customAnimate: ICustomAnimate): this {
-    this.updateStepAfterAppend(customAnimate);
-
     customAnimate.bind(this.target, this);
+    this.updateStepAfterAppend(customAnimate);
 
     return this;
   }

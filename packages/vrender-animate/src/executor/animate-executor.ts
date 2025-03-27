@@ -111,9 +111,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     });
   }
 
-  parseParams(params: IAnimationConfig): IAnimationConfig {
-    const isTimeline = 'timeSlices' in params;
-
+  parseParams(params: IAnimationConfig, isTimeline: boolean): IAnimationConfig {
     const totalTime = this.resolveValue(params.totalTime, undefined, undefined);
     const startTime = this.resolveValue(params.startTime, undefined, 0);
 
@@ -154,15 +152,28 @@ export class AnimateExecutor implements IAnimateExecutor {
           slice.delay = (slice.delay as number) * scale;
           slice.delayAfter = (slice.delayAfter as number) * scale;
           slice.duration = (slice.duration as number) * scale;
+          if (!Array.isArray(slice.effects)) {
+            slice.effects = [slice.effects];
+          }
+          slice.effects.forEach(effect => {
+            effect.custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[effect.type as any];
+            const customType =
+              effect.custom && isFunction(effect.custom)
+                ? /^class\s/.test(Function.prototype.toString.call(effect.custom))
+                  ? 1
+                  : 2
+                : 0;
+            (effect as any).customType = customType;
+          });
         });
         parsedParams.oneByOne = oneByOneTime * scale;
         parsedParams.oneByOneDelay = oneByOneDelay * scale;
         (parsedParams as IAnimationTimeline).startTime = startTime * scale;
       }
     } else {
-      const delay = this.resolveValue(params.delay, undefined, 0);
-      const delayAfter = this.resolveValue(params.delayAfter, undefined, 0);
-      const duration = this.resolveValue(params.duration, undefined, 300);
+      const delay = this.resolveValue((params as IAnimationTypeConfig).delay, undefined, 0);
+      const delayAfter = this.resolveValue((params as IAnimationTypeConfig).delayAfter, undefined, 0);
+      const duration = this.resolveValue((params as IAnimationTypeConfig).duration, undefined, 300);
 
       let oneByOneDelay = 0;
       let oneByOneTime = 0;
@@ -172,6 +183,17 @@ export class AnimateExecutor implements IAnimateExecutor {
       }
       parsedParams.oneByOne = oneByOneTime;
       parsedParams.oneByOneDelay = oneByOneDelay;
+      parsedParams.custom =
+        (params as IAnimationTypeConfig).custom ??
+        AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type];
+
+      const customType =
+        parsedParams.custom && isFunction(parsedParams.custom)
+          ? /^class\s/.test(Function.prototype.toString.call(parsedParams.custom))
+            ? 1
+            : 2
+          : 0;
+      parsedParams.customType = customType;
 
       if (totalTime) {
         const _totalTime = delay + delayAfter + duration + oneByOneDelay * (this._target.count - 2);
@@ -213,7 +235,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       });
     }
 
-    const parsedParams = this.parseParams(params);
+    const parsedParams = this.parseParams(params, isTimeline);
 
     const cb = isTimeline
       ? (child: IGraphic, index: number, count: number) => {
@@ -266,9 +288,10 @@ export class AnimateExecutor implements IAnimateExecutor {
       bounce,
       priority = 0,
       options,
+      custom,
+      customType, // 0: undefined, 1: class, 2: function
       controlOptions
     } = params as any;
-    const custom = params.custom ?? AnimateExecutor.builtInAnimateMap[type];
 
     // 创建动画实例
     const animate = graphic.animate() as unknown as IAnimate;
@@ -285,7 +308,8 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     // 设置开始时间
     animate.startAt(startTime as number);
-    animate.wait(index * oneByOneDelay);
+    const wait = index * oneByOneDelay;
+    wait > 0 && animate.wait(wait);
 
     // 添加延迟
     if (delayValue > 0) {
@@ -298,6 +322,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     this._handleRunAnimate(
       animate,
       custom,
+      customType,
       props,
       duration as number,
       easing,
@@ -332,6 +357,7 @@ export class AnimateExecutor implements IAnimateExecutor {
   private _handleRunAnimate(
     animate: IAnimate,
     custom: IAnimationCustomConstructor | IAnimationChannelInterpolator,
+    customType: number, // 0: undefined, 1: class, 2: function
     props: Record<string, any>,
     duration: number,
     easing: EasingType,
@@ -341,34 +367,32 @@ export class AnimateExecutor implements IAnimateExecutor {
     graphic: IGraphic
   ) {
     // 处理自定义动画
-    if (custom) {
+    if (custom && customType) {
       const customParams = this.resolveValue(customParameters, graphic, {});
       const objOptions = isFunction(options)
         ? options.call(null, customParameters.data && customParameters.data[0], graphic, customParameters)
         : options;
       customParams.options = objOptions;
-      if (isFunction(custom)) {
-        if (/^class\s/.test(Function.prototype.toString.call(custom))) {
-          // 自定义动画构造器 - 创建自定义动画类
-          this.createCustomAnimation(
-            animate,
-            custom as IAnimationCustomConstructor,
-            props,
-            duration as number,
-            easing,
-            customParams
-          );
-        } else {
-          // 自定义插值器 - 创建自定义插值动画
-          this.createCustomInterpolatorAnimation(
-            animate,
-            custom as IAnimationChannelInterpolator,
-            props,
-            duration as number,
-            easing,
-            customParams
-          );
-        }
+      if (customType === 1) {
+        // 自定义动画构造器 - 创建自定义动画类
+        this.createCustomAnimation(
+          animate,
+          custom as IAnimationCustomConstructor,
+          props,
+          duration as number,
+          easing,
+          customParams
+        );
+      } else if (customType === 2) {
+        // 自定义插值器 - 创建自定义插值动画
+        this.createCustomInterpolatorAnimation(
+          animate,
+          custom as IAnimationChannelInterpolator,
+          props,
+          duration as number,
+          easing,
+          customParams
+        );
       }
     } else if (type === 'to') {
       animate.to(props, duration as number, easing);
@@ -445,13 +469,12 @@ export class AnimateExecutor implements IAnimateExecutor {
     effectsArray.forEach(effect => {
       const { type = 'to', channel, customParameters, easing = 'linear', options } = effect;
 
-      const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
-
       // 根据 channel 配置创建属性对象
       const props = this.createPropsFromChannel(channel, graphic);
       this._handleRunAnimate(
         animate,
-        custom,
+        effect.custom,
+        (effect as any).customType,
         props,
         duration as number,
         easing,
@@ -507,16 +530,17 @@ export class AnimateExecutor implements IAnimateExecutor {
     customParams: any
   ) {
     // 获取动画目标的当前属性作为起始值
-    const from: Record<string, any> = {};
+    // const from: Record<string, any> = {};
     const to = props;
 
-    // 为每个属性填充起始值
-    Object.keys(to).forEach(key => {
-      from[key] = animate.target.getComputedAttribute(key);
-    });
+    // // 为每个属性填充起始值
+    // Object.keys(to).forEach(key => {
+    //   from[key] = animate.target.getComputedAttribute(key);
+    // });
 
     // 实例化自定义动画类
-    const customAnimate = new CustomAnimateConstructor(from, to, duration, easing, customParams);
+    // 自定义动画自己去计算from
+    const customAnimate = new CustomAnimateConstructor(null, to, duration, easing, customParams);
 
     // 播放自定义动画
     animate.play(customAnimate);

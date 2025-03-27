@@ -1,4 +1,3 @@
-import type { IAnimate, IStep } from '../intreface/animate';
 import type { EasingType } from '../intreface/easing';
 import { ACustomAnimate } from './custom-animate';
 
@@ -16,12 +15,12 @@ export interface IUpdateAnimationOptions {
  */
 export class Update extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
-  params: IUpdateAnimationOptions;
+  // params: IUpdateAnimationOptions;
 
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: IUpdateAnimationOptions) {
     const { diffAttrs = {} } = params;
     super(from, diffAttrs, duration, easing, params);
-    this.params = params;
+    // this.params = params;
   }
 
   update(end: boolean, ratio: number, out: Record<string, any>): void {

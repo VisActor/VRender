@@ -228,6 +228,8 @@ export class DefaultDrawContribution implements IDrawContribution {
       this.dirtyBounds.copy(this.backupDirtyBounds).transformWithMatrix(nextM.getInverse());
     }
 
+    drawContext.isGroupScroll = !!(group.attribute.scrollX || group.attribute.scrollY);
+
     this.renderItem(group, drawContext, {
       drawingCb: () => {
         skipSort
@@ -356,19 +358,27 @@ export class DefaultDrawContribution implements IDrawContribution {
       return;
     }
 
-    let retrans: boolean = this.scrollMatrix && (this.scrollMatrix.e !== 0 || this.scrollMatrix.f !== 0);
+    let retrans: boolean = false;
     let tempBounds: IBounds;
 
-    if (graphic.parent) {
+    if (drawContext.isGroupScroll) {
       const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
-      if (!!(scrollX || scrollY)) {
-        retrans = true;
-        if (!this.scrollMatrix) {
-          this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
-        }
-        this.scrollMatrix.translate(-scrollX, -scrollY);
+      retrans = true;
+      if (!this.scrollMatrix) {
+        this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
       }
+      this.scrollMatrix.translate(-scrollX, -scrollY);
     }
+    // if (graphic.parent) {
+    //   const { scrollX = 0, scrollY = 0 } = graphic.parent.attribute;
+    //   if (!!(scrollX || scrollY)) {
+    //     retrans = true;
+    //     if (!this.scrollMatrix) {
+    //       this.scrollMatrix = matrixAllocate.allocate(1, 0, 0, 1, 0, 0);
+    //     }
+    //     this.scrollMatrix.translate(-scrollX, -scrollY);
+    //   }
+    // }
     // 需要二次变化，那就重新算一个变换后的Bounds
     if (retrans) {
       tempBounds = this.dirtyBounds.clone().transformWithMatrix(this.scrollMatrix);

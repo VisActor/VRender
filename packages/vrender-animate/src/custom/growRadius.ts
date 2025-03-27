@@ -131,10 +131,12 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    const attribute: Record<string, any> = this.target.attribute;
     this.propKeys.forEach(key => {
-      out[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
     });
-    this.target.setAttributes(out);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }
 

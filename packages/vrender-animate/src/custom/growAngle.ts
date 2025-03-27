@@ -145,42 +145,74 @@ export const growAngleOut: TypeAnimation<IGraphic> = (
     : growAngleOutIndividual(graphic, options, animationParameters);
 };
 
-export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
+export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
+
+  declare _updateFunction: (ratio: number) => void;
 
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
     super(from, to, duration, easing, params);
   }
 
+  determineUpdateFunction(): void {
+    if (!this.propKeys) {
+      this.valid = false;
+    } else if (this.propKeys && this.propKeys.length > 1) {
+      this._updateFunction = this.updateAngle;
+    } else if (this.propKeys[0] === 'startAngle') {
+      this._updateFunction = this.updateStartAngle;
+    } else if (this.propKeys[0] === 'endAngle') {
+      this._updateFunction = this.updateEndAngle;
+    } else {
+      this.valid = false;
+    }
+  }
+
+  updateStartAngle(ratio: number): void {
+    (this.target.attribute as any).startAngle =
+      this.from.startAngle + (this.to.startAngle - this.from.startAngle) * ratio;
+  }
+
+  updateEndAngle(ratio: number): void {
+    (this.target.attribute as any).endAngle = this.from.endAngle + (this.to.endAngle - this.from.endAngle) * ratio;
+  }
+
+  updateAngle(ratio: number): void {
+    this.updateStartAngle(ratio);
+    this.updateEndAngle(ratio);
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    this.propKeys.forEach(key => {
-      out[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
-    });
-    this.target.setAttributes(out);
+    this._updateFunction(ratio);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }
 
 /**
  * 增长渐入
  */
-export class GrowAngleIn extends GworPointsBase {
+export class GrowAngleIn extends GrowAngleBase {
   onBind(): void {
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
     if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
+      Object.assign(this.target.attribute, this.params.diffAttrs);
     }
     const { from, to } = growAngleIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
     this.from = fromAttrs;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+    // 性能优化，不需要setAttributes
+    Object.assign(this.target.attribute, fromAttrs);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateBoundTag();
+    this.determineUpdateFunction();
   }
 }
 
-export class GrowAngleOut extends GworPointsBase {
+export class GrowAngleOut extends GrowAngleBase {
   onBind(): void {
     const { from, to } = growAngleOut(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context.lastAttrs ?? from;
@@ -189,6 +221,10 @@ export class GrowAngleOut extends GworPointsBase {
     this.animate.reSyncProps();
     this.from = fromAttrs;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+    // 性能优化，不需要setAttributes
+    Object.assign(this.target.attribute, fromAttrs);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateBoundTag();
+    this.determineUpdateFunction();
   }
 }

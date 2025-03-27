@@ -98,11 +98,12 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
       return;
     }
 
-    out.points = fromPoints.map((point, index) => {
+    (this.target.attribute as any).points = fromPoints.map((point, index) => {
       const newPoint = pointInterpolation(fromPoints[index], toPoints[index], ratio);
       return newPoint;
     });
-    this.target.setAttributes(out);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }
 

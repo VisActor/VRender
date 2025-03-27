@@ -342,8 +342,8 @@ export class DefaultCanvasGroupRender implements IGraphicRender {
       context.translate(scrollX, scrollY);
     }
     let p: any;
-    if (params && params.drawingCb) {
-      p = params.drawingCb();
+    if (params && params.renderInGroup) {
+      p = params.renderInGroup(params.skipDraw, group, drawContext, params.renderInGroupParams?.nextM);
     }
 
     if (context.modelMatrix !== lastModelMatrix) {

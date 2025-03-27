@@ -213,7 +213,7 @@ export class DefaultCanvasArcRender extends BaseRender<IArc> implements IGraphic
     arcAttribute?: Required<IArcGraphicAttribute>
   ) {
     // const arcAttribute = graphicService.themeService.getCurrentTheme().arcAttribute;
-    // const arcAttribute = getTheme(arc, params?.theme).arc;
+    arcAttribute = arcAttribute ?? getTheme(arc, params?.theme).arc;
     const {
       fill = arcAttribute.fill,
       stroke = arcAttribute.stroke,

@@ -80,6 +80,14 @@ export interface IGraphicRenderDrawParams {
   drawingCb?: () => void;
   skipDraw?: boolean;
   theme?: IFullThemeSpec;
+  // TODO 这里是为了性能优化，之前使用匿名函数的方式闭包等逻辑会影响性能，现在直接将函数显示定义，将参数传入提升性能，就是牺牲了代码可读性
+  // 用于在group中进行递归渲染的参数
+  renderInGroupParams?: {
+    skipSort?: boolean;
+    nextM?: IMatrixLike;
+  };
+  // 用于在group中进行递归渲染的函数
+  renderInGroup?: (skipSort: boolean, group: IGroup, drawContext: IDrawContext, nextM: IMatrixLike) => void;
 }
 
 export interface IGraphicRender {

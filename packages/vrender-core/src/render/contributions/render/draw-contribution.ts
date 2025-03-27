@@ -231,35 +231,11 @@ export class DefaultDrawContribution implements IDrawContribution {
     drawContext.isGroupScroll = !!(group.attribute.scrollX || group.attribute.scrollY);
 
     this.renderItem(group, drawContext, {
-      drawingCb: () => {
-        skipSort
-          ? group.forEachChildren((item: IGraphic) => {
-              if (drawContext.break) {
-                return;
-              }
-              if (item.isContainer) {
-                this.renderGroup(item as IGroup, drawContext, nextM);
-              } else {
-                this.renderItem(item, drawContext);
-              }
-            })
-          : foreach(
-              group,
-              DefaultAttribute.zIndex,
-              (item: IGraphic) => {
-                if (drawContext.break) {
-                  return;
-                }
-                if (item.isContainer) {
-                  this.renderGroup(item as IGroup, drawContext, nextM);
-                } else {
-                  this.renderItem(item, drawContext);
-                }
-              },
-              false,
-              !!drawContext.context?.camera
-            );
-      }
+      renderInGroupParams: {
+        skipSort,
+        nextM
+      },
+      renderInGroup: this._renderInGroup
     });
 
     if (this.useDirtyBounds) {
@@ -268,6 +244,36 @@ export class DefaultDrawContribution implements IDrawContribution {
       matrixAllocate.free(nextM);
     }
   }
+
+  _renderInGroup = (skipSort: boolean, group: IGroup, drawContext: IDrawContext, nextM: IMatrix) => {
+    skipSort
+      ? group.forEachChildren((item: IGraphic) => {
+          if (drawContext.break) {
+            return;
+          }
+          if (item.isContainer) {
+            this.renderGroup(item as IGroup, drawContext, nextM);
+          } else {
+            this.renderItem(item, drawContext);
+          }
+        })
+      : foreach(
+          group,
+          DefaultAttribute.zIndex,
+          (item: IGraphic) => {
+            if (drawContext.break) {
+              return;
+            }
+            if (item.isContainer) {
+              this.renderGroup(item as IGroup, drawContext, nextM);
+            } else {
+              this.renderItem(item, drawContext);
+            }
+          },
+          false,
+          !!drawContext.context?.camera
+        );
+  };
 
   protected _increaseRender(group: IGroup, drawContext: IDrawContext) {
     const { layer, stage } = drawContext;

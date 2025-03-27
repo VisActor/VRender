@@ -132,8 +132,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     context.inuse = true;
     context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
-    context.clearMatrix();
-    context.setTransformForCurrent(true);
+    context.clearMatrix(false);
+    // context.setTransformForCurrent(true);
 
     // const drawInArea =
     //   dirtyBounds.width() * context.dpr < context.canvas.width ||
@@ -160,7 +160,7 @@ export class DefaultDrawContribution implements IDrawContribution {
     // // 设置translate
     // context.translate(x, y, true);
 
-    context.save();
+    // context.save();
     renderService.renderTreeRoots
       .sort((a, b) => {
         return (a.attribute.zIndex ?? DefaultAttribute.zIndex) - (b.attribute.zIndex ?? DefaultAttribute.zIndex);
@@ -172,8 +172,8 @@ export class DefaultDrawContribution implements IDrawContribution {
       });
 
     // context.restore();
-    context.restore();
-    context.setClearMatrix(1, 0, 0, 1, 0, 0);
+    // context.restore();
+    // context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
     context.inuse = false;
     context.draw();

@@ -276,7 +276,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     data.forEach((d, index) => {
       const currentMark = this._idToGraphic.get(d.id);
-      const graphicAttribute = currentMark.attribute as IArcGraphicAttribute;
+      const graphicAttribute = currentMark.getAttributes(true) as IArcGraphicAttribute;
       const center = { x: graphicAttribute?.x ?? 0, y: graphicAttribute?.y ?? 0 };
       if (!isNil(data[index]) && !isNil(textBoundsArray[index])) {
         const item = data[index] ? data[index] : null;
@@ -502,8 +502,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     let maxRadius = 0;
     currentMarks.forEach((currentMark: IGraphic) => {
-      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
-        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      if ((currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius;
       }
     });
 
@@ -767,8 +767,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     let maxRadius = 0;
     currentMarks.forEach((currentMark: IGraphic) => {
-      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
-        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      if ((currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius;
       }
     });
 
@@ -821,8 +821,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     let maxRadius = 0;
     currentMarks.forEach((currentMark: IGraphic) => {
-      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
-        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      if ((currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius;
       }
     });
 
@@ -902,8 +902,8 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
 
     let maxRadius = 0;
     currentMarks.forEach((currentMark: IGraphic) => {
-      if ((currentMark.attribute as IArcGraphicAttribute).outerRadius > maxRadius) {
-        maxRadius = (currentMark.attribute as IArcGraphicAttribute).outerRadius;
+      if ((currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius > maxRadius) {
+        maxRadius = (currentMark.getAttributes(true) as IArcGraphicAttribute).outerRadius;
       }
     });
 
@@ -1017,7 +1017,7 @@ export class ArcLabel extends LabelBase<ArcLabelAttrs> {
       }
 
       if (baseMark.type === 'arc3d' && baseMark) {
-        const { beta, x, y } = baseMark.attribute;
+        const { beta, x, y } = baseMark.getAttributes(true);
         lineGraphic.setAttributes({
           beta,
           anchor3d: [x, y]

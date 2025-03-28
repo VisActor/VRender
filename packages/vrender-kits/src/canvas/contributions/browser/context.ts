@@ -257,14 +257,14 @@ export class BrowserContext2d implements IContext2d {
     this.baseGlobalAlpha = 1;
   }
 
-  reset() {
+  reset(setTransform: boolean = true) {
     if (this.stack.length) {
       Logger.getInstance().warn('可能存在bug，matrix没有清空');
     }
     this.matrix.setValue(1, 0, 0, 1, 0, 0);
     this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
     this.stack.length = 0;
-    this.nativeContext.setTransform(1, 0, 0, 1, 0, 0);
+    setTransform && this.nativeContext.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   getCanvas() {

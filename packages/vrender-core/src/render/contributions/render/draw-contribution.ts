@@ -129,7 +129,9 @@ export class DefaultDrawContribution implements IDrawContribution {
       dirtyBounds.y2 = Math.ceil(dirtyBounds.y2 * context.dpr) / context.dpr;
     }
     this.backupDirtyBounds.copy(dirtyBounds);
-    context.inuse = true;
+    // TODO：不需要设置context.transform，后续translate会设置
+    context.save();
+    context.reset(false);
     context.setClearMatrix(transMatrix.a, transMatrix.b, transMatrix.c, transMatrix.d, transMatrix.e, transMatrix.f);
     // 初始化context
     context.clearMatrix(false);
@@ -175,7 +177,8 @@ export class DefaultDrawContribution implements IDrawContribution {
     // context.restore();
     // context.setClearMatrix(1, 0, 0, 1, 0, 0);
     // this.break = false;
-    context.inuse = false;
+    // context.inuse = false;
+    context.restore();
     context.draw();
   }
 

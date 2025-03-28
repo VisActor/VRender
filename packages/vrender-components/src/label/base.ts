@@ -157,8 +157,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         };
       }
 
-      if (baseMark && baseMark.attribute.fill) {
-        lineGraphic.setAttribute('stroke', baseMark.attribute.fill);
+      if (baseMark && baseMark.getAttributes(true).fill) {
+        lineGraphic.setAttribute('stroke', baseMark.getAttributes(true).fill);
       }
 
       if (this.attribute.line && !isEmpty(this.attribute.line.style)) {
@@ -451,12 +451,13 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         continue;
       }
 
+      const graphicAttribute = baseMark.getAttributes(true);
       const labelAttribute = {
         fill: this._isCollectionBase
-          ? isArray(baseMark.attribute.stroke)
-            ? baseMark.attribute.stroke.find(entry => !!entry && entry !== true)
-            : baseMark.attribute.stroke
-          : baseMark.attribute.fill,
+          ? isArray(graphicAttribute.stroke)
+            ? graphicAttribute.stroke.find(entry => !!entry && entry !== true)
+            : graphicAttribute.stroke
+          : graphicAttribute.fill,
         ...textStyle,
         ...textData
       };
@@ -1023,7 +1024,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
        * similarBase（智能反色的补色），
        * null（不执行智能反色，保持fill设置的颜色）
        * */
-      let backgroundColor = baseMark.attribute.fill as IColor;
+      let backgroundColor = baseMark.getAttributes(true).fill as IColor;
       let foregroundColor = label.attribute.fill as IColor;
 
       if (isObject(backgroundColor) && backgroundColor.gradient) {

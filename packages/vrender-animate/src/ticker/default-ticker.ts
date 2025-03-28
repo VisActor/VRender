@@ -9,12 +9,12 @@ const performanceRAF = new PerformanceRAF();
 class RAFTickHandler implements ITickHandler {
   protected released: boolean = false;
 
-  tick(interval: number, cb: (handler: ITickHandler) => void): void {
+  tick(interval: number, cb: (handler: ITickHandler) => void | boolean): void {
     performanceRAF.addAnimationFrameCb(() => {
       if (this.released) {
         return;
       }
-      cb(this);
+      return cb(this);
     });
   }
 
@@ -32,24 +32,37 @@ class RAFTickHandler implements ITickHandler {
  * This ticker works directly with GraphManager instances without needing timeline adapters
  */
 export class DefaultTicker extends EventEmitter implements ITicker {
-  protected interval: number = 16;
+  protected interval: number;
   protected tickerHandler: ITickHandler;
   protected status: STATUS;
-  protected lastFrameTime: number = -1;
-  protected lastExecutionTime: number = -1; // Track the last time we actually executed a frame
-  protected tickCounts: number = 0;
+  protected lastFrameTime: number;
+  protected tickCounts: number;
   protected stage: IStage;
   timelines: ITimeline[] = [];
-  autoStop: boolean = true;
+  autoStop: boolean;
+  // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）
+  protected _jitter: number;
+  protected timeOffset: number;
+  declare _lastTickTime: number;
+  protected frameTimeHistory: number[] = [];
 
   constructor(stage: IStage) {
     super();
     this.init();
     this.lastFrameTime = -1;
-    this.lastExecutionTime = -1;
     this.tickCounts = 0;
     this.stage = stage;
     this.autoStop = true;
+    this.interval = 16;
+    this.computeTimeOffsetAndJitter();
+  }
+
+  /**
+   * 计算时间偏移和随机扰动
+   */
+  computeTimeOffsetAndJitter(): void {
+    this.timeOffset = Math.floor(Math.random() * this.interval);
+    this._jitter = Math.min(Math.max(this.interval * 0.2, 6), this.interval * 0.7);
   }
 
   init(): void {
@@ -97,6 +110,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
 
   setInterval(interval: number): void {
     this.interval = interval;
+    this.computeTimeOffsetAndJitter();
   }
 
   getInterval(): number {
@@ -104,7 +118,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   }
 
   setFPS(fps: number): void {
-    this.setInterval(1000 / fps);
+    this.setInterval(Math.floor(1000 / fps));
   }
 
   getFPS(): number {
@@ -113,7 +127,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
 
   tick(interval: number): void {
     this.tickerHandler.tick(interval, (handler: ITickHandler) => {
-      this.handleTick(handler, { once: true });
+      return this.handleTick(handler, { once: true });
     });
   }
 
@@ -182,7 +196,6 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.status = STATUS.INITIAL;
     this.setupTickHandler();
     this.lastFrameTime = -1;
-    this.lastExecutionTime = -1;
   }
 
   /**
@@ -202,46 +215,49 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.timelines = [];
     this.tickerHandler?.release();
     this.tickerHandler = null;
-    this.lastExecutionTime = -1;
+    this.lastFrameTime = -1;
   }
 
-  protected handleTick = (handler: ITickHandler, params?: { once?: boolean }): void => {
+  protected checkSkip = (delta: number): boolean => {
+    // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）
+    return delta < this.interval + (Math.random() - 0.5) * 2 * this._jitter;
+  };
+
+  protected handleTick = (handler: ITickHandler, params?: { once?: boolean }): boolean => {
     const { once = false } = params ?? {};
 
     // 尝试停止
     if (this.ifCanStop()) {
       this.stop();
-      return;
+      return false;
     }
 
     const currentTime = handler.getTime();
+    this._lastTickTime = currentTime;
 
-    // Check if enough time has passed since last execution based on the interval (FPS limit)
-    const timeFromLastExecution = this.lastExecutionTime < 0 ? this.interval : currentTime - this.lastExecutionTime;
+    if (this.lastFrameTime < 0) {
+      this.lastFrameTime = currentTime - this.interval + this.timeOffset;
+      this.frameTimeHistory.push(this.lastFrameTime);
+    }
 
-    // Only execute the frame if enough time has passed according to our interval/FPS setting
-    if (timeFromLastExecution >= this.interval) {
-      this._handlerTick();
-      this.lastExecutionTime = currentTime;
+    const delta = currentTime - this.lastFrameTime;
+
+    const skip = this.checkSkip(delta);
+
+    if (!skip) {
+      this._handlerTick(delta);
+      this.lastFrameTime = currentTime;
+      this.frameTimeHistory.push(this.lastFrameTime);
     }
 
     if (!once) {
       handler.tick(this.interval, this.handleTick);
     }
+
+    return !skip;
   };
 
-  protected _handlerTick = (): void => {
-    // Specific execution function
-    const tickerHandler = this.tickerHandler;
-    const time = tickerHandler.getTime();
-
-    // Time passed since last frame
-    let delta = 0;
-    if (this.lastFrameTime >= 0) {
-      delta = time - this.lastFrameTime;
-    }
-    this.lastFrameTime = time;
-
+  protected _handlerTick = (delta: number): void => {
     if (this.status !== STATUS.RUNNING) {
       return;
     }

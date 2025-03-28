@@ -299,12 +299,15 @@ export class Stage extends Group implements IStage {
     }
 
     this.initAnimate(params);
-    this.rafId = Math.floor(Math.random() * 3);
+    this.rafId = params.rafId ?? Math.floor(Math.random() * 6);
   }
 
   initAnimate(params: Partial<IStageParams>) {
     if ((this as any).createTicker && (this as any).createTimeline) {
       this.ticker = params.ticker || (this as any).createTicker(this);
+      if (this.params.optimize?.tickRenderMode !== 'effect') {
+        this.ticker.setFPS(30);
+      }
       this.timeline = (this as any).createTimeline();
       this.ticker.addTimeline(this.timeline);
       this.ticker.on('tick', this.afterTickCb);

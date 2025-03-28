@@ -85,6 +85,9 @@ export interface IStageParams {
   supportsPointerEvents?: boolean;
 
   context?: IStageCreateContext;
+
+  // 被分配的rafId，用于renderNextFrame，避免使用大量原生的RAF
+  rafId?: number;
 }
 
 export type EventConfig = {
@@ -106,11 +109,10 @@ export type IOptimizeType = {
   // 如果有dirtyBounds那么该配置不生效
   disableCheckGraphicWidthOutRange?: boolean;
   // tick渲染模式，effect会在tick之后立刻执行render，保证动画效果正常。performance模式中tick和render均是RAF，属性可能会被篡改
-  tickRenderMode?: 'effect' | 'performance';
   // 是否开启高性能动画，默认开启
   // 开启后不会执行某些安全校验，比如跳帧处理
   // 开启后会自动降帧，最高60fps
-  animateMode?: 'effect' | 'performance';
+  tickRenderMode?: 'effect' | 'performance';
 };
 
 export interface IOption3D {

@@ -126,6 +126,12 @@ export class EmptyContext2d implements IContext2d {
     this.restore();
   }
 
+  reset() {
+    this.matrix.setValue(1, 0, 0, 1, 0, 0);
+    this.applyedMatrix = new Matrix(1, 0, 0, 1, 0, 0);
+    this.stack.length = 0;
+  }
+
   restore() {
     if (this.stack.length > 0) {
       matrixAllocate.free(this.matrix);

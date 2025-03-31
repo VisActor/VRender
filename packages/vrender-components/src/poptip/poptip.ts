@@ -7,7 +7,6 @@ import {
   type IGroup,
   type IRect,
   type ISymbol,
-  type ISymbolGraphicAttribute,
   type IText,
   type ITextGraphicAttribute,
   type TextAlignType,
@@ -25,10 +24,11 @@ import {
   merge,
   normalizePadding,
   pi,
-  rectInsideAnotherRect
+  rectInsideAnotherRect,
+  type IAABBBoundsLike
 } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { BackgroundAttributes, ComponentOptions } from '../interface';
+import type { ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
 import { loadPoptipComponent } from './register';
 
@@ -92,6 +92,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       contentStyle = {} as ITextGraphicAttribute,
       panel,
       logoSymbol,
+      poptipAnchor = 'position',
       logoText,
       logoTextStyle = {} as ITextGraphicAttribute,
       triangleMode = 'default',
@@ -103,7 +104,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       visible,
       state,
       dx = 0,
-      dy = 0
+      dy = 0,
+      positionBounds
     } = this.attribute as PopTipAttributes;
 
     let { title = '', content = '' } = this.attribute as PopTipAttributes;
@@ -260,6 +262,13 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         isArray(spaceSize) ? (spaceSize as [number, number]) : [spaceSize, spaceSize - lineWidth],
         symbolType
       );
+
+      // Calculate anchor point if using bounds
+      let anchorPoint = { x: 0, y: 0 };
+      if (poptipAnchor === 'bounds' && positionBounds) {
+        anchorPoint = this.calculateAnchorPoint(p, positionBounds);
+      }
+
       if (isBoolean(bgVisible)) {
         const bgSymbol = group.createOrUpdateChild(
           'poptip-symbol-panel',
@@ -321,8 +330,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       }
 
       group.setAttributes({
-        x: -offset[0] + dx,
-        y: -offset[1] + dy,
+        x: -offset[0] + dx + anchorPoint.x,
+        y: -offset[1] + dy + anchorPoint.y,
         anchor: [offsetX, offsetY]
       });
 
@@ -392,6 +401,43 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   }
 
   positionList = ['top', 'tl', 'tr', 'bottom', 'bl', 'br', 'left', 'lt', 'lb', 'right', 'rt', 'rb'];
+
+  /**
+   * Calculate anchor point based on positionBounds and position
+   */
+  calculateAnchorPoint(position: string, positionBounds?: IAABBBoundsLike): { x: number; y: number } {
+    if (!positionBounds) {
+      return { x: 0, y: 0 };
+    }
+
+    const { x, y } = this.attribute;
+
+    const { x1, y1, x2, y2 } = positionBounds;
+    const width = x2 - x1;
+    const height = y2 - y1;
+
+    // Calculate anchor point based on position
+    switch (position) {
+      case 'top':
+      case 'tl':
+      case 'tr':
+        return { x: x1 + width / 2 - x, y: y1 - y };
+      case 'bottom':
+      case 'bl':
+      case 'br':
+        return { x: x1 + width / 2 - x, y: y2 - y };
+      case 'left':
+      case 'lt':
+      case 'lb':
+        return { x: x1 - x, y: y1 + height / 2 - y };
+      case 'right':
+      case 'rt':
+      case 'rb':
+        return { x: x2 - x, y: y1 + height / 2 - y };
+      default:
+        return { x: 0, y: 0 };
+    }
+  }
 
   getAngleAndOffset(
     position: string,

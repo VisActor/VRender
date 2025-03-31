@@ -331,6 +331,9 @@ export class BrowserContext2d implements IContext2d {
       this.matrix = this.stack.pop() as Matrix;
       this.setTransformForCurrent(true);
     }
+    this.font = '';
+    this._clearFilterStyle = false;
+    this._clearShadowStyle = false;
   }
   highPerformanceRestore() {
     if (this.stack.length > 0) {

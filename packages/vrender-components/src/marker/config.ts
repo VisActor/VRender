@@ -1,5 +1,6 @@
 import type { TextAlignType, TextBaselineType } from '@visactor/vrender-core';
 import { IMarkAreaLabelPosition, IMarkLineLabelPosition, IMarkCommonArcLabelPosition } from './type';
+import { autoRotate } from '../axis/overlap/auto-rotate';
 
 export const FUZZY_EQUAL_DELTA = 0.001;
 export const DEFAULT_MARK_LINE_THEME = {
@@ -201,6 +202,7 @@ export const DEFAULT_MARK_ARC_LINE_THEME = {
     lineWidth: 0
   },
   label: {
+    autoRotate: true,
     position: IMarkCommonArcLabelPosition.arcOuterMiddle,
     refX: 0,
     refY: 0,
@@ -257,6 +259,7 @@ export const DEFAULT_MARK_AREA_THEME = {
 export const DEFAULT_MARK_ARC_AREA_THEME = {
   interactive: true,
   label: {
+    autoRotate: true,
     position: IMarkCommonArcLabelPosition.arcOuterMiddle,
     textStyle: {
       fill: '#fff',

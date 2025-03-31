@@ -15,12 +15,10 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
   private _containerClip!: IGroup;
   protected _container!: IGroup;
 
-  protected _label!: Tag;
-
   /** animate */
   static _animate?: (
     marker: any,
-    label: Tag | IRichText | ISymbol | IImage,
+    label: (Tag | IRichText | ISymbol | IImage) | (Tag | IRichText | ISymbol | IImage)[],
     animationConfig: any,
     state: MarkerAnimationState
   ) => void;
@@ -37,7 +35,7 @@ export abstract class Marker<T extends MarkerAttrs<AnimationAttr>, AnimationAttr
   private _lastHover: IGraphic;
   private _lastSelect: IGraphic;
 
-  protected abstract setLabelPos(): any;
+  protected abstract setLabelPos(labelNode: IGroup, labelAttrs: any): any;
   protected abstract initMarker(container: IGroup): any;
   protected abstract updateMarker(): any;
   protected abstract isValidPoints(): any;

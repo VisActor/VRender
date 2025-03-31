@@ -1,15 +1,16 @@
-import { merge } from '@visactor/vutils';
+import { array, merge } from '@visactor/vutils';
 import { ArcSegment } from '../segment';
 import { loadMarkArcLineComponent } from './register';
 import { DEFAULT_STATES } from '../constant';
 import { MarkCommonLine } from './common-line';
 import type { ComponentOptions } from '../interface';
-import type { IArcGraphicAttribute } from '@visactor/vrender-core';
+import type { IArcGraphicAttribute, IGroup } from '@visactor/vrender-core';
 import { IMarkCommonArcLabelPosition } from './type';
 // eslint-disable-next-line no-duplicate-imports
-import type { MarkArcLineAttrs, MarkerAnimationState } from './type';
+import type { MarkArcLineAttrs, MarkerAnimationState, MarkerLineLabelAttrs } from './type';
 import { DEFAULT_MARK_ARC_LINE_THEME, DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP } from './config';
 import { markCommonLineAnimate } from './animate/animate';
+import type { TagAttributes } from '../tag';
 
 loadMarkArcLineComponent();
 
@@ -30,16 +31,15 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
 
   constructor(attributes: MarkArcLineAttrs, options?: ComponentOptions) {
     // eslint-disable-next-line max-len
-    super(
-      options?.skipDefault
-        ? attributes
-        : merge({}, MarkArcLine.defaultAttributes, attributes, { label: { autoRotate: true } })
-    );
+    super(options?.skipDefault ? attributes : merge({}, MarkArcLine.defaultAttributes, attributes));
   }
 
-  protected getPointAttrByPosition(direction: IMarkCommonArcLabelPosition) {
-    const { center, radius, startAngle, endAngle, label } = this.attribute as MarkArcLineAttrs;
-    const { refX = 0, refY = 0 } = label;
+  protected getPointAttrByPosition(
+    direction: IMarkCommonArcLabelPosition,
+    labelAttrs: MarkerLineLabelAttrs<IMarkCommonArcLabelPosition>
+  ) {
+    const { center, radius, startAngle, endAngle } = this.attribute as MarkArcLineAttrs;
+    const { refX = 0, refY = 0 } = labelAttrs;
     let angle;
 
     switch (direction) {
@@ -75,8 +75,8 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
     return DEFAULT_POLAR_MARKER_TEXT_STYLE_MAP[position];
   }
 
-  protected getRotateByAngle(angle: number): number {
-    return angle - Math.PI / 2 + (this.attribute.label.refAngle ?? 0);
+  protected getRotateByAngle(angle: number, labelAttrs: MarkerLineLabelAttrs<IMarkCommonArcLabelPosition>): number {
+    return angle - Math.PI / 2 + (labelAttrs.refAngle ?? 0);
   }
 
   protected createSegment() {
@@ -121,5 +121,13 @@ export class MarkArcLine extends MarkCommonLine<IArcGraphicAttribute, IMarkCommo
 
   protected isValidPoints() {
     return true;
+  }
+
+  protected addMarkLineLabels(container: IGroup) {
+    this._addMarkLabels(container, 'mark-common-line-label', MarkArcLine.defaultAttributes.label as TagAttributes);
+  }
+
+  protected updateMarkLineLabels() {
+    this._updateMarkLabels(MarkArcLine.defaultAttributes.label as TagAttributes);
   }
 }

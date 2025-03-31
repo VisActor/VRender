@@ -28,7 +28,21 @@ export type PopTipAttributes = {
   /**
    * 弹出框的方位，有 12 个方位可供选择
    */
-  position?: 'auto' | 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb';
+  position?:
+    | 'auto'
+    | 'top'
+    | 'tl'
+    | 'tr'
+    | 'bottom'
+    | 'bl'
+    | 'br'
+    | 'left'
+    | 'lt'
+    | 'lb'
+    | 'right'
+    | 'rt'
+    | 'rb'
+    | string[];
   /**
    * @since 0.22.7
    * 锚点，默认是position，即锚点在position的位置，如果设置为bounds，则锚点会基于bounds进行计算

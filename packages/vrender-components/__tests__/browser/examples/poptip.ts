@@ -232,7 +232,7 @@ export function run() {
         x: 30,
         y: 10,
         poptip: {
-          position: 'auto',
+          position: ['bottom', 'bl', 'br', 'right'],
           poptipAnchor: 'bounds',
           panel: {
             size: 0,

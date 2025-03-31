@@ -233,13 +233,14 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       }
     }
 
-    const layout = position === 'auto';
+    const layout = position === 'auto' || isArray(position);
+    const positionList = isArray(position) ? position : this.positionList;
     // 最多循环this.positionList次
     let maxBBoxI: number;
     let maxBBoxSize: number = -Infinity;
 
-    for (let i = 0; i < this.positionList.length + 1; i++) {
-      const p = layout ? this.positionList[i === this.positionList.length ? maxBBoxI : i] : position;
+    for (let i = 0; i < positionList.length + 1; i++) {
+      const p = layout ? positionList[i === positionList.length ? maxBBoxI : i] : position;
       let symbolType = 'arrow2Left';
       let offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
       let offsetY = 0;
@@ -247,10 +248,10 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         symbolType = 'arrow2Left';
       } else if (triangleMode === 'concise') {
         symbolType = (conciseSymbolMap as any)[p];
-        offsetX = ['tl', 'bl', 'rt', 'rb'].includes(position)
+        offsetX = ['tl', 'bl', 'rt', 'rb'].includes(p)
           ? (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2
           : -(isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2;
-        offsetY = ['tl', 'tr', 'lb', 'rb'].includes(position)
+        offsetY = ['tl', 'tr', 'lb', 'rb'].includes(p)
           ? -(isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2
           : (isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2;
       }

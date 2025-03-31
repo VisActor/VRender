@@ -65,7 +65,8 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
         childrenPickable: false,
         ...poptip,
         x: matrix.e,
-        y: matrix.f
+        y: matrix.f,
+        positionBounds: graphic.globalAABBBounds
       });
       // 添加到交互层中
       drawContext.stage.tryInitInteractiveLayer();

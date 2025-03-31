@@ -216,6 +216,7 @@ export function run() {
         y: 400,
         poptip: {
           position: 'auto',
+          poptipAnchor: 'bounds',
           contentFormatMethod: t => t + '=========aaa=====',
           panel: {
             size: 0,
@@ -232,6 +233,7 @@ export function run() {
         y: 10,
         poptip: {
           position: 'auto',
+          poptipAnchor: 'bounds',
           panel: {
             size: 0,
             space: 12

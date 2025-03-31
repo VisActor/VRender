@@ -230,13 +230,14 @@ export function run() {
         textBaseline: 'middle',
         fill: 'red',
         x: 30,
-        y: 10,
+        y: 500,
+        fontSize: 30,
         poptip: {
-          position: ['bottom', 'bl', 'br', 'right'],
+          position: 'right',
           poptipAnchor: 'bounds',
           panel: {
-            size: 0,
-            space: 12
+            // size: 0,
+            // space: 12
           }
         }
       })

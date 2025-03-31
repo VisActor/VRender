@@ -63,6 +63,8 @@ export class PopTipRenderContribution implements IInteractiveSubRenderContributi
         visibleAll: true,
         pickable: false,
         childrenPickable: false,
+        // 默认使用bounds作为锚点
+        poptipAnchor: 'bounds',
         ...poptip,
         x: matrix.e,
         y: matrix.f,

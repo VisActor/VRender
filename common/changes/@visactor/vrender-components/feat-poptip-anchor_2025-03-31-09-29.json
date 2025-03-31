@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: enhance poptip top, left, right, bottom to dynamic offset",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

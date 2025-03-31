@@ -22,6 +22,7 @@ import { SLIDER_ELEMENT_NAME } from './constant';
 import type { SliderAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadSliderComponent } from './register';
+import { getEndTriggersOfDrag } from '../util/event';
 
 function convertValueToRange(value: number | [number, number]) {
   if (isArray(value)) {
@@ -738,18 +739,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const { x, y } = this.stage.eventPointTransform(e);
     this._currentHandler = e.target as unknown as IGraphic;
     this._prePos = this._isHorizontal ? x : y;
-    if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-    } else {
-      this.stage.addEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      this.stage.addEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-      this.stage.addEventListener('pointerupoutside', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-    }
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.addEventListener(trigger, this._onHandlerPointerUp);
+    });
   };
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
@@ -797,21 +793,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     e.preventDefault();
     this._isChanging = false;
     this._currentHandler = null;
-    if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-    } else {
-      this.stage.removeEventListener('pointermove', this._onHandlerPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      this.stage.removeEventListener('pointerup', this._onHandlerPointerUp as EventListenerOrEventListenerObject);
-      this.stage.removeEventListener(
-        'pointerupoutside',
-        this._onHandlerPointerUp as EventListenerOrEventListenerObject
-      );
-    }
+
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.removeEventListener(trigger, this._onHandlerPointerUp);
+    });
   };
 
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
@@ -820,18 +809,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
     const { x, y } = this.stage.eventPointTransform(e);
     this._prePos = this._isHorizontal ? x : y;
-    if (vglobal.env === 'browser') {
-      vglobal.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      vglobal.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-    } else {
-      this.stage.addEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      this.stage.addEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this.stage.addEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-    }
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.addEventListener(trigger, this._onTrackPointerUp);
+    });
   };
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
@@ -899,18 +883,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     this._isChanging = false;
-    if (vglobal.env === 'browser') {
-      vglobal.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      vglobal.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-    } else {
-      this.stage.removeEventListener('pointermove', this._onTrackPointerMove as EventListenerOrEventListenerObject, {
-        capture: true
-      });
-      this.stage.removeEventListener('pointerup', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-      this.stage.removeEventListener('pointerupoutside', this._onTrackPointerUp as EventListenerOrEventListenerObject);
-    }
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.removeEventListener(trigger, this._onTrackPointerUp);
+    });
   };
 
   private _onRailPointerDown = (e: FederatedPointerEvent) => {

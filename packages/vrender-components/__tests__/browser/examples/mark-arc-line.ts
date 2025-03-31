@@ -60,23 +60,38 @@ export function run() {
       autoRotate: true
       // refAngle: degreeToRadian(-90)
     },
-    label: {
-      text: 'aaa',
-      // position: 'insideStartTop',
-      visible: true,
-      textStyle: {
-        fill: 'red',
-        fontSize: 20
+    label: [
+      {
+        text: 'aaa',
+        // position: 'insideStartTop',
+        visible: true,
+        textStyle: {
+          fill: 'red',
+          fontSize: 20
+        },
+        panel: {
+          visible: true
+        },
+        position: guiObject.labelPos,
+        autoRotate: guiObject.labelAutoRotate,
+        refX: guiObject.labelRefX,
+        refY: guiObject.labelRefY,
+        refAngle: degreeToRadian(guiObject.labelRefAngle)
       },
-      panel: {
-        visible: true
-      },
-      position: guiObject.labelPos,
-      autoRotate: guiObject.labelAutoRotate,
-      refX: guiObject.labelRefX,
-      refY: guiObject.labelRefY,
-      refAngle: degreeToRadian(guiObject.labelRefAngle)
-    },
+      {
+        text: 'bbbb',
+        position: 'arcInnerStart',
+        visible: true,
+        textStyle: {
+          fill: 'red',
+          fontSize: 20
+        },
+        panel: {
+          visible: true
+        }
+        // position: guiObject.labelPos,
+      }
+    ],
     autoRotate: true,
     clipInRange: false,
     interactive: true,

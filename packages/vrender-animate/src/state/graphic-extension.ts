@@ -1,6 +1,7 @@
 import type { IGraphic } from '@visactor/vrender-core';
 import type { IAnimationState } from './types';
 import { AnimationStateManager, AnimationStateStore } from './animation-state';
+import type { IAnimationConfig } from '../executor/executor';
 
 /**
  * 将动画状态方法作为混入扩展 Graphic 的类
@@ -34,6 +35,56 @@ export class GraphicStateExtension {
    */
   applyAnimationState(state: string[], animationConfig: IAnimationState[], callback?: (empty?: boolean) => void): this {
     this._getAnimationStateManager(this as unknown as IGraphic).applyState(state, animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 应用出现动画状态
+   * @param animationConfig 动画配置
+   * @param callback 动画结束回调
+   */
+  applyAppearState(animationConfig: IAnimationConfig, callback?: () => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyAppearState(animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 应用消失动画状态
+   * @param animationConfig 动画配置
+   * @param callback 动画结束回调
+   */
+  applyDisappearState(animationConfig: IAnimationConfig, callback?: () => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyDisappearState(animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 应用更新动画状态
+   * @param animationConfig 动画配置
+   * @param callback 动画结束回调
+   */
+  applyUpdateState(animationConfig: IAnimationConfig, callback?: () => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyUpdateState(animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 应用高亮动画状态
+   * @param animationConfig 动画配置
+   * @param callback 动画结束回调
+   */
+  applyHighlightState(animationConfig: IAnimationConfig, callback?: () => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyHighlightState(animationConfig, callback);
+    return this;
+  }
+
+  /**
+   * 应用取消高亮动画状态
+   * @param animationConfig 动画配置
+   * @param callback 动画结束回调
+   */
+  applyUnhighlightState(animationConfig: IAnimationConfig, callback?: () => void): this {
+    this._getAnimationStateManager(this as unknown as IGraphic).applyUnhighlightState(animationConfig, callback);
     return this;
   }
 

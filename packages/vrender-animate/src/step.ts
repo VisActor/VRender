@@ -291,6 +291,10 @@ export class Step implements IStep {
   getMergedEndProps(): Record<string, any> | void {
     return this.getEndProps();
   }
+
+  stop(): void {
+    // ...
+  }
 }
 
 export class WaitStep extends Step {

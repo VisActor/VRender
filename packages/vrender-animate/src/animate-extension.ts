@@ -10,10 +10,13 @@ import type { IAnimate } from './intreface/animate';
 import { Animate } from './animate';
 import { DefaultTimeline, defaultTimeline } from './timeline';
 import { DefaultTicker } from './ticker/default-ticker';
+import type { IAnimationConfig } from './executor/executor';
+import { AnimateExecutor } from './executor/animate-executor';
 
 // 基于性能考虑，每次调用animate函数，都会设置animatedAttribute为null，每次getAttributes(true)会根据animatedAttribute属性判断是否需要重新计算animatedAttribute。
 export class AnimateExtension {
   declare finalAttribute: Record<string, any>;
+  _animateExecutor: AnimateExecutor | null;
 
   declare animates: Map<string | number, IAnimate>;
 
@@ -80,6 +83,36 @@ export class AnimateExtension {
 
   initFinalAttribute(finalAttribute: Record<string, any>) {
     this.finalAttribute = finalAttribute;
+  }
+
+  initAnimateExecutor(): void {
+    if (!this._animateExecutor) {
+      this._animateExecutor = new AnimateExecutor(this as any);
+    }
+  }
+
+  /**
+   * Apply animation configuration to the component
+   * @param config Animation configuration
+   * @returns This component instance
+   */
+  executeAnimation(config: IAnimationConfig): this {
+    this.initAnimateExecutor();
+    this._animateExecutor.execute(config);
+    return this;
+  }
+
+  /**
+   * Apply animations to multiple components
+   * @param configs Animation configurations
+   * @returns This component instance
+   */
+  executeAnimations(configs: IAnimationConfig[]): this {
+    this.initAnimateExecutor();
+    configs.forEach(config => {
+      this._animateExecutor.execute(config);
+    });
+    return this;
   }
 
   protected getFinalAttribute() {

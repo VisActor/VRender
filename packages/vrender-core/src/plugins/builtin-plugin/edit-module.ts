@@ -55,8 +55,8 @@ export function findConfigIndexByCursorIdx(textConfig: IRichTextCharacter[], cur
   // 排序找到对应的元素
   const intCursorIndex = Math.round(cursorIndex);
   let tempCursorIndex = intCursorIndex;
-  // 跳过连续换行符中的第一个换行符
-  let lineBreak = false;
+  // 跳过连续换行符中的第一个换行符（但是如果第一个字符就是换行符，那就不跳）
+  let lineBreak = (textConfig?.[0] as any)?.text === '\n';
   let configIdx = 0;
   for (configIdx = 0; configIdx < textConfig.length && tempCursorIndex >= 0; configIdx++) {
     const c = textConfig[configIdx] as IRichTextParagraphCharacter;
@@ -93,8 +93,8 @@ export function findCursorIdxByConfigIndex(textConfig: IRichTextCharacter[], con
     return -0.1;
   }
   // 仅有一个\n，那不算
-  // 如果有连续的\n，那就少算一个
-  let lastLineBreak = false;
+  // 如果有连续的\n，那就少算一个（但是第一个字符是\n的话，不算）
+  let lastLineBreak = (textConfig?.[0] as any)?.text === '\n';
 
   for (let i = 0; i <= configIndex && i < textConfig.length; i++) {
     const c = textConfig[i] as IRichTextParagraphCharacter;
@@ -212,12 +212,18 @@ export class EditModule {
   };
 
   handleKeyDown = (e: KeyboardEvent) => {
+    if (!this.currRt) {
+      return;
+    }
     if (e.key === 'Delete' || e.key === 'Backspace') {
       this.handleInput({ data: null, type: 'Backspace' });
     }
   };
 
   handleCompositionStart = () => {
+    if (!this.currRt) {
+      return;
+    }
     this.isComposing = true;
     const { textConfig = [] } = this.currRt.attribute;
     this.composingConfigIdx = this.cursorIndex < 0 ? 0 : findConfigIndexByCursorIdx(textConfig, this.cursorIndex);
@@ -273,6 +279,9 @@ export class EditModule {
    * @param configIdx
    */
   parseCompositionStr(configIdx: number) {
+    if (!this.currRt) {
+      return '';
+    }
     const { textConfig = [] } = this.currRt.attribute;
 
     const lastConfig = textConfig[configIdx] ?? {};

@@ -521,6 +521,18 @@ export type IGraphicStyle = ILayout &
         } & SimpleDomStyleOptions &
           CommonDomOptions)
       | null;
+    /**
+     * 使用vue组件渲染内容
+     */
+    vue:
+      | ({
+          /**
+           * vue 虚拟节点
+           */
+          element: any;
+        } & SimpleDomStyleOptions &
+          CommonDomOptions)
+      | null;
   };
 
 export type IPickStyle = {

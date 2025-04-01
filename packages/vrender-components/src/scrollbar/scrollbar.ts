@@ -307,6 +307,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerDown = (e: FederatedPointerEvent) => {
+    this._clearDragEvents();
     const { stopSliderDownPropagation = true } = this.attribute as ScrollBarAttributes;
     if (stopSliderDownPropagation) {
       e.stopPropagation();
@@ -365,6 +366,16 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       ? this._onSliderPointerMove
       : delayMap[this.attribute.delayType](this._onSliderPointerMove, this.attribute.delayTime);
 
+  private _clearDragEvents() {
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.removeEventListener(trigger, this._onSliderPointerUp);
+    });
+  }
+
   private _onSliderPointerUp = (e: any) => {
     e.preventDefault();
     const { range: preRange, limitRange = [0, 1] } = this.attribute as ScrollBarAttributes;
@@ -378,13 +389,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
       value: clampRange(range, limitRange[0], limitRange[1])
     });
 
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
-
-    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.removeEventListener(trigger, this._onSliderPointerUp);
-    });
+    this._clearDragEvents();
   };
 
   private _reset() {

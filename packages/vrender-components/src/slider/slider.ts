@@ -735,6 +735,7 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
 
   private _onHandlerPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._clearAllDragEvents();
     this._isChanging = true;
     const { x, y } = this.stage.eventPointTransform(e);
     this._currentHandler = e.target as unknown as IGraphic;
@@ -747,6 +748,21 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
       obj.addEventListener(trigger, this._onHandlerPointerUp);
     });
   };
+
+  private _clearAllDragEvents() {
+    const triggers = getEndTriggersOfDrag();
+    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
+
+    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.removeEventListener(trigger, this._onHandlerPointerUp);
+    });
+
+    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      obj.removeEventListener(trigger, this._onTrackPointerUp);
+    });
+  }
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
     e.stopPropagation();
@@ -794,17 +810,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     this._isChanging = false;
     this._currentHandler = null;
 
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
-
-    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.removeEventListener(trigger, this._onHandlerPointerUp);
-    });
+    this._clearAllDragEvents();
   };
 
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._clearAllDragEvents();
     this._isChanging = true;
 
     const { x, y } = this.stage.eventPointTransform(e);
@@ -883,17 +894,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
     e.preventDefault();
     this._isChanging = false;
-    const triggers = getEndTriggersOfDrag();
-    const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
-    triggers.forEach((trigger: string) => {
-      obj.removeEventListener(trigger, this._onTrackPointerUp);
-    });
+    this._clearAllDragEvents();
   };
 
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
     e.stopPropagation();
+    this._clearAllDragEvents();
     this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
 

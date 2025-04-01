@@ -74,6 +74,7 @@ export default class Paragraph {
   ellipsisOtherParagraphWidth: number;
   verticalEllipsis?: boolean;
   overflow?: boolean;
+  space?: number;
 
   constructor(
     text: string,
@@ -137,6 +138,7 @@ export default class Paragraph {
     this.ellipsis = 'normal';
     this.ellipsisWidth = 0;
     this.ellipsisOtherParagraphWidth = 0;
+    this.space = character.space;
 
     // 处理旋转
     if (character.direction === 'vertical') {
@@ -216,10 +218,10 @@ export default class Paragraph {
       text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
-        const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
         if (direction === 'vertical') {
           // baseline -= this.ellipsisWidth - width;
         } else {
+          const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
           left -= this.ellipsisWidth - width;
         }
       }
@@ -247,7 +249,7 @@ export default class Paragraph {
   ) {
     let baseline = top + ascent;
     let text = this.text;
-    let left = this.left + deltaLeft;
+    let left = this.left + deltaLeft + (this.space ?? 0) / 2;
     baseline += this.top;
     let direction = this.direction;
 
@@ -276,10 +278,10 @@ export default class Paragraph {
       text += this.ellipsisStr;
 
       if (textAlign === 'right' || textAlign === 'end') {
-        const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
         if (direction === 'vertical') {
           // baseline -= this.ellipsisWidth - width;
         } else {
+          const { width } = measureTextCanvas(this.text.slice(index), this.character, this.ascentDescentMode);
           left -= this.ellipsisWidth - width;
         }
       }

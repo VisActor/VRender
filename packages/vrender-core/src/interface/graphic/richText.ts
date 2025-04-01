@@ -197,6 +197,10 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   background?: string;
   // 背景透明度
   backgroundOpacity?: number;
+  /**
+   * 该character与相邻节点的间距
+   */
+  space?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

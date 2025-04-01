@@ -65,7 +65,96 @@ export const page = () => {
           fontFamily: 'D-Din',
           lineHeight: '150%',
           text: 'a',
-          isComposing: false
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'b',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'c',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'd',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'e',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'f',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'f',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'h',
+          isComposing: false,
+          space: 6
+        },
+        {
+          fill: '#1F2329',
+          stroke: false,
+          fontSize: 16,
+          fontWeight: 'normal',
+          fontFamily: 'D-Din',
+          lineHeight: '150%',
+          text: 'i',
+          isComposing: false,
+          space: 6
         }
       ],
       upgradeAttrs: {

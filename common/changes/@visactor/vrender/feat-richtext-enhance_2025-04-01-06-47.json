@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender",
+      "comment": "feat: richtext support space to make horizontal space",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender"
+}

@@ -214,6 +214,10 @@ export class AnimateExecutor implements IAnimateExecutor {
    * 执行动画，针对一组元素
    */
   execute(params: IAnimationConfig) {
+    if (params.selfOnly) {
+      return this.executeItem(params, this._target, 0, 1);
+    }
+
     // 判断是否为timeline配置
     const isTimeline = 'timeSlices' in params;
 
@@ -470,7 +474,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       const { type = 'to', channel, customParameters, easing = 'linear', options } = effect;
 
       // 根据 channel 配置创建属性对象
-      const props = this.createPropsFromChannel(channel, graphic);
+      const props = effect.to ?? this.createPropsFromChannel(channel, graphic);
       this._handleRunAnimate(
         animate,
         effect.custom,
@@ -601,12 +605,14 @@ export class AnimateExecutor implements IAnimateExecutor {
     const isTimeline = 'timeSlices' in params;
     let animate: IAnimate | null = null;
 
+    const parsedParams = this.parseParams(params, isTimeline);
+
     if (isTimeline) {
       // 处理 Timeline 类型的动画配置
-      animate = this.executeTimelineItem(params as IAnimationTimeline, graphic, index, count);
+      animate = this.executeTimelineItem(parsedParams as IAnimationTimeline, graphic, index, count);
     } else {
       // 处理 TypeConfig 类型的动画配置
-      animate = this.executeTypeConfigItem(params as IAnimationTypeConfig, graphic, index, count);
+      animate = this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, graphic, index, count);
     }
 
     // 跟踪动画以进行生命周期管理

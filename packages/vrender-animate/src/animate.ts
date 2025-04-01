@@ -429,6 +429,12 @@ export class Animate implements IAnimate {
     // if (this.status === AnimateStatus.END) {
     //   return;
     // }
+    // 遍历step，调用其stop
+    let step = this._firstStep;
+    while (step) {
+      step.stop();
+      step = step.next;
+    }
 
     this.status = AnimateStatus.END;
 

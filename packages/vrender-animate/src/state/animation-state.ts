@@ -4,6 +4,21 @@ import { AnimationTransitionRegistry } from './animation-states-registry';
 import type { IAnimationConfig } from '../executor/executor';
 import { AnimateExecutor } from '../executor/animate-executor';
 
+// Standard animation state names
+export const AnimationStates = {
+  APPEAR: 'appear',
+  DISAPPEAR: 'disappear',
+  UPDATE: 'update',
+  HIGHLIGHT: 'highlight',
+  UNHIGHLIGHT: 'unhighlight',
+  SELECT: 'select',
+  UNSELECT: 'unselect',
+  HOVER: 'hover',
+  UNHOVER: 'unhover',
+  ACTIVE: 'active',
+  INACTIVE: 'inactive'
+};
+
 export class AnimationStateStore {
   graphic: IGraphic;
 
@@ -133,6 +148,63 @@ export class AnimationStateManager {
       this.stateList = [];
     }
     this.stateList.push(...shouldApplyState);
+  }
+
+  /**
+   * Apply a standard appear animation to the graphic
+   * @param animationConfig Animation configuration
+   * @param callback Callback to be called when animation ends
+   */
+  applyAppearState(animationConfig: IAnimationConfig, callback?: () => void): void {
+    this.applyState([AnimationStates.APPEAR], [{ name: AnimationStates.APPEAR, animation: animationConfig }], callback);
+  }
+
+  /**
+   * Apply a standard disappear animation to the graphic
+   * @param animationConfig Animation configuration
+   * @param callback Callback to be called when animation ends
+   */
+  applyDisappearState(animationConfig: IAnimationConfig, callback?: () => void): void {
+    this.applyState(
+      [AnimationStates.DISAPPEAR],
+      [{ name: AnimationStates.DISAPPEAR, animation: animationConfig }],
+      callback
+    );
+  }
+
+  /**
+   * Apply a standard update animation to the graphic
+   * @param animationConfig Animation configuration
+   * @param callback Callback to be called when animation ends
+   */
+  applyUpdateState(animationConfig: IAnimationConfig, callback?: () => void): void {
+    this.applyState([AnimationStates.UPDATE], [{ name: AnimationStates.UPDATE, animation: animationConfig }], callback);
+  }
+
+  /**
+   * Apply a standard highlight animation to the graphic
+   * @param animationConfig Animation configuration
+   * @param callback Callback to be called when animation ends
+   */
+  applyHighlightState(animationConfig: IAnimationConfig, callback?: () => void): void {
+    this.applyState(
+      [AnimationStates.HIGHLIGHT],
+      [{ name: AnimationStates.HIGHLIGHT, animation: animationConfig }],
+      callback
+    );
+  }
+
+  /**
+   * Apply a standard unhighlight animation to the graphic
+   * @param animationConfig Animation configuration
+   * @param callback Callback to be called when animation ends
+   */
+  applyUnhighlightState(animationConfig: IAnimationConfig, callback?: () => void): void {
+    this.applyState(
+      [AnimationStates.UNHIGHLIGHT],
+      [{ name: AnimationStates.UNHIGHLIGHT, animation: animationConfig }],
+      callback
+    );
   }
 
   stopState(state: string, type?: 'start' | 'end' | Record<string, any>): void {

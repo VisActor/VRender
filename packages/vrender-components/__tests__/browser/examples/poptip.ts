@@ -3,6 +3,11 @@ import '@visactor/vrender';
 import { createLine, createText, IText } from '@visactor/vrender';
 import render from '../../util/render';
 import { PopTip, loadPoptip } from '../../../src';
+import { registerAnimate, registerCustomAnimate } from '@visactor/vrender-animate';
+
+registerAnimate();
+registerCustomAnimate();
+
 // import { initBrowserEnv } from '@visactor/vrender-kits';
 // initBrowserEnv();
 loadPoptip();
@@ -246,9 +251,22 @@ export function run() {
   );
   stage.render();
   poptipList.forEach(poptip => {
-    poptip.appearAnimate({ duration: 300, easing: 'quadOut', wave: 0.3 });
+    poptip.applyAppearState({
+      type: 'poptipAppear',
+      duration: 300,
+      easing: 'quadOut',
+      selfOnly: true,
+      customParameters: {
+        wave: 0.3
+      }
+    });
+
     setTimeout(() => {
-      poptip.disappearAnimate({ duration: 300, easing: 'aIn3' });
+      poptip.applyDisappearState({
+        type: 'poptipDisappear',
+        duration: 300,
+        easing: 'aIn3'
+      });
     }, 2000);
   });
 

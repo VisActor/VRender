@@ -14,6 +14,8 @@ import {
 } from './growPoints';
 import { GrowRadiusIn, GrowRadiusOut } from './growRadius';
 import { GrowWidthIn, GrowWidthOut } from './growWidth';
+import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
+import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
 import { Update } from './update';
@@ -44,4 +46,10 @@ export const registerCustomAnimate = () => {
   // state和update共用一个自定义动画类
   AnimateExecutor.registerBuiltInAnimate('update', Update);
   AnimateExecutor.registerBuiltInAnimate('state', State);
+  // Label item animations
+  AnimateExecutor.registerBuiltInAnimate('labelItemAppear', LabelItemAppear);
+  AnimateExecutor.registerBuiltInAnimate('labelItemDisappear', LabelItemDisappear);
+  // Poptip animations
+  AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
+  AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
 };

@@ -1,3 +1,4 @@
+import type { ComponentAnimator } from '../component';
 import type { ICustomAnimate } from '../intreface/animate';
 import type { EasingType } from '../intreface/easing';
 import type { IAnimateStepType } from '../intreface/type';
@@ -34,5 +35,17 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
     this.props = props;
     this.propKeys = Object.keys(props);
     this.animate.reSyncProps();
+  }
+}
+
+export abstract class AComponentAnimate<T> extends ACustomAnimate<T> {
+  protected _animator: ComponentAnimator;
+
+  onFirstRun(): void {
+    this._animator && this._animator.start();
+  }
+
+  stop(): void {
+    this._animator && this._animator.stop();
   }
 }

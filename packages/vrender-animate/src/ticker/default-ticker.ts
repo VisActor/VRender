@@ -220,7 +220,8 @@ export class DefaultTicker extends EventEmitter implements ITicker {
 
   protected checkSkip = (delta: number): boolean => {
     // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）
-    return delta < this.interval + (Math.random() - 0.5) * 2 * this._jitter;
+    const skip = delta < this.interval + (Math.random() - 0.5) * 2 * this._jitter;
+    return skip;
   };
 
   protected handleTick = (handler: ITickHandler, params?: { once?: boolean }): boolean => {

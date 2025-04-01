@@ -15,14 +15,14 @@ import { max, merge } from '@visactor/vutils';
 
 export class StoryLabelItem extends AbstractComponent<Required<IStoryLabelItemAttrs>> {
   name: 'labelItem';
-  private _line?: ILine;
-  private _symbolStart: ISymbol;
-  private _symbolEnd: ISymbol;
-  private _symbolStartOuter: ISymbol;
-  private _titleTop: IText;
-  private _titleBottom: IText;
-  private _titleTopPanel: IRect;
-  private _titleBottomPanel: IRect;
+  _line?: ILine;
+  _symbolStart: ISymbol;
+  _symbolEnd: ISymbol;
+  _symbolStartOuter: ISymbol;
+  _titleTop: IText;
+  _titleBottom: IText;
+  _titleTopPanel: IRect;
+  _titleBottomPanel: IRect;
 
   static defaultAttributes: Partial<IStoryLabelItemAttrs> = {
     // 内容在X上的偏移量
@@ -230,113 +230,5 @@ export class StoryLabelItem extends AbstractComponent<Required<IStoryLabelItemAt
     this._titleTop = titleTop;
     this._titleBottom = titleBottom;
     this._line = line;
-  }
-
-  appearAnimate(animateConfig: {
-    duration?: number;
-    easing?: string;
-    symbolStartOuterType?: 'scale' | 'clipRange';
-    titleType?: 'typewriter' | 'move';
-    titlePanelType?: 'scale' | 'stroke';
-  }) {
-    const {
-      duration = 1000,
-      easing = 'quadOut',
-      symbolStartOuterType = 'scale',
-      titleType = 'typewriter',
-      titlePanelType = 'scale'
-    } = animateConfig;
-    const symbolTime = duration / 10;
-    this._symbolStart.setAttributes({ scaleX: 0, scaleY: 0 });
-    this._symbolStart.animate().to({ scaleX: 1, scaleY: 1 }, symbolTime * 5, easing as any);
-
-    let symbolStartOuterFrom: ISymbolGraphicAttribute;
-    let symbolStartOuterTo: ISymbolGraphicAttribute;
-    if (symbolStartOuterType === 'scale') {
-      symbolStartOuterFrom = { scaleX: 0, scaleY: 0 };
-      symbolStartOuterTo = { scaleX: 1, scaleY: 1 };
-    } else {
-      symbolStartOuterFrom = { clipRange: 0 };
-      symbolStartOuterTo = { clipRange: 1 };
-    }
-    this._symbolStartOuter.setAttributes(symbolStartOuterFrom);
-    this._symbolStartOuter.animate().to(symbolStartOuterTo, symbolTime * 5, easing as any);
-
-    this._symbolEnd.setAttributes({ scaleX: 0, scaleY: 0 });
-    this._symbolEnd
-      .animate()
-      .wait(symbolTime * 8)
-      .to({ scaleX: 1, scaleY: 1 }, symbolTime * 2, easing as any);
-
-    this._line.setAttributes({ clipRange: 0 });
-    this._line.animate().to({ clipRange: 1 }, symbolTime * 9, easing as any);
-
-    if (titleType === 'typewriter') {
-      const titleTopText = this._titleTop.attribute.text as string;
-      this._titleTop.setAttributes({ text: '' });
-      this._titleTop
-        .animate()
-        .wait(symbolTime * 5)
-        .play(new InputText({ text: '' }, { text: titleTopText }, symbolTime * 4, 'linear') as any);
-
-      const titleBottomText = this._titleBottom.attribute.text as string;
-      this._titleBottom.setAttributes({ text: '' });
-      this._titleBottom
-        .animate()
-        .wait(symbolTime * 5)
-        .play(new InputText({ text: '' }, { text: titleBottomText }, symbolTime * 4, 'linear') as any);
-    } else {
-      this._titleTop.setAttributes({ dy: this._titleTop.AABBBounds.height() + 10 });
-      this._titleTop
-        .animate()
-        .wait(symbolTime * 5)
-        .to({ dy: 0 }, symbolTime * 4, 'linear');
-
-      this._titleBottom.setAttributes({ dy: -(10 + this._titleBottom.AABBBounds.height()) });
-      this._titleBottom
-        .animate()
-        .wait(symbolTime * 5)
-        .to({ dy: 0 }, symbolTime * 4, 'linear');
-    }
-
-    if (titlePanelType === 'scale') {
-      [this._titleTopPanel, this._titleBottomPanel].forEach(panel => {
-        const scaleX = panel.attribute.scaleX;
-        panel.setAttributes({ scaleX: 0 });
-        panel.animate().to({ scaleX }, duration, 'circInOut');
-      });
-    } else if (titlePanelType === 'stroke') {
-      [this._titleTopPanel, this._titleBottomPanel].forEach(panel => {
-        const b = panel.AABBBounds;
-        const totalLen = (b.width() + b.height()) * 2;
-        panel.setAttributes({ lineDash: [0, totalLen * 10] });
-        panel.animate().to({ lineDash: [totalLen, totalLen * 10] }, duration, 'quadOut');
-      });
-    }
-  }
-
-  disappearAnimate(animateConfig: { duration?: number; easing?: string; mode?: 'scale' | 'default' }) {
-    if (animateConfig.mode === 'scale') {
-      const { duration = 1000, easing = 'quadOut' } = animateConfig;
-      this.animate().to({ scaleX: 0, scaleY: 0 }, duration, easing as any);
-    } else {
-      const { duration = 1000, easing = 'quadOut' } = animateConfig;
-      this._line.animate().to({ clipRange: 0 }, duration, easing as any);
-      this._symbolStart
-        .animate()
-        .wait(duration / 2)
-        .to({ scaleX: 0, scaleY: 0 }, duration / 2, easing as any);
-      this._symbolEnd.animate().to({ scaleX: 0, scaleY: 0 }, duration, easing as any);
-      this._titleTop.animate().to({ dy: this._titleTop.AABBBounds.height() + 10 }, duration / 2, easing as any);
-      this._titleBottom
-        .animate()
-        .to({ dy: -(10 + this._titleBottom.AABBBounds.height()) }, duration / 2, easing as any);
-      this._symbolStartOuter
-        .animate()
-        .wait(duration / 2)
-        .to({ clipRange: 0 }, duration / 2, easing as any);
-      this._titleTopPanel.animate().to({ scaleX: 0 }, duration, 'circInOut');
-      this._titleBottomPanel.animate().to({ scaleX: 0 }, duration, 'circInOut');
-    }
   }
 }

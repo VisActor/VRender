@@ -63,6 +63,9 @@ export interface IStep {
 
   // 屏蔽自身属性，会直接从props等内容里删除掉
   deleteSelfAttr: (key: string) => void;
+
+  // 停止
+  stop: () => void;
 }
 
 export interface IAnimate {

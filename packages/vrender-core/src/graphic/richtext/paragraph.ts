@@ -75,6 +75,8 @@ export default class Paragraph {
   verticalEllipsis?: boolean;
   overflow?: boolean;
   space?: number;
+  dx?: number;
+  dy?: number;
 
   constructor(
     text: string,
@@ -139,6 +141,8 @@ export default class Paragraph {
     this.ellipsisWidth = 0;
     this.ellipsisOtherParagraphWidth = 0;
     this.space = character.space;
+    this.dx = character.dx ?? 0;
+    this.dy = character.dy ?? 0;
 
     // 处理旋转
     if (character.direction === 'vertical') {
@@ -334,11 +338,11 @@ export default class Paragraph {
 
     const { lineWidth = 1 } = this.character;
     if (this.character.stroke && lineWidth) {
-      ctx.strokeText(text, left, baseline);
+      ctx.strokeText(text, left, baseline + this.dy);
     }
 
     if (this.character.fill) {
-      ctx.fillText(text, left, baseline);
+      ctx.fillText(text, left, baseline + this.dy);
     }
 
     if (this.character.fill) {

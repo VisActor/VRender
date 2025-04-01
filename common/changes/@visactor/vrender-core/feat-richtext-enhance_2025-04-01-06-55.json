@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "feat: richtext character support dx and dy",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

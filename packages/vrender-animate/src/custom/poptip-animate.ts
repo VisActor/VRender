@@ -82,6 +82,8 @@ export class PoptipAppear extends AComponentAnimate<any> {
         ]
       });
     }
+
+    this.completeBind(animator);
   }
 }
 
@@ -103,5 +105,7 @@ export class PoptipDisappear extends AComponentAnimate<any> {
       duration,
       easing
     });
+
+    this.completeBind(animator);
   }
 }

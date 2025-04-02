@@ -307,7 +307,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     const animate = graphic.animate() as unknown as IAnimate;
     animate.priority = priority;
 
-    const delayValue = delay as number;
+    const delayValue = isFunction(delay) ? delay(graphic.context?.data?.[0], graphic, {}) : delay;
 
     // 如果设置了indexKey，则使用indexKey作为index
     const datum = graphic.context?.data?.[0];
@@ -317,14 +317,15 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
 
     // 设置开始时间
-    animate.startAt(startTime as number);
+    animate.startAt((startTime as number) + delayValue);
     const wait = index * oneByOneDelay;
     wait > 0 && animate.wait(wait);
 
-    // 添加延迟
-    if (delayValue > 0) {
-      animate.wait(delayValue);
-    }
+    // 放到startAt中，否则label无法确定主图元何时开始
+    // // 添加延迟
+    // if (delayValue > 0) {
+    //   animate.wait(delayValue);
+    // }
 
     // 根据 channel 配置创建属性对象
     const props = params.to ?? this.createPropsFromChannel(channel, graphic);
@@ -347,8 +348,9 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
 
     // 添加后延迟
-    if ((delayAfter as number) > 0) {
-      animate.wait(delayAfter as number);
+    const delayAfterValue = isFunction(delayAfter) ? delayAfter(graphic.context?.data?.[0], graphic, {}) : delayAfter;
+    if (delayAfterValue > 0) {
+      animate.wait(delayAfterValue as number);
     }
 
     // 设置循环
@@ -465,8 +467,8 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     // 解析时间参数
     // const durationValue = duration as number;
-    const delayValue = delay as number;
-    const delayAfterValue = delayAfter as number;
+    const delayValue = isFunction(delay) ? delay(graphic.context?.data?.[0], graphic, {}) : delay;
+    const delayAfterValue = isFunction(delayAfter) ? delayAfter(graphic.context?.data?.[0], graphic, {}) : delayAfter;
 
     // 添加延迟
     if (delayValue > 0) {

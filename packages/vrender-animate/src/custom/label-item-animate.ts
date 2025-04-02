@@ -140,6 +140,8 @@ export class LabelItemAppear extends AComponentAnimate<any> {
         });
       });
     }
+
+    this.completeBind(animator);
   }
 }
 
@@ -223,5 +225,7 @@ export class LabelItemDisappear extends AComponentAnimate<any> {
         easing
       });
     }
+
+    this.completeBind(animator);
   }
 }

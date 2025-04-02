@@ -14,7 +14,6 @@ import {
 } from './growPoints';
 import { GrowRadiusIn, GrowRadiusOut } from './growRadius';
 import { GrowWidthIn, GrowWidthOut } from './growWidth';
-import { LabelUpdate } from './label-animate';
 import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
 import { IncreaseCount } from './number';
 import { PoptipAppear, PoptipDisappear } from './poptip-animate';
@@ -57,6 +56,4 @@ export const registerCustomAnimate = () => {
   // Poptip animations
   AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
   AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
-  // Label update animation
-  AnimateExecutor.registerBuiltInAnimate('labelUpdate', LabelUpdate);
 };

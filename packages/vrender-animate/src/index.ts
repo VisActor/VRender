@@ -14,7 +14,8 @@ export { Step } from './step';
 // 导出工具函数
 export * from './utils/easing-func';
 export { registerAnimate } from './register';
-export { ACustomAnimate } from './custom/custom-animate';
+export { ACustomAnimate, AComponentAnimate } from './custom/custom-animate';
+export { ComponentAnimator } from './component/component-animator';
 export { IncreaseCount } from './custom/number';
 export { InputText } from './custom/input-text';
 export { ClipGraphicAnimate, ClipAngleAnimate, ClipRadiusAnimate, ClipDirectionAnimate } from './custom/clip-graphic';

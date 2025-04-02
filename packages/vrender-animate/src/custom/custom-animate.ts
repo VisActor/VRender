@@ -41,8 +41,10 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
 export abstract class AComponentAnimate<T> extends ACustomAnimate<T> {
   protected _animator: ComponentAnimator;
 
-  onFirstRun(): void {
+  completeBind(animator: ComponentAnimator): void {
+    this.setStartTime(0);
     this._animator && this._animator.start();
+    this.setDuration(animator.getDuration());
   }
 
   stop(): void {

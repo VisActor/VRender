@@ -9,7 +9,6 @@ import type { IAnimationConfig, IAnimationTypeConfig, IAnimationTimeline } from 
 interface IAnimationTask {
   graphic: IGraphic;
   config: IAnimationConfig;
-  delay: number;
   animate?: IAnimate;
 }
 
@@ -42,7 +41,7 @@ export class ComponentAnimator {
    * @param delay Optional delay before starting this animation (in ms)
    * @returns This ComponentAnimator for chaining
    */
-  animate(graphic: IGraphic, config: IAnimationConfig, delay: number = 0): ComponentAnimator {
+  animate(graphic: IGraphic, config: IAnimationConfig): ComponentAnimator {
     if (this.started) {
       console.warn('Cannot add animations after animation has started');
       return this;
@@ -50,43 +49,8 @@ export class ComponentAnimator {
 
     this.tasks.push({
       graphic,
-      config,
-      delay
+      config
     });
-
-    // Calculate total duration including delay
-    let configDuration = 300; // Default duration
-    let configDelay = 0; // Default delay
-
-    // Extract duration and delay based on config type
-    if ('duration' in config) {
-      // TypeConfig case
-      const typeConfig = config as IAnimationTypeConfig;
-      configDuration = typeof typeConfig.duration === 'number' ? typeConfig.duration : 300;
-      configDelay = typeof typeConfig.delay === 'number' ? typeConfig.delay : 0;
-    } else if ('timeSlices' in config) {
-      // Timeline case - calculate total duration from all time slices
-      const timelineConfig = config as IAnimationTimeline;
-      const timeSlices = Array.isArray(timelineConfig.timeSlices)
-        ? timelineConfig.timeSlices
-        : [timelineConfig.timeSlices];
-
-      let totalTimeSliceDuration = 0;
-      timeSlices.forEach(slice => {
-        const sliceDuration = typeof slice.duration === 'number' ? slice.duration : 300;
-        const sliceDelay = typeof slice.delay === 'number' ? slice.delay : 0;
-        const sliceDelayAfter = typeof slice.delayAfter === 'number' ? slice.delayAfter : 0;
-        totalTimeSliceDuration += sliceDuration + sliceDelay + sliceDelayAfter;
-      });
-
-      configDuration = totalTimeSliceDuration;
-    }
-
-    const duration = configDuration + configDelay + delay;
-
-    if (duration > this.totalDuration) {
-      this.totalDuration = duration;
-    }
 
     return this;
   }
@@ -157,16 +121,9 @@ export class ComponentAnimator {
         }
       });
 
-      // Start animation after delay
-      if (task.delay > 0) {
-        setTimeout(() => {
-          const animate = executor.executeItem(task.config, task.graphic);
-          task.animate = animate;
-        }, task.delay);
-      } else {
-        const animate = executor.executeItem(task.config, task.graphic);
-        task.animate = animate;
-      }
+      const animate = executor.executeItem(task.config, task.graphic);
+      task.animate = animate;
+      this.totalDuration = Math.max(this.totalDuration, animate.getStartTime() + animate.getDuration());
     });
 
     return this;

@@ -42,7 +42,6 @@ import { bitmapTool, boundToRange, canPlace, clampText, place } from './overlap'
 import type {
   BaseLabelAttrs,
   OverlapAttrs,
-  ILabelAnimation,
   LabelItem,
   SmartInvertAttrs,
   ILabelEnterAnimation,
@@ -52,7 +51,7 @@ import type {
   ShiftYStrategy,
   Strategy
 } from './type';
-import { DefaultLabelAnimation, getAnimationAttributes, updateAnimation } from './animate/animate';
+import { DefaultLabelAnimation } from './animate/animate';
 import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadLabelComponent } from './register';
@@ -690,7 +689,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         hasPlace = place(
           bmpTool,
           bitmap,
-          strategy[j],
+          (strategy as any)[j],
           <BaseLabelAttrs>this.attribute,
           text as Text,
           this._isCollectionBase
@@ -807,7 +806,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     this._graphicToText = currentTextMap;
   }
 
-  protected runEnterAnimation(text: IText | IRichText) {
+  protected runEnterAnimation(text: IText | IRichText, labelLine?: ILine) {
     if (this._enableAnimation === false || !this._animationConfig.enter) {
       return;
     }
@@ -815,20 +814,28 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     const relatedGraphic = this.getRelatedGraphic(text.attribute);
     const { enter } = this._animationConfig;
 
-    text.applyAnimationState(
-      ['enter'],
-      [
-        {
-          name: 'enter',
-          animation: {
-            ...enter,
-            selfOnly: true,
-            customParameters: {
-              relatedGraphic
+    [text, labelLine].filter(Boolean).forEach(item =>
+      item.applyAnimationState(
+        ['enter'],
+        [
+          {
+            name: 'enter',
+            animation: {
+              ...enter,
+              type: 'labelEnter',
+              selfOnly: true,
+              customParameters: {
+                relatedGraphic,
+                relatedGraphics: this._idToGraphic,
+                config: {
+                  ...enter,
+                  type: item === text ? enter.type : 'clipIn'
+                }
+              }
             }
           }
-        }
-      ]
+        ]
+      )
     );
   }
 
@@ -861,11 +868,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
         }
       ]
     );
-
-    // updateAnimation(prevText, curText, this._animationConfig.update);
-    // if (prevLabelLine && curLabelLine) {
-    //   prevLabel.labelLine.animate().to(curLabelLine.attribute, duration, easing);
-    // }
   }
 
   protected _addLabel(
@@ -886,42 +888,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       this.add(labelLine);
     }
 
-    this.runEnterAnimation(text);
-
-    // if (this._enableAnimation !== false && this._animationConfig.enter !== false) {
-    //   if (relatedGraphic) {
-    //     const { from, to } = getAnimationAttributes(text.attribute, 'fadeIn');
-    //     if (text) {
-    //       this.add(text);
-    //     }
-
-    //     if (labelLine) {
-    //       labelLines.push(labelLine);
-    //       this.add(labelLine);
-    //     }
-
-    //     // enter的时长如果不是大于0，那么直接跳过动画
-    //     this._animationConfig.enter.duration > 0 &&
-    //       relatedGraphic.once('animate-bind', a => {
-    //         // text和labelLine共用一个from
-    //         text.setAttributes(from);
-    //         labelLine && labelLine.setAttributes(from);
-    //         const listener = this._afterRelatedGraphicAttributeUpdate(
-    //           text,
-    //           texts,
-    //           labelLine,
-    //           labelLines,
-    //           index,
-    //           relatedGraphic,
-    //           to,
-    //           this._animationConfig.enter as ILabelEnterAnimation
-    //         );
-    //         relatedGraphic.on('afterAttributeUpdate', listener);
-    //       });
-    //   }
-    // } else {
-
-    // }
+    this.runEnterAnimation(text, labelLine);
   }
 
   protected _updateLabel(prevLabel: LabelContent, currentLabel: LabelContent) {
@@ -947,15 +914,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
     };
 
     if (this._enableAnimation !== false && this._animationConfig.exit !== false) {
-      // const { duration, easing } = this._animationConfig.exit;
-      // textMap.forEach(label => {
-      //   label.text
-      //     ?.animate()
-      //     .to(getAnimationAttributes(label.text.attribute, 'fadeOut').to, duration, easing)
-      //     .onEnd(() => {
-      //       removeLabelAndLine(label);
-      //     });
-      // });
       textMap.forEach(label => {
         label.text.applyAnimationState(
           ['exit'],
@@ -1020,100 +978,6 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       this.updateStatesOfLabels(labels, currentStates);
     }
   };
-
-  // protected _syncStateWithRelatedGraphic(relatedGraphic: IGraphic) {
-  //   if (this.attribute.syncState && relatedGraphic) {
-  //     relatedGraphic.on('afterAttributeUpdate', this._handleRelatedGraphicSetState);
-  //   }
-  // }
-
-  // 默认labelLine和text共用相同动画属性
-  // protected _afterRelatedGraphicAttributeUpdate(
-  //   text: IText | IRichText,
-  //   texts: (IText | IRichText)[],
-  //   labelLine: ILine,
-  //   labelLines: ILine[],
-  //   index: number,
-  //   relatedGraphic: IGraphic,
-  //   to: any,
-  //   { mode, duration, easing, delay }: ILabelAnimation
-  // ) {
-  //   // TODO: 跟随动画
-  //   const listener = (event: any) => {
-  //     const { detail } = event;
-  //     if (!detail) {
-  //       return {};
-  //     }
-  //     const step = detail.animationState?.step;
-  //     const isValidAnimateState =
-  //       detail.type === AttributeUpdateType.ANIMATE_UPDATE &&
-  //       step &&
-  //       // 不是第一个wait
-  //       !(step.type === 'wait' && step.prev?.type == null);
-
-  //     if (!isValidAnimateState) {
-  //       return {};
-  //     }
-  //     // const prevStep = step.prev;
-  //     // if (prevStep && prevStep.type === 'wait' && prevStep.prev?.type == null) {
-  //     //   delay = delay ?? step.position;
-  //     // }
-  //     if (detail.type === AttributeUpdateType.ANIMATE_END) {
-  //       text.setAttributes(to);
-  //       labelLine && labelLine.setAttributes(to);
-  //       return;
-  //     }
-
-  //     const onStart = () => {
-  //       if (relatedGraphic) {
-  //         relatedGraphic.onAnimateBind = undefined;
-  //         relatedGraphic.removeEventListener('afterAttributeUpdate', listener);
-  //       }
-  //     };
-
-  //     switch (mode) {
-  //       case 'after':
-  //         // 3. 当前关联图元的动画播放结束后
-  //         if (detail.animationState.end) {
-  //           text.animate({ onStart }).wait(delay).to(to, duration, easing);
-  //           labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
-  //         }
-  //         break;
-  //       case 'after-all':
-  //         //  2. 所有完成后才开始；
-  //         if (index === texts.length - 1) {
-  //           if (detail.animationState.end) {
-  //             texts.forEach(t => {
-  //               t.animate({ onStart }).wait(delay).to(to, duration, easing);
-  //             });
-  //             labelLines.forEach(t => {
-  //               t.animate().wait(delay).to(to, duration, easing);
-  //             });
-  //           }
-  //         }
-  //         break;
-  //       case 'same-time':
-  //       default:
-  //         if (this._isCollectionBase) {
-  //           const point = this._idToPoint.get((text.attribute as LabelItem).id);
-  //           if (
-  //             point &&
-  //             (!text.animates || !text.animates.has('label-animate')) &&
-  //             relatedGraphic.containsPoint(point.x, point.y, IContainPointMode.LOCAL, this.stage?.getPickerService())
-  //           ) {
-  //             text.animate({ onStart }).wait(delay).to(to, duration, easing);
-  //             labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
-  //           }
-  //         } else if (detail.animationState.isFirstFrameOfStep) {
-  //           text.animate({ onStart }).wait(delay).to(to, duration, easing);
-  //           labelLine && labelLine.animate().wait(delay).to(to, duration, easing);
-  //         }
-
-  //         break;
-  //     }
-  //   };
-  //   return listener;
-  // }
 
   protected _smartInvert(labels: (IText | IRichText)[]) {
     const option = (isObject(this.attribute.smartInvert) ? this.attribute.smartInvert : {}) as SmartInvertAttrs;

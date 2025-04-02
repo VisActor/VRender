@@ -289,7 +289,7 @@ export class Stage extends Group implements IStage {
     this.supportInteractiveLayer = params.interactiveLayer !== false;
     if (!params.optimize) {
       params.optimize = {
-        animateMode: 'performance'
+        tickRenderMode: 'performance'
       };
     }
     this.optmize(params.optimize);

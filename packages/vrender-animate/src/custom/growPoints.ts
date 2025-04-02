@@ -114,7 +114,7 @@ export class GrowPointsIn extends GworPointsBase {
   onBind(): void {
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context.lastAttrs ?? from;
+      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
       this.animate.reSyncProps();
@@ -208,7 +208,7 @@ export class GrowPointsXIn extends GworPointsBase {
   onBind(): void {
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsXIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context.lastAttrs ?? from;
+      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
       this.animate.reSyncProps();
@@ -306,7 +306,7 @@ export class GrowPointsYIn extends GworPointsBase {
     }
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context.lastAttrs ?? from;
+      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
       this.animate.reSyncProps();

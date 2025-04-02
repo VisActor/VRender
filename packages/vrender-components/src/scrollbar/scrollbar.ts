@@ -323,7 +323,11 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
+    /**
+     * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
+     * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
+     */
+    obj.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true, passive: true });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onSliderPointerUp);
     });
@@ -351,6 +355,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerMove = (e: any) => {
+    e.preventDefault();
     const { stopSliderMovePropagation = true } = this.attribute as ScrollBarAttributes;
     if (stopSliderMovePropagation) {
       e.stopPropagation();
@@ -370,14 +375,13 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
+    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onSliderPointerUp);
     });
   }
 
   private _onSliderPointerUp = (e: any) => {
-    e.preventDefault();
     const { range: preRange, limitRange = [0, 1] } = this.attribute as ScrollBarAttributes;
     // 发射 change 事件
     const preScrollRange = this.getScrollRange();

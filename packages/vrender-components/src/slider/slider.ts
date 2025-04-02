@@ -665,6 +665,8 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         'pointerdown',
         this._onRailPointerDown as EventListenerOrEventListenerObject
       );
+
+      vglobal.addEventListener('touchmove', this._handleTouchMove, { passive: false });
     }
   }
 
@@ -734,7 +736,6 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   };
 
   private _onHandlerPointerdown = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
     this._clearAllDragEvents();
     this._isChanging = true;
     const { x, y } = this.stage.eventPointTransform(e);
@@ -743,7 +744,11 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    /**
+     * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
+     * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
+     */
+    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onHandlerPointerUp);
     });
@@ -753,19 +758,19 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onHandlerPointerUp);
     });
 
-    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
+    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onTrackPointerUp);
     });
   }
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
+    e.preventDefault();
 
     this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
@@ -806,15 +811,24 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   };
 
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
-    e.preventDefault();
     this._isChanging = false;
     this._currentHandler = null;
 
     this._clearAllDragEvents();
   };
 
+  private _handleTouchMove = (e: TouchEvent) => {
+    if (this._isChanging) {
+      /**
+       * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+       * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
+       * 抛出pointercancel事件，导致拖拽行为中断。
+       */
+      e.preventDefault();
+    }
+  };
+
   private _onTrackPointerdown = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
     this._clearAllDragEvents();
     this._isChanging = true;
 
@@ -823,14 +837,14 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true });
+    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true, passive: false });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onTrackPointerUp);
     });
   };
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
+    e.preventDefault();
     this._isChanging = true;
     const { railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
 
@@ -892,14 +906,12 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
   };
 
   private _onTrackPointerUp = (e: FederatedPointerEvent) => {
-    e.preventDefault();
     this._isChanging = false;
 
     this._clearAllDragEvents();
   };
 
   private _onRailPointerDown = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
     this._clearAllDragEvents();
     this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;

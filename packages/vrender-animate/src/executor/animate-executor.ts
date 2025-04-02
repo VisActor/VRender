@@ -116,8 +116,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     const startTime = this.resolveValue(params.startTime, undefined, 0);
 
     // execute只在mark层面调用，所以性能影响可以忽略
-    // TODO 如果后续调用频繁，需要重新修改
-    const parsedParams = cloneDeep(params);
+    // TODO 存在性能问题，如果后续调用频繁，需要重新修改
+    const parsedParams: Record<string, any> = { ...params };
     parsedParams.oneByOneDelay = 0;
     parsedParams.startTime = startTime;
     parsedParams.totalTime = totalTime;
@@ -148,23 +148,29 @@ export class AnimateExecutor implements IAnimateExecutor {
       if (totalTime) {
         const _totalTime = sliceTime + oneByOneDelay * (this._target.count - 2);
         const scale = totalTime ? totalTime / _totalTime : 1;
-        ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]).forEach(slice => {
-          slice.delay = (slice.delay as number) * scale;
-          slice.delayAfter = (slice.delayAfter as number) * scale;
-          slice.duration = (slice.duration as number) * scale;
-          if (!Array.isArray(slice.effects)) {
-            slice.effects = [slice.effects];
+        ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]) = (
+          (parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]
+        ).map(slice => {
+          let effects = slice.effects;
+          if (!Array.isArray(effects)) {
+            effects = [effects];
           }
-          slice.effects.forEach(effect => {
-            effect.custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[effect.type as any];
-            const customType =
-              effect.custom && isFunction(effect.custom)
-                ? /^class\s/.test(Function.prototype.toString.call(effect.custom))
-                  ? 1
-                  : 2
-                : 0;
-            (effect as any).customType = customType;
-          });
+          return {
+            ...slice,
+            delay: (slice.delay as number) * scale,
+            delayAfter: (slice.delayAfter as number) * scale,
+            duration: (slice.duration as number) * scale,
+            effects: effects.map(effect => {
+              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[effect.type as any];
+              const customType =
+                custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
+              return {
+                ...effect,
+                custom,
+                customType
+              };
+            })
+          };
         });
         parsedParams.oneByOne = oneByOneTime * scale;
         parsedParams.oneByOneDelay = oneByOneDelay * scale;

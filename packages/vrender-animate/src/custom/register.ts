@@ -14,13 +14,18 @@ import {
 } from './growPoints';
 import { GrowRadiusIn, GrowRadiusOut } from './growRadius';
 import { GrowWidthIn, GrowWidthOut } from './growWidth';
+import { LabelUpdate } from './label-animate';
 import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
+import { IncreaseCount } from './number';
 import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
 import { Update } from './update';
 
 export const registerCustomAnimate = () => {
+  // 基础动画
+  AnimateExecutor.registerBuiltInAnimate('increaseCount', IncreaseCount);
+
   AnimateExecutor.registerBuiltInAnimate('scaleIn', ScaleIn);
   AnimateExecutor.registerBuiltInAnimate('scaleOut', ScaleOut);
   AnimateExecutor.registerBuiltInAnimate('growHeightIn', GrowHeightIn);
@@ -52,4 +57,6 @@ export const registerCustomAnimate = () => {
   // Poptip animations
   AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
   AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
+  // Label update animation
+  AnimateExecutor.registerBuiltInAnimate('labelUpdate', LabelUpdate);
 };

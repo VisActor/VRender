@@ -105,7 +105,7 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
       Object.assign(this.target.attribute, this.params.diffAttrs);
     }
     const { from, to } = growHeightIn(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.from = fromAttrs;

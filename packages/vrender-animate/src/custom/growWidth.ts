@@ -169,7 +169,7 @@ export class GrowWidthIn extends ACustomAnimate<Record<string, number>> {
       this.target.setAttributes(this.params.diffAttrs);
     }
     const { from, to } = growWidthIn(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.animate.reSyncProps();

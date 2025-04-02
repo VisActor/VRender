@@ -23,7 +23,7 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     let from: Record<string, number>;
     let to: Record<string, number>;
     const attrs = this.target.getFinalAttribute();
-    const fromAttrs = this.target.context.lastAttrs ?? {};
+    const fromAttrs = this.target.context?.lastAttrs ?? {};
 
     switch (this.params?.direction) {
       case 'x':

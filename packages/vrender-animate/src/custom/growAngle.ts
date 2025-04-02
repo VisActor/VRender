@@ -198,7 +198,7 @@ export class GrowAngleIn extends GrowAngleBase {
       Object.assign(this.target.attribute, this.params.diffAttrs);
     }
     const { from, to } = growAngleIn(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.from = fromAttrs;
@@ -214,7 +214,7 @@ export class GrowAngleIn extends GrowAngleBase {
 export class GrowAngleOut extends GrowAngleBase {
   onBind(): void {
     const { from, to } = growAngleOut(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.animate.reSyncProps();

@@ -13,6 +13,7 @@ import type { IImage, IImageGraphicAttribute } from './graphic/image';
 import type { IPath, IPathGraphicAttribute } from './graphic/path';
 import type { IPolygon, IPolygonGraphicAttribute } from './graphic/polygon';
 import type { IRect, IRectGraphicAttribute } from './graphic/rect';
+import type { IStar, IStarGraphicAttribute } from './graphic/star';
 import type { IStage } from './stage';
 import type { ICanvasLike } from './canvas';
 import type { IDrawContext } from './render';
@@ -61,6 +62,8 @@ export type ITextRenderContribution = IBaseRenderContribution<IText, ITextGraphi
 export type IAreaRenderContribution = IBaseRenderContribution<IArea, IAreaGraphicAttribute>;
 
 export type ICircleRenderContribution = IBaseRenderContribution<ICircle, ICircleGraphicAttribute>;
+
+export type IStarRenderContribution = IBaseRenderContribution<IStar, IStarGraphicAttribute>;
 
 export type IGroupRenderContribution = IBaseRenderContribution<IGroup, IGroupGraphicAttribute>;
 

@@ -274,6 +274,8 @@ export class Arc extends Graphic<IArcGraphicAttribute> implements IArc {
     aabbBounds.union(tb1);
     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
 
+    this.setWidthHeightWithoutTransform(aabbBounds);
+
     const { lineJoin = arcTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, arcTheme, lineJoin === 'miter', this);
 

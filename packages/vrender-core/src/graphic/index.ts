@@ -13,6 +13,7 @@ export * from './path';
 export * from './area';
 export * from './image';
 export * from './arc';
+export * from './star';
 export * from './arc3d';
 export * from './group';
 export * from './polygon';

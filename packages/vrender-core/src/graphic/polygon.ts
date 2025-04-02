@@ -42,6 +42,9 @@ export class Polygon extends Graphic<IPolygonGraphicAttribute> implements IPolyg
     }
     application.graphicService.updateTempAABBBounds(aabbBounds);
 
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+
     const { lineJoin = polygonTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, polygonTheme, lineJoin === 'miter', this);
     return aabbBounds;

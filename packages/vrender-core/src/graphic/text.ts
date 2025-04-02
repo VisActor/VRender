@@ -201,6 +201,9 @@ export class Text extends Graphic<ITextGraphicAttribute> implements IText {
       application.graphicService.updateHTMLTextAABBBounds(attribute, textTheme, aabbBounds);
     }
 
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+
     transformBoundsWithMatrix(aabbBounds, aabbBounds, this.transMatrix);
     return aabbBounds;
   }

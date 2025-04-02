@@ -222,6 +222,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // 标记是否是在3d模式下
   declare in3dMode?: boolean;
 
+  // 不考虑transform的宽高，特殊情况下会使用到
+  declare widthWithoutTransform?: number;
+  declare heightWithoutTransform?: number;
+
   // aabbBounds，所有图形都需要有，所以初始化即赋值
   protected declare _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
@@ -623,6 +627,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       y = point.y;
     }
     return picker.containsPoint(this, { x, y });
+  }
+
+  protected setWidthHeightWithoutTransform(aabbBounds: IAABBBounds) {
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
   }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {

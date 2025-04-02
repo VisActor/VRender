@@ -28,6 +28,10 @@ export const pages = [
         path: 'animate-state'
       },
       {
+        name: 'custom-animate',
+        path: 'custom-animate'
+      },
+      {
         name: '内存',
         path: 'memory'
       },

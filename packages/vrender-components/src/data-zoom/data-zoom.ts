@@ -14,6 +14,7 @@ import { DataZoomActiveTag } from './type';
 import type { DataZoomAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadDataZoomComponent } from './register';
+import { getEndTriggersOfDrag } from '../util/event';
 
 const delayMap = {
   debounce: debounce,
@@ -184,9 +185,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
-    // 拖拽结束
-    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp);
-    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp);
+
     // hover
     if (showDetail === 'auto') {
       (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
@@ -225,11 +224,22 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return this.stage?.eventPointTransform(e) ?? { x: 0, y: 0 };
   }
 
+  private _clearDragEvents() {
+    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
+    const triggers = getEndTriggersOfDrag();
+
+    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
+    });
+  }
+
   /**
    * 拖拽开始事件
    * @description 开启activeState + 通过tag判断事件在哪个元素上触发 并 更新交互坐标
    */
   private _onHandlerPointerDown = (e: FederatedPointerEvent, tag: string) => {
+    this._clearDragEvents();
     e.stopPropagation();
     if (tag === 'start') {
       this._activeTag = DataZoomActiveTag.startHandler;
@@ -250,16 +260,13 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     this._activeState = true;
     this._activeCache.startPos = this.eventPosToStagePos(e);
     this._activeCache.lastPos = this.eventPosToStagePos(e);
+    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
+    const triggers = getEndTriggersOfDrag();
 
-    // 拖拽开始时监听事件
-    if (vglobal.env === 'browser') {
-      // 拖拽时
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-      // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp);
-    }
-    // 拖拽时
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    triggers.forEach((trigger: string) => {
+      evtTarget.addEventListener(trigger, this._onHandlerPointerUp);
+    });
   };
 
   /**
@@ -350,16 +357,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       end: this.state.end,
       tag: this._activeTag
     });
-    // 拖拽结束后卸载事件
-    if (vglobal.env === 'browser') {
-      // 拖拽时
-      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-      // 拖拽结束
-      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp);
-    }
-    // 拖拽时
-    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    (this as unknown as IGroup).removeEventListener('pointerup', this._onHandlerPointerUp);
+    this._clearDragEvents();
   };
 
   /**

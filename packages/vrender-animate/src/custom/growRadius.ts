@@ -150,7 +150,7 @@ export class GrowRadiusIn extends GworPointsBase {
       this.target.setAttributes(this.params.diffAttrs);
     }
     const { from, to } = growRadiusIn(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.animate.reSyncProps();
@@ -163,7 +163,7 @@ export class GrowRadiusIn extends GworPointsBase {
 export class GrowRadiusOut extends GworPointsBase {
   onBind(): void {
     const { from, to } = growRadiusOut(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context.lastAttrs ?? from;
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.animate.reSyncProps();

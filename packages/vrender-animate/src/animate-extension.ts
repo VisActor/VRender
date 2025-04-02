@@ -20,16 +20,6 @@ export class AnimateExtension {
 
   declare animates: Map<string | number, IAnimate>;
 
-  setAttributesAndPreventAnimate(attributes: Record<string, any>) {
-    (this as any).setAttributes(attributes);
-    this.animates &&
-      this.animates.forEach(animate => {
-        Object.keys(attributes).forEach(key => {
-          animate.preventAttr(key);
-        });
-      });
-  }
-
   getAttributes(final: boolean = false) {
     if (final && this.finalAttribute) {
       return this.finalAttribute;

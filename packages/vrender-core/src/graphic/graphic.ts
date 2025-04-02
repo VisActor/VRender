@@ -648,6 +648,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
     this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
   }
+  setAttributesAndPreventAnimate(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
+    this.setAttributes(params, forceUpdateTag, context);
+    this.animates &&
+      this.animates.forEach(animate => {
+        Object.keys(params).forEach(key => {
+          animate.preventAttr(key);
+        });
+      });
+  }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
     params =
@@ -959,6 +968,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   applyStateAttrs(attrs: Partial<T>, stateNames: string[], hasAnimation?: boolean, isClear?: boolean) {
+    // 应用状态的时候要停掉动画
     if (hasAnimation) {
       const keys = Object.keys(attrs);
       const noWorkAttrs = this.getNoWorkAnimateAttr();
@@ -997,10 +1007,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       // const animate = this.animate({ slience: true });
       // (animate as any).stateNames = stateNames;
       // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
-      noAnimateAttrs && this.setAttributes(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
+      noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
     } else {
       this.stopStateAnimates();
-      this.setAttributes(attrs, false, { type: AttributeUpdateType.STATE });
+      this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
     }
   }
 

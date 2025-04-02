@@ -20,6 +20,8 @@ import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
 import { Update } from './update';
+import { InputText } from './input-text';
+import { InputRichText } from './richtext/input-richtext';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -56,4 +58,7 @@ export const registerCustomAnimate = () => {
   // Poptip animations
   AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
   AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
+  // Text input animations
+  AnimateExecutor.registerBuiltInAnimate('inputText', InputText);
+  AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
 };

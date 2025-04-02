@@ -151,12 +151,12 @@ export class Switch extends AbstractComponent<Required<SwitchAttributes>> {
     // set circle position
     this._circle.setAttributes({
       y: circleY,
-      x: this.attribute.checked ? circleX : maxWidth - circleX
+      x: !this.attribute.checked ? circleX : maxWidth - circleX
     });
 
     // set text position
     this._text.setAttributes({
-      x: this.attribute.checked ? textX : maxWidth - textX - textWidth,
+      x: !this.attribute.checked ? textX : maxWidth - textX - textWidth,
       y: textY
     });
   }

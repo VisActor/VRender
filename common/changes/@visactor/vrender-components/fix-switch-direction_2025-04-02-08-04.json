@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "fix: fix switch defalut direction",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

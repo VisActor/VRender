@@ -1,8 +1,17 @@
 // eslint-disable-next-line no-duplicate-imports
 import type { IGraphic, IGroup, IText, TextAlignType, TextBaselineType } from '@visactor/vrender-core';
-import type { Dict, IBounds } from '@visactor/vutils';
+import type { Dict, IBounds, IOBBBounds } from '@visactor/vutils';
 // eslint-disable-next-line no-duplicate-imports
-import { isGreater, isLess, tau, normalizeAngle, polarToCartesian, merge } from '@visactor/vutils';
+import {
+  isGreater,
+  isLess,
+  tau,
+  normalizeAngle,
+  polarToCartesian,
+  merge,
+  obbSeparation,
+  aabbSeparation
+} from '@visactor/vutils';
 import { traverseGroup } from '../util/common';
 import type { Vector2 } from '../util';
 // eslint-disable-next-line no-duplicate-imports
@@ -158,15 +167,10 @@ export function textIntersect(textA: IText, textB: IText, sep: number) {
   // 注意：默认旋转角度一样
   const angle = textA.attribute?.angle;
   const isHorizontal = isAngleHorizontal(angle, Number.EPSILON);
-  const isAABBIntersects = (textA: IText, textB: IText, sep: number) => {
-    a = textA.AABBBounds;
-    b = textB.AABBBounds;
-    return sep > Math.max(b.x1 - a.x2, a.x1 - b.x2, b.y1 - a.y2, a.y1 - b.y2);
-  };
 
   // 水平文字可以直接用 AABB 包围盒计算
   if (isHorizontal) {
-    return isAABBIntersects(textA, textB, sep);
+    return sep > aabbSeparation(textA.AABBBounds, textB.AABBBounds);
   }
 
   a = textA.OBBBounds;
@@ -174,12 +178,10 @@ export function textIntersect(textA: IText, textB: IText, sep: number) {
 
   // 没有 OBB bounds 则用 AABB 包围盒计算
   if (!a || !b || a.empty() || b.empty()) {
-    return isAABBIntersects(textA, textB, sep);
+    return sep > aabbSeparation(textA, textB);
   }
-
   // 非水平文字且有 OBB 包围盒
-  // TODO: 待支持有旋转角度下的 sep 计算逻辑
-  return a.intersects(b);
+  return a.intersects(b) || sep > obbSeparation(a as IOBBBounds, b as IOBBBounds);
   //   const expandedTextA = textA.clone();
   //   const boundsPaddingA = textA.attribute.boundsPadding ?? 0;
   //   expandedTextA.setAttributes({

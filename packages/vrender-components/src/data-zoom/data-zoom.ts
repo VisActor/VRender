@@ -192,7 +192,9 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       (this as unknown as IGroup).addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
     }
 
-    vglobal.addEventListener('touchmove', this._handleTouchMove, { passive: false });
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
   }
   private _handleTouchMove = (e: TouchEvent) => {
     if (this._activeState) {
@@ -1249,5 +1251,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
   setStatePointToData(callback: (state: number) => any) {
     isFunction(callback) && (this._statePointToData = callback);
+  }
+
+  release(all?: boolean): void {
+    /**
+     * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
+     */
+    super.release(all);
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
+    this._clearDragEvents();
   }
 }

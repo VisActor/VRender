@@ -1,4 +1,4 @@
-import { ColorStore, ColorType, type IGraphic } from '@visactor/vrender-core';
+import { ColorStore, ColorType, Generator, type IGraphic } from '@visactor/vrender-core';
 import type { IAnimate, IStep } from './intreface/animate';
 import type { EasingType, EasingTypeFunc } from './intreface/easing';
 import type { IAnimateStepType } from './intreface/type';
@@ -11,6 +11,7 @@ function noop() {
 }
 
 export class Step implements IStep {
+  id: number;
   type: IAnimateStepType;
   prev?: IStep;
   duration: number;
@@ -51,6 +52,7 @@ export class Step implements IStep {
     if (type === 'wait') {
       this.onUpdate = noop;
     }
+    this.id = Generator.GenAutoIncrementId();
   }
 
   bind(target: IGraphic, animate: IAnimate): void {

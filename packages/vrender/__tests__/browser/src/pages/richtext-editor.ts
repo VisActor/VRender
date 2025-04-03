@@ -65,6 +65,7 @@ export const page = () => {
           fontFamily: 'D-Din',
           lineHeight: '150%',
           text: 'a',
+          dy: 10,
           isComposing: false
         },
         {
@@ -75,6 +76,7 @@ export const page = () => {
           fontFamily: 'D-Din',
           lineHeight: '150%',
           text: 'b',
+          dy: 20,
           isComposing: false
         },
         {
@@ -85,6 +87,7 @@ export const page = () => {
           fontFamily: 'D-Din',
           lineHeight: '150%',
           text: 'c',
+          dx: 30,
           isComposing: false
         }
       ],

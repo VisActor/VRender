@@ -161,7 +161,7 @@ export class AnimateExecutor implements IAnimateExecutor {
             delayAfter: (slice.delayAfter as number) * scale,
             duration: (slice.duration as number) * scale,
             effects: effects.map(effect => {
-              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[effect.type as any];
+              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'to'];
               const customType =
                 custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
               return {
@@ -191,7 +191,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       parsedParams.oneByOneDelay = oneByOneDelay;
       parsedParams.custom =
         (params as IAnimationTypeConfig).custom ??
-        AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type];
+        AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type ?? 'to'];
 
       const customType =
         parsedParams.custom && isFunction(parsedParams.custom)
@@ -285,7 +285,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     count: number
   ): IAnimate {
     const {
-      type,
+      type = 'to',
       channel,
       customParameters,
       easing = 'linear',

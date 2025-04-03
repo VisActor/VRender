@@ -127,7 +127,6 @@ export const page = () => {
         showCursor: true,
         cursorChar: '|',
         blinkCursor: true,
-        // 启用字符透明度渐变效果
         fadeInChars: true,
         fadeInDuration: 0.3
       },
@@ -136,16 +135,17 @@ export const page = () => {
     });
   });
 
-  // Advanced example with a more complex RichText
-  addCase('Complex InputRichText Animation', container, stage => {
+  // Slide RichText Animation - Right direction (default)
+  addCase('SlideRichText - Right Direction', container, stage => {
     // Create a richText with empty textConfig
     const richText = createRichText({
       x: 20,
-      y: 20,
+      y: 80,
       width: 600,
-      height: 120,
+      height: 100,
       textConfig: [],
-      textBaseline: 'top'
+      textBaseline: 'middle',
+      ascentDescentMode: 'font'
     });
 
     // Create a group and add the richText to it
@@ -154,147 +154,183 @@ export const page = () => {
     stage.defaultLayer.add(group);
     stage.render();
 
-    // Define a more complex final textConfig
-    const complexTextConfig = [
-      {
-        text: '富文本打字动画',
-        fontSize: 22,
-        fill: '#6600CC',
+    // Define the textConfig
+    const textConfig = [
+      ...Array.from('Slide from Right ').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#FF5500',
         fontWeight: 'bold'
-      },
-      {
-        text: '\n', // Line break
-        fontSize: 22
-      },
-      {
-        text: 'Supports ',
-        fontSize: 18,
-        fill: '#FF6600'
-      },
-      {
-        text: 'multiple ',
-        fontSize: 18,
-        fill: '#0099FF',
-        fontStyle: 'italic'
-      },
-      {
-        text: 'styles ',
-        fontSize: 18,
-        fill: '#33CC33',
-        textDecoration: 'underline'
-      },
-      {
-        text: 'and formats!',
-        fontSize: 18,
-        fill: '#CC3366',
-        fontWeight: 'bold'
-      }
+      })),
+      ...Array.from('- Characters slide in while typing!').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#0055FF'
+      }))
     ];
 
     // Create an AnimateExecutor and run the animation
     const executor = new AnimateExecutor(group);
     executor.execute({
-      type: 'inputRichText',
-      to: { textConfig: complexTextConfig },
+      type: 'slideRichText',
+      to: { textConfig },
       customParameters: {
-        showCursor: true,
-        cursorChar: '▎',
-        blinkCursor: true,
-        // 启用字符透明度渐变效果，设置较长的渐变时间提供更平滑的效果
-        fadeInChars: true,
-        fadeInDuration: 0.5
+        wordByWord: true,
+        fadeInDuration: 0.3,
+        slideDirection: 'right',
+        slideDistance: 50
       },
-      duration: 5000,
+      duration: 3000,
       easing: 'linear'
     });
   });
 
-  // Comparison demo to show the difference with/without fade effect
-  addCase('RichText With/Without Fade', container, stage => {
-    // Create two richTexts for comparison
-    const richTextNoFade = createRichText({
+  // Slide RichText Animation - Left direction
+  addCase('SlideRichText - Left Direction', container, stage => {
+    // Create a richText with empty textConfig
+    const richText = createRichText({
       x: 20,
-      y: 50,
+      y: 80,
       width: 600,
       height: 100,
       textConfig: [],
-      textBaseline: 'middle'
+      textBaseline: 'middle',
+      ascentDescentMode: 'font'
     });
 
-    const richTextWithFade = createRichText({
-      x: 20,
-      y: 150,
-      width: 600,
-      height: 100,
-      textConfig: [],
-      textBaseline: 'middle'
-    });
-
-    // Add title texts
-    const titleNoFade = createText({
-      x: 20,
-      y: 20,
-      text: 'Without Fade Effect:',
-      fontSize: 16,
-      fill: '#000'
-    });
-
-    const titleWithFade = createText({
-      x: 20,
-      y: 120,
-      text: 'With Fade Effect:',
-      fontSize: 16,
-      fill: '#000'
-    });
-
-    // Create a group and add everything to it
+    // Create a group and add the richText to it
     const group = createGroup({});
-    group.add(richTextNoFade);
-    group.add(richTextWithFade);
-    group.add(titleNoFade);
-    group.add(titleWithFade);
+    group.add(richText);
     stage.defaultLayer.add(group);
     stage.render();
 
-    // Define the textConfig to use for both examples
+    // Define the textConfig
     const textConfig = [
-      {
-        text: 'Compare these typing animations to see the difference.',
-        fontSize: 18,
-        fill: '#333333',
+      ...Array.from('Slide from Left ').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#FF5500',
         fontWeight: 'bold'
-      }
+      })),
+      ...Array.from('- Characters slide in while typing!').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#0055FF'
+      }))
     ];
 
-    // Create an AnimateExecutor and run both animations
-    const executor1 = new AnimateExecutor(richTextNoFade);
-    const executor2 = new AnimateExecutor(richTextWithFade);
-    // Animation without fade effect
-    executor1.execute({
-      type: 'inputRichText',
+    // Create an AnimateExecutor and run the animation
+    const executor = new AnimateExecutor(group);
+    executor.execute({
+      type: 'slideRichText',
       to: { textConfig },
       customParameters: {
-        showCursor: true,
-        cursorChar: '|',
-        blinkCursor: true,
-        fadeInChars: false
+        wordByWord: true,
+        fadeInDuration: 0.3,
+        slideDirection: 'left',
+        slideDistance: 50
       },
-      duration: 4000,
+      duration: 3000,
       easing: 'linear'
     });
+  });
 
-    // Animation with fade effect
-    executor2.execute({
-      type: 'inputRichText',
+  // Slide RichText Animation - Up direction
+  addCase('SlideRichText - Up Direction', container, stage => {
+    // Create a richText with empty textConfig
+    const richText = createRichText({
+      x: 20,
+      y: 80,
+      width: 600,
+      height: 100,
+      textConfig: [],
+      textBaseline: 'middle',
+      ascentDescentMode: 'font'
+    });
+
+    // Create a group and add the richText to it
+    const group = createGroup({});
+    group.add(richText);
+    stage.defaultLayer.add(group);
+    stage.render();
+
+    // Define the textConfig
+    const textConfig = [
+      ...Array.from('Slide from Bottom ').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#FF5500',
+        fontWeight: 'bold'
+      })),
+      ...Array.from('- Characters slide upward while typing!').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#0055FF'
+      }))
+    ];
+
+    // Create an AnimateExecutor and run the animation
+    const executor = new AnimateExecutor(richText);
+    executor.execute({
+      type: 'slideRichText',
       to: { textConfig },
       customParameters: {
-        showCursor: true,
-        cursorChar: '|',
-        blinkCursor: true,
-        fadeInChars: true,
-        fadeInDuration: 0.4
+        wordByWord: true,
+        fadeInDuration: 0.3,
+        slideDirection: 'up',
+        slideDistance: 50
       },
-      duration: 4000,
+      duration: 3000,
+      easing: 'linear'
+    });
+  });
+
+  // Slide RichText Animation - Down direction
+  addCase('SlideRichText - Down Direction', container, stage => {
+    // Create a richText with empty textConfig
+    const richText = createRichText({
+      x: 20,
+      y: 80,
+      width: 600,
+      height: 100,
+      textConfig: [],
+      textBaseline: 'middle',
+      ascentDescentMode: 'font'
+    });
+
+    // Create a group and add the richText to it
+    const group = createGroup({});
+    group.add(richText);
+    stage.defaultLayer.add(group);
+    stage.render();
+
+    // Define the textConfig
+    const textConfig = [
+      ...Array.from('从上方').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#FF5500',
+        fontWeight: 'bold'
+      })),
+      ...Array.from('- 字符向下滑动!').map(item => ({
+        text: item,
+        fontSize: 24,
+        fill: '#0055FF'
+      }))
+    ];
+
+    // Create an AnimateExecutor and run the animation
+    const executor = new AnimateExecutor(group);
+    executor.execute({
+      type: 'slideRichText',
+      to: { textConfig },
+      customParameters: {
+        wordByWord: true,
+        fadeInDuration: 0.3,
+        slideDirection: 'down',
+        slideDistance: 50
+      },
+      duration: 3000,
       easing: 'linear'
     });
   });

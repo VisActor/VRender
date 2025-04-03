@@ -374,7 +374,7 @@ export const page = () => {
 
     // Basic animation - all elements fade and change color simultaneously
     executor.execute({
-      type: 'to',
+      // type: 'to',
       channel: {
         fill: {
           to: 'red'

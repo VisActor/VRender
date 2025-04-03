@@ -338,11 +338,11 @@ export default class Paragraph {
 
     const { lineWidth = 1 } = this.character;
     if (this.character.stroke && lineWidth) {
-      ctx.strokeText(text, left, baseline + this.dy);
+      ctx.strokeText(text, left + this.dx, baseline + this.dy);
     }
 
     if (this.character.fill) {
-      ctx.fillText(text, left, baseline + this.dy);
+      ctx.fillText(text, left + this.dx, baseline + this.dy);
     }
 
     if (this.character.fill) {

@@ -168,6 +168,27 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
     }
   }
 
+  /**
+   * 删除自身属性，会直接从props等内容里删除掉
+   */
+  deleteSelfAttr(key: string): void {
+    delete this.props[key];
+    // fromProps在动画开始时才会计算，这时可能不在
+    this.fromProps && delete this.fromProps[key];
+    const index = this.propKeys.indexOf(key);
+    if (index !== -1) {
+      this.propKeys.splice(index, 1);
+    }
+
+    if (this.propKeys && this.propKeys.length > 1) {
+      this._updateFunction = this.updateAngle;
+    } else if (this.propKeys[0] === 'startAngle') {
+      this._updateFunction = this.updateStartAngle;
+    } else if (this.propKeys[0] === 'endAngle') {
+      this._updateFunction = this.updateEndAngle;
+    }
+  }
+
   updateStartAngle(ratio: number): void {
     (this.target.attribute as any).startAngle =
       this.from.startAngle + (this.to.startAngle - this.from.startAngle) * ratio;

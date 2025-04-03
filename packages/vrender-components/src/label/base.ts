@@ -829,7 +829,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
                 relatedGraphics: this._idToGraphic,
                 config: {
                   ...enter,
-                  type: item === text ? enter.type : 'clipIn'
+                  type: item === text ? (enter as any).type : 'clipIn'
                 }
               }
             }

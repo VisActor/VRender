@@ -22,6 +22,7 @@ import { State } from './state';
 import { Update } from './update';
 import { InputText } from './input-text';
 import { InputRichText } from './richtext/input-richtext';
+import { SlideRichText } from './richtext/slide-richtext';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -61,4 +62,5 @@ export const registerCustomAnimate = () => {
   // Text input animations
   AnimateExecutor.registerBuiltInAnimate('inputText', InputText);
   AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
+  AnimateExecutor.registerBuiltInAnimate('slideRichText', SlideRichText);
 };

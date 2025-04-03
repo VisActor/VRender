@@ -32,6 +32,10 @@ export const pages = [
         path: 'custom-animate'
       },
       {
+        name: 'story-animate',
+        path: 'story-animate'
+      },
+      {
         name: '内存',
         path: 'memory'
       },

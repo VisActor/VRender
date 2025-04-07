@@ -2,7 +2,7 @@ import type { IPointLike } from '@visactor/vutils';
 import { clamp, isValidNumber, Point } from '@visactor/vutils';
 import { ACustomAnimate } from './custom-animate';
 import type { ISegment } from '@visactor/vrender-core';
-import { pointInterpolation } from '@visactor/vrender-core';
+import { pointInterpolation, ILineAttribute } from '@visactor/vrender-core';
 import type { EasingType } from '../intreface/easing';
 
 export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; segments?: ISegment[] }> {
@@ -52,6 +52,13 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   }
 
   onBind(): void {
+    const { points, segments } = this.target.attribute as any;
+    const { points: pointsTo, segments: segmentsTo } = this.target.getFinalAttribute() as any;
+
+    this.from = { points, segments };
+    this.to = { points: pointsTo, segments: segmentsTo };
+    this.props = this.to;
+
     const originFromPoints = this.getPoints(this.from);
     const originToPoints = this.getPoints(this.to, true);
     this.fromPoints = !originFromPoints ? [] : !Array.isArray(originFromPoints) ? [originFromPoints] : originFromPoints;
@@ -160,11 +167,11 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
         }
         return;
       }
-      out.clipRange = this.clipRange + (1 - this.clipRange) * ratio;
+      this.target.setAttributes({ clipRange: this.clipRange + (1 - this.clipRange) * ratio });
     }
     if (this.segmentsCache && this.to.segments) {
       let start = 0;
-      out.segments = this.to.segments.map((segment: any, index: any) => {
+      const segments = this.to.segments.map((segment: any, index: any) => {
         const end = start + this.segmentsCache[index];
         const points = this.points.slice(start, end);
         start = end;
@@ -173,8 +180,11 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
           points
         };
       });
+      (this.target.attribute as ILineAttribute).points = segments;
     } else {
-      out.points = this.points;
+      (this.target.attribute as ILineAttribute).points = this.points;
     }
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
   }
 }

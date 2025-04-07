@@ -7,11 +7,10 @@ import type {
   ISymbolGraphicAttribute,
   IText
 } from '@visactor/vrender-core';
-import { InputText } from '@visactor/vrender-animate';
 import { AbstractComponent } from '../core/base';
 import type { IStoryLabelItemAttrs } from './type';
 import type { ComponentOptions } from '../interface';
-import { max, merge } from '@visactor/vutils';
+import { merge } from '@visactor/vutils';
 
 export class StoryLabelItem extends AbstractComponent<Required<IStoryLabelItemAttrs>> {
   name: 'labelItem';

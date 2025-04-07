@@ -34,6 +34,7 @@ export * from './common/shape/arc';
 export * from './common/shape/rect';
 export * from './common/matrix';
 export * from './common/simplify';
+export * from './common/diff';
 
 export * from './common/path-svg';
 export * from './common/render-curve';

@@ -55,6 +55,23 @@ export type AxisItem = {
 
 export interface AxisBaseAttributes extends IGroupGraphicAttribute {
   /**
+   * 是否开启动画
+   * @default false
+   */
+  animation?: boolean;
+  /**
+   * 标签入场动画配置
+   */
+  animationEnter?: boolean;
+  /**
+   * 标签更新动画配置
+   */
+  animationUpdate?: boolean;
+  /**
+   * 标签离场动画配置
+   */
+  animationExit?: boolean;
+  /**
    * 是否开启选中交互
    * @default false
    */

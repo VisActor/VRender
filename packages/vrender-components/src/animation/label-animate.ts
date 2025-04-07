@@ -46,7 +46,12 @@ export class LabelUpdate extends AComponentAnimate<any> {
       });
     }
 
-    this._animator && this._animator.start();
+    this.completeBind(animator);
+  }
+
+  // 标签动画本身没有逻辑，具体通过animator中执行，所以本身不需要屏蔽冲突
+  protected tryPreventConflict(): void {
+    return;
   }
 }
 
@@ -94,6 +99,11 @@ export class LabelEnter extends AComponentAnimate<any> {
     });
 
     this.completeBind(animator);
+  }
+
+  // 标签动画本身没有逻辑，具体通过animator中执行，所以本身不需要屏蔽冲突
+  protected tryPreventConflict(): void {
+    return;
   }
 }
 

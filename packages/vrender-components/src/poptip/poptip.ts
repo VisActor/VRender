@@ -11,7 +11,6 @@ import {
   type TextAlignType,
   type TextBaselineType
 } from '@visactor/vrender-core';
-import { InputText } from '@visactor/vrender-animate';
 import {
   AABBBounds,
   Bounds,

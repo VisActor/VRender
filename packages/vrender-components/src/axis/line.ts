@@ -15,9 +15,9 @@ import {
   mixin,
   last as peek
 } from '@visactor/vutils';
-import { graphicCreator } from '@visactor/vrender-core';
+import { diff, graphicCreator } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
-import type { TextAlignType, IGroup, INode, IText, TextBaselineType } from '@visactor/vrender-core';
+import type { TextAlignType, IGroup, INode, IText, TextBaselineType, IGraphic } from '@visactor/vrender-core';
 import type { SegmentAttributes } from '../segment';
 // eslint-disable-next-line no-duplicate-imports
 import { Segment } from '../segment';
@@ -27,7 +27,7 @@ import type { LineAttributes, LineAxisAttributes, TitleAttributes, AxisItem, Tra
 import { AxisBase } from './base';
 import { DEFAULT_AXIS_THEME } from './config';
 import { AXIS_ELEMENT_NAME, DEFAULT_STATES, TopZIndex } from './constant';
-import { measureTextSize } from '../util';
+import { measureTextSize, traverseGroup } from '../util';
 import { autoHide as autoHideFunc } from './overlap/auto-hide';
 import { autoRotate as autoRotateFunc, getXAxisLabelAlign, getYAxisLabelAlign } from './overlap/auto-rotate';
 import { autoLimit as autoLimitFunc } from './overlap/auto-limit';
@@ -657,6 +657,137 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       limitLength = (limitLength - labelSpace - titleSpacing - titleHeight - axisLineWidth - tickLength) / layerCount;
     }
     return limitLength;
+  }
+
+  protected runAnimation() {
+    if (this.attribute.animation && (this as any).applyAnimationState) {
+      // @ts-ignore
+      const currentInnerView = this.getInnerView();
+      // @ts-ignore
+      const prevInnerView = this.getPrevInnerView();
+      if (!prevInnerView) {
+        return;
+      }
+
+      const animationConfig = this._animationConfig;
+
+      this._newElementAttrMap = {};
+
+      const updateEls: { oldEl: IGraphic; newEl: IGraphic }[] = [];
+      const enterEls: { newEl: IGraphic }[] = [];
+
+      // 遍历新的场景树，将新节点属性更新为旧节点
+      // TODO: 目前只处理更新场景
+      traverseGroup(currentInnerView, (el: IGraphic) => {
+        if ((el as IGraphic).type !== 'group' && el.id) {
+          const oldEl = prevInnerView[el.id];
+          // 删除旧图元的动画
+          el.setFinalAttribute(el.attribute);
+          if (oldEl) {
+            oldEl.release();
+            // oldEl.stopAnimationState('enter');
+            // oldEl.stopAnimationState('update');
+            const oldAttrs = (oldEl as IGraphic).attribute;
+            const finalAttrs = el.getFinalAttribute();
+            const diffAttrs: Record<string, any> = diff(oldAttrs, finalAttrs);
+
+            let hasDiff = Object.keys(diffAttrs).length > 0;
+            // TODO 如果入场会有fadeIn，则需要处理opacity（后续还需要考虑其他动画情况）
+            if ('opacity' in oldAttrs && finalAttrs.opacity !== oldAttrs.opacity) {
+              diffAttrs.opacity = finalAttrs.opacity ?? 1;
+              hasDiff = true;
+            }
+
+            if (animationConfig.update && hasDiff) {
+              this._newElementAttrMap[el.id] = {
+                state: 'update',
+                node: el,
+                attrs: el.attribute
+              };
+              const oldAttrs = (oldEl as IGraphic).attribute;
+
+              (el as IGraphic).setAttributes(oldAttrs);
+
+              // el.applyAnimationState(
+              //   ['update'],
+              //   [
+              //     {
+              //       name: 'update',
+              //       animation: {
+              //         selfOnly: true,
+              //         ...animationConfig.update,
+              //         type: 'update',
+              //         to: diffAttrs,
+              //         customParameters: {
+              //           config: animationConfig.update,
+              //           diffAttrs
+              //         }
+              //       }
+              //     }
+              //   ]
+              // );
+
+              oldEl.type === 'text' &&
+                updateEls.push({
+                  oldEl: oldEl,
+                  newEl: el
+                });
+
+              el.applyAnimationState(
+                ['update'],
+                [
+                  {
+                    name: 'update',
+                    animation: {
+                      selfOnly: true,
+                      ...animationConfig.update,
+                      type: 'axisUpdate',
+                      customParameters: {
+                        config: animationConfig.update,
+                        diffAttrs
+                      }
+                    }
+                  }
+                ]
+              );
+            }
+          } else if (animationConfig.enter) {
+            this._newElementAttrMap[el.id] = {
+              state: 'enter',
+              node: el,
+              attrs: el.attribute
+            };
+
+            enterEls.push({
+              newEl: el
+            });
+          }
+        }
+      });
+
+      if (enterEls.length) {
+        enterEls.forEach(el => {
+          el.newEl.applyAnimationState(
+            ['enter'],
+            [
+              {
+                name: 'enter',
+                animation: {
+                  ...animationConfig.enter,
+                  type: 'axisEnter',
+                  selfOnly: true,
+                  customParameters: {
+                    config: animationConfig.enter,
+                    updateEls,
+                    enterEls
+                  }
+                }
+              }
+            ]
+          );
+        });
+      }
+    }
   }
 
   release(): void {

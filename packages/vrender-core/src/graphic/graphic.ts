@@ -159,6 +159,33 @@ export const NOWORK_ANIMATE_ATTR = {
   html: 1
 };
 
+// function createTrackableObject(obj: any) {
+//   // const accessedProperties = new Set(); // 记录被读取的属性
+//   // const modifiedProperties = new Set(); // 记录被设置/修改的属性
+
+//   const handler = {
+//     get(target: any, property: any) {
+//       // accessedProperties.add(property); // 记录读取操作
+//       return Reflect.get(target, property);
+//     },
+//     set(target: any, property: any, value: any) {
+//       if (property === 'opacity' && obj.text === 'Nail polish') {
+//         console.log('set', property, value);
+//       }
+//       // modifiedProperties.add(property); // 记录设置/修改操作
+//       return Reflect.set(target, property, value);
+//     }
+//   };
+
+//   const proxy = new Proxy(obj, handler);
+
+//   // 提供方法获取被追踪的属性
+//   proxy.getAccessedProperties = () => [...accessedProperties];
+//   proxy.getModifiedProperties = () => [...modifiedProperties];
+
+//   return proxy;
+// }
+
 /**
  * globalTransMatrix更新逻辑
  * 1. group的transform修改，会下发到所有下层group，将所有下层的tag修改
@@ -306,6 +333,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } else if (params.shadowGraphic) {
       this.setShadowGraphic(params.shadowGraphic);
     }
+    // this.attribute = createTrackableObject(this.attribute);
   }
 
   getAttributes(): T {

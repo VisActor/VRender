@@ -129,15 +129,23 @@ export class ComponentAnimator {
     return this;
   }
 
-  /**
-   * Stop all animations in this component animation
-   * @param jumpToEnd Whether to jump to the end state (true) or start state (false)
-   * @returns This ComponentAnimator
-   */
-  stop(jumpToEnd: boolean = true): ComponentAnimator {
+  deleteSelfAttr(key: string): void {
     this.tasks.forEach(task => {
       if (task.animate) {
-        task.animate.stop(jumpToEnd ? 'end' : 'start');
+        task.animate.preventAttr(key);
+      }
+    });
+  }
+
+  /**
+   * Stop all animations in this component animation
+   * @param type Whether to jump to the end state or start state
+   * @returns This ComponentAnimator
+   */
+  stop(type?: 'start' | 'end'): ComponentAnimator {
+    this.tasks.forEach(task => {
+      if (task.animate) {
+        task.animate.stop(type);
       }
     });
 

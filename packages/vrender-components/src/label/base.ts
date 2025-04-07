@@ -56,9 +56,10 @@ import { connectLineBetweenBounds, getPointsOfLineArea } from './util';
 import type { ComponentOptions } from '../interface';
 import { loadLabelComponent } from './register';
 import { shiftY } from './overlap/shiftY';
+import { AnimateComponent } from '../animation/animate-component';
 
 loadLabelComponent();
-export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
+export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
   name = 'label';
 
   protected _baseMarks?: IGraphic[];
@@ -416,26 +417,7 @@ export class LabelBase<T extends BaseLabelAttrs> extends AbstractComponent<T> {
       }
     }
 
-    if (this.attribute.animation !== false) {
-      const { animation, animationEnter, animationExit, animationUpdate } = this.attribute;
-      const animationCfg = isObject(animation) ? animation : {};
-      this._animationConfig = {
-        enter: animationEnter !== false ? merge({}, DefaultLabelAnimation, animationCfg, animationEnter ?? {}) : false,
-        exit: animationExit !== false ? merge({}, DefaultLabelAnimation, animationCfg, animationExit ?? {}) : false,
-        update:
-          animationUpdate !== false
-            ? isArray(animationUpdate)
-              ? animationUpdate
-              : merge({}, DefaultLabelAnimation, animationCfg, animationUpdate ?? {})
-            : false
-      };
-    } else {
-      this._animationConfig = {
-        enter: false,
-        exit: false,
-        update: false
-      };
-    }
+    this._prepareAnimate(DefaultLabelAnimation);
   }
 
   protected getRelatedGraphic(item: LabelItem) {

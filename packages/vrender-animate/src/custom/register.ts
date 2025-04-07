@@ -20,10 +20,6 @@ import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
 import { Update } from './update';
-import { InputText } from './input-text';
-import { InputRichText } from './richtext/input-richtext';
-import { SlideRichText } from './richtext/slide-richtext';
-import { SlideIn, GrowIn, SpinIn, MoveScaleIn, MoveRotateIn } from './story';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -60,15 +56,4 @@ export const registerCustomAnimate = () => {
   // Poptip animations
   AnimateExecutor.registerBuiltInAnimate('poptipAppear', PoptipAppear);
   AnimateExecutor.registerBuiltInAnimate('poptipDisappear', PoptipDisappear);
-  // Text input animations
-  AnimateExecutor.registerBuiltInAnimate('inputText', InputText);
-  AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
-  AnimateExecutor.registerBuiltInAnimate('slideRichText', SlideRichText);
-
-  // 故事化动画
-  AnimateExecutor.registerBuiltInAnimate('slideIn', SlideIn);
-  AnimateExecutor.registerBuiltInAnimate('growIn', GrowIn);
-  AnimateExecutor.registerBuiltInAnimate('spinIn', SpinIn);
-  AnimateExecutor.registerBuiltInAnimate('moveScaleIn', MoveScaleIn);
-  AnimateExecutor.registerBuiltInAnimate('moveRotateIn', MoveRotateIn);
 };

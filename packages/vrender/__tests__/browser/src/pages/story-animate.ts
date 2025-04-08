@@ -60,7 +60,7 @@ export const page = () => {
   btnContainer.style.flexDirection = 'row';
   btnContainer.style.gap = '3px';
   btnContainer.style.flexWrap = 'wrap';
-  btnContainer.style.height = '120px';
+  btnContainer.style.height = '160px';
   const canvas = document.getElementById('main');
   // 将btnContainer添加到canvas之前
   canvas.parentNode.insertBefore(btnContainer, canvas);
@@ -786,6 +786,77 @@ export const page = () => {
       },
       duration: 2000,
       easing: 'quadOut'
+    });
+  });
+
+  // Apple iMessage Animation with iosSpringOut
+  addCase('Apple iMessage (iosSpringOut)', btnContainer, stage => {
+    // Create a group to hold the message bubble and its components
+    const messageGroup = createGroup({
+      x: 450,
+      y: 250
+    });
+
+    // Main bubble (rounded rectangle)
+    const messageBubble = createRect({
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 80,
+      fill: '#34C759', // Updated to match Apple's green color more closely
+      cornerRadius: 20,
+      shadowBlur: 5,
+      shadowColor: 'rgba(0, 0, 0, 0.1)',
+      shadowOffsetX: 0,
+      shadowOffsetY: 2
+    });
+
+    // Message text
+    const messageText = createText({
+      x: 20,
+      y: 40,
+      text: 'Hello! 👋',
+      fontSize: 18,
+      fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif', // Apple system fonts
+      fill: '#FFFFFF',
+      textAlign: 'left',
+      textBaseline: 'middle'
+    });
+
+    // Add "now" timestamp text
+    const timestampText = createText({
+      x: 200,
+      y: 90,
+      text: 'now',
+      fontSize: 12,
+      fontFamily: 'SF Pro, -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif',
+      fill: 'rgba(120, 120, 128, 0.8)', // Light gray color like iOS
+      textAlign: 'right',
+      textBaseline: 'middle'
+    });
+
+    // Add all elements to the group
+    messageGroup.add(messageBubble);
+    messageGroup.add(messageText);
+    messageGroup.add(timestampText);
+
+    // Add group to stage
+    stage.defaultLayer.add(messageGroup);
+
+    // Apply animation to the group
+    const executor = new AnimateExecutor(messageGroup);
+
+    // Use our custom Apple-style animation
+    executor.execute({
+      type: 'growIn',
+      customParameters: {
+        fromScale: 0.3,
+        direction: 'xy',
+        fromOpacity: 0
+      },
+      selfOnly: true,
+      duration: 400,
+      easing: 'backOut' // Use our new iOS-style easing function
     });
   });
 

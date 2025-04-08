@@ -118,6 +118,8 @@ export abstract class AxisBase<T extends AxisBaseAttributes> extends AnimateComp
    */
   getBoundsWithoutRender(attributes: Partial<T>) {
     const currentAttribute = cloneDeep(this.attribute);
+    // lastScale 不能拷贝
+    currentAttribute.lastScale = (this.attribute as any).lastScale;
     merge(this.attribute, attributes);
 
     const offscreenGroup = graphicCreator.group({

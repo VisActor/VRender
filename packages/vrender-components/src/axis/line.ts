@@ -46,6 +46,7 @@ export interface LineAxis
 
 export class LineAxis extends AxisBase<LineAxisAttributes> {
   static defaultAttributes = DEFAULT_AXIS_THEME;
+  lastScale: any;
 
   constructor(attributes: LineAxisAttributes, options?: ComponentOptions) {
     super(options?.skipDefault ? attributes : merge({}, LineAxis.defaultAttributes, attributes), options);
@@ -660,6 +661,18 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
   }
 
   protected runAnimation() {
+    const lastScale = this.lastScale;
+    if ((this.attribute as any).lastScale) {
+      const lastScale = (this.attribute as any).lastScale;
+      this.lastScale = lastScale.clone();
+      if (lastScale._niceType) {
+        this.lastScale._niceType = lastScale._niceType;
+        this.lastScale._domainValidator = lastScale._domainValidator;
+        this.lastScale._niceDomain = lastScale._niceDomain.slice();
+        this.lastScale.range([0, 1]);
+      }
+    }
+
     if (this.attribute.animation && (this as any).applyAnimationState) {
       // @ts-ignore
       const currentInnerView = this.getInnerView();
@@ -672,9 +685,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
       const animationConfig = this._animationConfig;
 
       this._newElementAttrMap = {};
-
-      const updateEls: { oldEl: IGraphic; newEl: IGraphic }[] = [];
-      const enterEls: { newEl: IGraphic }[] = [];
 
       // 遍历新的场景树，将新节点属性更新为旧节点
       // TODO: 目前只处理更新场景
@@ -708,31 +718,6 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
 
               (el as IGraphic).setAttributes(oldAttrs);
 
-              // el.applyAnimationState(
-              //   ['update'],
-              //   [
-              //     {
-              //       name: 'update',
-              //       animation: {
-              //         selfOnly: true,
-              //         ...animationConfig.update,
-              //         type: 'update',
-              //         to: diffAttrs,
-              //         customParameters: {
-              //           config: animationConfig.update,
-              //           diffAttrs
-              //         }
-              //       }
-              //     }
-              //   ]
-              // );
-
-              oldEl.type === 'text' &&
-                updateEls.push({
-                  oldEl: oldEl,
-                  newEl: el
-                });
-
               el.applyAnimationState(
                 ['update'],
                 [
@@ -744,7 +729,8 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
                       type: 'axisUpdate',
                       customParameters: {
                         config: animationConfig.update,
-                        diffAttrs
+                        diffAttrs,
+                        lastScale
                       }
                     }
                   }
@@ -758,35 +744,27 @@ export class LineAxis extends AxisBase<LineAxisAttributes> {
               attrs: el.attribute
             };
 
-            enterEls.push({
-              newEl: el
-            });
+            el.applyAnimationState(
+              ['enter'],
+              [
+                {
+                  name: 'enter',
+                  animation: {
+                    ...animationConfig.enter,
+                    type: 'axisEnter',
+                    selfOnly: true,
+                    customParameters: {
+                      config: animationConfig.enter,
+                      lastScale,
+                      getTickCoord: this.getTickCoord.bind(this)
+                    }
+                  }
+                }
+              ]
+            );
           }
         }
       });
-
-      if (enterEls.length) {
-        enterEls.forEach(el => {
-          el.newEl.applyAnimationState(
-            ['enter'],
-            [
-              {
-                name: 'enter',
-                animation: {
-                  ...animationConfig.enter,
-                  type: 'axisEnter',
-                  selfOnly: true,
-                  customParameters: {
-                    config: animationConfig.enter,
-                    updateEls,
-                    enterEls
-                  }
-                }
-              }
-            ]
-          );
-        });
-      }
     }
   }
 

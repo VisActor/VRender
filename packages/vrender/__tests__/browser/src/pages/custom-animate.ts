@@ -7,6 +7,58 @@ registerCustomAnimate();
 
 let stage: any;
 
+// 基础富文本配置
+const basicTextConfig = [
+  {
+    text: 'VRender 富文本',
+    fontSize: 24,
+    fill: '#3A86FF',
+    fontWeight: 'bold'
+  }
+];
+
+// 带格式的富文本配置
+const formattedTextConfig = [
+  {
+    text: '富文本',
+    fontSize: 24,
+    fill: '#3A86FF',
+    fontWeight: 'bold'
+  },
+  {
+    text: '退场',
+    fontSize: 24,
+    fill: '#FF006E',
+    fontWeight: 'bold'
+  },
+  {
+    text: '动画效果',
+    fontSize: 24,
+    fill: '#FFBE0B',
+    fontWeight: 'bold'
+  }
+];
+
+// 段落富文本配置
+const paragraphTextConfig = [
+  {
+    text: 'VRender中的富文本动画\n',
+    fontSize: 24,
+    fill: '#3A86FF',
+    fontWeight: 'bold'
+  },
+  {
+    text: '这是一段用于演示的多行文本，\n',
+    fontSize: 18,
+    fill: '#000'
+  },
+  {
+    text: '支持逐字符退场和逐单词退场效果',
+    fontSize: 18,
+    fill: '#FF006E'
+  }
+];
+
 // Utility function to add test cases to the page
 function addCase(name: string, container: HTMLElement, cb: (stage: any) => void) {
   const button = document.createElement('button');
@@ -333,6 +385,310 @@ export const page = () => {
       duration: 3000,
       easing: 'linear'
     });
+  });
+
+  // 基础退格删除效果
+  addCase('OutputRichText - 退格删除', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: basicTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行退格删除动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'outputRichText',
+        customParameters: {
+          showCursor: true,
+          cursorChar: '|',
+          blinkCursor: true,
+          fadeOutChars: true,
+          direction: 'backward' // 从后往前删除（退格效果）
+        },
+        duration: 2000,
+        easing: 'linear'
+      });
+    }, 1000);
+  });
+
+  // 正向删除效果
+  addCase('OutputRichText - 正向删除', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: basicTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行正向删除动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'outputRichText',
+        customParameters: {
+          showCursor: true,
+          cursorChar: '|',
+          blinkCursor: true,
+          fadeOutChars: true,
+          direction: 'forward' // 从前往后删除
+        },
+        duration: 2000,
+        easing: 'linear'
+      });
+    }, 1000);
+  });
+
+  // 无光标的淡出效果
+  addCase('OutputRichText - 无光标淡出', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: formattedTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行无光标淡出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'outputRichText',
+        customParameters: {
+          showCursor: false,
+          fadeOutChars: true,
+          direction: 'backward'
+        },
+        duration: 2000,
+        easing: 'linear'
+      });
+    }, 1000);
+  });
+
+  // 完整的出入场序列
+  addCase('输入后退出序列', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: [],
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 创建动画执行器
+    const executor = new AnimateExecutor(richText);
+
+    // 1. 首先执行输入动画
+    executor.execute({
+      type: 'inputRichText',
+      to: {
+        textConfig: formattedTextConfig
+      },
+      customParameters: {
+        showCursor: true,
+        cursorChar: '|',
+        blinkCursor: true,
+        fadeInChars: true
+      },
+      duration: 2000,
+      easing: 'linear'
+    });
+
+    // 2. 等待2秒，然后执行退出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'outputRichText',
+        customParameters: {
+          showCursor: true,
+          cursorChar: '|',
+          blinkCursor: true,
+          fadeOutChars: true,
+          direction: 'backward'
+        },
+        duration: 2000,
+        easing: 'linear'
+      });
+    }, 4000);
+  });
+
+  // ==== SlideOutRichText演示 ====
+
+  // 向右滑出
+  addCase('SlideOutRichText - 向右滑出', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: formattedTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行向右滑出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'slideOutRichText',
+        customParameters: {
+          slideDirection: 'right',
+          slideDistance: 100,
+          fadeOutDuration: 0.3
+        },
+        duration: 1500,
+        easing: 'quadOut'
+      });
+    }, 1000);
+  });
+
+  // 向上滑出
+  addCase('SlideOutRichText - 向上滑出', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: formattedTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行向上滑出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'slideOutRichText',
+        customParameters: {
+          slideDirection: 'up',
+          slideDistance: 100,
+          fadeOutDuration: 0.3
+        },
+        duration: 1500,
+        easing: 'quadOut'
+      });
+    }, 1000);
+  });
+
+  // 按单词滑出
+  addCase('SlideOutRichText - 按单词滑出', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: paragraphTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行按单词滑出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'slideOutRichText',
+        customParameters: {
+          slideDirection: 'right',
+          slideDistance: 80,
+          fadeOutDuration: 0.3,
+          wordByWord: true
+        },
+        duration: 2000,
+        easing: 'quadOut'
+      });
+    }, 1000);
+  });
+
+  // 反向顺序滑出
+  addCase('SlideOutRichText - 反向顺序滑出', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: formattedTextConfig,
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 启动退场动画
+    const executor = new AnimateExecutor(richText);
+
+    // 先等待1秒，然后执行反向顺序滑出动画
+    setTimeout(() => {
+      executor.execute({
+        type: 'slideOutRichText',
+        customParameters: {
+          slideDirection: 'right',
+          slideDistance: 100,
+          fadeOutDuration: 0.3,
+          reverseOrder: true // 反转顺序
+        },
+        duration: 1500,
+        easing: 'quadOut'
+      });
+    }, 1000);
+  });
+
+  // 完整的滑动入场和退场序列
+  addCase('滑动入场后退场序列', container, stage => {
+    const richText = createRichText({
+      x: 400,
+      y: 200,
+      textConfig: [],
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+    stage.defaultLayer.add(richText);
+
+    // 创建动画执行器
+    const executor = new AnimateExecutor(richText);
+
+    // 1. 首先执行滑动入场动画
+    executor.execute({
+      type: 'slideRichText',
+      to: {
+        textConfig: paragraphTextConfig
+      },
+      customParameters: {
+        slideDirection: 'right',
+        slideDistance: 100,
+        fadeInDuration: 0.3,
+        wordByWord: true
+      },
+      duration: 2000,
+      easing: 'quadOut'
+    });
+
+    // 2. 等待2.5秒，然后执行滑动退场动画（使用相反方向）
+    setTimeout(() => {
+      executor.execute({
+        type: 'slideOutRichText',
+        customParameters: {
+          slideDirection: 'left', // 反方向滑出
+          slideDistance: 100,
+          fadeOutDuration: 0.3,
+          wordByWord: true
+        },
+        duration: 2000,
+        easing: 'quadOut'
+      });
+    }, 4500);
   });
 
   return container;

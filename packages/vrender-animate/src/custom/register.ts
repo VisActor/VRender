@@ -19,7 +19,9 @@ import { LabelItemAppear, LabelItemDisappear } from './label-item-animate';
 import { IncreaseCount } from './number';
 import { PoptipAppear, PoptipDisappear } from './poptip-animate';
 import { InputRichText } from './richtext/input-richtext';
+import { OutputRichText } from './richtext/output-richtext';
 import { SlideRichText } from './richtext/slide-richtext';
+import { SlideOutRichText } from './richtext/slide-out-richtext';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
 import {
@@ -75,7 +77,9 @@ export const registerCustomAnimate = () => {
   // Text input animations
   AnimateExecutor.registerBuiltInAnimate('inputText', InputText);
   AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
+  AnimateExecutor.registerBuiltInAnimate('outputRichText', OutputRichText);
   AnimateExecutor.registerBuiltInAnimate('slideRichText', SlideRichText);
+  AnimateExecutor.registerBuiltInAnimate('slideOutRichText', SlideOutRichText);
 
   // 故事化动画 - 入场
   AnimateExecutor.registerBuiltInAnimate('slideIn', SlideIn);

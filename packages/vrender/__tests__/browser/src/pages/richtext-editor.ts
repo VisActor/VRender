@@ -32,6 +32,7 @@ export const page = () => {
       y: 216.49803822714284,
       textAlign: 'center',
       text: null,
+      // editable: true,
       fontSize: 16,
       whiteSpace: 'normal',
       graphicAlign: 'center',
@@ -48,7 +49,6 @@ export const page = () => {
         syncPlaceholderToTextConfig: false,
         stopPropagation: true
       },
-      editable: true,
       fontFamily: 'D-Din',
       height: 0,
       heightLimit: 999999,
@@ -64,105 +64,9 @@ export const page = () => {
           fontWeight: 'normal',
           fontFamily: 'D-Din',
           lineHeight: '150%',
-          text: 'a',
+          text: 'fkdlajfldsfjlsaa',
           isComposing: false,
           dy: 5,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'b',
-          isComposing: false,
-          dy: 10,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'c',
-          isComposing: false,
-          dy: 15,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'd',
-          isComposing: false,
-          dy: 20,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'e',
-          isComposing: false,
-          dy: 25,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'f',
-          isComposing: false,
-          dy: 30,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'f',
-          isComposing: false,
-          dy: 35,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'h',
-          isComposing: false,
-          dy: 40,
-          space: 6
-        },
-        {
-          fill: '#1F2329',
-          stroke: false,
-          fontSize: 16,
-          fontWeight: 'normal',
-          fontFamily: 'D-Din',
-          lineHeight: '150%',
-          text: 'i',
-          isComposing: false,
-          dy: 45,
           space: 6
         }
       ],
@@ -176,6 +80,10 @@ export const page = () => {
   );
 
   console.log(shapes[0]);
+
+  setTimeout(() => {
+    shapes[0].setAttributes({ editable: true });
+  }, 1000);
 
   const stage = createStage({
     canvas: 'main',

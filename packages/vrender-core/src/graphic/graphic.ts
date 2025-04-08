@@ -1206,7 +1206,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       // 拷贝一份，避免计算bounds的过程中计算matrix，然后matrix又修改了bounds
       tempBounds.copy(this._AABBBounds);
       // @ts-ignore
-      this.setAttributes({ scaleX: 1, scaleY: 1, angle: 0 });
+      this.setAttributes({ angle: 0 });
       params.b = this.AABBBounds.clone();
       this._AABBBounds.copy(tempBounds);
       // @ts-ignore
@@ -1247,7 +1247,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } = this.attribute;
     let _anchor: [number, number] = [0, 0];
     const params = {};
-    if (anchor) {
+    if (anchor && angle) {
       _anchor = this.getAnchor(anchor, params);
     }
     if (scaleCenter && (scaleX !== 1 || scaleY !== 1)) {

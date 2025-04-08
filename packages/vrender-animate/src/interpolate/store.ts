@@ -60,6 +60,9 @@ export class InterpolateUpdateStore {
   opacity = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.opacity = interpolateNumber(from, to, ratio);
   };
+  baseOpacity = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
+    (target.attribute as any).baseOpacity = interpolateNumber(from, to, ratio);
+  };
   fillOpacity = (key: string, from: number, to: number, ratio: number, step: IStep, target: IGraphic) => {
     target.attribute.fillOpacity = interpolateNumber(from, to, ratio);
   };

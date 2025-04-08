@@ -48,27 +48,27 @@ export class SlideIn extends ACustomAnimate<Record<string, number>> {
     const fromOpacity = this.params?.fromOpacity ?? 0; // 使用透明度初始值参数
 
     // 初始化from和to对象
-    const from: Record<string, number> = { opacity: fromOpacity };
-    const to: Record<string, number> = { opacity: 1 };
+    const from: Record<string, number> = { opacity: fromOpacity, baseOpacity: fromOpacity };
+    const to: Record<string, number> = { opacity: 1, baseOpacity: 1 };
 
     // 根据方向设置对应的属性
     if (direction === 'top') {
       from.y = (attrs.y ?? 0) - distance;
       to.y = attrs.y ?? 0;
-      this.propKeys = ['opacity', 'y'];
+      this.propKeys = ['opacity', 'baseOpacity', 'y'];
     } else if (direction === 'bottom') {
       from.y = (attrs.y ?? 0) + distance;
       to.y = attrs.y ?? 0;
-      this.propKeys = ['opacity', 'y'];
+      this.propKeys = ['opacity', 'baseOpacity', 'y'];
     } else if (direction === 'left') {
       from.x = (attrs.x ?? 0) - distance;
       to.x = attrs.x ?? 0;
-      this.propKeys = ['opacity', 'x'];
+      this.propKeys = ['opacity', 'baseOpacity', 'x'];
     } else {
       // right
       from.x = (attrs.x ?? 0) + distance;
       to.x = attrs.x ?? 0;
-      this.propKeys = ['opacity', 'x'];
+      this.propKeys = ['opacity', 'baseOpacity', 'x'];
     }
 
     this.from = from;
@@ -111,9 +111,9 @@ export class GrowIn extends ACustomAnimate<Record<string, number>> {
     const fromOpacity = this.params?.fromOpacity ?? 0; // 使用透明度初始值参数
 
     // 初始化from和to对象
-    const from: Record<string, number> = { opacity: fromOpacity };
-    const to: Record<string, number> = { opacity: 1 };
-    this.propKeys = ['opacity'];
+    const from: Record<string, number> = { opacity: fromOpacity, baseOpacity: fromOpacity };
+    const to: Record<string, number> = { opacity: 1, baseOpacity: 1 };
+    this.propKeys = ['opacity', 'baseOpacity'];
 
     // 根据方向设置对应的缩放属性
     if (direction === 'x' || direction === 'xy') {
@@ -170,6 +170,7 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
     // 初始化from和to对象
     const from: Record<string, number> = {
       opacity: fromOpacity,
+      baseOpacity: fromOpacity,
       angle: fromAngle,
       scaleX: fromScale,
       scaleY: fromScale
@@ -177,12 +178,13 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
 
     const to: Record<string, number> = {
       opacity: 1,
+      baseOpacity: 1,
       angle: attrs.angle ?? 0,
       scaleX: attrs.scaleX ?? 1,
       scaleY: attrs.scaleY ?? 1
     };
 
-    this.propKeys = ['opacity', 'angle', 'scaleX', 'scaleY'];
+    this.propKeys = ['opacity', 'baseOpacity', 'angle', 'scaleX', 'scaleY'];
     this.from = from;
     this.to = to;
     this.props = to;
@@ -356,27 +358,27 @@ export class SlideOut extends ACustomAnimate<Record<string, number>> {
     const toOpacity = this.params?.toOpacity ?? 0; // 使用目标透明度参数
 
     // 初始化from和to对象
-    const from: Record<string, number> = { opacity: fromOpacity };
-    const to: Record<string, number> = { opacity: toOpacity };
+    const from: Record<string, number> = { opacity: fromOpacity, baseOpacity: fromOpacity };
+    const to: Record<string, number> = { opacity: toOpacity, baseOpacity: toOpacity };
 
     // 根据方向设置对应的属性
     if (direction === 'top') {
       from.y = attrs.y ?? 0;
       to.y = (attrs.y ?? 0) - distance;
-      this.propKeys = ['opacity', 'y'];
+      this.propKeys = ['opacity', 'baseOpacity', 'y'];
     } else if (direction === 'bottom') {
       from.y = attrs.y ?? 0;
       to.y = (attrs.y ?? 0) + distance;
-      this.propKeys = ['opacity', 'y'];
+      this.propKeys = ['opacity', 'baseOpacity', 'y'];
     } else if (direction === 'left') {
       from.x = attrs.x ?? 0;
       to.x = (attrs.x ?? 0) - distance;
-      this.propKeys = ['opacity', 'x'];
+      this.propKeys = ['opacity', 'baseOpacity', 'x'];
     } else {
       // right
       from.x = attrs.x ?? 0;
       to.x = (attrs.x ?? 0) + distance;
-      this.propKeys = ['opacity', 'x'];
+      this.propKeys = ['opacity', 'baseOpacity', 'x'];
     }
 
     this.from = from;
@@ -423,9 +425,9 @@ export class GrowOut extends ACustomAnimate<Record<string, number>> {
     const toOpacity = this.params?.toOpacity ?? 0; // 使用目标透明度参数
 
     // 初始化from和to对象
-    const from: Record<string, number> = { opacity: fromOpacity };
-    const to: Record<string, number> = { opacity: toOpacity };
-    this.propKeys = ['opacity'];
+    const from: Record<string, number> = { opacity: fromOpacity, baseOpacity: fromOpacity };
+    const to: Record<string, number> = { opacity: toOpacity, baseOpacity: toOpacity };
+    this.propKeys = ['opacity', 'baseOpacity'];
 
     // 根据方向设置对应的缩放属性
     if (direction === 'x' || direction === 'xy') {
@@ -486,6 +488,7 @@ export class SpinOut extends ACustomAnimate<Record<string, number>> {
     // 初始化from和to对象
     const from: Record<string, number> = {
       opacity: fromOpacity,
+      baseOpacity: fromOpacity,
       angle: attrs.angle ?? 0,
       scaleX: attrs.scaleX ?? 1,
       scaleY: attrs.scaleY ?? 1
@@ -493,12 +496,13 @@ export class SpinOut extends ACustomAnimate<Record<string, number>> {
 
     const to: Record<string, number> = {
       opacity: toOpacity,
+      baseOpacity: toOpacity,
       angle: toAngle,
       scaleX: toScale,
       scaleY: toScale
     };
 
-    this.propKeys = ['opacity', 'angle', 'scaleX', 'scaleY'];
+    this.propKeys = ['opacity', 'baseOpacity', 'angle', 'scaleX', 'scaleY'];
     this.from = from;
     this.to = to;
     this.props = to;

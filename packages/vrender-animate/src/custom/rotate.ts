@@ -1,0 +1,97 @@
+import type { EasingType, IGraphic } from '@visactor/vrender-core';
+import { isNumberClose, isValidNumber } from '@visactor/vutils';
+import { ACustomAnimate } from './custom-animate';
+
+export interface IRotateAnimationOptions {
+  orient?: 'clockwise' | 'anticlockwise';
+  angle?: number;
+}
+
+export const rotateIn = (graphic: IGraphic, options: IRotateAnimationOptions) => {
+  const finalAttrs = graphic.getFinalAttribute();
+  const attributeAngle = finalAttrs.angle ?? 0;
+
+  let angle = 0;
+  if (isNumberClose(attributeAngle / (Math.PI * 2), 0)) {
+    angle = Math.round(attributeAngle / (Math.PI * 2)) * Math.PI * 2;
+  } else if (isValidNumber(options?.angle)) {
+    angle = options.angle;
+  } else if (options?.orient === 'anticlockwise') {
+    angle = Math.ceil(attributeAngle / (Math.PI * 2)) * Math.PI * 2;
+  } else {
+    angle = Math.floor(attributeAngle / (Math.PI * 2)) * Math.PI * 2;
+  }
+  return {
+    from: { angle },
+    to: { angle: attributeAngle }
+  };
+};
+
+export const rotateOut = (graphic: IGraphic, options: IRotateAnimationOptions) => {
+  const finalAttrs = graphic.getFinalAttribute();
+  const finalAngle = finalAttrs.angle ?? 0;
+  let angle = 0;
+  if (isNumberClose(finalAngle / (Math.PI * 2), 0)) {
+    angle = Math.round(finalAngle / (Math.PI * 2)) * Math.PI * 2;
+  } else if (isValidNumber(options?.angle)) {
+    angle = options.angle;
+  } else if (options?.orient === 'anticlockwise') {
+    angle = Math.ceil(finalAngle / (Math.PI * 2)) * Math.PI * 2;
+  } else {
+    angle = Math.floor(finalAngle / (Math.PI * 2)) * Math.PI * 2;
+  }
+  return {
+    from: { angle: finalAngle },
+    to: { angle }
+  };
+};
+
+export class RotateBase extends ACustomAnimate<Record<string, number>> {
+  declare valid: boolean;
+
+  constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
+    super(from, to, duration, easing, params);
+  }
+
+  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
+    const attribute: Record<string, any> = this.target.attribute;
+    this.propKeys.forEach(key => {
+      attribute[key] = this.from[key] + (this.to[key] - this.from[key]) * ratio;
+    });
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateShapeAndBoundsTag();
+  }
+}
+
+/**
+ * 增长渐入
+ */
+export class RotateIn extends RotateBase {
+  onBind(): void {
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    if (this.params?.diffAttrs) {
+      this.target.setAttributes(this.params.diffAttrs);
+    }
+    const { from, to } = rotateIn(this.target, this.params.options);
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
+    this.props = to;
+    this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
+    this.animate.reSyncProps();
+    this.from = fromAttrs;
+    this.to = to;
+    this.target.setAttributes(fromAttrs);
+  }
+}
+
+export class RotateOut extends RotateBase {
+  onBind(): void {
+    const { from, to } = rotateOut(this.target, this.params.options);
+    const fromAttrs = this.target.context?.lastAttrs ?? from;
+    this.props = to;
+    this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
+    this.animate.reSyncProps();
+    this.from = fromAttrs;
+    this.to = to;
+    this.target.setAttributes(fromAttrs);
+  }
+}

@@ -17,7 +17,7 @@ import { cloneDeep, isArray, isFunction } from '@visactor/vutils';
 
 interface IAnimateExecutor {
   execute: (params: IAnimationConfig) => void;
-  executeItem: (params: IAnimationConfig, graphic: IGraphic, index?: number) => IAnimate | null;
+  executeItem: (params: IAnimationConfig, graphic: IGraphic, index?: number) => IAnimate[];
   onStart: (cb?: () => void) => void;
   onEnd: (cb?: () => void) => void;
 }
@@ -216,12 +216,20 @@ export class AnimateExecutor implements IAnimateExecutor {
     return parsedParams;
   }
 
+  execute(params: IAnimationConfig | IAnimationConfig[]) {
+    if (Array.isArray(params)) {
+      params.forEach(param => this._execute(param));
+    } else {
+      this._execute(params);
+    }
+  }
+
   /**
    * 执行动画，针对一组元素
    */
-  execute(params: IAnimationConfig) {
+  _execute(params: IAnimationConfig) {
     if (params.selfOnly) {
-      return this.executeItem(params, this._target, 0, 1);
+      return this._executeItem(params, this._target, 0, 1);
     }
 
     // 判断是否为timeline配置
@@ -582,6 +590,13 @@ export class AnimateExecutor implements IAnimateExecutor {
           }
         }
       });
+    } else {
+      channel.forEach(key => {
+        const value = graphic.context?.diffAttrs?.[key];
+        if (value !== undefined) {
+          props[key] = value;
+        }
+      });
     }
 
     return props;
@@ -602,10 +617,17 @@ export class AnimateExecutor implements IAnimateExecutor {
     return value as T;
   }
 
+  executeItem(params: IAnimationConfig | IAnimationConfig[], graphic: IGraphic, index: number = 0, count: number = 1) {
+    if (Array.isArray(params)) {
+      return params.map(param => this._executeItem(param, graphic, index, count)).filter(Boolean);
+    }
+    return [this._executeItem(params, graphic, index, count)].filter(Boolean);
+  }
+
   /**
    * 执行动画（具体执行到内部的单个图元）
    */
-  executeItem(params: IAnimationConfig, graphic: IGraphic, index: number = 0, count: number = 1): IAnimate | null {
+  _executeItem(params: IAnimationConfig, graphic: IGraphic, index: number = 0, count: number = 1): IAnimate | null {
     if (!graphic) {
       return null;
     }

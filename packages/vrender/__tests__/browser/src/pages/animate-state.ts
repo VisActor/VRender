@@ -99,65 +99,6 @@ export const page = () => {
 
     console.log(rect);
 
-    // Register animation states
-    rect.registerAnimationState({
-      name: 'pulse',
-      animation: {
-        timeSlices: [
-          {
-            duration: 500,
-            effects: {
-              type: 'to',
-              channel: {
-                scaleX: { to: 1.2 },
-                scaleY: { to: 1.2 }
-              },
-              easing: 'linear'
-            }
-          },
-          {
-            duration: 500,
-            effects: {
-              type: 'to',
-              channel: {
-                scaleX: { to: 1 },
-                scaleY: { to: 1 }
-              },
-              easing: 'linear'
-            }
-          }
-        ],
-        loop: true
-      }
-    });
-
-    rect.registerAnimationState({
-      name: 'spin',
-      animation: {
-        type: 'to',
-        channel: {
-          angle: { to: 360 }
-        },
-        duration: 2000,
-        easing: 'linear',
-        loop: true
-      }
-    });
-
-    rect.registerAnimationState({
-      name: 'highlight',
-      animation: {
-        type: 'to',
-        channel: {
-          fill: { to: 'orange' },
-          strokeWidth: { to: 3 },
-          stroke: { to: 'red' }
-        },
-        duration: 300,
-        easing: 'sineOut'
-      }
-    });
-
     // Create control buttons
     const createControlButton = (x: number, y: number, label: string, action: () => void) => {
       const buttonGroup = createGroup({
@@ -268,19 +209,70 @@ export const page = () => {
         rect.applyAnimationState(
           ['highlight'],
           [
-            {
-              name: 'highlight',
-              animation: {
-                type: 'to',
-                channel: {
-                  fill: { to: 'orange' },
-                  strokeWidth: { to: 3 },
-                  stroke: { to: 'red' }
-                },
-                duration: 300,
-                easing: 'sineOut'
+            [
+              {
+                name: 'pulse',
+                animation: {
+                  timeSlices: [
+                    {
+                      duration: 500,
+                      effects: {
+                        type: 'to',
+                        channel: {
+                          scaleX: { to: 1.2 },
+                          scaleY: { to: 1.2 }
+                        },
+                        easing: 'linear'
+                      }
+                    },
+                    {
+                      duration: 500,
+                      effects: {
+                        type: 'to',
+                        channel: {
+                          scaleX: { to: 1 },
+                          scaleY: { to: 1 }
+                        },
+                        easing: 'linear'
+                      }
+                    }
+                  ],
+                  loop: true
+                }
+              },
+              {
+                name: 'highlight',
+                animation: {
+                  timeSlices: [
+                    {
+                      duration: 1000,
+                      effects: {
+                        channel: {
+                          fill: { to: 'orange' },
+                          strokeWidth: { to: 3 },
+                          stroke: { to: 'red' }
+                        }
+                      },
+                      easing: 'sineOut'
+                    },
+                    {
+                      duration: 1000,
+                      effects: {
+                        channel: {
+                          fill: { to: 'green' },
+                          strokeWidth: { to: 3 },
+                          stroke: { to: 'pink' }
+                        }
+                      },
+                      easing: 'sineOut'
+                    }
+                  ],
+                  loop: true,
+                  duration: 300,
+                  easing: 'sineOut'
+                }
               }
-            }
+            ]
           ]
         );
       })

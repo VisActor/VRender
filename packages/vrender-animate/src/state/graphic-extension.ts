@@ -33,7 +33,11 @@ export class GraphicStateExtension {
   /**
    * 应用一个动画状态到图形
    */
-  applyAnimationState(state: string[], animationConfig: IAnimationState[], callback?: (empty?: boolean) => void): this {
+  applyAnimationState(
+    state: string[],
+    animationConfig: (IAnimationState | IAnimationState[])[],
+    callback?: (empty?: boolean) => void
+  ): this {
     this._getAnimationStateManager(this as unknown as IGraphic).applyState(state, animationConfig, callback);
     return this;
   }

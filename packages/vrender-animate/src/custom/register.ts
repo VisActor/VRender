@@ -22,7 +22,18 @@ import { InputRichText } from './richtext/input-richtext';
 import { SlideRichText } from './richtext/slide-richtext';
 import { ScaleIn, ScaleOut } from './scale';
 import { State } from './state';
-import { GrowIn, MoveRotateIn, MoveScaleIn, SlideIn, SpinIn } from './story';
+import {
+  GrowIn,
+  GrowOut,
+  MoveRotateIn,
+  MoveRotateOut,
+  MoveScaleIn,
+  MoveScaleOut,
+  SlideIn,
+  SlideOut,
+  SpinIn,
+  SpinOut
+} from './story';
 import { Update } from './update';
 
 export const registerCustomAnimate = () => {
@@ -66,10 +77,17 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('inputRichText', InputRichText);
   AnimateExecutor.registerBuiltInAnimate('slideRichText', SlideRichText);
 
-  // 故事化动画
+  // 故事化动画 - 入场
   AnimateExecutor.registerBuiltInAnimate('slideIn', SlideIn);
   AnimateExecutor.registerBuiltInAnimate('growIn', GrowIn);
   AnimateExecutor.registerBuiltInAnimate('spinIn', SpinIn);
   AnimateExecutor.registerBuiltInAnimate('moveScaleIn', MoveScaleIn);
   AnimateExecutor.registerBuiltInAnimate('moveRotateIn', MoveRotateIn);
+
+  // 故事化动画 - 出场
+  AnimateExecutor.registerBuiltInAnimate('slideOut', SlideOut);
+  AnimateExecutor.registerBuiltInAnimate('growOut', GrowOut);
+  AnimateExecutor.registerBuiltInAnimate('spinOut', SpinOut);
+  AnimateExecutor.registerBuiltInAnimate('moveScaleOut', MoveScaleOut);
+  AnimateExecutor.registerBuiltInAnimate('moveRotateOut', MoveRotateOut);
 };

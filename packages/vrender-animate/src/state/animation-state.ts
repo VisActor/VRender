@@ -3,6 +3,7 @@ import type { IAnimationState } from './types';
 import { AnimationTransitionRegistry } from './animation-states-registry';
 import type { IAnimationConfig } from '../executor/executor';
 import { AnimateExecutor } from '../executor/animate-executor';
+import { isArray } from '@visactor/vutils';
 
 // Standard animation state names
 export const AnimationStates = {
@@ -45,7 +46,7 @@ export class AnimationStateStore {
 // 一个状态对应一个执行器，每个图元都有一一对应
 interface IStateInfo {
   state: string;
-  animationConfig: IAnimationConfig;
+  animationConfig: IAnimationConfig | IAnimationConfig[];
   executor: AnimateExecutor;
 }
 
@@ -67,7 +68,11 @@ export class AnimationStateManager {
    * @param animationConfig 动画配置
    * @param callback 动画结束后的回调函数，参数empty为true表示没有动画需要执行直接调的回调
    */
-  applyState(nextState: string[], animationConfig: IAnimationState[], callback?: (empty?: boolean) => void): void {
+  applyState(
+    nextState: string[],
+    animationConfig: (IAnimationState | IAnimationState[])[],
+    callback?: (empty?: boolean) => void
+  ): void {
     const registry = AnimationTransitionRegistry.getInstance();
 
     // TODO 这里指判断第一个状态，后续如果需要的话要循环判断
@@ -78,7 +83,9 @@ export class AnimationStateManager {
       nextState.forEach((state, index) => {
         shouldApplyState.push({
           state,
-          animationConfig: animationConfig[index].animation,
+          animationConfig: isArray(animationConfig[index])
+            ? animationConfig[index].map(item => item.animation)
+            : animationConfig[index].animation,
           executor: new AnimateExecutor(this.graphic)
         });
       });
@@ -98,7 +105,9 @@ export class AnimationStateManager {
         if (result.allowTransition) {
           shouldApplyState.push({
             state,
-            animationConfig: animationConfig[index].animation,
+            animationConfig: isArray(animationConfig[index])
+              ? animationConfig[index].map(item => item.animation)
+              : animationConfig[index].animation,
             executor: new AnimateExecutor(this.graphic)
           });
           // 允许过渡的话，需要重新遍历this.stateList，获取stopOriginalTransition

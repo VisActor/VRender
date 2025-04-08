@@ -60,7 +60,12 @@ export interface IAnimationEffect {
   /** 动画 easing 配置 */
   easing?: EasingType;
   /** options暂时没有处理 */
-  options?: MarkFunctionValueType<any>;
+  options?:
+    | MarkFunctionValueType<any>
+    | {
+        // 忽略的属性
+        excludeChannels?: string[];
+      };
 }
 
 export interface IAnimationTimeSlice {

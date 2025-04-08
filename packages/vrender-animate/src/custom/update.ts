@@ -18,7 +18,15 @@ export class Update extends ACustomAnimate<Record<string, number>> {
   // params: IUpdateAnimationOptions;
 
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: IUpdateAnimationOptions) {
-    const { diffAttrs = {} } = params;
+    let { diffAttrs = {} } = params as any;
+    const { options } = params as any;
+
+    diffAttrs = { ...diffAttrs };
+    if (options?.excludeChannels?.length) {
+      options.excludeChannels.forEach((channel: string) => {
+        delete diffAttrs[channel];
+      });
+    }
     super(from, diffAttrs, duration, easing, params);
     // this.params = params;
   }

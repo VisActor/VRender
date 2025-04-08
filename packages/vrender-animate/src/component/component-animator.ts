@@ -1,7 +1,7 @@
 import type { IAnimate } from '../intreface/animate';
 import type { IGraphic } from '@visactor/vrender-core';
 import { AnimateExecutor } from '../executor/animate-executor';
-import type { IAnimationConfig, IAnimationTypeConfig, IAnimationTimeline } from '../executor/executor';
+import type { IAnimationConfig } from '../executor/executor';
 
 /**
  * Animation task that contains information about a scheduled animation
@@ -9,7 +9,7 @@ import type { IAnimationConfig, IAnimationTypeConfig, IAnimationTimeline } from 
 interface IAnimationTask {
   graphic: IGraphic;
   config: IAnimationConfig;
-  animate?: IAnimate;
+  animate?: IAnimate[];
 }
 
 /**
@@ -123,7 +123,9 @@ export class ComponentAnimator {
 
       const animate = executor.executeItem(task.config, task.graphic);
       task.animate = animate;
-      this.totalDuration = Math.max(this.totalDuration, animate.getStartTime() + animate.getDuration());
+      animate.forEach(animate => {
+        this.totalDuration = Math.max(this.totalDuration, animate.getStartTime() + animate.getDuration());
+      });
     });
 
     return this;
@@ -132,7 +134,7 @@ export class ComponentAnimator {
   deleteSelfAttr(key: string): void {
     this.tasks.forEach(task => {
       if (task.animate) {
-        task.animate.preventAttr(key);
+        task.animate.forEach(animate => animate.preventAttr(key));
       }
     });
   }
@@ -145,7 +147,7 @@ export class ComponentAnimator {
   stop(type?: 'start' | 'end'): ComponentAnimator {
     this.tasks.forEach(task => {
       if (task.animate) {
-        task.animate.stop(type);
+        task.animate.forEach(animate => animate.stop(type));
       }
     });
 

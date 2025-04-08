@@ -37,6 +37,8 @@ import {
   SpinOut
 } from './story';
 import { Update } from './update';
+import { MoveIn, MoveOut } from './move';
+import { RotateIn, RotateOut } from './rotate';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -64,6 +66,10 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('growAngleOut', GrowAngleOut);
   AnimateExecutor.registerBuiltInAnimate('growRadiusIn', GrowRadiusIn);
   AnimateExecutor.registerBuiltInAnimate('growRadiusOut', GrowRadiusOut);
+  AnimateExecutor.registerBuiltInAnimate('moveIn', MoveIn);
+  AnimateExecutor.registerBuiltInAnimate('moveOut', MoveOut);
+  AnimateExecutor.registerBuiltInAnimate('rotateIn', RotateIn);
+  AnimateExecutor.registerBuiltInAnimate('rotateOut', RotateOut);
   // state和update共用一个自定义动画类
   AnimateExecutor.registerBuiltInAnimate('update', Update);
   AnimateExecutor.registerBuiltInAnimate('state', State);

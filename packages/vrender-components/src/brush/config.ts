@@ -1,7 +1,7 @@
 export const DEFAULT_BRUSH_ATTRIBUTES = {
   trigger: 'pointerdown',
   updateTrigger: 'pointermove',
-  endTrigger: 'pointerup',
+  endTrigger: ['pointerup', 'pointerleave'],
   resetTrigger: 'pointerupoutside',
   hasMask: true,
   brushMode: 'single',

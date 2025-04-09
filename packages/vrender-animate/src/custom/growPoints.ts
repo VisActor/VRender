@@ -114,13 +114,17 @@ export class GrowPointsIn extends GworPointsBase {
   onBind(): void {
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
-      this.from = fromAttrs;
+      this.from = from;
       this.to = to;
-      this.target.setAttributes(fromAttrs);
+
+      // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+      const finalAttribute = this.target.getFinalAttribute();
+      if (finalAttribute) {
+        Object.assign(this.target.attribute, finalAttribute);
+      }
+      this.target.setAttributes(from);
     } else {
       this.valid = false;
     }
@@ -134,7 +138,6 @@ export class GrowPointsOut extends GworPointsBase {
       const { from, to } = growPointsOut(this.target, this.params.options, this.params);
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
       this.from = from || attrs;
       this.to = to;
     } else {
@@ -208,13 +211,17 @@ export class GrowPointsXIn extends GworPointsBase {
   onBind(): void {
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsXIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
-      this.from = fromAttrs;
+      this.from = from;
       this.to = to;
-      this.target.setAttributes(fromAttrs);
+
+      // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+      const finalAttribute = this.target.getFinalAttribute();
+      if (finalAttribute) {
+        Object.assign(this.target.attribute, finalAttribute);
+      }
+      this.target.setAttributes(from);
     } else {
       this.valid = false;
     }
@@ -228,7 +235,6 @@ export class GrowPointsXOut extends GworPointsBase {
       const { from, to } = growPointsXOut(this.target, this.params.options, this.params);
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
       this.from = from || attrs;
       this.to = to;
     } else {
@@ -300,19 +306,19 @@ const growPointsYOut: TypeAnimation<IGraphic> = (
 
 export class GrowPointsYIn extends GworPointsBase {
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYIn(this.target, this.params.options, this.params);
-      const fromAttrs = this.target.context?.lastAttrs ?? from;
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
-      this.from = fromAttrs;
+      this.from = from;
       this.to = to;
-      this.target.setAttributes(fromAttrs);
+
+      // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+      const finalAttribute = this.target.getFinalAttribute();
+      if (finalAttribute) {
+        Object.assign(this.target.attribute, finalAttribute);
+      }
+      this.target.setAttributes(from);
     } else {
       this.valid = false;
     }
@@ -321,13 +327,11 @@ export class GrowPointsYIn extends GworPointsBase {
 
 export class GrowPointsYOut extends GworPointsBase {
   onBind(): void {
-    if (['area', 'line'].includes(this.target.type)) {
-      const attrs = this.target.getFinalAttribute();
+    if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYOut(this.target, this.params.options, this.params);
       this.props = to;
       this.propKeys = Object.keys(to).filter(key => to[key] != null);
-      this.animate.reSyncProps();
-      this.from = from || attrs;
+      this.from = from ?? (this.target.attribute as any);
       this.to = to;
     } else {
       this.valid = false;

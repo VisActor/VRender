@@ -23,7 +23,7 @@ import { OutputRichText } from './richtext/output-richtext';
 import { SlideRichText } from './richtext/slide-richtext';
 import { SlideOutRichText } from './richtext/slide-out-richtext';
 import { ScaleIn, ScaleOut } from './scale';
-import { State } from './state';
+// import { State } from './state';
 import {
   GrowIn,
   GrowOut,
@@ -72,7 +72,7 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('rotateOut', RotateOut);
   // state和update共用一个自定义动画类
   AnimateExecutor.registerBuiltInAnimate('update', Update);
-  AnimateExecutor.registerBuiltInAnimate('state', State);
+  // AnimateExecutor.registerBuiltInAnimate('state', State);
   // Label item animations
   AnimateExecutor.registerBuiltInAnimate('labelItemAppear', LabelItemAppear);
   AnimateExecutor.registerBuiltInAnimate('labelItemDisappear', LabelItemDisappear);

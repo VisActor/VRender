@@ -17,25 +17,28 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
 
   onBind(): void {
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
-    const attrs = (this.target as any).getAttributes(true);
-    const fromAttrs = this.target.context?.lastAttrs ?? {};
+    const attrs = this.target.getFinalAttribute();
+    const fromAttrs: Record<string, any> = this.target.attribute ?? {};
 
     const to: Record<string, number> = {};
     const from: Record<string, number> = {};
     this.keys.forEach(key => {
       to[key] = attrs?.[key] ?? 1;
-      from[key] = fromAttrs?.[key] ?? 0;
+      from[key] = fromAttrs[key] ?? 0;
     });
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
 
     this.props = to;
     this.propKeys = this.keys;
-    this.animate.reSyncProps();
     this.from = from;
     this.to = to;
-    this.target.setAttributes(from as any);
+
+    this.target.setAttributes(from);
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
@@ -62,21 +65,24 @@ export class CommonOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    const attrs = this.target.getFinalAttribute();
+    const attrs: Record<string, any> = this.target.attribute;
 
     const to: Record<string, number> = {};
     const from: Record<string, number> = {};
     this.keys.forEach(key => {
       to[key] = 0;
-      from[key] = attrs?.[key] ?? 1;
+      from[key] = attrs[key] ?? 1;
     });
 
     this.props = to;
     this.propKeys = this.keys;
-    this.animate.reSyncProps();
     this.from = from;
     this.to = to;
-    this.target.setAttributes(from as any);
+
+    Object.assign(this.target.attribute, from);
+    this.target.addUpdatePositionTag();
+    this.target.addUpdateBoundTag();
+    // this.target.setAttributes(from as any);
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {

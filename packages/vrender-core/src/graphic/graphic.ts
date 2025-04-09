@@ -1032,7 +1032,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
           }
         ]
       );
-      // const animate = this.animate({ slience: true });
+      // const animate = (this.animate as any)({ slience: true });
       // (animate as any).stateNames = stateNames;
       // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
       noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
@@ -1093,7 +1093,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       return (this as any).finalAttribute?.[key];
     }
 
-    return value;
+    return value ?? (this as any).finalAttribute?.[key];
   }
 
   clearStates(hasAnimation?: boolean) {

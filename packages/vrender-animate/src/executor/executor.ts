@@ -53,6 +53,8 @@ export interface IAnimationEffect {
   channel?: IAnimationChannelAttrs | IAnimationChannelAttributes;
   /** 动画 to 配置（和channel互斥，如果同时设置，以to为准） */
   to?: Record<string, any>;
+  /** 动画 from 配置 */
+  from?: Record<string, any>;
   /** 动画 自定义插值 配置 */
   custom?: IAnimationChannelInterpolator | IAnimationCustomConstructor;
   /** 动画 custom 参数配置 */
@@ -98,6 +100,8 @@ export interface IAnimationTypeConfig {
   channel?: IAnimationChannelAttrs | IAnimationChannelAttributes;
   /** 动画 to 配置（和channel互斥，如果同时设置，以to为准） */
   to?: Record<string, any>;
+  /** 动画 from 配置 */
+  from?: Record<string, any>;
   /** 动画 自定义插值 配置 */
   custom?: IAnimationChannelInterpolator | IAnimationCustomConstructor;
   /** 动画 custom 参数配置 */

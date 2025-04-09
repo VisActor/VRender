@@ -161,7 +161,7 @@ export class AnimateExecutor implements IAnimateExecutor {
             delayAfter: (slice.delayAfter as number) * scale,
             duration: (slice.duration as number) * scale,
             effects: effects.map(effect => {
-              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'to'];
+              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'fromTo'];
               const customType =
                 custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
               return {
@@ -191,7 +191,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       parsedParams.oneByOneDelay = oneByOneDelay;
       parsedParams.custom =
         (params as IAnimationTypeConfig).custom ??
-        AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type ?? 'to'];
+        AnimateExecutor.builtInAnimateMap[(params as IAnimationTypeConfig).type ?? 'fromTo'];
 
       const customType =
         parsedParams.custom && isFunction(parsedParams.custom)
@@ -293,7 +293,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     count: number
   ): IAnimate {
     const {
-      type = 'to',
+      type = 'fromTo',
       channel,
       customParameters,
       easing = 'linear',
@@ -336,12 +336,28 @@ export class AnimateExecutor implements IAnimateExecutor {
     // }
 
     // 根据 channel 配置创建属性对象
-    const props = params.to ?? this.createPropsFromChannel(channel, graphic);
+    // 根据 channel 配置创建属性对象
+    let parsedFromProps = null;
+    let props = params.to;
+    let from = params.from;
+    if (!props) {
+      if (!parsedFromProps) {
+        parsedFromProps = this.createPropsFromChannel(channel, graphic);
+      }
+      props = parsedFromProps.props;
+    }
+    if (!from) {
+      if (!parsedFromProps) {
+        parsedFromProps = this.createPropsFromChannel(channel, graphic);
+      }
+      from = parsedFromProps.from;
+    }
 
     this._handleRunAnimate(
       animate,
       custom,
       customType,
+      from,
       props,
       duration as number,
       easing,
@@ -378,6 +394,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     animate: IAnimate,
     custom: IAnimationCustomConstructor | IAnimationChannelInterpolator,
     customType: number, // 0: undefined, 1: class, 2: function
+    from: Record<string, any> | null,
     props: Record<string, any>,
     duration: number,
     easing: EasingType,
@@ -398,6 +415,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         this.createCustomAnimation(
           animate,
           custom as IAnimationCustomConstructor,
+          from,
           props,
           duration as number,
           easing,
@@ -487,14 +505,29 @@ export class AnimateExecutor implements IAnimateExecutor {
     const effectsArray = Array.isArray(effects) ? effects : [effects];
 
     effectsArray.forEach(effect => {
-      const { type = 'to', channel, customParameters, easing = 'linear', options } = effect;
+      const { type = 'fromTo', channel, customParameters, easing = 'linear', options } = effect;
 
       // 根据 channel 配置创建属性对象
-      const props = effect.to ?? this.createPropsFromChannel(channel, graphic);
+      let parsedFromProps = null;
+      let props = effect.to;
+      let from = effect.from;
+      if (!props) {
+        if (!parsedFromProps) {
+          parsedFromProps = this.createPropsFromChannel(channel, graphic);
+        }
+        props = parsedFromProps.props;
+      }
+      if (!from) {
+        if (!parsedFromProps) {
+          parsedFromProps = this.createPropsFromChannel(channel, graphic);
+        }
+        from = parsedFromProps.from;
+      }
       this._handleRunAnimate(
         animate,
         effect.custom,
         (effect as any).customType,
+        from,
         props,
         duration as number,
         easing,
@@ -544,6 +577,7 @@ export class AnimateExecutor implements IAnimateExecutor {
   private createCustomAnimation(
     animate: IAnimate,
     CustomAnimateConstructor: IAnimationCustomConstructor,
+    from: Record<string, any> | null,
     props: Record<string, any>,
     duration: number,
     easing: EasingType,
@@ -560,7 +594,7 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     // 实例化自定义动画类
     // 自定义动画自己去计算from
-    const customAnimate = new CustomAnimateConstructor(null, to, duration, easing, customParams);
+    const customAnimate = new CustomAnimateConstructor(from, to, duration, easing, customParams);
 
     // 播放自定义动画
     animate.play(customAnimate);
@@ -572,11 +606,15 @@ export class AnimateExecutor implements IAnimateExecutor {
   private createPropsFromChannel(
     channel: IAnimationChannelAttrs | IAnimationChannelAttributes | undefined,
     graphic: IGraphic
-  ): Record<string, any> {
+  ): { from: Record<string, any> | null; props: Record<string, any> } {
     const props: Record<string, any> = {};
+    let from: Record<string, any> | null = null;
 
     if (!channel) {
-      return props;
+      return {
+        from,
+        props
+      };
     }
 
     if (!Array.isArray(channel)) {
@@ -589,6 +627,16 @@ export class AnimateExecutor implements IAnimateExecutor {
             props[key] = config.to;
           }
         }
+        if (config.from !== undefined) {
+          if (!from) {
+            from = {};
+          }
+          if (typeof config.from === 'function') {
+            from[key] = config.from((graphic.context as any)?.data, graphic, {});
+          } else {
+            from[key] = config.from;
+          }
+        }
       });
     } else {
       channel.forEach(key => {
@@ -599,7 +647,10 @@ export class AnimateExecutor implements IAnimateExecutor {
       });
     }
 
-    return props;
+    return {
+      from,
+      props
+    };
   }
 
   /**

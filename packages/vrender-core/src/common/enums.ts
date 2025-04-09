@@ -41,18 +41,6 @@ export enum AttributeUpdateType {
   ROTATE_TO = 25
 }
 
-export enum AnimateStatus {
-  INITIAL = 0,
-  RUNNING = 1,
-  PAUSED = 2,
-  END = 3
-}
-
-export enum AnimateMode {
-  NORMAL = 0b0000,
-  SET_ATTR_IMMEDIATELY = 0b0001
-}
-
 export enum AnimateStepType {
   'wait' = 'wait',
   'from' = 'from',

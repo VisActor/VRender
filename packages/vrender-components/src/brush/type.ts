@@ -59,7 +59,7 @@ export interface BrushAttributes extends IGroupGraphicAttribute {
    */
   brushMoved?: boolean;
   /**
-   * brushMode为'single'时，是否单击清除选框
+   * 是否单击空白处, 清除选框
    * @default true
    */
   removeOnClick?: boolean;

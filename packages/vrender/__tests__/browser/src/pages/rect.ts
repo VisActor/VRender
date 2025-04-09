@@ -1,4 +1,4 @@
-import { createStage, createRect, IGraphic } from '@visactor/vrender';
+import { createStage, createRect, IGraphic, createGroup } from '@visactor/vrender';
 import { roughModule } from '@visactor/vrender-kits';
 import { addShapesToStage, colorPools } from '../utils';
 
@@ -63,13 +63,26 @@ export const page = () => {
     fill: 'conic-gradient(from 90deg, rgba(5,0,255,1) 16%, rgba(0,255,10,1) 41%, rgba(9,9,121,1) 53%, rgba(0,212,255,1) 100%)',
     // cornerRadius: [5, 10, 15, 20],
     lineWidth: 5,
+    anchor: ['50%', '50%'],
+    // anchor: [400, 200],
     lineDash: [100, 10],
     lineDashOffset: -100
   });
 
+  const group = createGroup({
+    x: 300,
+    y: 100,
+    width: 200,
+    height: 200,
+    angle: 45,
+    anchor: ['50%', '50%']
+  });
+
+  group.appendChild(r);
+
   // r.animate().to({ lineDash: [2000, 1000], lineDashOffset: 100 }, 1000, 'linear');
 
-  graphics.push(r);
+  graphics.push(group);
   // r.animate().to({ scaleX: 2, scaleY: 2 }, 1000, 'linear');
 
   graphics.push(
@@ -93,4 +106,8 @@ export const page = () => {
   graphics.forEach(g => {
     stage.defaultLayer.add(g);
   });
+
+  r.animate()
+    .to({ angle: Math.PI * 2 }, 10000, 'linear')
+    .loop(Infinity);
 };

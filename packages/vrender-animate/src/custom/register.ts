@@ -39,6 +39,7 @@ import {
 import { Update } from './update';
 import { MoveIn, MoveOut } from './move';
 import { RotateIn, RotateOut } from './rotate';
+import { MotionPath } from './motionPath';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -100,4 +101,59 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('spinOut', SpinOut);
   AnimateExecutor.registerBuiltInAnimate('moveScaleOut', MoveScaleOut);
   AnimateExecutor.registerBuiltInAnimate('moveRotateOut', MoveRotateOut);
+
+  // 路径动画
+  AnimateExecutor.registerBuiltInAnimate('MotionPath', MotionPath);
+};
+
+export {
+  ClipIn,
+  ClipOut,
+  FadeIn,
+  FadeOut,
+  GrowAngleIn,
+  GrowAngleOut,
+  GrowCenterIn,
+  GrowCenterOut,
+  GrowHeightIn,
+  GrowHeightOut,
+  GrowPointsIn,
+  GrowPointsOut,
+  GrowPointsXIn,
+  GrowPointsXOut,
+  GrowPointsYIn,
+  GrowPointsYOut,
+  GrowRadiusIn,
+  GrowRadiusOut,
+  GrowWidthIn,
+  GrowWidthOut,
+  IncreaseCount,
+  PoptipAppear,
+  PoptipDisappear,
+  ScaleIn,
+  ScaleOut,
+  MoveIn,
+  MoveOut,
+  RotateIn,
+  RotateOut,
+  State,
+  Update,
+  MotionPath,
+  LabelItemAppear,
+  LabelItemDisappear,
+  InputText,
+  InputRichText,
+  OutputRichText,
+  SlideRichText,
+  SlideOutRichText,
+  SlideIn,
+  GrowIn,
+  SpinIn,
+  MoveScaleIn,
+  MoveRotateIn,
+  SlideOut,
+  GrowOut,
+  SpinOut,
+  MoveScaleOut,
+  MoveRotateOut
 };

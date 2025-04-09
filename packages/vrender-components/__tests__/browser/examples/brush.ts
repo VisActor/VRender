@@ -95,7 +95,8 @@ export function run() {
     console.log('brushClear');
   });
 
-  const stage = render([brush], 'main');
+  const stage = render([brush], 'main', { autoRender: true });
+  console.log('stage', stage);
 
   const gui = new GUI();
   gui.add(guiObject, 'name');

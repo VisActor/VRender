@@ -141,30 +141,27 @@ export class MoveBase extends ACustomAnimate<Record<string, number>> {
  */
 export class MoveIn extends MoveBase {
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
     const { from, to } = moveIn(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+    this.from = from;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+    this.target.setAttributes(from);
   }
 }
 
 export class MoveOut extends MoveBase {
   onBind(): void {
     const { from, to } = moveOut(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+    this.from = from;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
   }
 }

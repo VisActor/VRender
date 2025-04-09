@@ -16,26 +16,20 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
   declare _updateFunction: (ratio: number) => void;
 
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      Object.assign(this.target.attribute, this.params.diffAttrs);
-    }
     let from: Record<string, number>;
     let to: Record<string, number>;
     const attrs = this.target.getFinalAttribute();
-    const fromAttrs = this.target.context?.lastAttrs ?? {};
+    const fromAttrs = this.target.attribute ?? {};
 
     switch (this.params?.direction) {
       case 'x':
         from = { scaleX: fromAttrs.scaleX ?? 0 };
         to = { scaleX: attrs?.scaleX ?? 1 };
-        this.propKeys = ['scaleX'];
         this._updateFunction = this.updateX;
         break;
       case 'y':
         from = { scaleY: fromAttrs.scaleY ?? 0 };
         to = { scaleY: attrs?.scaleY ?? 1 };
-        this.propKeys = ['scaleY'];
         this._updateFunction = this.updateY;
         break;
       case 'xy':
@@ -45,19 +39,20 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
           scaleX: attrs?.scaleX ?? 1,
           scaleY: attrs?.scaleY ?? 1
         };
-        this.propKeys = ['scaleX', 'scaleY'];
         this._updateFunction = this.updateXY;
     }
 
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+
     this.props = to;
-    // 性能消耗，不用reSyncProps
-    // this.animate.reSyncProps();
     this.from = from;
     this.to = to;
-    // 性能优化，不需要setAttributes
-    Object.assign(this.target.attribute, from);
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateBoundTag();
+    // 调用次数不多，可以setAttributes
+    this.target.setAttributes(from);
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
@@ -77,9 +72,34 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     this.updateY(ratio);
   }
 
+  /**
+   * 删除自身属性，会直接从props等内容里删除掉
+   */
+  deleteSelfAttr(key: string): void {
+    delete this.props[key];
+    // fromProps在动画开始时才会计算，这时可能不在
+    this.fromProps && delete this.fromProps[key];
+    const index = this.propKeys.indexOf(key);
+    if (index !== -1) {
+      this.propKeys.splice(index, 1);
+    }
+
+    if (this.propKeys && this.propKeys.length > 1) {
+      this._updateFunction = this.updateXY;
+    } else if (this.propKeys[0] === 'scaleX') {
+      this._updateFunction = this.updateX;
+    } else if (this.propKeys[0] === 'scaleY') {
+      this._updateFunction = this.updateY;
+    } else {
+      this._updateFunction = null;
+    }
+  }
+
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    this._updateFunction(ratio);
-    this.target.addUpdatePositionTag();
+    if (this._updateFunction) {
+      this._updateFunction(ratio);
+      this.target.addUpdatePositionTag();
+    }
   }
 }
 
@@ -94,7 +114,7 @@ export class ScaleOut extends ACustomAnimate<Record<string, number>> {
     let from: Record<string, number>;
     let to: Record<string, number>;
     // 获取当前的数据
-    const attrs = this.target.getFinalAttribute();
+    const attrs = this.target.attribute;
     switch (this.params?.direction) {
       case 'x':
         from = { scaleX: attrs?.scaleX ?? 1 };
@@ -113,8 +133,6 @@ export class ScaleOut extends ACustomAnimate<Record<string, number>> {
         };
     }
     this.props = to;
-    this.propKeys = Object.keys(to);
-    this.animate.reSyncProps();
     this.from = from;
     this.to = to;
   }

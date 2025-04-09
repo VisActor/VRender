@@ -89,7 +89,7 @@ const growAngleOutIndividual = (
   options: IGrowAngleAnimationOptions,
   animationParameters: IAnimationParameters
 ) => {
-  const attrs = graphic.getFinalAttribute();
+  const attrs = graphic.attribute as any;
 
   if (options && options.orient === 'anticlockwise') {
     return {
@@ -108,7 +108,7 @@ const growAngleOutOverall = (
   options: IGrowAngleAnimationOptions,
   animationParameters: IAnimationParameters
 ) => {
-  const attrs = graphic.getFinalAttribute();
+  const attrs = graphic.attribute as any;
   if (options && options.orient === 'anticlockwise') {
     const overallValue = isNumber(options.overall) ? options.overall : Math.PI * 2;
     return {
@@ -186,6 +186,8 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
       this._updateFunction = this.updateStartAngle;
     } else if (this.propKeys[0] === 'endAngle') {
       this._updateFunction = this.updateEndAngle;
+    } else {
+      this._updateFunction = null;
     }
   }
 
@@ -204,8 +206,10 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    this._updateFunction(ratio);
-    this.target.addUpdateShapeAndBoundsTag();
+    if (this._updateFunction) {
+      this._updateFunction(ratio);
+      this.target.addUpdateShapeAndBoundsTag();
+    }
   }
 }
 
@@ -214,20 +218,20 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
  */
 export class GrowAngleIn extends GrowAngleBase {
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      Object.assign(this.target.attribute, this.params.diffAttrs);
-    }
     const { from, to } = growAngleIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.from = fromAttrs;
     this.to = to;
-    // 性能优化，不需要setAttributes
-    Object.assign(this.target.attribute, fromAttrs);
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateBoundTag();
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+
+    this.target.setAttributes(fromAttrs);
     this.determineUpdateFunction();
   }
 }
@@ -235,16 +239,13 @@ export class GrowAngleIn extends GrowAngleBase {
 export class GrowAngleOut extends GrowAngleBase {
   onBind(): void {
     const { from, to } = growAngleOut(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
+    const fromAttrs = from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+    this.from = fromAttrs ?? (this.target.attribute as any);
     this.to = to;
-    // 性能优化，不需要setAttributes
-    Object.assign(this.target.attribute, fromAttrs);
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateBoundTag();
+
+    // this.target.setAttributes(fromAttrs);
     this.determineUpdateFunction();
   }
 }

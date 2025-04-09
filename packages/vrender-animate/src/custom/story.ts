@@ -41,7 +41,7 @@ export class SlideIn extends ACustomAnimate<Record<string, number>> {
 
   onBind(): void {
     // 用于入场的时候设置属性
-    const attrs = this.target.getAttributes(true);
+    const attrs = this.target.getFinalAttribute();
 
     const direction = (this.params?.direction as 'top' | 'bottom' | 'left' | 'right') || 'right';
     const distance = this.params?.distance || 50;
@@ -104,7 +104,7 @@ export class GrowIn extends ACustomAnimate<Record<string, number>> {
 
   onBind(): void {
     // 用于入场的时候设置属性
-    const attrs = this.target.getAttributes(true);
+    const attrs = this.target.getFinalAttribute();
 
     const fromScale = this.params?.fromScale ?? 0;
     const direction = this.params?.direction || 'xy';
@@ -161,7 +161,7 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
 
   onBind(): void {
     // 用于入场的时候设置属性
-    const attrs = this.target.getAttributes(true);
+    const attrs = this.target.getFinalAttribute();
 
     const fromAngle = this.params?.fromAngle ?? Math.PI * 2; // 默认旋转一圈
     const fromScale = this.params?.fromScale ?? 0;

@@ -101,19 +101,20 @@ export class GrowHeightIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    if (this.params?.diffAttrs) {
-      Object.assign(this.target.attribute, this.params.diffAttrs);
-    }
     const { from, to } = growHeightIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
     this.from = fromAttrs;
     this.to = to;
-    // 性能优化，不需要setAttributes
-    Object.assign(this.target.attribute, fromAttrs);
-    this.target.addUpdatePositionTag();
-    this.target.addUpdateBoundTag();
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+
+    this.target.setAttributes(fromAttrs);
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
@@ -203,12 +204,10 @@ export class GrowHeightOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    const attrs = this.target.getFinalAttribute();
     const { from, to } = growHeightOut(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
-    this.from = from || attrs;
+    this.from = from ?? (this.target.attribute as any);
     this.to = to;
     // this.target.setAttributes(from);
   }

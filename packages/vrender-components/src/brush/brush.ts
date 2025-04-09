@@ -125,7 +125,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _onBrushEnd = (e: FederatedPointerEvent) => {
     // 如果在交互范围外点击，则直接清空
     if (this._isDownBeforeUpOutside) {
-      if (!isEmpty(this._brushMaskAABBBoundsDict)) {
+      if (!this._isEmptyMask()) {
         this._clearMask();
         this._dispatchBrushEvent(IOperateType.brushClear, e);
       }
@@ -143,7 +143,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
       // _isDrawedBeforeEnd(无效绘制)有两种情况:
       // 1. 没有绘制mask, 触发clear, 可以理解为双击才触发clear
       if (this._operatingMask?._AABBBounds.empty()) {
-        if (!isEmpty(this._brushMaskAABBBoundsDict)) {
+        if (!this._isEmptyMask()) {
           this._clearMask();
           this._dispatchBrushEvent(IOperateType.brushClear, e);
         }
@@ -152,7 +152,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
         delete this._brushMaskAABBBoundsDict[this._operatingMask.name];
         this._container.setAttributes({}); // hack逻辑, 待优化: removeChild后, vrender 无法 autoRender,  setAttr手动触发render
         this._container.removeChild(this._operatingMask);
-        if (isEmpty(this._brushMaskAABBBoundsDict)) {
+        if (!this._isEmptyMask()) {
           this._dispatchBrushEvent(IOperateType.brushClear, e);
         } else {
           this._dispatchBrushEvent(IOperateType.drawEnd, e);
@@ -177,7 +177,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
 
   private _onBrushClear = (e: FederatedPointerEvent) => {
     e.preventDefault();
-    if (!isEmpty(this._brushMaskAABBBoundsDict)) {
+    if (!this._isEmptyMask()) {
       this._clearMask();
       this._dispatchBrushEvent(IOperateType.brushClear, e);
     }
@@ -466,5 +466,15 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._brushMaskAABBBoundsDict = {};
     this._container.incrementalClearChild();
     this._operatingMask = null;
+  }
+
+  /**
+   * 判断当前画布中，是否存在有效mask
+   */
+  private _isEmptyMask() {
+    return (
+      isEmpty(this._brushMaskAABBBoundsDict) ||
+      Object.keys(this._brushMaskAABBBoundsDict).every(key => this._brushMaskAABBBoundsDict[key].empty())
+    );
   }
 }

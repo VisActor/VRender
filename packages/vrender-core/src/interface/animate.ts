@@ -1,7 +1,19 @@
 import type { EventEmitter } from '@visactor/vutils';
-import type { AnimateMode, AnimateStatus, AnimateStepType } from '../common/enums';
+import type { AnimateStepType } from '../common/enums';
 import type { Releaseable } from './common';
 import type { IGraphic } from './graphic';
+
+enum AnimateStatus {
+  INITIAL = 0,
+  RUNNING = 1,
+  PAUSED = 2,
+  END = 3
+}
+
+enum AnimateMode {
+  NORMAL = 0b0000,
+  SET_ATTR_IMMEDIATELY = 0b0001
+}
 
 // export type EasingType = (...args: any) => any;
 

@@ -23,39 +23,74 @@ export function run() {
   };
 
   const styleAttr = {
-    label: {
-      text: '平均值: 17.7',
-      // type: 'rich',
-      // text: [
-      //   {
-      //     text: 'Mapbox',
-      //     fontWeight: 'bold',
-      //     fontSize: 25,
-      //     fill: '#3f51b5',
-      //     height: 25
-      //   },
-      //   {
-      //     text: '替代方案',
-      //     fontStyle: 'italic',
-      //     textDecoration: 'underline',
-      //     fill: '#3f51b5',
-      //     height: 25
-      //   }
-      // ],
-      panel: {
-        visible: true
+    label: [
+      {
+        text: '平均值: 17.7',
+        // type: 'rich',
+        // text: [
+        //   {
+        //     text: 'Mapbox',
+        //     fontWeight: 'bold',
+        //     fontSize: 25,
+        //     fill: '#3f51b5',
+        //     height: 25
+        //   },
+        //   {
+        //     text: '替代方案',
+        //     fontStyle: 'italic',
+        //     textDecoration: 'underline',
+        //     fill: '#3f51b5',
+        //     height: 25
+        //   }
+        // ],
+        panel: {
+          visible: true
+        },
+        textStyle: {
+          fontSize: 12
+        },
+        position: guiObject.labelPos,
+        dx: guiObject.labelDx,
+        dy: guiObject.labelDy,
+        areaStyle: {
+          cornerRadius: guiObject.cornerRadius
+        },
+        autoRotate: guiObject.labelAutoRotate
       },
-      textStyle: {
-        fontSize: 12
-      },
-      position: guiObject.labelPos,
-      dx: guiObject.labelDx,
-      dy: guiObject.labelDy,
-      areaStyle: {
-        cornerRadius: guiObject.cornerRadius
-      },
-      autoRotate: guiObject.labelAutoRotate
-    },
+      {
+        text: '平均值: 17.7',
+        // type: 'rich',
+        // text: [
+        //   {
+        //     text: 'Mapbox',
+        //     fontWeight: 'bold',
+        //     fontSize: 25,
+        //     fill: '#3f51b5',
+        //     height: 25
+        //   },
+        //   {
+        //     text: '替代方案',
+        //     fontStyle: 'italic',
+        //     textDecoration: 'underline',
+        //     fill: '#3f51b5',
+        //     height: 25
+        //   }
+        // ],
+        panel: {
+          visible: true
+        },
+        textStyle: {
+          fontSize: 12
+        },
+        position: 'arcInnerStart',
+        dx: guiObject.labelDx,
+        dy: guiObject.labelDy,
+        areaStyle: {
+          cornerRadius: guiObject.cornerRadius
+        },
+        autoRotate: guiObject.labelAutoRotate
+      }
+    ],
     clipInRange: false,
     state: {
       area: {

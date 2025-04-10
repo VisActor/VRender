@@ -18,7 +18,7 @@ import { pointCallIn } from './call-in';
 
 export function markCommonLineAnimate(
   line: Segment | ArcSegment,
-  label: Tag,
+  label: Tag | Tag[],
   animationconfig: any,
   state: MarkerAnimationState
 ) {
@@ -43,7 +43,7 @@ export function markCommonLineAnimate(
   }
 }
 
-export function markAreaAnimate(area: IPolygon, label: Tag, animationconfig: any, state: MarkerAnimationState) {
+export function markAreaAnimate(area: IPolygon, label: Tag | Tag[], animationconfig: any, state: MarkerAnimationState) {
   const { enter, update, exit } = animationconfig;
   if (state === 'enter') {
     const { type, duration, delay, easing } = enter;
@@ -61,7 +61,7 @@ export function markAreaAnimate(area: IPolygon, label: Tag, animationconfig: any
   }
 }
 
-export function markArcAreaAnimate(area: IArc, label: Tag, animationconfig: any, state: MarkerAnimationState) {
+export function markArcAreaAnimate(area: IArc, label: Tag | Tag[], animationconfig: any, state: MarkerAnimationState) {
   const { enter, update, exit } = animationconfig;
   if (state === 'enter') {
     const { type, duration, delay, easing } = enter;

@@ -1,9 +1,6 @@
-import type { IAnimate, IStep } from '../../intreface/animate';
-import type { EasingType } from '../../intreface/easing';
 import { ACustomAnimate } from '../custom-animate';
-import type { IRichTextCharacter, IRichTextParagraphCharacter } from '@visactor/vrender-core';
+import type { IRichTextCharacter, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
 import { RichText } from '@visactor/vrender-core';
-import { InputRichText } from './input-richtext';
 
 /**
  * 富文本退出动画，实现类似打字机的字符逐个消失效果

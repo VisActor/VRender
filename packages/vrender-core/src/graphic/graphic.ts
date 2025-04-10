@@ -27,7 +27,6 @@ import type {
 import { Node } from './node-tree';
 import type {
   IAnimate,
-  IAnimateConstructor,
   IAnimateTarget,
   IGlyphGraphicAttribute,
   IGroup,
@@ -36,10 +35,7 @@ import type {
   IShadowRoot,
   IStage,
   IStep,
-  ISubAnimate,
-  ISymbolClass,
-  ITickerConstructor,
-  ITimelineConstructor
+  ISymbolClass
 } from '../interface';
 import { EventTarget, CustomEvent } from '../event';
 import { DefaultTransform } from './config';
@@ -55,7 +51,6 @@ import { builtinSymbolsMap, builtInSymbolStrMap, CustomSymbolClass } from './bui
 import { isSvg, XMLParser } from '../common/xml';
 import { SVG_PARSE_ATTRIBUTE_MAP, SVG_PARSE_ATTRIBUTE_MAP_KEYS } from './constants';
 import { DefaultStateAnimateConfig } from '../animate/config';
-import type { ITimeline } from '../interface/animate';
 
 const _tempBounds = new AABBBounds();
 /**
@@ -364,7 +359,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return point;
   }
 
-  onAnimateBind(animate: IAnimate | ISubAnimate) {
+  onAnimateBind(animate: IAnimate) {
     this._emitCustomEvent('animate-bind', animate);
   }
 
@@ -1389,169 +1384,6 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     if (props) {
       this.setAttributes(props, false, { type: AttributeUpdateType.ANIMATE_END });
     }
-  }
-  // step时调用
-  onStep(subAnimate: ISubAnimate, animate: IAnimate, step: IStep, ratio: number, end: boolean) {
-    const nextAttributes = {};
-    if (step.customAnimate) {
-      step.customAnimate.update(end, ratio, nextAttributes);
-    } else {
-      const nextProps = step.props;
-      const nextParsedProps = step.parsedProps;
-      const propKeys = step.propKeys;
-      this.stepInterpolate(
-        subAnimate,
-        animate,
-        nextAttributes,
-        step,
-        ratio,
-        end,
-        nextProps,
-        undefined,
-        nextParsedProps,
-        propKeys
-      );
-    }
-    this.setAttributes(nextAttributes, false, {
-      type: AttributeUpdateType.ANIMATE_UPDATE,
-      animationState: {
-        ratio,
-        end,
-        step,
-        isFirstFrameOfStep: subAnimate.getLastStep() !== step
-      }
-    });
-    this.stage && this.stage.renderNextFrame();
-  }
-
-  stepInterpolate(
-    subAnimate: ISubAnimate,
-    animate: IAnimate,
-    nextAttributes: Record<string, any>,
-    step: IStep,
-    ratio: number,
-    end: boolean,
-    nextProps: Record<string, any>,
-    lastProps?: Record<string, any>,
-    nextParsedProps?: any,
-    propKeys?: string[]
-  ) {
-    if (!propKeys) {
-      propKeys = Object.keys(nextProps);
-      step.propKeys = propKeys;
-    }
-    if (end) {
-      step.propKeys.forEach(key => {
-        if (!animate.validAttr(key)) {
-          return;
-        }
-        nextAttributes[key] = nextProps[key];
-      });
-    } else {
-      propKeys.forEach(key => {
-        // 如果属性不合法，那直接return
-        if (!animate.validAttr(key)) {
-          return;
-        }
-        const nextStepVal = nextProps[key];
-        const lastStepVal = (lastProps && lastProps[key]) ?? subAnimate.getLastPropByName(key, step);
-        if (nextStepVal == null || lastStepVal == null || nextStepVal === lastStepVal) {
-          // 用户直接调用stepInterpolate可能会走进来，如果传入的参数出现null或者undefined，直接赋值最终的值
-          nextAttributes[key] = nextStepVal;
-          return;
-        }
-        let match: boolean;
-        match =
-          animate.interpolateFunc && animate.interpolateFunc(key, ratio, lastStepVal, nextStepVal, nextAttributes);
-        if (match) {
-          return;
-        }
-        match = animate.customInterpolate(key, ratio, lastStepVal, nextStepVal, this, nextAttributes);
-        if (match) {
-          return;
-        }
-        if (!this.defaultInterpolate(nextStepVal, lastStepVal, key, nextAttributes, nextParsedProps, ratio)) {
-          this._interpolate(key, ratio, lastStepVal, nextStepVal, nextAttributes);
-        }
-      });
-    }
-
-    step.parsedProps = nextParsedProps;
-  }
-
-  defaultInterpolate(
-    nextStepVal: any,
-    lastStepVal: any,
-    key: string,
-    nextAttributes: Record<string, any>,
-    nextParsedProps: any,
-    ratio: number
-  ) {
-    if (Number.isFinite(nextStepVal) && Number.isFinite(lastStepVal)) {
-      nextAttributes[key] = lastStepVal + (nextStepVal - lastStepVal) * ratio;
-      return true;
-    } else if (key === 'fill') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const fillColorArray: [number, number, number, number] = nextParsedProps.fillColorArray;
-      const color = interpolateColor(lastStepVal, fillColorArray ?? nextStepVal, ratio, false, (fArray, tArray) => {
-        nextParsedProps.fillColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-      return true;
-    } else if (key === 'stroke') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const strokeColorArray: [number, number, number, number] = nextParsedProps.strokeColorArray;
-      const color = interpolateColor(lastStepVal, strokeColorArray ?? nextStepVal, ratio, false, (fArray, tArray) => {
-        nextParsedProps.strokeColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-      return true;
-    } else if (key === 'shadowColor') {
-      if (!nextParsedProps) {
-        nextParsedProps = {};
-      }
-      // 保存解析的结果到step
-      const shadowColorArray: [number, number, number, number] = nextParsedProps.shadowColorArray;
-      const color = interpolateColor(lastStepVal, shadowColorArray ?? nextStepVal, ratio, true, (fArray, tArray) => {
-        nextParsedProps.shadowColorArray = tArray;
-      });
-      if (color) {
-        nextAttributes[key] = color;
-      }
-
-      return true;
-    } else if (Array.isArray(nextStepVal) && nextStepVal.length === lastStepVal.length) {
-      const nextList = [];
-      let valid = true;
-      for (let i = 0; i < nextStepVal.length; i++) {
-        const v = lastStepVal[i];
-        const val = v + (nextStepVal[i] - v) * ratio;
-        if (!Number.isFinite(val)) {
-          valid = false;
-          break;
-        }
-        nextList.push(val);
-      }
-      if (valid) {
-        nextAttributes[key] = nextList;
-      }
-    }
-
-    return false;
-  }
-
-  protected _interpolate(key: string, ratio: number, lastStepVal: any, nextStepVal: any, nextAttributes: any) {
-    return;
   }
 
   getDefaultAttribute(name: string) {

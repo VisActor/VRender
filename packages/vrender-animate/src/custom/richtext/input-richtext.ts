@@ -1,7 +1,11 @@
-import type { IAnimate, IStep } from '../../intreface/animate';
-import type { EasingType } from '../../intreface/easing';
 import { ACustomAnimate } from '../custom-animate';
-import type { IRichTextCharacter, IRichTextParagraphCharacter } from '@visactor/vrender-core';
+import type {
+  IRichTextCharacter,
+  IRichTextParagraphCharacter,
+  IAnimate,
+  IStep,
+  EasingType
+} from '@visactor/vrender-core';
 import { RichText } from '@visactor/vrender-core';
 
 /**

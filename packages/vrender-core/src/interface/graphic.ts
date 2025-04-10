@@ -1,5 +1,5 @@
 import type { IAABBBounds, IMatrix, IPointLike, IPoint, BoundsAnchorType, IOBBBounds } from '@visactor/vutils';
-import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animate';
+import type { IAnimate, IStep, EasingType, IAnimateTarget, ITimeline } from './animation';
 import type { IColor } from './color';
 import type { IGroup } from './graphic/group';
 import type { IShadowRoot } from './graphic/shadow-root';

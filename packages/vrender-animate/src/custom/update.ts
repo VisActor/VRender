@@ -1,4 +1,4 @@
-import type { EasingType } from '../intreface/easing';
+import type { EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export interface IUpdateAnimationOptions {

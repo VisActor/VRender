@@ -1,6 +1,5 @@
 import type { EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
-import type { IAnimate, IStep } from '../intreface/animate';
 
 export class FromTo extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;

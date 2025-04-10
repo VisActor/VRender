@@ -1,5 +1,4 @@
-import type { IAnimate } from '../intreface/animate';
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IGraphic, IAnimate } from '@visactor/vrender-core';
 import { AnimateExecutor } from '../executor/animate-executor';
 import type { IAnimationConfig } from '../executor/executor';
 

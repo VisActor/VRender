@@ -1,5 +1,4 @@
-import { type IGraphic, type IGroup } from '@visactor/vrender-core';
-import type { EasingType } from '../intreface/easing';
+import { type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { isNumber } from '@visactor/vutils';
 

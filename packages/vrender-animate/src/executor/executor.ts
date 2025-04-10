@@ -1,5 +1,4 @@
-import type { IGraphic } from '@visactor/vrender-core';
-import type { EasingType } from '../intreface/easing';
+import type { IGraphic, EasingType } from '@visactor/vrender-core';
 import type { ACustomAnimate } from '../custom/custom-animate';
 
 export type MarkFunctionCallback<T> = (datum: any, graphic: IGraphic, parameters: any) => T;

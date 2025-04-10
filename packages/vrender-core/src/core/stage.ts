@@ -305,7 +305,7 @@ export class Stage extends Group implements IStage {
   initAnimate(params: Partial<IStageParams>) {
     if ((this as any).createTicker && (this as any).createTimeline) {
       this.ticker = params.ticker || (this as any).createTicker(this);
-      if (this.params.optimize?.tickRenderMode !== 'effect') {
+      if (this.params.optimize?.tickRenderMode === 'performance') {
         this.ticker.setFPS(30);
       }
       this.timeline = (this as any).createTimeline();

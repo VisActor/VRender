@@ -29,6 +29,7 @@ export class RotateBySphereAnimate extends ACustomAnimate<any> {
   }
 
   onBind() {
+    super.onBind();
     return;
   }
 

@@ -40,6 +40,7 @@ export class SlideIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     // 用于入场的时候设置属性
     const attrs = this.target.getFinalAttribute();
 
@@ -103,6 +104,7 @@ export class GrowIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     // 用于入场的时候设置属性
     const attrs = this.target.getFinalAttribute();
 
@@ -160,6 +162,7 @@ export class SpinIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     // 用于入场的时候设置属性
     const attrs = this.target.getFinalAttribute();
 
@@ -230,6 +233,7 @@ export class MoveScaleIn extends ACustomAnimate<any> {
   }
 
   onBind(): void {
+    super.onBind();
     // 创建AnimateExecutor来运行序列动画
     const executor = new AnimateExecutor(this.target);
 
@@ -293,6 +297,7 @@ export class MoveRotateIn extends ACustomAnimate<any> {
   }
 
   onBind(): void {
+    super.onBind();
     // 创建AnimateExecutor来运行序列动画
     const executor = new AnimateExecutor(this.target);
 

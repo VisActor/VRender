@@ -40,5 +40,6 @@ export class State extends ACustomAnimate<Record<string, number>> {
           func(key, fromValue, toValue, easedRatio, this, this.target);
         });
     this.onUpdate(end, easedRatio, out);
+    this.syncAttributeUpdate();
   }
 }

@@ -50,6 +50,7 @@ export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; seg
   }
 
   onBind(): void {
+    super.onBind();
     const { points, segments } = this.target.attribute as any;
     const { points: pointsTo, segments: segmentsTo } = this.target.getFinalAttribute() as any;
 

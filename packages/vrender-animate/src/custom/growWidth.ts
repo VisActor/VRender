@@ -162,6 +162,7 @@ export class GrowWidthIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     const { from, to } = growWidthIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
@@ -198,6 +199,7 @@ export class GrowWidthOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     const { from, to } = growWidthOut(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);

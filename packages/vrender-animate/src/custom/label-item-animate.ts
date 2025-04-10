@@ -7,6 +7,7 @@ import { InputText } from './input-text';
  */
 export class LabelItemAppear extends AComponentAnimate<any> {
   onBind(): void {
+    super.onBind();
     const animator = createComponentAnimator(this.target);
     this._animator = animator;
     const duration = this.duration;
@@ -150,6 +151,7 @@ export class LabelItemAppear extends AComponentAnimate<any> {
  */
 export class LabelItemDisappear extends AComponentAnimate<any> {
   onBind(): void {
+    super.onBind();
     const animator = createComponentAnimator(this.target);
     this._animator = animator;
 

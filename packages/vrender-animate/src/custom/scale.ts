@@ -15,6 +15,7 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
   declare _updateFunction: (ratio: number) => void;
 
   onBind(): void {
+    super.onBind();
     let from: Record<string, number>;
     let to: Record<string, number>;
     const attrs = this.target.getFinalAttribute();
@@ -110,6 +111,7 @@ export class ScaleOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     let from: Record<string, number>;
     let to: Record<string, number>;
     // 获取当前的数据

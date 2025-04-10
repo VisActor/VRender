@@ -13,6 +13,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
+    super.onBind();
     const finalAttribute = this.target.getFinalAttribute();
     const currAttribute = this.target.attribute;
     // 要同步from和to
@@ -56,5 +57,7 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       const toValue = this.to[key];
       func(key, fromValue, toValue, easedRatio, this, this.target);
     });
+    this.onUpdate(end, easedRatio, out);
+    this.syncAttributeUpdate();
   }
 }

@@ -2,8 +2,8 @@ import { AbstractComponent } from '../core/base';
 import type { IWeatherBoxAttrs } from './type';
 import type { ComponentOptions } from '../interface';
 import { merge } from '@visactor/vutils';
-import type { IGroup, ISymbol } from '@visactor/vrender-core';
-import { Animate, DefaultTimeline, type ITimeline } from '@visactor/vrender-animate';
+import type { IGroup, ISymbol, ITimeline } from '@visactor/vrender-core';
+import { Animate, DefaultTimeline } from '@visactor/vrender-animate';
 
 // todo 后续可能做成有随机数种子的伪随机，这样可以保证每次都生成一样的随机数
 function random() {

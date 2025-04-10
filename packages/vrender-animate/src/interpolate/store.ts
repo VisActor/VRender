@@ -1,7 +1,6 @@
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IGraphic, IStep } from '@visactor/vrender-core';
 import { interpolateColor, interpolatePureColorArrayToStr, pointsInterpolation } from '@visactor/vrender-core';
 import { interpolateNumber } from './number';
-import type { IStep } from '../intreface/animate';
 import type { IPointLike } from '@visactor/vutils';
 
 // 直接设置，触发 隐藏类（Hidden Class）优化：

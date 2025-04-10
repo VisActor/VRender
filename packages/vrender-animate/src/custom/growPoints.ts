@@ -1,8 +1,6 @@
-import { pointInterpolation, type IGraphic, type IGroup } from '@visactor/vrender-core';
+import { pointInterpolation, type IGraphic, type IGroup, type EasingType } from '@visactor/vrender-core';
 import type { IPointLike } from '@visactor/vutils';
 import { isValidNumber } from '@visactor/vutils';
-import type { IAnimate, IStep } from '../intreface/animate';
-import type { EasingType } from '../intreface/easing';
 import { ACustomAnimate } from './custom-animate';
 
 interface IAnimationParameters {

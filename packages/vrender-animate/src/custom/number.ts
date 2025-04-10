@@ -1,5 +1,4 @@
-import type { IAnimate, IStep } from '../intreface/animate';
-import type { EasingType } from '../intreface/easing';
+import type { EasingType, IAnimate, IStep } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 /**

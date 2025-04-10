@@ -1,9 +1,7 @@
-import type { IPointLike } from '@visactor/vutils';
-import { clamp, isValidNumber, Point } from '@visactor/vutils';
-import { ACustomAnimate } from './custom-animate';
-import type { ISegment, ILineAttribute } from '@visactor/vrender-core';
+import { clamp, isValidNumber, Point, type IPointLike } from '@visactor/vutils';
+import type { ISegment, ILineAttribute, EasingType } from '@visactor/vrender-core';
 import { pointInterpolation } from '@visactor/vrender-core';
-import type { EasingType } from '../intreface/easing';
+import { ACustomAnimate } from './custom-animate';
 
 export class TagPointsUpdate extends ACustomAnimate<{ points?: IPointLike[]; segments?: ISegment[] }> {
   protected fromPoints: IPointLike[];

@@ -1,4 +1,4 @@
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IGraphic } from '../graphic';
 import type { EasingType, EasingTypeFunc } from './easing';
 import type { AnimateStatus, IAnimateStepType } from './type';
 import type { ITimeline } from './timeline';
@@ -167,4 +167,15 @@ export interface IAnimate {
 export enum AnimateMode {
   NORMAL = 0b0000,
   SET_ATTR_IMMEDIATELY = 0b0001
+}
+
+export interface IAnimateTarget {
+  onAnimateBind?: (animte: IAnimate) => void;
+  // 获取属性
+  getComputedAttribute: (name: string) => any;
+  // 获取默认属性
+  getDefaultAttribute: (name: string) => any;
+  onStop: (props?: Record<string, any>) => void;
+  animates: Map<string | number, IAnimate>;
+  [key: string]: any;
 }

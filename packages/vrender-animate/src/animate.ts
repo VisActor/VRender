@@ -1,9 +1,15 @@
-import type { IAnimate, IStep, ICustomAnimate } from './intreface/animate';
-import type { EasingType } from './intreface/easing';
-import { AnimateStatus, AnimateStepType } from './intreface/type';
 import { Step, WaitStep } from './step';
-import type { ITimeline } from './intreface/timeline';
-import { Generator, type IGraphic } from '@visactor/vrender-core';
+import {
+  Generator,
+  AnimateStatus,
+  AnimateStepType,
+  type IGraphic,
+  type IAnimate,
+  type IStep,
+  type ICustomAnimate,
+  type EasingType,
+  type ITimeline
+} from '@visactor/vrender-core';
 import { defaultTimeline } from './timeline';
 
 export class Animate implements IAnimate {

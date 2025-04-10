@@ -41,13 +41,6 @@ export enum AttributeUpdateType {
   ROTATE_TO = 25
 }
 
-export enum AnimateStepType {
-  'wait' = 'wait',
-  'from' = 'from',
-  'to' = 'to',
-  'customAnimate' = 'customAnimate'
-}
-
 export enum Direction {
   ROW = 1,
   COLUMN = 2

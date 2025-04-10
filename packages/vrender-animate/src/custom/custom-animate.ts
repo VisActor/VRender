@@ -1,7 +1,5 @@
 import type { ComponentAnimator } from '../component';
-import type { ICustomAnimate } from '../intreface/animate';
-import type { EasingType } from '../intreface/easing';
-import type { IAnimateStepType } from '../intreface/type';
+import type { EasingType, IAnimateStepType, ICustomAnimate } from '@visactor/vrender-core';
 import { Step } from '../step';
 
 export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {

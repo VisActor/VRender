@@ -42,7 +42,6 @@ import { RotateIn, RotateOut } from './rotate';
 import { MotionPath } from './motionPath';
 import { FromTo } from './from-to';
 
-
 export const registerCustomAnimate = () => {
   // 基础动画
   AnimateExecutor.registerBuiltInAnimate('increaseCount', IncreaseCount);
@@ -158,5 +157,6 @@ export {
   GrowOut,
   SpinOut,
   MoveScaleOut,
-  MoveRotateOut
+  MoveRotateOut,
+  FromTo
 };

@@ -685,6 +685,10 @@ export interface IGraphic<T extends Partial<IGraphicAttribute> = Partial<IGraphi
   // 是否是3d模式（是否应用3d视角）
   in3dMode?: boolean;
 
+  // 不考虑transform的宽高，特殊情况下会使用到
+  widthWithoutTransform?: number;
+  heightWithoutTransform?: number;
+
   // 上次更新的stamp
   stamp?: number;
   animationBackUps?: {

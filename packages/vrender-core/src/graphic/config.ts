@@ -27,6 +27,7 @@ import {
   type RichTextGlobalAlignType,
   type RichTextGlobalBaselineType,
   type IRichTextIconGraphicAttribute,
+  type IStarGraphicAttribute,
   type IConnectedStyle,
   type ILayout,
   type IDebugType,
@@ -306,6 +307,14 @@ export const DefaultPolygonAttribute: Required<IPolygonGraphicAttribute> = {
   points: [],
   cornerRadius: 0,
   closePath: true
+};
+
+export const DefaultStarAttribute: Required<IStarGraphicAttribute> = {
+  ...DefaultAttribute,
+  width: 100,
+  height: 100,
+  spikes: 5,
+  thickness: 0.5
 };
 
 export const DefaultRectAttribute: Required<IRectGraphicAttribute> = {

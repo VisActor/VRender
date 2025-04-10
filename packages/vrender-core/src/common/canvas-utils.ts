@@ -43,18 +43,27 @@ export function createColor(
   if (typeof color === 'string') {
     return color;
   }
+  // 如果是渐变色的话，需要根据bounds来计算渐变色的范围
   if (params.AABBBounds && (!params.attribute || params.attribute.scaleX !== 0 || params.attribute.scaleY !== 0)) {
     const bounds = params.AABBBounds;
     let w = bounds.x2 - bounds.x1;
     let h = bounds.y2 - bounds.y1;
     let x = bounds.x1 - offsetX;
     let y = bounds.y1 - offsetY;
+    // 检测是否有angle、scale，如果有的话，说明context有transform。
+    // 需要获取图元原始的bounds宽高，然后设置xy为0才行
     if (params.attribute) {
-      const { scaleX = 1, scaleY = 1 } = params.attribute;
+      const { scaleX = 1, scaleY = 1, angle = 0 } = params.attribute;
       w /= scaleX;
       h /= scaleY;
       x /= scaleX;
       y /= scaleY;
+      if (angle || scaleX !== 1 || scaleY !== 1) {
+        x = 0;
+        y = 0;
+        w = (params as any).widthWithoutTransform ?? w;
+        h = (params as any).heightWithoutTransform ?? h;
+      }
     }
     // TODO 不同scaleCenter有问题
     if (color.gradient === 'linear') {

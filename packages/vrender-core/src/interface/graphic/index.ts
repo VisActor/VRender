@@ -20,6 +20,7 @@ export * from './rect';
 export * from './rect3d';
 export * from './richText';
 export * from './shadow-root';
+export * from './star';
 export * from './svg';
 export * from './symbol';
 export * from './text';

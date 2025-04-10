@@ -54,6 +54,9 @@ export class Circle extends Graphic<ICircleGraphicAttribute> implements ICircle 
     aabbBounds.union(tb1);
     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
 
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+
     application.graphicService.transformAABBBounds(attribute, aabbBounds, circleTheme, false, this);
 
     return aabbBounds;

@@ -217,6 +217,7 @@ export class GrowAngleBase extends ACustomAnimate<Record<string, number>> {
  */
 export class GrowAngleIn extends GrowAngleBase {
   onBind(): void {
+    super.onBind();
     const { from, to } = growAngleIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
@@ -237,6 +238,7 @@ export class GrowAngleIn extends GrowAngleBase {
 
 export class GrowAngleOut extends GrowAngleBase {
   onBind(): void {
+    super.onBind();
     const { from, to } = growAngleOut(this.target, this.params.options, this.params);
     const fromAttrs = from;
     this.props = to;

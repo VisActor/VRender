@@ -26,6 +26,7 @@ export class ClipGraphicAnimate extends ACustomAnimate<any> {
   }
 
   onBind() {
+    super.onBind();
     if (this._group && this._clipGraphic) {
       this._lastClip = this._group.attribute.clip;
       this._lastPath = this._group.attribute.path;

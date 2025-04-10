@@ -7,6 +7,7 @@ import { InputText } from './input-text';
  */
 export class PoptipAppear extends AComponentAnimate<any> {
   onBind(): void {
+    super.onBind();
     const animator = createComponentAnimator(this.target);
     this._animator = animator;
 
@@ -92,6 +93,7 @@ export class PoptipAppear extends AComponentAnimate<any> {
  */
 export class PoptipDisappear extends AComponentAnimate<any> {
   onBind(): void {
+    super.onBind();
     const animator = createComponentAnimator(this.target);
     this._animator = animator;
 

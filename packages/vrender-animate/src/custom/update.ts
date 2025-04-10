@@ -23,6 +23,7 @@ export class Update extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind() {
+    super.onBind();
     let { diffAttrs = {} } = this.target.context ?? ({} as any);
     const { options } = this.params as any;
 

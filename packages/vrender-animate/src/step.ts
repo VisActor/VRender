@@ -46,6 +46,8 @@ export class Step implements IStep {
 
   protected _endCb?: (animate: IAnimate, step: IStep) => void;
 
+  syncAttributeUpdate: () => void;
+
   constructor(type: IAnimateStepType, props: Record<string, any>, duration: number, easing: EasingType) {
     this.type = type;
     this.props = props;
@@ -60,12 +62,14 @@ export class Step implements IStep {
       this.onUpdate = noop;
     }
     this.id = Generator.GenAutoIncrementId();
+    this.syncAttributeUpdate = noop;
   }
 
   bind(target: IGraphic, animate: IAnimate): void {
     this.target = target;
     this.animate = animate;
     this.onBind();
+    this.syncAttributeUpdate();
   }
 
   append(step: IStep): void {
@@ -161,7 +165,14 @@ export class Step implements IStep {
 
   onBind(): void {
     // 在第一次绑定到Animate的时候触发
+    if (this.target.type === 'glyph') {
+      this.syncAttributeUpdate = this._syncAttributeUpdate;
+    }
   }
+
+  _syncAttributeUpdate = (): void => {
+    this.target.setAttributes(this.target.attribute);
+  };
 
   /**
    * 首次运行逻辑
@@ -258,6 +269,7 @@ export class Step implements IStep {
           func(key, fromValue, toValue, easedRatio, this, this.target);
         });
     this.onUpdate(end, easedRatio, out);
+    this.syncAttributeUpdate();
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {

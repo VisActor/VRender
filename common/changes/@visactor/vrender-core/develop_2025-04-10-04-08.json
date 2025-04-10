@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with bounds while verticalDirection setted",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}

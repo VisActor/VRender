@@ -1,6 +1,7 @@
-import { AnimateStatus, Generator } from '@visactor/vrender-core';
+import { Generator } from '@visactor/vrender-core';
 import type { IAnimate } from './intreface/animate';
 import type { ITimeline } from './intreface/timeline';
+import { AnimateStatus } from './intreface/type';
 
 export class DefaultTimeline implements ITimeline {
   declare id: number;

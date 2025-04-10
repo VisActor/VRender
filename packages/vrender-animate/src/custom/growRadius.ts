@@ -123,7 +123,7 @@ export const growRadiusOut: TypeAnimation<IGraphic> = (
     : growRadiusOutIndividual(graphic, options, animationParameters);
 };
 
-export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
+export class GrowPointsBase extends ACustomAnimate<Record<string, number>> {
   declare valid: boolean;
 
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
@@ -143,32 +143,32 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
 /**
  * 增长渐入
  */
-export class GrowRadiusIn extends GworPointsBase {
+export class GrowRadiusIn extends GrowPointsBase {
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
     const { from, to } = growRadiusIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
     this.from = fromAttrs;
     this.to = to;
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
     this.target.setAttributes(fromAttrs);
   }
 }
 
-export class GrowRadiusOut extends GworPointsBase {
+export class GrowRadiusOut extends GrowPointsBase {
   onBind(): void {
-    const { from, to } = growRadiusOut(this.target, this.params.options, this.params);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
+    const { to } = growRadiusOut(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+
+    this.from = this.target.attribute as any;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+    // this.target.setAttributes(fromAttrs);
   }
 }

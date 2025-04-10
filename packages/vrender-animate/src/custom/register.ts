@@ -40,11 +40,14 @@ import { Update } from './update';
 import { MoveIn, MoveOut } from './move';
 import { RotateIn, RotateOut } from './rotate';
 import { MotionPath } from './motionPath';
+import { FromTo } from './from-to';
+
 
 export const registerCustomAnimate = () => {
   // 基础动画
   AnimateExecutor.registerBuiltInAnimate('increaseCount', IncreaseCount);
 
+  AnimateExecutor.registerBuiltInAnimate('fromTo', FromTo);
   AnimateExecutor.registerBuiltInAnimate('scaleIn', ScaleIn);
   AnimateExecutor.registerBuiltInAnimate('scaleOut', ScaleOut);
   AnimateExecutor.registerBuiltInAnimate('growHeightIn', GrowHeightIn);

@@ -304,9 +304,9 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
 
   declare animate?: () => IAnimate;
 
-  declare nextAttrs?: T;
-  declare prevAttrs?: T;
-  declare finalAttrs?: T;
+  // declare nextAttrs?: T;
+  // declare prevAttrs?: T;
+  // declare finalAttrs?: T;
 
   declare pathProxy?: ICustomPath2D;
   // 依附于某个theme，如果该节点不存在parent，那么这个Theme就作为节点的Theme，避免添加到节点前计算属性
@@ -1022,10 +1022,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
           }
         ]
       );
-      // const animate = this.animate({ slience: true });
+      // const animate = (this.animate as any)({ slience: true });
       // (animate as any).stateNames = stateNames;
       // animate.to(animateAttrs, stateAnimateConfig.duration, stateAnimateConfig.easing);
       noAnimateAttrs && this.setAttributesAndPreventAnimate(noAnimateAttrs, false, { type: AttributeUpdateType.STATE });
+      // Object.assign((this as any).finalAttribute, attrs);
     } else {
       this.stopStateAnimates();
       this.setAttributesAndPreventAnimate(attrs, false, { type: AttributeUpdateType.STATE });
@@ -1067,20 +1068,22 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   }
 
   private getNormalAttribute(key: string) {
-    let value = (this.attribute as any)[key];
+    const value = (this.attribute as any)[key];
 
     if (this.animates) {
-      this.animates.forEach(animate => {
-        if ((animate as any).stateNames) {
-          const endProps = animate.getEndProps();
-          if (has(endProps, key)) {
-            value = endProps[key];
-          }
-        }
-      });
+      // this.animates.forEach(animate => {
+      //   if ((animate as any).stateNames) {
+      //     const endProps = animate.getEndProps();
+      //     if (has(endProps, key)) {
+      //       value = endProps[key];
+      //     }
+      //   }
+      // });
+      // console.log(this.finalAttrs);
+      return (this as any).finalAttribute?.[key];
     }
 
-    return value;
+    return value ?? (this as any).finalAttribute?.[key];
   }
 
   clearStates(hasAnimation?: boolean) {

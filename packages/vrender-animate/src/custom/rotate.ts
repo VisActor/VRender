@@ -69,29 +69,30 @@ export class RotateBase extends ACustomAnimate<Record<string, number>> {
 export class RotateIn extends RotateBase {
   onBind(): void {
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
     const { from, to } = rotateIn(this.target, this.params.options);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
+
     this.props = to;
-    this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+    this.propKeys = ['angle'];
+    this.from = from;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+
+    this.target.setAttributes(from);
   }
 }
 
 export class RotateOut extends RotateBase {
   onBind(): void {
     const { from, to } = rotateOut(this.target, this.params.options);
-    const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
-    this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
-    this.animate.reSyncProps();
-    this.from = fromAttrs;
+    this.propKeys = ['angle'];
+
+    this.from = from;
     this.to = to;
-    this.target.setAttributes(fromAttrs);
   }
 }

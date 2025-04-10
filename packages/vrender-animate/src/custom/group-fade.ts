@@ -1,70 +1,21 @@
-import type { IGroup } from '@visactor/vrender-core';
+import type { EasingType, IGroup } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
+import { CommonIn, CommonOut } from './common';
 
-export class GroupFadeIn extends ACustomAnimate<any> {
-  declare target: IGroup;
+export class GroupFadeIn extends CommonIn {
+  declare valid: boolean;
 
-  getEndProps(): Record<string, any> {
-    return {};
-  }
-
-  onBind(): void {
-    this.target.setTheme({
-      common: {
-        opacity: 0
-      }
-    });
-    return;
-  }
-
-  onEnd(): void {
-    this.target.setTheme({
-      common: {
-        opacity: 1
-      }
-    });
-    return;
-  }
-
-  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    this.target.setTheme({
-      common: {
-        opacity: ratio
-      }
-    });
+  constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
+    super(from, to, duration, easing, params);
+    this.keys = ['baseOpacity'];
   }
 }
 
-export class GroupFadeOut extends ACustomAnimate<any> {
-  declare target: IGroup;
+export class GroupFadeOut extends CommonOut {
+  declare valid: boolean;
 
-  getEndProps(): Record<string, any> {
-    return {};
-  }
-
-  onBind(): void {
-    this.target.setTheme({
-      common: {
-        opacity: 1
-      }
-    });
-    return;
-  }
-
-  onEnd(): void {
-    this.target.setTheme({
-      common: {
-        opacity: 0
-      }
-    });
-    return;
-  }
-
-  onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {
-    this.target.setTheme({
-      common: {
-        opacity: 1 - ratio
-      }
-    });
+  constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
+    super(from, to, duration, easing, params);
+    this.keys = ['baseOpacity'];
   }
 }

@@ -84,8 +84,8 @@ export class AnimationStateManager {
         shouldApplyState.push({
           state,
           animationConfig: isArray(animationConfig[index])
-            ? animationConfig[index].map(item => item.animation)
-            : animationConfig[index].animation,
+            ? (animationConfig[index] as IAnimationState[]).map(item => item.animation)
+            : (animationConfig[index] as IAnimationState).animation,
           executor: new AnimateExecutor(this.graphic)
         });
       });
@@ -106,8 +106,8 @@ export class AnimationStateManager {
           shouldApplyState.push({
             state,
             animationConfig: isArray(animationConfig[index])
-              ? animationConfig[index].map(item => item.animation)
-              : animationConfig[index].animation,
+              ? (animationConfig[index] as IAnimationState[]).map(item => item.animation)
+              : (animationConfig[index] as IAnimationState).animation,
             executor: new AnimateExecutor(this.graphic)
           });
           // 允许过渡的话，需要重新遍历this.stateList，获取stopOriginalTransition

@@ -115,7 +115,7 @@ const growCenterOut: TypeAnimation<IGraphic> = (
   options: IGrowCartesianAnimationOptions,
   animationParameters: IAnimationParameters
 ) => {
-  const attrs = graphic.getFinalAttribute();
+  const attrs = graphic.attribute as any;
   switch (options?.direction) {
     case 'x': {
       const x = attrs.x;
@@ -203,17 +203,19 @@ export class GrowCenterIn extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
-    if (this.params?.diffAttrs) {
-      this.target.setAttributes(this.params.diffAttrs);
-    }
     const { from, to } = growCenterIn(this.target, this.params.options, this.params);
     const fromAttrs = this.target.context?.lastAttrs ?? from;
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
     this.from = fromAttrs;
     this.to = to;
+
+    // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
+    const finalAttribute = this.target.getFinalAttribute();
+    if (finalAttribute) {
+      Object.assign(this.target.attribute, finalAttribute);
+    }
+
     this.target.setAttributes(fromAttrs);
   }
 
@@ -239,12 +241,11 @@ export class GrowCenterOut extends ACustomAnimate<Record<string, number>> {
   }
 
   onBind(): void {
-    const attrs = this.target.getFinalAttribute();
     const { from, to } = growCenterOut(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => to[key] != null);
-    this.animate.reSyncProps();
-    this.from = from || attrs;
+
+    this.from = from ?? (this.target.attribute as any);
     this.to = to;
     // this.target.setAttributes(from);
   }

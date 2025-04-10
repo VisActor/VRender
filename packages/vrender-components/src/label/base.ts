@@ -903,8 +903,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
             {
               name: 'exit',
               animation: {
-                type: 'fadeOut',
-                ...this._animationConfig.exit
+                ...this._animationConfig.exit,
+                type: 'fadeOut'
               }
             }
           ],
@@ -918,8 +918,8 @@ export class LabelBase<T extends BaseLabelAttrs> extends AnimateComponent<T> {
             {
               name: 'exit',
               animation: {
-                type: 'fadeOut',
-                ...this._animationConfig.exit
+                ...this._animationConfig.exit,
+                type: 'fadeOut'
               }
             }
           ],

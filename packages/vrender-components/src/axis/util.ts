@@ -162,8 +162,6 @@ export function getPolygonPath(points: Point[], closed: boolean) {
 }
 
 export function textIntersect(textA: IText, textB: IText, sep: number) {
-  let a: IBounds;
-  let b: IBounds;
   // 注意：默认旋转角度一样
   const angle = textA.attribute?.angle;
   const isHorizontal = isAngleHorizontal(angle, Number.EPSILON);
@@ -173,12 +171,12 @@ export function textIntersect(textA: IText, textB: IText, sep: number) {
     return sep > aabbSeparation(textA.AABBBounds, textB.AABBBounds);
   }
 
-  a = textA.OBBBounds;
-  b = textB.OBBBounds;
+  const a = textA.OBBBounds;
+  const b = textB.OBBBounds;
 
   // 没有 OBB bounds 则用 AABB 包围盒计算
   if (!a || !b || a.empty() || b.empty()) {
-    return sep > aabbSeparation(textA, textB);
+    return sep > aabbSeparation(textA.AABBBounds, textB.AABBBounds);
   }
   // 非水平文字且有 OBB 包围盒
   return a.intersects(b) || sep > obbSeparation(a as IOBBBounds, b as IOBBBounds);

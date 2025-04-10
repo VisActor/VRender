@@ -8,29 +8,29 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
 
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
     super(from, to, duration, easing, params);
-    this.from = from;
-    this.to = to;
+    this.from = from ?? {};
   }
 
   onBind(): void {
     super.onBind();
-    const finalAttribute = this.target.getFinalAttribute();
-    const currAttribute = this.target.attribute;
-    // 要同步from和to
-    const fromKeys = Object.keys(this.from);
-    const toKeys = Object.keys(this.to);
-    fromKeys.forEach(key => {
-      if (this.to[key] == null) {
-        this.to[key] = finalAttribute[key] ?? 0;
-      }
-    });
-    toKeys.forEach(key => {
-      if (this.from[key] == null) {
-        this.from[key] = (currAttribute as any)[key] ?? 0;
-      }
-    });
-    this.propKeys = Object.keys(this.from);
 
+    const finalAttribute = this.target.getFinalAttribute();
+    // 如果存在from，不存在to，那么需要设置给props
+    Object.keys(this.from).forEach(key => {
+      if (this.props[key] == null) {
+        this.props[key] = finalAttribute[key];
+      }
+    });
+  }
+
+  onFirstRun(): void {
+    // 获取上一步的属性值作为起始值
+    this.from = { ...this.getLastProps(), ...this.from };
+    const startProps = this.animate.getStartProps();
+    this.propKeys &&
+      this.propKeys.forEach(key => {
+        this.from[key] = this.from[key] ?? startProps[key];
+      });
     // TODO：比较hack
     // 如果是入场动画，那么还需要设置属性
     if (this.target.context?.animationState === 'appear') {
@@ -38,25 +38,33 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
       const finalAttribute = this.target.getFinalAttribute();
       this.target.setAttributes(finalAttribute);
     }
+    this.target.setAttributes(this.from);
   }
 
+  /**
+   * 更新执行的时候调用
+   * 如果跳帧了就不一定会执行
+   */
   update(end: boolean, ratio: number, out: Record<string, any>): void {
+    // TODO 需要修复，只有在开始的时候才调用
     this.onStart();
     if (!this.props || !this.propKeys) {
       return;
     }
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
-    this.interpolateUpdateFunctions.forEach((func, index) => {
-      // 如果这个属性被屏蔽了，直接跳过
-      if (!this.animate.validAttr(this.propKeys[index])) {
-        return;
-      }
-      const key = this.propKeys[index];
-      const fromValue = this.from[key];
-      const toValue = this.to[key];
-      func(key, fromValue, toValue, easedRatio, this, this.target);
-    });
+    this.animate.interpolateUpdateFunction
+      ? this.animate.interpolateUpdateFunction(this.from, this.props, easedRatio, this, this.target)
+      : this.interpolateUpdateFunctions.forEach((func, index) => {
+          // 如果这个属性被屏蔽了，直接跳过
+          if (!this.animate.validAttr(this.propKeys[index])) {
+            return;
+          }
+          const key = this.propKeys[index];
+          const fromValue = this.from[key];
+          const toValue = this.props[key];
+          func(key, fromValue, toValue, easedRatio, this, this.target);
+        });
     this.onUpdate(end, easedRatio, out);
     this.syncAttributeUpdate();
   }

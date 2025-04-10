@@ -526,10 +526,14 @@ export class AnimateExecutor implements IAnimateExecutor {
         }
         from = parsedFromProps.from;
       }
+      const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
+      const customType =
+        (effect as any).customType ??
+        (custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0);
       this._handleRunAnimate(
         animate,
-        effect.custom,
-        (effect as any).customType,
+        custom,
+        customType,
         from,
         props,
         duration as number,

@@ -1,4 +1,4 @@
-import type { IGraphic } from '@visactor/vrender-core';
+import type { IGraphic, EasingType, IAnimate } from '@visactor/vrender-core';
 import type {
   IAnimationConfig,
   IAnimationTimeline,
@@ -11,9 +11,7 @@ import type {
   IAnimationCustomConstructor,
   IAnimationChannelInterpolator
 } from './executor';
-import type { EasingType } from '../intreface/easing';
-import type { IAnimate } from '../intreface/animate';
-import { cloneDeep, isArray, isFunction } from '@visactor/vutils';
+import { isArray, isFunction } from '@visactor/vutils';
 
 interface IAnimateExecutor {
   execute: (params: IAnimationConfig) => void;

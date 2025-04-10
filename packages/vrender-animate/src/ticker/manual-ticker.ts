@@ -1,5 +1,4 @@
-import type { ITickHandler } from '../intreface/ticker';
-import { type ITicker } from '../intreface/ticker';
+import type { ITickHandler, ITicker } from '@visactor/vrender-core';
 import { DefaultTicker } from './default-ticker';
 
 class ManualTickHandler implements ITickHandler {

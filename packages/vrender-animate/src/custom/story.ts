@@ -1,5 +1,5 @@
 import { FadeIn } from './fade';
-import type { EasingType } from '../intreface/easing';
+import type { EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 import { AnimateExecutor } from '../executor/animate-executor';
 

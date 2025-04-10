@@ -7,7 +7,7 @@ import type { vec3 } from './matrix';
 import type { IDirectionLight } from './light';
 import type { ISyncHook } from './sync-hook';
 import type { IDrawContext, IRenderService } from './render';
-import type { ITicker, ITimeline } from './animate';
+import type { ITicker, ITimeline } from './animation';
 import type { IPickerService, PickResult } from './picker';
 import type { IPlugin, IPluginService } from './plugin';
 import type { IWindow } from './window';

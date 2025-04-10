@@ -5,8 +5,7 @@
 // 3. 重载Graphic的getAttributes方法，根据参数getAttributes(final = true)返回finalAttribute = {}; merge(finalAttribute, graphic.attribute, animatedAttribute)，
 // animatedAttribute为所有动画的最终结果（loop为INFINITY的动画不算）
 
-import type { IGraphicAnimateParams } from '@visactor/vrender-core';
-import type { IAnimate } from './intreface/animate';
+import type { IGraphicAnimateParams, IAnimate } from '@visactor/vrender-core';
 import { Animate } from './animate';
 import { DefaultTimeline, defaultTimeline } from './timeline';
 import { DefaultTicker } from './ticker/default-ticker';

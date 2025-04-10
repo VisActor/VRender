@@ -1,4 +1,4 @@
-import type { EasingType } from '../intreface/easing';
+import type { EasingType } from '@visactor/vrender-core';
 import { CommonIn, CommonOut } from './common';
 
 export interface IScaleAnimationOptions {

@@ -1,7 +1,5 @@
-import type { IGraphic, IGroup } from '@visactor/vrender-core';
+import type { IGraphic, IGroup, IAnimate, IStep, EasingType } from '@visactor/vrender-core';
 import { isValid } from '@visactor/vutils';
-import type { IAnimate, IStep } from '../intreface/animate';
-import type { EasingType } from '../intreface/easing';
 import { ACustomAnimate } from './custom-animate';
 
 interface IGrowCartesianAnimationOptions {

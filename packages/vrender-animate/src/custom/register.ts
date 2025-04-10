@@ -157,5 +157,6 @@ export {
   GrowOut,
   SpinOut,
   MoveScaleOut,
-  MoveRotateOut
+  MoveRotateOut,
+  FromTo
 };

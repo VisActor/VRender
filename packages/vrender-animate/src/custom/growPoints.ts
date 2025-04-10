@@ -110,6 +110,7 @@ export class GworPointsBase extends ACustomAnimate<Record<string, number>> {
  */
 export class GrowPointsIn extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsIn(this.target, this.params.options, this.params);
       this.props = to;
@@ -131,6 +132,7 @@ export class GrowPointsIn extends GworPointsBase {
 
 export class GrowPointsOut extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line'].includes(this.target.type)) {
       const attrs = this.target.getFinalAttribute();
       const { from, to } = growPointsOut(this.target, this.params.options, this.params);
@@ -207,6 +209,7 @@ const growPointsXOut: TypeAnimation<IGraphic> = (
 
 export class GrowPointsXIn extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsXIn(this.target, this.params.options, this.params);
       this.props = to;
@@ -228,6 +231,7 @@ export class GrowPointsXIn extends GworPointsBase {
 
 export class GrowPointsXOut extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line'].includes(this.target.type)) {
       const attrs = this.target.getFinalAttribute();
       const { from, to } = growPointsXOut(this.target, this.params.options, this.params);
@@ -304,6 +308,7 @@ const growPointsYOut: TypeAnimation<IGraphic> = (
 
 export class GrowPointsYIn extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYIn(this.target, this.params.options, this.params);
       this.props = to;
@@ -325,6 +330,7 @@ export class GrowPointsYIn extends GworPointsBase {
 
 export class GrowPointsYOut extends GworPointsBase {
   onBind(): void {
+    super.onBind();
     if (['area', 'line', 'polygon'].includes(this.target.type)) {
       const { from, to } = growPointsYOut(this.target, this.params.options, this.params);
       this.props = to;

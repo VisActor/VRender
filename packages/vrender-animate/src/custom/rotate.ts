@@ -68,6 +68,7 @@ export class RotateBase extends ACustomAnimate<Record<string, number>> {
  */
 export class RotateIn extends RotateBase {
   onBind(): void {
+    super.onBind();
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
     const { from, to } = rotateIn(this.target, this.params.options);
 
@@ -88,6 +89,7 @@ export class RotateIn extends RotateBase {
 
 export class RotateOut extends RotateBase {
   onBind(): void {
+    super.onBind();
     const { from, to } = rotateOut(this.target, this.params.options);
     this.props = to;
     this.propKeys = ['angle'];

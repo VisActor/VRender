@@ -141,6 +141,7 @@ export class MoveBase extends ACustomAnimate<Record<string, number>> {
  */
 export class MoveIn extends MoveBase {
   onBind(): void {
+    super.onBind();
     const { from, to } = moveIn(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);
@@ -158,6 +159,7 @@ export class MoveIn extends MoveBase {
 
 export class MoveOut extends MoveBase {
   onBind(): void {
+    super.onBind();
     const { from, to } = moveOut(this.target, this.params.options, this.params);
     this.props = to;
     this.propKeys = Object.keys(to).filter(key => (to as any)[key] != null);

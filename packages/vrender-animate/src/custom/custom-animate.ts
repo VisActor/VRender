@@ -27,6 +27,7 @@ export abstract class ACustomAnimate<T> extends Step implements ICustomAnimate {
     // 应用缓动函数
     const easedRatio = this.easing(ratio);
     this.onUpdate(end, easedRatio, out);
+    this.syncAttributeUpdate();
   }
 
   protected setProps(props: T) {

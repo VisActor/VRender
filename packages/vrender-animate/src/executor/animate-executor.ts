@@ -407,7 +407,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     if (custom && customType) {
       const customParams = this.resolveValue(customParameters, graphic, {});
       const objOptions = isFunction(options)
-        ? options.call(null, customParameters.data && customParameters.data[0], graphic, customParameters)
+        ? options.call(null, customParams.data && customParams.data[0], graphic, customParams)
         : options;
       customParams.options = objOptions;
       if (customType === 1) {

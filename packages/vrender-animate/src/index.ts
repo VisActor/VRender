@@ -24,7 +24,7 @@ export { GroupFadeIn, GroupFadeOut } from './custom/group-fade';
 export { RotateBySphereAnimate } from './custom/sphere';
 export { AnimateExecutor } from './executor/animate-executor';
 export type { IAnimationConfig } from './executor/executor';
-export { registerCustomAnimate } from './custom/register';
+export * from './custom/register';
 // Export animation state modules
 export * from './state';
 export { AnimationTransitionRegistry } from './state/animation-states-registry';

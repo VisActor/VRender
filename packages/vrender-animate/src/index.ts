@@ -14,7 +14,7 @@ export { IncreaseCount } from './custom/number';
 export { InputText } from './custom/input-text';
 export { ClipGraphicAnimate, ClipAngleAnimate, ClipRadiusAnimate, ClipDirectionAnimate } from './custom/clip-graphic';
 export { TagPointsUpdate } from './custom/tag-points';
-export { GroupFadeIn, GroupFadeOut } from './custom/group-fade';
+export { GroupFadeIn, GroupFadeOut } from './custom/groupFade';
 export { RotateBySphereAnimate } from './custom/sphere';
 export { AnimateExecutor } from './executor/animate-executor';
 export type { IAnimationConfig } from './executor/executor';

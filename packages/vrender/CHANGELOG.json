@@ -2,6 +2,18 @@
   "name": "@visactor/vrender",
   "entries": [
     {
+      "version": "0.22.7",
+      "tag": "@visactor/vrender_v0.22.7",
+      "date": "Fri, 11 Apr 2025 07:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "feat: richtext support space to make horizontal space"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.6",
       "tag": "@visactor/vrender_v0.22.6",
       "date": "Fri, 21 Mar 2025 08:20:49 GMT",

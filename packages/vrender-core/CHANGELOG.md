@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-core
 
-This log was last generated on Fri, 21 Mar 2025 08:20:48 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Apr 2025 07:37:57 GMT and should not be manually modified.
+
+## 0.22.7
+Fri, 11 Apr 2025 07:37:57 GMT
+
+### Updates
+
+- fix: fix issue with bounds while verticalDirection setted
+- feat: richtext support space to make horizontal space
+- feat: richtext character support dx and dy
+- fix: fix issue with gradient-color
+- fix: fix issue with crash when pass string anchor
+- fix: fix issue with global listen keydown
+- fix: fix issue with edit while first character is \n
 
 ## 0.22.6
 Fri, 21 Mar 2025 08:20:48 GMT

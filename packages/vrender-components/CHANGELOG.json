@@ -2,6 +2,30 @@
   "name": "@visactor/vrender-components",
   "entries": [
     {
+      "version": "0.22.7",
+      "tag": "@visactor/vrender-components_v0.22.7",
+      "date": "Fri, 11 Apr 2025 07:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix end event of drag\n\n"
+          },
+          {
+            "comment": "feat: support obb separation in axis label autoHide"
+          },
+          {
+            "comment": "feat: enhance poptip top, left, right, bottom to dynamic offset"
+          },
+          {
+            "comment": "feat: poptip support poptipAnchor and positionBounds"
+          },
+          {
+            "comment": "fix: fix switch defalut direction"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.6",
       "tag": "@visactor/vrender-components_v0.22.6",
       "date": "Fri, 21 Mar 2025 08:20:48 GMT",

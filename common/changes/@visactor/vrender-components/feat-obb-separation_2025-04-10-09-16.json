@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-components",
+      "comment": "feat: support obb separation in axis label autoHide",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-components"
+}

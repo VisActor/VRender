@@ -1,6 +1,13 @@
 # Change Log - @visactor/vrender
 
-This log was last generated on Fri, 21 Mar 2025 08:20:49 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Apr 2025 07:37:57 GMT and should not be manually modified.
+
+## 0.22.7
+Fri, 11 Apr 2025 07:37:57 GMT
+
+### Updates
+
+- feat: richtext support space to make horizontal space
 
 ## 0.22.6
 Fri, 21 Mar 2025 08:20:49 GMT

@@ -1,6 +1,19 @@
 # Change Log - @visactor/vrender-components
 
-This log was last generated on Fri, 21 Mar 2025 08:20:48 GMT and should not be manually modified.
+This log was last generated on Fri, 11 Apr 2025 07:37:57 GMT and should not be manually modified.
+
+## 0.22.7
+Fri, 11 Apr 2025 07:37:57 GMT
+
+### Updates
+
+- fix: fix end event of drag
+
+
+- feat: support obb separation in axis label autoHide
+- feat: enhance poptip top, left, right, bottom to dynamic offset
+- feat: poptip support poptipAnchor and positionBounds
+- fix: fix switch defalut direction
 
 ## 0.22.6
 Fri, 21 Mar 2025 08:20:48 GMT

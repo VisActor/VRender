@@ -11,14 +11,14 @@ registerMarkLineAnimate();
 export function run() {
   console.log('MarkLine');
 
-  const guiObject = {
-    name: 'MarkLine',
-    labelPos: 'start',
-    labelAutoRotate: false,
-    labelRefX: 5,
-    labelRefY: 5,
-    labelRefAngle: 0
-  };
+  // const guiObject = {
+  //   name: 'MarkLine',
+  //   labelPos: 'start',
+  //   labelAutoRotate: false,
+  //   labelRefX: 5,
+  //   labelRefY: 5,
+  //   labelRefAngle: 0
+  // };
 
   const styleAttr = {
     select: true,
@@ -88,68 +88,61 @@ export function run() {
         }
       }
     },
-    label: {
-      // text: 'aaaaaa',
-      type: 'rich',
-      padding: 10,
-      text: [
-        {
-          text: 'aaaa\n',
-          lineWidth: 0,
-          visible: false
-        },
-        {
-          text: 'bbb',
-          lineWidth: 0,
-          visible: false
-        }
-      ],
-      // visible: false,
-      textStyle: {
-        // visible: false,
-        fill: 'red',
-        fontSize: 20,
-        // lineWidth: 5,
-        stroke: 'yellow',
-        state: {
-          hover: {
-            fill: 'green'
+    label: [
+      {
+        // text: 'aaaaaa',
+        type: 'rich',
+        padding: 10,
+        text: [
+          {
+            text: 'aaaa\n',
+            lineWidth: 0,
+            visible: false
           },
-          selected: {
-            fill: 'blue'
+          {
+            text: 'bbb',
+            lineWidth: 0,
+            visible: false
+          }
+        ],
+        // visible: false,
+        textStyle: {
+          // visible: false,
+          fill: 'red',
+          fontSize: 20,
+          // lineWidth: 5,
+          stroke: 'yellow',
+          state: {
+            hover: {
+              fill: 'green'
+            },
+            selected: {
+              fill: 'blue'
+            }
           }
         }
       },
-      // panel: {
-      //   visible: true,
-      //   fill: 'red'
-      //   //   customShape: (data, attrs, path) => {
-      //   //     console.log('data', data, attrs, path);
-      //   //     const width = attrs.width;
-      //   //     const deltaY = attrs.height == null ? attrs.y1 - attrs.y : attrs.height;
-
-      //   //     path.moveTo(0, deltaY);
-      //   //     path.quadraticCurveTo(0.45 * width, 0.67 * deltaY, 0.5 * width, 0);
-      //   //     path.quadraticCurveTo(0.55 * width, 0.67 * deltaY, width, deltaY);
-      //   //     path.lineTo(0, deltaY);
-      //   //     path.closePath();
-      //   //     return path;
-      //   //   },
-      //   //   state: {
-      //   //     hover: {
-      //   //       fill: 'red'
-      //   //     },
-      //   //     selected: {
-      //   //       fill: 'blue'
-      //   //     }
-      //   //   }
-      // },
-      position: guiObject.labelPos,
-      autoRotate: guiObject.labelAutoRotate,
-      refX: guiObject.labelRefX,
-      refY: guiObject.labelRefY,
-      refAngle: degreeToRadian(guiObject.labelRefAngle)
-    },
+      {
+        text: 'aaaaaa',
+        padding: 10,
+        position: 'start',
+        textStyle: {
+          // visible: false,
+          fill: 'red',
+          fontSize: 20,
+          // lineWidth: 5,
+          stroke: 'yellow',
+          state: {
+            hover: {
+              fill: 'green'
+            },
+            selected: {
+              fill: 'blue'
+            }
+          }
+        }
+      }
+    ],
     limitRect: {
       x: 180,
       y: 250,
@@ -179,42 +172,14 @@ export function run() {
     ...(styleAttr as any)
   });
 
-  const markLine2 = new MarkLine({
-    points: [
-      {
-        x: 100,
-        y: 250
-      },
-      {
-        x: 400,
-        y: 150
-      }
-    ],
-    ...(styleAttr as any)
-  });
-
-  const markLine3 = new MarkLine({
-    points: [
-      {
-        x: 100,
-        y: 350
-      },
-      {
-        x: 400,
-        y: 450
-      }
-    ],
-    ...(styleAttr as any)
-  });
-
   const markLines = [markLine];
   console.log('markline', markLine);
 
   const stage = render(markLines, 'main');
 
-  setTimeout(() => {
-    // markLine.release();
-  }, 500);
+  // setTimeout(() => {
+  //   // markLine.release();
+  // }, 500);
 
   // markLine.setAttributes({
   //   points: [
@@ -234,63 +199,63 @@ export function run() {
   // });
   console.log('markLine', markLine);
 
-  // gui
-  const gui = new GUI();
-  gui.add(guiObject, 'name');
-  gui
-    .add(guiObject, 'labelPos', [
-      'start',
-      'startTop',
-      'startBottom',
-      'insideStart',
-      'insideStartTop',
-      'insideStartBottom',
+  //   // gui
+  //   const gui = new GUI();
+  //   gui.add(guiObject, 'name');
+  //   gui
+  //     .add(guiObject, 'labelPos', [
+  //       'start',
+  //       'startTop',
+  //       'startBottom',
+  //       'insideStart',
+  //       'insideStartTop',
+  //       'insideStartBottom',
 
-      'middle',
-      'insideMiddleTop',
-      'insideMiddleBottom',
+  //       'middle',
+  //       'insideMiddleTop',
+  //       'insideMiddleBottom',
 
-      'end',
-      'endTop',
-      'endBottom',
-      'insideEnd',
-      'insideEndTop',
-      'insideEndBottom'
-    ])
-    .onChange(value => {
-      markLines.forEach(markLine =>
-        markLine.setAttribute('label', {
-          position: value
-        })
-      );
-    });
-  gui.add(guiObject, 'labelAutoRotate').onChange(value => {
-    markLines.forEach(markLine =>
-      markLine.setAttribute('label', {
-        autoRotate: value
-      })
-    );
-  });
-  gui.add(guiObject, 'labelRefX').onChange(value => {
-    markLines.forEach(markLine =>
-      markLine.setAttribute('label', {
-        refX: value
-      })
-    );
-  });
-  gui.add(guiObject, 'labelRefY').onChange(value => {
-    markLines.forEach(markLine =>
-      markLine.setAttribute('label', {
-        refY: value
-      })
-    );
-  });
+  //       'end',
+  //       'endTop',
+  //       'endBottom',
+  //       'insideEnd',
+  //       'insideEndTop',
+  //       'insideEndBottom'
+  //     ])
+  //     .onChange(value => {
+  //       markLines.forEach(markLine =>
+  //         markLine.setAttribute('label', {
+  //           position: value
+  //         })
+  //       );
+  //     });
+  //   gui.add(guiObject, 'labelAutoRotate').onChange(value => {
+  //     markLines.forEach(markLine =>
+  //       markLine.setAttribute('label', {
+  //         autoRotate: value
+  //       })
+  //     );
+  //   });
+  //   gui.add(guiObject, 'labelRefX').onChange(value => {
+  //     markLines.forEach(markLine =>
+  //       markLine.setAttribute('label', {
+  //         refX: value
+  //       })
+  //     );
+  //   });
+  //   gui.add(guiObject, 'labelRefY').onChange(value => {
+  //     markLines.forEach(markLine =>
+  //       markLine.setAttribute('label', {
+  //         refY: value
+  //       })
+  //     );
+  //   });
 
-  gui.add(guiObject, 'labelRefAngle').onChange(value => {
-    markLines.forEach(markLine =>
-      markLine.setAttribute('label', {
-        refAngle: degreeToRadian(value)
-      })
-    );
-  });
+  //   gui.add(guiObject, 'labelRefAngle').onChange(value => {
+  //     markLines.forEach(markLine =>
+  //       markLine.setAttribute('label', {
+  //         refAngle: degreeToRadian(value)
+  //       })
+  //     );
+  //   });
 }

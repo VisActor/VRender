@@ -32,6 +32,7 @@ export const page = () => {
       y: 216.49803822714284,
       textAlign: 'center',
       text: null,
+      // editable: true,
       fontSize: 16,
       whiteSpace: 'normal',
       graphicAlign: 'center',
@@ -48,7 +49,6 @@ export const page = () => {
         syncPlaceholderToTextConfig: false,
         stopPropagation: true
       },
-      editable: true,
       fontFamily: 'D-Din',
       height: 0,
       heightLimit: 999999,
@@ -64,8 +64,10 @@ export const page = () => {
           fontWeight: 'normal',
           fontFamily: 'D-Din',
           lineHeight: '150%',
-          text: 'a',
-          isComposing: false
+          text: 'fkdlajfldsfjlsaa',
+          isComposing: false,
+          dy: 5,
+          space: 6
         }
       ],
       upgradeAttrs: {
@@ -78,6 +80,10 @@ export const page = () => {
   );
 
   console.log(shapes[0]);
+
+  setTimeout(() => {
+    shapes[0].setAttributes({ editable: true });
+  }, 1000);
 
   const stage = createStage({
     canvas: 'main',

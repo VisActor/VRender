@@ -84,6 +84,10 @@ export const pages = [
         path: 'glyph'
       },
       {
+        name: 'star绘制',
+        path: 'star'
+      },
+      {
         name: '多layer绘制',
         path: 'layer'
       },

@@ -2,6 +2,36 @@
   "name": "@visactor/vrender-core",
   "entries": [
     {
+      "version": "0.22.7",
+      "tag": "@visactor/vrender-core_v0.22.7",
+      "date": "Fri, 11 Apr 2025 07:37:57 GMT",
+      "comments": {
+        "none": [
+          {
+            "comment": "fix: fix issue with bounds while verticalDirection setted"
+          },
+          {
+            "comment": "feat: richtext support space to make horizontal space"
+          },
+          {
+            "comment": "feat: richtext character support dx and dy"
+          },
+          {
+            "comment": "fix: fix issue with gradient-color"
+          },
+          {
+            "comment": "fix: fix issue with crash when pass string anchor"
+          },
+          {
+            "comment": "fix: fix issue with global listen keydown"
+          },
+          {
+            "comment": "fix: fix issue with edit while first character is \\n"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.22.6",
       "tag": "@visactor/vrender-core_v0.22.6",
       "date": "Fri, 21 Mar 2025 08:20:48 GMT",

@@ -247,12 +247,13 @@ export type MarkCommonLineState<LineAttr> = {
   lineEndSymbol?: State<Partial<ISymbolGraphicAttribute>>;
   /**
    * 设置标签在特定状态下的样式
+   * 自 0.22.7 版本开始，支持多标签配置
    */
-  label?: State<Partial<ITextGraphicAttribute>>;
+  label?: State<Partial<ITextGraphicAttribute>> | State<Partial<ITextGraphicAttribute>>[];
   /**
    * 设置标签背景区块在特定状态下的样式
    */
-  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>> | State<Partial<IRectGraphicAttribute>>[];
 };
 
 export type CommonMarkAreaState<AreaAttr> = {
@@ -262,12 +263,13 @@ export type CommonMarkAreaState<AreaAttr> = {
   area?: State<Partial<AreaAttr>>;
   /**
    * 设置标注区域标签在特定状态下的样式
+   * 自 0.22.7 版本开始，支持多标签配置
    */
-  label?: State<Partial<ITextGraphicAttribute>>;
+  label?: State<Partial<ITextGraphicAttribute>> | State<Partial<ITextGraphicAttribute>>[];
   /**
    * 设置标签背景区块在特定状态下的样式
    */
-  labelBackground?: State<Partial<IRectGraphicAttribute>>;
+  labelBackground?: State<Partial<IRectGraphicAttribute>> | State<Partial<IRectGraphicAttribute>>[];
 };
 
 export type MarkPointState = {
@@ -313,24 +315,27 @@ export type MarkPointState = {
   targetItem?: State<Partial<ISymbolGraphicAttribute>>;
 };
 
+export type MarkerLineLabelAttrs<LineLabelPosition> = {
+  /**
+   * label 相对line的位置
+   */
+  position?: LineLabelPosition;
+  /**
+   * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+   * @default false
+   */
+  confine?: boolean;
+} & IMarkRef &
+  IMarkLabel;
+
 export type MarkCommonLineAttrs<LineAttr, LineLabelPosition, MarkCommonLineAnimationType> =
   MarkerAttrs<MarkCommonLineAnimationType> &
     Omit<CommonSegmentAttributes, 'state' | 'lineStyle'> & {
       /**
        * 标签
+       * 自 0.22.7 版本开始，支持多标签配置
        */
-      label?: {
-        /**
-         * label 相对line的位置
-         */
-        position?: LineLabelPosition;
-        /**
-         * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
-         * @default false
-         */
-        confine?: boolean;
-      } & IMarkRef &
-        IMarkLabel;
+      label?: MarkerLineLabelAttrs<LineLabelPosition> | MarkerLineLabelAttrs<LineLabelPosition>[];
       /**
        * 辅助线各种状态下的样式
        */
@@ -400,6 +405,18 @@ export type MarkArcLineAttrs = MarkCommonLineAttrs<
   lineStyle?: IArcGraphicAttribute;
 };
 
+export type MarkerAreaLabelAttrs = {
+  /**
+   * 设置标签的位置
+   */
+  position?: keyof typeof IMarkAreaLabelPosition;
+  /**
+   * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+   * @default false
+   */
+  confine?: boolean;
+} & IMarkLabel;
+
 export type MarkAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   type?: 'area';
   /**
@@ -408,18 +425,9 @@ export type MarkAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   points: Point[];
   /**
    * 标签
+   * 自 0.22.7 版本开始，支持多标签配置
    */
-  label?: {
-    /**
-     * 设置标签的位置
-     */
-    position?: keyof typeof IMarkAreaLabelPosition;
-    /**
-     * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
-     * @default false
-     */
-    confine?: boolean;
-  } & IMarkLabel;
+  label?: MarkerAreaLabelAttrs | MarkerAreaLabelAttrs[];
   /**
    * area的样式
    */
@@ -429,6 +437,19 @@ export type MarkAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
    */
   state?: CommonMarkAreaState<IPolygonGraphicAttribute>;
 };
+
+export type MarkerArcAreaLabelAttrs = {
+  /**
+   * 标签的位置
+   */
+  position?: keyof typeof IMarkCommonArcLabelPosition;
+  /**
+   * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
+   * @default false
+   */
+  confine?: boolean;
+} & IMarkRef &
+  IMarkLabel;
 
 export type MarkArcAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   type?: 'arc-area';
@@ -457,19 +478,9 @@ export type MarkArcAreaAttrs = MarkerAttrs<CommonMarkAreaAnimationType> & {
   endAngle: number;
   /**
    * 标签
+   * 自 0.22.7 版本开始，支持多标签配置
    */
-  label?: {
-    /**
-     * 标签的位置
-     */
-    position?: keyof typeof IMarkCommonArcLabelPosition;
-    /**
-     * 当 mark 配置了 limitRect 之后，label 是否自动调整位置
-     * @default false
-     */
-    confine?: boolean;
-  } & IMarkRef &
-    IMarkLabel;
+  label?: MarkerArcAreaLabelAttrs | MarkerArcAreaLabelAttrs[];
   /**
    * area的样式
    */

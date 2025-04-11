@@ -255,7 +255,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
       maxWidth = richtextTheme.maxWidth,
       maxHeight = richtextTheme.maxHeight,
       textAlign = richtextTheme.textAlign,
-      verticalDirection = attribute.textBaseline ?? richtextTheme.textBaseline ?? richtextTheme.verticalDirection,
+      textBaseline = attribute.textBaseline ?? richtextTheme.textBaseline ?? 'top',
       editOptions
     } = attribute;
 
@@ -283,7 +283,7 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
 
     // 调整对齐方式
     let deltaY = 0;
-    switch (verticalDirection) {
+    switch (textBaseline) {
       case 'top':
         deltaY = 0;
         break;
@@ -317,6 +317,9 @@ export class RichText extends Graphic<IRichTextGraphicAttribute> implements IRic
     if (attribute.forceBoundsHeight != null || attribute.forceBoundsWidth != null) {
       application.graphicService.updateHTMLTextAABBBounds(attribute, richtextTheme, aabbBounds);
     }
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
+
     application.graphicService.transformAABBBounds(attribute, aabbBounds, richtextTheme, false, this);
     // 都为0的话，就直接clear
     if (aabbBounds.width() === 0 && aabbBounds.height() === 0) {

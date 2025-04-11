@@ -18,3 +18,4 @@ export const GlyphRender = Symbol.for('GlyphRender');
 export const ImageRender = Symbol.for('ImageRender');
 export const RenderSelector = Symbol.for('RenderSelector');
 export const DrawContribution = Symbol.for('DrawContribution');
+export const StarRender = Symbol.for('StarRender');

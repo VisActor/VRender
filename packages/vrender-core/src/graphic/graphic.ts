@@ -222,6 +222,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
   // 标记是否是在3d模式下
   declare in3dMode?: boolean;
 
+  // 不考虑transform的宽高，特殊情况下会使用到
+  declare widthWithoutTransform?: number;
+  declare heightWithoutTransform?: number;
+
   // aabbBounds，所有图形都需要有，所以初始化即赋值
   protected declare _AABBBounds: IAABBBounds;
   get AABBBounds(): IAABBBounds {
@@ -623,6 +627,11 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       y = point.y;
     }
     return picker.containsPoint(this, { x, y });
+  }
+
+  protected setWidthHeightWithoutTransform(aabbBounds: IAABBBounds) {
+    this.widthWithoutTransform = aabbBounds.x2 - aabbBounds.x1;
+    this.heightWithoutTransform = aabbBounds.y2 - aabbBounds.y1;
   }
 
   setAttributes(params: Partial<T>, forceUpdateTag: boolean = false, context?: ISetAttributeContext) {
@@ -1202,15 +1211,15 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       if (params.b) {
         return params.b;
       }
-      const { scaleX, scaleY, angle } = this.attribute;
+      const { scaleX, scaleY, angle, scaleCenter } = this.attribute;
       // 拷贝一份，避免计算bounds的过程中计算matrix，然后matrix又修改了bounds
       tempBounds.copy(this._AABBBounds);
       // @ts-ignore
-      this.setAttributes({ scaleX: 1, scaleY: 1, angle: 0 });
+      this.setAttributes({ angle: 0, scaleCenter: null });
       params.b = this.AABBBounds.clone();
       this._AABBBounds.copy(tempBounds);
       // @ts-ignore
-      this.setAttributes({ scaleX, scaleY, angle });
+      this.setAttributes({ scaleX, scaleY, angle, scaleCenter });
       return params.b;
     };
     if (typeof anchor[0] === 'string') {
@@ -1247,7 +1256,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     } = this.attribute;
     let _anchor: [number, number] = [0, 0];
     const params = {};
-    if (anchor) {
+    if (anchor && angle) {
       _anchor = this.getAnchor(anchor, params);
     }
     if (scaleCenter && (scaleX !== 1 || scaleY !== 1)) {

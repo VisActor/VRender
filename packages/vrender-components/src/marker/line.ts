@@ -1,5 +1,5 @@
 import { isValidNumber, merge } from '@visactor/vutils';
-import type { IMarkLineLabelPosition } from './type';
+import type { IMarkLineLabelPosition, MarkerLineLabelAttrs } from './type';
 // eslint-disable-next-line no-duplicate-imports
 import type { MarkLineAttrs, MarkerAnimationState } from './type';
 import type { ComponentOptions } from '../interface';
@@ -11,9 +11,10 @@ import type { ArcSegment } from '../segment';
 import { Segment } from '../segment';
 import { DEFAULT_STATES } from '../constant';
 import { DEFAULT_CARTESIAN_MARK_LINE_TEXT_STYLE_MAP, DEFAULT_MARK_LINE_THEME, FUZZY_EQUAL_DELTA } from './config';
-import type { ILineGraphicAttribute } from '@visactor/vrender-core';
+import type { IGroup, ILineGraphicAttribute } from '@visactor/vrender-core';
 import { markCommonLineAnimate } from './animate/animate';
 import { fuzzyEqualNumber, getTextAlignAttrOfVerticalDir, isPostiveXAxis } from '../util';
+import type { TagAttributes } from '../tag';
 
 loadMarkLineComponent();
 
@@ -38,9 +39,11 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     super(options?.skipDefault ? attributes : merge({}, MarkLine.defaultAttributes, attributes));
   }
 
-  protected getPointAttrByPosition(position: IMarkLineLabelPosition) {
-    const { label = {} } = this.attribute;
-    const { refX = 0, refY = 0 } = label;
+  protected getPointAttrByPosition(
+    position: IMarkLineLabelPosition,
+    labelAttrs: MarkerLineLabelAttrs<IMarkLineLabelPosition>
+  ) {
+    const { refX = 0, refY = 0 } = labelAttrs;
     const points = this._line.getMainSegmentPoints();
     const lineEndAngle = this._line.getEndAngle() ?? 0;
     const labelAngle = isPostiveXAxis(lineEndAngle) ? lineEndAngle : lineEndAngle;
@@ -74,9 +77,9 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
     };
   }
 
-  protected getRotateByAngle(angle: number): number {
+  protected getRotateByAngle(angle: number, labelAttrs: MarkerLineLabelAttrs<IMarkLineLabelPosition>): number {
     const itemAngle = isPostiveXAxis(angle) ? angle : angle - Math.PI;
-    return itemAngle + (this.attribute.label.refAngle ?? 0);
+    return itemAngle + (labelAttrs.refAngle ?? 0);
   }
 
   protected getTextStyle(position: IMarkLineLabelPosition, labelAngle: number, autoRotate: boolean) {
@@ -153,5 +156,13 @@ export class MarkLine extends MarkCommonLine<ILineGraphicAttribute, IMarkLineLab
       }
     });
     return validFlag;
+  }
+
+  protected addMarkLineLabels(container: IGroup) {
+    this._addMarkLabels(container, 'mark-common-line-label', MarkLine.defaultAttributes.label as TagAttributes);
+  }
+
+  protected updateMarkLineLabels() {
+    this._updateMarkLabels(MarkLine.defaultAttributes.label as TagAttributes);
   }
 }

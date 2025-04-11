@@ -72,6 +72,8 @@ export class Area extends Graphic<IAreaGraphicAttribute> implements IArea {
     //     tb1.setValue(tb2.x1, tb2.y1, tb2.x2, tb2.y2);
     //   });
 
+    this.setWidthHeightWithoutTransform(aabbBounds);
+
     const { lineJoin = areaTheme.lineJoin } = attribute;
     application.graphicService.transformAABBBounds(attribute, aabbBounds, areaTheme, lineJoin === 'miter', this);
     return aabbBounds;

@@ -77,6 +77,7 @@ export * from './register/register-richtext';
 export * from './register/register-shadowRoot';
 export * from './register/register-symbol';
 export * from './register/register-text';
+export * from './register/register-star';
 export * from './register/register-wraptext';
 export * from './tools/dynamicTexture/effect';
 // export const canvasModuleLoader = _canvasModuleLoader;

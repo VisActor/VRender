@@ -161,6 +161,9 @@ export function getStrByWithCanvas(
   guessIndex: number,
   needTestLetter?: boolean
 ): number {
+  if (desc.length <= 1) {
+    return 0;
+  }
   if (!width || width <= 0) {
     return 0;
   }
@@ -344,6 +347,14 @@ export function measureTextCanvas(
   character: IRichTextParagraphCharacter,
   mode: 'actual' | 'font' = 'actual'
 ): { ascent: number; height: number; descent: number; width: number } {
+  if (text === '') {
+    return {
+      ascent: 0,
+      height: 0,
+      descent: 0,
+      width: 0
+    };
+  }
   const textMeasure = application.graphicUtil.textMeasure;
   const measurement = textMeasure.measureText(text, character as any) as TextMetrics;
   const result: { ascent: number; height: number; descent: number; width: number } = {
@@ -365,6 +376,8 @@ export function measureTextCanvas(
     result.ascent = Math.floor(ascent);
     result.descent = result.height - result.ascent;
   }
+  const space = character.space ?? 0;
+  result.width += space;
   return result;
 }
 

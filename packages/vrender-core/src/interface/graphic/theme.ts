@@ -10,6 +10,7 @@ import type { IPathGraphicAttribute } from './path';
 import type { IPolygonGraphicAttribute } from './polygon';
 import type { IRectGraphicAttribute } from './rect';
 import type { IRichTextGraphicAttribute, IRichTextIconGraphicAttribute } from './richText';
+import type { IStarGraphicAttribute } from './star';
 import type { ISymbolGraphicAttribute } from './symbol';
 import type { ITextGraphicAttribute } from './text';
 
@@ -22,6 +23,7 @@ export interface IThemeSpec {
   line?: Partial<ILineGraphicAttribute>;
   path?: Partial<IPathGraphicAttribute>;
   symbol?: Partial<ISymbolGraphicAttribute>;
+  star?: Partial<IStarGraphicAttribute>;
   group?: Partial<IGroupGraphicAttribute>;
   polygon?: Partial<IPolygonGraphicAttribute>;
   image?: Partial<IImageGraphicAttribute>;
@@ -40,6 +42,7 @@ export interface IFullThemeSpec {
   glyph: Required<IGlyphGraphicAttribute>;
   group: Required<IGroupGraphicAttribute>;
   polygon: Required<IPolygonGraphicAttribute>;
+  star: Required<IStarGraphicAttribute>;
   richtext: Required<IRichTextGraphicAttribute>;
   richtextIcon: Required<IRichTextIconGraphicAttribute>;
   image: Required<IImageGraphicAttribute>;

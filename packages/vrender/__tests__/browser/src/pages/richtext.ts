@@ -981,21 +981,23 @@ export const page = () => {
     zIndex: -1,
     // maxLineWidth: 200,
     disableAutoWrapLine: true,
-    x: 100,
-    y: 100,
+    x: 200,
+    y: 0,
+    width: 200,
+    height: 200,
+    verticalDirection: 'bottom',
+    textBaseline: 'top',
     angle: 0,
     // lineWidth: 0,
     textConfig: [
       {
-        text: '',
+        text: '这是一段富文本',
         fontSize: 12,
         textAlign: 'left',
         fill: '#1F2329'
       }
     ],
-    z: 0,
-    width: 0,
-    height: 0
+    z: 0
     // width: 30,
     // width: 31,
     // width: 0,
@@ -1008,7 +1010,8 @@ export const page = () => {
   const stage = createStage({
     canvas: 'main',
     width: 1200,
-    height: 700
+    height: 700,
+    autoRender: true
     // viewWidth: 1200,
     // viewHeight: 600
   });

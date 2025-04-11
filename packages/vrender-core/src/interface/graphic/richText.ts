@@ -197,6 +197,18 @@ export type IRichTextParagraphCharacter = IRichTextBasicCharacter & {
   background?: string;
   // 背景透明度
   backgroundOpacity?: number;
+  /**
+   * 该character与相邻节点的间距
+   */
+  space?: number;
+  /**
+   * 该character的偏移量，仅在Render时生效，不影响布局效果，常用于动画过程中
+   */
+  dx?: number;
+  /**
+   * 该character的偏移量，仅在Render时生效不影响布局效果，常用于动画过程中
+   */
+  dy?: number;
   // direction?: RichTextLayoutDirectionType;
 };
 

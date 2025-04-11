@@ -191,7 +191,7 @@ export class FederatedEvent<N extends Event = Event> implements Event {
   _composedDetailPath(params: any) {
     if (params && params.graphic) {
       // 被包装的节点一定是最终的节点
-      const g = (this.pickParams as any).graphic;
+      const g = params.graphic;
       if (g.stage) {
         const path = g.stage.eventSystem.manager.propagationPath(g);
         this.detailPath.push(path);

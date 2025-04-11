@@ -2,10 +2,11 @@ import type { EasingType } from '@visactor/vrender-core';
 import type { ArcSegment, Segment } from '../../segment';
 import type { Tag } from '../../tag';
 import { graphicFadeIn } from './common';
+import { array } from '@visactor/vutils';
 
 export function commonLineClipIn(
   line: Segment | ArcSegment,
-  label: Tag,
+  label: Tag | Tag[],
   duration: number,
   delay: number,
   easing: EasingType
@@ -30,19 +31,13 @@ export function commonLineClipIn(
   // end symbol
   graphicFadeIn(line.endSymbol, delay + startSymbolDuration + lineDuration, endSymbolDuration, easing);
 
-  // text
-  graphicFadeIn(
-    label.getTextShape(),
-    delay + startSymbolDuration + lineDuration + endSymbolDuration,
-    labelDuration,
-    easing
-  );
+  // label
+  array(label).forEach(labelNode => {
+    const delayTime = delay + startSymbolDuration + lineDuration + endSymbolDuration;
+    // text
+    graphicFadeIn(labelNode.getTextShape(), delayTime, labelDuration, easing);
 
-  // text background
-  graphicFadeIn(
-    label.getBgRect(),
-    delay + startSymbolDuration + lineDuration + endSymbolDuration,
-    labelDuration,
-    easing
-  );
+    // text background
+    graphicFadeIn(labelNode.getBgRect(), delayTime, labelDuration, easing);
+  });
 }

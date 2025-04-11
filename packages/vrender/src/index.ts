@@ -11,7 +11,7 @@ import {
   registerDirectionalLight,
   registerOrthoCamera
 } from '@visactor/vrender-core';
-import { loadBrowserEnv, loadNodeEnv } from '@visactor/vrender-kits';
+import { loadBrowserEnv, loadNodeEnv, registerStar } from '@visactor/vrender-kits';
 import {
   registerArc,
   registerArc3d,
@@ -60,6 +60,7 @@ registerShadowRoot();
 registerSymbol();
 registerText();
 registerWrapText();
+registerStar();
 
 registerFlexLayoutPlugin();
 registerViewTransform3dPlugin();

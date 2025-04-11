@@ -7,6 +7,7 @@ import type {
 } from '@visactor/vrender-core';
 import type { Padding, State } from '../core/type';
 import type { BackgroundAttributes } from '../interface';
+import type { IAABBBoundsLike } from '@visactor/vutils';
 
 type StateStyle = {
   /**
@@ -27,7 +28,36 @@ export type PopTipAttributes = {
   /**
    * 弹出框的方位，有 12 个方位可供选择
    */
-  position?: 'auto' | 'top' | 'tl' | 'tr' | 'bottom' | 'bl' | 'br' | 'left' | 'lt' | 'lb' | 'right' | 'rt' | 'rb';
+  position?:
+    | 'auto'
+    | 'top'
+    | 'tl'
+    | 'tr'
+    | 'bottom'
+    | 'bl'
+    | 'br'
+    | 'left'
+    | 'lt'
+    | 'lb'
+    | 'right'
+    | 'rt'
+    | 'rb'
+    | string[];
+  /**
+   * @since 0.22.7
+   * 锚点，默认是position，即锚点在position的位置，如果设置为bounds，则锚点会基于bounds进行计算
+   */
+  poptipAnchor?: 'position' | 'bounds';
+  /**
+   * @since 0.22.7
+   * 布局的包围盒
+   * positionBounds 是定位的包围盒，如果配置了的话
+   * position为'top' | 'tl' | 'tr': 锚点为positionBounds的上方中间位置
+   * position为'bottom' | 'bl' | 'br': 锚点为positionBounds的下方中间位置
+   * position为'left' | 'lt' | 'lb': 锚点为positionBounds的左侧中间位置
+   * position为'right' | 'rt' | 'rb': 锚点为positionBounds的右侧中间位置
+   */
+  positionBounds?: IAABBBoundsLike;
   /**
    * 标题内容，如果需要进行换行，则使用数组形式，如 ['abc', '123']
    */

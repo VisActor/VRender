@@ -7,7 +7,6 @@ import {
   type IGroup,
   type IRect,
   type ISymbol,
-  type ISymbolGraphicAttribute,
   type IText,
   type ITextGraphicAttribute,
   type TextAlignType,
@@ -23,12 +22,14 @@ import {
   isValid,
   max,
   merge,
+  min,
   normalizePadding,
   pi,
-  rectInsideAnotherRect
+  rectInsideAnotherRect,
+  type IAABBBoundsLike
 } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
-import type { BackgroundAttributes, ComponentOptions } from '../interface';
+import type { ComponentOptions } from '../interface';
 import type { PopTipAttributes } from './type';
 import { loadPoptipComponent } from './register';
 
@@ -92,6 +93,7 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       contentStyle = {} as ITextGraphicAttribute,
       panel,
       logoSymbol,
+      poptipAnchor = 'position',
       logoText,
       logoTextStyle = {} as ITextGraphicAttribute,
       triangleMode = 'default',
@@ -103,7 +105,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       visible,
       state,
       dx = 0,
-      dy = 0
+      dy = 0,
+      positionBounds
     } = this.attribute as PopTipAttributes;
 
     let { title = '', content = '' } = this.attribute as PopTipAttributes;
@@ -231,13 +234,14 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       }
     }
 
-    const layout = position === 'auto';
+    const layout = position === 'auto' || isArray(position);
+    const positionList = isArray(position) ? position : this.positionList;
     // 最多循环this.positionList次
     let maxBBoxI: number;
     let maxBBoxSize: number = -Infinity;
 
-    for (let i = 0; i < this.positionList.length + 1; i++) {
-      const p = layout ? this.positionList[i === this.positionList.length ? maxBBoxI : i] : position;
+    for (let i = 0; i < positionList.length + 1; i++) {
+      const p = layout ? positionList[i === positionList.length ? maxBBoxI : i] : position;
       let symbolType = 'arrow2Left';
       let offsetX = (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 4;
       let offsetY = 0;
@@ -245,10 +249,10 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         symbolType = 'arrow2Left';
       } else if (triangleMode === 'concise') {
         symbolType = (conciseSymbolMap as any)[p];
-        offsetX = ['tl', 'bl', 'rt', 'rb'].includes(position)
+        offsetX = ['tl', 'bl', 'rt', 'rb'].includes(p)
           ? (isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2
           : -(isArray(symbolSize) ? symbolSize[0] : symbolSize) / 2;
-        offsetY = ['tl', 'tr', 'lb', 'rb'].includes(position)
+        offsetY = ['tl', 'tr', 'lb', 'rb'].includes(p)
           ? -(isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2
           : (isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2;
       }
@@ -260,8 +264,17 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         isArray(spaceSize) ? (spaceSize as [number, number]) : [spaceSize, spaceSize - lineWidth],
         symbolType
       );
+
+      // Calculate anchor point if using bounds
+      let anchorPoint = { x: 0, y: 0 };
+      if (poptipAnchor === 'bounds' && positionBounds) {
+        anchorPoint = this.calculateAnchorPoint(p, positionBounds);
+      }
+
+      // 后续可能需要偏移，所以需要保存
+      let bgSymbol: ISymbol;
       if (isBoolean(bgVisible)) {
-        const bgSymbol = group.createOrUpdateChild(
+        bgSymbol = group.createOrUpdateChild(
           'poptip-symbol-panel',
           {
             ...backgroundStyle,
@@ -321,8 +334,8 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
       }
 
       group.setAttributes({
-        x: -offset[0] + dx,
-        y: -offset[1] + dy,
+        x: -offset[0] + dx + anchorPoint.x,
+        y: -offset[1] + dy + anchorPoint.y,
         anchor: [offsetX, offsetY]
       });
 
@@ -371,19 +384,76 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
         }
       }
 
-      if (layout && range) {
+      if (range) {
         _tBounds.setValue(0, 0, popTipWidth, poptipHeight).transformWithMatrix(group.globalTransMatrix);
         const b = _tBounds;
         const stageBounds = new Bounds().setValue(0, 0, range[0], range[1]);
-        if (rectInsideAnotherRect(b, stageBounds, false)) {
-          break;
-        } else {
-          const bbox = getRectIntersect(b, stageBounds, false);
-          const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
-          if (size > maxBBoxSize) {
-            maxBBoxSize = size;
-            maxBBoxI = i;
+        if (layout) {
+          if (rectInsideAnotherRect(b, stageBounds, false)) {
+            break;
+          } else {
+            const bbox = getRectIntersect(b, stageBounds, false);
+
+            const size = (bbox.x2 - bbox.x1) * (bbox.y2 - bbox.y1);
+            if (size > maxBBoxSize) {
+              maxBBoxSize = size;
+              maxBBoxI = i;
+            }
           }
+        }
+
+        // 检测是否是'top' | 'bottom' | 'left' | 'right'，如果是，则需要进行偏移
+        // 1. 判断主方向上有没有重叠（top|bottom的话就是垂直方向，left|right的话就是水平方向），如果重叠就无法偏移
+        // 2. 找到次方向上的偏移量（top|bottom的话就是水平方向，left|right的话就是垂直方向），然后对group进行偏移即可
+        if (['top', 'bottom', 'left', 'right'].includes(p)) {
+          const isVerticalPosition = p === 'top' || p === 'bottom';
+          const isHorizontalPosition = p === 'left' || p === 'right';
+
+          // 判断主方向上有没有偏移
+          let mainDirectionOverlap = false;
+          if (isVerticalPosition) {
+            mainDirectionOverlap = (p === 'top' && b.y1 < 0) || (p === 'bottom' && b.y2 > stageBounds.y2);
+          } else if (isHorizontalPosition) {
+            mainDirectionOverlap = (p === 'left' && b.x1 < 0) || (p === 'right' && b.x2 > stageBounds.x2);
+          }
+
+          // 如果主方向上没有偏移，则可以尝试在次方向上找到合适的偏移量
+          if (!mainDirectionOverlap) {
+            let secondaryOffset = 0;
+
+            const szNumber = (isArray(symbolSize) ? symbolSize[1] : symbolSize) / 2;
+            if (isVerticalPosition) {
+              // 水平偏移
+              if (b.x1 < 0) {
+                secondaryOffset = -b.x1;
+              } else if (b.x2 > stageBounds.x2) {
+                secondaryOffset = stageBounds.x2 - b.x2;
+              }
+              group.setAttribute('x', group.attribute.x + secondaryOffset);
+              bgSymbol.setAttribute(
+                'dx',
+                min(max(bgSymbol.attribute.dx - secondaryOffset, szNumber), b.width() - szNumber)
+              );
+            } else if (isHorizontalPosition) {
+              // 垂直偏移
+              if (b.y1 < 0) {
+                secondaryOffset = -b.y1;
+              } else if (b.y2 > stageBounds.y2) {
+                secondaryOffset = stageBounds.y2 - b.y2;
+              }
+
+              group.setAttribute('y', group.attribute.y + secondaryOffset);
+              bgSymbol.setAttribute(
+                'dy',
+                min(max(bgSymbol.attribute.dy - secondaryOffset, szNumber), b.height() - szNumber)
+              );
+            }
+            break;
+          }
+        }
+
+        if (!layout) {
+          break;
         }
       } else {
         break;
@@ -392,6 +462,43 @@ export class PopTip extends AbstractComponent<Required<PopTipAttributes>> {
   }
 
   positionList = ['top', 'tl', 'tr', 'bottom', 'bl', 'br', 'left', 'lt', 'lb', 'right', 'rt', 'rb'];
+
+  /**
+   * Calculate anchor point based on positionBounds and position
+   */
+  calculateAnchorPoint(position: string, positionBounds?: IAABBBoundsLike): { x: number; y: number } {
+    if (!positionBounds) {
+      return { x: 0, y: 0 };
+    }
+
+    const { x, y } = this.attribute;
+
+    const { x1, y1, x2, y2 } = positionBounds;
+    const width = x2 - x1;
+    const height = y2 - y1;
+
+    // Calculate anchor point based on position
+    switch (position) {
+      case 'top':
+      case 'tl':
+      case 'tr':
+        return { x: x1 + width / 2 - x, y: y1 - y };
+      case 'bottom':
+      case 'bl':
+      case 'br':
+        return { x: x1 + width / 2 - x, y: y2 - y };
+      case 'left':
+      case 'lt':
+      case 'lb':
+        return { x: x1 - x, y: y1 + height / 2 - y };
+      case 'right':
+      case 'rt':
+      case 'rb':
+        return { x: x2 - x, y: y1 + height / 2 - y };
+      default:
+        return { x: 0, y: 0 };
+    }
+  }
 
   getAngleAndOffset(
     position: string,

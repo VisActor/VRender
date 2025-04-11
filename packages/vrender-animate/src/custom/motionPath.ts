@@ -1,5 +1,4 @@
-import type { EasingType } from '../intreface/easing';
-import type { CustomPath2D, IGraphic } from '@visactor/vrender-core';
+import type { CustomPath2D, IGraphic, EasingType } from '@visactor/vrender-core';
 import { ACustomAnimate } from './custom-animate';
 
 export class MotionPath extends ACustomAnimate<any> {

@@ -40,7 +40,9 @@ import { Update } from './update';
 import { MoveIn, MoveOut } from './move';
 import { RotateIn, RotateOut } from './rotate';
 import { MotionPath } from './motionPath';
-import { FromTo } from './from-to';
+import { FromTo } from './fromTo';
+import { GroupFadeIn, GroupFadeOut } from './groupFade';
+import { StreamLight } from './streamLight';
 
 export const registerCustomAnimate = () => {
   // 基础动画
@@ -106,6 +108,8 @@ export const registerCustomAnimate = () => {
 
   // 路径动画
   AnimateExecutor.registerBuiltInAnimate('MotionPath', MotionPath);
+  // 流光动画
+  AnimateExecutor.registerBuiltInAnimate('streamLight', StreamLight);
 };
 
 export {
@@ -158,5 +162,8 @@ export {
   SpinOut,
   MoveScaleOut,
   MoveRotateOut,
-  FromTo
+  GroupFadeIn,
+  GroupFadeOut,
+  FromTo,
+  StreamLight
 };

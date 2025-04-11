@@ -626,7 +626,8 @@ export class AnimateExecutor implements IAnimateExecutor {
 
     if (!Array.isArray(channel)) {
       // 如果是对象，解析 from/to 配置
-      Object.entries(channel).forEach(([key, config]) => {
+      Object.keys(channel).forEach(key => {
+        const config = channel[key];
         if (config.to !== undefined) {
           if (typeof config.to === 'function') {
             props[key] = config.to((graphic.context as any)?.data, graphic, {});

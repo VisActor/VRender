@@ -151,6 +151,7 @@ export const DefaultStyle: IGraphicStyle = {
   cursor: null,
   html: null,
   react: null,
+  vue: null,
   ...DefaultFillStyle,
   ...DefaultStrokeStyle,
   ...DefaultLayout,

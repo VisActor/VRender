@@ -16,6 +16,9 @@
     },
     {
       "path": "../vrender-kits"
+    },
+    {
+      "path": "../vrender-animate"
     }
   ]
 }

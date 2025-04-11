@@ -14,6 +14,7 @@ import { DataZoomActiveTag } from './type';
 import type { DataZoomAttributes } from './type';
 import type { ComponentOptions } from '../interface';
 import { loadDataZoomComponent } from './register';
+import { getEndTriggersOfDrag } from '../util/event';
 
 const delayMap = {
   debounce: debounce,
@@ -184,15 +185,27 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
         (e: FederatedPointerEvent) => this._onHandlerPointerDown(e, selectedTag) as unknown as EventListener
       );
     }
-    // 拖拽结束
-    (this as unknown as IGroup).addEventListener('pointerup', this._onHandlerPointerUp);
-    (this as unknown as IGroup).addEventListener('pointerupoutside', this._onHandlerPointerUp);
+
     // hover
     if (showDetail === 'auto') {
       (this as unknown as IGroup).addEventListener('pointerenter', this._onHandlerPointerEnter as EventListener);
       (this as unknown as IGroup).addEventListener('pointerleave', this._onHandlerPointerLeave as EventListener);
     }
+
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
   }
+  private _handleTouchMove = (e: TouchEvent) => {
+    if (this._activeState) {
+      /**
+       * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+       * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
+       * 抛出pointercancel事件，导致拖拽行为中断。
+       */
+      e.preventDefault();
+    }
+  };
 
   /** dragMask size边界处理 */
   protected dragMaskSize() {
@@ -225,12 +238,23 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     return this.stage?.eventPointTransform(e) ?? { x: 0, y: 0 };
   }
 
+  private _clearDragEvents() {
+    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
+    const triggers = getEndTriggersOfDrag();
+
+    evtTarget.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    triggers.forEach((trigger: string) => {
+      evtTarget.removeEventListener(trigger, this._onHandlerPointerUp);
+    });
+  }
+
   /**
    * 拖拽开始事件
    * @description 开启activeState + 通过tag判断事件在哪个元素上触发 并 更新交互坐标
    */
   private _onHandlerPointerDown = (e: FederatedPointerEvent, tag: string) => {
-    e.stopPropagation();
+    // 清除之前的事件，防止没有被清除掉
+    this._clearDragEvents();
     if (tag === 'start') {
       this._activeTag = DataZoomActiveTag.startHandler;
       this._activeItem = this._startHandlerMask;
@@ -250,16 +274,17 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
     this._activeState = true;
     this._activeCache.startPos = this.eventPosToStagePos(e);
     this._activeCache.lastPos = this.eventPosToStagePos(e);
+    const evtTarget = vglobal.env === 'browser' ? vglobal : this.stage;
+    const triggers = getEndTriggersOfDrag();
 
-    // 拖拽开始时监听事件
-    if (vglobal.env === 'browser') {
-      // 拖拽时
-      vglobal.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-      // 拖拽结束
-      vglobal.addEventListener('pointerup', this._onHandlerPointerUp);
-    }
-    // 拖拽时
-    (this as unknown as IGroup).addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
+    /**
+     * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
+     * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
+     */
+    evtTarget.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    triggers.forEach((trigger: string) => {
+      evtTarget.addEventListener(trigger, this._onHandlerPointerUp);
+    });
   };
 
   /**
@@ -271,7 +296,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * 4. 在endHandler上拖拽，同上
    */
   private _pointerMove = (e: FederatedPointerEvent) => {
-    e.stopPropagation();
+    e.preventDefault();
     const { start: startAttr, end: endAttr, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     const pos = this.eventPosToStagePos(e);
     const { attPos, max } = this._layoutCache;
@@ -301,7 +326,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
           end = end + dis;
         }
       }
-      this._activeCache.lastPos = pos;
       brushSelect && this.renderDragMask();
     }
     start = Math.min(Math.max(start, 0), 1);
@@ -309,6 +333,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
 
     // 避免attributes相同时, 重复渲染
     if (startAttr !== start || endAttr !== end) {
+      this._activeCache.lastPos = pos;
       this.setStateAttr(start, end, true);
       if (realTime) {
         this._dispatchEvent('change', {
@@ -329,7 +354,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 关闭activeState + 边界情况处理: 防止拖拽后start和end过近
    */
   private _onHandlerPointerUp = (e: FederatedPointerEvent) => {
-    e.preventDefault();
     const { start, end, brushSelect, realTime = true } = this.attribute as DataZoomAttributes;
     if (this._activeState) {
       if (this._activeTag === DataZoomActiveTag.background) {
@@ -350,16 +374,7 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
       end: this.state.end,
       tag: this._activeTag
     });
-    // 拖拽结束后卸载事件
-    if (vglobal.env === 'browser') {
-      // 拖拽时
-      vglobal.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-      // 拖拽结束
-      vglobal.removeEventListener('pointerup', this._onHandlerPointerUp);
-    }
-    // 拖拽时
-    (this as unknown as IGroup).removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
-    (this as unknown as IGroup).removeEventListener('pointerup', this._onHandlerPointerUp);
+    this._clearDragEvents();
   };
 
   /**
@@ -367,7 +382,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 鼠标进入选中部分出现start和end文字
    */
   private _onHandlerPointerEnter(e: FederatedPointerEvent) {
-    e.stopPropagation();
     this._showText = true;
     this.renderText();
   }
@@ -377,7 +391,6 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
    * @description 鼠标移出选中部分不出现start和end文字
    */
   private _onHandlerPointerLeave(e: FederatedPointerEvent) {
-    e.stopPropagation();
     this._showText = false;
     this.renderText();
   }
@@ -1238,5 +1251,16 @@ export class DataZoom extends AbstractComponent<Required<DataZoomAttributes>> {
   }
   setStatePointToData(callback: (state: number) => any) {
     isFunction(callback) && (this._statePointToData = callback);
+  }
+
+  release(all?: boolean): void {
+    /**
+     * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
+     */
+    super.release(all);
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
+    this._clearDragEvents();
   }
 }

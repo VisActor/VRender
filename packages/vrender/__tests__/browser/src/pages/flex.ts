@@ -32,10 +32,10 @@ export const page = () => {
   });
 
   const container = createGroup({
-    x: 500,
+    x: 100,
     y: 100,
-    height: 100,
-    width: 100,
+    height: 200,
+    width: 200,
     background: 'green',
     display: 'flex',
     flexDirection: 'row-reverse',
@@ -139,7 +139,8 @@ export const page = () => {
     canvas: 'main',
     width: 1200,
     height: 600,
-    enableLayout: true
+    enableLayout: true,
+    autoRender: true
   });
 
   // stage.defaultLayer.add(group);
@@ -154,8 +155,11 @@ export const page = () => {
   container.add(date1);
   container.add(date2);
   container.add(date3);
+  setTimeout(() => {
+    container.setAttributes({ width: 1000, height: 1000 });
+  }, 1000);
   // plugin.pauseLayout(false);
   // plugin.tryLayoutChildren(container);
 
-  stage.render(undefined, { renderStyle: 'rough' });
+  // stage.render(undefined, { renderStyle: 'rough' });
 };

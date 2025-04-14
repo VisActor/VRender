@@ -208,7 +208,7 @@ export class Step implements IStep {
     const animate = this.animate;
     const target = this.target;
     target.animates.forEach((a: any) => {
-      if (a === animate || a.priority > animate.priority) {
+      if (a === animate || a.priority > animate.priority || a.priority === Infinity) {
         return;
       }
       const fromProps = a.getStartProps();
@@ -325,6 +325,8 @@ export class WaitStep extends Step {
 
   onStart(): void {
     super.onStart();
+  }
+  onFirstRun(): void {
     // 设置上一个阶段的props到attribute
     const fromProps = this.getFromProps();
     this.target.setAttributes(fromProps);

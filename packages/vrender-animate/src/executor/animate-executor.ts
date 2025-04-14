@@ -332,8 +332,8 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
 
     // 设置开始时间
-    animate.startAt((startTime as number) + delayValue);
-    const wait = index * oneByOneDelay;
+    animate.startAt(startTime as number);
+    const wait = index * oneByOneDelay + delayValue;
     wait > 0 && animate.wait(wait);
 
     // 放到startAt中，否则label无法确定主图元何时开始
@@ -375,14 +375,19 @@ export class AnimateExecutor implements IAnimateExecutor {
       graphic
     );
 
+    let totalDelay = 0;
     if (oneByOneDelay) {
-      animate.wait(oneByOneDelay * (count - index - 1));
+      totalDelay = oneByOneDelay * (count - index - 1);
     }
 
     // 添加后延迟
     const delayAfterValue = isFunction(delayAfter) ? delayAfter(graphic.context?.data?.[0], graphic, {}) : delayAfter;
     if (delayAfterValue > 0) {
-      animate.wait(delayAfterValue as number);
+      totalDelay += delayAfterValue as number;
+    }
+
+    if (totalDelay > 0) {
+      animate.wait(totalDelay);
     }
 
     // 设置循环

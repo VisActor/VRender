@@ -49,7 +49,9 @@ export const moveIn = (
 
   changedX += offset;
   changedY += offset;
-  const point = isFunction(pointOpt) ? pointOpt.call(null, graphic.getDatum(), graphic, animationParameters) : pointOpt;
+  const point = isFunction(pointOpt)
+    ? pointOpt.call(null, graphic.context?.data?.[0], graphic, animationParameters)
+    : pointOpt;
   const fromX = point && isValidNumber(point.x) ? point.x : changedX;
   const fromY = point && isValidNumber(point.y) ? point.y : changedY;
   const finalAttrs = graphic.getFinalAttribute();
@@ -92,7 +94,9 @@ export const moveOut = (
   const groupHeight = groupBounds?.height() ?? animationParameters.height;
   const changedX = (orient === 'negative' ? groupWidth : 0) + offset;
   const changedY = (orient === 'negative' ? groupHeight : 0) + offset;
-  const point = isFunction(pointOpt) ? pointOpt.call(null, graphic.getDatum(), graphic, animationParameters) : pointOpt;
+  const point = isFunction(pointOpt)
+    ? pointOpt.call(null, graphic.context?.data?.[0], graphic, animationParameters)
+    : pointOpt;
   const fromX = point && isValidNumber(point.x) ? point.x : changedX;
   const fromY = point && isValidNumber(point.y) ? point.y : changedY;
 

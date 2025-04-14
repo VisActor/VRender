@@ -107,4 +107,12 @@ export class AnimateExtension {
   protected getFinalAttribute() {
     return this.finalAttribute;
   }
+
+  // TODO prev是兼容原本VGrammar函数的一个参数，用于动画中获取上一次属性，目前的逻辑中应该不需要，直接去当前帧的属性即可
+  getGraphicAttribute(key: string, prev: boolean = false) {
+    if (!prev && this.finalAttribute) {
+      return this.finalAttribute[key];
+    }
+    return (this as any).attribute[key];
+  }
 }

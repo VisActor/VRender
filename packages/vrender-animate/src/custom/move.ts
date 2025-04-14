@@ -34,17 +34,8 @@ export const moveIn = (
   let changedY = 0;
 
   if (orient === 'negative') {
-    // consider the offset of group
-    if (animationParameters.group) {
-      changedX = (animationParameters as any).groupWidth ?? animationParameters.group.getBounds().width();
-      changedY = (animationParameters as any).groupHeight ?? animationParameters.group.getBounds().height();
-
-      (animationParameters as any).groupWidth = changedX;
-      (animationParameters as any).groupHeight = changedY;
-    } else {
-      changedX = animationParameters.width;
-      changedY = animationParameters.height;
-    }
+    changedX = graphic.stage.viewWidth;
+    changedY = graphic.stage.viewHeight;
   }
 
   changedX += offset;
@@ -89,9 +80,9 @@ export const moveOut = (
   const { offset = 0, orient, direction, point: pointOpt } = options ?? {};
 
   // consider the offset of group
-  const groupBounds = animationParameters.group ? animationParameters.group.getBounds() : null;
-  const groupWidth = groupBounds?.width() ?? animationParameters.width;
-  const groupHeight = groupBounds?.height() ?? animationParameters.height;
+  // const groupBounds = graphic.parent ? graphic.parent.getBounds() : null;
+  const groupWidth = graphic.stage.viewWidth;
+  const groupHeight = graphic.stage.viewHeight;
   const changedX = (orient === 'negative' ? groupWidth : 0) + offset;
   const changedY = (orient === 'negative' ? groupHeight : 0) + offset;
   const point = isFunction(pointOpt)
@@ -157,7 +148,10 @@ export class MoveIn extends MoveBase {
     if (finalAttribute) {
       Object.assign(this.target.attribute, finalAttribute);
     }
-    this.target.setAttributes(from);
+
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(from);
+    }
   }
 }
 

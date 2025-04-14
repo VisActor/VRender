@@ -94,5 +94,6 @@ export enum IOperateType {
   moving = 'moving',
   moveStart = 'moveStart',
   moveEnd = 'moveEnd',
+  brushActive = 'brushActive',
   brushClear = 'brushClear'
 }

@@ -369,6 +369,7 @@ export class AnimateExecutor implements IAnimateExecutor {
       duration as number,
       easing,
       customParameters,
+      controlOptions,
       options,
       type,
       graphic
@@ -406,6 +407,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     duration: number,
     easing: EasingType,
     customParameters: any,
+    controlOptions: any,
     options: any,
     type: string,
     graphic: IGraphic
@@ -422,6 +424,7 @@ export class AnimateExecutor implements IAnimateExecutor {
           )
         : options;
       customParams.options = objOptions;
+      customParams.controlOptions = controlOptions;
       if (customType === 1) {
         // 自定义动画构造器 - 创建自定义动画类
         this.createCustomAnimation(
@@ -546,6 +549,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         duration as number,
         easing,
         customParameters,
+        null,
         options,
         type,
         graphic

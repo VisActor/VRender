@@ -323,6 +323,13 @@ export class WaitStep extends Step {
     super(type, props, duration, easing);
   }
 
+  onStart(): void {
+    super.onStart();
+    // 设置上一个阶段的props到attribute
+    const fromProps = this.getFromProps();
+    this.target.setAttributes(fromProps);
+  }
+
   update(end: boolean, ratio: number, out: Record<string, any>): void {
     this.onStart();
     // 其他的不执行

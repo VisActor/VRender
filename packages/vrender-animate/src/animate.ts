@@ -49,6 +49,9 @@ export class Animate implements IAnimate {
   protected currentTime: number;
   slience?: boolean;
 
+  // 临时变量
+  lastRunStep?: IStep;
+
   interpolateUpdateFunction:
     | ((from: Record<string, any>, to: Record<string, any>, ratio: number, step: IStep, target: IGraphic) => void)
     | null;
@@ -588,6 +591,7 @@ export class Animate implements IAnimate {
     }
     // 如果已经结束，设置状态后return
     if (nextTime >= this._startTime + this._totalDuration) {
+      this._lastStep?.onUpdate(true, 1, {});
       this._lastStep?.onEnd();
       this.onEnd();
       this.status = AnimateStatus.END;
@@ -652,6 +656,14 @@ export class Animate implements IAnimate {
       return;
     }
 
+    // 如果当前step和上一次执行的step不一样，则调用上一次step的onEnd，确保所有完成的step都调用了结束
+    // 如果上一次的step已经调用了onEnd，在下面的onEnd那里会将lastRunStep设置为null
+    if (targetStep !== this.lastRunStep) {
+      this.lastRunStep?.onEnd();
+    }
+
+    this.lastRunStep = targetStep;
+
     // 计算当前step的进度比例（基于当前step内的相对时间）
     const stepStartTime = targetStep.getStartTime();
     const stepDuration = targetStep.getDuration();
@@ -666,6 +678,7 @@ export class Animate implements IAnimate {
     // 如果step执行完毕
     if (isEnd) {
       targetStep.onEnd();
+      this.lastRunStep = null;
       // 不立即调用onFinish，让动画系统来决定何时结束
     }
 

@@ -155,12 +155,10 @@ const changePointsX = (
   const points = attrs.points;
   return points.map((point: IPointLike) => {
     if (options && options.orient === 'negative') {
-      let groupRight = animationParameters.width;
+      let groupRight = graphic.stage.viewWidth;
 
-      if (animationParameters.group) {
-        groupRight = (animationParameters as any).groupWidth ?? animationParameters.group.getBounds().width();
-
-        (animationParameters as any).groupWidth = groupRight;
+      if (graphic.parent.parent.parent) {
+        groupRight = graphic.parent.parent.parent.AABBBounds.width();
       }
 
       return {
@@ -254,12 +252,9 @@ const changePointsY = (
   const points = attrs.points;
   return points.map((point: IPointLike) => {
     if (options && options.orient === 'negative') {
-      let groupBottom = animationParameters.height;
-
-      if (animationParameters.group) {
-        groupBottom = (animationParameters as any).groupHeight ?? animationParameters.group.getBounds().height();
-
-        (animationParameters as any).groupHeight = groupBottom;
+      let groupBottom = graphic.stage.viewHeight;
+      if (graphic.parent.parent.parent) {
+        groupBottom = graphic.parent.parent.parent.AABBBounds.height();
       }
 
       return {
@@ -321,7 +316,10 @@ export class GrowPointsYIn extends GworPointsBase {
       if (finalAttribute) {
         Object.assign(this.target.attribute, finalAttribute);
       }
-      this.target.setAttributes(from);
+
+      if (this.params.controlOptions?.immediatelyApply !== false) {
+        this.target.setAttributes(from);
+      }
     } else {
       this.valid = false;
     }

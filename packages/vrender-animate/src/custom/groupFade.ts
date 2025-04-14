@@ -8,6 +8,7 @@ export class GroupFadeIn extends CommonIn {
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: any) {
     super(from, to, duration, easing, params);
     this.keys = ['baseOpacity'];
+    this.from = { baseOpacity: 0 };
   }
 }
 

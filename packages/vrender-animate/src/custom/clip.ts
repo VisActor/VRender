@@ -11,6 +11,7 @@ export class ClipIn extends CommonIn {
   constructor(from: null, to: null, duration: number, easing: EasingType, params?: IScaleAnimationOptions) {
     super(from, to, duration, easing, params);
     this.keys = ['clipRange'];
+    this.from = { clipRange: 0 };
   }
 }
 

@@ -21,10 +21,10 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
     const fromAttrs: Record<string, any> = this.target.attribute ?? {};
 
     const to: Record<string, number> = {};
-    const from: Record<string, number> = {};
+    const from: Record<string, number> = this.from ?? {};
     this.keys.forEach(key => {
       to[key] = attrs?.[key] ?? 1;
-      from[key] = fromAttrs[key] ?? 0;
+      from[key] = from[key] ?? fromAttrs[key] ?? 0;
     });
 
     // 用于入场的时候设置属性（因为有动画的时候VChart不会再设置属性了）
@@ -38,11 +38,9 @@ export class CommonIn extends ACustomAnimate<Record<string, number>> {
     this.from = from;
     this.to = to;
 
-    this.target.setAttributes(from);
-  }
-
-  onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {
-    super.onEnd(cb);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(from);
+    }
   }
 
   onUpdate(end: boolean, ratio: number, out: Record<string, any>): void {

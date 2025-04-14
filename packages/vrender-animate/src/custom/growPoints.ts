@@ -123,7 +123,9 @@ export class GrowPointsIn extends GworPointsBase {
       if (finalAttribute) {
         Object.assign(this.target.attribute, finalAttribute);
       }
-      this.target.setAttributes(from);
+      if (this.params.controlOptions?.immediatelyApply !== false) {
+        this.target.setAttributes(from);
+      }
     } else {
       this.valid = false;
     }
@@ -220,7 +222,9 @@ export class GrowPointsXIn extends GworPointsBase {
       if (finalAttribute) {
         Object.assign(this.target.attribute, finalAttribute);
       }
-      this.target.setAttributes(from);
+      if (this.params.controlOptions?.immediatelyApply !== false) {
+        this.target.setAttributes(from);
+      }
     } else {
       this.valid = false;
     }

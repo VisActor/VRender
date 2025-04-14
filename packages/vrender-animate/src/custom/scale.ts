@@ -51,8 +51,9 @@ export class ScaleIn extends ACustomAnimate<Record<string, number>> {
     this.props = to;
     this.from = from;
     this.to = to;
-    // 调用次数不多，可以setAttributes
-    this.target.setAttributes(from);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(from);
+    }
   }
 
   onEnd(cb?: (animate: IAnimate, step: IStep) => void): void {

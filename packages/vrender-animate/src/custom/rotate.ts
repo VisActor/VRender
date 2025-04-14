@@ -83,7 +83,9 @@ export class RotateIn extends RotateBase {
       Object.assign(this.target.attribute, finalAttribute);
     }
 
-    this.target.setAttributes(from);
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(from);
+    }
   }
 }
 

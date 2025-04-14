@@ -11,7 +11,7 @@ import type {
   IAnimationCustomConstructor,
   IAnimationChannelInterpolator
 } from './executor';
-import { isArray, isFunction } from '@visactor/vutils';
+import { cloneDeep, isArray, isFunction } from '@visactor/vutils';
 
 interface IAnimateExecutor {
   execute: (params: IAnimationConfig) => void;
@@ -109,18 +109,18 @@ export class AnimateExecutor implements IAnimateExecutor {
     });
   }
 
-  parseParams(params: IAnimationConfig, isTimeline: boolean): IAnimationConfig {
+  parseParams(params: IAnimationConfig, isTimeline: boolean, child?: IGraphic): IAnimationConfig {
     const totalTime = this.resolveValue(params.totalTime, undefined, undefined);
     const startTime = this.resolveValue(params.startTime, undefined, 0);
 
     // execute只在mark层面调用，所以性能影响可以忽略
     // TODO 存在性能问题，如果后续调用频繁，需要重新修改
-    const parsedParams: Record<string, any> = { ...params };
+    const parsedParams: Record<string, any> = cloneDeep(params);
     parsedParams.oneByOneDelay = 0;
     parsedParams.startTime = startTime;
     parsedParams.totalTime = totalTime;
 
-    const oneByOne = this.resolveValue(params.oneByOne, undefined, false);
+    const oneByOne = this.resolveValue(params.oneByOne, child, false);
 
     if (isTimeline) {
       const timeSlices = (parsedParams as IAnimationTimeline).timeSlices;
@@ -129,9 +129,9 @@ export class AnimateExecutor implements IAnimateExecutor {
       }
       let sliceTime = 0;
       ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]).forEach(slice => {
-        slice.delay = this.resolveValue(slice.delay, undefined, 0);
-        slice.delayAfter = this.resolveValue(slice.delayAfter, undefined, 0);
-        slice.duration = this.resolveValue(slice.duration, undefined, 300);
+        slice.delay = this.resolveValue(slice.delay, child, 0);
+        slice.delayAfter = this.resolveValue(slice.delayAfter, child, 0);
+        slice.duration = this.resolveValue(slice.duration, child, 300);
         sliceTime += slice.delay + slice.duration + slice.delayAfter;
       });
       let oneByOneDelay = 0;
@@ -143,41 +143,42 @@ export class AnimateExecutor implements IAnimateExecutor {
       parsedParams.oneByOne = oneByOneTime;
       parsedParams.oneByOneDelay = oneByOneDelay;
 
+      let scale = 1;
       if (totalTime) {
         const _totalTime = sliceTime + oneByOneDelay * (this._target.count - 2);
-        const scale = totalTime ? totalTime / _totalTime : 1;
-        ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]) = (
-          (parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]
-        ).map(slice => {
-          let effects = slice.effects;
-          if (!Array.isArray(effects)) {
-            effects = [effects];
-          }
-          return {
-            ...slice,
-            delay: (slice.delay as number) * scale,
-            delayAfter: (slice.delayAfter as number) * scale,
-            duration: (slice.duration as number) * scale,
-            effects: effects.map(effect => {
-              const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'fromTo'];
-              const customType =
-                custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
-              return {
-                ...effect,
-                custom,
-                customType
-              };
-            })
-          };
-        });
-        parsedParams.oneByOne = oneByOneTime * scale;
-        parsedParams.oneByOneDelay = oneByOneDelay * scale;
-        (parsedParams as IAnimationTimeline).startTime = startTime * scale;
+        scale = totalTime ? totalTime / _totalTime : 1;
       }
+      ((parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]) = (
+        (parsedParams as IAnimationTimeline).timeSlices as IAnimationTimeSlice[]
+      ).map(slice => {
+        let effects = slice.effects;
+        if (!Array.isArray(effects)) {
+          effects = [effects];
+        }
+        return {
+          ...slice,
+          delay: (slice.delay as number) * scale,
+          delayAfter: (slice.delayAfter as number) * scale,
+          duration: (slice.duration as number) * scale,
+          effects: effects.map(effect => {
+            const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[(effect.type as any) ?? 'fromTo'];
+            const customType =
+              custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0;
+            return {
+              ...effect,
+              custom,
+              customType
+            };
+          })
+        };
+      });
+      parsedParams.oneByOne = oneByOneTime * scale;
+      parsedParams.oneByOneDelay = oneByOneDelay * scale;
+      (parsedParams as IAnimationTimeline).startTime = startTime * scale;
     } else {
-      const delay = this.resolveValue((params as IAnimationTypeConfig).delay, undefined, 0);
-      const delayAfter = this.resolveValue((params as IAnimationTypeConfig).delayAfter, undefined, 0);
-      const duration = this.resolveValue((params as IAnimationTypeConfig).duration, undefined, 300);
+      const delay = this.resolveValue((params as IAnimationTypeConfig).delay, child, 0);
+      const delayAfter = this.resolveValue((params as IAnimationTypeConfig).delayAfter, child, 0);
+      const duration = this.resolveValue((params as IAnimationTypeConfig).duration, child, 300);
 
       let oneByOneDelay = 0;
       let oneByOneTime = 0;
@@ -239,7 +240,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     // 如果设置了partitioner，则进行筛选
     if (isTimeline && params.partitioner) {
       filteredChildren = (filteredChildren ?? (this._target.getChildren() as IGraphic[])).filter(child => {
-        return (params as IAnimationTimeline).partitioner((child.context as any)?.data, child, {});
+        return (params as IAnimationTimeline).partitioner((child.context as any)?.data?.[0], child, {});
       });
     }
 
@@ -247,14 +248,21 @@ export class AnimateExecutor implements IAnimateExecutor {
     if (isTimeline && (params as IAnimationTimeline).sort) {
       filteredChildren = filteredChildren ?? (this._target.getChildren() as IGraphic[]);
       filteredChildren.sort((a, b) => {
-        return (params as IAnimationTimeline).sort((a.context as any)?.data, (b.context as any)?.data, a, b, {});
+        return (params as IAnimationTimeline).sort(
+          (a.context as any)?.data?.[0],
+          (b.context as any)?.data?.[0],
+          a,
+          b,
+          {}
+        );
       });
     }
 
-    const parsedParams = this.parseParams(params, isTimeline);
+    //
 
     const cb = isTimeline
       ? (child: IGraphic, index: number, count: number) => {
+          const parsedParams = this.parseParams(params, isTimeline, child);
           // 执行单个图元的timeline动画
           const animate = this.executeTimelineItem(parsedParams as IAnimationTimeline, child, index, count);
           if (animate) {
@@ -262,6 +270,7 @@ export class AnimateExecutor implements IAnimateExecutor {
           }
         }
       : (child: IGraphic, index: number, count: number) => {
+          const parsedParams = this.parseParams(params, isTimeline, child);
           // 执行单个图元的config动画
           const animate = this.executeTypeConfigItem(parsedParams as IAnimationTypeConfig, child, index, count);
           if (animate) {
@@ -527,9 +536,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         from = parsedFromProps.from;
       }
       const custom = effect.custom ?? AnimateExecutor.builtInAnimateMap[type];
-      const customType =
-        (effect as any).customType ??
-        (custom && isFunction(custom) ? (/^class\s/.test(Function.prototype.toString.call(custom)) ? 1 : 2) : 0);
+      const customType = (effect as any).customType;
       this._handleRunAnimate(
         animate,
         custom,
@@ -630,7 +637,7 @@ export class AnimateExecutor implements IAnimateExecutor {
         const config = channel[key];
         if (config.to !== undefined) {
           if (typeof config.to === 'function') {
-            props[key] = config.to((graphic.context as any)?.data, graphic, {});
+            props[key] = config.to((graphic.context as any)?.data?.[0], graphic, {});
           } else {
             props[key] = config.to;
           }
@@ -640,7 +647,7 @@ export class AnimateExecutor implements IAnimateExecutor {
             from = {};
           }
           if (typeof config.from === 'function') {
-            from[key] = config.from((graphic.context as any)?.data, graphic, {});
+            from[key] = config.from((graphic.context as any)?.data?.[0], graphic, {});
           } else {
             from[key] = config.from;
           }
@@ -670,7 +677,7 @@ export class AnimateExecutor implements IAnimateExecutor {
     }
 
     if (typeof value === 'function' && graphic) {
-      return (value as MarkFunctionCallback<T>)((graphic.context as any)?.data, graphic, {});
+      return (value as MarkFunctionCallback<T>)((graphic.context as any)?.data?.[0], graphic, {});
     }
 
     return value as T;

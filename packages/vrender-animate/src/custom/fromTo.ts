@@ -21,6 +21,16 @@ export class FromTo extends ACustomAnimate<Record<string, number>> {
         this.props[key] = finalAttribute[key];
       }
     });
+
+    // 如果入场动画，那么需要设置属性
+    if (this.target.context?.animationState === 'appear') {
+      if (finalAttribute) {
+        Object.assign(this.target.attribute, finalAttribute);
+      }
+    }
+    if (this.params.controlOptions?.immediatelyApply !== false) {
+      this.target.setAttributes(this.from);
+    }
   }
 
   onFirstRun(): void {

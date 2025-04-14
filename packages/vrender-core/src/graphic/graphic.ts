@@ -164,7 +164,7 @@ export const NOWORK_ANIMATE_ATTR = {
 //       return Reflect.get(target, property);
 //     },
 //     set(target: any, property: any, value: any) {
-//       if (property === 'points' && value.length === 5 && value.every(item => item.y === 337)) {
+//       if (property === 'opacity' && obj.text === 'Nail polish') {
 //         console.log('set', property, value);
 //       }
 //       // modifiedProperties.add(property); // 记录设置/修改操作

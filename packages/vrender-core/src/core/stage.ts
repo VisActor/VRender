@@ -163,7 +163,7 @@ export class Stage extends Group implements IStage {
     return this.at(0) as unknown as ILayer;
   }
 
-  ticker: ITicker;
+  protected _ticker: ITicker;
 
   autoRender: boolean;
   autoRefresh: boolean;
@@ -202,6 +202,19 @@ export class Stage extends Group implements IStage {
 
   // 随机分配一个rafId
   readonly rafId: number;
+
+  get ticker() {
+    return this._ticker;
+  }
+
+  set ticker(ticker: ITicker) {
+    if (this._ticker) {
+      this._ticker.removeListener('tick', this.afterTickCb);
+    }
+    ticker.addTimeline(this.timeline);
+    this._ticker = ticker;
+    this._ticker.on('tick', this.afterTickCb);
+  }
 
   /**
    * 所有属性都具有默认值。
@@ -304,19 +317,19 @@ export class Stage extends Group implements IStage {
 
   initAnimate(params: Partial<IStageParams>) {
     if ((this as any).createTicker && (this as any).createTimeline) {
-      this.ticker = params.ticker || (this as any).createTicker(this);
+      this._ticker = params.ticker || (this as any).createTicker(this);
       if (this.params.optimize?.tickRenderMode === 'performance') {
-        this.ticker.setFPS(30);
+        this._ticker.setFPS(30);
       }
       this.timeline = (this as any).createTimeline();
-      this.ticker.addTimeline(this.timeline);
-      this.ticker.on('tick', this.afterTickCb);
+      this._ticker.addTimeline(this.timeline);
+      this._ticker.on('tick', this.afterTickCb);
     }
   }
 
   startAnimate() {
-    if (this.ticker && this.timeline) {
-      this.ticker.start();
+    if (this._ticker && this.timeline) {
+      this._ticker.start();
       this.timeline.resume();
     }
   }
@@ -994,8 +1007,8 @@ export class Stage extends Group implements IStage {
       this.interactiveLayer.release();
     }
     this.window.release();
-    this.ticker?.remTimeline(this?.timeline);
-    this.ticker?.removeListener('afterTick', this.afterTickCb);
+    this._ticker?.remTimeline(this?.timeline);
+    this._ticker?.removeListener('tick', this.afterTickCb);
     this.renderService.renderTreeRoots = [];
   }
 

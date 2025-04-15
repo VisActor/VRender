@@ -3,7 +3,6 @@ import { Generator, type IAnimate, type ITimeline, AnimateStatus } from '@visact
 export class DefaultTimeline implements ITimeline {
   declare id: number;
   protected animates: IAnimate[] = [];
-  protected declare ticker: any;
   protected declare paused: boolean;
 
   // 添加必要的属性

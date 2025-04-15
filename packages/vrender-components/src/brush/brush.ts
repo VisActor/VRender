@@ -125,11 +125,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
    * @description 取消绘制 和 移动 状态
    */
   private _onBrushEnd = (e: FederatedPointerEvent) => {
-    const { updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger, endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger } =
-      this.attribute as BrushAttributes;
-    array(updateTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushingWithDelay as EventListener));
-    array(endTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushEnd as EventListener));
-
+    this._releaseBrushUpdateEvents();
     e.preventDefault();
     this._activeDrawState && this._drawEnd(e);
     this._activeMoveState && this._moveEnd(e);
@@ -298,23 +294,24 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   }
 
   protected render() {
-    this.releaseBrushEvents();
     this._bindBrushEvents();
     const group = this.createOrUpdateChild('brush-container', {}, 'group') as unknown as IGroup;
     this._container = group;
   }
 
   releaseBrushEvents(): void {
-    const {
-      trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger,
-      updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger,
-      endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger,
-      resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger
-    } = this.attribute as BrushAttributes;
+    const { trigger = DEFAULT_BRUSH_ATTRIBUTES.trigger, resetTrigger = DEFAULT_BRUSH_ATTRIBUTES.resetTrigger } = this
+      .attribute as BrushAttributes;
     array(trigger).forEach(t => this.stage.removeEventListener(t, this._onBrushStart as EventListener));
+    array(resetTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushClear as EventListener));
+    this._releaseBrushUpdateEvents();
+  }
+
+  private _releaseBrushUpdateEvents(): void {
+    const { updateTrigger = DEFAULT_BRUSH_ATTRIBUTES.updateTrigger, endTrigger = DEFAULT_BRUSH_ATTRIBUTES.endTrigger } =
+      this.attribute as BrushAttributes;
     array(updateTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushingWithDelay as EventListener));
     array(endTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushEnd as EventListener));
-    array(resetTrigger).forEach(t => this.stage.removeEventListener(t, this._onBrushClear as EventListener));
   }
 
   /**

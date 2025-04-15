@@ -36,6 +36,10 @@ export const pages = [
         path: 'story-animate'
       },
       {
+        name: 'animate-tick',
+        path: 'animate-tick'
+      },
+      {
         name: '内存',
         path: 'memory'
       },

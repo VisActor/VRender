@@ -1,3 +1,16 @@
+# v0.22.8
+
+2025-04-16
+
+
+**🐛 Bug fix**
+
+- **@visactor/vrender-components**: brush bug from aeolus and self test
+
+
+
+[more detail about v0.22.8](https://github.com/VisActor/VRender/releases/tag/v0.22.8)
+
 # v0.22.5
 
 2025-03-13

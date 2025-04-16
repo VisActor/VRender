@@ -38,6 +38,7 @@ export interface IRenderService {
   draw: (params: IRenderServiceDrawParams) => void;
   afterDraw: (params: IRenderServiceDrawParams) => void;
   render: (groups: IGroup[], params: IRenderServiceDrawParams) => MaybePromise<void>;
+  reInit: () => void;
 }
 
 export interface IDrawContext extends IRenderServiceDrawParams {
@@ -70,6 +71,7 @@ export interface IDrawContribution {
   getRenderContribution: (graphic: IGraphic) => IGraphicRender | null;
   renderGroup: (group: IGroup, drawContext: IDrawContext, matrix: IMatrixLike, skipSort?: boolean) => void;
   renderItem: (graphic: IGraphic, drawContext: IDrawContext, params?: IGraphicRenderDrawParams) => void;
+  reInit: () => void;
 }
 
 export interface IGraphicRenderDrawParams {
@@ -109,6 +111,8 @@ export interface IGraphicRender {
       themeAttribute: IThemeAttribute
     ) => boolean
   ) => void;
+
+  reInit: () => void;
 }
 
 export interface IBeforeRenderConstribution {

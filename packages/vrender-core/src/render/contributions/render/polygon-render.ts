@@ -33,11 +33,11 @@ export class DefaultCanvasPolygonRender extends BaseRender<IPolygon> implements 
   constructor(
     @inject(ContributionProvider)
     @named(PolygonRenderContribution)
-    protected readonly polygonRenderContribitions: IContributionProvider<IPolygonRenderContribution>
+    protected readonly graphicRenderContributions: IContributionProvider<IPolygonRenderContribution>
   ) {
     super();
     this.builtinContributions = [defaultPolygonBackgroundRenderContribution, defaultPolygonTextureRenderContribution];
-    this.init(polygonRenderContribitions);
+    this.init(graphicRenderContributions);
   }
 
   drawShape(

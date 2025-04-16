@@ -51,6 +51,7 @@ export * from './plugins/builtin-plugin/richtext-edit-plugin';
 export * from './allocator/matrix-allocate';
 export * from './allocator/canvas-allocate';
 export * from './allocator/graphic-allocate';
+export * from './common/contribution-provider';
 
 export * from './animate/default-ticker';
 export { wrapCanvas, wrapContext } from './canvas/util';

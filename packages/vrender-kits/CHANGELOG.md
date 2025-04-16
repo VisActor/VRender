@@ -1,6 +1,11 @@
 # Change Log - @visactor/vrender-kits
 
-This log was last generated on Fri, 11 Apr 2025 07:37:57 GMT and should not be manually modified.
+This log was last generated on Wed, 16 Apr 2025 03:17:31 GMT and should not be manually modified.
+
+## 0.22.8
+Wed, 16 Apr 2025 03:17:31 GMT
+
+_Version update only_
 
 ## 0.22.7
 Fri, 11 Apr 2025 07:37:57 GMT

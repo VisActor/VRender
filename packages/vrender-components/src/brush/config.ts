@@ -1,7 +1,7 @@
 export const DEFAULT_BRUSH_ATTRIBUTES = {
   trigger: 'pointerdown',
   updateTrigger: 'pointermove',
-  endTrigger: 'pointerup',
+  endTrigger: ['pointerup', 'pointerleave'],
   resetTrigger: 'pointerupoutside',
   hasMask: true,
   brushMode: 'single',
@@ -17,10 +17,10 @@ export const DEFAULT_BRUSH_ATTRIBUTES = {
   delayType: 'throttle',
   delayTime: 10,
   interactiveRange: {
-    y1: -Infinity,
-    y2: Infinity,
-    x1: -Infinity,
-    x2: Infinity
+    minY: -Infinity,
+    maxY: Infinity,
+    minX: -Infinity,
+    maxX: Infinity
   }
 };
 

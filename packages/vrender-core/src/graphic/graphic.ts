@@ -1205,7 +1205,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
     return !!(this._updateTag & UpdateTag.UPDATE_LAYOUT);
   }
 
-  protected getAnchor(anchor: [string | number, string | number], params: { b?: IAABBBounds }) {
+  protected getAnchor(anchor: [string | number, string | number], params: { b?: IAABBBounds }, resetScale?: boolean) {
     const _anchor: [number, number] = [0, 0];
     const getBounds = () => {
       if (params.b) {
@@ -1215,6 +1215,10 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       const graphic = this.clone();
       graphic.attribute.angle = 0;
       graphic.attribute.scaleCenter = null;
+      if (resetScale) {
+        graphic.attribute.scaleX = 1;
+        graphic.attribute.scaleY = 1;
+      }
       // @ts-ignore
       // this.setAttributes({ angle: 0, scaleCenter: null });
       params.b = graphic.AABBBounds;
@@ -1268,7 +1272,7 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       m.translate(x, y);
       // m.translate(scaleCenter[0] * scaleX, scaleCenter[1] * scaleY);
       // 计算bounds
-      _anchor = this.getAnchor(scaleCenter, params);
+      _anchor = this.getAnchor(scaleCenter, params, true);
       application.transformUtil.fromMatrix(m, m).scale(scaleX, scaleY, { x: _anchor[0], y: _anchor[1] });
       // m.translate(-scaleCenter[0], -scaleCenter[1]);
     } else {

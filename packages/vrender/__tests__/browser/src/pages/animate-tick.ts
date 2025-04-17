@@ -120,6 +120,12 @@ export const page = () => {
     stage.defaultLayer.add(rect);
 
     stage.ticker.tickAt(200);
+    setTimeout(() => {
+      stage.ticker.tickAt(300);
+      setTimeout(() => {
+        stage.ticker.tickAt(400);
+      }, 1000);
+    }, 1000);
     // stage.ticker.tickAt(800);
   });
 };

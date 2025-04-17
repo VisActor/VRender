@@ -44,7 +44,7 @@ export class DefaultTicker extends EventEmitter implements ITicker {
   declare _lastTickTime: number;
   protected frameTimeHistory: number[] = [];
 
-  constructor(stage: IStage) {
+  constructor(stage?: IStage) {
     super();
     this.init();
     this.lastFrameTime = -1;
@@ -53,6 +53,10 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.autoStop = true;
     this.interval = 16;
     this.computeTimeOffsetAndJitter();
+  }
+
+  bindStage(stage: IStage): void {
+    this.stage = stage;
   }
 
   /**
@@ -216,14 +220,14 @@ export class DefaultTicker extends EventEmitter implements ITicker {
     this.lastFrameTime = -1;
   }
 
-  protected checkSkip = (delta: number): boolean => {
+  protected checkSkip(delta: number): boolean {
     if (this.stage.params.optimize.tickRenderMode === 'performance') {
       return false;
     }
     // 随机扰动（每次都对interval进行随机的扰动，避免所有tick都发生在同一帧）
     const skip = delta < this.interval + (Math.random() - 0.5) * 2 * this._jitter;
     return skip;
-  };
+  }
 
   protected handleTick = (handler: ITickHandler, params?: { once?: boolean }): boolean => {
     const { once = false } = params ?? {};

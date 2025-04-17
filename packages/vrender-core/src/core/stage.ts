@@ -208,6 +208,7 @@ export class Stage extends Group implements IStage {
   }
 
   set ticker(ticker: ITicker) {
+    ticker.bindStage(this);
     if (this._ticker) {
       this._ticker.removeListener('tick', this.afterTickCb);
     }
@@ -318,6 +319,7 @@ export class Stage extends Group implements IStage {
   initAnimate(params: Partial<IStageParams>) {
     if ((this as any).createTicker && (this as any).createTimeline) {
       this._ticker = params.ticker || (this as any).createTicker(this);
+      this._ticker.bindStage(this);
       if (this.params.optimize?.tickRenderMode === 'performance') {
         this._ticker.setFPS(30);
       }

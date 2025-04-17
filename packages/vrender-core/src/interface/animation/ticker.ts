@@ -4,6 +4,7 @@
 
 import type { EventEmitter } from '@visactor/vutils';
 import type { ITimeline } from './timeline';
+import type { IStage } from '../stage';
 
 export type TickerMode = 'raf' | 'timeout' | 'manual';
 
@@ -49,6 +50,8 @@ export interface ITicker extends EventEmitter {
   trySyncTickStatus: () => void;
   getTimelines: () => ITimeline[];
   release: () => void;
+
+  bindStage: (stage: IStage) => void;
 
   // Whether to automatically stop, default is true
   autoStop: boolean;

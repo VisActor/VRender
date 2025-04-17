@@ -4,14 +4,13 @@ import { DefaultTicker } from './default-ticker';
 
 class ManualTickHandler implements ITickHandler {
   protected released: boolean = false;
-  protected startTime: number = -1;
   protected currentTime: number = -1;
 
   tick(interval: number, cb: (handler: ITickHandler) => void): void {
-    if (this.startTime < 0) {
-      this.startTime = 0;
+    if (this.currentTime < 0) {
+      this.currentTime = 0;
     }
-    this.currentTime = this.startTime + interval;
+    this.currentTime += interval;
     cb(this);
   }
 
@@ -24,8 +23,7 @@ class ManualTickHandler implements ITickHandler {
   }
 
   tickTo(time: number, cb: (handler: ITickHandler) => void): void {
-    if (this.startTime < 0) {
-      this.startTime = 0;
+    if (this.currentTime < 0) {
       this.currentTime = 0;
     }
     const interval = time - this.currentTime;
@@ -34,7 +32,7 @@ class ManualTickHandler implements ITickHandler {
 }
 
 export class ManualTicker extends DefaultTicker implements ITicker {
-  constructor(stage: IStage) {
+  constructor(stage?: IStage) {
     super(stage);
     // manualTicker 的 lastFrameTime 默认为 0
     // status 默认为 STATUS.RUNNING（不需要启动）
@@ -51,6 +49,10 @@ export class ManualTicker extends DefaultTicker implements ITicker {
 
     this.tickerHandler = handler;
     return true;
+  }
+
+  checkSkip(delta: number): boolean {
+    return false;
   }
 
   getTime(): number {

@@ -1211,15 +1211,14 @@ export abstract class Graphic<T extends Partial<IGraphicAttribute> = Partial<IGr
       if (params.b) {
         return params.b;
       }
-      const { scaleX, scaleY, angle, scaleCenter } = this.attribute;
       // 拷贝一份，避免计算bounds的过程中计算matrix，然后matrix又修改了bounds
-      tempBounds.copy(this._AABBBounds);
+      const graphic = this.clone();
+      graphic.attribute.angle = 0;
+      graphic.attribute.scaleCenter = null;
       // @ts-ignore
-      this.setAttributes({ angle: 0, scaleCenter: null });
-      params.b = this.AABBBounds.clone();
-      this._AABBBounds.copy(tempBounds);
-      // @ts-ignore
-      this.setAttributes({ scaleX, scaleY, angle, scaleCenter });
+      // this.setAttributes({ angle: 0, scaleCenter: null });
+      params.b = graphic.AABBBounds;
+
       return params.b;
     };
     if (typeof anchor[0] === 'string') {

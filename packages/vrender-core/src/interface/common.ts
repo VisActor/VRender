@@ -8,6 +8,7 @@ export type ICurveType =
   | 'cardinalOpen'
   | 'stepBefore'
   | 'stepAfter'
+  | 'stepClosed'
   | 'catmullRom'
   | 'catmullRomClosed'
   | 'catmullRomOpen'

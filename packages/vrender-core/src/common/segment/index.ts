@@ -3,7 +3,7 @@ import type { ICurveType, IGenSegmentParams, ISegPath2D } from '../../interface'
 import { genLinearSegments } from './linear';
 import { genBasisSegments } from './basis';
 import { genMonotoneXSegments, genMonotoneYSegments } from './monotone';
-import { genStepSegments } from './step';
+import { genStepClosedSegments, genStepSegments } from './step';
 import { genLinearClosedSegments } from './linear-closed';
 import { genCatmullRomSegments } from './catmull-rom';
 import { genCatmullRomClosedSegments } from './catmull-rom-close';
@@ -31,6 +31,8 @@ export function calcLineCache(
       return genMonotoneYSegments(points, params);
     case 'step':
       return genStepSegments(points, 0.5, params);
+    case 'stepClosed':
+      return genStepClosedSegments(points, 0.5, params);
     case 'stepBefore':
       return genStepSegments(points, 0, params);
     case 'stepAfter':

@@ -31,10 +31,13 @@ import {
   MoveRotateOut,
   MoveScaleIn,
   MoveScaleOut,
+  PulseAnimate,
   SlideIn,
   SlideOut,
   SpinIn,
-  SpinOut
+  SpinOut,
+  StrokeIn,
+  StrokeOut
 } from './story';
 import { Update } from './update';
 import { MoveIn, MoveOut } from './move';
@@ -98,6 +101,7 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('spinIn', SpinIn);
   AnimateExecutor.registerBuiltInAnimate('moveScaleIn', MoveScaleIn);
   AnimateExecutor.registerBuiltInAnimate('moveRotateIn', MoveRotateIn);
+  AnimateExecutor.registerBuiltInAnimate('strokeIn', StrokeIn);
 
   // 故事化动画 - 出场
   AnimateExecutor.registerBuiltInAnimate('slideOut', SlideOut);
@@ -105,6 +109,10 @@ export const registerCustomAnimate = () => {
   AnimateExecutor.registerBuiltInAnimate('spinOut', SpinOut);
   AnimateExecutor.registerBuiltInAnimate('moveScaleOut', MoveScaleOut);
   AnimateExecutor.registerBuiltInAnimate('moveRotateOut', MoveRotateOut);
+  AnimateExecutor.registerBuiltInAnimate('strokeOut', StrokeOut);
+
+  // 特效动画
+  AnimateExecutor.registerBuiltInAnimate('pulse', PulseAnimate);
 
   // 路径动画
   AnimateExecutor.registerBuiltInAnimate('MotionPath', MotionPath);
@@ -162,6 +170,9 @@ export {
   SpinOut,
   MoveScaleOut,
   MoveRotateOut,
+  StrokeIn,
+  StrokeOut,
+  PulseAnimate,
   GroupFadeIn,
   GroupFadeOut,
   FromTo,

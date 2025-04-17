@@ -13,6 +13,7 @@ import { RichText } from '@visactor/vrender-core';
  * 支持通过beforeText和afterText参数添加前缀和后缀
  * 支持通过showCursor参数显示光标，cursorChar自定义光标字符
  * 支持通过fadeInChars参数开启字符透明度渐变效果
+ * 支持通过strokeFirst参数开启描边先于填充显示效果，使用文字自身颜色作为描边色
  */
 export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharacter[] }> {
   declare valid: boolean;
@@ -23,10 +24,10 @@ export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
   private showCursor: boolean = false;
   private cursorChar: string = '|';
   private blinkCursor: boolean = true;
-  private beforeText: string = '';
-  private afterText: string = '';
   private fadeInChars: boolean = false;
   private fadeInDuration: number = 0.3; // 透明度渐变持续时间，以动画总时长的比例表示
+  private strokeFirst: boolean = false; // 是否开启描边先于填充显示效果
+  private strokeToFillRatio: number = 0.3; // 描边到填充的过渡比例，占总动画时长的比例
 
   constructor(
     from: { textConfig: IRichTextCharacter[] },
@@ -41,6 +42,8 @@ export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
       afterText?: string;
       fadeInChars?: boolean;
       fadeInDuration?: number;
+      strokeFirst?: boolean;
+      strokeToFillRatio?: number;
     }
   ) {
     super(from, to, duration, easing, params);
@@ -56,20 +59,20 @@ export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
       this.blinkCursor = params.blinkCursor;
     }
 
-    // 配置前缀和后缀文本
-    if (params?.beforeText !== undefined) {
-      this.beforeText = params.beforeText;
-    }
-    if (params?.afterText !== undefined) {
-      this.afterText = params.afterText;
-    }
-
     // 配置字符透明度渐变效果
     if (params?.fadeInChars !== undefined) {
       this.fadeInChars = params.fadeInChars;
     }
     if (params?.fadeInDuration !== undefined) {
       this.fadeInDuration = params.fadeInDuration;
+    }
+
+    // 配置描边先于填充显示效果
+    if (params?.strokeFirst !== undefined) {
+      this.strokeFirst = params.strokeFirst;
+    }
+    if (params?.strokeToFillRatio !== undefined) {
+      this.strokeToFillRatio = params.strokeToFillRatio;
     }
   }
 
@@ -144,27 +147,48 @@ export class InputRichText extends ACustomAnimate<{ textConfig: IRichTextCharact
       // 删除动画：显示from的前currentLength项
       currentTextConfig = this.fromTextConfig.slice(0, currentLength);
     } else {
-      // 添加文本动画：显示to的前currentLength项，可能需要应用透明度
+      // 添加文本动画：显示to的前currentLength项，可能需要应用透明度和描边效果
       currentTextConfig = this.toTextConfig.slice(0, currentLength).map((item, index) => {
-        // 如果启用了透明度渐变效果
-        if (this.fadeInChars && 'text' in item) {
-          // 计算每个字符从出现到结束的渐变进度
-          // 字符在特定时间点出现：出现时刻 = (index / totalItems) * maxTextShowRatio
-          // 当前时刻 = ratio
-          // 渐变持续时间 = fadeInDuration
-          // 渐变进度 = (当前时刻 - 出现时刻) / 渐变持续时间
+        // 如果是文本项并且需要应用效果
+        if ('text' in item) {
+          const newItem = { ...item };
 
-          const appearTime = (index / totalItems) * maxTextShowRatio;
-          const fadeProgress = (ratio - appearTime) / this.fadeInDuration;
+          // 如果启用了描边优先效果
+          if (this.strokeFirst) {
+            // 计算描边到填充的过渡进度
+            // 字符在特定时间点出现：出现时刻 = (index / totalItems) * maxTextShowRatio
+            const appearTime = (index / totalItems) * maxTextShowRatio;
+            const itemLifetime = Math.max(0, ratio - appearTime); // 当前字符已经存在的时间
+            const maxLifetime = 1 - appearTime; // 当前字符从出现到动画结束的最大时间
+            const fillProgress = Math.min(1, itemLifetime / (this.strokeToFillRatio * maxLifetime));
 
-          // 限制透明度在0-1范围内
-          const opacity = Math.max(0, Math.min(1, fadeProgress));
+            // 使用文本自身的填充颜色作为描边颜色
+            if ('fill' in newItem && newItem.fill) {
+              newItem.stroke = newItem.fill;
+              // 计算描边宽度，基于字体大小
+              // const fontSize = newItem.fontSize || 16;
+              // newItem.lineWidth = Math.max(1, fontSize * 0.05); // 线宽大约为字体大小的5%
 
-          // 如果是文本项，添加透明度
-          return {
-            ...item,
-            opacity: opacity
-          };
+              // 如果还没到填充阶段，则将填充色透明度设为0
+              if (fillProgress < 1) {
+                newItem.fillOpacity = fillProgress;
+              }
+            }
+
+            // 如果也启用了透明度渐变
+            if (this.fadeInChars) {
+              const fadeProgress = Math.min(1, itemLifetime / (this.fadeInDuration * maxLifetime));
+              newItem.opacity = Math.max(0, Math.min(1, fadeProgress));
+            }
+          }
+          // 只启用了透明度渐变效果，没有启用描边优先
+          else if (this.fadeInChars) {
+            const appearTime = (index / totalItems) * maxTextShowRatio;
+            const fadeProgress = (ratio - appearTime) / this.fadeInDuration;
+            newItem.opacity = Math.max(0, Math.min(1, fadeProgress));
+          }
+
+          return newItem;
         }
         return item;
       });

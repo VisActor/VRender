@@ -1,8 +1,18 @@
 import { Generator, type IAnimate, type ITimeline, AnimateStatus } from '@visactor/vrender-core';
 
+// 定义链表节点
+interface AnimateNode {
+  animate: IAnimate;
+  next: AnimateNode | null;
+  prev: AnimateNode | null;
+}
+
 export class DefaultTimeline implements ITimeline {
   declare id: number;
-  protected animates: IAnimate[] = [];
+  protected head: AnimateNode | null = null;
+  protected tail: AnimateNode | null = null;
+  protected animateMap: Map<IAnimate, AnimateNode> = new Map();
+  protected _animateCount: number = 0;
   protected declare paused: boolean;
 
   // 添加必要的属性
@@ -11,39 +21,57 @@ export class DefaultTimeline implements ITimeline {
   protected _startTime: number = 0;
   protected _currentTime: number = 0;
 
-  // 0 ... _endAnimatePtr ... animates.length
-  // [0, _endAnimatePtr] 表示正在运行的动画
-  // (_endAnimatePtr, animates.length) 表示已经结束的动画
-  protected _endAnimatePtr: number = -1;
-
   declare isGlobal?: boolean;
 
   get animateCount() {
-    return this.animates.length;
+    return this._animateCount;
   }
 
   constructor() {
     this.id = Generator.GenAutoIncrementId();
-    this.animates = [];
     this.paused = false;
   }
 
   isRunning() {
-    return !this.paused && this._endAnimatePtr >= 0;
+    return !this.paused && this._animateCount > 0;
   }
 
   forEachAccessAnimate(cb: (animate: IAnimate, index: number) => void) {
-    for (let i = 0; i <= this._endAnimatePtr; i++) {
-      cb(this.animates[i], i);
+    let current = this.head;
+    let index = 0;
+
+    while (current) {
+      // 保存下一个节点的引用，以防在回调中移除当前节点
+      const next = current.next;
+      cb(current.animate, index);
+      index++;
+      current = next;
     }
   }
 
   addAnimate(animate: IAnimate) {
-    this.animates.push(animate);
-    // 交换位置
-    this._endAnimatePtr++;
-    this.animates[this.animates.length - 1] = this.animates[this._endAnimatePtr];
-    this.animates[this._endAnimatePtr] = animate;
+    const newNode: AnimateNode = {
+      animate,
+      next: null,
+      prev: null
+    };
+
+    // 添加到链表尾部
+    if (!this.head) {
+      this.head = newNode;
+      this.tail = newNode;
+    } else {
+      if (this.tail) {
+        this.tail.next = newNode;
+        newNode.prev = this.tail;
+        this.tail = newNode;
+      }
+    }
+
+    // 在映射中保存节点引用
+    this.animateMap.set(animate, newNode);
+    this._animateCount++;
+
     // 更新总时长
     this._totalDuration = Math.max(this._totalDuration, animate.getStartTime() + animate.getDuration());
   }
@@ -69,7 +97,7 @@ export class DefaultTimeline implements ITimeline {
 
     this.forEachAccessAnimate((animate, i) => {
       if (animate.status === AnimateStatus.END) {
-        this.removeAnimate(animate, true, i);
+        this.removeAnimate(animate, true);
       } else if (animate.status === AnimateStatus.RUNNING || animate.status === AnimateStatus.INITIAL) {
         animate.advance(scaledDelta);
       }
@@ -80,30 +108,57 @@ export class DefaultTimeline implements ITimeline {
     this.forEachAccessAnimate(animate => {
       animate.release();
     });
-    this.animates = [];
+
+    this.head = null;
+    this.tail = null;
+    this.animateMap.clear();
+    this._animateCount = 0;
     this._totalDuration = 0;
   }
 
-  removeAnimate(animate: IAnimate, release: boolean = true, index?: number) {
-    if (this._endAnimatePtr < 0) {
+  removeAnimate(animate: IAnimate, release: boolean = true) {
+    const node = this.animateMap.get(animate);
+
+    if (!node) {
       return;
     }
+
     if (release) {
       animate._onRemove && animate._onRemove.forEach(cb => cb());
       animate.release();
     }
 
-    index = index ?? this.animates.indexOf(animate);
-    // 交换位置
-    this.animates[index] = this.animates[this._endAnimatePtr];
-    this._endAnimatePtr--;
+    // 从链表中移除节点
+    if (node.prev) {
+      node.prev.next = node.next;
+    } else {
+      // 节点是头节点
+      this.head = node.next;
+    }
+
+    if (node.next) {
+      node.next.prev = node.prev;
+    } else {
+      // 节点是尾节点
+      this.tail = node.prev;
+    }
+
+    // 从映射中移除
+    this.animateMap.delete(animate);
+    this._animateCount--;
+
+    // 如果移除的是最长时间的动画，应该重新计算总时长
+    if (animate.getStartTime() + animate.getDuration() >= this._totalDuration) {
+      this.recalculateTotalDuration();
+    }
+
     return;
   }
 
   // 重新计算总时长
   protected recalculateTotalDuration() {
     this._totalDuration = 0;
-    this.animates.forEach(animate => {
+    this.forEachAccessAnimate(animate => {
       this._totalDuration = Math.max(this._totalDuration, animate.getStartTime() + animate.getDuration());
     });
   }

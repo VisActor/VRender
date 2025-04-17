@@ -499,7 +499,7 @@ export class Stage extends Group implements IStage {
   protected afterTickCb = () => {
     this.tickedBeforeRender = true;
     // 性能模式不用立刻渲染
-    this.state !== 'rendering' && this.render();
+    this.state !== 'rendering' && this.renderNextFrame();
   };
 
   setBeforeRender(cb: (stage: IStage) => void) {

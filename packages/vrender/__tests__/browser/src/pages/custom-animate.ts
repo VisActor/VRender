@@ -691,5 +691,132 @@ export const page = () => {
     }, 4500);
   });
 
+  // Test case for InputRichText with stroke animation
+  addCase('InputRichText - Stroke First Animation', container, stage => {
+    // Create a richText with empty textConfig
+    const richText = createRichText({
+      x: 20,
+      y: 80,
+      width: 600,
+      height: 100,
+      textConfig: [],
+      textBaseline: 'middle'
+    });
+
+    // Create a group and add the richText to it
+    const group = createGroup({});
+    group.add(richText);
+    stage.defaultLayer.add(group);
+    stage.render();
+
+    // Define the final textConfig with different styles
+    const finalTextConfig = [
+      {
+        text: 'Hello, ',
+        fontSize: 40,
+        fill: '#FF5500',
+        stroke: '#FF5500',
+        lineWidth: 2,
+        fontWeight: 'bold'
+      },
+      {
+        text: 'Manim',
+        fontSize: 40,
+        fill: '#0055FF',
+        stroke: '#0055FF',
+        lineWidth: 2,
+        fontStyle: 'italic'
+      },
+      {
+        text: '!',
+        fontSize: 40,
+        fill: '#FF5500',
+        stroke: '#FF5500',
+        lineWidth: 2,
+        fontWeight: 'bold'
+      }
+    ];
+
+    // Create an AnimateExecutor and run the animation
+    const executor = new AnimateExecutor(group);
+    executor.execute({
+      type: 'inputRichText',
+      to: { textConfig: finalTextConfig },
+      customParameters: {
+        showCursor: true,
+        cursorChar: '|',
+        blinkCursor: true,
+        strokeFirst: true,
+        strokeToFillRatio: 0
+      },
+      duration: 3000,
+      easing: 'linear'
+    });
+  });
+
+  // Test case with a more complex stroke first animation
+  addCase('InputRichText - Complex Stroke Animation', container, stage => {
+    // Black background to better show the effect
+    stage.background = '#000000';
+
+    // Create a richText with empty textConfig
+    const richText = createRichText({
+      x: 250,
+      y: 200,
+      width: 600,
+      height: 200,
+      textConfig: [],
+      textAlign: 'center',
+      textBaseline: 'middle'
+    });
+
+    stage.defaultLayer.add(richText);
+    stage.render();
+
+    // Define the final textConfig with different styles
+    const finalTextConfig = [
+      {
+        text: 'Hello, ',
+        fontSize: 60,
+        fill: '#FFFFFF',
+        stroke: '#FFFFFF',
+        lineWidth: 1,
+        fontWeight: 'bold'
+      },
+      {
+        text: 'Manim',
+        fontSize: 60,
+        fill: '#3A86FF',
+        stroke: '#3A86FF',
+        lineWidth: 1,
+        fontWeight: 'bold'
+      },
+      {
+        text: '!',
+        fontSize: 60,
+        fill: '#FF006E',
+        stroke: '#FF006E',
+        lineWidth: 1,
+        fontWeight: 'bold'
+      }
+    ];
+
+    // Create an AnimateExecutor and run the animation
+    const executor = new AnimateExecutor(richText);
+    executor.execute({
+      type: 'inputRichText',
+      to: { textConfig: finalTextConfig },
+      customParameters: {
+        showCursor: false,
+        strokeFirst: true,
+        strokeToFillRatio: 1,
+        fadeInChars: true,
+        fadeInDuration: 0.2
+      },
+      duration: 4000,
+      easing: 'quadOut'
+    });
+  });
+
   return container;
 };

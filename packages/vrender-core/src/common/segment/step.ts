@@ -107,6 +107,16 @@ export class Step implements ICurvedSegment {
   }
 }
 
+export class StepClosed extends Step implements ILinearSegment {
+  declare context: ISegPath2D;
+
+  protected declare startPoint?: IPointLike;
+
+  lineEnd() {
+    this.context.closePath();
+  }
+}
+
 export function genStepSegments(points: IPointLike[], t: number, params: IGenSegmentParams = {}): ISegPath2D | null {
   const { direction, startPoint } = params;
   if (points.length < 2 - Number(!!startPoint)) {
@@ -128,4 +138,27 @@ export function genStepSegments(points: IPointLike[], t: number, params: IGenSeg
 
 export function genStepTypeSegments(path: ILinearSegment, points: IPointLike[]): void {
   return genCurveSegments(path, points, 1);
+}
+
+export function genStepClosedSegments(
+  points: IPointLike[],
+  t: number,
+  params: IGenSegmentParams = {}
+): ISegPath2D | null {
+  const { direction, startPoint } = params;
+  if (points.length < 2 - Number(!!startPoint)) {
+    return null;
+  }
+  const segContext = new SegContext(
+    'step',
+    direction ??
+      (abs(points[points.length - 1].x - points[0].x) > abs(points[points.length - 1].y - points[0].y)
+        ? Direction.ROW
+        : Direction.COLUMN)
+  );
+  const step = new StepClosed(segContext, t, startPoint);
+
+  genStepTypeSegments(step, points);
+
+  return segContext;
 }

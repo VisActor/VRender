@@ -4,7 +4,7 @@
 import type { IRectGraphicAttribute, FederatedPointerEvent, IGroup, IRect } from '@visactor/vrender-core';
 // eslint-disable-next-line no-duplicate-imports
 import { vglobal } from '@visactor/vrender-core';
-import { merge, normalizePadding, clamp, clampRange, debounce, throttle } from '@visactor/vutils';
+import { merge, normalizePadding, clamp, clampRange, debounce, throttle, isValid } from '@visactor/vutils';
 import { AbstractComponent } from '../core/base';
 
 import type { ScrollBarAttributes } from './type';
@@ -141,7 +141,23 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     if (this._slider) {
       this._slider.addEventListener('pointerdown', this._onSliderPointerDown as EventListener);
     }
+
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
   }
+
+  private _handleTouchMove = (e: TouchEvent) => {
+    if (isValid(this._prePos)) {
+      // 正在滚动中的时候
+      /**
+       * https://developer.mozilla.org/zh-CN/docs/Web/CSS/overscroll-behavior
+       * 由于浏览器的overscroll-behavior属性，需要在move的时候阻止浏览器默认行为，否则会因为浏览器检测到scroll行为，阻止pointer事件，
+       * 抛出pointercancel事件，导致拖拽行为中断。
+       */
+      e.preventDefault();
+    }
+  };
 
   protected render() {
     this._reset();
@@ -327,7 +343,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
      * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
      * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
      */
-    obj.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true, passive: true });
+    obj.addEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onSliderPointerUp);
     });
@@ -355,7 +371,6 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   };
 
   private _onSliderPointerMove = (e: any) => {
-    e.preventDefault();
     const { stopSliderMovePropagation = true } = this.attribute as ScrollBarAttributes;
     if (stopSliderMovePropagation) {
       e.stopPropagation();
@@ -375,7 +390,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true, passive: false });
+    obj.removeEventListener('pointermove', this._onSliderPointerMoveWithDelay, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onSliderPointerUp);
     });
@@ -387,6 +402,7 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
     const preScrollRange = this.getScrollRange();
     const [currentPos, currentScrollValue] = this._computeScrollValue(e);
     const range: [number, number] = [preScrollRange[0] + currentScrollValue, preScrollRange[1] + currentScrollValue];
+    this._prePos = null;
 
     this._dispatchEvent(SCROLLBAR_END_EVENT, {
       pre: preRange,
@@ -399,5 +415,16 @@ export class ScrollBar extends AbstractComponent<Required<ScrollBarAttributes>> 
   private _reset() {
     this._sliderRenderBounds = null;
     this._sliderLimitRange = null;
+  }
+
+  release(all?: boolean): void {
+    /**
+     * 浏览器上的事件必须解绑，防止内存泄漏，场景树上的事件会自动解绑
+     */
+    super.release(all);
+    (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
+      passive: false
+    });
+    this._clearDragEvents();
   }
 }

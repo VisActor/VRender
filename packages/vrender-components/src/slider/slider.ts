@@ -665,7 +665,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
         'pointerdown',
         this._onRailPointerDown as EventListenerOrEventListenerObject
       );
-
+      /**
+       * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
+       */
       (vglobal.env === 'browser' ? vglobal : this.stage).addEventListener('touchmove', this._handleTouchMove, {
         passive: false
       });
@@ -747,10 +749,9 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
     /**
-     * move的时候，需要通过 capture: true，能够在捕获截断被拦截，
-     * move的时候，需要显示的设置passive: false，因为在移动端需要禁用浏览器默认行为
+     * move的时候，需要通过 capture: true，能够在捕获截断被拦截
      */
-    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    obj.addEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onHandlerPointerUp);
     });
@@ -760,20 +761,18 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true, passive: false });
+    obj.removeEventListener('pointermove', this._onHandlerPointerMove, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onHandlerPointerUp);
     });
 
-    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true, passive: false });
+    obj.removeEventListener('pointermove', this._onTrackPointerMove, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.removeEventListener(trigger, this._onTrackPointerUp);
     });
   }
 
   private _onHandlerPointerMove = (e: FederatedPointerEvent) => {
-    e.preventDefault();
-
     this._isChanging = true;
     const { railWidth, railHeight, min, max } = this.attribute as SliderAttributes;
     if (max === min) {
@@ -839,14 +838,13 @@ export class Slider extends AbstractComponent<Required<SliderAttributes>> {
     const triggers = getEndTriggersOfDrag();
     const obj = vglobal.env === 'browser' ? vglobal : this.stage;
 
-    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true, passive: false });
+    obj.addEventListener('pointermove', this._onTrackPointerMove, { capture: true });
     triggers.forEach((trigger: string) => {
       obj.addEventListener(trigger, this._onTrackPointerUp);
     });
   };
 
   private _onTrackPointerMove = (e: FederatedPointerEvent) => {
-    e.preventDefault();
     this._isChanging = true;
     const { railWidth, railHeight, min, max, inverse } = this.attribute as SliderAttributes;
 

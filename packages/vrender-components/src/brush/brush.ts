@@ -92,6 +92,7 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
     this._activeMoveState = brushMoved && this._isPosInBrushMask(e); // 如果是移动状态，在这里会标记operatingMask为正在移动的mask
     this._activeDrawState = !this._activeMoveState;
     this._startPos = this.eventPosToStagePos(e);
+    this._cacheDrawPoints = [this._startPos];
   };
 
   /**
@@ -151,7 +152,8 @@ export class Brush extends AbstractComponent<Required<BrushAttributes>> {
   private _initDraw(e: FederatedPointerEvent) {
     const { brushMode } = this.attribute as BrushAttributes;
     const pos = this.eventPosToStagePos(e);
-    this._cacheDrawPoints = [pos];
+
+    this._cacheDrawPoints.push(pos);
     brushMode === 'single' && this._clearMask();
     this._addBrushMask();
     this._dispatchBrushEvent(IOperateType.drawStart, e);

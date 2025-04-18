@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@visactor/vrender-core",
+      "comment": "fix: fix issue with symbol gradient, and support native conical gradient",
+      "type": "none"
+    }
+  ],
+  "packageName": "@visactor/vrender-core"
+}
